@@ -25,7 +25,7 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
         $route = $router->generate('back_config_service_secours_route_index');
         $client->request('GET', $route);
 
-        $this->assertSelectorTextContains('h2', '2 services secours trouvés');
+        $this->assertSelectorTextContains('h2#desc-table', '2 services secours trouvés');
     }
 
     public function testIndexForUnauthorizedUser(): void
@@ -71,6 +71,6 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
 
         $this->assertResponseRedirects();
         $client->followRedirect();
-        $this->assertSelectorTextContains('h2', '3 services secours trouvés');
+        $this->assertSelectorTextContains('h2#desc-table', '3 services secours trouvés');
     }
 }

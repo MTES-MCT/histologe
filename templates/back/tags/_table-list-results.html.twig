@@ -15,10 +15,12 @@
             <td>{{ tag.territory.name }}</td>
             <td class="fr-text--right fr-ws-nowrap">
                 <button class="fr-btn fr-icon-edit-line"
-                    title="Editer l'étiquette {{ tag.label }}"
+                    aria-label="Éditer l'étiquette {{ tag.label }}"
+                    title="Éditer l'étiquette {{ tag.label }}"
                     data-fr-opened="false" aria-controls="fr-modal-etiquette-edit-{{ tag.id }}"
-                    >Editer l'étiquette {{ tag.label }}</button>
+                    >Éditer l'étiquette {{ tag.label }}</button>
                 <a class="fr-btn fr-icon-list-unordered"
+                    aria-label="Voir la liste des signalements avec l'étiquette {{ tag.label }}"
                     title="Voir la liste des signalements avec l'étiquette {{ tag.label }}"
                     {% if is_granted('ROLE_ADMIN') %}
                         href="{{ path('back_signalements_index', { 'etiquettes[]': tag.id, 'isImported': 'oui', 'territoire': tag.territory.id }) }}"
@@ -27,6 +29,7 @@
                     {% endif %}
                     >Voir la liste des signalements avec l'étiquette {{ tag.label }}</a>
                 <button class="fr-btn fr-btn--secondary fr-icon-delete-line"
+                    aria-label="Supprimer l'étiquette {{ tag.label }}"
                     title="Supprimer l'étiquette {{ tag.label }}"
                     data-fr-opened="false" aria-controls="fr-modal-etiquette-delete-{{ tag.id }}"
                     >Supprimer l'étiquette {{ tag.label }}</button>
@@ -37,7 +40,7 @@
 
 {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des étiquettes', 'tableHead': tableHead, 'tableBody': tableBody } %}
 
-<div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+<div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" aria-label="Pagination de la liste des étiquettes">
     {% import '_partials/macros.html.twig' as macros %}
     {{ macros.customPagination(pages, searchTag.page, 'back_territory_management_tags_index', searchTag.urlParams) }}
 </div>

@@ -67,7 +67,7 @@ class SearchArchivedPartnerType extends AbstractType
             'data_class' => SearchArchivedPartner::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-archived-partner-form', 'class' => 'fr-p-4v bo-filter-form'],
+            'attr' => ['id' => 'search-archived-partner-form', 'class' => 'fr-pt-4v bo-filter-form'],
         ]);
     }
 

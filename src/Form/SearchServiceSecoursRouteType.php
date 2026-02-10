@@ -24,8 +24,8 @@ class SearchServiceSecoursRouteType extends AbstractType
         ]);
         $builder->add('orderType', ChoiceType::class, [
             'choices' => [
-                'Ordre alpahbétique (A à Z)' => 'ssr.name-ASC',
-                'Ordre alpahbétique inversé (Z à A)' => 'ssr.name-DESC',
+                'Ordre alphabétique (A à Z)' => 'ssr.name-ASC',
+                'Ordre alphabétique inversé (Z à A)' => 'ssr.name-DESC',
             ],
             'required' => false,
             'placeholder' => false,
@@ -41,7 +41,7 @@ class SearchServiceSecoursRouteType extends AbstractType
             'data_class' => SearchServiceSecoursRoute::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-service-secours-route-form', 'class' => 'fr-p-5v bo-filter-form'],
+            'attr' => ['id' => 'search-service-secours-route-form', 'class' => 'fr-pt-4v bo-filter-form'],
         ]);
     }
 

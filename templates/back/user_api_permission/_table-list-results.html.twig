@@ -50,10 +50,13 @@
                                                     {{ currentPermissionDescription|raw }}
                                                 </td>
                                                 <td class="fr-cell--right">
-                                                    <a class="fr-btn fr-btn--sm fr-fi-edit-line" href="{{ path('back_api_user_permission_edit', {'id': permission.id}) }}" title="Modifier la permission"></a>
+                                                    <a class="fr-btn fr-btn--sm fr-fi-edit-line" href="{{ path('back_api_user_permission_edit', {'id': permission.id}) }}"
+                                                        aria-label="Modifier la permission"
+                                                        title="Modifier la permission"></a>
                                                     <button class="fr-btn fr-btn--danger fr-btn--sm fr-fi-delete-line btn-delete-user-api-permission"
-                                                        title="Supprimer la permission" 
-                                                        aria-controls="fr-modal-user-api-permission-delete" data-fr-opened="false" 
+                                                        aria-label="Supprimer la permission"
+                                                        title="Supprimer la permission"
+                                                        aria-controls="fr-modal-user-api-permission-delete" data-fr-opened="false"
                                                         data-url="{{ path('back_api_user_permission_delete', {'id': permission.id}) }}"
                                                         data-description="{{ currentPermissionDescription|e('html_attr') }}">
                                                     </button>
@@ -68,14 +71,16 @@
                 {% endif %}
             </td>
             <td class="fr-cell--right">
-                <a class="fr-btn fr-btn--success fr-btn--sm fr-fi-add-circle-line" href="{{ path('back_api_user_permission_create', {'id': user.id}) }}" title="Ajouter une permission"></a>
+                <a class="fr-btn fr-btn--success fr-btn--sm fr-fi-add-circle-line" href="{{ path('back_api_user_permission_create', {'id': user.id}) }}"
+                    aria-label="Ajouter une permission"
+                    title="Ajouter une permission"></a>
             </td>
         </tr>
     {% endfor %}
 {% endset %}
 {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des utilisateurs API', 'tableHead': tableHead, 'tableBody': tableBody } %}
 
-<div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+<div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" aria-label="Pagination de la liste des utilisateurs API">
     {% import '_partials/macros.html.twig' as macros %}
     {{ macros.customPagination(pages, searchUser.page, 'back_api_user_index', searchUser.urlParams) }}
 </div>

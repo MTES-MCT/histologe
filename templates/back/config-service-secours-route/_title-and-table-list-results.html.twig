@@ -1,4 +1,4 @@
-<section class="fr-col-12 fr-pt-0 fr-px-5v">
+<section class="fr-col-12" id="table-list-results">
     {% set tableHead %}
         <th scope="col">ID</th>
         <th scope="col">Nom</th>
@@ -17,11 +17,12 @@
                 <td class="fr-text--right">
                     <button class="fr-btn fr-btn--danger fr-btn--sm fr-fi-delete-line fr-mt-3v btn-delete-config-service-secours-route"
                         id="config_service_secours_route_delete_{{ serviceSecoursRoute.id }}" aria-controls="fr-modal-config-service-secours-route-delete"
-                        data-fr-opened="false" 
-                        data-config-service-secours-route-url="{{ path('back_config_service_secours_route_delete', {'id': serviceSecoursRoute.id}) }}" 
+                        data-fr-opened="false"
+                        data-config-service-secours-route-url="{{ path('back_config_service_secours_route_delete', {'id': serviceSecoursRoute.id}) }}"
                         data-config-service-secours-route-name="{{ serviceSecoursRoute.name }}"
-                        >
-                    </button>
+                        aria-label="Supprimer la route {{ serviceSecoursRoute.name }}"
+                        title="Supprimer la route {{ serviceSecoursRoute.name }}"
+                        ></button>
                 </td>
             </tr>
         {% else %}
@@ -33,7 +34,7 @@
 
     {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste routes service secours', 'tableHead': tableHead, 'tableBody': tableBody } %}
 
-    <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="aconfig-service-secours-route-pagination">
+    <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" role="navigation" aria-label="Pagination de la liste des routes">
         {% import '_partials/macros.html.twig' as macros %}
         {{ macros.customPagination(pages, searchServiceSecoursRoute.page, 'back_config_service_secours_route_index', searchServiceSecoursRoute.urlParams) }}
     </div>

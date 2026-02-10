@@ -3,7 +3,7 @@
 {% block title %}Partenaire{% endblock %}
 
 {% block content %}
-    <section class="fr-col-12 fr-p-5v">
+    <section class="fr-col-12 fr-pt-4v">
         {% if create %}
             {% include 'back/breadcrumb_bo.html.twig' with {
                 'level2Title': 'Outils admin',
@@ -38,7 +38,7 @@
             <h1 class="fr-mb-0"> Modifier le partenaire : {{ partner.nom }} </h1>
             <span>Tous les champs sont obligatoires, sauf mention contraire.</span>
         {% endif %}
-        <div class="fr-pt-5v">
+        <div class="fr-pt-4v">
             {{ include('back/partner/_form.html.twig') }}
         </div>
     </section>

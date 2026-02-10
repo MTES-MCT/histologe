@@ -76,7 +76,7 @@ class SearchAnnuaireAgentType extends AbstractType
         $resolver->setDefaults([
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['class' => 'fr-p-4v bo-filter-form'],
+            'attr' => ['class' => 'fr-pt-4v bo-filter-form'],
         ]);
     }
 

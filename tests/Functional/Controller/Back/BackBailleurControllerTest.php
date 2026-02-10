@@ -37,9 +37,9 @@ class BackBailleurControllerTest extends WebTestCase
         $this->client->request('GET', $route, $params);
 
         if ($nb > 1) {
-            $this->assertSelectorTextContains('h2', $nb.' bailleurs');
+            $this->assertSelectorTextContains('h2#desc-table', $nb.' bailleurs');
         } else {
-            $this->assertSelectorTextContains('h2', $nb.' bailleur');
+            $this->assertSelectorTextContains('h2#desc-table', $nb.' bailleur');
         }
     }
 

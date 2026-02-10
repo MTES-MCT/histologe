@@ -3,7 +3,7 @@
 {% block title %} Administration - Nouveauté(s) {% endblock %}
 
 {% block content %}
-    <section class="fr-p-4v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Notifications',
             'level2Link': '',
@@ -12,9 +12,9 @@
     </section>
     {% set searchParams = app.request.query.all|url_encode %}
 
-    <section class="fr-grid-row fr-grid-row--middle fr-p-4v ">
+    <section class="fr-grid-row fr-grid-row--middle fr-pt-4v">
         <div class="fr-col-12 fr-col-md-6">
-            <h1 class="fr-h2 fr-mb-0">Notification(s)</h1>
+            <h1 class="fr-mb-0">Notification(s)</h1>
         </div>
         <div class="fr-col-6 fr-text--right">
             <div id="notification-selected-buttons">
@@ -23,7 +23,7 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-px-4v" id="title-list-results">
+    <section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
         {% include 'back/notifications/_title-list-results.html.twig' %}
     </section>
     
@@ -33,7 +33,7 @@
     </section>
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-4v" id="table-list-results">
+    <section class="fr-col-12" id="table-list-results">
         {% include 'back/notifications/_table-list-results.html.twig' %}
     </section>
 {% endblock %}

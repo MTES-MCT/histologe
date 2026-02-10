@@ -3,7 +3,7 @@
 {% block title %}Connexions SI externes{% endblock %}
 
 {% block content %}
-    <section class="fr-p-4v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils SA',
             'level2Link': '',
@@ -24,7 +24,11 @@
 
     {{ form_start(form) }}
 
-    <section class="fr-container--fluid overflow-visible">
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        {% include '_partials/back/filters-title.html.twig' with {
+            'skiplink_href': '#list-connections',
+            'skiplink_label': 'Accéder à la liste des connexions SI'
+        } %}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-2">
@@ -48,8 +52,14 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-py-4v">
-        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(totalConnexions, 'connexion à un SI externe trouvée', 'connexions à un SI externe trouvées') }}</h2>
+    <section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
+        <div id="list-connections">
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(totalConnexions, 'connexion à un SI externe trouvée', 'connexions à un SI externe trouvées') }}</h2>
+            <div class="fr-skiplinks">
+                <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                    >Accéder à la pagination</a>
+            </div>
+        </div>
     </section>
     
     <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
@@ -58,7 +68,7 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-4v">
+    <section class="fr-col-12" id="table-list-results">
         {% set tableHead %}
             <th scope="col" data-responsive-title="1">Référence</th>
             <th scope="col">Dernière synchro</th>
@@ -101,6 +111,7 @@
                         <button data-fr-opened="false"
                                 aria-controls="{{ modalId }}"
                                 type="button"
+                                aria-label="Afficher les détails de synchronisation pour {{ connection.reference }} le {{ syncAt  }}"
                                 title="Afficher les détails de synchronisation pour {{ connection.reference }} le {{ syncAt  }}"
                                 class="fr-btn fr-btn--sm fr-fi-eye-fill">
                         </button>
@@ -109,12 +120,14 @@
                         {% if connection.uuid is not null %}
                         <a href="{{ path('back_signalement_view', {'uuid': connection.uuid}) }}"
                             class="fr-btn fr-btn--sm fr-fi-arrow-right-line"
+                            aria-label="Voir le signalement {{ connection.reference }}"
                             title="Voir le signalement {{ connection.reference }}"
                             >{{ connection.reference }}</a>
                         {% endif %}
-                        
+
                         <a href="{{ path('back_partner_view', {id: connection.id}) }}"
                             class="fr-btn fr-btn--sm fr-icon-group-line"
+                            aria-label="Voir le partenaire {{ connection.nom }}"
                             title="Voir le partenaire {{ connection.nom }}"
                             >{{ connection.nom }}</a>
                    </td>
@@ -124,7 +137,7 @@
 
         {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Connexions SI externes', 'tableHead': tableHead, 'tableBody': tableBody, 'cancelSortable': true } %}
 
-        <div id="interconnexion-pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center">
+        <div id="pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center" aria-label="Pagination de la liste des connexions SI">
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, searchInterconnexion.page, 'back_interconnexion_index', searchInterconnexion.urlParams) }}
         </div>

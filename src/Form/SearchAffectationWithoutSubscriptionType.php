@@ -48,7 +48,7 @@ class SearchAffectationWithoutSubscriptionType extends AbstractType
             'data_class' => SearchAffectationWithoutSubscription::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-affectation-form', 'class' => 'fr-p-4v bo-filter-form'],
+            'attr' => ['id' => 'search-affectation-form', 'class' => 'fr-pt-4v bo-filter-form'],
         ]);
     }
 

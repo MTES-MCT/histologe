@@ -67,7 +67,7 @@ class SearchSignalementInjonctionType extends AbstractType
             'data_class' => SearchSignalementInjonction::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-signalement-form', 'class' => 'fr-p-4v bo-filter-form'],
+            'attr' => ['id' => 'search-signalement-form', 'class' => 'fr-pt-4v bo-filter-form'],
         ]);
     }
 

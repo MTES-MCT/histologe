@@ -3,7 +3,7 @@
 {% block title %}Mes brouillons{% endblock %}
 
 {% block content %}
-    <section class="fr-p-4v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Liste des signalements',
             'level2Link': path('back_signalements_index'),
@@ -14,7 +14,7 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-col-md-6 fr-text--left">
-                    <h1 class="fr-h1 fr-mb-0">Brouillons</h1>
+                    <h1 class="fr-mb-0">Brouillons</h1>
                 </div>
                 <div class="fr-col-12 fr-col-md-6 fr-text--md-right">
                     <a class="fr-btn fr-btn--success fr-btn--icon-left fr-icon-add-line fr-btn--block fr-btn--md-inline" href="{{path('back_signalement_create')}}">Créer un signalement</a>
@@ -23,9 +23,16 @@
         </header>
     </section>
 
-    <section class="fr-col-12 fr-p-4v">
-        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(drafts|length, 'brouillon trouvé', 'brouillons trouvés') }}</h2>
+    <section class="fr-col-12 fr-py-5v" aria-labelledby="desc-table">
+        <div id="list-drafts">
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(drafts|length, 'brouillon trouvé', 'brouillons trouvés') }}</h2>
+            <div class="fr-skiplinks">
+                <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                    >Accéder à la pagination</a>
+            </div>
+        </div>
     </section>
+    
     {{ form_start(form) }}
     
     <section class="fr-col-12 fr-col-lg-4 fr-pt-0">
@@ -34,7 +41,7 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-container--fluid fr-p-4v">
+    <section class="fr-pt-4v">
         {% for signalement in drafts %}
             {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').DRAFT %}                
                 {% include 'back/signalement_drafts/draft_card.html.twig' %}   
@@ -47,7 +54,7 @@
                 Aucun brouillon trouvé
             </div>
         {% endfor %}
-        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="drafts-pagination">
+        <div id="pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center" aria-label="Pagination de la liste des brouillons">
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, searchDraft.page, 'back_signalement_drafts', searchDraft.urlParams) }}
         </div>

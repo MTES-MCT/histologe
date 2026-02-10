@@ -3,7 +3,7 @@
 {% block title %}Signalements archivés{% endblock %}
 
 {% block content %}
-    <section class="fr-p-4v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils SA',
             'level2Link': '',
@@ -22,7 +22,11 @@
 
     {{ form_start(form) }}
 
-    <section class="fr-container--fluid">
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        {% include '_partials/back/filters-title.html.twig' with {
+            'skiplink_href': '#list-signalements',
+            'skiplink_label': 'Accéder à la liste des signalements'
+        } %}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-4">
@@ -37,8 +41,14 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-py-4v">
-        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(signalements|length, 'signalement archivé trouvé', 'signalements archivés trouvés') }}</h2>
+    <section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
+        <div id="list-signalements">
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(signalements|length, 'signalement archivé trouvé', 'signalements archivés trouvés') }}</h2>
+            <div class="fr-skiplinks">
+                <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                    >Accéder à la pagination</a>
+            </div>
+        </div>
     </section>
     
     <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
@@ -47,7 +57,7 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-4v">
+    <section class="fr-col-12" id="table-list-results">
         {% set tableHead %}
             <th scope="col" data-responsive-title="1">#Ref.</th>
             <th scope="col">Territoire</th>
@@ -98,11 +108,13 @@
                     <td class="fr-text--right fr-ws-nowrap">
                         <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
                             class="fr-btn fr-fi-arrow-right-line fr-btn--sm"
+                            aria-label="Voir le signalement #{{ signalement.reference }}"
                             title="Voir le signalement #{{ signalement.reference }}"
                             ></a>
                         <button data-reactive="{{ path('back_archived_signalements_reactiver',{uuid:signalement.uuid}) }}"
                             data-token="{{ csrf_token('signalement_reactive_'~signalement.id) }}"
                             class="fr-btn fr-icon-flashlight-fill fr-btn--sm signalement-row-reactive"
+                            aria-label="Réactiver le signalement #{{ signalement.reference }}"
                             title="Réactiver le signalement #{{ signalement.reference }}"
                             ></button>
                     </td>
@@ -112,7 +124,7 @@
 
         {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des signalements archivés', 'tableHead': tableHead, 'tableBody': tableBody } %}
 
-        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" aria-label="Pagination de la liste des signalements">
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, searchArchivedSignalement.page, 'back_archived_signalements_index', searchArchivedSignalement.urlParams) }}
         </div>

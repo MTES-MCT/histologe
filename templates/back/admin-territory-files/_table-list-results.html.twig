@@ -37,22 +37,23 @@
             <td class="fr-text--right fr-ws-nowrap">
                 <button
                     class="fr-btn fr-icon-eye-line open-modal-document-view"
+                    aria-label="Voir les détails du document {{ file.title }}"
                     title="Voir les détails du document {{ file.title }}"
-                    data-fr-opened="false" 
+                    data-fr-opened="false"
                     aria-controls="fr-modal-document-view"
                     data-url="{{ path('back_territory_management_document_edit', { file: file.id }) }}"
                     data-createdat="{{ file.createdAt|date('d/m/Y') }}"
                     data-createdby="{{ file.uploadedBy ? file.uploadedBy.fullName : 'Admin' }}"
                     data-title="{{ file.title }}"
                     data-description="{{ file.description ?? '/' }}"
-                    data-partnertype="Type de partenaire : 
+                    data-partnertype="Type de partenaire :
                         {% if file.partnerType|length > 0 %}
                             {% for type in file.partnerType %}
                                 <span class='fr-badge fr-badge--no-icon fr-badge--info'>{{ type.label() }}</span>
                             {% endfor %}
                         {% else %}/
                         {% endif %}"
-                    data-partnercompetence="Compétences : 
+                    data-partnercompetence="Compétences :
                         {% if file.partnerCompetence|length > 0 %}
                             {% for competence in file.partnerCompetence %}
                                 <span class='fr-badge fr-badge--no-icon fr-badge--info'>{{ competence.label() }}</span>
@@ -60,16 +61,20 @@
                         {% else %}/
                         {% endif %}"
                     >Voir les détails du document {{ file.title }}</button>
-                <a href="{{ path('back_territory_management_document_edit', { file: file.id }) }}" class="fr-btn fr-icon-edit-line" title="Editer le document {{ file.title }}"
-                    >Editer le document {{ file.title }}</a>
+                <a href="{{ path('back_territory_management_document_edit', { file: file.id }) }}" class="fr-btn fr-icon-edit-line"
+                    aria-label="Éditer le document {{ file.title }}"
+                    title="Éditer le document {{ file.title }}"
+                    >Éditer le document {{ file.title }}</a>
                 <a href="{{ sign_url(path('show_file', {uuid: file.uuid})) }}"
-                        class="fr-btn fr-icon-download-line"
-                        title="Ouvrir le document {{ file.title }} - Ouvre une nouvelle fenêtre"
-                        target="_blank"
-                        rel="noopener"
+                    class="fr-btn fr-icon-download-line"
+                    aria-label="Ouvrir le document {{ file.title }}"
+                    title="Ouvrir le document {{ file.title }} - Ouvre une nouvelle fenêtre"
+                    target="_blank"
+                    rel="noopener"
                     >Ouvrir le document {{ file.title }}</a>
                 <button
                     class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-document-delete"
+                    aria-label="Supprimer le document {{ file.title }}"
                     title="Supprimer le document {{ file.title }}"
                     data-fr-opened="false"
                     aria-controls="fr-modal-document-delete"
@@ -84,7 +89,7 @@
 
 {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des documents', 'tableHead': tableHead, 'tableBody': tableBody } %}
 
-<div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+<div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" aria-label="Pagination de la liste des documents">
     {% import '_partials/macros.html.twig' as macros %}
     {{ macros.customPagination(pages, searchTerritoryFiles.page, 'back_territory_management_document', searchTerritoryFiles.urlParams) }}
 </div>

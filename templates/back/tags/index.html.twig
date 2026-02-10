@@ -3,7 +3,7 @@
 {% block title %}Etiquettes du territoire{% endblock %}
 
 {% block content %}
-    <section class="fr-p-4v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
             'level2Link': '',
@@ -17,7 +17,7 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-col-md-8 fr-text--left">
-                    <h1>Gérer les étiquettes du territoire</h1>
+                    <h1 class="fr-mb-0">Gérer les étiquettes du territoire</h1>
                     <p>
                         Les étiquettes peuvent être créées, éditées et supprimées par les responsables territoire uniquement.
                         <br>
@@ -36,7 +36,11 @@
     </section>
 
     {{ form_start(form) }}
-    <section class="fr-container--fluid">
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        {% include '_partials/back/filters-title.html.twig' with {
+            'skiplink_href': '#list-tags',
+            'skiplink_label': 'Accéder à la liste des étiquettes'
+        } %}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-4">
@@ -53,7 +57,7 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-py-4v" id="title-list-results">
+    <section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
         {% include 'back/tags/_title-list-results.html.twig' %}
     </section>
     
@@ -182,7 +186,7 @@
         </div>
     {% endfor %}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-4v" id="table-list-results">
+    <section class="fr-col-12" id="table-list-results">
         {% include 'back/tags/_table-list-results.html.twig' %}
     </section>
 {% endblock %}

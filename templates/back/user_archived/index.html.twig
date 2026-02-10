@@ -3,7 +3,7 @@
 {% block title %}Comptes archivés ou sans territoires et/ou partenaires{% endblock %}
 
 {% block content %}
-    <section class="fr-p-4v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils SA',
             'level2Link': '',
@@ -14,7 +14,7 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--left">
-                    <h1 class="fr-h1 fr-mb-0">Comptes archivés</h1>
+                    <h1 class="fr-mb-0">Comptes archivés</h1>
                 </div>
             </div>
         </header>
@@ -23,7 +23,11 @@
     {{ form_start(form) }}
 
     {% if is_granted('ROLE_ADMIN') %}
-    <section class="fr-container--fluid">
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        {% include '_partials/back/filters-title.html.twig' with {
+            'skiplink_href': '#list-users',
+            'skiplink_label': 'Accéder à la liste des utilisateurs'
+        } %}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-3">
@@ -44,8 +48,14 @@
     </section>
     {% endif %}
 
-    <section class="fr-col-12 fr-py-4v">
-        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(users|length, 'compte archivé ou sans territoire et/ou partenaire trouvé', 'comptes archivés ou sans territoire et/ou partenaire trouvés') }}</h2>
+    <section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
+        <div id="list-users">
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(users|length, 'compte archivé ou sans territoire et/ou partenaire trouvé', 'comptes archivés ou sans territoire et/ou partenaire trouvés') }}</h2>
+            <div class="fr-skiplinks">
+                <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                    >Accéder à la pagination</a>
+            </div>
+        </div>
     </section>
     
     <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
@@ -54,7 +64,7 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-4v">
+    <section class="fr-col-12" id="table-list-results">
         {% set tableHead %}
             <th scope="col">Partenaire</th>
             <th scope="col">Territoire</th>
@@ -111,7 +121,9 @@
                     <td>{{ user.getNomComplet() }}</td>
                     <td class="fr-text--right">
                         <a href="{{ path('back_archived_users_reactiver', {'id': user.id}) }}"
-                        class="fr-btn fr-icon-flashlight-fill fr-btn--sm" title="Réactiver le compte {{user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left')}}"></a>
+                            class="fr-btn fr-icon-flashlight-fill fr-btn--sm"
+                            aria-label="Réactiver le compte {{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}"
+                            title="Réactiver le compte {{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}"></a>
                     </td>
                 </tr>
             {% else %}
@@ -123,11 +135,9 @@
 
         {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des comptes archivés ou sans territoires et/ou partenaires', 'tableHead': tableHead, 'tableBody': tableBody } %}
 
-        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" aria-label="Pagination de la liste des utilisateurs">
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, searchArchivedUser.page, 'back_archived_users_index', searchArchivedUser.urlParams) }}
         </div>
     </section>
-
-
 {% endblock %}

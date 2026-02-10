@@ -1,9 +1,9 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% block title %}Modifier la zone {{zone.name}}{% endblock %}
+{% block title %}Zone {{zone.name}}{% endblock %}
 
 {% block content %}
-    <section class="fr-p-5v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
             'level2Link': '',
@@ -50,7 +50,7 @@
         </header>
     </section>
 
-    <section class="fr-grid-row fr-grid-row--gutters fr-p-5v">
+    <section class="fr-grid-row fr-grid-row--gutters fr-pt-4v">
         <div class="fr-col-12 fr-col-lg-8">
             <div id="zone_map"></div>
         </div>

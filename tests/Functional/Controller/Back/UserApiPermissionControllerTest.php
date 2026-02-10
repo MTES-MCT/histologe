@@ -31,9 +31,9 @@ class UserApiPermissionControllerTest extends WebTestCase
         $route = $router->generate('back_api_user_index');
         $client->request('GET', $route, $params);
         if ($nb > 1) {
-            $this->assertSelectorTextContains('h2', $nb.' utilisateurs trouvés');
+            $this->assertSelectorTextContains('h2#desc-table', $nb.' utilisateurs trouvés');
         } else {
-            $this->assertSelectorTextContains('h2', $nb.' utilisateur trouvé');
+            $this->assertSelectorTextContains('h2#desc-table', $nb.' utilisateur trouvé');
         }
     }
 

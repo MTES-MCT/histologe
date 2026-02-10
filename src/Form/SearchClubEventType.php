@@ -72,7 +72,7 @@ class SearchClubEventType extends AbstractType
             'data_class' => SearchClubEvent::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-club-event-form', 'class' => 'fr-p-5v bo-filter-form'],
+            'attr' => ['id' => 'search-club-event-form', 'class' => 'fr-pt-4v bo-filter-form'],
         ]);
     }
 

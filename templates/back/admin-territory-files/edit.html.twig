@@ -3,7 +3,7 @@
 {% block title %}Documents types{% endblock %}
 
 {% block content %}
-    <section class="fr-p-5v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
             'level2Link': '',
@@ -43,7 +43,7 @@
         </header>
     </section>
 
-    <section class="fr-col-12 fr-px-5v" data-ajax-form>
+    <section class="fr-col-12 fr-pt-4v" data-ajax-form>
         <div class="single-ajax-form-container">
             {{ form_start(editForm, {'attr': {'id': 'form-edit-file', 'data-submit-type': 'formData'}}) }}
             <div class="fr-grid-row fr-grid-row--gutters">

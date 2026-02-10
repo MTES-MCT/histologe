@@ -1,7 +1,7 @@
 <template>
   <div
     id="app-stats"
-    class="histo-app-stats fr-p-5v"
+    class="histo-app-stats fr-pt-4v"
     :data-ajaxurl="sharedProps.ajaxurl"
     >
     <HistoBOTabHeader>

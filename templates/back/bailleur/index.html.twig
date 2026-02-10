@@ -3,7 +3,7 @@
 {% block title %}Liste des bailleurs{% endblock %}
 
 {% block content %}
-    <section class="fr-p-4v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils SA',
             'level2Link': '',
@@ -23,7 +23,11 @@
 
     {{ form_start(form) }}
 
-    <section class="fr-container--fluid overflow-visible">
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        {% include '_partials/back/filters-title.html.twig' with {
+            'skiplink_href': '#list-bailleurs',
+            'skiplink_label': 'Accéder à la liste des bailleurs'
+        } %}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-4">
@@ -38,7 +42,7 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-py-4v" id="title-list-results">
+    <section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
         {% include 'back/bailleur/_title-list-results.html.twig' %}
     </section>
     
@@ -48,7 +52,7 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-0 fr-px-4v" id="table-list-results">
+    <section class="fr-col-12" id="table-list-results">
         {% include 'back/bailleur/_table-list-results.html.twig' with { 'bailleurs': bailleurs, 'pages': pages, 'searchBailleur': searchBailleur } %}
     </section>
 

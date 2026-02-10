@@ -2,6 +2,10 @@ html, body {
     scroll-behavior: smooth !important;
 }
 
+#content .fr-skiplinks {
+    background-color: transparent !important;
+}
+
 .signalement-invalid {
     position: relative;
 

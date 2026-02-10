@@ -28,9 +28,9 @@ class BackUserControllerTest extends WebTestCase
         $client->request('GET', $route, $params);
 
         if ($nb > 1) {
-            $this->assertSelectorTextContains('h2', $nb.' utilisateurs');
+            $this->assertSelectorTextContains('h2#desc-table', $nb.' utilisateurs');
         } else {
-            $this->assertSelectorTextContains('h2', $nb.' utilisateur');
+            $this->assertSelectorTextContains('h2#desc-table', $nb.' utilisateur');
         }
     }
 

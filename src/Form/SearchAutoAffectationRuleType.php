@@ -58,7 +58,7 @@ class SearchAutoAffectationRuleType extends AbstractType
             'data_class' => SearchAutoAffectationRule::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-auto-affectation-rule-form', 'class' => 'fr-p-4v bo-filter-form'],
+            'attr' => ['id' => 'search-auto-affectation-rule-form', 'class' => 'fr-pt-4v bo-filter-form'],
         ]);
     }
 

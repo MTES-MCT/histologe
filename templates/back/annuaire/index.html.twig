@@ -3,7 +3,7 @@
 {% block title %}Annuaire des agents{% endblock %}
 
 {% block content %}
-    <section class="fr-p-4v">
+    <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Annuaire',
             'level2Link': '',
@@ -13,7 +13,7 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--left">
-                    <h1>Annuaire des agents</h1>
+                    <h1 class="fr-mb-0">Annuaire des agents</h1>
                 </div>
             </div>
         </header>
@@ -22,7 +22,11 @@
     {% set isMultiTerritory = (app.user.isSuperAdmin() or app.user.partnersTerritories|length > 1) %}
 
     {{ form_start(form) }}
-    <section class="fr-container--fluid overflow-visible">
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        {% include '_partials/back/filters-title.html.twig' with {
+            'skiplink_href': '#list-agents',
+            'skiplink_label': 'Passer directement à la liste des agents'
+        } %}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-3">
@@ -40,15 +44,23 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-grid-row fr-grid-row--middle fr-py-4v">
-        <div class="fr-col-12 fr-col-md-6">
-            <h2 class="fr-mb-0">{{ singular_or_plural(userPartners|length, 'Agent trouvé', 'Agents trouvés') }}</h2>
-        </div>
-        <div class="fr-col-12 fr-col-md-6 fr-text--md-right">
-            <a 
-                href="{% if userPartners|length > 0 %}{{path('back_annuaire_export', search.urlParams)}}{% else %}#{% endif %}" 
-                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill {% if userPartners|length == 0 %}fr-label--disabled{% endif %} fr-btn--block fr-btn--md-inline"
-            > Exporter les résultats </a>
+    <section class="fr-col-12 fr-py-5v" aria-labelledby="desc-table">
+        <div id="list-agents" class="fr-grid-row fr-grid-row--middle">
+            <div class="fr-col-12 fr-col-md-6">
+                <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(userPartners|length, 'Agent trouvé', 'Agents trouvés') }}</h2>
+                <div class="fr-skiplinks">
+                    <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                        >Accéder à la pagination</a>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-6 fr-text--md-right">
+                <a
+                    href="{% if userPartners|length > 0 %}{{path('back_annuaire_export', search.urlParams)}}{% else %}#{% endif %}"
+                    class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill {% if userPartners|length == 0 %}fr-label--disabled{% endif %} fr-btn--block fr-btn--md-inline"
+                    aria-label="Exporter les résultats de l'annuaire"
+                    title="Exporter les résultats"
+                >Exporter les résultats</a>
+            </div>
         </div>
     </section>
     
@@ -58,8 +70,7 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-container--fluid fr-px-4v">
-
+    <section class="fr-col-12">
         <div class="fr-grid-row fr-grid-row--gutters">
             {% for userPartner in userPartners %}
                 <div class="fr-col-12 fr-col-lg-6">
@@ -87,7 +98,7 @@
             {% endfor %}
         </div>
         
-        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+        <div id="pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center" aria-label="Pagination de l'annuaire des agents">
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, search.page, 'back_annuaire_index', search.urlParams) }}
         </div>

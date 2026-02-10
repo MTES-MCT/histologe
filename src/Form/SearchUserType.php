@@ -188,7 +188,7 @@ class SearchUserType extends AbstractType
             'data_class' => SearchUser::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-user-form', 'class' => 'fr-p-4v bo-filter-form'],
+            'attr' => ['id' => 'search-user-form', 'class' => 'fr-pt-4v bo-filter-form'],
             'show_all_fields' => true,
         ]);
     }

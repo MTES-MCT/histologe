@@ -81,7 +81,7 @@ class SearchTerritoryFilesType extends AbstractType
             'data_class' => SearchTerritoryFiles::class,
             'csrf_protection' => false,
             'method' => 'GET',
-            'attr' => ['id' => 'search-territory-files-type-form', 'class' => 'fr-p-4v bo-filter-form'],
+            'attr' => ['id' => 'search-territory-files-type-form', 'class' => 'fr-pt-4v bo-filter-form'],
         ]);
     }
 

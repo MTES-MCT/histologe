@@ -1,40 +1,39 @@
 {{ form_start(form,{attr:{'class':'needs-validation','novalidate':true}}) }}
-<fieldset class="fr-fieldset fr-fieldset--inline fr-mb-md-0">
-    <legend class="fr-fieldset__legend fr-text--regular">
-        <span>Pour réactiver le compte {{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}, veuillez vérifier les champs ci-dessous et les modifier si besoin.</span></br>
-        <span>Tous les champs sont obligatoires.</span>
-    </legend>
-    <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-lg-6">
-            {{ form_row(form.email, {'value': user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left')}) }}
-        </div>
-        
-        {% if 'ROLE_USAGER' not in user.roles %}
-            <div class="fr-col-lg-6 ">
-                {{ form_row(form.territory) }}
-            </div>
-        {% endif %}
-        <div class="fr-col-lg-6">
-            {{ form_row(form.nom) }}
-        </div>
-        {% if 'ROLE_USAGER' not in user.roles %}
-            <div class="fr-col-lg-6">
-                {{ form_row(form.tempPartner) }}
-                <div class="fr-alert fr-alert--warning">
-                    Si le partenaire n'apparaît pas dans la liste des partenaires, c'est qu'il n'existe pas. Veillez à bien créer le partenaire avant de vouloir y ajouter un compte.
-                </div>
-            </div>
-        {% endif %}
-        <div class="fr-col-lg-6">
-            <label for="{{ form.prenom.vars.id }}" class="fr-label">Prénom</label>
-            {{ form_widget(form.prenom) }}
-            <p class="fr-error-text fr-hidden">
-                Vous devez renseigner le prénom du compte.
-            </p>
-        </div>
+<p>
+    Pour réactiver le compte {{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left') }}, veuillez vérifier les champs ci-dessous et les modifier si besoin.
+    <br>
+    Tous les champs sont obligatoires.
+</p>
+<div class="fr-grid-row fr-grid-row--gutters">
+    <div class="fr-col-lg-6">
+        {{ form_row(form.email, {'value': user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left')}) }}
     </div>
-</fieldset><br><br>
-<div class="fr-grid-row">
+    
+    {% if 'ROLE_USAGER' not in user.roles %}
+        <div class="fr-col-lg-6">
+            {{ form_row(form.territory) }}
+        </div>
+    {% endif %}
+    <div class="fr-col-lg-6">
+        {{ form_row(form.nom) }}
+    </div>
+    {% if 'ROLE_USAGER' not in user.roles %}
+        <div class="fr-col-lg-6">
+            {{ form_row(form.tempPartner) }}
+            <div class="fr-alert fr-alert--warning">
+                Si le partenaire n'apparaît pas dans la liste des partenaires, c'est qu'il n'existe pas. Veillez à bien créer le partenaire avant de vouloir y ajouter un compte.
+            </div>
+        </div>
+    {% endif %}
+    <div class="fr-col-lg-6">
+        <label for="{{ form.prenom.vars.id }}" class="fr-label">Prénom</label>
+        {{ form_widget(form.prenom) }}
+        <p class="fr-error-text fr-hidden">
+            Vous devez renseigner le prénom du compte.
+        </p>
+    </div>
+</div>
+<div class="fr-grid-row fr-pt-4v">
     <div class="fr-col-6">
         <a class="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left"
         href="{{ path('back_archived_users_index') }}"
