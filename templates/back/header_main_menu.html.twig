@@ -41,10 +41,10 @@
                                                 {% set ariaCurrent = 'false' %}
                                             {% endif %}
                                             <a class="fr-nav__link"
-                                            href="{{ path(child.route, child.routeParameters) }}"
-                                            target="_self"
-                                            aria-current="{{ariaCurrent}}"
-                                            >{{ child.label }}</a>
+                                                href="{{ path(child.route, child.routeParameters) }}"
+                                                target="_self"
+                                                aria-current="{{ariaCurrent}}"
+                                                >{{ child.label }}</a>
                                         </li>
                                     {% endif %}
                                 {% endif %}

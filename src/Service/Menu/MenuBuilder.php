@@ -63,35 +63,37 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(route: 'back_territory_management_zone_edit'))
         ;
 
-        $mesOutilsSubMenu = null;
         $mesOutilsSubMenu = (new MenuItem(label: 'Mes outils', roleGranted: User::ROLE_USER));
         $mesOutilsSubMenu->addChild(new MenuItem(label: 'Espace documentaire', route: 'back_territory_files_index', roleGranted: User::ROLE_USER));
         $mesOutilsSubMenu->addChild(new MenuItem(label: 'Annuaire des agents', route: 'back_annuaire_index', roleGranted: User::ROLE_USER));
         $mesOutilsSubMenu->addChild(new MenuItem(label: 'Documentation', externalLink: 'https://documentation.signal-logement.beta.gouv.fr', roleGranted: User::ROLE_USER));
 
-        $superAdminToolsSubItem = (new MenuItem(label: 'Outils SA', roleGranted: User::ROLE_ADMIN))
+        $superAdminToolsSubItem = (new MenuItem(label: 'Best of', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Partenaires archivés', route: 'back_archived_partner_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Comptes archivés', route: 'back_archived_users_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Signalements archivés', route: 'back_archived_signalements_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Affectations sans prise en charge', route: 'back_affectation_without_subscription_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Règles d\'auto-affectation', route: 'back_auto_affectation_rule_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Connexions SI externes', route: 'back_interconnexion_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Événements', route: 'back_config_club_event_index', routeParameters: ['isInFuture' => 1], roleGranted: User::ROLE_ADMIN))
-            ->addChild(new MenuItem(label: 'Permissions utilisateurs API', route: 'back_api_user_index', roleGranted: User::ROLE_ADMIN))
-            ->addChild(new MenuItem(label: 'Résumés de suivis', route: 'back_suivi_summaries_index', roleGranted: User::ROLE_ADMIN))
-            ->addChild(new MenuItem(label: 'Services secours', route: 'back_config_service_secours_route_index', roleGranted: User::ROLE_ADMIN))
         ;
         $superAdminToolsSubItem
-            ->addChild(new MenuItem(label: 'Bailleurs', route: 'back_bailleur_index', roleGranted: User::ROLE_ADMIN))
-            ->addChild(new MenuItem(label: 'Communes', route: 'back_commune_index', roleGranted: User::ROLE_ADMIN))
-            ->addChild(new MenuItem(label: 'Outil RIAL par BAN ID', route: 'back_tools_rial', roleGranted: User::ROLE_ADMIN))
-            ->addChild(new MenuItem(label: 'Connexions SI externes', route: 'back_interconnexion_index', roleGranted: User::ROLE_ADMIN));
-        $superAdminToolsSubItem
-            ->addChild(new MenuItem(label: 'Affectations sans prise en charge', route: 'back_affectation_without_subscription_index', roleGranted: User::ROLE_ADMIN));
-        $superAdminToolsSubItem
             ->addChild(new MenuItem(route: 'back_archived_users_reactiver'))
-            ->addChild(new MenuItem(route: 'back_territories_edit'))
-            ->addChild(new MenuItem(route: 'back_bailleur_edit'))
             ->addChild(new MenuItem(route: 'back_auto_affectation_rule_new'))
             ->addChild(new MenuItem(route: 'back_auto_affectation_rule_edit'))
+        ;
+
+        $techAdminToolsSubItem = (new MenuItem(label: 'Maxi Best of', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Permissions utilisateurs API', route: 'back_api_user_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Services secours', route: 'back_config_service_secours_route_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Bailleurs', route: 'back_bailleur_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Communes', route: 'back_commune_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Résumés de suivis', route: 'back_suivi_summaries_index', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Outil RIAL par BAN ID', route: 'back_tools_rial', roleGranted: User::ROLE_ADMIN))
+        ;
+        $techAdminToolsSubItem
+            ->addChild(new MenuItem(route: 'back_territories_edit'))
+            ->addChild(new MenuItem(route: 'back_bailleur_edit'))
         ;
 
         $listRouteBOParameters = [];
@@ -104,11 +106,10 @@ readonly class MenuBuilder
             ->addChild($signalementsSubMenu)
             ->addChild($donneesChiffreesSubMenu)
             ->addChild($adminToolsSubItem)
+            ->addChild($mesOutilsSubMenu)
             ->addChild($superAdminToolsSubItem)
+            ->addChild($techAdminToolsSubItem)
         ;
-        if (null !== $mesOutilsSubMenu) {
-            $menu->addChild($mesOutilsSubMenu);
-        }
 
         return $menu;
     }
