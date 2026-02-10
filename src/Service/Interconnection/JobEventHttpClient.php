@@ -61,11 +61,18 @@ class JobEventHttpClient implements HttpClientInterface
                 ERROR);
         }
         /* @var JobEventMetaData $jobEventMetaData */
-        $this->logger->info('Starting HTTP request', [
+        $service = $jobEventMetaData->getService();
+        $action = $jobEventMetaData->getAction();
+        $this->logger->info(sprintf('Starting HTTP request (%s/%s))', $service, $action), [
             'method' => $method,
             'url' => $url,
             'options' => $options,
             'payload' => $jobEventMetaData->getPayload(),
+            'service' => $jobEventMetaData->getService(),
+            'action' => $jobEventMetaData->getAction(),
+            'signalement_id' => $jobEventMetaData->getSignalementId(),
+            'partner_id' => $jobEventMetaData->getPartnerId(),
+            'partner_type' => $jobEventMetaData->getPartnerType()->value,
         ]);
         $response = null;
         try {
