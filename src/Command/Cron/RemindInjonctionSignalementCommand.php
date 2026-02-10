@@ -79,7 +79,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         $countSignalement = count($signalements);
         if (count($signalements) > 0) {
             $feedbackMsg = \sprintf(
-                '%s rappels ont été faits pour des signalements en injonction dont le bailleur n\'a pas encore répondu.',
+                '%s rappels ont été faits pour des signalements en injonction sans réponse bailleur.',
                 $countSignalement
             );
             $io->success($feedbackMsg);
@@ -127,7 +127,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         $countSignalement = count($signalements);
         if (count($signalements) > 0) {
             $feedbackMsg = \sprintf(
-                '%s rappels ont été faits pour des signalements en injonction.',
+                '%s rappels ont été faits pour des signalements en injonction avec suivi travaux.',
                 $countSignalement
             );
             $io->success($feedbackMsg);

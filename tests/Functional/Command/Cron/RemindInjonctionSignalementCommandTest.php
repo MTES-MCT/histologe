@@ -24,7 +24,7 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $output = $commandTester->getDisplay();
 
         $this->assertStringContainsString('Aucun rappel n\'a été envoyé pour le suivi', $output);
-        $this->assertStringContainsString('1 rappels ont été faits pour des signalements en injonction dont le bailleur n\'a pas encore répondu.', $output);
+        $this->assertStringContainsString('1 rappels ont été faits pour des signalements en injonction', $output);
         $this->assertEmailCount(3);
     }
 
@@ -67,8 +67,8 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
 
-        $this->assertStringContainsString('1 rappels ont été faits pour des signalements en injonction.', $output);
-        $this->assertStringContainsString('1 rappels ont été faits pour des signalements en injonction dont le bailleur n\'a pas encore répondu.', $output);
+        $this->assertStringContainsString('1 rappels ont été faits pour des signalements en injonction sans réponse bailleur', $output);
+        $this->assertStringContainsString('1 rappels ont été faits pour des signalements en injonction avec suivi travaux', $output);
         $this->assertEmailCount(5);
     }
 }
