@@ -26,12 +26,13 @@ class MenuBuilderTest extends KernelTestCase
         $security->method('getUser')->willReturn($user);
 
         $menuBuilder = new MenuBuilder($security, true);
-        $this->assertCount(6, $menuBuilder->build()->getChildren());
+        $this->assertCount(7, $menuBuilder->build()->getChildren());
         $this->assertEquals('Tableau de bord', $menuBuilder->build()->getChildren()[0]->getLabel());
         $this->assertEquals('Signalements', $menuBuilder->build()->getChildren()[1]->getLabel());
         $this->assertEquals('Données chiffrées', $menuBuilder->build()->getChildren()[2]->getLabel());
         $this->assertEquals('Outils Admin', $menuBuilder->build()->getChildren()[3]->getLabel());
-        $this->assertEquals('Outils SA', $menuBuilder->build()->getChildren()[4]->getLabel());
-        $this->assertEquals('Mes outils', $menuBuilder->build()->getChildren()[5]->getLabel());
+        $this->assertEquals('Mes outils', $menuBuilder->build()->getChildren()[4]->getLabel());
+        $this->assertEquals('Best of', $menuBuilder->build()->getChildren()[5]->getLabel());
+        $this->assertEquals('Maxi Best of', $menuBuilder->build()->getChildren()[6]->getLabel());
     }
 }
