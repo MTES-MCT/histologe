@@ -2557,9 +2557,10 @@ class SignalementRepository extends ServiceEntityRepository
     public function findInjonctionToRemindAnswerBailleur(\DateTimeImmutable $beforeDate): array
     {
         $qb = $this->createQueryBuilder('s');
-        // Toujours en injonction, donc n'ont pas répondu non
+        // Toujours en injonction, donc n'ont pas répondu non ET créés avant la date renseignée ET avec mail proprio présent
         $qb->where('s.statut = :statut')
-            ->andWhere('s.createdAt <= :date');
+            ->andWhere('s.createdAt <= :date')
+            ->andWhere('s.mailProprio IS NOT NULL');
 
         // Pas de réponse "oui" ou "oui avec aide" ou "oui démarches commencées
         // ET Pas de rappel déjà envoyé (pas de suivi de catégorie INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR)

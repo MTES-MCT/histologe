@@ -70,6 +70,7 @@ class NotificationAndMailSender
                     territory: $this->signalement->getTerritory(),
                     signalement: $this->signalement,
                     attachment: $pdfContent,
+                    isReminder: true,
                 )
             );
         }
