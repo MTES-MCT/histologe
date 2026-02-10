@@ -1,7 +1,7 @@
 # docker-compose.yml
 services:
   signal_logement_mysql:
-    image: 'mysql:8.0.40'
+    image: 'mysql:8.0.45'
     command: --max_allowed_packet=32505856
     container_name: signal_logement_mysql
     restart: always
