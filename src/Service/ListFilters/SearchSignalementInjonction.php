@@ -15,7 +15,7 @@ class SearchSignalementInjonction
     private User $user;
     private ?Territory $territoire = null;
     private ?string $orderType = null;
-    private ?string $injonctionAvecAide = null;
+    private ?string $reponseBailleur = null;
 
     public function __construct(User $user)
     {
@@ -40,14 +40,14 @@ class SearchSignalementInjonction
         $this->territoire = $territoire;
     }
 
-    public function getInjonctionAvecAide(): ?string
+    public function getReponseBailleur(): ?string
     {
-        return $this->injonctionAvecAide;
+        return $this->reponseBailleur;
     }
 
-    public function setInjonctionAvecAide(?string $injonctionAvecAide): void
+    public function setReponseBailleur(?string $reponseBailleur): void
     {
-        $this->injonctionAvecAide = $injonctionAvecAide;
+        $this->reponseBailleur = $reponseBailleur;
     }
 
     public function getOrderType(): ?string
