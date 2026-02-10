@@ -21,7 +21,6 @@ final class Version20260206134031 extends AbstractMigration
             WHERE error_message IN (
                 'Unable to send an email: email is not valid in to (code 400).',
                 'Unable to send an email: email is not valid in bcc (code 400).',
-                'An email must have a "To", "Cc", or "Bcc" header.'
             )
             AND CAST(to_email AS CHAR) REGEXP '\\.archived@'
         SQL);

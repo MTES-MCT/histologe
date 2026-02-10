@@ -122,7 +122,7 @@ class VisiteNotifier
         ?NotificationMailerType $notificationMailerType = null,
         ?Affectation $affectation = null,
     ): void {
-        if (UserStatus::ARCHIVE === $user->getStatut()) {
+        if (UserStatus::ACTIVE !== $user->getStatut()) {
             return;
         }
         if ($notificationMailerType) {
@@ -157,7 +157,7 @@ class VisiteNotifier
         );
 
         foreach ($listUsersToNotify as $user) {
-            if ($user->getIsMailingActive() && UserStatus::ACTIVE === $user->getStatut()) {
+            if ($user->getIsMailingActive()) {
                 $this->notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,

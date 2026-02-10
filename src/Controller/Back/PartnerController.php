@@ -329,7 +329,6 @@ class PartnerController extends AbstractController
                     );
                     $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
                     $user->setStatut(UserStatus::ARCHIVE);
-                    $entityManager->persist($user);
                 }
             }
 
