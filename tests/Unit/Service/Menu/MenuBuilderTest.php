@@ -33,5 +33,6 @@ class MenuBuilderTest extends KernelTestCase
         $this->assertEquals('Outils Admin', $menuBuilder->build()->getChildren()[3]->getLabel());
         $this->assertEquals('Mes outils', $menuBuilder->build()->getChildren()[4]->getLabel());
         $this->assertEquals('Best of', $menuBuilder->build()->getChildren()[5]->getLabel());
+        $this->assertEquals('Maxi Best of', $menuBuilder->build()->getChildren()[6]->getLabel());
     }
 }
