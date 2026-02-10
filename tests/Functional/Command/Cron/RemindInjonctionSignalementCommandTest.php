@@ -10,33 +10,21 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class RemindInjonctionSignalementCommandTest extends KernelTestCase
 {
-    public function testOneReminderNoSuiviToSend(): void
+    /**
+     * @dataProvider provideReminderSentData
+     */
+    public function testReminderSent(string $dateModifier, string $outputSuivi, string $outputReminderBailleurs, int $expectedEmailCount): void
     {
         putenv('APP=test');
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
 
-        $command = $application->find('app:remind-injonction-signalement');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([]);
-
-        $commandTester->assertCommandIsSuccessful();
-        $output = $commandTester->getDisplay();
-
-        $this->assertStringContainsString('Aucun rappel n\'a été envoyé pour le suivi', $output);
-        $this->assertStringContainsString('1 rappels ont été faits pour des signalements en injonction', $output);
-        $this->assertEmailCount(3);
-    }
-
-    public function testNoReminderSent(): void
-    {
-        putenv('APP=test');
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
         $container = self::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable('-1 month'));
-        $container->set(ClockInterface::class, $mockClock);
+        if (!empty($dateModifier)) {
+            $mockClock = new MockClock(new \DateTimeImmutable($dateModifier));
+            $container->set(ClockInterface::class, $mockClock);
+        }
 
         $command = $application->find('app:remind-injonction-signalement');
         $commandTester = new CommandTester($command);
@@ -45,30 +33,30 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
 
-        $this->assertStringContainsString('Aucun rappel n\'a été envoyé pour le suivi', $output);
-        $this->assertStringContainsString('Aucun rappel n\'a été envoyé pour les bailleurs.', $output);
-        $this->assertEmailCount(2);
+        $this->assertStringContainsString($outputSuivi, $output);
+        $this->assertStringContainsString($outputReminderBailleurs, $output);
+        $this->assertEmailCount($expectedEmailCount);
     }
 
-    public function testReminderSent(): void
+    public function provideReminderSentData(): \Generator
     {
-        putenv('APP=test');
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
-
-        $container = self::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
-        $container->set(ClockInterface::class, $mockClock);
-
-        $command = $application->find('app:remind-injonction-signalement');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([]);
-
-        $commandTester->assertCommandIsSuccessful();
-        $output = $commandTester->getDisplay();
-
-        $this->assertStringContainsString('1 rappels ont été faits pour des signalements en injonction sans réponse bailleur', $output);
-        $this->assertStringContainsString('1 rappels ont été faits pour des signalements en injonction avec suivi travaux', $output);
-        $this->assertEmailCount(5);
+        yield 'One reminder, no suivi' => [
+            '',
+            'Aucun rappel n\'a été envoyé pour le suivi',
+            '1 rappels faits pour des signalements sans réponse bailleur.',
+            3,
+        ];
+        yield 'No reminder, no suivi' => [
+            '-1 month',
+            'Aucun rappel n\'a été envoyé pour le suivi',
+            'Aucun rappel n\'a été envoyé pour les bailleurs.',
+            2,
+        ];
+        yield 'One reminder, one suivi' => [
+            '+1 month',
+            '1 rappels faits pour des signalements avec suivi travaux.',
+            '1 rappels faits pour des signalements sans réponse bailleur.',
+            5,
+        ];
     }
 }
