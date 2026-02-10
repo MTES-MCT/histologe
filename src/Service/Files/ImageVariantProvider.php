@@ -13,6 +13,7 @@ readonly class ImageVariantProvider
     public function __construct(
         private FilesystemOperator $fileStorage,
         private ParameterBagInterface $parameterBag,
+        private TmpFileWriter $tmpFileWriter,
     ) {
     }
 
@@ -35,12 +36,11 @@ readonly class ImageVariantProvider
         $bucketFilepath = $this->parameterBag->get('url_bucket').'/'.$filename;
         $content = file_get_contents($bucketFilepath);
 
-        $dir = dirname($tmpFilepath);
-        if (!is_dir($dir) && !mkdir($dir, 0775, true)) {
-            throw new \Exception(sprintf('Impossible de créer le dossier : %s', $dir));
+        if (false === $content) {
+            throw new \Exception(sprintf('Impossible de lire le contenu du fichier distant "%s" (filename: "%s").', $bucketFilepath, $filename));
         }
 
-        file_put_contents($tmpFilepath, $content);
+        $this->tmpFileWriter->putContents($tmpFilepath, $content);
 
         return new File($tmpFilepath);
     }

@@ -8,6 +8,7 @@ use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
 use App\Repository\FileRepository;
 use App\Service\Files\FilenameGenerator;
+use App\Service\Files\TmpFileWriter;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
@@ -30,6 +31,7 @@ class UploadHandlerService
         private readonly LoggerInterface $logger,
         private readonly FilenameGenerator $filenameGenerator,
         private readonly FileRepository $fileRepository,
+        private readonly TmpFileWriter $tmpFileWriter,
     ) {
     }
 
@@ -379,7 +381,17 @@ class UploadHandlerService
             }
             $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
             $bucketFilepath = $this->parameterBag->get('url_bucket').'/'.$filename;
-            file_put_contents($tmpFilepath, file_get_contents($bucketFilepath));
+
+            $content = file_get_contents($bucketFilepath);
+            if (false === $content) {
+                $this->logger->error('Impossible de récupérer le contenu du fichier: ', [
+                    'filename' => $filename,
+                ]);
+
+                return null;
+            }
+
+            $this->tmpFileWriter->putContents($tmpFilepath, $content);
 
             return $tmpFilepath;
         } catch (\Throwable $exception) {
