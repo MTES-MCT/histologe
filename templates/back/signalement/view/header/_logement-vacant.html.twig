@@ -1,0 +1,12 @@
+<div class="fr-mb-4v fr-m-1v">
+    {% if signalement.isLogementVacant %}
+        <span class="fr-badge fr-badge--warning">Logement vacant</span>
+    {% else %}
+        <span class="fr-badge fr-badge--info">Logement occupé</span>
+    {% endif %}
+    {% if is_granted('SIGN_SWITCH_LOGEMENT_VACANT', signalement) %}
+        <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-logement-vacant" class="fr-ml-2v fr-btn--icon-left fr-icon-edit-line fr-a-edit">
+            Modifier
+        </a>
+    {% endif %}
+</div>

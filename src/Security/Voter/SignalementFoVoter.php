@@ -65,6 +65,9 @@ class SignalementFoVoter extends Voter
         if (!$this->canUsagerView($signalement, $user)) {
             return false;
         }
+        if ($signalement->getIsLogementVacant()) {
+            return false;
+        }
         if (in_array($signalement->getStatut(), [SignalementStatus::INJONCTION_BAILLEUR, SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE, SignalementStatus::CLOSED])) {
             if (SignalementStatus::CLOSED !== $signalement->getStatut()) {
                 return true;
@@ -84,6 +87,9 @@ class SignalementFoVoter extends Voter
 
     private function canUsagerEdit(Signalement $signalement): bool
     {
+        if ($signalement->getIsLogementVacant()) {
+            return false;
+        }
         if (in_array($signalement->getStatut(), [
             SignalementStatus::ACTIVE,
             SignalementStatus::NEED_VALIDATION,
@@ -97,6 +103,9 @@ class SignalementFoVoter extends Voter
 
     private function canUsagerBasculeProcedure(Signalement $signalement, SignalementUser $user): bool
     {
+        if ($signalement->getIsLogementVacant()) {
+            return false;
+        }
         if ($this->canUsagerView($signalement, $user) && SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
             return true;
         }

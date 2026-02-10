@@ -1,5 +1,8 @@
 {% set currentPartner =  app.user.partnerInTerritoryOrFirstOne(signalement.territory) %}
 {% set isAloneInCurrentPartner = app.user.isAloneInPartner(currentPartner) %}
+{% if is_granted('SIGN_SWITCH_LOGEMENT_VACANT', signalement) %}
+    {% include 'back/signalement/view/edit-modals/edit-logement-vacant.html.twig' %}
+{% endif %}
 {% if (is_granted('AFFECTATION_ACCEPT_OR_REFUSE', affectation) or is_granted('AFFECTATION_CANCEL_REFUSED', affectation)) and not isAloneInCurrentPartner %}
     <div data-ajax-form class="fr-display-inline">
         {% include '_partials/_modal_accept_affectation.html.twig' %}

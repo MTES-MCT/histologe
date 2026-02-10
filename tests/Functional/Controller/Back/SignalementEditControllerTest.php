@@ -163,6 +163,33 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(400);
     }
 
+    public function testEditLogementVacantSuccess(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000009']);
+        $route = $this->router->generate(
+            'back_signalement_edit_logement_vacant',
+            ['uuid' => $signalement->getUuid()]
+        );
+
+        $post = [
+            'logementVacant' => '1',
+            '_token' => $this->generateCsrfToken($this->client, 'signalement_switch_logement_vacant'),
+        ];
+
+        $this->client->request('POST', $route, $post);
+
+        $this->assertResponseRedirects();
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000009']);
+        $this->assertTrue($signalement->getIsLogementVacant());
+        $lastSuivi = $signalement->getSuivis()->last();
+        $this->assertNotFalse($lastSuivi);
+        $this->assertEquals('Le logement a été marqué comme vacant.', $lastSuivi->getDescription());
+        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        $this->assertTrue($flashBag->has('success'));
+        $successMessages = $flashBag->get('success');
+        $this->assertEquals(['title' => 'Modifications enregistrées', 'message' => 'Le statut d\'occupation du logement a bien été modifié.'], $successMessages[0]);
+    }
+
     /**
      * @return array<string>
      */

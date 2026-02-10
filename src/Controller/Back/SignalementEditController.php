@@ -12,9 +12,12 @@ use App\Dto\Request\Signalement\InformationsLogementRequest;
 use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\User;
 use App\Manager\SignalementManager;
+use App\Manager\SuiviManager;
 use App\Security\Voter\SignalementVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\FormHelper;
@@ -23,6 +26,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\MessageHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -560,5 +564,39 @@ class SignalementEditController extends AbstractController
         ];
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
+    }
+
+    #[Route('/{uuid:signalement}/edit-logement-vacant', name: 'back_signalement_edit_logement_vacant', methods: 'POST')]
+    #[IsGranted(SignalementVoter::SIGN_SWITCH_LOGEMENT_VACANT, subject: 'signalement')]
+    public function editLogementVacant(
+        Signalement $signalement,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SuiviManager $suiviManager,
+    ): Response {
+        $token = is_scalar($request->request->get('_token')) ? (string) $request->request->get('_token') : '';
+        $logementVacant = (bool) $request->request->get('logementVacant');
+        if ($this->isCsrfTokenValid('signalement_switch_logement_vacant', $token)) {
+            if ($logementVacant != $signalement->getIsLogementVacant()) {
+                $signalement->setIsLogementVacant($logementVacant);
+                /** @var User $user */
+                $user = $this->getUser();
+                $description = $logementVacant ? 'Le logement a été marqué comme vacant.' : 'Le logement a été marqué comme occupé.';
+                $suiviManager->createSuivi(
+                    signalement: $signalement,
+                    description: $description,
+                    type: Suivi::TYPE_AUTO,
+                    category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+                    partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                    user: $user,
+                );
+                $entityManager->flush();
+            }
+            $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'Le statut d\'occupation du logement a bien été modifié.']);
+        } else {
+            $this->addFlash('alert', ['title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF]);
+        }
+
+        return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 }
