@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Service\Files;
 
 use App\Service\Files\ImageVariantProvider;
+use App\Service\Files\TmpFileWriter;
 use App\Service\ImageManipulationHandler;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -14,6 +15,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class ImageVariantProviderTest extends KernelTestCase
 {
     private FilesystemOperator&MockObject $fileStorageMock;
+    private TmpFileWriter&MockObject $tmpFileWriterMock;
     private ImageVariantProvider $provider;
     private Filesystem $filesystem;
 
@@ -25,6 +27,16 @@ class ImageVariantProviderTest extends KernelTestCase
         self::bootKernel();
 
         $this->fileStorageMock = $this->createMock(FilesystemOperator::class);
+        $this->tmpFileWriterMock = $this->createMock(TmpFileWriter::class);
+        $this->tmpFileWriterMock
+            ->method('putContents')
+            ->willReturnCallback(function (string $path, string $content): void {
+                $dir = \dirname($path);
+                if (!is_dir($dir)) {
+                    mkdir($dir, 0777, true);
+                }
+                file_put_contents($path, $content);
+            });
 
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
@@ -32,7 +44,7 @@ class ImageVariantProviderTest extends KernelTestCase
         $this->bucketDir = $parameterBag->get('url_bucket');
         $this->tmpDir = $parameterBag->get('uploads_tmp_dir');
 
-        $this->provider = new ImageVariantProvider($this->fileStorageMock, $parameterBag);
+        $this->provider = new ImageVariantProvider($this->fileStorageMock, $parameterBag, $this->tmpFileWriterMock);
         $this->filesystem = new Filesystem();
     }
 

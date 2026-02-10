@@ -2,9 +2,14 @@
 
 namespace App\Tests\Functional\Service;
 
+use App\Exception\File\EmptyFileException;
+use App\Exception\File\MaxUploadSizeExceededException;
+use App\Exception\File\UnsupportedFileFormatException;
 use App\Repository\FileRepository;
 use App\Service\Files\FilenameGenerator;
+use App\Service\Files\TmpFileWriter;
 use App\Service\UploadHandlerService;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
@@ -21,6 +26,7 @@ class UploadHandlerServiceTest extends KernelTestCase
     private MockObject&LoggerInterface $logger;
     private MockObject&FilenameGenerator $filenameGenerator;
     private MockObject&FileRepository $fileRepository;
+    private TmpFileWriter $tmpFileWriter;
 
     private string $projectDir = '';
     private string $fixturesPath = '/src/DataFixtures/Images/';
@@ -45,8 +51,15 @@ class UploadHandlerServiceTest extends KernelTestCase
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->filenameGenerator = $this->createMock(FilenameGenerator::class);
         $this->fileRepository = $this->createMock(FileRepository::class);
+        $this->tmpFileWriter = $this->createMock(TmpFileWriter::class);
     }
 
+    /**
+     * @throws UnsupportedFileFormatException
+     * @throws MaxUploadSizeExceededException
+     * @throws FilesystemException
+     * @throws EmptyFileException
+     */
     public function testTemporaryFileUploaded(): void
     {
         $uploadFile = new UploadedFile(
@@ -73,7 +86,8 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->parameterBag,
             $this->logger,
             $this->filenameGenerator,
-            $this->fileRepository
+            $this->fileRepository,
+            $this->tmpFileWriter
         );
 
         $fileResult = $uploadHandlerService->toTempFolder($uploadFile);
@@ -99,7 +113,8 @@ class UploadHandlerServiceTest extends KernelTestCase
             $parameterBag,
             $logger,
             $fileName,
-            $this->fileRepository
+            $this->fileRepository,
+            $this->tmpFileWriter
         );
 
         /** @var MockObject&UploadedFile $uploadedFileMock */
@@ -129,7 +144,8 @@ class UploadHandlerServiceTest extends KernelTestCase
             $parameterBag,
             $logger,
             $fileName,
-            $this->fileRepository
+            $this->fileRepository,
+            $this->tmpFileWriter
         );
 
         /** @var MockObject&UploadedFile $uploadedFileMock */
@@ -148,6 +164,12 @@ class UploadHandlerServiceTest extends KernelTestCase
         $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.webm');
     }
 
+    /**
+     * @throws UnsupportedFileFormatException
+     * @throws MaxUploadSizeExceededException
+     * @throws FilesystemException
+     * @throws EmptyFileException
+     */
     public function testUploadToTempFolderThrowException(): void
     {
         $uploadFile = new UploadedFile(
@@ -168,7 +190,8 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->parameterBag,
             $this->logger,
             $this->filenameGenerator,
-            $this->fileRepository
+            $this->fileRepository,
+            $this->tmpFileWriter
         );
 
         $uploadHandler = $uploadHandlerService->toTempFolder($uploadFile);

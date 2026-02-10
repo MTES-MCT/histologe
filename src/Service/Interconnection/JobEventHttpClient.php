@@ -60,12 +60,19 @@ class JobEventHttpClient implements HttpClientInterface
                             - '@http_client.default'
                 ERROR);
         }
-        /* @var JobEventMetaData $jobEventMetaData */
-        $this->logger->info('Starting HTTP request', [
+        /** @var JobEventMetaData $jobEventMetaData */
+        $service = $jobEventMetaData->getService();
+        $action = $jobEventMetaData->getAction();
+        $this->logger->info(sprintf('Starting HTTP request (%s/%s))', $service, $action), [
             'method' => $method,
             'url' => $url,
             'options' => $options,
             'payload' => $jobEventMetaData->getPayload(),
+            'service' => $service,
+            'action' => $action,
+            'signalement_id' => $jobEventMetaData->getSignalementId(),
+            'partner_id' => $jobEventMetaData->getPartnerId(),
+            'partner_type' => $jobEventMetaData->getPartnerType()->value,
         ]);
         $response = null;
         try {
@@ -96,8 +103,8 @@ class JobEventHttpClient implements HttpClientInterface
         }
 
         $this->jobEventManager->createJobEvent(
-            service: $jobEventMetaData->getService(),
-            action: $jobEventMetaData->getAction(),
+            service: $service,
+            action: $action,
             message: (string) json_encode($payload),
             response: (string) $responseContent,
             status: Response::HTTP_OK === $statusCode ? JobEvent::STATUS_SUCCESS : JobEvent::STATUS_FAILED,
