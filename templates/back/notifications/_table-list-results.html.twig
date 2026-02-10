@@ -35,9 +35,9 @@
             <td>{{ auteur }}</td>
             <td class="fr-text--right fr-ws-nowrap">
                 {% set link = path('back_signalement_view', {uuid: notification.signalement.uuid}) ~ (notification.suivi ? '#suivis' : '') %}
-                <a href="{{ link }}" class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}"></a>
+                <a href="{{ link }}" class="fr-btn fr-btn--sm {{ notification.isSeen ? 'fr-fi-check-line fr-btn--success':'fr-fi-eye-fill' }}" aria-label="{{ notification.isSeen ? 'Notification déjà vue' : 'Voir la notification' }}" title="{{ notification.isSeen ? 'Notification déjà vue' : 'Voir la notification' }}"></a>
                 <form method="POST" action="{{ path('back_notifications_delete_notification', {id: notification.id}) }}" class="simple-ajax-form fr-display-inline-block">
-                    <button type="submit" class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-line"></button>
+                    <button type="submit" class="fr-btn fr-btn--sm fr-btn--danger fr-fi-delete-line" aria-label="Supprimer la notification" title="Supprimer la notification"></button>
                     <input type="hidden" name="csrf_token" value="{{ csrf_token('back_delete_notification_'~notification.id) }}">
                     <input type="hidden" name="search_params" value="{{searchParams}}">
                 </form>
@@ -52,7 +52,7 @@
 
 {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des notifications', 'tableHead': tableHead, 'tableBody': tableBody } %}
 
-<div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="notifications-pagination">
+<div id="pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center" aria-label="Pagination de la liste des notifications">
     {% import '_partials/macros.html.twig' as macros %}
     {{ macros.customPagination(pages, searchNotification.page, 'back_notifications_list', searchNotification.urlParams) }}
 </div>

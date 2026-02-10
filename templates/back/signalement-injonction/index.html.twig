@@ -36,7 +36,11 @@
 
     {{ form_start(form) }}
 
-    <section class="fr-col-12">
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        {% include '_partials/back/filters-title.html.twig' with {
+            'skiplink_href': '#list-signalements',
+            'skiplink_label': 'Passer directement à la liste des signalements'
+        } %}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">        
             {% if is_granted('ROLE_ADMIN') %}
@@ -53,8 +57,14 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-pt-4v">
-        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(signalements|length, 'signalement trouvé', 'signalements trouvés') }}</h2>
+    <section class="fr-col-12 fr-py-5v" aria-labelledby="desc-table">
+        <div id="list-signalements">
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(signalements|length, 'signalement trouvé', 'signalements trouvés') }}</h2>
+            <div class="fr-skiplinks">
+                <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                    >Accéder à la pagination</a>
+            </div>
+        </div>
     </section>
     
     <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
@@ -63,7 +73,7 @@
 
     {{ form_end(form) }}
 
-    <section class="fr-col-12 fr-pt-4v">
+    <section class="fr-col-12">
         {% set tableHead %}
             {% if is_granted('ROLE_ADMIN') %}
                 <th scope="col">Territoire</th>
@@ -103,10 +113,10 @@
                     <td><span class="fr-badge {{ classeBadgeReponseBailleur }} fr-badge--no-icon fr-ws-nowrap ">{{ labelReponseBailleur }}</span></td>
                     <td>{{ signalement.getCountAffectationsByStatus(enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED) }} / {{ signalement.affectations|length }}</td>
                     <td>
-                        <a href="{{ path('back_signalement_view', {uuid: signalement.uuid}) }}" class="fr-btn fr-fi-arrow-right-line fr-btn--sm fr-mb-1v" title="Voir le signalement {{ signalement.reference }}"></a>
+                        <a href="{{ path('back_signalement_view', {uuid: signalement.uuid}) }}" class="fr-btn fr-fi-arrow-right-line fr-btn--sm fr-mb-1v" aria-label="Voir le signalement {{ signalement.reference }}" title="Voir le signalement {{ signalement.reference }}"></a>
                         {% if is_granted('SIGN_VIEW_INJONCTION_COURRIER', signalement) %}
                             <a href="{{ path('back_injonction_signalement_courrier_bailleur', { uuid: signalement.uuid }) }}" class="fr-btn fr-icon-mail-line fr-btn--sm" target="_blank" rel="noopener"
-                                title="Afficher le courrier (Ouvre une nouvelle fenêtre)"></a>
+                                aria-label="Afficher le courrier (Ouvre une nouvelle fenêtre)" title="Afficher le courrier (Ouvre une nouvelle fenêtre)"></a>
                         {% endif %}
                     </td>
                 </tr>
@@ -119,7 +129,7 @@
 
         {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des signalements', 'tableHead': tableHead, 'tableBody': tableBody } %}
 
-        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="signalement-pagination">
+        <div id="pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center" aria-label="Pagination de la liste des signalements en injonction">
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, searchSignalement.page, 'back_injonction_signalement_index', searchSignalement.urlParams) }}
         </div>

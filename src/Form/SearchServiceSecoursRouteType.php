@@ -24,8 +24,8 @@ class SearchServiceSecoursRouteType extends AbstractType
         ]);
         $builder->add('orderType', ChoiceType::class, [
             'choices' => [
-                'Ordre alpahbétique (A à Z)' => 'ssr.name-ASC',
-                'Ordre alpahbétique inversé (Z à A)' => 'ssr.name-DESC',
+                'Ordre alphabétique (A à Z)' => 'ssr.name-ASC',
+                'Ordre alphabétique inversé (Z à A)' => 'ssr.name-DESC',
             ],
             'required' => false,
             'placeholder' => false,

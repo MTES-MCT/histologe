@@ -33,7 +33,11 @@
 
     {{ form_start(form) }}
 
-    <section class="fr-container--fluid">
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        {% include '_partials/back/filters-title.html.twig' with {
+            'skiplink_href': '#list-documents',
+            'skiplink_label': 'Passer directement à la liste des documents'
+        } %}
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-md-6">
@@ -55,8 +59,14 @@
         </div>
     </section>
 
-    <section class="fr-col-12 fr-py-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(total, 'document trouvé', 'documents trouvés') }}</h2>
+    <section class="fr-col-12 fr-py-5v" aria-labelledby="desc-table">
+        <div id="list-documents">
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(total, 'document trouvé', 'documents trouvés') }}</h2>
+            <div class="fr-skiplinks">
+                <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                    >Accéder à la pagination</a>
+            </div>
+        </div>
     </section>
     
     <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
@@ -65,7 +75,7 @@
 
     {{ form_end(form, {render_rest: false}) }}
 
-    <section class="fr-col-12 fr-py-5v">
+    <section class="fr-col-12 fr-pt-4v">
         <div class="fr-grid-row fr-grid-row--gutters">
             {% for file in files %}
                 <div class="fr-col fr-col-md-6">
@@ -82,11 +92,15 @@
                                     <a href="{{ sign_url(path('show_file', {uuid: file.uuid})) }}"
                                         class="fr-btn fr-btn--secondary fr-mr-3v"
                                         target="_blank" rel="noopener noreferrer"
+                                        aria-label="Afficher le document {{ file.title }}"
+                                        title="Afficher le document"
                                         >Afficher</a>
                                     {% endif %}
                                     <a href="{{ sign_url(path('show_file', {uuid: file.uuid})) }}"
                                         class="fr-btn fr-btn--secondary fr-icon-file-download-line"
                                         download
+                                        aria-label="Télécharger le document {{ file.title }}"
+                                        title="Télécharger le document"
                                         >Télécharger</a>
                                 </div>
                             </div>
@@ -100,7 +114,7 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="fr-grid-row fr-mt-2v fr-grid-row--center">
+        <div id="pagination" class="fr-grid-row fr-mt-2v fr-grid-row--center" aria-label="Pagination de la liste des documents">
             {% import '_partials/macros.html.twig' as macros %}
             {{ macros.customPagination(pages, searchTerritoryFiles.page, 'back_territory_files_index', searchTerritoryFiles.urlParams) }}
         </div>
