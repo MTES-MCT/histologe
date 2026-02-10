@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Service\Interconnection;
 
+use App\Entity\Enum\PartnerType;
 use App\Manager\JobEventManager;
 use App\Service\Interconnection\JobEventHttpClient;
 use App\Service\Interconnection\JobEventMetaData;
@@ -43,8 +44,11 @@ class JobEventHttpClientTest extends TestCase
                 service: 'esabora',
                 action: 'push_dossier',
                 payload: $payload,
+                signalementId: 1,
+                partnerId: 123,
+                partnerType: PartnerType::ARS,
                 attachmentsCount: 2,
-                attachmentsSize: 10
+                attachmentsSize: 10,
             ),
         ];
 
@@ -136,7 +140,11 @@ class JobEventHttpClientTest extends TestCase
             $loggerMock,
             self::HISTOLOGE_LOCAL_URL
         );
-        $options['extra']['job_event_metadata'] = new JobEventMetaData('esabora', 'push_dossier');
+        $options['extra']['job_event_metadata'] = new JobEventMetaData(
+            service: 'esabora',
+            action: 'push_dossier',
+            partnerType: PartnerType::ARS
+        );
         $response = $jobEventHttpClient->request('GET', self::API_WIREMOCK_URL, $options);
         $this->assertSame('Internal server error', $response->getContent(throw: false));
     }
