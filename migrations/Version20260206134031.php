@@ -20,7 +20,7 @@ final class Version20260206134031 extends AbstractMigration
             DELETE FROM failed_email
             WHERE error_message IN (
                 'Unable to send an email: email is not valid in to (code 400).',
-                'Unable to send an email: email is not valid in bcc (code 400).',
+                'Unable to send an email: email is not valid in bcc (code 400).'
             )
             AND CAST(to_email AS CHAR) REGEXP '\\.archived@'
         SQL);
