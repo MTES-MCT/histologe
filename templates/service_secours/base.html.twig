@@ -12,6 +12,7 @@
     <link rel="manifest" href="{{ path('service_secours_webmanifest', {'name': serviceSecoursRoute.name, 'uuid': serviceSecoursRoute.uuid, 'domain': root_domain(app.request.host)}) }}">
 
     <link rel="stylesheet" href="{{ asset('build/dsfr/dsfr.min.css') }}">
+    <link rel="stylesheet" href={{ asset('build/app.css') }}>
 
     {% if matomo is defined and matomo.enable == 1 and 'activate_account' not in app.request.attributes.get('_route') %}
         <!-- Matomo -->

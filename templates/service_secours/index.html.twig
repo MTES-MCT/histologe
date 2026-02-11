@@ -6,81 +6,104 @@
             <div class="fr-mt-5v fr-col-md-12">
                 <h1>Bienvenue {{serviceSecoursRoute.name}}</h1>
 
+                {% set current_step = form.vars.cursor.currentStep %}
+                {% if current_step === 'step1' %}
+                    {% set step_number = 1 %}
+                    {% set step_title = 'Vos coordonnées' %}
+                    {% set next_step_title = 'Infos sur le logement' %}
+                {% elseif current_step === 'step2' %}
+                    {% set step_number = 2 %}
+                    {% set step_title = 'Infos sur le logement' %}
+                    {% set next_step_title = 'Occupation du logement' %}
+                {% elseif current_step === 'step3' %}
+                    {% set step_number = 3 %}
+                    {% set step_title = 'Occupation du logement' %}
+                    {% set next_step_title = 'Propriétaire / bailleur' %}
+                {% elseif current_step === 'step4' %}
+                    {% set step_number = 4 %}
+                    {% set step_title = 'Propriétaire / bailleur' %}
+                    {% set next_step_title = 'Désordres' %}
+                {% elseif current_step === 'step5' %}
+                    {% set step_number = 5 %}
+                    {% set step_title = 'Désordres' %}
+                {% endif %}
+
+                {% if current_step != 'step6' %}
+                    <div class="fr-stepper">
+                        <h2 class="fr-stepper__title">
+                            {{step_title}} <span class="fr-stepper__state">Étape {{ step_number }} sur 5</span>
+                        </h2>
+                        <div class="fr-stepper__steps" data-fr-current-step="{{ step_number }}" data-fr-steps="5"></div>
+                        {% if next_step_title is defined %}
+                            <p class="fr-stepper__details">
+                                <span class="fr-text--bold">Étape suivante :</span> {{ next_step_title }}
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
 
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-12 fr-col-md-6">
-                        <fieldset role="group" aria-labelledby="declarant-infos-fieldset-legend">
-                            <legend class="fr-fieldset__legend" id="declarant-infos-fieldset-legend">Le déclarant</legend>
-                            {{ form_row(form.structureDeclarant) }}
-                            {{ form_row(form.mailDeclarant) }}
-                            {{ form_row(form.telDeclarant) }}
-                            {{ form_row(form.nomDeclarant) }}
-                            {{ form_row(form.prenomDeclarant) }}
-                            {{ form_row(form.dateVisite) }}
-                        </fieldset>
-                        <fieldset role="group" aria-labelledby="bailleur-infos-fieldset-legend">
-                            <legend class="fr-fieldset__legend" id="bailleur-infos-fieldset-legend">Le propriétaire</legend>
-                            {{ form_row(form.nomBailleur) }}
-                            {{ form_row(form.prenomBailleur) }}
-                            {{ form_row(form.mailBailleur) }}
-                            {{ form_row(form.telBailleur) }}
-                            {{ form_row(form.isLogementSocial) }}
-                        </fieldset>
-                        <fieldset role="group" aria-labelledby="localisation-logement-fieldset-legend">
-                            <legend class="fr-fieldset__legend" id="localisation-logement-fieldset-legend">Localisation du logement</legend>
-                            {{ form_row(form.adresseComplete) }}
-                            {{ form_row(form.adresseAutreOccupant) }}
-                            {{ form_row(form.profilOccupant) }}
-                        </fieldset>
-                        <fieldset role="group" aria-labelledby="categorie-logement-fieldset-legend">
-                            <legend class="fr-fieldset__legend" id="categorie-logement-fieldset-legend">Catégorie du logement</legend>
-                            {{ form_row(form.natureLogement) }}
-                            {{ form_row(form.natureLogementAutre) }}
-                            {{ form_row(form.nombrePieces) }}
-                        </fieldset>
-                        <fieldset role="group" aria-labelledby="occupant-infos-fieldset-legend">
-                            <legend class="fr-fieldset__legend" id="occupant-infos-fieldset-legend">Occupant du logement</legend>
-                            {{form_row(form.nomOccupant)}}
-                            {{form_row(form.prenomOccupant)}}
-                            {{form_row(form.mailOccupant)}}
-                            {{form_row(form.telOccupant)}}
-                            {{form_row(form.nbOccupantsLogement)}}
-                            {{form_row(form.nbEnfantsDansLogement)}}
-                            {{form_row(form.commentaireOccupant)}}
-                        </fieldset>
+                {% if current_step == 'step1' %}
+                    {{ form_row(form.step1.matriculeDeclarant) }}
+                    {{ form_row(form.step1.nomDeclarant) }}
+                    {{ form_row(form.step1.origineMission) }}
+                    {{ form_row(form.step1.dateMission) }}
+                    {{ form_row(form.step1.ordreMission) }}
+                {% elseif current_step == 'step2' %}
+                    {{ form_row(form.step2.adresseComplete) }}
+                    {{ form_row(form.step2.adresseAutreOccupant) }}
+                    {{ form_row(form.step2.isLogementSocial) }}
+                    {{ form_row(form.step2.natureLogement) }}
+                    {{ form_row(form.step2.typeEtageLogement) }}
+                    {{ form_row(form.step2.etageOccupant) }}
+                    {{ form_row(form.step2.nbPiecesLogement) }}
+                    {{ form_row(form.step2.superficie) }}
+                {% elseif current_step == 'step3' %}
+                    {{ form_row(form.step3.profilOccupant) }}
+                    {{ form_row(form.step3.nomOccupant) }}
+                    {{ form_row(form.step3.prenomOccupant) }}
+                    {{ form_row(form.step3.mailOccupant) }}
+                    {{ form_row(form.step3.telOccupant) }}
+                    {{ form_row(form.step3.nbAdultesDansLogement) }}
+                    {{ form_row(form.step3.nbEnfantsDansLogement) }}
+                    {{ form_row(form.step3.isEnfantsMoinsSixAnsDansLogement) }}
+                    {{ form_row(form.step3.autreVulnerabilite) }}
+                {% elseif current_step == 'step4' %}
+                    {{ form_row(form.step4.isBailleurAverti) }}
+                    {{ form_row(form.step4.denominationBailleur) }}
+                    {{ form_row(form.step4.mailBailleur) }}
+                    {{ form_row(form.step4.telBailleur) }}
+                {% elseif current_step == 'step5' %}
+                    {{ form_row(form.step5.desordres) }}
+                    {{ form_row(form.step5.desordresAutre) }}
+                    {{ form_row(form.step5.autresOccupantsDesordre) }}
+                {% elseif current_step == 'step6' %}
+                    <div class="fr-mt-5v fr-mb-5v">
+                        //RECAP
                     </div>
-                    <div class="fr-col-12 fr-col-md-6">
-                        <fieldset role="group" aria-labelledby="desordres-infos-fieldset-legend">
-                            <legend class="fr-fieldset__legend" id="desordres-infos-fieldset-legend">Elements motivant le signalement</legend>
-                                {% for choice in form.desordres %}
-                                    <div class="fr-checkbox-group fr-mb-6v">
-                                        {{ form_widget(choice) }}
-                                        <label class="fr-label" for="{{ choice.vars.id }}">
-                                            {{ choice.vars.label|raw }}
-                                            <span id="{{ choice.vars.id }}_help" class="fr-hint-text">
-                                                {% set value = choice.vars.value %}
-                                                {% set enum = constant('App\\Entity\\Enum\\DesordreSecours::' ~ value) %}
-                                                {{ enum.getDescription() }}
-                                            </span>
-                                        </label>
-                                    </div>
-                                {% endfor %}
-                            {{form_row(form.desordresAutre)}}
-                        </fieldset>
-                        <fieldset role="group" aria-labelledby="divers-infos-fieldset-legend">
-                            <legend class="fr-fieldset__legend" id="divers-infos-fieldset-legend">Divers</legend>
-                            {{form_row(form.coordonneesSyndic)}}
-                            {{form_row(form.desagrementsImmeuble)}}
-                            {{form_row(form.isTransmisMairie)}}
-                            {{form_row(form.isBailleurAverti)}}
-                        </fieldset>
-                    </div>
-                    <div class="fr-col-12">
-                        {{ form_row(form.submit) }}
-                    </div>
+                    {{form_row(form.step6.hidden)}}
+                {% endif %}
+
+                <div class="fr-grid-row fr-grid-row--center">
+                    {% if form.navigator.previous is defined %}
+                        <div class="fr-col">
+                            {{ form_row(form.navigator.previous) }}
+                        </div>
+                    {% endif %}
+                    {% if form.navigator.next is defined %}
+                        <div class="fr-col fr-text--right">
+                            {{ form_row(form.navigator.next) }}
+                        </div>
+                    {% endif %}
+                    {% if form.navigator.finish is defined %}
+                        <div class="fr-col fr-text--right">
+                            {{ form_row(form.navigator.finish) }}
+                        </div>
+                    {% endif %}
                 </div>
+
                 {{ form_end(form) }}
 
             </div>
