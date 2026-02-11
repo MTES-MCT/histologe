@@ -6,6 +6,7 @@ use App\Entity\Notification;
 use App\Entity\User;
 use App\Form\SearchNotificationType;
 use App\Repository\NotificationRepository;
+use App\Service\FormHelper;
 use App\Service\ListFilters\SearchNotification;
 use App\Service\MessageHelper;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -33,7 +34,7 @@ class NotificationController extends AbstractController
         $user = $this->getUser();
         $searchNotification = new SearchNotification($user);
         $form = $this->createForm(SearchNotificationType::class, $searchNotification);
-        $form->handleRequest($request);
+        FormHelper::handleFormSubmitFromRequestOrSearchParams($form, $request, $fromSearchParams);
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchNotification = new SearchNotification($user);
         }
