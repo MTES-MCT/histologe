@@ -30,7 +30,9 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         private readonly SignalementRepository $signalementRepository,
         private readonly SuiviManager $suiviManager,
         #[Autowire(env: 'INJONCTION_REMINDER_THRESHOLD')]
-        private readonly string $reminderThreshold,
+        private readonly string $reminderSuiviTravauxThreshold,
+        #[Autowire(env: 'INJONCTION_ANSWER_BAILLEUR_THRESHOLD')]
+        private readonly string $answerBailleurThreshold,
         private readonly ClockInterface $clock,
         private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
@@ -45,7 +47,61 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $beforeDate = $this->clock->now()->modify('-'.$this->reminderThreshold);
+
+        $this->remindAnswerBailleur($io, $output);
+        $this->remindSuiviTravaux($io, $output);
+
+        return Command::SUCCESS;
+    }
+
+    private function remindAnswerBailleur(SymfonyStyle $io, OutputInterface $output): void
+    {
+        $beforeDate = $this->clock->now()->modify('-'.$this->answerBailleurThreshold);
+        $signalements = $this->signalementRepository->findInjonctionToRemindAnswerBailleur($beforeDate);
+        foreach ($signalements as $signalement) {
+            if (!empty($signalement->getMailProprio())) {
+                $this->notificationAndMailSender->sendNewSignalementInjonction($signalement);
+                $output->writeln(sprintf('#%s bailleur reminded to answer', $signalement->getUuid()));
+
+                // On crée un suivi pour l'usager
+                $description = 'Le bailleur du logement a été relancé pour répondre à l\'injonction.';
+                $this->suiviManager->createSuivi(
+                    signalement: $signalement,
+                    description: $description,
+                    type: Suivi::TYPE_AUTO,
+                    category: SuiviCategory::INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR,
+                    isPublic: false
+                );
+            }
+        }
+
+        $feedbackMsg = '';
+        $countSignalement = count($signalements);
+        if (count($signalements) > 0) {
+            $feedbackMsg = \sprintf(
+                '%s rappels faits pour des signalements sans réponse bailleur.',
+                $countSignalement
+            );
+            $io->success($feedbackMsg);
+        } else {
+            $feedbackMsg = 'Aucun rappel n\'a été envoyé pour les bailleurs.';
+            $io->warning($feedbackMsg);
+        }
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_CRON,
+                to: (string) $this->parameterBag->get('admin_email'),
+                message: $feedbackMsg,
+                cronLabel: 'rappel de réponse du bailleur en cours d\'injonction',
+                cronCount: null,
+            )
+        );
+    }
+
+    private function remindSuiviTravaux(SymfonyStyle $io, OutputInterface $output): void
+    {
+        $beforeDate = $this->clock->now()->modify('-'.$this->reminderSuiviTravauxThreshold);
         $signalements = $this->signalementRepository->findInjonctionToRemind($beforeDate);
         foreach ($signalements as $signalement) {
             if (!empty($signalement->getMailProprio())) {
@@ -71,12 +127,12 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         $countSignalement = count($signalements);
         if (count($signalements) > 0) {
             $feedbackMsg = \sprintf(
-                '%s rappels ont été faits pour des signalements en injonction.',
+                '%s rappels faits pour des signalements avec suivi travaux.',
                 $countSignalement
             );
             $io->success($feedbackMsg);
         } else {
-            $feedbackMsg = 'Aucun rappel n\'a été envoyé.';
+            $feedbackMsg = 'Aucun rappel n\'a été envoyé pour le suivi.';
             $io->warning($feedbackMsg);
         }
 
@@ -89,7 +145,5 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                 cronCount: null,
             )
         );
-
-        return Command::SUCCESS;
     }
 }

@@ -2558,6 +2558,40 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function findInjonctionToRemindAnswerBailleur(\DateTimeImmutable $beforeDate): array
+    {
+        $qb = $this->createQueryBuilder('s');
+        // Toujours en injonction, donc n'ont pas répondu non ET créés avant la date renseignée ET avec mail proprio présent
+        $qb->where('s.statut = :statut')
+            ->andWhere('s.createdAt <= :date')
+            ->andWhere('s.mailProprio IS NOT NULL');
+
+        // Pas de réponse "oui" ou "oui avec aide" ou "oui démarches commencées
+        // ET Pas de rappel déjà envoyé (pas de suivi de catégorie INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR)
+        $qb->andWhere(
+            $qb->expr()->not(
+                $qb->expr()->exists(
+                    $this->createQueryBuilder('s1')
+                        ->select('1')
+                        ->join('s1.suivis', 'su1')
+                        ->where('s1 = s')
+                        ->andWhere('su1.category = :ouiCategory OR su1.category = :aideCategory OR su1.category = :demarchesCategory OR su1.category = :reminderCategory')
+                        ->getDQL()
+                )
+            )
+        );
+        $qb->setParameter('ouiCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI)
+            ->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE)
+            ->setParameter('demarchesCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES)
+            ->setParameter('reminderCategory', SuiviCategory::INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR);
+
+        $qb->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
+            ->setParameter('date', $beforeDate)
+            ->orderBy('s.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
     /**
      * @return Signalement[]
      *
@@ -2568,7 +2602,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.statut = :statut');
 
-        // Au moins une réponse "oui" ou "oui avec aide" avant la date
+        // Au moins une réponse "oui" ou "oui avec aide" ou "oui démarches commencées" avant la date
         $qb->andWhere(
             $qb->expr()->exists(
                 $this->createQueryBuilder('s1')

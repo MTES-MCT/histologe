@@ -49,6 +49,10 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         $this->mailerParams = $this->getMailerParamsFromNotification($notificationMail);
         $this->updateMailerSubjectFromNotification($notificationMail);
         $this->updateButtonTextFromNotification($notificationMail);
+
+        if ($notificationMail->isReminder()) {
+            $this->mailerSubject = 'RAPPEL : '.$this->mailerSubject;
+        }
         $params = [
             'template' => $this->mailerTemplate,
             'template_id' => $this->brevoTemplateId,
