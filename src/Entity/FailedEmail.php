@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: FailedEmailRepository::class)]
 class FailedEmail
 {
+    public const string EXPIRATION_PERIOD = '- 1 month';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
