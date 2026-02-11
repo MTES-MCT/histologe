@@ -43,7 +43,8 @@ class SignalementVisitesController extends AbstractController
         Request $request,
         string $tokenName,
     ): ?Response {
-        if (!$this->isCsrfTokenValid($tokenName, (string) $request->request->get('_token'))) {
+        $token = $request->request->get('_token') ?? $request->query->get('_token');
+        if (!$this->isCsrfTokenValid($tokenName, (string) $token)) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
@@ -513,7 +514,6 @@ class SignalementVisitesController extends AbstractController
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
-
         $errorRedirect = $this->getSecurityResponse(
             $request,
             'delete_rapport',

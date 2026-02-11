@@ -3,13 +3,9 @@ import {
   enableHeaderAndFooterButtonOfModal,
 } from '../../services/ui/modales_helper';
 
-initializeUploadModal('#fr-modal-upload-files', false);
-
-document?.querySelectorAll('.fr-modal-visites-upload-files')?.forEach((modalVisiteUpload) => {
-  initializeUploadModal('#' + modalVisiteUpload.id, true);
-});
 
 export function initializeVisitesUploadFilesModal() {
+  initializeUploadModal('#fr-modal-upload-files', false);
   document?.querySelectorAll('.fr-modal-visites-upload-files')?.forEach((modalVisiteUpload) => {
     initializeUploadModal('#' + modalVisiteUpload.id, true);
   });
