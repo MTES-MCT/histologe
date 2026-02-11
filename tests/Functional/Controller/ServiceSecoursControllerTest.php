@@ -22,7 +22,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         foreach ($routes as $route) {
             // OK
             $url = $router->generate('service_secours_index', [
-                'name' => $route->getName(),
+                'slug' => $route->getSlug(),
                 'uuid' => $route->getUuid(),
                 'domain' => 'localhost',
             ]);
@@ -30,7 +30,7 @@ class ServiceSecoursControllerTest extends WebTestCase
             $this->assertResponseIsSuccessful();
 
             $manifestUrl = $router->generate('service_secours_webmanifest', [
-                'name' => $route->getName(),
+                'slug' => $route->getSlug(),
                 'uuid' => $route->getUuid(),
                 'domain' => 'localhost',
             ]);
@@ -42,7 +42,7 @@ class ServiceSecoursControllerTest extends WebTestCase
             $this->assertJson($content);
             // KO
             $url = $router->generate('service_secours_index', [
-                'name' => $route->getName().'1',
+                'slug' => $route->getSlug().'1',
                 'uuid' => $route->getUuid(),
                 'domain' => 'localhost',
             ]);
@@ -50,7 +50,7 @@ class ServiceSecoursControllerTest extends WebTestCase
             $this->assertResponseStatusCodeSame(404);
 
             $url = $router->generate('service_secours_index', [
-                'name' => $route->getName(),
+                'slug' => $route->getSlug(),
                 'uuid' => $route->getUuid().'1',
                 'domain' => 'localhost',
             ]);

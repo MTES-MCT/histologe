@@ -11,8 +11,18 @@ class ServiceSecoursRouteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('name', null, [
-            'label' => 'Type de service de secours',
-            'help' => '255 caractères maximum.',
+            'label' => 'Nom du service de secours',
+            'help' => 'Sera enregistré comme structure du déclarant.',
+            'required' => false,
+        ]);
+        $builder->add('email', null, [
+            'label' => 'E-mail du service de secours',
+            'help' => 'Sera enregistré comme e-mail du déclarant.',
+            'required' => false,
+        ]);
+        $builder->add('phone', null, [
+            'label' => 'Téléphone du service de secours',
+            'help' => 'Sera enregistré comme téléphone du déclarant.',
             'required' => false,
         ]);
         $builder->add('submit', SubmitType::class, [

@@ -48,8 +48,8 @@
                 {% if current_step == 'step1' %}
                     {{ form_row(form.step1.matriculeDeclarant) }}
                     {{ form_row(form.step1.nomDeclarant) }}
-                    {{ form_row(form.step1.origineMission) }}
                     {{ form_row(form.step1.dateMission) }}
+                    {{ form_row(form.step1.origineMission) }}
                     {{ form_row(form.step1.ordreMission) }}
                 {% elseif current_step == 'step2' %}
                     {{ form_row(form.step2.adresseComplete) }}

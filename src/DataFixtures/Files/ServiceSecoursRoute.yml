@@ -1,6 +1,8 @@
 service_secours_routes:
 -
-  name: "PIM-PON"
+  name: "PIN PON"
+  email: "pin-pon@example.com"
 -
-  name: "WOUIP-WOUIP"
+  name: "WOUIP WOUIP"
+  email: "wouip-wouip@example.com"
 
