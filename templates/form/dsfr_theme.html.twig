@@ -190,7 +190,7 @@
             {% if label is not same as(false) %}
                 <label for="{{ id }}_input" class="fr-label">{{ label }} {{form_help(form)}}</label>
             {% endif %}
-            <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input">
+            <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input" autocomplete="off">
         </div>
         <div class="search-checkbox-badges" {% if not showSelectionAsBadges %}style="display:none"{% endif %}></div>
         <button type="button" class="fr-btn--close fr-btn fr-hidden">Fermer</button>
@@ -205,7 +205,7 @@
             {% if label is not same as(false) %}
                 <label for="{{ id }}_input" class="fr-label">{{ label }} {{form_help(form)}}</label>
             {% endif %}
-            <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input">
+            <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input" autocomplete="off">
         </div>
         <div class="search-checkbox-badges" {% if not showSelectionAsBadges %}style="display:none"{% endif %}></div>
         <button type="button" class="fr-btn--close fr-btn fr-hidden">Fermer</button>
