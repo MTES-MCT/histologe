@@ -9,7 +9,6 @@ use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
-use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
@@ -387,14 +386,17 @@ class SignalementManager extends AbstractManager
         );
     }
 
-    public function updateFromInviteTiersRequest(
+    public function updateFromTiersInvitation(
         Signalement $signalement,
-        InviteTiersRequest $inviteTiersRequest,
-    ): bool {
-        $signalement->setNomDeclarant($inviteTiersRequest->getNom())
-            ->setPrenomDeclarant($inviteTiersRequest->getPrenom())
-            ->setMailDeclarant($inviteTiersRequest->getMail())
-            ->setTelDeclarant($inviteTiersRequest->getTelephone())
+    ): void {
+        $tiersInvitation = $signalement->getTiersInvitation();
+        if (null === $tiersInvitation) {
+            return;
+        }
+        $signalement->setNomDeclarant($tiersInvitation->getLastname())
+            ->setPrenomDeclarant($tiersInvitation->getFirstname())
+            ->setMailDeclarant($tiersInvitation->getEmail())
+            ->setTelDeclarant($tiersInvitation->getTelephone())
             ->setIsCguTiersAccepted(false);
 
         // Create user corresponding to declarant
@@ -402,7 +404,7 @@ class SignalementManager extends AbstractManager
 
         $this->save($signalement);
 
-        return $this->suiviManager->addInviteSuiviFromBo($signalement);
+        $this->suiviManager->addAccepteInvitationSuivi($signalement);
     }
 
     public function updateFromCoordonneesFoyerRequest(

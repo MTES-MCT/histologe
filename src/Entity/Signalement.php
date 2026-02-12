@@ -548,6 +548,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\ManyToOne(inversedBy: 'signalements')]
     private ?ServiceSecoursRoute $serviceSecours = null;
 
+    #[ORM\OneToOne(
+        mappedBy: 'signalement',
+        targetEntity: TiersInvitation::class,
+        cascade: ['persist', 'remove']
+    )]
+    private ?TiersInvitation $tiersInvitation = null;
+
     public function __construct()
     {
         $this->criticites = new ArrayCollection();
@@ -2979,6 +2986,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setServiceSecours(?ServiceSecoursRoute $serviceSecours): static
     {
         $this->serviceSecours = $serviceSecours;
+
+        return $this;
+    }
+
+    public function getTiersInvitation(): ?TiersInvitation
+    {
+        return $this->tiersInvitation;
+    }
+
+    public function setTiersInvitation(?TiersInvitation $tiersInvitation): static
+    {
+        $this->tiersInvitation = $tiersInvitation;
 
         return $this;
     }

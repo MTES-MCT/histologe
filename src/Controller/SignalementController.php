@@ -13,6 +13,7 @@ use App\Entity\Model\InformationProcedure;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
+use App\Entity\TiersInvitation;
 use App\Event\SuiviViewedEvent;
 use App\Form\DemandeLienSignalementType;
 use App\Form\MessageUsagerType;
@@ -980,39 +981,38 @@ class SignalementController extends AbstractController
         string $code,
         Request $request,
         SignalementRepository $signalementRepository,
-        SignalementManager $signalementManager,
         SuiviManager $suiviManager,
-        UserManager $userManager,
         NotificationMailerRegistry $notificationMailerRegistry,
+        EntityManagerInterface $entityManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
 
         // On bloque si tiers déjà renseigné ou si créé par tiers
-        if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant())) {
+        if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant()) || null !== $signalement->getTiersInvitation()) {
             throw $this->createAccessDeniedException();
         }
 
+        $invitation = new TiersInvitation();
+        $invitation->setSignalement($signalement);
+
         $form = $this->createForm(
             UsagerCoordonneesTiersType::class,
-            $signalement,
-            ['extended' => true],
+            $invitation
         );
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Create user corresponding to declarant
-            $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+            $entityManager->persist($invitation);
+            $entityManager->flush();
 
-            $signalement->setIsCguTiersAccepted(false);
-            $signalementManager->save($signalement);
-
-            $suiviManager->addInviteSuiviFromFo($signalement);
+            $suiviManager->addInviteSuiviFromFo($invitation);
 
             $notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_INVITE_TIERS,
-                    to: $signalement->getMailDeclarant(),
+                    to: $invitation->getEmail(),
                     signalement: $signalement,
                 )
             );
@@ -1028,5 +1028,52 @@ class SignalementController extends AbstractController
             'signalement' => $signalement,
             'form' => $form->createView(),
         ]);
+    }
+
+    #[Route('/invitation/{code}/accepter', name: 'front_suivi_invitation_accepter', methods: ['GET', 'POST'])]
+    public function accepterInvitation(
+        string $code,
+        SignalementRepository $signalementRepository,
+        SignalementManager $signalementManager,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        // $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_BASCULE_PROCEDURE, $signalement); // TODO : mettre un voter
+
+        $tiersInvitation = $signalement->getTiersInvitation();
+        if (!$tiersInvitation) {
+            throw $this->createNotFoundException('Invitation non trouvée');
+        }
+
+        $signalementManager->updateFromTiersInvitation($signalement);
+
+        $entityManager->remove($tiersInvitation);
+        $entityManager->flush();
+        $this->addFlash('success', ['title' => 'Invitation acceptée', 'message' => 'Vous pouvez désormais suivre ce dossier.']);
+
+        return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+    }
+
+    #[Route('/invitation/{code}/refuser', name: 'front_suivi_invitation_refuser', methods: ['GET', 'POST'])]
+    public function refuserInvitation(
+        string $code,
+        SignalementRepository $signalementRepository,
+        SuiviManager $suiviManager,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        // $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_BASCULE_PROCEDURE, $signalement); // TODO : mettre un voter
+
+        $tiersInvitation = $signalement->getTiersInvitation();
+        if (!$tiersInvitation) {
+            throw $this->createNotFoundException('Invitation non trouvée');
+        }
+
+        $suiviManager->addRefuseInvitationSuivi($signalement);
+        $entityManager->remove($tiersInvitation);
+        $entityManager->flush();
+        $this->addFlash('success', ['title' => 'Invitation refusée', 'message' => 'Vous avez refusé l\'invitation pour suivre ce dossier.']);
+
+        return $this->redirectToRoute('home');
     }
 }

@@ -15,6 +15,7 @@ use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\TiersInvitation;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -142,13 +143,22 @@ class SignalementEditController extends AbstractController
         InviteTiersRequest $inviteTiersRequest,
         Signalement $signalement,
         Request $request,
-        SignalementManager $signalementManager,
+        SuiviManager $suiviManager,
         ValidatorInterface $validator,
         NotificationMailerRegistry $notificationMailerRegistry,
+        EntityManagerInterface $em,
     ): JsonResponse {
         // On bloque si tiers déjà renseigné ou si créé par tiers
         if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant())) {
             throw $this->createAccessDeniedException();
+        }
+
+        // On bloque si invitation déjà en cours
+        if (null !== $signalement->getTiersInvitation()) {
+            return $this->json([
+                'code' => Response::HTTP_CONFLICT,
+                'message' => 'Une invitation est déjà en attente pour ce dossier.',
+            ], Response::HTTP_CONFLICT);
         }
 
         /** @var array<string, mixed> $payload */
@@ -161,16 +171,28 @@ class SignalementEditController extends AbstractController
             $errorMessage = FormHelper::getErrorsFromRequest($validator, $inviteTiersRequest);
 
             if (empty($errorMessage)) {
-                $subscriptionCreated = $signalementManager->updateFromInviteTiersRequest($signalement, $inviteTiersRequest);
+                $invitation = new TiersInvitation();
+                $invitation
+                    ->setSignalement($signalement)
+                    ->setLastname($inviteTiersRequest->getNom())
+                    ->setFirstname($inviteTiersRequest->getPrenom())
+                    ->setEmail($inviteTiersRequest->getMail())
+                    ->setTelephone($inviteTiersRequest->getTelephone());
+
+                $signalement->setTiersInvitation($invitation);
+
+                $em->persist($invitation);
+                $em->flush();
 
                 $notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_INVITE_TIERS,
-                        to: $signalement->getMailDeclarant(),
+                        to: $inviteTiersRequest->getMail(),
                         signalement: $signalement,
+                        // tu pourras ajouter le token dans le mail plus tard
                     )
                 );
-
+                $subscriptionCreated = $suiviManager->addInviteSuiviFromBo($signalement, $inviteTiersRequest);
                 $response = ['code' => Response::HTTP_OK];
                 $this->addFlash('success', ['title' => 'Invitation sur le dossier',
                     'message' => 'Le tiers aidant a bien été invité.',
