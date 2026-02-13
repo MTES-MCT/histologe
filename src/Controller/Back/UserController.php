@@ -56,7 +56,7 @@ class UserController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $originalMethod = $request->getMethod();
-        $request->setMethod('GET'); // to prevent Symfony ignoring GET data while handlning the form
+        $request->setMethod('GET'); // to prevent Symfony ignoring GET data while handling the form
         [, $searchUser, $paginatedUsers] = $this->handleSearchUser($request, $userRepository, $maxListPagination);
         if ('POST' === $originalMethod) {
             /** @var string $format */
@@ -136,24 +136,31 @@ class UserController extends AbstractController
         UserManager $userManager,
         UserPasswordHasherInterface $passwordHasher,
     ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        $request->setMethod('GET'); // to prevent Symfony ignoring GET data while handling the form
+        $searchUser = new SearchUser($user);
+        $form = $this->createForm(SearchUserType::class, $searchUser);
+        $form->handleRequest($request);
+
         /** @var string $userId */
         $userId = $request->request->get('user_id');
         if (!$this->isCsrfTokenValid('user_disable', (string) $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
 
-            return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_user_index', $searchUser->getUrlParams(), Response::HTTP_SEE_OTHER);
         }
         /** @var User $user */
         $user = $userManager->find($userId);
         if (!$user) {
             $this->addFlash('error', 'Utilisateur introuvable.');
 
-            return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_user_index', $searchUser->getUrlParams(), Response::HTTP_SEE_OTHER);
         }
         if (!$this->isGranted(UserVoter::USER_DISABLE, $user)) {
             $this->addFlash('error', 'Action non autorisée sur un super administrateur.');
 
-            return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('back_user_index', $searchUser->getUrlParams(), Response::HTTP_SEE_OTHER);
         }
 
         $user->setStatut(UserStatus::INACTIVE);
@@ -163,7 +170,7 @@ class UserController extends AbstractController
             'message' => 'L\'utilisateur '.$user->getNomComplet(true).' a bien été désactivé.',
         ]);
 
-        return $this->redirectToRoute('back_user_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('back_user_index', $searchUser->getUrlParams(), Response::HTTP_SEE_OTHER);
     }
 
     /**
