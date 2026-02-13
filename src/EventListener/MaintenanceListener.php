@@ -54,6 +54,7 @@ class MaintenanceListener
                 || str_starts_with($uri, '/suivre-mon-signalement')
                 || str_starts_with($uri, '/mot-de-pass-perdu')
                 || str_starts_with($uri, '/contact')
+                || str_starts_with($uri, '/demande-lien-signalement')
                 || str_starts_with($uri, '/activation'))
             && !$this->authorizationChecker->isGranted(User::ROLE_ADMIN);
     }
