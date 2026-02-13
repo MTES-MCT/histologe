@@ -10,7 +10,7 @@ function histoUpdateValueFromData(elementName, elementData, target) {
 document.querySelectorAll('.btn-disable-user').forEach((swbtn) => {
   swbtn.addEventListener('click', (evt) => {
     const target = evt.target;
-    document.querySelectorAll('#fr-modal-user-disable_username').forEach((el) => {
+    document.querySelectorAll('.fr-modal-user-disable_username').forEach((el) => {
       el.textContent = target.getAttribute('data-username');
     });
     histoUpdateValueFromData('#fr-modal-user-disable_userid', 'data-userid', target);
