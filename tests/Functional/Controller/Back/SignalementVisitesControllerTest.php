@@ -74,7 +74,7 @@ class SignalementVisitesControllerTest extends WebTestCase
         $crawler = $this->client->getCrawler();
         $highlights = $crawler->filter('.fr-highlight');
         $this->assertCount(2, $highlights);
-        $this->assertStringContainsString('Commentaire avant visite', $highlights->eq(1)->text());
+        $this->assertStringContainsString('Commentaire avant visite', $highlights->eq(0)->text());
     }
 
     public function testAddFutureVisiteOnExternalOperator(): void

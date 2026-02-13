@@ -90,7 +90,7 @@ class InterventionRepository extends ServiceEntityRepository
             ->setParameter('visiteTypes', [InterventionType::VISITE->name, InterventionType::VISITE_CONTROLE->name])
             ->andWhere('i.signalement = :signalement')
             ->setParameter('signalement', $signalement)
-            ->orderBy('i.scheduledAt', 'ASC')
+            ->orderBy('i.scheduledAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
