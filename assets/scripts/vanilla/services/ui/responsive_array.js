@@ -179,7 +179,6 @@ class ResponsiveArray {
 
   debounce(func, wait) {
     let timeout;
-    debugger; // eslint error: no-debugger
     return function executedFunction(...args) {
       const later = () => {
         clearTimeout(timeout);
