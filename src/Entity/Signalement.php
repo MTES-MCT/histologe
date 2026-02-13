@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Behaviour\EntityHistoryCollectionInterface;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
@@ -41,6 +42,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['statut'], name: 'idx_signalement_statut')]
 #[ORM\Index(columns: ['created_at'], name: 'idx_signalement_created_at')]
 #[ORM\Index(columns: ['is_imported'], name: 'idx_signalement_is_imported')]
+#[ORM\Index(columns: ['creation_source'], name: 'idx_signalement_creation_source')]
 #[ORM\Index(columns: ['uuid'], name: 'idx_signalement_uuid')]
 #[ORM\Index(columns: ['code_suivi'], name: 'idx_signalement_code_suivi')]
 #[ORM\Index(columns: ['cp_occupant'], name: 'idx_signalement_cp_occupant')]
@@ -521,6 +523,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\ManyToOne]
     private ?Partner $createdByPartner = null;
+
+    #[ORM\Column(type: 'string', enumType: CreationSource::class)]
+    private ?CreationSource $creationSource = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $loginBailleur = null;
@@ -2848,6 +2853,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setCreatedByPartner(?Partner $createdByPartner): static
     {
         $this->createdByPartner = $createdByPartner;
+
+        return $this;
+    }
+
+    public function getCreationSource(): ?CreationSource
+    {
+        return $this->creationSource;
+    }
+
+    public function setCreationSource(?CreationSource $creationSource): static
+    {
+        $this->creationSource = $creationSource;
 
         return $this;
     }

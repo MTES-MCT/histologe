@@ -3,6 +3,7 @@
 namespace App\Service\Signalement;
 
 use App\Dto\Api\Request\SignalementRequest;
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
@@ -243,6 +244,7 @@ class SignalementApiFactory
             $signalement->setBailleur($bailleur);
         }
         $signalement->setCreatedBy($this->user);
+        $signalement->setCreationSource(CreationSource::API);
         $signalement->setIsCguAccepted(true);
 
         return $signalement;

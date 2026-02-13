@@ -4,6 +4,7 @@ namespace App\Service\Signalement;
 
 use App\Entity\DesordreCritere;
 use App\Entity\DesordrePrecision;
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
@@ -113,6 +114,7 @@ class SignalementBoManager
 
         $signalement->setStatut(SignalementStatus::DRAFT);
         $signalement->setCreatedBy($this->user);
+        $signalement->setCreationSource(CreationSource::FORM_PRO);
         $signalement->setTerritory($territory);
         $signalement->setIsCguAccepted(true);
         if (!$signalement->getReference()) {
