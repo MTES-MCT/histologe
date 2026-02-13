@@ -5,8 +5,8 @@
         <span class="fr-badge fr-badge--info">Logement occupé</span>
     {% endif %}
     {% if is_granted('SIGN_SWITCH_LOGEMENT_VACANT', signalement) %}
-        <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-logement-vacant" class="fr-ml-2v fr-btn--icon-left fr-icon-edit-line fr-a-edit">
+        <button data-fr-opened="false" aria-controls="fr-modal-edit-logement-vacant" class="fr-btn--icon-left fr-icon-edit-line fr-btn fr-btn--sm fr-btn--tertiary-no-outline">
             Modifier
-        </a>
+        </button>
     {% endif %}
 </div>

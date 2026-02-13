@@ -10,7 +10,7 @@
                         <div class="fr-modal__content">
                             {% if signalement.isLogementVacant %}
                                 <h1 class="fr-modal__title">Sortir du statut de logement vacant</h1>
-                                <div class="fr-alert fr-alert--warning fr-mt-2v fr-mb-2v">
+                                <div class="fr-alert fr-alert--warning fr-my-2v">
                                     <p>
                                         Si vous sortez le logement du statut de vacant, les usagers (occupant et tiers déclarant) recevront à nouveau des mises à jour sur le dossier, 
                                         et vous pourrez à nouveau partager des suivis aux usagers.
@@ -19,16 +19,16 @@
                                 <input type="hidden" name="logementVacant" value="0">
                             {% else %}
                                 <h1 class="fr-modal__title">Enregistrer comme logement vacant</h1>
-                                <div class="fr-alert fr-alert--warning fr-mt-2v fr-mb-2v">
+                                <div class="fr-alert fr-alert--warning fr-my-2v">
                                     <p>
                                         Si vous indiquez que le logement est vacant, les usagers (occupant et tiers déclarant) ne recevront plus de mises à jour sur le dossier, 
                                         et vous ne pourrez plus partager de suivis aux usagers. Vous pourrez toujours effectuer des actions sur le dossier.
                                         <br>
-                                        Les usagers pourront continuer à accéder au dossier dan interagir avec.
+                                        Les usagers pourront continuer à accéder au dossier mais ne pourront plus interagir.
                                     </p>
                                 </div>
                                 {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
-                                    <div class="fr-alert fr-alert--error nfo fr-mt-2v fr-mb-2v">
+                                    <div class="fr-alert fr-alert--error fr-my-2v">
                                         <p>
                                             Le déclarant tiers bailleur ne recevra plus de mise à jour sur le dossier et ne pourra plus interagir avec le dossier.
                                         </p>
