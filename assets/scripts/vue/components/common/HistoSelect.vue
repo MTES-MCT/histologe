@@ -1,7 +1,7 @@
 <template>
   <div class="fr-select-group">
     <label v-if="$slots.label" class="fr-label" :for="id">
-      <slot name="label"></slot>
+      <slot name="label" slot="aaa"></slot>
     </label>
     <select
       class="fr-select"
@@ -18,8 +18,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import HistoInterfaceSelectOption f
-rom './HistoInterfaceSelectOption'
+import HistoInterfaceSelectOption from './HistoInterfaceSelectOption'
 
 export default defineComponent({
   name: 'HistoSelect',
