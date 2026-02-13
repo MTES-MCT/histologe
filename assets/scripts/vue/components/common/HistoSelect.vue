@@ -18,7 +18,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import HistoInterfaceSelectOption from './HistoInterfaceSelectOption'
+import HistoInterfaceSelectOption f
+rom './HistoInterfaceSelectOption'
 
 export default defineComponent({
   name: 'HistoSelect',

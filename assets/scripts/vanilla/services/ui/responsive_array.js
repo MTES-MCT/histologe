@@ -35,7 +35,8 @@ class ResponsiveArray {
     const headers = [];
     const headerCells = table.querySelectorAll('thead th');
 
-    headerCells.forEach((th, index) => {
+    headerCells.forEach((th, ind
+      ex) => {
       const label = th.textContent.trim();
       headers.push({
         label: label,
