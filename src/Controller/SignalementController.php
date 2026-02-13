@@ -449,39 +449,6 @@ class SignalementController extends AbstractController
         return $this->json(['error' => 'Aucun fichier n\'a été téléversé'], 400);
     }
 
-    #[Route('/suivre-ma-procedure/{code}', name: 'front_suivi_procedure', methods: ['GET', 'POST'])]
-    public function suiviProcedure(
-        string $code,
-        SignalementRepository $signalementRepository,
-        Request $request,
-    ): Response {
-        $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
-        if (SignalementStatus::ARCHIVED === $signalement->getStatut()) {
-            $this->addFlash('error', 'Le lien utilisé est expiré ou invalide.');
-
-            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-        }
-        $suiviAuto = $request->query->get('suiviAuto');
-        // TODO : route à supprimer quelques semaines/mois après la suppression du feature flipping featureSuiviAction (aout 2025)
-        // pour ne pas avoir des liens cassés dans les anciens mails
-        if (Suivi::ARRET_PROCEDURE == $suiviAuto) {
-            return $this->redirectToRoute(
-                'front_suivi_signalement_procedure',
-                [
-                    'code' => $signalement->getCodeSuivi(),
-                ]
-            );
-        }
-
-        return $this->redirectToRoute(
-            'front_suivi_signalement_procedure_poursuite',
-            [
-                'code' => $signalement->getCodeSuivi(),
-            ]
-        );
-    }
-
     /**
      * @throws NonUniqueResultException
      */
@@ -830,14 +797,10 @@ class SignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         SignalementManager $signalementManager,
         SuiviManager $suiviManager,
+        SuiviRepository $suiviRepository,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
-        if (false === $signalement->getIsUsagerAbandonProcedure()) {
-            $this->addFlash('error', ['title' => 'Demande déjà enregistrée', 'message' => 'L\'administration a déjà été informée de votre volonté de poursuivre la procédure.']);
-
-            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-        }
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
             $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Vous n\'avez pas les droits pour effectuer cette action.']);
 
@@ -851,12 +814,18 @@ class SignalementController extends AbstractController
             return $redirect;
         }
 
+        $lastSuiviDemandePoursuite = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], ['createdAt' => 'DESC']);
+        $hasRecentDemandePoursuite = false;
+        if ($lastSuiviDemandePoursuite && $lastSuiviDemandePoursuite->getCreatedAt() > (new \DateTime('-20 days'))) {
+            $hasRecentDemandePoursuite = true;
+        }
+
         $user = $signalementUser->getUser();
 
         $form = $this->createForm(UsagerPoursuivreProcedureType::class);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if (!$hasRecentDemandePoursuite && $form->isSubmitted() && $form->isValid()) {
             $signalement->setIsUsagerAbandonProcedure(false);
 
             $description = $user->getNomComplet().' a indiqué vouloir poursuivre la procédure sur '
@@ -881,6 +850,7 @@ class SignalementController extends AbstractController
         return $this->render('front/suivi_signalement_poursuivre_procedure_validation.html.twig', [
             'signalement' => $signalement,
             'form' => $form->createView(),
+            'hasRecentDemandePoursuite' => $hasRecentDemandePoursuite,
         ]);
     }
 

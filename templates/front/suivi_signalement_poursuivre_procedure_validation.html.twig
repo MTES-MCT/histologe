@@ -16,29 +16,44 @@
 	</nav>
 	<div class="fr-grid-row fr-grid-row--gutters">
 		<div class="fr-col-12 fr-col-md-8">
-			{{ form_start(form, {'attr': {'id': 'form-poursuivre-procedure'}}) }}
-			{{ form_errors(form) }}
-				<h1 class="title-blue-france">Poursuivre la procédure</h1>
-				<div class="fr-my-3w">
-					Vous souhaitez poursuivre la procédure ?<br>
-					Nous allons informer les services de votre réponse.
-					<br>
-					Attention votre choix pourra avoir un impact sur la poursuite de votre dossier.<br><br>
-					{{ form_row(form.details,{}) }}
-				</div>	
+			{% if hasRecentDemandePoursuite %}
+				<div class="fr-alert fr-alert--info">
+					<p>
+						Vous avez indiqué vouloir poursuivre la procédure récemment. 
+					</p>
+					<p>
+						Nous avons bien pris en compte votre demande et nous vous invitons à patienter pendant que nous traitons votre dossier. 
+					</p>
+					<p>
+						Si vous souhaitez apporter des éléments complémentaires à votre demande, veuillez utilliser la 
+						<a href="{{ path('front_suivi_signalement_messages', {code: signalement.codeSuivi}) }}">messagerie de votre dossier</a>.
+					</p>
+				</div>
+			{% else %}
+				{{ form_start(form, {'attr': {'id': 'form-poursuivre-procedure'}}) }}
+				{{ form_errors(form) }}
+					<h1 class="title-blue-france">Poursuivre la procédure</h1>
+					<div class="fr-my-3w">
+						Vous souhaitez poursuivre la procédure ?<br>
+						Nous allons informer les services de votre réponse.
+						<br>
+						Attention votre choix pourra avoir un impact sur la poursuite de votre dossier.<br><br>
+						{{ form_row(form.details,{}) }}
+					</div>	
 
-				
-				<ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left">
-					<li>				
-						<button class="fr-btn fr-icon-check-line" type="submit" id="form_finish_submit" form="form-poursuivre-procedure">
-							Valider ma demande
-						</button>
-					</li>
-					<li>					
-						<a class="fr-btn fr-btn--secondary fr-icon-close-line" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi}) }}" >Annuler</a>
-					</li>
-				</ul>
-			{{ form_end(form) }}
+					
+					<ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left">
+						<li>				
+							<button class="fr-btn fr-icon-check-line" type="submit" id="form_finish_submit" form="form-poursuivre-procedure">
+								Valider ma demande
+							</button>
+						</li>
+						<li>					
+							<a class="fr-btn fr-btn--secondary fr-icon-close-line" href="{{ path('front_suivi_signalement',{code:signalement.codeSuivi}) }}" >Annuler</a>
+						</li>
+					</ul>
+				{{ form_end(form) }}
+			{% endif %}
 		</div>
 		{% include 'front/_partials/_suivi_signalement_card_right.html.twig' %}
 	</div>
