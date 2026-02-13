@@ -2066,6 +2066,7 @@ class SignalementRepository extends ServiceEntityRepository
             'INTERVENTION_ARRETE_IS_CREATED',
             'INTERVENTION_ARRETE_IS_RESCHEDULED',
             'NEW_DOCUMENT',
+            'AFFECTATION_IS_CLOSED',
         ];
 
         $paramsToBind = [];
