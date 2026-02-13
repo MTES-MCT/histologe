@@ -22,7 +22,7 @@ class ServiceSecoursStep3Type extends AbstractType
             ],
             'label' => 'Profil de l\'occupant <span class="text-required">*</span>',
             'label_html' => true,
-        ]); // obligatoire
+        ]);
         $builder->add('nomOccupant', null, ['label' => 'Nom']);
         $builder->add('prenomOccupant', null, ['label' => 'Prénom']);
         $builder->add('mailOccupant', null, ['label' => 'Adresse e-mail']);

@@ -25,7 +25,7 @@ class ServiceSecoursStep5Type extends AbstractType
         ]);
         $builder->add('desordresAutre', TextareaType::class, ['label' => 'Autres éléments à signaler', 'required' => false]);
         $builder->add('autresOccupantsDesordre', ChoiceType::class, [
-            'label' => 'D\'autres occupants de l\'immeuble ont-ils rencontrés des désordres ? <span class="text-required">*</span>',
+            'label' => 'D\'autres occupants de l\'immeuble ont-ils rencontré des désordres ? <span class="text-required">*</span>',
             'label_html' => true,
             'required' => false,
             'expanded' => true,

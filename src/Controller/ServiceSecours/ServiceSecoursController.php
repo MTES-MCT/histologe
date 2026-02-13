@@ -34,9 +34,8 @@ class ServiceSecoursController extends AbstractController
         $flow = $this->createForm(ServiceSecoursType::class, $serviceSecours);
         $flow->handleRequest($request);
         if ($flow->isSubmitted() && $flow->isValid() && $flow->isFinished()) { // @phpstan-ignore-line
-            // dd($flow->getData());
             // TODO : voir les traitements fait dans App\Controller\Api\SignalementCreateController.php pour les adapter / refactoriser ici
-            //
+
             return $this->render('service_secours/success.html.twig', ['serviceSecoursRoute' => $serviceSecoursRoute]);
         }
 

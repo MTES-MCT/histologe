@@ -23,7 +23,7 @@ class ServiceSecoursStep4Type extends AbstractType
                 'Non' => false,
                 'Indeterminé' => null,
             ],
-        ]); // obligatoire
+        ]);
         $builder->add('denominationBailleur', null, ['label' => 'Dénomination du bailleur']);
         $builder->add('mailBailleur', null, ['label' => 'Adresse e-mail', 'help' => 'Format attendu : nom@domaine.fr']);
         $builder->add('telBailleur', null, ['label' => 'Téléphone']);

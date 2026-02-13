@@ -16,7 +16,7 @@ class ServiceSecoursStep2Type extends AbstractType
             'label' => 'Adresse du logement <span class="text-required">*</span>',
             'label_html' => true,
             'help' => 'Format attendu : Tapez l\'adresse puis sélectionnez-la dans la liste. Si elle n\'apparait pas, cliquez sur Saisir une adresse manuellement.',
-        ]); // obligatoire
+        ]);
         // TODO : gerer les champs adresse indépendant (adresse, code postal, ville)
         $builder->add('adresseAutreOccupant', null, ['label' => 'Complément d\'adresse (bâtiment/étage/porte)', 'help' => 'Format attendu : 255 caractères maximum']);
         $builder->add('isLogementSocial', ChoiceType::class, [
@@ -30,7 +30,7 @@ class ServiceSecoursStep2Type extends AbstractType
                 'Non' => false,
                 'Indéterminé' => null,
             ],
-        ]); // obligatoire
+        ]);
         $builder->add('natureLogement', ChoiceType::class, [
             'expanded' => true,
             'required' => false,
@@ -42,7 +42,7 @@ class ServiceSecoursStep2Type extends AbstractType
             ],
             'label' => 'Nature du logement <span class="text-required">*</span>',
             'label_html' => true,
-        ]); // obligatoire
+        ]);
         $builder->add('typeEtageLogement', ChoiceType::class, [
             'expanded' => true,
             'required' => false,
