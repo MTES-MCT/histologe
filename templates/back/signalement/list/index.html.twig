@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <section class="fr-pt-5v {{ app.request.get('_route') == 'back_signalements_index' ? container_class : 'fr-pl-5v' }}">
+    <section class="fr-pt-5v {{ app.request.attributes.get('_route') == 'back_signalements_index' ? container_class : 'fr-pl-5v' }}">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Liste des signalements',
             'level2Link': '',
