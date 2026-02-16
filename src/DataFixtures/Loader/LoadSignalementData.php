@@ -91,7 +91,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         $signalement = (new Signalement())
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
-            ->setCreationSource(CreationSource::FORM_USAGER)
+            ->setCreationSource(CreationSource::FORM_USAGER_V1)
             ->setProfileDeclarant(ProfileDeclarant::from($row['profile_declarant']))
             ->setNomOccupant($row['nom_occupant'] ?? $faker->lastName())
             ->setPrenomOccupant($faker->firstName())
@@ -332,7 +332,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         /** @var Signalement $signalement */
         $signalement = (new Signalement())
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
-            ->setCreationSource(CreationSource::FORM_USAGER)
+            ->setCreationSource(CreationSource::FORM_USAGER_V2)
             ->setCiviliteOccupant($row['civilite_occupant'] ?? 'mme')
             ->setNomOccupant($row['nom_occupant'] ?? $faker->lastName())
             ->setPrenomOccupant($row['prenom_occupant'] ?? $faker->firstName())

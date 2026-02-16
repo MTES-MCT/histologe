@@ -86,7 +86,7 @@ class SignalementBuilder
 
         $this->signalement = (new Signalement())
             ->setCreatedFrom($this->signalementDraft)
-            ->setCreationSource(CreationSource::FORM_USAGER)
+            ->setCreationSource(CreationSource::FORM_USAGER_V2)
             ->setTerritory($this->territory)
             ->setIsCguAccepted(true)
             ->setDetails($this->signalementDraftRequest->getMessageAdministration())

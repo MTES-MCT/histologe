@@ -5,6 +5,7 @@ namespace App\Service\Signalement;
 use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
@@ -437,31 +438,26 @@ class SearchFilter
 
         if (!empty($filters['createdFrom'])) {
             if (TabDossier::CREATED_FROM_FORMULAIRE_USAGER === $filters['createdFrom']) {
-                $qb->andWhere('s.createdBy IS NULL');
+                $qb->andWhere('s.creationSource IN (:creationSourcesFormUsager)')
+                    ->setParameter('creationSourcesFormUsager', CreationSource::getFormUsagerValues());
             } elseif (TabDossier::CREATED_FROM_FORMULAIRE_PRO === $filters['createdFrom']) {
-                $qb->andWhere('s.createdBy IS NOT NULL');
+                $qb->andWhere('s.creationSource = :creationSourceFormPro')
+                    ->setParameter('creationSourceFormPro', CreationSource::getFormProValues());
             } elseif (TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V1 === $filters['createdFrom']) {
-                $qb->andWhere('s.isImported = 0');
-                $qb->andWhere('s.createdBy IS NULL');
-                $qb->andWhere('s.createdFrom IS NULL');
+                $qb->andWhere('s.creationSource = :creationSourceFormUsagerV1')
+                    ->setParameter('creationSourceFormUsagerV1', CreationSource::FORM_USAGER_V1->value);
             } elseif (TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V2 === $filters['createdFrom']) {
-                $qb->andWhere('s.isImported = 0');
-                $qb->andWhere('s.createdBy IS NULL');
-                $qb->andWhere('s.createdFrom IS NOT NULL');
+                $qb->andWhere('s.creationSource = :creationSourceFormUsagerV2')
+                    ->setParameter('creationSourceFormUsagerV2', CreationSource::FORM_USAGER_V2->value);
             } elseif (TabDossier::CREATED_FROM_FORMULAIRE_PRO_BO === $filters['createdFrom']) {
-                $qb->andWhere('s.isImported = 0');
-                $qb->andWhere('s.createdBy IS NOT NULL');
-                $qb->leftJoin('s.createdBy', 'userCreatedBy');
-                $qb->andWhere('userCreatedBy.roles NOT LIKE :roleApi')
-                    ->setParameter('roleApi', '%'.User::ROLE_API_USER.'%');
+                $qb->andWhere('s.creationSource = :creationSourceFormProBo')
+                    ->setParameter('creationSourceFormProBo', CreationSource::FORM_PRO->value);
             } elseif (TabDossier::CREATED_FROM_API === $filters['createdFrom']) {
-                $qb->andWhere('s.isImported = 0');
-                $qb->andWhere('s.createdBy IS NOT NULL');
-                $qb->leftJoin('s.createdBy', 'userCreatedBy');
-                $qb->andWhere('userCreatedBy.roles LIKE :roleApi')
-                    ->setParameter('roleApi', '%'.User::ROLE_API_USER.'%');
+                $qb->andWhere('s.creationSource = :creationSourceApi')
+                    ->setParameter('creationSourceApi', CreationSource::API->value);
             } elseif (TabDossier::CREATED_FROM_IMPORT === $filters['createdFrom']) {
-                $qb->andWhere('s.isImported = 1');
+                $qb->andWhere('s.creationSource = :creationSourceImport')
+                    ->setParameter('creationSourceImport', CreationSource::IMPORT->value);
             }
         }
 

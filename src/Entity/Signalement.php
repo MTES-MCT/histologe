@@ -2360,7 +2360,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function isV2(): bool
     {
-        return $this->createdFrom || $this->createdBy;
+        return !in_array($this->creationSource, CreationSource::getV1Sources(), true);
     }
 
     public function getCreatedFrom(): ?SignalementDraft
