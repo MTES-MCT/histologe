@@ -164,10 +164,20 @@ async function submitPayload(formElement) {
   }
 }
 
-const containerElements = document.querySelectorAll(
-  '[data-ajax-form] dialog, [data-ajax-form] .single-ajax-form-container'
-);
-containerElements.forEach((containerElement) => handleSubmitForm(containerElement));
+export function attachAjaxFormHandlers() {
+  const containerElements = document.querySelectorAll(
+    '[data-ajax-form] dialog, [data-ajax-form] .single-ajax-form-container'
+  );
+  containerElements.forEach((containerElement) => {
+    if (containerElement.dataset.ajaxBound === '1') {
+      return;
+    }
+
+    containerElement.dataset.ajaxBound = '1';
+    handleSubmitForm(containerElement);
+  });
+}
+attachAjaxFormHandlers();
 
 function resetSubmitButton(submitElement) {
   if (submitElement) {

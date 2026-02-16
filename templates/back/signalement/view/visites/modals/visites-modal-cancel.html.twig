@@ -5,7 +5,7 @@
                 <div class="fr-modal__body">
                     <form method="POST"
                         name="signalement-cancel-visite" class="signalement-cancel-visite"
-                        data-intervention-id="{{intervention.id}}" enctype="application/json"
+                        data-intervention-id="{{intervention.id}}" enctype="multipart/form-data"
                         action="{{ path('back_signalement_visite_cancel',{uuid:signalement.uuid}) }}">
                         <div class="fr-modal__header">
                             <button type="button" class="fr-btn--close fr-btn" title="Fermer la fenêtre modale" aria-controls="cancel-visite-modal-{{intervention.id}}">Fermer</button>
