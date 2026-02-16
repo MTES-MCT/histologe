@@ -55,40 +55,6 @@ class SignalementControllerTest extends WebTestCase
     /**
      * @dataProvider provideStatusSignalement
      */
-    public function testDisplaySuiviProcedure(string $status): void
-    {
-        $client = static::createClient();
-
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine');
-        /** @var Signalement $signalement */
-        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
-            'statut' => $status,
-            'isUsagerAbandonProcedure' => null,
-        ]);
-        $signalementUser = $this->getSignalementUser($signalement);
-        $client->loginUser($signalementUser, 'code_suivi');
-
-        /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
-        $urlSuiviProcedureUser = $router->generate('front_suivi_procedure', [
-            'code' => $signalement->getCodeSuivi(),
-        ]).'?suiviAuto='.Suivi::ARRET_PROCEDURE;
-
-        $client->request('GET', $urlSuiviProcedureUser);
-
-        if (in_array($status, [SignalementStatus::DRAFT->value, SignalementStatus::DRAFT_ARCHIVED->value])) {
-            $this->assertResponseRedirects('/authentification/'.$signalement->getCodeSuivi());
-        } elseif (SignalementStatus::ARCHIVED->value === $status) {
-            $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi());
-        } else {
-            $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/procedure');
-        }
-    }
-
-    /**
-     * @dataProvider provideStatusSignalement
-     */
     public function testDisplaySuiviSignalement(string $status): void
     {
         $client = static::createClient();
@@ -253,6 +219,9 @@ class SignalementControllerTest extends WebTestCase
         $this->assertStringContainsString($signalementUser->getUser()->getNomComplet(), $lastSuivi->getDescription());
         $this->assertStringContainsString('vouloir poursuivre la procédure', $lastSuivi->getDescription());
         $this->assertStringContainsString('Commentaire : on veut vraiment vivre mieux &lt;b&gt;test&lt;/b&gt;', $lastSuivi->getDescription());
+
+        $crawler = $client->request('GET', $urlSuiviSignalementUserResponse);
+        $this->assertStringContainsString('Vous avez indiqué vouloir poursuivre la procédure récemment.', $crawler->filter('.fr-alert.fr-alert--info p')->text());
     }
 
     public function testSuiviSignalementProcedureBascule(): void
