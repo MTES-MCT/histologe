@@ -4,7 +4,7 @@
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                 <div class="fr-modal__body">
 
-                    {% set action_route = app.request.get('_route') in ['front_suivi_signalement', 'front_suivi_signalement_messages', 'front_suivi_signalement_documents'] 
+                    {% set action_route = app.request.attributes.get('_route') in ['front_suivi_signalement', 'front_suivi_signalement_messages', 'front_suivi_signalement_documents'] 
                         ? path('signalement_delete_file', { code: signalement.codeSuivi }) 
                         : path('back_signalement_delete_file', { uuid: signalement.uuid }) 
                     %}

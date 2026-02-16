@@ -1,5 +1,5 @@
 {% set container_class = 'fr-container' %}
-{% if 'back_' in app.request.get('_route') and app.user is not null %}
+{% if 'back_' in app.request.attributes.get('_route') and app.user is not null %}
     {% set container_class = 'fr-container-sml' %}
 {% endif %}
 
@@ -7,7 +7,7 @@
 <html lang="fr" {{ mise_en_berne ? 'data-fr-mourning' : '' }}>
 <head>
     <meta charset="UTF-8">
-    {% if 'back_' in app.request.get('_route') or 'front_suivi_signalement' in app.request.get('_route') %}
+    {% if 'back_' in app.request.attributes.get('_route') or 'front_suivi_signalement' in app.request.attributes.get('_route') %}
         <meta name="robots" content="noindex, nofollow">
     {% else %}
         <meta name="robots" content="index, follow">
@@ -52,7 +52,7 @@
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-arrows/icons-arrows.min.css') }}">
     <link rel="stylesheet" href={{ asset('build/app.css') }}>
 
-    {% if app.request.get('_route') == 'back_beta_statistiques' %}
+    {% if app.request.attributes.get('_route') == 'back_beta_statistiques' %}
         <meta http-equiv="refresh" content="{{ refreshDelayInSeconds|default(3600) }}"> <!-- in seconds -->
     {% endif %}
 
@@ -61,7 +61,7 @@
         {{ encore_entry_script_tags('app') }}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
-    {% if matomo is defined and matomo.enable == 1 and 'activate_account' not in app.request.get('_route') %}
+    {% if matomo is defined and matomo.enable == 1 and 'activate_account' not in app.request.attributes.get('_route') %}
         <!-- Matomo -->
         <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
             var _paq = window._paq = window._paq || [];
@@ -110,7 +110,7 @@
       data-mode-maintenance="{{ maintenance.enable }}">
 {% include "skiplink.html.twig" %}
 {% include 'maintenance/banner.html.twig' %}
-{% if 'back_' not in app.request.get('_route') %}
+{% if 'back_' not in app.request.attributes.get('_route') %}
     {% include "header.html.twig" %}
     {% include "flash-messages.html.twig" %}
 {% else %}
@@ -118,14 +118,14 @@
 {% endif %}
 
 {% block body %}{% endblock %}
-{% if 'back_cartographie' not in app.request.get('_route') %}
+{% if 'back_cartographie' not in app.request.attributes.get('_route') %}
     {% include "footer.html.twig" %}
 {% endif %}
 
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
 <script nomodule src="{{ asset('build/dsfr/dsfr.nomodule.min.js') }}"></script>
 
-{% if 'back_signalement_view' in app.request.get('_route') %}
+{% if 'back_signalement_view' in app.request.attributes.get('_route') %}
     <script src="{{ asset('build/popper/umd/popper.min.js') }}"></script>
     <script src="{{ asset('build/tinymce/tinymce.min.js') }}"></script>
 {% endif %}

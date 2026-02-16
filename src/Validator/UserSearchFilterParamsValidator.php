@@ -16,7 +16,7 @@ class UserSearchFilterParamsValidator extends ConstraintValidator
     /**
      * @param UserSearchFilterParams $constraint
      */
-    public function validate(mixed $entity, Constraint $constraint)
+    public function validate(mixed $entity, Constraint $constraint): void
     {
         if (!$entity instanceof UserSearchFilter) {
             return;

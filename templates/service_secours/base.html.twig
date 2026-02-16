@@ -13,7 +13,7 @@
 
     <link rel="stylesheet" href="{{ asset('build/dsfr/dsfr.min.css') }}">
 
-    {% if matomo is defined and matomo.enable == 1 and 'activate_account' not in app.request.get('_route') %}
+    {% if matomo is defined and matomo.enable == 1 and 'activate_account' not in app.request.attributes.get('_route') %}
         <!-- Matomo -->
         <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
             var _paq = window._paq = window._paq || [];
