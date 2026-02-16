@@ -13,7 +13,6 @@ use App\Entity\Suivi;
 use App\Entity\SuiviFile;
 use App\Entity\User;
 use App\Event\SuiviCreatedEvent;
-use App\EventListener\SignalementUpdatedListener;
 use App\Security\User\SignalementUser;
 use App\Service\Sanitizer;
 use Doctrine\Persistence\ManagerRegistry;
@@ -319,14 +318,14 @@ class SuiviManager extends Manager
         return $description;
     }
 
-    public function createSuiviFromEditFormChanges(
+    public function createSuiviFromEditUsager(
         Signalement $signalement,
         SignalementUser $signalementUser,
-        string $editFormKey
+        string $editUsagerFormKey,
     ): void {
-        $editFormChanges = $signalement->getChanges();
+        $changes = $signalement->getChanges();
 
-        if ($editFormChanges === []) {
+        if ([] === $changes) {
             return;
         }
 
@@ -337,29 +336,29 @@ class SuiviManager extends Manager
             ? UserManager::OCCUPANT
             : UserManager::DECLARANT;
 
-            $editForm = $editFormChanges[$editFormKey];
-            $description = $user->getNomComplet(true)
-                .' ('.$usagerType.') a mis à jour les '.$editForm['label'].'.';
+        $editForm = $changes[$editUsagerFormKey];
+        $description = $user->getNomComplet(true)
+            .' ('.$usagerType.') a mis à jour les '.$editForm['label'].'.';
 
-            $description .= '<br>Voici les modifications :';
-            $description .= '<ul>';
+        $description .= '<br>Voici les modifications :';
+        $description .= '<ul>';
 
-            foreach ($editForm['fieldChanges'] as $change) {
-                $description .= sprintf(
-                    '<li>%s : %s</li>',
-                    $change['label'],
-                    $change['new'] ?? '-'
-                );
-            }
-
-            $description .= '</ul>';
-            $this->createSuivi(
-                signalement: $signalement,
-                description: $description,
-                type: Suivi::TYPE_USAGER,
-                category: SuiviCategory::SIGNALEMENT_EDITED_FO,
-                user: $user,
-                isPublic: true,
+        foreach ($editForm['fieldChanges'] as $change) {
+            $description .= sprintf(
+                '<li>%s : %s</li>',
+                $change['label'],
+                $change['new'] ?? '-'
             );
+        }
+
+        $description .= '</ul>';
+        $this->createSuivi(
+            signalement: $signalement,
+            description: $description,
+            type: Suivi::TYPE_USAGER,
+            category: SuiviCategory::SIGNALEMENT_EDITED_FO,
+            user: $user,
+            isPublic: true,
+        );
     }
 }

@@ -2,15 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Enum\SuiviCategory;
-use App\Entity\Signalement;
-use App\Entity\Suivi;
-use App\Entity\User;
 use App\EventListener\SignalementUpdatedListener;
 use App\Form\CoordonneesAgenceType;
 use App\Form\CoordonneesBailleurType;
 use App\Manager\SuiviManager;
-use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use App\Security\Voter\SignalementFoVoter;
@@ -59,7 +54,7 @@ class SignalementEditController extends AbstractController
             && $formCoordonneesBailleur->isValid()
         ) {
             $this->entityManager->flush();
-            $this->suiviManager->createSuiviFromEditFormChanges(
+            $this->suiviManager->createSuiviFromEditUsager(
                 $signalement,
                 $signalementUser,
                 SignalementUpdatedListener::EDIT_COORDONNEES_BAILLEUR
@@ -98,7 +93,8 @@ class SignalementEditController extends AbstractController
         $form = $this->createForm(CoordonneesAgenceType::class, $signalement);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->suiviManager->createSuiviFromEditFormChanges(
+            $this->entityManager->flush();
+            $this->suiviManager->createSuiviFromEditUsager(
                 $signalement,
                 $signalementUser,
                 SignalementUpdatedListener::EDIT_COORDONNEES_AGENCE

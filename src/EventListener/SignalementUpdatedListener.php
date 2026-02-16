@@ -3,10 +3,11 @@
 namespace App\EventListener;
 
 use App\Entity\Signalement;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
-use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[AsEntityListener(event: Events::preUpdate, method: 'preUpdate', entity: Signalement::class)]
 class SignalementUpdatedListener
@@ -26,7 +27,7 @@ class SignalementUpdatedListener
                 'adresseProprio' => 'Adresse',
                 'codePostalProprio' => 'Code postal',
                 'villeProprio' => 'Ville',
-            ]
+            ],
         ],
         self::EDIT_COORDONNEES_AGENCE => [
             'label' => 'coordonnées de l\'agence',
@@ -40,9 +41,13 @@ class SignalementUpdatedListener
                 'adresseAgence' => 'Adresse',
                 'codePostalAgence' => 'Code postal',
                 'villeAgence' => 'Ville',
-            ]
-        ]
+            ],
+        ],
     ];
+
+    public function __construct(private readonly Security $security)
+    {
+    }
 
     public function preUpdate(Signalement $signalement, PreUpdateEventArgs $event): void
     {
@@ -50,14 +55,15 @@ class SignalementUpdatedListener
             $signalement->setUpdateOccurred(true);
         }
 
+        if (!$this->supports()) {
+            return;
+        }
+
         $editedForms = [];
-
         foreach (self::EDIT_FIELDS as $editFormKey => $editFormMapping) {
-
             $fieldChanges = [];
 
             foreach ($editFormMapping['fields'] as $fieldName => $label) {
-
                 if (!$event->hasChangedField($fieldName)) {
                     continue;
                 }
@@ -71,11 +77,11 @@ class SignalementUpdatedListener
 
                 $fieldChanges[$fieldName] = [
                     'label' => $label,
-                    'new'   => $new,
+                    'new' => $new,
                 ];
             }
 
-            if ($fieldChanges !== []) {
+            if ([] !== $fieldChanges) {
                 $editedForms[$editFormKey] = [
                     'label' => $editFormMapping['label'],
                     'fieldChanges' => $fieldChanges,
@@ -84,5 +90,17 @@ class SignalementUpdatedListener
         }
 
         $signalement->setChanges($editedForms);
+    }
+
+    private function supports(): bool
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        if (!$user) {
+            return false;
+        }
+
+        return in_array('ROLE_USAGER', $user->getRoles(), true);
     }
 }
