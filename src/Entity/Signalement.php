@@ -521,6 +521,10 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $loginBailleur = null;
 
+    private bool $updateOccurred = false;
+
+    private array $changes = [];
+
     public function __construct()
     {
         $this->criticites = new ArrayCollection();
@@ -2870,5 +2874,29 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         }
 
         return null;
+    }
+
+    public function isUpdateOccurred(): bool
+    {
+        return $this->updateOccurred;
+    }
+
+    public function setUpdateOccurred(bool $updateOccurred): static
+    {
+        $this->updateOccurred = $updateOccurred;
+
+        return $this;
+    }
+
+    public function getChanges(): array
+    {
+        return $this->changes;
+    }
+
+    public function setChanges(array $changes): self
+    {
+        $this->changes = $changes;
+
+        return $this;
     }
 }

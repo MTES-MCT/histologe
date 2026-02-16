@@ -7,7 +7,6 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
-use App\EventListener\SignalementUpdatedListener;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
@@ -24,7 +23,6 @@ class SuiviManagerTest extends KernelTestCase
 {
     private const string REF_SIGNALEMENT = '2022-8';
     private ManagerRegistry $managerRegistry;
-    private SignalementUpdatedListener $signalementUpdatedListener;
     private EventDispatcherInterface $eventDispatcherInterface;
     private Security $security;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
@@ -38,7 +36,6 @@ class SuiviManagerTest extends KernelTestCase
     {
         self::bootKernel();
         $this->managerRegistry = self::getContainer()->get(ManagerRegistry::class);
-        $this->signalementUpdatedListener = static::getContainer()->get(SignalementUpdatedListener::class);
         $this->eventDispatcherInterface = static::getContainer()->get(EventDispatcherInterface::class);
         $this->security = static::getContainer()->get(Security::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
@@ -48,7 +45,6 @@ class SuiviManagerTest extends KernelTestCase
         $this->userManager = static::getContainer()->get(UserManager::class);
         $this->suiviManager = new SuiviManager(
             $this->managerRegistry,
-            $this->signalementUpdatedListener,
             $this->eventDispatcherInterface,
             $this->security,
             $this->htmlSanitizerInterface,
