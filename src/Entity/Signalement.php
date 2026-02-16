@@ -2893,7 +2893,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->changes;
     }
 
-    public function setChanges(array $changes): self
+    public function setChanges(array $changes): static
     {
         $this->changes = $changes;
 
