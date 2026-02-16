@@ -202,4 +202,27 @@ class AppExtensionTest extends WebTestCase
         yield 'Less than 4 relances' => [2, 'fr-badge--new'];
         yield 'Zero relance' => [0, 'fr-badge--new'];
     }
+
+    /**
+     * @dataProvider provideHosts
+     */
+    public function testExtractRootDomain(string $host, string $expected): void
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+        /** @var AppExtension $appExtension */
+        $appExtension = $container->get(AppExtension::class);
+
+        $this->assertSame($expected, $appExtension->extractRootDomain($host));
+    }
+
+    public function provideHosts(): \Generator
+    {
+        yield 'localhost' => ['localhost', 'localhost'];
+        yield 'localhost service-secours' => ['services-secours.localhost', 'services-secours.localhost'];
+        yield 'staging' => ['histologe-staging.incubateur.net', 'histologe-staging.incubateur.net'];
+        yield 'staging service-secours' => ['services-secours.histologe-staging.incubateur.net', 'services-secours.histologe-staging.incubateur.net'];
+        yield 'production' => ['bo.signal-logement.beta.gouv.fr', 'signal-logement.beta.gouv.fr'];
+        yield 'production service-secours' => ['services-secours.signal-logement.beta.gouv.fr', 'services-secours.signal-logement.beta.gouv.fr'];
+    }
 }
