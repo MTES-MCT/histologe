@@ -2,7 +2,7 @@
 
 namespace App\Dto\ServiceSecours;
 
-class ServiceSecoursStep5
+class FormServiceSecoursStep5
 {
     public array $desordres = [];
     public ?string $desordresAutre = null;

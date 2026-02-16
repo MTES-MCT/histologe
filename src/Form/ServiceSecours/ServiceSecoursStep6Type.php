@@ -2,7 +2,7 @@
 
 namespace App\Form\ServiceSecours;
 
-use App\Dto\ServiceSecours\ServiceSecoursStep6;
+use App\Dto\ServiceSecours\FormServiceSecoursStep6;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,7 +18,7 @@ class ServiceSecoursStep6Type extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ServiceSecoursStep6::class,
+            'data_class' => FormServiceSecoursStep6::class,
         ]);
     }
 }

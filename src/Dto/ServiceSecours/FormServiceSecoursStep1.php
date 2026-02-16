@@ -4,7 +4,7 @@ namespace App\Dto\ServiceSecours;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ServiceSecoursStep1
+class FormServiceSecoursStep1
 {
     #[Assert\NotBlank(message: 'Le matricule est obligatoire.', groups: ['step1'])]
     #[Assert\Length(max: 50, groups: ['step1'])]

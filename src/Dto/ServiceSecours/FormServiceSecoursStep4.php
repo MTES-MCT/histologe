@@ -5,7 +5,7 @@ namespace App\Dto\ServiceSecours;
 use App\Validator as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ServiceSecoursStep4
+class FormServiceSecoursStep4
 {
     public ?bool $isBailleurAverti = null;
 

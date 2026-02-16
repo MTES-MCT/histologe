@@ -2,7 +2,7 @@
 
 namespace App\Form\ServiceSecours;
 
-use App\Dto\ServiceSecours\ServiceSecoursStep3;
+use App\Dto\ServiceSecours\FormServiceSecoursStep3;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -43,7 +43,7 @@ class ServiceSecoursStep3Type extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ServiceSecoursStep3::class,
+            'data_class' => FormServiceSecoursStep3::class,
         ]);
     }
 }

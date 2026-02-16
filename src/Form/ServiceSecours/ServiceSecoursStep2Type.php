@@ -2,7 +2,7 @@
 
 namespace App\Form\ServiceSecours;
 
-use App\Dto\ServiceSecours\ServiceSecoursStep2;
+use App\Dto\ServiceSecours\FormServiceSecoursStep2;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -63,7 +63,7 @@ class ServiceSecoursStep2Type extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ServiceSecoursStep2::class,
+            'data_class' => FormServiceSecoursStep2::class,
         ]);
     }
 }

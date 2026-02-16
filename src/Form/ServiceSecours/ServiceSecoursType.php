@@ -2,7 +2,7 @@
 
 namespace App\Form\ServiceSecours;
 
-use App\Dto\ServiceSecours\ServiceSecours;
+use App\Dto\ServiceSecours\FormServiceSecours;
 use Symfony\Component\Form\Flow\AbstractFlowType;
 use Symfony\Component\Form\Flow\FormFlowBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,7 +24,7 @@ class ServiceSecoursType extends AbstractFlowType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => ServiceSecours::class,
+            'data_class' => FormServiceSecours::class,
             'step_property_path' => 'currentStep',
         ]);
     }

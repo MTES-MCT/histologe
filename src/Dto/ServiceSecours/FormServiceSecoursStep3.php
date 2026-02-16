@@ -5,7 +5,7 @@ namespace App\Dto\ServiceSecours;
 use App\Validator as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ServiceSecoursStep3
+class FormServiceSecoursStep3
 {
     #[Assert\NotBlank(groups: ['step3'])]
     public ?string $profilOccupant = null;

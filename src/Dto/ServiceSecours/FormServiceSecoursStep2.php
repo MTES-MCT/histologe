@@ -4,7 +4,7 @@ namespace App\Dto\ServiceSecours;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class ServiceSecoursStep2
+class FormServiceSecoursStep2
 {
     #[Assert\NotBlank(groups: ['step2'])]
     public ?string $adresseComplete = null;
