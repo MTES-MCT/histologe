@@ -11,6 +11,8 @@ use App\Service\MessageHelper;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementEditControllerTest extends WebTestCase
@@ -95,8 +97,32 @@ class SignalementEditControllerTest extends WebTestCase
         );
 
         $this->assertResponseIsSuccessful();
-        $this->assertEquals($newMail, $signalement->getMailDeclarant());
-        $this->assertFalse($signalement->getIsCguTiersAccepted());
+        $this->assertNull($signalement->getMailDeclarant());
+        $this->assertNull($signalement->getIsCguTiersAccepted());
+        $this->assertEquals($newMail, $signalement->getTiersInvitation()->getEmail());
+        $this->assertEmailCount(3);
+        $this->assertEmailSubjectContains($this->getMailerMessages()[0], 'Invitation à suivre un dossier de signalement');
+        $this->assertEmailSubjectContains($this->getMailerMessages()[1], 'Nouveau suivi');
+        $this->assertEmailSubjectContains($this->getMailerMessages()[2], 'Nouvelle mise à jour de votre signalement !');
+
+        // Test d'une seconde invitation alors qu'une invitation est déjà en attente
+        $newMail = 'paulpot2@gmail.com';
+        $payload = [
+            'nom' => 'Pote2',
+            'prenom' => 'Paul',
+            'mail' => $newMail,
+            '_token' => $this->getCsrfToken('signalement_edit_invite_tiers_', $signalement->getId()),
+        ];
+        $this->client->request(
+            method: 'POST',
+            uri: $route,
+            server: ['CONTENT_TYPE' => 'application/json'],
+            content: (string) json_encode($payload)
+        );
+        $this->assertResponseStatusCodeSame(Response::HTTP_CONFLICT);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('message', $response);
+        $this->assertEquals('Une invitation est déjà en attente pour ce dossier.', $response['message']);
     }
 
     /**
@@ -160,7 +186,7 @@ class SignalementEditControllerTest extends WebTestCase
         $payload['_token'] = $this->getCsrfToken($token, $this->signalement->getId());
         $payload[key($payload)] = str_repeat('x', 5000);
         $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
-        $this->assertResponseStatusCodeSame(400);
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
 
     public function testEditLogementVacantSuccess(): void
@@ -184,7 +210,9 @@ class SignalementEditControllerTest extends WebTestCase
         $lastSuivi = $signalement->getSuivis()->last();
         $this->assertNotFalse($lastSuivi);
         $this->assertEquals('Le logement a été marqué comme vacant.', $lastSuivi->getDescription());
-        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        /** @var Session $session */
+        $session = $this->client->getRequest()->getSession();
+        $flashBag = $session->getFlashBag();
         $this->assertTrue($flashBag->has('success'));
         $successMessages = $flashBag->get('success');
         $this->assertEquals(['title' => 'Modifications enregistrées', 'message' => 'Le statut d\'occupation du logement a bien été modifié.'], $successMessages[0]);

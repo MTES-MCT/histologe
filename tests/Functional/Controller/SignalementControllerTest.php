@@ -10,6 +10,7 @@ use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
+use App\Entity\TiersInvitation;
 use App\Repository\FileRepository;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SuiviRepository;
@@ -18,6 +19,7 @@ use App\Tests\UserHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementControllerTest extends WebTestCase
@@ -338,17 +340,156 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('POST', $urlCoordonneesTiers, [
             'usager_coordonnees_tiers' => [
-                'nomDeclarant' => 'Pote',
-                'prenomDeclarant' => 'Paul',
-                'mailDeclarant' => $newMail,
+                'lastName' => 'Pote',
+                'firstName' => 'Paul',
+                'email' => $newMail,
                 '_token' => $this->generateCsrfToken($client, 'usager_coordonnees_tiers'),
             ],
         ]);
 
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi());
-        $this->assertEquals($newMail, $signalement->getMailDeclarant());
-        $this->assertFalse($signalement->getIsCguTiersAccepted());
+
+        $entityManager->clear();
+        /** @var Signalement $signalementReloaded */
+        $signalementReloaded = $entityManager
+            ->getRepository(Signalement::class)
+            ->find($signalement->getId());
+
+        $invitation = $signalementReloaded->getTiersInvitation();
+        $this->assertNotNull($invitation);
+        $this->assertEquals($newMail, $invitation->getEmail());
+        $this->assertNull($signalementReloaded->getMailDeclarant());
         $this->assertEmailCount(2);
+    }
+
+    public function testAccepterInvitation(): void
+    {
+        $client = static::createClient();
+        $container = $client->getContainer();
+        $entityManager = $container->get('doctrine')->getManager();
+
+        /** @var Signalement $signalement */
+        $signalement = $entityManager
+            ->getRepository(Signalement::class)
+            ->findOneBy(['reference' => '2024-01']);
+
+        // On crée une invitation en base
+        $invitation = new TiersInvitation();
+        $invitation->setSignalement($signalement);
+        $invitation->setLastname('Pote');
+        $invitation->setFirstname('Paul');
+        $invitation->setEmail('paulpote@gmail.com');
+
+        $signalement->setTiersInvitation($invitation);
+        $entityManager->persist($invitation);
+        $entityManager->persist($signalement);
+        $entityManager->flush();
+
+        $client->loginUser(
+            $this->getSignalementUser($signalement),
+            'code_suivi'
+        );
+
+        $url = $container->get(RouterInterface::class)->generate(
+            'front_suivi_invitation_accepter',
+            ['code' => $signalement->getCodeSuivi()]
+        );
+
+        $client->request('GET', $url);
+
+        $this->assertResponseRedirects(
+            '/suivre-mon-signalement/'.$signalement->getCodeSuivi()
+        );
+
+        $entityManager->clear();
+
+        $signalementReloaded = $entityManager
+            ->getRepository(Signalement::class)
+            ->find($signalement->getId());
+
+        $this->assertEquals('paulpote@gmail.com', $signalementReloaded->getMailDeclarant());
+        $this->assertNull($signalementReloaded->getTiersInvitation());
+    }
+
+    public function testRefuserInvitation(): void
+    {
+        $client = static::createClient();
+        $container = $client->getContainer();
+        $entityManager = $container->get('doctrine')->getManager();
+
+        $signalement = $entityManager
+            ->getRepository(Signalement::class)
+            ->findOneBy(['reference' => '2024-01']);
+
+        $invitation = new TiersInvitation();
+        $invitation->setSignalement($signalement);
+        $invitation->setEmail('paulpote@gmail.com');
+        $invitation->setLastname('Pote');
+        $invitation->setFirstname('Paul');
+
+        $signalement->setTiersInvitation($invitation);
+        $entityManager->persist($invitation);
+        $entityManager->persist($signalement);
+        $entityManager->flush();
+
+        $client->loginUser(
+            $this->getSignalementUser($signalement),
+            'code_suivi'
+        );
+
+        $url = $container->get(RouterInterface::class)->generate(
+            'front_suivi_invitation_refuser',
+            ['code' => $signalement->getCodeSuivi()]
+        );
+
+        $client->request('GET', $url);
+
+        $this->assertResponseRedirects('/');
+
+        $entityManager->clear();
+
+        $signalementReloaded = $entityManager
+            ->getRepository(Signalement::class)
+            ->find($signalement->getId());
+
+        $this->assertNull($signalementReloaded->getMailDeclarant());
+        $this->assertNull($signalementReloaded->getTiersInvitation());
+    }
+
+    public function testCoordonneesTiersBloqueSiInvitationExistante(): void
+    {
+        $client = static::createClient();
+        $container = $client->getContainer();
+        $entityManager = $container->get('doctrine')->getManager();
+
+        $signalement = $entityManager
+            ->getRepository(Signalement::class)
+            ->findOneBy(['reference' => '2024-01']);
+
+        $invitation = new TiersInvitation();
+        $invitation->setSignalement($signalement);
+        $invitation->setEmail('existing@gmail.com');
+        $invitation->setLastname('Pote');
+        $invitation->setFirstname('Paul');
+
+        $signalement->setTiersInvitation($invitation);
+        $entityManager->persist($invitation);
+        $entityManager->persist($signalement);
+        $entityManager->flush();
+
+        $client->loginUser(
+            $this->getSignalementUser($signalement),
+            'code_suivi'
+        );
+
+        $url = $container->get(RouterInterface::class)->generate(
+            'front_suivi_signalement_coordonnees_tiers',
+            ['code' => $signalement->getCodeSuivi()]
+        );
+
+        $client->request('GET', $url);
+
+        $this->assertResponseStatusCodeSame(403);
     }
 
     public function testUsagerAddDocuments(): void
@@ -389,7 +530,9 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/documents');
 
-        $flashBag = $client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        /** @var Session $session */
+        $session = $client->getRequest()->getSession();
+        $flashBag = $session->getFlashBag();
         $this->assertTrue($flashBag->has('success'));
         $successMessages = $flashBag->get('success');
         $this->assertEquals(['title' => 'Documents ajoutés', 'message' => 'Vos documents ont bien été enregistrés.'], $successMessages[0]);
@@ -432,7 +575,9 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/documents');
 
-        $flashBag = $client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        /** @var Session $session */
+        $session = $client->getRequest()->getSession();
+        $flashBag = $session->getFlashBag();
         $this->assertFalse($flashBag->has('success'));
     }
 
