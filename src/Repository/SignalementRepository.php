@@ -382,7 +382,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->where('s.statut NOT IN (:statutList)')
             ->setParameter('statutList', SignalementStatus::excludedStatuses())
             ->andWhere('s.createdSource = :createdSource')
-            ->setParameter('createdSource', CreationSource::FORM_USAGER_V2->value);
+            ->setParameter('createdSource', CreationSource::FORM_USAGER_V2);
 
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);

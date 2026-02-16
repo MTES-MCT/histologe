@@ -31,25 +31,25 @@ enum CreationSource: string
     public static function getV1Sources(): array
     {
         return [
-            self::FORM_USAGER_V1->value,
-            self::IMPORT->value,
+            self::FORM_USAGER_V1,
+            self::IMPORT,
         ];
     }
 
     public static function getFormUsagerValues(): array
     {
         return [
-            self::FORM_USAGER_V1->value,
-            self::FORM_USAGER_V2->value,
-            self::IMPORT->value,
+            self::FORM_USAGER_V1,
+            self::FORM_USAGER_V2,
+            self::IMPORT,
         ];
     }
 
     public static function getFormProValues(): array
     {
         return [
-            self::FORM_PRO->value,
-            self::API->value,
+            self::FORM_PRO,
+            self::API,
         ];
     }
 }
