@@ -115,7 +115,7 @@ class SignalementVoter extends Voter
             self::SIGN_CREATE_SUIVI => $this->canCreateSuivi($subject, $user, $vote),
             self::SIGN_AFFECTATION_TOGGLE => $this->canToggleAffectation($subject, $user),
             self::SIGN_AFFECTATION_SEE => $this->canSeeAffectation($subject, $user),
-            self::SIGN_SWITCH_LOGEMENT_VACANT => $this->security->isGranted('ROLE_ADMIN'),
+            self::SIGN_SWITCH_LOGEMENT_VACANT => $this->canSwitchLogementVacant($subject, $user),
             default => false,
         };
     }
@@ -385,8 +385,8 @@ class SignalementVoter extends Voter
         if (!$this->isAdminOrTerritoryAdmin($signalement, $user)) {
             return false;
         }
-        if (!in_array($signalement->getStatut(), [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE])) {
-            return false;
+        if (in_array($signalement->getStatut(), [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE])) {
+            return true;
         }
 
         return false;
