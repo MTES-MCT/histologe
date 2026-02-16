@@ -20,7 +20,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -45,12 +44,7 @@ class SignalementCreateController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly AutoAssigner $autoAssigner,
         private readonly UserManager $userManager,
-        #[Autowire(param: 'feature_api_creation_signalement')]
-        private readonly ?string $featureApiCreationSignalement = null,
     ) {
-        if (!empty($this->featureApiCreationSignalement)) {
-            throw $this->createNotFoundException('La création de signalement via l\'API est désactivée.');
-        }
     }
 
     /**
