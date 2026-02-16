@@ -2,7 +2,7 @@
 
 <div class="fr-grid-row" data-territory-timezone="{{ territory_timezone }}">
     <div class="fr-col-12 fr-col-md-6">
-        <h3 class="fr-h5 fr-mb-3v">Visites du logement</h3>
+        <h3 class="fr-h5 fr-mb-3v">Visites du logement ({{ visites|length > 0 ? visites|length : 'aucune'}})</h3>
 
         <p class="fr-text--sm fr-pb-5v">
             Les visites sont gérées par les partenaires ayant la compétence "Visites" et les responsables de territoires.

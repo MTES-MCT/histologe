@@ -7,7 +7,7 @@
                 </button>
             {% endif %}
             <button class="fr-btn fr-btn--secondary fr-fi-edit-line" aria-controls="reschedule-visite-modal-{{intervention.id}}" data-fr-opened="false">
-                Modifier la date
+                Modifier la visite
             </button>
             {% if workflow_can(intervention, 'confirm') %}
                 <button class="fr-btn fr-fi-check-line" aria-controls="confirm-visite-modal-{{intervention.id}}" data-fr-opened="false">

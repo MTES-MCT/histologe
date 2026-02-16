@@ -389,10 +389,8 @@ class SignalementVisitesController extends AbstractController
         if ($errorMessage) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => \sprintf('Erreurs lors de la modification de la visite : %s, veuillez réessayer.', $errorMessage)];
         } elseif ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest, $partner)) {
-            if ($intervention->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d')) {
-                $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM];
-            } else {
-                $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_ADD];
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM];
+            if ($intervention->getScheduledAt()->format('Y-m-d') > (new \DateTimeImmutable())->format('Y-m-d')) {
                 $eventDispatcher->dispatch(
                     new InterventionRescheduledEvent(
                         $intervention,
