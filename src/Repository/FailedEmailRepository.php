@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Command\Cron\RetryFailedEmailsCommand;
 use App\Entity\FailedEmail;
+use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,7 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method FailedEmail[]    findAll()
  * @method FailedEmail[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class FailedEmailRepository extends ServiceEntityRepository
+class FailedEmailRepository extends ServiceEntityRepository implements EntityCleanerRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -27,7 +28,7 @@ class FailedEmailRepository extends ServiceEntityRepository
      */
     public function findEmailToResend(): array
     {
-        $startAt = new \DateTimeImmutable(RetryFailedEmailsCommand::START_AT_YEAR.'-01-01 00:00:00');
+        $startAt = new \DateTimeImmutable(FailedEmail::EXPIRATION_PERIOD);
 
         return $this->createQueryBuilder('f')
             ->where('f.isResendSuccessful = :isResendSuccessful')
@@ -39,5 +40,18 @@ class FailedEmailRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function cleanOlderThan(string $period = FailedEmail::EXPIRATION_PERIOD): int
+    {
+        $queryBuilder = $this->createQueryBuilder('f');
+        $queryBuilder->delete()
+            ->andWhere('DATE(f.createdAt) <= :createdAt')
+            ->setParameter('createdAt', (new \DateTimeImmutable($period))->format('Y-m-d'));
+
+        return $queryBuilder->getQuery()->execute();
     }
 }
