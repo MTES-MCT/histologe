@@ -121,6 +121,12 @@ jobs:
       - name: Check PHP coding standard (PHP-CS-Fixer)
         run: composer cs-check
 
+      - name: Check if Vue js files are correctly linted
+        run: npm run es-vue-check
+
+      - name: Check if Vanilla js files are correctly linted
+        run: npm run es-js-check
+
       - name: Load Doctrine fixtures
         run: |
           composer require symfony/orm-pack

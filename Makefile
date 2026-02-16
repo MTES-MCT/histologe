@@ -246,9 +246,15 @@ cs-fix: ## Fix source code with PHP-CS-Fixer
 es-vue-fix: ## Fix vue source code with es-lint --fix
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm npm run es-vue-fix
 
+es-vue-check: ## Fix vue source code with es-lint --fix-dry-run
+	@$(DOCKER_COMP) exec -it signal_logement_phpfpm npm run es-vue-check
+
 es-js-fix: ## Fix vanilla js source code with es-lint --fix
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm npm run es-js-fix
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm npm run es-js-prettier-fix
+
+es-js-check: ## Fix vanilla js source code with es-lint --fix-dry-run
+	@$(DOCKER_COMP) exec -it signal_logement_phpfpm npm run es-js-check
 
 ## Tools
 tools-build: ## [Tools] Install tools (Matomo, ...) local environement

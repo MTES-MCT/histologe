@@ -67,7 +67,9 @@
     "watch-bo": "encore dev --watch",
     "build": "encore production --progress",
     "es-vue-fix": "node_modules/.bin/eslint --config=eslint.vue.config.mjs --fix assets/scripts/vue/**/*.{ts,vue}",
+    "es-vue-check": "node_modules/.bin/eslint --config=eslint.vue.config.mjs --fix-dry-run assets/scripts/vue/**/*.{ts,vue}",
     "es-js-fix": "node_modules/.bin/eslint --config=eslint.vanilla.config.mjs --fix assets/scripts/vanilla/*",
+    "es-js-check": "node_modules/.bin/eslint --config=eslint.vanilla.config.mjs --fix-dry-run assets/scripts/vanilla/*",
     "es-js-prettier-fix": "node_modules/.bin/prettier --write 'assets/scripts/vanilla/**/*.js'"
   },
   "engines": {
