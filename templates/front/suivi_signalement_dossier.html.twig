@@ -132,7 +132,7 @@
 					</div>
 				{% elseif is_granted('SIGN_USAGER_EDIT', signalement) %}
 					<div class="fr-callout fr-icon-information-line fr-callout--blue-cumulus fr-mt-3w">
-						<p class="fr-callout__title">Invitez un tiers</p>
+						<p class="fr-callout__title">{% if signalement.tiersInvitation %}Invitation en attente{% else %}Invitez un tiers{% endif %}</p>
 						<p>
 							Afin de faciliter les échanges avec l'administration, 
 							vous pouvez donner accès au dossier à un tiers (famille, travailleur social, association, etc.) 

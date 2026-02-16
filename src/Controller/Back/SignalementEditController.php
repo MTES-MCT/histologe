@@ -189,7 +189,6 @@ class SignalementEditController extends AbstractController
                         type: NotificationMailerType::TYPE_INVITE_TIERS,
                         to: $inviteTiersRequest->getMail(),
                         signalement: $signalement,
-                        // tu pourras ajouter le token dans le mail plus tard
                     )
                 );
                 $subscriptionCreated = $suiviManager->addInviteSuiviFromBo($signalement, $inviteTiersRequest);

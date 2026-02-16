@@ -929,7 +929,7 @@ class SignalementController extends AbstractController
         SuiviManager $suiviManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -986,7 +986,7 @@ class SignalementController extends AbstractController
         EntityManagerInterface $entityManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         // On bloque si tiers déjà renseigné ou si créé par tiers
         if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant()) || null !== $signalement->getTiersInvitation()) {
@@ -1038,7 +1038,7 @@ class SignalementController extends AbstractController
         EntityManagerInterface $entityManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        // $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_BASCULE_PROCEDURE, $signalement); // TODO : mettre un voter
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_ANSWER_INVITATION, $signalement);
 
         $tiersInvitation = $signalement->getTiersInvitation();
         if (!$tiersInvitation) {
@@ -1062,7 +1062,7 @@ class SignalementController extends AbstractController
         EntityManagerInterface $entityManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        // $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_BASCULE_PROCEDURE, $signalement); // TODO : mettre un voter
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_ANSWER_INVITATION, $signalement);
 
         $tiersInvitation = $signalement->getTiersInvitation();
         if (!$tiersInvitation) {
