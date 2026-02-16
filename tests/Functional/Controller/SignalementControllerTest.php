@@ -634,9 +634,9 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
-            'reference' => '2025-10',
+            'reference' => '2023-2',
         ]);
-        $this->assertNotNull($signalement, 'Le signalement 2025-10 doit exister en base de test.');
+        $this->assertNotNull($signalement, 'Le signalement 2023-2 doit exister en base de test.');
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);

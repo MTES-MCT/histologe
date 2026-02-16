@@ -70,6 +70,8 @@
 					{% set errorMessage = 'Votre dossier a été fermé il y a plus de 30 jours, vous ne pouvez plus envoyer de messages.' %}
 				{% elseif signalement.statut.name == 'ARCHIVED' %}
 					{% set errorMessage = 'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.' %}
+				{% elseif signalement.isLogementVacant %}
+					{% set errorMessage = 'Votre logement a été marqué comme vacant, vous ne pouvez plus envoyer de messages.' %}
 				{% else %}
 					{% set errorMessage = 'Vous ne pouvez plus envoyer de messages.' %}
 				{% endif %}

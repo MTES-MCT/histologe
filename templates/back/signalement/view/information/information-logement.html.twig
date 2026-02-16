@@ -71,14 +71,6 @@
         {% endif %}
     </div>
     <div class="fr-col-12 fr-col-md-6">
-        <strong>Logement vacant :</strong>
-        {% if signalement.isLogementVacant is same as true %}
-            {{ picto.picto_yes() }}
-        {% elseif signalement.isLogementVacant is same as false %}
-            {{ picto.picto_no() }}
-        {% endif %}
-    </div>
-    <div class="fr-col-12 fr-col-md-6">
         <strong>Invariant fiscal saisi par l'usager :</strong>
         {{ signalement.numeroInvariant}}
     </div>

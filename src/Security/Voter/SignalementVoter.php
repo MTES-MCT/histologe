@@ -39,6 +39,7 @@ class SignalementVoter extends Voter
     public const string SIGN_CREATE_SUIVI = 'SIGN_CREATE_SUIVI';
     public const string SIGN_AFFECTATION_TOGGLE = 'SIGN_AFFECTATION_TOGGLE';
     public const string SIGN_AFFECTATION_SEE = 'SIGN_AFFECTATION_SEE';
+    public const string SIGN_SWITCH_LOGEMENT_VACANT = 'SIGN_SWITCH_LOGEMENT_VACANT';
 
     public function __construct(
         private readonly Security $security,
@@ -69,6 +70,7 @@ class SignalementVoter extends Voter
                 self::SIGN_CREATE_SUIVI,
                 self::SIGN_AFFECTATION_TOGGLE,
                 self::SIGN_AFFECTATION_SEE,
+                self::SIGN_SWITCH_LOGEMENT_VACANT,
             ])
             && ($subject instanceof Signalement);
     }
@@ -113,6 +115,7 @@ class SignalementVoter extends Voter
             self::SIGN_CREATE_SUIVI => $this->canCreateSuivi($subject, $user, $vote),
             self::SIGN_AFFECTATION_TOGGLE => $this->canToggleAffectation($subject, $user),
             self::SIGN_AFFECTATION_SEE => $this->canSeeAffectation($subject, $user),
+            self::SIGN_SWITCH_LOGEMENT_VACANT => $this->canSwitchLogementVacant($subject, $user),
             default => false,
         };
     }
@@ -375,5 +378,17 @@ class SignalementVoter extends Voter
         }
 
         return $this->canSeeAffectation($signalement, $user);
+    }
+
+    public function canSwitchLogementVacant(Signalement $signalement, User $user): bool
+    {
+        if (!$this->isAdminOrTerritoryAdmin($signalement, $user)) {
+            return false;
+        }
+        if (in_array($signalement->getStatut(), [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE])) {
+            return true;
+        }
+
+        return false;
     }
 }

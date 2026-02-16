@@ -56,7 +56,7 @@ class FileVoter extends Voter
 
     private function canFrontDelete(File $file): bool
     {
-        return $file->isUsagerFile();
+        return $file->isUsagerFile() && !$file->getSignalement()->getIsLogementVacant();
     }
 
     private function canCreate(File $file, User $user): bool

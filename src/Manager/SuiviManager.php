@@ -58,6 +58,10 @@ class SuiviManager extends Manager
         bool $createSubscription = true,
         bool &$subscriptionCreated = false,
     ): Suivi {
+        // ticket #5252 Bloquer les emails aux usagers quand logement vacant
+        if ($signalement->getIsLogementVacant() && $isPublic) {
+            $isPublic = false;
+        }
         $suivi = (new Suivi())
             ->setCreatedBy($user)
             ->setPartner($partner)

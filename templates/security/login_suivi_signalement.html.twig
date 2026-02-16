@@ -57,6 +57,8 @@
                         </div>
                     </div>
                 </fieldset>
+            {% else %}
+                <input type="hidden" name="visitor-type" value="{{constant('App\\Manager\\UserManager::OCCUPANT')}}">
             {% endif %}
             <fieldset class="fr-fieldset fr-grid-row fr-grid-row--gutters" id="fieldset-identity" aria-labelledby="fieldset-identity-legend">
                 <legend class="fr-fieldset__legend" id="fieldset-identity-legend">

@@ -1,0 +1,64 @@
+<dialog aria-labelledby="fr-modal-edit-logement-vacant-title" id="fr-modal-edit-logement-vacant" class="fr-modal">
+    <div class="fr-container fr-container--fluid fr-container-md">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-10 fr-col-lg-10">
+                <div class="fr-modal__body">
+                    <form method="POST" action="{{ path('back_signalement_edit_logement_vacant',{uuid:signalement.uuid}) }}">
+                        <div class="fr-modal__header">
+                        <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-edit-logement-vacant">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            {% if signalement.isLogementVacant %}
+                                <h1 class="fr-modal__title">Sortir du statut de logement vacant</h1>
+                                <div class="fr-alert fr-alert--warning fr-my-2v">
+                                    <p>
+                                        Si vous sortez le logement du statut de vacant, les usagers (occupant et tiers déclarant) recevront à nouveau des mises à jour sur le dossier, 
+                                        et vous pourrez à nouveau partager des suivis aux usagers.
+                                    </p>
+                                </div>
+                                <input type="hidden" name="logementVacant" value="0">
+                            {% else %}
+                                <h1 class="fr-modal__title">Enregistrer comme logement vacant</h1>
+                                <div class="fr-alert fr-alert--warning fr-my-2v">
+                                    <p>
+                                        Si vous indiquez que le logement est vacant, les usagers (occupant et tiers déclarant) ne recevront plus de mises à jour sur le dossier, 
+                                        et vous ne pourrez plus partager de suivis aux usagers. Vous pourrez toujours effectuer des actions sur le dossier.
+                                        <br>
+                                        Les usagers pourront continuer à accéder au dossier mais ne pourront plus interagir.
+                                    </p>
+                                </div>
+                                {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
+                                    <div class="fr-alert fr-alert--error fr-my-2v">
+                                        <p>
+                                            Le déclarant tiers bailleur ne recevra plus de mise à jour sur le dossier et ne pourra plus interagir avec le dossier.
+                                        </p>
+                                    </div>
+                                {% endif %}
+                                <input type="hidden" name="logementVacant" value="1">
+                            {% endif %}
+                            <input type="hidden" name="_token" value="{{ csrf_token('signalement_switch_logement_vacant') }}">
+                        </div>
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button class="fr-btn fr-icon-check-line" type="submit">
+                                        {% if signalement.isLogementVacant %}
+                                            Enregistrer comme logement occupé
+                                        {% else %}
+                                            Enregistrer comme logement vacant
+                                        {% endif %}
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="fr-modal-edit-logement-vacant" type="button">
+                                        Annuler
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</dialog>
