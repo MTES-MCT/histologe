@@ -212,16 +212,14 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
 
     public function extractRootDomain(string $host): string
     {
-        // Retire le premier sous-domaine s'il est présent
+        $backofficeSubdomains = ['bo', 'service-secours'];
         $parts = explode('.', $host);
 
-        // Si c'est un domaine à un seul niveau (comme "localhost"), on le retourne tel quel
-        if (1 === count($parts)) {
-            return $host;
+        if (in_array(strtolower($parts[0]), $backofficeSubdomains, true)) {
+            return implode('.', array_slice($parts, 1));
         }
 
-        // Sinon on retire la première partie (le sous-domaine)
-        return implode('.', array_slice($parts, 1));
+        return $host;
     }
 
     public function getAcceptedMimeTypes(?string $type = null): string
