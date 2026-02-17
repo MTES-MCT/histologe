@@ -76,7 +76,7 @@ class SignalementControllerTest extends WebTestCase
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
 
         if (SignalementStatus::ARCHIVED->value === $status) {
-            $this->assertResponseStatusCodeSame(200);
+            $this->assertResponseStatusCodeSame(Response::HTTP_OK);
             $this->assertEquals(
                 'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.',
                 $crawler->filter('.fr-tile__detail')->text()
@@ -379,6 +379,7 @@ class SignalementControllerTest extends WebTestCase
         $invitation->setLastname('Pote');
         $invitation->setFirstname('Paul');
         $invitation->setEmail('paulpote@gmail.com');
+        $invitation->setToken('token-invitation-test');
 
         $signalement->setTiersInvitation($invitation);
         $entityManager->persist($invitation);
@@ -392,7 +393,7 @@ class SignalementControllerTest extends WebTestCase
 
         $url = $container->get(RouterInterface::class)->generate(
             'front_suivi_invitation_accepter',
-            ['code' => $signalement->getCodeSuivi()]
+            ['code' => $signalement->getCodeSuivi(), 'token' => $invitation->getToken()]
         );
 
         $client->request('GET', $url);
@@ -426,6 +427,7 @@ class SignalementControllerTest extends WebTestCase
         $invitation->setEmail('paulpote@gmail.com');
         $invitation->setLastname('Pote');
         $invitation->setFirstname('Paul');
+        $invitation->setToken('token-invitation-test');
 
         $signalement->setTiersInvitation($invitation);
         $entityManager->persist($invitation);
@@ -439,7 +441,7 @@ class SignalementControllerTest extends WebTestCase
 
         $url = $container->get(RouterInterface::class)->generate(
             'front_suivi_invitation_refuser',
-            ['code' => $signalement->getCodeSuivi()]
+            ['code' => $signalement->getCodeSuivi(), 'token' => $invitation->getToken()]
         );
 
         $client->request('GET', $url);
@@ -471,6 +473,7 @@ class SignalementControllerTest extends WebTestCase
         $invitation->setEmail('existing@gmail.com');
         $invitation->setLastname('Pote');
         $invitation->setFirstname('Paul');
+        $invitation->setToken('token-invitation-test');
 
         $signalement->setTiersInvitation($invitation);
         $entityManager->persist($invitation);
@@ -489,7 +492,7 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('GET', $url);
 
-        $this->assertResponseStatusCodeSame(403);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
     public function testUsagerAddDocuments(): void

@@ -32,25 +32,22 @@ class SignalementInviteTiersMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
+        $token = $signalement->getTiersInvitation()->getToken();
         $linkAccepter = $this->generateLink(
             'front_suivi_invitation_accepter',
-            ['code' => $signalement->getCodeSuivi()]
+            ['code' => $signalement->getCodeSuivi(), 'token' => $token]
         );
         $linkRefuser = $this->generateLink(
             'front_suivi_invitation_refuser',
-            ['code' => $signalement->getCodeSuivi()]
+            ['code' => $signalement->getCodeSuivi(), 'token' => $token]
         );
 
         return [
-            'signalement_prenomOccupant' => $notificationMail->getSignalement()->getPrenomOccupant(),
-            'signalement_nomOccupant' => $notificationMail->getSignalement()->getNomOccupant(),
-            'signalement_adresseOccupant' => $notificationMail->getSignalement()->getAdresseOccupant(),
-            'signalement_cpOccupant' => $notificationMail->getSignalement()->getCpOccupant(),
-            'signalement_villeOccupant' => $notificationMail->getSignalement()->getVilleOccupant(),
-            'lien_suivi' => $this->generateLink(
-                'front_suivi_signalement',
-                ['code' => $notificationMail->getSignalement()->getCodeSuivi()]
-            ),
+            'signalement_prenomOccupant' => $signalement->getPrenomOccupant(),
+            'signalement_nomOccupant' => $signalement->getNomOccupant(),
+            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
+            'signalement_cpOccupant' => $signalement->getCpOccupant(),
+            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
             'lien_accepter_invitation' => $linkAccepter,
             'lien_refuser_invitation' => $linkRefuser,
         ];

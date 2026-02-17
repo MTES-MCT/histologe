@@ -119,10 +119,12 @@ class SignalementEditControllerTest extends WebTestCase
             server: ['CONTENT_TYPE' => 'application/json'],
             content: (string) json_encode($payload)
         );
-        $this->assertResponseStatusCodeSame(Response::HTTP_CONFLICT);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('message', $response);
-        $this->assertEquals('Une invitation est déjà en attente pour ce dossier.', $response['message']);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $msgFlash = 'Une invitation est déjà en attente pour ce dossier.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
     /**

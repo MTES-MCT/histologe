@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Repository\TiersInvitationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Email;
 
 #[ORM\Entity(repositoryClass: TiersInvitationRepository::class)]
 class TiersInvitation
@@ -20,17 +22,27 @@ class TiersInvitation
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Signalement $signalement;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
+    #[Assert\Length(max: 50)]
+    #[Assert\NotBlank(message: 'Veuillez saisir un nom de famille.')]
     private ?string $lastname = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
+    #[Assert\Length(max: 50)]
+    #[Assert\NotBlank(message: 'Veuillez saisir un prénom.')]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(max: 255)]
+    #[Assert\NotBlank(message: 'Veuillez saisir une adresse e-mail.')]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail n\'est pas valide.')]
     private ?string $email = null;
 
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $telephone = null;
+
+    #[ORM\Column(length: 64, unique: true)]
+    private string $token;
 
     public function getId(): ?int
     {
@@ -93,6 +105,18 @@ class TiersInvitation
     public function setTelephone(?string $telephone): static
     {
         $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(string $token): static
+    {
+        $this->token = $token;
 
         return $this;
     }

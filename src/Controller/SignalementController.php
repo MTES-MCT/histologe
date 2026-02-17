@@ -988,12 +988,13 @@ class SignalementController extends AbstractController
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
-        // On bloque si tiers déjà renseigné ou si créé par tiers
+        // On bloque si tiers déjà renseigné, si créé par tiers ou si une invitation est déjà en cours
         if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant()) || null !== $signalement->getTiersInvitation()) {
             throw $this->createAccessDeniedException();
         }
 
         $invitation = new TiersInvitation();
+        $invitation->setToken(bin2hex(random_bytes(32)));
         $invitation->setSignalement($signalement);
 
         $form = $this->createForm(
@@ -1004,6 +1005,8 @@ class SignalementController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $signalement->setTiersInvitation($invitation);
+            $entityManager->persist($signalement);
             $entityManager->persist($invitation);
             $entityManager->flush();
 
@@ -1030,9 +1033,10 @@ class SignalementController extends AbstractController
         ]);
     }
 
-    #[Route('/invitation/{code}/accepter', name: 'front_suivi_invitation_accepter', methods: ['GET', 'POST'])]
+    #[Route('/invitation/{code}/accepter/{token}', name: 'front_suivi_invitation_accepter', methods: ['GET', 'POST'])]
     public function accepterInvitation(
         string $code,
+        string $token,
         SignalementRepository $signalementRepository,
         SignalementManager $signalementManager,
         EntityManagerInterface $entityManager,
@@ -1044,6 +1048,9 @@ class SignalementController extends AbstractController
         if (!$tiersInvitation) {
             throw $this->createNotFoundException('Invitation non trouvée');
         }
+        if ($tiersInvitation->getToken() !== $token) {
+            throw $this->createAccessDeniedException('Token invalide');
+        }
 
         $signalementManager->updateFromTiersInvitation($signalement);
 
@@ -1054,9 +1061,10 @@ class SignalementController extends AbstractController
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
     }
 
-    #[Route('/invitation/{code}/refuser', name: 'front_suivi_invitation_refuser', methods: ['GET', 'POST'])]
+    #[Route('/invitation/{code}/refuser/{token}', name: 'front_suivi_invitation_refuser', methods: ['GET', 'POST'])]
     public function refuserInvitation(
         string $code,
+        string $token,
         SignalementRepository $signalementRepository,
         SuiviManager $suiviManager,
         EntityManagerInterface $entityManager,
@@ -1067,6 +1075,9 @@ class SignalementController extends AbstractController
         $tiersInvitation = $signalement->getTiersInvitation();
         if (!$tiersInvitation) {
             throw $this->createNotFoundException('Invitation non trouvée');
+        }
+        if ($tiersInvitation->getToken() !== $token) {
+            throw $this->createAccessDeniedException('Token invalide');
         }
 
         $suiviManager->addRefuseInvitationSuivi($signalement);
