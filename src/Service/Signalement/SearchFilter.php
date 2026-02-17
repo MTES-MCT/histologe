@@ -18,7 +18,6 @@ use App\Repository\EpciRepository;
 use App\Repository\SignalementQualificationRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Utils\CommuneHelper;
 use App\Utils\ImportCommune;
@@ -437,27 +436,18 @@ class SearchFilter
         }
 
         if (!empty($filters['createdFrom'])) {
-            if (TabDossier::CREATED_FROM_FORMULAIRE_USAGER === $filters['createdFrom']) {
+            if (CreationSource::CREATED_FROM_FORMULAIRE_USAGER === $filters['createdFrom']) {
                 $qb->andWhere('s.creationSource IN (:creationSourcesFormUsager)')
                     ->setParameter('creationSourcesFormUsager', CreationSource::getFormUsagerValues());
-            } elseif (TabDossier::CREATED_FROM_FORMULAIRE_PRO === $filters['createdFrom']) {
-                $qb->andWhere('s.creationSource = :creationSourceFormPro')
+            } elseif (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $filters['createdFrom']) {
+                $qb->andWhere('s.creationSource IN (:creationSourceFormPro)')
                     ->setParameter('creationSourceFormPro', CreationSource::getFormProValues());
-            } elseif (TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V1 === $filters['createdFrom']) {
-                $qb->andWhere('s.creationSource = :creationSourceFormUsagerV1')
-                    ->setParameter('creationSourceFormUsagerV1', CreationSource::FORM_USAGER_V1->value);
-            } elseif (TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V2 === $filters['createdFrom']) {
-                $qb->andWhere('s.creationSource = :creationSourceFormUsagerV2')
-                    ->setParameter('creationSourceFormUsagerV2', CreationSource::FORM_USAGER_V2->value);
-            } elseif (TabDossier::CREATED_FROM_FORMULAIRE_PRO_BO === $filters['createdFrom']) {
-                $qb->andWhere('s.creationSource = :creationSourceFormProBo')
-                    ->setParameter('creationSourceFormProBo', CreationSource::FORM_PRO->value);
-            } elseif (TabDossier::CREATED_FROM_API === $filters['createdFrom']) {
-                $qb->andWhere('s.creationSource = :creationSourceApi')
-                    ->setParameter('creationSourceApi', CreationSource::API->value);
-            } elseif (TabDossier::CREATED_FROM_IMPORT === $filters['createdFrom']) {
-                $qb->andWhere('s.creationSource = :creationSourceImport')
-                    ->setParameter('creationSourceImport', CreationSource::IMPORT->value);
+            } else {
+                $creationSource = CreationSource::tryFrom($filters['createdFrom']);
+                if (null !== $creationSource) {
+                    $qb->andWhere('s.creationSource = :creationSource')
+                        ->setParameter('creationSource', $creationSource->value);
+                }
             }
         }
 

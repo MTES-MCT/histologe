@@ -114,7 +114,7 @@ class SignalementBoManager
 
         $signalement->setStatut(SignalementStatus::DRAFT);
         $signalement->setCreatedBy($this->user);
-        $signalement->setCreationSource(CreationSource::FORM_PRO);
+        $signalement->setCreationSource(CreationSource::FORM_PRO_BO);
         $signalement->setTerritory($territory);
         $signalement->setIsCguAccepted(true);
         if (!$signalement->getReference()) {

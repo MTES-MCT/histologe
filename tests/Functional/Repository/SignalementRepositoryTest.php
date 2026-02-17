@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Repository;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
@@ -15,7 +16,6 @@ use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -277,7 +277,7 @@ class SignalementRepositoryTest extends KernelTestCase
         static::getContainer()->get('security.token_storage')->setToken($token);
 
         $tabQueryParameter = new TabQueryParameters(
-            createdFrom: TabDossier::CREATED_FROM_FORMULAIRE_USAGER,
+            createdFrom: CreationSource::CREATED_FROM_FORMULAIRE_USAGER,
             sortBy: 'createdAt',
             orderBy: 'DESC',
         );
@@ -310,7 +310,7 @@ class SignalementRepositoryTest extends KernelTestCase
         static::getContainer()->get('security.token_storage')->setToken($token);
 
         $tabQueryParameter = new TabQueryParameters(
-            createdFrom: TabDossier::CREATED_FROM_FORMULAIRE_PRO,
+            createdFrom: CreationSource::CREATED_FROM_FORMULAIRE_PRO,
             sortBy: 'createdAt',
             orderBy: 'DESC',
         );
@@ -374,7 +374,7 @@ class SignalementRepositoryTest extends KernelTestCase
         static::getContainer()->get('security.token_storage')->setToken($token);
 
         $tabQueryParameter = new TabQueryParameters(
-            createdFrom: TabDossier::CREATED_FROM_FORMULAIRE_USAGER,
+            createdFrom: CreationSource::CREATED_FROM_FORMULAIRE_USAGER,
             sortBy: 'createdAt',
             orderBy: 'DESC',
         );

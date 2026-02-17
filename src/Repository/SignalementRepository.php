@@ -1439,11 +1439,11 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         if ($tabQueryParameters->createdFrom) {
-            if (TabDossier::CREATED_FROM_FORMULAIRE_USAGER === $tabQueryParameters->createdFrom) {
-                $qb->andWhere('s.creationSource = :creationSource')
+            if (CreationSource::CREATED_FROM_FORMULAIRE_USAGER === $tabQueryParameters->createdFrom) {
+                $qb->andWhere('s.creationSource IN (:creationSource)')
                     ->setParameter('creationSource', CreationSource::getFormUsagerValues());
-            } elseif (TabDossier::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
-                $qb->andWhere('s.creationSource = :creationSource')
+            } elseif (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
+                $qb->andWhere('s.creationSource IN (:creationSource)')
                     ->setParameter('creationSource', CreationSource::getFormProValues());
             }
         }
@@ -1493,7 +1493,7 @@ class SignalementRepository extends ServiceEntityRepository
             tabQueryParameters: $tabQueryParameters
         );
 
-        if (TabDossier::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
+        if (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
             $qb
                 ->leftJoin('s.createdBy', 'u')
                 ->leftJoin('u.userPartners', 'up')
@@ -1510,7 +1510,7 @@ class SignalementRepository extends ServiceEntityRepository
                     s.reference,
                     CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)),
                     s.createdAt,'.
-                    (TabDossier::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom
+                    (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom
                         ? 'CONCAT(UPPER(u.nom), \' \', u.prenom), p.nom,'
                         : '\'\' , \'\' ,'
                     ).
