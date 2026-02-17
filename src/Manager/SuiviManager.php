@@ -321,7 +321,6 @@ class SuiviManager extends Manager
     public function createSuiviFromEditUsager(
         Signalement $signalement,
         SignalementUser $signalementUser,
-        string $editUsagerFormKey,
     ): void {
         $changes = $signalement->getChanges();
 
@@ -332,21 +331,19 @@ class SuiviManager extends Manager
         /** @var User $user */
         $user = $signalementUser->getUser();
 
-        $usagerType = ($user === $signalement->getSignalementUsager()?->getOccupant())
-            ? UserManager::OCCUPANT
-            : UserManager::DECLARANT;
+        /** @var array{label:string, fieldChanges:array} $sectionChanges */
+        // Un seul formulaire est soumis à la fois,
+        // donc un seul bloc de changements est attendu.
+        $sectionChanges = current($changes);
 
-        $editForm = $changes[$editUsagerFormKey];
         $description = sprintf(
-            '%s (%s) a mis à jour les %s.',
+            '%s ont été modifiées par %s.',
+            $sectionChanges['label'],
             $user->getNomComplet(true),
-            $usagerType,
-            $editForm['label']
         );
-        $description .= '<br>Voici les modifications :';
         $description .= '<ul>';
 
-        foreach ($editForm['fieldChanges'] as $change) {
+        foreach ($sectionChanges['fieldChanges'] as $change) {
             $description .= sprintf(
                 '<li>%s : %s</li>',
                 $change['label'],

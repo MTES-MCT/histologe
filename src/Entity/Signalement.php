@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityChangesTrait;
 use App\Entity\Behaviour\EntityHistoryCollectionInterface;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\AffectationStatus;
@@ -49,6 +50,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['mail_declarant'], name: 'idx_signalement_mail_declarant')]
 class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInterface
 {
+    use EntityChangesTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -520,10 +523,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $loginBailleur = null;
-
-    private bool $updateOccurred = false;
-
-    private array $changes = [];
 
     public function __construct()
     {
@@ -2874,29 +2873,5 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         }
 
         return null;
-    }
-
-    public function isUpdateOccurred(): bool
-    {
-        return $this->updateOccurred;
-    }
-
-    public function setUpdateOccurred(bool $updateOccurred): static
-    {
-        $this->updateOccurred = $updateOccurred;
-
-        return $this;
-    }
-
-    public function getChanges(): array
-    {
-        return $this->changes;
-    }
-
-    public function setChanges(array $changes): static
-    {
-        $this->changes = $changes;
-
-        return $this;
     }
 }

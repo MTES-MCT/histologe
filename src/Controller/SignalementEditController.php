@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\EventListener\SignalementUpdatedListener;
+use App\Entity\Signalement;
 use App\Form\CoordonneesAgenceType;
 use App\Form\CoordonneesBailleurType;
 use App\Manager\SuiviManager;
@@ -53,12 +53,7 @@ class SignalementEditController extends AbstractController
             $formCoordonneesBailleur->isSubmitted()
             && $formCoordonneesBailleur->isValid()
         ) {
-            $this->entityManager->flush();
-            $this->suiviManager->createSuiviFromEditUsager(
-                $signalement,
-                $signalementUser,
-                SignalementUpdatedListener::EDIT_COORDONNEES_BAILLEUR
-            );
+            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
 
             $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées du bailleur ont bien été mises à jour.']);
 
@@ -93,13 +88,7 @@ class SignalementEditController extends AbstractController
         $form = $this->createForm(CoordonneesAgenceType::class, $signalement);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityManager->flush();
-            $this->suiviManager->createSuiviFromEditUsager(
-                $signalement,
-                $signalementUser,
-                SignalementUpdatedListener::EDIT_COORDONNEES_AGENCE
-            );
-
+            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
             $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées de l\'agence ont bien été mises à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
@@ -109,5 +98,16 @@ class SignalementEditController extends AbstractController
             'signalement' => $signalement,
             'form' => $form,
         ]);
+    }
+
+    private function saveChangesAndCreateSuivi(Signalement $signalement, SignalementUser $signalementUser): void
+    {
+        $this->entityManager->wrapInTransaction(function () use ($signalement, $signalementUser): void {
+            $this->entityManager->flush();
+            $this->suiviManager->createSuiviFromEditUsager(
+                $signalement,
+                $signalementUser,
+            );
+        });
     }
 }

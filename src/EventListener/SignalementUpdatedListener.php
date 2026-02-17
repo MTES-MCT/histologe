@@ -15,9 +15,9 @@ class SignalementUpdatedListener
     public const string EDIT_COORDONNEES_BAILLEUR = 'coordonnees_bailleur';
     public const string EDIT_COORDONNEES_AGENCE = 'coordonnees_agence';
 
-    public const array EDIT_FIELDS = [
+    public const array EDIT_SECTIONS = [
         self::EDIT_COORDONNEES_BAILLEUR => [
-            'label' => 'coordonnées du bailleur',
+            'label' => 'Les coordonnées du bailleur',
             'fields' => [
                 'nomProprio' => 'Nom',
                 'prenomProprio' => 'Prénom',
@@ -30,7 +30,7 @@ class SignalementUpdatedListener
             ],
         ],
         self::EDIT_COORDONNEES_AGENCE => [
-            'label' => 'coordonnées de l\'agence',
+            'label' => 'Les coordonnées de l\'agence',
             'fields' => [
                 'denominationAgence' => 'Dénomination',
                 'nomAgence' => 'Nom',
@@ -51,19 +51,19 @@ class SignalementUpdatedListener
 
     public function preUpdate(Signalement $signalement, PreUpdateEventArgs $event): void
     {
-        if ([] !== $event->getEntityChangeSet()) {
-            $signalement->setUpdateOccurred(true);
-        }
+        // On continue de flagger qu'un changement est détecté.
+        // On le fait AVANT le verrou `supports` pour que le BO puisse afficher l'info même si on ne détaille pas les changements.
+        $signalement->markUpdateOccurred();
 
-        if (!$this->supports()) {
+        if (!$this->supports()) { // On ne traite que les modifications de l'usager
             return;
         }
 
-        $editedForms = [];
-        foreach (self::EDIT_FIELDS as $editFormKey => $editFormMapping) {
+        $changes = [];
+        foreach (self::EDIT_SECTIONS as $sectionKey => $sectionDefinition) {
             $fieldChanges = [];
 
-            foreach ($editFormMapping['fields'] as $fieldName => $label) {
+            foreach ($sectionDefinition['fields'] as $fieldName => $label) {
                 if (!$event->hasChangedField($fieldName)) {
                     continue;
                 }
@@ -82,14 +82,14 @@ class SignalementUpdatedListener
             }
 
             if ([] !== $fieldChanges) {
-                $editedForms[$editFormKey] = [
-                    'label' => $editFormMapping['label'],
+                $changes[$sectionKey] = [
+                    'label' => $sectionDefinition['label'],
                     'fieldChanges' => $fieldChanges,
                 ];
             }
         }
 
-        $signalement->setChanges($editedForms);
+        $signalement->registerChanges($changes);
     }
 
     private function supports(): bool
