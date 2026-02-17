@@ -13,7 +13,7 @@ use App\Entity\Suivi;
 use App\Entity\SuiviFile;
 use App\Entity\User;
 use App\Event\SuiviCreatedEvent;
-use App\EventListener\SignalementUpdatedListener;
+use App\Security\User\SignalementUser;
 use App\Service\Sanitizer;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -25,7 +25,6 @@ class SuiviManager extends Manager
 {
     public function __construct(
         protected ManagerRegistry $managerRegistry,
-        private readonly SignalementUpdatedListener $signalementUpdatedListener,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly Security $security,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
@@ -133,7 +132,7 @@ class SuiviManager extends Manager
         string $description,
     ): bool {
         $subscriptionCreated = false;
-        if ($this->signalementUpdatedListener->updateOccurred()) {
+        if ($signalement->isUpdateOccurred()) {
             /** @var User $user */
             $user = $this->security->getUser();
             $this->createSuivi(
@@ -317,5 +316,49 @@ class SuiviManager extends Manager
         }
 
         return $description;
+    }
+
+    public function createSuiviFromEditUsager(
+        Signalement $signalement,
+        SignalementUser $signalementUser,
+    ): void {
+        $changes = $signalement->getChanges();
+
+        if ([] === $changes) {
+            return;
+        }
+
+        /** @var User $user */
+        $user = $signalementUser->getUser();
+
+        /** @var array{label:string, fieldChanges:array} $sectionChanges */
+        // Un seul formulaire est soumis à la fois,
+        // donc un seul bloc de changements est attendu.
+        $sectionChanges = current($changes);
+
+        $description = sprintf(
+            '%s ont été modifiées par %s.',
+            $sectionChanges['label'],
+            $user->getNomComplet(true),
+        );
+        $description .= '<ul>';
+
+        foreach ($sectionChanges['fieldChanges'] as $change) {
+            $description .= sprintf(
+                '<li>%s : %s</li>',
+                $change['label'],
+                $change['new'] ?? '-'
+            );
+        }
+
+        $description .= '</ul>';
+        $this->createSuivi(
+            signalement: $signalement,
+            description: $description,
+            type: Suivi::TYPE_USAGER,
+            category: SuiviCategory::SIGNALEMENT_EDITED_FO,
+            user: $user,
+            isPublic: true,
+        );
     }
 }
