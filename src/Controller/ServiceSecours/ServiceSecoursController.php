@@ -2,11 +2,11 @@
 
 namespace App\Controller\ServiceSecours;
 
-use App\Dto\Api\Request\SignalementRequest;
-use App\Entity\Enum\ProfileDeclarant;
+use App\Dto\ServiceSecours\FormServiceSecours;
 use App\Entity\ServiceSecoursRoute;
-use App\Form\ServiceSecoursType;
+use App\Form\ServiceSecours\ServiceSecoursType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Flow\FormFlowInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,17 +30,18 @@ class ServiceSecoursController extends AbstractController
         Request $request,
         ServiceSecoursRoute $serviceSecoursRoute,
     ): Response {
-        $signalementRequest = new SignalementRequest();
-        $signalementRequest->profilDeclarant = ProfileDeclarant::SERVICE_SECOURS->value;
-
-        $form = $this->createForm(ServiceSecoursType::class, $signalementRequest);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        $serviceSecours = new FormServiceSecours();
+        /** @var FormFlowInterface $flow */
+        $flow = $this->createForm(ServiceSecoursType::class, $serviceSecours);
+        $flow->handleRequest($request);
+        if ($flow->isSubmitted() && $flow->isValid() && $flow->isFinished()) {
             // TODO : voir les traitements fait dans App\Controller\Api\SignalementCreateController.php pour les adapter / refactoriser ici
+
+            return $this->render('service_secours/success.html.twig', ['serviceSecoursRoute' => $serviceSecoursRoute]);
         }
 
         return $this->render('service_secours/index.html.twig', [
-            'form' => $form,
+            'form' => $flow->getStepForm(),
             'serviceSecoursRoute' => $serviceSecoursRoute,
         ]);
     }
