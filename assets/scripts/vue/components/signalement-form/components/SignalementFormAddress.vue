@@ -195,18 +195,27 @@ export default defineComponent({
     watch(
       () => this.formStore.data[this.id + '_detail_numero'],
       async () => {
+        if (this.isSearchSkipped) {
+          return
+        }
         this.handleAddressFieldsEdited(false)
       }
     )
     watch(
       () => this.formStore.data[this.id + '_detail_code_postal'],
       async () => {
+        if (this.isSearchSkipped) {
+          return
+        }
         this.handleAddressFieldsEdited(true)
       }
     )
     watch(
       () => this.formStore.data[this.id + '_detail_commune'],
       async () => {
+        if (this.isSearchSkipped) {
+          return
+        }
         this.handleAddressFieldsEdited(true)
       }
     )
