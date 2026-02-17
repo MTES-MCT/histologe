@@ -440,8 +440,8 @@ class SearchFilter
                 $qb->andWhere('s.creationSource IN (:creationSourcesFormUsager)')
                     ->setParameter('creationSourcesFormUsager', CreationSource::getFormUsagerValues());
             } elseif (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $filters['createdFrom']) {
-                $qb->andWhere('s.creationSource IN (:creationSourceFormPro)')
-                    ->setParameter('creationSourceFormPro', CreationSource::getFormProValues());
+                $qb->andWhere('s.creationSource IN (:creationSourcesFormPro)')
+                    ->setParameter('creationSourcesFormPro', CreationSource::getFormProValues());
             } else {
                 $creationSource = CreationSource::tryFrom($filters['createdFrom']);
                 if (null !== $creationSource) {

@@ -454,7 +454,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         if (isset($row['created_by'])) {
             $signalement
-                ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
+                ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]))
+                ->setCreationSource(CreationSource::FORM_PRO_BO);
         }
 
         if (isset($row['type_proprio'])) {
@@ -502,7 +503,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             }
         }
         if (!$signalement->getCreatedFrom() && !$signalement->getCreatedBy()) {
-            $signalement->setCreatedBy($this->admin);
+            $signalement->setCreatedBy($this->admin)
+                ->setCreationSource(CreationSource::FORM_PRO_BO);
         }
         $manager->persist($signalement);
         $this->userManager->createUsagersFromSignalement($signalement);

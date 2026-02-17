@@ -1440,11 +1440,11 @@ class SignalementRepository extends ServiceEntityRepository
 
         if ($tabQueryParameters->createdFrom) {
             if (CreationSource::CREATED_FROM_FORMULAIRE_USAGER === $tabQueryParameters->createdFrom) {
-                $qb->andWhere('s.creationSource IN (:creationSource)')
-                    ->setParameter('creationSource', CreationSource::getFormUsagerValues());
+                $qb->andWhere('s.creationSource IN (:creationSources)')
+                    ->setParameter('creationSources', CreationSource::getFormUsagerValues());
             } elseif (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
-                $qb->andWhere('s.creationSource IN (:creationSource)')
-                    ->setParameter('creationSource', CreationSource::getFormProValues());
+                $qb->andWhere('s.creationSource IN (:creationSources)')
+                    ->setParameter('creationSources', CreationSource::getFormProValues());
             }
         }
 

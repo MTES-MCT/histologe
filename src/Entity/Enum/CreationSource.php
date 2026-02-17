@@ -48,22 +48,11 @@ enum CreationSource: string
         ];
     }
 
-    public static function getFormUsagerValuesListString(): string
-    {
-        // Les valeurs sont des enum, on veut récupérer une liste des valeurs
-        return implode(',', array_map(fn (self $creationSource) => $creationSource->value, self::getFormUsagerValues()));
-    }
-
     public static function getFormProValues(): array
     {
         return [
             self::FORM_PRO_BO,
             self::API,
         ];
-    }
-
-    public static function getFormProValuesListString(): string
-    {
-        return implode(',', array_map(fn (self $creationSource) => $creationSource->value, self::getFormProValues()));
     }
 }
