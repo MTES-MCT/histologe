@@ -102,8 +102,9 @@ class SignalementEditController extends AbstractController
 
     private function saveChangesAndCreateSuivi(Signalement $signalement, SignalementUser $signalementUser): void
     {
+        // Ordre volontaire : createSuiviFromEditUsager() utilise les changements enregistrés sur Signalement en preUpdate.
         $this->entityManager->wrapInTransaction(function () use ($signalement, $signalementUser): void {
-            $this->entityManager->flush();
+            $this->entityManager->flush(); /* @see SignalementUpdatedListener::preUpdate() écoute l'event dispatché par le flush() */
             $this->suiviManager->createSuiviFromEditUsager(
                 $signalement,
                 $signalementUser,
