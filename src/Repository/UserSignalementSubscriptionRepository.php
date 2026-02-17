@@ -51,6 +51,9 @@ class UserSignalementSubscriptionRepository extends ServiceEntityRepository
      */
     public function findForSignalementAndPartner(Signalement $signalement, Partner $partner, bool $excludeRT = false): array
     {
+        if (!$partner->getId()) {
+            return [];
+        }
         $queryBuilder = $this->createQueryBuilder('s')
             ->select('s', 'u')
             ->innerJoin('s.user', 'u')
