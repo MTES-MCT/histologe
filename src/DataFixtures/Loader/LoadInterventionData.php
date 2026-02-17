@@ -50,13 +50,17 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
         $signalement = $this->signalementRepository->findOneBy(['reference' => $row['signalement']]);
         $intervention = (new Intervention())
             ->setSignalement($signalement)
-            ->setPartner($this->partnerRepository->findOneBy(['email' => $row['partner']]))
             ->setScheduledAt($this->getScheduledAt($row))
             ->setType(isset($row['type']) ? InterventionType::from($row['type']) : InterventionType::VISITE)
             ->setDetails($row['details'] ?? null)
             ->setOccupantPresent($row['occupant_present'] ?? null)
             ->setProprietairePresent($row['proprietaire_present'] ?? null)
             ->setStatus($row['status'] ?? Intervention::STATUS_PLANNED);
+        if (isset($row['external_operator']) && $row['external_operator']) {
+            $intervention->setExternalOperator(externalOperator: $row['partner']);
+        } else {
+            $intervention->setPartner($this->partnerRepository->findOneBy(['email' => $row['partner']]));
+        }
 
         if (isset($row['additional_information'])) {
             $intervention->setAdditionalInformation($row['additional_information']);

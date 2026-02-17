@@ -120,3 +120,10 @@ interventions:
     proprietaire_present: 0
     details: "<p>Rapport de visite ajouté au dossier</p>"
     conclude_procedure: [ 'INSALUBRITE' ]
+  -
+    signalement: "2025-09"
+    external_operator: true
+    partner: "partenaire externe"
+    user: "admin-territoire-30@signal-logement.fr"
+    scheduled_at: '-2 days'
+    status: 'PLANNED'
