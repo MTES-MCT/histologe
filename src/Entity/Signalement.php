@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityChangesTrait;
 use App\Entity\Behaviour\EntityHistoryCollectionInterface;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\AffectationStatus;
@@ -50,6 +51,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['mail_declarant'], name: 'idx_signalement_mail_declarant')]
 class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInterface
 {
+    use EntityChangesTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
