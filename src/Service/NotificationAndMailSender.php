@@ -301,7 +301,7 @@ class NotificationAndMailSender
         if (!$recipients->isEmpty()) {
             $recipients->removeElement($this->suivi->getCreatedBy()?->getEmail());
             foreach ($recipients as $recipient) {
-                if ($this->signalement->isTiersDeclarant()) {
+                if ($this->signalement->isTiersDeclarant() && $recipient === $this->signalement->getMailDeclarant()) {
                     if ($this->isAgentSubscribedToSignalement($recipient)) {
                         continue;
                     }
