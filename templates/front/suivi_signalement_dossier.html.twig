@@ -538,7 +538,15 @@
 			</div>
 
 			<div class="signalement-group-data-card">
-				<h3 class="title-blue-france fr-h5">Situation du foyer</h3>
+				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
+					<h3 class="title-blue-france fr-h5">Situation du foyer</h3>
+					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+						<a href="{{ path('front_suivi_signalement_complete_situation_foyer', {'code': signalement.codeSuivi}) }}" 
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
+							Compléter les informations
+						</a>
+					{% endif %}
+				</div>
 				<ul>
 					{% if signalement.isLogementSocial %}
 						<li>Logement social : Oui</li>
