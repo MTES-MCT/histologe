@@ -55,7 +55,7 @@ class UserVoter extends Voter
             return false;
         }
 
-        if ($this->security->isGranted('ROLE_ADMIN') && self::USER_DISABLE !== $attribute) {
+        if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         } elseif ($subject->isSuperAdmin()) {
             $vote?->addReason('Action non autorisée sur un super administrateur.');
