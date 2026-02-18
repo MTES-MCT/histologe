@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Signalement;
-use App\Form\CoordonneesAgenceType;
-use App\Form\CoordonneesBailleurType;
+use App\Form\SignalementeEditFO\CoordonneesAgenceType;
+use App\Form\SignalementeEditFO\CoordonneesBailleurType;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;

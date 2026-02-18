@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\SignalementeEditFO;
 
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -33,7 +34,7 @@ class CoordonneesAgenceType extends AbstractType
                 'help' => 'Saisissez le prénom du ou de la gestionnaire du logement',
                 'required' => false,
             ])
-            ->add('mailAgence', null, [
+            ->add('mailAgence', TextType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
