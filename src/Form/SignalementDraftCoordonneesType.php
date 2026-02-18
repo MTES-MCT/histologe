@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -16,6 +15,9 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -161,14 +163,18 @@ class SignalementDraftCoordonneesType extends AbstractType
                 ],
                 'empty_data' => '',
             ])
-            ->add('isProTiersDeclarant', ChoiceType::class, [
-                'label' => 'Tiers professionnel',
+            ->add('isTiersDeclarant', ChoiceType::class, [
+                'label' => $signalement->isTiersDeclarant()
+                    ? 'Utiliser mes coordonnées <span class="text-required">*</span>'
+                    : 'Utiliser mes coordonnées',
                 'choices' => [
-                    'Utiliser mes coordonnées' => '1',
+                    'Oui' => true,
+                    'Non' => false,
                 ],
-                'help' => 'Cochez cette case pour devenir le tiers déclarant de ce signalement. Vous recevrez alors des mises à jour par e-mail au même titre que l\'occupant du logement.',
+                'label_html' => true,
+                'help' => 'Cochez cette case pour pré-remplir les coordonnées du déclarant avec vos informations. Vous recevrez alors des mises à jour par e-mail au même titre que l\'occupant du logement.',
                 'expanded' => true,
-                'multiple' => true,
+                'multiple' => false,
                 'required' => false,
                 'placeholder' => false,
                 'mapped' => false,
@@ -178,22 +184,33 @@ class SignalementDraftCoordonneesType extends AbstractType
                     'data-user-prenom' => $user->getPrenom(),
                     'data-user-mail' => $user->getEmail(),
                 ],
-                'data' => (!empty($signalement->getMailDeclarant()) && ProfileDeclarant::TIERS_PRO === $signalement->getProfileDeclarant()) ? [$signalement->getMailDeclarant() == $user->getEmail()] : null,
             ])
             ->add('structureDeclarant', TextType::class, [
-                'label' => 'Structure',
+                'label' => $signalement->isTiersDeclarant()
+                    ? 'Structure <span class="text-required">*</span>'
+                    : 'Structure',
+                'label_html' => true,
                 'required' => false,
             ])
             ->add('nomDeclarant', TextType::class, [
-                'label' => 'Nom de famille',
+                'label' => $signalement->isTiersDeclarant()
+                    ? 'Nom de famille <span class="text-required">*</span>'
+                    : 'Nom de famille',
+                'label_html' => true,
                 'required' => false,
             ])
             ->add('prenomDeclarant', TextType::class, [
-                'label' => 'Prénom',
+                'label' => $signalement->isTiersDeclarant()
+                    ? 'Prénom <span class="text-required">*</span>'
+                    : 'Prénom',
+                'label_html' => true,
                 'required' => false,
             ])
             ->add('mailDeclarant', TextType::class, [
-                'label' => 'Adresse e-mail',
+                'label' => $signalement->isTiersDeclarant()
+                    ? 'Adresse e-mail <span class="text-required">*</span>'
+                    : 'Adresse e-mail',
+                'label_html' => true,
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
             ])
@@ -292,6 +309,37 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'row_attr' => ['class' => 'fr-ml-2w'],
             ])
         ;
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event) use ($signalement): void {
+            if (!$signalement->isTiersDeclarant()) {
+                return;
+            }
+
+            $form = $event->getForm();
+            $isTiersDeclarant = $form->get('isTiersDeclarant')->getData();
+
+            $errorMessageTiersDeclarant = 'Veuillez sélectionner une option.';
+            $errorMessageNom = $isTiersDeclarant ? 'Veuillez renseigner votre nom.' : 'Veuillez renseigner un nom.';
+            $errorMessagePrenom = $isTiersDeclarant ? 'Veuillez renseigner votre prénom.' : 'Veuillez renseigner un prénom.';
+            $errorMessageMail = $isTiersDeclarant ? 'Veuillez renseigner votre adresse e-mail.' : 'Veuillez renseigner une adresse e-mail.';
+            $errorMessageStructure = $isTiersDeclarant ? 'Veuillez renseigner votre structure.' : 'Veuillez renseigner une structure.';
+
+            if (null === $form->get('isTiersDeclarant')->getData()) {
+                $form->get('isTiersDeclarant')->addError(new FormError($errorMessageTiersDeclarant));
+            }
+            if ('' === trim((string) $form->get('nomDeclarant')->getData())) {
+                $form->get('nomDeclarant')->addError(new FormError($errorMessageNom));
+            }
+            if ('' === trim((string) $form->get('prenomDeclarant')->getData())) {
+                $form->get('prenomDeclarant')->addError(new FormError($errorMessagePrenom));
+            }
+            if ('' === trim((string) $form->get('mailDeclarant')->getData())) {
+                $form->get('mailDeclarant')->addError(new FormError($errorMessageMail));
+            }
+            if ('' === trim((string) $form->get('structureDeclarant')->getData())) {
+                $form->get('structureDeclarant')->addError(new FormError($errorMessageStructure));
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

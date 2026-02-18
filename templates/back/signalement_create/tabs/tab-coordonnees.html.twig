@@ -2,7 +2,13 @@
 {% include 'back/signalement_create/tabs/_partial_facultative.html.twig' %}
 
 <div class="fr-alert fr-alert--warning fr-alert--sm fr-mb-5v">
-    <p> Renseigner l'adresse e-mail de la personne occupant le logement ou d'un tiers est recommandé pour un meilleur suivi du dossier. Si vous ne renseignez pas de coordonnées, l'adresse e-mail de votre compte sera associée au dossier.</p>
+    {% if signalement.isTiersDeclarant %}
+        <p>Renseigner l'adresse e-mail de la personne occupant le logement ou d'un tiers permet un meilleur suivi du dossier.
+            <br>Pour un déclarant tiers, les coordonnées du tiers sont obligatoires. </p>
+    {% else %}
+        <p> Renseigner l'adresse e-mail de la personne occupant le logement ou d'un tiers est recommandé pour un meilleur suivi du dossier.
+            Si vous ne renseignez pas de coordonnées, l'adresse e-mail de votre compte sera associée au dossier.</p>
+    {% endif %}
 </div>
 
 {{ form_start(formCoordonnees, {'attr': {'id': 'bo-form-signalement-coordonnees'}}) }}
@@ -90,7 +96,7 @@
                 <h3 class="fr-h5">Tiers</h3>
             </legend>
             <div class="fr-fieldset__element">
-                {{ form_row(formCoordonnees.isProTiersDeclarant) }}
+                {{ form_row(formCoordonnees.isTiersDeclarant) }}
             </div>
             <div class="fr-fieldset__element">
                 {{ form_row(formCoordonnees.structureDeclarant) }}

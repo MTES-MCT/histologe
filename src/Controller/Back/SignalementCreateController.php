@@ -573,6 +573,23 @@ class SignalementCreateController extends AbstractController
     private function getErrorMsgsOnValidation(Signalement $signalement): array
     {
         $errorMsgs = [];
+        if ($signalement->isTiersDeclarant()) {
+            if ('' === trim($signalement->getStructureDeclarant())) {
+                $errorMsgs[] = 'En tant que tiers déclarant, vous devez renseigner une structure pour le tiers';
+            }
+
+            if ('' === trim($signalement->getMailDeclarant())) {
+                $errorMsgs[] = 'En tant que tiers déclarant, vous devez renseigner un e-mail pour le tiers.';
+            }
+
+            if ('' === trim($signalement->getNomDeclarant())) {
+                $errorMsgs[] = 'En tant que tiers déclarant, vous devez renseigner un nom pour le tiers.';
+            }
+
+            if ('' === trim($signalement->getPrenomDeclarant())) {
+                $errorMsgs[] = 'En tant que tiers déclarant, vous devez renseigner un prénom pour le tiers.';
+            }
+        }
         if (!$signalement->getAdresseOccupant()) {
             $errorMsgs[] = 'Vous devez renseigner l\'adresse du logement pour pouvoir soumettre le signalement.';
         }
@@ -594,15 +611,6 @@ class SignalementCreateController extends AbstractController
     private function setSignalementDefaultValuesOnValidation(Signalement $signalement, User $user): void
     {
         if ($signalement->isTiersDeclarant()) {
-            if (!$signalement->getMailDeclarant()) {
-                $signalement->setMailDeclarant($user->getEmail());
-            }
-            if (!$signalement->getNomDeclarant()) {
-                $signalement->setNomDeclarant($user->getNom());
-            }
-            if (!$signalement->getPrenomDeclarant()) {
-                $signalement->setPrenomDeclarant($user->getPrenom());
-            }
             $signalement->setIsNotOccupant(true);
         } else {
             if (!$signalement->getMailOccupant()) {

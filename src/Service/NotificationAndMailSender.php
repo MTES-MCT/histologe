@@ -14,6 +14,7 @@ use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
 use App\Factory\NotificationFactory;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\InjonctionBailleur\CourrierBailleurGenerator;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -36,6 +37,7 @@ class NotificationAndMailSender
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly Security $security,
         private readonly CourrierBailleurGenerator $courrierBailleurGenerator,
+        private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
     ) {
         $this->suivi = null;
         $user = $this->security->getUser();
@@ -299,9 +301,8 @@ class NotificationAndMailSender
         if (!$recipients->isEmpty()) {
             $recipients->removeElement($this->suivi->getCreatedBy()?->getEmail());
             foreach ($recipients as $recipient) {
-                if ($this->signalement->isTiersDeclarant() && $recipient === $this->signalement->getMailDeclarant()) {
-                    $agentExist = $this->userRepository->findAgentByEmail(email: $recipient, userStatus: UserStatus::ACTIVE, acceptRoleApi: false);
-                    if ($agentExist) {
+                if ($this->signalement->isTiersDeclarant()) {
+                    if ($this->isAgentSubscribedToSignalement($recipient)) {
                         continue;
                     }
                 }
@@ -472,5 +473,23 @@ class NotificationAndMailSender
                 isRecipientVisible: false,
             )
         );
+    }
+
+    private function isAgentSubscribedToSignalement(string $recipient): bool
+    {
+        $agent = $this->userRepository->findAgentByEmail(
+            email: $recipient,
+            userStatus: UserStatus::ACTIVE,
+            acceptRoleApi: false
+        );
+
+        if (!$agent) {
+            return false;
+        }
+
+        return null !== $this->userSignalementSubscriptionRepository->findOneBy([
+            'user' => $agent,
+            'signalement' => $this->signalement,
+        ]);
     }
 }
