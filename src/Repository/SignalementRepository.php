@@ -381,8 +381,8 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('dp.desordreCritere', 'desordreCriteres')
             ->where('s.statut NOT IN (:statutList)')
             ->setParameter('statutList', SignalementStatus::excludedStatuses())
-            ->andWhere('s.createdSource = :createdSource')
-            ->setParameter('createdSource', CreationSource::FORM_USAGER_V2);
+            ->andWhere('s.creationSource = :creationSource')
+            ->setParameter('creationSource', CreationSource::FORM_USAGER_V2);
 
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
