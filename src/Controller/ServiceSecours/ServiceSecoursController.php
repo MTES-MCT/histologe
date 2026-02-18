@@ -39,7 +39,7 @@ class ServiceSecoursController extends AbstractController
         if ($flow->isSubmitted() && $flow->isValid() && $flow->isFinished()) {
             $signalement = $signalementFactory->createInstanceFromFormServiceSecours($flow->getData(), $serviceSecoursRoute);
 
-            // dump($signalement); for testing purpose
+            // dump($signalement); // for testing purpose
             // TODO : persist and flush
             // voir les traitements fait dans App\Controller\Api\SignalementCreateController.php, création de la référence dans une transaction en particulier)
             return $this->render('service_secours/success.html.twig', ['serviceSecoursRoute' => $serviceSecoursRoute, 'signalement' => $signalement]);

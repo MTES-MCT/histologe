@@ -28,9 +28,9 @@ class SignalementFactory
         // data from step1
         $signalement->setMatriculeDeclarant($formServiceSecours->step1->matriculeDeclarant);
         $signalement->setNomDeclarant($formServiceSecours->step1->nomDeclarant);
-        $signalement->setDateMission($formServiceSecours->step1->dateMission);
-        $signalement->setOrigineMission($formServiceSecours->step1->origineMission);
-        $signalement->setOrdreMission($formServiceSecours->step1->ordreMission);
+        $signalement->setDateMissionServiceSecours($formServiceSecours->step1->dateMission);
+        $signalement->setOrigineMissionServiceSecours($formServiceSecours->step1->origineMission);
+        $signalement->setOrdreMissionServiceSecours($formServiceSecours->step1->ordreMission);
 
         // TODO : manage other steps
         //

@@ -194,6 +194,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
     private ?string $structureDeclarant = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $matriculeDeclarant = null;
+
     #[ORM\Column(type: 'string', length: 10, nullable: true)]
     private ?string $civiliteOccupant = null;
 
@@ -533,17 +536,14 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $loginBailleur = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $matriculeDeclarant = null;
-
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    private ?\DateTimeImmutable $dateMission = null;
+    private ?\DateTimeImmutable $dateMissionServiceSecours = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $origineMission = null;
+    private ?string $origineMissionServiceSecours = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $ordreMission = null;
+    private ?string $ordreMissionServiceSecours = null;
 
     #[ORM\ManyToOne(inversedBy: 'signalements')]
     private ?ServiceSecoursRoute $serviceSecours = null;
@@ -2935,38 +2935,38 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getDateMission(): ?\DateTimeImmutable
+    public function getDateMissionServiceSecours(): ?\DateTimeImmutable
     {
-        return $this->dateMission;
+        return $this->dateMissionServiceSecours;
     }
 
-    public function setDateMission(?\DateTimeImmutable $dateMission): static
+    public function setDateMissionServiceSecours(?\DateTimeImmutable $dateMissionServiceSecours): static
     {
-        $this->dateMission = $dateMission;
+        $this->dateMissionServiceSecours = $dateMissionServiceSecours;
 
         return $this;
     }
 
-    public function getOrigineMission(): ?string
+    public function getOrigineMissionServiceSecours(): ?string
     {
-        return $this->origineMission;
+        return $this->origineMissionServiceSecours;
     }
 
-    public function setOrigineMission(?string $origineMission): static
+    public function setOrigineMissionServiceSecours(?string $origineMissionServiceSecours): static
     {
-        $this->origineMission = $origineMission;
+        $this->origineMissionServiceSecours = $origineMissionServiceSecours;
 
         return $this;
     }
 
-    public function getOrdreMission(): ?string
+    public function getOrdreMissionServiceSecours(): ?string
     {
-        return $this->ordreMission;
+        return $this->ordreMissionServiceSecours;
     }
 
-    public function setOrdreMission(?string $ordreMission): static
+    public function setOrdreMissionServiceSecours(?string $ordreMissionServiceSecours): static
     {
-        $this->ordreMission = $ordreMission;
+        $this->ordreMissionServiceSecours = $ordreMissionServiceSecours;
 
         return $this;
     }
