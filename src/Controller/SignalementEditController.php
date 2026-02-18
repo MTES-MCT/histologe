@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Model\InformationProcedure;
+use App\Entity\Model\SituationFoyer;
 use App\Entity\Signalement;
 use App\Form\SignalementeEditFO\AdresseLogementType;
 use App\Form\SignalementeEditFO\CoordonneesAgenceType;
@@ -175,6 +176,51 @@ class SignalementEditController extends AbstractController
         }
 
         return $this->render('front/edit-signalement/coordonnees-agence.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form,
+        ]);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    #[Route('/{code}/completer/situation-foyer', name: 'front_suivi_signalement_complete_situation_foyer', methods: ['GET', 'POST'])]
+    public function suiviSignalementCompleteSituationFoyer(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->cguTiersChecker->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+        
+        $form = $this->createForm(UsagerSituationFoyerType::class, $signalement);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $situationFoyer = $signalement->getSituationFoyer() ? clone $signalement->getSituationFoyer() : new SituationFoyer();
+            if ('nsp' === $form->get('isLogementSocial')->getData()) {
+                $signalement->setIsLogementSocial(null);
+                $situationFoyer->setLogementSocialAllocation(null);
+            } elseif ($form->get('isLogementSocial')->getData()) {
+                $situationFoyer->setLogementSocialAllocation('oui');
+            } else {
+                $situationFoyer->setLogementSocialAllocation('non');
+            }
+            $signalement->setSituationFoyer($situationFoyer);
+
+
+            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'La situation du foyer a bien été mise à jour.']);
+            return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+        }
+        
+        return $this->render('front/edit-signalement/situation-foyer.html.twig', [
             'signalement' => $signalement,
             'form' => $form,
         ]);

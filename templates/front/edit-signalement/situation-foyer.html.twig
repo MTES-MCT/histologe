@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compléter la situation du foyer #{{ signalement.reference }}{% endblock %}
+
+{% block body %}
+
+<main class="fr-container fr-pb-5w" id="content">
+	<nav role="navigation" class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
+		<button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
+		<div class="fr-collapse" id="breadcrumb-1">
+			<ol class="fr-breadcrumb__list">
+				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}">Votre dossier #{{ signalement.reference }}</a></li>
+				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement_dossier', {code: signalement.codeSuivi}) }}">Détails du dossier</a></li>
+				<li><a class="fr-breadcrumb__link" aria-current="page">Compléter la situation du foyer</a></li>
+			</ol>
+		</div>
+	</nav>
+	{{ form_start(form, {'attr': {'id': 'form-usager-complete-dossier'}}) }}
+	<div class="fr-grid-row fr-mt-3w">
+		<div class="fr-col-12">
+			<h1 class="title-blue-france">Compléter les informations</h1>
+			<div class="fr-mb-3w">
+				Complétez votre dossier en remplissant les champs ci-dessous. Un signalement complet permet une meilleure prise en charge du dossier !
+			</div>
+			{{ form_errors(form) }}				
+			<fieldset class="fr-fieldset">
+				<legend class="fr-fieldset__legend">
+					<h3 class="fr-h5">Situation du foyer</h3>
+				</legend>
+				<div class="fr-fieldset__element">
+					{{ form_row(form.isLogementSocial) }}
+				</div>
+				<div class="fr-fieldset__element">
+					{{ form_row(form.isRelogement) }}
+				</div>
+			</fieldset>
+		</div>
+		<div class="fr-col-6">
+			<a href="{{ path('front_suivi_signalement_dossier', {code: signalement.codeSuivi}) }}" class="fr-btn fr-btn--secondary">Annuler</a>
+		</div>
+		<div class="fr-col-6 fr-text--right">
+			{{ form_row(form.save) }}
+		</div>
+	</div>
+	{{ form_end(form) }}
+</main>
+{% endblock %}
