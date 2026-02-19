@@ -56,19 +56,31 @@ class SignalementListControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
-    public function testGetSignalementListWithLimit(): void
+    /**
+     * @dataProvider provideGoodQueryParameters
+     */
+    public function testGetSignalementListWithFilters(array $queryParameters, int $count): void
     {
         $client = static::createClient();
         $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
+
         $client->loginUser($user, 'api');
-        $client->request('GET', '/api/signalements?limit=2');
+        $client->request('GET', '/api/signalements?'.http_build_query($queryParameters));
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         $response = json_decode((string) $client->getResponse()->getContent(), true);
-        $this->assertCount(2, $response);
+        $this->assertCount($count, $response);
+
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
+    }
+
+    public static function provideGoodQueryParameters(): iterable
+    {
+        yield 'limit=2' => [['limit' => 2], 2];
+        yield 'codeInsee=13213' => [['codeInsee' => 13213], 2];
+        yield 'codeInsee=13203' => [['codeInsee' => 13203], 7];
     }
 
     /**
@@ -142,6 +154,9 @@ class SignalementListControllerTest extends WebTestCase
                 'dateAffectationFin' => 'friend',
             ],
             6,
+        ];
+        yield 'Wrong code insee' => [
+            ['codeInsee' => '1234567890'], 1,
         ];
     }
 
