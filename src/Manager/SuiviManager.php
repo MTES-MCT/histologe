@@ -348,10 +348,14 @@ class SuiviManager extends Manager
         $description .= '<ul>';
 
         foreach ($sectionChanges['fieldChanges'] as $change) {
+            $new = $change['new'];
+            if (null === $new || '' === $new) {
+                $new = '<i>(valeur supprimée)</i>';
+            }
             $description .= sprintf(
                 '<li>%s : %s</li>',
                 $change['label'],
-                $change['new'] ?? '-'
+                $new
             );
         }
 

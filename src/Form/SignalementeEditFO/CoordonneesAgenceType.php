@@ -67,7 +67,6 @@ class CoordonneesAgenceType extends AbstractType
                     'class' => 'manual-address manual-address-input',
                     'data-autocomplete-addresse-agence' => 'true',
                 ],
-                'empty_data' => '',
             ])
             ->add('codePostalAgence', null, [
                 'label' => 'Code postal',
@@ -76,7 +75,6 @@ class CoordonneesAgenceType extends AbstractType
                     'class' => 'manual-address',
                     'data-autocomplete-codepostal-agence' => 'true',
                 ],
-                'empty_data' => '',
             ])
             ->add('villeAgence', null, [
                 'label' => 'Ville',
@@ -85,7 +83,6 @@ class CoordonneesAgenceType extends AbstractType
                     'class' => 'manual-address',
                     'data-autocomplete-ville-agence' => 'true',
                 ],
-                'empty_data' => '',
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Envoyer',
