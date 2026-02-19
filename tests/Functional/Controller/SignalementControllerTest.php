@@ -16,6 +16,7 @@ use App\Repository\SuiviRepository;
 use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
@@ -184,6 +185,12 @@ class SignalementControllerTest extends WebTestCase
         /** @var Suivi $lastSuivi */
         $lastSuivi = $signalement->getSuivis()->last();
         $this->assertEquals($lastSuivi->getCategory(), SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER);
+        $this->assertEmailCount(1);
+        /** @var NotificationEmail $mail */
+        $mail = $this->getMailerMessages()[0];
+        $this->assertEmailSubjectContains($mail, 'Votre locataire a mis fin à la procédure concernant votre logement');
+        $this->assertEmailAddressContains($mail, 'to', $signalement->getMailProprio());
+        $this->assertEmailHasHeader($mail, 'templateId', '296');
     }
 
     public function testSuiviSignalementProcedurePoursuite(): void

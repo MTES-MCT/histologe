@@ -1421,7 +1421,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getReference(): ?string
     {
-        if (SignalementStatus::INJONCTION_BAILLEUR === $this->getStatut()) {
+        if (SignalementStatus::INJONCTION_BAILLEUR === $this->getStatut()
+            || SignalementStatus::INJONCTION_CLOSED === $this->getStatut()) {
             return $this->getReferenceInjonction();
         }
 

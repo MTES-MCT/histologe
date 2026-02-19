@@ -2432,7 +2432,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->andWhere('s.loginBailleur = :loginBailleur')
             ->setParameter('loginBailleur', $loginBailleur)
             ->andWhere('s.statut = :statutInjonction OR su.category IN (:injonctionCategories)')
-            ->setParameter('statutInjonction', SignalementStatus::INJONCTION_BAILLEUR)
+            ->setParameter('statutInjonction', SignalementStatus::INJONCTION_BAILLEUR) // TODO : ajouter INJONCTION_CLOSED ?
             ->setParameter('injonctionCategories', SuiviCategory::injonctionBailleurCategories())
             ->getQuery()
             ->getOneOrNullResult();
@@ -2444,7 +2444,7 @@ class SignalementRepository extends ServiceEntityRepository
     ): int {
         $qb = $this->createQueryBuilder('s')
             ->where('s.statut = :statut')
-            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR);
+            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR); // TODO : ajouter INJONCTION_CLOSED ?
 
         $qb->select('COUNT(s.id)');
 
@@ -2472,8 +2472,9 @@ class SignalementRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('s')
             ->select('s, su')
             ->leftJoin('s.suivis', 'su')
-            ->where('s.statut = :statut')
-            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR);
+            ->where('s.statut IN (:statut, :statutClosed)')
+            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
+            ->setParameter('statutClosed', SignalementStatus::INJONCTION_CLOSED);
 
         if (!empty($searchSignalementInjonction->getTerritoire())) {
             $queryBuilder
@@ -2520,6 +2521,11 @@ class SignalementRepository extends ServiceEntityRepository
                 );
                 $queryBuilder->setParameter('aideCategory', SuiviCategory::tryFrom($searchSignalementInjonction->getReponseBailleur()));
             }
+        }
+
+        if (!empty($searchSignalementInjonction->getStatutSignalement())) {
+            $queryBuilder->andWhere('s.statut = :statutSignalement')
+                ->setParameter('statutSignalement', $searchSignalementInjonction->getStatutSignalement());
         }
 
         if (!empty($searchSignalementInjonction->getOrderType())) {

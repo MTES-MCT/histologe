@@ -17,6 +17,7 @@ use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\TabQueryParameters;
+use App\Service\ListFilters\SearchSignalementInjonction;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -614,5 +615,103 @@ class SignalementRepositoryTest extends KernelTestCase
         $beforeDate = $mockClock->now()->modify('-1 month');
         $signalements = $signalementRepository->findInjonctionBeforeDateWithoutAnswer($beforeDate);
         $this->assertCount(1, $signalements);
+    }
+
+    public function testFindInjonctionFilteredPaginatedReturnsOnlyInjonctionStatuses(): void
+    {
+        $user = new User();
+        $user->setRoles(['ROLE_ADMIN']);
+        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+        static::getContainer()->get('security.token_storage')->setToken($token);
+
+        /** @var SignalementRepository $repository */
+        $repository = $this->entityManager->getRepository(Signalement::class);
+
+        $search = new SearchSignalementInjonction($user);
+
+        $paginator = $repository->findInjonctionFilteredPaginated(
+            $search,
+            10,
+            null
+        );
+
+        $this->assertEquals(3, $paginator->count());
+        foreach ($paginator as $signalement) {
+            $this->assertContains(
+                $signalement->getStatut(),
+                [
+                    SignalementStatus::INJONCTION_BAILLEUR,
+                    SignalementStatus::INJONCTION_CLOSED,
+                ]
+            );
+        }
+    }
+
+    public function testFindInjonctionFilteredPaginatedWithTerritory(): void
+    {
+        $user = new User();
+        $user->setRoles(['ROLE_ADMIN']);
+        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+        static::getContainer()->get('security.token_storage')->setToken($token);
+
+        /** @var SignalementRepository $repository */
+        $repository = $this->entityManager->getRepository(Signalement::class);
+        $territory = $this->entityManager
+            ->getRepository(Territory::class)
+            ->findOneBy(['zip' => '34']);
+
+        $search = new SearchSignalementInjonction($user);
+        $search->setTerritoire($territory);
+
+        $paginator = $repository->findInjonctionFilteredPaginated(
+            $search,
+            10,
+            null
+        );
+
+        $this->assertEquals(2, $paginator->count());
+        foreach ($paginator as $signalement) {
+            $this->assertEquals('34', $signalement->getTerritory()->getZip());
+        }
+    }
+
+    public function testFindInjonctionFilteredPaginatedWithNoReponseBailleur(): void
+    {
+        $user = new User();
+        $user->setRoles(['ROLE_ADMIN']);
+        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+        static::getContainer()->get('security.token_storage')->setToken($token);
+        /** @var SignalementRepository $repository */
+        $repository = $this->entityManager->getRepository(Signalement::class);
+
+        $search = new SearchSignalementInjonction($user);
+        $search->setReponseBailleur('aucune');
+
+        $paginator = $repository->findInjonctionFilteredPaginated(
+            $search,
+            10,
+            null
+        );
+        $this->assertEquals(2, $paginator->count());
+    }
+
+    public function testFindInjonctionFilteredPaginatedWithStatut(): void
+    {
+        $user = new User();
+        $user->setRoles(['ROLE_ADMIN']);
+        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+        static::getContainer()->get('security.token_storage')->setToken($token);
+        /** @var SignalementRepository $repository */
+        $repository = $this->entityManager->getRepository(Signalement::class);
+
+        $search = new SearchSignalementInjonction($user);
+        $search->setStatutSignalement('INJONCTION_CLOSED');
+
+        $paginator = $repository->findInjonctionFilteredPaginated(
+            $search,
+            10,
+            null
+        );
+        $this->assertEquals(1, $paginator->count());
     }
 }
