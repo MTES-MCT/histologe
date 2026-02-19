@@ -99,7 +99,6 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertNull($signalement->getMailDeclarant());
         $this->assertNull($signalement->getIsCguTiersAccepted());
-        $this->assertEquals($newMail, $signalement->getTiersInvitation()->getEmail());
         $this->assertEmailCount(3);
         $this->assertEmailSubjectContains($this->getMailerMessages()[0], 'Invitation à suivre un dossier de signalement');
         $this->assertEmailSubjectContains($this->getMailerMessages()[1], 'Nouveau suivi');

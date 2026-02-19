@@ -29,6 +29,7 @@ use App\Repository\CommuneRepository;
 use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
+use App\Repository\TiersInvitationRepository;
 use App\Security\User\SignalementUser;
 use App\Security\Voter\SignalementFoVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
@@ -459,6 +460,7 @@ class SignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         SuiviRepository $suiviRepository,
         SuiviCategoryMapper $suiviCategoryMapper,
+        TiersInvitationRepository $tiersInvitationRepository,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
@@ -484,10 +486,15 @@ class SignalementController extends AbstractController
             $suiviCategory = $suiviCategoryMapper->mapFromSuivi($lastSuiviPublic);
         }
 
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+        ]);
+
         return $this->render('front/suivi_signalement_dashboard.html.twig', [
             'signalement' => $signalement,
             'formDemandeLienSignalement' => $formDemandeLienSignalement,
             'suiviCategory' => $suiviCategory,
+            'tiersInvitation' => $tiersInvitation,
         ]);
     }
 
@@ -524,6 +531,7 @@ class SignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
+        TiersInvitationRepository $tiersInvitationRepository,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
@@ -542,10 +550,15 @@ class SignalementController extends AbstractController
             'action' => $this->generateUrl('front_demande_lien_signalement'),
         ]);
 
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+        ]);
+
         return $this->render('front/suivi_signalement_dossier.html.twig', [
             'signalement' => $signalement,
             'infoDesordres' => $infoDesordres,
             'formDemandeLienSignalement' => $formDemandeLienSignalement,
+            'tiersInvitation' => $tiersInvitation,
         ]);
     }
 
@@ -981,6 +994,7 @@ class SignalementController extends AbstractController
         string $code,
         Request $request,
         SignalementRepository $signalementRepository,
+        TiersInvitationRepository $tiersInvitationRepository,
         SuiviManager $suiviManager,
         NotificationMailerRegistry $notificationMailerRegistry,
         EntityManagerInterface $entityManager,
@@ -989,7 +1003,10 @@ class SignalementController extends AbstractController
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         // On bloque si tiers déjà renseigné, si créé par tiers ou si une invitation est déjà en cours
-        if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant()) || null !== $signalement->getTiersInvitation()) {
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+        ]);
+        if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant()) || null !== $tiersInvitation) {
             throw $this->createAccessDeniedException();
         }
 
@@ -1005,8 +1022,6 @@ class SignalementController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $signalement->setTiersInvitation($invitation);
-            $entityManager->persist($signalement);
             $entityManager->persist($invitation);
             $entityManager->flush();
 
@@ -1017,6 +1032,7 @@ class SignalementController extends AbstractController
                     type: NotificationMailerType::TYPE_INVITE_TIERS,
                     to: $invitation->getEmail(),
                     signalement: $signalement,
+                    tiersInvitation: $invitation,
                 )
             );
 
@@ -1038,13 +1054,16 @@ class SignalementController extends AbstractController
         string $code,
         string $token,
         SignalementRepository $signalementRepository,
+        TiersInvitationRepository $tiersInvitationRepository,
         SignalementManager $signalementManager,
         EntityManagerInterface $entityManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_ANSWER_INVITATION, $signalement);
 
-        $tiersInvitation = $signalement->getTiersInvitation();
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+        ]);
         if (!$tiersInvitation) {
             throw $this->createNotFoundException('Invitation non trouvée');
         }
@@ -1066,13 +1085,16 @@ class SignalementController extends AbstractController
         string $code,
         string $token,
         SignalementRepository $signalementRepository,
+        TiersInvitationRepository $tiersInvitationRepository,
         SuiviManager $suiviManager,
         EntityManagerInterface $entityManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_ANSWER_INVITATION, $signalement);
 
-        $tiersInvitation = $signalement->getTiersInvitation();
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+        ]);
         if (!$tiersInvitation) {
             throw $this->createNotFoundException('Invitation non trouvée');
         }

@@ -32,7 +32,7 @@ class SignalementInviteTiersMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
-        $token = $signalement->getTiersInvitation()->getToken();
+        $token = $notificationMail->getTiersInvitation()->getToken();
         $linkAccepter = $this->generateLink(
             'front_suivi_invitation_accepter',
             ['code' => $signalement->getCodeSuivi(), 'token' => $token]

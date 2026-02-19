@@ -19,6 +19,7 @@ use App\Entity\TiersInvitation;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Repository\TiersInvitationRepository;
 use App\Security\Voter\SignalementVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\FormHelper;
@@ -89,6 +90,7 @@ class SignalementEditController extends AbstractController
         Signalement $signalement,
         Request $request,
         SignalementManager $signalementManager,
+        TiersInvitationRepository $tiersInvitationRepository,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
@@ -127,7 +129,10 @@ class SignalementEditController extends AbstractController
         $htmlTargetContents = [
             [
                 'target' => '#signalement-information-tiers-container',
-                'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', ['signalement' => $signalement]),
+                'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', [
+                    'signalement' => $signalement,
+                    'tiersInvitation' => $tiersInvitationRepository->findOneBy(['signalement' => $signalement]),
+                ]),
             ],
         ];
 
@@ -144,6 +149,7 @@ class SignalementEditController extends AbstractController
         SuiviManager $suiviManager,
         ValidatorInterface $validator,
         NotificationMailerRegistry $notificationMailerRegistry,
+        TiersInvitationRepository $tiersInvitationRepository,
         EntityManagerInterface $em,
     ): JsonResponse {
         // On bloque si tiers déjà renseigné ou si créé par tiers
@@ -152,7 +158,10 @@ class SignalementEditController extends AbstractController
         }
 
         // On bloque si invitation déjà en cours
-        if (null !== $signalement->getTiersInvitation()) {
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+        ]);
+        if (null !== $tiersInvitation) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Une invitation est déjà en attente pour ce dossier.'];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
@@ -185,8 +194,6 @@ class SignalementEditController extends AbstractController
             ->setTelephone($inviteTiersRequest->getTelephone())
             ->setToken(bin2hex(random_bytes(32)));
 
-        $signalement->setTiersInvitation($invitation);
-
         $em->persist($invitation);
         $em->flush();
 
@@ -195,6 +202,7 @@ class SignalementEditController extends AbstractController
                 type: NotificationMailerType::TYPE_INVITE_TIERS,
                 to: $inviteTiersRequest->getMail(),
                 signalement: $signalement,
+                tiersInvitation: $invitation,
             )
         );
         $subscriptionCreated = $suiviManager->addInviteSuiviFromBo($signalement, $inviteTiersRequest);
@@ -206,7 +214,9 @@ class SignalementEditController extends AbstractController
         $htmlTargetContents = [
             [
                 'target' => '#signalement-information-tiers-container',
-                'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', ['signalement' => $signalement]),
+                'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', [
+                    'signalement' => $signalement, 'tiersInvitation' => $invitation,
+                ]),
             ],
         ];
 

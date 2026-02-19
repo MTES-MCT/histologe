@@ -6,9 +6,9 @@
     {% if not signalement.isNotOccupant and not signalement.mailDeclarant %}
         Afin de faciliter les échanges avec l'usager, vous pouvez donner accès au dossier à un tiers (famille, travailleur social, association, etc.) en renseignant son adresse e-mail.
         <br>
-        {% if signalement.tiersInvitation %}
+        {% if tiersInvitation %}
             <div class="alert alert-warning">
-                <strong>Invitation en attente pour {{ signalement.tiersInvitation.email }}</strong>
+                <strong>Invitation en attente pour {{ tiersInvitation.email }}</strong>
             </div>
         {% else %}
             {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}

@@ -40,6 +40,7 @@ use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
 use App\Repository\Query\SignalementList\ListPaginatorQuery;
+use App\Repository\TiersInvitationRepository;
 use App\Service\Gouv\Ban\Response\Address;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
@@ -72,6 +73,7 @@ class SignalementManager extends AbstractManager
         private readonly SuiviManager $suiviManager,
         private readonly UserManager $userManager,
         private readonly BailleurRepository $bailleurRepository,
+        private readonly TiersInvitationRepository $tiersInvitationRepository,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly ExportIterableQuery $exportIterableQuery,
@@ -389,7 +391,9 @@ class SignalementManager extends AbstractManager
     public function updateFromTiersInvitation(
         Signalement $signalement,
     ): void {
-        $tiersInvitation = $signalement->getTiersInvitation();
+        $tiersInvitation = $this->tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+        ]);
         if (null === $tiersInvitation) {
             return;
         }

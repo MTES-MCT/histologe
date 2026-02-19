@@ -18,8 +18,8 @@ class TiersInvitation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'tiersInvitation')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[ORM\OneToOne()]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE', unique: true)]
     private Signalement $signalement;
 
     #[ORM\Column(length: 50)]

@@ -355,7 +355,11 @@ class SignalementControllerTest extends WebTestCase
             ->getRepository(Signalement::class)
             ->find($signalement->getId());
 
-        $invitation = $signalementReloaded->getTiersInvitation();
+        $invitation = $entityManager
+            ->getRepository(TiersInvitation::class)->findOneBy([
+                'signalement' => $signalementReloaded,
+            ]);
+        /* @var TiersInvitation $invitation */
         $this->assertNotNull($invitation);
         $this->assertEquals($newMail, $invitation->getEmail());
         $this->assertNull($signalementReloaded->getMailDeclarant());
@@ -381,9 +385,7 @@ class SignalementControllerTest extends WebTestCase
         $invitation->setEmail('paulpote@gmail.com');
         $invitation->setToken('token-invitation-test');
 
-        $signalement->setTiersInvitation($invitation);
         $entityManager->persist($invitation);
-        $entityManager->persist($signalement);
         $entityManager->flush();
 
         $client->loginUser(
@@ -409,7 +411,6 @@ class SignalementControllerTest extends WebTestCase
             ->find($signalement->getId());
 
         $this->assertEquals('paulpote@gmail.com', $signalementReloaded->getMailDeclarant());
-        $this->assertNull($signalementReloaded->getTiersInvitation());
     }
 
     public function testRefuserInvitation(): void
@@ -429,9 +430,7 @@ class SignalementControllerTest extends WebTestCase
         $invitation->setFirstname('Paul');
         $invitation->setToken('token-invitation-test');
 
-        $signalement->setTiersInvitation($invitation);
         $entityManager->persist($invitation);
-        $entityManager->persist($signalement);
         $entityManager->flush();
 
         $client->loginUser(
@@ -455,7 +454,6 @@ class SignalementControllerTest extends WebTestCase
             ->find($signalement->getId());
 
         $this->assertNull($signalementReloaded->getMailDeclarant());
-        $this->assertNull($signalementReloaded->getTiersInvitation());
     }
 
     public function testCoordonneesTiersBloqueSiInvitationExistante(): void
@@ -475,9 +473,7 @@ class SignalementControllerTest extends WebTestCase
         $invitation->setFirstname('Paul');
         $invitation->setToken('token-invitation-test');
 
-        $signalement->setTiersInvitation($invitation);
         $entityManager->persist($invitation);
-        $entityManager->persist($signalement);
         $entityManager->flush();
 
         $client->loginUser(

@@ -35,6 +35,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
+use App\Repository\TiersInvitationRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Repository\ZoneRepository;
@@ -90,6 +91,7 @@ class SignalementController extends AbstractController
         SuiviSeenMarker $suiviSeenMarker,
         UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
         SignalementRepository $signalementRepository,
+        TiersInvitationRepository $tiersInvitationRepository,
         UrlGeneratorInterface $urlGenerator,
     ): Response {
         // load desordres data to prevent n+1 queries
@@ -226,6 +228,9 @@ class SignalementController extends AbstractController
             $linkToVisitGrid = $urlGenerator->generate('show_file', ['uuid' => $existingVisitGrid->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
         }
 
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+        ]);
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
         $suiviSeenMarker->markSeenByUsager($signalement);
         $signalementsOnSameAddress = $signalementRepository->findOnSameAddress(
@@ -265,6 +270,7 @@ class SignalementController extends AbstractController
             'allPhotosOrdered' => $allPhotosOrdered,
             'zones' => $zoneRepository->findZonesBySignalement($signalement),
             'signalementsOnSameAddress' => $signalementsOnSameAddress,
+            'tiersInvitation' => $tiersInvitation,
             'isUserSubscribed' => $isUserSubscribed,
             'subscriptionsInMyPartner' => $subscriptionsInMyPartner,
             'partnerEmailAlerts' => $this->emailAlertBuilder->buildPartnerEmailAlert($signalement),

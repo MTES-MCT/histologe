@@ -132,15 +132,16 @@
 					</div>
 				{% elseif is_granted('SIGN_USAGER_EDIT', signalement) %}
 					<div class="fr-callout fr-icon-information-line fr-callout--blue-cumulus fr-mt-3w">
-						<p class="fr-callout__title">{% if signalement.tiersInvitation %}Invitation en attente{% else %}Invitez un tiers{% endif %}</p>
+
+						<p class="fr-callout__title">{% if tiersInvitation %}Invitation en attente{% else %}Invitez un tiers{% endif %}</p>
 						<p>
 							Afin de faciliter les échanges avec l'administration, 
 							vous pouvez donner accès au dossier à un tiers (famille, travailleur social, association, etc.) 
 							en renseignant son adresse e-mail.
 							<br>
-							{% if signalement.tiersInvitation %}
+							{% if tiersInvitation %}
 								<div class="alert alert-warning">
-									<strong>Invitation en attente pour {{ signalement.tiersInvitation.email }}</strong>
+									<strong>Invitation en attente pour {{ tiersInvitation.email }}</strong>
 								</div>
 							{% else %}
 								<a href="{{ path('front_suivi_signalement_coordonnees_tiers', {code: signalement.codeSuivi}) }}" 
