@@ -126,7 +126,7 @@ class SignalementEditController extends AbstractController
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
             $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les informations sur l\'assurance ont bien été mises à jour.']);
 
-            // return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+            return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
 
         return $this->render('front/edit-signalement/procedure-assurance.html.twig', [
