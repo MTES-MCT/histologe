@@ -395,3 +395,32 @@ closeNoticeButtons.forEach((button) => {
     notice.parentNode.removeChild(notice);
   });
 });
+
+const infoProcedureAssuranceContactee = document.querySelector(
+  '#procedure_assurance_infoProcedureAssuranceContactee'
+);
+if (infoProcedureAssuranceContactee) {
+  const radioButtonsAssuranceContactee = document.querySelectorAll(
+    'input[name="procedure_assurance[infoProcedureAssuranceContactee]"]'
+  );
+  const infoProcedureReponseAssurance = document.querySelector(
+    '#procedure_assurance_infoProcedureReponseAssurance'
+  ).parentNode;
+  const toggleReponseAssurance = () => {
+    const checkedRadio = document.querySelector(
+      'input[name="procedure_assurance[infoProcedureAssuranceContactee]"]:checked'
+    );
+    if (checkedRadio && checkedRadio.value === 'oui') {
+      infoProcedureReponseAssurance.classList.remove('fr-hidden');
+    } else {
+      infoProcedureReponseAssurance.classList.add('fr-hidden');
+      document.querySelector('#procedure_assurance_infoProcedureReponseAssurance').value = '';
+    }
+  };
+
+  radioButtonsAssuranceContactee.forEach((radio) => {
+    radio.addEventListener('change', toggleReponseAssurance);
+  });
+
+  toggleReponseAssurance();
+}

@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Model\InformationProcedure;
 use App\Entity\Signalement;
 use App\Form\SignalementeEditFO\CoordonneesAgenceType;
 use App\Form\SignalementeEditFO\CoordonneesBailleurType;
+use App\Form\SignalementeEditFO\ProcedureAssuranceType;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
@@ -95,6 +97,39 @@ class SignalementEditController extends AbstractController
         }
 
         return $this->render('front/edit-signalement/coordonnees-agence.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{code}/completer/assurance', name: 'front_suivi_signalement_complete_assurance', methods: ['GET', 'POST'])]
+    public function suiviSignalementCompleteAssurance(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->cguTiersChecker->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
+        $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : new InformationProcedure();
+        $form = $this->createForm(ProcedureAssuranceType::class, $informationProcedure);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $signalement->setInformationProcedure($informationProcedure);
+            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les informations sur l\'assurance ont bien été mises à jour.']);
+
+            // return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/edit-signalement/procedure-assurance.html.twig', [
             'signalement' => $signalement,
             'form' => $form,
         ]);
