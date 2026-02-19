@@ -31,6 +31,7 @@ use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\Suivi;
 use App\Entity\Territory;
+use App\Entity\TiersInvitation;
 use App\Entity\User;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
@@ -40,7 +41,6 @@ use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
 use App\Repository\Query\SignalementList\ListPaginatorQuery;
-use App\Repository\TiersInvitationRepository;
 use App\Service\Gouv\Ban\Response\Address;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
@@ -73,7 +73,6 @@ class SignalementManager extends AbstractManager
         private readonly SuiviManager $suiviManager,
         private readonly UserManager $userManager,
         private readonly BailleurRepository $bailleurRepository,
-        private readonly TiersInvitationRepository $tiersInvitationRepository,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly ExportIterableQuery $exportIterableQuery,
@@ -389,21 +388,15 @@ class SignalementManager extends AbstractManager
     }
 
     public function updateFromTiersInvitation(
-        Signalement $signalement,
+        TiersInvitation $tiersInvitation,
     ): void {
-        $tiersInvitation = $this->tiersInvitationRepository->findOneBy([
-            'signalement' => $signalement,
-        ]);
-        if (null === $tiersInvitation) {
-            return;
-        }
+        $signalement = $tiersInvitation->getSignalement();
         $signalement->setNomDeclarant($tiersInvitation->getLastname())
             ->setPrenomDeclarant($tiersInvitation->getFirstname())
             ->setMailDeclarant($tiersInvitation->getEmail())
             ->setTelDeclarant($tiersInvitation->getTelephone())
             ->setIsCguTiersAccepted(false);
 
-        // Create user corresponding to declarant
         $this->userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
 
         $this->save($signalement);

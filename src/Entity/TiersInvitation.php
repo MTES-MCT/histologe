@@ -6,6 +6,7 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\TiersInvitationRepository;
+use App\Validator as AppAssert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
@@ -41,10 +42,16 @@ class TiersInvitation implements EntityHistoryInterface
     private ?string $email = null;
 
     #[ORM\Column(length: 20, nullable: true)]
+    #[AppAssert\TelephoneFormat]
     private ?string $telephone = null;
 
     #[ORM\Column(length: 64, unique: true)]
     private string $token;
+
+    public function __construct()
+    {
+        $this->token = bin2hex(random_bytes(32));
+    }
 
     public function getId(): ?int
     {

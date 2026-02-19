@@ -1011,7 +1011,6 @@ class SignalementController extends AbstractController
         }
 
         $invitation = new TiersInvitation();
-        $invitation->setToken(bin2hex(random_bytes(32)));
         $invitation->setSignalement($signalement);
 
         $form = $this->createForm(

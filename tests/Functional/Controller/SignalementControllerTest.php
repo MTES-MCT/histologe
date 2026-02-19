@@ -383,7 +383,6 @@ class SignalementControllerTest extends WebTestCase
         $invitation->setLastname('Pote');
         $invitation->setFirstname('Paul');
         $invitation->setEmail('paulpote@gmail.com');
-        $invitation->setToken('token-invitation-test');
 
         $entityManager->persist($invitation);
         $entityManager->flush();
@@ -428,7 +427,6 @@ class SignalementControllerTest extends WebTestCase
         $invitation->setEmail('paulpote@gmail.com');
         $invitation->setLastname('Pote');
         $invitation->setFirstname('Paul');
-        $invitation->setToken('token-invitation-test');
 
         $entityManager->persist($invitation);
         $entityManager->flush();
@@ -471,7 +469,6 @@ class SignalementControllerTest extends WebTestCase
         $invitation->setEmail('existing@gmail.com');
         $invitation->setLastname('Pote');
         $invitation->setFirstname('Paul');
-        $invitation->setToken('token-invitation-test');
 
         $entityManager->persist($invitation);
         $entityManager->flush();

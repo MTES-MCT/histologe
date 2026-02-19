@@ -32,7 +32,8 @@ class SignalementInviteTiersMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
-        $token = $notificationMail->getTiersInvitation()->getToken();
+        $tiersInvitation = $notificationMail->getTiersInvitation();
+        $token = $tiersInvitation->getToken();
         $linkAccepter = $this->generateLink(
             'front_suivi_invitation_accepter',
             ['code' => $signalement->getCodeSuivi(), 'token' => $token]
@@ -50,6 +51,7 @@ class SignalementInviteTiersMailer extends AbstractNotificationMailer
             'signalement_villeOccupant' => $signalement->getVilleOccupant(),
             'lien_accepter_invitation' => $linkAccepter,
             'lien_refuser_invitation' => $linkRefuser,
+            'nom_tiers' => $tiersInvitation->getFirstname().' '.$tiersInvitation->getLastname(),
         ];
     }
 }

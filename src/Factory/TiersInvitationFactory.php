@@ -23,7 +23,6 @@ class TiersInvitationFactory
              ->setLastname($lastName)
              ->setFirstname($firstName)
              ->setEmail($email)
-             ->setTelephone($telephone)
-             ->setToken(bin2hex(random_bytes(32)));
+             ->setTelephone($telephone);
     }
 }

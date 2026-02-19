@@ -26,7 +26,6 @@ use App\Repository\Query\SignalementList\ExportIterableQuery;
 use App\Repository\Query\SignalementList\ListPaginatorQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
-use App\Repository\TiersInvitationRepository;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\Qualification\QualificationStatusService;
@@ -63,7 +62,6 @@ class SignalementManagerTest extends WebTestCase
     private SuiviManager $suiviManager;
     private UserManager $userManager;
     private BailleurRepository $bailleurRepository;
-    private TiersInvitationRepository $tiersInvitationRepository;
     private SignalementAddressUpdater $signalementAddressUpdater;
     private AffectationManager $affectationManager;
     private ZipcodeProvider $zipcodeProvider;
@@ -93,7 +91,6 @@ class SignalementManagerTest extends WebTestCase
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->userManager = static::getContainer()->get(UserManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
-        $this->tiersInvitationRepository = static::getContainer()->get(TiersInvitationRepository::class);
         $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $this->affectationManager = static::getContainer()->get(AffectationManager::class);
         $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
@@ -116,7 +113,6 @@ class SignalementManagerTest extends WebTestCase
             $this->suiviManager,
             $this->userManager,
             $this->bailleurRepository,
-            $this->tiersInvitationRepository,
             $this->signalementAddressUpdater,
             $this->zipcodeProvider,
             $this->exportIterableQuery,

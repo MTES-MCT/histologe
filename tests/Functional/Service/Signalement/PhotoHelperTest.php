@@ -45,7 +45,6 @@ class PhotoHelperTest extends KernelTestCase
     private SuiviManager $suiviManager;
     private UserManager $userManager;
     private BailleurRepository $bailleurRepository;
-    private TiersInvitationRepository $tiersInvitationRepository;
     private SignalementAddressUpdater $signalementAddressUpdater;
     private ZipcodeProvider $zipcodeProvider;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
@@ -71,7 +70,6 @@ class PhotoHelperTest extends KernelTestCase
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->userManager = static::getContainer()->get(UserManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
-        $this->tiersInvitationRepository = static::getContainer()->get(TiersInvitationRepository::class);
         $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
         $this->exportIterableQuery = static::getContainer()->get(ExportIterableQuery::class);
@@ -93,7 +91,6 @@ class PhotoHelperTest extends KernelTestCase
             $this->suiviManager,
             $this->userManager,
             $this->bailleurRepository,
-            $this->tiersInvitationRepository,
             $this->signalementAddressUpdater,
             $this->zipcodeProvider,
             $this->exportIterableQuery,

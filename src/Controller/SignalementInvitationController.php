@@ -25,19 +25,19 @@ class SignalementInvitationController extends AbstractController
         EntityManagerInterface $entityManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        dump($signalement);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_ANSWER_INVITATION, $signalement);
 
         $tiersInvitation = $tiersInvitationRepository->findOneBy([
             'signalement' => $signalement,
+            'token' => $token,
         ]);
+        dump($tiersInvitation);
         if (!$tiersInvitation) {
             throw $this->createNotFoundException('Invitation non trouvée');
         }
-        if ($tiersInvitation->getToken() !== $token) {
-            throw $this->createAccessDeniedException('Token invalide');
-        }
 
-        $signalementManager->updateFromTiersInvitation($signalement);
+        $signalementManager->updateFromTiersInvitation($tiersInvitation);
 
         $entityManager->remove($tiersInvitation);
         $entityManager->flush();
@@ -56,16 +56,16 @@ class SignalementInvitationController extends AbstractController
         EntityManagerInterface $entityManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        dump($signalement);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_ANSWER_INVITATION, $signalement);
 
         $tiersInvitation = $tiersInvitationRepository->findOneBy([
             'signalement' => $signalement,
+            'token' => $token,
         ]);
+        dump($tiersInvitation);
         if (!$tiersInvitation) {
             throw $this->createNotFoundException('Invitation non trouvée');
-        }
-        if ($tiersInvitation->getToken() !== $token) {
-            throw $this->createAccessDeniedException('Token invalide');
         }
 
         $suiviManager->addRefuseInvitationSuivi($signalement);
