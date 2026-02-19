@@ -52,7 +52,6 @@ class UsagerCoordonneesTiersType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'validation_groups' => ['fo_suivi_usager_tiers'],
             'data_class' => TiersInvitation::class,
             'extended' => false,
         ]);
