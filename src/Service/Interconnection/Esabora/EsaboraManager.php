@@ -90,6 +90,10 @@ class EsaboraManager
         }
     }
 
+    /**
+     * @throws \DateInvalidTimeZoneException
+     * @throws \DateMalformedStringException
+     */
     public function updateStatusFor(
         Affectation $affectation,
         User $user,
@@ -142,7 +146,16 @@ class EsaboraManager
                         dispatchAffectationAnsweredEvent: false
                     );
                     if ($this->featureSishRepushMessage) {
-                        $note = '<i>NOTE : vous pourrez, si besoin, renvoyer ce signalement après mise à jour dans les 24 heures</i>';
+                        $timezone = new \DateTimeZone($affectation->getSignalement()->getTimezone());
+                        $dateReaffectation = (new \DateTimeImmutable('now', $timezone))
+                            ->modify('+1 day')
+                            ->format('d/m/Y');
+
+                        $note = \sprintf(
+                            '<i>NOTE : vous pourrez, si besoin, réaffecter ce signalement à partir du : %s</i>',
+                            $dateReaffectation
+                        );
+
                         $description = \sprintf(
                             'refusé via '.$dossierResponse->getNameSI().' pour motif suivant : %s<br>%s',
                             $dossierResponse->getSasCauseRefus(),
