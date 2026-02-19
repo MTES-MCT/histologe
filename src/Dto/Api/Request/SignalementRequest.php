@@ -33,7 +33,7 @@ class SignalementRequest implements RequestInterface
 
     #[OA\Property(
         description: 'Adresse du logement (numéro et voie).',
-        example: '151 avenue du pont trinquat',
+        example: '151 Avenue du Pont Trinquat',
     )]
     #[Assert\NotBlank(message: 'Veuillez renseigner l\'adresse du logement.')]
     #[Assert\Length(max: 100)]

@@ -2,6 +2,7 @@
 
 namespace App\Service\DashboardTabPanel;
 
+use App\Entity\Enum\CreationSource;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class TabQueryParameters
@@ -10,8 +11,8 @@ class TabQueryParameters
         public ?int $territoireId = null,
         public ?string $communeCodePostal = null,
         #[Assert\Choice([
-            TabDossier::CREATED_FROM_FORMULAIRE_USAGER,
-            TabDossier::CREATED_FROM_FORMULAIRE_PRO,
+            CreationSource::CREATED_FROM_FORMULAIRE_USAGER,
+            CreationSource::CREATED_FROM_FORMULAIRE_PRO,
         ])]
         public ?string $createdFrom = null,
         /** @var array<int|string> */

@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\AutoAffectationRule;
 use App\Entity\Critere;
 use App\Entity\Criticite;
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
@@ -61,33 +62,34 @@ trait FixturesHelper
         $faker = Factory::create('fr_FR');
 
         $signalement = (new Signalement())
-           ->setIsProprioAverti(false)
-           ->setNbAdultes((string) 2)
-           ->setNbEnfantsP6((string) 1)
-           ->setNbEnfantsM6((string) 1)
-           ->setTelOccupant($faker->phoneNumber())
-           ->setAdresseOccupant('25 rue du test')
-           ->setEtageOccupant('2')
-           ->setVilleOccupant('Calais')
-           ->setCpOccupant($codePostal ?? '62100')
-           ->setNumAppartOccupant('2')
-           ->setCiviliteOccupant('mme')
-           ->setNomOccupant($nom ?? $faker->lastName())
-           ->setPrenomOccupant($prenom ?? $faker->firstName())
-           ->setTelOccupant($faker->phoneNumber())
-           ->setMailOccupant($email ?? $faker->email())
-           ->setNomProprio($faker->lastName())
-           ->setPrenomProprio($faker->firstName())
-           ->setAdresseProprio('27 rue de la république')
-           ->setCodePostalProprio('13002')
-           ->setVilleProprio('Marseille')
-           ->setTerritory($territory)
-           ->setInseeOccupant('62193')
-           ->setProfileDeclarant($profileDeclarant ?? ProfileDeclarant::LOCATAIRE)
-           ->setValidatedAt(new \DateTimeImmutable())
-           ->setScore(1.46265448)
-           ->setSuperficie(75.5)
-           ->addSuivi($this->getSuiviPartner());
+            ->setCreationSource(CreationSource::FORM_USAGER_V1)
+            ->setIsProprioAverti(false)
+            ->setNbAdultes((string) 2)
+            ->setNbEnfantsP6((string) 1)
+            ->setNbEnfantsM6((string) 1)
+            ->setTelOccupant($faker->phoneNumber())
+            ->setAdresseOccupant('25 rue du test')
+            ->setEtageOccupant('2')
+            ->setVilleOccupant('Calais')
+            ->setCpOccupant($codePostal ?? '62100')
+            ->setNumAppartOccupant('2')
+            ->setCiviliteOccupant('mme')
+            ->setNomOccupant($nom ?? $faker->lastName())
+            ->setPrenomOccupant($prenom ?? $faker->firstName())
+            ->setTelOccupant($faker->phoneNumber())
+            ->setMailOccupant($email ?? $faker->email())
+            ->setNomProprio($faker->lastName())
+            ->setPrenomProprio($faker->firstName())
+            ->setAdresseProprio('27 rue de la république')
+            ->setCodePostalProprio('13002')
+            ->setVilleProprio('Marseille')
+            ->setTerritory($territory)
+            ->setInseeOccupant('62193')
+            ->setProfileDeclarant($profileDeclarant ?? ProfileDeclarant::LOCATAIRE)
+            ->setValidatedAt(new \DateTimeImmutable())
+            ->setScore(1.46265448)
+            ->setSuperficie(75.5)
+            ->addSuivi($this->getSuiviPartner());
 
         if (null !== $profileDeclarant && ProfileDeclarant::LOCATAIRE !== $profileDeclarant) {
             $signalement
@@ -127,6 +129,7 @@ trait FixturesHelper
         $signalements = [];
         for ($i = 0; $i < $count; ++$i) {
             $signalements[] = (new Signalement())
+                ->setCreationSource(CreationSource::FORM_USAGER_V1)
                 ->setIsProprioAverti(false)
                 ->setNbAdultes((string) 2)
                 ->setNbEnfantsP6((string) 1)

@@ -2,6 +2,7 @@
 
 namespace App\Factory;
 
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
@@ -23,6 +24,7 @@ class SignalementFactory
 
         return (new Signalement())
             ->setIsImported(true)
+            ->setCreationSource(CreationSource::IMPORT)
             ->setTerritory($territory)
             ->setDetails($data['details'])
             ->setIsProprioAverti((bool) $data['isProprioAverti'])

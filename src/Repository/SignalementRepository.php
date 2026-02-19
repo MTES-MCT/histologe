@@ -8,6 +8,7 @@ use App\Entity\Affectation;
 use App\Entity\Commune;
 use App\Entity\EmailDeliveryIssue;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
@@ -380,9 +381,8 @@ class SignalementRepository extends ServiceEntityRepository
             ->leftJoin('dp.desordreCritere', 'desordreCriteres')
             ->where('s.statut NOT IN (:statutList)')
             ->setParameter('statutList', SignalementStatus::excludedStatuses())
-            ->andWhere('s.createdFrom IS NOT NULL OR s.createdBy IS NOT NULL');
-
-        $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
+            ->andWhere('s.creationSource = :creationSource')
+            ->setParameter('creationSource', CreationSource::FORM_USAGER_V2);
 
         if ($territory) {
             $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
@@ -1439,10 +1439,12 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         if ($tabQueryParameters->createdFrom) {
-            if (TabDossier::CREATED_FROM_FORMULAIRE_USAGER === $tabQueryParameters->createdFrom) {
-                $qb->andWhere('s.createdBy IS NULL');
-            } elseif (TabDossier::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
-                $qb->andWhere('s.createdBy IS NOT NULL');
+            if (CreationSource::CREATED_FROM_FORMULAIRE_USAGER === $tabQueryParameters->createdFrom) {
+                $qb->andWhere('s.creationSource IN (:creationSources)')
+                    ->setParameter('creationSources', CreationSource::getFormUsagerValues());
+            } elseif (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
+                $qb->andWhere('s.creationSource IN (:creationSources)')
+                    ->setParameter('creationSources', CreationSource::getFormProValues());
             }
         }
 
@@ -1491,7 +1493,7 @@ class SignalementRepository extends ServiceEntityRepository
             tabQueryParameters: $tabQueryParameters
         );
 
-        if (TabDossier::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
+        if (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
             $qb
                 ->leftJoin('s.createdBy', 'u')
                 ->leftJoin('u.userPartners', 'up')
@@ -1508,7 +1510,7 @@ class SignalementRepository extends ServiceEntityRepository
                     s.reference,
                     CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)),
                     s.createdAt,'.
-                    (TabDossier::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom
+                    (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom
                         ? 'CONCAT(UPPER(u.nom), \' \', u.prenom), p.nom,'
                         : '\'\' , \'\' ,'
                     ).

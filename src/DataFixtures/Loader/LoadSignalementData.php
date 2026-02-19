@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\Loader;
 
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
@@ -90,6 +91,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         $signalement = (new Signalement())
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
+            ->setCreationSource(CreationSource::FORM_USAGER_V1)
             ->setProfileDeclarant(ProfileDeclarant::from($row['profile_declarant']))
             ->setNomOccupant($row['nom_occupant'] ?? $faker->lastName())
             ->setPrenomOccupant($faker->firstName())
@@ -167,6 +169,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         if (isset($row['is_imported'])) {
             $signalement
                 ->setIsImported($row['is_imported'])
+                ->setCreationSource(CreationSource::IMPORT)
                 ->setModifiedAt(null);
         }
 
@@ -329,6 +332,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         /** @var Signalement $signalement */
         $signalement = (new Signalement())
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
+            ->setCreationSource(CreationSource::FORM_USAGER_V2)
             ->setCiviliteOccupant($row['civilite_occupant'] ?? 'mme')
             ->setNomOccupant($row['nom_occupant'] ?? $faker->lastName())
             ->setPrenomOccupant($row['prenom_occupant'] ?? $faker->firstName())
@@ -420,6 +424,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         if (isset($row['is_imported'])) {
             $signalement
                 ->setIsImported($row['is_imported'])
+                ->setCreationSource(CreationSource::IMPORT)
                 ->setModifiedAt(null);
         }
 
@@ -449,7 +454,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         if (isset($row['created_by'])) {
             $signalement
-                ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
+                ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]))
+                ->setCreationSource(CreationSource::FORM_PRO_BO);
         }
 
         if (isset($row['type_proprio'])) {
@@ -497,7 +503,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             }
         }
         if (!$signalement->getCreatedFrom() && !$signalement->getCreatedBy()) {
-            $signalement->setCreatedBy($this->admin);
+            $signalement->setCreatedBy($this->admin)
+                ->setCreationSource(CreationSource::FORM_PRO_BO);
         }
         $manager->persist($signalement);
         $this->userManager->createUsagersFromSignalement($signalement);

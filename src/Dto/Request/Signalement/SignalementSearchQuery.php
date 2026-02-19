@@ -2,9 +2,8 @@
 
 namespace App\Dto\Request\Signalement;
 
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\SignalementStatus;
-use App\Service\DashboardTabPanel\TabDossier;
-use App\Service\Signalement\SearchFilter;
 use App\Service\UrlHelper;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -116,13 +115,13 @@ class SignalementSearchQuery
         ], message: 'Motif de clôture invalide')]
         private readonly ?string $motifCloture = null,
         #[Assert\Choice([
-            TabDossier::CREATED_FROM_FORMULAIRE_USAGER,
-            TabDossier::CREATED_FROM_FORMULAIRE_PRO,
-            TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V1,
-            TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V2,
-            TabDossier::CREATED_FROM_FORMULAIRE_PRO_BO,
-            TabDossier::CREATED_FROM_API,
-            TabDossier::CREATED_FROM_IMPORT,
+            CreationSource::CREATED_FROM_FORMULAIRE_USAGER,
+            CreationSource::CREATED_FROM_FORMULAIRE_PRO,
+            CreationSource::FORM_USAGER_V1->value,
+            CreationSource::FORM_USAGER_V2->value,
+            CreationSource::FORM_PRO_BO->value,
+            CreationSource::API->value,
+            CreationSource::IMPORT->value,
         ], message: 'Source de création invalide')]
         private readonly ?string $createdFrom = null,
         #[Assert\Choice(['oui'], message: 'La valeur pour mes abonnements est invalide')]

@@ -5,6 +5,7 @@ namespace App\Service\Signalement;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\DesordrePrecision;
 use App\Entity\Enum\ChauffageType;
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
@@ -85,6 +86,7 @@ class SignalementBuilder
 
         $this->signalement = (new Signalement())
             ->setCreatedFrom($this->signalementDraft)
+            ->setCreationSource(CreationSource::FORM_USAGER_V2)
             ->setTerritory($this->territory)
             ->setIsCguAccepted(true)
             ->setDetails($this->signalementDraftRequest->getMessageAdministration())

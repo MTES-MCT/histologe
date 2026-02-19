@@ -2,11 +2,11 @@
 
 namespace App\Tests\Functional\Controller\Back;
 
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
-use App\Service\DashboardTabPanel\TabDossier;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -91,13 +91,13 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by dates depot and dates of last suivi' => [['isImported' => 'oui', 'dateDepotDebut' => '2023-01-01', 'dateDepotFin' => '2023-03-31', 'dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-12-31'], 2];
         yield 'Search by Demande fermeture usager territoire 13' => [['territoire' => '13', 'usagerAbandonProcedure' => '1'], 1];
         yield 'Search by Demande fermeture usager all' => [['usagerAbandonProcedure' => '1'], 2];
-        yield 'Search by Created from CREATED_FROM_FORMULAIRE_PRO' => [['createdFrom' => TabDossier::CREATED_FROM_FORMULAIRE_PRO], 10];
-        yield 'Search by Created from CREATED_FROM_FORMULAIRE_USAGER' => [['createdFrom' => TabDossier::CREATED_FROM_FORMULAIRE_USAGER, 'isImported' => 'oui'], 47];
-        yield 'Search by Provenance CREATED_FROM_IMPORT' => [['createdFrom' => TabDossier::CREATED_FROM_IMPORT, 'isImported' => 'oui'], 6];
-        yield 'Search by Provenance CREATED_FROM_FORMULAIRE_USAGER_V1' => [['createdFrom' => TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V1], 35];
-        yield 'Search by Provenance CREATED_FROM_FORMULAIRE_USAGER_V2' => [['createdFrom' => TabDossier::CREATED_FROM_FORMULAIRE_USAGER_V2], 6];
-        yield 'Search by Provenance CREATED_FROM_FORMULAIRE_PRO_BO' => [['createdFrom' => TabDossier::CREATED_FROM_FORMULAIRE_PRO_BO], 10];
-        yield 'Search by Provenance CREATED_FROM_API' => [['createdFrom' => TabDossier::CREATED_FROM_API], 0];
+        yield 'Search by Created from CREATED_FROM_FORMULAIRE_PRO' => [['createdFrom' => CreationSource::CREATED_FROM_FORMULAIRE_PRO], 10];
+        yield 'Search by Created from CREATED_FROM_FORMULAIRE_USAGER' => [['createdFrom' => CreationSource::CREATED_FROM_FORMULAIRE_USAGER, 'isImported' => 'oui'], 47];
+        yield 'Search by Provenance IMPORT' => [['createdFrom' => CreationSource::IMPORT->value, 'isImported' => 'oui'], 6];
+        yield 'Search by Provenance FORM_USAGER_V1' => [['createdFrom' => CreationSource::FORM_USAGER_V1->value], 35];
+        yield 'Search by Provenance FORM_USAGER_V2' => [['createdFrom' => CreationSource::FORM_USAGER_V2->value], 6];
+        yield 'Search by Provenance FORM_PRO_BO' => [['createdFrom' => CreationSource::FORM_PRO_BO->value], 10];
+        yield 'Search by Provenance API' => [['createdFrom' => CreationSource::API->value], 0];
         yield 'Search by Mes dossiers' => [['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], 0];
         yield 'Search by relanceUsagerSansReponse' => [['relanceUsagerSansReponse' => 'oui', 'isImported' => 'oui'], 1];
         yield 'Search by Messages usagers après fermeture' => [['isMessagePostCloture' => 'oui', 'isImported' => 'oui'], 1];

@@ -9,6 +9,7 @@ use App\Dto\Api\Model\File;
 use App\Dto\Api\Model\Personne;
 use App\Dto\Api\Model\Suivi;
 use App\Dto\Api\Model\Visite;
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\MotifCloture;
@@ -873,4 +874,11 @@ class SignalementResponse
         example: false
     )]
     public bool $signalementImporte;
+    #[OA\Property(
+        description: 'Indique la source de création du signalement.',
+        type: 'string',
+        example: 'API',
+        nullable: true
+    )]
+    public ?CreationSource $sourceCreationSignalement;
 }

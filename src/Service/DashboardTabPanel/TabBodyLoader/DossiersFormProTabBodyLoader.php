@@ -2,11 +2,11 @@
 
 namespace App\Service\DashboardTabPanel\TabBodyLoader;
 
+use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\SignalementStatus;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
-use App\Service\DashboardTabPanel\TabDossier;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -27,7 +27,7 @@ class DossiersFormProTabBodyLoader extends AbstractTabBodyLoader
     public function load(TabBody $tabBody): void
     {
         parent::load($tabBody);
-        $this->tabQueryParameters->createdFrom = TabDossier::CREATED_FROM_FORMULAIRE_PRO;
+        $this->tabQueryParameters->createdFrom = CreationSource::CREATED_FROM_FORMULAIRE_PRO;
 
         $result = $this->tabDataManager->getNouveauxDossiersWithCount(
             signalementStatus: SignalementStatus::NEED_VALIDATION,
@@ -41,7 +41,7 @@ class DossiersFormProTabBodyLoader extends AbstractTabBodyLoader
         $filters = [
             ...$tabBody->getFilters(),
             'status' => SignalementStatus::NEED_VALIDATION->label(),
-            'createdFrom' => TabDossier::CREATED_FROM_FORMULAIRE_PRO,
+            'createdFrom' => CreationSource::CREATED_FROM_FORMULAIRE_PRO,
         ];
 
         $tabBody->setFilters($filters);

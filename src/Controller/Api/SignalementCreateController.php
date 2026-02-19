@@ -65,7 +65,7 @@ class SignalementCreateController extends AbstractController
                         description: 'Exemple de payload de création d\'un signalement.',
                         value: [
                             'partenaireUuid' => '85401893-8d92-11f0-8aa8-f6901f1203f4',
-                            'adresseOccupant' => '151 avenue du pont trinquat',
+                            'adresseOccupant' => '151 Avenue du Pont Trinquat',
                             'codePostalOccupant' => '34070',
                             'communeOccupant' => 'Montpellier',
                             'etageOccupant' => '2',
