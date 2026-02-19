@@ -611,8 +611,8 @@ function initBoFormSignalementAdresse() {
   initRefreshFromRadio(
     'adresse',
     'signalement_draft_address_profileDeclarant',
-    ['#signalement_draft_coordonnees_isProTiersDeclarant_0'],
-    'TIERS_PRO',
+    ['#signalement_draft_coordonnees_copyInfoTiersDeclarant_0'],
+      ['TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS', 'BAILLEUR'],
     [],
     'coordonnees'
   );
@@ -868,10 +868,10 @@ function initBoFormSignalementCoordonnees() {
       '#signalement_draft_coordonnees_prenomProprio_help',
     ]
   );
-  const checkIsProTiersDeclarant = document.querySelector(
-    '#signalement_draft_coordonnees_isProTiersDeclarant_0'
+  const checkcopyInfoTiersDeclarant = document.querySelector(
+    '#signalement_draft_coordonnees_copyInfoTiersDeclarant_0'
   );
-  checkIsProTiersDeclarant.addEventListener('change', (event) => {
+  checkcopyInfoTiersDeclarant.addEventListener('change', (event) => {
     const proTiersStructure = document.querySelector(
       '#signalement_draft_coordonnees_structureDeclarant'
     );
@@ -880,13 +880,13 @@ function initBoFormSignalementCoordonnees() {
     const proTiersMail = document.querySelector('#signalement_draft_coordonnees_mailDeclarant');
     if (event.target.checked) {
       proTiersStructure.value =
-        checkIsProTiersDeclarant.parentElement.parentElement.parentElement.dataset.userStructure;
+        checkcopyInfoTiersDeclarant.parentElement.parentElement.parentElement.dataset.userStructure;
       proTiersNom.value =
-        checkIsProTiersDeclarant.parentElement.parentElement.parentElement.dataset.userNom;
+        checkcopyInfoTiersDeclarant.parentElement.parentElement.parentElement.dataset.userNom;
       proTiersPrenom.value =
-        checkIsProTiersDeclarant.parentElement.parentElement.parentElement.dataset.userPrenom;
+        checkcopyInfoTiersDeclarant.parentElement.parentElement.parentElement.dataset.userPrenom;
       proTiersMail.value =
-        checkIsProTiersDeclarant.parentElement.parentElement.parentElement.dataset.userMail;
+        checkcopyInfoTiersDeclarant.parentElement.parentElement.parentElement.dataset.userMail;
     } else {
       proTiersStructure.value = '';
       proTiersNom.value = '';

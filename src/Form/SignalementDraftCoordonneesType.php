@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -16,8 +15,10 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SignalementDraftCoordonneesType extends AbstractType
 {
@@ -161,12 +162,12 @@ class SignalementDraftCoordonneesType extends AbstractType
                 ],
                 'empty_data' => '',
             ])
-            ->add('isProTiersDeclarant', ChoiceType::class, [
-                'label' => 'Tiers professionnel',
+            ->add('copyInfoTiersDeclarant', ChoiceType::class, [
+                'label' => 'Utiliser mes coordonnées',
                 'choices' => [
-                    'Utiliser mes coordonnées' => '1',
+                    'Copier mes coordonnées' => '1',
                 ],
-                'help' => 'Cochez cette case pour devenir le tiers déclarant de ce signalement. Vous recevrez alors des mises à jour par e-mail au même titre que l\'occupant du logement.',
+                'help' => 'Cochez cette case pour pré-remplir les coordonnées du déclarant avec vos informations. Vous recevrez alors des mises à jour par e-mail au même titre que l\'occupant du logement.',
                 'expanded' => true,
                 'multiple' => true,
                 'required' => false,
@@ -178,24 +179,35 @@ class SignalementDraftCoordonneesType extends AbstractType
                     'data-user-prenom' => $user->getPrenom(),
                     'data-user-mail' => $user->getEmail(),
                 ],
-                'data' => (!empty($signalement->getMailDeclarant()) && ProfileDeclarant::TIERS_PRO === $signalement->getProfileDeclarant()) ? [$signalement->getMailDeclarant() == $user->getEmail()] : null,
             ])
             ->add('structureDeclarant', TextType::class, [
                 'label' => 'Structure',
                 'required' => false,
             ])
             ->add('nomDeclarant', TextType::class, [
-                'label' => 'Nom de famille',
+                'label' => $signalement->isTiersDeclarant()
+                    ? 'Nom de famille <span class="text-required">*</span>'
+                    : 'Nom de famille',
+                'label_html' => true,
                 'required' => false,
+                'constraints' => [
+                    new NotBlank(message: 'Veuillez renseigner un nom.', groups: ['bo_step_coordonnees_tiers']),
+                ],
             ])
             ->add('prenomDeclarant', TextType::class, [
                 'label' => 'Prénom',
                 'required' => false,
             ])
             ->add('mailDeclarant', TextType::class, [
-                'label' => 'Adresse e-mail',
+                'label' => $signalement->isTiersDeclarant()
+                    ? 'Adresse e-mail <span class="text-required">*</span>'
+                    : 'Adresse e-mail',
+                'label_html' => true,
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
+                'constraints' => [
+                    new NotBlank(message: 'Veuillez renseigner une adresse e-mail.', groups: ['bo_step_coordonnees_tiers']),
+                ],
             ])
             ->add('telDeclarant', PhoneType::class, [
                 'required' => false,
@@ -297,7 +309,16 @@ class SignalementDraftCoordonneesType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'validation_groups' => ['bo_step_coordonnees'],
+            'validation_groups' => static function (FormInterface $form): array {
+                $groups = ['bo_step_coordonnees'];
+
+                $data = $form->getData();
+                if ($data instanceof Signalement && $data->isTiersDeclarant()) {
+                    $groups[] = 'bo_step_coordonnees_tiers';
+                }
+
+                return $groups;
+            },
         ]);
     }
 }

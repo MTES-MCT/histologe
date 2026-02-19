@@ -60,6 +60,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationMailerRegistry,
             $this->security,
             $courrierBailleurGenerator,
+            $this->userSignalementSubscriptionRepository,
         );
     }
 
@@ -213,6 +214,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationMailerRegistry,
             $this->security,
             $courrierBailleurGenerator,
+            $this->userSignalementSubscriptionRepository,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
@@ -263,6 +265,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationMailerRegistry,
             $this->security,
             $courrierBailleurGenerator,
+            $this->userSignalementSubscriptionRepository,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);
@@ -306,6 +309,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationMailerRegistry,
             $this->security,
             $courrierBailleurGenerator,
+            $this->userSignalementSubscriptionRepository,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
@@ -352,6 +356,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->notificationMailerRegistry,
             $this->security,
             $courrierBailleurGenerator,
+            $this->userSignalementSubscriptionRepository,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
