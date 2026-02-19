@@ -574,20 +574,12 @@ class SignalementCreateController extends AbstractController
     {
         $errorMsgs = [];
         if ($signalement->isTiersDeclarant()) {
-            if ('' === trim($signalement->getStructureDeclarant())) {
-                $errorMsgs[] = 'En tant que tiers déclarant, vous devez renseigner une structure pour le tiers';
-            }
-
             if ('' === trim($signalement->getMailDeclarant())) {
                 $errorMsgs[] = 'En tant que tiers déclarant, vous devez renseigner un e-mail pour le tiers.';
             }
 
             if ('' === trim($signalement->getNomDeclarant())) {
                 $errorMsgs[] = 'En tant que tiers déclarant, vous devez renseigner un nom pour le tiers.';
-            }
-
-            if ('' === trim($signalement->getPrenomDeclarant())) {
-                $errorMsgs[] = 'En tant que tiers déclarant, vous devez renseigner un prénom pour le tiers.';
             }
         }
         if (!$signalement->getAdresseOccupant()) {
