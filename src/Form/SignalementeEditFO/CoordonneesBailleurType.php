@@ -52,7 +52,6 @@ class CoordonneesBailleurType extends AbstractType
                         'class' => 'manual-address manual-address-input',
                         'data-autocomplete-addresse-proprio' => 'true',
                     ],
-                    'empty_data' => '',
                 ])
                 ->add('codePostalProprio', null, [
                     'label' => 'Code postal',
@@ -61,7 +60,6 @@ class CoordonneesBailleurType extends AbstractType
                         'class' => 'manual-address',
                         'data-autocomplete-codepostal-proprio' => 'true',
                     ],
-                    'empty_data' => '',
                 ])
                 ->add('villeProprio', null, [
                     'label' => 'Ville',
@@ -70,7 +68,6 @@ class CoordonneesBailleurType extends AbstractType
                         'class' => 'manual-address',
                         'data-autocomplete-ville-proprio' => 'true',
                     ],
-                    'empty_data' => '',
                 ])
                 ->add('telProprio', TextType::class, [
                     'label' => 'Téléphone principal',
