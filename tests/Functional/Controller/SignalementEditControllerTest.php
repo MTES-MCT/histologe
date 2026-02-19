@@ -12,6 +12,7 @@ use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -175,6 +176,14 @@ class SignalementEditControllerTest extends WebTestCase
         ]);
         $this->assertEquals('nouvel.email@example.org', $signalement->getMailProprio());
         $this->assertNotNull($suivi);
-        $this->assertStringContainsString('a mis à jour les coordonnées', $suivi->getDescription());
+        $this->assertStringContainsString('Les coordonnées du bailleur ont été modifiées par', $description = $suivi->getDescription());
+        $crawler = new Crawler($description);
+        $this->assertEquals(6, $crawler->filter('li')->count());
+        $this->assertStringContainsString('E-mail', $description);
+        $this->assertStringContainsString('Adresse', $description);
+        $this->assertStringContainsString('Code postal', $description);
+        $this->assertStringContainsString('Ville', $description);
+        $this->assertStringContainsString('Téléphone', $description);
+        $this->assertStringContainsString('Téléphone secondaire', $description);
     }
 }

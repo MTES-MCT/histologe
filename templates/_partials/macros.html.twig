@@ -82,3 +82,54 @@
     </ul>
 </nav>
 {% endmacro %}
+
+{% macro historyEntriesVizualisation(historyEntryChanges, isSubChange = false, parentName = '') %}
+{% import _self as macros %}
+{% if not isSubChange %}
+<div class="fr-table fr-table--sm fr-table--multiline fr-m-0">
+    <div class="fr-table__wrapper">
+        <div class="fr-table__container">
+            <div class="fr-table__content">
+                <table class="history-diff">
+{% endif %}
+                    {% for name, change in historyEntryChanges %}
+                        {% set old = change.old is defined
+                            ? (change.old is iterable ? change.old|join(', ') : change.old)
+                            : null
+                        %}
+                        {% set new = change.new is defined
+                            ? (change.new is iterable ? change.new|join(', ') : change.new)
+                            : null
+                        %}
+
+                        {% if old is not null or new is not null %}
+                            <tr>
+                                <td class="history-diff-title">
+                                    {{ name }}
+                                    {% if parentName %}
+                                        <small><br>({{ parentName }})</small>
+                                    {% endif %}
+                                </td>
+                                <td class="history-diff-old">
+                                    {% if old is not null %}
+                                        {{ old|diff(new ?? '', 'old') }}
+                                    {% endif %}
+                                </td>
+                                <td class="history-diff-new">
+                                    {% if new is not null %}
+                                        {{ new|diff(old ?? '', 'new') }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            {{ macros.historyEntriesVizualisation(change, true, name) }}
+                        {% endif %}
+                    {% endfor %}
+{% if not isSubChange %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endmacro %}

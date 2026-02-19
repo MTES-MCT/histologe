@@ -2,17 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\Enum\SuiviCategory;
-use App\Entity\Suivi;
-use App\Entity\User;
-use App\Form\CoordonneesBailleurType;
-use App\Manager\SignalementManager;
+use App\Entity\Signalement;
+use App\Form\SignalementeEditFO\CoordonneesAgenceType;
+use App\Form\SignalementeEditFO\CoordonneesBailleurType;
 use App\Manager\SuiviManager;
-use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use App\Security\Voter\SignalementFoVoter;
 use App\Service\Security\CguTiersChecker;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +22,8 @@ class SignalementEditController extends AbstractController
 {
     public function __construct(
         private readonly CguTiersChecker $cguTiersChecker,
+        private readonly SuiviManager $suiviManager,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -31,8 +32,6 @@ class SignalementEditController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         Request $request,
-        SuiviManager $suiviManager,
-        SignalementManager $signalementManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
@@ -54,37 +53,9 @@ class SignalementEditController extends AbstractController
             $formCoordonneesBailleur->isSubmitted()
             && $formCoordonneesBailleur->isValid()
         ) {
-            /** @var User $user */
-            $user = $signalementUser->getUser();
-            $signalementManager->save($signalement);
-            $usager = ($user === $signalement->getSignalementUsager()?->getOccupant()) ?
-                ' ('.UserManager::OCCUPANT.')' :
-                ' ('.UserManager::DECLARANT.')';
-            $description = $user->getNomComplet(true).$usager.' a mis à jour les coordonnées du bailleur.';
-            $description .= '<br>Voici les nouvelles coordonnées :';
-            $description .= '<ul>';
-            $description .= $signalement->getNomProprio() ? '<li>Nom : '.$signalement->getNomProprio().'</li>' : '';
-            $description .= $signalement->getPrenomProprio() ? '<li>Prénom : '.$signalement->getPrenomProprio().'</li>' : '';
-            $description .= $signalement->getMailProprio() ? '<li>E-mail : '.$signalement->getMailProprio().'</li>' : '';
-            $description .= $signalement->getTelProprio() ? '<li>Téléphone : '.$signalement->getTelProprio().'</li>' : '';
-            $description .= $signalement->getTelProprioSecondaire() ? '<li>Téléphone secondaire : '.$signalement->getTelProprioSecondaire().'</li>' : '';
-            $description .= $signalement->getAdresseProprio() ? '<li>Adresse : '.$signalement->getAdresseProprio().'</li>' : '';
-            $description .= $signalement->getCodePostalProprio() ? '<li>Code postal : '.$signalement->getCodePostalProprio().'</li>' : '';
-            $description .= $signalement->getVilleProprio() ? '<li>Ville : '.$signalement->getVilleProprio().'</li>' : '';
-            $description .= '</ul>';
+            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
 
-            $suiviManager->createSuivi(
-                signalement: $signalement,
-                description: $description,
-                type: Suivi::TYPE_USAGER,
-                category: SuiviCategory::SIGNALEMENT_EDITED_FO,
-                user: $user,
-                isPublic: true,
-            );
-
-            $this->addFlash('success', ['title' => 'Dossier complété',
-                'message' => 'Votre dossier a bien été complété, vous recevrez un e-mail lorsque votre dossier sera mis à jour. N\'hésitez pas à consulter votre page de suivi !',
-            ]);
+            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées du bailleur ont bien été mises à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -93,5 +64,51 @@ class SignalementEditController extends AbstractController
             'signalement' => $signalement,
             'formCoordonneesBailleur' => $formCoordonneesBailleur,
         ]);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    #[Route('/{code}/completer/agence', name: 'front_suivi_signalement_complete_agence', methods: ['GET', 'POST'])]
+    public function suiviSignalementCompleteAgence(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->cguTiersChecker->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
+        $form = $this->createForm(CoordonneesAgenceType::class, $signalement);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées de l\'agence ont bien été mises à jour.']);
+
+            return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/edit-signalement/coordonnees-agence.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form,
+        ]);
+    }
+
+    private function saveChangesAndCreateSuivi(Signalement $signalement, SignalementUser $signalementUser): void
+    {
+        // Ordre volontaire : createSuiviFromEditUsager() utilise les changements enregistrés sur Signalement en preUpdate.
+        $this->entityManager->wrapInTransaction(function () use ($signalement, $signalementUser): void {
+            $this->entityManager->flush(); /* @see SignalementUpdatedListener::preUpdate() écoute l'event dispatché par le flush() */
+            $this->suiviManager->createSuiviFromEditUsager(
+                $signalement,
+                $signalementUser,
+            );
+        });
     }
 }
