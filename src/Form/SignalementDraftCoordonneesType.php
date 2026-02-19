@@ -162,7 +162,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 ],
                 'empty_data' => '',
             ])
-            ->add('isTiersDeclarant', ChoiceType::class, [
+            ->add('copyInfoTiersDeclarant', ChoiceType::class, [
                 'label' => 'Utiliser mes coordonnées',
                 'choices' => [
                     'Copier mes coordonnées' => '1',
