@@ -15,8 +15,8 @@ use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Entity\TiersInvitation;
 use App\Entity\User;
+use App\Factory\TiersInvitationFactory;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\TiersInvitationRepository;
@@ -150,6 +150,7 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
         NotificationMailerRegistry $notificationMailerRegistry,
         TiersInvitationRepository $tiersInvitationRepository,
+        TiersInvitationFactory $tiersInvitationFactory,
         EntityManagerInterface $em,
     ): JsonResponse {
         // On bloque si tiers déjà renseigné ou si créé par tiers
@@ -185,14 +186,13 @@ class SignalementEditController extends AbstractController
             return $this->json($response, $response['code']);
         }
 
-        $invitation = new TiersInvitation();
-        $invitation
-            ->setSignalement($signalement)
-            ->setLastname($inviteTiersRequest->getNom())
-            ->setFirstname($inviteTiersRequest->getPrenom())
-            ->setEmail($inviteTiersRequest->getMail())
-            ->setTelephone($inviteTiersRequest->getTelephone())
-            ->setToken(bin2hex(random_bytes(32)));
+        $invitation = $tiersInvitationFactory->createInstanceFrom(
+            $signalement,
+            $inviteTiersRequest->getNom(),
+            $inviteTiersRequest->getPrenom(),
+            $inviteTiersRequest->getMail(),
+            $inviteTiersRequest->getTelephone()
+        );
 
         $em->persist($invitation);
         $em->flush();

@@ -2,14 +2,16 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\TimestampableTrait;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\TiersInvitationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
 
 #[ORM\Entity(repositoryClass: TiersInvitationRepository::class)]
-class TiersInvitation
+class TiersInvitation implements EntityHistoryInterface
 {
     use TimestampableTrait;
 
@@ -119,5 +121,11 @@ class TiersInvitation
         $this->token = $token;
 
         return $this;
+    }
+
+    /** @return array<HistoryEntryEvent> */
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }
