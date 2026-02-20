@@ -127,6 +127,20 @@ class SignalementUpdatedListener
                 if (null === $parsed) {
                     continue;
                 }
+                
+                $old = $event->getOldValue($fieldName);
+                $new = $event->getNewValue($fieldName);
+
+                // Si c'est un champ de type DateTimeImmutable, on formate la date pour que ce soit plus lisible dans le suivi
+                if ($new instanceof \DateTimeImmutable) {
+                    $new = $new->format('d/m/Y');
+                }
+                if ($old instanceof \DateTimeImmutable) {
+                    $old = $old->format('d/m/Y');
+                }
+                if ($old === $new) {
+                    continue;
+                }
 
                 $jsonField = $parsed['jsonField']; // ex: information_procedure
                 $jsonProperty = $parsed['jsonProperty'];   // ex: info_procedure_assurance_contactee

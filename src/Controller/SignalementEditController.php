@@ -8,7 +8,11 @@ use App\Entity\Model\SituationFoyer;
 use App\Entity\Signalement;
 use App\Form\SignalementeEditFO\CoordonneesAgenceType;
 use App\Form\SignalementeEditFO\CoordonneesBailleurType;
+<<<<<<< HEAD
 use App\Form\SignalementeEditFO\ProcedureAssuranceType;
+=======
+use App\Form\UsagerSituationFoyerType;
+>>>>>>> 2507977a3 (fix rebase  #5303)
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
