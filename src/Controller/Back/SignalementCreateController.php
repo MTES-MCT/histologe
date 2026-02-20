@@ -437,7 +437,9 @@ class SignalementCreateController extends AbstractController
         $partners = [];
         $assignablePartners = $autoAssigner->assign($signalement, true);
         if (!count($assignablePartners)) {
-            $partners = $partnerRepository->findAllList($signalement->getTerritory());
+            $partners = $signalementManager->findAffectablePartners(
+                signalement: $signalement
+            )['not_affected'];
         }
 
         $acceptSignalementForm = null;
@@ -493,8 +495,9 @@ class SignalementCreateController extends AbstractController
             } elseif ($this->isGranted('ROLE_ADMIN_TERRITORY') && !empty($partnerIds)) {
                 $partnersList = explode(',', (string) $partnerIds);
                 foreach ($partnersList as $partnerId) {
-                    if (isset($partners[$partnerId])) {
-                        $affectation = $affectationManager->createAffectation($signalement, $partners[$partnerId], $user);
+                    if (in_array((int) $partnerId, array_column($partners, 'id'))) {
+                        $partner = $partnerRepository->find((int) $partnerId);
+                        $affectation = $affectationManager->createAffectation($signalement, $partner, $user);
                         $signalement->addAffectation($affectation);
                     }
                 }

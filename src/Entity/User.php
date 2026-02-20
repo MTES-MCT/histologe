@@ -560,6 +560,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public function getNomComplet(bool $firstNameFirst = false): string
     {
+        if (null === $this->nom && null === $this->prenom && $this->isApiUser()) {
+            return 'Utilisateur API';
+        }
         if ($firstNameFirst) {
             return ucfirst($this->prenom ?? '').' '.mb_strtoupper($this->nom ?? '');
         }
@@ -806,11 +809,6 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->isActivateAccountNotificationEnabled = $isActivateAccountNotificationEnabled;
 
         return $this;
-    }
-
-    public function getFullname(): string
-    {
-        return $this->prenom.' '.$this->nom;
     }
 
     /** @return Collection<int, SignalementUsager> */
