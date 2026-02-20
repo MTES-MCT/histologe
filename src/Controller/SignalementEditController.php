@@ -11,6 +11,7 @@ use App\Form\SignalementeEditFO\CoordonneesAgenceType;
 use App\Form\SignalementeEditFO\CoordonneesBailleurType;
 use App\Form\SignalementeEditFO\ProcedureAssuranceType;
 use App\Manager\SignalementManager;
+use App\Form\UsagerSituationFoyerType;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
