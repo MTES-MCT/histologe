@@ -5,7 +5,9 @@ namespace App\Form;
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -17,18 +19,57 @@ class UsagerSituationFoyerType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        /** @var Signalement $signalement */
+        $signalement = $builder->getData();
+
+        $isLogementSocial = null;
+        $isLogementSocialChoices = [
+            'Oui' => true,
+            'Non' => false,
+        ];
+        if (null === $signalement->getIsLogementSocial()) {
+            $isLogementSocial = 'nsp';
+            // On ajoute le choix "Ne sais pas" uniquement si la valeur est nulle, pour éviter de proposer ce choix si l'utilisateur a déjà renseigné une valeur
+            $isLogementSocialChoices['Je ne sais pas'] = 'nsp';
+        } else {
+            $isLogementSocial = $signalement->getIsLogementSocial();
+        }
+
+        $allocataire = '';
+        if ('0' === $signalement->getIsAllocataire()) {
+            $allocataire = 'non';
+        } elseif (!empty($signalement->getIsAllocataire())) {
+            $allocataire = 'oui';
+        }
+        $caisseAllocation = ('caf' === $signalement->getIsAllocataire() || 'msa' === $signalement->getIsAllocataire()) ? $signalement->getIsAllocataire() : '';
+
+        $typeAllocation = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsTypeAllocation() : '';
+        $montantAllocation = $signalement->getMontantAllocation();
+        if (empty($montantAllocation)) {
+            $montantAllocation = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getLogementSocialMontantAllocation() : null;
+        }
+
+        $souhaiteQuitterLogement = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialQuitteLogement() : '';
+        $preavisDepartDepose = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialPreavisDepart() : '';
+        $accompagnementTravailleurSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnement() : '';
+        $accompagnementTravailleurSocialNomStructure = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementNomStructure() : '';
+
+        $beneficiaireRSA = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireRsa() : '';
+        $beneficiaireFSL = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireFsl() : '';
+        $revenuFiscal = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsRevenuFiscal() : '';
+
+        $departApresTravaux = $signalement->getInformationProcedure() ? $signalement->getInformationProcedure()->getInfoProcedureDepartApresTravaux() : '';
+
         $builder
             ->add('isLogementSocial', ChoiceType::class, [
                 'label' => 'Est-ce qu\'il s\'agit d\'un logement social ?',
-                'choices' => [
-                    'Oui' => true,
-                    'Non' => false,
-                    'Ne sais pas' => 'nsp',
-                ],
+                'choices' => $isLogementSocialChoices,
                 'expanded' => true,
                 'multiple' => false,
                 'required' => false,
                 'placeholder' => false,
+                'mapped' => false,
+                'data' => $isLogementSocial,
                 'constraints' => [
                     new Assert\NotNull(
                         message: 'Veuillez déterminer s\'il s\'agit d\'un logement social.',
@@ -52,92 +93,162 @@ class UsagerSituationFoyerType extends AbstractType
                     ),
                 ],
             ])
+            ->add('allocataire', ChoiceType::class, [
+                'label' => 'Est-ce que l\'occupant est allocataire ?',
+                'choices' => [
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $allocataire,
+            ])
+            ->add('caisseAllocation', ChoiceType::class, [
+                'label' => 'Caisse d\'allocation',
+                'choices' => [
+                    'CAF' => 'caf',
+                    'MSA' => 'msa',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $caisseAllocation,
+            ])
+            ->add('dateNaissanceAllocataire', DateType::class, [
+                'label' => 'Date de naissance de la personne qui occupe le logement',
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $signalement->getDateNaissanceOccupant(),
+            ])
+            ->add('numAllocataire', TextType::class, [
+                'label' => 'Numéro d\'allocataire / de dossier',
+                'help' => 'Format attendu : 25 caractères maximum',
+                'required' => false,
+            ])
+            ->add('typeAllocation', ChoiceType::class, [
+                'label' => 'Type d\'allocation',
+                'choices' => [
+                    '' => '',
+                    'ALS' => 'als',
+                    'ALF' => 'alf',
+                    'APL' => 'apl',
+                ],
+                'expanded' => false,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $typeAllocation,
+            ])
+            ->add('montantAllocation', TextType::class, [
+                'label' => 'Montant de l\'allocation',
+                'help' => 'Format attendu : saisir un nombre entier',
+                'required' => false,
+                'mapped' => false,
+                'data' => $montantAllocation,
+            ])
+            ->add('souhaiteQuitterLogement', ChoiceType::class, [
+                'label' => 'Est-ce que le foyer souhaite quitter le logement ?',
+                'choices' => [
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $souhaiteQuitterLogement,
+            ])
+            ->add('preavisDepartDepose', ChoiceType::class, [
+                'label' => 'Est-ce qu\'un préavis de départ a été déposé ?',
+                'choices' => [
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $preavisDepartDepose,
+            ])
+            ->add('accompagnementTravailleurSocial', ChoiceType::class, [
+                'label' => 'Est-ce que le foyer est accompagné par un ou une travailleuse sociale ?',
+                'choices' => [
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $accompagnementTravailleurSocial,
+            ])
+            ->add('accompagnementTravailleurSocialNomStructure', TextType::class, [
+                'label' => 'Nom de la structure d\'accompagnement',
+                'required' => false,
+                'mapped' => false,
+                'data' => $accompagnementTravailleurSocialNomStructure,
+            ])
+            ->add('beneficiaireRSA', ChoiceType::class, [
+                'label' => 'Est-ce que le foyer est bénéficiaire du RSA ?',
+                'choices' => [
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $beneficiaireRSA,
+            ])
+            ->add('beneficiaireFSL', ChoiceType::class, [
+                'label' => 'Est-ce que le foyer est bénéficiaire du FSL ?',
+                'choices' => [
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $beneficiaireFSL,
+            ])
+            ->add('revenuFiscal', TextType::class, [
+                'label' => 'Revenu fiscal de référence',
+                'required' => false,
+                'mapped' => false,
+                'data' => $revenuFiscal,
+            ])
+            ->add('departApresTravaux', ChoiceType::class, [
+                'label' => 'Est-ce que le foyer souhaite rester dans le logement si des travaux sont faits ?',
+                'choices' => [
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $departApresTravaux,
+            ])
             ->add('save', SubmitType::class, [
                 'label' => 'Envoyer',
                 'attr' => [
                     'class' => 'fr-btn--primary',
                 ],
             ]);
-
-        /*
-
-
-					{% if signalement.isAllocataire in [null, ''] %}
-					{% elseif signalement.isAllocataire in ['oui', '1'] %}
-						<li>Allocataire : Oui</li>
-					{% elseif signalement.isAllocataire in ['non', '0'] %}
-						<li>Allocataire : Non</li>
-					{% elseif signalement.isAllocataire %}
-						<li>Allocataire : {{ signalement.isAllocataire }}</li>
-					{% endif %}
-					{% if (signalement.dateNaissanceOccupant) %}
-						<li>Date de naissance : {{ signalement.dateNaissanceOccupant.format('d/m/Y') }}</li>
-					{% elseif signalement.naissanceOccupants %}
-						<li>Date de naissance : {{ signalement.naissanceOccupants}}</li>
-					{% endif %}
-					{% if signalement.numAllocataire %}
-						<li>N° allocataire : {{ signalement.numAllocataire }}</li>
-					{% endif %}
-					{% if signalement.situationFoyer %}
-						{% if signalement.situationFoyer.logementSocialMontantAllocation %}
-							<li>Montant allocation :
-								{{ signalement.situationFoyer.logementSocialMontantAllocation }} €
-							</li>
-						{% endif %}
-						{% if signalement.situationFoyer.travailleurSocialQuitteLogement(false) %}
-							<li>Souhaite quitter le logement :
-								{{signalement.situationFoyer.travailleurSocialQuitteLogement(false)|capitalize}}
-							</li>
-						{% endif %}
-						{% if signalement.situationFoyer.travailleurSocialPreavisDepart(false) %}
-							<li>Préavis de départ :
-								{{signalement.situationFoyer.travailleurSocialPreavisDepart(false)|capitalize}}
-							</li>
-						{% endif %}
-						{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) %}
-							<li>Accompagnement par un ou une travailleuse sociale :
-								{{signalement.situationFoyer.travailleurSocialAccompagnement(false)|capitalize}}
-							</li>
-						{% endif %}
-						{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) and signalement.situationFoyer.travailleurSocialAccompagnementNomStructure %}
-							<li>Nom de la structure d'accompagnement :
-								{{ signalement.situationFoyer.travailleurSocialAccompagnementNomStructure }}
-							</li>
-						{% endif %}
-					{% endif %}
-					{% if signalement.informationComplementaire %}
-						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa %}
-							<li>Bénéficiaire RSA :
-								{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa|capitalize}}
-							</li>
-						{% endif %}
-						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl %}
-							<li>Bénéficiaire FSL :
-								{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl|capitalize}}
-							</li>
-						{% endif %}
-						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal %}
-							<li>Revenu fiscal de référence :
-								{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal}} €
-							</li>
-						{% endif %}
-					{% endif %}
-					{% if signalement.informationProcedure %}
-						<li>
-							Si des travaux sont faits, voulez-vous rester dans le logement ? 
-							{{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)|capitalize}}
-						</li>
-					{% endif %}
-
-
-        $builder
-            ->add('denominationAgence', null, [
-                'label' => 'Dénomination',
-                'required' => false,
-            ])
-
-
-            */
     }
 
     public function configureOptions(OptionsResolver $resolver): void

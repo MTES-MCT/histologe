@@ -17,6 +17,7 @@ class SignalementUpdatedListener
     public const string EDIT_COORDONNEES_BAILLEUR = 'coordonnees_bailleur';
     public const string EDIT_COORDONNEES_AGENCE = 'coordonnees_agence';
     public const string EDIT_INFORMATIONS_ASSURANCE = 'informations_assurance';
+    public const string EDIT_SITUATION_FOYER = 'situation_foyer';
 
     /**
      * Définition des champs suivis.
@@ -56,6 +57,16 @@ class SignalementUpdatedListener
             'fields' => [
                 'informationProcedure.info_procedure_reponse_assurance' => 'Réponse de l\'assurance',
                 'informationProcedure.info_procedure_assurance_contactee' => 'Assurance contactée',
+            ],
+        ],
+        self::EDIT_SITUATION_FOYER => [
+            'label' => 'La situation du foyer',
+            'fields' => [
+                'isLogementSocial' => 'Logement social',
+                'isRelogement' => 'Relogement',
+                'isAllocataire' => 'Allocataire',
+                'dateNaissanceOccupant' => 'Date de naissance de l\'occupant',
+                'numAllocataire' => 'Numéro d\'allocataire / de dossier',
             ],
         ],
     ];

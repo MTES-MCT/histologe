@@ -14,6 +14,7 @@ use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Service\Signalement\InputValue\SituationFoyerProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
@@ -28,6 +29,7 @@ class SignalementBoManager
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly PostalCodeHomeChecker $postalCodeHomeChecker,
         private readonly ReferenceGenerator $referenceGenerator,
+        private readonly SituationFoyerProcessor $situationFoyerProcessor,
     ) {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -61,14 +63,7 @@ class SignalementBoManager
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
         $situationFoyer = $signalement->getSituationFoyer() ? clone $signalement->getSituationFoyer() : new SituationFoyer();
 
-        if ('nsp' === $form->get('isLogementSocial')->getData()) {
-            $signalement->setIsLogementSocial(null);
-            $situationFoyer->setLogementSocialAllocation(null);
-        } elseif ($form->get('isLogementSocial')->getData()) {
-            $situationFoyer->setLogementSocialAllocation('oui');
-        } else {
-            $situationFoyer->setLogementSocialAllocation('non');
-        }
+        $this->situationFoyerProcessor->processIsLogementSocial($signalement, $form->get('isLogementSocial')->getData(), $situationFoyer);
 
         $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : new InformationProcedure();
         $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();
@@ -218,23 +213,15 @@ class SignalementBoManager
         }
         $informationComplementaire->setInformationsComplementairesLogementMontantLoyer($form->get('montantLoyer')->getData());
         $informationComplementaire->setInformationsComplementairesSituationOccupantsLoyersPayes($form->get('payementLoyersAJour')->getData());
-        if ('non' === $form->get('allocataire')->getData()) {
-            $signalement->setIsAllocataire('0');
-        } elseif (!empty($form->get('allocataire')->getData())) {
-            if ('caf' === $form->get('caisseAllocation')->getData()) {
-                $signalement->setIsAllocataire('caf');
-            } elseif ('msa' === $form->get('caisseAllocation')->getData()) {
-                $signalement->setIsAllocataire('msa');
-            } else {
-                $signalement->setIsAllocataire('1');
-            }
-        }
+        $this->situationFoyerProcessor->processIsAllocataire($signalement, $form->get('allocataire')->getData(), $form->get('caisseAllocation')->getData());
+
         if (!empty($form->get('dateNaissanceAllocataire')->getData())) {
             $signalement->setDateNaissanceOccupant(new \DateTimeImmutable($form->get('dateNaissanceAllocataire')->getData()->format('Y-m-d')));
         }
         $signalement->setNumAllocataire($form->get('numeroAllocataire')->getData());
         $informationComplementaire->setInformationsComplementairesSituationOccupantsTypeAllocation($form->get('typeAllocation')->getData());
         $signalement->setMontantAllocation((int) $form->get('montantAllocation')->getData());
+        $situationFoyer->setLogementSocialMontantAllocation($form->get('montantAllocation')->getData());
         $situationFoyer->setTravailleurSocialAccompagnement($form->get('accompagnementTravailleurSocial')->getData());
         $situationFoyer->setTravailleurSocialAccompagnementNomStructure($form->get('accompagnementTravailleurSocialNomStructure')->getData());
         $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireRsa($form->get('beneficiaireRSA')->getData());
