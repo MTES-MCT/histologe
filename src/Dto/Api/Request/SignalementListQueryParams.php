@@ -56,6 +56,18 @@ readonly class SignalementListQueryParams implements RequestInterface
             nullable: true
         )]
         public ?string $dateAffectationFin = null,
+
+        #[Assert\Length(
+            min: 5,
+            max: 5,
+            exactMessage: 'Le code INSEE doit contenir 5 caractères (exemple: 13201).'
+        )]
+        #[OA\Property(
+            description: 'Code INSEE de la commune (5 chiffres) pour filtrer les signalements.',
+            example: '13201',
+            nullable: true
+        )]
+        public ?int $codeInsee = null,
     ) {
     }
 }

@@ -1268,6 +1268,11 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('dateAffectationEnd', $dateAffectationEnd);
         }
 
+        if (!empty($signalementListQueryParams->codeInsee)) {
+            $qb->andWhere('s.inseeOccupant = :codeInsee')
+                ->setParameter('codeInsee', $signalementListQueryParams->codeInsee);
+        }
+
         $qb->orderBy('s.createdAt', 'DESC')
             ->setFirstResult($offset)
             ->setMaxResults($limit);
