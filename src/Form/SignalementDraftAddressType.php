@@ -34,6 +34,7 @@ class SignalementDraftAddressType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        /** @var Signalement $signalement */
         $signalement = $builder->getData();
         $adresseCompleteOccupant = '';
         if ($signalement->getBanIdOccupant()) {
@@ -70,6 +71,11 @@ class SignalementDraftAddressType extends AbstractType
                 'label' => 'Territoire',
                 'data' => $territory ? $territory->getZip().'|'.$territory->getName() : '',
             ]);
+        }
+
+        $isLogementSocial = null;
+        if (!empty($signalement->getId())) {
+            $isLogementSocial = null === $signalement->getIsLogementSocial() ? 'nsp' : $signalement->getIsLogementSocial();
         }
 
         $builder
@@ -190,6 +196,8 @@ class SignalementDraftAddressType extends AbstractType
                 'multiple' => false,
                 'required' => false,
                 'placeholder' => false,
+                'mapped' => false,
+                'data' => $isLogementSocial,
                 'constraints' => [
                     new Assert\NotNull(
                         message: 'Veuillez renseigner si il s\'agit d\'un logement social.',

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Model\InformationProcedure;
+use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\SituationFoyer;
 use App\Entity\Signalement;
 use App\Form\SignalementeEditFO\CoordonneesAgenceType;
@@ -13,6 +14,7 @@ use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use App\Security\Voter\SignalementFoVoter;
 use App\Service\Security\CguTiersChecker;
+use App\Service\Signalement\InputValue\SituationFoyerProcessor;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -111,6 +113,7 @@ class SignalementEditController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         Request $request,
+        SituationFoyerProcessor $situationFoyerProcessor,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
@@ -126,16 +129,29 @@ class SignalementEditController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $situationFoyer = $signalement->getSituationFoyer() ? clone $signalement->getSituationFoyer() : new SituationFoyer();
-            if ('nsp' === $form->get('isLogementSocial')->getData()) {
-                $signalement->setIsLogementSocial(null);
-                $situationFoyer->setLogementSocialAllocation(null);
-            } elseif ($form->get('isLogementSocial')->getData()) {
-                $situationFoyer->setLogementSocialAllocation('oui');
-            } else {
-                $situationFoyer->setLogementSocialAllocation('non');
-            }
-            $signalement->setSituationFoyer($situationFoyer);
+            $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();
+            $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : null;
 
+            $situationFoyerProcessor->processIsLogementSocial($signalement, $form->get('isLogementSocial')->getData());
+            $situationFoyerProcessor->processIsAllocataire($signalement, $form->get('allocataire')->getData(), $form->get('caisseAllocation')->getData());
+            if (!empty($form->get('dateNaissanceAllocataire')->getData())) {
+                $signalement->setDateNaissanceOccupant(new \DateTimeImmutable($form->get('dateNaissanceAllocataire')->getData()->format('Y-m-d')));
+            }
+            $signalement->setMontantAllocation((int) $form->get('montantAllocation')->getData());
+            $situationFoyer->setLogementSocialMontantAllocation((int) $form->get('montantAllocation')->getData())
+                ->setTravailleurSocialQuitteLogement($form->get('souhaiteQuitterLogement')->getData())
+                ->setTravailleurSocialPreavisDepart($form->get('preavisDepartDepose')->getData())
+                ->setTravailleurSocialAccompagnement($form->get('accompagnementTravailleurSocial')->getData())
+                ->setTravailleurSocialAccompagnementNomStructure($form->get('accompagnementTravailleurSocialNomStructure')->getData());
+            $informationComplementaire->setInformationsComplementairesSituationOccupantsTypeAllocation($form->get('typeAllocation')->getData())
+                ->setInformationsComplementairesSituationOccupantsBeneficiaireRsa($form->get('beneficiaireRSA')->getData())
+                ->setInformationsComplementairesSituationOccupantsBeneficiaireFsl($form->get('beneficiaireFSL')->getData())
+                ->setInformationsComplementairesSituationOccupantsRevenuFiscal($form->get('revenuFiscal')->getData());
+            $informationProcedure->setInfoProcedureDepartApresTravaux($form->get('departApresTravaux')->getData());
+
+            $signalement->setSituationFoyer($situationFoyer);
+            $signalement->setInformationComplementaire($informationComplementaire);
+            $signalement->setInformationProcedure($informationProcedure);
 
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
             $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'La situation du foyer a bien été mise à jour.']);

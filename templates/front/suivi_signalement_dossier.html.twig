@@ -570,6 +570,13 @@
 					{% if signalement.numAllocataire %}
 						<li>N° allocataire : {{ signalement.numAllocataire }}</li>
 					{% endif %}
+					{% if signalement.informationComplementaire %}
+						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsTypeAllocation %}
+							<li>Type d'allocation :
+								{{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsTypeAllocation }}
+							</li>
+						{% endif %}
+					{% endif %}
 					{% if signalement.situationFoyer %}
 						{% if signalement.situationFoyer.logementSocialMontantAllocation %}
 							<li>Montant allocation :
@@ -616,7 +623,7 @@
 					{% endif %}
 					{% if signalement.informationProcedure %}
 						<li>
-							Si des travaux sont faits, voulez-vous rester dans le logement ? 
+							Si des travaux sont faits, est-ce que le foyer souhaite rester dans le logement ? 
 							{{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)|capitalize}}
 						</li>
 					{% endif %}
