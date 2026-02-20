@@ -448,8 +448,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setMotifRefus(MotifRefus::tryFrom($row['motif_refus']));
         }
 
-        if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()
-            || SignalementStatus::INJONCTION_CLOSED === $signalement->getStatut()) {
+        if (in_array($signalement->getStatut(), SignalementStatus::injonctionStatuses())) {
             $signalement->setReferenceInjonction($this->referenceGenerator->generateReferenceInjonction());
         }
 
