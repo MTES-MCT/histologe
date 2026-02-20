@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\TiersInvitation;
+use App\Form\Type\PhoneType;
+use App\Validator\TelephoneFormat;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -29,9 +31,14 @@ class UsagerCoordonneesTiersType extends AbstractType
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
             ])
-            ->add('telephone', TextType::class, [
+            ->add('telephone', PhoneType::class, [
                 'label' => 'Numéro de téléphone (facultatif)',
                 'required' => false,
+                'constraints' => [
+                    new TelephoneFormat([
+                        'message' => 'Le numéro de téléphone n\'est pas valide.',
+                    ]),
+                ],
             ]);
 
         $builder->add('save', SubmitType::class, [
