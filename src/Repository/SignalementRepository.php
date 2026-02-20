@@ -2431,8 +2431,8 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('referenceInjonction', $referenceInjonction)
             ->andWhere('s.loginBailleur = :loginBailleur')
             ->setParameter('loginBailleur', $loginBailleur)
-            ->andWhere('s.statut = :statutInjonction OR su.category IN (:injonctionCategories)')
-            ->setParameter('statutInjonction', SignalementStatus::INJONCTION_BAILLEUR) // TODO : ajouter INJONCTION_CLOSED ?
+            ->andWhere('s.statut IN (:signalementStatusList) OR su.category IN (:injonctionCategories)')
+            ->setParameter('signalementStatusList', SignalementStatus::injonctionStatuses())
             ->setParameter('injonctionCategories', SuiviCategory::injonctionBailleurCategories())
             ->getQuery()
             ->getOneOrNullResult();
@@ -2472,9 +2472,8 @@ class SignalementRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('s')
             ->select('s, su')
             ->leftJoin('s.suivis', 'su')
-            ->where('s.statut IN (:statut, :statutClosed)')
-            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
-            ->setParameter('statutClosed', SignalementStatus::INJONCTION_CLOSED);
+            ->where('s.statut IN (:signalementStatusList)')
+            ->setParameter('signalementStatusList', SignalementStatus::injonctionStatuses());
 
         if (!empty($searchSignalementInjonction->getTerritoire())) {
             $queryBuilder

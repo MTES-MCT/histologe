@@ -5,7 +5,7 @@
 {% block content %}
     <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
-            'level2Title': 'Liste des signalements en cours d\'injonction',
+            'level2Title': 'Liste des signalements en démarche accélérée',
             'level2Link': '',
             'level2Label': ''
         } %}
@@ -107,9 +107,9 @@
                 {% endif %}
 
                 {% set classeStatut = 'fr-badge--info' %}
-                {% set labelStatut = 'Démarche en cours' %}
+                {% set labelStatut = 'En cours' %}
                 {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED %}
-                    {% set labelStatut = 'Démarche fermée' %}
+                    {% set labelStatut = 'Fermée' %}
                     {% set classeStatut = 'fr-badge--success' %}
                 {% endif %}
 
