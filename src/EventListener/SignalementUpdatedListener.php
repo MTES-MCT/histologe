@@ -4,6 +4,8 @@ namespace App\EventListener;
 
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Service\History\EntityComparator;
+use App\Utils\DictionaryProvider;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
@@ -14,7 +16,13 @@ class SignalementUpdatedListener
 {
     public const string EDIT_COORDONNEES_BAILLEUR = 'coordonnees_bailleur';
     public const string EDIT_COORDONNEES_AGENCE = 'coordonnees_agence';
+    public const string EDIT_INFORMATIONS_ASSURANCE = 'informations_assurance';
 
+    /**
+     * Définition des champs suivis.
+     * - Champs simples : "field" => "label"
+     * - Champs JSON : "<jsonField>.<jsonProperty>" => "label".
+     */
     public const array EDIT_SECTIONS = [
         self::EDIT_COORDONNEES_BAILLEUR => [
             'label' => 'Les coordonnées du bailleur',
@@ -43,12 +51,32 @@ class SignalementUpdatedListener
                 'villeAgence' => 'Ville',
             ],
         ],
+        self::EDIT_INFORMATIONS_ASSURANCE => [
+            'label' => 'Les informations d\'assurance',
+            'fields' => [
+                'informationProcedure.info_procedure_reponse_assurance' => 'Réponse de l\'assurance',
+                'informationProcedure.info_procedure_assurance_contactee' => 'Assurance contactée',
+            ],
+        ],
     ];
 
-    public function __construct(private readonly Security $security)
-    {
+    private const array JSON_FIELDS = [
+        'typeCompositionLogement',
+        'situationFoyer',
+        'informationProcedure',
+        'informationComplementaire',
+    ];
+
+    public function __construct(
+        private readonly Security $security,
+        private readonly EntityComparator $entityComparator,
+        private readonly DictionaryProvider $dictionaryProvider,
+    ) {
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function preUpdate(Signalement $signalement, PreUpdateEventArgs $event): void
     {
         // On continue de flagger qu'un changement est détecté.
@@ -63,21 +91,53 @@ class SignalementUpdatedListener
         foreach (self::EDIT_SECTIONS as $sectionKey => $sectionDefinition) {
             $fieldChanges = [];
 
-            foreach ($sectionDefinition['fields'] as $fieldName => $label) {
-                if (!$event->hasChangedField($fieldName)) {
+            foreach ($sectionDefinition['fields'] as $field => $label) {
+                if (!str_contains($field, '.')) {
+                    if (!$event->hasChangedField($field)) {
+                        continue;
+                    }
+
+                    $old = $event->getOldValue($field);
+                    $new = $event->getNewValue($field);
+
+                    if ($old === $new) {
+                        continue;
+                    }
+
+                    $fieldChanges[$field] = [
+                        'label' => $label,
+                        'new' => $new,
+                    ];
+
                     continue;
                 }
 
-                $old = $event->getOldValue($fieldName);
-                $new = $event->getNewValue($fieldName);
-
-                if ($old === $new) {
+                $parsed = $this->parseJsonPath($field); // ex: information_procedure.info_procedure_assurance_contactee
+                if (null === $parsed) {
                     continue;
                 }
 
-                $fieldChanges[$fieldName] = [
+                $jsonField = $parsed['jsonField']; // ex: information_procedure
+                $jsonProperty = $parsed['jsonProperty'];   // ex: info_procedure_assurance_contactee
+
+                if (!$event->hasChangedField($jsonField)) {
+                    continue;
+                }
+
+                $oldValue = $this->entityComparator->processValue($event->getOldValue($jsonField) ?? []);
+                $newValue = $this->entityComparator->processValue($event->getNewValue($jsonField) ?? []);
+                $fieldsChanges = $this->entityComparator->compareValues($oldValue, $newValue, $jsonField);
+
+                // la propriété déclarée n'a pas changé
+                if (!array_key_exists($jsonProperty, $fieldsChanges)
+                    || empty($diffProperty = $fieldsChanges[$jsonProperty])
+                ) {
+                    continue;
+                }
+
+                $fieldChanges[$field] = [
                     'label' => $label,
-                    'new' => $new,
+                    'new' => $diffProperty['new'] ? $this->dictionaryProvider->translate($diffProperty['new']) : null,
                 ];
             }
 
@@ -90,6 +150,35 @@ class SignalementUpdatedListener
         }
 
         $signalement->registerChanges($changes);
+    }
+
+    /**
+     * Parse "<jsonField>.<jsonProperty>".
+     *
+     * @return array{jsonField:string,jsonProperty:string}|null
+     */
+    private function parseJsonPath(string $path): ?array
+    {
+        $parts = explode('.', $path, 2);
+
+        if (2 !== count($parts)) {
+            return null;
+        }
+
+        [$jsonField, $jsonProperty] = $parts;
+
+        if (!in_array($jsonField, self::JSON_FIELDS, true)) {
+            return null;
+        }
+
+        if ('' === $jsonProperty) {
+            return null;
+        }
+
+        return [
+            'jsonField' => $jsonField,
+            'jsonProperty' => $jsonProperty,
+        ];
     }
 
     private function supports(): bool
