@@ -340,8 +340,8 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('POST', $urlCoordonneesTiers, [
             'usager_coordonnees_tiers' => [
-                'lastName' => 'Pote',
-                'firstName' => 'Paul',
+                'lastname' => 'Pote',
+                'firstname' => 'Paul',
                 'email' => $newMail,
                 '_token' => $this->generateCsrfToken($client, 'usager_coordonnees_tiers'),
             ],
