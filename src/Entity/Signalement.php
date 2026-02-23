@@ -194,6 +194,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
     private ?string $structureDeclarant = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $matriculeDeclarant = null;
+
     #[ORM\Column(type: 'string', length: 10, nullable: true)]
     private ?string $civiliteOccupant = null;
 
@@ -532,6 +535,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $loginBailleur = null;
+
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dateMissionServiceSecours = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $origineMissionServiceSecours = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $ordreMissionServiceSecours = null;
+
+    #[ORM\ManyToOne(inversedBy: 'signalements')]
+    private ?ServiceSecoursRoute $serviceSecours = null;
 
     public function __construct()
     {
@@ -2906,5 +2921,65 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         }
 
         return null;
+    }
+
+    public function getMatriculeDeclarant(): ?string
+    {
+        return $this->matriculeDeclarant;
+    }
+
+    public function setMatriculeDeclarant(?string $matriculeDeclarant): static
+    {
+        $this->matriculeDeclarant = $matriculeDeclarant;
+
+        return $this;
+    }
+
+    public function getDateMissionServiceSecours(): ?\DateTimeImmutable
+    {
+        return $this->dateMissionServiceSecours;
+    }
+
+    public function setDateMissionServiceSecours(?\DateTimeImmutable $dateMissionServiceSecours): static
+    {
+        $this->dateMissionServiceSecours = $dateMissionServiceSecours;
+
+        return $this;
+    }
+
+    public function getOrigineMissionServiceSecours(): ?string
+    {
+        return $this->origineMissionServiceSecours;
+    }
+
+    public function setOrigineMissionServiceSecours(?string $origineMissionServiceSecours): static
+    {
+        $this->origineMissionServiceSecours = $origineMissionServiceSecours;
+
+        return $this;
+    }
+
+    public function getOrdreMissionServiceSecours(): ?string
+    {
+        return $this->ordreMissionServiceSecours;
+    }
+
+    public function setOrdreMissionServiceSecours(?string $ordreMissionServiceSecours): static
+    {
+        $this->ordreMissionServiceSecours = $ordreMissionServiceSecours;
+
+        return $this;
+    }
+
+    public function getServiceSecours(): ?ServiceSecoursRoute
+    {
+        return $this->serviceSecours;
+    }
+
+    public function setServiceSecours(?ServiceSecoursRoute $serviceSecours): static
+    {
+        $this->serviceSecours = $serviceSecours;
+
+        return $this;
     }
 }

@@ -18,8 +18,8 @@ class ServiceSecoursStep1Type extends AbstractType
             'required' => false,
         ]);
         $builder->add('nomDeclarant', null, ['label' => 'Nom']);
-        $builder->add('origineMission', null, ['label' => 'Engin du BMPM / SDIS à l\'origine du signalement']);
         $builder->add('dateMission', DateType::class, ['label' => 'Date de la mission', 'help' => 'format attendu : JJ/MM/AAAA', 'required' => false]);
+        $builder->add('origineMission', null, ['label' => 'Engin du BMPM / SDIS à l\'origine du signalement']);
         $builder->add('ordreMission', null, ['label' => 'Ordre de mission']);
     }
 

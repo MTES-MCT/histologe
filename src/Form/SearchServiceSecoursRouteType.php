@@ -19,8 +19,8 @@ class SearchServiceSecoursRouteType extends AbstractType
     {
         $builder->add('queryName', SearchType::class, [
             'required' => false,
-            'label' => 'Nom de l\'événement',
-            'attr' => ['placeholder' => 'Taper une partie du nom de l\'événement'],
+            'label' => 'Nom du service de secours',
+            'attr' => ['placeholder' => 'Taper une partie du nom du service de secours'],
         ]);
         $builder->add('orderType', ChoiceType::class, [
             'choices' => [

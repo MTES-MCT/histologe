@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller\Back;
 
+use App\Repository\ServiceSecoursRouteRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -64,7 +65,9 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
         $csrfToken = $this->generateCsrfToken($client, 'service_secours_route');
         $client->request('POST', $route, [
             'service_secours_route' => [
-                'name' => 'TI-DU-DUT',
+                'name' => 'TI DU DUT',
+                'email' => 'ti-du-dut@example.com',
+                'phone' => '',
                 '_token' => $csrfToken,
             ],
         ]);
@@ -72,5 +75,13 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
         $this->assertResponseRedirects();
         $client->followRedirect();
         $this->assertSelectorTextContains('h2#desc-table', '3 services secours trouvés');
+
+        $serviceSecourRouteRepository = static::getContainer()->get(ServiceSecoursRouteRepository::class);
+        $serviceSecoursRoute = $serviceSecourRouteRepository->findOneBy(['name' => 'TI DU DUT']);
+        $this->assertNotNull($serviceSecoursRoute);
+        $this->assertSame('TI DU DUT', $serviceSecoursRoute->getName());
+        $this->assertSame('TI-DU-DUT', $serviceSecoursRoute->getSlug());
+        $this->assertSame('ti-du-dut@example.com', $serviceSecoursRoute->getEmail());
+        $this->assertNull($serviceSecoursRoute->getPhone());
     }
 }

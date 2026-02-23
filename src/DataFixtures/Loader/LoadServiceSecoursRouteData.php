@@ -25,6 +25,7 @@ class LoadServiceSecoursRouteData extends Fixture implements OrderedFixtureInter
     public function loadServiceSecoursRoute(ObjectManager $manager, array $row): void
     {
         $serviceSecoursRoute = (new ServiceSecoursRoute())->setName($row['name']);
+        $serviceSecoursRoute->setEmail($row['email']);
         $manager->persist($serviceSecoursRoute);
     }
 

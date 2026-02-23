@@ -2,14 +2,42 @@
 
 namespace App\Factory;
 
+use App\Dto\ServiceSecours\FormServiceSecours;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\ServiceSecoursRoute;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 
 class SignalementFactory
 {
+    public function createInstanceFromFormServiceSecours(FormServiceSecours $formServiceSecours, ServiceSecoursRoute $serviceSecoursRoute): Signalement
+    {
+        $signalement = new Signalement();
+        // default data
+        $signalement->setProfileDeclarant(ProfileDeclarant::SERVICE_SECOURS);
+        $signalement->setIsCguAccepted(true);
+        $signalement->setCreationSource(CreationSource::FORM_SERVICE_SECOURS);
+        // data calculated from serviceSecoursRoute
+        $signalement->setServiceSecours($serviceSecoursRoute);
+        $signalement->setStructureDeclarant($serviceSecoursRoute->getName());
+        $signalement->setMailDeclarant($serviceSecoursRoute->getEmail());
+        $signalement->setTelDeclarant($serviceSecoursRoute->getPhone());
+        // data from step1
+        $signalement->setMatriculeDeclarant($formServiceSecours->step1->matriculeDeclarant);
+        $signalement->setNomDeclarant($formServiceSecours->step1->nomDeclarant);
+        $signalement->setDateMissionServiceSecours($formServiceSecours->step1->dateMission);
+        $signalement->setOrigineMissionServiceSecours($formServiceSecours->step1->origineMission);
+        $signalement->setOrdreMissionServiceSecours($formServiceSecours->step1->ordreMission);
+
+        // TODO : manage other steps
+        //
+        //
+        return $signalement;
+    }
+
     /**
      * @param array<string, mixed> $data
      */

@@ -4,6 +4,7 @@ namespace App\Controller\ServiceSecours;
 
 use App\Dto\ServiceSecours\FormServiceSecours;
 use App\Entity\ServiceSecoursRoute;
+use App\Factory\SignalementFactory;
 use App\Form\ServiceSecours\ServiceSecoursType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Flow\FormFlowInterface;
@@ -22,22 +23,26 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 ]
 class ServiceSecoursController extends AbstractController
 {
-    #[Route('/services-secours/{name:serviceSecoursRoute}/{uuid:serviceSecoursRoute}',
+    #[Route('/services-secours/{slug:serviceSecoursRoute}/{uuid:serviceSecoursRoute}',
         name: 'service_secours_index',
         methods: ['GET', 'POST'])
     ]
     public function index(
         Request $request,
         ServiceSecoursRoute $serviceSecoursRoute,
+        SignalementFactory $signalementFactory,
     ): Response {
         $serviceSecours = new FormServiceSecours();
         /** @var FormFlowInterface $flow */
         $flow = $this->createForm(ServiceSecoursType::class, $serviceSecours);
         $flow->handleRequest($request);
         if ($flow->isSubmitted() && $flow->isValid() && $flow->isFinished()) {
-            // TODO : voir les traitements fait dans App\Controller\Api\SignalementCreateController.php pour les adapter / refactoriser ici
+            $signalement = $signalementFactory->createInstanceFromFormServiceSecours($flow->getData(), $serviceSecoursRoute);
 
-            return $this->render('service_secours/success.html.twig', ['serviceSecoursRoute' => $serviceSecoursRoute]);
+            // dump($signalement); // for testing purpose
+            // TODO : persist and flush
+            // voir les traitements fait dans App\Controller\Api\SignalementCreateController.php, création de la référence dans une transaction en particulier)
+            return $this->render('service_secours/success.html.twig', ['serviceSecoursRoute' => $serviceSecoursRoute, 'signalement' => $signalement]);
         }
 
         return $this->render('service_secours/index.html.twig', [
@@ -46,14 +51,14 @@ class ServiceSecoursController extends AbstractController
         ]);
     }
 
-    #[Route('/services-secours/{name:serviceSecoursRoute}/{uuid:serviceSecoursRoute}/site.webmanifest',
+    #[Route('/services-secours/{slug:serviceSecoursRoute}/{uuid:serviceSecoursRoute}/site.webmanifest',
         name: 'service_secours_webmanifest',
         methods: ['GET'])
     ]
     public function webmanifest(ServiceSecoursRoute $serviceSecoursRoute, Request $request): JsonResponse
     {
         $startUrl = $this->generateUrl('service_secours_index', [
-            'name' => $serviceSecoursRoute->getName(),
+            'slug' => $serviceSecoursRoute->getSlug(),
             'uuid' => $serviceSecoursRoute->getUuid(),
             'domain' => $request->attributes->get('domain'),
         ], UrlGeneratorInterface::ABSOLUTE_PATH);
