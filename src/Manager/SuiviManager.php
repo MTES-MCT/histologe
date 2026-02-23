@@ -343,7 +343,7 @@ class SuiviManager extends Manager
         $description = sprintf(
             '%s ont été modifiées par %s.',
             $sectionChanges['label'],
-            $user->getNomComplet(true),
+            htmlentities($user->getNomComplet(true)),
         );
         $description .= '<ul>';
 
@@ -355,7 +355,7 @@ class SuiviManager extends Manager
             $description .= sprintf(
                 '<li>%s : %s</li>',
                 $change['label'],
-                $new
+                nl2br(htmlentities($change['new'] ?? '-'))
             );
         }
 
