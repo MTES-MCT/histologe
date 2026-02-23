@@ -2,7 +2,10 @@
 
 namespace App\Tests\Functional\Controller\Webhook;
 
+use App\Entity\Enum\UserStatus;
+use App\Entity\User;
 use App\Repository\EmailDeliveryIssueRepository;
+use App\Service\Sanitizer;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -180,5 +183,59 @@ class BrevoWebhookControllerTest extends WebTestCase
             'expectDeliveryIssue' => false,
             'expectedPayload' => null,
         ];
+    }
+
+    public function testArchivedUsersWithSameEmailPrefixCreatesDeliveryIssue(): void
+    {
+        $client = static::createClient();
+        $container = static::getContainer();
+        $em = $container->get('doctrine')->getManager();
+
+        $emailBase = 'duplicate@test.com';
+
+        $user1 = (new User())
+            ->setRoles([User::ROLE_USER_PARTNER])
+            ->setNom('User 1')
+            ->setPrenom('Test')
+            ->setEmail(Sanitizer::tagArchivedEmail($emailBase))
+            ->setStatut(UserStatus::ARCHIVE)
+            ->setIsMailingActive(false);
+
+        $user2 = (new User())
+            ->setRoles([User::ROLE_USER_PARTNER])
+            ->setNom('User 2')
+            ->setPrenom('Test')
+            ->setEmail(Sanitizer::tagArchivedEmail($emailBase).'9')
+            ->setStatut(UserStatus::ARCHIVE)
+            ->setIsMailingActive(false);
+
+        $em->persist($user1);
+        $em->persist($user2);
+        $em->flush();
+
+        $payload = [
+            'event' => 'hard_bounce',
+            'email' => $emailBase,
+        ];
+
+        $client->request(
+            'POST',
+            '/webhook/brevo',
+            [],
+            [],
+            [
+                'REMOTE_ADDR' => '127.0.0.1',
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            (string) json_encode($payload)
+        );
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $repo = $container->get(EmailDeliveryIssueRepository::class);
+        $issue = $repo->findOneBy(['email' => $payload['email']]);
+
+        $this->assertNotNull($issue);
+        $this->assertEquals('hard_bounce', $issue->getEvent()->value);
     }
 }

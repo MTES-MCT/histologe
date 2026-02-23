@@ -111,14 +111,11 @@ class BrevoWebhookController extends AbstractController
         $emailPrefix = explode($pattern, $email)[0];
 
         $countUser = (int) $userRepository->createQueryBuilder('u')
-    ->select('COUNT(u.id)')
-    ->where('u.email LIKE :emailPrefix')
-    ->setParameter('emailPrefix', $emailPrefix.'%')
-    ->getQuery()
-    ->getSingleScalarResult();
-
-
-
+            ->select('COUNT(u.id)')
+            ->where('u.email LIKE :emailPrefix')
+            ->setParameter('emailPrefix', $emailPrefix.'%')
+            ->getQuery()
+            ->getSingleScalarResult();
 
         if ($countUser > 0) {
             return true;
