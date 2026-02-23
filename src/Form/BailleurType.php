@@ -3,6 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Bailleur;
+use App\Entity\Territory;
+use App\Form\Type\SearchCheckboxType;
+use App\Repository\TerritoryRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -10,14 +13,33 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BailleurType extends AbstractType
 {
+    public function __construct(
+        private readonly TerritoryRepository $territoryRepository,
+    ) {
+    }
+
     /**
      * @param array<string, mixed> $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $bailleur = $builder->getData();
         $builder
             ->add('name', null, [
                 'label' => 'Nom',
+            ])
+            ->add('bailleurTerritories', SearchCheckboxType::class, [
+                'class' => Territory::class,
+                'choice_label' => 'zipAndName',
+                'label' => 'Territoires associés',
+                'noselectionlabel' => 'Sélectionnez un ou plusieurs territoires à associer',
+                'nochoiceslabel' => 'Aucun territoire associable disponible',
+                'mapped' => false,
+                'choices' => $this->territoryRepository->findAllList(),
+                'data' => $bailleur
+                    ->getBailleurTerritories()
+                    ->map(fn ($bt) => $bt->getTerritory())
+                    ->toArray(),
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Valider',

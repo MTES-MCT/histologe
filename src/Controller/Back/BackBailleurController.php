@@ -70,6 +70,23 @@ class BackBailleurController extends AbstractController
         $form = $this->createForm(BailleurType::class, $bailleur);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $selectedTerritories = $form->get('bailleurTerritories')->getData();
+            foreach ($bailleur->getBailleurTerritories() as $bt) {
+                if (!in_array($bt->getTerritory(), $selectedTerritories, true)) {
+                    $bailleur->removeBailleurTerritory($bt);
+                    $em->remove($bt);
+                }
+            }
+            $currentTerritories = $bailleur->getBailleurTerritories()
+                ->map(fn ($bt) => $bt->getTerritory())
+                ->toArray();
+
+            foreach ($selectedTerritories as $territory) {
+                if (!in_array($territory, $currentTerritories, true)) {
+                    $bailleur->addTerritory($territory);
+                }
+            }
+
             $em->flush();
             $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'Le bailleur a bien été modifié.']);
 
