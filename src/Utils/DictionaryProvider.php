@@ -19,7 +19,7 @@ class DictionaryProvider
      */
     public function all(): array
     {
-        $path = $this->projectDir.'/assets/json/Signalement/dictionary.json';
+        $path = $this->projectDir.'/public/build/json/Signalement/dictionary.json';
 
         if (!is_file($path)) {
             return [];
