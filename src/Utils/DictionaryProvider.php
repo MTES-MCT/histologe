@@ -4,8 +4,10 @@ namespace App\Utils;
 
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-readonly class DictionaryProvider
+class DictionaryProvider
 {
+    private ?array $dictionary = null;
+
     public function __construct(
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
@@ -30,7 +32,10 @@ readonly class DictionaryProvider
 
     public function translate(string $slug, string $context = 'default'): string
     {
-        $dict = $this->all();
+        if (null === $this->dictionary) {
+            $this->dictionary = $this->all();
+        }
+        $dict = $this->dictionary;
 
         if (!isset($dict[$slug])) {
             return $slug;
