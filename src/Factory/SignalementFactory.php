@@ -4,18 +4,38 @@ namespace App\Factory;
 
 use App\Dto\ServiceSecours\FormServiceSecours;
 use App\Entity\Enum\CreationSource;
+use App\Entity\Enum\EtageType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\ServiceSecoursRoute;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Service\Signalement\ZipcodeProvider;
 
 class SignalementFactory
 {
+    public function __construct(
+        private ZipcodeProvider $zipcodeProvider,
+    ) {
+    }
+
     public function createInstanceFromFormServiceSecours(FormServiceSecours $formServiceSecours, ServiceSecoursRoute $serviceSecoursRoute): Signalement
     {
         $signalement = new Signalement();
+        $typeCompositionLogement = new TypeCompositionLogement();
+
+        $signalement->setTerritory(
+            $this->zipcodeProvider->getTerritoryByInseeCode($formServiceSecours->step2->inseeOccupant)
+        );
+        if (!$signalement->getTerritory()) {
+            throw new \LogicException('Impossible de trouver une territory pour le code insee : ' . $formServiceSecours->step2->inseeOccupant);
+        }
+        if (!$signalement->getTerritory()->isIsActive()) {
+            throw new \LogicException('Le territoire associé au code insee : ' . $formServiceSecours->step2->inseeOccupant . ' n\'est pas actif');
+        }
+
         // default data
         $signalement->setProfileDeclarant(ProfileDeclarant::SERVICE_SECOURS);
         $signalement->setIsCguAccepted(true);
@@ -25,6 +45,7 @@ class SignalementFactory
         $signalement->setStructureDeclarant($serviceSecoursRoute->getName());
         $signalement->setMailDeclarant($serviceSecoursRoute->getEmail());
         $signalement->setTelDeclarant($serviceSecoursRoute->getPhone());
+
         // data from step1
         $signalement->setMatriculeDeclarant($formServiceSecours->step1->matriculeDeclarant);
         $signalement->setNomDeclarant($formServiceSecours->step1->nomDeclarant);
@@ -32,6 +53,51 @@ class SignalementFactory
         $signalement->setOrigineMissionServiceSecours($formServiceSecours->step1->origineMission);
         $signalement->setOrdreMissionServiceSecours($formServiceSecours->step1->ordreMission);
 
+        // data from step2
+        $signalement->setAdresseOccupant($formServiceSecours->step2->adresseOccupant)
+            ->setCpOccupant($formServiceSecours->step2->cpOccupant)
+            ->setVilleOccupant($formServiceSecours->step2->villeOccupant)
+            ->setAdresseAutreOccupant($formServiceSecours->step2->adresseAutreOccupant)
+            ->setIsLogementSocial($formServiceSecours->step2->isLogementSocial)
+            ->setNatureLogement($formServiceSecours->step2->natureLogement);
+
+
+        if ('appartement' === $signalement->getNatureLogement()) {
+            /** @var EtageType $appartementEtage */
+            $appartementEtage = $formServiceSecours->step2->typeEtageLogement;
+            if (!empty($appartementEtage)) {
+                switch ($appartementEtage) {
+                    case EtageType::RDC:
+                        $typeCompositionLogement->setTypeLogementRdc('oui')
+                            ->setTypeLogementDernierEtage('non');
+                        break;
+                    case EtageType::DERNIER_ETAGE:
+                        $typeCompositionLogement->setTypeLogementDernierEtage('oui')
+                            ->setTypeLogementRdc('non');
+                        break;
+                    case EtageType::SOUSSOL:
+                        // On n'a pas de champ juste "sous-sol", on a "sous-sol sans fenêtre"
+                        $signalement->setEtageOccupant('-1');
+                        $typeCompositionLogement->setTypeLogementRdc('non')
+                            ->setTypeLogementDernierEtage('non');
+                        break;
+                    case EtageType::AUTRE:
+                        $etageOccupant = $formServiceSecours->step2->etageOccupant;
+                        if (!empty($etageOccupant)) {
+                            $signalement->setEtageOccupant($etageOccupant);
+                        }
+                        $typeCompositionLogement->setTypeLogementRdc('non')
+                            ->setTypeLogementDernierEtage('non');
+                        break;
+                }
+            }
+        }
+
+
+        $signalement->setNbPiecesLogement($formServiceSecours->step2->nbPiecesLogement)
+            ->setSuperficie($formServiceSecours->step2->superficie);
+
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
         // TODO : manage other steps
         //
         //

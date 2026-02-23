@@ -4,13 +4,13 @@ import {
 } from '../../services/ui/modales_helper';
 
 import { attacheAutocompleteAddressEvents } from '../../services/component/component_search_address';
-import { initComponentAdress } from '../../services/component/component_search_address';
+import { initComponentAddress } from '../../services/component/component_search_address';
 attacheAutocompleteAddressEvents();
 if (document.querySelector('#coordonnees_bailleur_adresseCompleteProprio')) {
-  initComponentAdress('#coordonnees_bailleur_adresseCompleteProprio');
+  initComponentAddress('#coordonnees_bailleur_adresseCompleteProprio');
 }
 if (document.querySelector('#coordonnees_agence_adresseCompleteAgence')) {
-  initComponentAdress('#coordonnees_agence_adresseCompleteAgence');
+  initComponentAddress('#coordonnees_agence_adresseCompleteAgence');
 }
 
 const fieldsetVisitorType = document?.querySelector('#fieldset-visitor-type');

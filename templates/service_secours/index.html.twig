@@ -42,7 +42,7 @@
                     </div>
                 {% endif %}
 
-                {{ form_start(form) }}
+                {{ form_start(form, {'attr': {'id': 'fo-form-service-secours'}}) }}
                 {{ form_errors(form) }}
 
                 {% if current_step == 'step1' %}
@@ -52,12 +52,29 @@
                     {{ form_row(form.step1.origineMission) }}
                     {{ form_row(form.step1.ordreMission) }}
                 {% elseif current_step == 'step2' %}
-                    {{ form_row(form.step2.adresseComplete) }}
+                    {{ form_row(form.step2.adresseCompleteOccupant) }}
+                    <div id="fo-form-service-secours-adresse">
+                        <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
+                        </div>
+                    </div>
+                    <div class="fr-my-2w">
+                        <button type="button" class="fr-link fr-link--icon-left fr-icon-edit-line manual-address-switcher">Saisir une adresse manuellement</button>
+                    </div>
+				    <div class="fr-hidden fr-mb-2w manual-address-container">
+                        {{ form_row(form.step2.adresseOccupant) }}
+                        {{ form_row(form.step2.cpOccupant) }}
+                        {{ form_row(form.step2.villeOccupant) }}
+                        {{ form_row(form.step2.inseeOccupant) }}
+                    </div>
                     {{ form_row(form.step2.adresseAutreOccupant) }}
-                    {{ form_row(form.step2.isLogementSocial) }}
-                    {{ form_row(form.step2.natureLogement) }}
-                    {{ form_row(form.step2.typeEtageLogement) }}
-                    {{ form_row(form.step2.etageOccupant) }}
+					{{ form_row(form.step2.isLogementSocial, {display_mode: 'block'}) }}
+                    {{ form_row(form.step2.natureLogement, {display_mode: 'block'}) }}
+                    <div class="fr-hidden type-etage-logement-appartement-container fr-input-group">
+                        {{ form_row(form.step2.typeEtageLogement, {display_mode: 'block'}) }}
+                        <div class="fr-hidden etage-occupant-container fr-input-group fr-pl-4w">
+                            {{ form_row(form.step2.etageOccupant) }}
+                        </div>
+                    </div>
                     {{ form_row(form.step2.nbPiecesLogement) }}
                     {{ form_row(form.step2.superficie) }}
                 {% elseif current_step == 'step3' %}
