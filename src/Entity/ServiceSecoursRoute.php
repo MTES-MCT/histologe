@@ -91,13 +91,6 @@ class ServiceSecoursRoute implements EntityHistoryInterface
         return $this->slug;
     }
 
-    public function setSlug(string $slug): static
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
     public function getEmail(): ?string
     {
         return $this->email;
