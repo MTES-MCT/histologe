@@ -43,7 +43,7 @@
                     aria-controls="fr-modal-document-view"
                     data-url="{{ path('back_territory_management_document_edit', { file: file.id }) }}"
                     data-createdat="{{ file.createdAt|date('d/m/Y') }}"
-                    data-createdby="{{ file.uploadedBy ? file.uploadedBy.fullName : 'Admin' }}"
+                    data-createdby="{{ file.uploadedBy ? file.uploadedBy.nomComplet(true) : 'Admin' }}"
                     data-title="{{ file.title }}"
                     data-description="{{ file.description ?? '/' }}"
                     data-partnertype="Type de partenaire :
