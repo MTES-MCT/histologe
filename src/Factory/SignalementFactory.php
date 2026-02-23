@@ -19,7 +19,7 @@ class SignalementFactory
         // default data
         $signalement->setProfileDeclarant(ProfileDeclarant::SERVICE_SECOURS);
         $signalement->setIsCguAccepted(true);
-        // TODO : $signalement->setCreationSource(CreationSource::FORM_SERVICE_SECOURS);
+        $signalement->setCreationSource(CreationSource::FORM_SERVICE_SECOURS);
         // data calculated from serviceSecoursRoute
         $signalement->setServiceSecours($serviceSecoursRoute);
         $signalement->setStructureDeclarant($serviceSecoursRoute->getName());
