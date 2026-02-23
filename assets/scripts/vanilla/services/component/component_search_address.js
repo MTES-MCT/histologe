@@ -201,7 +201,7 @@ function setManualEdit(input, needResetInsee) {
   }
 }
 
-export function initComponentAdress(id) {
+export function initComponentAddress(id) {
   const addressInput = document.querySelector(id);
   if (!addressInput) {
     return;

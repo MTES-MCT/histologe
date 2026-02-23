@@ -185,8 +185,8 @@ function initBoFormSignalementSubmit(tabName) {
       break;
     case 'coordonnees':
       initBoFormSignalementCoordonnees();
-      initComponentAdress('#signalement_draft_coordonnees_adresseCompleteProprio');
-      initComponentAdress('#signalement_draft_coordonnees_adresseCompleteAgence');
+      initComponentAddress('#signalement_draft_coordonnees_adresseCompleteProprio');
+      initComponentAddress('#signalement_draft_coordonnees_adresseCompleteAgence');
       break;
     case 'desordres':
       initBoFormSignalementDesordres();
@@ -498,9 +498,9 @@ function initBoFormSignalementDesordres() {
   updateSelectedCriteres(document.getElementById('fr-modal-desordres-logement-add'));
 }
 
-// TODO utiliser import { initComponentAdress } from '../../services/component/component_search_address';
+// TODO utiliser import { initComponentAddress } from '../../services/component/component_search_address';
 // nécessite de renommer certaines classes dans les templates et formType et de vérifier q'il n'y a pas des confusions
-function initComponentAdress(id) {
+function initComponentAddress(id) {
   const addressInput = document.querySelector(id);
   const addressInputParent = addressInput.parentElement.parentElement.parentElement;
   const manualAddressSwitcher = addressInputParent?.querySelector(
@@ -585,7 +585,7 @@ function initBoFormValidation() {
 }
 
 function initBoFormSignalementAdresse() {
-  initComponentAdress('#signalement_draft_address_adresseCompleteOccupant');
+  initComponentAddress('#signalement_draft_address_adresseCompleteOccupant');
 
   initRefreshFromRadio(
     'adresse',
