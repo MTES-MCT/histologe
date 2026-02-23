@@ -69,6 +69,40 @@ class BackBailleurControllerTest extends WebTestCase
         $this->assertEquals('Bailleur Test', $bailleur->getName());
     }
 
+    public function testBailleurEditTerritories(): void
+    {
+        /** @var BailleurRepository $bailleurRepository */
+        $bailleurRepository = static::getContainer()->get(BailleurRepository::class);
+        $bailleur = $bailleurRepository->findOneBy(['name' => '13 HABITAT']);
+        $this->assertCount(1, $bailleur->getBailleurTerritories());
+        $firstTerritory = $bailleur->getBailleurTerritories()->first();
+        if ($firstTerritory) {
+            $this->assertEquals('Bouches-du-Rhône', $firstTerritory->getTerritory()->getName());
+        }
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('back_bailleur_edit', ['bailleur' => $bailleur->getId()]);
+
+        $csrfToken = $this->generateCsrfToken($this->client, 'bailleur_type');
+        $this->client->request('POST', $route, [
+            '_token' => $csrfToken,
+            'name' => 'Bailleur Test',
+            'bailleurTerritories' => [13, 45],
+        ]);
+
+        $this->assertEquals('Bailleur Test', $bailleur->getName());
+        $this->assertCount(2, $bailleur->getBailleurTerritories());
+        $firstTerritory = $bailleur->getBailleurTerritories()->first();
+        if ($firstTerritory) {
+            $this->assertEquals('Bouches-du-Rhône', $firstTerritory->getTerritory()->getName());
+        }
+        $lastTerritory = $bailleur->getBailleurTerritories()->last();
+        if ($lastTerritory) {
+            $this->assertEquals('Loire-Atlantique', $lastTerritory->getTerritory()->getName());
+        }
+    }
+
     public function testBailleurDeleteKO(): void
     {
         /** @var BailleurRepository $bailleurRepository */
