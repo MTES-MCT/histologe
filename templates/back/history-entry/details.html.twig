@@ -48,7 +48,7 @@
                         {% if entry.user %}
                             {{ entry.user.email }}
                             <br>
-                            {{ entry.user.fullName }}
+                            {{ entry.user.nomComplet(true) }}
                             <br>
                             Id {{entry.user.id}}
                         {% endif %}
