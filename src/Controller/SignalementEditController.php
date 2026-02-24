@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\InformationComplementaire;
+use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
 use App\Entity\Signalement;
 use App\Form\SignalementeEditFO\CoordonneesAgenceType;
@@ -125,7 +125,7 @@ class SignalementEditController extends AbstractController
         if ($redirect = $this->cguTiersChecker->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
             return $redirect;
         }
-        
+
         $form = $this->createForm(UsagerSituationFoyerType::class, $signalement);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -139,7 +139,7 @@ class SignalementEditController extends AbstractController
                 $signalement->setDateNaissanceOccupant(new \DateTimeImmutable($form->get('dateNaissanceAllocataire')->getData()->format('Y-m-d')));
             }
             $signalement->setMontantAllocation((int) $form->get('montantAllocation')->getData());
-            $situationFoyer->setLogementSocialMontantAllocation((int) $form->get('montantAllocation')->getData())
+            $situationFoyer->setLogementSocialMontantAllocation($form->get('montantAllocation')->getData())
                 ->setTravailleurSocialQuitteLogement($form->get('souhaiteQuitterLogement')->getData())
                 ->setTravailleurSocialPreavisDepart($form->get('preavisDepartDepose')->getData())
                 ->setTravailleurSocialAccompagnement($form->get('accompagnementTravailleurSocial')->getData())
@@ -156,9 +156,10 @@ class SignalementEditController extends AbstractController
 
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
             $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'La situation du foyer a bien été mise à jour.']);
+
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
-        
+
         return $this->render('front/edit-signalement/situation-foyer.html.twig', [
             'signalement' => $signalement,
             'form' => $form,

@@ -64,9 +64,19 @@ class SignalementUpdatedListener
             'fields' => [
                 'isLogementSocial' => 'Logement social',
                 'isRelogement' => 'Relogement',
-                'isAllocataire' => 'Allocataire',
+                'isAllocataire' => 'Allocataire / Caisse d\'allocation',
                 'dateNaissanceOccupant' => 'Date de naissance de l\'occupant',
                 'numAllocataire' => 'Numéro d\'allocataire / de dossier',
+                'informationComplementaire.informations_complementaires_situation_occupants_type_allocation' => 'Type d\'allocation',
+                'montantAllocation' => 'Montant de l\'allocation',
+                'situationFoyer.travailleur_social_quitte_logement' => 'Souhaite quitter le logement',
+                'situationFoyer.travailleur_social_preavis_depart' => 'Préavis de départ déposé',
+                'situationFoyer.travailleur_social_accompagnement' => 'Accompagnement travailleur social',
+                'situationFoyer.travailleur_social_accompagnement_nom_structure' => 'Nom de la structure d\'accompagnement',
+                'informationComplementaire.informations_complementaires_situation_bailleur_beneficiaire_rsa' => 'Bénéficiaire du RSA',
+                'informationComplementaire.informations_complementaires_situation_bailleur_beneficiaire_fsl' => 'Bénéficiaire du FSL',
+                'informationComplementaire.informations_complementaires_situation_occupants_revenu_fiscal' => 'Revenu fiscal de référence',
+                'informationProcedure.info_procedure_depart_apres_travaux' => 'Rester si travaux faits',
             ],
         ],
     ];
@@ -111,9 +121,25 @@ class SignalementUpdatedListener
                     $old = $event->getOldValue($field);
                     $new = $event->getNewValue($field);
 
+                    // Si c'est un champ de type DateTimeImmutable, on formate la date pour que ce soit plus lisible dans le suivi
+                    if ($new instanceof \DateTimeImmutable) {
+                        $new = $new->format('d/m/Y');
+                    }
+                    if ($old instanceof \DateTimeImmutable) {
+                        $old = $old->format('d/m/Y');
+                    }
+
                     if ($old === $new) {
                         continue;
                     }
+
+                    /*
+                    TODO : mieux gérer le diff pour les bool (ex : isLogementSocial)
+                    Ca ne fonctionne pas comme ça
+                    if ($new instanceof bool) {
+                        $new = ($new === 1) ? 'OUI' : 'NON';
+                    }
+                    */
 
                     $fieldChanges[$field] = [
                         'label' => $label,
@@ -125,20 +151,6 @@ class SignalementUpdatedListener
 
                 $parsed = $this->parseJsonPath($field); // ex: information_procedure.info_procedure_assurance_contactee
                 if (null === $parsed) {
-                    continue;
-                }
-
-                $old = $event->getOldValue($field);
-                $new = $event->getNewValue($field);
-
-                // Si c'est un champ de type DateTimeImmutable, on formate la date pour que ce soit plus lisible dans le suivi
-                if ($new instanceof \DateTimeImmutable) {
-                    $new = $new->format('d/m/Y');
-                }
-                if ($old instanceof \DateTimeImmutable) {
-                    $old = $old->format('d/m/Y');
-                }
-                if ($old === $new) {
                     continue;
                 }
 
