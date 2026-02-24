@@ -127,9 +127,9 @@ class SignalementUpdatedListener
                 if (null === $parsed) {
                     continue;
                 }
-                
-                $old = $event->getOldValue($fieldName);
-                $new = $event->getNewValue($fieldName);
+
+                $old = $event->getOldValue($field);
+                $new = $event->getNewValue($field);
 
                 // Si c'est un champ de type DateTimeImmutable, on formate la date pour que ce soit plus lisible dans le suivi
                 if ($new instanceof \DateTimeImmutable) {
