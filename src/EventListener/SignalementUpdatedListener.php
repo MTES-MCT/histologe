@@ -18,6 +18,7 @@ class SignalementUpdatedListener
     public const string EDIT_COORDONNEES_AGENCE = 'coordonnees_agence';
     public const string EDIT_INFORMATIONS_ASSURANCE = 'informations_assurance';
     public const string EDIT_SITUATION_FOYER = 'situation_foyer';
+    public const string EDIT_INFORMATIONS_GENERALES = 'informations_generales';
 
     /**
      * Définition des champs suivis.
@@ -77,6 +78,24 @@ class SignalementUpdatedListener
                 'informationComplementaire.informations_complementaires_situation_occupants_beneficiaire_fsl' => 'Bénéficiaire du FSL',
                 'informationComplementaire.informations_complementaires_situation_occupants_revenu_fiscal' => 'Revenu fiscal de référence',
                 'informationProcedure.info_procedure_depart_apres_travaux' => 'Rester si travaux faits',
+            ],
+        ],
+        self::EDIT_INFORMATIONS_GENERALES => [
+            'label' => 'Les informations générales',
+            'fields' => [
+                'dateEntree' => 'Date d\'entrée dans le logement',
+                'nbOccupantsLogement' => 'Nombre de personnes occupant le logement',
+                'numeroInvariant' => 'Invariant fiscal',
+                'loyer' => 'Montant du loyer',
+                'typeCompositionLogement.composition_logement_nombre_enfants' => 'Nombre d\'enfants occupant le logement',
+                'typeCompositionLogement.composition_logement_enfants' => 'Présence d\'enfants de moins de 6 ans',
+                'typeCompositionLogement.bail_dpe_bail' => 'Contrat de location (bail)',
+                'typeCompositionLogement.bail_dpe_etat_des_lieux' => 'Etat des lieux',
+                'typeCompositionLogement.bail_dpe_dpe' => 'Diagnostic performance énergétique (DPE)',
+                'typeCompositionLogement.bail_dpe_classe_energetique' => 'Classe énergétique du logement',
+                'informationComplementaire.informations_complementaires_situation_bailleur_date_effet_bail' => 'Date d\'effet du bail',
+                'informationComplementaire.informations_complementaires_situation_occupants_loyers_payes' => 'Paiement des loyers à jour',
+                'informationComplementaire.informations_complementaires_logement_annee_construction' => 'Année de construction du logement',
             ],
         ],
     ];
