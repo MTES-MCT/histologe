@@ -443,10 +443,10 @@ class SearchFilter
                 $qb->andWhere('s.creationSource IN (:creationSourcesFormPro)')
                     ->setParameter('creationSourcesFormPro', CreationSource::getFormProValues());
             } else {
-                $creationSource = CreationSource::tryFrom($filters['createdFrom']);
+                $creationSource = CreationSource::tryFromInsensitive($filters['createdFrom']);
                 if (null !== $creationSource) {
                     $qb->andWhere('s.creationSource = :creationSource')
-                        ->setParameter('creationSource', $creationSource->value);
+                        ->setParameter('creationSource', $creationSource->name);
                 }
             }
         }

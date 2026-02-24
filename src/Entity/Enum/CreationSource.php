@@ -11,12 +11,12 @@ enum CreationSource: string
     public const string CREATED_FROM_FORMULAIRE_USAGER = 'formulaire-usager'; // valeur tableau de bord
     public const string CREATED_FROM_FORMULAIRE_PRO = 'formulaire-pro'; // valeur tableau de bord
 
-    case API = 'API';
-    case FORM_PRO_BO = 'FORM_PRO_BO';
-    case FORM_SERVICE_SECOURS = 'FORM_SERVICE_SECOURS';
-    case FORM_USAGER_V1 = 'FORM_USAGER_V1';
-    case FORM_USAGER_V2 = 'FORM_USAGER_V2';
-    case IMPORT = 'IMPORT';
+    case API = 'api';
+    case FORM_PRO_BO = 'form-pro-bo';
+    case FORM_SERVICE_SECOURS = 'form-service-secours';
+    case FORM_USAGER_V1 = 'form-usager-v1';
+    case FORM_USAGER_V2 = 'form-usager-v2';
+    case IMPORT = 'import';
 
     /** @return array<string, string> */
     public static function getLabelList(): array
@@ -34,25 +34,30 @@ enum CreationSource: string
     public static function getV1Sources(): array
     {
         return [
-            self::FORM_USAGER_V1,
-            self::IMPORT,
+            self::FORM_USAGER_V1->name,
+            self::IMPORT->name,
         ];
     }
 
     public static function getFormUsagerValues(): array
     {
         return [
-            self::FORM_USAGER_V1,
-            self::FORM_USAGER_V2,
-            self::IMPORT,
+            self::FORM_USAGER_V1->name,
+            self::FORM_USAGER_V2->name,
+            self::IMPORT->name,
         ];
     }
 
     public static function getFormProValues(): array
     {
         return [
-            self::FORM_PRO_BO,
-            self::API,
+            self::FORM_PRO_BO->name,
+            self::API->name,
         ];
+    }
+
+    public static function tryFromInsensitive(string $value): ?self
+    {
+        return self::tryFrom(strtolower($value));
     }
 }
