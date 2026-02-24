@@ -3,8 +3,10 @@
 namespace App\Dto\ServiceSecours;
 
 use App\Entity\Enum\EtageType;
+use App\Validator\InseeOccupantIsActive;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[InseeOccupantIsActive(groups: ['step2'])]
 class FormServiceSecoursStep2
 {
     public ?string $adresseCompleteOccupant = null;
