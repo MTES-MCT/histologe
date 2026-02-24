@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Factory;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Territory;
 use App\Factory\SignalementFactory;
+use App\Service\Signalement\ZipcodeProvider;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -93,7 +94,8 @@ class SignalementFactoryTest extends KernelTestCase
             ->setZip('01')
             ->setIsActive(true);
 
-        $signalement = (new SignalementFactory())->createInstanceFromArrayForImport($territory, $data);
+        $zipCodeProvider = static::getContainer()->get(ZipcodeProvider::class);
+        $signalement = (new SignalementFactory($zipCodeProvider))->createInstanceFromArrayForImport($territory, $data);
 
         $this->assertEquals($data['reference'], $signalement->getReference());
         $this->assertEquals($data['nomDeclarant'], $signalement->getNomDeclarant());
