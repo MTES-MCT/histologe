@@ -39,3 +39,28 @@ function attachFormServiceSecoursEvent() {
     });
   });
 }
+
+
+
+//step4
+const showInformationsSyndicContainer = document.querySelector('#show-informations-syndic-container');
+const informationsSyndicContainer = document.querySelector('#informations-syndic-container');
+if (showInformationsSyndicContainer && informationsSyndicContainer) {
+  showInformationsSyndicContainer.addEventListener('click', (event) => {
+    event.preventDefault();
+    informationsSyndicContainer.classList.remove('fr-hidden');
+    showInformationsSyndicContainer.classList.add('fr-hidden');
+  });
+  const denominationAgence = document.querySelector('#service_secours_step4_denominationAgence');
+  const nomAgence = document.querySelector('#service_secours_step4_nomAgence');
+  const prenomAgence = document.querySelector('#service_secours_step4_prenomAgence');
+  const mailAgence = document.querySelector('#service_secours_step4_mailAgence');
+  const telAgence = document.querySelector('#service_secours_step4_telAgence_input');
+  if (denominationAgence.value || nomAgence.value || prenomAgence.value || mailAgence.value || telAgence.value) {
+    informationsSyndicContainer.classList.remove('fr-hidden');
+    showInformationsSyndicContainer.classList.add('fr-hidden');
+  }
+}
+
+
+

@@ -33,7 +33,7 @@ class DataPropertyArrayFilterTest extends TestCase
     {
         yield 'Données Type composition' => [
             SignalementDraftRequest::PREFIX_PROPERTIES_TYPE_COMPOSITION,
-            $this->getLocataireTypeComposition(),
+            $this->getLocataireTypeComposition(withCompositionLogementNombrePersonnes: true),
         ];
 
         yield 'Données Situation Foyer' => [
@@ -43,7 +43,7 @@ class DataPropertyArrayFilterTest extends TestCase
 
         yield 'Données Procedure' => [
             SignalementDraftRequest::PREFIX_PROPERTIES_INFORMATION_PROCEDURE,
-            $this->getLocataireInformationProcedure(),
+            $this->getLocataireInformationProcedure(withInfoProcedureBailleurPrevenu: true),
         ];
 
         yield 'Données Information complémentaire' => [

@@ -548,7 +548,6 @@ class SignalementManager extends AbstractManager
         }
 
         $typeCompositionLogement
-            ->setCompositionLogementNombrePersonnes($informationsLogementRequest->getNombrePersonnes())
             ->setCompositionLogementNombreEnfants($informationsLogementRequest->getCompositionLogementNombreEnfants())
             ->setCompositionLogementEnfants($informationsLogementRequest->getCompositionLogementEnfants())
             ->setBailDpeBail($informationsLogementRequest->getBailDpeBail())
@@ -627,6 +626,7 @@ class SignalementManager extends AbstractManager
                 null !== $situationFoyer
                 && null !== $typeCompositionLogement
                 && $this->suroccupationSpecification->isSatisfiedBy(
+                    (int) $signalement->getNbOccupantsLogement(),
                     $situationFoyer,
                     $typeCompositionLogement
                 )) {
@@ -838,7 +838,6 @@ class SignalementManager extends AbstractManager
         }
 
         $informationProcedure
-            ->setInfoProcedureBailleurPrevenu($procedureDemarchesRequest->getIsProprioAverti())
             ->setInfoProcedureBailMoyen($procedureDemarchesRequest->getInfoProcedureBailMoyen())
             ->setInfoProcedureBailDate($procedureDemarchesRequest->getInfoProcedureBailDate())
             ->setInfoProcedureBailReponse($procedureDemarchesRequest->getInfoProcedureBailReponse())

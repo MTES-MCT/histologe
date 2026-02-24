@@ -514,7 +514,7 @@ trait FixturesHelper
     /**
      * @return array<string>
      */
-    public function getLocataireTypeComposition(bool $transformPiecesAVivre = false): array
+    public function getLocataireTypeComposition(bool $withCompositionLogementNombrePersonnes = false): array
     {
         $typeComposition = [
             'bail_dpe_dpe' => 'oui',
@@ -535,11 +535,14 @@ trait FixturesHelper
             'composition_logement_piece_unique' => 'plusieurs_pieces',
             'type_logement_commodites_wc_cuisine' => 'non',
             'type_logement_sous_sol_sans_fenetre' => 'non',
-            'composition_logement_nombre_personnes' => '3',
             'type_logement_commodites_salle_de_bain' => 'oui',
             'type_logement_commodites_salle_de_bain_collective' => 'oui',
             'desordres_logement_chauffage_details_dpe_annee' => 'post2023',
         ];
+
+        if ($withCompositionLogementNombrePersonnes) {
+            $typeComposition['composition_logement_nombre_personnes'] = '3';
+        }
 
         return $typeComposition;
     }
@@ -564,11 +567,10 @@ trait FixturesHelper
     /**
      * @return array<mixed>
      */
-    public function getLocataireInformationProcedure(): array
+    public function getLocataireInformationProcedure(bool $withInfoProcedureBailleurPrevenu = false): array
     {
-        return [
+        $data = [
             'utilisation_service_ok_visite' => 1,
-            'info_procedure_bailleur_prevenu' => 'oui',
             'info_procedure_bail_moyen' => 'courrier',
             'info_procedure_bail_date' => '11/2024',
             'info_procedure_bail_reponse' => 'Réponse du bailleur',
@@ -580,6 +582,11 @@ trait FixturesHelper
             'utilisation_service_ok_cgu' => 1,
             'info_procedure_reponse_assurance' => 'Dossier reçu',
         ];
+        if ($withInfoProcedureBailleurPrevenu) {
+            $data['info_procedure_bailleur_prevenu'] = 'oui';
+        }
+
+        return $data;
     }
 
     /**

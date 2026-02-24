@@ -548,6 +548,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\ManyToOne(inversedBy: 'signalements')]
     private ?ServiceSecoursRoute $serviceSecours = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $autreSituationVulnerabilite = null;
+
     public function __construct()
     {
         $this->criticites = new ArrayCollection();
@@ -2979,6 +2982,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setServiceSecours(?ServiceSecoursRoute $serviceSecours): static
     {
         $this->serviceSecours = $serviceSecours;
+
+        return $this;
+    }
+
+    public function getAutreSituationVulnerabilite(): ?string
+    {
+        return $this->autreSituationVulnerabilite;
+    }
+
+    public function setAutreSituationVulnerabilite(?string $autreSituationVulnerabilite): static
+    {
+        $this->autreSituationVulnerabilite = $autreSituationVulnerabilite;
 
         return $this;
     }

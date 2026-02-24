@@ -213,7 +213,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals(ProfileDeclarant::BAILLEUR_OCCUPANT, $signalement->getProfileDeclarant());
         $this->assertEquals(ProfileOccupant::BAILLEUR_OCCUPANT, $signalement->getProfileOccupant());
         $this->assertEquals('maison', $signalement->getNatureLogement());
-        $this->assertEquals(4, $signalement->getTypeCompositionLogement()->getCompositionLogementNombrePersonnes());
+        $this->assertEquals(4, $signalement->getNbOccupantsLogement());
         $this->assertEquals(2, $signalement->getTypeCompositionLogement()->getCompositionLogementNombreEnfants());
         $this->assertEquals('non', $signalement->getTypeCompositionLogement()->getCompositionLogementEnfants());
     }

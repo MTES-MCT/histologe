@@ -5,7 +5,6 @@ namespace App\Entity\Model;
 class InformationProcedure
 {
     public function __construct(
-        private ?string $infoProcedureBailleurPrevenu = null,
         private ?string $infoProcedureBailMoyen = null,
         private ?string $infoProcedureBailDate = null,
         private ?string $infoProcedureBailReponse = null,
@@ -18,18 +17,6 @@ class InformationProcedure
         private ?bool $utilisationServiceOkDemandeLogement = null,
         private ?bool $utilisationServiceOkCgu = null,
     ) {
-    }
-
-    public function getInfoProcedureBailleurPrevenu(): ?string
-    {
-        return $this->infoProcedureBailleurPrevenu;
-    }
-
-    public function setInfoProcedureBailleurPrevenu(?string $infoProcedureBailleurPrevenu): self
-    {
-        $this->infoProcedureBailleurPrevenu = $infoProcedureBailleurPrevenu;
-
-        return $this;
     }
 
     public function getInfoProcedureBailMoyen(): ?string
@@ -176,7 +163,6 @@ class InformationProcedure
     public function toArray(): array
     {
         return [
-            'info_procedure_bailleur_prevenu' => $this->infoProcedureBailleurPrevenu,
             'info_procedure_bail_moyen' => $this->infoProcedureBailMoyen,
             'info_procedure_bail_date' => $this->infoProcedureBailDate,
             'info_procedure_bail_reponse' => $this->infoProcedureBailReponse,
