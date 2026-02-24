@@ -181,11 +181,11 @@ export const store = {
     createdFromList: [
       { Id: 'formulaire-usager', Text: 'Formulaire usager (v1, actuel et import)' },
       { Id: 'formulaire-pro', Text: 'Formulaire pro (BO et api)' },
-      { Id: 'form-usager-v1', Text: 'Formulaire usager v1' },
-      { Id: 'form-usager-v2', Text: 'Formulaire usager actuel' },
-      { Id: 'form-pro-bo', Text: 'Formulaire pro BO' },
-      { Id: 'api', Text: 'API' },
-      { Id: 'import', Text: 'Import' }
+      { Id: 'FORM_USAGER_V1', Text: 'Formulaire usager v1' },
+      { Id: 'FORM_USAGER_V2', Text: 'Formulaire usager actuel' },
+      { Id: 'FORM_PRO_BO', Text: 'Formulaire pro BO' },
+      { Id: 'API', Text: 'API' },
+      { Id: 'IMPORT', Text: 'Import' }
     ],
     selectedSavedSearchId: undefined as string | undefined,
     savedSearchSelectKey: 0,
