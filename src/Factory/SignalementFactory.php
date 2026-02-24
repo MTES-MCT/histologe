@@ -30,10 +30,10 @@ class SignalementFactory
             $this->zipcodeProvider->getTerritoryByInseeCode($formServiceSecours->step2->inseeOccupant)
         );
         if (!$signalement->getTerritory()) {
-            throw new \LogicException('Impossible de trouver une territory pour le code insee : ' . $formServiceSecours->step2->inseeOccupant);
+            throw new \LogicException('Impossible de trouver une territory pour le code insee : '.$formServiceSecours->step2->inseeOccupant);
         }
         if (!$signalement->getTerritory()->isIsActive()) {
-            throw new \LogicException('Le territoire associé au code insee : ' . $formServiceSecours->step2->inseeOccupant . ' n\'est pas actif');
+            throw new \LogicException('Le territoire associé au code insee : '.$formServiceSecours->step2->inseeOccupant.' n\'est pas actif');
         }
 
         // default data
@@ -60,7 +60,6 @@ class SignalementFactory
             ->setAdresseAutreOccupant($formServiceSecours->step2->adresseAutreOccupant)
             ->setIsLogementSocial($formServiceSecours->step2->isLogementSocial)
             ->setNatureLogement($formServiceSecours->step2->natureLogement);
-
 
         if ('appartement' === $signalement->getNatureLogement()) {
             /** @var EtageType $appartementEtage */
@@ -93,11 +92,11 @@ class SignalementFactory
             }
         }
 
-
         $signalement->setNbPiecesLogement($formServiceSecours->step2->nbPiecesLogement)
             ->setSuperficie($formServiceSecours->step2->superficie);
 
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
         // TODO : manage other steps
         //
         //

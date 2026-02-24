@@ -58,54 +58,59 @@ class ServiceSecoursStep2Type extends AbstractType
                     'data-autocomplete-insee' => 'true',
                 ],
             ])
-        
+
             ->add('adresseAutreOccupant', null, [
                 'label' => 'Complément d\'adresse',
                 'help' => 'Lieu-dit, bâtiment, étage, porte, ...<br>Format attendu : 255 caractères maximum',
                 'help_html' => true,
+            ])
+
+            ->add('isLogementSocial', ChoiceType::class, [
+                'label' => 'Logement social <span class="text-required">*</span>',
+                'label_html' => true,
+                'expanded' => true,
+                'required' => false,
+                'placeholder' => false,
+                'choices' => [
+                    'Oui' => true,
+                    'Non' => false,
+                    'Indéterminé' => null,
+                ],
+            ])
+            ->add('natureLogement', ChoiceType::class, [
+                'expanded' => true,
+                'required' => false,
+                'placeholder' => false,
+                'choices' => [
+                    'Appartement' => 'appartement',
+                    'Maison' => 'maison',
+                    'Autre' => 'autre',
+                ],
+                'label' => 'Nature du logement <span class="text-required">*</span>',
+                'label_html' => true,
+            ])
+            ->add('typeEtageLogement', EnumType::class, [
+                'class' => EtageType::class,
+                'choice_label' => function ($choice) {
+                    return $choice->label();
+                },
+                'expanded' => true,
+                'required' => false,
+                'placeholder' => false,
+                'label' => 'Localisation de l\'appartement',
+            ])
+            ->add('etageOccupant', null, [
+                'label' => 'Préciser l\'étage',
+                'help' => 'Format attendu : 5 caractères maximum',
+            ])
+            ->add('nbPiecesLogement', null, [
+                'label' => 'Nombre de pièces à vivre (salon, chambre) du logement',
+                'help' => 'Format attendu : Saisir un nombre entier',
+            ])
+            ->add('superficie', null, [
+                'label' => 'Superficie approximative du logement (en m²)',
+                'help' => 'Format attendu : Saisir un nombre entier',
             ]);
-
-
-        $builder->add('isLogementSocial', ChoiceType::class, [
-            'label' => 'Logement social <span class="text-required">*</span>',
-            'label_html' => true,
-            'expanded' => true,
-            'required' => false,
-            'placeholder' => false,
-            'choices' => [
-                'Oui' => true,
-                'Non' => false,
-                'Indéterminé' => null,
-            ],
-        ]);
-        $builder->add('natureLogement', ChoiceType::class, [
-            'expanded' => true,
-            'required' => false,
-            'placeholder' => false,
-            'choices' => [
-                'Appartement' => 'appartement',
-                'Maison' => 'maison',
-                'Autre' => 'autre',
-            ],
-            'label' => 'Nature du logement <span class="text-required">*</span>',
-            'label_html' => true,
-        ]);
-        $builder->add('typeEtageLogement', EnumType::class, [
-            'class' => EtageType::class,
-            'choice_label' => function ($choice) {
-                return $choice->label();
-            },
-            'expanded' => true,
-            'required' => false,
-            'placeholder' => false,
-            'label' => 'Localisation de l\'appartement',
-        ]);
-        $builder->add('etageOccupant', null, [
-            'label' => 'Préciser l\'étage',
-            'help' => 'Format attendu : 5 caractères maximum',
-        ]);
-        $builder->add('nbPiecesLogement', null, ['label' => 'Nombre de pièces à vivre (salon, chambre) du logement', 'help' => 'Format attendu : Saisir un nombre entier']);
-        $builder->add('superficie', null, ['label' => 'Superficie approximative du logement (en m²)', 'help' => 'Format attendu : Saisir un nombre entier']);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
