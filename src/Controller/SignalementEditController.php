@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Form\SignalementeEditFO\CoordonneesAgenceType;
 use App\Form\SignalementeEditFO\CoordonneesBailleurType;
+use App\Form\SignalementeEditFO\InformationsGeneralesType;
 use App\Form\SignalementeEditFO\ProcedureAssuranceType;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
@@ -130,6 +133,55 @@ class SignalementEditController extends AbstractController
         }
 
         return $this->render('front/edit-signalement/procedure-assurance.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{code}/completer/informations-generales', name: 'front_suivi_signalement_complete_informations_generales', methods: ['GET', 'POST'])]
+    public function suiviSignalementCompleteInformationsGenerales(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->cguTiersChecker->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
+        $form = $this->createForm(InformationsGeneralesType::class, $signalement);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
+
+            $typeCompositionLogement->setCompositionLogementNombreEnfants($form->get('nbEnfantsDansLogement')->getData())
+                ->setCompositionLogementEnfants($form->get('enfantsDansLogementMoinsSixAns')->getData())
+                ->setBailDpeBail($form->get('bail')->getData())
+                ->setBailDpeEtatDesLieux($form->get('etatDesLieux')->getData())
+                ->setBailDpeDpe($form->get('dpe')->getData())
+                ->setBailDpeClasseEnergetique($form->get('classeEnergetique')->getData());
+            $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+            $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();
+            $dateEffetBail = $form->get('dateEffetBail')->getData() ? $form->get('dateEffetBail')->getData()->format('Y-m-d') : null;
+            $informationComplementaire->setInformationsComplementairesSituationBailleurDateEffetBail($dateEffetBail)
+                ->setInformationsComplementairesSituationOccupantsLoyersPayes($form->get('payementLoyersAJour')->getData())
+                ->setInformationsComplementairesLogementAnneeConstruction($form->get('anneeConstruction')->getData());
+            $signalement->setInformationComplementaire($informationComplementaire);
+
+            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les informations générales ont bien été mises à jour.']);
+
+            return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/edit-signalement/informations-generales.html.twig', [
             'signalement' => $signalement,
             'form' => $form,
         ]);

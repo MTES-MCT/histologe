@@ -467,9 +467,16 @@
 					{% endif %}
 				</ul>
 			</div>
-
 			<div class="signalement-group-data-card">
-				<h3 class="title-blue-france fr-h5">Informations générales sur le logement</h3>
+				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
+					<h3 class="title-blue-france fr-h5">Informations générales sur le logement</h3>
+					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+						<a href="{{ path('front_suivi_signalement_complete_informations_generales', {'code': signalement.codeSuivi}) }}" 
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
+							Modifier les informations
+						</a>
+					{% endif %}
+				</div>
 				<ul>
 					{% if signalement.dateEntree %}
 						<li>Date arrivée :
@@ -478,7 +485,7 @@
 					{% endif %}
 					{% if signalement.informationComplementaire and  signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail %}
 						<li>Date d'effet du bail :
-							{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail('d/m/Y')}}
+							{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail|date('d/m/Y')}}
 						</li>
 					{% endif %}
 					<li>Nombre de personnes : {{ signalement.nbOccupantsLogement }}</li>
