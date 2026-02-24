@@ -35,11 +35,11 @@ class InformationsGeneralesType extends AbstractType
         $dateEffetBail = $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurDateEffetBail() ? \DateTime::createFromFormat('Y-m-d', $signalement->getInformationComplementaire()->getInformationsComplementairesSituationBailleurDateEffetBail()) : null;
 
         $builder->add('dateEntree', DateType::class, [
-            'label' => 'Date arrivée :',
-            'required' => false,
-            'placeholder' => false,
-            'data' => $signalement->getDateEntree(),
-        ])
+                'label' => 'Date arrivée :',
+                'required' => false,
+                'placeholder' => false,
+                'data' => $signalement->getDateEntree(),
+            ])
             ->add('dateEffetBail', DateType::class, [
                 'label' => 'Date d\'effet du bail',
                 'required' => false,
