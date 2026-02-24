@@ -121,7 +121,7 @@ final class DossierMessage implements DossierMessageInterface
         $this->nbrPieceLogement = $signalement->getNbPiecesLogement();
         $this->nbrEtages = (int) $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementNombreEtages();
         $this->etapes = [
-            'nbrPersonne' => $signalement->getTypeCompositionLogement()?->getCompositionLogementNombrePersonnes(),
+            'nbrPersonne' => $signalement->getNbOccupantsLogement(),
             'typeLogement' => $signalement->getNatureLogement(),
             'superficie' => $signalement->getSuperficie(),
             'dateConstruction' => $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementAnneeConstruction(),

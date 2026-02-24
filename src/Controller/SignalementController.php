@@ -11,7 +11,6 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\File;
-use App\Entity\Model\InformationProcedure;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
@@ -982,13 +981,6 @@ class SignalementController extends AbstractController
             user: $user,
             isPublic: true,
         );
-
-        $informationProcedure = new InformationProcedure();
-        if (!empty($signalement->getInformationProcedure())) {
-            $informationProcedure = clone $signalement->getInformationProcedure();
-        }
-        $informationProcedure->setInfoProcedureBailleurPrevenu('oui');
-        $signalement->setInformationProcedure($informationProcedure);
         $signalement->setIsProprioAverti(true);
         $signalementManager->save($signalement);
 

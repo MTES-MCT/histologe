@@ -191,7 +191,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertEquals(new \DateTimeImmutable('2020-10-01'), $signalement->getDateEntree());
 
         $typeCompositionLogement = array_filter($signalement->getTypeCompositionLogement()->toArray());
-        $this->assertEquals($this->getLocataireTypeComposition(transformPiecesAVivre: true), $typeCompositionLogement);
+        $this->assertEquals($this->getLocataireTypeComposition(), $typeCompositionLogement);
 
         $situationFoyer = array_filter($signalement->getSituationFoyer()->toArray());
         $this->assertEquals($this->getLocataireSituationFoyer(), $situationFoyer);

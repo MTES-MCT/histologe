@@ -25,7 +25,6 @@ class TypeCompositionLogement
         private ?string $compositionLogementPieceUnique = null,
         private ?string $compositionLogementSuperficie = null,
         private ?string $compositionLogementNbPieces = null,
-        private ?string $compositionLogementNombrePersonnes = null,
         private ?string $compositionLogementNombreEnfants = null,
         private ?string $compositionLogementEnfants = null,
         private ?string $typeLogementCommoditesPieceAVivre9m = null,
@@ -270,18 +269,6 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getCompositionLogementNombrePersonnes(): ?string
-    {
-        return $this->compositionLogementNombrePersonnes;
-    }
-
-    public function setCompositionLogementNombrePersonnes(?string $compositionLogementNombrePersonnes): self
-    {
-        $this->compositionLogementNombrePersonnes = $compositionLogementNombrePersonnes;
-
-        return $this;
-    }
-
     public function getCompositionLogementNombreEnfants(): ?string
     {
         return $this->compositionLogementNombreEnfants;
@@ -449,7 +436,6 @@ class TypeCompositionLogement
             'composition_logement_piece_unique' => $this->compositionLogementPieceUnique,
             'composition_logement_superficie' => $this->compositionLogementSuperficie,
             'composition_logement_nb_pieces' => $this->compositionLogementNbPieces,
-            'composition_logement_nombre_personnes' => $this->compositionLogementNombrePersonnes,
             'composition_logement_nombre_enfants' => $this->compositionLogementNombreEnfants,
             'composition_logement_enfants' => $this->compositionLogementEnfants,
             'bail_dpe_bail' => $this->bailDpeBail,

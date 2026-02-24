@@ -69,7 +69,6 @@ class SignalementApiFactory
             $signalement->setIsLogementVacant(false);
         }
 
-        $typeCompositionLogement->setCompositionLogementNombrePersonnes((string) $request->nbOccupantsLogement);
         $signalement->setNbOccupantsLogement($request->nbOccupantsLogement);
         $typeCompositionLogement->setCompositionLogementNombreEnfants((string) $request->nbEnfantsDansLogement);
         $typeCompositionLogement->setCompositionLogementEnfants((string) $request->isEnfantsMoinsSixAnsDansLogement);

@@ -78,7 +78,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals($signalement->getIsLogementSocial(), $payload['isLogementSocial']);
         $this->assertEquals($signalement->getIsLogementVacant(), $payload['isLogementVacant']);
         $this->assertEquals($signalement->getNbOccupantsLogement(), $payload['nbOccupantsLogement']);
-        $this->assertEquals($typeCompositionLogement->getCompositionLogementNombrePersonnes(), $payload['nbOccupantsLogement']);
+        $this->assertEquals($signalement->getNbOccupantsLogement(), $payload['nbOccupantsLogement']);
         $this->assertEquals($typeCompositionLogement->getCompositionLogementNombreEnfants(), $payload['nbEnfantsDansLogement']);
         $this->assertEquals($typeCompositionLogement->getCompositionLogementEnfants(), $payload['isEnfantsMoinsSixAnsDansLogement']);
         $this->assertEquals($signalement->getNatureLogement(), $payload['natureLogement']);

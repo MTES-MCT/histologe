@@ -561,6 +561,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     )]
     private Collection $tiersInvitations;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $autreSituationVulnerabilite = null;
+
     public function __construct()
     {
         $this->criticites = new ArrayCollection();
