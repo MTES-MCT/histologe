@@ -25,11 +25,10 @@ final class Version20260212125909 extends AbstractMigration
                 email VARCHAR(255) NOT NULL,
                 telephone VARCHAR(20) DEFAULT NULL,
                 token VARCHAR(64) NOT NULL,
-                status VARCHAR(20) NOT NULL,
+                status VARCHAR(255) NOT NULL,
                 created_at DATETIME DEFAULT NULL COMMENT '(DC2Type:datetime_immutable)',
                 updated_at DATETIME DEFAULT NULL COMMENT '(DC2Type:datetime_immutable)',
                 UNIQUE INDEX unique_tiers_invitation_token (token),
-                UNIQUE INDEX uniq_tiers_invitation_signalement_status (signalement_id, status),
                 INDEX idx_tiers_invitation_signalement (signalement_id),
                 PRIMARY KEY(id)
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB

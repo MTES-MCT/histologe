@@ -548,6 +548,15 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\ManyToOne(inversedBy: 'signalements')]
     private ?ServiceSecoursRoute $serviceSecours = null;
 
+    /** @var Collection<int, TiersInvitation> $tiersInvitations */
+    #[ORM\OneToMany(
+        mappedBy: 'signalement',
+        targetEntity: TiersInvitation::class,
+        orphanRemoval: true,
+        cascade: ['persist']
+    )]
+    private Collection $tiersInvitations;
+
     public function __construct()
     {
         $this->criticites = new ArrayCollection();
@@ -568,6 +577,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->desordrePrecisions = new ArrayCollection();
         $this->userSignalementSubscriptions = new ArrayCollection();
         $this->loginBailleur = BailleurLoginCodeGenerator::generate();
+        $this->tiersInvitations = new ArrayCollection();
     }
 
     #[Assert\Callback]
@@ -2979,6 +2989,36 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setServiceSecours(?ServiceSecoursRoute $serviceSecours): static
     {
         $this->serviceSecours = $serviceSecours;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TiersInvitation>
+     */
+    public function getTiersInvitations(): Collection
+    {
+        return $this->tiersInvitations;
+    }
+
+    public function addTiersInvitation(TiersInvitation $tiersInvitation): static
+    {
+        if (!$this->tiersInvitations->contains($tiersInvitation)) {
+            $this->tiersInvitations[] = $tiersInvitation;
+            $tiersInvitation->setSignalement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTiersInvitation(TiersInvitation $tiersInvitation): static
+    {
+        if ($this->tiersInvitations->removeElement($tiersInvitation)) {
+            // set the owning side to null (unless already changed)
+            if ($tiersInvitation->getSignalement() === $this) {
+                $tiersInvitation->setSignalement(null);
+            }
+        }
 
         return $this;
     }

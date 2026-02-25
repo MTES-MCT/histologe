@@ -8,7 +8,6 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\File;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Signalement;
@@ -30,7 +29,6 @@ use App\Repository\CommuneRepository;
 use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
-use App\Repository\TiersInvitationRepository;
 use App\Security\User\SignalementUser;
 use App\Security\Voter\SignalementFoVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
@@ -461,7 +459,6 @@ class SignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         SuiviRepository $suiviRepository,
         SuiviCategoryMapper $suiviCategoryMapper,
-        TiersInvitationRepository $tiersInvitationRepository,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
@@ -487,10 +484,7 @@ class SignalementController extends AbstractController
             $suiviCategory = $suiviCategoryMapper->mapFromSuivi($lastSuiviPublic);
         }
 
-        $tiersInvitation = $tiersInvitationRepository->findOneBy([
-            'signalement' => $signalement,
-            'status' => TiersInvitationStatus::WAITING,
-        ]);
+        $tiersInvitation = $signalement->getTiersInvitations()->filter(fn (TiersInvitation $tiersInvitation) => $tiersInvitation->isWaiting())->first();
 
         return $this->render('front/suivi_signalement_dashboard.html.twig', [
             'signalement' => $signalement,
@@ -533,7 +527,6 @@ class SignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
-        TiersInvitationRepository $tiersInvitationRepository,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
@@ -552,10 +545,7 @@ class SignalementController extends AbstractController
             'action' => $this->generateUrl('front_demande_lien_signalement'),
         ]);
 
-        $tiersInvitation = $tiersInvitationRepository->findOneBy([
-            'signalement' => $signalement,
-            'status' => TiersInvitationStatus::WAITING,
-        ]);
+        $tiersInvitation = $signalement->getTiersInvitations()->filter(fn (TiersInvitation $tiersInvitation) => $tiersInvitation->isWaiting())->first();
 
         return $this->render('front/suivi_signalement_dossier.html.twig', [
             'signalement' => $signalement,
@@ -997,7 +987,6 @@ class SignalementController extends AbstractController
         string $code,
         Request $request,
         SignalementRepository $signalementRepository,
-        TiersInvitationRepository $tiersInvitationRepository,
         SuiviManager $suiviManager,
         NotificationMailerRegistry $notificationMailerRegistry,
         EntityManagerInterface $entityManager,
@@ -1006,11 +995,9 @@ class SignalementController extends AbstractController
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         // On bloque si tiers déjà renseigné, si créé par tiers ou si une invitation est déjà en cours
-        $tiersInvitation = $tiersInvitationRepository->findOneBy([
-            'signalement' => $signalement,
-            'status' => TiersInvitationStatus::WAITING,
-        ]);
-        if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant()) || null !== $tiersInvitation) {
+        $tiersInvitation = $signalement->getTiersInvitations()->filter(fn (TiersInvitation $tiersInvitation) => $tiersInvitation->isWaiting())->first();
+
+        if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant()) || $tiersInvitation) {
             throw $this->createAccessDeniedException();
         }
 

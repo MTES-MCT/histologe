@@ -15,4 +15,16 @@ class TiersInvitationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, TiersInvitation::class);
     }
+
+    public function findOneByCodeAndToken(string $code, string $token): ?TiersInvitation
+    {
+        return $this->createQueryBuilder('ti')
+            ->join('ti.signalement', 's')
+            ->andWhere('s.codeSuivi = :code')
+            ->andWhere('ti.token = :token')
+            ->setParameter('code', $code)
+            ->setParameter('token', $token)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

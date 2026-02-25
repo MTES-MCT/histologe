@@ -13,14 +13,13 @@ use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\TiersInvitation;
 use App\Entity\User;
 use App\Factory\TiersInvitationFactory;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
-use App\Repository\TiersInvitationRepository;
 use App\Security\Voter\SignalementVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\FormHelper;
@@ -91,7 +90,6 @@ class SignalementEditController extends AbstractController
         Signalement $signalement,
         Request $request,
         SignalementManager $signalementManager,
-        TiersInvitationRepository $tiersInvitationRepository,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
@@ -132,7 +130,7 @@ class SignalementEditController extends AbstractController
                 'target' => '#signalement-information-tiers-container',
                 'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', [
                     'signalement' => $signalement,
-                    'tiersInvitation' => $tiersInvitationRepository->findOneBy(['signalement' => $signalement, 'status' => TiersInvitationStatus::WAITING]),
+                    'tiersInvitation' => $signalement->getTiersInvitations()->filter(fn (TiersInvitation $tiersInvitation) => $tiersInvitation->isWaiting())->first(),
                 ]),
             ],
         ];
@@ -150,7 +148,6 @@ class SignalementEditController extends AbstractController
         SuiviManager $suiviManager,
         ValidatorInterface $validator,
         NotificationMailerRegistry $notificationMailerRegistry,
-        TiersInvitationRepository $tiersInvitationRepository,
         TiersInvitationFactory $tiersInvitationFactory,
         EntityManagerInterface $em,
     ): JsonResponse {
@@ -160,11 +157,8 @@ class SignalementEditController extends AbstractController
         }
 
         // On bloque si invitation déjà en cours
-        $tiersInvitation = $tiersInvitationRepository->findOneBy([
-            'signalement' => $signalement,
-            'status' => TiersInvitationStatus::WAITING,
-        ]);
-        if (null !== $tiersInvitation) {
+        $tiersInvitation = $signalement->getTiersInvitations()->filter(fn (TiersInvitation $tiersInvitation) => $tiersInvitation->isWaiting())->first();
+        if ($tiersInvitation) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Une invitation est déjà en attente pour ce dossier.'];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);

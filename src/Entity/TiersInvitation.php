@@ -13,10 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
 
 #[ORM\Entity(repositoryClass: TiersInvitationRepository::class)]
-#[ORM\UniqueConstraint(
-    name: 'uniq_tiers_invitation_signalement_status',
-    columns: ['signalement_id', 'status']
-)]
+#[ORM\HasLifecycleCallbacks()]
 #[ORM\UniqueConstraint(
     name: 'unique_tiers_invitation_token',
     columns: ['token']
@@ -34,8 +31,8 @@ class TiersInvitation implements EntityHistoryInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne()]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE', unique: true)]
+    #[ORM\ManyToOne(targetEntity: Signalement::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Signalement $signalement;
 
     #[ORM\Column(length: 50)]
