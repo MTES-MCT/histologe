@@ -407,7 +407,7 @@ class SuiviManager extends Manager
         foreach ($sectionChanges['fieldChanges'] as $change) {
             $new = $change['new'];
             // Si c'est un champ de type DateTimeImmutable, on formate la date pour que ce soit plus lisible dans le suivi
-            if ($new instanceof \DateTimeImmutable || $new instanceof \DateTime) {
+            if ($new instanceof \DateTimeInterface) {
                 $new = $new->format('d/m/Y');
             } else {
                 $new = nl2br(htmlentities($new));
