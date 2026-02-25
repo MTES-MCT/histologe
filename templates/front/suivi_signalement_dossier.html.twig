@@ -296,7 +296,7 @@
 					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_assurance', {'code': signalement.codeSuivi}) }}" 
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
-							Modifier les informations
+							Compléter les informations
 						</a>
 					{% endif %}
 				</div>
@@ -329,7 +329,7 @@
 				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 					<a href="{{ path('front_suivi_signalement_complete_assurance', {'code': signalement.codeSuivi}) }}" 
 						class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md">
-						Modifier les informations
+						Compléter les informations
 					</a>
 				{% endif %}
 			</div>
@@ -473,7 +473,7 @@
 					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_informations_generales', {'code': signalement.codeSuivi}) }}" 
 							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
-							Modifier les informations
+							Compléter les informations
 						</a>
 					{% endif %}
 				</div>
@@ -542,6 +542,12 @@
 						{% endif %}
 					{% endif %}
 				</ul>
+				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					<a href="{{ path('front_suivi_signalement_complete_informations_generales', {'code': signalement.codeSuivi}) }}" 
+						class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md">
+						Compléter les informations
+					</a>
+				{% endif %}
 			</div>
 
 			<div class="signalement-group-data-card">

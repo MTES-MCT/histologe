@@ -160,7 +160,8 @@ class SignalementEditController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
 
-            $typeCompositionLogement->setCompositionLogementNombreEnfants($form->get('nbEnfantsDansLogement')->getData())
+            $typeCompositionLogement
+                ->setCompositionLogementNombreEnfants($form->get('nbEnfantsDansLogement')->getData())
                 ->setCompositionLogementEnfants($form->get('enfantsDansLogementMoinsSixAns')->getData())
                 ->setBailDpeBail($form->get('bail')->getData())
                 ->setBailDpeEtatDesLieux($form->get('etatDesLieux')->getData())
@@ -171,7 +172,8 @@ class SignalementEditController extends AbstractController
 
             $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();
             $dateEffetBail = $form->get('dateEffetBail')->getData() ? $form->get('dateEffetBail')->getData()->format('Y-m-d') : null;
-            $informationComplementaire->setInformationsComplementairesSituationBailleurDateEffetBail($dateEffetBail)
+            $informationComplementaire
+                ->setInformationsComplementairesSituationBailleurDateEffetBail($dateEffetBail)
                 ->setInformationsComplementairesLogementMontantLoyer($form->get('loyer')->getData())
                 ->setInformationsComplementairesSituationOccupantsLoyersPayes($form->get('payementLoyersAJour')->getData())
                 ->setInformationsComplementairesLogementAnneeConstruction($form->get('anneeConstruction')->getData());

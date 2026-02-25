@@ -5,6 +5,7 @@ namespace App\EventListener;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Service\History\EntityComparator;
+use App\Utils\DateHelper;
 use App\Utils\DictionaryProvider;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
@@ -156,7 +157,10 @@ class SignalementUpdatedListener
 
                 $fieldChanges[$field] = [
                     'label' => $label,
-                    'new' => $diffProperty['new'] ? $this->dictionaryProvider->translate($diffProperty['new']) : null,
+                    'new' => $this->formatValue(
+                        $diffProperty['new'],
+                        fn (string $v) => $this->dictionaryProvider->translate($v, 'suivi')
+                    ),
                 ];
             }
 
@@ -169,6 +173,20 @@ class SignalementUpdatedListener
         }
 
         $signalement->registerChanges($changes);
+    }
+
+    private function formatValue(?string $value, callable $fallback): ?string
+    {
+        if (null === $value || '' === $value) {
+            return null;
+        }
+
+        $dateFormatted = DateHelper::formatDateString($value, 'Y-m-d', 'd/m/Y');
+        if (false !== $dateFormatted) {
+            return $dateFormatted;
+        }
+
+        return $fallback($value);
     }
 
     /**
