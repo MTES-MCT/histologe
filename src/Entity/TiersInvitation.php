@@ -31,7 +31,7 @@ class TiersInvitation implements EntityHistoryInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Signalement::class)]
+    #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'tiersInvitations')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Signalement $signalement;
 
