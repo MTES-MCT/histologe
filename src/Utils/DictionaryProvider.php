@@ -41,8 +41,8 @@ class DictionaryProvider
             return $slug;
         }
 
-        if (isset($dict[$slug]['default']) && is_string($dict[$slug]['default']) && 'default' === $context) {
-            return $dict[$slug]['default'];
+        if (isset($dict[$slug][$context]) && is_string($dict[$slug][$context])) {
+            return $dict[$slug][$context];
         }
 
         if (isset($dict[$slug][$context]['default']) && is_string($dict[$slug][$context]['default'])) {
