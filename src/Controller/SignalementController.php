@@ -767,7 +767,7 @@ class SignalementController extends AbstractController
                 $description = $user->getNomComplet().' a clôturé son dossier en démarche accélérée pour le motif suivant :
                     '.$motif->label().\PHP_EOL
                     .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
-                $notificationAndMailSender->sendUsagerCloseInjonctionToBailleur($signalement, $motif->label()); // todo : enregistrer le signalement avant pour ne pas avoir à transmettre le motif de cloture
+                $notificationAndMailSender->sendUsagerCloseInjonctionToBailleur($signalement, $motif->label());
             } else {
                 $category = SuiviCategory::DEMANDE_ABANDON_PROCEDURE;
                 $description = $user->getNomComplet().' souhaite fermer son dossier sur '
