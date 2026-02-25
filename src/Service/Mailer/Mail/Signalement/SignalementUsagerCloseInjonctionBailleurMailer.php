@@ -33,6 +33,7 @@ class SignalementUsagerCloseInjonctionBailleurMailer extends AbstractNotificatio
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
+        $motifCloture = $notificationMail->getParams()['motif_cloture'] ?? null;
 
         return [
             'ADRESSE_OCCUPANT' => $signalement->getAddressCompleteOccupant(),
@@ -42,6 +43,7 @@ class SignalementUsagerCloseInjonctionBailleurMailer extends AbstractNotificatio
                 [],
                 referenceType: UrlGeneratorInterface::ABSOLUTE_URL
             ),
+            'MOTIF_CLOTURE' => $motifCloture ?? 'Non précisé',
         ];
     }
 }

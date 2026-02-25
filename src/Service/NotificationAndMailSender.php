@@ -78,7 +78,7 @@ class NotificationAndMailSender
         }
     }
 
-    public function sendUsagerCloseInjonctionToBailleur(Signalement $signalement): void
+    public function sendUsagerCloseInjonctionToBailleur(Signalement $signalement, ?string $motifCloture = null): void
     {
         $mailerType = NotificationMailerType::TYPE_USAGER_CLOSE_INJONCTION_TO_BAILLEUR;
         $this->signalement = $signalement;
@@ -92,6 +92,7 @@ class NotificationAndMailSender
                     territory: $this->signalement->getTerritory(),
                     signalement: $this->signalement,
                     isReminder: true,
+                    params: ['motif_cloture' => $motifCloture]
                 )
             );
         }

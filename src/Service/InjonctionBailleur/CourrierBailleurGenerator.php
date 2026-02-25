@@ -36,4 +36,24 @@ class CourrierBailleurGenerator
 
         return $domPdf->output();
     }
+
+    public function generateInjonctionClosed(Signalement $signalement): string
+    {
+        $writer = new PngWriter();
+
+        // $url = $this->urlGenerator->generate('app_login_bailleur', [], referenceType: UrlGeneratorInterface::ABSOLUTE_URL);
+        // $qrCode = new QrCode(data: $url);
+
+        // $result = $writer->write($qrCode);
+        $content = $this->twig->render('back/signalement-injonction/courrier-bailleur-injonction-closed.html.twig', [
+            'signalement' => $signalement,
+            // 'qrCode' => $result->getDataUri(),
+        ]);
+
+        $domPdf = new Dompdf();
+        $domPdf->loadHtml($content);
+        $domPdf->render();
+
+        return $domPdf->output();
+    }
 }

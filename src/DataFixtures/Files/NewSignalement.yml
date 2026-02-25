@@ -1045,6 +1045,7 @@ signalements:
     cp_occupant: "34170"
     ville_occupant: "Castelnau-le-Lez"
     statut: "INJONCTION_CLOSED"
+    motif_cloture_usager: "RELOGEMENT_OCCUPANT"
     geoloc: "[]"
     insee_occupant: ""
     nb_pieces_logement: 3

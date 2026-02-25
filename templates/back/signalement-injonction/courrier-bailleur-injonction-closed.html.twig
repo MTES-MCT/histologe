@@ -1,0 +1,37 @@
+<div style="font-family: Arial, sans-serif; font-size: 14px;">
+    <div style="text-align: left;">
+        <strong>Signal logement</strong><br>
+        Direction générale de l'aménagement, du logement et de la nature (DGALN)<br>
+        Ministère de la transition écologique, aménagement du territoire, transports, villes et logement<br>
+        Tour Sequoïa<br>
+        1 place Carpeaux<br>
+        92800 PUTEAUX
+        <br><br>
+        Références :<br>
+        Dossier #{{ signalement.reference }}<br>
+        Date d'enregistrement : {{ signalement.createdAt|date('d/m/Y') }}
+    </div>
+    <br><br>
+    <div style="text-align: right;">
+        {{ signalement.displayedNomProprio }}<br>
+        {{ signalement.adresseProprio }} <br>
+        {{ signalement.codePostalProprio }} {{ signalement.villeProprio }}
+    </div>
+    <br><br>
+    <div style="font-weight: bold;">
+        Objet : Votre locataire a mis fin à la procédure concernant votre logement
+    </div>
+    <br><br>
+    Madame, Monsieur,
+    <br><br>
+
+    <p style="margin-bottom: 16px;">Votre locataire {{ signalement.prenomOccupant }} {{ signalement.nomOccupant }} a mis fin à la procédure concernant votre logement situé {{ signalement.addressCompleteOccupant }} </strong></p>
+    <p style="margin-bottom: 16px;">Motif de clôture indiqué par votre locataire : {{ signalement.motifClotureUsager.label }}</p>
+    <br>
+    <p>Nous restons à votre disposition pour tout renseignement complémentaire.</p>
+    <br><br>
+    <div style="text-align: right;">
+        L’équipe Signal Logement
+    </div>
+</div>
+

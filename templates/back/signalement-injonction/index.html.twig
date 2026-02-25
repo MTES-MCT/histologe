@@ -131,6 +131,10 @@
                             <a href="{{ path('back_injonction_signalement_courrier_bailleur', { uuid: signalement.uuid }) }}" class="fr-btn fr-icon-mail-line fr-btn--sm" target="_blank" rel="noopener"
                                 aria-label="Afficher le courrier (Ouvre une nouvelle fenêtre)" title="Afficher le courrier (Ouvre une nouvelle fenêtre)"></a>
                         {% endif %}
+                        {% if is_granted('SIGN_VIEW_INJONCTION_COURRIER', signalement) and signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED %}
+                            <a href="{{ path('back_injonction_signalement_courrier_bailleur_injonction_closed', { uuid: signalement.uuid }) }}" class="fr-btn fr-icon-mail-close-line fr-btn--sm" target="_blank" rel="noopener"
+                                aria-label="Afficher le courrier de fin de procédure (Ouvre une nouvelle fenêtre)" title="Afficher le courrier de fin de procédure (Ouvre une nouvelle fenêtre)"></a>
+                        {% endif %}
                     </td>
                 </tr>
             {% else %}

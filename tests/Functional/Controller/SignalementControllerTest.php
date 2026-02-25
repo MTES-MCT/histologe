@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
@@ -19,6 +20,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementControllerTest extends WebTestCase
@@ -135,7 +137,7 @@ class SignalementControllerTest extends WebTestCase
         $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
-        $reason = 'Changement de logement';
+        $reason = MotifClotureUsager::RELOGEMENT_OCCUPANT->value;
         $details = 'on a trouvé un meilleur appartement <b>test</b>';
         $client->request('POST', $urlSuiviSignalementUserResponse, [
             'usager_cancel_procedure' => [
@@ -147,11 +149,12 @@ class SignalementControllerTest extends WebTestCase
         $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi);
         $this->assertTrue($signalement->getIsUsagerAbandonProcedure());
+        $this->assertEquals($signalement->getMotifClotureUsager(), MotifClotureUsager::RELOGEMENT_OCCUPANT);
         /** @var Suivi $lastSuivi */
         $lastSuivi = $signalement->getSuivis()->last();
         $this->assertStringContainsString($signalementUser->getUser()->getNomComplet(), $lastSuivi->getDescription());
         $this->assertStringContainsString('souhaite fermer son dossier', $lastSuivi->getDescription());
-        $this->assertStringContainsString('pour le motif suivant : '.$reason, $lastSuivi->getDescription());
+        $this->assertStringContainsString('pour le motif suivant : '.MotifClotureUsager::RELOGEMENT_OCCUPANT->label(), $lastSuivi->getDescription());
         $this->assertStringContainsString('arrêt de procédure : on a trouvé un meilleur appartement &lt;b&gt;test&lt;/b&gt;', $lastSuivi->getDescription());
     }
 
@@ -169,7 +172,7 @@ class SignalementControllerTest extends WebTestCase
         $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
 
-        $reason = 'Le problème est résolu';
+        $reason = MotifClotureUsager::TRAVAUX_FAITS_OU_EN_COURS->value;
         $details = 'Le propriétaire a effectué les réparations nécessaires';
         $client->request('POST', $urlSuiviSignalementUserResponse, [
             'usager_cancel_procedure' => [
@@ -182,6 +185,8 @@ class SignalementControllerTest extends WebTestCase
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi);
         $this->assertTrue($signalement->getIsUsagerAbandonProcedure());
         $this->assertEquals(SignalementStatus::INJONCTION_CLOSED, $signalement->getStatut());
+        $this->assertTrue($signalement->getIsUsagerAbandonProcedure());
+        $this->assertEquals($signalement->getMotifClotureUsager(), MotifClotureUsager::TRAVAUX_FAITS_OU_EN_COURS);
         /** @var Suivi $lastSuivi */
         $lastSuivi = $signalement->getSuivis()->last();
         $this->assertEquals($lastSuivi->getCategory(), SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER);
@@ -396,7 +401,9 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/documents');
 
-        $flashBag = $client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        /** @var Session $session */
+        $session = $client->getRequest()->getSession();
+        $flashBag = $session->getFlashBag();
         $this->assertTrue($flashBag->has('success'));
         $successMessages = $flashBag->get('success');
         $this->assertEquals(['title' => 'Documents ajoutés', 'message' => 'Vos documents ont bien été enregistrés.'], $successMessages[0]);
@@ -439,7 +446,9 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/documents');
 
-        $flashBag = $client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        /** @var Session $session */
+        $session = $client->getRequest()->getSession();
+        $flashBag = $session->getFlashBag();
         $this->assertFalse($flashBag->has('success'));
     }
 
