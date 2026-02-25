@@ -8,6 +8,7 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\File;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Signalement;
@@ -488,6 +489,7 @@ class SignalementController extends AbstractController
 
         $tiersInvitation = $tiersInvitationRepository->findOneBy([
             'signalement' => $signalement,
+            'status' => TiersInvitationStatus::WAITING,
         ]);
 
         return $this->render('front/suivi_signalement_dashboard.html.twig', [
@@ -552,6 +554,7 @@ class SignalementController extends AbstractController
 
         $tiersInvitation = $tiersInvitationRepository->findOneBy([
             'signalement' => $signalement,
+            'status' => TiersInvitationStatus::WAITING,
         ]);
 
         return $this->render('front/suivi_signalement_dossier.html.twig', [
@@ -1005,6 +1008,7 @@ class SignalementController extends AbstractController
         // On bloque si tiers déjà renseigné, si créé par tiers ou si une invitation est déjà en cours
         $tiersInvitation = $tiersInvitationRepository->findOneBy([
             'signalement' => $signalement,
+            'status' => TiersInvitationStatus::WAITING,
         ]);
         if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant()) || null !== $tiersInvitation) {
             throw $this->createAccessDeniedException();

@@ -34,12 +34,19 @@ class SignalementInvitationController extends AbstractController
         if (!$tiersInvitation) {
             throw $this->createNotFoundException('Invitation non trouvée');
         }
+        if ($tiersInvitation->isRefused()) {
+            $this->addFlash('info', ['title' => 'Invitation déjà refusée', 'message' => 'Vous avez déjà refusé cette invitation.']);
 
-        $signalementManager->updateFromTiersInvitation($tiersInvitation);
-
-        $entityManager->remove($tiersInvitation);
-        $entityManager->flush();
-        $this->addFlash('success', ['title' => 'Invitation acceptée', 'message' => 'Vous pouvez désormais suivre ce dossier.']);
+            return $this->redirectToRoute('home');
+        }
+        if ($tiersInvitation->isWaiting()) {
+            $signalementManager->updateFromTiersInvitation($tiersInvitation);
+            $tiersInvitation->accept();
+            $entityManager->flush();
+            $this->addFlash('success', ['title' => 'Invitation acceptée', 'message' => 'Vous pouvez désormais suivre ce dossier.']);
+        } elseif ($tiersInvitation->isAccepted()) {
+            $this->addFlash('success', ['title' => 'Invitation déjà acceptée', 'message' => 'Vous pouvez vous connecter pour suivre ce dossier.']);
+        }
 
         return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
     }
@@ -64,10 +71,19 @@ class SignalementInvitationController extends AbstractController
             throw $this->createNotFoundException('Invitation non trouvée');
         }
 
-        $suiviManager->addRefuseInvitationSuivi($signalement);
-        $entityManager->remove($tiersInvitation);
-        $entityManager->flush();
-        $this->addFlash('success', ['title' => 'Invitation refusée', 'message' => 'Vous avez refusé l\'invitation pour suivre ce dossier.']);
+        if ($tiersInvitation->isAccepted()) {
+            $this->addFlash('success', ['title' => 'Invitation déjà acceptée', 'message' => 'Vous pouvez vous connecter pour suivre ce dossier.']);
+
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+        if ($tiersInvitation->isWaiting()) {
+            $suiviManager->addRefuseInvitationSuivi($signalement);
+            $tiersInvitation->refuse();
+            $entityManager->flush();
+            $this->addFlash('success', ['title' => 'Invitation refusée', 'message' => 'Vous avez refusé l\'invitation pour suivre ce dossier.']);
+        } elseif ($tiersInvitation->isRefused()) {
+            $this->addFlash('info', ['title' => 'Invitation déjà refusée', 'message' => 'Vous avez déjà refusé cette invitation.']);
+        }
 
         return $this->redirectToRoute('home');
     }

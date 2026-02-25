@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\HistoryEntryEvent;
+use App\Entity\Enum\TiersInvitationStatus;
 use App\Repository\TiersInvitationRepository;
 use App\Validator as AppAssert;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,6 +13,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
 
 #[ORM\Entity(repositoryClass: TiersInvitationRepository::class)]
+#[ORM\UniqueConstraint(
+    name: 'uniq_tiers_invitation_signalement_status',
+    columns: ['signalement_id', 'status']
+)]
+#[ORM\UniqueConstraint(
+    name: 'unique_tiers_invitation_token',
+    columns: ['token']
+)]
+#[ORM\Index(
+    name: 'idx_tiers_invitation_signalement',
+    columns: ['signalement_id']
+)]
 class TiersInvitation implements EntityHistoryInterface
 {
     use TimestampableTrait;
@@ -48,9 +61,13 @@ class TiersInvitation implements EntityHistoryInterface
     #[ORM\Column(length: 64, unique: true)]
     private string $token;
 
+    #[ORM\Column(enumType: TiersInvitationStatus::class)]
+    private TiersInvitationStatus $status;
+
     public function __construct()
     {
         $this->token = bin2hex(random_bytes(32));
+        $this->status = TiersInvitationStatus::WAITING;
     }
 
     public function getId(): ?int
@@ -126,6 +143,35 @@ class TiersInvitation implements EntityHistoryInterface
     public function setToken(string $token): static
     {
         $this->token = $token;
+
+        return $this;
+    }
+
+    public function isWaiting(): bool
+    {
+        return TiersInvitationStatus::WAITING === $this->status;
+    }
+
+    public function isAccepted(): bool
+    {
+        return TiersInvitationStatus::ACCEPTED === $this->status;
+    }
+
+    public function isRefused(): bool
+    {
+        return TiersInvitationStatus::REFUSED === $this->status;
+    }
+
+    public function accept(): static
+    {
+        $this->status = TiersInvitationStatus::ACCEPTED;
+
+        return $this;
+    }
+
+    public function refuse(): static
+    {
+        $this->status = TiersInvitationStatus::REFUSED;
 
         return $this;
     }

@@ -11,6 +11,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -230,6 +231,7 @@ class SignalementController extends AbstractController
 
         $tiersInvitation = $tiersInvitationRepository->findOneBy([
             'signalement' => $signalement,
+            'status' => TiersInvitationStatus::WAITING,
         ]);
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
         $suiviSeenMarker->markSeenByUsager($signalement);
