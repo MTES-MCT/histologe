@@ -26,17 +26,30 @@ class InseeOccupantIsActiveValidator extends ConstraintValidator
         }
 
         $inseeCode = $value->inseeOccupant;
+        $postalCode = $value->cpOccupant;
+        $territory = null;
+        $usedInseeCode = false;
 
-        if (null === $inseeCode || '' === $inseeCode) {
-            return;
+        // Essayer d'abord avec le code INSEE si disponible
+        if (!empty($inseeCode)) {
+            $territory = $this->zipcodeProvider->getTerritoryByInseeCode($inseeCode);
+            $usedInseeCode = true;
         }
 
-        $territory = $this->zipcodeProvider->getTerritoryByInseeCode($inseeCode);
+        // Si pas de territoire trouvé avec le code INSEE, essayer avec le code postal
+        if (!$territory && !empty($postalCode)) {
+            $territory = $this->zipcodeProvider->getTerritoryByPostalCode($postalCode);
+            $usedInseeCode = false;
+        }
 
+        // Si aucun territoire trouvé ou territoire inactif, ajouter une violation
         if (!$territory || !$territory->isIsActive()) {
+            $message = $usedInseeCode ? $constraint->messageInsee : $constraint->messagePostalCode;
+            $code = $usedInseeCode ? $inseeCode : $postalCode;
+
             $this->context
-                ->buildViolation($constraint->message)
-                ->setParameter('{{ inseeCode }}', $inseeCode)
+                ->buildViolation($message)
+                ->setParameter('{{ code }}', $code ?? '')
                 ->atPath('adresseCompleteOccupant')
                 ->addViolation();
         }
