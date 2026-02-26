@@ -1200,23 +1200,26 @@ class SignalementRepository extends ServiceEntityRepository
     /**
      * @return array<int, Signalement>
      */
-    public function findSignalementsSplittedCreatedBefore(?int $split, Territory $territory): array
+    public function findSignalementsByYear(?int $year, Territory $territory, ?bool $emptyGeolocOnly = false): array
     {
         $qb = $this->createQueryBuilder('s')
             ->where('s.territory = :territory')
             ->setParameter('territory', $territory)
             ->orderBy('s.createdAt', 'ASC');
 
-        if (1 === $split) {
-            $qb->andWhere('s.createdAt < :beforeDate')->setParameter('beforeDate', '2024-02-01');
-            $qb->andWhere('s.createdAt > :afterDate')->setParameter('afterDate', '2023-01-01');
-        } elseif (2 === $split) {
-            $qb->andWhere('s.createdAt < :beforeDate')->setParameter('beforeDate', '2023-01-01');
-            $qb->andWhere('s.createdAt > :afterDate')->setParameter('afterDate', '2021-01-01');
-        } elseif (3 === $split) {
-            $qb->andWhere('s.createdAt < :beforeDate')->setParameter('beforeDate', '2021-01-01');
-        } else {
-            $qb->andWhere('s.createdAt < :beforeDate')->setParameter('beforeDate', '2024-02-01');
+        if ($emptyGeolocOnly) {
+            $qb->andWhere('s.geoloc IS NULL OR JSON_LENGTH(s.geoloc) = 0');
+        }
+
+        if (null !== $year) {
+            $start = new \DateTimeImmutable(sprintf('%d-01-01 00:00:00', $year));
+            $end = $start->modify('+1 year');
+
+            $qb
+                ->andWhere('s.createdAt >= :start')
+                ->andWhere('s.createdAt < :end')
+                ->setParameter('start', $start)
+                ->setParameter('end', $end);
         }
 
         return $qb->getQuery()->getResult();
