@@ -53,6 +53,8 @@ doctrine:
                 FIND_IN_SET: DoctrineExtensions\Query\Mysql\FindInSet
                 CONCAT_WS: DoctrineExtensions\Query\Mysql\ConcatWs
                 REGEXP: DoctrineExtensions\Query\Mysql\Regexp
+            numeric_functions:
+                JSON_LENGTH: DoctrineExtensions\Query\Mysql\JsonLength
 
 when@test:
     doctrine:
