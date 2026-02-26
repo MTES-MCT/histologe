@@ -20,18 +20,20 @@
 		<div class="fr-col-12">
 			<h1 class="title-blue-france">Compléter les informations</h1>
 			<div class="fr-mb-3w">
-				Complétez votre dossier en remplissant les champs ci-dessous. Un signalement complet permet une meilleure prise en charge du dossier !
+				Complétez votre dossier en remplissant les champs ci-dessous.
+				<br>
+				Les champs marqués d’un astérisque (<span class="text-required">*</span>) sont obligatoires.
+				<br>
+				Les autres champs sont facultatifs, mais peuvent aider à une meilleure prise en charge du dossier.
 			</div>
-			{{ form_errors(form) }}				
+			{{ form_errors(form) }}
+			<h2>Situation du foyer</h2>
 			<fieldset class="fr-fieldset">
 				<legend class="fr-fieldset__legend">
-					<h3 class="fr-h5">Situation du foyer</h3>
+					<h3>Allocations</h3>
 				</legend>
 				<div class="fr-fieldset__element">
 					{{ form_row(form.isLogementSocial) }}
-				</div>
-				<div class="fr-fieldset__element">
-					{{ form_row(form.isRelogement) }}
 				</div>
 				<div class="fr-fieldset__element">
 					{{ form_row(form.allocataire) }}
@@ -52,6 +54,23 @@
 					{{ form_row(form.montantAllocation) }}
 				</div>
 				<div class="fr-fieldset__element">
+					{{ form_row(form.beneficiaireRSA) }}
+				</div>
+				<div class="fr-fieldset__element">
+					{{ form_row(form.beneficiaireFSL) }}
+				</div>
+				<div class="fr-fieldset__element">
+					{{ form_row(form.revenuFiscal) }}
+				</div>
+			</fieldset>
+			<fieldset class="fr-fieldset">
+				<legend class="fr-fieldset__legend">
+					<h3>Accompagnement</h3>
+				</legend>
+				<div class="fr-fieldset__element">
+					{{ form_row(form.isRelogement) }}
+				</div>
+				<div class="fr-fieldset__element">
 					{{ form_row(form.souhaiteQuitterLogement) }}
 				</div>
 				<div class="fr-fieldset__element">
@@ -62,15 +81,6 @@
 				</div>
 				<div class="fr-fieldset__element">
 					{{ form_row(form.accompagnementTravailleurSocialNomStructure) }}
-				</div>
-				<div class="fr-fieldset__element">
-					{{ form_row(form.beneficiaireRSA) }}
-				</div>
-				<div class="fr-fieldset__element">
-					{{ form_row(form.beneficiaireFSL) }}
-				</div>
-				<div class="fr-fieldset__element">
-					{{ form_row(form.revenuFiscal) }}
 				</div>
 				<div class="fr-fieldset__element">
 					{{ form_row(form.departApresTravaux) }}

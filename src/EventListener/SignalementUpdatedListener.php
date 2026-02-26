@@ -73,8 +73,8 @@ class SignalementUpdatedListener
                 'situationFoyer.travailleur_social_preavis_depart' => 'Préavis de départ déposé',
                 'situationFoyer.travailleur_social_accompagnement' => 'Accompagnement travailleur social',
                 'situationFoyer.travailleur_social_accompagnement_nom_structure' => 'Nom de la structure d\'accompagnement',
-                'informationComplementaire.informations_complementaires_situation_bailleur_beneficiaire_rsa' => 'Bénéficiaire du RSA',
-                'informationComplementaire.informations_complementaires_situation_bailleur_beneficiaire_fsl' => 'Bénéficiaire du FSL',
+                'informationComplementaire.informations_complementaires_situation_occupants_beneficiaire_rsa' => 'Bénéficiaire du RSA',
+                'informationComplementaire.informations_complementaires_situation_occupants_beneficiaire_fsl' => 'Bénéficiaire du FSL',
                 'informationComplementaire.informations_complementaires_situation_occupants_revenu_fiscal' => 'Revenu fiscal de référence',
                 'informationProcedure.info_procedure_depart_apres_travaux' => 'Rester si travaux faits',
             ],
@@ -133,13 +133,9 @@ class SignalementUpdatedListener
                         continue;
                     }
 
-                    /*
-                    TODO : mieux gérer le diff pour les bool (ex : isLogementSocial)
-                    Ca ne fonctionne pas comme ça
-                    if ($new instanceof bool) {
-                        $new = ($new === 1) ? 'OUI' : 'NON';
+                    if ('boolean' === gettype($new)) {
+                        $new = $new ? 'Oui' : 'Non';
                     }
-                    */
 
                     $fieldChanges[$field] = [
                         'label' => $label,
@@ -166,15 +162,15 @@ class SignalementUpdatedListener
                 $fieldsChanges = $this->entityComparator->compareValues($oldValue, $newValue, $jsonField);
 
                 // la propriété déclarée n'a pas changé
-                if (!array_key_exists($jsonProperty, $fieldsChanges)
-                    || empty($diffProperty = $fieldsChanges[$jsonProperty])
+                if (!isset($fieldsChanges[$jsonProperty])
+                    || [] === ($diffProperty = $fieldsChanges[$jsonProperty])
                 ) {
                     continue;
                 }
 
                 $fieldChanges[$field] = [
                     'label' => $label,
-                    'new' => $diffProperty['new'] ? $this->dictionaryProvider->translate($diffProperty['new']) : null,
+                    'new' => array_key_exists('new', $diffProperty) ? $this->dictionaryProvider->translate($diffProperty['new']) : null,
                 ];
             }
 

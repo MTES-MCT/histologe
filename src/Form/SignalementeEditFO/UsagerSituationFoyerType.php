@@ -62,7 +62,8 @@ class UsagerSituationFoyerType extends AbstractType
 
         $builder
             ->add('isLogementSocial', ChoiceType::class, [
-                'label' => 'Est-ce qu\'il s\'agit d\'un logement social ?',
+                'label' => 'Est-ce qu\'il s\'agit d\'un logement social ? <span class="text-required">*</span>',
+                'label_html' => true,
                 'choices' => $isLogementSocialChoices,
                 'expanded' => true,
                 'multiple' => false,
@@ -77,7 +78,8 @@ class UsagerSituationFoyerType extends AbstractType
                 ],
             ])
             ->add('isRelogement', ChoiceType::class, [
-                'label' => 'Est-ce qu\'une demande de relogement a été faite ?',
+                'label' => 'Est-ce qu\'une demande de relogement a été faite ? <span class="text-required">*</span>',
+                'label_html' => true,
                 'choices' => [
                     'Oui' => true,
                     'Non' => false,
@@ -94,7 +96,7 @@ class UsagerSituationFoyerType extends AbstractType
                 ],
             ])
             ->add('allocataire', ChoiceType::class, [
-                'label' => 'Est-ce que l\'occupant est allocataire ?',
+                'label' => 'Est-ce que l\'occupant est allocataire ? (facultatif)',
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -107,7 +109,7 @@ class UsagerSituationFoyerType extends AbstractType
                 'data' => $allocataire,
             ])
             ->add('caisseAllocation', ChoiceType::class, [
-                'label' => 'Caisse d\'allocation',
+                'label' => 'Caisse d\'allocation (facultatif)',
                 'choices' => [
                     'CAF' => 'caf',
                     'MSA' => 'msa',
@@ -120,19 +122,25 @@ class UsagerSituationFoyerType extends AbstractType
                 'data' => $caisseAllocation,
             ])
             ->add('dateNaissanceAllocataire', DateType::class, [
-                'label' => 'Date de naissance de la personne qui occupe le logement',
+                'label' => 'Date de naissance de la personne qui occupe le logement (facultatif)',
                 'required' => false,
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $signalement->getDateNaissanceOccupant(),
             ])
             ->add('numAllocataire', TextType::class, [
-                'label' => 'Numéro d\'allocataire / de dossier',
+                'label' => 'Numéro d\'allocataire / de dossier (facultatif)',
                 'help' => 'Format attendu : 25 caractères maximum',
                 'required' => false,
+                'constraints' => [
+                    new Assert\Length(
+                        max: 25,
+                        maxMessage: 'Le numéro d\'allocataire doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('typeAllocation', ChoiceType::class, [
-                'label' => 'Type d\'allocation',
+                'label' => 'Type d\'allocation (facultatif)',
                 'choices' => [
                     '' => '',
                     'ALS' => 'als',
@@ -147,14 +155,20 @@ class UsagerSituationFoyerType extends AbstractType
                 'data' => $typeAllocation,
             ])
             ->add('montantAllocation', TextType::class, [
-                'label' => 'Montant de l\'allocation',
+                'label' => 'Montant de l\'allocation (facultatif)',
                 'help' => 'Format attendu : saisir un nombre entier',
                 'required' => false,
                 'mapped' => false,
                 'data' => $montantAllocation,
+                'constraints' => [
+                    new Assert\Regex(
+                        pattern: '/^\d+$/',
+                        message: 'Veuillez saisir un montant d\'allocation valide (nombre entier).',
+                    ),
+                ],
             ])
             ->add('souhaiteQuitterLogement', ChoiceType::class, [
-                'label' => 'Est-ce que le foyer souhaite quitter le logement ?',
+                'label' => 'Est-ce que le foyer souhaite quitter le logement ? (facultatif)',
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -167,7 +181,7 @@ class UsagerSituationFoyerType extends AbstractType
                 'data' => $souhaiteQuitterLogement,
             ])
             ->add('preavisDepartDepose', ChoiceType::class, [
-                'label' => 'Est-ce qu\'un préavis de départ a été déposé ?',
+                'label' => 'Est-ce qu\'un préavis de départ a été déposé ? (facultatif)',
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -180,7 +194,7 @@ class UsagerSituationFoyerType extends AbstractType
                 'data' => $preavisDepartDepose,
             ])
             ->add('accompagnementTravailleurSocial', ChoiceType::class, [
-                'label' => 'Est-ce que le foyer est accompagné par un ou une travailleuse sociale ?',
+                'label' => 'Est-ce que le foyer est accompagné par un ou une travailleuse sociale ? (facultatif)',
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -193,13 +207,20 @@ class UsagerSituationFoyerType extends AbstractType
                 'data' => $accompagnementTravailleurSocial,
             ])
             ->add('accompagnementTravailleurSocialNomStructure', TextType::class, [
-                'label' => 'Nom de la structure d\'accompagnement',
+                'label' => 'Nom de la structure d\'accompagnement (facultatif)',
+                'help' => 'Format attendu : 255 caractères maximum',
                 'required' => false,
                 'mapped' => false,
                 'data' => $accompagnementTravailleurSocialNomStructure,
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le nom de la structure d\'accompagnement doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('beneficiaireRSA', ChoiceType::class, [
-                'label' => 'Est-ce que le foyer est bénéficiaire du RSA ?',
+                'label' => 'Est-ce que le foyer est bénéficiaire du RSA ? (facultatif)',
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -212,7 +233,7 @@ class UsagerSituationFoyerType extends AbstractType
                 'data' => $beneficiaireRSA,
             ])
             ->add('beneficiaireFSL', ChoiceType::class, [
-                'label' => 'Est-ce que le foyer est bénéficiaire du FSL ?',
+                'label' => 'Est-ce que le foyer est bénéficiaire du FSL ? (facultatif)',
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -225,13 +246,19 @@ class UsagerSituationFoyerType extends AbstractType
                 'data' => $beneficiaireFSL,
             ])
             ->add('revenuFiscal', TextType::class, [
-                'label' => 'Revenu fiscal de référence',
+                'label' => 'Revenu fiscal de référence (facultatif)',
                 'required' => false,
                 'mapped' => false,
                 'data' => $revenuFiscal,
+                'constraints' => [
+                    new Assert\Regex(
+                        pattern: '/^\d+$/',
+                        message: 'Veuillez saisir un montant d\'allocation valide (nombre entier).',
+                    ),
+                ],
             ])
             ->add('departApresTravaux', ChoiceType::class, [
-                'label' => 'Est-ce que le foyer souhaite rester dans le logement si des travaux sont faits ?',
+                'label' => 'Est-ce que le foyer souhaite rester dans le logement si des travaux sont faits ? (facultatif)',
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
