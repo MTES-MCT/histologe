@@ -547,12 +547,10 @@
 						</a>
 					{% endif %}
 				</div>
+				<div class="title-separator">Allocations</div>
 				<ul>
 					{% if signalement.isLogementSocial %}
 						<li>Logement social : Oui</li>
-					{% endif %}
-					{% if signalement.isRelogement is same as true %}
-						<li>Demande de relogement : Oui</li>
 					{% endif %}
 					{% if signalement.isAllocataire in [null, ''] %}
 					{% elseif signalement.isAllocataire in ['oui', '1'] %}
@@ -583,6 +581,31 @@
 								{{ signalement.situationFoyer.logementSocialMontantAllocation }} €
 							</li>
 						{% endif %}
+					{% endif %}
+					{% if signalement.informationComplementaire %}
+						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa %}
+							<li>Bénéficiaire RSA :
+								{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa|capitalize}}
+							</li>
+						{% endif %}
+						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl %}
+							<li>Bénéficiaire FSL :
+								{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl|capitalize}}
+							</li>
+						{% endif %}
+						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal %}
+							<li>Revenu fiscal de référence :
+								{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal}} €
+							</li>
+						{% endif %}
+					{% endif %}
+				</ul>
+				<div class="title-separator">Accompagnement</div>
+				<ul>
+					{% if signalement.isRelogement is same as true %}
+						<li>Demande de relogement : Oui</li>
+					{% endif %}
+					{% if signalement.situationFoyer %}
 						{% if signalement.situationFoyer.travailleurSocialQuitteLogement(false) %}
 							<li>Souhaite quitter le logement :
 								{{signalement.situationFoyer.travailleurSocialQuitteLogement(false)|capitalize}}
@@ -604,24 +627,7 @@
 							</li>
 						{% endif %}
 					{% endif %}
-					{% if signalement.informationComplementaire %}
-						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa %}
-							<li>Bénéficiaire RSA :
-								{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa|capitalize}}
-							</li>
-						{% endif %}
-						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl %}
-							<li>Bénéficiaire FSL :
-								{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl|capitalize}}
-							</li>
-						{% endif %}
-						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal %}
-							<li>Revenu fiscal de référence :
-								{{signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal}} €
-							</li>
-						{% endif %}
-					{% endif %}
-					{% if signalement.informationProcedure %}
+					{% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureDepartApresTravaux(true) is not same as null %}
 						<li>
 							Si des travaux sont faits, est-ce que le foyer souhaite rester dans le logement ? 
 							{{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)|capitalize}}
