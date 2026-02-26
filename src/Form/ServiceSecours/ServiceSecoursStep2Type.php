@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -16,8 +17,8 @@ class ServiceSecoursStep2Type extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('adresseCompleteOccupant', null, [
-                'label' => 'Adresse du logement <span class="text-required">*</span>',
+            ->add('adresseCompleteOccupant', TextType::class, [
+                'label' => '<span class="fr-h5">Adresse du logement <span class="text-required">*</span></span>',
                 'label_html' => true,
                 'help' => 'Format attendu : Tapez l\'adresse puis sélectionnez-la dans la liste. Si elle n\'apparaît pas, cliquez sur saisir une adresse manuellement.',
                 'mapped' => false,
@@ -27,15 +28,16 @@ class ServiceSecoursStep2Type extends AbstractType
                     'data-autocomplete-query-selector' => '#fo-form-service-secours-adresse .fr-address-group',
                 ],
             ])
-            ->add('adresseOccupant', null, [
+            ->add('adresseOccupant', TextType::class, [
                 'label' => 'Numéro et voie',
+                'required' => false,
                 'empty_data' => '',
                 'attr' => [
                     'class' => 'manual-address manual-address-input',
                     'data-autocomplete-addresse' => 'true',
                 ],
             ])
-            ->add('cpOccupant', null, [
+            ->add('cpOccupant', TextType::class, [
                 'label' => 'Code postal',
                 'required' => false,
                 'empty_data' => '',
@@ -44,7 +46,7 @@ class ServiceSecoursStep2Type extends AbstractType
                     'data-autocomplete-codepostal' => 'true',
                 ],
             ])
-            ->add('villeOccupant', null, [
+            ->add('villeOccupant', TextType::class, [
                 'label' => 'Ville',
                 'required' => false,
                 'empty_data' => '',
@@ -59,10 +61,11 @@ class ServiceSecoursStep2Type extends AbstractType
                 ],
             ])
 
-            ->add('adresseAutreOccupant', null, [
+            ->add('adresseAutreOccupant', TextType::class, [
                 'label' => 'Complément d\'adresse',
                 'help' => 'Lieu-dit, bâtiment, étage, porte, ...<br>Format attendu : 255 caractères maximum',
                 'help_html' => true,
+                'required' => false,
             ])
 
             ->add('isLogementSocial', ChoiceType::class, [
@@ -89,6 +92,11 @@ class ServiceSecoursStep2Type extends AbstractType
                 'label' => 'Nature du logement <span class="text-required">*</span>',
                 'label_html' => true,
             ])
+            ->add('natureLogementAutre', TextType::class, [
+                'label' => 'Préciser la nature du logement',
+                'help' => 'Format attendu : 15 caractères maximum',
+                'required' => false,
+            ])
             ->add('typeEtageLogement', EnumType::class, [
                 'class' => EtageType::class,
                 'choice_label' => function ($choice) {
@@ -99,17 +107,20 @@ class ServiceSecoursStep2Type extends AbstractType
                 'placeholder' => false,
                 'label' => 'Localisation de l\'appartement',
             ])
-            ->add('etageOccupant', null, [
+            ->add('etageOccupant', TextType::class, [
                 'label' => 'Préciser l\'étage',
                 'help' => 'Format attendu : 5 caractères maximum',
+                'required' => false,
             ])
-            ->add('nbPiecesLogement', null, [
+            ->add('nbPiecesLogement', TextType::class, [
                 'label' => 'Nombre de pièces à vivre (salon, chambre) du logement',
                 'help' => 'Format attendu : Saisir un nombre entier',
+                'required' => false,
             ])
-            ->add('superficie', null, [
+            ->add('superficie', TextType::class, [
                 'label' => 'Superficie approximative du logement (en m²)',
                 'help' => 'Format attendu : Saisir un nombre entier',
+                'required' => false,
             ]);
     }
 

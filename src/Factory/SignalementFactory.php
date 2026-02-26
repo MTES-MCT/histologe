@@ -26,16 +26,6 @@ class SignalementFactory
         $signalement = new Signalement();
         $typeCompositionLogement = new TypeCompositionLogement();
 
-        $signalement->setTerritory(
-            $this->zipcodeProvider->getTerritoryByInseeCode($formServiceSecours->step2->inseeOccupant)
-        );
-        if (!$signalement->getTerritory()) {
-            throw new \LogicException('Impossible de trouver une territory pour le code insee : '.$formServiceSecours->step2->inseeOccupant);
-        }
-        if (!$signalement->getTerritory()->isIsActive()) {
-            throw new \LogicException('Le territoire associé au code insee : '.$formServiceSecours->step2->inseeOccupant.' n\'est pas actif');
-        }
-
         // default data
         $signalement->setProfileDeclarant(ProfileDeclarant::SERVICE_SECOURS);
         $signalement->setIsCguAccepted(true);
@@ -57,9 +47,24 @@ class SignalementFactory
         $signalement->setAdresseOccupant($formServiceSecours->step2->adresseOccupant)
             ->setCpOccupant($formServiceSecours->step2->cpOccupant)
             ->setVilleOccupant($formServiceSecours->step2->villeOccupant)
+            ->setInseeOccupant($formServiceSecours->step2->inseeOccupant)
             ->setAdresseAutreOccupant($formServiceSecours->step2->adresseAutreOccupant)
             ->setIsLogementSocial($formServiceSecours->step2->isLogementSocial)
             ->setNatureLogement($formServiceSecours->step2->natureLogement);
+
+        // Déterminer le territoire : priorité au code INSEE, sinon utiliser le code postal
+        $territory = null;
+        if (!empty($formServiceSecours->step2->inseeOccupant)) {
+            $territory = $this->zipcodeProvider->getTerritoryByInseeCode($formServiceSecours->step2->inseeOccupant);
+        }
+        if (!$territory && !empty($formServiceSecours->step2->cpOccupant)) {
+            $territory = $this->zipcodeProvider->getTerritoryByPostalCode($formServiceSecours->step2->cpOccupant);
+        }
+        $signalement->setTerritory($territory);
+
+        if (empty($formServiceSecours->step2->inseeOccupant)) {
+            $signalement->setManualAddressOccupant(true);
+        }
 
         if ('appartement' === $signalement->getNatureLogement()) {
             /** @var EtageType $appartementEtage */
@@ -90,10 +95,14 @@ class SignalementFactory
                         break;
                 }
             }
+        } elseif ('autre' === $signalement->getNatureLogement()) {
+            $typeCompositionLogement->setTypeLogementNatureAutrePrecision($formServiceSecours->step2->natureLogementAutre);
         }
 
-        $signalement->setNbPiecesLogement($formServiceSecours->step2->nbPiecesLogement)
-            ->setSuperficie($formServiceSecours->step2->superficie);
+        $signalement->setNbPiecesLogement((int) $formServiceSecours->step2->nbPiecesLogement)
+            ->setSuperficie((int) $formServiceSecours->step2->superficie);
+
+        $typeCompositionLogement->setCompositionLogementSuperficie($formServiceSecours->step2->superficie);
 
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
 

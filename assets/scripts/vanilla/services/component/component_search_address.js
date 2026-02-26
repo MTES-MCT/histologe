@@ -215,6 +215,15 @@ export function initComponentAddress(id) {
     (input) => input.value !== ''
   );
 
+  // Vérifier si le code INSEE est présent (signifie que l'adresse a été sélectionnée via autocomplete)
+  const idForm = addressInput.closest('form').id;
+  let suffix = '';
+  if (addressInput.dataset.suffix !== undefined && addressInput.dataset.suffix !== '') {
+    suffix = '-' + addressInput.dataset.suffix;
+  }
+  const inseeInput = document?.querySelector('#' + idForm + ' [data-autocomplete-insee' + suffix + ']');
+  const hasInseeCode = inseeInput && inseeInput.value !== '';
+
   manualAddressSwitcher?.addEventListener('click', (event) => {
     event.preventDefault();
     if (manualAddressContainer.classList.contains('fr-hidden')) {
@@ -223,6 +232,10 @@ export function initComponentAddress(id) {
       addressInput.value = '';
       addressInput.disabled = true;
       manualAddressAddress.focus();
+      // Vider le code INSEE lors du passage en mode manuel
+      if (inseeInput) {
+        inseeInput.value = '';
+      }
     } else {
       manualAddressContainer.classList.add('fr-hidden');
       manualAddressSwitcher.textContent = 'Saisir une adresse manuellement';
@@ -232,7 +245,24 @@ export function initComponentAddress(id) {
     }
   });
 
-  if (addressInput.value == '' && hasManualAddressValues) {
+  // N'afficher les champs manuels que si :
+  // - Le champ autocomplete est vide
+  // - Les champs manuels ont des valeurs
+  // - ET le code INSEE n'est pas présent (sinon c'est une sélection via autocomplete)
+  if (addressInput.value == '' && hasManualAddressValues && !hasInseeCode) {
     manualAddressSwitcher.click();
+  }
+
+  // Si le champ autocomplete est vide mais qu'on a une adresse avec code INSEE,
+  // reconstruire l'adresse complète dans le champ autocomplete
+  if (addressInput.value == '' && hasManualAddressValues && hasInseeCode) {
+    const addressField = document?.querySelector('#' + idForm + ' [data-autocomplete-addresse' + suffix + ']');
+    const postalCodeField = document?.querySelector('#' + idForm + ' [data-autocomplete-codepostal' + suffix + ']');
+    const cityField = document?.querySelector('#' + idForm + ' [data-autocomplete-ville' + suffix + ']');
+
+    if (addressField && postalCodeField && cityField) {
+      const fullAddress = `${addressField.value}, ${postalCodeField.value} ${cityField.value}`;
+      addressInput.value = fullAddress;
+    }
   }
 }
