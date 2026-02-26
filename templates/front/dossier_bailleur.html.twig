@@ -15,15 +15,17 @@
 	data-matomo-timer-event-name="40">
 	<div class="fr-grid-row fr-grid-row--gutters">
 
-		<div class="fr-col-12 fr-col-md-12 fr-background-alt--blue-france">
-			<p>Votre locataire souhaite tenter une dernière démarche amiable avant le déclenchement des contrôles et procédures légales. </p>
-			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
-				{% set maintenant = date() %}
-				{% set interval = maintenant.diff(dateLimit) %}
-				<p>Il vous reste <strong>{{ interval.days }} jours</strong> pour préciser vos intentions quant aux désordres déclarés par votre locataire. </p>
-			{% endif %}
-			<p>Des dispositifs d'accompagnement ou d’aides peuvent éventuellement vous être proposés, selon votre situation (voir plus bas). Au-delà de ce délai, le dossier sera automatiquement transmis aux autorités compétentes.</p>
-		</div>
+		{% if suiviReponse is empty %}
+			<div class="fr-col-12 fr-col-md-12 fr-background-alt--blue-france">
+				<p>Votre locataire souhaite tenter une dernière démarche amiable avant le déclenchement des contrôles et procédures légales. </p>	
+				{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+					{% set maintenant = date() %}
+					{% set interval = maintenant.diff(dateLimit) %}
+					<p>Il vous reste <strong>{{ interval.days }} jours</strong> pour préciser vos intentions quant aux désordres déclarés par votre locataire. </p>
+				{% endif %}
+				<p>Des dispositifs d'accompagnement ou d’aides peuvent éventuellement vous être proposés, selon votre situation (voir plus bas). Au-delà de ce délai, le dossier sera automatiquement transmis aux autorités compétentes.</p>
+			</div>
+		{% endif %}
 		<div class="fr-col-12 fr-col-md-6">
 			<h1 class="title-blue-france">Détails du dossier</h1>
 			<div class="signalement-card fr-mb-3w">
