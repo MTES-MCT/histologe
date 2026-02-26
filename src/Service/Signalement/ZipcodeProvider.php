@@ -32,12 +32,27 @@ class ZipcodeProvider
         $this->territories = $this->territoryRepository->findAllIndexedByZip();
     }
 
-    public function getTerritoryByInseeCode(string $inseeCode, bool $forceReload = false): ?Territory
+    public function getTerritoryByInseeCode(?string $inseeCode, bool $forceReload = false): ?Territory
     {
+        if (empty($inseeCode)) {
+            return null;
+        }
+
         if ($forceReload) {
             $this->territories = $this->territoryRepository->findAllIndexedByZip();
         }
         $zipCode = $this->getInternalZipCodeByInseeCode($inseeCode);
+
+        return $this->territories[$zipCode] ?? null;
+    }
+
+    public function getTerritoryByPostalCode(string $postalCode, bool $forceReload = false): ?Territory
+    {
+        if ($forceReload) {
+            $this->territories = $this->territoryRepository->findAllIndexedByZip();
+        }
+
+        $zipCode = $this->getInternalZipCodeByInseeCode($postalCode);
 
         return $this->territories[$zipCode] ?? null;
     }

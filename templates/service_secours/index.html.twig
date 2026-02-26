@@ -43,7 +43,14 @@
                 {% endif %}
 
                 {{ form_start(form, {'attr': {'id': 'fo-form-service-secours'}}) }}
-                {{ form_errors(form) }}
+                {# Afficher uniquement les erreurs globales du formulaire, pas celles des champs individuels #}
+                {% for error in form.vars.errors %}
+                    {% if error.origin is same as(form) %}
+                    <div class="fr-alert fr-alert--error fr-mb-2w">
+                        <p>{{ error.message }}</p>
+                    </div>
+                    {% endif %}
+                {% endfor %}
 
                 {% if current_step == 'step1' %}
                     {{ form_row(form.step1.matriculeDeclarant) }}
@@ -69,6 +76,9 @@
                     {{ form_row(form.step2.adresseAutreOccupant) }}
 					{{ form_row(form.step2.isLogementSocial, {display_mode: 'block'}) }}
                     {{ form_row(form.step2.natureLogement, {display_mode: 'block'}) }}
+                    <div class="fr-hidden nature-logement-autre-container fr-input-group">
+                        {{ form_row(form.step2.natureLogementAutre) }}
+                    </div>
                     <div class="fr-hidden type-etage-logement-appartement-container fr-input-group">
                         {{ form_row(form.step2.typeEtageLogement, {display_mode: 'block'}) }}
                         <div class="fr-hidden etage-occupant-container fr-input-group fr-pl-4w">

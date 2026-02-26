@@ -16,6 +16,19 @@ function attachFormServiceSecoursEvent() {
   // Si on coche la valeur "appartement" pour la nature du logement (service_secours[step2][natureLogement]), on affiche "type-etage-logement-appartement-container"
   const natureLogementRadios = document.querySelectorAll('input[name="service_secours[step2][natureLogement]"]');
   const typeEtageLogementAppartementContainer = document.querySelector('.type-etage-logement-appartement-container');
+  const natureLogementAutreContainer = document.querySelector('.nature-logement-autre-container');
+
+  // Vérifier l'état initial au chargement de la page
+  const natureLogementChecked = document.querySelector('input[name="service_secours[step2][natureLogement]"]:checked');
+  if (natureLogementChecked) {
+    if (natureLogementChecked.value === 'appartement') {
+      typeEtageLogementAppartementContainer.classList.remove('fr-hidden');
+    }
+    if (natureLogementChecked.value === 'autre') {
+      natureLogementAutreContainer.classList.remove('fr-hidden');
+    }
+  }
+
   natureLogementRadios.forEach(radio => {
     radio.addEventListener('change', (event) => {
       if (event.target.value === 'appartement') {
@@ -23,12 +36,25 @@ function attachFormServiceSecoursEvent() {
       } else {
         typeEtageLogementAppartementContainer.classList.add('fr-hidden');
       }
+
+      if (event.target.value === 'autre') {
+        natureLogementAutreContainer.classList.remove('fr-hidden');
+      } else {
+        natureLogementAutreContainer.classList.add('fr-hidden');
+      }
     });
   });
 
   // Si on coche la valeur "autre" pour le type d'étage (service_secours[step2][typeEtageLogement]), on affiche "etage-occupant-container"
   const typeEtageLogementRadios = document.querySelectorAll('input[name="service_secours[step2][typeEtageLogement]"]');
   const etageOccupantContainer = document.querySelector('.etage-occupant-container');
+
+  // Vérifier l'état initial au chargement de la page
+  const typeEtageLogementChecked = document.querySelector('input[name="service_secours[step2][typeEtageLogement]"]:checked');
+  if (typeEtageLogementChecked && typeEtageLogementChecked.value === 'AUTRE') {
+    etageOccupantContainer.classList.remove('fr-hidden');
+  }
+
   typeEtageLogementRadios.forEach(radio => {
     radio.addEventListener('change', (event) => {
       if (event.target.value === 'AUTRE') {
