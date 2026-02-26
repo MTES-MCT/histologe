@@ -11,10 +11,10 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Entity\TiersInvitation;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
@@ -36,6 +36,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
+use App\Repository\TiersInvitationRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Repository\ZoneRepository;
@@ -91,6 +92,7 @@ class SignalementController extends AbstractController
         SuiviSeenMarker $suiviSeenMarker,
         UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
         SignalementRepository $signalementRepository,
+        TiersInvitationRepository $tiersInvitationRepository,
         UrlGeneratorInterface $urlGenerator,
     ): Response {
         // load desordres data to prevent n+1 queries
@@ -227,7 +229,10 @@ class SignalementController extends AbstractController
             $linkToVisitGrid = $urlGenerator->generate('show_file', ['uuid' => $existingVisitGrid->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
         }
 
-        $tiersInvitation = $signalement->getTiersInvitations()->filter(fn (TiersInvitation $tiersInvitation) => $tiersInvitation->isWaiting())->first();
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+            'status' => TiersInvitationStatus::WAITING,
+        ]);
 
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
         $suiviSeenMarker->markSeenByUsager($signalement);

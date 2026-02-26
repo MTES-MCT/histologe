@@ -55,7 +55,7 @@ class TiersInvitation implements EntityHistoryInterface
     #[AppAssert\TelephoneFormat]
     private ?string $telephone = null;
 
-    #[ORM\Column(length: 64, unique: true)]
+    #[ORM\Column(length: 64)]
     private string $token;
 
     #[ORM\Column(enumType: TiersInvitationStatus::class)]

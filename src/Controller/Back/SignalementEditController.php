@@ -13,13 +13,14 @@ use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Entity\TiersInvitation;
 use App\Entity\User;
 use App\Factory\TiersInvitationFactory;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Repository\TiersInvitationRepository;
 use App\Security\Voter\SignalementVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\FormHelper;
@@ -90,6 +91,7 @@ class SignalementEditController extends AbstractController
         Signalement $signalement,
         Request $request,
         SignalementManager $signalementManager,
+        TiersInvitationRepository $tiersInvitationRepository,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
@@ -125,12 +127,16 @@ class SignalementEditController extends AbstractController
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
         }
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+            'status' => TiersInvitationStatus::WAITING,
+        ]);
         $htmlTargetContents = [
             [
                 'target' => '#signalement-information-tiers-container',
                 'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', [
                     'signalement' => $signalement,
-                    'tiersInvitation' => $signalement->getTiersInvitations()->filter(fn (TiersInvitation $tiersInvitation) => $tiersInvitation->isWaiting())->first(),
+                    'tiersInvitation' => $tiersInvitation,
                 ]),
             ],
         ];
@@ -146,6 +152,7 @@ class SignalementEditController extends AbstractController
         Signalement $signalement,
         Request $request,
         SuiviManager $suiviManager,
+        TiersInvitationRepository $tiersInvitationRepository,
         ValidatorInterface $validator,
         NotificationMailerRegistry $notificationMailerRegistry,
         TiersInvitationFactory $tiersInvitationFactory,
@@ -157,7 +164,10 @@ class SignalementEditController extends AbstractController
         }
 
         // On bloque si invitation déjà en cours
-        $tiersInvitation = $signalement->getTiersInvitations()->filter(fn (TiersInvitation $tiersInvitation) => $tiersInvitation->isWaiting())->first();
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+            'status' => TiersInvitationStatus::WAITING,
+        ]);
         if ($tiersInvitation) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Une invitation est déjà en attente pour ce dossier.'];
 
