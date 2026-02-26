@@ -8,6 +8,9 @@
     <header class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-md-9">
             <h3 class="fr-text-label--blue-france {{ h3_icon_class }}">{{ title }} ({{ count }})</h3>
+            {% if subtitle is defined %}
+                <div class="fr-text--sm fr-mb-3v">{{ subtitle }}</div>
+            {% endif %}
         </div>
         {% include 'back/dashboard/components/_select_sort_dossiers_nouveaux.html.twig' with {
             data_sort_body: data_sort_body
