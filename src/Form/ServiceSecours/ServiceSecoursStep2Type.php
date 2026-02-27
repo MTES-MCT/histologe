@@ -74,13 +74,16 @@ class ServiceSecoursStep2Type extends AbstractType
                 'expanded' => true,
                 'required' => false,
                 'placeholder' => false,
+                // chaines pour éviter le null par défaut qui sélectionnait "Indéterminé"
                 'choices' => [
-                    'Oui' => true,
-                    'Non' => false,
-                    'Indéterminé' => null,
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                    'Indéterminé' => 'nsp',
                 ],
             ])
             ->add('natureLogement', ChoiceType::class, [
+                'label' => 'Nature du logement <span class="text-required">*</span>',
+                'label_html' => true,
                 'expanded' => true,
                 'required' => false,
                 'placeholder' => false,
@@ -89,11 +92,10 @@ class ServiceSecoursStep2Type extends AbstractType
                     'Maison' => 'maison',
                     'Autre' => 'autre',
                 ],
-                'label' => 'Nature du logement <span class="text-required">*</span>',
-                'label_html' => true,
             ])
             ->add('natureLogementAutre', TextType::class, [
-                'label' => 'Préciser la nature du logement',
+                'label' => 'Préciser la nature du logement <span class="text-required">*</span>',
+                'label_html' => true,
                 'help' => 'Format attendu : 15 caractères maximum',
                 'required' => false,
             ])
