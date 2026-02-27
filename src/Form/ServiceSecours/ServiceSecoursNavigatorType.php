@@ -18,11 +18,12 @@ class ServiceSecoursNavigatorType extends AbstractType
             ->add('previous', PreviousFlowType::class, [
                 'label' => 'Précédent',
                 'include_if' => fn (FormFlowCursor $cursor) => !$cursor->isFirstStep(),
-                'attr' => ['class' => 'fr-btn--secondary'],
+                'attr' => ['class' => 'fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line'],
             ])
             ->add('next', NextFlowType::class, [
                 'label' => 'Suivant',
                 'include_if' => fn (FormFlowCursor $cursor) => !$cursor->isLastStep(),
+                'attr' => ['class' => 'fr-btn--icon-right fr-icon-arrow-right-line'],
             ])
             ->add('finish', FinishFlowType::class, [
                 'label' => 'Valider le signalement',
