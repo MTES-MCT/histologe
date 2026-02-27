@@ -49,8 +49,19 @@ class SignalementFactory
             ->setVilleOccupant($formServiceSecours->step2->villeOccupant)
             ->setInseeOccupant($formServiceSecours->step2->inseeOccupant)
             ->setAdresseAutreOccupant($formServiceSecours->step2->adresseAutreOccupant)
-            ->setIsLogementSocial($formServiceSecours->step2->isLogementSocial)
             ->setNatureLogement($formServiceSecours->step2->natureLogement);
+
+        switch ($formServiceSecours->step2->isLogementSocial) {
+            case 'oui':
+                $signalement->setIsLogementSocial(true);
+                break;
+            case 'non':
+                $signalement->setIsLogementSocial(false);
+                break;
+            case 'nsp':
+                $signalement->setIsLogementSocial(null);
+                break;
+        }
 
         // Déterminer le territoire : priorité au code INSEE, sinon utiliser le code postal
         $territory = null;

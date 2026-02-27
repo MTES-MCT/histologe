@@ -113,23 +113,17 @@
                     {{form_row(form.step6.hidden)}}
                 {% endif %}
 
-                <div class="fr-grid-row fr-grid-row--center">
-                    {% if form.navigator.previous is defined %}
-                        <div class="fr-col">
-                            {{ form_row(form.navigator.previous) }}
-                        </div>
+                <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline fr-btns-group--icon-left">
+                    {% if form.navigator.finish is defined %}
+                        <li>{{ form_row(form.navigator.finish) }}</li>
                     {% endif %}
                     {% if form.navigator.next is defined %}
-                        <div class="fr-col fr-text--right">
-                            {{ form_row(form.navigator.next) }}
-                        </div>
+                        <li>{{ form_row(form.navigator.next) }}</li>
                     {% endif %}
-                    {% if form.navigator.finish is defined %}
-                        <div class="fr-col fr-text--right">
-                            {{ form_row(form.navigator.finish) }}
-                        </div>
+                    {% if form.navigator.previous is defined %}
+                        <li>{{ form_row(form.navigator.previous) }}</li>
                     {% endif %}
-                </div>
+                </ul>
 
                 {{ form_end(form) }}
 
