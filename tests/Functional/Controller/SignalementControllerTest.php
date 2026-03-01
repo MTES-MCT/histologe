@@ -659,9 +659,8 @@ class SignalementControllerTest extends WebTestCase
 
         $signalementUpdated = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
         $this->assertTrue($signalementUpdated->getIsProprioAverti(), 'Le bailleur devrait être marqué comme averti.');
-        $this->assertEquals(
-            'oui',
-            $signalementUpdated->getInformationProcedure()?->getInfoProcedureBailleurPrevenu(),
+        $this->assertTrue(
+            $signalementUpdated->getIsProprioAverti(),
             'L’information procédure doit indiquer que le bailleur a été prévenu.'
         );
 

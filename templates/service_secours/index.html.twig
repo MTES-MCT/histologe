@@ -53,6 +53,7 @@
                 {% endfor %}
 
                 {% if current_step == 'step1' %}
+                    <h3 class="fr-h5">Vos coordonnées</h3>
                     {{ form_row(form.step1.matriculeDeclarant) }}
                     {{ form_row(form.step1.nomDeclarant) }}
                     {{ form_row(form.step1.dateMission) }}
@@ -88,20 +89,46 @@
                     {{ form_row(form.step2.nbPiecesLogement) }}
                     {{ form_row(form.step2.superficie) }}
                 {% elseif current_step == 'step3' %}
-                    {{ form_row(form.step3.profilOccupant) }}
+                    <h3 class="fr-h5">Coordonnées de l'occupant</h3>
+                    {{ form_row(form.step3.profilOccupant, {display_mode: 'block'}) }}
                     {{ form_row(form.step3.nomOccupant) }}
                     {{ form_row(form.step3.prenomOccupant) }}
                     {{ form_row(form.step3.mailOccupant) }}
                     {{ form_row(form.step3.telOccupant) }}
+                    <h3 class="fr-h5">Situation du foyer</h3>
                     {{ form_row(form.step3.nbAdultesDansLogement) }}
                     {{ form_row(form.step3.nbEnfantsDansLogement) }}
-                    {{ form_row(form.step3.isEnfantsMoinsSixAnsDansLogement) }}
+                    {{ form_row(form.step3.isEnfantsMoinsSixAnsDansLogement, {display_mode: 'block'}) }}
                     {{ form_row(form.step3.autreVulnerabilite) }}
                 {% elseif current_step == 'step4' %}
-                    {{ form_row(form.step4.isBailleurAverti) }}
-                    {{ form_row(form.step4.denominationBailleur) }}
-                    {{ form_row(form.step4.mailBailleur) }}
-                    {{ form_row(form.step4.telBailleur) }}
+                    <h3 class="fr-h5">Informations sur le bailleur</h3>
+                    {{ form_row(form.step4.isBailleurAverti, {display_mode: 'block'}) }}
+                    {% if form.step4.denominationProprio is defined %}
+                        <div class="fr-input-group">
+                            {{ form_label(form.step4.denominationProprio) }}
+                            {{ form_widget(form.step4.denominationProprio) }}
+                            <ul class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list">
+                            </ul>
+                        </div>
+                    {% endif %}
+                    {% if form.step4.nomProprio is defined %}
+                        {{ form_row(form.step4.nomProprio) }}
+                    {% endif %}
+                    {% if form.step4.prenomProprio is defined %}
+                        {{ form_row(form.step4.prenomProprio) }}
+                    {% endif %}
+                    {{ form_row(form.step4.mailProprio) }}
+                    {{ form_row(form.step4.telProprio) }}
+                    <div class="fr-my-2w">
+                        <button type="button" class="fr-link fr-link--icon-left fr-icon-add-line" id="show-informations-syndic-container">Ajouter les coordonnées du syndic</button>
+                    </div>
+                    <div class="fr-hidden fr-mb-3w" id="informations-syndic-container">
+                        <h3 class="fr-h5">Informations sur le syndic</h3>
+                        {{ form_row(form.step4.denominationAgence) }}
+                        {{ form_row(form.step4.nomAgence) }}
+                        {{ form_row(form.step4.mailAgence) }}
+                        {{ form_row(form.step4.telAgence) }}
+                    </div>
                 {% elseif current_step == 'step5' %}
                     {{ form_row(form.step5.desordres) }}
                     {{ form_row(form.step5.desordresAutre) }}

@@ -5,7 +5,6 @@ namespace App\EventSubscriber;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Intervention;
-use App\Entity\Model\InformationProcedure;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -92,12 +91,6 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
 
     private function setBailleurPrevenu(Signalement $signalement): void
     {
-        $informationProcedure = new InformationProcedure();
-        if (!empty($signalement->getInformationProcedure())) {
-            $informationProcedure = clone $signalement->getInformationProcedure();
-        }
-        $informationProcedure->setInfoProcedureBailleurPrevenu('oui');
-        $signalement->setInformationProcedure($informationProcedure);
         $signalement->setIsProprioAverti(true);
         $this->signalementManager->save($signalement);
     }

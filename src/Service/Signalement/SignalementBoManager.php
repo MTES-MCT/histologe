@@ -55,7 +55,6 @@ class SignalementBoManager
         if ('autre' === $signalement->getNatureLogement()) {
             $typeCompositionLogement->setTypeLogementNatureAutrePrecision($form->get('natureLogementAutre')->getData());
         }
-        $typeCompositionLogement->setCompositionLogementNombrePersonnes($form->get('nbOccupantsLogement')->getData());
         $typeCompositionLogement->setCompositionLogementNombreEnfants($form->get('nbEnfantsDansLogement')->getData());
         $typeCompositionLogement->setCompositionLogementEnfants($form->get('enfantsDansLogementMoinsSixAns')->getData());
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
