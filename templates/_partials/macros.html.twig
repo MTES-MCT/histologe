@@ -83,6 +83,18 @@
 </nav>
 {% endmacro %}
 
+{% macro formatValue(value) %}
+    {%- if value is iterable -%}
+        {{ value|join(', ') }}
+    {%- elseif value is same as false -%}
+        false
+    {%- elseif value is same as true -%}
+        true
+    {%- else -%}
+        {{ value }}
+    {%- endif -%}
+{% endmacro %}
+
 {% macro historyEntriesVizualisation(historyEntryChanges, isSubChange = false, parentName = '') %}
 {% import _self as macros %}
 {% if not isSubChange %}
@@ -93,14 +105,8 @@
                 <table class="history-diff">
 {% endif %}
                     {% for name, change in historyEntryChanges %}
-                        {% set old = change.old is defined
-                            ? (change.old is iterable ? change.old|join(', ') : change.old)
-                            : null
-                        %}
-                        {% set new = change.new is defined
-                            ? (change.new is iterable ? change.new|join(', ') : change.new)
-                            : null
-                        %}
+                        {% set old = change.old is defined ? macros.formatValue(change.old) : null %}
+                        {% set new = change.new is defined ? macros.formatValue(change.new) : null %}
 
                         {% if old is not null or new is not null %}
                             <tr>

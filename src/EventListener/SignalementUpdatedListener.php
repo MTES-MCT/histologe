@@ -170,7 +170,7 @@ class SignalementUpdatedListener
 
                 $fieldChanges[$field] = [
                     'label' => $label,
-                    'new' => array_key_exists('new', $diffProperty) ? $this->dictionaryProvider->translate($diffProperty['new']) : null,
+                    'new' => array_key_exists('new', $diffProperty) && null !== $diffProperty['new'] ? $this->dictionaryProvider->translate($diffProperty['new']) : null,
                 ];
             }
 

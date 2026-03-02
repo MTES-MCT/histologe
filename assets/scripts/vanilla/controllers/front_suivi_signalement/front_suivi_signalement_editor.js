@@ -27,3 +27,26 @@ if (fieldsetAllocataire) {
   }
   refreshCaisseAllocation();
 }
+
+const fieldsetAccompagnementTravailleurSocial = document?.querySelector('#usager_situation_foyer_accompagnementTravailleurSocial');
+// le nom de la structure d'accompagnement (usager_situation_foyer_accompagnementTravailleurSocialNomStructure) s'affiche que si on a répondu oui
+if (fieldsetAccompagnementTravailleurSocial) {
+  document
+    .querySelectorAll('#usager_situation_foyer_accompagnementTravailleurSocial input[type="radio"]')
+    .forEach((element) => {
+      element.addEventListener('change', () => {
+        refreshAccompagnementTravailleurSocial();
+      });
+    });
+
+  function refreshAccompagnementTravailleurSocial() {
+    const containerNomStructure = document.querySelector('#usager_situation_foyer_accompagnementTravailleurSocialNomStructure').closest('.fr-fieldset__element');
+    if (document.querySelector('#usager_situation_foyer_accompagnementTravailleurSocial_0').checked) {
+      containerNomStructure.classList.remove('fr-hidden');
+    } else {
+      containerNomStructure.classList.add('fr-hidden');
+      document.querySelector('#usager_situation_foyer_accompagnementTravailleurSocialNomStructure').value = '';
+    }
+  }
+  refreshAccompagnementTravailleurSocial();
+}
