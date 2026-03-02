@@ -28,6 +28,7 @@ class SignalementVoter extends Voter
     public const string SIGN_EDIT_INJONCTION = 'SIGN_EDIT_INJONCTION';
     public const string SIGN_EDIT_DRAFT = 'SIGN_EDIT_DRAFT';
     public const string SIGN_EDIT_NEED_VALIDATION = 'SIGN_EDIT_NEED_VALIDATION';
+    public const string SIGN_EDIT_ADDRESS = 'SIGN_EDIT_ADDRESS';
     public const string SIGN_DELETE_DRAFT = 'SIGN_DELETE_DRAFT';
     public const string SIGN_VIEW = 'SIGN_VIEW';
     public const string SIGN_VIEW_INJONCTION_COURRIER = 'SIGN_VIEW_INJONCTION_COURRIER';
@@ -55,6 +56,7 @@ class SignalementVoter extends Voter
                 self::SIGN_EDIT_INJONCTION,
                 self::SIGN_EDIT_DRAFT,
                 self::SIGN_EDIT_NEED_VALIDATION,
+                self::SIGN_EDIT_ADDRESS,
                 self::SIGN_VIEW,
                 self::SIGN_VIEW_INJONCTION_COURRIER,
                 self::SIGN_SEND_MAIL_BAILLEUR,
@@ -107,6 +109,7 @@ class SignalementVoter extends Voter
             self::SIGN_EDIT_CLOSED => $this->canEditClosed($subject, $user),
             self::SIGN_EDIT_INJONCTION => $this->canEditInjonction($subject, $user),
             self::SIGN_EDIT_NEED_VALIDATION => $this->canEditNeedValidation($subject, $user),
+            self::SIGN_EDIT_ADDRESS => $this->canEditActive($subject, $user) || $this->canEditNeedValidation($subject, $user),
             self::SIGN_VIEW => $this->canView($subject, $user),
             self::SIGN_VIEW_INJONCTION_COURRIER => $this->canViewInjonctionCourrier($subject, $user),
             self::SIGN_SEND_MAIL_BAILLEUR => $this->canSendMailBailleur($subject, $user),

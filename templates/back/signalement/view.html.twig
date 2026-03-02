@@ -25,10 +25,12 @@
 {% endblock %}
 
 {% block content %}
-    {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+    {% if is_granted('SIGN_EDIT_ADDRESS', signalement) %}
         <div data-ajax-form>
             {% include 'back/signalement/view/edit-modals/edit-address.html.twig' %}
         </div>
+    {% endif %}
+    {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
         {% if not signalement.isNotOccupant and not signalement.mailDeclarant %}
             <div data-ajax-form>
                 {% include 'back/signalement/view/edit-modals/edit-invite-tiers.html.twig' %}

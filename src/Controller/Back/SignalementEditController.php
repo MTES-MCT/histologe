@@ -43,7 +43,7 @@ class SignalementEditController extends AbstractController
     private const string ERROR_MSG = 'Une erreur s\'est produite. Veuillez actualiser la page.';
 
     #[Route('/{uuid:signalement}/edit-address', name: 'back_signalement_edit_address', methods: 'POST')]
-    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ADDRESS, subject: 'signalement')]
     public function editAddress(
         Signalement $signalement,
         Request $request,
