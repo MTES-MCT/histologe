@@ -81,6 +81,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'limit=2' => [['limit' => 2], 2];
         yield 'codeInsee=13213' => [['codeInsee' => '13213'], 2];
         yield 'codeInsee=13203' => [['codeInsee' => '13203'], 7];
+        // Codes INSEE corses : la validation accepte 2A/2B et aussi 2a/2b (regex insensible à la casse via le flag `i`).
         yield 'codeInsee=2A247' => [['codeInsee' => '2A247'], 0];
         yield 'codeInsee=2B002' => [['codeInsee' => '2B002'], 0];
         yield 'codeInsee=2a247' => [['codeInsee' => '2a247'], 0];
