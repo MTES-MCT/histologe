@@ -67,7 +67,6 @@ class JobEventHttpClient implements HttpClientInterface
             'method' => $method,
             'url' => $url,
             'options' => $options,
-            'payload' => $jobEventMetaData->getPayload(),
             'service' => $service,
             'action' => $action,
             'signalement_id' => $jobEventMetaData->getSignalementId(),
