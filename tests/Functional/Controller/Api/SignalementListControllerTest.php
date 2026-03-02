@@ -79,8 +79,12 @@ class SignalementListControllerTest extends WebTestCase
     public static function provideGoodQueryParameters(): iterable
     {
         yield 'limit=2' => [['limit' => 2], 2];
-        yield 'codeInsee=13213' => [['codeInsee' => 13213], 2];
-        yield 'codeInsee=13203' => [['codeInsee' => 13203], 7];
+        yield 'codeInsee=13213' => [['codeInsee' => '13213'], 2];
+        yield 'codeInsee=13203' => [['codeInsee' => '13203'], 7];
+        yield 'codeInsee=2A247' => [['codeInsee' => '2A247'], 0];
+        yield 'codeInsee=2B002' => [['codeInsee' => '2B002'], 0];
+        yield 'codeInsee=2a247' => [['codeInsee' => '2a247'], 0];
+        yield 'codeInsee=2b002' => [['codeInsee' => '2b002'], 0];
     }
 
     /**
