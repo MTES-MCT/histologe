@@ -549,9 +549,15 @@
 				</div>
 				<div class="title-separator">Allocations</div>
 				<ul>
-					{% if signalement.isLogementSocial %}
-						<li>Logement social : Oui</li>
-					{% endif %}
+					<li>
+						Logement social : {% if signalement.isLogementSocial is same as true %}
+							Oui
+						{% elseif signalement.isLogementSocial is same as false %}
+							Non
+						{% else %}
+							Ne sait pas
+						{% endif %}
+					</li>
 					{% if signalement.isAllocataire in [null, ''] %}
 					{% elseif signalement.isAllocataire in ['oui', '1'] %}
 						<li>Allocataire : Oui</li>
@@ -602,9 +608,16 @@
 				</ul>
 				<div class="title-separator">Accompagnement</div>
 				<ul>
-					{% if signalement.isRelogement is same as true %}
-						<li>Demande de relogement : Oui</li>
-					{% endif %}
+					<li>
+						Demande de relogement : {% if signalement.isRelogement is same as true %}
+							Oui
+						{% elseif signalement.isRelogement is same as false %}
+							Non
+						{% else %}
+							Ne sait pas
+						{% endif %}
+					</li>
+					
 					{% if signalement.situationFoyer %}
 						{% if signalement.situationFoyer.travailleurSocialQuitteLogement(false) %}
 							<li>Souhaite quitter le logement :
@@ -621,7 +634,7 @@
 								{{signalement.situationFoyer.travailleurSocialAccompagnement(false)|capitalize}}
 							</li>
 						{% endif %}
-						{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) and signalement.situationFoyer.travailleurSocialAccompagnementNomStructure %}
+						{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) is same as 'oui' and signalement.situationFoyer.travailleurSocialAccompagnementNomStructure %}
 							<li>Nom de la structure d'accompagnement :
 								{{ signalement.situationFoyer.travailleurSocialAccompagnementNomStructure }}
 							</li>
