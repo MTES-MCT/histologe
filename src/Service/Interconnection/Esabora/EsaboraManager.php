@@ -316,7 +316,7 @@ class EsaboraManager
         }
 
         if (!empty($event->getLibelle())) {
-            $description .= $event->getLibelle().\PHP_EOL;
+            $description .= $event->getLibelle();
         }
 
         $suivi = $this->suiviManager->createSuivi(
