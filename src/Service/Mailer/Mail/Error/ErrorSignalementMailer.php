@@ -36,7 +36,20 @@ class ErrorSignalementMailer extends AbstractNotificationMailer
             'url' => $_SERVER['SERVER_NAME'] ?? 'non défini',
             'code' => $event->getThrowable()->getCode(),
             'error' => $event->getThrowable()->getMessage(),
-            'req' => $event->getRequest()->getContent(),
+            'req' => $this->sanitizeContent($event->getRequest()->getContent()),
         ];
+    }
+
+    private function sanitizeContent(?string $content): ?string
+    {
+        if (empty($content)) {
+            return null;
+        }
+
+        return preg_replace(
+            '/"(password|password-current|password-repeat|[^"]*token[^"]*)"\s*:\s*"[^"]*"/i',
+            '"$1": "[Filtered]"',
+            $content
+        );
     }
 }
