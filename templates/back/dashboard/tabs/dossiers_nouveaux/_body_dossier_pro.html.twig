@@ -8,6 +8,7 @@
     <header class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-md-9">
             <h3 class="fr-text-label--blue-france tab-panel-title-with-document-icon">Dossiers déposés depuis le formulaire pro ({{ count }})</h3>
+            <div class="fr-text--sm fr-mb-3v">Aperçu des 5 derniers dossiers déposés depuis le formulaire pro</div>
         </div>
         {% include 'back/dashboard/components/_select_sort_dossiers_nouveaux.html.twig' with {
             data_sort_body: 'dossiers-form-pro'
