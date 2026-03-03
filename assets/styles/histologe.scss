@@ -1386,3 +1386,32 @@ ul.fr-toggle__list.fr-toggle__list--inline {
         text-decoration: none;
     }
 }
+
+#pwa-install-prompt {
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 20px;
+    max-width: 400px;
+    width: calc(100% - 40px);
+    display: flex;
+    flex-direction: column;
+
+    div.img-container {
+        display: flex;
+        justify-content: center;
+
+        img {
+            max-width: 200px;
+        }
+    }
+
+    p {
+        text-align: center;
+    }
+
+    div#pwa-install-buttons {
+        display: flex;
+        justify-content: center;
+    }
+}

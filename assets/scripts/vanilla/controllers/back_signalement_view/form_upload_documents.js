@@ -3,7 +3,6 @@ import {
   enableHeaderAndFooterButtonOfModal,
 } from '../../services/ui/modales_helper';
 
-
 export function initializeVisitesUploadFilesModal() {
   initializeUploadModal('#fr-modal-upload-files', false);
   document?.querySelectorAll('.fr-modal-visites-upload-files')?.forEach((modalVisiteUpload) => {

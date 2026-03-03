@@ -612,7 +612,7 @@ function initBoFormSignalementAdresse() {
     'adresse',
     'signalement_draft_address_profileDeclarant',
     ['#signalement_draft_coordonnees_copyInfoTiersDeclarant_0'],
-      ['TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS', 'BAILLEUR'],
+    ['TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS', 'BAILLEUR'],
     [],
     'coordonnees'
   );
