@@ -21,6 +21,7 @@ class ErrorSignalementMailerTest extends TestCase
             'password' => 'secret',
             'password-current' => 'secret',
             'password-repeat' => 'secret',
+            '_token' => 'secret',
         ]);
 
         $result = json_decode($method->invoke($mailer, $rawPayload), true);
@@ -28,7 +29,7 @@ class ErrorSignalementMailerTest extends TestCase
         $countFiltered = array_count_values($result)['[Filtered]'] ?? 0;
         $countSecret = array_count_values($result)['secret'] ?? 0;
         $this->assertEquals(0, $countSecret);
-        $this->assertEquals(3, $countFiltered);
+        $this->assertEquals(4, $countFiltered);
     }
 
     /**

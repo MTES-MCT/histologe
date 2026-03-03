@@ -47,7 +47,7 @@ class ErrorSignalementMailer extends AbstractNotificationMailer
         }
 
         return preg_replace(
-            '/"(password|password-current|password-repeat|_token)"\s*:\s*"[^"]*"/i',
+            '/"(password|password-current|password-repeat|[^"]*token[^"]*)"\s*:\s*"[^"]*"/i',
             '"$1": "[Filtered]"',
             $content
         );
