@@ -20,8 +20,7 @@ function markPromptDismissed() {
 }
 
 // Créer l'invite personnalisée
-function createInstallPrompt() {
-  const prompt = document.getElementById('pwa-install-prompt');
+function createInstallPrompt(prompt) {
   if (!prompt) return null;
   prompt.classList.remove('fr-hidden');
 
@@ -55,9 +54,14 @@ window.addEventListener('beforeinstallprompt', (e) => {
   // Sauvegarder l'événement
   deferredPrompt = e;
 
+  const prompt = document.getElementById('pwa-install-prompt');
+  if (!prompt) return null;
+
   // Afficher l'invite personnalisée uniquement si elle n'a pas été rejetée récemment
   if (!isPromptDismissed()) {
-    createInstallPrompt();
+    createInstallPrompt(prompt);
+  } else {
+    prompt.classList.add('fr-hidden');
   }
 });
 
