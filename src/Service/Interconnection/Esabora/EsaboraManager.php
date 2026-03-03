@@ -72,12 +72,16 @@ class EsaboraManager
         $this->adminUser = $this->userManager->getSystemUser();
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     * @throws \DateInvalidTimeZoneException
+     */
     public function synchronizeAffectationFrom(
         DossierResponseInterface $dossierResponse,
         Affectation $affectation,
     ): void {
         $signalement = $affectation->getSignalement();
-        $description = $this->updateStatusFor($affectation, $this->adminUser, $dossierResponse);
+        $description = $this->updateStatusAndBuildDescription($affectation, $this->adminUser, $dossierResponse);
         if (!empty($description)) {
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
@@ -94,7 +98,7 @@ class EsaboraManager
      * @throws \DateInvalidTimeZoneException
      * @throws \DateMalformedStringException
      */
-    public function updateStatusFor(
+    public function updateStatusAndBuildDescription(
         Affectation $affectation,
         User $user,
         DossierResponseInterface $dossierResponse,
@@ -296,10 +300,19 @@ class EsaboraManager
      */
     public function createSuiviFromDossierEvent(DossierEventSCHS $event, Affectation $affectation): Suivi
     {
-        $description = 'Message provenant d\'esabora SCHS :'.\PHP_EOL;
+        $rawDate = $event->getDate();
+        $dateLabel = 'inconnue';
+        if (!empty($rawDate)
+            && false !== \DateTimeImmutable::createFromFormat(AbstractEsaboraService::FORMAT_DATE, $rawDate)
+        ) {
+            $dateLabel = $rawDate;
+        }
+
+        $description = \sprintf('Date : %s', $dateLabel).'<br/>';
+        $description .= 'Message provenant d\'esabora SCHS :<br/>';
 
         if (!empty($event->getPresentation())) {
-            $description .= $event->getPresentation().\PHP_EOL;
+            $description .= $event->getPresentation().'<br/>';
         }
 
         if (!empty($event->getLibelle())) {
@@ -316,12 +329,7 @@ class EsaboraManager
             context: Suivi::CONTEXT_SCHS,
             flush: false,
         );
-        $createdAt = \DateTimeImmutable::createFromFormat(AbstractEsaboraService::FORMAT_DATE, $event->getDate());
-        if (false === $createdAt) {
-            throw new \InvalidArgumentException(sprintf('Date invalide "%s" pour le format %s', $event->getDate(), AbstractEsaboraService::FORMAT_DATE));
-        }
 
-        $suivi->setCreatedAt($createdAt);
         $suivi->setOriginalData($event->getOriginalData());
         $this->entityManager->persist($suivi);
 
