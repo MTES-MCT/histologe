@@ -4,7 +4,7 @@
  */
 
 document.querySelectorAll('[data-matomo-clickable-event-category]')?.forEach((element) => {
-  element.addEventListener('click touchdown', () => {
+  element.addEventListener('click', () => {
     var _paq = (window._paq = window._paq || []);
     eventCategory = element.getAttribute('data-matomo-clickable-event-category');
     eventAction = element.getAttribute('data-matomo-clickable-event-action');
