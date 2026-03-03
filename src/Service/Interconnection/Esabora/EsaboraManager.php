@@ -308,11 +308,11 @@ class EsaboraManager
             $dateLabel = $rawDate;
         }
 
-        $description = \sprintf('Date : %s', $dateLabel).\PHP_EOL;
-        $description .= 'Message provenant d\'esabora SCHS :'.\PHP_EOL;
+        $description = \sprintf('Date : %s', $dateLabel).'<br/>';
+        $description .= 'Message provenant d\'esabora SCHS :<br/>';
 
         if (!empty($event->getPresentation())) {
-            $description .= $event->getPresentation().\PHP_EOL;
+            $description .= $event->getPresentation().'<br/>';
         }
 
         if (!empty($event->getLibelle())) {
