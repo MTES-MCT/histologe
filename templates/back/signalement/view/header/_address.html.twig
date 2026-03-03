@@ -2,7 +2,7 @@
     {{ signalement.adresseOccupant }}
     {% if signalement.complementAdresseOccupant %}- {{signalement.complementAdresseOccupant}}{% endif %},
     {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|capitalize }}
-    {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+    {% if is_granted('SIGN_EDIT_ADDRESS', signalement) %}
         <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-address" class="fr-ml-6v fr-btn--icon-left fr-icon-edit-line fr-a-edit">
             Modifier
         </a>
