@@ -36,6 +36,11 @@ run: ## Start containers
 	@bash -l -c '$(DOCKER_COMP) up -d'
 	@echo -e '\e[1;32mContainers running\032'
 
+run-with-clamav: ## Start containers with Clamav
+	@echo -e '\e[1;32mStart containers with Clamav\032'
+	@bash -l -c '$(DOCKER_COMP) --profile clamav up -d'
+	@echo -e '\e[1;32mContainers running (with Clamav)\032'
+
 down: ## Shutdown containers
 	@echo -e '\e[1;32mStop containers\032'
 	@bash -l -c '$(DOCKER_COMP) down'
