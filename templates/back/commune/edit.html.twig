@@ -42,7 +42,7 @@
             {{ form_end(form) }}
         </div>
         <div class="fr-col-12 fr-col-md-6">
-            {% if poiCommune %}
+            {% if poiCommune and poiCommune.names|length > 0 %}
                 <div class="fr-alert {% if poiCommune.names|length == 1 and poiCommune.names[0] == commune.nom %}fr-alert--success{% else %}fr-alert--error{% endif %}">
                     <p>
                         La BAN retourne un résultat pour cette commune (Code INSEE {{ commune.codeInsee }}, Nom {{ commune.nom }}).
@@ -73,6 +73,15 @@
                 <div class="fr-alert fr-alert--info">
                     <p>
                         Aucun signalement n'est associé à cette commune (Code INSEE {{ commune.codeInsee }}).
+                    </p>
+                </div>
+            {% endif %}
+            {% if countSignalementsWithInsee > 0 %}
+                <div class="fr-alert fr-alert--warning fr-mt-2v">
+                    <p>
+                        Attention, il y a {{ countSignalementsWithInsee }} signalement(s) avec le code INSEE actuel ({{ commune.codeInsee }}).
+                        <br>
+                        En modifiant le code INSEE de la commune, il sera aussi mis à jour dans les signalements associés.
                     </p>
                 </div>
             {% endif %}

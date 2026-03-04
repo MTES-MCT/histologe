@@ -74,8 +74,12 @@ class BackCommuneController extends AbstractController
         $inconsistentSignalements = $signalementRepository->findWithInconsistentCommuneName($commune);
         $form = $this->createForm(CommuneType::class, $commune);
         $originalNom = $commune->getNom();
+        $originalInsee = $commune->getCodeInsee();
+        $signalementsWithInsee = $signalementRepository->findBy(['inseeOccupant' => $originalInsee]);
+        $countWithInsee = \count($signalementsWithInsee);
         $form->handleRequest($request);
         $nomUpdated = false;
+        $inseeUpdated = false;
         if ($form->isSubmitted() && $form->isValid()) {
             if ($originalNom !== $commune->getNom()) {
                 $nomUpdated = true;
@@ -85,10 +89,21 @@ class BackCommuneController extends AbstractController
                     $signalement->setVilleOccupant($commune->getNom());
                 }
             }
+            if ($originalInsee !== $commune->getCodeInsee()) {
+                $inseeUpdated = true;
+                // Si une commune avec le nouveau code INSEE existe, on met à jour les signalements pour qu'ils pointent vers cette commune
+                foreach ($signalementsWithInsee as $signalement) {
+                    $signalement->setInseeOccupant($commune->getCodeInsee());
+                }
+            }
+
             $em->flush();
             $message = 'La commune a bien été modifiée.';
             if ($nomUpdated && count($inconsistentSignalements) > 0) {
                 $message .= sprintf(' %d signalement(s) ont été mis à jour pour être cohérents avec le nouveau nom de la commune.', count($inconsistentSignalements));
+            }
+            if ($inseeUpdated && $countWithInsee > 0) {
+                $message .= sprintf(' %d signalement(s) ont été mis à jour pour être cohérents avec le nouveau code INSEE de la commune.', $countWithInsee);
             }
             $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => $message]);
 
@@ -100,6 +115,7 @@ class BackCommuneController extends AbstractController
             'commune' => $commune,
             'countSignalements' => $countSignalements,
             'inconsistentSignalements' => $inconsistentSignalements,
+            'countSignalementsWithInsee' => $countWithInsee,
             'poiCommune' => $poiCommune,
         ]);
     }
