@@ -37,7 +37,6 @@ import './vanilla/controllers/back_signalement_view/form_upload_documents.js';
 import './vanilla/controllers/back_signalement_view/input_autocomplete_bailleur.js';
 import './vanilla/controllers/back_signalement_view/form_cloture_modal.js';
 import './vanilla/controllers/back_signalement_view/form_acceptation_refus.js';
-import './vanilla/controllers/back_signalement_view/pick-localisation.js';
 import './vanilla/controllers/back_signalement_view/toggle-suivi-auto.js';
 import './vanilla/controllers/back_signalement_view/zip_selection_photos.js';
 import './vanilla/controllers/back_signalement_edit_file/back_signalement_edit_file.js';

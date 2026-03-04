@@ -97,7 +97,7 @@
     {% include '_partials/_modal_localisation.html.twig' %}
     {% if (is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_NEED_VALIDATION', signalement)) and (signalement.geoloc.lat is not defined or signalement.geoloc.lng is not defined) %}
         <div data-ajax-form>
-            {% include '_partials/_modal_pick_localisation.html.twig' %}
+			{% include '_partials/_modal_pick_localisation.html.twig' with {'url': path('back_signalement_set_rnb', {'uuid': signalement.uuid})} %}
         </div>
     {% endif %}
     {% if is_granted('ROLE_ADMIN') %}

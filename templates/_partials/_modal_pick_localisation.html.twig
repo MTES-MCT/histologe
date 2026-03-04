@@ -18,7 +18,7 @@
                         <div id="fr-modal-pick-localisation-message">Chargement en cours</div>
                         <div id="fr-modal-pick-localisation-map"></div>
                     </div>
-                    <form action="{{ path('back_signalement_set_rnb', {'uuid': signalement.uuid}) }}" method="POST" id="fr-modal-pick-localisation-form" data-submit-type="formData">
+                    <form action="{{ url }}" method="POST" id="fr-modal-pick-localisation-form" data-submit-type="formData">
                         <input type="hidden" name="rnbId" id="fr-modal-pick-localisation-rnb-id">
                         <input type="hidden" name="_token" value="{{ csrf_token('signalement_set_rnb_'~signalement.uuid) }}">
                     </form>

@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('build/leaflet/leaflet.css')}}">
+{% endblock %}
+
 {% block title %}Détails du dossier #{{ signalement.reference }}{% endblock %}
 
 {% block body %}
@@ -44,12 +48,44 @@
 
 			<h2 class="title-blue-france fr-mb-1w fr-h3">Coordonnées et démarches</h2>
 			<div class="signalement-group-data-card">
-				<h3 class="title-blue-france fr-h5">Adresse du logement</h3>
+				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
+					<h3 class="title-blue-france fr-h5">Adresse du logement</h3>
+					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+						<a href="{{ path('front_suivi_signalement_complete_adresse_logement', {'code': signalement.codeSuivi}) }}" 
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md"
+							>Compléter les informations</a>
+					{% endif %}
+				</div>
 				{{ signalement.adresseOccupant }} {{ signalement.cpOccupant }} {{ signalement.villeOccupant }}
 				{% if signalement.complementAdresseOccupant %}
 					<div class="title-separator">Détails</div>
 					{{signalement.complementAdresseOccupant}}
 				{% endif %}
+				
+				<div class="fr-mt-4w">
+					<div class="title-separator">Localisation du bâtiment</div>
+					{% if signalement.geoloc.lat is not defined or signalement.geoloc.lng is not defined %}
+						<div data-ajax-form>
+            				{% include '_partials/_modal_pick_localisation.html.twig' with {'url': path('front_suivi_signalement_complete_localisation', {'code': signalement.codeSuivi})} %}
+						</div>
+						<p>
+							Afin de faciliter le travail des agents, vous pouvez préciser l'emplacement du bâtiment sur une carte.
+						</p>
+						<p class="fr-text--center fr-mt-2v">
+							<button 
+								class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-map-pin-2-line" 
+								data-fr-opened="false" 
+								aria-controls="fr-modal-pick-localisation"
+								>
+								Sélectionner le bâtiment sur la carte
+							</button>
+						</p>
+					{% else %}
+						<p>
+							La localisation du bâtiment est connue.
+						</p>
+					{% endif %}
+				</div>
 			</div>
 			<div class="signalement-group-data-card">
 				<h3 class="title-blue-france fr-h5">Coordonnées de l'occupant</h3>
@@ -132,9 +168,8 @@
 					<h3 class="title-blue-france fr-h5">Votre bailleur</h3>
 					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_bailleur', {'code': signalement.codeSuivi}) }}" 
-							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
-							Compléter les informations
-						</a>
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md"
+							>Compléter les informations</a>
 					{% endif %}
 				</div>
 				<div class="title-separator">Coordonnées du bailleur</div>
@@ -215,9 +250,8 @@
 				</ul>
 				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 					<a href="{{ path('front_suivi_signalement_complete_bailleur', {'code': signalement.codeSuivi}) }}" 
-						class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md">
-						Compléter les informations
-					</a>
+						class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
+						>Compléter les informations</a>
 				{% endif %}
 			</div>
 			{% include 'front/_partials/_suivi_signalement_prevenir_bailleur.html.twig' with {'cssDiv': 'fr-callout--brown-caramel fr-mt-2w'} %}
@@ -228,9 +262,8 @@
 						<h3 class="title-blue-france fr-h5">Coordonnées de l'agence</h3>
 						{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 							<a href="{{ path('front_suivi_signalement_complete_agence', {'code': signalement.codeSuivi}) }}" 
-								class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
-								Compléter les informations
-							</a>
+								class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md"
+								>Compléter les informations</a>
 						{% endif %}
 					</div>
 					{% if signalement.denominationAgence %}
@@ -271,9 +304,8 @@
 					{% endif %}
 					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 						<a href="{{ path('front_suivi_signalement_complete_agence', {'code': signalement.codeSuivi}) }}" 
-							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md">
-							Compléter les informations
-						</a>
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
+							>Compléter les informations</a>
 					{% endif %}
 				</div>
 			{% elseif is_granted('SIGN_USAGER_COMPLETE', signalement) %}
