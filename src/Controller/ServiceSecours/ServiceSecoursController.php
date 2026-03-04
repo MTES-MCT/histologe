@@ -83,7 +83,11 @@ class ServiceSecoursController extends AbstractController
             'theme_color' => '#ffffff',
             'background_color' => '#ffffff',
             'display' => 'standalone',
+            'lang' => 'fr',
+            'dir' => 'ltr',
             'orientation' => 'portrait',
+            'description' => 'Signaler une situation de mal logement',
+            'categories' => ['government', 'utilities'],
         ];
 
         $response = new JsonResponse($manifest);

@@ -75,7 +75,7 @@ function handleFinalConsentChoice() {
 
 function displayOrHideConsentBannerCookie() {
   const cookieConsent = getCookie('cookieConsent');
-  const consentBanner = document.querySelector('.fr-consent-banner');
+  const consentBanner = document.querySelector('.fr-consent-banner.fr-consent-banner-matomo');
   if (cookieConsent) {
     consentBanner?.classList.add('fr-hidden');
   } else {
