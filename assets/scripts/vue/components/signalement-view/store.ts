@@ -108,7 +108,8 @@ export const store = {
       { Id: 'attente_relogement', Text: 'Attente de relogement' },
       { Id: 'bail_en_cours', Text: 'Bail en cours' },
       { Id: 'preavis_de_depart', Text: 'Préavis de départ' },
-      { Id: 'logement_vacant', Text: 'Logement vacant' }
+      { Id: 'logement_vacant', Text: 'Logement vacant' },
+      { Id: 'bailleur_occupant', Text: 'Bailleur occupant' }
     ],
     procedureList: [
       { Id: 'non_decence_energetique', Text: 'Non décence énergétique' },

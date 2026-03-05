@@ -6,6 +6,7 @@ use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\CreationSource;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
@@ -492,6 +493,9 @@ class SearchFilter
                 break;
             case 'logement_vacant':
                 $qb->andWhere('s.isLogementVacant = :is_logement_vacant')->setParameter('is_logement_vacant', true);
+                break;
+            case 'bailleur_occupant':
+                $qb->andWhere('s.profileOccupant = :profile_occupant')->setParameter('profile_occupant', ProfileOccupant::BAILLEUR_OCCUPANT);
                 break;
         }
 
