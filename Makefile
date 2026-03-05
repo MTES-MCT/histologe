@@ -43,7 +43,7 @@ run-with-clamav: ## Start containers with Clamav
 
 down: ## Shutdown containers
 	@echo -e '\e[1;32mStop containers\032'
-	@bash -l -c '$(DOCKER_COMP) down'
+	@bash -l -c '$(DOCKER_COMP) --profile clamav down'
 	@echo -e '\e[1;32mContainers stopped\032'
 
 sh: ## Log to phpfpm container
