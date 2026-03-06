@@ -81,8 +81,16 @@
 							</button>
 						</p>
 					{% else %}
+						{% include '_partials/_modal_localisation.html.twig' %}
 						<p>
-							La localisation du bâtiment est connue.
+							<button 
+								class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-france-line" 
+								id="fr-modal-localisation-btn"
+								data-fr-opened="false" 
+								aria-controls="fr-modal-localisation"
+								data-lat="{{signalement.geoloc.lat}}"
+								data-lng="{{signalement.geoloc.lng}}"
+							>Voir sur la carte</button>
 						</p>
 					{% endif %}
 				</div>
