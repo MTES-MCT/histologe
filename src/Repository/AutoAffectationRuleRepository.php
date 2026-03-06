@@ -89,4 +89,22 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findWithInseeToInclude(string $insee): array
+    {
+        return $this->createQueryBuilder('aar')
+            ->andWhere('aar.inseeToInclude LIKE :insee')
+            ->setParameter('insee', "%{$insee}%")
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findWithInseeToExclude(string $insee): array
+    {
+        return $this->createQueryBuilder('aar')
+            ->andWhere('JSON_CONTAINS(aar.inseeToExclude, :insee) = 1')
+            ->setParameter('insee', json_encode($insee))
+            ->getQuery()
+            ->getResult();
+    }
 }
