@@ -14,13 +14,12 @@
 	data-matomo-timer-event-action="timer"
 	data-matomo-timer-event-name="40">
 	<div class="fr-grid-row fr-grid-row--gutters">
-
 		{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED %}
-			<div class="fr-col-12 fr-col-md-12 fr-background-alt--blue-france">
-				<p>Votre locataire a cloturé sa démarche pour le motif suivant : {{ signalement.motifClotureUsager.label }}.</p>	
+			<div class="fr-col-12 fr-col-md-12 fr-mb-5w fr-background-alt--blue-france">
+				Votre locataire a cloturé sa démarche pour le motif suivant : {{ signalement.motifClotureUsager.label }}.
 			</div>
 		{% elseif suiviReponse is empty %}
-			<div class="fr-col-12 fr-col-md-12 fr-background-alt--blue-france">
+			<div class="fr-col-12 fr-col-md-12 fr-mb-5w fr-background-alt--blue-france">
 				<p>Votre locataire souhaite tenter une dernière démarche amiable avant le déclenchement des contrôles et procédures légales. </p>
 				{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
 					{% set maintenant = date() %}
@@ -30,7 +29,6 @@
 				<p>Des dispositifs d'accompagnement ou d’aides peuvent éventuellement vous être proposés, selon votre situation (voir plus bas). Au-delà de ce délai, le dossier sera automatiquement transmis aux autorités compétentes.</p>
 			</div>
 		{% endif %}
-		</div>
 		<div class="fr-col-12 fr-col-md-6">
 			<h1 class="title-blue-france">Détails du dossier</h1>
 			<div class="signalement-card fr-mb-3w">
