@@ -133,6 +133,20 @@ class SignalementEditController extends AbstractController
             $formCoordonneesBailleur->isSubmitted()
             && $formCoordonneesBailleur->isValid()
         ) {
+            $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : null;
+
+            $isProprioAverti = $formCoordonneesBailleur->get('isProprioAverti')->getData();
+            if ('nsp' === $isProprioAverti) {
+                $signalement->setIsProprioAverti(null);
+            } elseif ($isProprioAverti) {
+                $signalement->setIsProprioAverti(true);
+            } else {
+                $signalement->setIsProprioAverti(false);
+            }
+            $informationProcedure?->setInfoProcedureBailMoyen($formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData() ? $formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData()->value : null);
+
+            $signalement->setInformationProcedure($informationProcedure);
+
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
 
             $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées du bailleur ont bien été mises à jour.']);
