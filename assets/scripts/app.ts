@@ -6,6 +6,7 @@ import './base-import.ts';
 import './vanilla/services/maintenance_banner.js';
 import './vanilla/services/component/component_json_response_handler.js';
 import './vanilla/services/component/component_search_address.js';
+import './vanilla/services/component/pick-localisation.js';
 import './vanilla/services/cookie/cookie_banner.js';
 import './vanilla/services/file/file_delete.js';
 import './vanilla/services/form/form_helper.js';
