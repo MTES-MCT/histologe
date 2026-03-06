@@ -21,11 +21,6 @@
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
 
-    {% block customscripts %}
-        {{ encore_entry_script_tags('app') }}
-        {{ encore_entry_link_tags('app') }}
-    {% endblock %}
-
     {% if matomo is defined and matomo.enable == 1 and 'activate_account' not in app.request.attributes.get('_route') %}
         <!-- Matomo -->
         <script nonce="{{ app.request.attributes.get('csp_script_nonce') }}">
