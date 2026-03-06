@@ -31,7 +31,7 @@
         </div>
     {% endif %}
     {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
-        {% if not signalement.isNotOccupant and not signalement.mailDeclarant and not signalement.tiersInvitation %}
+        {% if not signalement.isNotOccupant and not signalement.mailDeclarant and not tiersInvitation %}
             <div data-ajax-form>
                 {% include 'back/signalement/view/edit-modals/edit-invite-tiers.html.twig' %}
             </div>

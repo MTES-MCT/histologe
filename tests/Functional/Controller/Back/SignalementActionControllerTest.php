@@ -19,6 +19,7 @@ use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementActionControllerTest extends WebTestCase
@@ -119,7 +120,9 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertArrayHasKey('url', $response);
         $this->assertTrue($response['redirect']);
         $this->assertEquals('/bo/signalements/'.$signalement->getUuid(), $response['url']);
-        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        /** @var Session $session */
+        $session = $this->client->getRequest()->getSession();
+        $flashBag = $session->getFlashBag();
         $this->assertTrue($flashBag->has('success'));
         $successMessages = $flashBag->get('success');
         $this->assertEquals(['title' => 'Signalement accepté', 'message' => 'Le signalement a bien été accepté.'], $successMessages[0]);
@@ -451,7 +454,9 @@ class SignalementActionControllerTest extends WebTestCase
             ]
         );
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
-        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        /** @var Session $session */
+        $session = $this->client->getRequest()->getSession();
+        $flashBag = $session->getFlashBag();
         $this->assertTrue($flashBag->has('success'));
         $flashMsg = [
             'title' => 'Abonnement au dossier',
@@ -473,7 +478,9 @@ class SignalementActionControllerTest extends WebTestCase
         );
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
 
-        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        /** @var Session $session */
+        $session = $this->client->getRequest()->getSession();
+        $flashBag = $session->getFlashBag();
         $this->assertTrue($flashBag->has('error'));
         $this->assertEquals('Vous ne pouvez pas quitter un dossier étant seul agent de votre partenaire.', $flashBag->get('error')[0]);
 
@@ -593,7 +600,9 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/bo/signalements/'.$signalement->getUuid());
 
-        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        /** @var Session $session */
+        $session = $this->client->getRequest()->getSession();
+        $flashBag = $session->getFlashBag();
         $this->assertTrue($flashBag->has('error'));
         $this->assertEquals(MessageHelper::ERROR_MESSAGE_CSRF, $flashBag->get('error')[0]);
 
