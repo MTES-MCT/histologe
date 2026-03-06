@@ -13,11 +13,14 @@ use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\Factory\TiersInvitationFactory;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
+use App\Repository\TiersInvitationRepository;
 use App\Security\Voter\SignalementVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\FormHelper;
@@ -40,8 +43,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/bo/signalements')]
 class SignalementEditController extends AbstractController
 {
-    private const string ERROR_MSG = 'Une erreur s\'est produite. Veuillez actualiser la page.';
-
     #[Route('/{uuid:signalement}/edit-address', name: 'back_signalement_edit_address', methods: 'POST')]
     #[IsGranted(SignalementVoter::SIGN_EDIT_ADDRESS, subject: 'signalement')]
     public function editAddress(
@@ -90,6 +91,7 @@ class SignalementEditController extends AbstractController
         Signalement $signalement,
         Request $request,
         SignalementManager $signalementManager,
+        TiersInvitationRepository $tiersInvitationRepository,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
     ): JsonResponse {
@@ -125,10 +127,17 @@ class SignalementEditController extends AbstractController
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
         }
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+            'status' => TiersInvitationStatus::WAITING,
+        ]);
         $htmlTargetContents = [
             [
                 'target' => '#signalement-information-tiers-container',
-                'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', ['signalement' => $signalement]),
+                'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', [
+                    'signalement' => $signalement,
+                    'tiersInvitation' => $tiersInvitation,
+                ]),
             ],
         ];
 
@@ -142,56 +151,82 @@ class SignalementEditController extends AbstractController
         InviteTiersRequest $inviteTiersRequest,
         Signalement $signalement,
         Request $request,
-        SignalementManager $signalementManager,
+        SuiviManager $suiviManager,
+        TiersInvitationRepository $tiersInvitationRepository,
         ValidatorInterface $validator,
         NotificationMailerRegistry $notificationMailerRegistry,
+        TiersInvitationFactory $tiersInvitationFactory,
+        EntityManagerInterface $em,
     ): JsonResponse {
         // On bloque si tiers déjà renseigné ou si créé par tiers
         if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant())) {
             throw $this->createAccessDeniedException();
         }
 
+        // On bloque si invitation déjà en cours
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+            'status' => TiersInvitationStatus::WAITING,
+        ]);
+        if ($tiersInvitation) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Une invitation est déjà en attente pour ce dossier.'];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
-        if ($this->isCsrfTokenValid(
-            'signalement_edit_invite_tiers_'.$signalement->getId(),
-            $token
-        )) {
-            $errorMessage = FormHelper::getErrorsFromRequest($validator, $inviteTiersRequest);
+        if (!$this->isCsrfTokenValid('signalement_edit_invite_tiers_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
-            if (empty($errorMessage)) {
-                $subscriptionCreated = $signalementManager->updateFromInviteTiersRequest($signalement, $inviteTiersRequest);
-
-                $notificationMailerRegistry->send(
-                    new NotificationMail(
-                        type: NotificationMailerType::TYPE_INVITE_TIERS,
-                        to: $signalement->getMailDeclarant(),
-                        signalement: $signalement,
-                    )
-                );
-
-                $response = ['code' => Response::HTTP_OK];
-                $this->addFlash('success', ['title' => 'Invitation sur le dossier',
-                    'message' => 'Le tiers aidant a bien été invité.',
-                ]);
-                if ($subscriptionCreated) {
-                    $this->addFlash('success', ['title' => 'Abonnement au dossier',
-                        'message' => User::MSG_SUBSCRIPTION_CREATED,
-                    ]);
-                }
-            } else {
-                $response = ['code' => Response::HTTP_BAD_REQUEST];
-                $response = [...$response, ...$errorMessage];
-            }
-        } else {
-            $response = [
-                'code' => Response::HTTP_UNAUTHORIZED,
-                'message' => self::ERROR_MSG,
-            ];
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
 
-        return $this->json($response, $response['code']);
+        $errorMessage = FormHelper::getErrorsFromRequest($validator, $inviteTiersRequest);
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+
+        $invitation = $tiersInvitationFactory->createInstanceFrom(
+            $signalement,
+            $inviteTiersRequest->getNom(),
+            $inviteTiersRequest->getPrenom(),
+            $inviteTiersRequest->getMail(),
+            $inviteTiersRequest->getTelephone()
+        );
+
+        $em->persist($invitation);
+        $em->flush();
+
+        $notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_INVITE_TIERS,
+                to: $inviteTiersRequest->getMail(),
+                signalement: $signalement,
+                tiersInvitation: $invitation,
+            )
+        );
+        $subscriptionCreated = $suiviManager->addInviteSuiviFromBo($signalement, $inviteTiersRequest);
+
+        $flashMessages[] = ['type' => 'success', 'title' => 'Invitation sur le dossier', 'message' => 'Le tiers aidant a bien été invité.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-information-tiers-container',
+                'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', [
+                    'signalement' => $signalement, 'tiersInvitation' => $invitation,
+                ]),
+            ],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }
 
     #[Route('/{uuid:signalement}/edit-coordonnees-foyer', name: 'back_signalement_edit_coordonnees_foyer', methods: 'POST')]

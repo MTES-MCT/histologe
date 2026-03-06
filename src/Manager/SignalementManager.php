@@ -9,7 +9,6 @@ use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
-use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
@@ -32,6 +31,7 @@ use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\Suivi;
 use App\Entity\Territory;
+use App\Entity\TiersInvitation;
 use App\Entity\User;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
@@ -387,22 +387,21 @@ class SignalementManager extends AbstractManager
         );
     }
 
-    public function updateFromInviteTiersRequest(
-        Signalement $signalement,
-        InviteTiersRequest $inviteTiersRequest,
-    ): bool {
-        $signalement->setNomDeclarant($inviteTiersRequest->getNom())
-            ->setPrenomDeclarant($inviteTiersRequest->getPrenom())
-            ->setMailDeclarant($inviteTiersRequest->getMail())
-            ->setTelDeclarant($inviteTiersRequest->getTelephone())
+    public function updateFromTiersInvitation(
+        TiersInvitation $tiersInvitation,
+    ): void {
+        $signalement = $tiersInvitation->getSignalement();
+        $signalement->setNomDeclarant($tiersInvitation->getLastname())
+            ->setPrenomDeclarant($tiersInvitation->getFirstname())
+            ->setMailDeclarant($tiersInvitation->getEmail())
+            ->setTelDeclarant($tiersInvitation->getTelephone())
             ->setIsCguTiersAccepted(false);
 
-        // Create user corresponding to declarant
         $this->userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
 
         $this->save($signalement);
 
-        return $this->suiviManager->addInviteSuiviFromBo($signalement);
+        $this->suiviManager->addAccepteInvitationSuivi($signalement);
     }
 
     public function updateFromCoordonneesFoyerRequest(

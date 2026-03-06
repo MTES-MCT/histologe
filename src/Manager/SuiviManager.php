@@ -2,6 +2,7 @@
 
 namespace App\Manager;
 
+use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
@@ -11,6 +12,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\SuiviFile;
+use App\Entity\TiersInvitation;
 use App\Entity\User;
 use App\Event\SuiviCreatedEvent;
 use App\Security\User\SignalementUser;
@@ -153,13 +155,20 @@ class SuiviManager extends Manager
         return $subscriptionCreated;
     }
 
-    public function addInviteSuiviFromBo(Signalement $signalement): bool
-    {
+    public function addInviteSuiviFromBo(
+        Signalement $signalement,
+        InviteTiersRequest $inviteTiersRequest,
+    ): bool {
         $subscriptionCreated = false;
         /** @var User $user */
         $user = $this->security->getUser();
-        $description = 'Les coordonnées d\'un tiers ont été ajoutées pour suivre le signalement :';
-        $description .= $this->getInviteSuiviHtmlContent($signalement);
+        $description = 'Une invitation a été envoyée à un tiers pour suivre le signalement :';
+        $description .= $this->buildTiersInfoHtml(
+            $inviteTiersRequest->getNom(),
+            $inviteTiersRequest->getPrenom(),
+            $inviteTiersRequest->getMail(),
+            $inviteTiersRequest->getTelephone(),
+        );
 
         $this->createSuivi(
             signalement: $signalement,
@@ -175,13 +184,18 @@ class SuiviManager extends Manager
         return $subscriptionCreated;
     }
 
-    public function addInviteSuiviFromFo(Signalement $signalement): void
+    public function addInviteSuiviFromFo(TiersInvitation $tiersInvitation): void
     {
-        $description = 'L\'usager a ajouté les coordonnées d\'un tiers pour suivre le signalement :';
-        $description .= $this->getInviteSuiviHtmlContent($signalement);
+        $description = 'L\'usager a envoyé une invitation à un tiers pour suivre le signalement :';
+        $description .= $this->buildTiersInfoHtml(
+            $tiersInvitation->getLastname(),
+            $tiersInvitation->getFirstname(),
+            $tiersInvitation->getEmail(),
+            $tiersInvitation->getTelephone(),
+        );
 
         $this->createSuivi(
-            signalement: $signalement,
+            signalement: $tiersInvitation->getSignalement(),
             description: $description,
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
@@ -190,14 +204,57 @@ class SuiviManager extends Manager
         );
     }
 
-    private function getInviteSuiviHtmlContent(Signalement $signalement): string
+    public function addAccepteInvitationSuivi(Signalement $signalement): void
     {
-        $description = '<br>';
-        $description .= '<ul>';
-        $description .= $signalement->getNomDeclarant() ? '<li>Nom : '.$signalement->getNomDeclarant().'</li>' : '';
-        $description .= $signalement->getPrenomDeclarant() ? '<li>Prénom : '.$signalement->getPrenomDeclarant().'</li>' : '';
-        $description .= $signalement->getMailDeclarant() ? '<li>E-mail : '.$signalement->getMailDeclarant().'</li>' : '';
-        $description .= $signalement->getTelDeclarant() ? '<li>Téléphone : '.$signalement->getTelDeclarantDecoded().'</li>' : '';
+        $description = 'Un tiers a accepté une invitation pour suivre le signalement :';
+        $description .= $this->buildTiersInfoHtml(
+            $signalement->getNomDeclarant(),
+            $signalement->getPrenomDeclarant(),
+            $signalement->getMailDeclarant(),
+            $signalement->getTelDeclarantDecoded(),
+        );
+
+        $this->createSuivi(
+            signalement: $signalement,
+            description: $description,
+            type: Suivi::TYPE_AUTO,
+            category: SuiviCategory::SIGNALEMENT_EDITED_FO,
+            user: $this->userManager->getSystemUser(),
+            isPublic: true,
+        );
+    }
+
+    public function addRefuseInvitationSuivi(Signalement $signalement): void
+    {
+        $description = 'Le tiers a refusé l\'invitation pour suivre le signalement :';
+        $description .= $this->buildTiersInfoHtml(
+            $signalement->getNomDeclarant(),
+            $signalement->getPrenomDeclarant(),
+            $signalement->getMailDeclarant(),
+            $signalement->getTelDeclarantDecoded(),
+        );
+
+        $this->createSuivi(
+            signalement: $signalement,
+            description: $description,
+            type: Suivi::TYPE_AUTO,
+            category: SuiviCategory::SIGNALEMENT_EDITED_FO,
+            user: $this->userManager->getSystemUser(),
+            isPublic: true,
+        );
+    }
+
+    private function buildTiersInfoHtml(
+        ?string $nom,
+        ?string $prenom,
+        ?string $email,
+        ?string $telephone,
+    ): string {
+        $description = '<br><ul>';
+        $description .= $nom ? '<li>Nom : '.$nom.'</li>' : '';
+        $description .= $prenom ? '<li>Prénom : '.$prenom.'</li>' : '';
+        $description .= $email ? '<li>E-mail : '.$email.'</li>' : '';
+        $description .= $telephone ? '<li>Téléphone : '.$telephone.'</li>' : '';
         $description .= '</ul>';
 
         return $description;

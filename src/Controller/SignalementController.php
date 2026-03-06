@@ -8,11 +8,13 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\File;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
+use App\Entity\TiersInvitation;
 use App\Event\SuiviViewedEvent;
 use App\Form\DemandeLienSignalementType;
 use App\Form\MessageUsagerType;
@@ -28,6 +30,7 @@ use App\Repository\CommuneRepository;
 use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
+use App\Repository\TiersInvitationRepository;
 use App\Security\User\SignalementUser;
 use App\Security\Voter\SignalementFoVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
@@ -457,6 +460,7 @@ class SignalementController extends AbstractController
         string $code,
         SignalementRepository $signalementRepository,
         SuiviRepository $suiviRepository,
+        TiersInvitationRepository $tiersInvitationRepository,
         SuiviCategoryMapper $suiviCategoryMapper,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
@@ -483,10 +487,16 @@ class SignalementController extends AbstractController
             $suiviCategory = $suiviCategoryMapper->mapFromSuivi($lastSuiviPublic);
         }
 
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+            'status' => TiersInvitationStatus::WAITING,
+        ]);
+
         return $this->render('front/suivi_signalement_dashboard.html.twig', [
             'signalement' => $signalement,
             'formDemandeLienSignalement' => $formDemandeLienSignalement,
             'suiviCategory' => $suiviCategory,
+            'tiersInvitation' => $tiersInvitation,
         ]);
     }
 
@@ -522,6 +532,7 @@ class SignalementController extends AbstractController
     public function suiviSignalementDossier(
         string $code,
         SignalementRepository $signalementRepository,
+        TiersInvitationRepository $tiersInvitationRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
@@ -541,10 +552,16 @@ class SignalementController extends AbstractController
             'action' => $this->generateUrl('front_demande_lien_signalement'),
         ]);
 
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+            'status' => TiersInvitationStatus::WAITING,
+        ]);
+
         return $this->render('front/suivi_signalement_dossier.html.twig', [
             'signalement' => $signalement,
             'infoDesordres' => $infoDesordres,
             'formDemandeLienSignalement' => $formDemandeLienSignalement,
+            'tiersInvitation' => $tiersInvitation,
         ]);
     }
 
@@ -928,7 +945,7 @@ class SignalementController extends AbstractController
         SuiviManager $suiviManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
         /** @var SignalementUser $signalementUser */
         $signalementUser = $this->getUser();
@@ -980,40 +997,46 @@ class SignalementController extends AbstractController
         string $code,
         Request $request,
         SignalementRepository $signalementRepository,
-        SignalementManager $signalementManager,
+        TiersInvitationRepository $tiersInvitationRepository,
         SuiviManager $suiviManager,
-        UserManager $userManager,
         NotificationMailerRegistry $notificationMailerRegistry,
+        EntityManagerInterface $entityManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
-        $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
 
-        // On bloque si tiers déjà renseigné ou si créé par tiers
-        if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant())) {
+        // On bloque si tiers déjà renseigné, si créé par tiers ou si une invitation est déjà en cours
+        $tiersInvitation = $tiersInvitationRepository->findOneBy([
+            'signalement' => $signalement,
+            'status' => TiersInvitationStatus::WAITING,
+        ]);
+
+        if (!empty($signalement->getMailDeclarant()) || ($signalement->isV2() && $signalement->getIsNotOccupant()) || $tiersInvitation) {
             throw $this->createAccessDeniedException();
         }
 
+        $invitation = new TiersInvitation();
+        $invitation->setSignalement($signalement);
+
         $form = $this->createForm(
             UsagerCoordonneesTiersType::class,
-            $signalement,
-            ['extended' => true],
+            $invitation
         );
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Create user corresponding to declarant
-            $userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
+            $entityManager->persist($invitation);
+            $entityManager->flush();
 
-            $signalement->setIsCguTiersAccepted(false);
-            $signalementManager->save($signalement);
-
-            $suiviManager->addInviteSuiviFromFo($signalement);
+            $suiviManager->addInviteSuiviFromFo($invitation);
 
             $notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_INVITE_TIERS,
-                    to: $signalement->getMailDeclarant(),
+                    to: $invitation->getEmail(),
                     signalement: $signalement,
+                    tiersInvitation: $invitation,
                 )
             );
 

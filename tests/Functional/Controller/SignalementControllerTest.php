@@ -10,6 +10,7 @@ use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
+use App\Entity\TiersInvitation;
 use App\Repository\FileRepository;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SuiviRepository;
@@ -18,6 +19,7 @@ use App\Tests\UserHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementControllerTest extends WebTestCase
@@ -74,7 +76,7 @@ class SignalementControllerTest extends WebTestCase
         $crawler = $client->request('GET', $urlSuiviSignalementUser);
 
         if (SignalementStatus::ARCHIVED->value === $status) {
-            $this->assertResponseStatusCodeSame(200);
+            $this->assertResponseStatusCodeSame(Response::HTTP_OK);
             $this->assertEquals(
                 'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.',
                 $crawler->filter('.fr-tile__detail')->text()
@@ -338,17 +340,64 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('POST', $urlCoordonneesTiers, [
             'usager_coordonnees_tiers' => [
-                'nomDeclarant' => 'Pote',
-                'prenomDeclarant' => 'Paul',
-                'mailDeclarant' => $newMail,
+                'lastname' => 'Pote',
+                'firstname' => 'Paul',
+                'email' => $newMail,
                 '_token' => $this->generateCsrfToken($client, 'usager_coordonnees_tiers'),
             ],
         ]);
 
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi());
-        $this->assertEquals($newMail, $signalement->getMailDeclarant());
-        $this->assertFalse($signalement->getIsCguTiersAccepted());
+
+        $entityManager->clear();
+        /** @var Signalement $signalementReloaded */
+        $signalementReloaded = $entityManager
+            ->getRepository(Signalement::class)
+            ->find($signalement->getId());
+
+        $invitation = $entityManager
+            ->getRepository(TiersInvitation::class)->findOneBy([
+                'signalement' => $signalementReloaded,
+            ]);
+        /* @var TiersInvitation $invitation */
+        $this->assertNotNull($invitation);
+        $this->assertEquals($newMail, $invitation->getEmail());
+        $this->assertNull($signalementReloaded->getMailDeclarant());
         $this->assertEmailCount(2);
+    }
+
+    public function testCoordonneesTiersBloqueSiInvitationExistante(): void
+    {
+        $client = static::createClient();
+        $container = $client->getContainer();
+        $entityManager = $container->get('doctrine')->getManager();
+
+        $signalement = $entityManager
+            ->getRepository(Signalement::class)
+            ->findOneBy(['reference' => '2024-01']);
+
+        $invitation = new TiersInvitation();
+        $invitation->setSignalement($signalement);
+        $invitation->setEmail('existing@gmail.com');
+        $invitation->setLastname('Pote');
+        $invitation->setFirstname('Paul');
+
+        $entityManager->persist($invitation);
+        $entityManager->flush();
+
+        $client->loginUser(
+            $this->getSignalementUser($signalement),
+            'code_suivi'
+        );
+
+        $url = $container->get(RouterInterface::class)->generate(
+            'front_suivi_signalement_coordonnees_tiers',
+            ['code' => $signalement->getCodeSuivi()]
+        );
+
+        $client->request('GET', $url);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
     public function testUsagerAddDocuments(): void
@@ -389,7 +438,9 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/documents');
 
-        $flashBag = $client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        /** @var Session $session */
+        $session = $client->getRequest()->getSession();
+        $flashBag = $session->getFlashBag();
         $this->assertTrue($flashBag->has('success'));
         $successMessages = $flashBag->get('success');
         $this->assertEquals(['title' => 'Documents ajoutés', 'message' => 'Vos documents ont bien été enregistrés.'], $successMessages[0]);
@@ -432,7 +483,9 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/documents');
 
-        $flashBag = $client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        /** @var Session $session */
+        $session = $client->getRequest()->getSession();
+        $flashBag = $session->getFlashBag();
         $this->assertFalse($flashBag->has('success'));
     }
 

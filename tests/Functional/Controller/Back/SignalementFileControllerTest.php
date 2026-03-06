@@ -12,6 +12,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
 
 class SignalementFileControllerTest extends WebTestCase
@@ -133,7 +134,9 @@ class SignalementFileControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertEquals('{"response":"success"}', (string) $this->client->getResponse()->getContent());
-        $flashBag = $this->client->getRequest()->getSession()->getFlashBag(); // @phpstan-ignore-line
+        /** @var Session $session */
+        $session = $this->client->getRequest()->getSession();
+        $flashBag = $session->getFlashBag();
         $this->assertTrue($flashBag->has('success'));
         $successMessages = $flashBag->get('success');
         $this->assertEquals(['title' => 'Document modifié', 'message' => 'Le document a bien été modifié.'], $successMessages[0]);

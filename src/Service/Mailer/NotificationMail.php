@@ -7,6 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Entity\Territory;
+use App\Entity\TiersInvitation;
 use App\Entity\User;
 
 class NotificationMail
@@ -27,6 +28,7 @@ class NotificationMail
         private readonly ?Suivi $suivi = null,
         private readonly ?SignalementDraft $signalementDraft = null,
         private readonly ?Intervention $intervention = null,
+        private readonly ?TiersInvitation $tiersInvitation = null,
         private readonly ?\DateTimeImmutable $previousVisiteDate = null,
         private readonly mixed $event = null,
         private readonly mixed $attachment = null,
@@ -101,6 +103,11 @@ class NotificationMail
     public function getIntervention(): ?Intervention
     {
         return $this->intervention;
+    }
+
+    public function getTiersInvitation(): ?TiersInvitation
+    {
+        return $this->tiersInvitation;
     }
 
     public function getPreviousVisiteDate(): ?\DateTimeImmutable

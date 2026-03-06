@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Signalement;
+use App\Entity\TiersInvitation;
 use App\Form\Type\PhoneType;
 use App\Validator\TelephoneFormat;
 use Symfony\Component\Form\AbstractType;
@@ -16,22 +16,22 @@ class UsagerCoordonneesTiersType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nomDeclarant', TextType::class, [
+            ->add('lastname', TextType::class, [
                 'label' => 'Nom de famille',
                 'required' => false,
                 'attr' => ['maxlength' => 50],
             ])
-            ->add('prenomDeclarant', TextType::class, [
+            ->add('firstname', TextType::class, [
                 'label' => 'Prénom',
                 'required' => false,
                 'attr' => ['maxlength' => 50],
             ])
-            ->add('mailDeclarant', TextType::class, [
+            ->add('email', TextType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
             ])
-            ->add('telDeclarant', PhoneType::class, [
+            ->add('telephone', PhoneType::class, [
                 'label' => 'Numéro de téléphone (facultatif)',
                 'required' => false,
                 'constraints' => [
@@ -52,8 +52,7 @@ class UsagerCoordonneesTiersType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'validation_groups' => ['fo_suivi_usager_tiers'],
-            'data_class' => Signalement::class,
+            'data_class' => TiersInvitation::class,
             'extended' => false,
         ]);
     }
