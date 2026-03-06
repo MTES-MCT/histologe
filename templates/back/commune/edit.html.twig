@@ -61,10 +61,10 @@
                     </p>
                 </div>
             {% endif %}
-            {% if countSignalements > 0 %}
+            {% if countSignalementsWithCommune > 0 %}
                 <div class="fr-alert fr-alert--warning">
                     <p>
-                        Il y a {{ countSignalements }} signalement(s) associé(s) à cette commune (Code INSEE {{ commune.codeInsee }}).
+                        Il y a {{ countSignalementsWithCommune }} signalement(s) associé(s) à cette commune (Code INSEE {{ commune.codeInsee }}).
                         <br>
                         En modifiant le nom de la commune il sera aussi mis à jour dans les signalements associés.
                     </p>
@@ -76,12 +76,35 @@
                     </p>
                 </div>
             {% endif %}
-            {% if countSignalementsWithInsee > 0 %}
+            {% if countSignalementsWithInsee > 0
+                or countWithAutoAffectationRulesWithInseeToInclude > 0
+                or countWithAutoAffectationRulesWithInseeToExclude > 0
+                or countWithPartenairesWithInsee > 0
+                or countWithTerritoriesWithInsee > 0
+                %}
                 <div class="fr-alert fr-alert--warning fr-mt-2v">
                     <p>
-                        Attention, il y a {{ countSignalementsWithInsee }} signalement(s) avec le code INSEE actuel ({{ commune.codeInsee }}).
-                        <br>
-                        En modifiant le code INSEE de la commune, il sera aussi mis à jour dans les signalements associés.
+                        Attention : pour le code INSEE actuel de la commune ({{ commune.codeInsee }}), il y a :
+                    </p>
+                    <ul class="fr-mt-2v">
+                        {% if countSignalementsWithInsee > 0 %}
+                            <li>{{ countSignalementsWithInsee }} signalement(s)</li>
+                        {% endif %}
+                        {% if countWithAutoAffectationRulesWithInseeToInclude > 0 %}
+                            <li>{{ countWithAutoAffectationRulesWithInseeToInclude }} règle(s) d'auto-affectation avec ce code INSEE dans les critères d'inclusion</li>
+                        {% endif %}
+                        {% if countWithAutoAffectationRulesWithInseeToExclude > 0 %}
+                            <li>{{ countWithAutoAffectationRulesWithInseeToExclude }} règle(s) d'auto-affectation avec ce code INSEE dans les critères d'exclusion</li>
+                        {% endif %}
+                        {% if countWithPartenairesWithInsee > 0 %}
+                            <li>{{ countWithPartenairesWithInsee }} partenaire(s) avec ce code INSEE dans les critères de localisation</li>
+                        {% endif %}
+                        {% if countWithTerritoriesWithInsee > 0 %}
+                            <li>{{ countWithTerritoriesWithInsee }} territoire(s) avec ce code INSEE dans les critères de localisation</li>
+                        {% endif %}
+                    </ul>
+                    <p class="fr-mt-2v">
+                        En modifiant le code INSEE de la commune, il sera aussi mis à jour dans les données associées.
                     </p>
                 </div>
             {% endif %}

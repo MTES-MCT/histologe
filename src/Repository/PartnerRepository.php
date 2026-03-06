@@ -413,4 +413,19 @@ class PartnerRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findWithInsee(string $insee, ?Territory $territory = null): array
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->andWhere('p.insee LIKE :insee')
+            ->setParameter('insee', '%'.$insee.'%');
+        if ($territory) {
+            $qb->andWhere('p.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+
+        return $qb->indexBy('p', 'p.id')
+            ->getQuery()
+            ->getResult();
+    }
 }
