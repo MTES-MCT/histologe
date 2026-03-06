@@ -61,7 +61,7 @@ class SignalementSearchQuery
         private readonly ?string $allocataire = null,
         #[Assert\Choice(['oui', 'non', 'non_renseigne'], message: 'Enfants de moins de 6 ans invalide')]
         private readonly ?string $enfantsM6 = null,
-        #[Assert\Choice(['attente_relogement', 'bail_en_cours', 'preavis_de_depart', 'logement_vacant'], message: 'Situation invalide')]
+        #[Assert\Choice(['attente_relogement', 'bail_en_cours', 'preavis_de_depart', 'logement_vacant', 'bailleur_occupant'], message: 'Situation invalide')]
         private readonly ?string $situation = null,
         #[Assert\Choice([
             'non_decence_energetique',
