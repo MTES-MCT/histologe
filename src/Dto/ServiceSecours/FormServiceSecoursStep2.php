@@ -24,6 +24,7 @@ class FormServiceSecoursStep2
     #[Assert\Length(max: 255, groups: ['step2'])]
     public ?string $adresseAutreOccupant = null;
 
+    #[Assert\NotBlank(groups: ['step2'])]
     public ?string $isLogementSocial = null;
 
     #[Assert\NotBlank(groups: ['step2'])]
