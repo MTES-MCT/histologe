@@ -42,8 +42,15 @@
                     </div>
                 {% endif %}
 
-                {{ form_start(form) }}
-                {{ form_errors(form) }}
+                {{ form_start(form, {'attr': {'id': 'fo-form-service-secours'}}) }}
+                {# Afficher uniquement les erreurs globales du formulaire, pas celles des champs individuels #}
+                {% for error in form.vars.errors %}
+                    {% if error.origin is same as(form) %}
+                    <div class="fr-alert fr-alert--error fr-mb-2w">
+                        <p>{{ error.message }}</p>
+                    </div>
+                    {% endif %}
+                {% endfor %}
 
                 {% if current_step == 'step1' %}
                     {{ form_row(form.step1.matriculeDeclarant) }}
@@ -52,12 +59,32 @@
                     {{ form_row(form.step1.origineMission) }}
                     {{ form_row(form.step1.ordreMission) }}
                 {% elseif current_step == 'step2' %}
-                    {{ form_row(form.step2.adresseComplete) }}
+                    {{ form_row(form.step2.adresseCompleteOccupant) }}
+                    <div id="fo-form-service-secours-adresse">
+                        <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
+                        </div>
+                    </div>
+                    <div class="fr-my-2w">
+                        <button type="button" class="fr-link fr-link--icon-left fr-icon-edit-line manual-address-switcher">Saisir une adresse manuellement</button>
+                    </div>
+				    <div class="fr-hidden fr-mb-2w manual-address-container">
+                        {{ form_row(form.step2.adresseOccupant) }}
+                        {{ form_row(form.step2.cpOccupant) }}
+                        {{ form_row(form.step2.villeOccupant) }}
+                        {{ form_row(form.step2.inseeOccupant) }}
+                    </div>
                     {{ form_row(form.step2.adresseAutreOccupant) }}
-                    {{ form_row(form.step2.isLogementSocial) }}
-                    {{ form_row(form.step2.natureLogement) }}
-                    {{ form_row(form.step2.typeEtageLogement) }}
-                    {{ form_row(form.step2.etageOccupant) }}
+					{{ form_row(form.step2.isLogementSocial, {display_mode: 'block'}) }}
+                    {{ form_row(form.step2.natureLogement, {display_mode: 'block'}) }}
+                    <div class="fr-hidden nature-logement-autre-container fr-input-group">
+                        {{ form_row(form.step2.natureLogementAutre) }}
+                    </div>
+                    <div class="fr-hidden type-etage-logement-appartement-container fr-input-group">
+                        {{ form_row(form.step2.typeEtageLogement, {display_mode: 'block'}) }}
+                        <div class="fr-hidden etage-occupant-container fr-input-group fr-pl-4w">
+                            {{ form_row(form.step2.etageOccupant) }}
+                        </div>
+                    </div>
                     {{ form_row(form.step2.nbPiecesLogement) }}
                     {{ form_row(form.step2.superficie) }}
                 {% elseif current_step == 'step3' %}
@@ -86,23 +113,17 @@
                     {{form_row(form.step6.hidden)}}
                 {% endif %}
 
-                <div class="fr-grid-row fr-grid-row--center">
-                    {% if form.navigator.previous is defined %}
-                        <div class="fr-col">
-                            {{ form_row(form.navigator.previous) }}
-                        </div>
+                <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline fr-btns-group--icon-left">
+                    {% if form.navigator.finish is defined %}
+                        <li>{{ form_row(form.navigator.finish) }}</li>
                     {% endif %}
                     {% if form.navigator.next is defined %}
-                        <div class="fr-col fr-text--right">
-                            {{ form_row(form.navigator.next) }}
-                        </div>
+                        <li>{{ form_row(form.navigator.next) }}</li>
                     {% endif %}
-                    {% if form.navigator.finish is defined %}
-                        <div class="fr-col fr-text--right">
-                            {{ form_row(form.navigator.finish) }}
-                        </div>
+                    {% if form.navigator.previous is defined %}
+                        <li>{{ form_row(form.navigator.previous) }}</li>
                     {% endif %}
-                </div>
+                </ul>
 
                 {{ form_end(form) }}
 
