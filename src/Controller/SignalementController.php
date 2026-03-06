@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Dto\DemandeLienSignalement;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
@@ -41,6 +42,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\MessageHelper;
+use App\Service\NotificationAndMailSender;
 use App\Service\Security\CguTiersChecker;
 use App\Service\Security\FileScanner;
 use App\Service\Signalement\AutoAssigner;
@@ -745,6 +747,7 @@ class SignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         SignalementManager $signalementManager,
         SuiviManager $suiviManager,
+        NotificationAndMailSender $notificationAndMailSender,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
@@ -771,18 +774,22 @@ class SignalementController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $signalement->setIsUsagerAbandonProcedure(true);
+            /** @var MotifClotureUsager $motif */
+            $motif = $form->get('reason')->getData();
+            $signalement->setMotifClotureUsager($motif);
 
             if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
                 $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
                 $category = SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER;
                 $description = $user->getNomComplet().' a clôturé son dossier en démarche accélérée pour le motif suivant :
-                    '.$form->get('reason')->getData().\PHP_EOL
+                    '.$motif->label().\PHP_EOL
                     .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
+                $notificationAndMailSender->sendUsagerCloseInjonctionToBailleur($signalement, $motif->label());
             } else {
                 $category = SuiviCategory::DEMANDE_ABANDON_PROCEDURE;
                 $description = $user->getNomComplet().' souhaite fermer son dossier sur '
                     .$this->getParameter('platform_name')
-                    .' pour le motif suivant : '.$form->get('reason')->getData().\PHP_EOL
+                    .' pour le motif suivant : '.$motif->label().\PHP_EOL
                     .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
             }
 

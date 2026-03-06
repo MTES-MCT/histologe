@@ -12,6 +12,10 @@
     {% endif %}
     {% if signalement.referenceInjonction and signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
         <br>
-        Le dossier existait auparavant en démarche accélérée sous la référence #{{ signalement.referenceInjonction }}.
+        {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED %}
+            Le dossier existait auparavant en démarche accélérée et a été clôturé par l'usager.
+        {% else %}
+            Le dossier existait auparavant en démarche accélérée sous la référence #{{ signalement.referenceInjonction }}.
+        {% endif %}
     {% endif %}
 </div>

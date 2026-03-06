@@ -85,4 +85,13 @@ enum SignalementStatus: string
             self::INJONCTION_CLOSED->value,
         ];
     }
+
+    /** @return array<SignalementStatus> */
+    public static function injonctionStatuses(): array
+    {
+        return [
+            self::INJONCTION_BAILLEUR,
+            self::INJONCTION_CLOSED,
+        ];
+    }
 }

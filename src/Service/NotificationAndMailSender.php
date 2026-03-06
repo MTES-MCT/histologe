@@ -78,6 +78,26 @@ class NotificationAndMailSender
         }
     }
 
+    public function sendUsagerCloseInjonctionToBailleur(Signalement $signalement, ?string $motifCloture = null): void
+    {
+        $mailerType = NotificationMailerType::TYPE_USAGER_CLOSE_INJONCTION_TO_BAILLEUR;
+        $this->signalement = $signalement;
+        $mailProprio = $signalement->getMailProprio();
+
+        if ($mailProprio) {
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: $mailerType,
+                    to: $mailProprio,
+                    territory: $this->signalement->getTerritory(),
+                    signalement: $this->signalement,
+                    isReminder: true,
+                    params: ['motif_cloture' => $motifCloture]
+                )
+            );
+        }
+    }
+
     public function sendNewAffectation(Affectation $affectation): void
     {
         $mailerType = NotificationMailerType::TYPE_AFFECTATION_NEW;

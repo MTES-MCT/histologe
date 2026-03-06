@@ -99,6 +99,20 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->assertEmailHasHeader($mail, 'templateId', '253');
     }
 
+    public function testSendUsagerCloseInjonctionToBailleur(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+        $this->notificationAndMailSender->sendUsagerCloseInjonctionToBailleur($signalement);
+
+        $this->assertEmailCount(1);
+        /** @var NotificationEmail $mail */
+        $mail = $this->getMailerMessages()[0];
+        $this->assertEmailSubjectContains($mail, 'Votre locataire a mis fin à la procédure concernant votre logement');
+        $this->assertEmailAddressContains($mail, 'to', $signalement->getMailProprio());
+        $this->assertEmailHasHeader($mail, 'templateId', '296');
+    }
+
     public function testSendNewAffectation(): void
     {
         /** @var Signalement $signalement */

@@ -10,6 +10,7 @@ use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
@@ -422,6 +423,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(type: 'string', enumType: MotifCloture::class, nullable: true)]
     private ?MotifCloture $motifCloture = null;
+
+    #[ORM\Column(type: 'string', enumType: MotifClotureUsager::class, nullable: true)]
+    private ?MotifClotureUsager $motifClotureUsager = null;
 
     #[ORM\Column(type: 'string', enumType: MotifRefus::class, nullable: true)]
     private ?MotifRefus $motifRefus = null;
@@ -1431,7 +1435,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getReference(): ?string
     {
-        if (SignalementStatus::INJONCTION_BAILLEUR === $this->getStatut()) {
+        if (in_array($this->getStatut(), SignalementStatus::injonctionStatuses())) {
             return $this->getReferenceInjonction();
         }
 
@@ -2071,6 +2075,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setMotifCloture(?MotifCloture $motifCloture): static
     {
         $this->motifCloture = $motifCloture;
+
+        return $this;
+    }
+
+    public function getMotifClotureUsager(): ?MotifClotureUsager
+    {
+        return $this->motifClotureUsager;
+    }
+
+    public function setMotifClotureUsager(?MotifClotureUsager $motifClotureUsager): static
+    {
+        $this->motifClotureUsager = $motifClotureUsager;
 
         return $this;
     }

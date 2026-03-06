@@ -36,4 +36,17 @@ class CourrierBailleurGenerator
 
         return $domPdf->output();
     }
+
+    public function generateInjonctionClosed(Signalement $signalement): string
+    {
+        $content = $this->twig->render('back/signalement-injonction/courrier-bailleur-injonction-closed.html.twig', [
+            'signalement' => $signalement,
+        ]);
+
+        $domPdf = new Dompdf();
+        $domPdf->loadHtml($content);
+        $domPdf->render();
+
+        return $domPdf->output();
+    }
 }
