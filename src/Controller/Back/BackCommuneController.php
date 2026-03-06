@@ -97,7 +97,10 @@ class BackCommuneController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Avant des propager les modifications, on s'assure que la correspondance dans la BAN existe
             $newPoiCommune = $addressService->getMunicipalityByCityCode($commune->getNom(), $commune->getCodeInsee());
-            if (empty($newPoiCommune->getNames()) || empty($newPoiCommune->getCityCodes())) {
+            // Browse commune names and city codes from BAN response to find an exact match with the commune name and code INSEE
+            $hasCorrespondingCommuneName = !empty($newPoiCommune) ? in_array($commune->getNom(), $newPoiCommune->getNames(), true) : false;
+            $hasCorrespondingInseeCode = !empty($newPoiCommune) ? in_array($commune->getCodeInsee(), $newPoiCommune->getCityCodes(), true) : false;
+            if (!$hasCorrespondingCommuneName || !$hasCorrespondingInseeCode) {
                 $this->addFlash('error', ['title' => 'Erreur de validation', 'message' => 'La correspondance entre le nom et le code INSEE de la commune n\'existe pas dans la Base Adresse Nationale. Veuillez vérifier les informations saisies.']);
 
                 return $this->redirectToRoute('back_commune_edit', ['commune' => $commune->getId()]);
