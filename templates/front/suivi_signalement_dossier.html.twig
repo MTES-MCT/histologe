@@ -538,14 +538,26 @@
 			</div>
 
 			<div class="signalement-group-data-card">
-				<h3 class="title-blue-france fr-h5">Situation du foyer</h3>
+				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
+					<h3 class="title-blue-france fr-h5">Situation du foyer</h3>
+					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+						<a href="{{ path('front_suivi_signalement_complete_situation_foyer', {'code': signalement.codeSuivi}) }}" 
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
+							Compléter les informations
+						</a>
+					{% endif %}
+				</div>
+				<div class="title-separator">Allocations</div>
 				<ul>
-					{% if signalement.isLogementSocial %}
-						<li>Logement social : Oui</li>
-					{% endif %}
-					{% if signalement.isRelogement is same as true %}
-						<li>Demande de relogement : Oui</li>
-					{% endif %}
+					<li>
+						Logement social : {% if signalement.isLogementSocial is same as true %}
+							Oui
+						{% elseif signalement.isLogementSocial is same as false %}
+							Non
+						{% else %}
+							Ne sait pas
+						{% endif %}
+					</li>
 					{% if signalement.isAllocataire in [null, ''] %}
 					{% elseif signalement.isAllocataire in ['oui', '1'] %}
 						<li>Allocataire : Oui</li>
@@ -562,30 +574,17 @@
 					{% if signalement.numAllocataire %}
 						<li>N° allocataire : {{ signalement.numAllocataire }}</li>
 					{% endif %}
+					{% if signalement.informationComplementaire %}
+						{% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsTypeAllocation %}
+							<li>Type d'allocation :
+								{{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsTypeAllocation }}
+							</li>
+						{% endif %}
+					{% endif %}
 					{% if signalement.situationFoyer %}
 						{% if signalement.situationFoyer.logementSocialMontantAllocation %}
 							<li>Montant allocation :
 								{{ signalement.situationFoyer.logementSocialMontantAllocation }} €
-							</li>
-						{% endif %}
-						{% if signalement.situationFoyer.travailleurSocialQuitteLogement(false) %}
-							<li>Souhaite quitter le logement :
-								{{signalement.situationFoyer.travailleurSocialQuitteLogement(false)|capitalize}}
-							</li>
-						{% endif %}
-						{% if signalement.situationFoyer.travailleurSocialPreavisDepart(false) %}
-							<li>Préavis de départ :
-								{{signalement.situationFoyer.travailleurSocialPreavisDepart(false)|capitalize}}
-							</li>
-						{% endif %}
-						{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) %}
-							<li>Accompagnement par un ou une travailleuse sociale :
-								{{signalement.situationFoyer.travailleurSocialAccompagnement(false)|capitalize}}
-							</li>
-						{% endif %}
-						{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) and signalement.situationFoyer.travailleurSocialAccompagnementNomStructure %}
-							<li>Nom de la structure d'accompagnement :
-								{{ signalement.situationFoyer.travailleurSocialAccompagnementNomStructure }}
 							</li>
 						{% endif %}
 					{% endif %}
@@ -606,9 +605,44 @@
 							</li>
 						{% endif %}
 					{% endif %}
-					{% if signalement.informationProcedure %}
+				</ul>
+				<div class="title-separator">Accompagnement</div>
+				<ul>
+					<li>
+						Demande de relogement : {% if signalement.isRelogement is same as true %}
+							Oui
+						{% elseif signalement.isRelogement is same as false %}
+							Non
+						{% else %}
+							Ne sait pas
+						{% endif %}
+					</li>
+					
+					{% if signalement.situationFoyer %}
+						{% if signalement.situationFoyer.travailleurSocialQuitteLogement(false) %}
+							<li>Souhaite quitter le logement :
+								{{signalement.situationFoyer.travailleurSocialQuitteLogement(false)|capitalize}}
+							</li>
+						{% endif %}
+						{% if signalement.situationFoyer.travailleurSocialPreavisDepart(false) %}
+							<li>Préavis de départ :
+								{{signalement.situationFoyer.travailleurSocialPreavisDepart(false)|capitalize}}
+							</li>
+						{% endif %}
+						{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) %}
+							<li>Accompagnement par un ou une travailleuse sociale :
+								{{signalement.situationFoyer.travailleurSocialAccompagnement(false)|capitalize}}
+							</li>
+						{% endif %}
+						{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) is same as 'oui' and signalement.situationFoyer.travailleurSocialAccompagnementNomStructure %}
+							<li>Nom de la structure d'accompagnement :
+								{{ signalement.situationFoyer.travailleurSocialAccompagnementNomStructure }}
+							</li>
+						{% endif %}
+					{% endif %}
+					{% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureDepartApresTravaux(true) is not same as null %}
 						<li>
-							Si des travaux sont faits, voulez-vous rester dans le logement ? 
+							Si des travaux sont faits, est-ce que le foyer souhaite rester dans le logement ? 
 							{{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)|capitalize}}
 						</li>
 					{% endif %}

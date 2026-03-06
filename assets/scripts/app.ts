@@ -17,5 +17,6 @@ import './vanilla/controllers/activate_account/activate_account.js';
 import './vanilla/controllers/front_demande_lien_signalement/front_demande_lien_signalement.js';
 import './vanilla/controllers/front_suivi_signalement/front_suivi_signalement.js';
 import './vanilla/controllers/front_suivi_signalement/front_suivi_signalement_message.js';
+import './vanilla/controllers/front_suivi_signalement/front_suivi_signalement_editor.js';
 import './vanilla/controllers/front_dossier_bailleur/front_dossier_bailleur.js';
 import './vanilla/controllers/front_service_secours/front_service_secours_install.js';
