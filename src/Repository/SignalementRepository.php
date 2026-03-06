@@ -2444,7 +2444,7 @@ class SignalementRepository extends ServiceEntityRepository
     ): int {
         $qb = $this->createQueryBuilder('s')
             ->where('s.statut = :statut')
-            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR); // TODO : ajouter INJONCTION_CLOSED ?
+            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR);
 
         $qb->select('COUNT(s.id)');
 

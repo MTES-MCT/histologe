@@ -1,21 +1,21 @@
 <div style="font-family: Arial, sans-serif; font-size: 14px;">
     {% include 'back/signalement-injonction/_courrier-bailleur-header.html.twig' %}
-    <div style="font-weight: bold;">
+    <p style="font-weight: bold;">
         Objet : Votre locataire a mis fin à la procédure concernant votre logement
-    </div>
+    </p>
     <br><br>
     Madame, Monsieur,
     <br><br>
 
-    <p style="margin-bottom: 16px;">Votre locataire {{ signalement.prenomOccupant }} {{ signalement.nomOccupant }} a mis fin à la procédure concernant votre logement situé {{ signalement.addressCompleteOccupant }} </strong></p>
+    <p style="margin-bottom: 16px;">Votre locataire {{ signalement.prenomOccupant }} {{ signalement.nomOccupant }} a mis fin à la procédure concernant votre logement situé {{ signalement.addressCompleteOccupant }}</p>
     {% if signalement.motifClotureUsager is not empty %}
         <p style="margin-bottom: 16px;">Motif de clôture indiqué par votre locataire : {{ signalement.motifClotureUsager.label }}</p>
     {% endif %}
     <br>
     <p>Nous restons à votre disposition pour tout renseignement complémentaire.</p>
     <br><br>
-    <div style="text-align: right;">
+    <p style="text-align: right;">
         L’équipe Signal Logement
-    </div>
+    </p>
 </div>
 
