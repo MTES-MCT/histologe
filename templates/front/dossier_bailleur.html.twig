@@ -19,7 +19,7 @@
 			<div class="fr-col-12 fr-col-md-12 fr-background-alt--blue-france">
 				<p>Votre locataire a cloturé sa démarche pour le motif suivant : {{ signalement.motifClotureUsager.label }}.</p>	
 			</div>
-		{% else if suiviReponse is empty %}
+		{% elseif suiviReponse is empty %}
 			<div class="fr-col-12 fr-col-md-12 fr-background-alt--blue-france">
 				<p>Votre locataire souhaite tenter une dernière démarche amiable avant le déclenchement des contrôles et procédures légales. </p>
 				{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
