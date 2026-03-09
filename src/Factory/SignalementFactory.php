@@ -12,12 +12,14 @@ use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\ServiceSecoursRoute;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\Signalement\ZipcodeProvider;
 
 class SignalementFactory
 {
     public function __construct(
-        private ZipcodeProvider $zipcodeProvider,
+        private readonly ZipcodeProvider $zipcodeProvider,
+        private readonly SignalementAddressUpdater $signalementAddressUpdater,
     ) {
     }
 
@@ -47,9 +49,14 @@ class SignalementFactory
         $signalement->setAdresseOccupant($formServiceSecours->step2->adresseOccupant)
             ->setCpOccupant($formServiceSecours->step2->cpOccupant)
             ->setVilleOccupant($formServiceSecours->step2->villeOccupant)
-            ->setInseeOccupant($formServiceSecours->step2->inseeOccupant)
             ->setAdresseAutreOccupant($formServiceSecours->step2->adresseAutreOccupant)
             ->setNatureLogement($formServiceSecours->step2->natureLogement);
+
+        if (empty($formServiceSecours->step2->inseeOccupant)) {
+            $signalement->setManualAddressOccupant(true);
+        } else {
+            $signalement->setInseeOccupant($formServiceSecours->step2->inseeOccupant);
+        }
 
         switch ($formServiceSecours->step2->isLogementSocial) {
             case 'oui':
@@ -58,24 +65,14 @@ class SignalementFactory
             case 'non':
                 $signalement->setIsLogementSocial(false);
                 break;
-            case 'nsp':
-                $signalement->setIsLogementSocial(null);
-                break;
+                // case 'nsp' si null, which is the default value of the entity
         }
 
-        // Déterminer le territoire : priorité au code INSEE, sinon utiliser le code postal
-        $territory = null;
-        if (!empty($formServiceSecours->step2->inseeOccupant)) {
-            $territory = $this->zipcodeProvider->getTerritoryByInseeCode($formServiceSecours->step2->inseeOccupant);
-        }
-        if (!$territory && !empty($formServiceSecours->step2->cpOccupant)) {
-            $territory = $this->zipcodeProvider->getTerritoryByPostalCode($formServiceSecours->step2->cpOccupant);
-        }
-        $signalement->setTerritory($territory);
+        $this->signalementAddressUpdater->updateAddressOccupantFromBanData(signalement: $signalement);
 
-        if (empty($formServiceSecours->step2->inseeOccupant)) {
-            $signalement->setManualAddressOccupant(true);
-        }
+        $signalement->setTerritory(
+            territory: $this->zipcodeProvider->getTerritoryByInseeCode($signalement->getInseeOccupant())
+        );
 
         if ('appartement' === $signalement->getNatureLogement()) {
             /** @var EtageType $appartementEtage */
