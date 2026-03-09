@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Form\Type\TerritoryChoiceType;
 use App\Service\ListFilters\SearchSignalementInjonction;
@@ -43,6 +44,16 @@ class SearchSignalementInjonctionType extends AbstractType
             'required' => false,
             'placeholder' => 'Tous',
             'label' => 'Réponse bailleur',
+        ]);
+
+        $builder->add('statutSignalement', ChoiceType::class, [
+            'choices' => [
+                'en cours' => SignalementStatus::INJONCTION_BAILLEUR->value,
+                'fermée' => SignalementStatus::INJONCTION_CLOSED->value,
+            ],
+            'required' => false,
+            'placeholder' => 'Tous',
+            'label' => 'Statut de la démarche',
         ]);
 
         $builder->add('orderType', ChoiceType::class, [

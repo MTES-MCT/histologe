@@ -1,11 +1,11 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% block title %}Signalements en cours d'injonction{% endblock %}
+{% block title %}Signalements en démarche accélérée{% endblock %}
 
 {% block content %}
     <section class="fr-pt-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
-            'level2Title': 'Liste des signalements en cours d\'injonction',
+            'level2Title': 'Liste des signalements en démarche accélérée',
             'level2Link': '',
             'level2Label': ''
         } %}
@@ -28,7 +28,7 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--left">
-                    <h1 class="fr-mb-0">Signalements en cours d'injonction</h1>
+                    <h1 class="fr-mb-0">Signalements en démarche accélérée</h1>
                 </div>
             </div>
         </header>
@@ -50,6 +50,9 @@
             {% endif %}
             <div class="fr-col-12 fr-col-lg-4">
                 {{ form_row(form.reponseBailleur) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-4">
+                {{ form_row(form.statutSignalement) }}
             </div>
             <div class="fr-col-12 fr-col-lg-4">
                 <a href="{{ path('back_injonction_signalement_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
@@ -84,6 +87,7 @@
             <th scope="col">Nom de l'occupant</th>
             <th scope="col">Nom du bailleur</th>
             <th scope="col">Réponse bailleur</th>
+            <th scope="col">Statut de la démarche</th>
             <th scope="col">Affectations acceptées</th>
             <th scope="col">Actions</th>
         {% endset %}
@@ -101,6 +105,14 @@
                         {% set classeBadgeReponseBailleur = 'fr-badge--success' %}
                     {% endif %}
                 {% endif %}
+
+                {% set classeStatut = 'fr-badge--info' %}
+                {% set labelStatut = 'En cours' %}
+                {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED %}
+                    {% set labelStatut = 'Fermée' %}
+                    {% set classeStatut = 'fr-badge--success' %}
+                {% endif %}
+
                 <tr>
                     {% if is_granted('ROLE_ADMIN') %}
                         <td>{{ signalement.territory ? signalement.territory.zipAndName : 'aucun' }}</td>
@@ -111,12 +123,17 @@
                     <td>{{ signalement.prenomOccupant ~ ' ' ~ signalement.nomOccupant }}</td>
                     <td>{{ signalement.getDisplayedNomProprio() }}</td>
                     <td><span class="fr-badge {{ classeBadgeReponseBailleur }} fr-badge--no-icon fr-ws-nowrap ">{{ labelReponseBailleur }}</span></td>
+                    <td><span class="fr-badge {{ classeStatut }} fr-badge--no-icon fr-ws-nowrap ">{{ labelStatut }}</span></td>
                     <td>{{ signalement.getCountAffectationsByStatus(enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED) }} / {{ signalement.affectations|length }}</td>
-                    <td>
+                    <td class="fr-ws-nowrap">
                         <a href="{{ path('back_signalement_view', {uuid: signalement.uuid}) }}" class="fr-btn fr-fi-arrow-right-line fr-btn--sm fr-mb-1v" aria-label="Voir le signalement {{ signalement.reference }}" title="Voir le signalement {{ signalement.reference }}"></a>
                         {% if is_granted('SIGN_VIEW_INJONCTION_COURRIER', signalement) %}
-                            <a href="{{ path('back_injonction_signalement_courrier_bailleur', { uuid: signalement.uuid }) }}" class="fr-btn fr-icon-mail-line fr-btn--sm" target="_blank" rel="noopener"
+                            <a href="{{ path('back_injonction_signalement_courrier_bailleur', { uuid: signalement.uuid }) }}" class="fr-btn fr-icon-mail-line fr-btn--sm fr-mb-1v" target="_blank" rel="noopener"
                                 aria-label="Afficher le courrier (Ouvre une nouvelle fenêtre)" title="Afficher le courrier (Ouvre une nouvelle fenêtre)"></a>
+                            {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED %}
+                                <a href="{{ path('back_injonction_signalement_courrier_bailleur_injonction_closed', { uuid: signalement.uuid }) }}" class="fr-btn fr-icon-mail-close-line fr-btn--sm fr-mb-1v" target="_blank" rel="noopener"
+                                    aria-label="Afficher le courrier de fin de procédure (Ouvre une nouvelle fenêtre)" title="Afficher le courrier de fin de procédure (Ouvre une nouvelle fenêtre)"></a>
+                            {% endif %}
                         {% endif %}
                     </td>
                 </tr>

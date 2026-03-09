@@ -2431,8 +2431,8 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('referenceInjonction', $referenceInjonction)
             ->andWhere('s.loginBailleur = :loginBailleur')
             ->setParameter('loginBailleur', $loginBailleur)
-            ->andWhere('s.statut = :statutInjonction OR su.category IN (:injonctionCategories)')
-            ->setParameter('statutInjonction', SignalementStatus::INJONCTION_BAILLEUR)
+            ->andWhere('s.statut IN (:signalementStatusList) OR su.category IN (:injonctionCategories)')
+            ->setParameter('signalementStatusList', SignalementStatus::injonctionStatuses())
             ->setParameter('injonctionCategories', SuiviCategory::injonctionBailleurCategories())
             ->getQuery()
             ->getOneOrNullResult();
@@ -2472,8 +2472,8 @@ class SignalementRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('s')
             ->select('s, su')
             ->leftJoin('s.suivis', 'su')
-            ->where('s.statut = :statut')
-            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR);
+            ->where('s.statut IN (:signalementStatusList)')
+            ->setParameter('signalementStatusList', SignalementStatus::injonctionStatuses());
 
         if (!empty($searchSignalementInjonction->getTerritoire())) {
             $queryBuilder
@@ -2520,6 +2520,11 @@ class SignalementRepository extends ServiceEntityRepository
                 );
                 $queryBuilder->setParameter('aideCategory', SuiviCategory::tryFrom($searchSignalementInjonction->getReponseBailleur()));
             }
+        }
+
+        if (!empty($searchSignalementInjonction->getStatutSignalement())) {
+            $queryBuilder->andWhere('s.statut = :statutSignalement')
+                ->setParameter('statutSignalement', $searchSignalementInjonction->getStatutSignalement());
         }
 
         if (!empty($searchSignalementInjonction->getOrderType())) {

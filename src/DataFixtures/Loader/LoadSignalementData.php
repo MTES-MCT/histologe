@@ -5,6 +5,7 @@ namespace App\DataFixtures\Loader;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
@@ -448,8 +449,14 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 ->setMotifRefus(MotifRefus::tryFrom($row['motif_refus']));
         }
 
-        if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
+        if (in_array($signalement->getStatut(), SignalementStatus::injonctionStatuses())) {
             $signalement->setReferenceInjonction($this->referenceGenerator->generateReferenceInjonction());
+        }
+
+        if (SignalementStatus::INJONCTION_CLOSED->value === $row['statut']) {
+            $signalement
+                ->setMotifClotureUsager(MotifClotureUsager::tryFrom($row['motif_cloture_usager']))
+                ->setIsUsagerAbandonProcedure(true);
         }
 
         if (isset($row['created_by'])) {

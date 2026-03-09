@@ -16,6 +16,7 @@ class SearchSignalementInjonction
     private ?Territory $territoire = null;
     private ?string $orderType = null;
     private ?string $reponseBailleur = null;
+    private ?string $statutSignalement = null;
 
     public function __construct(User $user)
     {
@@ -48,6 +49,16 @@ class SearchSignalementInjonction
     public function setReponseBailleur(?string $reponseBailleur): void
     {
         $this->reponseBailleur = $reponseBailleur;
+    }
+
+    public function getStatutSignalement(): ?string
+    {
+        return $this->statutSignalement;
+    }
+
+    public function setStatutSignalement(?string $statutSignalement): void
+    {
+        $this->statutSignalement = $statutSignalement;
     }
 
     public function getOrderType(): ?string

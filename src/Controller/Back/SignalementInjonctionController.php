@@ -61,4 +61,20 @@ class SignalementInjonctionController extends AbstractController
 
         return $response;
     }
+
+    #[Route('/{uuid:signalement}/courrier-bailleur-fermeture', name: 'back_injonction_signalement_courrier_bailleur_injonction_closed', methods: ['GET'])]
+    public function courrierBailleurFermeture(
+        Signalement $signalement,
+        CourrierBailleurGenerator $courrierBailleurGenerator,
+    ): Response {
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW_INJONCTION_COURRIER, $signalement);
+
+        $pdfContent = $courrierBailleurGenerator->generateInjonctionClosed($signalement);
+
+        $response = new Response($pdfContent);
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'inline; filename="courrier-bailleur.pdf"');
+
+        return $response;
+    }
 }

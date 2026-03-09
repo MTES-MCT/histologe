@@ -2,8 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\MotifClotureUsager;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -13,18 +14,14 @@ class UsagerCancelProcedureType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('reason', ChoiceType::class, [
+            ->add('reason', EnumType::class, [
+                'class' => MotifClotureUsager::class,
                 'label' => 'Pour quelle raison voulez-vous arrêter la procédure ?',
-                'choices' => [
-                    'Le problème est résolu' => 'Le problème est résolu',
-                    'Changement de logement' => 'Changement de logement',
-                    'Accord avec le propriétaire' => 'Accord avec le propriétaire',
-                    'Autre' => 'Autre',
-                ],
                 'expanded' => true,
                 'multiple' => false,
                 'required' => false,
                 'placeholder' => false,
+                'choice_label' => fn (MotifClotureUsager $choice) => $choice->label(),
                 'constraints' => [
                     new Assert\NotBlank(
                         message: 'Veuillez choisir une raison.',
