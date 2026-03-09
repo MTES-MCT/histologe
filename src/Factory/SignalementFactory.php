@@ -136,7 +136,11 @@ class SignalementFactory
         $signalement->setAutreSituationVulnerabilite($formServiceSecours->step3->autreVulnerabilite);
 
         // data from step4
-        $signalement->setIsProprioAverti($formServiceSecours->step4->isBailleurAverti);
+        if ('oui' === $formServiceSecours->step4->isBailleurAverti) {
+            $signalement->setIsProprioAverti(true);
+        } elseif ('non' === $formServiceSecours->step4->isBailleurAverti) {
+            $signalement->setIsProprioAverti(false);
+        }
         $signalement->setDenominationProprio($formServiceSecours->step4->denominationProprio);
         if ($signalement->getDenominationProprio()) {
             $bailleur = $this->bailleurRepository->findOneBailleurBy(name: $signalement->getDenominationProprio(), territory: $signalement->getTerritory());

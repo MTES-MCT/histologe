@@ -22,9 +22,18 @@ class FormServiceSecoursStep3
     #[Assert\Length(max: 128, groups: ['step3'])]
     public ?string $telOccupant = null;
 
-    #[Assert\Type('integer', groups: ['step3'])]
+    #[Assert\Regex(
+        pattern: '/^\d+$/',
+        message: 'Merci de saisir un nombre entier.',
+        groups: ['step3']
+    )]
     public ?string $nbAdultesDansLogement = null;
 
+    #[Assert\Regex(
+        pattern: '/^\d+$/',
+        message: 'Merci de saisir un nombre entier.',
+        groups: ['step3']
+    )]
     #[Assert\Type('integer', groups: ['step3'])]
     public ?string $nbEnfantsDansLogement = null;
 

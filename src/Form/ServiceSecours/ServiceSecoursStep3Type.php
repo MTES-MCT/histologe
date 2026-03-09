@@ -32,7 +32,11 @@ class ServiceSecoursStep3Type extends AbstractType
         ]);
         $builder->add('nomOccupant', null, ['label' => 'Nom']);
         $builder->add('prenomOccupant', null, ['label' => 'Prénom']);
-        $builder->add('mailOccupant', null, ['label' => 'Adresse e-mail', 'help' => 'Format attendu : exemple@domaine.com']);
+        $builder->add('mailOccupant', TextType::class, [
+            'label' => 'Adresse e-mail',
+            'help' => 'Format attendu : exemple@domaine.com',
+            'required' => false,
+        ]);
         // TODO : importer js associé + icone
         $builder->add('telOccupant', PhoneType::class, [
             'label' => 'Téléphone',

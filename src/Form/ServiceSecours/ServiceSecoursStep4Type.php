@@ -9,6 +9,7 @@ use App\Validator\TelephoneFormat;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -29,9 +30,9 @@ class ServiceSecoursStep4Type extends AbstractType
             'placeholder' => false,
             'expanded' => true,
             'choices' => [
-                'Oui' => true,
-                'Non' => false,
-                'Indeterminé' => null,
+                'Oui' => 'oui',
+                'Non' => 'non',
+                'Indeterminé' => 'indetermine',
             ],
         ]);
 
@@ -40,7 +41,7 @@ class ServiceSecoursStep4Type extends AbstractType
             $rootData = $form->getRoot()->getData();
 
             if ($rootData instanceof FormServiceSecours) {
-                if (true === $rootData->step2->isLogementSocial) {
+                if ('oui' === $rootData->step2->isLogementSocial) {
                     $form->add('denominationProprio', null, [
                         'label' => 'Dénomination du bailleur',
                         'help' => 'Format attendu : Tappez le nom du bailleur et sélectionnez-le dans la liste.',
@@ -65,7 +66,11 @@ class ServiceSecoursStep4Type extends AbstractType
         ]);
         $builder->add('denominationAgence', null, ['label' => 'Dénomination du syndic']);
         $builder->add('nomAgence', null, ['label' => 'Nom du ou de la représentante']);
-        $builder->add('mailAgence', null, ['label' => 'Adresse e-mail', 'help' => 'Format attendu : nom@domaine.fr']);
+        $builder->add('mailAgence', TextType::class, [
+            'label' => 'Adresse e-mail',
+            'help' => 'Format attendu : nom@domaine.fr',
+            'required' => false,
+        ]);
         $builder->add('telAgence', PhoneType::class, [
             'label' => 'Téléphone',
             'constraints' => [
