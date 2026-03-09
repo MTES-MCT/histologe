@@ -29,3 +29,6 @@ desordre_categorie:
     label: "Incurie"
   -
     label: "Propreté / entretien"
+  -
+    label: "Service Secours"
+    app_context: "service_secours"

@@ -1523,3 +1523,99 @@ desordre_precision:
     qualification: ['RSD', 'INSALUBRITE', 'MISE_EN_SECURITE_PERIL', 'SALETE']
     desordre_precision_slug: "desordres_logement_proprete_pieces_salle_de_bain"
     is_suroccupation: 0
+  -
+    desordre_critere_slug: "desordres_service_secours_logement_inadapte"
+    desordre_precision_slug: "desordres_service_secours_logement_inadapte_logement_exigu"
+    label: "Logement très exigu, bas de plafond (inférieur à 2,20m), sans ouvrant vers l'extérieur avec lumière naturelle insuffisante, etc."
+    coef: 0
+    is_danger: 0
+    is_suroccupation: 0
+    qualification: []
+  -
+    desordre_critere_slug: "desordres_service_secours_humidite_moisissures"
+    desordre_precision_slug: "desordres_service_secours_humidite_moisissures_fuites"
+    label: "Fuites ou infiltrations d’eau, tâches de moisissures, forte odeur d’humidité, etc."
+    coef: 0
+    is_danger: 0
+    is_suroccupation: 0
+    qualification: []
+  -
+    desordre_critere_slug: "desordres_service_secours_chauffage_dangereux"
+    desordre_precision_slug: "desordres_service_secours_chauffage_dangereux_logement_calfeutre"
+    label: "Logement calfeutré, sans ventilation, appareil ou conduit en mauvais état, toute situation menant à un risque d’intoxication au monoxyde de carbone."
+    coef: 0
+    is_danger: 0
+    is_suroccupation: 0
+    qualification: []
+  -
+    desordre_critere_slug: "desordres_service_secours_risque_electrique"
+    desordre_precision_slug: "desordres_service_secours_risque_electrique_absence_compteur"
+    label: "Absence de compteur individuel, risques de contact direct avec des fils dénudés, traces d’échauffement, etc."
+    coef: 0
+    is_danger: 0
+    is_suroccupation: 0
+    qualification: []
+  -
+    desordre_critere_slug: "desordres_service_secours_salete_accumulation_dechets"
+    desordre_precision_slug: "desordres_service_secours_salete_accumulation_dechets_logement_sale"
+    label: "Logement très sale, encombré de déchets, isolement social, refus d’accès au logement."
+    coef: 0
+    is_danger: 0
+    is_suroccupation: 0
+    qualification: []
+  -
+    desordre_critere_slug: "desordres_service_secours_mauvais_etat_batiment"
+    desordre_precision_slug: "desordres_service_secours_mauvais_etat_batiment_structure"
+    label: "Présence de fissures, plancher anormalement instable, risque de chute d’éléments (cheminée, tuiles, plafonds, escalier désolidarisé), etc."
+    coef: 0
+    is_danger: 0
+    is_suroccupation: 0
+    qualification: []
+  -
+    desordre_critere_slug: "desordres_service_secours_absence_confort"
+    desordre_precision_slug: "desordres_service_secours_absence_confort_salubrite"
+    label: "Chauffage absent ou insuffisant, ventilation non fonctionnelle, ouvrants en mauvais état, absence d’eau chaude, de cuisine avec évier, de WC, de salle d’eau, remontées d’odeur de canalisations, etc."
+    coef: 0
+    is_danger: 0
+    is_suroccupation: 0
+    qualification: []
+  -
+    desordre_critere_slug: "desordres_service_secours_securite_personnes"
+    desordre_precision_slug: "desordres_service_secours_securite_personnes_risque_chute"
+    label: "Escaliers dangereux, garde-corps (fenêtres, escaliers) instable ou absent, sol avec ressauts, etc."
+    coef: 0
+    is_danger: 0
+    is_suroccupation: 0
+    qualification: []
+  -
+    desordre_critere_slug: "desordres_service_secours_risque_saturnisme"
+    desordre_precision_slug: "desordres_service_secours_risque_saturnisme_personne_vulnerable"
+    label: "Peintures dégradées, présence d’enfant ou de femme enceinte dans un immeuble ancien"
+    coef: 0
+    is_danger: 0
+    is_suroccupation: 0
+    qualification: []
+  -
+    desordre_critere_slug: "desordres_service_secours_nuisibles"
+    desordre_precision_slug: "desordres_service_secours_nuisibles_infestations"
+    label: "Rats, souris, punaises de lit, cafards, etc."
+    coef: 0
+    is_danger: 0
+    is_suroccupation: 0
+    qualification: []
+  -
+    desordre_critere_slug: "desordres_service_secours_parties_communes_degradees"
+    desordre_precision_slug: "desordres_service_secours_parties_communes_degradees_precision"
+    label: null
+    coef: 0
+    is_danger: 0
+    is_suroccupation: 0
+    qualification: []
+  -
+    desordre_critere_slug: "desordres_service_secours_autre"
+    desordre_precision_slug: "desordres_service_secours_autre_precision"
+    label: null
+    coef: 0
+    is_danger: 0
+    is_suroccupation: 0
+    qualification: []
