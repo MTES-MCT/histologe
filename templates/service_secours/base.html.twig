@@ -12,8 +12,10 @@
     <link rel="manifest" href="{{ path('service_secours_webmanifest', {'slug': serviceSecoursRoute.slug, 'uuid': serviceSecoursRoute.uuid, 'domain': root_domain(app.request.host)}) }}">
 
     <link rel="stylesheet" href="{{ asset('build/dsfr/dsfr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-arrows/icons-arrows.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-design/icons-design.min.css') }}">
     <link rel="stylesheet" href={{ asset('build/app.css') }}>
-
+    
     {% block customscripts %}
         {{ encore_entry_script_tags('app') }}
         {{ encore_entry_link_tags('app') }}
