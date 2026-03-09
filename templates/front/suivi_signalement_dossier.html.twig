@@ -61,6 +61,14 @@
 					<div class="title-separator">Détails</div>
 					{{signalement.complementAdresseOccupant}}
 				{% endif %}
+
+				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					<div class="fr-mt-2v">
+						<a href="{{ path('front_suivi_signalement_complete_adresse_logement', {'code': signalement.codeSuivi}) }}" 
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
+							>Compléter les informations</a>
+					</div>
+				{% endif %}
 				
 				<div class="fr-mt-4w">
 					<div class="title-separator">Localisation du bâtiment</div>
