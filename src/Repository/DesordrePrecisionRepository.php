@@ -32,7 +32,7 @@ class DesordrePrecisionRepository extends ServiceEntityRepository
             ->setParameter('appContext', $appContext)
             ->leftJoin('dp.desordreCritere', 'dc')
             ->leftJoin('dc.desordrePrecisions', 'dps')
-            ->innerJoin('dc.desordreCategorie', 'dc')
+            ->innerJoin('dc.desordreCategorie', 'cat')
             ->getQuery()
             ->getOneOrNullResult()
         ;
