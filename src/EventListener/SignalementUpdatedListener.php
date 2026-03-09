@@ -36,6 +36,11 @@ class SignalementUpdatedListener
                 'adresseProprio' => 'Adresse',
                 'codePostalProprio' => 'Code postal',
                 'villeProprio' => 'Ville',
+                'isProprioAverti' => 'Le bailleur a-t-il été averti ?',
+                'informationProcedure.info_procedure_bail_moyen' => 'Moyen d\'information du bailleur',
+                'informationProcedure.info_procedure_bail_date' => 'Date d\'information du bailleur',
+                'informationProcedure.info_procedure_bail_reponse' => 'Réponse du bailleur',
+                'informationProcedure.info_procedure_bail_numero' => 'Numéro de réclamation fourni par le bailleur',
             ],
         ],
         self::EDIT_COORDONNEES_AGENCE => [
