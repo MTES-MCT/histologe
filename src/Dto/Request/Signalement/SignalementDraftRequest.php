@@ -1615,6 +1615,13 @@ class SignalementDraftRequest
 
     public function setInfoProcedureBailDate(?string $infoProcedureBailDate): self
     {
+        // Nettoyer silencieusement les valeurs qui ne matchent pas le format MM/YYYY
+        // Cela peut arriver si l'utilisateur navigue en arrière dans le formulaire
+        // avec une valeur invalide dans le store front
+        if (null !== $infoProcedureBailDate && !preg_match('/^(0[1-9]|1[0-2])\/(19|20)\d{2}$/', $infoProcedureBailDate)) {
+            $infoProcedureBailDate = null;
+        }
+
         $this->infoProcedureBailDate = $infoProcedureBailDate;
 
         return $this;
