@@ -137,7 +137,7 @@ class SignalementEditController extends AbstractController
             $formCoordonneesBailleur->isSubmitted()
             && $formCoordonneesBailleur->isValid()
         ) {
-            $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : null;
+            $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : new InformationProcedure();
 
             $isProprioAverti = $formCoordonneesBailleur->get('isProprioAverti')->getData();
             if ('nsp' === $isProprioAverti) {
@@ -147,7 +147,29 @@ class SignalementEditController extends AbstractController
             } else {
                 $signalement->setIsProprioAverti(false);
             }
-            $informationProcedure?->setInfoProcedureBailMoyen($formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData() ? $formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData()->value : null);
+            $informationProcedure->setInfoProcedureBailMoyen($formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData() ? $formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData()->value : null);
+
+            $infoProcedureBailDateFormData = $formCoordonneesBailleur->get('infoProcedureBailDate')->getData();
+            if ($infoProcedureBailDateFormData) {
+                try {
+                    $informationProcedure->setInfoProcedureBailDate($infoProcedureBailDateFormData);
+                    $infoProcedureBailDateFormDataFormat = \DateTimeImmutable::createFromFormat('m/Y', $infoProcedureBailDateFormData);
+                    $signalement->setProprioAvertiAt(!empty($infoProcedureBailDateFormDataFormat) ? $infoProcedureBailDateFormDataFormat : null);
+                } catch (\Exception $e) {
+                    // En cas d'erreur de parsing de la date, on ignore la valeur et on n'enregistre pas de date
+                    $informationProcedure->setInfoProcedureBailDate('');
+                    $signalement->setProprioAvertiAt(null);
+                }
+            } else {
+                $informationProcedure->setInfoProcedureBailDate('');
+                $signalement->setProprioAvertiAt(null);
+            }
+
+            $informationProcedure->setInfoProcedureBailReponse($formCoordonneesBailleur->get('infoProcedureBailReponse')->getData());
+
+            if ($signalement->getIsLogementSocial()) {
+                $informationProcedure->setInfoProcedureBailNumero($formCoordonneesBailleur->get('infoProcedureBailNumero')->getData());
+            }
 
             $signalement->setInformationProcedure($informationProcedure);
 

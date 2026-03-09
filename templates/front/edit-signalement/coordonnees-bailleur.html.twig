@@ -21,6 +21,8 @@
 			<h1 class="title-blue-france">Compléter les informations</h1>
 			<div class="fr-mb-3w">
 				Complétez votre dossier en remplissant les champs ci-dessous. Un signalement complet permet une meilleure prise en charge du dossier !
+				<br>
+				Ces informations sont facultatives.
 			</div>
 			{{ form_errors(formCoordonneesBailleur) }}				
 			<fieldset class="fr-fieldset">
@@ -79,6 +81,17 @@
 				<div class="fr-fieldset__element">
 					{{ form_row(formCoordonneesBailleur.infoProcedureBailMoyen) }}
 				</div>
+				<div class="fr-fieldset__element">
+					{{ form_row(formCoordonneesBailleur.infoProcedureBailDate) }}
+				</div>
+				<div class="fr-fieldset__element">
+					{{ form_row(formCoordonneesBailleur.infoProcedureBailReponse) }}
+				</div>
+				{% if formCoordonneesBailleur.infoProcedureBailNumero is defined %}
+					<div class="fr-fieldset__element">
+						{{ form_row(formCoordonneesBailleur.infoProcedureBailNumero) }}
+					</div>
+				{% endif %}
 			</fieldset>
 		</div>
 		<div class="fr-col-6">

@@ -36,6 +36,9 @@ class CoordonneesBailleurType extends AbstractType
         } else {
             $isProprioAverti = $signalement->getIsProprioAverti();
         }
+        $infoProcedureBailDate = $signalement->getProprioAvertiAt()
+            ? $signalement->getProprioAvertiAt()->format('m/Y')
+            : $signalement->getInformationProcedure()?->getInfoProcedureBailDate();
 
         if ($options['extended']) {
             $builder
@@ -126,11 +129,50 @@ class CoordonneesBailleurType extends AbstractType
                     'mapped' => false,
                     'data' => MoyenContact::tryFrom($signalement->getInformationProcedure()?->getInfoProcedureBailMoyen()),
                 ])
+                ->add('infoProcedureBailDate', TextType::class, [
+                    'label' => 'Date d\'avertissement du propriétaire',
+                    'help' => 'Format attendu : MM/YYYY',
+                    'required' => false,
+                    'mapped' => false,
+                    'data' => $infoProcedureBailDate,
+                    'constraints' => [
+                        new Assert\Regex([
+                            'pattern' => '/^(0[1-9]|1[0-2])\/\d{4}$/',
+                            'message' => 'Le format de la date doit être MM/YYYY.',
+                        ]),
+                    ],
+                ])
+                ->add('infoProcedureBailReponse', TextType::class, [
+                    'label' => 'Réponse du propriétaire',
+                    'help' => 'Format attendu : 255 caractères maximum',
+                    'required' => false,
+                    'mapped' => false,
+                    'data' => $signalement->getInformationProcedure()?->getInfoProcedureBailReponse(),
+                    'constraints' => [
+                        new Assert\Length([
+                            'max' => 255,
+                            'maxMessage' => 'La réponse du propriétaire ne peut pas dépasser {{ limit }} caractères.',
+                        ]),
+                    ],
+                ])
             ;
 
-        // signalement.informationProcedure.infoProcedureBailDate + proprioAvertiAt
-        // signalement.informationProcedure.infoProcedureBailReponse
-        // signalement.informationProcedure.infoProcedureBailNumero
+            if ($signalement->getIsLogementSocial()) {
+                $builder
+                    ->add('infoProcedureBailNumero', TextType::class, [
+                        'label' => 'Numéro de réclamation fourni par le bailleur',
+                        'help' => 'Format attendu : 30 caractères maximum',
+                        'required' => false,
+                        'mapped' => false,
+                        'data' => $signalement->getInformationProcedure()?->getInfoProcedureBailNumero(),
+                        'constraints' => [
+                            new Assert\Length([
+                                'max' => 30,
+                                'maxMessage' => 'Le numéro de réclamation ne peut pas dépasser {{ limit }} caractères.',
+                            ]),
+                        ],
+                    ]);
+            }
         } else {
             $builder
                 ->add('mailProprio', TextType::class, [
