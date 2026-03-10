@@ -218,9 +218,37 @@
 			</div>
 		</div>
 	</div>
-	<div class="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
-		{% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED %}
-			<div class="fr-col-12 fr-col-md-8">
+	<hr>
+	<div class="fr-grid-row fr-grid-row--gutters">		
+		<div class="fr-col-12 fr-col-md-6">
+			<h2 class="title-blue-france">La procédure en cours</h2>
+		
+			<div class="signalement-card fr-mb-3w">
+				<div class="fr-mb-1w">
+					Votre réponse
+					<br>
+					<span class="info">
+						{{suiviReponse ? suiviReponse.category.labelReponseBailleur : 'Aucune'}}
+					</span>
+				</div>
+				
+				<div class="fr-mb-1w">
+					{% if suiviReponse %}
+						Réponse donnée le
+						<br>
+						<span class="info">
+							{{ suiviReponse.createdAt|date('d/m/Y') }}
+						</span>
+					{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+						Réponse attendue d'ici le
+						<br>
+						<span class="info">
+							{{ dateLimit|date('d/m/Y') }}
+						</span>
+					{% endif %}
+				</div>
+			</div>
+			{% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED %}
 				<div class="fr-highlight">
 					<p>Bon à savoir : 
 						<ul>
@@ -245,9 +273,9 @@
 						</ul>
 					</p>
 				</div>
-			</div>
-		{% endif %}
-		<div class="fr-col-12 fr-col-md-8">
+			{% endif %}
+		</div>
+		<div class="fr-col-12 fr-col-md-6">
 			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}				
 				{% if suiviReponse %}
 					{% if suiviReponse.category is same as enum('App\\Entity\\Enum\\SuiviCategory').INJONCTION_BAILLEUR_REPONSE_NON %}
@@ -301,24 +329,22 @@
 						</div>
 
 						{% if form is not null %}
-						<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_coordonnees_bailleur_title">Coordonnées manquantes</h2>
+							<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_coordonnees_bailleur_title">Coordonnées manquantes</h2>
 							{{ form(form) }}
 						{% endif %}
-						{% if formStopProcedure is not null %}
-							<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_stop_procedure_bailleur_title">Arrêter la procédure</h2>
+
+						{% if suiviDemandeCloture is empty %}
+							<h2 class="title-blue-france fr-mt-5w fr-text--center" id="form_stop_procedure_bailleur_title">Demander l'arrêt de la procédure</h2>
 							<div class="fr-mt-3w">
-								<button type="button" id="stop-procedure-btn" class="fr-btn fr-btn--secondary"
+								<a class="fr-btn  fr-btn--secondary" href="{{ path('front_dossier_bailleur_cloture') }}"
 									data-matomo-clickable-event-category="Espace bailleur"
 									data-matomo-clickable-event-action="clickButton"
 									data-matomo-clickable-event-name="Arrêter la procédure"
-									>Arrêter la procédure</button>
-							</div>
-							<div id="stop-procedure-form-container" class="fr-hidden fr-mt-2w">
-								{{ form(formStopProcedure) }}
+									>Demander l'arrêt de la procédure</a>
 							</div>
 						{% endif %}
 					{% endif %}
-				{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+				{% else %}
 					<h2 class="title-blue-france fr-mb-1w" id="form_reponse_injonction_bailleur_title">Quelle réponse apportez-vous au locataire ?</h2>
 					    {{ form_start(form) }}
 						{{ form_errors(form) }}
@@ -353,7 +379,6 @@
 				<p class="fr-text--center"><strong>Le signalement est à présent clos.</strong></p>
 			{% endif %}
 		</div>
-
 	</div>
 </main>
 {% endblock %}
