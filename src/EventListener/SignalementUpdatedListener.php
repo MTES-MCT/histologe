@@ -16,6 +16,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 class SignalementUpdatedListener
 {
     public const string EDIT_ADRESSE_LOGEMENT = 'adresse_logement';
+    private const string DATE_FORMAT = 'd/m/Y';
     public const string EDIT_COORDONNEES_BAILLEUR = 'coordonnees_bailleur';
     public const string EDIT_COORDONNEES_AGENCE = 'coordonnees_agence';
     public const string EDIT_INFORMATIONS_ASSURANCE = 'informations_assurance';
@@ -158,10 +159,10 @@ class SignalementUpdatedListener
 
                     // Si c'est un champ de type DateTimeImmutable, on formate la date pour que ce soit plus lisible dans le suivi
                     if ($new instanceof \DateTimeImmutable) {
-                        $new = $new->format('d/m/Y');
+                        $new = $new->format(self::DATE_FORMAT);
                     }
                     if ($old instanceof \DateTimeImmutable) {
-                        $old = $old->format('d/m/Y');
+                        $old = $old->format(self::DATE_FORMAT);
                     }
 
                     if ($old === $new) {
@@ -229,7 +230,7 @@ class SignalementUpdatedListener
             return null;
         }
 
-        $dateFormatted = DateHelper::formatDateString($value, 'Y-m-d', 'd/m/Y');
+        $dateFormatted = DateHelper::formatDateString($value, 'Y-m-d', self::DATE_FORMAT);
         if (false !== $dateFormatted) {
             return $dateFormatted;
         }

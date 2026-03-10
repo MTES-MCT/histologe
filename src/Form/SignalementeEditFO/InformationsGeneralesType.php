@@ -34,12 +34,13 @@ class InformationsGeneralesType extends AbstractType
         $anneeConstruction = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementAnneeConstruction();
         $dateEffetBail = $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurDateEffetBail() ? \DateTime::createFromFormat('Y-m-d', $signalement->getInformationComplementaire()->getInformationsComplementairesSituationBailleurDateEffetBail()) : null;
 
-        $builder->add('dateEntree', DateType::class, [
-            'label' => 'Date arrivée :',
-            'required' => false,
-            'placeholder' => false,
-            'data' => $signalement->getDateEntree(),
-        ])
+        $builder
+            ->add('dateEntree', DateType::class, [
+                'label' => 'Date arrivée :',
+                'required' => false,
+                'placeholder' => false,
+                'data' => $signalement->getDateEntree(),
+            ])
             ->add('dateEffetBail', DateType::class, [
                 'label' => 'Date d\'effet du bail',
                 'required' => false,
@@ -77,6 +78,7 @@ class InformationsGeneralesType extends AbstractType
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
+                    'Je ne sais pas' => 'nsp',
                 ],
                 'expanded' => true,
                 'multiple' => false,
@@ -90,6 +92,7 @@ class InformationsGeneralesType extends AbstractType
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
+                    'Je ne sais pas' => 'nsp',
                 ],
                 'expanded' => true,
                 'multiple' => false,
@@ -103,6 +106,7 @@ class InformationsGeneralesType extends AbstractType
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
+                    'Je ne sais pas' => 'nsp',
                 ],
                 'expanded' => true,
                 'multiple' => false,
@@ -116,6 +120,7 @@ class InformationsGeneralesType extends AbstractType
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
+                    'Je ne sais pas' => 'nsp',
                 ],
                 'expanded' => true,
                 'multiple' => false,
@@ -135,6 +140,7 @@ class InformationsGeneralesType extends AbstractType
                     'E' => 'E',
                     'F' => 'F',
                     'G' => 'G',
+                    'Je ne sais pas' => 'nsp',
                 ],
                 'expanded' => false,
                 'multiple' => false,

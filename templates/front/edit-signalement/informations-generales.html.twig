@@ -20,9 +20,12 @@
 		<div class="fr-col-12">
 			<h1 class="title-blue-france">Compléter les informations</h1>
 			<div class="fr-mb-3w">
-				Complétez votre dossier en remplissant les champs ci-dessous. Un signalement complet permet une meilleure prise en charge du dossier !
+				Complétez votre dossier en remplissant les champs ci-dessous.
+				<br>
+				Tous ses champs sont facultatifs, mais peuvent aider à une meilleure prise en charge du dossier. 
 			</div>
 			{{ form_errors(form) }}
+			<h2>Informations générales sur le logement</h2>
 			<fieldset class="fr-fieldset">
 				<div class="fr-fieldset__element">
 					{{ form_row(form.dateEntree) }}
