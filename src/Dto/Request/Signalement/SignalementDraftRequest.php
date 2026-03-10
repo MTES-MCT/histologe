@@ -438,7 +438,7 @@ class SignalementDraftRequest
     )]
     private ?string $infoProcedureBailMoyen = null;
 
-    #[Assert\DateTime('m/Y')]
+    // #[Assert\DateTime('m/Y')] this constraints has been removed because it causes validation error in the front when using back/next buttons. The value is cleaned in the setter setInfoProcedureBailDate.
     private ?string $infoProcedureBailDate = null;
 
     #[Assert\Length(
@@ -1615,6 +1615,13 @@ class SignalementDraftRequest
 
     public function setInfoProcedureBailDate(?string $infoProcedureBailDate): self
     {
+        // Nettoyer silencieusement les valeurs qui ne matchent pas le format MM/YYYY
+        // Cela peut arriver si l'utilisateur navigue en arrière dans le formulaire
+        // avec une valeur invalide dans le store front
+        if (null !== $infoProcedureBailDate && !preg_match('/^(0[1-9]|1[0-2])\/(19|20)\d{2}$/', $infoProcedureBailDate)) {
+            $infoProcedureBailDate = null;
+        }
+
         $this->infoProcedureBailDate = $infoProcedureBailDate;
 
         return $this;

@@ -166,7 +166,7 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setTravailleurSocialAccompagnement('invalid_accompagnement')
             ->setInfoProcedureBailleurPrevenu('invalid_bailleur_prevenu')
             ->setInfoProcedureBailMoyen('invalid_bailleur_moyen')
-            ->setInfoProcedureBailDate('invalid_bailleur_date')
+            ->setInfoProcedureBailDate('invalid_bailleur_date') // Le setter va nettoyer cette valeur et la mettre à null, ce qui est valide
             ->setInfoProcedureBailReponse(str_repeat('v', 256))
             ->setInfoProcedureBailNumero(str_repeat('v', 31))
             ->setInfoProcedureAssuranceContactee('invalid_assurance_contactee')
@@ -188,10 +188,10 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setInformationsComplementairesLogementMontantLoyer(str_repeat('x', 21))
             ->setInformationsComplementairesLogementNombreEtages(str_repeat('y', 6))
             ->setInformationsComplementairesLogementAnneeConstruction('invalid_annee')
-            ->setMessageAdministration('Message administration');
+            ->setMessageAdministration('Message administration'); // ne génère pas d'erreur de validation
 
         $errors = $this->validator->validate($signalementDraftRequest);
-        $this->assertCount(101, $errors);
+        $this->assertCount(99, $errors);
     }
 
     public function testValidateTooMuchChildren(): void
