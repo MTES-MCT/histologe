@@ -120,4 +120,16 @@ class TerritoryRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * @return array<int, Territory>
+     */
+    public function findWithAuthorizedCodesInsee(string $inseeCode): array
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('JSON_CONTAINS(t.authorizedCodesInsee, :insee) = 1')
+            ->setParameter('insee', $inseeCode)
+            ->getQuery()
+            ->getResult();
+    }
 }

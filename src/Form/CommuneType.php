@@ -44,7 +44,6 @@ class CommuneType extends AbstractType
             ])
             ->add('codeInsee', null, [
                 'label' => 'Code INSEE',
-                'disabled' => true,
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Valider',
