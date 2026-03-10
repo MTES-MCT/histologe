@@ -20,10 +20,8 @@ use App\Service\HtmlCleaner;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\UploadHandlerService;
-use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
 class InjonctionBailleurService
 {
@@ -110,10 +108,6 @@ class InjonctionBailleurService
         );
     }
 
-    /**
-     * @throws Exception
-     * @throws ExceptionInterface
-     */
     public function assignHelpingPartners(Signalement $signalement): void
     {
         $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, filterInjonctionBailleur: true);
@@ -126,10 +120,9 @@ class InjonctionBailleurService
         foreach ($helpingPartnersFromTerritory as $partnerItem) {
             $partner = $this->partnerRepository->find($partnerItem['id']);
             $affectation = $this->affectationManager->createAffectationFrom(
-                signalement: $signalement,
-                partner: $partner,
-                user: $adminUser,
-                dispatchInterconnection: false,
+                $signalement,
+                $partner,
+                $adminUser
             );
             if ($affectation instanceof Affectation) {
                 $signalement->addAffectation($affectation);

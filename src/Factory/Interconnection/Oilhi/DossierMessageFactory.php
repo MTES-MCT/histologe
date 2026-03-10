@@ -6,7 +6,6 @@ use App\Controller\FileController;
 use App\Entity\Affectation;
 use App\Entity\Criticite;
 use App\Entity\Enum\Qualification;
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Factory\Interconnection\DossierMessageFactoryInterface;
@@ -36,9 +35,8 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
         $signalement = $affectation->getSignalement();
 
         return $this->featureEnable
-            && $signalement->hasQualificaton(Qualification::RSD)
-            && SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()
-            && $partner->canSyncWithOilhi($signalement);
+        && $signalement->hasQualificaton(Qualification::RSD)
+        && $partner->canSyncWithOilhi($signalement);
     }
 
     public function createInstance(Affectation $affectation): DossierMessage
