@@ -163,9 +163,6 @@ class AffectationController extends AbstractController
         return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
     }
 
-    /**
-     * @throws ExceptionInterface
-     */
     #[Route('/affectation/{affectation}/reinit', name: 'back_signalement_affectation_reinit', methods: ['POST'])]
     public function reinitAffectation(
         Affectation $affectation,
