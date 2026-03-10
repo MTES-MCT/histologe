@@ -188,7 +188,7 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setInformationsComplementairesLogementMontantLoyer(str_repeat('x', 21))
             ->setInformationsComplementairesLogementNombreEtages(str_repeat('y', 6))
             ->setInformationsComplementairesLogementAnneeConstruction('invalid_annee')
-            ->setMessageAdministration('Message administration');// ne génère pas d'erreur de validation
+            ->setMessageAdministration('Message administration'); // ne génère pas d'erreur de validation
 
         $errors = $this->validator->validate($signalementDraftRequest);
         $this->assertCount(99, $errors);
