@@ -438,7 +438,7 @@ class SignalementDraftRequest
     )]
     private ?string $infoProcedureBailMoyen = null;
 
-    #[Assert\DateTime('m/Y')]
+    // #[Assert\DateTime('m/Y')] this constraints has been removed because it causes validation error in the front when using back/next buttons. The value is cleaned in the setter setInfoProcedureBailDate.
     private ?string $infoProcedureBailDate = null;
 
     #[Assert\Length(
