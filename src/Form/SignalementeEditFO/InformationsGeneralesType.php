@@ -36,23 +36,27 @@ class InformationsGeneralesType extends AbstractType
 
         $builder
             ->add('dateEntree', DateType::class, [
-                'label' => 'Date arrivée :',
+                'label' => 'Date arrivée (facultatif)',
                 'required' => false,
                 'placeholder' => false,
                 'data' => $signalement->getDateEntree(),
             ])
             ->add('dateEffetBail', DateType::class, [
-                'label' => 'Date d\'effet du bail',
+                'label' => 'Date d\'effet du bail (facultatif)',
                 'required' => false,
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $dateEffetBail,
             ])
             ->add('nbOccupantsLogement', NumberType::class, [
-                'label' => 'Nombre de personnes occupant le logement',
+                'label' => 'Nombre de personnes occupant le logement <span class="text-required">*</span>',
+                'label_html' => true,
                 'help' => 'Format attendu : saisir un nombre entier',
                 'required' => false,
                 'constraints' => [
+                    new Assert\NotNull(
+                        message: 'Veuillez indiquer le nombre de personnes occupant le logement.',
+                    ),
                     new Assert\Regex(
                         pattern: '/^\d+$/',
                         message: 'Veuillez saisir un nombre entier.',
@@ -61,7 +65,7 @@ class InformationsGeneralesType extends AbstractType
                 'data' => $signalement->getNbOccupantsLogement(),
             ])
             ->add('nbEnfantsDansLogement', NumberType::class, [
-                'label' => 'Dont enfants',
+                'label' => 'Dont enfants (facultatif)',
                 'help' => 'Format attendu : saisir un nombre entier',
                 'required' => false,
                 'mapped' => false,
@@ -74,7 +78,7 @@ class InformationsGeneralesType extends AbstractType
                 ],
             ])
             ->add('enfantsDansLogementMoinsSixAns', ChoiceType::class, [
-                'label' => 'Enfants de 6 ans ou moins',
+                'label' => 'Enfants de 6 ans ou moins (facultatif)',
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -88,7 +92,7 @@ class InformationsGeneralesType extends AbstractType
                 'data' => $enfantsDansLogementMoinsSixAns,
             ])
             ->add('bail', ChoiceType::class, [
-                'label' => 'Contrat de location (bail)',
+                'label' => 'Contrat de location (bail) (facultatif)',
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -102,7 +106,7 @@ class InformationsGeneralesType extends AbstractType
                 'data' => $bail,
             ])
             ->add('etatDesLieux', ChoiceType::class, [
-                'label' => 'Etat des lieux',
+                'label' => 'Etat des lieux (facultatif)',
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -116,7 +120,8 @@ class InformationsGeneralesType extends AbstractType
                 'data' => $etatDesLieux,
             ])
             ->add('dpe', ChoiceType::class, [
-                'label' => 'Diagnostic performance énergétique (DPE)',
+                'label' => 'Diagnostic performance énergétique (DPE) <span class="text-required">*</span>',
+                'label_html' => true,
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -128,9 +133,14 @@ class InformationsGeneralesType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $dpe,
+                'constraints' => [
+                    new Assert\NotNull(
+                        message: 'Veuillez renseigner la présence d\'un DPE.',
+                    ),
+                ],
             ])
             ->add('classeEnergetique', ChoiceType::class, [
-                'label' => 'Classe énergétique du logement',
+                'label' => 'Classe énergétique du logement (facultatif)',
                 'choices' => [
                     '' => '',
                     'A' => 'A',
@@ -150,18 +160,18 @@ class InformationsGeneralesType extends AbstractType
                 'data' => $classeEnergetique,
             ])
             ->add('numeroInvariant', TextType::class, [
-                'label' => 'Invariant fiscal',
+                'label' => 'Invariant fiscal (facultatif)',
                 'help' => 'Format attendu : 255 caractères maximum',
                 'required' => false,
                 'data' => $signalement->getNumeroInvariant(),
             ])
             ->add('loyer', NumberType::class, [
-                'label' => 'Montant du loyer',
+                'label' => 'Montant du loyer (facultatif)',
                 'required' => false,
                 'data' => $signalement->getLoyer(),
             ])
             ->add('payementLoyersAJour', ChoiceType::class, [
-                'label' => 'Paiement des loyers à jour',
+                'label' => 'Paiement des loyers à jour (facultatif)',
                 'choices' => [
                     'Oui' => 'oui',
                     'Non' => 'non',
@@ -174,7 +184,7 @@ class InformationsGeneralesType extends AbstractType
                 'data' => $payementLoyersAJour,
             ])
             ->add('anneeConstruction', NumberType::class, [
-                'label' => 'Année de construction',
+                'label' => 'Année de construction (facultatif)',
                 'help' => 'Format attendu : saisir l\'année de construction avec 4 chiffres',
                 'required' => false,
                 'mapped' => false,
