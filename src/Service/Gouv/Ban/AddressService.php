@@ -43,6 +43,11 @@ class AddressService
         try {
             $url = self::API_URL.urlencode($cityName).'&citycode='.urlencode($cityCode).'&index=poi&category=commune&autocomplete=0'.self::API_PARAM_LIMIT;
             $response = $this->httpClient->request('GET', $url);
+            if (Response::HTTP_OK === $response->getStatusCode() && !empty($response->toArray()['features'])) {
+                return new Poi($response->toArray());
+            }
+            $url = self::API_URL.urlencode($cityName).'&citycode='.urlencode($cityCode).'&index=poi&category=arrondissement municipal&autocomplete=0'.self::API_PARAM_LIMIT;
+            $response = $this->httpClient->request('GET', $url);
             if (Response::HTTP_OK === $response->getStatusCode()) {
                 return new Poi($response->toArray());
             }

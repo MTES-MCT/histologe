@@ -128,7 +128,7 @@ class TerritoryRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('t')
             ->andWhere('JSON_CONTAINS(t.authorizedCodesInsee, :insee) = 1')
-            ->setParameter('insee', json_encode($inseeCode))
+            ->setParameter('insee', $inseeCode)
             ->getQuery()
             ->getResult();
     }
