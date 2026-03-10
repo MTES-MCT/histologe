@@ -138,12 +138,10 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                     || ProfileDeclarant::TIERS_PARTICULIER === $signalement->getProfileDeclarant()
                     || ProfileDeclarant::TIERS_PRO === $signalement->getProfileDeclarant()
                 )
-                &&
-                (
+                && (
                     ProfileOccupant::LOCATAIRE === $signalement->getProfileOccupant()
                     || empty($signalement->getProfileOccupant())
                 )
-                
             );
     }
 
