@@ -202,22 +202,25 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $civiliteOccupant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ['Default', 'fo_coordonnees_occupant'])]
     #[Assert\Length(max: 50)]
     private ?string $nomOccupant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ['Default', 'fo_coordonnees_occupant'])]
     #[Assert\Length(max: 50)]
     private ?string $prenomOccupant = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
-    #[AppAssert\TelephoneFormat]
+    #[AppAssert\TelephoneFormat(groups: ['Default', 'fo_coordonnees_occupant'])]
     private ?string $telOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees'])]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees', 'fo_coordonnees_occupant'])]
     private ?string $mailOccupant = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $mailOccupantTemp = null;
 
     #[ORM\Column(type: 'string', length: 100, nullable: true)]
     #[Assert\Length(max: 100, groups: ['bo_step_address'])]
@@ -457,7 +460,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?User $closedBy = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
-    #[AppAssert\TelephoneFormat]
+    #[AppAssert\TelephoneFormat(groups: ['Default', 'fo_coordonnees_occupant'])]
     private ?string $telOccupantBis = null;
 
     /** @var Collection<int, Tag> $tags */
@@ -1177,6 +1180,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setMailOccupant(?string $mailOccupant): static
     {
         $this->mailOccupant = TrimHelper::safeTrim($mailOccupant);
+
+        return $this;
+    }
+
+    public function getMailOccupantTemp(): ?string
+    {
+        return $this->mailOccupantTemp;
+    }
+
+    public function setMailOccupantTemp(?string $mailOccupantTemp): ?string
+    {
+        $this->mailOccupantTemp = TrimHelper::safeTrim($mailOccupantTemp);
 
         return $this;
     }

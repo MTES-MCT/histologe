@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier les coordonnées de l'occupant #{{ signalement.reference }}{% endblock %}
+
+{% block body %}
+
+<main class="fr-container fr-pb-5w" id="content">
+	<nav role="navigation" class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
+		<button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
+		<div class="fr-collapse" id="breadcrumb-1">
+			<ol class="fr-breadcrumb__list">
+				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}">Votre dossier #{{ signalement.reference }}</a></li>
+				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement_dossier', {code: signalement.codeSuivi}) }}">Détails du dossier</a></li>
+				<li><a class="fr-breadcrumb__link" aria-current="page">Modifier les coordonnées de l'occupant</a></li>
+			</ol>
+		</div>
+	</nav>
+	{{ form_start(form, {'attr': {'id': 'form-usager-complete-dossier'}}) }}
+	<div class="fr-grid-row fr-mt-3w">
+		<div class="fr-col-12">
+			<h1 class="title-blue-france">Modifier les coordonnées de l'occupant</h1>
+			<div class="fr-mb-3w">
+				Complétez votre dossier en remplissant les champs ci-dessous. Un signalement complet permet une meilleure prise en charge du dossier !
+			</div>
+			<div class="fr-mb-3w">
+				{{ form_errors(form) }}
+				<div class="fr-grid-row fr-grid-row--gutters">
+					<div class="fr-col-12 fr-col-md-2">			
+						{{ form_row(form.civiliteOccupant) }}
+					 </div>
+					<div class="fr-col-12 fr-col-md-5">
+						{{ form_row(form.nomOccupant) }}
+					</div>
+					<div class="fr-col-12 fr-col-md-5">
+						{{ form_row(form.prenomOccupant) }}
+					</div>
+					<div class="fr-col-12">
+						<div class="fr-alert fr-alert--warning fr-mb-2v">
+							<div class="fr-alert__body">
+								<p class="fr-alert__text">
+									En cas de modification des nom et/ou prénom de l'occupant cela modifiera aussi les initiales à renseigner pour la connexion à l'espace usager.
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="fr-col-12">
+						{{ form_row(form.mailOccupantTemp) }}
+						<div class="fr-alert fr-alert--info fr-mb-6v">
+							<div class="fr-alert__body">
+								<p class="fr-alert__text">
+									En cas de modification de l'adresse e-mail, un e-mail de confirmation sera envoyé à la nouvelle adresse.
+									<br>
+									La modification sera prise en compte uniquement aprés validation de cet e-mail.
+								</p>
+							</div>
+						</div>
+						{{ form_row(form.telOccupant) }}
+						{{ form_row(form.telOccupantBis) }}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="fr-col-6">
+			<a href="{{ path('front_suivi_signalement_dossier', {code: signalement.codeSuivi}) }}" class="fr-btn fr-btn--secondary">Annuler</a>
+		</div>
+		<div class="fr-col-6 fr-text--right">
+			{{ form_row(form.save) }}
+		</div>
+	</div>
+	{{ form_end(form) }}
+</main>
+{% endblock %}

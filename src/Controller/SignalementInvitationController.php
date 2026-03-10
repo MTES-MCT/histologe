@@ -25,7 +25,7 @@ class SignalementInvitationController extends AbstractController
         SignalementManager $signalementManager,
         EntityManagerInterface $entityManager,
     ): Response {
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_ANSWER_INVITATION, $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT_OFFLINE, $signalement);
 
         if ($tiersInvitation->isRefused()) {
             $this->addFlash('info', ['title' => 'Invitation déjà refusée', 'message' => 'Vous avez déjà refusé cette invitation.']);
@@ -53,7 +53,7 @@ class SignalementInvitationController extends AbstractController
         SuiviManager $suiviManager,
         EntityManagerInterface $entityManager,
     ): Response {
-        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_ANSWER_INVITATION, $signalement);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT_OFFLINE, $signalement);
 
         if ($tiersInvitation->isAccepted()) {
             $this->addFlash('success', ['title' => 'Invitation déjà acceptée', 'message' => 'Vous pouvez vous connecter pour suivre ce dossier.']);

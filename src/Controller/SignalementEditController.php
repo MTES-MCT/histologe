@@ -9,6 +9,7 @@ use App\Entity\Signalement;
 use App\Form\SignalementeEditFO\AdresseLogementType;
 use App\Form\SignalementeEditFO\CoordonneesAgenceType;
 use App\Form\SignalementeEditFO\CoordonneesBailleurType;
+use App\Form\SignalementeEditFO\CoordonneesOccupantType;
 use App\Form\SignalementeEditFO\ProcedureAssuranceType;
 use App\Form\SignalementeEditFO\UsagerSituationFoyerType;
 use App\Manager\SignalementManager;
@@ -17,6 +18,9 @@ use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use App\Security\Voter\SignalementFoVoter;
 use App\Service\Gouv\Rnb\RnbService;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\MessageHelper;
 use App\Service\RequestDataExtractor;
 use App\Service\Security\CguTiersChecker;
@@ -109,6 +113,49 @@ class SignalementEditController extends AbstractController
         $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'La localisation du bâtiment a bien été mise à jour.']);
 
         return $this->json(['redirect' => true, 'url' => $redirectUrl]);
+    }
+
+    #[Route('/{code}/completer/occupant', name: 'front_suivi_signalement_complete_occupant', methods: ['GET', 'POST'])]
+    public function suiviSignalementCompleteOccupant(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+        NotificationMailerRegistry $notificationMailerRegistry,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->cguTiersChecker->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
+        $mailOccupant = $signalement->getMailOccupant();
+        $form = $this->createForm(CoordonneesOccupantType::class, $signalement);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            if ($mailOccupant != $form->get('mailOccupantTemp')->getData()) {
+                $signalement->setMailOccupantTemp($form->get('mailOccupantTemp')->getData());
+                $notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_SIGNALEMENT_EDIT_MAIL_OCCUPANT,
+                        to: $signalement->getMailOccupantTemp(),
+                        signalement: $signalement,
+                    )
+                );
+            }
+            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées de l\'occupant ont bien été mises à jour.']);
+
+            return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/edit-signalement/coordonnees-occupant.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form,
+        ]);
     }
 
     #[Route('/{code}/completer/bailleur', name: 'front_suivi_signalement_complete_bailleur', methods: ['GET', 'POST'])]
