@@ -17,6 +17,7 @@ class SignalementUpdatedListener
     public const string EDIT_COORDONNEES_BAILLEUR = 'coordonnees_bailleur';
     public const string EDIT_COORDONNEES_AGENCE = 'coordonnees_agence';
     public const string EDIT_INFORMATIONS_ASSURANCE = 'informations_assurance';
+    public const string EDIT_SITUATION_FOYER = 'situation_foyer';
 
     /**
      * Définition des champs suivis.
@@ -56,6 +57,26 @@ class SignalementUpdatedListener
             'fields' => [
                 'informationProcedure.info_procedure_reponse_assurance' => 'Réponse de l\'assurance',
                 'informationProcedure.info_procedure_assurance_contactee' => 'Assurance contactée',
+            ],
+        ],
+        self::EDIT_SITUATION_FOYER => [
+            'label' => 'La situation du foyer',
+            'fields' => [
+                'isLogementSocial' => 'Logement social',
+                'isRelogement' => 'Relogement',
+                'isAllocataire' => 'Allocataire / Caisse d\'allocation',
+                'dateNaissanceOccupant' => 'Date de naissance de l\'occupant',
+                'numAllocataire' => 'Numéro d\'allocataire / de dossier',
+                'informationComplementaire.informations_complementaires_situation_occupants_type_allocation' => 'Type d\'allocation',
+                'montantAllocation' => 'Montant de l\'allocation',
+                'situationFoyer.travailleur_social_quitte_logement' => 'Souhaite quitter le logement',
+                'situationFoyer.travailleur_social_preavis_depart' => 'Préavis de départ déposé',
+                'situationFoyer.travailleur_social_accompagnement' => 'Accompagnement travailleur social',
+                'situationFoyer.travailleur_social_accompagnement_nom_structure' => 'Nom de la structure d\'accompagnement',
+                'informationComplementaire.informations_complementaires_situation_occupants_beneficiaire_rsa' => 'Bénéficiaire du RSA',
+                'informationComplementaire.informations_complementaires_situation_occupants_beneficiaire_fsl' => 'Bénéficiaire du FSL',
+                'informationComplementaire.informations_complementaires_situation_occupants_revenu_fiscal' => 'Revenu fiscal de référence',
+                'informationProcedure.info_procedure_depart_apres_travaux' => 'Rester si travaux faits',
             ],
         ],
     ];
@@ -100,8 +121,20 @@ class SignalementUpdatedListener
                     $old = $event->getOldValue($field);
                     $new = $event->getNewValue($field);
 
+                    // Si c'est un champ de type DateTimeImmutable, on formate la date pour que ce soit plus lisible dans le suivi
+                    if ($new instanceof \DateTimeImmutable) {
+                        $new = $new->format('d/m/Y');
+                    }
+                    if ($old instanceof \DateTimeImmutable) {
+                        $old = $old->format('d/m/Y');
+                    }
+
                     if ($old === $new) {
                         continue;
+                    }
+
+                    if ('boolean' === gettype($new)) {
+                        $new = $new ? 'Oui' : 'Non';
                     }
 
                     $fieldChanges[$field] = [
@@ -129,15 +162,15 @@ class SignalementUpdatedListener
                 $fieldsChanges = $this->entityComparator->compareValues($oldValue, $newValue, $jsonField);
 
                 // la propriété déclarée n'a pas changé
-                if (!array_key_exists($jsonProperty, $fieldsChanges)
-                    || empty($diffProperty = $fieldsChanges[$jsonProperty])
+                if (!isset($fieldsChanges[$jsonProperty])
+                    || [] === ($diffProperty = $fieldsChanges[$jsonProperty])
                 ) {
                     continue;
                 }
 
                 $fieldChanges[$field] = [
                     'label' => $label,
-                    'new' => $diffProperty['new'] ? $this->dictionaryProvider->translate($diffProperty['new']) : null,
+                    'new' => array_key_exists('new', $diffProperty) && null !== $diffProperty['new'] ? $this->dictionaryProvider->translate($diffProperty['new']) : null,
                 ];
             }
 
