@@ -233,7 +233,7 @@ class File implements EntityHistoryInterface
 
     /**
      * @see templates/front/suivi_signalement_documents.html.twig
-     * @see templates/front/dossier_bailleur.html.twig
+     * @see templates/front/dossier_bailleur/dossier_bailleur.html.twig
      * @see templates/back/signalement/view/photos-documents.html.twig
      * @see templates/back/signalement_create/tabs/tab-situation.html.twig
      */

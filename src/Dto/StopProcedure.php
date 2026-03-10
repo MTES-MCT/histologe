@@ -2,6 +2,7 @@
 
 namespace App\Dto;
 
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -10,6 +11,7 @@ class StopProcedure
     #[Assert\NotBlank()]
     private ?Signalement $signalement = null;
 
+    private ?MotifCloture $reason = null;
     private ?string $description = null;
 
     public function getSignalement(): ?Signalement
@@ -20,6 +22,18 @@ class StopProcedure
     public function setSignalement(Signalement $signalement): self
     {
         $this->signalement = $signalement;
+
+        return $this;
+    }
+
+    public function getReason(): ?MotifCloture
+    {
+        return $this->reason;
+    }
+
+    public function setReason(?MotifCloture $reason): self
+    {
+        $this->reason = $reason;
 
         return $this;
     }

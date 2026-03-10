@@ -46,4 +46,13 @@ enum MotifCloture: string
             'AUTRE' => 'Autre',
         ];
     }
+
+    /** @return array<MotifCloture> */
+    public static function getListForBailleur(): array
+    {
+        return [
+            self::TRAVAUX_FAITS_OU_EN_COURS,
+            self::AUTRE,
+        ];
+    }
 }

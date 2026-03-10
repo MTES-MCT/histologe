@@ -50,10 +50,10 @@ class SuiviBailleurController extends AbstractController
         $dateLimit = $signalement->getCreatedAt()->modify('+'.InjonctionBailleurService::DELAIS_DE_REPONSE.' -1 day');
         $suiviReponse = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::injonctionBailleurReponseCategories()]);
         $suiviBasculeProcedure = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR]);
+        $suiviDemandeCloture = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR]);
 
         $engagementTravauxPdf = null;
         $form = null;
-        $formStopProcedure = null;
         if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
             if ($suiviReponse) {
                 if (!$signalement->getMailProprio()) {
@@ -72,30 +72,6 @@ class SuiviBailleurController extends AbstractController
                 }
                 if (in_array($suiviReponse->getCategory(), [SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI, SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE, SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES], true)) {
                     $engagementTravauxPdf = $fileRepository->findOneBy(['signalement' => $signalement, 'documentType' => DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR]);
-                    $stopProcedure = new StopProcedure();
-                    $stopProcedure->setSignalement($signalement);
-
-                    $formStopProcedure = $this->createForm(StopProcedureType::class, $stopProcedure, [
-                        'action' => $this->generateUrl('front_dossier_bailleur').'#form_stop_procedure_bailleur_title',
-                    ]);
-                    $formStopProcedure->handleRequest($request);
-
-                    if ($formStopProcedure->isSubmitted() && $formStopProcedure->isValid()) {
-                        $entityManager->beginTransaction();
-                        try {
-                            $injonctionBailleurService->handleStopProcedure($stopProcedure);
-                            $entityManager->commit();
-                            $this->addFlash('success', ['title' => 'Réponse enregistrée',
-                                'message' => 'Votre réponse a été enregistrée avec succès.',
-                            ]);
-                        } catch (\Exception $e) {
-                            $logger->critical($e->getMessage());
-                            $entityManager->rollback();
-                            $this->addFlash('error', 'Une erreur est survenue veuillez réessayer.');
-                        }
-
-                        return $this->redirectToRoute('front_dossier_bailleur');
-                    }
                 }
             } else {
                 $reponseInjonctionBailleur = new ReponseInjonctionBailleur();
@@ -125,15 +101,58 @@ class SuiviBailleurController extends AbstractController
             }
         }
 
-        return $this->render('front/dossier_bailleur.html.twig', [
+        return $this->render('front/dossier_bailleur/dossier_bailleur.html.twig', [
             'signalement' => $signalement,
             'infoDesordres' => $infoDesordres,
             'suiviReponse' => $suiviReponse,
             'suiviBasculeProcedure' => $suiviBasculeProcedure,
+            'suiviDemandeCloture' => $suiviDemandeCloture,
             'dateLimit' => $dateLimit,
             'form' => $form,
-            'formStopProcedure' => $formStopProcedure,
+            // 'formStopProcedure' => $formStopProcedure,
             'engagementTravauxPdf' => $engagementTravauxPdf,
+        ]);
+    }
+
+    #[Route('/cloture', name: 'front_dossier_bailleur_cloture', methods: ['GET', 'POST'])]
+    public function dossierBailleurCloture(
+        Request $request,
+        SignalementRepository $signalementRepository,
+        InjonctionBailleurService $injonctionBailleurService,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
+    ): Response {
+        /**
+         * @var SignalementBailleur $user
+         */
+        $user = $this->getUser();
+        $signalement = $signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
+
+        $stopProcedure = new StopProcedure();
+        $stopProcedure->setSignalement($signalement);
+        $form = $this->createForm(StopProcedureType::class, $stopProcedure);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->beginTransaction();
+            try {
+                $injonctionBailleurService->handleStopProcedure($stopProcedure);
+                $entityManager->commit();
+                $this->addFlash('success', ['title' => 'Réponse enregistrée',
+                    'message' => 'Votre réponse a été enregistrée avec succès.',
+                ]);
+            } catch (\Exception $e) {
+                $logger->critical($e->getMessage());
+                $entityManager->rollback();
+                $this->addFlash('error', 'Une erreur est survenue veuillez réessayer.');
+            }
+
+            return $this->redirectToRoute('front_dossier_bailleur');
+        }
+
+        return $this->render('front/dossier_bailleur/dossier_bailleur_cloture.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form->createView(),
         ]);
     }
 
