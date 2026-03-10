@@ -17,6 +17,7 @@ use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
+use App\Messenger\InterconnectionBus;
 use App\Repository\BailleurRepository;
 use App\Repository\FileRepository;
 use App\Repository\PartnerRepository;
@@ -29,12 +30,16 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBoManager;
 use App\Service\Signalement\SignalementDesordresProcessor;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\TransactionRequiredException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -48,6 +53,7 @@ class SignalementCreateController extends AbstractController
     public function __construct(
         private readonly SignalementBoManager $signalementBoManager,
         private readonly SignalementManager $signalementManager,
+        private readonly InterconnectionBus $interconnectionBus,
     ) {
     }
 
@@ -411,6 +417,12 @@ class SignalementCreateController extends AbstractController
         return $this->json(['tabContent' => $tabContent]);
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws TransactionRequiredException
+     * @throws ExceptionInterface
+     * @throws Exception
+     */
     #[Route('/bo-form-validation/{uuid:signalement}', name: 'back_signalement_draft_form_validation', methods: ['GET', 'POST'])]
     #[IsGranted(SignalementVoter::SIGN_EDIT_DRAFT, subject: 'signalement')]
     public function formValidation(
@@ -497,7 +509,12 @@ class SignalementCreateController extends AbstractController
                 foreach ($partnersList as $partnerId) {
                     if (in_array((int) $partnerId, array_column($partners, 'id'))) {
                         $partner = $partnerRepository->find((int) $partnerId);
-                        $affectation = $affectationManager->createAffectation($signalement, $partner, $user);
+                        $affectation = $affectationManager->createAffectation(
+                            signalement: $signalement,
+                            partner: $partner,
+                            user: $user,
+                            dispatchInterconnection: false
+                        );
                         $signalement->addAffectation($affectation);
                     }
                 }
@@ -538,6 +555,13 @@ class SignalementCreateController extends AbstractController
             $signalement->setCreatedAt(new \DateTimeImmutable());
             $userManager->createUsagersFromSignalement($signalement);
             $fileRepository->updateIsWaitingSuiviForSignalement($signalement);
+
+            if ($this->isGranted('ROLE_ADMIN_TERRITORY')
+                && $signalement->getAffectations()->count() > 0
+            ) {
+                $this->interconnectionBus->dispatchAll($signalement);
+            }
+
             $signalementManager->flush();
             $entityManager->commit();
 

@@ -84,8 +84,13 @@ class AffectationManager extends Manager
     /**
      * @throws ExceptionInterface
      */
-    public function createAffectationFrom(Signalement $signalement, Partner $partner, ?User $user, bool $dispatchEvent = true): Affectation|bool
-    {
+    public function createAffectationFrom(
+        Signalement $signalement,
+        Partner $partner,
+        ?User $user,
+        bool $dispatchEvent = true,
+        bool $dispatchInterconnection = true,
+    ): Affectation|bool {
         $hasAffectation = $signalement
             ->getAffectations()
             ->exists(
@@ -107,7 +112,7 @@ class AffectationManager extends Manager
             return false;
         }
 
-        return $this->createAffectation($signalement, $partner, $user, $dispatchEvent);
+        return $this->createAffectation($signalement, $partner, $user, $dispatchEvent, $dispatchInterconnection);
     }
 
     /**
@@ -118,6 +123,7 @@ class AffectationManager extends Manager
         Partner $partner,
         ?User $user = null,
         bool $dispatchEvent = true,
+        bool $dispatchInterconnection = true,
     ): Affectation {
         $affectation = (new Affectation())
             ->setSignalement($signalement)
@@ -130,7 +136,10 @@ class AffectationManager extends Manager
         }
 
         $this->persist($affectation);
-        $this->interconnectionBus->dispatch($affectation);
+
+        if ($dispatchInterconnection) {
+            $this->interconnectionBus->dispatch($affectation);
+        }
 
         return $affectation;
     }
