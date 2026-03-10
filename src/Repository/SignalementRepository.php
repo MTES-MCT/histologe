@@ -1034,6 +1034,7 @@ class SignalementRepository extends ServiceEntityRepository
                 [
                     SignalementStatus::ACTIVE,
                     SignalementStatus::NEED_VALIDATION,
+                    SignalementStatus::INJONCTION_BAILLEUR,
                 ]
             );
 

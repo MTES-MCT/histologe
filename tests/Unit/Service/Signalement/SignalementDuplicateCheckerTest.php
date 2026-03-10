@@ -125,4 +125,42 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
         $this->assertEquals($result['already_exists'], true);
         $this->assertEquals($result['type'], 'draft');
     }
+
+    public function testCheckSignalementInjonction(): void
+    {
+        $uuid = '00000000-0000-0000-2025-000000000012';
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy([
+            'uuid' => $uuid,
+        ]);
+
+        /** @var SignalementDraftRequestSerializer $serializer */
+        $serializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
+        $payloadLocataireSignalement = (string) file_get_contents(__DIR__.'../../../../files/post_signalement_draft_payload.json');
+        /** @var SignalementDraftRequest $signalementDraftRequest */
+        $signalementDraftRequest = $serializer->deserialize(
+            $payloadLocataireSignalement,
+            SignalementDraftRequest::class,
+            'json'
+        );
+
+        $signalementDraftRequest->setProfil(ProfileDeclarant::LOCATAIRE->name);
+        $signalementDraftRequest->setAdresseLogementAdresseDetailNumero($signalement->getAdresseOccupant());
+        $signalementDraftRequest->setAdresseLogementAdresseDetailCodePostal($signalement->getCpOccupant());
+        $signalementDraftRequest->setAdresseLogementAdresseDetailCommune($signalement->getVilleOccupant());
+        $signalementDraftRequest->setVosCoordonneesOccupantEmail($signalement->getMailOccupant());
+        $signalementDraftRequest->setVosCoordonneesOccupantNom($signalement->getNomOccupant());
+
+        /** @var SignalementDuplicateChecker $signalementDuplicateChecker */
+        $signalementDuplicateChecker = static::getContainer()->get(SignalementDuplicateChecker::class);
+        $result = $signalementDuplicateChecker->check($signalementDraftRequest);
+
+        $this->assertEquals($result['already_exists'], true);
+        $this->assertEquals($result['type'], 'signalement');
+        $this->assertEquals($result['has_created_recently'], true);
+        $this->assertEquals($result['signalements'][0]['uuid'], $uuid);
+    }
 }
