@@ -94,6 +94,12 @@
 						</p>
 					{% endif %}
 				</div>
+				
+				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					<a href="{{ path('front_suivi_signalement_complete_adresse_logement', {'code': signalement.codeSuivi}) }}" 
+						class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
+						>Compléter les informations</a>
+				{% endif %}
 			</div>
 			<div class="signalement-group-data-card">
 				<h3 class="title-blue-france fr-h5">Coordonnées de l'occupant</h3>
@@ -542,7 +548,7 @@
 						{% endif %}
 						{% if signalement.typeCompositionLogement.compositionLogementEnfants %}
 							<li>Enfants de moins de 6 ans ?
-								{{signalement.typeCompositionLogement.compositionLogementEnfants|capitalize}}
+								{{signalement.typeCompositionLogement.compositionLogementEnfants(false)|capitalize}}
 							</li>
 						{% endif %}
 						{% if signalement.typeCompositionLogement.bailDpeBail %}
@@ -562,7 +568,7 @@
 						{% endif %}
 						{% if signalement.typeCompositionLogement.bailDpeClasseEnergetique %}
 							<li>Classe énergétique :
-								{{signalement.typeCompositionLogement.bailDpeClasseEnergetique}}
+								{{signalement.typeCompositionLogement.bailDpeClasseEnergetique(false)}}
 							</li>
 						{% endif %}
 					{% endif %}
@@ -707,6 +713,12 @@
 						</li>
 					{% endif %}
 				</ul>
+				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					<a href="{{ path('front_suivi_signalement_complete_situation_foyer', {'code': signalement.codeSuivi}) }}" 
+						class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md">
+						Compléter les informations
+					</a>
+				{% endif %}
 			</div>
 		</div>
 	</div>

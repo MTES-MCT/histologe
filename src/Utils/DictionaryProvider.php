@@ -37,22 +37,20 @@ class DictionaryProvider
         }
         $dict = $this->dictionary;
 
-        if (!isset($dict[$slug])) {
-            return $slug;
+        $result = $slug;
+
+        if (isset($dict[$slug])) {
+            $entry = $dict[$slug];
+
+            if (isset($entry[$context]) && is_string($entry[$context])) {
+                $result = $entry[$context];
+            } elseif (isset($entry[$context]['default']) && is_string($entry[$context]['default'])) {
+                $result = $entry[$context]['default'];
+            } elseif (isset($entry['default']) && is_string($entry['default'])) {
+                $result = $entry['default'];
+            }
         }
 
-        if (isset($dict[$slug][$context]) && is_string($dict[$slug][$context])) {
-            return $dict[$slug][$context];
-        }
-
-        if (isset($dict[$slug][$context]['default']) && is_string($dict[$slug][$context]['default'])) {
-            return $dict[$slug][$context]['default'];
-        }
-
-        if (isset($dict[$slug]['default']) && is_string($dict[$slug]['default'])) {
-            return $dict[$slug]['default'];
-        }
-
-        return $slug;
+        return $result;
     }
 }

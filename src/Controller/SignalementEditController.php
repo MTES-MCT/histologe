@@ -34,6 +34,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/suivre-mon-signalement')]
 class SignalementEditController extends AbstractController
 {
+    private const SUCCESS_MESSAGE_TITLE = 'Dossier complété';
+
     public function __construct(
         private readonly CguTiersChecker $cguTiersChecker,
         private readonly SuiviManager $suiviManager,
@@ -62,7 +64,7 @@ class SignalementEditController extends AbstractController
         if ($formAdresseLogement->isSubmitted() && $formAdresseLogement->isValid()) {
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
 
-            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'L\'adresse du logement a bien été mise à jour.']);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'L\'adresse du logement a bien été mise à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -108,7 +110,7 @@ class SignalementEditController extends AbstractController
         $signalement->setGeoloc(['lat' => $building->getLat(), 'lng' => $building->getLng()]);
         $signalementManager->flush();
 
-        $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'La localisation du bâtiment a bien été mise à jour.']);
+        $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'La localisation du bâtiment a bien été mise à jour.']);
 
         return $this->json(['redirect' => true, 'url' => $redirectUrl]);
     }
@@ -141,7 +143,7 @@ class SignalementEditController extends AbstractController
         ) {
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
 
-            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées du bailleur ont bien été mises à jour.']);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Les coordonnées du bailleur ont bien été mises à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -175,7 +177,7 @@ class SignalementEditController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
-            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées de l\'agence ont bien été mises à jour.']);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Les coordonnées de l\'agence ont bien été mises à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -235,7 +237,7 @@ class SignalementEditController extends AbstractController
             $signalement->setInformationProcedure($informationProcedure);
 
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
-            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'La situation du foyer a bien été mise à jour.']);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'La situation du foyer a bien été mise à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -268,7 +270,7 @@ class SignalementEditController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $signalement->setInformationProcedure($informationProcedure);
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
-            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les informations sur l\'assurance ont bien été mises à jour.']);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Les informations sur l\'assurance ont bien été mises à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -321,7 +323,7 @@ class SignalementEditController extends AbstractController
             $signalement->setInformationComplementaire($informationComplementaire);
 
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
-            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les informations générales ont bien été mises à jour.']);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Les informations générales ont bien été mises à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
