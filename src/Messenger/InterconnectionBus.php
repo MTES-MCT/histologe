@@ -3,6 +3,7 @@
 namespace App\Messenger;
 
 use App\Entity\Affectation;
+use App\Entity\Signalement;
 use App\Factory\Interconnection\DossierMessageFactoryInterface;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
@@ -41,6 +42,16 @@ class InterconnectionBus
             if ($dossierMessageFactory->supports($affectation)) {
                 $this->messageBus->dispatch($dossierMessageFactory->createInstance($affectation));
             }
+        }
+    }
+
+    /**
+     * @throws ExceptionInterface
+     */
+    public function dispatchAll(Signalement $signalement): void
+    {
+        foreach ($signalement->getAffectations() as $affectation) {
+            $this->dispatch($affectation);
         }
     }
 }

@@ -35,6 +35,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
 class SignalementImportLoader
 {
@@ -230,6 +231,8 @@ class SignalementImportLoader
      * @param array<string, mixed> $dataMapped
      *
      * @return ArrayCollection<int, Affectation>
+     *
+     * @throws ExceptionInterface
      */
     private function loadAffectation(Territory $territory, array $dataMapped, ?Signalement $signalement = null): ArrayCollection
     {
@@ -263,7 +266,8 @@ class SignalementImportLoader
                     signalement: $signalement,
                     partner: $partner,
                     user: $partner->getUsers()->isEmpty() ? null : $partner->getUsers()->first(),
-                    dispatchEvent: false
+                    dispatchEvent: false,
+                    dispatchInterconnection: false,
                 );
                 if ($affectation instanceof Affectation) {
                     $affectation
@@ -273,8 +277,8 @@ class SignalementImportLoader
                         $affectation = $this->affectationManager->closeAffectation(
                             affectation: $affectation,
                             user: $this->userSystem,
-                            partner: null,
-                            motif: MotifCloture::tryFrom($dataMapped['motifCloture'])
+                            motif: MotifCloture::tryFrom($dataMapped['motifCloture']),
+                            partner: null
                         );
                     } else {
                         $affectation->setStatut(AffectationStatus::ACCEPTED);

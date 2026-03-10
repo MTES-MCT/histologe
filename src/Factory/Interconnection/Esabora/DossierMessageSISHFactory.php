@@ -35,7 +35,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 
     public function supports(Affectation $affectation): bool
     {
-        return $this->isEsaboraPartnerActive($affectation) && PartnerType::ARS === $affectation->getPartner()->getType();
+        return $this->isEsaboraPartnerActive($affectation)
+            && $this->isEligibleStatusForSync($affectation)
+            && PartnerType::ARS === $affectation->getPartner()->getType();
     }
 
     /**

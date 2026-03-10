@@ -3,6 +3,7 @@
 namespace App\Factory\Interconnection\Esabora;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Factory\Interconnection\DossierMessageFactoryInterface;
 use App\Service\HtmlCleaner;
@@ -19,6 +20,13 @@ abstract class AbstractDossierMessageFactory implements DossierMessageFactoryInt
         $partner = $affectation->getPartner();
 
         return $partner->canSyncWithEsabora();
+    }
+
+    protected function isEligibleStatusForSync(Affectation $affectation): bool
+    {
+        $signalement = $affectation->getSignalement();
+
+        return SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut();
     }
 
     /**

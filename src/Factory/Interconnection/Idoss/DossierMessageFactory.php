@@ -4,6 +4,7 @@ namespace App\Factory\Interconnection\Idoss;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\SignalementStatus;
 use App\Factory\Interconnection\DossierMessageFactoryInterface;
 use App\Messenger\Message\Idoss\DossierMessage;
 use App\Service\Interconnection\Idoss\IdossService;
@@ -19,6 +20,10 @@ class DossierMessageFactory implements DossierMessageFactoryInterface
             return false;
         }
         if ($affectation->getSignalement()->getSynchroData(IdossService::TYPE_SERVICE)) {
+            return false;
+        }
+
+        if (SignalementStatus::INJONCTION_BAILLEUR === $affectation->getSignalement()->getStatut()) {
             return false;
         }
 
