@@ -3,6 +3,8 @@
 namespace App\Factory;
 
 use App\Dto\ServiceSecours\FormServiceSecours;
+use App\Entity\DesordreCritere;
+use App\Entity\DesordrePrecision;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\MotifCloture;
@@ -26,8 +28,10 @@ class SignalementFactory
     ) {
     }
 
-    public function createInstanceFromFormServiceSecours(FormServiceSecours $formServiceSecours, ServiceSecoursRoute $serviceSecoursRoute): Signalement
-    {
+    public function createInstanceFromFormServiceSecours(
+        FormServiceSecours $formServiceSecours,
+        ServiceSecoursRoute $serviceSecoursRoute,
+    ): Signalement {
         $signalement = new Signalement();
         $typeCompositionLogement = new TypeCompositionLogement();
 
@@ -160,6 +164,20 @@ class SignalementFactory
         //
         //
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+        $jsonContent = [];
+        /** @var DesordreCritere $desordreCritere */
+        foreach ($formServiceSecours->step5->desordres as $desordreCritere) {
+            /** @var DesordrePrecision $desordrePrecision */
+            $desordrePrecision = $desordreCritere->getDesordrePrecisions()->current();
+            $signalement->addDesordrePrecision($desordrePrecision);
+
+            if ('desordres_service_secours_autre' === $desordreCritere->getLabelCritere()) {
+                $jsonContent[$desordrePrecision->getLabel()] = $formServiceSecours->step5->desordresAutre;
+            }
+        }
+
+        $signalement->setJsonContent($jsonContent);
 
         return $signalement;
     }
