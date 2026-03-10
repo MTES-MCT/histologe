@@ -16,6 +16,7 @@ class SignalementUpdatedListener
 {
     public const string EDIT_ADRESSE_LOGEMENT = 'adresse_logement';
     private const string DATE_FORMAT = 'd/m/Y';
+    public const string EDIT_COORDONNEES_OCCUPANT = 'coordonnees_occupant';
     public const string EDIT_COORDONNEES_BAILLEUR = 'coordonnees_bailleur';
     public const string EDIT_COORDONNEES_AGENCE = 'coordonnees_agence';
     public const string EDIT_INFORMATIONS_ASSURANCE = 'informations_assurance';
@@ -35,6 +36,15 @@ class SignalementUpdatedListener
                 'escalierOccupant' => 'Escalier',
                 'numAppartOccupant' => 'Numéro d\'appartement',
                 'adresseAutreOccupant' => 'Autre',
+            ],
+        ],
+        self::EDIT_COORDONNEES_OCCUPANT => [
+            'label' => 'Les coordonnées de l\'occupant',
+            'fields' => [
+                'nomOccupant' => 'Nom',
+                'prenomOccupant' => 'Prénom',
+                'telOccupant' => 'Téléphone',
+                'telOccupantSecondaire' => 'Téléphone secondaire',
             ],
         ],
         self::EDIT_COORDONNEES_BAILLEUR => [
