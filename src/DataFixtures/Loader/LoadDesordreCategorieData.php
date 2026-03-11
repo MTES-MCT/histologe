@@ -3,6 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\DesordreCategorie;
+use App\Entity\Enum\AppContext;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -26,7 +27,8 @@ class LoadDesordreCategorieData extends Fixture implements OrderedFixtureInterfa
     private function loadSituations(ObjectManager $manager, array $row): void
     {
         $desordreCategorie = (new DesordreCategorie())
-            ->setLabel($row['label']);
+            ->setLabel($row['label'])
+            ->setAppContext(isset($row['app_context']) ? AppContext::from($row['app_context']) : AppContext::DEFAULT);
 
         $manager->persist($desordreCategorie);
     }

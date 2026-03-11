@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Behaviour\TimestampableTrait;
+use App\Entity\Enum\AppContext;
 use App\Repository\DesordreCategorieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,6 +22,9 @@ class DesordreCategorie
 
     #[ORM\Column(length: 255)]
     private ?string $label = null;
+
+    #[ORM\Column(type: 'string', length: 32, nullable: true, enumType: AppContext::class)]
+    private ?AppContext $appContext = null;
 
     /** @var Collection<int, DesordreCritere> $desordreCriteres */
     #[ORM\OneToMany(mappedBy: 'desordreCategorie', targetEntity: DesordreCritere::class, orphanRemoval: true)]
@@ -41,7 +45,7 @@ class DesordreCategorie
         return $this->label;
     }
 
-    public function setLabel(string $label): self
+    public function setLabel(string $label): static
     {
         $this->label = $label;
 
@@ -56,7 +60,7 @@ class DesordreCategorie
         return $this->desordreCriteres;
     }
 
-    public function addDesordreCritere(DesordreCritere $desordreCritere): self
+    public function addDesordreCritere(DesordreCritere $desordreCritere): static
     {
         if (!$this->desordreCriteres->contains($desordreCritere)) {
             $this->desordreCriteres->add($desordreCritere);
@@ -66,7 +70,7 @@ class DesordreCategorie
         return $this;
     }
 
-    public function removeDesordreCritere(DesordreCritere $desordreCritere): self
+    public function removeDesordreCritere(DesordreCritere $desordreCritere): static
     {
         if ($this->desordreCriteres->removeElement($desordreCritere)) {
             // set the owning side to null (unless already changed)
@@ -74,6 +78,18 @@ class DesordreCategorie
                 $desordreCritere->setDesordreCategorie(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAppContext(): ?AppContext
+    {
+        return $this->appContext;
+    }
+
+    public function setAppContext(?AppContext $appContext): static
+    {
+        $this->appContext = $appContext;
 
         return $this;
     }

@@ -39,7 +39,7 @@ class SignalementDraftDesordresType extends AbstractType
         $signalement = $builder->getData();
         $details = $signalement->getDetails();
 
-        $desordreCriteres = $this->desordreCritereRepository->findAll();
+        $desordreCriteres = $this->desordreCritereRepository->findAllByAppContext();
         $groupedCriteria = [];
 
         $signalementPrecisions = $signalement ? $signalement->getDesordrePrecisions()->toArray() : [];
