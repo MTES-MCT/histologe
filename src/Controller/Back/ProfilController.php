@@ -449,8 +449,8 @@ class ProfilController extends AbstractController
         }
         $entityManager->flush();
         if ($sendFlashSuccess) {
-            $this->addFlash('success', ['title' => 'Préférences d\'abonnement',
-                'message' => 'Vos préférences d\'abonnement ont bien été mises à jour.',
+            $this->addFlash('success', ['title' => 'Mise à jour des abonnements',
+                'message' => 'Vos abonnements ont bien été mises à jour.',
             ]);
         }
 

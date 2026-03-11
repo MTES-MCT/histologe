@@ -36,7 +36,7 @@ class ClotureType extends AbstractType
                 'label' => 'Motif <span class="fr-text-default--error">*</span>',
                 'label_html' => true,
                 'placeholder' => 'Sélectionnez un motif',
-                'help' => 'Choisissez un motif de cloture parmi la liste ci-dessous.',
+                'help' => 'Choisissez un motif de clôture parmi la liste ci-dessous.',
             ])
             ->add('type', HiddenType::class)
             ->add('description', TextareaType::class, [
