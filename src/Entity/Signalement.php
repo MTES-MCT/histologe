@@ -1075,6 +1075,34 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    public function getNomDeclarantComplet(bool $firstNameFirst = false): string
+    {
+        $nom = '';
+        if ($firstNameFirst) {
+            if ($this->prenomDeclarant) {
+                $nom .= ucfirst($this->prenomDeclarant);
+            }
+            if ($this->nomDeclarant) {
+                if ($nom) {
+                    $nom .= ' ';
+                }
+                $nom .= mb_strtoupper($this->nomDeclarant);
+            }
+        } else {
+            if ($this->nomDeclarant) {
+                $nom .= mb_strtoupper($this->nomDeclarant);
+            }
+            if ($this->prenomDeclarant) {
+                if ($nom) {
+                    $nom .= ' ';
+                }
+                $nom .= ucfirst($this->prenomDeclarant);
+            }
+        }
+
+        return $nom;
+    }
+
     public function getTelDeclarant(): ?string
     {
         return $this->telDeclarant;
@@ -1153,6 +1181,34 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->prenomOccupant = TrimHelper::safeTrim($prenomOccupant);
 
         return $this;
+    }
+
+    public function getNomOccupantComplet(bool $firstNameFirst = false): string
+    {
+        $nom = '';
+        if ($firstNameFirst) {
+            if ($this->prenomOccupant) {
+                $nom .= ucfirst($this->prenomOccupant);
+            }
+            if ($this->nomOccupant) {
+                if ($nom) {
+                    $nom .= ' ';
+                }
+                $nom .= mb_strtoupper($this->nomOccupant);
+            }
+        } else {
+            if ($this->nomOccupant) {
+                $nom .= mb_strtoupper($this->nomOccupant);
+            }
+            if ($this->prenomOccupant) {
+                if ($nom) {
+                    $nom .= ' ';
+                }
+                $nom .= ucfirst($this->prenomOccupant);
+            }
+        }
+
+        return $nom;
     }
 
     public function getTelOccupant(): ?string

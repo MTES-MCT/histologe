@@ -26,7 +26,7 @@
             <td>{{ notification.createdAt|format_datetime(locale='fr', timezone=territory_timezone, pattern='d MMMM yyyy à HH:mm:ss') }}</td>
             <td class="word-wrap-anywhere">{{ notification.suivi? transform_suivi_description(notification.suivi)|raw : notification.description }}</td>
             {% if notification.suivi and notification.suivi.createdBy %}
-                {% set auteur =  notification.suivi.createdBy.nomComplet %} 
+                {% set auteur =  notification.suivi.createdByNomComplet %} 
             {% elseif notification.affectation and notification.affectation.answeredBy %}
                 {% set auteur = notification.affectation.answeredBy.nomComplet %}
             {% else %}
