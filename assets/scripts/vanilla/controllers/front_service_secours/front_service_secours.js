@@ -77,11 +77,12 @@ if (showInformationsSyndicContainer && informationsSyndicContainer) {
     informationsSyndicContainer.classList.remove('fr-hidden');
     showInformationsSyndicContainer.classList.add('fr-hidden');
   });
-  const denominationAgence = document.querySelector('#service_secours_step4_denominationAgence');
-  const nomAgence = document.querySelector('#service_secours_step4_nomAgence');
-  const mailAgence = document.querySelector('#service_secours_step4_mailAgence');
-  const telAgence = document.querySelector('#service_secours_step4_telAgence_input');
-  if (denominationAgence.value || nomAgence.value || mailAgence.value || telAgence.value) {
+  const denominationSyndic = document.querySelector('#service_secours_step4_denominationSyndic');
+  const nomSyndic = document.querySelector('#service_secours_step4_nomSyndic');
+  const mailSyndic = document.querySelector('#service_secours_step4_mailSyndic');
+  const telSyndic = document.querySelector('#service_secours_step4_telSyndic_input');
+  const telSyndicSecondaire = document.querySelector('#service_secours_step4_telSyndicSecondaire_input');
+  if (denominationSyndic.value || nomSyndic.value || mailSyndic.value || telSyndic.value || telSyndicSecondaire.value) {
     informationsSyndicContainer.classList.remove('fr-hidden');
     showInformationsSyndicContainer.classList.add('fr-hidden');
   }

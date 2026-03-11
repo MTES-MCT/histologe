@@ -34,7 +34,6 @@ class FormServiceSecoursStep3
         message: 'Merci de saisir un nombre entier.',
         groups: ['step3']
     )]
-    #[Assert\Type('integer', groups: ['step3'])]
     public ?string $nbEnfantsDansLogement = null;
 
     public ?string $isEnfantsMoinsSixAnsDansLogement = null;

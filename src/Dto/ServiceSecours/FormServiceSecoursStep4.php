@@ -28,16 +28,20 @@ class FormServiceSecoursStep4
     public ?string $telProprio = null;
 
     #[Assert\Length(max: 255, groups: ['step4'])]
-    public ?string $denominationAgence = null;
+    public ?string $denominationSyndic = null;
 
     #[Assert\Length(max: 255, groups: ['step4'])]
-    public ?string $nomAgence = null;
+    public ?string $nomSyndic = null;
 
     #[Assert\Email(mode: Assert\Email::VALIDATION_MODE_STRICT, groups: ['step4'])]
     #[Assert\Length(max: 255, groups: ['step4'])]
-    public ?string $mailAgence = null;
+    public ?string $mailSyndic = null;
 
     #[Assert\Length(max: 128, groups: ['step4'])]
     #[AppAssert\TelephoneFormat]
-    public ?string $telAgence = null;
+    public ?string $telSyndic = null;
+
+    #[Assert\Length(max: 128, groups: ['step4'])]
+    #[AppAssert\TelephoneFormat]
+    public ?string $telSyndicSecondaire = null;
 }

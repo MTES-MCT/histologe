@@ -124,10 +124,11 @@
                     </div>
                     <div class="fr-hidden fr-mb-3w" id="informations-syndic-container">
                         <h3 class="fr-h5">Informations sur le syndic</h3>
-                        {{ form_row(form.step4.denominationAgence) }}
-                        {{ form_row(form.step4.nomAgence) }}
-                        {{ form_row(form.step4.mailAgence) }}
-                        {{ form_row(form.step4.telAgence) }}
+                        {{ form_row(form.step4.denominationSyndic) }}
+                        {{ form_row(form.step4.nomSyndic) }}
+                        {{ form_row(form.step4.mailSyndic) }}
+                        {{ form_row(form.step4.telSyndic) }}
+                        {{ form_row(form.step4.telSyndicSecondaire) }}
                     </div>
                 {% elseif current_step == 'step5' %}
                     {{ form_row(form.step5.desordres) }}

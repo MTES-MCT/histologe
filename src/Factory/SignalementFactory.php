@@ -150,10 +150,11 @@ class SignalementFactory
         $signalement->setPrenomProprio($formServiceSecours->step4->prenomProprio);
         $signalement->setMailProprio($formServiceSecours->step4->mailProprio);
         $signalement->setTelProprio($formServiceSecours->step4->telProprio);
-        $signalement->setDenominationAgence($formServiceSecours->step4->denominationAgence);
-        $signalement->setNomAgence($formServiceSecours->step4->nomAgence);
-        $signalement->setMailAgence($formServiceSecours->step4->mailAgence);
-        $signalement->setTelAgence($formServiceSecours->step4->telAgence);
+        $signalement->setDenominationSyndic($formServiceSecours->step4->denominationSyndic);
+        $signalement->setNomSyndic($formServiceSecours->step4->nomSyndic);
+        $signalement->setMailSyndic($formServiceSecours->step4->mailSyndic);
+        $signalement->setTelSyndic($formServiceSecours->step4->telSyndic);
+        $signalement->setTelSyndicSecondaire($formServiceSecours->step4->telSyndicSecondaire);
 
         // TODO : manage other steps
         //

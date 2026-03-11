@@ -64,15 +64,24 @@ class ServiceSecoursStep4Type extends AbstractType
                 ]),
             ],
         ]);
-        $builder->add('denominationAgence', null, ['label' => 'Dénomination du syndic']);
-        $builder->add('nomAgence', null, ['label' => 'Nom du ou de la représentante']);
-        $builder->add('mailAgence', TextType::class, [
+        $builder->add('denominationSyndic', null, ['label' => 'Dénomination du syndic']);
+        $builder->add('nomSyndic', null, ['label' => 'Nom du ou de la représentante']);
+        $builder->add('mailSyndic', TextType::class, [
             'label' => 'Adresse e-mail',
             'help' => 'Format attendu : nom@domaine.fr',
             'required' => false,
         ]);
-        $builder->add('telAgence', PhoneType::class, [
+        $builder->add('telSyndic', PhoneType::class, [
             'label' => 'Téléphone',
+            'constraints' => [
+                new TelephoneFormat([
+                    'message' => 'Le numéro de téléphone n\'est pas valide.',
+                ]),
+            ],
+        ]);
+        $builder->add('telSyndicSecondaire', PhoneType::class, [
+            'label' => 'Téléphone secondaire',
+            'required' => false,
             'constraints' => [
                 new TelephoneFormat([
                     'message' => 'Le numéro de téléphone n\'est pas valide.',
