@@ -20,6 +20,7 @@ twig:
         sites_faciles_url: '%env(resolve:SITES_FACILES_URL)%'
         feature_injonction_bailleur: '%env(bool:FEATURE_INJONCTION_BAILLEUR)%'
         feature_injonction_bailleur_depts: '%env(resolve:FEATURE_INJONCTION_BAILLEUR_DEPTS)%'
+        feature_imprim_fip: '%env(bool:FEATURE_IMPRIM_FIP)%'
         MAX_ITEMS_LIST: !php/const App\Service\DashboardTabPanel\TabDossier::MAX_ITEMS_LIST
     paths:
         # point this wherever your images live

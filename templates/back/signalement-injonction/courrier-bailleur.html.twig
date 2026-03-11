@@ -1,5 +1,5 @@
-<div style="font-family: Arial, sans-serif; font-size: 14px;">
-    {% include 'back/signalement-injonction/_courrier-bailleur-header.html.twig' %}
+{% extends 'back/signalement-injonction/_courrier-bailleur-layout.html.twig' %}
+{% block content %}
     <div style="font-weight: bold;">
         Objet : Réception d’un signalement par la plateforme « Signal Logement » relatif à un logement dont vous êtes propriétaire
     </div>
@@ -34,5 +34,5 @@
     <div style="text-align: right;">
         L’équipe Signal Logement
     </div>
-</div>
+{% endblock %}
 
