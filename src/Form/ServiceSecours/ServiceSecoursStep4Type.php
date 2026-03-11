@@ -55,7 +55,10 @@ class ServiceSecoursStep4Type extends AbstractType
                 }
             }
         });
-        $builder->add('mailProprio', null, ['label' => 'Adresse e-mail', 'help' => 'Format attendu : nom@domaine.fr']);
+        $builder->add('mailProprio', TextType::class, [
+            'label' => 'Adresse e-mail',
+            'help' => 'Format attendu : nom@domaine.fr'
+        ]);
         $builder->add('telProprio', PhoneType::class, [
             'label' => 'Téléphone',
             'constraints' => [
