@@ -39,6 +39,7 @@ class SignalementUpdatedListener
         self::EDIT_COORDONNEES_OCCUPANT => [
             'label' => 'Les coordonnées de l\'occupant',
             'fields' => [
+                'civiliteOccupant' => 'Civilité',
                 'nomOccupant' => 'Nom',
                 'prenomOccupant' => 'Prénom',
                 'telOccupant' => 'Téléphone',
