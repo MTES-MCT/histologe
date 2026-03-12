@@ -5,10 +5,12 @@ namespace App\Controller;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
+use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Form\SignalementeEditFO\AdresseLogementType;
 use App\Form\SignalementeEditFO\CoordonneesAgenceType;
 use App\Form\SignalementeEditFO\CoordonneesBailleurType;
+use App\Form\SignalementeEditFO\InformationsGeneralesType;
 use App\Form\SignalementeEditFO\ProcedureAssuranceType;
 use App\Form\SignalementeEditFO\UsagerSituationFoyerType;
 use App\Manager\SignalementManager;
@@ -32,6 +34,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/suivre-mon-signalement')]
 class SignalementEditController extends AbstractController
 {
+    private const SUCCESS_MESSAGE_TITLE = 'Dossier complété';
+
     public function __construct(
         private readonly CguTiersChecker $cguTiersChecker,
         private readonly SuiviManager $suiviManager,
@@ -60,7 +64,7 @@ class SignalementEditController extends AbstractController
         if ($formAdresseLogement->isSubmitted() && $formAdresseLogement->isValid()) {
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
 
-            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'L\'adresse du logement a bien été mise à jour.']);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'L\'adresse du logement a bien été mise à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -106,7 +110,7 @@ class SignalementEditController extends AbstractController
         $signalement->setGeoloc(['lat' => $building->getLat(), 'lng' => $building->getLng()]);
         $signalementManager->flush();
 
-        $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'La localisation du bâtiment a bien été mise à jour.']);
+        $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'La localisation du bâtiment a bien été mise à jour.']);
 
         return $this->json(['redirect' => true, 'url' => $redirectUrl]);
     }
@@ -139,7 +143,7 @@ class SignalementEditController extends AbstractController
         ) {
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
 
-            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées du bailleur ont bien été mises à jour.']);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Les coordonnées du bailleur ont bien été mises à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -173,7 +177,7 @@ class SignalementEditController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
-            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées de l\'agence ont bien été mises à jour.']);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Les coordonnées de l\'agence ont bien été mises à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -209,7 +213,7 @@ class SignalementEditController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $situationFoyer = $signalement->getSituationFoyer() ? clone $signalement->getSituationFoyer() : new SituationFoyer();
             $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();
-            $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : null;
+            $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : new InformationProcedure();
 
             $situationFoyerProcessor->processIsLogementSocial($signalement, $form->get('isLogementSocial')->getData());
             $situationFoyerProcessor->processIsAllocataire($signalement, $form->get('allocataire')->getData(), $form->get('caisseAllocation')->getData());
@@ -233,7 +237,7 @@ class SignalementEditController extends AbstractController
             $signalement->setInformationProcedure($informationProcedure);
 
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
-            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'La situation du foyer a bien été mise à jour.']);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'La situation du foyer a bien été mise à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -266,12 +270,65 @@ class SignalementEditController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $signalement->setInformationProcedure($informationProcedure);
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
-            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les informations sur l\'assurance ont bien été mises à jour.']);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Les informations sur l\'assurance ont bien été mises à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
 
         return $this->render('front/edit-signalement/procedure-assurance.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{code}/completer/informations-generales', name: 'front_suivi_signalement_complete_informations_generales', methods: ['GET', 'POST'])]
+    public function suiviSignalementCompleteInformationsGenerales(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->cguTiersChecker->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
+        $form = $this->createForm(InformationsGeneralesType::class, $signalement);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
+
+            $typeCompositionLogement
+                ->setCompositionLogementNombreEnfants($form->get('nbEnfantsDansLogement')->getData())
+                ->setCompositionLogementEnfants($form->get('enfantsDansLogementMoinsSixAns')->getData())
+                ->setBailDpeBail($form->get('bail')->getData())
+                ->setBailDpeEtatDesLieux($form->get('etatDesLieux')->getData())
+                ->setBailDpeDpe($form->get('dpe')->getData())
+                ->setBailDpeClasseEnergetique($form->get('classeEnergetique')->getData())
+                ->setBailDpeDateEmmenagement($form->get('dateEntree')->getData() ? $form->get('dateEntree')->getData()->format('Y-m-d') : null);
+            $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+            $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();
+            $dateEffetBail = $form->get('dateEffetBail')->getData() ? $form->get('dateEffetBail')->getData()->format('Y-m-d') : null;
+            $informationComplementaire
+                ->setInformationsComplementairesSituationBailleurDateEffetBail($dateEffetBail)
+                ->setInformationsComplementairesLogementMontantLoyer($form->get('loyer')->getData())
+                ->setInformationsComplementairesSituationOccupantsLoyersPayes($form->get('payementLoyersAJour')->getData())
+                ->setInformationsComplementairesLogementAnneeConstruction($form->get('anneeConstruction')->getData());
+            $signalement->setInformationComplementaire($informationComplementaire);
+
+            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Les informations générales ont bien été mises à jour.']);
+
+            return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/edit-signalement/informations-generales.html.twig', [
             'signalement' => $signalement,
             'form' => $form,
         ]);

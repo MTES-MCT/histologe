@@ -14,10 +14,12 @@ use Symfony\Bundle\SecurityBundle\Security;
 #[AsEntityListener(event: Events::preUpdate, method: 'preUpdate', entity: Signalement::class)]
 class SignalementUpdatedListener
 {
+    private const string DATE_FORMAT = 'd/m/Y';
     public const string EDIT_COORDONNEES_BAILLEUR = 'coordonnees_bailleur';
     public const string EDIT_COORDONNEES_AGENCE = 'coordonnees_agence';
     public const string EDIT_INFORMATIONS_ASSURANCE = 'informations_assurance';
     public const string EDIT_SITUATION_FOYER = 'situation_foyer';
+    public const string EDIT_INFORMATIONS_GENERALES = 'informations_generales';
 
     /**
      * Définition des champs suivis.
@@ -79,6 +81,24 @@ class SignalementUpdatedListener
                 'informationProcedure.info_procedure_depart_apres_travaux' => 'Rester si travaux faits',
             ],
         ],
+        self::EDIT_INFORMATIONS_GENERALES => [
+            'label' => 'Les informations générales',
+            'fields' => [
+                'dateEntree' => 'Date d\'entrée dans le logement',
+                'nbOccupantsLogement' => 'Nombre de personnes occupant le logement',
+                'numeroInvariant' => 'Invariant fiscal',
+                'loyer' => 'Montant du loyer',
+                'typeCompositionLogement.composition_logement_nombre_enfants' => 'Nombre d\'enfants occupant le logement',
+                'typeCompositionLogement.composition_logement_enfants' => 'Présence d\'enfants de moins de 6 ans',
+                'typeCompositionLogement.bail_dpe_bail' => 'Contrat de location (bail)',
+                'typeCompositionLogement.bail_dpe_etat_des_lieux' => 'Etat des lieux',
+                'typeCompositionLogement.bail_dpe_dpe' => 'Diagnostic performance énergétique (DPE)',
+                'typeCompositionLogement.bail_dpe_classe_energetique' => 'Classe énergétique du logement',
+                'informationComplementaire.informations_complementaires_situation_bailleur_date_effet_bail' => 'Date d\'effet du bail',
+                'informationComplementaire.informations_complementaires_situation_occupants_loyers_payes' => 'Paiement des loyers à jour',
+                'informationComplementaire.informations_complementaires_logement_annee_construction' => 'Année de construction du logement',
+            ],
+        ],
     ];
 
     private const array JSON_FIELDS = [
@@ -123,10 +143,10 @@ class SignalementUpdatedListener
 
                     // Si c'est un champ de type DateTimeImmutable, on formate la date pour que ce soit plus lisible dans le suivi
                     if ($new instanceof \DateTimeImmutable) {
-                        $new = $new->format('d/m/Y');
+                        $new = $new->format(self::DATE_FORMAT);
                     }
                     if ($old instanceof \DateTimeImmutable) {
-                        $old = $old->format('d/m/Y');
+                        $old = $old->format(self::DATE_FORMAT);
                     }
 
                     if ($old === $new) {
@@ -170,7 +190,7 @@ class SignalementUpdatedListener
 
                 $fieldChanges[$field] = [
                     'label' => $label,
-                    'new' => array_key_exists('new', $diffProperty) && null !== $diffProperty['new'] ? $this->dictionaryProvider->translate($diffProperty['new']) : null,
+                    'new' => $this->dictionaryProvider->translate($diffProperty['new'], 'suivi'),
                 ];
             }
 

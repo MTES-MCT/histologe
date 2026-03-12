@@ -67,9 +67,10 @@
                                     }}
                                 </label>
                                 <select class="fr-select" id="informationLogementCompositionLogementEnfants" name="compositionLogementEnfants">
-                                    <option value="" {{ compositionLogementEnfants not in ['oui', 'non'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ compositionLogementEnfants is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ compositionLogementEnfants is same as 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="" {{ compositionLogementEnfants not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                                    <option value="oui" {{ compositionLogementEnfants == 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ compositionLogementEnfants == 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ compositionLogementEnfants == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
@@ -110,9 +111,9 @@
                                 </label>
                                 <select class="fr-select" id="informationLogementBailDpeBail" name="bailDpeBail">
                                     <option value="" {{ bailDpeBail not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ bailDpeBail is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ bailDpeBail is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ bailDpeBail is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                    <option value="oui" {{ bailDpeBail == 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ bailDpeBail == 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ bailDpeBail == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
@@ -134,9 +135,9 @@
                                 </label>
                                 <select class="fr-select" id="informationLogementBailDpeEtatDesLieux" name="bailDpeEtatDesLieux">
                                     <option value="" {{ bailDpeEtatDesLieux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ bailDpeEtatDesLieux is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ bailDpeEtatDesLieux is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ bailDpeEtatDesLieux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                    <option value="oui" {{ bailDpeEtatDesLieux == 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ bailDpeEtatDesLieux == 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ bailDpeEtatDesLieux == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
@@ -152,9 +153,9 @@
                                 </label>
                                 <select class="fr-select" id="informationLogementBailDpeDpe" name="bailDpeDpe">
                                     <option value="" {{ bailDpeDpe not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
-                                    <option value="oui" {{ bailDpeDpe is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                                    <option value="non" {{ bailDpeDpe is same as 'non' ? 'selected' : '' }}>Non</option>
-                                    <option value="nsp" {{ bailDpeDpe is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                    <option value="oui" {{ bailDpeDpe == 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ bailDpeDpe == 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ bailDpeDpe == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
 
