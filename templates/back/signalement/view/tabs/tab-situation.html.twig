@@ -52,14 +52,14 @@
         {% include 'back/signalement/view/information/information-bailleur.html.twig' %}
     </div>
     <hr class="fr-mt-3w fr-hr">
-
 {% endif %}
 
-<div id="signalement-information-agence-container">
-    {% include 'back/signalement/view/information/information-agence.html.twig' %}
-</div>
-
-<hr class="fr-mt-3w fr-hr">
+{% if signalement|display_signalement_info_agence %}
+    <div id="signalement-information-agence-container">
+        {% include 'back/signalement/view/information/information-agence.html.twig' %}
+    </div>
+    <hr class="fr-mt-3w fr-hr">
+{% endif %}
 
 <div id="signalement-information-procedure-container">
     {% include 'back/signalement/view/information/information-procedure.html.twig' %}

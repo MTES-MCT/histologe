@@ -147,6 +147,7 @@ class AppExtensionTest extends WebTestCase
             'status_to_css',
             'signalement_lien_declarant_occupant',
             'display_signalement_info_bailleur',
+            'display_signalement_info_agence',
             'image64',
             'truncate_filename',
             'clean_tagged_text',

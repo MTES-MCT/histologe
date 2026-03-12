@@ -47,6 +47,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFilter('status_to_css', [$this, 'getCssFromStatus']),
             new TwigFilter('signalement_lien_declarant_occupant', [$this, 'getLabelLienDeclarantOccupant']),
             new TwigFilter('display_signalement_info_bailleur', [$this, 'isDisplaySignalementInfoBailleur']),
+            new TwigFilter('display_signalement_info_agence', [$this, 'isDisplaySignalementInfoAgence']),
             new TwigFilter('image64', [ImageBase64Encoder::class, 'encode']),
             new TwigFilter('truncate_filename', [$this, 'getTruncatedFilename']),
             new TwigFilter('clean_tagged_text', [$this, 'cleanTaggedText']),
@@ -138,8 +139,18 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
                     || ProfileDeclarant::TIERS_PARTICULIER === $signalement->getProfileDeclarant()
                     || ProfileDeclarant::TIERS_PRO === $signalement->getProfileDeclarant()
                 )
-                && ProfileOccupant::LOCATAIRE === $signalement->getProfileOccupant()
+                && (
+                    ProfileOccupant::LOCATAIRE === $signalement->getProfileOccupant()
+                    || empty($signalement->getProfileOccupant())
+                )
             );
+    }
+
+    public function isDisplaySignalementInfoAgence(Signalement $signalement): bool
+    {
+        return ProfileDeclarant::BAILLEUR_OCCUPANT !== $signalement->getProfileDeclarant()
+            && ProfileOccupant::BAILLEUR_OCCUPANT !== $signalement->getProfileOccupant()
+        ;
     }
 
     public function getTruncatedFilename(string $fileName, int $maxCharacters = 50): string
