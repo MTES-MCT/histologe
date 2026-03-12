@@ -64,4 +64,132 @@ function attachFormServiceSecoursEvent() {
       }
     });
   });
+
+  initUploadPhotos();
+}
+
+function initUploadPhotos() {
+
+  /** @type {HTMLElement|null} */
+  const wrapper = document.querySelector('.js-upload-photos');
+
+  if (!wrapper) {
+    return;
+  }
+
+  /** @type {HTMLButtonElement|null} */
+  const trigger = wrapper.querySelector('[data-upload-photos-trigger]');
+
+  /** @type {HTMLInputElement|null} */
+  const input = wrapper.querySelector('[data-upload-photos-input]');
+
+  /** @type {HTMLElement|null} */
+  const fileList = wrapper.querySelector('[data-upload-photos-list]');
+
+  /** @type {HTMLElement|null} */
+  const hiddenContainer = wrapper.querySelector('[data-upload-photos-hidden-container]');
+
+  const uploadUrl = wrapper.dataset.ajaxurlHandleUpload;
+
+  if (!trigger || !input || !fileList || !hiddenContainer || !uploadUrl) {
+    return;
+  }
+
+  /** @type {Array<{titre:string,filePath:string}>} */
+  let uploadedFiles = [];
+
+
+  trigger.addEventListener('click', () => {
+    input.click();
+  });
+
+  input.addEventListener('change', async () => {
+
+    const files = Array.from(input.files || []);
+
+    setButtonsDisabled(true);
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append('signalement[documents]', file);
+
+      try {
+        const response = await fetch(uploadUrl, {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+        if (data.error) {
+          console.error(data.error);
+          continue;
+        }
+
+        uploadedFiles.push({
+          titre: data.titre,
+          filePath: data.filePath
+        });
+
+        renderFiles();
+        updateHiddenInputs();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    input.value = '';
+    setButtonsDisabled(false);
+  });
+
+
+  function renderFiles() {
+    fileList.innerHTML = '';
+    uploadedFiles.forEach((uploadedFile, index) => {
+      const row = document.createElement('div');
+      row.classList.add('uploaded-file-row');
+
+      const name = document.createElement('span');
+      name.textContent = uploadedFile.titre;
+
+      const removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.className = 'fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error fr-ml-2w';
+      removeButton.textContent = 'Supprimer';
+      removeButton.setAttribute(
+          'aria-label',
+          `Supprimer le fichier ${uploadedFile.titre}`
+      );
+
+      removeButton.setAttribute(
+          'title',
+          `Supprimer le fichier ${uploadedFile.titre}`
+      );
+
+      removeButton.addEventListener('click', () => {
+        uploadedFiles.splice(index, 1);
+        renderFiles();
+        updateHiddenInputs();
+      });
+      row.appendChild(name);
+      row.appendChild(removeButton);
+      fileList.appendChild(row);
+    });
+  }
+
+  function updateHiddenInputs() {
+    hiddenContainer.innerHTML = '';
+    uploadedFiles.forEach((file, index) => {
+      const inputHidden = document.createElement('input');
+      inputHidden.type = 'hidden';
+      inputHidden.name = `service_secours[step5][uploadedFiles][${index}]`;
+      inputHidden.value = file.filePath;
+      hiddenContainer.appendChild(inputHidden);
+    });
+  }
+
+
+  function setButtonsDisabled(disabled) {
+    const buttonNext = document.getElementById('service_secours_navigator_next');
+    const butonPrevious = document.getElementById('service_secours_navigator_previous');
+    buttonNext.disabled = disabled;
+    butonPrevious.disabled = disabled;
+  }
 }
