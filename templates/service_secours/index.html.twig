@@ -106,6 +106,39 @@
                     {{ form_row(form.step5.desordres) }}
                     {{ form_row(form.step5.desordresAutre) }}
                     {{ form_row(form.step5.autresOccupantsDesordre) }}
+                    <div
+                            class="fr-upload-group js-upload-photos"
+                            data-ajaxurl-handle-upload="{{ path('handle_upload') }}">
+                        <p class="fr-text--lg">
+                            <span class="fr-text--bold">Photos</span><br>
+                            <span>Si possible, ajoutez des photos des problèmes sélectionnés.</span>
+                        </p>
+
+                        {% if form.step5.photos.vars.help %}
+                            <span class="fr-hint-text">{{ form.step5.photos.vars.help }}</span>
+                        {% endif %}
+                        <button
+                                type="button"
+                                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line"
+                                data-upload-photos-trigger>
+                            Ajouter des photos
+                        </button>
+
+                        <div class="fr-hidden">
+                            {{ form_widget(form.step5.photos, {
+                                attr: {
+                                    'data-upload-photos-input': ''
+                                }
+                            }) }}
+                        </div>
+
+                        {{ form_errors(form.step5.photos) }}
+
+                        <div class="fr-mt-2w" data-upload-photos-list></div>
+                        <div data-upload-photos-hidden-container></div>
+                        {% do form.step5.uploadedFiles.setRendered %}
+
+                    </div>
                 {% elseif current_step == 'step6' %}
                     <div class="fr-mt-5v fr-mb-5v">
                         //RECAP

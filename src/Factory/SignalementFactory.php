@@ -134,6 +134,13 @@ class SignalementFactory
             }
         }
 
+        if (!empty($formServiceSecours->step5->uploadedFiles)) {
+            // A la sauvegarde du signalement, déclencher le traitement en asynchrone des fichiers
+            // Supprimer la propriété une fois le traitement terminé
+            // Adapter le handler front ?
+            $jsonContent['uploadedFiles'] = $formServiceSecours->step5->uploadedFiles;
+        }
+
         $signalement->setJsonContent($jsonContent);
 
         return $signalement;
