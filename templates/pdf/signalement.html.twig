@@ -260,6 +260,27 @@
                     </td>
                 </tr>
                 {% endif %}
+
+                {% if signalement|display_signalement_info_agence %}
+                <tr>
+                    <td>
+                        <h3 style="margin-bottom: 0">Informations sur l'agence</h3>
+                        <ul style="list-style:none; margin-left:0px;padding-left:0px;">
+                            <li>
+                                <b>Dénomination :</b> {{ signalement.denominationAgence }}<br>
+                                <b>Nom :</b> {{ signalement.nomAgence ?? 'N/R' }}
+                                - <b>Prénom :</b> {{ signalement.prenomAgence ?? 'N/R' }}
+                            </li>
+                            <li><b>Courriel :</b> {{ signalement.mailAgence ?? 'N/R' }}</li>
+                            <li><b>Tel. :</b> {{ signalement.telAgence ? signalement.telAgenceDecoded|phone : 'N/R' }}</li>
+                            <li><b>Tel. sec. :</b> {{ signalement.telAgenceSecondaire ? signalement.telAgenceSecondaireDecoded|phone : 'N/R' }}</li>
+                            <li><b>Adresse :</b>
+                                {{ signalement.adresseAgence ? signalement.adresseAgence ~ ', ' ~ signalement.codePostalAgence ~ ' ' ~ signalement.villeAgence : 'N/R' }}
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+                {% endif %}
             </table>
         </section>
         <section>
