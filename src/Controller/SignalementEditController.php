@@ -151,15 +151,9 @@ class SignalementEditController extends AbstractController
 
             $infoProcedureBailDateFormData = $formCoordonneesBailleur->get('infoProcedureBailDate')->getData();
             if ($infoProcedureBailDateFormData) {
-                try {
-                    $informationProcedure->setInfoProcedureBailDate($infoProcedureBailDateFormData);
-                    $infoProcedureBailDateFormDataFormat = \DateTimeImmutable::createFromFormat('m/Y', $infoProcedureBailDateFormData);
-                    $signalement->setProprioAvertiAt(!empty($infoProcedureBailDateFormDataFormat) ? $infoProcedureBailDateFormDataFormat : null);
-                } catch (\Exception $e) {
-                    // En cas d'erreur de parsing de la date, on ignore la valeur et on n'enregistre pas de date
-                    $informationProcedure->setInfoProcedureBailDate('');
-                    $signalement->setProprioAvertiAt(null);
-                }
+                $informationProcedure->setInfoProcedureBailDate($infoProcedureBailDateFormData);
+                $infoProcedureBailDateFormDataFormat = \DateTimeImmutable::createFromFormat('m/Y', $infoProcedureBailDateFormData);
+                $signalement->setProprioAvertiAt(!empty($infoProcedureBailDateFormDataFormat) ? $infoProcedureBailDateFormDataFormat : null);
             } else {
                 $informationProcedure->setInfoProcedureBailDate('');
                 $signalement->setProprioAvertiAt(null);
