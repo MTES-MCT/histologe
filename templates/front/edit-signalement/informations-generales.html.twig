@@ -62,7 +62,9 @@
 				<div class="fr-fieldset__element">
 					{{ form_row(form.loyer) }}
 				</div>
-				<div class="fr-fieldset__element">
+				{% set isBailleurOccupant = ( signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT) or (signalement.profileOccupant and signalement.profileOccupant is same as enum('App\\Entity\\Enum\\ProfileOccupant').BAILLEUR_OCCUPANT) %}
+
+				<div class="fr-fieldset__element {% if isBailleurOccupant %}fr-hidden{% endif %}">
 					{{ form_row(form.payementLoyersAJour) }}
 				</div>
 				<div class="fr-fieldset__element">
