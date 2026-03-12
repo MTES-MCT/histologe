@@ -16,6 +16,7 @@ use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Entity\TiersInvitation;
 use App\Event\SuiviViewedEvent;
+use App\Form\BailleurClotureProcedureType;
 use App\Form\DemandeLienSignalementType;
 use App\Form\MessageUsagerType;
 use App\Form\UsagerBasculeProcedureType;
@@ -938,6 +939,95 @@ class SignalementController extends AbstractController
         }
 
         return $this->render('front/suivi_signalement_poursuivre_procedure_bascule.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/suivre-mon-signalement/{code}/procedure/cloture-bailleur', name: 'front_suivi_signalement_procedure_bailleur_cloture', methods: ['GET', 'POST'])]
+    public function suiviSignalementProcedureBailleurCloture(
+        Request $request,
+        string $code,
+        SignalementRepository $signalementRepository,
+        SignalementManager $signalementManager,
+        SuiviManager $suiviManager,
+        InjonctionBailleurService $injonctionBailleurService,
+        EntityManagerInterface $entityManager,
+        AutoAssigner $autoAssigner,
+        LoggerInterface $logger,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
+        if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
+            $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Vous n\'avez pas les droits pour effectuer cette action.']);
+
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->cguTiersChecker->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
+        $user = $signalementUser->getUser();
+
+        $form = $this->createForm(BailleurClotureProcedureType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ('non' === $form->get('reponse')->getData()) {
+                // -> Quand il sélectionne "Non", on affiche un champ commentaire non obligatoire "Préciser la situation" + un message d'info Votre dossier va être transmis aux services compétents.
+                $messageFeedback = 'Votre dossier va être transmis aux services compétents.';
+                $descriptionSuivi = HtmlCleaner::cleanFrontEndEntry($user->getNomComplet().' ne confirme pas la réalisation des travaux par le bailleur pour son signalement. Précision apportée : '.$form->get('description')->getData());
+                $categorySuivi = SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER;
+                $entityManager->beginTransaction();
+                try {
+                    $suiviManager->createSuivi(
+                        signalement: $signalement,
+                        description: HtmlCleaner::cleanFrontEndEntry($descriptionSuivi),
+                        type: Suivi::TYPE_USAGER,
+                        category: $categorySuivi,
+                        user: $user,
+                        isPublic: true,
+                    );
+                    $injonctionBailleurService->switchFromInjonctionToProcedure($signalement);
+                    $signalementManager->save($signalement);
+                    $entityManager->commit();
+                } catch (\Exception $e) {
+                    $entityManager->rollback();
+                    $logger->critical($e->getMessage());
+                    $this->addFlash('error', 'Une erreur est survenue veuillez réessayer.');
+
+                    return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+                }
+
+                $autoAssigner->assignOrSendNewSignalementNotification($signalement);
+            } else {
+                // -> Quand il sélectionne "Oui", on affiche un message d'info Votre dossier va être fermé.
+                $messageFeedback = 'Votre dossier va être fermé.';
+                $descriptionSuivi = $user->getNomComplet().' confirme la réalisation des travaux par le bailleur pour son signalement.';
+                $categorySuivi = SuiviCategory::DEMANDE_POURSUITE_PROCEDURE;
+                $suiviManager->createSuivi(
+                    signalement: $signalement,
+                    description: HtmlCleaner::cleanFrontEndEntry($descriptionSuivi),
+                    type: Suivi::TYPE_USAGER,
+                    category: $categorySuivi,
+                    user: $user,
+                    isPublic: true,
+                );
+
+                // TODO : on fait quoi du statut du signalement ?
+                $signalementManager->save($signalement);
+            }
+
+            $this->addFlash('success', ['title' => 'Demande enregistrée', 'message' => $messageFeedback]);
+
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/suivi_signalement_bailleur_cloture_procedure.html.twig', [
             'signalement' => $signalement,
             'form' => $form->createView(),
         ]);
