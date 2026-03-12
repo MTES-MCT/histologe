@@ -17,6 +17,7 @@ use App\Entity\User;
 use App\Event\SuiviCreatedEvent;
 use App\Security\User\SignalementUser;
 use App\Service\Sanitizer;
+use App\Utils\DateHelper;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\ClockInterface;
@@ -26,6 +27,8 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class SuiviManager extends Manager
 {
+    private const string DATE_FORMAT = 'd/m/Y';
+
     public function __construct(
         protected ManagerRegistry $managerRegistry,
         private readonly EventDispatcherInterface $eventDispatcher,
@@ -409,18 +412,7 @@ class SuiviManager extends Manager
         $description .= '<ul>';
 
         foreach ($sectionChanges['fieldChanges'] as $change) {
-            $new = $change['new'];
-            // Si c'est un champ de type DateTimeImmutable, on formate la date pour que ce soit plus lisible dans le suivi
-            if ($new instanceof \DateTimeInterface) {
-                $new = $new->format('d/m/Y');
-            } else {
-                $new = nl2br(htmlentities($new));
-            }
-            if (null === $new || '' === $new) {
-                $new = '<i>(valeur supprimée)</i>';
-            } else {
-                $new = nl2br(htmlentities($new));
-            }
+            $new = $this->formatValue($change['new']);
             $description .= sprintf(
                 '<li>%s : %s</li>',
                 $change['label'],
@@ -437,5 +429,24 @@ class SuiviManager extends Manager
             user: $user,
             isPublic: true,
         );
+    }
+
+    private function formatValue(mixed $value): string
+    {
+        // Si c'est un champ de type DateTimeInterface, on formate la date pour que ce soit plus lisible dans le suivi
+        if ($value instanceof \DateTimeInterface) {
+            $value = $value->format('d/m/Y');
+        } else {
+            $dateFormatted = DateHelper::formatDateString($value, 'Y-m-d', self::DATE_FORMAT);
+            if (false !== $dateFormatted) {
+                return $dateFormatted;
+            }
+            $value = nl2br(htmlentities($value));
+        }
+        if (null === $value || '' === $value) {
+            $value = '<i>(valeur supprimée)</i>';
+        }
+
+        return $value;
     }
 }

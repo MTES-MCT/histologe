@@ -23,6 +23,7 @@ class InformationsGeneralesType extends AbstractType
         /** @var Signalement $signalement */
         $signalement = $builder->getData();
 
+        $dateEntree = $signalement->getDateEntree() ?? $signalement->getTypeCompositionLogement()?->getBailDpeDateEmmenagement();
         $nbEnfantsDansLogement = $signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants();
         $enfantsDansLogementMoinsSixAns = $signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants();
         $bail = $signalement->getTypeCompositionLogement()?->getBailDpeBail();
@@ -33,13 +34,14 @@ class InformationsGeneralesType extends AbstractType
         $payementLoyersAJour = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsLoyersPayes() : '';
         $anneeConstruction = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementAnneeConstruction();
         $dateEffetBail = $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurDateEffetBail() ? \DateTime::createFromFormat('Y-m-d', $signalement->getInformationComplementaire()->getInformationsComplementairesSituationBailleurDateEffetBail()) : null;
+        $loyer = $signalement->getLoyer() ?? $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementMontantLoyer();
 
         $builder
             ->add('dateEntree', DateType::class, [
                 'label' => 'Date arrivée (facultatif)',
                 'required' => false,
                 'placeholder' => false,
-                'data' => $signalement->getDateEntree(),
+                'data' => $dateEntree,
             ])
             ->add('dateEffetBail', DateType::class, [
                 'label' => 'Date d\'effet du bail (facultatif)',
@@ -168,7 +170,7 @@ class InformationsGeneralesType extends AbstractType
             ->add('loyer', NumberType::class, [
                 'label' => 'Montant du loyer (facultatif)',
                 'required' => false,
-                'data' => $signalement->getLoyer(),
+                'data' => $loyer,
             ])
             ->add('payementLoyersAJour', ChoiceType::class, [
                 'label' => 'Paiement des loyers à jour (facultatif)',

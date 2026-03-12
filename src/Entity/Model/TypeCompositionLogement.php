@@ -324,9 +324,7 @@ class TypeCompositionLogement
 
     public function setBailDpeClasseEnergetique(?string $bailDpeClasseEnergetique): self
     {
-        if (null === $this->bailDpeClasseEnergetique
-            && (null === $bailDpeClasseEnergetique || '' === $bailDpeClasseEnergetique)
-        ) {
+        if (null === $this->bailDpeClasseEnergetique && '' === $bailDpeClasseEnergetique) {
             return $this;
         }
 

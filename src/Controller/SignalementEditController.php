@@ -243,7 +243,7 @@ class SignalementEditController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $situationFoyer = $signalement->getSituationFoyer() ? clone $signalement->getSituationFoyer() : new SituationFoyer();
             $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();
-            $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : null;
+            $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : new InformationProcedure();
 
             $situationFoyerProcessor->processIsLogementSocial($signalement, $form->get('isLogementSocial')->getData());
             $situationFoyerProcessor->processIsAllocataire($signalement, $form->get('allocataire')->getData(), $form->get('caisseAllocation')->getData());
