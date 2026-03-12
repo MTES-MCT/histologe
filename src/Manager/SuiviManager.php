@@ -412,7 +412,7 @@ class SuiviManager extends Manager
             } elseif (null === $new || '' === $new) {
                 $new = '<i>(valeur supprimée)</i>';
             } else {
-                $new = nl2br(htmlentities($new ?? '-'));
+                $new = nl2br(htmlentities($new));
             }
             $description .= sprintf(
                 '<li>%s : %s</li>',
