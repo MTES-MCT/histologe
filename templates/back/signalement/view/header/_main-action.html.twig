@@ -28,7 +28,17 @@
         <div class="fr-pl-3v">
             <div class="fr-notice__body">
                 <p>
-                    <span class="fr-notice__title">Ce signalement est en cours d'injonction au bailleur.</span>
+                    <span class="fr-notice__title">Ce signalement est en cours de démarche accélérée.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED %}
+    <div class="fr-notice fr-notice--success fr-my-4v fr-text--left">
+        <div class="fr-pl-3v">
+            <div class="fr-notice__body">
+                <p>
+                    <span class="fr-notice__title">Ce signalement est en démarche accélérée fermée.</span>
                 </p>
             </div>
         </div>

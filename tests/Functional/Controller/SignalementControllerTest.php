@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
@@ -742,5 +743,157 @@ class SignalementControllerTest extends WebTestCase
             $suivi->getDescription(),
             'Le suivi doit contenir le nom complet de l’usager.'
         );
+    }
+
+    public function testSuiviSignalementProcedureBailleurClotureOui(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine');
+
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
+            'statut' => SignalementStatus::INJONCTION_BAILLEUR,
+        ]);
+
+        $this->assertNotNull($signalement);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        $url = $router->generate(
+            'front_suivi_signalement_procedure_bailleur_cloture',
+            ['code' => $codeSuivi = $signalement->getCodeSuivi()]
+        );
+
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        $client->request('POST', $url, [
+            'bailleur_cloture_procedure' => [
+                'reponse' => 'oui',
+                'description' => '',
+                '_token' => $this->generateCsrfToken($client, 'bailleur_cloture_procedure'),
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi);
+
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
+            'uuid' => $signalement->getUuid(),
+        ]);
+
+        $this->assertEquals(
+            SignalementStatus::INJONCTION_CLOSED,
+            $signalement->getStatut()
+        );
+
+        $this->assertEquals(
+            MotifCloture::TRAVAUX_FAITS_OU_EN_COURS,
+            $signalement->getMotifCloture()
+        );
+
+        /** @var Suivi $lastSuivi */
+        $lastSuivi = $signalement->getSuivis()->last();
+
+        $this->assertEquals(
+            SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER,
+            $lastSuivi->getCategory()
+        );
+
+        $this->assertStringContainsString(
+            'confirme la réalisation des travaux',
+            $lastSuivi->getDescription()
+        );
+    }
+
+    public function testSuiviSignalementProcedureBailleurClotureNon(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine');
+
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
+            'statut' => SignalementStatus::INJONCTION_BAILLEUR,
+        ]);
+
+        $this->assertNotNull($signalement);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        $url = $router->generate(
+            'front_suivi_signalement_procedure_bailleur_cloture',
+            ['code' => $codeSuivi = $signalement->getCodeSuivi()]
+        );
+
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        $details = 'Les travaux ne sont pas terminés <b>test</b>';
+
+        $client->request('POST', $url, [
+            'bailleur_cloture_procedure' => [
+                'reponse' => 'non',
+                'description' => $details,
+                '_token' => $this->generateCsrfToken($client, 'bailleur_cloture_procedure'),
+            ],
+        ]);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi);
+
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
+            'uuid' => $signalement->getUuid(),
+        ]);
+
+        /** @var Suivi $lastSuivi */
+        $lastSuivi = $signalement->getSuivis()->last();
+
+        $this->assertEquals(
+            SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
+            $lastSuivi->getCategory()
+        );
+
+        $this->assertStringContainsString(
+            'ne confirme pas la réalisation des travaux',
+            $lastSuivi->getDescription()
+        );
+
+        $this->assertStringContainsString(
+            '&lt;b&gt;test&lt;/b&gt;',
+            $lastSuivi->getDescription()
+        );
+    }
+
+    public function testDisplaySuiviSignalementProcedureBailleurCloture(): void
+    {
+        $client = static::createClient();
+
+        $entityManager = self::getContainer()->get('doctrine');
+
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
+            'statut' => SignalementStatus::INJONCTION_BAILLEUR,
+        ]);
+
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        $url = $router->generate(
+            'front_suivi_signalement_procedure_bailleur_cloture',
+            ['code' => $signalement->getCodeSuivi()]
+        );
+
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        $crawler = $client->request('GET', $url);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('form');
     }
 }

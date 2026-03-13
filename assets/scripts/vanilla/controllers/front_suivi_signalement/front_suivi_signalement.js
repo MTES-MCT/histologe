@@ -427,7 +427,6 @@ if (infoProcedureAssuranceContactee) {
 
 
 const fieldsetBailleurClotureProcedureReponse = document?.querySelector('#bailleur_cloture_procedure_reponse');
-// le nom de la structure d'accompagnement (usager_situation_foyer_accompagnementTravailleurSocialNomStructure) s'affiche que si on a répondu oui
 if (fieldsetBailleurClotureProcedureReponse) {
   document
     .querySelectorAll('#bailleur_cloture_procedure_reponse input[type="radio"]')

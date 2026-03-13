@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Dto\DemandeLienSignalement;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
@@ -977,49 +978,48 @@ class SignalementController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ('non' === $form->get('reponse')->getData()) {
-                // -> Quand il sélectionne "Non", on affiche un champ commentaire non obligatoire "Préciser la situation" + un message d'info Votre dossier va être transmis aux services compétents.
+            $reponse = $form->get('reponse')->getData();
+            $descriptionInput = $form->get('description')->getData();
+
+            if ('non' === $reponse) {
                 $messageFeedback = 'Votre dossier va être transmis aux services compétents.';
-                $descriptionSuivi = HtmlCleaner::cleanFrontEndEntry($user->getNomComplet().' ne confirme pas la réalisation des travaux par le bailleur pour son signalement. Précision apportée : '.$form->get('description')->getData());
-                $categorySuivi = SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER;
-                $entityManager->beginTransaction();
-                try {
-                    $suiviManager->createSuivi(
-                        signalement: $signalement,
-                        description: HtmlCleaner::cleanFrontEndEntry($descriptionSuivi),
-                        type: Suivi::TYPE_USAGER,
-                        category: $categorySuivi,
-                        user: $user,
-                        isPublic: true,
-                    );
-                    $injonctionBailleurService->switchFromInjonctionToProcedure($signalement);
-                    $signalementManager->save($signalement);
-                    $entityManager->commit();
-                } catch (\Exception $e) {
-                    $entityManager->rollback();
-                    $logger->critical($e->getMessage());
-                    $this->addFlash('error', 'Une erreur est survenue veuillez réessayer.');
-
-                    return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
-                }
-
-                $autoAssigner->assignOrSendNewSignalementNotification($signalement);
+                $description = $user->getNomComplet().' ne confirme pas la réalisation des travaux par le bailleur pour son signalement. Précision apportée : '.HtmlCleaner::cleanFrontEndEntry($descriptionInput);
+                $category = SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER;
             } else {
-                // -> Quand il sélectionne "Oui", on affiche un message d'info Votre dossier va être fermé.
                 $messageFeedback = 'Votre dossier va être fermé.';
-                $descriptionSuivi = $user->getNomComplet().' confirme la réalisation des travaux par le bailleur pour son signalement.';
-                $categorySuivi = SuiviCategory::DEMANDE_POURSUITE_PROCEDURE;
+                $description = $user->getNomComplet().' confirme la réalisation des travaux par le bailleur pour son signalement.';
+                $category = SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER;
+            }
+
+            $entityManager->beginTransaction();
+            try {
                 $suiviManager->createSuivi(
                     signalement: $signalement,
-                    description: HtmlCleaner::cleanFrontEndEntry($descriptionSuivi),
+                    description: $description,
                     type: Suivi::TYPE_USAGER,
-                    category: $categorySuivi,
+                    category: $category,
                     user: $user,
                     isPublic: true,
                 );
 
-                // TODO : on fait quoi du statut du signalement ?
+                if ('non' === $reponse) {
+                    $injonctionBailleurService->switchFromInjonctionToProcedure($signalement);
+                } else {
+                    $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
+                    $signalement->setMotifCloture(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS);
+                }
                 $signalementManager->save($signalement);
+                $entityManager->commit();
+            } catch (\Exception $e) {
+                $entityManager->rollback();
+                $logger->critical($e->getMessage());
+                $this->addFlash('error', 'Une erreur est survenue veuillez réessayer.');
+
+                return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+            }
+
+            if ('non' === $reponse) {
+                $autoAssigner->assignOrSendNewSignalementNotification($signalement);
             }
 
             $this->addFlash('success', ['title' => 'Demande enregistrée', 'message' => $messageFeedback]);

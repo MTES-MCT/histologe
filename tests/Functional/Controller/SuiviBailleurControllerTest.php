@@ -62,7 +62,7 @@ class SuiviBailleurControllerTest extends WebTestCase
 
         $this->assertStringContainsString('Votre réponse a été enregistrée avec succès.', $crawler->filter('.fr-notice.fr-notice--success')->text());
         $this->assertStringContainsString('Oui', $crawler->filter('.signalement-card .info')->eq(3)->text());
-        $this->assertStringContainsString('Contrat d\'engagement', $crawler->filter('h2')->eq(3)->text());
+        $this->assertStringContainsString('Contrat d\'engagement', $crawler->filter('h3')->eq(3)->text());
 
         $signalement = $entityManager->getRepository(Suivi::class)->findBy([
             'signalement' => $signalement->getId(),
@@ -113,8 +113,8 @@ class SuiviBailleurControllerTest extends WebTestCase
 
         $this->assertStringContainsString('Votre réponse a été enregistrée avec succès.', $crawler->filter('.fr-notice.fr-notice--success')->text());
         $this->assertStringContainsString('Oui avec aide', $crawler->filter('.signalement-card .info')->eq(3)->text());
-        $this->assertStringContainsString('Contrat d\'engagement', $crawler->filter('h2')->eq(3)->text());
-        $this->assertStringContainsString('Coordonnées manquantes', $crawler->filter('h2')->eq(4)->text());
+        $this->assertStringContainsString('Contrat d\'engagement', $crawler->filter('h3')->eq(3)->text());
+        $this->assertStringContainsString('Coordonnées manquantes', $crawler->filter('h3')->eq(4)->text());
 
         $suivi = $entityManager->getRepository(Suivi::class)->findBy([
             'signalement' => $signalement->getId(),
@@ -177,7 +177,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $this->assertStringNotContainsString('-TEMPORAIRE', $signalement->getReference());
     }
 
-    public function testDossierBailleurStopProcedure(): void
+    public function testDossierBailleurStopProcedureAutre(): void
     {
         $client = static::createClient();
 
@@ -196,7 +196,7 @@ class SuiviBailleurControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
-        $urlDossierBailleur = $router->generate('front_dossier_bailleur');
+        $urlDossierBailleur = $router->generate('front_dossier_bailleur_cloture');
         $uuid = $signalement->getUuid();
         if (empty($uuid)) {
             throw new \RuntimeException('Le signalement n’a pas d’UUID');
@@ -211,10 +211,11 @@ class SuiviBailleurControllerTest extends WebTestCase
         );
 
         $form = $crawler->filter('form[name="stop_procedure"]')->form();
+        $form['stop_procedure[reason]'] = '1';
         $form['stop_procedure[description]'] = 'Je préfère passer en procédure classique. <strong>Merci</strong>';
         $client->submit($form);
 
-        $this->assertResponseRedirects($urlDossierBailleur);
+        $this->assertResponseRedirects($router->generate('front_dossier_bailleur'));
         $client->followRedirect();
         $crawler = $client->getCrawler();
 
@@ -241,5 +242,70 @@ class SuiviBailleurControllerTest extends WebTestCase
         $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
         $this->assertStringStartsWith(date('Y').'-', $signalement->getReference());
         $this->assertStringNotContainsString('-TEMPORAIRE', $signalement->getReference());
+    }
+
+    public function testDossierBailleurStopTravaux(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
+
+        $suiviReponse = new Suivi();
+        $suiviReponse->setSignalement($signalement);
+        $suiviReponse->setCategory(SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI);
+        $suiviReponse->setDescription('Réponse initiale du bailleur : oui.');
+        $suiviReponse->setType(Suivi::TYPE_AUTO);
+        $entityManager->persist($suiviReponse);
+        $entityManager->flush();
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $urlDossierBailleur = $router->generate('front_dossier_bailleur_cloture');
+        $uuid = $signalement->getUuid();
+        if (empty($uuid)) {
+            throw new \RuntimeException('Le signalement n’a pas d’UUID');
+        }
+        $signalementUser = new SignalementBailleur(userIdentifier: $uuid);
+        $client->loginUser($signalementUser, 'login_bailleur');
+        $crawler = $client->request('GET', $urlDossierBailleur);
+        $this->assertGreaterThan(
+            0,
+            $crawler->filter('form[name="stop_procedure"]')->count(),
+            'Le formulaire d’arrêt de procédure devrait être affiché.'
+        );
+
+        $form = $crawler->filter('form[name="stop_procedure"]')->form();
+        $form['stop_procedure[reason]'] = '0';
+        $form['stop_procedure[description]'] = 'Tout est nickel maintenant';
+        $client->submit($form);
+
+        $this->assertResponseRedirects($router->generate('front_dossier_bailleur'));
+        $client->followRedirect();
+        $crawler = $client->getCrawler();
+
+        $this->assertStringContainsString(
+            'Votre réponse a été enregistrée avec succès.',
+            $crawler->filter('.fr-notice.fr-notice--success')->text()
+        );
+
+        $suivis = $entityManager->getRepository(Suivi::class)->findBy([
+            'signalement' => $signalement->getId(),
+            'category' => SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
+        ]);
+        $this->assertCount(1, $suivis, 'Un suivi de demande de clôture doit être créé.');
+
+        $suivis = $entityManager->getRepository(Suivi::class)->findBy([
+            'signalement' => $signalement->getId(),
+            'category' => SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,
+        ]);
+        $this->assertCount(1, $suivis, 'Un suivi de demande de clôture doit être créé.');
+        $this->assertEquals('Tout est nickel maintenant', $suivis[0]->getDescription());
+
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
+        $this->assertEquals(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());
     }
 }
