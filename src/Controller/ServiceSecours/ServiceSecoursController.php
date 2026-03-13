@@ -4,8 +4,19 @@ namespace App\Controller\ServiceSecours;
 
 use App\Dto\ServiceSecours\FormServiceSecours;
 use App\Entity\ServiceSecoursRoute;
+use App\Entity\Signalement;
 use App\Factory\SignalementFactory;
 use App\Form\ServiceSecours\ServiceSecoursType;
+use App\Manager\UserManager;
+use App\Repository\SignalementRepository;
+use App\Service\Mailer\NotificationMail;
+use App\Service\Mailer\NotificationMailerRegistry;
+use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\AutoAssigner;
+use App\Service\Signalement\Export\ServiceSecoursPdfGenerator;
+use App\Service\Signalement\ReferenceGenerator;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Flow\FormFlowInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,6 +42,13 @@ class ServiceSecoursController extends AbstractController
         Request $request,
         ServiceSecoursRoute $serviceSecoursRoute,
         SignalementFactory $signalementFactory,
+        SignalementRepository $signalementRepository,
+        EntityManagerInterface $entityManager,
+        ReferenceGenerator $referenceGenerator,
+        UserManager $userManager,
+        AutoAssigner $autoAssigner,
+        NotificationMailerRegistry $notificationMailerRegistry,
+        ServiceSecoursPdfGenerator $serviceSecoursPdfGenerator,
     ): Response {
         $serviceSecours = new FormServiceSecours();
         /** @var FormFlowInterface $flow */
@@ -40,8 +58,24 @@ class ServiceSecoursController extends AbstractController
             $signalement = $signalementFactory->createInstanceFromFormServiceSecours($flow->getData(), $serviceSecoursRoute);
 
             // dump($signalement); // for testing purpose
-            // TODO : persist and flush
-            // voir les traitements fait dans App\Controller\Api\SignalementCreateController.php, création de la référence dans une transaction en particulier)
+
+            $entityManager->beginTransaction();
+            $signalement->setReference($referenceGenerator->generateReference($signalement->getTerritory()));
+            $signalementRepository->save($signalement, true);
+            $entityManager->commit();
+            $userManager->createUsagersFromSignalement($signalement);
+            $autoAssigner->assignOrSendNewSignalementNotification($signalement);
+            // acusé de reception
+            $pdfContent = $serviceSecoursPdfGenerator->generate($signalement);
+            $notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_SERVICE_SECOURS_ACCUSE_RECEPTION,
+                    to: $serviceSecoursRoute->getEmail(),
+                    signalement: $signalement,
+                    attachment: $pdfContent,
+                )
+            );
+
             return $this->render('service_secours/success.html.twig', ['serviceSecoursRoute' => $serviceSecoursRoute, 'signalement' => $signalement]);
         }
 
@@ -49,6 +83,30 @@ class ServiceSecoursController extends AbstractController
             'form' => $flow->getStepForm(),
             'serviceSecoursRoute' => $serviceSecoursRoute,
         ]);
+    }
+
+    #[Route(
+        '/services-secours/{slug:serviceSecoursRoute}/{uuid:serviceSecoursRoute}/pdf/{uuidSignalement}',
+        name: 'service_secours_pdf',
+        methods: 'GET',
+        defaults: ['_signed' => true]
+    )]
+    public function pdf(
+        ServiceSecoursRoute $serviceSecoursRoute,
+        #[MapEntity(mapping: ['uuidSignalement' => 'uuid'])] Signalement $signalement,
+        ServiceSecoursPdfGenerator $serviceSecoursPdfGenerator,
+    ): Response {
+        if ($signalement->getServiceSecours() !== $serviceSecoursRoute) {
+            throw $this->createNotFoundException();
+        }
+        // dump($signalement); // for testing purpose
+        $pdfContent = $serviceSecoursPdfGenerator->generate($signalement);
+
+        $response = new Response($pdfContent);
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'inline; filename="signalement-'.$signalement->getReference().'.pdf"');
+
+        return $response;
     }
 
     #[Route('/services-secours/{slug:serviceSecoursRoute}/{uuid:serviceSecoursRoute}/site.webmanifest',
