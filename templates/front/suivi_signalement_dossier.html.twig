@@ -542,6 +542,11 @@
 							{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail('d/m/Y')}}
 						</li>
 					{% endif %}
+					{% if signalement.autreSituationVulnerabilite %}
+						<li>Autre situation de vulnérabilité :
+							{{ signalement.autreSituationVulnerabilite|nl2br }}
+						</li>
+					{% endif %}
 					<li>Nombre de personnes : {{ signalement.nbOccupantsLogement }}</li>
 					{% if signalement.typeCompositionLogement %}
 						{% if signalement.typeCompositionLogement.compositionLogementNombreEnfants %}

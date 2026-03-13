@@ -74,6 +74,14 @@
                             </div>
 
                             <div class="fr-input-group">
+                                <label class="fr-label" for="informationLogementAutreSituationVulnerabilite"
+                                    >Autre situation de vulnérabilité (facultatif)
+                                    <span class="fr-hint-text">Ne saisissez pas d'information de santé.</span>
+                                    </label>
+                                <textarea class="fr-input fr-input--no-resize" id="informationLogementAutreSituationVulnerabilite" name="autreSituationVulnerabilite">{{ signalement.autreSituationVulnerabilite }}</textarea>
+                            </div>
+
+                            <div class="fr-input-group">
                                 {% set dateEntree = '' %}
                                 {% if signalement.dateEntree %}
                                     {% set dateEntree = signalement.dateEntree.format('Y-m-d') %}
