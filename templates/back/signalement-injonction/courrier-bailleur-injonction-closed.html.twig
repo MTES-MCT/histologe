@@ -1,5 +1,5 @@
-<div style="font-family: Arial, sans-serif; font-size: 14px;">
-    {% include 'back/signalement-injonction/_courrier-bailleur-header.html.twig' %}
+{% extends 'back/signalement-injonction/_courrier-bailleur-layout.html.twig' %}
+{% block content %}
     <p style="font-weight: bold;">
         Objet : Votre locataire a mis fin à la procédure concernant votre logement
     </p>
@@ -17,5 +17,5 @@
     <p style="text-align: right;">
         L’équipe Signal Logement
     </p>
-</div>
+{% endblock %}
 

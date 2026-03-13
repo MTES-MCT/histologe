@@ -1,19 +1,63 @@
-<div style="text-align: left;">
-    <strong>Signal logement</strong><br>
-    Direction générale de l'aménagement, du logement et de la nature (DGALN)<br>
-    Ministère de la transition écologique, aménagement du territoire, transports, villes et logement<br>
-    Tour Sequoïa<br>
-    1 place Carpeaux<br>
-    92800 PUTEAUX
+{% set showBorderBox = false %}
+{% if feature_imprim_fip %}
+    <table width="100%" style="border-collapse: collapse;">
+        <tr>
+            <td></td>
+            <td style="width:5cm; height:2cm;{% if showBorderBox %}border:1px solid #fff647;{% endif %}">
+                <div style="height:1.5cm; margin-right:0.3cm; margin-top:0.5cm; {% if showBorderBox %}border:1px solid #fff647;border-bottom:0;{% endif %}">
+                    {# logo eventuel #}
+                </div>
+            </td>
+        </tr>
+    </table>
+    <div style="margin-right:0.3cm;">
+        <table width="100%" style="border-collapse: collapse;">
+            <tr>
+                <td style="width:7cm;"></td>
+                <td style="height:6cm; {% if showBorderBox %}border:1px solid #4b4b4b;{% endif %}">
+                    <div style="height:5.2cm; margin-left:2.1cm; margin-top:0.5cm; margin-right:0.5cm; {% if showBorderBox %}border:1px solid #4b4b4b;{% endif %}">
+                        <div style="height:1.4cm;font-size: 7pt;letter-spacing: 0.9pt;text-transform: uppercase;line-height: 2.8mm;">
+                            Signal logement - DGALN<br>
+                            Ministère de la transition écologique<br>
+                            Tour Sequoïa - 1 place Carpeaux<br>
+                            92800 PUTEAUX<br>
+                        </div>
+                        <div style="height:1.6cm;{% if showBorderBox %}border-top:1px solid #ff5f5f;border-bottom:1px solid #ff5f5f;{% endif %}">
+                            {# zone technique #}
+                        </div>
+                        <div style="height:2.2cm;font-size: 9pt;text-transform: uppercase;line-height: 3.5mm;">
+                                {{ signalement.displayedNomProprio }}<br>
+                                {{ signalement.adresseProprio }} <br>
+                                {{ signalement.codePostalProprio }} {{ signalement.villeProprio }}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
     <br><br>
     Références :<br>
     Dossier #{{ signalement.reference }}<br>
     Date d'enregistrement : {{ signalement.createdAt|date('d/m/Y') }}
-</div>
-<br><br>
-<div style="text-align: right;">
-    {{ signalement.displayedNomProprio }}<br>
-    {{ signalement.adresseProprio }} <br>
-    {{ signalement.codePostalProprio }} {{ signalement.villeProprio }}
-</div>
-<br><br>
+    <br><br>
+{% else %}
+    <div style="text-align: left;">
+        <strong>Signal logement</strong><br>
+        Direction générale de l'aménagement, du logement et de la nature (DGALN)<br>
+        Ministère de la transition écologique, aménagement du territoire, transports, villes et logement<br>
+        Tour Sequoïa<br>
+        1 place Carpeaux<br>
+        92800 PUTEAUX
+        <br><br>
+        Références :<br>
+        Dossier #{{ signalement.reference }}<br>
+        Date d'enregistrement : {{ signalement.createdAt|date('d/m/Y') }}
+    </div>
+    <br><br>
+    <div style="text-align: right;">
+        {{ signalement.displayedNomProprio }}<br>
+        {{ signalement.adresseProprio }} <br>
+        {{ signalement.codePostalProprio }} {{ signalement.villeProprio }}
+    </div>
+    <br><br>
+{% endif %}

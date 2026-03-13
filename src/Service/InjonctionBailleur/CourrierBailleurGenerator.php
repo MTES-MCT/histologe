@@ -32,6 +32,7 @@ class CourrierBailleurGenerator
 
         $domPdf = new Dompdf();
         $domPdf->loadHtml($content);
+        $domPdf->setPaper('A4', 'portrait');
         $domPdf->render();
 
         return $domPdf->output();
@@ -45,6 +46,7 @@ class CourrierBailleurGenerator
 
         $domPdf = new Dompdf();
         $domPdf->loadHtml($content);
+        $domPdf->setPaper('A4', 'portrait');
         $domPdf->render();
 
         return $domPdf->output();
