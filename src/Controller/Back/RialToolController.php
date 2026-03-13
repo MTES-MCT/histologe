@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Service\Gouv\Rial\RialService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +20,12 @@ class RialToolController extends AbstractController
     public function index(
         Request $request,
         RialService $rialService,
+        #[Autowire(env: 'RIAL_ENABLE')]
+        string $rialEnable,
     ): Response {
+        if (!$rialEnable) {
+            return $this->render('back/tools/rial.html.twig');
+        }
         $form = $this->createFormBuilder()
             ->add('banIds', TextareaType::class, [
                 'label' => 'BAN id(s) (séparés par des virgules ou des retours à la ligne)',

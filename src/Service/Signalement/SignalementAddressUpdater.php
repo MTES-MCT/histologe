@@ -6,6 +6,7 @@ use App\Entity\Signalement;
 use App\Service\Gouv\Ban\AddressService;
 use App\Service\Gouv\Rial\RialService;
 use App\Service\Gouv\Rnb\RnbService;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class SignalementAddressUpdater
 {
@@ -15,6 +16,8 @@ class SignalementAddressUpdater
         private readonly AddressService $addressService,
         private readonly RnbService $rnbService,
         private readonly RialService $rialService,
+        #[Autowire(env: 'RIAL_ENABLE')]
+        private readonly string $rialEnable,
     ) {
     }
 
@@ -47,11 +50,13 @@ class SignalementAddressUpdater
             } else {
                 $this->updateGeolocFromRnbService($signalement);
             }
-            $rialResult = $this->rialService->getSingleInvariantByBanId($signalement->getBanIdOccupant());
-            if ($rialResult) {
-                $signalement->setNumeroInvariantRial($rialResult);
-            } else {
-                $signalement->setNumeroInvariantRial(null);
+            if ($this->rialEnable) {
+                $rialResult = $this->rialService->getSingleInvariantByBanId($signalement->getBanIdOccupant());
+                if ($rialResult) {
+                    $signalement->setNumeroInvariantRial($rialResult);
+                } else {
+                    $signalement->setNumeroInvariantRial(null);
+                }
             }
 
             return;

@@ -11,51 +11,58 @@
             'level3Title': 'Outil RIAL par BAN ID',
             'level3Link': path('back_tools_rial'),
         } %}
-        <header>
-            <div class="fr-grid-row">
-                <div class="fr-col-12 fr-text--left">
-                    <h1>Outil RIAL par BAN ID</h1>
-                    <p>
-                        Entrez un ou plusieurs identifiants BAN pour obtenir les informations RIAL correspondantes.
-                    </p>
+        {% if rial_enable %}
+            <header>
+                <div class="fr-grid-row">
+                    <div class="fr-col-12 fr-text--left">
+                        <h1>Outil RIAL par BAN ID</h1>
+                        <p>
+                            Entrez un ou plusieurs identifiants BAN pour obtenir les informations RIAL correspondantes.
+                        </p>
+                    </div>
                 </div>
+            </header>
+            
+            <div class="fr-mb-5v">
+                {{ form(form) }}
             </div>
-        </header>
-        
-        <div class="fr-mb-5v">
-            {{ form(form) }}
-        </div>
 
-        {% if results is defined and results|length > 0 %}
-            <h2>Résultats</h2>
-            <div class="fr-table fr-table--lg fr-table--bordered">
-                <div class="fr-table__wrapper">
-                    <div class="fr-table__container">
-                        <div class="fr-table__content">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th scope="col">BAN ID</th>
-                                        <th scope="col">Identifiant fiscal</th>
-                                        <th scope="col">Données locales</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for row in results %}
+            {% if results is defined and results|length > 0 %}
+                <h2>Résultats</h2>
+                <div class="fr-table fr-table--lg fr-table--bordered">
+                    <div class="fr-table__wrapper">
+                        <div class="fr-table__container">
+                            <div class="fr-table__content">
+                                <table>
+                                    <thead>
                                         <tr>
-                                            <td class="fr-cell--top">{{ row.ban_id }}</td>
-                                            <td class="fr-cell--top">{{ row.identifiant_fiscal }}</td>
-                                            <td><pre style="white-space: pre-wrap;">{{ row.local_data }}</pre></td>
+                                            <th scope="col">BAN ID</th>
+                                            <th scope="col">Identifiant fiscal</th>
+                                            <th scope="col">Données locales</th>
                                         </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in results %}
+                                            <tr>
+                                                <td class="fr-cell--top">{{ row.ban_id }}</td>
+                                                <td class="fr-cell--top">{{ row.identifiant_fiscal }}</td>
+                                                <td><pre style="white-space: pre-wrap;">{{ row.local_data }}</pre></td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
+                
+            {% else %}
+                <img alt="BOOH!" src="{{ asset('img/easter/casper.png') }}">
+            {% endif %}
         {% else %}
+            <div class="fr-alert fr-alert--warning fr-my-5v">
+                <p>L'outil RIAL est désactivé.</p>
+            </div>
             <img alt="BOOH!" src="{{ asset('img/easter/casper.png') }}">
         {% endif %}
     </section>

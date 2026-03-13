@@ -35,6 +35,8 @@ class RialService
         private readonly string $rialKey,
         #[Autowire(env: 'RIAL_SECRET')]
         private readonly string $rialSecret,
+        #[Autowire(env: 'RIAL_ENABLE')]
+        private readonly string $rialEnable,
     ) {
     }
 
@@ -45,30 +47,32 @@ class RialService
 
     public function getAccessToken(): ?string
     {
-        if (!empty($this->accessToken)) {
-            return $this->accessToken;
-        }
-
-        $url = $this->urlDgfip.self::URI_GENERATE_TOKEN;
-        $headers = RialHeaders::getGenerateTokenHeaders($this->rialKey, $this->rialSecret);
-        $params = [
-            'grant_type' => 'client_credentials',
-        ];
-
-        try {
-            $response = $this->httpClient->request('POST', $url, [
-                'headers' => $headers,
-                'body' => http_build_query($params),
-            ]);
-
-            if (Response::HTTP_OK === $response->getStatusCode()) {
-                $this->accessToken = $response->toArray()['access_token'];
-
+        if ($this->rialEnable) {
+            if (!empty($this->accessToken)) {
                 return $this->accessToken;
             }
-            $this->logger->warning(\sprintf('Rial API access token failed (status %s)', $response->getStatusCode()));
-        } catch (\Throwable $exception) {
-            $this->logger->error($exception->getMessage());
+
+            $url = $this->urlDgfip.self::URI_GENERATE_TOKEN;
+            $headers = RialHeaders::getGenerateTokenHeaders($this->rialKey, $this->rialSecret);
+            $params = [
+                'grant_type' => 'client_credentials',
+            ];
+
+            try {
+                $response = $this->httpClient->request('POST', $url, [
+                    'headers' => $headers,
+                    'body' => http_build_query($params),
+                ]);
+
+                if (Response::HTTP_OK === $response->getStatusCode()) {
+                    $this->accessToken = $response->toArray()['access_token'];
+
+                    return $this->accessToken;
+                }
+                $this->logger->warning(\sprintf('Rial API access token failed (status %s)', $response->getStatusCode()));
+            } catch (\Throwable $exception) {
+                $this->logger->error($exception->getMessage());
+            }
         }
 
         return null;
@@ -76,26 +80,30 @@ class RialService
 
     public function getSingleInvariantByBanId(string $banId): ?string
     {
-        $listLocaux = $this->searchLocauxByBanId($banId);
-        if (empty($listLocaux)) {
-            return null;
-        }
+        if ($this->rialEnable) {
+            $listLocaux = $this->searchLocauxByBanId($banId);
+            if (empty($listLocaux)) {
+                return null;
+            }
 
-        // Multiple results: check if only one "habitation principale"
-        $result = null;
-        foreach ($listLocaux as $localId) {
-            $infoLocal = $this->searchLocalByIdFiscal($localId);
-            if (!empty($infoLocal) && in_array($infoLocal['descriptifGeneralLocal']['codeNatureLocal'], self::CODES_NATURES_ACCEPTED)) {
-                if (empty($result)) {
-                    $result = $localId;
-                } else {
-                    $result = null;
-                    break;
+            // Multiple results: check if only one "habitation principale"
+            $result = null;
+            foreach ($listLocaux as $localId) {
+                $infoLocal = $this->searchLocalByIdFiscal($localId);
+                if (!empty($infoLocal) && in_array($infoLocal['descriptifGeneralLocal']['codeNatureLocal'], self::CODES_NATURES_ACCEPTED)) {
+                    if (empty($result)) {
+                        $result = $localId;
+                    } else {
+                        $result = null;
+                        break;
+                    }
                 }
             }
+
+            return $result;
         }
 
-        return $result;
+        return null;
     }
 
     /**
@@ -105,33 +113,35 @@ class RialService
      */
     public function searchLocauxByBanId(string $banId): ?array
     {
-        $accessToken = $this->getAccessToken();
-        if (empty($accessToken)) {
-            return null;
-        }
-
-        $params = RialSearchLocauxParams::getFromBanId($banId);
-        if (empty($params)) {
-            return null;
-        }
-
-        $queryParams = '?'.http_build_query($params);
-        $url = $this->urlDgfip.self::URI_LOCAUX_BY_ADRESSE.$queryParams;
-        $headers = RialHeaders::getSearchLocauxHeaders($accessToken);
-
-        try {
-            $response = $this->httpClient->request('GET', $url, [
-                'headers' => $headers,
-            ]);
-
-            if (Response::HTTP_OK === $response->getStatusCode()) {
-                $responseArray = $response->toArray();
-
-                return $responseArray['listeIdentifiantsFiscaux'];
+        if ($this->rialEnable) {
+            $accessToken = $this->getAccessToken();
+            if (empty($accessToken)) {
+                return null;
             }
-            $this->logger->warning(\sprintf('Rial API search by BAN id failed for: %s (status %s)', $url, $response->getStatusCode()));
-        } catch (\Throwable $exception) {
-            $this->logger->error($exception->getMessage());
+
+            $params = RialSearchLocauxParams::getFromBanId($banId);
+            if (empty($params)) {
+                return null;
+            }
+
+            $queryParams = '?'.http_build_query($params);
+            $url = $this->urlDgfip.self::URI_LOCAUX_BY_ADRESSE.$queryParams;
+            $headers = RialHeaders::getSearchLocauxHeaders($accessToken);
+
+            try {
+                $response = $this->httpClient->request('GET', $url, [
+                    'headers' => $headers,
+                ]);
+
+                if (Response::HTTP_OK === $response->getStatusCode()) {
+                    $responseArray = $response->toArray();
+
+                    return $responseArray['listeIdentifiantsFiscaux'];
+                }
+                $this->logger->warning(\sprintf('Rial API search by BAN id failed for: %s (status %s)', $url, $response->getStatusCode()));
+            } catch (\Throwable $exception) {
+                $this->logger->error($exception->getMessage());
+            }
         }
 
         return null;
@@ -142,28 +152,30 @@ class RialService
      */
     public function searchLocalByIdFiscal(string $identifiantFiscal): ?array
     {
-        $accessToken = $this->getAccessToken();
-        if (empty($accessToken)) {
-            return null;
-        }
-
-        $url = $this->urlDgfip.self::URI_LOCAL_BY_ID;
-        $url = sprintf($url, $identifiantFiscal);
-        $headers = RialHeaders::getSearchLocauxHeaders($accessToken);
-
-        try {
-            $response = $this->httpClient->request('GET', $url, [
-                'headers' => $headers,
-            ]);
-
-            if (Response::HTTP_OK === $response->getStatusCode()) {
-                $responseArray = $response->toArray();
-
-                return $responseArray[0];
+        if ($this->rialEnable) {
+            $accessToken = $this->getAccessToken();
+            if (empty($accessToken)) {
+                return null;
             }
-            $this->logger->warning(\sprintf('Rial API search by invariant failed for: %s (status %s)', $url, $response->getStatusCode()));
-        } catch (\Throwable $exception) {
-            $this->logger->error($exception->getMessage());
+
+            $url = $this->urlDgfip.self::URI_LOCAL_BY_ID;
+            $url = sprintf($url, $identifiantFiscal);
+            $headers = RialHeaders::getSearchLocauxHeaders($accessToken);
+
+            try {
+                $response = $this->httpClient->request('GET', $url, [
+                    'headers' => $headers,
+                ]);
+
+                if (Response::HTTP_OK === $response->getStatusCode()) {
+                    $responseArray = $response->toArray();
+
+                    return $responseArray[0];
+                }
+                $this->logger->warning(\sprintf('Rial API search by invariant failed for: %s (status %s)', $url, $response->getStatusCode()));
+            } catch (\Throwable $exception) {
+                $this->logger->error($exception->getMessage());
+            }
         }
 
         return null;
