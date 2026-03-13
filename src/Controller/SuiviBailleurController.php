@@ -109,7 +109,6 @@ class SuiviBailleurController extends AbstractController
             'suiviDemandeCloture' => $suiviDemandeCloture,
             'dateLimit' => $dateLimit,
             'form' => $form,
-            // 'formStopProcedure' => $formStopProcedure,
             'engagementTravauxPdf' => $engagementTravauxPdf,
         ]);
     }
@@ -132,7 +131,6 @@ class SuiviBailleurController extends AbstractController
         $stopProcedure->setSignalement($signalement);
         $form = $this->createForm(StopProcedureType::class, $stopProcedure);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->beginTransaction();
             try {
