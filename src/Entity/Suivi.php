@@ -43,13 +43,9 @@ class Suivi implements EntityHistoryInterface
     public const int DEFAULT_PERIOD_RELANCE = 45;
     public const int DEFAULT_PERIOD_BOUCLE = 90;
 
-    public const string DESCRIPTION_MOTIF_CLOTURE_ALL = 'Le signalement a été cloturé pour tous';
-    public const string DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été cloturé pour';
+    public const string DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été clôturé pour';
     public const string DESCRIPTION_SIGNALEMENT_VALIDE = 'Signalement validé';
     public const string DESCRIPTION_DELETED = 'Ce suivi a été supprimé par un administrateur le ';
-
-    public const string ARRET_PROCEDURE = 'arret-procedure';
-    public const string POURSUIVRE_PROCEDURE = 'poursuivre-procedure';
 
     private ?SuiviTransformerService $suiviTransformerService = null;
 

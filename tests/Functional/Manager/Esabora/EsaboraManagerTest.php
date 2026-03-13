@@ -175,7 +175,7 @@ class EsaboraManagerTest extends KernelTestCase
         yield EsaboraStatus::ESABORA_CLOSED->value => [
             '2022-10',
             'etat_termine.json',
-            'cloturé par Partenaire 13-02 via Esabora',
+            'clôturé par Partenaire 13-02 via Esabora',
             AffectationStatus::CLOSED,
             Suivi::TYPE_AUTO,
             true, // suivi mail sent

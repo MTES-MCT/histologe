@@ -148,7 +148,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $suivi->setSignalement($signalement);
         $suivi->setCreatedBy($admin);
         $suivi->setType(Suivi::TYPE_PARTNER);
-        $suivi->setDescription('Le signalement a été cloturé pour tous les partenaires avec le motif...');
+        $suivi->setDescription('Le signalement a été clôturé pour tous les partenaires avec le motif...');
         $this->entityManager->persist($suivi);
 
         $this->notificationAndMailSender->sendSignalementIsClosedToPartners($suivi);
