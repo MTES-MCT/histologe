@@ -7,11 +7,13 @@ use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\ServiceSecoursRoute;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Repository\BailleurRepository;
 use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\Signalement\ZipcodeProvider;
 
@@ -20,6 +22,7 @@ class SignalementFactory
     public function __construct(
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
+        private BailleurRepository $bailleurRepository,
     ) {
     }
 
@@ -112,11 +115,52 @@ class SignalementFactory
 
         $typeCompositionLogement->setCompositionLogementSuperficie($formServiceSecours->step2->superficie);
 
-        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+        // data from step3
+        $profilOccupant = $formServiceSecours->step3->profilOccupant;
+        if ('logement_vacant' === $profilOccupant) {
+            $signalement->setIsLogementVacant(true);
+        } elseif ('indetermine' === $profilOccupant) {
+            // nothing to set on signalement
+        } else {
+            $signalement->setIsLogementVacant(false);
+            $signalement->setProfileOccupant(ProfileOccupant::from($profilOccupant));
+        }
+        $signalement->setNomOccupant($formServiceSecours->step3->nomOccupant);
+        $signalement->setPrenomOccupant($formServiceSecours->step3->prenomOccupant);
+        $signalement->setMailOccupant($formServiceSecours->step3->mailOccupant);
+        $signalement->setTelOccupant($formServiceSecours->step3->telOccupant);
+        $nbPersonnes = (int) $formServiceSecours->step3->nbAdultesDansLogement + (int) $formServiceSecours->step3->nbEnfantsDansLogement;
+        $signalement->setNbOccupantsLogement($nbPersonnes);
+        $typeCompositionLogement->setCompositionLogementNombreEnfants($formServiceSecours->step3->nbEnfantsDansLogement);
+        $typeCompositionLogement->setCompositionLogementEnfants($formServiceSecours->step3->isEnfantsMoinsSixAnsDansLogement);
+        $signalement->setAutreSituationVulnerabilite($formServiceSecours->step3->autreVulnerabilite);
+
+        // data from step4
+        if ('oui' === $formServiceSecours->step4->isBailleurAverti) {
+            $signalement->setIsProprioAverti(true);
+        } elseif ('non' === $formServiceSecours->step4->isBailleurAverti) {
+            $signalement->setIsProprioAverti(false);
+        }
+        $signalement->setDenominationProprio($formServiceSecours->step4->denominationProprio);
+        if ($signalement->getDenominationProprio()) {
+            $bailleur = $this->bailleurRepository->findOneBailleurBy(name: $signalement->getDenominationProprio(), territory: $signalement->getTerritory());
+            $signalement->setBailleur($bailleur);
+        }
+        $signalement->setNomProprio($formServiceSecours->step4->nomProprio);
+        $signalement->setPrenomProprio($formServiceSecours->step4->prenomProprio);
+        $signalement->setMailProprio($formServiceSecours->step4->mailProprio);
+        $signalement->setTelProprio($formServiceSecours->step4->telProprio);
+        $signalement->setDenominationSyndic($formServiceSecours->step4->denominationSyndic);
+        $signalement->setNomSyndic($formServiceSecours->step4->nomSyndic);
+        $signalement->setMailSyndic($formServiceSecours->step4->mailSyndic);
+        $signalement->setTelSyndic($formServiceSecours->step4->telSyndic);
+        $signalement->setTelSyndicSecondaire($formServiceSecours->step4->telSyndicSecondaire);
 
         // TODO : manage other steps
         //
         //
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
         return $signalement;
     }
 

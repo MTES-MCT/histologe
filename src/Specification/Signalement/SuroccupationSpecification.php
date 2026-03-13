@@ -15,12 +15,13 @@ class SuroccupationSpecification
     private ?string $slug = null;
 
     public function isSatisfiedBy(
+        int $nbOccupants,
         SituationFoyer $situationFoyer,
         TypeCompositionLogement $typeCompositionLogement,
     ): bool {
         return $this->checkSuroccupation(
             $situationFoyer->getLogementSocialAllocation(),
-            (int) $typeCompositionLogement->getCompositionLogementNombrePersonnes(),
+            $nbOccupants,
             (int) $typeCompositionLogement->getCompositionLogementNbPieces(),
             $typeCompositionLogement->getCompositionLogementSuperficie(),
         );

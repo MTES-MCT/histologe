@@ -287,7 +287,7 @@ class SignalementBuilder
 
         $situationFoyer = $this->situationFoyerFactory->createFromSignalementDraftPayload($this->payload);
         $suroccupationSpecification = new SuroccupationSpecification();
-        if ($suroccupationSpecification->isSatisfiedBy($situationFoyer, $typeCompositionLogement)) {
+        if ($suroccupationSpecification->isSatisfiedBy((int) $this->signalement->getNbOccupantsLogement(), $situationFoyer, $typeCompositionLogement)) {
             $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
                 ['desordrePrecisionSlug' => $suroccupationSpecification->getSlug()]
             );

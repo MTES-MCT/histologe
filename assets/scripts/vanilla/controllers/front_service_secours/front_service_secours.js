@@ -65,3 +65,28 @@ function attachFormServiceSecoursEvent() {
     });
   });
 }
+
+
+
+//step4
+const showInformationsSyndicContainer = document.querySelector('#show-informations-syndic-container');
+const informationsSyndicContainer = document.querySelector('#informations-syndic-container');
+if (showInformationsSyndicContainer && informationsSyndicContainer) {
+  showInformationsSyndicContainer.addEventListener('click', (event) => {
+    event.preventDefault();
+    informationsSyndicContainer.classList.remove('fr-hidden');
+    showInformationsSyndicContainer.classList.add('fr-hidden');
+  });
+  const denominationSyndic = document.querySelector('#service_secours_step4_denominationSyndic');
+  const nomSyndic = document.querySelector('#service_secours_step4_nomSyndic');
+  const mailSyndic = document.querySelector('#service_secours_step4_mailSyndic');
+  const telSyndic = document.querySelector('#service_secours_step4_telSyndic_input');
+  const telSyndicSecondaire = document.querySelector('#service_secours_step4_telSyndicSecondaire_input');
+  if (denominationSyndic.value || nomSyndic.value || mailSyndic.value || telSyndic.value || telSyndicSecondaire.value) {
+    informationsSyndicContainer.classList.remove('fr-hidden');
+    showInformationsSyndicContainer.classList.add('fr-hidden');
+  }
+}
+
+
+

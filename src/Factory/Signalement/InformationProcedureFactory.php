@@ -32,7 +32,6 @@ class InformationProcedureFactory
     public static function createFromArray(array $data): InformationProcedure
     {
         return new InformationProcedure(
-            infoProcedureBailleurPrevenu: $data['info_procedure_bailleur_prevenu'] ?? null,
             infoProcedureBailMoyen: $data['info_procedure_bail_moyen'] ?? null,
             infoProcedureBailDate: $data['info_procedure_bail_date'] ?? null,
             infoProcedureBailReponse: $data['info_procedure_bail_reponse'] ?? null,

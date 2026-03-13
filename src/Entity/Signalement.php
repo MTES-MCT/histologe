@@ -269,6 +269,26 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'agence n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $mailAgence = null;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $denominationSyndic = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
+    private ?string $nomSyndic = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du syndic n\'est pas valide.')]
+    private ?string $mailSyndic = null;
+
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
+    private ?string $telSyndic = null;
+
+    #[ORM\Column(type: 'string', length: 128, nullable: true)]
+    #[AppAssert\TelephoneFormat]
+    private ?string $telSyndicSecondaire = null;
+
     #[ORM\Column(type: 'boolean')]
     private ?bool $isCguAccepted = null;
 
@@ -551,6 +571,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\ManyToOne(inversedBy: 'signalements')]
     private ?ServiceSecoursRoute $serviceSecours = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $autreSituationVulnerabilite = null;
 
     /** @var Collection<int, TiersInvitation> $tiersInvitations */
     #[ORM\OneToMany(
@@ -1345,6 +1368,76 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setMailAgence(?string $mailAgence): static
     {
         $this->mailAgence = $mailAgence;
+
+        return $this;
+    }
+
+    public function getDenominationSyndic(): ?string
+    {
+        return $this->denominationSyndic;
+    }
+
+    public function setDenominationSyndic(?string $denominationSyndic): static
+    {
+        $this->denominationSyndic = $denominationSyndic;
+
+        return $this;
+    }
+
+    public function getNomSyndic(): ?string
+    {
+        return $this->nomSyndic;
+    }
+
+    public function setNomSyndic(?string $nomSyndic): static
+    {
+        $this->nomSyndic = $nomSyndic;
+
+        return $this;
+    }
+
+    public function getMailSyndic(): ?string
+    {
+        return $this->mailSyndic;
+    }
+
+    public function setMailSyndic(?string $mailSyndic): static
+    {
+        $this->mailSyndic = $mailSyndic;
+
+        return $this;
+    }
+
+    public function getTelSyndic(): ?string
+    {
+        return $this->telSyndic;
+    }
+
+    public function getTelSyndicDecoded(?bool $national = false): ?string
+    {
+        return Phone::format($this->telSyndic, $national);
+    }
+
+    public function setTelSyndic(?string $telSyndic): static
+    {
+        $this->telSyndic = $telSyndic;
+
+        return $this;
+    }
+
+    public function getTelSyndicSecondaire(): ?string
+    {
+        return $this->telSyndicSecondaire;
+    }
+
+    public function getTelSyndicSecondaireDecoded(?bool $national = false): ?string
+    {
+        return Phone::format($this->telSyndicSecondaire, $national);
+    }
+
+    public function setTelSyndicSecondaire(?string $telSyndicSecondaire): static
+    {
+        $this->telSyndicSecondaire = $telSyndicSecondaire;
 
         return $this;
     }
@@ -3005,6 +3098,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setServiceSecours(?ServiceSecoursRoute $serviceSecours): static
     {
         $this->serviceSecours = $serviceSecours;
+
+        return $this;
+    }
+
+    public function getAutreSituationVulnerabilite(): ?string
+    {
+        return $this->autreSituationVulnerabilite;
+    }
+
+    public function setAutreSituationVulnerabilite(?string $autreSituationVulnerabilite): static
+    {
+        $this->autreSituationVulnerabilite = $autreSituationVulnerabilite;
 
         return $this;
     }

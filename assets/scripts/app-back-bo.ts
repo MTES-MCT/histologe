@@ -33,7 +33,6 @@ import './vanilla/controllers/back_partner_view/form_partner.js';
 import './vanilla/controllers/back_signalement_form/back_signalement_form.js';
 import './vanilla/controllers/back_signalement_view/back_view_signalement.js';
 import './vanilla/controllers/back_signalement_view/form_upload_documents.js';
-import './vanilla/controllers/back_signalement_view/input_autocomplete_bailleur.js';
 import './vanilla/controllers/back_signalement_view/form_cloture_modal.js';
 import './vanilla/controllers/back_signalement_view/form_acceptation_refus.js';
 import './vanilla/controllers/back_signalement_view/toggle-suivi-auto.js';

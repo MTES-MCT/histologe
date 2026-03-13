@@ -23,12 +23,12 @@ class SuroccupationSpecificationTest extends KernelTestCase
         $this->typeCompositionLogement = new TypeCompositionLogement();
         $this->typeCompositionLogement->setCompositionLogementSuperficie('7');
         $this->typeCompositionLogement->setCompositionLogementNbPieces('1');
-        $this->typeCompositionLogement->setCompositionLogementNombrePersonnes('1');
     }
 
     public function testCheckSuroccupationAllocataire1Personne(): void
     {
         $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            1,
             $this->situationFoyer,
             $this->typeCompositionLogement
         );
@@ -44,6 +44,7 @@ class SuroccupationSpecificationTest extends KernelTestCase
     {
         $this->typeCompositionLogement->setCompositionLogementSuperficie('10');
         $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            1,
             $this->situationFoyer,
             $this->typeCompositionLogement
         );
@@ -53,8 +54,8 @@ class SuroccupationSpecificationTest extends KernelTestCase
 
     public function testCheckSuroccupationAllocataire2Personnes(): void
     {
-        $this->typeCompositionLogement->setCompositionLogementNombrePersonnes('2');
         $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            2,
             $this->situationFoyer,
             $this->typeCompositionLogement
         );
@@ -68,9 +69,9 @@ class SuroccupationSpecificationTest extends KernelTestCase
 
     public function testCheckPasSuroccupationAllocataire2Personnes(): void
     {
-        $this->typeCompositionLogement->setCompositionLogementNombrePersonnes('2');
         $this->typeCompositionLogement->setCompositionLogementSuperficie('17');
         $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            2,
             $this->situationFoyer,
             $this->typeCompositionLogement
         );
@@ -80,9 +81,9 @@ class SuroccupationSpecificationTest extends KernelTestCase
 
     public function testCheckSuroccupationAllocataire3Personnes(): void
     {
-        $this->typeCompositionLogement->setCompositionLogementNombrePersonnes('3');
         $this->typeCompositionLogement->setCompositionLogementSuperficie('23');
         $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            3,
             $this->situationFoyer,
             $this->typeCompositionLogement
         );
@@ -96,9 +97,9 @@ class SuroccupationSpecificationTest extends KernelTestCase
 
     public function testCheckPasSuroccupationAllocataire3Personnes(): void
     {
-        $this->typeCompositionLogement->setCompositionLogementNombrePersonnes('3');
         $this->typeCompositionLogement->setCompositionLogementSuperficie('26');
         $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            3,
             $this->situationFoyer,
             $this->typeCompositionLogement
         );
@@ -109,8 +110,8 @@ class SuroccupationSpecificationTest extends KernelTestCase
     public function testCheckSuroccupationPasAllocataire3Personnes(): void
     {
         $this->situationFoyer->setLogementSocialAllocation('non');
-        $this->typeCompositionLogement->setCompositionLogementNombrePersonnes('3');
         $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            3,
             $this->situationFoyer,
             $this->typeCompositionLogement
         );
@@ -125,9 +126,9 @@ class SuroccupationSpecificationTest extends KernelTestCase
     public function testCheckPasSuroccupationPasAllocataire3Personnes(): void
     {
         $this->situationFoyer->setLogementSocialAllocation('non');
-        $this->typeCompositionLogement->setCompositionLogementNombrePersonnes('3');
         $this->typeCompositionLogement->setCompositionLogementNbPieces('2');
         $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            3,
             $this->situationFoyer,
             $this->typeCompositionLogement
         );
@@ -138,9 +139,9 @@ class SuroccupationSpecificationTest extends KernelTestCase
     public function testCheckSuroccupationAllocataireNull5Personnes(): void
     {
         $this->situationFoyer->setLogementSocialAllocation(null);
-        $this->typeCompositionLogement->setCompositionLogementNombrePersonnes('5');
         $this->typeCompositionLogement->setCompositionLogementNbPieces('2');
         $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            5,
             $this->situationFoyer,
             $this->typeCompositionLogement
         );
@@ -155,9 +156,9 @@ class SuroccupationSpecificationTest extends KernelTestCase
     public function testCheckSuroccupationAllocataireNull5PersonnesNbPiecesNull(): void
     {
         $this->situationFoyer->setLogementSocialAllocation(null);
-        $this->typeCompositionLogement->setCompositionLogementNombrePersonnes('5');
         $this->typeCompositionLogement->setCompositionLogementNbPieces(null);
         $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            5,
             $this->situationFoyer,
             $this->typeCompositionLogement
         );
@@ -168,9 +169,9 @@ class SuroccupationSpecificationTest extends KernelTestCase
     public function testCheckPasSuroccupationAllocataireNull5Personnes(): void
     {
         $this->situationFoyer->setLogementSocialAllocation(null);
-        $this->typeCompositionLogement->setCompositionLogementNombrePersonnes('5');
         $this->typeCompositionLogement->setCompositionLogementNbPieces('3');
         $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            5,
             $this->situationFoyer,
             $this->typeCompositionLogement
         );
@@ -183,6 +184,7 @@ class SuroccupationSpecificationTest extends KernelTestCase
         $this->situationFoyer->setLogementSocialAllocation('oui');
         $this->typeCompositionLogement->setCompositionLogementSuperficie(null);
         $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
+            1,
             $this->situationFoyer,
             $this->typeCompositionLogement
         );

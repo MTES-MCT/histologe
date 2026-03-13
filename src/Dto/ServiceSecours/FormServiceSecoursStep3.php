@@ -2,7 +2,6 @@
 
 namespace App\Dto\ServiceSecours;
 
-use App\Validator as AppAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class FormServiceSecoursStep3
@@ -21,14 +20,23 @@ class FormServiceSecoursStep3
     public ?string $mailOccupant = null;
 
     #[Assert\Length(max: 128, groups: ['step3'])]
-    #[AppAssert\TelephoneFormat]
     public ?string $telOccupant = null;
 
-    public ?int $nbAdultesDansLogement = null;
+    #[Assert\Regex(
+        pattern: '/^\d+$/',
+        message: 'Merci de saisir un nombre entier.',
+        groups: ['step3']
+    )]
+    public ?string $nbAdultesDansLogement = null;
 
-    public ?int $nbEnfantsDansLogement = null;
+    #[Assert\Regex(
+        pattern: '/^\d+$/',
+        message: 'Merci de saisir un nombre entier.',
+        groups: ['step3']
+    )]
+    public ?string $nbEnfantsDansLogement = null;
 
-    public ?bool $isEnfantsMoinsSixAnsDansLogement = null;
+    public ?string $isEnfantsMoinsSixAnsDansLogement = null;
 
     public ?string $autreVulnerabilite = null;
 }

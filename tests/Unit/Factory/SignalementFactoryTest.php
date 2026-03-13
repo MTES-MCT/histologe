@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Factory;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Territory;
 use App\Factory\SignalementFactory;
+use App\Repository\BailleurRepository;
 use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\Signalement\ZipcodeProvider;
 use Faker\Factory;
@@ -96,10 +97,12 @@ class SignalementFactoryTest extends KernelTestCase
             ->setIsActive(true);
 
         $zipCodeProvider = static::getContainer()->get(ZipcodeProvider::class);
+        $bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $signalementFactory = new SignalementFactory(
             $zipCodeProvider,
             $signalementAddressUpdater,
+            $bailleurRepository
         );
         $signalement = $signalementFactory->createInstanceFromArrayForImport($territory, $data);
 
