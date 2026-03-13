@@ -123,6 +123,24 @@
                                     <option value="nsp" {{ infoProcedureDepartApresTravaux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                                 </select>
                             </div>
+                            {% if signalement.serviceSecours %}
+                                <div class="fr-input-group">
+                                    <label class="fr-label" for="procedureDemarchesDateMissionServiceSecours">Date de la mission du service de secours (facultatif)
+                                        <span class="fr-hint-text">Format : jj/mm/aaaa</span>
+                                    </label>
+                                    <input class="fr-input" type="date" id="procedureDemarchesDateMissionServiceSecours" name="dateMissionServiceSecours" value="{{ signalement.dateMissionServiceSecours ? signalement.dateMissionServiceSecours|date('Y-m-d') : '' }}">
+                                </div>
+
+                                <div class="fr-input-group">
+                                    <label class="fr-label" for="procedureDemarchesOrigineMissionServiceSecours">Origine de la mission du service de secours (facultatif)</label>
+                                    <input class="fr-input" type="text" id="procedureDemarchesOrigineMissionServiceSecours" name="origineMissionServiceSecours" maxlength="255" value="{{ signalement.origineMissionServiceSecours ?? '' }}">
+                                </div>
+
+                                <div class="fr-input-group">
+                                    <label class="fr-label" for="procedureDemarchesOrdreMissionServiceSecours">Ordre de mission du service de secours (facultatif)</label>
+                                    <input class="fr-input" type="text" id="procedureDemarchesOrdreMissionServiceSecours" name="ordreMissionServiceSecours" maxlength="255" value="{{ signalement.ordreMissionServiceSecours ?? '' }}">
+                                </div>
+                            {% endif %}
                             <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_procedure_demarches_'~signalement.id) }}">
                         </div>
                         

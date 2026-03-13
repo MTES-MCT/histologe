@@ -131,9 +131,17 @@ Fichier de départ : src/Controller/ServiceSecours/ServiceSecoursController.php
 #### Formulaires d'édition pour les pro
 Technologie : PHP / Javascript Vanilla.
 
-Fichiers de départ :
-- pour l'accès à la page : src/Controller/Back/SignalementController.php
-- pour les différentes éditions : src/Controller/Back/SignalementEditController.php
+Fichiers à modifier :
+- Contrôleur : src/Controller/Back/SignalementEditController.php (méthode selon la section concernée)
+- DTO de requête : src/Dto/Request/Signalement/[Nom]Request.php (ajouter la propriété et le getter)
+- Manager : src/Manager/SignalementManager.php (méthode updateFrom[Nom]Request)
+- Template d'affichage : templates/back/signalement/view/information/information-[section].html.twig
+- Template modal d'édition : templates/back/signalement/view/edit-modals/edit-[section].html.twig
+
+**Sections disponibles** :
+- Coordonnées tiers : `CoordonneesTiersRequest` → `updateFromCoordonneesTiersRequest` → `information-tiers.html.twig` + `edit-coordonnees-tiers.html.twig`
+- Procédure et démarches : `ProcedureDemarchesRequest` → `updateFromProcedureDemarchesRequest` → `information-procedure.html.twig` + `edit-procedure-demarches.html.twig`
+- Composition logement : etc.
 
 #### Formulaires d'édition pour les usagers
 Technologie : PHP / Javascript Vanilla.
