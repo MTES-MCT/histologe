@@ -44,7 +44,8 @@ class CoordonneesBailleurType extends AbstractType
         if ($options['extended']) {
             $builder
                 ->add('nomProprio', TextType::class, [
-                    'label' => 'Nom',
+                    'label' => 'Nom <span class="text-required">*</span>',
+                    'label_html' => true,
                     'disabled' => $signalement->getIsLogementSocial() ? true : false,
                     'constraints' => $signalement->getIsLogementSocial() ? [] : [
                         new Assert\NotBlank(),
