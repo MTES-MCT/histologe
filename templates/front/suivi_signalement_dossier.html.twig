@@ -164,6 +164,10 @@
 				<div class="signalement-group-data-card">
 					<h3 class="title-blue-france fr-h5">Coordonnées du tiers déclarant</h3>
 					{{ signalement.nomDeclarant|capitalize }} {{ signalement.prenomDeclarant|capitalize }}
+					{% if signalement.matriculeDeclarant %}
+						<br>
+						Matricule : {{ signalement.matriculeDeclarant }}
+					{% endif %}
 					{% if signalement.mailDeclarant %}
 						<br>
 						{{ signalement.mailDeclarant }}

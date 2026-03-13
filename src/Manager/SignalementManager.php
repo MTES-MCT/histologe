@@ -361,8 +361,10 @@ class SignalementManager extends AbstractManager
                     : null
                 );
         }
-        $signalement->setNomDeclarant($coordonneesTiersRequest->getNom())
+        $signalement
+            ->setNomDeclarant($coordonneesTiersRequest->getNom())
             ->setPrenomDeclarant($coordonneesTiersRequest->getPrenom())
+            ->setMatriculeDeclarant($coordonneesTiersRequest->getMatricule())
             ->setMailDeclarant($coordonneesTiersRequest->getMail())
             ->setTelDeclarant($coordonneesTiersRequest->getTelephone())
             ->setLienDeclarantOccupant($coordonneesTiersRequest->getLien())

@@ -663,6 +663,14 @@ class SignalementRequest implements RequestInterface
     )]
     #[Assert\Length(max: 50)]
     public ?string $prenomDeclarant = null;
+
+    #[OA\Property(
+        description: 'Matricule du déclarant.
+                     <br>⚠️Pris en compte uniquement dans le cas où profilDeclarant = "SERVICE_SECOURS", "BAILLEUR", "TIERS_PRO" ou "TIERS_PARTICULIER".',
+        example: 'MAT12345',
+    )]
+    #[Assert\Length(max: 255)]
+    public ?string $matriculeDeclarant = null;
     #[OA\Property(
         description: 'E-mail du déclarant.
                      <br>⚠️Pris en compte uniquement dans le cas où profilDeclarant = "SERVICE_SECOURS", "BAILLEUR", "TIERS_PRO" ou "TIERS_PARTICULIER".

@@ -58,6 +58,7 @@ class SignalementExport
         public ?string $isRelogement = null,
         public ?string $isNotOccupant = null,
         public ?string $nomDeclarant = null,
+        public ?string $matriculeDeclarant = null,
         public ?string $emailDeclarant = null,
         public ?string $structureDeclarant = null,
         public ?string $lienDeclarantOccupant = null,

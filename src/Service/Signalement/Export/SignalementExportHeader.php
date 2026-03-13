@@ -65,6 +65,7 @@ class SignalementExportHeader
             'Demande de relogement',
             'Déclarant tiers',
             'Nom tiers',
+            'Matricule tiers',
             'E-mail tiers',
             'Structure tiers',
             'Lien tiers occupant',
