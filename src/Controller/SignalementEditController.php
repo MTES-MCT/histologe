@@ -140,7 +140,7 @@ class SignalementEditController extends AbstractController
         $form = $this->createForm(CoordonneesOccupantType::class, $signalement);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $msg = 'Les coordonnées de l\'occupant ont bien été mises à jour.';
             if ($mailOccupant != $form->get('mailOccupantTemp')->getData()) {
                 $signalement->setMailOccupantTemp($form->get('mailOccupantTemp')->getData());
                 $notificationMailerRegistry->send(
@@ -150,8 +150,10 @@ class SignalementEditController extends AbstractController
                         signalement: $signalement,
                     )
                 );
+                $msg .= ' L\'adresse e-mail sera mise à jour après validation de l\'email de confirmation transmis a cette adresse.';
             }
-            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées de l\'occupant ont bien été mises à jour.']);
+            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => $msg]);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }

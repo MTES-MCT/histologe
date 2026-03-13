@@ -141,12 +141,14 @@ enum SuiviCategory: string
     public static function categoriesSubmittedByUsager(): array
     {
         return [
-            SuiviCategory::MESSAGE_USAGER,
-            SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
-            SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
-            SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
-            SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
-            SuiviCategory::SIGNALEMENT_EDITED_FO,
+            self::MESSAGE_USAGER,
+            self::MESSAGE_USAGER_POST_CLOTURE,
+            self::DOCUMENT_DELETED_BY_USAGER,
+            self::DEMANDE_POURSUITE_PROCEDURE,
+            self::DEMANDE_ABANDON_PROCEDURE,
+            self::SIGNALEMENT_EDITED_FO,
+            self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
+            self::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER,
         ];
     }
 
