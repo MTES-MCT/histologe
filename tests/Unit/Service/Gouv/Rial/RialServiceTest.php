@@ -59,6 +59,7 @@ class RialServiceTest extends TestCase
             self::API_WIREMOCK_URL,
             'rialKey',
             'rialSecret',
+            '1'
         );
     }
 }
