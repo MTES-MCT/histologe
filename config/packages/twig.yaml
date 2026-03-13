@@ -21,6 +21,7 @@ twig:
         feature_injonction_bailleur: '%env(bool:FEATURE_INJONCTION_BAILLEUR)%'
         feature_injonction_bailleur_depts: '%env(resolve:FEATURE_INJONCTION_BAILLEUR_DEPTS)%'
         MAX_ITEMS_LIST: !php/const App\Service\DashboardTabPanel\TabDossier::MAX_ITEMS_LIST
+        rial_enable: '%env(bool:RIAL_ENABLE)%'
     paths:
         # point this wherever your images live
         '%kernel.project_dir%/public/img': images
