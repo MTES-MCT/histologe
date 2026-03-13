@@ -33,7 +33,7 @@ class AffectationRequest implements RequestInterface
         )]
         public ?string $statut = null,
         #[OA\Property(
-            description: 'Le motif de cloture de l\'affectation, il doit être accompagné d\'un message.',
+            description: 'Le motif de clôture de l\'affectation, il doit être accompagné d\'un message.',
             enum: [
                 'ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE',
                 'DEPART_OCCUPANT',

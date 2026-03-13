@@ -16,7 +16,7 @@
 	<div class="fr-grid-row fr-grid-row--gutters">
 		{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED %}
 			<div class="fr-col-12 fr-col-md-12 fr-mb-5w fr-background-alt--blue-france">
-				Votre locataire a cloturé sa démarche pour le motif suivant : {{ signalement.motifClotureUsager.label }}.
+				Votre locataire a clôturé sa démarche pour le motif suivant : {{ signalement.motifClotureUsager.label }}.
 			</div>
 		{% elseif suiviReponse is empty %}
 			<div class="fr-col-12 fr-col-md-12 fr-mb-5w fr-background-alt--blue-france">
@@ -347,7 +347,7 @@
 				{% endif %}		
 			{% elseif signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED %}
 				<div class="fr-alert fr-alert--info fr-alert--sm fr-mb-3v">
-					<p class="fr-text--center"><strong>Le signalement a été cloturé par le locataire pour le motif suivant : {{ signalement.motifClotureUsager.label }}.</strong></p>		
+					<p class="fr-text--center"><strong>Le signalement a été clôturé par le locataire pour le motif suivant : {{ signalement.motifClotureUsager.label }}.</strong></p>		
 				</div>	
 			{% else %}
 				<p class="fr-text--center"><strong>Le signalement est à présent clos.</strong></p>

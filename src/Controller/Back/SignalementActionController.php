@@ -161,7 +161,7 @@ class SignalementActionController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $signalement->setMotifRefus($refusSignalement->getMotifRefus());
-        $description = 'Signalement cloturé car non-valide avec le motif suivant : '.$refusSignalement->getMotifRefus()->label().'<br>Plus précisément :<br>'.$refusSignalement->getDescription();
+        $description = 'Signalement clôturé car non-valide avec le motif suivant : '.$refusSignalement->getMotifRefus()->label().'<br>Plus précisément :<br>'.$refusSignalement->getDescription();
 
         /** @var User $user */
         $user = $this->getUser();

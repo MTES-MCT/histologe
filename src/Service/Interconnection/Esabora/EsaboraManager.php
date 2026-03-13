@@ -131,7 +131,7 @@ class EsaboraManager
                 if ($this->shouldBeClosedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::CLOSED, $affectation->getPartner());
                     $this->affectationManager->removeSubscriptionsOfAffectation($affectation);
-                    $description = 'cloturé par '.$namePartner.' via '.$dossierResponse->getNameSI();
+                    $description = 'clôturé par '.$namePartner.' via '.$dossierResponse->getNameSI();
                 }
                 break;
             case EsaboraStatus::ESABORA_REFUSED->value:
