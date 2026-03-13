@@ -2,9 +2,13 @@
 
 namespace App\Form\SignalementeEditFO;
 
+use App\Entity\Enum\MoyenContact;
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -20,10 +24,28 @@ class CoordonneesBailleurType extends AbstractType
         /** @var Signalement $signalement */
         $signalement = $builder->getData();
         $adresseCompleteProprio = mb_trim($signalement->getAdresseProprio().' '.$signalement->getCodePostalProprio().' '.$signalement->getVilleProprio());
+
+        $isProprioAverti = null;
+        $isProprioAvertiChoices = [
+            'Oui' => true,
+            'Non' => false,
+        ];
+        if (null === $signalement->getIsProprioAverti()) {
+            $isProprioAverti = 'nsp';
+            // On ajoute le choix "Ne sais pas" uniquement si la valeur est nulle, pour éviter de proposer ce choix si l'utilisateur a déjà renseigné une valeur
+            $isProprioAvertiChoices['Je ne sais pas'] = 'nsp';
+        } else {
+            $isProprioAverti = $signalement->getIsProprioAverti();
+        }
+        $infoProcedureBailDate = $signalement->getProprioAvertiAt()
+            ? $signalement->getProprioAvertiAt()->format('m/Y')
+            : $signalement->getInformationProcedure()?->getInfoProcedureBailDate();
+
         if ($options['extended']) {
             $builder
                 ->add('nomProprio', TextType::class, [
-                    'label' => 'Nom',
+                    'label' => 'Nom <span class="text-required">*</span>',
+                    'label_html' => true,
                     'disabled' => $signalement->getIsLogementSocial() ? true : false,
                     'constraints' => $signalement->getIsLogementSocial() ? [] : [
                         new Assert\NotBlank(),
@@ -81,7 +103,78 @@ class CoordonneesBailleurType extends AbstractType
                     'label' => 'Adresse e-mail',
                     'required' => false,
                     'help' => 'Format attendu : nom@domaine.fr',
-                ]);
+                ])
+                ->add('isProprioAverti', ChoiceType::class, [
+                    'label' => 'Est-ce que le propriétaire est averti ? <span class="text-required">*</span>',
+                    'label_html' => true,
+                    'choices' => $isProprioAvertiChoices,
+                    'expanded' => true,
+                    'multiple' => false,
+                    'required' => false,
+                    'placeholder' => false,
+                    'mapped' => false,
+                    'data' => $isProprioAverti,
+                    'constraints' => [
+                        new Assert\NotNull(
+                            message: 'Veuillez déterminer si le propriétaire est averti.',
+                        ),
+                    ],
+                ])
+                ->add('infoProcedureBailMoyen', EnumType::class, [
+                    'label' => 'Moyen de contact utilisé pour avertir le propriétaire',
+                    'class' => MoyenContact::class,
+                    'choice_label' => function ($choice) {
+                        return $choice->label();
+                    },
+                    'placeholder' => 'Sélectionner un moyen de contact',
+                    'required' => false,
+                    'mapped' => false,
+                    'data' => MoyenContact::tryFrom($signalement->getInformationProcedure()?->getInfoProcedureBailMoyen()),
+                ])
+                ->add('infoProcedureBailDate', TextType::class, [
+                    'label' => 'Date d\'avertissement du propriétaire',
+                    'help' => 'Format attendu : MM/YYYY',
+                    'required' => false,
+                    'mapped' => false,
+                    'data' => $infoProcedureBailDate,
+                    'constraints' => [
+                        new Assert\Regex([
+                            'pattern' => '/^(0[1-9]|1[0-2])\/\d{4}$/',
+                            'message' => 'Le format de la date doit être MM/YYYY.',
+                        ]),
+                    ],
+                ])
+                ->add('infoProcedureBailReponse', TextareaType::class, [
+                    'label' => 'Réponse du propriétaire',
+                    'help' => 'Format attendu : 255 caractères maximum',
+                    'required' => false,
+                    'mapped' => false,
+                    'data' => $signalement->getInformationProcedure()?->getInfoProcedureBailReponse(),
+                    'constraints' => [
+                        new Assert\Length([
+                            'max' => 255,
+                            'maxMessage' => 'La réponse du propriétaire ne peut pas dépasser {{ limit }} caractères.',
+                        ]),
+                    ],
+                ])
+            ;
+
+            if ($signalement->getIsLogementSocial()) {
+                $builder
+                    ->add('infoProcedureBailNumero', TextType::class, [
+                        'label' => 'Numéro de réclamation fourni par le bailleur',
+                        'help' => 'Format attendu : 30 caractères maximum',
+                        'required' => false,
+                        'mapped' => false,
+                        'data' => $signalement->getInformationProcedure()?->getInfoProcedureBailNumero(),
+                        'constraints' => [
+                            new Assert\Length([
+                                'max' => 30,
+                                'maxMessage' => 'Le numéro de réclamation ne peut pas dépasser {{ limit }} caractères.',
+                            ]),
+                        ],
+                    ]);
+            }
         } else {
             $builder
                 ->add('mailProprio', TextType::class, [

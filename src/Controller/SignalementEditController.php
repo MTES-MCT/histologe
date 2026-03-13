@@ -137,6 +137,36 @@ class SignalementEditController extends AbstractController
             $formCoordonneesBailleur->isSubmitted()
             && $formCoordonneesBailleur->isValid()
         ) {
+            $informationProcedure = $signalement->getInformationProcedure() ? clone $signalement->getInformationProcedure() : new InformationProcedure();
+
+            $isProprioAverti = $formCoordonneesBailleur->get('isProprioAverti')->getData();
+            if ('nsp' === $isProprioAverti) {
+                $signalement->setIsProprioAverti(null);
+            } elseif ($isProprioAverti) {
+                $signalement->setIsProprioAverti(true);
+            } else {
+                $signalement->setIsProprioAverti(false);
+            }
+            $informationProcedure->setInfoProcedureBailMoyen($formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData() ? $formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData()->value : null);
+
+            $infoProcedureBailDateFormData = $formCoordonneesBailleur->get('infoProcedureBailDate')->getData();
+            if ($infoProcedureBailDateFormData) {
+                $informationProcedure->setInfoProcedureBailDate($infoProcedureBailDateFormData);
+                $infoProcedureBailDateFormDataFormat = \DateTimeImmutable::createFromFormat('m/Y', $infoProcedureBailDateFormData);
+                $signalement->setProprioAvertiAt(!empty($infoProcedureBailDateFormDataFormat) ? $infoProcedureBailDateFormDataFormat : null);
+            } else {
+                $informationProcedure->setInfoProcedureBailDate('');
+                $signalement->setProprioAvertiAt(null);
+            }
+
+            $informationProcedure->setInfoProcedureBailReponse($formCoordonneesBailleur->get('infoProcedureBailReponse')->getData());
+
+            if ($signalement->getIsLogementSocial()) {
+                $informationProcedure->setInfoProcedureBailNumero($formCoordonneesBailleur->get('infoProcedureBailNumero')->getData());
+            }
+
+            $signalement->setInformationProcedure($informationProcedure);
+
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
 
             $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées du bailleur ont bien été mises à jour.']);

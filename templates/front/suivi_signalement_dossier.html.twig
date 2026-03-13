@@ -61,6 +61,14 @@
 					<div class="title-separator">Détails</div>
 					{{signalement.complementAdresseOccupant}}
 				{% endif %}
+
+				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					<div class="fr-mt-2v">
+						<a href="{{ path('front_suivi_signalement_complete_adresse_logement', {'code': signalement.codeSuivi}) }}" 
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
+							>Compléter les informations</a>
+					</div>
+				{% endif %}
 				
 				<div class="fr-mt-4w">
 					<div class="title-separator">Localisation du bâtiment</div>
@@ -243,7 +251,9 @@
 						<li>
 							Date d'information du bailleur :
 							{# todo : check format date #}
-							{% if signalement.informationProcedure.infoProcedureBailDate %}
+							{% if signalement.proprioAvertiAt %}
+								{{ signalement.proprioAvertiAt | date('m/Y') }}
+							{% elseif signalement.informationProcedure.infoProcedureBailDate %}
 								{{ signalement.informationProcedure.infoProcedureBailDate  }}
 							{% endif %}
 						</li>
@@ -257,7 +267,7 @@
 							<li>
 								Numéro de réclamation :
 								{% if signalement.informationProcedure.infoProcedureBailNumero %}
-									{{ signalement.informationProcedure.infoProcedureBailNumero | nl2br  }}
+									{{ signalement.informationProcedure.infoProcedureBailNumero  }}
 								{% endif %}
 							</li>
 						{% endif %}

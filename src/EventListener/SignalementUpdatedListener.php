@@ -14,6 +14,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 #[AsEntityListener(event: Events::preUpdate, method: 'preUpdate', entity: Signalement::class)]
 class SignalementUpdatedListener
 {
+    public const string EDIT_ADRESSE_LOGEMENT = 'adresse_logement';
     public const string EDIT_COORDONNEES_BAILLEUR = 'coordonnees_bailleur';
     public const string EDIT_COORDONNEES_AGENCE = 'coordonnees_agence';
     public const string EDIT_INFORMATIONS_ASSURANCE = 'informations_assurance';
@@ -25,6 +26,15 @@ class SignalementUpdatedListener
      * - Champs JSON : "<jsonField>.<jsonProperty>" => "label".
      */
     public const array EDIT_SECTIONS = [
+        self::EDIT_ADRESSE_LOGEMENT => [
+            'label' => 'L\'adresse du logement',
+            'fields' => [
+                'etageOccupant' => 'Étage',
+                'escalierOccupant' => 'Escalier',
+                'numAppartOccupant' => 'Numéro d\'appartement',
+                'adresseAutreOccupant' => 'Autre',
+            ],
+        ],
         self::EDIT_COORDONNEES_BAILLEUR => [
             'label' => 'Les coordonnées du bailleur',
             'fields' => [
@@ -36,6 +46,11 @@ class SignalementUpdatedListener
                 'adresseProprio' => 'Adresse',
                 'codePostalProprio' => 'Code postal',
                 'villeProprio' => 'Ville',
+                'isProprioAverti' => 'Le bailleur a-t-il été averti ?',
+                'informationProcedure.info_procedure_bail_moyen' => 'Moyen d\'information du bailleur',
+                'informationProcedure.info_procedure_bail_date' => 'Date d\'information du bailleur',
+                'informationProcedure.info_procedure_bail_reponse' => 'Réponse du bailleur',
+                'informationProcedure.info_procedure_bail_numero' => 'Numéro de réclamation fourni par le bailleur',
             ],
         ],
         self::EDIT_COORDONNEES_AGENCE => [

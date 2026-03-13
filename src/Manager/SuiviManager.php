@@ -409,14 +409,15 @@ class SuiviManager extends Manager
             // Si c'est un champ de type DateTimeImmutable, on formate la date pour que ce soit plus lisible dans le suivi
             if ($new instanceof \DateTimeImmutable) {
                 $new = $new->format('d/m/Y');
-            }
-            if (null === $new || '' === $new) {
+            } elseif (null === $new || '' === $new) {
                 $new = '<i>(valeur supprimée)</i>';
+            } else {
+                $new = nl2br(htmlentities($new));
             }
             $description .= sprintf(
                 '<li>%s : %s</li>',
                 $change['label'],
-                nl2br(htmlentities($change['new'] ?? '-'))
+                $new,
             );
         }
 
