@@ -1077,30 +1077,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getNomDeclarantComplet(bool $firstNameFirst = false): string
     {
-        $nom = '';
-        if ($firstNameFirst) {
-            if ($this->prenomDeclarant) {
-                $nom .= ucfirst($this->prenomDeclarant);
-            }
-            if ($this->nomDeclarant) {
-                if ($nom) {
-                    $nom .= ' ';
-                }
-                $nom .= mb_strtoupper($this->nomDeclarant);
-            }
-        } else {
-            if ($this->nomDeclarant) {
-                $nom .= mb_strtoupper($this->nomDeclarant);
-            }
-            if ($this->prenomDeclarant) {
-                if ($nom) {
-                    $nom .= ' ';
-                }
-                $nom .= ucfirst($this->prenomDeclarant);
-            }
-        }
+        $prenom = $this->prenomDeclarant ? ucfirst($this->prenomDeclarant) : null;
+        $nom = $this->nomDeclarant ? mb_strtoupper($this->nomDeclarant) : null;
 
-        return $nom;
+        $parts = $firstNameFirst ? [$prenom, $nom] : [$nom, $prenom];
+
+        return implode(' ', array_filter($parts));
     }
 
     public function getTelDeclarant(): ?string
@@ -1185,30 +1167,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getNomOccupantComplet(bool $firstNameFirst = false): string
     {
-        $nom = '';
-        if ($firstNameFirst) {
-            if ($this->prenomOccupant) {
-                $nom .= ucfirst($this->prenomOccupant);
-            }
-            if ($this->nomOccupant) {
-                if ($nom) {
-                    $nom .= ' ';
-                }
-                $nom .= mb_strtoupper($this->nomOccupant);
-            }
-        } else {
-            if ($this->nomOccupant) {
-                $nom .= mb_strtoupper($this->nomOccupant);
-            }
-            if ($this->prenomOccupant) {
-                if ($nom) {
-                    $nom .= ' ';
-                }
-                $nom .= ucfirst($this->prenomOccupant);
-            }
-        }
+        $prenom = $this->prenomOccupant ? ucfirst($this->prenomOccupant) : null;
+        $nom = $this->nomOccupant ? mb_strtoupper($this->nomOccupant) : null;
 
-        return $nom;
+        $parts = $firstNameFirst ? [$prenom, $nom] : [$nom, $prenom];
+
+        return implode(' ', array_filter($parts));
     }
 
     public function getTelOccupant(): ?string

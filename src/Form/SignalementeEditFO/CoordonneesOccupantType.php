@@ -25,8 +25,8 @@ class CoordonneesOccupantType extends AbstractType
             ->add('civiliteOccupant', ChoiceType::class, [
                 'label' => 'Civilité',
                 'choices' => [
-                    'M' => 'M',
-                    'Mme' => 'Mme',
+                    'M' => 'mr',
+                    'Mme' => 'mme',
                 ],
                 'required' => false,
             ])
