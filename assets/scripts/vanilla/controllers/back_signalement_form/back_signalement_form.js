@@ -624,6 +624,7 @@ function initBoFormSignalementAdresse() {
       '#signalement_draft_coordonnees_structureDeclarant',
       '#signalement_draft_coordonnees_nomDeclarant',
       '#signalement_draft_coordonnees_prenomDeclarant',
+      '#signalement_draft_coordonnees_matriculeDeclarant',
       '#signalement_draft_coordonnees_mailDeclarant',
       '#signalement_draft_coordonnees_telDeclarant_select',
       '#signalement_draft_coordonnees_telDeclarant_input',

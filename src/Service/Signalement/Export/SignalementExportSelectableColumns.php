@@ -61,6 +61,7 @@ class SignalementExportSelectableColumns
         'DEMANDE_RELOGEMENT' => ['name' => 'Demande de relogement', 'description' => 'Si le foyer a fait une demande de relogement ou non', 'export' => 'isRelogement', 'preselected' => false],
         'DECLARANT_TIERS' => ['name' => 'Déclarant tiers', 'description' => 'Si le signalement a été déposé par un tiers ou non', 'export' => 'isNotOccupant', 'preselected' => false],
         'NOM_TIERS' => ['name' => 'Nom tiers', 'description' => 'Le nom du tiers déclarant', 'export' => 'nomDeclarant', 'preselected' => false],
+        'MATRICULE_TIERS' => ['name' => 'Matricule tiers', 'description' => 'Le matricule du tiers déclarant', 'export' => 'matriculeDeclarant', 'preselected' => false],
         'EMAIL_TIERS' => ['name' => 'E-mail tiers', 'description' => 'L\'adresse e-mail du tiers déclarant', 'export' => 'emailDeclarant', 'preselected' => false],
         'STRUCTURE_TIERS' => ['name' => 'Structure tiers', 'description' => 'La structure du tiers déclarant', 'export' => 'structureDeclarant', 'preselected' => false],
         'LIEN_TIERS' => ['name' => 'Lien tiers occupant', 'description' => 'Le lien du tiers déclarant avec l\'occupant (voisin, proche, pro...)', 'export' => 'lienDeclarantOccupant', 'preselected' => false],

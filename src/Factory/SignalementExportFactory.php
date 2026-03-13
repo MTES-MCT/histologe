@@ -136,6 +136,7 @@ class SignalementExportFactory
             isRelogement: $this->mapData($data, 'isRelogement'),
             isNotOccupant: 1 == $data['isNotOccupant'] ? self::OUI : self::NON,
             nomDeclarant: $data['nomDeclarant'] ?? '-',
+            matriculeDeclarant: $data['matriculeDeclarant'] ?? '-',
             emailDeclarant: $data['mailDeclarant'] ?? '-',
             structureDeclarant: $data['structureDeclarant'] ?? '-',
             lienDeclarantOccupant: $data['lienDeclarantOccupant'] ?? '-',

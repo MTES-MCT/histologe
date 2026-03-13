@@ -198,6 +198,10 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'label' => 'Prénom',
                 'required' => false,
             ])
+            ->add('matriculeDeclarant', TextType::class, [
+                'label' => 'Matricule',
+                'required' => false,
+            ])
             ->add('mailDeclarant', TextType::class, [
                 'label' => $signalement->isTiersDeclarant()
                     ? 'Adresse e-mail <span class="text-required">*</span>'

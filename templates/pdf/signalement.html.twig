@@ -127,6 +127,9 @@
                             <ul style="list-style:none; margin-left:0px;padding-left:0px;">
                                 <li><b>Nom :</b> {{ signalement.nomDeclarant }} -
                                     <b>Prénom :</b> {{ signalement.prenomDeclarant }}</li>
+                                {% if signalement.matriculeDeclarant %}
+                                    <li><b>Matricule :</b> {{ signalement.matriculeDeclarant }}</li>
+                                {% endif %}
                                 <li><b>Courriel :</b><a
                                             href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
                                 </li>

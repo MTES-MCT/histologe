@@ -106,14 +106,22 @@
 Quand une donnée est ajoutée dans l'entité signaleement, idéalement, il faut l'ajouter dans différents contextes.
 
 #### Formulaire de création de signalement pour les usagers
-Technologie : Vue (fichier de départ : app-front-signalement-form.ts).
+Technologie : PHP / Vue
+
+Fichier de départ :
+- Vue : app-front-signalement-form.ts
+- PHP : src/Service/Signalement/SignalementBuilder.php
 
 Instructions : Ne le fais jamais automatiquement. Il faut passer par les fichiers json et créer des scénarii spécifiques. Affiche une alerte pour y faire penser.
 
 #### Formulaire de création de signalement pour les pro
 Technologie : PHP / Javascript Vanilla.
 
-Fichier de départ : src/Controller/Back/SignalementCreateController.php
+Fichier de départ :
+- PHP : src/Controller/Back/SignalementCreateController.php
+- Javascript : assets/scripts/vanilla/controllers/back_signalement_form.js
+
+Attention : penser à vérifier qu'il faut activer ou non les champs selon les éléments sélectionnés.
 
 #### Formulaire de création de signalement pour les services de secours
 Technologie : PHP / Javascript Vanilla.
@@ -127,6 +135,15 @@ Fichiers de départ :
 - pour l'accès à la page : src/Controller/Back/SignalementController.php
 - pour les différentes éditions : src/Controller/Back/SignalementEditController.php
 
+#### Formulaires d'édition pour les usagers
+Technologie : PHP / Javascript Vanilla.
+
+Fichiers de départ :
+- pour l'accès à la page : src/Controller/SignalementEditController.php
+- pour l'affichage des informations : templates/front/suivi_signalement_dossier.html.twig
+
+**Note** : Les usagers ne peuvent actuellement pas éditer leurs coordonnées de déclarant/tiers. Seul l'affichage est disponible. Si une nouvelle donnée concerne les coordonnées du déclarant, il faut l'ajouter dans la section "Coordonnées du tiers déclarant" du template d'affichage.
+
 #### API
 Technologie : PHP
 
@@ -137,7 +154,12 @@ Fichiers de départ :
 #### Export CSV
 Technologie : PHP
 
-Fichier de départ : src/Factory/SignalementExportFactory.php
+Fichiers à modifier :
+- src/Factory/SignalementExportFactory.php
+- src/Dto/SignalementExport.php
+- src/Repository/Query/SignalementList/ExportIterableQuery.php
+- src/Service/Signalement/Export/SignalementExportHeader.php
+- src/Service/Signalement/Export/SignalementExportSelectableColumns.php
 
 #### Export PDF
 Technologie : Twig

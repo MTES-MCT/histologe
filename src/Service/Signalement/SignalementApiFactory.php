@@ -205,6 +205,7 @@ class SignalementApiFactory
             $signalement->setStructureDeclarant($request->structureDeclarant);
             $signalement->setNomDeclarant($request->nomDeclarant);
             $signalement->setPrenomDeclarant($request->prenomDeclarant);
+            $signalement->setMatriculeDeclarant($request->matriculeDeclarant);
             $signalement->setMailDeclarant($request->mailDeclarant);
             $signalement->setTelDeclarant($request->telDeclarant);
         } else {
