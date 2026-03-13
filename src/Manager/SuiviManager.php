@@ -397,10 +397,16 @@ class SuiviManager extends Manager
         // donc un seul bloc de changements est attendu.
         $sectionChanges = current($changes);
 
+        if (UserManager::OCCUPANT === $signalementUser->getType()) {
+            $nomComplet = $signalement->getNomOccupantComplet(true);
+        } else {
+            $nomComplet = $signalement->getNomDeclarantComplet(true);
+        }
+
         $description = sprintf(
             '%s ont été modifiées par %s.',
             $sectionChanges['label'],
-            htmlentities($user->getNomComplet(true)),
+            htmlentities($nomComplet),
         );
         $description .= '<ul>';
 

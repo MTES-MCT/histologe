@@ -21,7 +21,7 @@ class SignalementFoVoter extends Voter
     public const string SIGN_USAGER_EDIT = 'SIGN_USAGER_EDIT';
     public const string SIGN_USAGER_BASCULE_PROCEDURE = 'SIGN_USAGER_BASCULE_PROCEDURE';
     public const string SIGN_USAGER_COMPLETE = 'SIGN_USAGER_COMPLETE';
-    public const string SIGN_ANSWER_INVITATION = 'SIGN_ANSWER_INVITATION';
+    public const string SIGN_USAGER_EDIT_OFFLINE = 'SIGN_USAGER_EDIT_OFFLINE';
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -31,15 +31,15 @@ class SignalementFoVoter extends Voter
             self::SIGN_USAGER_EDIT,
             self::SIGN_USAGER_BASCULE_PROCEDURE,
             self::SIGN_USAGER_COMPLETE,
-            self::SIGN_ANSWER_INVITATION,
+            self::SIGN_USAGER_EDIT_OFFLINE,
         ])
             && ($subject instanceof Signalement);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
-        if (self::SIGN_ANSWER_INVITATION === $attribute) {
-            return $this->canAnswerInvitation($subject);
+        if (self::SIGN_USAGER_EDIT_OFFLINE === $attribute) {
+            return $this->canUsagerEdit($subject);
         }
         /** @var User|null $user */
         $user = $token->getUser();
@@ -88,11 +88,6 @@ class SignalementFoVoter extends Voter
         }
 
         return false;
-    }
-
-    private function canAnswerInvitation(Signalement $signalement): bool
-    {
-        return $this->canUsagerEdit($signalement);
     }
 
     private function canUsagerEdit(Signalement $signalement): bool

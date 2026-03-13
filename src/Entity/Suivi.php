@@ -158,6 +158,41 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
+    public function isCreatedByOccupant(): bool
+    {
+        if ($this->getCreatedBy()
+            && in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByUsager())
+            && $this->getCreatedBy() === $this->getSignalement()->getSignalementUsager()?->getOccupant()
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isCreatedByDeclarant(): bool
+    {
+        if ($this->getCreatedBy()
+            && in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByUsager())
+            && $this->getCreatedBy() === $this->getSignalement()->getSignalementUsager()?->getDeclarant()
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getCreatedByNomComplet(bool $firstNameFirst = false): ?string
+    {
+        if ($this->isCreatedByOccupant()) {
+            return $this->getSignalement()->getNomOccupantComplet($firstNameFirst);
+        } elseif ($this->isCreatedByDeclarant()) {
+            return $this->getSignalement()->getNomDeclarantComplet($firstNameFirst);
+        }
+
+        return $this->getCreatedBy()?->getNomComplet($firstNameFirst);
+    }
+
     public function getCreatedByLabel(string $separator = ' : '): ?string
     {
         if (self::TYPE_TECHNICAL === $this->type) {
@@ -171,19 +206,12 @@ class Suivi implements EntityHistoryInterface
             return $this->getPartner()->getNom().$separator.$this->getCreatedBy()->getNomComplet(true);
         }
         if ($this->getCreatedBy()) {
-            if (in_array($this->getCategory(), [
-                SuiviCategory::MESSAGE_USAGER,
-                SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
-                SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
-                SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
-                SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
-                SuiviCategory::SIGNALEMENT_EDITED_FO,
-            ])) {
+            if (in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByUsager())) {
                 if ($this->getCreatedBy() === $this->getSignalement()->getSignalementUsager()?->getOccupant()) {
-                    return 'OCCUPANT'.$separator.$this->getCreatedBy()->getNomComplet(true);
+                    return 'OCCUPANT'.$separator.$this->getCreatedByNomComplet(true);
                 }
 
-                return 'DECLARANT'.$separator.$this->getCreatedBy()->getNomComplet(true);
+                return 'DECLARANT'.$separator.$this->getCreatedByNomComplet(true);
             }
 
             return $this->getCreatedBy()->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getTerritory())?->getNom().$separator.$this->getCreatedBy()->getNomComplet(true);

@@ -10,7 +10,9 @@
             <br>
             {% if suivi.createdBy is not null %}
                 <span class="fr-tooltip fr-placement" id="tooltip_suivi_{{ suivi.id }}" role="tooltip">
-                    <strong class="fr-ws-nowrap">{{ suivi.createdBy.nomComplet }}</strong>
+                    <strong class="fr-ws-nowrap">
+                        {{ suivi.createdByNomComplet }}
+                    </strong>
                     <hr class="fr-pb-1v">
                     <span class="fr-ws-nowrap">{{ suivi.createdBy.email }}</span>
                     {% if suivi.createdBy.fonction %}
