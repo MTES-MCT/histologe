@@ -80,4 +80,24 @@
             {% endif %}
         {% endif %}
     </div>
+    {% if signalement.serviceSecours %}
+        <div class="fr-col-12">
+            <strong>Date de la mission du service de secours :</strong>
+            {% if signalement.dateMissionServiceSecours %}
+                {{ signalement.dateMissionServiceSecours|date('d/m/Y') }}
+            {% endif %}
+        </div>
+        <div class="fr-col-12">
+            <strong>Origine de la mission du service de secours :</strong>
+            {% if signalement.origineMissionServiceSecours %}
+                {{ signalement.origineMissionServiceSecours }}
+            {% endif %}
+        </div>
+        <div class="fr-col-12">
+            <strong>Ordre de mission du service de secours :</strong>
+            {% if signalement.ordreMissionServiceSecours %}
+                {{ signalement.ordreMissionServiceSecours }}
+            {% endif %}
+        </div>
+    {% endif %}
 </div>

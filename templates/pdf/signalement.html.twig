@@ -380,6 +380,23 @@
                                         {% endif %}
                                 </li>
                             {% endif %}
+                            {% if signalement.serviceSecours %}
+                                {% if signalement.dateMissionServiceSecours %}
+                                <li>
+                                    <b>Date de la mission du service de secours :</b> {{ signalement.dateMissionServiceSecours|date('d/m/Y') }}
+                                </li>
+                                {% endif %}
+                                {% if signalement.origineMissionServiceSecours %}
+                                <li>
+                                    <b>Origine de la mission du service de secours :</b> {{ signalement.origineMissionServiceSecours }}
+                                </li>
+                                {% endif %}
+                                {% if signalement.ordreMissionServiceSecours %}
+                                <li>
+                                    <b>Ordre de mission du service de secours :</b> {{ signalement.ordreMissionServiceSecours }}
+                                </li>
+                                {% endif %}
+                            {% endif %}
                         </ul>
                     </td>
                 </tr>

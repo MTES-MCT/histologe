@@ -848,6 +848,12 @@ class SignalementManager extends AbstractManager
             ->setInfoProcedureDepartApresTravaux($procedureDemarchesRequest->getInfoProcedureDepartApresTravaux());
         $signalement->setInformationProcedure($informationProcedure);
 
+        if ($procedureDemarchesRequest->getDateMissionServiceSecours()) {
+            $signalement->setDateMissionServiceSecours(new \DateTimeImmutable($procedureDemarchesRequest->getDateMissionServiceSecours()));
+        }
+        $signalement->setOrigineMissionServiceSecours($procedureDemarchesRequest->getOrigineMissionServiceSecours());
+        $signalement->setOrdreMissionServiceSecours($procedureDemarchesRequest->getOrdreMissionServiceSecours());
+
         $informationComplementaire = new InformationComplementaire();
         if (!empty($signalement->getInformationComplementaire())) {
             $informationComplementaire = clone $signalement->getInformationComplementaire();
