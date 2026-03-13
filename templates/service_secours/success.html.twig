@@ -5,8 +5,27 @@
         <section class="fr-grid-row fr-grid-row--center">
             <div class="fr-mt-5v fr-col-md-12">
                 <h1>Le signalement a bien été enregistré !</h1>
-                <p>Le signalement a bien été enregistré sous le numéro : #TODO</p>
+                <p>Le signalement a bien été enregistré sous le numéro : #{{ signalement.reference }}</p>
                 <p>Il va automatiquement être transmis au pôle départemental de lutte contre l'habitat indigne.</p>
+                <ul class="fr-btns-group fr-btns-group--icon-left fr-mt-5w">
+                    <li>
+                        {# lien valable une heure (3600 secondes) #}
+                        <a class="fr-btn fr-icon-download-line" download 
+                            href="{{ sign_url(path('service_secours_pdf', {
+                                'slug': serviceSecoursRoute.slug, 
+                                'uuid': serviceSecoursRoute.uuid, 
+                                'uuidSignalement': signalement.uuid, 
+                                'domain': root_domain(app.request.host)
+                            }), 3600) }}">
+                            Télécharger le PDF</a>
+                    </li>
+                    <li>
+                        <a class="fr-btn fr-btn--secondary" 
+                            href="{{path('service_secours_index', {'slug': serviceSecoursRoute.slug, 'uuid': serviceSecoursRoute.uuid, 'domain': root_domain(app.request.host)})}}">
+                            Saisir un autre signalement
+                        </a>
+                    </li>
+                </ul>
             </div>
         </section>
     </main>
