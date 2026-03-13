@@ -249,8 +249,9 @@
 				</div>
 			</div>
 			{% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED %}
-				<div class="fr-highlight">
-					<p>Bon à savoir : 
+				<h3 class="title-blue-france">Bon à savoir</h3>
+				<div>
+					<p> 
 						<ul>
 							<li>Si vous acceptez de remédier aux désordres, <a href="{{ asset('build/files/Engagement_du_bailleur_a_realiser_des_travaux.docx') }}" target="_blank" rel="noopener" title="Modèle de lettre d'engagement - Ouvre une nouvelle fenêtre">vous devrez signer une lettre d’engagement à réalisation des travaux</a>. Un suivi sera opéré mensuellement avec les deux parties afin de vérifier l’avancement.</li>
 							<li>En cas de nécessité vous pourrez mettre un terme à votre engagement et le dossier sera automatiquement transmis aux autorités compétentes.</li>
