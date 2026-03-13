@@ -81,13 +81,22 @@
 									><span class="fr-hidden">Signalement archivé</span></a>
 							</h3>
 						{% else %}
+						{# {{ dump(suiviCategory) }} #}
 							{% if suiviCategory %}
 								<h3 class="fr-tile__title">
-									<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}{% if suiviCategory.suivi.id %}#suivi_{{suiviCategory.suivi.id}}{% endif %}"
-										data-matomo-clickable-event-category="Suivre mon signalement"
-										data-matomo-clickable-event-action="clickLink"
-										data-matomo-clickable-event-name="{{suiviCategory.title}}"
-										>{{suiviCategory.title}}</a>
+									{% if suiviCategory.suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR %}										
+										<a href="{{ path('front_suivi_signalement_procedure_bailleur_cloture', {'code': signalement.codeSuivi}) }}"
+											data-matomo-clickable-event-category="Suivre mon signalement"
+											data-matomo-clickable-event-action="clickLink"
+											data-matomo-clickable-event-name="{{suiviCategory.title}}"
+											>{{suiviCategory.title}}</a>
+									{% else %}
+										<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}{% if suiviCategory.suivi.id %}#suivi_{{suiviCategory.suivi.id}}{% endif %}"
+											data-matomo-clickable-event-category="Suivre mon signalement"
+											data-matomo-clickable-event-action="clickLink"
+											data-matomo-clickable-event-name="{{suiviCategory.title}}"
+											>{{suiviCategory.title}}</a>
+									{% endif %}
 								</h3>
 								<p class="fr-tile__detail">{{suiviCategory.suivi.createdAt|date('d/m/Y')}}</p>
 								<div class="fr-tile__start">

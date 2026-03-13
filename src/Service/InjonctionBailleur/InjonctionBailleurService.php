@@ -6,6 +6,7 @@ use App\Dto\ReponseInjonctionBailleur;
 use App\Dto\StopProcedure;
 use App\Entity\Affectation;
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
@@ -135,27 +136,43 @@ class InjonctionBailleurService
     {
         $signalement = $stopProcedure->getSignalement();
         $description = $stopProcedure->getDescription();
+        $reason = $stopProcedure->getReason();
+        if (MotifCloture::AUTRE === $reason) {
+            $this->suiviManager->createSuivi(
+                signalement: $signalement,
+                description: 'Le bailleur souhaite arrêter la procédure d\'injonction, le signalement va être pris en charge par les partenaires compétents.',
+                type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
+                isPublic: true
+            );
 
-        $contenu = 'Le bailleur souhaite arrêter la procédure d\'injonction, le signalement va être pris en charge par les partenaires compétents.';
-        $category = SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR;
-        $this->suiviManager->createSuivi(
-            signalement: $signalement,
-            description: $contenu,
-            type: Suivi::TYPE_AUTO,
-            category: $category,
-            isPublic: true
-        );
+            $this->suiviManager->createSuivi(
+                signalement: $signalement,
+                description: HtmlCleaner::cleanFrontEndEntry($description),
+                type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,
+            );
 
-        $this->suiviManager->createSuivi(
-            signalement: $signalement,
-            description: HtmlCleaner::cleanFrontEndEntry($description),
-            type: Suivi::TYPE_AUTO,
-            category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,
-        );
+            $this->switchFromInjonctionToProcedure($signalement);
+            $this->entityManager->flush();
+            $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
+        } elseif (MotifCloture::TRAVAUX_FAITS_OU_EN_COURS === $reason) {
+            $this->suiviManager->createSuivi(
+                signalement: $signalement,
+                description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
+                type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
+                isPublic: true
+            );
 
-        $this->switchFromInjonctionToProcedure($signalement);
-        $this->entityManager->flush();
-        $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
+            $this->suiviManager->createSuivi(
+                signalement: $signalement,
+                description: HtmlCleaner::cleanFrontEndEntry($description),
+                type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,
+            );
+            $this->entityManager->flush();
+        }
     }
 
     public function switchFromInjonctionToProcedure(Signalement $signalement): void

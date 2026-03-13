@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Service\InjonctionBailleur;
 
 use App\Dto\StopProcedure;
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
@@ -77,13 +78,14 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         );
     }
 
-    public function testHandleStopProcedure(): void
+    public function testHandleStopProcedureAutre(): void
     {
         $signalement = new Signalement();
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '30']);
         $signalement->setTerritory($territory);
         $stopProcedure = new StopProcedure();
         $stopProcedure->setSignalement($signalement);
+        $stopProcedure->setReason(MotifCloture::AUTRE);
         $stopProcedure->setDescription('Le bailleur souhaite repasser en procédure classique.');
 
         // On s'attend à 2 appels à createSuivi
@@ -114,6 +116,45 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         $this->assertSame(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
         $this->assertStringStartsWith(date('Y').'-', $signalement->getReference());
         $this->assertStringNotContainsString('-TEMPORAIRE', $signalement->getReference());
+    }
+
+    public function testHandleStopProcedureTravaux(): void
+    {
+        $signalement = new Signalement();
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '30']);
+        $signalement->setTerritory($territory);
+        $signalement->setStatut(SignalementStatus::INJONCTION_BAILLEUR);
+        $stopProcedure = new StopProcedure();
+        $stopProcedure->setSignalement($signalement);
+        $stopProcedure->setReason(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS);
+        $stopProcedure->setDescription('Travaux faits.');
+
+        // On s'attend à 2 appels à createSuivi
+        $this->suiviManager->expects($this->exactly(2))
+            ->method('createSuivi')
+            ->withConsecutive(
+                [
+                    $this->callback(fn ($arg) => $arg instanceof Signalement),
+                    $this->stringContains('Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés'),
+                    Suivi::TYPE_AUTO,
+                    SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
+                    $this->anything(), // on ignore les autres params facultatifs
+                ],
+                [
+                    $this->callback(fn ($arg) => $arg instanceof Signalement),
+                    'Travaux faits.',
+                    Suivi::TYPE_AUTO,
+                    SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,
+                    $this->anything(),
+                ]
+            );
+
+        $this->autoAssigner->expects($this->never())->method('assignOrSendNewSignalementNotification')->with($signalement);
+        $this->entityManager->beginTransaction();
+        $this->service->handleStopProcedure($stopProcedure);
+        $this->entityManager->commit();
+
+        $this->assertEquals(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());
     }
 
     public function testAssignHelpingPartners(): void

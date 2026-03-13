@@ -106,7 +106,8 @@
 						enum('App\\Entity\\Enum\\SuiviCategory').DOCUMENT_DELETED_BY_USAGER,
 						enum('App\\Entity\\Enum\\SuiviCategory').DEMANDE_POURSUITE_PROCEDURE,
 						enum('App\\Entity\\Enum\\SuiviCategory').DEMANDE_ABANDON_PROCEDURE,
-						enum('App\\Entity\\Enum\\SuiviCategory').SIGNALEMENT_EDITED_FO
+						enum('App\\Entity\\Enum\\SuiviCategory').SIGNALEMENT_EDITED_FO,
+						enum('App\\Entity\\Enum\\SuiviCategory').INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER
 					]
 				%}
 					{% if suivi.isSeenByUsager %}
@@ -131,7 +132,8 @@
 									enum('App\\Entity\\Enum\\SuiviCategory').DOCUMENT_DELETED_BY_USAGER,
 									enum('App\\Entity\\Enum\\SuiviCategory').DEMANDE_POURSUITE_PROCEDURE,
 									enum('App\\Entity\\Enum\\SuiviCategory').DEMANDE_ABANDON_PROCEDURE,
-									enum('App\\Entity\\Enum\\SuiviCategory').SIGNALEMENT_EDITED_FO
+									enum('App\\Entity\\Enum\\SuiviCategory').SIGNALEMENT_EDITED_FO,
+									enum('App\\Entity\\Enum\\SuiviCategory').INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER
 								] 
 							%}
 								{{ suivi.createdBy is same as signalement.getSignalementUsager.getOccupant ? 'OCCUPANT' : 'DECLARANT' }}

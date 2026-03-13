@@ -112,6 +112,12 @@ class SuiviCategoryMapper
             'title' => 'Votre demande a été enregistrée',
             'icon' => 'success.svg',
         ],
+        SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR->name => [
+            'label' => 'A faire',
+            'labelClass' => 'fr-badge--error',
+            'title' => 'Demande de clôture du bailleur à confirmer',
+            'icon' => 'conclusion.svg',
+        ],
     ];
 
     public function __construct(
