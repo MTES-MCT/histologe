@@ -56,6 +56,7 @@ class SignalementExportHeader
             'Nb personnes',
             'Nb enfants',
             'Enfants -6 ans',
+            'Autre situation de vulnérabilité',
             'Allocataire',
             'Numéro allocataire',
             'Nature du logement',

@@ -97,6 +97,11 @@
                                     {% endif %}
                                 {% endif %}
                             </li>
+                            {% if signalement.autreSituationVulnerabilite %}
+                            <li>
+                                <b>Autre situation de vulnérabilité :</b> {{ signalement.autreSituationVulnerabilite }}
+                            </li>
+                            {% endif %}
                             <li><b>Date d'entrée :</b> {{ signalement.dateEntree ? signalement.dateEntree|date('d/m/Y') : 'N/R' }}
                             </li>
                             <li>

@@ -52,6 +52,7 @@ class SignalementExportSelectableColumns
         'NB_PERSONNES' => ['name' => 'Nb personnes', 'description' => 'Le nombre de personnes total occupant le logement', 'export' => 'nbPersonnes', 'preselected' => false],
         'NB_ENFANTS' => ['name' => 'Nb enfants', 'description' => 'Le nombre d\'enfants occupant le logement', 'export' => 'nbEnfants', 'preselected' => false],
         'MOINS_6_ANS' => ['name' => 'Enfants -6 ans', 'description' => 'Si oui ou non il y a des enfants de - de 6 ans dans le logement', 'export' => 'enfantsM6', 'preselected' => false],
+        'AUTRE_SITUATION_VULNERABILITE' => ['name' => 'Autre situation de vulnérabilité', 'description' => 'Autre situation de vulnérabilité à mentionner', 'export' => 'autreSituationVulnerabilite', 'preselected' => false],
         'IS_ALLOCATAIRE' => ['name' => 'Allocataire', 'description' => 'Si l\'usager est allocataire ou non', 'export' => 'isAllocataire', 'preselected' => true],
         'NUM_ALLOCATAIRE' => ['name' => 'Numéro allocataire', 'description' => 'Le numéro d\'allocataire de l\'occupant', 'export' => 'numAllocataire', 'preselected' => false],
         'NATURE_LOGEMENT' => ['name' => 'Nature du logement', 'description' => 'La nature du logement (maison, appartement, autre)', 'export' => 'natureLogement', 'preselected' => false],

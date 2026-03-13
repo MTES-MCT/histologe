@@ -127,6 +127,7 @@ class SignalementExportFactory
             nbPersonnes: $data['nbOccupantsLogement'],
             nbEnfants: $nbEnfants,
             enfantsM6: $enfantsM6,
+            autreSituationVulnerabilite: $data['autreSituationVulnerabilite'] ?? '-',
             isAllocataire: $this->mapData($data, 'isAllocataire'),
             numAllocataire: $data['numAllocataire'] ?? self::NON_RENSEIGNE,
             natureLogement: $data['natureLogement'] ?? self::NON_RENSEIGNE,

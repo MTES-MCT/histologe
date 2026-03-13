@@ -72,6 +72,7 @@ class SignalementApiFactory
         $signalement->setNbOccupantsLogement($request->nbOccupantsLogement);
         $typeCompositionLogement->setCompositionLogementNombreEnfants((string) $request->nbEnfantsDansLogement);
         $typeCompositionLogement->setCompositionLogementEnfants((string) $request->isEnfantsMoinsSixAnsDansLogement);
+        $signalement->setAutreSituationVulnerabilite($request->autreSituationVulnerabilite);
         $signalement->setNatureLogement($request->natureLogement);
         $typeCompositionLogement->setTypeLogementNatureAutrePrecision($request->natureLogementAutre);
         $apptAvecFenetre = self::convertBoolToString($request->isAppartementAvecFenetres);

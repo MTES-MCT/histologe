@@ -165,6 +165,12 @@ class SignalementRequest implements RequestInterface
     public ?bool $isEnfantsMoinsSixAnsDansLogement = null;
 
     #[OA\Property(
+        description: 'Autre situation de vulnérabilité à mentionner.',
+        example: 'Personne âgée',
+    )]
+    public ?string $autreSituationVulnerabilite = null;
+
+    #[OA\Property(
         description: 'Nature du logement.',
         example: 'appartement',
     )]

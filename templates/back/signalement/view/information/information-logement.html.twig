@@ -46,6 +46,13 @@
             {% endif %}
         {% endif %}
     </div>
+    <div class="fr-col-12">
+        <strong>Autre situation de vulnérabilité :</strong>
+        {% if signalement.autreSituationVulnerabilite %}
+            <br>
+            {{ signalement.autreSituationVulnerabilite|nl2br }}
+        {% endif %}
+    </div>
     <div class="fr-col-12 fr-col-md-6">
         <strong>Date arrivée :</strong>
         {% if signalement.dateEntree %}

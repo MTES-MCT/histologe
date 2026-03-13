@@ -49,6 +49,7 @@ class SignalementExport
         public ?string $nbPersonnes = null,
         public string|int|null $nbEnfants = null,
         public ?string $enfantsM6 = null,
+        public ?string $autreSituationVulnerabilite = null,
         public ?string $isAllocataire = null,
         public ?string $numAllocataire = null,
         public ?string $natureLogement = null,

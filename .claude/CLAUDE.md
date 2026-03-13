@@ -119,6 +119,8 @@ Technologie : PHP / Javascript Vanilla.
 
 Fichier de départ :
 - PHP : src/Controller/Back/SignalementCreateController.php
+  - Onglet Adresse : src/Form/SignalementDraftAddressType.php
+  - Twig de l'onglet Adresse : templates/back/signalement_create/tabs/tab-adresse.html.twig
 - Javascript : assets/scripts/vanilla/controllers/back_signalement_form.js
 
 Attention : penser à vérifier qu'il faut activer ou non les champs selon les éléments sélectionnés.
