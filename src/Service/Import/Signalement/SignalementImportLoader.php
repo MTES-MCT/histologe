@@ -16,6 +16,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Manager\AffectationManager;
 use App\Manager\FileManager;
+use App\Manager\InterventionManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\TagManager;
@@ -75,6 +76,7 @@ class SignalementImportLoader
     public function __construct(
         private SignalementImportMapper $signalementImportMapper,
         private SignalementManager $signalementManager,
+        private readonly InterventionManager $interventionManager,
         private TagManager $tagManager,
         private AffectationManager $affectationManager,
         private SuiviManager $suiviManager,
@@ -281,6 +283,14 @@ class SignalementImportLoader
                         $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
                     }
                     $affectationCollection->add($affectation);
+
+                    if ($dataMapped['dateVisite']) {
+                        $this->interventionManager->createVisiteFromImport(
+                            affectation: $affectation,
+                            dateVisite: $dataMapped['dateVisite'] ?? null,
+                            conclusionVisite: $dataMapped['conclusionVisite'] ?? '',
+                        );
+                    }
                 }
             }
         }
