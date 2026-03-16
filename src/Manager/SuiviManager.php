@@ -19,6 +19,7 @@ use App\Security\User\SignalementUser;
 use App\Service\Sanitizer;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
@@ -35,6 +36,7 @@ class SuiviManager extends Manager
         private readonly UserManager $userManager,
         #[Autowire(env: 'EDITION_SUIVI_ENABLE')]
         private readonly bool $editionSuiviEnable,
+        private readonly ClockInterface $clock,
         string $entityName = Suivi::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -75,6 +77,8 @@ class SuiviManager extends Manager
             ->setCategory($category);
         if (!empty($createdAt)) {
             $suivi->setCreatedAt($createdAt);
+        } else {
+            $suivi->setCreatedAt($this->clock->now());
         }
         if (SuiviCategory::MESSAGE_PARTNER === $suivi->getCategory() && $this->editionSuiviEnable) {
             $suivi->setWaitingNotification(true);
