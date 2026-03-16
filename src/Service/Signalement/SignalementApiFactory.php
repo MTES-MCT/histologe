@@ -217,6 +217,11 @@ class SignalementApiFactory
         $signalement->setPrenomAgence($request->prenomAgence);
         $signalement->setMailAgence($request->mailAgence);
         $signalement->setTelAgence($request->telAgence);
+        $signalement->setDenominationSyndic($request->denominationSyndic);
+        $signalement->setNomSyndic($request->nomSyndic);
+        $signalement->setMailSyndic($request->mailSyndic);
+        $signalement->setTelSyndic($request->telSyndic);
+        $signalement->setTelSyndicSecondaire($request->telSyndicSecondaire);
 
         foreach ($request->desordres as $desordre) {
             if (count($desordre->precisions)) {

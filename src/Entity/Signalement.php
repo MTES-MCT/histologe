@@ -1293,6 +1293,15 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
             || $this->mailAgence;
     }
 
+    public function hasInfosSyndic(): bool
+    {
+        return $this->nomSyndic
+            || $this->denominationSyndic
+            || $this->telSyndic
+            || $this->telSyndicSecondaire
+            || $this->mailSyndic;
+    }
+
     public function getNomAgence(): ?string
     {
         return $this->nomAgence;

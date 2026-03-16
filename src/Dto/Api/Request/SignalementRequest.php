@@ -750,6 +750,42 @@ class SignalementRequest implements RequestInterface
     #[Assert\Length(max: 100)]
     public ?string $communeAgence = null;
 
+    #[OA\Property(
+        description: 'Dénomination du syndic.',
+        example: 'Syndic Pro',
+    )]
+    #[Assert\Length(max: 255)]
+    public ?string $denominationSyndic = null;
+
+    #[OA\Property(
+        description: 'Nom du contact du syndic.',
+        example: 'Dupont',
+    )]
+    #[Assert\Length(max: 255)]
+    public ?string $nomSyndic = null;
+
+    #[OA\Property(
+        description: 'E-mail du contact du syndic.',
+        example: 'contact@syndicpro.com',
+    )]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du contact du syndic n\'est pas valide.')]
+    #[Assert\Length(max: 255)]
+    public ?string $mailSyndic = null;
+
+    #[OA\Property(
+        description: 'Téléphone du contact du syndic.',
+        example: '0639988822',
+    )]
+    #[AppAssert\TelephoneFormat]
+    public ?string $telSyndic = null;
+
+    #[OA\Property(
+        description: 'Téléphone secondaire du contact du syndic.',
+        example: '0139988823',
+    )]
+    #[AppAssert\TelephoneFormat]
+    public ?string $telSyndicSecondaire = null;
+
     /** @var array<DesordreRequest> $desordres */
     #[OA\Property(
         description: 'Liste des désordres constatés.

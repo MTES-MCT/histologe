@@ -290,6 +290,40 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'empty_data' => '',
             ])
 
+            ->add('denominationSyndic', TextType::class, [
+                'label' => 'Dénomination',
+                'required' => false,
+            ])
+            ->add('nomSyndic', TextType::class, [
+                'label' => 'Nom',
+                'help' => 'Saisissez le nom du contact du syndic',
+                'required' => false,
+            ])
+            ->add('mailSyndic', TextType::class, [
+                'label' => 'Adresse e-mail',
+                'help' => 'Format attendu : nom@domaine.fr',
+                'required' => false,
+            ])
+            ->add('telSyndic', PhoneType::class, [
+                'required' => false,
+                'constraints' => [
+                    new TelephoneFormat([
+                        'message' => 'Le numéro de téléphone n\'est pas valide.',
+                        'groups' => ['bo_step_coordonnees'],
+                    ]),
+                ],
+            ])
+            ->add('telSyndicSecondaire', PhoneType::class, [
+                'label' => 'Numéro de téléphone secondaire',
+                'required' => false,
+                'constraints' => [
+                    new TelephoneFormat([
+                        'message' => 'Le numéro de téléphone n\'est pas valide.',
+                        'groups' => ['bo_step_coordonnees'],
+                    ]),
+                ],
+            ])
+
             ->add('forceSave', HiddenType::class, [
                 'mapped' => false,
             ])

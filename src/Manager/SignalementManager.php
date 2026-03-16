@@ -7,6 +7,7 @@ use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\CoordonneesAgenceRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
+use App\Dto\Request\Signalement\CoordonneesSyndicRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
@@ -524,6 +525,25 @@ class SignalementManager extends AbstractManager
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'Les coordonnées de l\'agence ont été modifiées par ',
+        );
+    }
+
+    public function updateFromCoordonneesSyndicRequest(
+        Signalement $signalement,
+        CoordonneesSyndicRequest $coordonneesSyndicRequest,
+    ): bool {
+        $signalement
+            ->setDenominationSyndic($coordonneesSyndicRequest->getDenomination())
+            ->setNomSyndic($coordonneesSyndicRequest->getNom())
+            ->setMailSyndic($coordonneesSyndicRequest->getMail())
+            ->setTelSyndic($coordonneesSyndicRequest->getTelephone())
+            ->setTelSyndicSecondaire($coordonneesSyndicRequest->getTelephoneBis());
+
+        $this->save($signalement);
+
+        return $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'Les coordonnées du syndic ont été modifiées par ',
         );
     }
 

@@ -171,6 +171,32 @@
                 </div>
             </div>
         </fieldset>
+
+        <fieldset class="fr-fieldset">
+            <legend>
+                <h3 class="fr-h5">Syndic</h3>
+            </legend>
+            <div class="fr-fieldset__element fr-mb-5v">
+                <div class="fr-alert fr-alert--info fr-alert--sm">
+                    <p>Si le logement dispose d'un syndic, renseignez les coordonnées du syndic.</p>
+                </div>
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.denominationSyndic) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.nomSyndic) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.mailSyndic) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.telSyndic) }}
+            </div>
+            <div class="fr-fieldset__element">
+                {{ form_row(formCoordonnees.telSyndicSecondaire) }}
+            </div>
+        </fieldset>
     </div>
 
     <div class="fr-col-6">

@@ -26,7 +26,7 @@ class SignalementExport
         public ?string $escalierOccupant = null,
         public ?string $numAppartOccupant = null,
         public ?string $adresseAutreOccupant = null,
-        public ?string $typeOccupant = null,
+        public ?string $profileOccupant = null,
         public ?string $situations = null,
         public ?string $desordres = null,
         public ?string $score = null,
