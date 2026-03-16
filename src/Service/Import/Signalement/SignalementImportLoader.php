@@ -8,6 +8,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Signalement;
@@ -235,6 +236,7 @@ class SignalementImportLoader
      */
     private function loadAffectation(Territory $territory, array $dataMapped, ?Signalement $signalement = null): ArrayCollection
     {
+        $hasAddedVisite = false;
         $affectationCollection = new ArrayCollection();
         if (isset($dataMapped['partners']) && !empty($dataMapped['partners'])) {
             if (str_contains($dataMapped['partners'], ',') && '62' !== $territory->getZip()) {
@@ -284,12 +286,13 @@ class SignalementImportLoader
                     }
                     $affectationCollection->add($affectation);
 
-                    if ($dataMapped['dateVisite']) {
+                    if ($dataMapped['dateVisite'] && !$hasAddedVisite && $partner->hasCompetence(Qualification::VISITES)) {
                         $this->interventionManager->createVisiteFromImport(
                             affectation: $affectation,
                             dateVisite: $dataMapped['dateVisite'] ?? null,
                             conclusionVisite: $dataMapped['conclusionVisite'] ?? '',
                         );
+                        $hasAddedVisite = true;
                     }
                 }
             }
