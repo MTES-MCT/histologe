@@ -8,6 +8,7 @@ readonly class CountAfermer
         public int $countDemandesFermetureByUsager = 0,
         public int $countDossiersRelanceSansReponse = 0,
         public int $countDossiersFermePartenaireTous = 0,
+        public int $countDossiersFermeCommune = 0,
     ) {
     }
 
@@ -15,6 +16,7 @@ readonly class CountAfermer
     {
         return $this->countDemandesFermetureByUsager
             + $this->countDossiersRelanceSansReponse
-            + $this->countDossiersFermePartenaireTous;
+            + $this->countDossiersFermePartenaireTous
+            + $this->countDossiersFermeCommune;
     }
 }

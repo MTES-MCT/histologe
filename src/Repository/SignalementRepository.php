@@ -2122,7 +2122,8 @@ class SignalementRepository extends ServiceEntityRepository
         return new CountAfermer(
             countDemandesFermetureByUsager: $this->countDossiersDemandesFermetureByUsager($params),
             countDossiersRelanceSansReponse: $this->countSignalementsAvecRelancesSansReponse($params),
-            countDossiersFermePartenaireTous: $this->countDossiersFermePartenaireTous($params)
+            countDossiersFermePartenaireTous: $this->countDossiersFermePartenaireTous($params),
+            countDossiersFermeCommune: $this->countDossiersFermePartenaireCommune($params),
         );
     }
 

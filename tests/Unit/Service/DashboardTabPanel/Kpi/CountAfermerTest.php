@@ -14,6 +14,7 @@ class CountAfermerTest extends TestCase
         $this->assertSame(0, $count->countDemandesFermetureByUsager);
         $this->assertSame(0, $count->countDossiersRelanceSansReponse);
         $this->assertSame(0, $count->countDossiersFermePartenaireTous);
+        $this->assertSame(0, $count->countDossiersFermeCommune);
         $this->assertSame(0, $count->total());
     }
 
@@ -23,12 +24,14 @@ class CountAfermerTest extends TestCase
             countDemandesFermetureByUsager: 2,
             countDossiersRelanceSansReponse: 3,
             countDossiersFermePartenaireTous: 5,
+            countDossiersFermeCommune: 10,
         );
 
         $this->assertSame(2, $count->countDemandesFermetureByUsager);
         $this->assertSame(3, $count->countDossiersRelanceSansReponse);
         $this->assertSame(5, $count->countDossiersFermePartenaireTous);
-        $this->assertSame(10, $count->total());
+        $this->assertSame(10, $count->countDossiersFermeCommune);
+        $this->assertSame(20, $count->total());
     }
 
     public function testTotalWithDifferentValues(): void
@@ -37,8 +40,9 @@ class CountAfermerTest extends TestCase
             countDemandesFermetureByUsager: 7,
             countDossiersRelanceSansReponse: 1,
             countDossiersFermePartenaireTous: 4,
+            countDossiersFermeCommune: 10,
         );
 
-        $this->assertSame(12, $count->total());
+        $this->assertSame(22, $count->total());
     }
 }
