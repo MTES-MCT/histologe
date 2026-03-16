@@ -19,6 +19,8 @@ class ServiceSecoursNavigatorType extends AbstractType
                 'label' => 'Précédent',
                 'include_if' => fn (FormFlowCursor $cursor) => !$cursor->isFirstStep(),
                 'attr' => ['class' => 'fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line'],
+                'clear_submission' => false,
+                'validation_groups' => false,
             ])
             ->add('next', NextFlowType::class, [
                 'label' => 'Suivant',
