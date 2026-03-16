@@ -102,79 +102,20 @@
 
 ## Ajouts de données
 
-### Signalement
-Quand une donnée est ajoutée dans l'entité signaleement, idéalement, il faut l'ajouter dans différents contextes.
+Pour ajouter un nouveau champ dans l'entité Signalement, consulter le **[Guide d'ajout de données (AJOUT_DONNEES.md)](AJOUT_DONNEES.md)**.
 
-#### Formulaire de création de signalement pour les usagers
-Technologie : PHP / Vue
+Ce guide détaille les 9 contextes où un champ doit potentiellement être ajouté :
+1. Formulaire de création pour les usagers (Vue.js + PHP) - ⚠️ Ne jamais modifier automatiquement
+2. Formulaire de création pour les pro (PHP + JS Vanilla)
+3. Formulaire de création pour les services de secours
+4. Formulaires d'édition pour les pro (Back-office)
+5. Formulaires d'édition pour les usagers (Front-office)
+6. API (Création et liste)
+7. Export CSV (Optionnel)
+8. Export PDF
+9. Listener de suivi automatique (pour tracer les modifications des usagers)
 
-Fichier de départ :
-- Vue : app-front-signalement-form.ts
-- PHP : src/Service/Signalement/SignalementBuilder.php
-
-Instructions : Ne le fais jamais automatiquement. Il faut passer par les fichiers json et créer des scénarii spécifiques. Affiche une alerte pour y faire penser.
-
-#### Formulaire de création de signalement pour les pro
-Technologie : PHP / Javascript Vanilla.
-
-Fichier de départ :
-- PHP : src/Controller/Back/SignalementCreateController.php
-  - Onglet Adresse : src/Form/SignalementDraftAddressType.php
-  - Twig de l'onglet Adresse : templates/back/signalement_create/tabs/tab-adresse.html.twig
-- Javascript : assets/scripts/vanilla/controllers/back_signalement_form.js
-
-Attention : penser à vérifier qu'il faut activer ou non les champs selon les éléments sélectionnés.
-
-#### Formulaire de création de signalement pour les services de secours
-Technologie : PHP / Javascript Vanilla.
-
-Fichier de départ : src/Controller/ServiceSecours/ServiceSecoursController.php
-
-#### Formulaires d'édition pour les pro
-Technologie : PHP / Javascript Vanilla.
-
-Fichiers à modifier :
-- Contrôleur : src/Controller/Back/SignalementEditController.php (méthode selon la section concernée)
-- DTO de requête : src/Dto/Request/Signalement/[Nom]Request.php (ajouter la propriété et le getter)
-- Manager : src/Manager/SignalementManager.php (méthode updateFrom[Nom]Request)
-- Template d'affichage : templates/back/signalement/view/information/information-[section].html.twig
-- Template modal d'édition : templates/back/signalement/view/edit-modals/edit-[section].html.twig
-
-**Sections disponibles** :
-- Coordonnées tiers : `CoordonneesTiersRequest` → `updateFromCoordonneesTiersRequest` → `information-tiers.html.twig` + `edit-coordonnees-tiers.html.twig`
-- Procédure et démarches : `ProcedureDemarchesRequest` → `updateFromProcedureDemarchesRequest` → `information-procedure.html.twig` + `edit-procedure-demarches.html.twig`
-- Composition logement : etc.
-
-#### Formulaires d'édition pour les usagers
-Technologie : PHP / Javascript Vanilla.
-
-Fichiers de départ :
-- pour l'accès à la page : src/Controller/SignalementEditController.php
-- pour l'affichage des informations : templates/front/suivi_signalement_dossier.html.twig
-
-**Note** : Les usagers ne peuvent actuellement pas éditer leurs coordonnées de déclarant/tiers. Seul l'affichage est disponible. Si une nouvelle donnée concerne les coordonnées du déclarant, il faut l'ajouter dans la section "Coordonnées du tiers déclarant" du template d'affichage.
-
-#### API
-Technologie : PHP
-
-Fichiers de départ :
-- pour la création : src/Controller/Api/SignalementCreateController.php
-- pour la liste des informations : src/Controller/Api/SignalementListController.php
-
-#### Export CSV
-Technologie : PHP
-
-Fichiers à modifier :
-- src/Factory/SignalementExportFactory.php
-- src/Dto/SignalementExport.php
-- src/Repository/Query/SignalementList/ExportIterableQuery.php
-- src/Service/Signalement/Export/SignalementExportHeader.php
-- src/Service/Signalement/Export/SignalementExportSelectableColumns.php
-
-#### Export PDF
-Technologie : Twig
-
-Fichier de template : templates/pdf/signalement.html.twig
+**Exemple complet** : Les champs Syndic (`denominationSyndic`, `nomSyndic`, `mailSyndic`, `telSyndic`, `telSyndicSecondaire`) ont été implémentés dans tous les contextes et peuvent servir de référence.
 
 ## Conventions de code
 

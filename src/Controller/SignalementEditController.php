@@ -13,6 +13,7 @@ use App\Form\SignalementeEditFO\CoordonneesAgenceType;
 use App\Form\SignalementeEditFO\CoordonneesBailleurType;
 use App\Form\SignalementeEditFO\CoordonneesOccupantType;
 use App\Form\SignalementeEditFO\InformationsGeneralesType;
+use App\Form\SignalementeEditFO\CoordonneesSyndicType;
 use App\Form\SignalementeEditFO\ProcedureAssuranceType;
 use App\Form\SignalementeEditFO\TypeCompositionType;
 use App\Form\SignalementeEditFO\UsagerSituationFoyerType;
@@ -264,6 +265,40 @@ class SignalementEditController extends AbstractController
         }
 
         return $this->render('front/edit-signalement/coordonnees-agence.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form,
+        ]);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    #[Route('/{code}/completer/syndic', name: 'front_suivi_signalement_complete_syndic', methods: ['GET', 'POST'])]
+    public function suiviSignalementCompleteSyndic(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->cguTiersChecker->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
+        $form = $this->createForm(CoordonneesSyndicType::class, $signalement);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées du syndic ont bien été mises à jour.']);
+
+            return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/edit-signalement/coordonnees-syndic.html.twig', [
             'signalement' => $signalement,
             'form' => $form,
         ]);

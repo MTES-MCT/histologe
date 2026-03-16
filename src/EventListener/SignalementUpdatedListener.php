@@ -19,6 +19,7 @@ class SignalementUpdatedListener
     public const string EDIT_COORDONNEES_OCCUPANT = 'coordonnees_occupant';
     public const string EDIT_COORDONNEES_BAILLEUR = 'coordonnees_bailleur';
     public const string EDIT_COORDONNEES_AGENCE = 'coordonnees_agence';
+    public const string EDIT_COORDONNEES_SYNDIC = 'coordonnees_syndic';
     public const string EDIT_INFORMATIONS_ASSURANCE = 'informations_assurance';
     public const string EDIT_SITUATION_FOYER = 'situation_foyer';
     public const string EDIT_INFORMATIONS_GENERALES = 'informations_generales';
@@ -79,6 +80,16 @@ class SignalementUpdatedListener
                 'adresseAgence' => 'Adresse',
                 'codePostalAgence' => 'Code postal',
                 'villeAgence' => 'Ville',
+            ],
+        ],
+        self::EDIT_COORDONNEES_SYNDIC => [
+            'label' => 'Les coordonnées du syndic',
+            'fields' => [
+                'denominationSyndic' => 'Dénomination',
+                'nomSyndic' => 'Nom',
+                'mailSyndic' => 'E-mail',
+                'telSyndic' => 'Téléphone',
+                'telSyndicSecondaire' => 'Téléphone secondaire',
             ],
         ],
         self::EDIT_INFORMATIONS_ASSURANCE => [
