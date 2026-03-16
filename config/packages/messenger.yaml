@@ -31,6 +31,7 @@ framework:
             App\Messenger\Message\SuiviSummariesMessage: async_priority_high
             App\Messenger\Message\SignalementDraftProcessMessage: async_priority_high
             App\Messenger\Message\FileDuplicationMessage: async_priority_high
+            App\Messenger\Message\SignalementServiceSecoursFileMessage: async_priority_high
 
 
 

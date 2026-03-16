@@ -141,7 +141,7 @@
                 {% elseif current_step == 'step5' %}
                     {{ form_row(form.step5.desordres) }}
                     {{ form_row(form.step5.desordresAutre) }}
-                    {{ form_row(form.step5.autresOccupantsDesordre) }}
+                    {{ form_row(form.step5.autresOccupantsDesordre, {display_mode: 'block'}) }}
                     <div
                             class="fr-upload-group js-upload-photos"
                             data-ajaxurl-handle-upload="{{ path('handle_upload') }}">
@@ -151,7 +151,7 @@
                         </p>
 
                         {% if form.step5.photos.vars.help %}
-                            <span class="fr-hint-text">{{ form.step5.photos.vars.help }}</span>
+                            <span class="fr-hint-text fr-mb-2w">{{ form.step5.photos.vars.help }}</span>
                         {% endif %}
                         <button
                                 type="button"
@@ -163,15 +163,20 @@
                         <div class="fr-hidden">
                             {{ form_widget(form.step5.photos, {
                                 attr: {
-                                    'data-upload-photos-input': ''
+                                    'data-upload-photos-input': '',
+                                    'accept': 'image/jpeg,image/png,image/gif,application/pdf'
                                 }
                             }) }}
                         </div>
 
                         {{ form_errors(form.step5.photos) }}
-
                         <div class="fr-mt-2w" data-upload-photos-list></div>
-                        <div data-upload-photos-hidden-container></div>
+                        <div data-upload-photos-hidden-container
+                             data-input-name="{{ form.step5.uploadedFiles.vars.full_name }}"
+                             data-uploaded-files='{{ form.step5.vars.data.uploadedFiles|json_encode|e("html_attr") }}'
+                        >
+
+                        </div>
                         {% do form.step5.uploadedFiles.setRendered %}
 
                     </div>
@@ -185,6 +190,9 @@
                 <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline fr-btns-group--icon-left">
                     {% if form.navigator.finish is defined %}
                         <li>{{ form_row(form.navigator.finish) }}</li>
+                    {% endif %}
+                    {% if form.navigator.nextReview is defined %}
+                        <li>{{ form_row(form.navigator.nextReview) }}</li>
                     {% endif %}
                     {% if form.navigator.next is defined %}
                         <li>{{ form_row(form.navigator.next) }}</li>

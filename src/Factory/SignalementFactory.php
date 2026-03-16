@@ -3,7 +3,6 @@
 namespace App\Factory;
 
 use App\Dto\ServiceSecours\FormServiceSecours;
-use App\Entity\DesordreCritere;
 use App\Entity\DesordrePrecision;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\EtageType;
@@ -24,7 +23,7 @@ class SignalementFactory
     public function __construct(
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
-        private BailleurRepository $bailleurRepository,
+        private readonly BailleurRepository $bailleurRepository,
     ) {
     }
 
@@ -160,33 +159,36 @@ class SignalementFactory
         $signalement->setTelSyndic($formServiceSecours->step4->telSyndic);
         $signalement->setTelSyndicSecondaire($formServiceSecours->step4->telSyndicSecondaire);
 
-        // TODO : manage other steps
-        //
-        //
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
+        $this->handleStep5($formServiceSecours, $signalement);
+
+        return $signalement;
+    }
+
+    private function handleStep5(FormServiceSecours $formServiceSecours, Signalement $signalement): void
+    {
         $jsonContent = [];
-        /** @var DesordreCritere $desordreCritere */
         foreach ($formServiceSecours->step5->desordres as $desordreCritere) {
             /** @var DesordrePrecision $desordrePrecision */
             $desordrePrecision = $desordreCritere->getDesordrePrecisions()->current();
             $signalement->addDesordrePrecision($desordrePrecision);
 
-            if ('desordres_service_secours_autre' === $desordreCritere->getLabelCritere()) {
-                $jsonContent[$desordrePrecision->getLabel()] = $formServiceSecours->step5->desordresAutre;
+            if ('desordres_service_secours_autre_precision' === $desordrePrecision->getDesordrePrecisionSlug()) {
+                $jsonContent[$desordrePrecision->getDesordrePrecisionSlug()] = $formServiceSecours->step5->desordresAutre;
             }
         }
 
-        if (!empty($formServiceSecours->step5->uploadedFiles)) {
-            // A la sauvegarde du signalement, déclencher le traitement en asynchrone des fichiers
-            // Supprimer la propriété une fois le traitement terminé
-            // Adapter le handler front ?
-            $jsonContent['uploadedFiles'] = $formServiceSecours->step5->uploadedFiles;
+        if (!empty($uploadedFiles = $formServiceSecours->step5->uploadedFiles)) {
+            $jsonContent['uploadedFiles'] = array_map(
+                fn (string $file) => array_merge(json_decode($file, true), ['slug' => 'desordres_service_secours']),
+                $uploadedFiles
+            );
         }
 
-        $signalement->setJsonContent($jsonContent);
+        $jsonContent['autresOccupantsDesordre'] = $formServiceSecours->step5->autresOccupantsDesordre;
 
-        return $signalement;
+        $signalement->setJsonContent($jsonContent);
     }
 
     /**

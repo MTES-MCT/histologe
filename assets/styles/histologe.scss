@@ -1419,3 +1419,11 @@ ul.fr-toggle__list.fr-toggle__list--inline {
 .fr-link--error {
     color: var(--text-default-error);
 }
+
+@media (max-width: 61.9375rem) {
+    [data-upload-photos-trigger] {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+}

@@ -2,6 +2,8 @@ import {
   attacheAutocompleteAddressEvent,
   initComponentAddress,
 } from '../../services/component/component_search_address';
+import {attacheAutocompleteAddressEvent, initComponentAddress} from '../../services/component/component_search_address';
+import axios from 'axios';
 
 attachFormServiceSecoursEvent();
 
@@ -78,10 +80,19 @@ function attachFormServiceSecoursEvent() {
     });
   });
 
+  initDesordresAutreToggle();
   initUploadPhotos();
 }
 
 function initUploadPhotos() {
+  const ALLOWED_MIME_TYPES = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'application/pdf'
+  ];
+
+  const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 
   /** @type {HTMLElement|null} */
   const wrapper = document.querySelector('.js-upload-photos');
@@ -104,107 +115,317 @@ function initUploadPhotos() {
 
   const uploadUrl = wrapper.dataset.ajaxurlHandleUpload;
 
+  const uploadedFilesElement = wrapper.querySelector('[data-uploaded-files]');
+  const existingUploadedFilesRaw = uploadedFilesElement ? uploadedFilesElement.dataset.uploadedFiles : null;
+
   if (!trigger || !input || !fileList || !hiddenContainer || !uploadUrl) {
     return;
   }
 
-  /** @type {Array<{titre:string,filePath:string}>} */
+  /**
+   * @type {Array<{
+   *   titre: string,
+   *   filePath: string|null,
+   *   progress: number,
+   *   status: 'uploading'|'uploaded'|'error',
+   *   errorMessage?: string
+   * }>}
+   */
   let uploadedFiles = [];
 
+  if (existingUploadedFilesRaw) {
+    try {
+      const parsedFiles = JSON.parse(existingUploadedFilesRaw);
+
+      if (Array.isArray(parsedFiles)) {
+        uploadedFiles = parsedFiles
+            .map((file) => {
+              if (!file) {
+                return null;
+              }
+
+              if (typeof file === 'string') {
+                try {
+                  const parsedFile = JSON.parse(file);
+
+                  if (
+                      parsedFile &&
+                      typeof parsedFile.titre === 'string' &&
+                      typeof parsedFile.filePath === 'string'
+                  ) {
+                    return {
+                      titre: parsedFile.titre,
+                      filePath: parsedFile.filePath,
+                      progress: 100,
+                      status: 'uploaded'
+                    };
+                  }
+                } catch (error) {
+                  console.error('Impossible de parser un fichier encodé en JSON', error);
+                }
+
+                return null;
+              }
+
+              if (
+                  typeof file === 'object' &&
+                  typeof file.titre === 'string' &&
+                  typeof file.filePath === 'string'
+              ) {
+                return {
+                  titre: file.titre,
+                  filePath: file.filePath,
+                  progress: 100,
+                  status: 'uploaded'
+                };
+              }
+
+              return null;
+            })
+            .filter((file) => file && file.filePath);
+
+        renderFiles();
+        updateHiddenInputs();
+      }
+    } catch (error) {
+      console.error('Impossible de parser les fichiers existants', error);
+    }
+  }
 
   trigger.addEventListener('click', () => {
     input.click();
   });
 
   input.addEventListener('change', async () => {
-
+    uploadedFiles = uploadedFiles.filter(file => file.status !== 'error');
     const files = Array.from(input.files || []);
 
+    if (files.length === 0) {
+      return;
+    }
+
     setButtonsDisabled(true);
-    for (const file of files) {
-      const formData = new FormData();
-      formData.append('signalement[documents]', file);
 
-      try {
-        const response = await fetch(uploadUrl, {
-          method: 'POST',
-          body: formData
-        });
+    try {
+      for (const file of files) {
+        const validationError = validateFile(file);
 
-        const data = await response.json();
-        if (data.error) {
-          console.error(data.error);
+        if (validationError) {
+          uploadedFiles.push({
+            titre: file.name,
+            filePath: null,
+            progress: 0,
+            status: 'error',
+            errorMessage: validationError
+          });
+
+          renderFiles();
           continue;
         }
-
-        uploadedFiles.push({
-          titre: data.titre,
-          filePath: data.filePath
-        });
+        const fileIndex = uploadedFiles.push({
+          titre: file.name,
+          filePath: null,
+          progress: 0,
+          status: 'uploading'
+        }) - 1;
 
         renderFiles();
-        updateHiddenInputs();
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    input.value = '';
-    setButtonsDisabled(false);
-  });
 
+        const formData = new FormData();
+        formData.append('signalement[documents]', file);
+
+        try {
+          const response = await axios.post(uploadUrl, formData, {
+            onUploadProgress: (progressEvent) => {
+              if (!progressEvent.total) {
+                return;
+              }
+
+              uploadedFiles[fileIndex].progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              renderFiles();
+            }
+          });
+
+          const data = response.data;
+          if (data.error) {
+            uploadedFiles[fileIndex].status = 'error';
+            uploadedFiles[fileIndex].errorMessage = data.error;
+            renderFiles();
+            continue;
+          }
+
+          uploadedFiles[fileIndex] = {
+            titre: data.titre,
+            filePath: data.filePath,
+            progress: 100,
+            status: 'uploaded'
+          };
+
+          renderFiles();
+          updateHiddenInputs();
+        } catch (error) {
+          console.error(error);
+
+          uploadedFiles[fileIndex].status = 'error';
+          uploadedFiles[fileIndex].errorMessage =  error.response?.data?.error || 'Erreur lors du téléversement.';
+          renderFiles();
+        }
+      }
+    } finally {
+      input.value = '';
+      setButtonsDisabled(false);
+    }
+  });
 
   function renderFiles() {
     fileList.innerHTML = '';
     uploadedFiles.forEach((uploadedFile, index) => {
       const row = document.createElement('div');
-      row.classList.add('uploaded-file-row');
+      row.className = 'fr-grid-row fr-grid-row--middle fr-mb-1w';
+      if (uploadedFile.status === 'error') {
+        row.classList.add('row-error');
+      }
 
-      const name = document.createElement('span');
-      name.textContent = uploadedFile.titre;
+      const colFilename = document.createElement('div');
+      colFilename.className = 'fr-col';
 
-      const removeButton = document.createElement('button');
-      removeButton.type = 'button';
-      removeButton.className = 'fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error fr-ml-2w';
-      removeButton.textContent = 'Supprimer';
-      removeButton.setAttribute(
-          'aria-label',
-          `Supprimer le fichier ${uploadedFile.titre}`
-      );
+      const colAction = document.createElement('div');
+      colAction.className = 'fr-col-auto';
 
-      removeButton.setAttribute(
-          'title',
-          `Supprimer le fichier ${uploadedFile.titre}`
-      );
+      const filenameContainer = document.createElement('div');
 
-      removeButton.addEventListener('click', () => {
-        uploadedFiles.splice(index, 1);
-        renderFiles();
-        updateHiddenInputs();
-      });
-      row.appendChild(name);
-      row.appendChild(removeButton);
+      if (uploadedFile.status !== 'error') {
+        const titleElement = document.createElement('div');
+        titleElement.textContent = uploadedFile.titre;
+        filenameContainer.appendChild(titleElement);
+      }
+
+
+      if (uploadedFile.status === 'uploading') {
+        const progressText = document.createElement('div');
+        progressText.className = 'fr-hint-text fr-mt-1v';
+        progressText.textContent = `Téléversement… ${uploadedFile.progress}%`;
+
+        const progress = document.createElement('progress');
+        progress.className = 'fr-mt-1v';
+        progress.max = 100;
+        progress.value = uploadedFile.progress;
+
+        filenameContainer.appendChild(progressText);
+        filenameContainer.appendChild(progress);
+      }
+
+      if (uploadedFile.status === 'error') {
+        const error = document.createElement('p');
+        error.className = 'fr-error-text fr-mt-1v';
+        error.textContent = uploadedFile.errorMessage || 'Erreur lors du téléversement.';
+        filenameContainer.appendChild(error);
+      }
+
+      colFilename.appendChild(filenameContainer);
+
+      if (uploadedFile.status === 'uploaded') {
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error';
+        removeButton.textContent = 'Supprimer';
+
+        removeButton.setAttribute(
+            'aria-label',
+            `Supprimer le fichier ${uploadedFile.titre}`
+        );
+
+        removeButton.setAttribute(
+            'title',
+            `Supprimer le fichier ${uploadedFile.titre}`
+        );
+
+        removeButton.addEventListener('click', () => {
+          uploadedFiles.splice(index, 1);
+          uploadedFiles = uploadedFiles.filter(file => file.status !== 'error');
+          renderFiles();
+          updateHiddenInputs();
+        });
+
+        colAction.appendChild(removeButton);
+      }
+
+      row.appendChild(colFilename);
+      row.appendChild(colAction);
+
       fileList.appendChild(row);
     });
   }
 
   function updateHiddenInputs() {
     hiddenContainer.innerHTML = '';
-    uploadedFiles.forEach((file, index) => {
-      const inputHidden = document.createElement('input');
-      inputHidden.type = 'hidden';
-      inputHidden.name = `service_secours[step5][uploadedFiles][${index}]`;
-      inputHidden.value = file.filePath;
-      hiddenContainer.appendChild(inputHidden);
-    });
-  }
 
+    uploadedFiles
+        .filter((file) => file.status === 'uploaded' && file.filePath)
+        .forEach((file, index) => {
+          const inputHidden = document.createElement('input');
+          inputHidden.type = 'hidden';
+          inputHidden.name = `service_secours[step5][uploadedFiles][${index}]`;
+          inputHidden.value = JSON.stringify({
+            titre: file.titre,
+            filePath: file.filePath
+          });
+          hiddenContainer.appendChild(inputHidden);
+        });
+  }
 
   function setButtonsDisabled(disabled) {
-    const buttonNext = document.getElementById('service_secours_navigator_next');
-    const butonPrevious = document.getElementById('service_secours_navigator_previous');
-    buttonNext.disabled = disabled;
-    butonPrevious.disabled = disabled;
+    const buttonNextReview = document.getElementById('service_secours_navigator_nextReview');
+    const buttonPrevious = document.getElementById('service_secours_navigator_previous');
+
+    if (buttonNextReview) {
+      buttonNextReview.disabled = disabled;
+    }
+
+    if (buttonPrevious) {
+      buttonPrevious.disabled = disabled;
+    }
   }
+
+  function validateFile(file) {
+    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+      return `Le fichier "${file.name}" n'est pas pris en charge. Formats autorisés : JPEG, PNG, GIF, PDF.`;
+    }
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      return `Le fichier "${file.name}" dépasse la taille maximale autorisée de 10 Mo.`;
+    }
+
+    return null;
+  }
+}
+
+
+function initDesordresAutreToggle() {
+  const autreCheckbox = document.querySelector(
+      'input[name="service_secours[step5][desordres][]"][value="desordres_service_secours_autre"]'
+  );
+
+  const autreContainer = document.querySelector('#desordres-autre-wrapper');
+  const autreTextarea = document.querySelector('textarea[name="service_secours[step5][desordresAutre]"]');
+
+  if (!autreCheckbox || !autreContainer) {
+    return;
+  }
+
+  const toggleAutreField = () => {
+    if (autreCheckbox.checked) {
+      autreContainer.classList.remove('fr-hidden');
+    } else {
+      autreContainer.classList.add('fr-hidden');
+      autreTextarea.value = '';
+    }
+  };
+
+  autreCheckbox.addEventListener('change', toggleAutreField);
+
+  // état initial au chargement
+  toggleAutreField();
 }
 
 //step4

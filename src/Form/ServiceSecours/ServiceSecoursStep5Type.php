@@ -24,6 +24,11 @@ class ServiceSecoursStep5Type extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        /** @var FormServiceSecoursStep5|null $data */
+        $data = $options['data'] ?? null;
+        $isAutreChecked = $data instanceof FormServiceSecoursStep5
+            && \in_array('desordres_service_secours_autre', $data->desordres, true);
+
         $desordres = $this->desordreCritereRepository->findAllWithPrecisions(AppContext::SERVICE_SECOURS);
 
         $builder->add('desordres', ChoiceType::class, [
@@ -43,15 +48,29 @@ class ServiceSecoursStep5Type extends AbstractType
             },
             'multiple' => true,
             'expanded' => true,
-            'label' => 'Désordres <span class="text-required">*</span>',
+            'help' => 'Vous pouvez sélectionner plusieurs options.',
+            'help_html' => true,
+            'label' => 'Désordres <span class="text-required">*</span><div class="fr-text--regular fr-mt-1v">
+            Sélectionnez les principaux éléments motivant le signalement.
+        </div>',
             'label_html' => true,
-            'label_attr' => ['class' => 'fr-text--lg fr-text--bold'],
         ]);
 
         $builder->add(
             'desordresAutre',
-            TextareaType::class,
-            ['label' => 'Autres éléments à signaler', 'required' => false]
+            TextareaType::class, [
+                'label' => 'Veuillez préciser <span class="text-required">*</span> :',
+                'label_html' => true,
+                'help' => 'Merci de ne transmettre aucune donnée de santé.',
+                'required' => false,
+                'row_attr' => [
+                    'id' => 'desordres-autre-wrapper',
+                    'class' => $isAutreChecked ? '' : 'fr-hidden',
+                ],
+                'attr' => [
+                    'maxlength' => 2000,
+                ],
+            ],
         );
         $builder->add('autresOccupantsDesordre', ChoiceType::class, [
             'label' => 'D\'autres occupants de l\'immeuble ont-ils rencontré des désordres ? <span class="text-required">*</span>',
@@ -60,18 +79,21 @@ class ServiceSecoursStep5Type extends AbstractType
             'expanded' => true,
             'placeholder' => false,
             'choices' => [
-                'Oui' => true,
-                'Non' => false,
-                'Indéterminé' => null,
+                'Oui' => 'oui',
+                'Non' => 'non',
+                'Indéterminé' => 'nsp',
             ],
         ]);
 
         $builder->add('photos', FileType::class, [
             'label' => 'Ajouter des photos',
+            'attr' => [
+                'class' => 'fr-btn',
+            ],
             'mapped' => false,
             'required' => false,
             'multiple' => true,
-            'help' => 'Les photos ne doivent pas contenir de visages de personnes ou d\'objets personnels.',
+            'help' => 'Merci de ne transmettre aucun document comportant des données de santé. Les photos ne doivent pas contenir de visages de personnes ou d\'objets personnels.',
             'help_attr' => [
                 'class' => 'fr-hint-text',
             ],
