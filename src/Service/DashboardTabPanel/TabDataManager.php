@@ -314,6 +314,22 @@ class TabDataManager
 
     /**
      * @throws \DateMalformedStringException
+     */
+    public function getDossiersFermePartenaireCommune(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        $dossiers = $this->signalementRepository->findDossiersFermePartenaireCommune(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $count = $this->signalementRepository->countDossiersFermePartenaireCommune(
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        return new TabDossierResult($dossiers, $count);
+    }
+
+    /**
+     * @throws \DateMalformedStringException
      * @throws NonUniqueResultException
      * @throws NoResultException
      */

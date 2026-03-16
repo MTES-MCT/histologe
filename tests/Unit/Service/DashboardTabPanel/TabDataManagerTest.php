@@ -421,6 +421,37 @@ class TabDataManagerTest extends WebTestCase
         $this->assertSame($expectedCount, $result->count);
     }
 
+    public function testGetDossiersFermePartenaireCommuneReturnsExpectedResult(): void
+    {
+        $expectedDossiers = [['id' => 99]];
+        $expectedCount = 1;
+        $params = new TabQueryParameters(null, null);
+
+        $this->signalementRepository
+            ->method('findDossiersFermePartenaireCommune')
+            ->with($params)
+            ->willReturn($expectedDossiers);
+        $this->signalementRepository
+            ->method('countDossiersFermePartenaireCommune')
+            ->with($params)
+            ->willReturn($expectedCount);
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder,
+        );
+        $result = $tabDataManager->getDossiersFermePartenaireCommune($params);
+
+        $this->assertInstanceOf(TabDossierResult::class, $result);
+        $this->assertSame($expectedDossiers, $result->dossiers);
+        $this->assertSame($expectedCount, $result->count);
+    }
+
     public function testGetMessagesUsagersMessagesSansReponseReturnsExpectedResult(): void
     {
         /** @var MockObject&User $user */

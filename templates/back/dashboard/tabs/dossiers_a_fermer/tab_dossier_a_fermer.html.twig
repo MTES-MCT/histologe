@@ -10,6 +10,11 @@
             Chargement...
         </div>
     {% endif %}
+    {% if is_granted('TAB_PANEL_VIEW', 'dossiers-ferme-commune') %}
+        <div id="dossiers-ferme-commune" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-ferme-commune' }) }}">
+            Chargement...
+        </div>
+    {% endif %}
     {% if is_granted('TAB_PANEL_VIEW', 'dossiers-demandes-fermeture-usager') %}
         <div id="dossiers-demandes-fermeture-usager" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-demandes-fermeture-usager' }) }}">
             Chargement...

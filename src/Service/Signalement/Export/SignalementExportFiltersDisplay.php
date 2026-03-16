@@ -46,6 +46,7 @@ class SignalementExportFiltersDisplay
         'refuse' => 'Refusée',
         'cloture_un_partenaire' => 'Clôturée par au moins un partenaire',
         'cloture_tous_partenaire' => 'Clôturée par tous les partenaires',
+        'cloture_commune' => 'Clôturée par la commune',
     ];
 
     /** @var array<string> SITUATION_LIST */

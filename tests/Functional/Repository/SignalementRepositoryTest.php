@@ -714,4 +714,50 @@ class SignalementRepositoryTest extends KernelTestCase
         );
         $this->assertEquals(1, $paginator->count());
     }
+
+    public function testCountAndFindDossiersFermePartenaireCommune(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        $user = new User();
+        $user->setRoles(['ROLE_ADMIN']);
+        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+        static::getContainer()->get('security.token_storage')->setToken($token);
+
+        // Ferleture des affectations
+        $affRepo = $this->entityManager->getRepository(Affectation::class);
+        $affectations = $affRepo->createQueryBuilder('a')
+            ->innerJoin('a.signalement', 's')
+            ->innerJoin('a.partner', 'p')
+            ->where('s.reference IN (:refs)')
+            ->andWhere('p.nom = :partnerName')
+            ->setParameter('refs', ['2023-15', '2023-14'])
+            ->setParameter('partnerName', 'Partenaire 13-05 ESABORA SCHS')
+            ->getQuery()
+            ->getResult();
+        foreach ($affectations as $aff) {
+            $aff->setStatut(AffectationStatus::CLOSED);
+            $aff->setAnsweredAt(new \DateTimeImmutable());
+        }
+
+        $this->entityManager->flush();
+
+        $tabQueryParameter = new TabQueryParameters(
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+
+        $count = $signalementRepository->countDossiersFermePartenaireCommune(tabQueryParameters: $tabQueryParameter);
+        $this->assertIsInt($count);
+        $this->assertEquals(2, $count);
+
+        $result = $signalementRepository->findDossiersFermePartenaireCommune(tabQueryParameters: $tabQueryParameter);
+        $this->assertIsArray($result);
+        $this->assertEquals(2, count($result));
+        foreach ($result as $dossier) {
+            $this->assertNotNull($dossier->uuid);
+            $this->assertNotNull($dossier->reference);
+        }
+    }
 }

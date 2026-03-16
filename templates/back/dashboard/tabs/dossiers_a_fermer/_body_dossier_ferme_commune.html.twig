@@ -1,0 +1,40 @@
+{% set columns = [
+    { class: 'fr-col-md-3', title: 'Clôture commune le' },
+    { class: 'fr-col-md-8', title: 'Référence' },
+] %}
+<section class="fr-mb-5v">
+    <header class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-9">
+            <h3 class="fr-text-label--blue-france tab-panel-title-with-success-icon">Dossiers fermés par les communes ({{ count }})</h3>
+            <div class="fr-text--sm fr-mb-3v">Aperçu des 5 derniers dossiers fermés par la commune affectée</div>
+        </div>
+        <div class="fr-select-group fr-col-12 fr-col-md-3">
+            <label class="fr-label" for="order-type-dossiers-ferme-commune">
+                Trier par
+            </label>
+            <select id="order-type-dossiers-ferme-commune" class="fr-select" data-sort-body="dossiers-ferme-commune">
+                <option value="closedAt-ASC" selected="selected">Fermeture la plus ancienne (de la plus ancienne à la plus récente) = tri par défaut</option>
+                <option value="closedAt-DESC">Fermeture la plus récente (du plus récent au plus ancien)</option>
+            </select>
+        </div>
+    </header>
+    <hr class="hr--blue-france">
+    <section class="fr-container--fluid">
+        {% for item in items %}
+            {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
+            {% include 'back/dashboard/components/_card.html.twig' with {
+                data: [
+                    '<div>' ~ item.clotureAt|date('d/m/Y à H:i') ~ '</div>',
+                    '<div class="fr-text-label--blue-france">
+                            <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
+                            <div>' ~ item.adresse ~ '</div>
+                    </div>',
+                ],
+                link: path('back_signalement_view', {'uuid' : item.uuid})
+            } %}
+        {% else %}
+            <p>Aucun dossier trouvé.</p>
+        {% endfor %}
+        {% include 'back/dashboard/components/_footer_link.html.twig' %}
+    </section>
+</section>

@@ -10,6 +10,7 @@ use App\Entity\EmailDeliveryIssue;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\DesordreCritereZone;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
@@ -1792,6 +1793,86 @@ class SignalementRepository extends ServiceEntityRepository
 
         $qb->select('COUNT(DISTINCT s.id)');
         $qb->setParameter('closed', AffectationStatus::CLOSED);
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @return TabDossier[]
+     *
+     * @throws \DateMalformedStringException
+     */
+    public function findDossiersFermePartenaireCommune(?TabQueryParameters $tabQueryParameters): array
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createSignalementQueryBuilder(
+            user: $user,
+            signalementStatus: SignalementStatus::ACTIVE,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $qb->select("
+            s.uuid,
+            s.nomOccupant,
+            s.prenomOccupant,
+            s.reference,
+            CONCAT_WS(', ', s.adresseOccupant, CONCAT(s.cpOccupant, ' ', s.villeOccupant)) AS fullAddress,
+            MAX(a.answeredAt) AS lastClosedAt
+        ")
+            ->innerJoin('s.affectations', 'a')
+            ->innerJoin('a.partner', 'p')
+            ->andWhere('p.type = :partnerType')
+            ->andWhere('a.statut = :closed')
+            ->groupBy('s.uuid, s.nomOccupant, s.prenomOccupant, s.reference, s.adresseOccupant, s.cpOccupant, s.villeOccupant')
+            ->setParameter('closed', AffectationStatus::CLOSED)
+            ->setParameter('partnerType', PartnerType::COMMUNE_SCHS);
+
+        if (null !== $tabQueryParameters
+            && 'closedAt' === $tabQueryParameters->sortBy
+            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+        ) {
+            $qb->orderBy('MAX(a.answeredAt)', $tabQueryParameters->orderBy);
+        } else {
+            $qb->orderBy('MAX(a.answeredAt)', 'ASC');
+        }
+
+        $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
+
+        $rows = $qb->getQuery()->getArrayResult();
+
+        return array_map(
+            fn (array $row) => new TabDossier(
+                uuid: $row['uuid'],
+                nomDeclarant: $row['nomOccupant'],
+                prenomDeclarant: $row['prenomOccupant'],
+                reference: $row['reference'],
+                adresse: $row['fullAddress'],
+                clotureAt: $row['lastClosedAt'] ? new \DateTimeImmutable($row['lastClosedAt']) : null,
+            ),
+            $rows
+        );
+    }
+
+    public function countDossiersFermePartenaireCommune(?TabQueryParameters $tabQueryParameters): int
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createSignalementQueryBuilder(
+            user: $user,
+            signalementStatus: SignalementStatus::ACTIVE,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $qb->select('COUNT(DISTINCT s.id)')
+            ->innerJoin('s.affectations', 'a')
+            ->innerJoin('a.partner', 'p')
+            ->andWhere('p.type = :partnerType')
+            ->andWhere('a.statut = :closed')
+            ->setParameter('partnerType', PartnerType::COMMUNE_SCHS)
+            ->setParameter('closed', AffectationStatus::CLOSED);
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
