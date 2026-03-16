@@ -2637,27 +2637,17 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE)
             ->setParameter('demarchesCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES);
 
-        // Soit pas de rappel envoyé, soit un rappel envoyé avant la date
+        // Aucun rappel envoyé après la date limite
         $qb->andWhere(
-            $qb->expr()->orX(
-                $qb->expr()->not(
-                    $qb->expr()->exists(
-                        $this->createQueryBuilder('s2')
-                            ->select('1')
-                            ->join('s2.suivis', 'su2')
-                            ->where('s2 = s')
-                            ->andWhere('su2.category = :reminderCategory')
-                            ->getDQL()
-                    )
-                ),
+            $qb->expr()->not(
                 $qb->expr()->exists(
-                    $this->createQueryBuilder('s3')
+                    $this->createQueryBuilder('s2')
                         ->select('1')
-                        ->join('s3.suivis', 'su3')
-                        ->where('s3 = s')
-                        ->andWhere('su3.category = :reminderCategory')
+                        ->join('s2.suivis', 'su2')
+                        ->where('s2 = s')
+                        ->andWhere('su2.category = :reminderCategory')
                         ->andWhere(
-                            $qb->expr()->lt('su3.createdAt', ':date')
+                            $qb->expr()->gte('su2.createdAt', ':date')
                         )
                         ->getDQL()
                 )

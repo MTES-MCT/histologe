@@ -15,6 +15,7 @@ use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -51,6 +52,7 @@ class SuiviManagerTest extends KernelTestCase
             $this->userSignalementSubscriptionManager,
             $this->userManager,
             true,
+            self::getContainer()->get(ClockInterface::class),
             Suivi::class,
         );
     }
