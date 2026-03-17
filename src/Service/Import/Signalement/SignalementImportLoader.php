@@ -8,6 +8,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Signalement;
@@ -16,6 +17,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Manager\AffectationManager;
 use App\Manager\FileManager;
+use App\Manager\InterventionManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\TagManager;
@@ -75,6 +77,7 @@ class SignalementImportLoader
     public function __construct(
         private SignalementImportMapper $signalementImportMapper,
         private SignalementManager $signalementManager,
+        private readonly InterventionManager $interventionManager,
         private TagManager $tagManager,
         private AffectationManager $affectationManager,
         private SuiviManager $suiviManager,
@@ -233,6 +236,7 @@ class SignalementImportLoader
      */
     private function loadAffectation(Territory $territory, array $dataMapped, ?Signalement $signalement = null): ArrayCollection
     {
+        $hasAddedVisite = false;
         $affectationCollection = new ArrayCollection();
         if (isset($dataMapped['partners']) && !empty($dataMapped['partners'])) {
             if (str_contains($dataMapped['partners'], ',') && '62' !== $territory->getZip()) {
@@ -281,6 +285,15 @@ class SignalementImportLoader
                         $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
                     }
                     $affectationCollection->add($affectation);
+
+                    if ($dataMapped['dateVisite'] && !$hasAddedVisite && $partner->hasCompetence(Qualification::VISITES)) {
+                        $this->interventionManager->createVisiteFromImport(
+                            affectation: $affectation,
+                            dateVisite: $dataMapped['dateVisite'] ?? null,
+                            conclusionVisite: $dataMapped['conclusionVisite'] ?? '',
+                        );
+                        $hasAddedVisite = true;
+                    }
                 }
             }
         }

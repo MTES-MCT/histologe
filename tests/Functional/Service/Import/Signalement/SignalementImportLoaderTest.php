@@ -6,6 +6,7 @@ use App\Entity\Territory;
 use App\EventListener\SuiviCreatedListener;
 use App\Manager\AffectationManager;
 use App\Manager\FileManager;
+use App\Manager\InterventionManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\TagManager;
@@ -33,6 +34,7 @@ class SignalementImportLoaderTest extends KernelTestCase
 {
     private SignalementImportMapper $signalementImportMapper;
     private SignalementManager $signalementManager;
+    private InterventionManager $interventionManager;
     private TagManager $tagManager;
     private AffectationManager $affectationManager;
     private SuiviManager $suiviManager;
@@ -54,6 +56,7 @@ class SignalementImportLoaderTest extends KernelTestCase
         $kernel = self::bootKernel();
         $this->signalementImportMapper = self::getContainer()->get(SignalementImportMapper::class);
         $this->signalementManager = self::getContainer()->get(SignalementManager::class);
+        $this->interventionManager = self::getContainer()->get(InterventionManager::class);
         $this->tagManager = self::getContainer()->get(TagManager::class);
         $this->affectationManager = self::getContainer()->get(AffectationManager::class);
         $this->suiviManager = self::getContainer()->get(SuiviManager::class);
@@ -86,6 +89,7 @@ class SignalementImportLoaderTest extends KernelTestCase
         $signalementImportLoader = new SignalementImportLoader(
             $this->signalementImportMapper,
             $this->signalementManager,
+            $this->interventionManager,
             $this->tagManager,
             $this->affectationManager,
             $this->suiviManager,
@@ -159,7 +163,8 @@ class SignalementImportLoaderTest extends KernelTestCase
                 'Code postal occupant' => '13001',
                 'ville occupant' => $faker->city(),
                 'code insee occupant' => '13001',
-                'date visite' => null,
+                'date visite' => date('d/m/Y'),
+                'conclusion visite' => 'Pas génial, ce logement',
                 'Occupant présent lors de la visite ?' => null,
                 'etage occupant' => '2',
                 'escalier occupant' => null,
