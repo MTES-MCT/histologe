@@ -9,7 +9,6 @@ use App\Factory\SignalementFactory;
 use App\Form\ServiceSecours\ServiceSecoursType;
 use App\Messenger\Message\SignalementServiceSecoursFileMessage;
 use App\Messenger\MessageHandler\SignalementServiceSecoursFileMessageHandler;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Flow\FormFlowInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;

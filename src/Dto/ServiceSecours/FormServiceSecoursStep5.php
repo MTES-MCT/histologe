@@ -25,7 +25,7 @@ class FormServiceSecoursStep5
                 groups: ['step5']
             ),
             new Assert\Length(
-                max: 2000,
+                max: 5000,
                 maxMessage: 'Le texte ne doit pas dépasser {{ limit }} caractères.',
                 groups: ['step5']
             ),

@@ -68,7 +68,7 @@ class ServiceSecoursStep5Type extends AbstractType
                     'class' => $isAutreChecked ? '' : 'fr-hidden',
                 ],
                 'attr' => [
-                    'maxlength' => 2000,
+                    'maxlength' => 5000,
                 ],
             ],
         );
