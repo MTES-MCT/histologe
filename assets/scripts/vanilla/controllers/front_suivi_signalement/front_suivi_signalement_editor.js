@@ -50,3 +50,44 @@ if (fieldsetAccompagnementTravailleurSocial) {
   }
   refreshAccompagnementTravailleurSocial();
 }
+
+const fieldsetDpe = document?.querySelector('#informations_generales_dpe');
+// le choix de la classe énergétique ne s'affiche que si on a répondu oui au Dpe
+if (fieldsetDpe) {
+  document
+    .querySelectorAll('#informations_generales_dpe input[type="radio"]')
+    .forEach((element) => {
+      element.addEventListener('change', () => {
+        refreshClasseEnergetique();
+      });
+    });
+
+  function refreshClasseEnergetique() {
+    const containerClasseEnergetique = document.querySelector('#informations_generales_classeEnergetique').closest('.fr-fieldset__element');
+    if (document.querySelector('#informations_generales_dpe_0').checked) {
+      containerClasseEnergetique.classList.remove('fr-hidden');
+    } else {
+      containerClasseEnergetique.classList.add('fr-hidden');
+      document.querySelector('#informations_generales_classeEnergetique').value = '';
+    }
+  }
+  refreshClasseEnergetique();
+}
+
+const fieldsetNbEnfants= document?.querySelector('#informations_generales_nbEnfantsDansLogement');
+// le choix de la classe énergétique ne s'affiche que si on a répondu oui au Dpe
+if (fieldsetNbEnfants) {
+  fieldsetNbEnfants.addEventListener('input', () => {
+    refreshEnfantsMoinsSixAns();
+  });
+
+  function refreshEnfantsMoinsSixAns() {
+    const containerEnfantsMoinsSixAns = document.querySelector('#informations_generales_enfantsDansLogementMoinsSixAns').closest('.fr-fieldset__element');
+    if (document.querySelector('#informations_generales_nbEnfantsDansLogement').value > 0) {
+      containerEnfantsMoinsSixAns.classList.remove('fr-hidden');
+    } else {
+      containerEnfantsMoinsSixAns.classList.add('fr-hidden');
+    }
+  }
+  refreshEnfantsMoinsSixAns();
+}

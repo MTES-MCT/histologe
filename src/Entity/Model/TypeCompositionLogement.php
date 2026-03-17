@@ -281,9 +281,9 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getCompositionLogementEnfants(): ?string
+    public function getCompositionLogementEnfants(bool $raw = true): ?string
     {
-        return $this->compositionLogementEnfants;
+        return (!$raw && 'nsp' === $this->compositionLogementEnfants) ? 'Ne sait pas' : $this->compositionLogementEnfants;
     }
 
     public function setCompositionLogementEnfants(?string $compositionLogementEnfants): self
@@ -324,6 +324,10 @@ class TypeCompositionLogement
 
     public function setBailDpeClasseEnergetique(?string $bailDpeClasseEnergetique): self
     {
+        if (null === $this->bailDpeClasseEnergetique && '' === $bailDpeClasseEnergetique) {
+            return $this;
+        }
+
         $this->bailDpeClasseEnergetique = $bailDpeClasseEnergetique;
 
         return $this;

@@ -36,7 +36,7 @@
             {% elseif signalement.typeCompositionLogement.compositionLogementEnfants is same as 'non' %}
                 {{ picto.picto_no() }}
             {% else %}
-                {{signalement.typeCompositionLogement.compositionLogementEnfants}}
+                {{signalement.typeCompositionLogement.compositionLogementEnfants(false)}}
             {% endif %}
         {% else %}
             {% if signalement.nbEnfantsM6 > 0 %}
@@ -55,7 +55,7 @@
     <div class="fr-col-12 fr-col-md-6">
         <strong>Date d'effet du bail :</strong>
         {% if signalement.informationComplementaire %}
-            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail}}
+            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail|date('d/m/Y')}}
         {% endif %}
     </div>
     <div class="fr-col-12 fr-col-md-6">

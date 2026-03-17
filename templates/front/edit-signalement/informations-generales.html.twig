@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Compléter la situation du foyer #{{ signalement.reference }}{% endblock %}
+{% block title %}Compléter les informations générales sur le logement #{{ signalement.reference }}{% endblock %}
 
 {% block body %}
 
@@ -11,7 +11,7 @@
 			<ol class="fr-breadcrumb__list">
 				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement', {code: signalement.codeSuivi}) }}">Votre dossier #{{ signalement.reference }}</a></li>
 				<li><a class="fr-breadcrumb__link" href="{{ path('front_suivi_signalement_dossier', {code: signalement.codeSuivi}) }}">Détails du dossier</a></li>
-				<li><a class="fr-breadcrumb__link" aria-current="page">Compléter la situation du foyer</a></li>
+				<li><a class="fr-breadcrumb__link" aria-current="page">Compléter les informations générales</a></li>
 			</ol>
 		</div>
 	</nav>
@@ -27,66 +27,51 @@
 				Les autres champs sont facultatifs, mais peuvent aider à une meilleure prise en charge du dossier.
 			</div>
 			{{ form_errors(form) }}
-			<h2>Situation du foyer</h2>
+			<h2>Informations générales sur le logement</h2>
 			<fieldset class="fr-fieldset">
-				<legend class="fr-fieldset__legend">
-					<h3>Allocations</h3>
-				</legend>
 				<div class="fr-fieldset__element">
-					{{ form_row(form.isLogementSocial) }}
+					{{ form_row(form.dateEntree) }}
 				</div>
 				<div class="fr-fieldset__element">
-					{{ form_row(form.allocataire) }}
+					{{ form_row(form.dateEffetBail) }}
 				</div>
 				<div class="fr-fieldset__element">
-					{{ form_row(form.caisseAllocation) }}
+					{{ form_row(form.nbOccupantsLogement) }}
 				</div>
 				<div class="fr-fieldset__element">
-					{{ form_row(form.dateNaissanceAllocataire) }}
+					{{ form_row(form.nbEnfantsDansLogement) }}
 				</div>
 				<div class="fr-fieldset__element">
-					{{ form_row(form.numAllocataire) }}
+					{{ form_row(form.enfantsDansLogementMoinsSixAns) }}
 				</div>
 				<div class="fr-fieldset__element">
-					{{ form_row(form.typeAllocation) }}
+					{{ form_row(form.bail) }}
 				</div>
 				<div class="fr-fieldset__element">
-					{{ form_row(form.montantAllocation) }}
+					{{ form_row(form.etatDesLieux) }}
 				</div>
 				<div class="fr-fieldset__element">
-					{{ form_row(form.beneficiaireRSA) }}
+					{{ form_row(form.dpe) }}
 				</div>
 				<div class="fr-fieldset__element">
-					{{ form_row(form.beneficiaireFSL) }}
+					{{ form_row(form.classeEnergetique) }}
 				</div>
 				<div class="fr-fieldset__element">
-					{{ form_row(form.revenuFiscal) }}
+					{{ form_row(form.numeroInvariant) }}
+				</div>
+				<div class="fr-fieldset__element">
+					{{ form_row(form.loyer) }}
+				</div>
+				{% set isBailleurOccupant = ( signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT) or (signalement.profileOccupant and signalement.profileOccupant is same as enum('App\\Entity\\Enum\\ProfileOccupant').BAILLEUR_OCCUPANT) %}
+
+				<div class="fr-fieldset__element {% if isBailleurOccupant %}fr-hidden{% endif %}">
+					{{ form_row(form.payementLoyersAJour) }}
+				</div>
+				<div class="fr-fieldset__element">
+					{{ form_row(form.anneeConstruction) }}
 				</div>
 			</fieldset>
-			<fieldset class="fr-fieldset">
-				<legend class="fr-fieldset__legend">
-					<h3>Accompagnement</h3>
-				</legend>
-				<div class="fr-fieldset__element">
-					{{ form_row(form.isRelogement) }}
-				</div>
-				<div class="fr-fieldset__element">
-					{{ form_row(form.souhaiteQuitterLogement) }}
-				</div>
-				<div class="fr-fieldset__element">
-					{{ form_row(form.preavisDepartDepose) }}
-				</div>
-				<div class="fr-fieldset__element">
-					{{ form_row(form.accompagnementTravailleurSocial) }}
-				</div>
-				<div class="fr-fieldset__element">
-					{{ form_row(form.accompagnementTravailleurSocialNomStructure) }}
-				</div>
-				<div class="fr-fieldset__element">
-					{{ form_row(form.departApresTravaux) }}
-				</div>
-			</fieldset>
-		</div>		
+		</div>
 		<div class="fr-col-12">
 			<ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline fr-btns-group--icon-left">
 				<li>
