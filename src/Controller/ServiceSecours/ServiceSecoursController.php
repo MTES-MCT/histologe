@@ -44,7 +44,6 @@ class ServiceSecoursController extends AbstractController
         Request $request,
         ServiceSecoursRoute $serviceSecoursRoute,
         SignalementFactory $signalementFactory,
-        EntityManagerInterface $entityManager,
     ): Response {
         $serviceSecours = new FormServiceSecours();
         /** @var FormFlowInterface $flow */
