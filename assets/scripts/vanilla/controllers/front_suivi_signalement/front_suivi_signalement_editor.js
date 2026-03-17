@@ -73,3 +73,21 @@ if (fieldsetDpe) {
   }
   refreshClasseEnergetique();
 }
+
+const fieldsetNbEnfants= document?.querySelector('#informations_generales_nbEnfantsDansLogement');
+// le choix de la classe énergétique ne s'affiche que si on a répondu oui au Dpe
+if (fieldsetNbEnfants) {
+  fieldsetNbEnfants.addEventListener('input', () => {
+    refreshEnfantsMoinsSixAns();
+  });
+
+  function refreshEnfantsMoinsSixAns() {
+    const containerEnfantsMoinsSixAns = document.querySelector('#informations_generales_enfantsDansLogementMoinsSixAns').closest('.fr-fieldset__element');
+    if (document.querySelector('#informations_generales_nbEnfantsDansLogement').value > 0) {
+      containerEnfantsMoinsSixAns.classList.remove('fr-hidden');
+    } else {
+      containerEnfantsMoinsSixAns.classList.add('fr-hidden');
+    }
+  }
+  refreshEnfantsMoinsSixAns();
+}
