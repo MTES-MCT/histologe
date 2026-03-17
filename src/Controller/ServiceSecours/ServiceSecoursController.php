@@ -121,18 +121,18 @@ class ServiceSecoursController extends AbstractController
         throw $this->createNotFoundException();
     }
 
-    /**
-     * Dispatch le traitement asynchrone pour les photos.
-     *
-     * @throws ExceptionInterface
-     * @throws ExceptionInterface
-     *
-     * @see SignalementServiceSecoursFileMessageHandler
-     */
-    private function dispatchFileProcessing(Signalement $signalement): void
-    {
-        $this->messageBus->dispatch(
-            new SignalementServiceSecoursFileMessage($signalement->getId())
-        );
-    }
+    //    /**
+    //     * Dispatch le traitement asynchrone pour les photos.
+    //     *
+    //     * @throws ExceptionInterface
+    //     * @throws ExceptionInterface
+    //     *
+    //     * @see SignalementServiceSecoursFileMessageHandler
+    //     */
+    //    private function dispatchFileProcessing(Signalement $signalement): void
+    //    {
+    //        $this->messageBus->dispatch(
+    //            new SignalementServiceSecoursFileMessage($signalement->getId())
+    //        );
+    //    }
 }
