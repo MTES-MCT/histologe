@@ -55,7 +55,7 @@ class ServiceSecoursController extends AbstractController
             // TODO : persist and flush
             // voir les traitements fait dans App\Controller\Api\SignalementCreateController.php, création de la référence dans une transaction en particulier)
 
-            $this->dispatchFileProcessing($signalement);
+            // $this->dispatchFileProcessing($signalement);
 
             return $this->render('service_secours/success.html.twig', ['serviceSecoursRoute' => $serviceSecoursRoute, 'signalement' => $signalement]);
         }
