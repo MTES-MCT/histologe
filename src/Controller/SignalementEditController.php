@@ -13,6 +13,7 @@ use App\Form\SignalementeEditFO\CoordonneesBailleurType;
 use App\Form\SignalementeEditFO\CoordonneesOccupantType;
 use App\Form\SignalementeEditFO\InformationsGeneralesType;
 use App\Form\SignalementeEditFO\ProcedureAssuranceType;
+use App\Form\SignalementeEditFO\TypeCompositionType;
 use App\Form\SignalementeEditFO\UsagerSituationFoyerType;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -408,6 +409,57 @@ class SignalementEditController extends AbstractController
         }
 
         return $this->render('front/edit-signalement/informations-generales.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{code}/completer/type-composition', name: 'front_suivi_signalement_complete_type_composition', methods: ['GET', 'POST'])]
+    public function suiviSignalementCompleteTypeComposition(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->cguTiersChecker->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
+        $form = $this->createForm(TypeCompositionType::class, $signalement);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
+
+            $typeCompositionLogement
+                ->setTypeLogementNatureAutrePrecision($form->get('natureAutrePrecision')->getData())
+                ->setTypeLogementAppartementEtage($form->get('etage')->getData())
+                ->setTypeLogementAppartementAvecFenetres($form->get('avecFenetres')->getData())
+                ->setCompositionLogementPieceUnique($form->get('pieceUnique')->getData())
+                ->setCompositionLogementNbPieces($form->get('nbPieces')->getData())
+                ->setTypeLogementCommoditesPieceAVivre9m($form->get('pieceAVivre9m')->getData())
+                ->setTypeLogementCommoditesCuisine($form->get('cuisine')->getData())
+                ->setTypeLogementCommoditesCuisineCollective($form->get('cuisineCollective')->getData())
+                ->setTypeLogementCommoditesSalleDeBain($form->get('salleDeBain')->getData())
+                ->setTypeLogementCommoditesSalleDeBainCollective($form->get('salleDeBainCollective')->getData())
+                ->setTypeLogementCommoditesWc($form->get('wc')->getData())
+                ->setTypeLogementCommoditesWcCollective($form->get('wcCollective')->getData())
+                ->setTypeLogementCommoditesWcCuisine($form->get('wcCuisine')->getData());
+
+            $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Le type et la composition du logement ont bien été mis à jour.']);
+
+            return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/edit-signalement/type-composition.html.twig', [
             'signalement' => $signalement,
             'form' => $form,
         ]);

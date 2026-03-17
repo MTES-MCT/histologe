@@ -22,6 +22,7 @@ class SignalementUpdatedListener
     public const string EDIT_INFORMATIONS_ASSURANCE = 'informations_assurance';
     public const string EDIT_SITUATION_FOYER = 'situation_foyer';
     public const string EDIT_INFORMATIONS_GENERALES = 'informations_generales';
+    public const string EDIT_TYPE_COMPOSITION = 'type_composition';
 
     /**
      * Définition des champs suivis.
@@ -123,6 +124,26 @@ class SignalementUpdatedListener
                 'informationComplementaire.informations_complementaires_situation_bailleur_date_effet_bail' => 'Date d\'effet du bail',
                 'informationComplementaire.informations_complementaires_situation_occupants_loyers_payes' => 'Paiement des loyers à jour',
                 'informationComplementaire.informations_complementaires_logement_annee_construction' => 'Année de construction du logement',
+            ],
+        ],
+        self::EDIT_TYPE_COMPOSITION => [
+            'label' => 'Le type et la composition du logement',
+            'fields' => [
+                'natureLogement' => 'Nature du logement',
+                'superficie' => 'Superficie du logement',
+                'typeCompositionLogement.type_logement_nature_autre_precision' => 'Précision sur la nature du logement',
+                'typeCompositionLogement.type_logement_appartement_etage' => 'Étage',
+                'typeCompositionLogement.type_logement_appartement_avec_fenetres' => 'Avec fenêtres',
+                'typeCompositionLogement.composition_logement_piece_unique' => 'Une seule ou plusieurs pièces',
+                'typeCompositionLogement.composition_logement_nb_pieces' => 'Nombre de pièces à vivre',
+                'typeCompositionLogement.type_logement_commodites_piece_a_vivre_9m' => 'Une pièce à vivre fait 9m² ou plus',
+                'typeCompositionLogement.type_logement_commodites_cuisine' => 'Cuisine ou coin cuisine',
+                'typeCompositionLogement.type_logement_commodites_cuisine_collective' => 'Accès à une cuisine collective',
+                'typeCompositionLogement.type_logement_commodites_salle_de_bain' => 'Salle de bain',
+                'typeCompositionLogement.type_logement_commodites_salle_de_bain_collective' => 'Accès à une salle de bain collective',
+                'typeCompositionLogement.type_logement_commodites_wc' => 'Toilettes (WC)',
+                'typeCompositionLogement.type_logement_commodites_wc_collective' => 'Accès à des toilettes collectives',
+                'typeCompositionLogement.type_logement_commodites_wc_cuisine' => 'Toilettes et cuisine dans la même pièce',
             ],
         ],
     ];
