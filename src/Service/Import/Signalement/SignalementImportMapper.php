@@ -4,7 +4,6 @@ namespace App\Service\Import\Signalement;
 
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
-use App\Entity\Signalement;
 
 class SignalementImportMapper
 {
@@ -64,6 +63,7 @@ class SignalementImportMapper
             'ville occupant' => 'villeOccupant',
             'code insee occupant' => 'inseeOccupant',
             'date visite' => 'dateVisite',
+            'conclusion visite' => 'conclusionVisite',
             'Occupant présent lors de la visite ?' => 'isOccupantPresentVisite',
             'etage occupant' => 'etageOccupant',
             'escalier occupant' => 'escalierOccupant',

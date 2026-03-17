@@ -272,6 +272,22 @@ class InterventionManager extends AbstractManager
         return $intervention;
     }
 
+    public function createVisiteFromImport(Affectation $affectation, \DateTimeImmutable $dateVisite, string $conclusionVisite): ?Intervention
+    {
+        $intervention = $this->interventionFactory->createInstanceFrom(
+            affectation: $affectation,
+            type: InterventionType::VISITE,
+            scheduledAt: $dateVisite,
+            registeredAt: new \DateTimeImmutable(),
+            status: Intervention::STATUS_DONE,
+            details: $conclusionVisite,
+        );
+
+        $this->save($intervention);
+
+        return $intervention;
+    }
+
     private function createFile(
         Intervention $intervention,
         string $document,
