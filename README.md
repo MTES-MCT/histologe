@@ -21,7 +21,7 @@ Cette application est déployé chez Scalingo, hébergé par Outscale.
 | AWS CLI OVH Object storage (optionnel) | [1.25](https://docs.ovh.com/fr/storage/s3/debuter-avec-s3/#utilisation-de-aws-cli) |
 | PHP (optionnel)                        | [8.4.*](https://www.php.net/)                                                      |
 | Composer (optionnel)                   | [2.7.*](https://getcomposer.org/download/)                                         |
-| Node (optionnel)                       | [18.*](https://nodejs.org/en/)                                                     |
+| Node (optionnel)                       | [24.*](https://nodejs.org/en/)                                                     |
 
 ## Environnement technique
 ### Principaux outils utilisés
@@ -37,7 +37,7 @@ Cette application est déployé chez Scalingo, hébergé par Outscale.
 |---------|-----------------|
 | Nginx   | 1.26.x (latest) |
 | PHP     | 8.4.x (latest)  |
-| Node.js | 18.16.x         |
+| Node.js | 24.x.x         |
 | MySQL   | 8.0.x           |
 | Redis   | 7.0.x (latest)  |
 

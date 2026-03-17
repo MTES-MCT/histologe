@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         sqlite3 \
         libxslt1-dev \
         libicu-dev \
-        && curl -fsSL https://deb.nodesource.com/setup_lts.x | bash \
+        && curl -fsSL https://deb.nodesource.com/setup_24.x | bash \
         && apt-get install -y  nodejs \
          # Install intl
         && docker-php-ext-configure intl \

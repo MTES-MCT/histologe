@@ -73,6 +73,6 @@
     "es-js-prettier-fix": "node_modules/.bin/prettier --write 'assets/scripts/vanilla/**/*.js'"
   },
   "engines": {
-    "node": "22"
+    "node": "24"
   }
 }
