@@ -2,7 +2,6 @@ import {
   attacheAutocompleteAddressEvent,
   initComponentAddress,
 } from '../../services/component/component_search_address';
-import {attacheAutocompleteAddressEvent, initComponentAddress} from '../../services/component/component_search_address';
 import axios from 'axios';
 
 attachFormServiceSecoursEvent();
@@ -116,7 +115,9 @@ function initUploadPhotos() {
   const uploadUrl = wrapper.dataset.ajaxurlHandleUpload;
 
   const uploadedFilesElement = wrapper.querySelector('[data-uploaded-files]');
-  const existingUploadedFilesRaw = uploadedFilesElement ? uploadedFilesElement.dataset.uploadedFiles : null;
+  const existingUploadedFilesRaw = uploadedFilesElement
+    ? uploadedFilesElement.dataset.uploadedFiles
+    : null;
 
   if (!trigger || !input || !fileList || !hiddenContainer || !uploadUrl) {
     return;
@@ -139,50 +140,50 @@ function initUploadPhotos() {
 
       if (Array.isArray(parsedFiles)) {
         uploadedFiles = parsedFiles
-            .map((file) => {
-              if (!file) {
-                return null;
-              }
+          .map((file) => {
+            if (!file) {
+              return null;
+            }
 
-              if (typeof file === 'string') {
-                try {
-                  const parsedFile = JSON.parse(file);
+            if (typeof file === 'string') {
+              try {
+                const parsedFile = JSON.parse(file);
 
-                  if (
-                      parsedFile &&
-                      typeof parsedFile.titre === 'string' &&
-                      typeof parsedFile.filePath === 'string'
-                  ) {
-                    return {
-                      titre: parsedFile.titre,
-                      filePath: parsedFile.filePath,
-                      progress: 100,
-                      status: 'uploaded'
-                    };
-                  }
-                } catch (error) {
-                  console.error('Impossible de parser un fichier encodé en JSON', error);
+                if (
+                  parsedFile &&
+                  typeof parsedFile.titre === 'string' &&
+                  typeof parsedFile.filePath === 'string'
+                ) {
+                  return {
+                    titre: parsedFile.titre,
+                    filePath: parsedFile.filePath,
+                    progress: 100,
+                    status: 'uploaded',
+                  };
                 }
-
-                return null;
-              }
-
-              if (
-                  typeof file === 'object' &&
-                  typeof file.titre === 'string' &&
-                  typeof file.filePath === 'string'
-              ) {
-                return {
-                  titre: file.titre,
-                  filePath: file.filePath,
-                  progress: 100,
-                  status: 'uploaded'
-                };
+              } catch (error) {
+                console.error('Impossible de parser un fichier encodé en JSON', error);
               }
 
               return null;
-            })
-            .filter((file) => file && file.filePath);
+            }
+
+            if (
+              typeof file === 'object' &&
+              typeof file.titre === 'string' &&
+              typeof file.filePath === 'string'
+            ) {
+              return {
+                titre: file.titre,
+                filePath: file.filePath,
+                progress: 100,
+                status: 'uploaded',
+              };
+            }
+
+            return null;
+          })
+          .filter((file) => file && file.filePath);
 
         renderFiles();
         updateHiddenInputs();
@@ -197,7 +198,7 @@ function initUploadPhotos() {
   });
 
   input.addEventListener('change', async () => {
-    uploadedFiles = uploadedFiles.filter(file => file.status !== 'error');
+    uploadedFiles = uploadedFiles.filter((file) => file.status !== 'error');
     const files = Array.from(input.files || []);
 
     if (files.length === 0) {
@@ -216,18 +217,19 @@ function initUploadPhotos() {
             filePath: null,
             progress: 0,
             status: 'error',
-            errorMessage: validationError
+            errorMessage: validationError,
           });
 
           renderFiles();
           continue;
         }
-        const fileIndex = uploadedFiles.push({
-          titre: file.name,
-          filePath: null,
-          progress: 0,
-          status: 'uploading'
-        }) - 1;
+        const fileIndex =
+          uploadedFiles.push({
+            titre: file.name,
+            filePath: null,
+            progress: 0,
+            status: 'uploading',
+          }) - 1;
 
         renderFiles();
 
@@ -241,9 +243,11 @@ function initUploadPhotos() {
                 return;
               }
 
-              uploadedFiles[fileIndex].progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              uploadedFiles[fileIndex].progress = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
               renderFiles();
-            }
+            },
           });
 
           const data = response.data;
@@ -258,7 +262,7 @@ function initUploadPhotos() {
             titre: data.titre,
             filePath: data.filePath,
             progress: 100,
-            status: 'uploaded'
+            status: 'uploaded',
           };
 
           renderFiles();
@@ -267,7 +271,8 @@ function initUploadPhotos() {
           console.error(error);
 
           uploadedFiles[fileIndex].status = 'error';
-          uploadedFiles[fileIndex].errorMessage =  error.response?.data?.error || 'Erreur lors du téléversement.';
+          uploadedFiles[fileIndex].errorMessage =
+            error.response?.data?.error || 'Erreur lors du téléversement.';
           renderFiles();
         }
       }
@@ -300,7 +305,6 @@ function initUploadPhotos() {
         filenameContainer.appendChild(titleElement);
       }
 
-
       if (uploadedFile.status === 'uploading') {
         const progressText = document.createElement('div');
         progressText.className = 'fr-hint-text fr-mt-1v';
@@ -327,22 +331,17 @@ function initUploadPhotos() {
       if (uploadedFile.status === 'uploaded') {
         const removeButton = document.createElement('button');
         removeButton.type = 'button';
-        removeButton.className = 'fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error';
+        removeButton.className =
+          'fr-link fr-icon-close-circle-line fr-link--icon-left fr-link--error';
         removeButton.textContent = 'Supprimer';
 
-        removeButton.setAttribute(
-            'aria-label',
-            `Supprimer le fichier ${uploadedFile.titre}`
-        );
+        removeButton.setAttribute('aria-label', `Supprimer le fichier ${uploadedFile.titre}`);
 
-        removeButton.setAttribute(
-            'title',
-            `Supprimer le fichier ${uploadedFile.titre}`
-        );
+        removeButton.setAttribute('title', `Supprimer le fichier ${uploadedFile.titre}`);
 
         removeButton.addEventListener('click', () => {
           uploadedFiles.splice(index, 1);
-          uploadedFiles = uploadedFiles.filter(file => file.status !== 'error');
+          uploadedFiles = uploadedFiles.filter((file) => file.status !== 'error');
           renderFiles();
           updateHiddenInputs();
         });
@@ -361,17 +360,17 @@ function initUploadPhotos() {
     hiddenContainer.innerHTML = '';
 
     uploadedFiles
-        .filter((file) => file.status === 'uploaded' && file.filePath)
-        .forEach((file, index) => {
-          const inputHidden = document.createElement('input');
-          inputHidden.type = 'hidden';
-          inputHidden.name = `service_secours[step5][uploadedFiles][${index}]`;
-          inputHidden.value = JSON.stringify({
-            titre: file.titre,
-            filePath: file.filePath
-          });
-          hiddenContainer.appendChild(inputHidden);
+      .filter((file) => file.status === 'uploaded' && file.filePath)
+      .forEach((file, index) => {
+        const inputHidden = document.createElement('input');
+        inputHidden.type = 'hidden';
+        inputHidden.name = `service_secours[step5][uploadedFiles][${index}]`;
+        inputHidden.value = JSON.stringify({
+          titre: file.titre,
+          filePath: file.filePath,
         });
+        hiddenContainer.appendChild(inputHidden);
+      });
   }
 
   function setButtonsDisabled(disabled) {
@@ -400,14 +399,15 @@ function initUploadPhotos() {
   }
 }
 
-
 function initDesordresAutreToggle() {
   const autreCheckbox = document.querySelector(
-      'input[name="service_secours[step5][desordres][]"][value="desordres_service_secours_autre"]'
+    'input[name="service_secours[step5][desordres][]"][value="desordres_service_secours_autre"]'
   );
 
   const autreContainer = document.querySelector('#desordres-autre-wrapper');
-  const autreTextarea = document.querySelector('textarea[name="service_secours[step5][desordresAutre]"]');
+  const autreTextarea = document.querySelector(
+    'textarea[name="service_secours[step5][desordresAutre]"]'
+  );
 
   if (!autreCheckbox || !autreContainer) {
     return;
