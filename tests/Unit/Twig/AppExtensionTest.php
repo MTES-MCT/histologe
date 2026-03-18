@@ -154,6 +154,7 @@ class AppExtensionTest extends WebTestCase
             'phone',
             'badge_class',
             'badge_relance_class',
+            'entity_label',
         ];
 
         $this->assertEqualsCanonicalizing($expectedFilters, $filterNames);
