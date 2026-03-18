@@ -108,6 +108,10 @@ class TypeCompositionType extends AbstractType
                     new Assert\NotNull(
                         message: 'Veuillez indiquer la superficie.',
                     ),
+                    new Assert\GreaterThan(
+                        value: 0,
+                        message: 'Veuillez saisir une superficie supérieure à 0.',
+                    ),
                 ],
             ])
             ->add('pieceUnique', ChoiceType::class, [
@@ -132,7 +136,7 @@ class TypeCompositionType extends AbstractType
             ->add('nbPieces', NumberType::class, [
                 'label' => 'Nombre de pièces à vivre <span class="text-required">*</span>',
                 'label_html' => true,
-                'help' => 'Format attendu : saisir un nombre entier',
+                'help' => 'Format attendu : saisir un nombre entier supérieur à 1',
                 'required' => false,
                 'mapped' => false,
                 'data' => $nbPieces,
@@ -140,6 +144,19 @@ class TypeCompositionType extends AbstractType
                     new Assert\Regex(
                         pattern: '/^\d+$/',
                         message: 'Veuillez saisir un nombre entier.',
+                    ),
+                    // Si le logement n'est pas une pièce unique (pieceUnique = 'plusieurs_pieces'), alors le nombre de pièces à vivre doit être supérieur ou égal à 2
+                    new Assert\Callback(
+                        callback: function ($value, $context) {
+                            $form = $context->getRoot();
+                            $pieceUnique = $form->get('pieceUnique')->getData();
+
+                            if ('plusieurs_pieces' === $pieceUnique && $value < 2) {
+                                $context
+                                    ->buildViolation('Le nombre de pièces à vivre doit être supérieur ou égal à 2 si le logement a plusieurs pièces.')
+                                    ->addViolation();
+                            }
+                        },
                     ),
                 ],
             ])
