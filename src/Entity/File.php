@@ -187,6 +187,11 @@ class File implements EntityHistoryInterface
         $this->isStandalone = false;
     }
 
+    public function __toString(): string
+    {
+        return $this->getDisplayFilename();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

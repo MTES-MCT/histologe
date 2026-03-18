@@ -16,62 +16,114 @@
         <header>
             <div class="fr-grid-row">
                 <div class="fr-col-12 fr-text--left">
-                    <h1 class="fr-h1 fr-mb-0">Historique des modifications pour 
-                        {% if entityUrl is defined %}
-                            <a href="{{entityUrl}}">{{ entityName }} #{{ entityId }}</a>
-                        {% else %}
-                            {{ entityName }} #{{ entityId }}
-                        {% endif %}
-                    </h1>
+                    {% if entity %}
+                        <h1 class="fr-h1 fr-mb-0">Historique des modifications pour 
+                            {% if entityUrl %}
+                                <a href="{{entityUrl}}">{{ entityName }} #{{ entityId }}</a>
+                            {% else %}
+                                {{ entityName }} #{{ entityId }}
+                            {% endif %}
+                        </h1>
+                    {% else %}
+                        <h1 class="fr-h1 fr-mb-0">Entité "{{entityName}} : {{entityId}}" introuvable</h1>
+                    {% endif %}
                 </div>
             </div>
         </header>
     </section>
 
     <section class="fr-col-12 fr-p-5v">
-        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(historyEntries|length, 'modification trouvée', 'modifications trouvées') }}</h2>
+        <div class="fr-mb-4v">
+            {{ form_start(searchForm) }}
+            {{ form_errors(searchForm) }}
+            <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-lg-3">
+                    {{ form_row(searchForm.entity_name) }}
+                </div>
+                <div class="fr-col-12 fr-col-lg-3">
+                    {{ form_row(searchForm.entity_id) }}
+                </div>
+                <div class="fr-col-12 fr-col-lg-3">
+                    {{ form_row(searchForm.orderType) }}
+                </div>
+                <div class="fr-col-12 fr-col-lg-3">
+                    {{ form_row(searchForm.submit) }}
+                </div>
+            </div>
+            {{ form_end(searchForm) }}
+        </div>
+        {% if entity %}
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(historyEntries|length, 'modification trouvée', 'modifications trouvées') }}</h2>
+        {% endif %}
     </section>
 
-    <section class="fr-col-12 fr-pt-0 fr-px-4v">
-        {% set tableHead %}
-            <th scope="col">Utilisateur</th>
-            <th scope="col">Type</th>
-            <th scope="col">Date</th>
-            <th scope="col">Modifications</th>
-            <th scope="col">Source</th>
-        {% endset %}
+    {% if entity %}
+        <section class="fr-col-12 fr-pt-0 fr-px-4v">
+            {% set tableHead %}
+                <th scope="col">Utilisateur</th>
+                <th scope="col">Type</th>
+                <th scope="col">Date</th>
+                <th scope="col">Modifications</th>
+                <th scope="col">Source</th>
+            {% endset %}
 
-        {% set tableBody %}
-            {% for entry in historyEntries %}
-                <tr class="user-row">
-                    <td>
-                        {% if entry.user %}
-                            {{ entry.user.email }}
-                            <br>
-                            {{ entry.user.nomComplet(true) }}
-                            <br>
-                            Id {{entry.user.id}}
-                        {% endif %}
-                    </td>
-                    <td>
-                        <span class="fr-badge {% if entry.event.value == 'CREATE' %}fr-badge--success{% elseif entry.event.value == 'UPDATE' %}fr-badge--info{% endif %}">{{ entry.event.value }}</span>
-                    </td>
-                    <td>{{ entry.createdAt|date('d/m/Y H:i') }}</td>
-                    <td>
-                        {% if entry.changes|length > 0 %}
-                            {{ macros.historyEntriesVizualisation(entry.changes) }}
-                        {% endif %}
-                    </td>
-                    <td>{{ entry.source }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="5">Aucune modification trouvée</td>
-                </tr>
+            {% set tableBody %}
+                {% for entry in historyEntries %}
+                    <tr class="user-row">
+                        <td>
+                            {% if entry.user %}
+                                {{ entry.user.email }}
+                                <br>
+                                {{ entry.user.nomComplet(true) }}
+                                <br>
+                                Id {{entry.user.id}}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span title="{{ entry.id }}" class="fr-badge {% if entry.event.value == 'CREATE' %}fr-badge--success{% elseif entry.event.value == 'UPDATE' %}fr-badge--info{% endif %}">{{ entry.event.value }}</span>
+                        </td>
+                        <td>{{ entry.createdAt|date('d/m/Y H:i') }}</td>
+                        <td>
+                            {% if entry.changes|length > 0 %}
+                                {{ macros.historyEntriesVizualisation(entry.changes) }}
+                            {% endif %}
+                        </td>
+                        <td>{{ entry.source }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5">Aucune modification trouvée</td>
+                    </tr>
+                {% endfor %}
+            {% endset %}
+            {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des modifications', 'tableHead': tableHead, 'tableBody': tableBody } %}
+        </section>
+
+        <section class="fr-col-12 fr-pt-0 fr-px-4v">
+            <h2>Relations</h2>
+            <div class="fr-grid-row fr-grid-row--gutters">
+                {% for entityName, records in relatedEntities %}
+                    {% if records|length > 0 %}
+                        <div class="fr-col-4">
+                            <h3>{{ entityName }}</h3>
+                            <ul>
+                                {% for record in records %}
+                                    {% set label = record|entity_label %}
+                                    <li>
+                                        <a href="{{ path('back_history_entry_diff', { 'entity_name': entityName, 'entity_id': record.id }) }}">
+                                            {{ record.id }}{% if label %} - {{ label }}{% endif %}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
             {% endfor %}
-        {% endset %}
+            </div>
+        </section>
 
-        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des modifications', 'tableHead': tableHead, 'tableBody': tableBody } %}
-        
-    </section>
+
+
+    {% endif %}
+
 {% endblock %}

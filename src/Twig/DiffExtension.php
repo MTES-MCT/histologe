@@ -7,6 +7,8 @@ use Twig\TwigFilter;
 
 class DiffExtension extends AbstractExtension
 {
+    private const string NULL_PLACEHOLDER = "\x00NULL\x00";
+
     public function getFilters(): array
     {
         return [
@@ -23,20 +25,11 @@ class DiffExtension extends AbstractExtension
      */
     public function diff(?string $text, ?string $compare, string $mode = 'new'): string
     {
-        if (null === $text && null === $compare) {
-            return '';
-        }
-
-        if (null === $text) {
-            $text = '';
-        }
-
-        if (null === $compare) {
-            $compare = '';
-        }
+        $text = $text ?? self::NULL_PLACEHOLDER;
+        $compare = $compare ?? self::NULL_PLACEHOLDER;
 
         if ($text === $compare) {
-            return htmlspecialchars($text);
+            return self::NULL_PLACEHOLDER === $text ? '<i>null</i>' : htmlspecialchars($text);
         }
 
         $oldWords = $this->tokenize('old' === $mode ? $text : $compare);
@@ -130,7 +123,7 @@ class DiffExtension extends AbstractExtension
         $result = '';
 
         foreach ($diff as $part) {
-            $value = htmlspecialchars($part['value']);
+            $value = self::NULL_PLACEHOLDER === $part['value'] ? '<small><i>null</i></small>' : htmlspecialchars($part['value']);
 
             switch ($part['type']) {
                 case 'equal':

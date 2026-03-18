@@ -40,6 +40,11 @@ class SignalementQualification
     #[ORM\Column(nullable: true)]
     private ?bool $isPostVisite = null;
 
+    public function __toString(): string
+    {
+        return $this->qualification->value;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

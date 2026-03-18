@@ -84,15 +84,17 @@
 {% endmacro %}
 
 {% macro formatValue(value) %}
-    {%- if value is iterable -%}
+    {% if value is iterable %}
         {{ value|join(', ') }}
-    {%- elseif value is same as false -%}
+    {% elseif value is same as false %}
         false
-    {%- elseif value is same as true -%}
+    {% elseif value is same as true %}
         true
-    {%- else -%}
+    {% elseif value is numeric %}
+        {{ value|json_encode }}
+    {% else %}
         {{ value }}
-    {%- endif -%}
+    {% endif %}
 {% endmacro %}
 
 {% macro historyEntriesVizualisation(historyEntryChanges, isSubChange = false, parentName = '') %}
@@ -105,8 +107,8 @@
                 <table class="history-diff">
 {% endif %}
                     {% for name, change in historyEntryChanges %}
-                        {% set old = change.old is defined ? macros.formatValue(change.old) : null %}
-                        {% set new = change.new is defined ? macros.formatValue(change.new) : null %}
+                        {% set old = (change.old is defined and change.old is not null) ? macros.formatValue(change.old) : null %}
+                        {% set new = (change.new is defined and change.new is not null) ? macros.formatValue(change.new) : null %}
 
                         {% if old is not null or new is not null %}
                             <tr>
@@ -117,14 +119,10 @@
                                     {% endif %}
                                 </td>
                                 <td class="history-diff-old">
-                                    {% if old is not null %}
-                                        {{ old|diff(new ?? '', 'old') }}
-                                    {% endif %}
+                                    {{ old|diff(new, 'old') }}
                                 </td>
                                 <td class="history-diff-new">
-                                    {% if new is not null %}
-                                        {{ new|diff(old ?? '', 'new') }}
-                                    {% endif %}
+                                    {{ new|diff(old, 'new') }}
                                 </td>
                             </tr>
                         {% else %}

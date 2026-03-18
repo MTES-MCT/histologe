@@ -66,6 +66,11 @@ class Notification
         $this->createdAt = new \DateTimeImmutable();
     }
 
+    public function __toString(): string
+    {
+        return $this->createdAt->format('d/m/y H:i').' '.$this->type->value;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
