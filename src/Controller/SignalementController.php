@@ -508,7 +508,7 @@ class SignalementController extends AbstractController
 
     private function getSuiviDemandeCloture(
         Signalement $signalement,
-        SuiviRepository $suiviRepository
+        SuiviRepository $suiviRepository,
     ): ?Suivi {
         if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
             return null;

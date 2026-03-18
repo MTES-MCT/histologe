@@ -44,7 +44,7 @@ test('login for bailleur', async ({page, context}) => {
 
   await page.getByRole('heading', { name: 'Détails du dossier' }).click();
   await page.getByText('Monsieur Mulder Fox').click();
-  await page.getByText('Oui avec aide').click();
+  await page.getByText('La procédure en cours').click();
   await page.getByRole('link', { name: 'Quitter' }).click();
 });
 
