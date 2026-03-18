@@ -10,8 +10,8 @@ use App\Entity\Signalement;
 use App\Form\SignalementeEditFO\AdresseLogementType;
 use App\Form\SignalementeEditFO\CoordonneesAgenceType;
 use App\Form\SignalementeEditFO\CoordonneesBailleurType;
-use App\Form\SignalementeEditFO\InformationsGeneralesType;
 use App\Form\SignalementeEditFO\CoordonneesOccupantType;
+use App\Form\SignalementeEditFO\InformationsGeneralesType;
 use App\Form\SignalementeEditFO\ProcedureAssuranceType;
 use App\Form\SignalementeEditFO\UsagerSituationFoyerType;
 use App\Manager\SignalementManager;
@@ -150,7 +150,7 @@ class SignalementEditController extends AbstractController
                         signalement: $signalement,
                     )
                 );
-                $msg .= ' L\'adresse e-mail sera mise à jour après validation de l\'email de confirmation transmis a cette adresse.';
+                $msg .= ' L\'adresse e-mail sera mise à jour après validation de l\'e-mail de confirmation transmis à cette adresse.';
             }
             $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
             $this->addFlash('success', ['title' => 'Dossier complété', 'message' => $msg]);
