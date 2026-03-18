@@ -311,16 +311,16 @@ class AffectationController extends AbstractController
         }
 
         $partners = $this->partnerRepository->findByIds($partnerIds);
-        $grouped = [];
+        $countByUrl = [];
         foreach ($partners as $partner) {
             if (!$partner->canSyncWithEsabora()) {
                 continue;
             }
 
             $key = $partner->getEsaboraUrl();
-            $grouped[$key] = ($grouped[$key] ?? 0) + 1;
+            $countByUrl[$key] = ($countByUrl[$key] ?? 0) + 1;
 
-            if ($grouped[$key] > 1) {
+            if ($countByUrl[$key] > 1) {
                 return true;
             }
         }

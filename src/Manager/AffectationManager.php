@@ -150,23 +150,26 @@ class AffectationManager extends Manager
 
     private function shouldDispatchInterconnection(Affectation $affectation): bool
     {
-        $relatedAffectation = $this->findRelatedAffectationSynced($affectation);
+        $partner = $affectation->getPartner();
+        $relatedAffectation = $this->findRelatedAffectation($affectation);
 
-        if (null === $relatedAffectation) {
+        if (PartnerType::COMMUNE_SCHS === $partner->getType() && !$partner->isConnectedToSanteHabitat()
+            || null === $relatedAffectation
+        ) {
             return true;
         }
 
         return !$relatedAffectation->isSynchronized();
     }
 
-    private function findRelatedAffectationSynced(Affectation $affectation): ?Affectation
+    private function findRelatedAffectation(Affectation $affectation): ?Affectation
     {
         $partner = $affectation->getPartner();
         $signalement = $affectation->getSignalement();
 
         return match ($partner->getType()) {
-            PartnerType::ARS => $signalement->getAffectationForPartnerByType(PartnerType::COMMUNE_SCHS),
-            PartnerType::COMMUNE_SCHS => $signalement->getAffectationForPartnerByType(PartnerType::ARS),
+            PartnerType::ARS => $signalement->getAffectationByPartnerTypeConnectedToSish(PartnerType::COMMUNE_SCHS),
+            PartnerType::COMMUNE_SCHS => $signalement->getAffectationByPartnerTypeConnectedToSish(PartnerType::ARS),
             default => null,
         };
     }

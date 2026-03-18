@@ -83,7 +83,6 @@ abstract class AbstractDossierMessageFactory implements DossierMessageFactoryInt
     {
         $partner = $affectation->getPartner();
 
-        return str_contains($partner->getEsaboraUrl(), 'sante-habitat')
-            || str_contains($partner->getEsaboraUrl(), 'ARS');
+        return $partner->isConnectedToSanteHabitat();
     }
 }
