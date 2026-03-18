@@ -35,7 +35,6 @@ class SignalementServiceSecoursFileMessageHandler
             $this->signalementFileAttacher->createAndAttach($signalement, $uploadedFile);
         }
 
-        $signalement->setJsonContent($jsonContent);
         $this->entityManager->flush();
 
         $this->logger->info('SignalementServiceSecoursFileMessageHandler handled successfully', [
