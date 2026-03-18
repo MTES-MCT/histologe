@@ -37,7 +37,7 @@ class UserGetMeControllerTest extends WebTestCase
         yield 'Partenaire id 2' => ['api-01@signal-logement.fr', 3];
         yield 'Partenaire id 84' => ['api-02@signal-logement.fr', 1];
         yield 'Partenaires EPCI de La Réunion' => ['api-reunion-epci@signal-logement.fr', 2];
-        yield 'Partenaires COMMUNE_SCHS' => ['api-oilhi@signal-logement.fr', 31];
+        yield 'Partenaires COMMUNE_SCHS' => ['api-oilhi@signal-logement.fr', 32];
         yield 'Partenaires 72 et 74 + partenaires EPCI et CAP_MSA de l\'Hérault' => ['api-34-01@signal-logement.fr', 4];
         yield 'Partenaires du Puy-de-Dôme' => ['api-full-63@signal-logement.fr', 19];
     }

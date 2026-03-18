@@ -24,7 +24,8 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
     public function supports(Affectation $affectation): bool
     {
         return $this->isEsaboraPartnerActive($affectation)
-            && in_array($affectation->getPartner()->getType(), DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA);
+            && in_array($affectation->getPartner()->getType(), DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA)
+            && !$this->isConnectedToSish($affectation);
     }
 
     public function createInstance(Affectation $affectation): DossierMessageSCHS

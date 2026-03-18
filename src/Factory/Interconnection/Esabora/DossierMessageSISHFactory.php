@@ -3,7 +3,6 @@
 namespace App\Factory\Interconnection\Esabora;
 
 use App\Entity\Affectation;
-use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
@@ -35,7 +34,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
 
     public function supports(Affectation $affectation): bool
     {
-        return $this->isEsaboraPartnerActive($affectation) && PartnerType::ARS === $affectation->getPartner()->getType();
+        return $this->isEsaboraPartnerActive($affectation)
+            && in_array($affectation->getPartner()->getType(), DossierMessageSISH::CAN_SYNC_SISH_ESABORA)
+            && $this->isConnectedToSish($affectation);
     }
 
     /**

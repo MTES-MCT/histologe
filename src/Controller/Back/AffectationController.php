@@ -20,6 +20,7 @@ use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\EmailAlertChecker;
 use App\Service\FormHelper;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\MessageHelper;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Psr\Cache\InvalidArgumentException;
@@ -84,6 +85,19 @@ class AffectationController extends AbstractController
                 $alreadyAffectedPartnersIds = array_map(static fn (array $partner) => $partner['id'], $alreadyAffectedPartner);
                 $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartnersIds);
                 $partnersIdToRemove = array_diff($alreadyAffectedPartnersIds, $postedPartner);
+
+                if ($this->hasSameEsaboraUrl($partnersIdToAdd)) {
+                    $message = sprintf('Impossible d\'affecter simultanément des partenaires interconnectés %s avec les mêmes identifiants.
+                    Sélectionnez uniquement le partenaire d\'envoi, puis ajoutez le second après validation.', EsaboraSISHService::NAME_SI);
+
+                    $flashMessage = [
+                        'type' => 'alert',
+                        'title' => 'Erreur',
+                        'message' => $message,
+                    ];
+
+                    return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
+                }
 
                 foreach ($partnersIdToAdd as $partnerIdToAdd) {
                     $canAffectPartner = false;
@@ -288,5 +302,29 @@ class AffectationController extends AbstractController
         $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return $this->json(['redirect' => true, 'url' => $url]);
+    }
+
+    private function hasSameEsaboraUrl(array $partnerIds): bool
+    {
+        if (empty($partnerIds)) {
+            return false;
+        }
+
+        $partners = $this->partnerRepository->findByIds($partnerIds);
+        $grouped = [];
+        foreach ($partners as $partner) {
+            if (!$partner->canSyncWithEsabora()) {
+                continue;
+            }
+
+            $key = $partner->getEsaboraUrl();
+            $grouped[$key] = ($grouped[$key] ?? 0) + 1;
+
+            if ($grouped[$key] > 1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -78,4 +78,12 @@ abstract class AbstractDossierMessageFactory implements DossierMessageFactoryInt
 
         return HtmlCleaner::clean($commentaireDesordres);
     }
+
+    protected function isConnectedToSish(Affectation $affectation): bool
+    {
+        $partner = $affectation->getPartner();
+
+        return str_contains($partner->getEsaboraUrl(), 'sante-habitat')
+            || str_contains($partner->getEsaboraUrl(), 'ARS');
+    }
 }

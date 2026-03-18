@@ -10,6 +10,11 @@ use App\Service\Interconnection\Esabora\Model\DossierMessageSISHPersonne;
 
 final class DossierMessageSISH implements DossierMessageInterface
 {
+    public const array CAN_SYNC_SISH_ESABORA = [
+        PartnerType::COMMUNE_SCHS,
+        PartnerType::ARS,
+    ];
+
     private ?string $url = null;
     private ?string $token = null;
     private ?string $signalementUrl = null;

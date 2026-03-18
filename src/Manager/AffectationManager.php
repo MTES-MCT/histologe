@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
+use App\Entity\Enum\PartnerType;
 use App\Entity\File;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -132,16 +133,42 @@ class AffectationManager extends Manager
             ->setTerritory($signalement->getTerritory());
 
         if ($dispatchEvent) {
-            $this->eventDispatcher->dispatch(new AffectationCreatedEvent($affectation), AffectationCreatedEvent::NAME);
+            $this->eventDispatcher->dispatch(
+                new AffectationCreatedEvent($affectation),
+                AffectationCreatedEvent::NAME
+            );
         }
 
         $this->persist($affectation);
 
-        if ($dispatchInterconnection) {
+        if ($dispatchInterconnection && $this->shouldDispatchInterconnection($affectation)) {
             $this->interconnectionBus->dispatch($affectation);
         }
 
         return $affectation;
+    }
+
+    private function shouldDispatchInterconnection(Affectation $affectation): bool
+    {
+        $relatedAffectation = $this->findRelatedAffectationSynced($affectation);
+
+        if (null === $relatedAffectation) {
+            return true;
+        }
+
+        return !$relatedAffectation->isSynchronized();
+    }
+
+    private function findRelatedAffectationSynced(Affectation $affectation): ?Affectation
+    {
+        $partner = $affectation->getPartner();
+        $signalement = $affectation->getSignalement();
+
+        return match ($partner->getType()) {
+            PartnerType::ARS => $signalement->getAffectationForPartnerByType(PartnerType::COMMUNE_SCHS),
+            PartnerType::COMMUNE_SCHS => $signalement->getAffectationForPartnerByType(PartnerType::ARS),
+            default => null,
+        };
     }
 
     public function closeBySignalement(

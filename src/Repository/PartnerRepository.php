@@ -434,4 +434,13 @@ class PartnerRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findByIds(array $partnerIds): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.id IN (:ids)')
+            ->setParameter('ids', $partnerIds)
+            ->getQuery()
+            ->getResult();
+    }
 }
