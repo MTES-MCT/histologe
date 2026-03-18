@@ -24,8 +24,10 @@
                                 {{ entityName }} #{{ entityId }}
                             {% endif %}
                         </h1>
-                    {% else %}
+                    {% elseif entityName %}
                         <h1 class="fr-h1 fr-mb-0">Entité "{{entityName}} : {{entityId}}" introuvable</h1>
+                    {% else %}
+                        <h1 class="fr-h1 fr-mb-0">Effectuez une recherche</h1>
                     {% endif %}
                 </div>
             </div>
@@ -107,15 +109,38 @@
                         <div class="fr-col-4">
                             <h3>{{ entityName }}</h3>
                             <ul>
-                                {% for record in records %}
+                                {% for record in records|slice(0, 10) %}
                                     {% set label = record|entity_label %}
                                     <li>
-                                        <a href="{{ path('back_history_entry_diff', { 'entity_name': entityName, 'entity_id': record.id }) }}">
+                                        {% if entityName in searchForm['entity_name'].vars.choices|map(c => c.value) %}
+                                            <a href="{{ path('back_history_entry_diff', { 'entity_name': entityName, 'entity_id': record.id }) }}">
+                                                {{ record.id }}{% if label %} - {{ label }}{% endif %}
+                                            </a>
+                                        {% else %}
                                             {{ record.id }}{% if label %} - {{ label }}{% endif %}
-                                        </a>
+                                        {% endif %}
                                     </li>
                                 {% endfor %}
                             </ul>
+                            {% if records|length > 10 %}
+                                <details>
+                                    <summary>Afficher tout ({{ records|length - 10 }} de plus)</summary>
+                                    <ul>
+                                        {% for record in records|slice(10) %}
+                                            {% set label = record|entity_label %}
+                                            <li>
+                                                {% if entityName in searchForm['entity_name'].vars.choices|map(c => c.value) %}
+                                                    <a href="{{ path('back_history_entry_diff', { 'entity_name': entityName, 'entity_id': record.id }) }}">
+                                                        {{ record.id }}{% if label %} - {{ label }}{% endif %}
+                                                    </a>
+                                                {% else %}
+                                                    {{ record.id }}{% if label %} - {{ label }}{% endif %}
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </details>
+                            {% endif %}
                         </div>
                     {% endif %}
             {% endfor %}

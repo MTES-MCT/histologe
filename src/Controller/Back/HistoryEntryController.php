@@ -2,7 +2,9 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\Zone;
 use App\Form\SearchHistoryEntryType;
 use App\Manager\HistoryEntryManager;
 use App\Repository\HistoryEntryRepository;
@@ -61,9 +63,12 @@ class HistoryEntryController extends AbstractController
             /** @var class-string $fullEntityName */
             $historyEntries = $historyEntryRepository->findBy(['entityId' => $entity_id, 'entityName' => $fullEntityName], ['createdAt' => $orderType]);
             $entity = $entityManager->getRepository($fullEntityName)->find($entity_id);
-            if ($entity instanceof Signalement) {
-                $entityUrl = $this->generateUrl('back_signalement_view', ['uuid' => $entity->getUuid()]);
-            }
+            $entityUrl = match (true) {
+                $entity instanceof Signalement => $this->generateUrl('back_signalement_view', ['uuid' => $entity->getUuid()]),
+                $entity instanceof Partner => $this->generateUrl('back_partner_view', ['id' => $entity->getId()]),
+                $entity instanceof Zone => $this->generateUrl('back_territory_management_zone_show', ['zone' => $entity->getId()]),
+                default => null,
+            };
             foreach ($entityManager->getMetadataFactory()->getAllMetadata() as $metadata) {
                 foreach ($metadata->getAssociationMappings() as $fieldName => $mapping) {
                     if ($mapping['targetEntity'] === $fullEntityName && ClassMetadata::MANY_TO_ONE == $mapping['type'] && empty($mapping['mappedBy'])) {
@@ -75,6 +80,7 @@ class HistoryEntryController extends AbstractController
                     }
                 }
             }
+            ksort($relatedEntities);
         }
 
         return $this->render('back/history-entry/details.html.twig', [
