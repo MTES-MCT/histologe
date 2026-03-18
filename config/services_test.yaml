@@ -1,0 +1,9 @@
+services:
+  App\Service\Gouv\Ban\AddressService:
+    class: App\Tests\Fake\AddressServiceFake
+
+  App\Service\Gouv\Rnb\RnbService:
+    class: App\Tests\Fake\RnbServiceFake
+
+  Symfony\Contracts\HttpClient\HttpClientInterface:
+    class: Symfony\Component\HttpClient\MockHttpClient
