@@ -10,6 +10,8 @@ class AddressServiceFake extends AddressService
 {
     public function __construct()
     {
+        // Intentionally empty.
+        // In test environment, this fake replaces the real service to avoid HTTP calls.
     }
 
     /**
