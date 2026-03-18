@@ -221,7 +221,9 @@ export function initComponentAddress(id) {
   if (addressInput.dataset.suffix !== undefined && addressInput.dataset.suffix !== '') {
     suffix = '-' + addressInput.dataset.suffix;
   }
-  const inseeInput = document?.querySelector('#' + idForm + ' [data-autocomplete-insee' + suffix + ']');
+  const inseeInput = document?.querySelector(
+    '#' + idForm + ' [data-autocomplete-insee' + suffix + ']'
+  );
   const hasInseeCode = inseeInput && inseeInput.value !== '';
 
   manualAddressSwitcher?.addEventListener('click', (event) => {
@@ -256,9 +258,15 @@ export function initComponentAddress(id) {
   // Si le champ autocomplete est vide mais qu'on a une adresse avec code INSEE,
   // reconstruire l'adresse complète dans le champ autocomplete
   if (addressInput.value == '' && hasManualAddressValues && hasInseeCode) {
-    const addressField = document?.querySelector('#' + idForm + ' [data-autocomplete-addresse' + suffix + ']');
-    const postalCodeField = document?.querySelector('#' + idForm + ' [data-autocomplete-codepostal' + suffix + ']');
-    const cityField = document?.querySelector('#' + idForm + ' [data-autocomplete-ville' + suffix + ']');
+    const addressField = document?.querySelector(
+      '#' + idForm + ' [data-autocomplete-addresse' + suffix + ']'
+    );
+    const postalCodeField = document?.querySelector(
+      '#' + idForm + ' [data-autocomplete-codepostal' + suffix + ']'
+    );
+    const cityField = document?.querySelector(
+      '#' + idForm + ' [data-autocomplete-ville' + suffix + ']'
+    );
 
     if (addressField && postalCodeField && cityField) {
       const fullAddress = `${addressField.value}, ${postalCodeField.value} ${cityField.value}`;

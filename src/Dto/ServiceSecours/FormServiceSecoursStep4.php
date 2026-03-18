@@ -7,7 +7,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class FormServiceSecoursStep4
 {
-    #[Assert\NotBlank(groups: ['step4'])]
     public ?string $isBailleurAverti = null;
 
     #[Assert\Length(max: 255, groups: ['step4'])]

@@ -1,4 +1,7 @@
-import { attacheAutocompleteAddressEvent, initComponentAddress } from '../../services/component/component_search_address';
+import {
+  attacheAutocompleteAddressEvent,
+  initComponentAddress,
+} from '../../services/component/component_search_address';
 
 attachFormServiceSecoursEvent();
 
@@ -14,12 +17,18 @@ function attachFormServiceSecoursEvent() {
   }
 
   // Si on coche la valeur "appartement" pour la nature du logement (service_secours[step2][natureLogement]), on affiche "type-etage-logement-appartement-container"
-  const natureLogementRadios = document.querySelectorAll('input[name="service_secours[step2][natureLogement]"]');
-  const typeEtageLogementAppartementContainer = document.querySelector('.type-etage-logement-appartement-container');
+  const natureLogementRadios = document.querySelectorAll(
+    'input[name="service_secours[step2][natureLogement]"]'
+  );
+  const typeEtageLogementAppartementContainer = document.querySelector(
+    '.type-etage-logement-appartement-container'
+  );
   const natureLogementAutreContainer = document.querySelector('.nature-logement-autre-container');
 
   // Vérifier l'état initial au chargement de la page
-  const natureLogementChecked = document.querySelector('input[name="service_secours[step2][natureLogement]"]:checked');
+  const natureLogementChecked = document.querySelector(
+    'input[name="service_secours[step2][natureLogement]"]:checked'
+  );
   if (natureLogementChecked) {
     if (natureLogementChecked.value === 'appartement') {
       typeEtageLogementAppartementContainer.classList.remove('fr-hidden');
@@ -29,7 +38,7 @@ function attachFormServiceSecoursEvent() {
     }
   }
 
-  natureLogementRadios.forEach(radio => {
+  natureLogementRadios.forEach((radio) => {
     radio.addEventListener('change', (event) => {
       if (event.target.value === 'appartement') {
         typeEtageLogementAppartementContainer.classList.remove('fr-hidden');
@@ -46,16 +55,20 @@ function attachFormServiceSecoursEvent() {
   });
 
   // Si on coche la valeur "autre" pour le type d'étage (service_secours[step2][typeEtageLogement]), on affiche "etage-occupant-container"
-  const typeEtageLogementRadios = document.querySelectorAll('input[name="service_secours[step2][typeEtageLogement]"]');
+  const typeEtageLogementRadios = document.querySelectorAll(
+    'input[name="service_secours[step2][typeEtageLogement]"]'
+  );
   const etageOccupantContainer = document.querySelector('.etage-occupant-container');
 
   // Vérifier l'état initial au chargement de la page
-  const typeEtageLogementChecked = document.querySelector('input[name="service_secours[step2][typeEtageLogement]"]:checked');
+  const typeEtageLogementChecked = document.querySelector(
+    'input[name="service_secours[step2][typeEtageLogement]"]:checked'
+  );
   if (typeEtageLogementChecked && typeEtageLogementChecked.value === 'AUTRE') {
     etageOccupantContainer.classList.remove('fr-hidden');
   }
 
-  typeEtageLogementRadios.forEach(radio => {
+  typeEtageLogementRadios.forEach((radio) => {
     radio.addEventListener('change', (event) => {
       if (event.target.value === 'AUTRE') {
         etageOccupantContainer.classList.remove('fr-hidden');
@@ -66,10 +79,10 @@ function attachFormServiceSecoursEvent() {
   });
 }
 
-
-
 //step4
-const showInformationsSyndicContainer = document.querySelector('#show-informations-syndic-container');
+const showInformationsSyndicContainer = document.querySelector(
+  '#show-informations-syndic-container'
+);
 const informationsSyndicContainer = document.querySelector('#informations-syndic-container');
 if (showInformationsSyndicContainer && informationsSyndicContainer) {
   showInformationsSyndicContainer.addEventListener('click', (event) => {
@@ -81,12 +94,17 @@ if (showInformationsSyndicContainer && informationsSyndicContainer) {
   const nomSyndic = document.querySelector('#service_secours_step4_nomSyndic');
   const mailSyndic = document.querySelector('#service_secours_step4_mailSyndic');
   const telSyndic = document.querySelector('#service_secours_step4_telSyndic_input');
-  const telSyndicSecondaire = document.querySelector('#service_secours_step4_telSyndicSecondaire_input');
-  if (denominationSyndic.value || nomSyndic.value || mailSyndic.value || telSyndic.value || telSyndicSecondaire.value) {
+  const telSyndicSecondaire = document.querySelector(
+    '#service_secours_step4_telSyndicSecondaire_input'
+  );
+  if (
+    denominationSyndic.value ||
+    nomSyndic.value ||
+    mailSyndic.value ||
+    telSyndic.value ||
+    telSyndicSecondaire.value
+  ) {
     informationsSyndicContainer.classList.remove('fr-hidden');
     showInformationsSyndicContainer.classList.add('fr-hidden');
   }
 }
-
-
-

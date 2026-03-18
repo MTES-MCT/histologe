@@ -1,6 +1,6 @@
 let deferredPrompt = null;
 const DISMISS_DURATION_DAYS = 30;
-const MILLISECOND_IN_DAY = 1000 * 60 * 60 * 24
+const MILLISECOND_IN_DAY = 1000 * 60 * 60 * 24;
 const STORAGE_KEY = 'pwa-install-prompt-dismissed';
 
 // Vérifier si l'invite a été rejetée récemment
