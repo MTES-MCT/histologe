@@ -85,7 +85,7 @@ jobs:
       - name: NPM install
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '24'
       - run: npm ci --omit=dev
 
       - name: Install Symfony Encore # --omit-dev just above, do not delete, required for npm run build
