@@ -25,8 +25,8 @@ class DiffExtension extends AbstractExtension
      */
     public function diff(?string $text, ?string $compare, string $mode = 'new'): string
     {
-        $text = $text ?? self::NULL_PLACEHOLDER;
-        $compare = $compare ?? self::NULL_PLACEHOLDER;
+        $text = html_entity_decode($text ?? self::NULL_PLACEHOLDER, \ENT_QUOTES | \ENT_HTML5, 'UTF-8');
+        $compare = html_entity_decode($compare ?? self::NULL_PLACEHOLDER, \ENT_QUOTES | \ENT_HTML5, 'UTF-8');
 
         if ($text === $compare) {
             return self::NULL_PLACEHOLDER === $text ? '<i>null</i>' : htmlspecialchars($text);

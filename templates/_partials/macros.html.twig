@@ -90,8 +90,10 @@
         false
     {% elseif value is same as true %}
         true
+    {% elseif value is numeric and value is not same as (value ~ '') %}
+        {{ value|json_encode|raw }}
     {% elseif value is numeric %}
-        {{ value|json_encode }}
+        {{ value }}
     {% else %}
         {{ value }}
     {% endif %}
