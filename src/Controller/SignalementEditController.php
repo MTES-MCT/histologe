@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Enum\EtageType;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -438,18 +439,67 @@ class SignalementEditController extends AbstractController
 
             $typeCompositionLogement
                 ->setTypeLogementNatureAutrePrecision($form->get('natureAutrePrecision')->getData())
-                ->setTypeLogementAppartementEtage($form->get('etage')->getData())
-                ->setTypeLogementAppartementAvecFenetres($form->get('avecFenetres')->getData())
                 ->setCompositionLogementPieceUnique($form->get('pieceUnique')->getData())
                 ->setCompositionLogementNbPieces($form->get('nbPieces')->getData())
-                ->setTypeLogementCommoditesPieceAVivre9m($form->get('pieceAVivre9m')->getData())
-                ->setTypeLogementCommoditesCuisine($form->get('cuisine')->getData())
-                ->setTypeLogementCommoditesCuisineCollective($form->get('cuisineCollective')->getData())
-                ->setTypeLogementCommoditesSalleDeBain($form->get('salleDeBain')->getData())
-                ->setTypeLogementCommoditesSalleDeBainCollective($form->get('salleDeBainCollective')->getData())
-                ->setTypeLogementCommoditesWc($form->get('wc')->getData())
-                ->setTypeLogementCommoditesWcCollective($form->get('wcCollective')->getData())
-                ->setTypeLogementCommoditesWcCuisine($form->get('wcCuisine')->getData());
+                ->setTypeLogementCommoditesPieceAVivre9m($form->get('pieceAVivre9m')->getData());
+
+            if ('appartement' === $signalement->getNatureLogement()) {
+                /** @var EtageType $appartementEtage */
+                $appartementEtage = $form->get('appartementEtage')->getData();
+                $typeCompositionLogement->setTypeLogementAppartementEtage($appartementEtage->value);
+                if (EtageType::RDC === $appartementEtage) {
+                    $typeCompositionLogement->setTypeLogementRdc('oui');
+                } else {
+                    $typeCompositionLogement->setTypeLogementRdc('non');
+                }
+
+                $typeCompositionLogement->setTypeLogementAppartementAvecFenetres($form->get('appartementAvecFenetres')->getData());
+
+                if (EtageType::DERNIER_ETAGE === $appartementEtage) {
+                    $typeCompositionLogement->setTypeLogementDernierEtage('oui');
+                    if ('non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()) {
+                        $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('oui');
+                    }
+                } elseif (!empty($appartementEtage)) {
+                    $typeCompositionLogement->setTypeLogementDernierEtage('non');
+                    $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('non');
+                }
+
+                if (EtageType::SOUSSOL === $appartementEtage
+                        && 'non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()) {
+                    $typeCompositionLogement->setTypeLogementSousSolSansFenetre('oui');
+                }
+            }
+
+            $cuisine = $form->get('cuisine')->getData();
+            $typeCompositionLogement->setTypeLogementCommoditesCuisine($cuisine);
+            if ('non' === $cuisine) {
+                $typeCompositionLogement->setTypeLogementCommoditesCuisineCollective($form->get('cuisineCollective')->getData());
+            } else {
+                $typeCompositionLogement->setTypeLogementCommoditesCuisineCollective(null);
+            }
+
+            $sdb = $form->get('salleDeBain')->getData();
+            $typeCompositionLogement->setTypeLogementCommoditesSalleDeBain($sdb);
+            if ('non' === $sdb) {
+                $typeCompositionLogement->setTypeLogementCommoditesSalleDeBainCollective($form->get('salleDeBainCollective')->getData());
+            } else {
+                $typeCompositionLogement->setTypeLogementCommoditesSalleDeBainCollective(null);
+            }
+
+            $wc = $form->get('wc')->getData();
+            $typeCompositionLogement->setTypeLogementCommoditesWc($wc);
+            if ('non' === $wc) {
+                $typeCompositionLogement->setTypeLogementCommoditesWcCollective($form->get('wcCollective')->getData());
+            } else {
+                $typeCompositionLogement->setTypeLogementCommoditesWcCollective(null);
+            }
+
+            if ('oui' === $cuisine && 'oui' === $wc) {
+                $typeCompositionLogement->setTypeLogementCommoditesWcCuisine($form->get('wcCuisine')->getData());
+            } else {
+                $typeCompositionLogement->setTypeLogementCommoditesWcCuisine(null);
+            }
 
             $signalement->setTypeCompositionLogement($typeCompositionLogement);
 

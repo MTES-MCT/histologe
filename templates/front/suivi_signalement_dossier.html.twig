@@ -497,28 +497,34 @@
 							{% if signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
 								({{signalement.typeCompositionLogement.typeLogementNatureAutrePrecision}})
 							{% endif %}
-							{% if signalement.typeCompositionLogement.typeLogementRdc == 'oui' %}, RDC
-							{% endif %}
-							{% if signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' %}, Dernier étage
-							{% endif %}
-							{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre == 'oui' %}, Combles sans fenêtres
+							{% if signalement.natureLogement is same as 'appartement' %}
+								{% if signalement.typeCompositionLogement.typeLogementRdc == 'oui' %}, RDC
+								{% endif %}
+								{% if signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' %}, Dernier étage
+								{% endif %}
+								{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre == 'oui' %}, Combles sans fenêtres
+								{% endif %}
 							{% endif %}
 						{% endif %}
 					</li>
-					<li>Etage :
-						{% include '_partials/signalement/signalement-typecomposition-etage.html.twig' %}
-					</li>
-					<li>Avec fenêtres :
-						{% include '_partials/signalement/signalement-typecomposition-fenetres.html.twig' %}
-					</li>
+					{% if signalement.natureLogement is same as 'appartement' %}
+						<li>Etage :
+							{% include '_partials/signalement/signalement-typecomposition-etage.html.twig' %}
+						</li>
+						<li>Avec fenêtres :
+							{% include '_partials/signalement/signalement-typecomposition-fenetres.html.twig' %}
+						</li>
+					{% endif %}
 					<li>Superficie en m² : {{ signalement.superficie }} m²</li>
 					{% if signalement.typeCompositionLogement %}
 						<li>Une seule ou plusieurs pièces ?
 							{{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
 						</li>
-						<li>Nombre de pièces à vivre :
-							{{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
-						</li>
+						{% if signalement.typeCompositionLogement.compositionLogementPieceUnique(true) is same as 'plusieurs_pieces' %}
+							<li>Nombre de pièces à vivre :
+								{{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
+							</li>
+						{% endif %}
 						<li>Est-ce qu'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ?
 							{{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)|capitalize }}
 						</li>

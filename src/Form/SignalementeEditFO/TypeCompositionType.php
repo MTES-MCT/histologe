@@ -6,6 +6,7 @@ use App\Entity\Enum\EtageType;
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -26,7 +27,7 @@ class TypeCompositionType extends AbstractType
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
 
         $natureAutrePrecision = $typeCompositionLogement?->getTypeLogementNatureAutrePrecision();
-        $etage = $typeCompositionLogement?->getTypeLogementAppartementEtage();
+        $appartementEtage = EtageType::tryFrom($typeCompositionLogement?->getTypeLogementAppartementEtage());
         $avecFenetres = $typeCompositionLogement?->getTypeLogementAppartementAvecFenetres();
         $pieceUnique = $typeCompositionLogement?->getCompositionLogementPieceUnique();
         $nbPieces = $typeCompositionLogement?->getCompositionLogementNbPieces();
@@ -46,8 +47,6 @@ class TypeCompositionType extends AbstractType
                 'choices' => [
                     'Appartement' => 'appartement',
                     'Maison' => 'maison',
-                    'Chambre' => 'chambre',
-                    'Hébergement de fortune' => 'hebergement',
                     'Autre' => 'autre',
                 ],
                 'expanded' => false,
@@ -67,23 +66,20 @@ class TypeCompositionType extends AbstractType
                 'mapped' => false,
                 'data' => $natureAutrePrecision,
             ])
-            ->add('etage', ChoiceType::class, [
-                'label' => 'Étage <span class="text-required">*</span>',
-                'label_html' => true,
-                'choices' => EtageType::getLabelList(),
-                'expanded' => false,
+            ->add('appartementEtage', EnumType::class, [
+                'label' => 'Localisation de l\'appartement',
+                'class' => EtageType::class,
+                'choice_label' => function ($choice) {
+                    return $choice->label();
+                },
+                'expanded' => true,
                 'multiple' => false,
                 'required' => false,
-                'placeholder' => 'Sélectionnez une option',
+                'placeholder' => false,
                 'mapped' => false,
-                'data' => $etage,
-                'constraints' => [
-                    new Assert\NotNull(
-                        message: 'Veuillez indiquer l\'étage.',
-                    ),
-                ],
+                'data' => $appartementEtage,
             ])
-            ->add('avecFenetres', ChoiceType::class, [
+            ->add('appartementAvecFenetres', ChoiceType::class, [
                 'label' => 'Avec fenêtres <span class="text-required">*</span>',
                 'label_html' => true,
                 'choices' => [
@@ -141,9 +137,6 @@ class TypeCompositionType extends AbstractType
                 'mapped' => false,
                 'data' => $nbPieces,
                 'constraints' => [
-                    new Assert\NotNull(
-                        message: 'Veuillez indiquer le nombre de pièces.',
-                    ),
                     new Assert\Regex(
                         pattern: '/^\d+$/',
                         message: 'Veuillez saisir un nombre entier.',

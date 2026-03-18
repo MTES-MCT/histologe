@@ -116,9 +116,15 @@ if (fieldsetNbEnfants) {
 const natureLogementSelect = document?.querySelector('#type_composition_natureLogement');
 if (natureLogementSelect) {
   const natureAutrePrecisionContainer = document.querySelector('#type_composition_natureAutrePrecision')?.closest('.fr-fieldset__element');
+  const etageContainer = document.querySelector('#type_composition_appartementEtage')?.closest('.fr-fieldset__element');
 
   function refreshNatureAutrePrecision() {
     if (natureAutrePrecisionContainer) {
+      if (natureLogementSelect.value === 'appartement') {
+        etageContainer.classList.remove('fr-hidden');
+      } else {
+        etageContainer.classList.add('fr-hidden');
+      }
       if (natureLogementSelect.value === 'autre') {
         natureAutrePrecisionContainer.classList.remove('fr-hidden');
       } else {
@@ -133,6 +139,31 @@ if (natureLogementSelect) {
   refreshNatureAutrePrecision();
 }
 
+const fieldsetPieceUnique = document?.querySelector('#type_composition_pieceUnique');
+if (fieldsetPieceUnique) {
+  document
+    .querySelectorAll('#type_composition_pieceUnique input[type="radio"]')
+    .forEach((element) => {
+      element.addEventListener('change', () => {
+        refreshNbPieces();
+      });
+    });
+
+  function refreshNbPieces() {
+    const nbPiecesContainer = document.querySelector('#type_composition_nbPieces')?.closest('.fr-fieldset__element');
+    if (nbPiecesContainer) {
+      const pieceUniquePlusieursPiecesChecked = document.querySelector('#type_composition_pieceUnique input[value="plusieurs_pieces"]:checked');
+      if (pieceUniquePlusieursPiecesChecked) {
+        nbPiecesContainer.classList.remove('fr-hidden');
+      } else {
+        nbPiecesContainer.classList.add('fr-hidden');
+        nbPiecesContainer.querySelector('input').value = '1';
+      }
+    }
+  }
+  refreshNbPieces();
+}
+
 const fieldsetCuisine = document?.querySelector('#type_composition_cuisine');
 if (fieldsetCuisine) {
   document
@@ -140,20 +171,10 @@ if (fieldsetCuisine) {
     .forEach((element) => {
       element.addEventListener('change', () => {
         refreshCuisineCollective();
+        refreshWcCuisine();
       });
     });
 
-  function refreshCuisineCollective() {
-    const containerCuisineCollective = document.querySelector('#type_composition_cuisineCollective')?.closest('.fr-fieldset__element');
-    if (containerCuisineCollective) {
-      const cuisineNonChecked = document.querySelector('#type_composition_cuisine input[value="non"]:checked');
-      if (cuisineNonChecked) {
-        containerCuisineCollective.classList.remove('fr-hidden');
-      } else {
-        containerCuisineCollective.classList.add('fr-hidden');
-      }
-    }
-  }
   refreshCuisineCollective();
 }
 
@@ -167,17 +188,6 @@ if (fieldsetSalleDeBain) {
       });
     });
 
-  function refreshSalleDeBainCollective() {
-    const containerSalleDeBainCollective = document.querySelector('#type_composition_salleDeBainCollective')?.closest('.fr-fieldset__element');
-    if (containerSalleDeBainCollective) {
-      const salleDeBainNonChecked = document.querySelector('#type_composition_salleDeBain input[value="non"]:checked');
-      if (salleDeBainNonChecked) {
-        containerSalleDeBainCollective.classList.remove('fr-hidden');
-      } else {
-        containerSalleDeBainCollective.classList.add('fr-hidden');
-      }
-    }
-  }
   refreshSalleDeBainCollective();
 }
 
@@ -192,46 +202,62 @@ if (fieldsetWc) {
       });
     });
 
-  function refreshWcCollective() {
-    const containerWcCollective = document.querySelector('#type_composition_wcCollective')?.closest('.fr-fieldset__element');
-    if (containerWcCollective) {
-      const wcNonChecked = document.querySelector('#type_composition_wc input[value="non"]:checked');
-      if (wcNonChecked) {
-        containerWcCollective.classList.remove('fr-hidden');
-      } else {
-        containerWcCollective.classList.add('fr-hidden');
-      }
-    }
-  }
   refreshWcCollective();
 }
 
 // Gérer l'affichage du champ "wcCuisine" (visible uniquement si cuisine ET wc sont à 'oui')
 const fieldsetWcCuisine = document?.querySelector('#type_composition_cuisine, #type_composition_wc');
 if (fieldsetWcCuisine) {
-  // Ajouter les listeners sur les radios de cuisine
-  document
-    .querySelectorAll('#type_composition_cuisine input[type="radio"]')
-    .forEach((element) => {
-      element.addEventListener('change', () => {
-        refreshWcCuisine();
-      });
-    });
+  refreshWcCuisine();
+}
 
-  // Note: les listeners sur les radios de wc sont déjà ajoutés ci-dessus
-
-  function refreshWcCuisine() {
-    const containerWcCuisine = document.querySelector('#type_composition_wcCuisine')?.closest('.fr-fieldset__element');
-    if (containerWcCuisine) {
-      const cuisineOuiChecked = document.querySelector('#type_composition_cuisine input[value="oui"]:checked');
-      const wcOuiChecked = document.querySelector('#type_composition_wc input[value="oui"]:checked');
-
-      if (cuisineOuiChecked && wcOuiChecked) {
-        containerWcCuisine.classList.remove('fr-hidden');
-      } else {
-        containerWcCuisine.classList.add('fr-hidden');
-      }
+function refreshCuisineCollective() {
+  const containerCuisineCollective = document.querySelector('#type_composition_cuisineCollective')?.closest('.fr-fieldset__element');
+  if (containerCuisineCollective) {
+    const cuisineNonChecked = document.querySelector('#type_composition_cuisine input[value="non"]:checked');
+    if (cuisineNonChecked) {
+      containerCuisineCollective.classList.remove('fr-hidden');
+    } else {
+      document.querySelector('#type_composition_cuisineCollective input[type="radio"]').checked = false;
+      containerCuisineCollective.classList.add('fr-hidden');
     }
   }
-  refreshWcCuisine();
+}
+function refreshSalleDeBainCollective() {
+  const containerSalleDeBainCollective = document.querySelector('#type_composition_salleDeBainCollective')?.closest('.fr-fieldset__element');
+  if (containerSalleDeBainCollective) {
+    const salleDeBainNonChecked = document.querySelector('#type_composition_salleDeBain input[value="non"]:checked');
+    if (salleDeBainNonChecked) {
+      containerSalleDeBainCollective.classList.remove('fr-hidden');
+    } else {
+      document.querySelector('#type_composition_salleDeBainCollective input[type="radio"]').checked = false;
+      containerSalleDeBainCollective.classList.add('fr-hidden');
+    }
+  }
+}
+function refreshWcCollective() {
+  const containerWcCollective = document.querySelector('#type_composition_wcCollective')?.closest('.fr-fieldset__element');
+  if (containerWcCollective) {
+    const wcNonChecked = document.querySelector('#type_composition_wc input[value="non"]:checked');
+    if (wcNonChecked) {
+      containerWcCollective.classList.remove('fr-hidden');
+    } else {
+      document.querySelector('#type_composition_wcCollective input[type="radio"]').checked = false;
+      containerWcCollective.classList.add('fr-hidden');
+    }
+  }
+}
+function refreshWcCuisine() {
+  const containerWcCuisine = document.querySelector('#type_composition_wcCuisine')?.closest('.fr-fieldset__element');
+  if (containerWcCuisine) {
+    const cuisineOuiChecked = document.querySelector('#type_composition_cuisine input[value="oui"]:checked');
+    const wcOuiChecked = document.querySelector('#type_composition_wc input[value="oui"]:checked');
+
+    if (cuisineOuiChecked && wcOuiChecked) {
+      containerWcCuisine.classList.remove('fr-hidden');
+    } else {
+      containerWcCuisine.classList.add('fr-hidden');
+      document.querySelector('#type_composition_wcCuisine input[type="radio"]').checked = false;
+    }
+  }
 }

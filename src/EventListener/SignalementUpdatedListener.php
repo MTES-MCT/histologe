@@ -235,10 +235,12 @@ class SignalementUpdatedListener
                     continue;
                 }
 
-                $fieldChanges[$field] = [
-                    'label' => $label,
-                    'new' => $this->dictionaryProvider->translate($diffProperty['new'], 'suivi'),
-                ];
+                if ($diffProperty['new']) {
+                    $fieldChanges[$field] = [
+                        'label' => $label,
+                        'new' => $this->dictionaryProvider->translate($diffProperty['new'], 'suivi'),
+                    ];
+                }
             }
 
             if ([] !== $fieldChanges) {
