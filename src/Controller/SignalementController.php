@@ -495,11 +495,37 @@ class SignalementController extends AbstractController
             'status' => TiersInvitationStatus::WAITING,
         ]);
 
+        $suiviDemandeCloture = $this->getSuiviDemandeCloture($signalement, $suiviRepository);
+
         return $this->render('front/suivi_signalement_dashboard.html.twig', [
             'signalement' => $signalement,
             'formDemandeLienSignalement' => $formDemandeLienSignalement,
             'suiviCategory' => $suiviCategory,
             'tiersInvitation' => $tiersInvitation,
+            'suiviDemandeCloture' => $suiviDemandeCloture,
+        ]);
+    }
+
+    private function getSuiviDemandeCloture(
+        Signalement $signalement,
+        SuiviRepository $suiviRepository
+    ): ?Suivi {
+        if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
+            return null;
+        }
+
+        $suiviReponse = $suiviRepository->findOneBy([
+            'signalement' => $signalement,
+            'category' => SuiviCategory::injonctionBailleurReponseCategories(),
+        ]);
+
+        if (!$suiviReponse || SuiviCategory::INJONCTION_BAILLEUR_REPONSE_NON === $suiviReponse->getCategory()) {
+            return null;
+        }
+
+        return $suiviRepository->findOneBy([
+            'signalement' => $signalement,
+            'category' => SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
         ]);
     }
 
@@ -950,6 +976,7 @@ class SignalementController extends AbstractController
         Request $request,
         string $code,
         SignalementRepository $signalementRepository,
+        SuiviRepository $suiviRepository,
         SignalementManager $signalementManager,
         SuiviManager $suiviManager,
         InjonctionBailleurService $injonctionBailleurService,
@@ -961,6 +988,20 @@ class SignalementController extends AbstractController
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement)) {
             $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Vous n\'avez pas les droits pour effectuer cette action.']);
+
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
+            $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Le signalement n\'est pas en démarche accélérée.']);
+
+            return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        $suiviReponse = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::injonctionBailleurReponseCategories()]);
+        $suiviDemandeCloture = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR]);
+        if (!$suiviReponse || SuiviCategory::INJONCTION_BAILLEUR_REPONSE_NON === $suiviReponse->getCategory() || !$suiviDemandeCloture) {
+            $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Le bailleur n\'a pas demandé la clôture de la démarche accélérée.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }

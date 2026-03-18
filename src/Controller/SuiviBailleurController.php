@@ -117,6 +117,7 @@ class SuiviBailleurController extends AbstractController
     public function dossierBailleurCloture(
         Request $request,
         SignalementRepository $signalementRepository,
+        SuiviRepository $suiviRepository,
         InjonctionBailleurService $injonctionBailleurService,
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
@@ -126,6 +127,15 @@ class SuiviBailleurController extends AbstractController
          */
         $user = $this->getUser();
         $signalement = $signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
+        if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
+            throw $this->createNotFoundException();
+        }
+
+        $suiviReponse = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::injonctionBailleurReponseCategories()]);
+        $suiviDemandeCloture = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR]);
+        if (!$suiviReponse || SuiviCategory::INJONCTION_BAILLEUR_REPONSE_NON === $suiviReponse->getCategory() || $suiviDemandeCloture) {
+            throw $this->createNotFoundException();
+        }
 
         $stopProcedure = new StopProcedure();
         $stopProcedure->setSignalement($signalement);

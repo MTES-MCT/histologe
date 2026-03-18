@@ -81,22 +81,13 @@
 									><span class="fr-hidden">Signalement archivé</span></a>
 							</h3>
 						{% else %}
-						{# {{ dump(suiviCategory) }} #}
 							{% if suiviCategory %}
 								<h3 class="fr-tile__title">
-									{% if suiviCategory.suivi.category is same as enum('App\\Entity\\Enum\\SuiviCategory').INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR %}										
-										<a href="{{ path('front_suivi_signalement_procedure_bailleur_cloture', {'code': signalement.codeSuivi}) }}"
-											data-matomo-clickable-event-category="Suivre mon signalement"
-											data-matomo-clickable-event-action="clickLink"
-											data-matomo-clickable-event-name="{{suiviCategory.title}}"
-											>{{suiviCategory.title}}</a>
-									{% else %}
-										<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}{% if suiviCategory.suivi.id %}#suivi_{{suiviCategory.suivi.id}}{% endif %}"
-											data-matomo-clickable-event-category="Suivre mon signalement"
-											data-matomo-clickable-event-action="clickLink"
-											data-matomo-clickable-event-name="{{suiviCategory.title}}"
-											>{{suiviCategory.title}}</a>
-									{% endif %}
+									<a href="{{ path('front_suivi_signalement_messages', {'code': signalement.codeSuivi}) }}{% if suiviCategory.suivi.id %}#suivi_{{suiviCategory.suivi.id}}{% endif %}"
+										data-matomo-clickable-event-category="Suivre mon signalement"
+										data-matomo-clickable-event-action="clickLink"
+										data-matomo-clickable-event-name="{{suiviCategory.title}}"
+										>{{suiviCategory.title}}</a>
 								</h3>
 								<p class="fr-tile__detail">{{suiviCategory.suivi.createdAt|date('d/m/Y')}}</p>
 								<div class="fr-tile__start">
@@ -131,7 +122,7 @@
 										<p class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--info">Validation en cours</p>           
 									</div>
 								{% endif %} 
-							{% endif %}  
+							{% endif %}
 						{% endif %}     
 					</div>    
 				</div>    
@@ -143,6 +134,31 @@
 					</div>
 				{% endif %}
 			</div>
+			{# si le bailleur a une demande de cloture non confirmée par le locataire on affiche une autre carte #}
+			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR and suiviDemandeCloture %}
+				<div class="fr-tile fr-tile--sm fr-tile--horizontal fr-enlarge-link fr-mb-3w tile-last-suivi">
+					<div class="fr-tile__body">
+						<div class="fr-tile__content">
+							<h3 class="fr-tile__title">
+								<a href="{{ path('front_suivi_signalement_procedure_bailleur_cloture', {'code': signalement.codeSuivi}) }}"
+								data-matomo-clickable-event-category="Suivre mon signalement"
+								data-matomo-clickable-event-action="clickLink"
+								data-matomo-clickable-event-name="Demande de clôture du bailleur à confirmer"
+								>Demande de clôture du bailleur à confirmer</a> 
+							</h3>
+							<p class="fr-tile__detail">{{suiviDemandeCloture.createdAt|date('d/m/Y')}}</p>
+							<div class="fr-tile__start">
+								<p class="fr-badge fr-badge--error">A faire</p>
+							</div>
+						</div>
+					</div>
+					<div class="fr-tile__header">
+						<div class="fr-tile__pictogram">
+							<img src="{{ asset('img/picto-dsfr/conclusion.svg') }}" aria-hidden="true" class="fr-artwork">
+						</div>
+					</div>
+				</div>
+			{% endif %}  
 
 			<ul class="fr-btns-group fr-btns-group--center fr-btns-group--icon-left">
 				<li>

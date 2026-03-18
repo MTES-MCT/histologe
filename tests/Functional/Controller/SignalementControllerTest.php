@@ -13,6 +13,7 @@ use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Entity\TiersInvitation;
+use App\Manager\SuiviManager;
 use App\Repository\FileRepository;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SuiviRepository;
@@ -754,10 +755,22 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
-            'statut' => SignalementStatus::INJONCTION_BAILLEUR,
+            'referenceInjonction' => '2364',
         ]);
 
         $this->assertNotNull($signalement);
+
+        /** @var SuiviManager $suiviManager */
+        $suiviManager = static::getContainer()->get(SuiviManager::class);
+        $suivi = $suiviManager->createSuivi(
+            signalement: $signalement,
+            description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
+            type: Suivi::TYPE_AUTO,
+            category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
+            isPublic: true,
+            flush: true
+        );
+        $signalement->addSuivi($suivi);
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
@@ -818,10 +831,22 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
-            'statut' => SignalementStatus::INJONCTION_BAILLEUR,
+            'referenceInjonction' => '2364',
         ]);
 
         $this->assertNotNull($signalement);
+
+        /** @var SuiviManager $suiviManager */
+        $suiviManager = static::getContainer()->get(SuiviManager::class);
+        $suivi = $suiviManager->createSuivi(
+            signalement: $signalement,
+            description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
+            type: Suivi::TYPE_AUTO,
+            category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
+            isPublic: true,
+            flush: true
+        );
+        $signalement->addSuivi($suivi);
 
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
@@ -851,22 +876,19 @@ class SignalementControllerTest extends WebTestCase
             'uuid' => $signalement->getUuid(),
         ]);
 
-        /** @var Suivi $lastSuivi */
-        $lastSuivi = $signalement->getSuivis()->last();
-
-        $this->assertEquals(
-            SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
-            $lastSuivi->getCategory()
-        );
+        /** @var Suivi $suiviUsager */
+        $suiviUsager = $entityManager->getRepository(Suivi::class)->findOneBy([
+            'category' => SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
+        ]);
 
         $this->assertStringContainsString(
             'ne confirme pas la réalisation des travaux',
-            $lastSuivi->getDescription()
+            $suiviUsager->getDescription()
         );
 
         $this->assertStringContainsString(
             '&lt;b&gt;test&lt;/b&gt;',
-            $lastSuivi->getDescription()
+            $suiviUsager->getDescription()
         );
     }
 
@@ -878,8 +900,20 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
-            'statut' => SignalementStatus::INJONCTION_BAILLEUR,
+            'referenceInjonction' => '2364',
         ]);
+
+        /** @var SuiviManager $suiviManager */
+        $suiviManager = static::getContainer()->get(SuiviManager::class);
+        $suivi = $suiviManager->createSuivi(
+            signalement: $signalement,
+            description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
+            type: Suivi::TYPE_AUTO,
+            category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
+            isPublic: true,
+            flush: true
+        );
+        $signalement->addSuivi($suivi);
 
         $router = self::getContainer()->get(RouterInterface::class);
 
