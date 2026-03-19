@@ -248,7 +248,7 @@
 					{% endif %}
 				</div>
 			</div>
-			{% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_CLOSED %}
+			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
 				<h3 class="title-blue-france">Bon à savoir</h3>
 				<div>
 					<p> 

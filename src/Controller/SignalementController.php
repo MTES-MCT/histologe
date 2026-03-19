@@ -495,7 +495,10 @@ class SignalementController extends AbstractController
             'status' => TiersInvitationStatus::WAITING,
         ]);
 
-        $suiviDemandeCloture = $this->getSuiviDemandeCloture($signalement, $suiviRepository);
+        $suiviDemandeCloture = $suiviRepository->findOneBy([
+            'signalement' => $signalement,
+            'category' => SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
+        ]);
 
         return $this->render('front/suivi_signalement_dashboard.html.twig', [
             'signalement' => $signalement,
@@ -503,29 +506,6 @@ class SignalementController extends AbstractController
             'suiviCategory' => $suiviCategory,
             'tiersInvitation' => $tiersInvitation,
             'suiviDemandeCloture' => $suiviDemandeCloture,
-        ]);
-    }
-
-    private function getSuiviDemandeCloture(
-        Signalement $signalement,
-        SuiviRepository $suiviRepository,
-    ): ?Suivi {
-        if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
-            return null;
-        }
-
-        $suiviReponse = $suiviRepository->findOneBy([
-            'signalement' => $signalement,
-            'category' => SuiviCategory::injonctionBailleurReponseCategories(),
-        ]);
-
-        if (!$suiviReponse || SuiviCategory::INJONCTION_BAILLEUR_REPONSE_NON === $suiviReponse->getCategory()) {
-            return null;
-        }
-
-        return $suiviRepository->findOneBy([
-            'signalement' => $signalement,
-            'category' => SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
         ]);
     }
 
@@ -998,9 +978,8 @@ class SignalementController extends AbstractController
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
 
-        $suiviReponse = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::injonctionBailleurReponseCategories()]);
         $suiviDemandeCloture = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR]);
-        if (!$suiviReponse || SuiviCategory::INJONCTION_BAILLEUR_REPONSE_NON === $suiviReponse->getCategory() || !$suiviDemandeCloture) {
+        if (!$suiviDemandeCloture) {
             $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Le bailleur n\'a pas demandé la clôture de la démarche accélérée.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);

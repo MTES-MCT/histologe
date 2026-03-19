@@ -29,7 +29,7 @@ class StopProcedureType extends AbstractType
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Précisez la situation',
-                'help' => 'Dix (10) caractères minimum',
+                'help' => 'Dix (10) caractères minimum. Le commentaire ne sera pas partagé à l\'usager.',
                 'attr' => [
                     'rows' => 5,
                 ],

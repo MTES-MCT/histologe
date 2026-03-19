@@ -26,7 +26,7 @@ class BailleurClotureProcedureType extends AbstractType
             ->add('description', TextareaType::class, [
                 'label' => 'Précisez la situation <span class="fr-text-default--error">*</span>',
                 'label_html' => true,
-                'help' => 'Précisez la situation <em>(10 caractères minimum)</em>',
+                'help' => '(10 caractères minimum)',
                 'help_html' => true,
                 'required' => false,
                 'attr' => [
