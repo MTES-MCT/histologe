@@ -442,6 +442,7 @@
           "label": "Quelle a été la réponse du bailleur (propriétaire) ? (facultatif)",
           "slug": "info_procedure_bail_reponse",
           "description": "Format attendu : 255 caractères maximum",
+          "maxlength": 255,
           "conditional": {
             "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui'"
           },
@@ -2011,6 +2012,7 @@
           "type": "SignalementFormTextarea",
           "label": "Quelle a été la réponse de l'assurance ? (facultatif)",
           "slug": "info_procedure_reponse_assurance",
+          "maxlength": 255,
           "conditional": {
             "show": "formStore.data.info_procedure_assurance_contactee === 'oui'"
           },

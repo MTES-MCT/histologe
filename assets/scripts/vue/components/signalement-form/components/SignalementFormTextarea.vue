@@ -14,6 +14,7 @@
         @input="updateValue($event)"
         :aria-describedby="hasError ? id + '-text-input-error-desc-error' : undefined"
         :disabled="disabled"
+        :maxlength="maxlength"
       >
       </textarea>
     </div>
@@ -44,6 +45,7 @@ export default defineComponent({
     hasError: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
     error: { type: String, default: '' },
+    maxlength: { type: Number, default: null },
     // les propriétés suivantes ne sont pas utilisées,
     // mais si on ne les met pas, elles apparaissent dans le DOM
     // et ça soulève des erreurs W3C

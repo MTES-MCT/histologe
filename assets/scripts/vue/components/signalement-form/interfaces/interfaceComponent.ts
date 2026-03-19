@@ -26,6 +26,7 @@ export interface Component {
   placeholder?: string
   ariaControls?: string
   tagWhenEdit?: string
+  maxlength?: string
   autocomplete?: string
   accessibility?: any
 }
