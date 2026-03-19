@@ -124,6 +124,11 @@ class Suivi implements EntityHistoryInterface
         $this->waitingNotification = false;
     }
 
+    public function __toString(): string
+    {
+        return $this->createdAt->format('d/m/y H:i').' '.$this->category->value;
+    }
+
     public function setSuiviTransformerService(?SuiviTransformerService $suiviTransformerService): void
     {
         $this->suiviTransformerService = $suiviTransformerService;

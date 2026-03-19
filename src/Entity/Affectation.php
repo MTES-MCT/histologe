@@ -77,6 +77,11 @@ class Affectation implements EntityHistoryInterface
         $this->uuid = Uuid::v4();
     }
 
+    public function __toString(): string
+    {
+        return $this->createdAt->format('d/m/y H:i').' '.$this->getPartner()->getNom().' - '.$this->getStatut()->value.'';
+    }
+
     public function getId(): ?int
     {
         return $this->id;

@@ -54,7 +54,17 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFilter('phone', [$this, 'formatPhone']),
             new TwigFilter('badge_class', [$this, 'getBadgeClass']),
             new TwigFilter('badge_relance_class', [$this, 'getRelanceBadgeClass']),
+            new TwigFilter('entity_label', [$this, 'getEntityLabel']),
         ];
+    }
+
+    public function getEntityLabel(object $entity): ?string
+    {
+        if ($entity instanceof \Stringable) {
+            return (string) $entity;
+        }
+
+        return null;
     }
 
     public function getBadgeClass(?int $days): string

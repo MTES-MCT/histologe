@@ -40,6 +40,11 @@ class UserSignalementSubscription implements EntityHistoryInterface
         $this->isLegacy = false;
     }
 
+    public function __toString(): string
+    {
+        return $this->createdAt->format('d/m/y H:i').' '.$this->getUser()->getNomComplet();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
