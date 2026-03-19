@@ -96,7 +96,8 @@ export const store = {
       { Id: 'en_attente', Text: 'En attente' },
       { Id: 'refuse', Text: 'Refusée' },
       { Id: 'cloture_un_partenaire', Text: 'Clôturée par au moins un partenaire' },
-      { Id: 'cloture_tous_partenaire', Text: 'Clôturée par tous les partenaires' }
+      { Id: 'cloture_tous_partenaire', Text: 'Clôturée par tous les partenaires' },
+      { Id: 'cloture_commune', Text: 'Clôturée par la commune' }
     ],
     statusVisiteList: [
       { Id: 'Non planifiée', Text: 'Visite non planifiée' },

@@ -22,14 +22,14 @@
     <hr class="hr--blue-france">
     <section class="fr-container--fluid">
         {% for item in items %}
-            {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
+            {% set occupantInfo = item.reference ~ ' - ' ~ item.nomOccupant|upper ~ ' ' ~ item.prenomOccupant|capitalize %}
             {% set days = item.demandeFermetureUsagerDaysAgo %}
             {% set daysLabel = days is not null ? ' ' ~ (days < 2 ? 'JOUR' : 'JOURS') : '—' %}
             {% include 'back/dashboard/components/_card.html.twig' with {
                 data: [
                     '<div><span class="fr-badge fr-badge--no-icon ' ~ days|badge_class ~ '">' ~ item.demandeFermetureUsagerDaysAgo  ~ daysLabel   ~ '</span></div>',
                     '<div class="fr-text-label--blue-france">
-                            <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
+                            <div><strong class="fr-text--lg">' ~ occupantInfo ~ '</strong></div>
                             <div>' ~ item.adresse ~ '</div>
                         </div>',
                     '<div>

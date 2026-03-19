@@ -26,12 +26,12 @@
     <hr class="hr--blue-france">
     <section class="fr-container--fluid">
         {% for item in items %}
-            {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
+            {% set occupantInfo = item.reference ~ ' - ' ~ item.nomOccupant|upper ~ ' ' ~ item.prenomOccupant|capitalize %}
             {% include 'back/dashboard/components/_card.html.twig' with {
                 data: [
                     '<div><span class="fr-badge fr-badge--no-icon fr-badge--warning">' ~ item.profilNonDeliverable  ~ '</span></div>',
                     '<div class="fr-text-label--blue-france">
-                            <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
+                            <div><strong class="fr-text--lg">' ~ occupantInfo ~ '</strong></div>
                             <div>' ~ item.adresse ~ '</div>
                         </div>',
                     '<div>' ~ item.depotAt|date('d/m/Y') ~ '</div>',

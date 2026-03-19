@@ -6,6 +6,7 @@ use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\CreationSource;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
@@ -210,6 +211,23 @@ class SearchFilter
                 ->setParameter('idUnclosedAffectation', $subquery->getQuery()->getSingleColumnResult())
                 ->setParameter('statut', SignalementStatus::ARCHIVED->value);
                 // TODO : à vérifier
+            }
+
+            if (\in_array('COMMUNE_CLOSED', $filters['closed_affectation'])) {
+                $subquery = $this->entityManager->getRepository(Affectation::class)
+                    ->createQueryBuilder('a')
+                    ->select('DISTINCT s.id')
+                    ->leftJoin('a.signalement', 's')
+                    ->innerJoin('a.partner', 'p')
+                    ->where('a.statut = :statut_affectation_closed')
+                    ->andWhere('p.type = :partner_type')
+                    ->setParameter('statut_affectation_closed', AffectationStatus::CLOSED->value)
+                    ->setParameter('partner_type', PartnerType::COMMUNE_SCHS->value);
+
+                $qb->andWhere(
+                    $qb->expr()->in('s.id', ':idClosedCommuneAffectation')
+                )
+                ->setParameter('idClosedCommuneAffectation', $subquery->getQuery()->getSingleColumnResult());
             }
         }
 

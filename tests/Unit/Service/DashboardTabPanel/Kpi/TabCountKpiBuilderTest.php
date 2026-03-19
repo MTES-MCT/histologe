@@ -64,7 +64,7 @@ class TabCountKpiBuilderTest extends TestCase
 
         $countNouveaux = new CountNouveauxDossiers(1, 2, 3, 4);
         $countMessages = new CountDossiersMessagesUsagers(1, 2, 3);
-        $countAfermer = new CountAfermer(1, 1, 1);
+        $countAfermer = new CountAfermer(1, 1, 1, 1);
         $countAverifier = new CountDossiersAVerifier(3, 9);
 
         $this->signalementRepository
@@ -113,7 +113,7 @@ class TabCountKpiBuilderTest extends TestCase
         $this->assertInstanceOf(TabCountKpi::class, $tabCountKpi);
         $this->assertSame(10, $tabCountKpi->countNouveauxDossiers);
         $this->assertSame(6, $tabCountKpi->countDossiersMessagesUsagers);
-        $this->assertSame(3, $tabCountKpi->countDossiersAFermer);
+        $this->assertSame(4, $tabCountKpi->countDossiersAFermer);
         $this->assertSame(12, $tabCountKpi->countDossiersAVerifier);
     }
 
@@ -141,7 +141,7 @@ class TabCountKpiBuilderTest extends TestCase
 
         $countNouveaux = new CountNouveauxDossiers(1, 2, 1, 2);
         $countMessages = new CountDossiersMessagesUsagers(1, 2, 2);
-        $countAfermer = new CountAfermer(1, 0, 0);
+        $countAfermer = new CountAfermer(1, 0, 0, 2);
         $countAverifier = new CountDossiersAVerifier(2, 2);
 
         $this->signalementRepository
@@ -188,7 +188,7 @@ class TabCountKpiBuilderTest extends TestCase
 
         $this->assertSame(6, $tabCountKpi->countNouveauxDossiers);
         $this->assertSame(5, $tabCountKpi->countDossiersMessagesUsagers);
-        $this->assertSame(1, $tabCountKpi->countDossiersAFermer);
+        $this->assertSame(3, $tabCountKpi->countDossiersAFermer);
         $this->assertSame(4, $tabCountKpi->countDossiersAVerifier);
     }
 }

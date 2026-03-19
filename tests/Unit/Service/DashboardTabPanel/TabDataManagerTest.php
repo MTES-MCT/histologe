@@ -87,8 +87,8 @@ class TabDataManagerTest extends WebTestCase
         $this->assertIsArray($result);
         $this->assertCount(1, $result);
         $this->assertInstanceOf(TabDossier::class, $result[0]);
-        $this->assertSame('Dupont', $result[0]->nomDeclarant);
-        $this->assertSame('Jean', $result[0]->prenomDeclarant);
+        $this->assertSame('Dupont', $result[0]->nomOccupant);
+        $this->assertSame('Jean', $result[0]->prenomOccupant);
         $this->assertSame('#2023-001', $result[0]->reference);
         $this->assertSame('1 rue de Paris', $result[0]->adresse);
         $this->assertSame('en cours', $result[0]->statut);
@@ -312,8 +312,8 @@ class TabDataManagerTest extends WebTestCase
         $result = $tabDataManager->getMessagesUsagersNouveauxMessages();
         $this->assertCount(1, $result->dossiers);
         $this->assertSame(1, $result->count);
-        $this->assertSame('Martin', $result->dossiers[0]->nomDeclarant);
-        $this->assertSame('Alice', $result->dossiers[0]->prenomDeclarant);
+        $this->assertSame('Martin', $result->dossiers[0]->nomOccupant);
+        $this->assertSame('Alice', $result->dossiers[0]->prenomOccupant);
         $this->assertSame('#2024-001', $result->dossiers[0]->reference);
         $this->assertSame('uuid-456', $result->dossiers[0]->uuid);
         $this->assertInstanceOf(\DateTimeImmutable::class, $result->dossiers[0]->messageAt);
@@ -385,7 +385,7 @@ class TabDataManagerTest extends WebTestCase
         $this->assertCount(1, $result->dossiers);
         $this->assertSame(1, $result->count);
         $this->assertSame('#2024-002', $result->dossiers[0]->reference);
-        $this->assertSame('Durand', $result->dossiers[0]->nomDeclarant);
+        $this->assertSame('Durand', $result->dossiers[0]->nomOccupant);
         $this->assertInstanceOf(\DateTimeImmutable::class, $result->dossiers[0]->clotureAt);
         $this->assertInstanceOf(\DateTimeImmutable::class, $result->dossiers[0]->messageAt);
     }
@@ -415,6 +415,37 @@ class TabDataManagerTest extends WebTestCase
             $this->tabCountKpiBuilder,
         );
         $result = $tabDataManager->getDossiersFermePartenaireTous($params);
+
+        $this->assertInstanceOf(TabDossierResult::class, $result);
+        $this->assertSame($expectedDossiers, $result->dossiers);
+        $this->assertSame($expectedCount, $result->count);
+    }
+
+    public function testGetDossiersFermePartenaireCommuneReturnsExpectedResult(): void
+    {
+        $expectedDossiers = [['id' => 99]];
+        $expectedCount = 1;
+        $params = new TabQueryParameters(null, null);
+
+        $this->signalementRepository
+            ->method('findDossiersFermePartenaireCommune')
+            ->with($params)
+            ->willReturn($expectedDossiers);
+        $this->signalementRepository
+            ->method('countDossiersFermePartenaireCommune')
+            ->with($params)
+            ->willReturn($expectedCount);
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder,
+        );
+        $result = $tabDataManager->getDossiersFermePartenaireCommune($params);
 
         $this->assertInstanceOf(TabDossierResult::class, $result);
         $this->assertSame($expectedDossiers, $result->dossiers);
@@ -456,8 +487,8 @@ class TabDataManagerTest extends WebTestCase
         $result = $tabDataManager->getMessagesUsagersMessagesSansReponse();
         $this->assertCount(1, $result->dossiers);
         $this->assertSame(1, $result->count);
-        $this->assertSame('Lemoine', $result->dossiers[0]->nomDeclarant);
-        $this->assertSame('Claire', $result->dossiers[0]->prenomDeclarant);
+        $this->assertSame('Lemoine', $result->dossiers[0]->nomOccupant);
+        $this->assertSame('Claire', $result->dossiers[0]->prenomOccupant);
         $this->assertSame('#2024-003', $result->dossiers[0]->reference);
         $this->assertSame(3, $result->dossiers[0]->messageDaysAgo);
         $this->assertSame('uuid-999', $result->dossiers[0]->uuid);
@@ -501,8 +532,8 @@ class TabDataManagerTest extends WebTestCase
         $result = $tabDataManager->getDossiersAVerifierSansActivitePartenaires();
         $this->assertCount(1, $result->dossiers);
         $this->assertSame(1, $result->count);
-        $this->assertSame('Lemoine', $result->dossiers[0]->nomDeclarant);
-        $this->assertSame('Claire', $result->dossiers[0]->prenomDeclarant);
+        $this->assertSame('Lemoine', $result->dossiers[0]->nomOccupant);
+        $this->assertSame('Claire', $result->dossiers[0]->prenomOccupant);
         $this->assertSame('#2024-003', $result->dossiers[0]->reference);
         $this->assertSame(3, $result->dossiers[0]->derniereActionPartenaireDaysAgo);
         $this->assertSame(SuiviCategory::MESSAGE_PARTNER->label(), $result->dossiers[0]->derniereActionTypeSuivi);
@@ -577,8 +608,8 @@ class TabDataManagerTest extends WebTestCase
         $this->assertSame(1, $result->count);
         $this->assertSame(SignalementStatus::ACTIVE->label(), $result->dossiers[0]->statut);
         $this->assertSame('#2024-003', $result->dossiers[0]->reference);
-        $this->assertSame('Lemoine', $result->dossiers[0]->nomDeclarant);
-        $this->assertSame('Claire', $result->dossiers[0]->prenomDeclarant);
+        $this->assertSame('Lemoine', $result->dossiers[0]->nomOccupant);
+        $this->assertSame('Claire', $result->dossiers[0]->prenomOccupant);
         $this->assertInstanceOf('DateTimeImmutable', $result->dossiers[0]->derniereActionAt);
         $this->assertSame('30 boulevard Nation 62100 Alès', $result->dossiers[0]->adresse);
         $this->assertSame('Suivi visible par l\'usager', $result->dossiers[0]->derniereAction);

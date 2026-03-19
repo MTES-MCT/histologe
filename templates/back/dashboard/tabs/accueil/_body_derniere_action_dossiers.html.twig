@@ -24,11 +24,11 @@
                         : 'fr-badge--grey'
                     %}
 
-                    {% set declarantInfo = item.reference ~ ' - ' ~ item.nomDeclarant|upper ~ ' ' ~ item.prenomDeclarant|capitalize %}
+                    {% set occupantInfo = item.reference ~ ' - ' ~ item.nomOccupant|upper ~ ' ' ~ item.prenomOccupant|capitalize %}
                     {% include 'back/dashboard/components/_card.html.twig' with {
                         data: [
                             '<div class="fr-text-label--blue-france">
-                                <div><strong class="fr-text--lg">' ~ declarantInfo ~ '</strong></div>
+                                <div><strong class="fr-text--lg">' ~ occupantInfo ~ '</strong></div>
                                 <div>' ~ item.adresse ~ '</div>
                                 <div class="fr-mt-1v">
                                     <span class="confetti ' ~ confettiClass ~ '"></span> ' ~ item.statut|capitalize ~ '

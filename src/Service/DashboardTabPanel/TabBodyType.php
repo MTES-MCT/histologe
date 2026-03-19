@@ -16,6 +16,7 @@ class TabBodyType
 
     // Tab A fermer
     public const string TAB_DATA_TYPE_DOSSIERS_FERME_PARTENAIRE_TOUS = 'dossiers-ferme-partenaire-tous';
+    public const string TAB_DATA_TYPE_DOSSIERS_FERME_COMMUNE = 'dossiers-ferme-commune';
     public const string TAB_DATA_TYPE_DOSSIERS_DEMANDE_FERMETURE_USAGER = 'dossiers-demandes-fermeture-usager';
     public const string TAB_DATA_TYPE_DOSSIERS_RELANCE_USAGER_SANS_REPONSE = 'dossiers-relance-usager-sans-reponse';
 
