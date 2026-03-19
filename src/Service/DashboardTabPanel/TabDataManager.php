@@ -85,8 +85,8 @@ class TabDataManager
                 : $signalement['suiviCategory']->label();
             $tabDossiers[] = new TabDossier(
                 uuid: $signalement['uuid'],
-                nomDeclarant: $signalement['nomOccupant'],
-                prenomDeclarant: $signalement['prenomOccupant'],
+                nomOccupant: $signalement['nomOccupant'],
+                prenomOccupant: $signalement['prenomOccupant'],
                 reference: '#'.$signalement['reference'],
                 adresse: $signalement['adresseOccupant'],
                 statut: $signalement['statut']->label(),
@@ -378,8 +378,8 @@ class TabDataManager
             $suivi = $suivis[$i];
             $tabDossiers[] = new TabDossier(
                 uuid: $suivi['uuid'],
-                nomDeclarant: $suivi['nomOccupant'],
-                prenomDeclarant: $suivi['prenomOccupant'],
+                nomOccupant: $suivi['nomOccupant'],
+                prenomOccupant: $suivi['prenomOccupant'],
                 reference: '#'.$suivi['reference'],
                 adresse: $suivi['adresse'],
                 messageAt: new \DateTimeImmutable($suivi['messageAt']),
@@ -409,8 +409,8 @@ class TabDataManager
             $suivi = $suivis[$i];
             $tabDossiers[] = new TabDossier(
                 uuid: $suivi['uuid'],
-                nomDeclarant: $suivi['nomOccupant'],
-                prenomDeclarant: $suivi['prenomOccupant'],
+                nomOccupant: $suivi['nomOccupant'],
+                prenomOccupant: $suivi['prenomOccupant'],
                 reference: '#'.$suivi['reference'],
                 adresse: $suivi['adresse'],
                 clotureAt: $suivi['clotureAt'],
@@ -441,8 +441,8 @@ class TabDataManager
             $suivi = $suivis[$i];
             $tabDossiers[] = new TabDossier(
                 uuid: $suivi['uuid'],
-                nomDeclarant: $suivi['nomOccupant'],
-                prenomDeclarant: $suivi['prenomOccupant'],
+                nomOccupant: $suivi['nomOccupant'],
+                prenomOccupant: $suivi['prenomOccupant'],
                 reference: '#'.$suivi['reference'],
                 adresse: $suivi['adresse'],
                 messageAt: new \DateTimeImmutable($suivi['messageAt']),
@@ -471,8 +471,8 @@ class TabDataManager
             $signalement = $signalements[$i];
             $tabDossiers[] = new TabDossier(
                 uuid: $signalement['uuid'],
-                nomDeclarant: $signalement['nomOccupant'],
-                prenomDeclarant: $signalement['prenomOccupant'],
+                nomOccupant: $signalement['nomOccupant'],
+                prenomOccupant: $signalement['prenomOccupant'],
                 reference: '#'.$signalement['reference'],
                 adresse: $signalement['adresse'],
                 derniereActionAt: new \DateTimeImmutable($signalement['dernierSuiviAt']),
@@ -499,8 +499,8 @@ class TabDataManager
             $signalement = $signalements[$i];
             $tabDossiers[] = new TabDossier(
                 uuid: $signalement['uuid'],
-                nomDeclarant: $signalement['nomOccupant'],
-                prenomDeclarant: $signalement['prenomOccupant'],
+                nomOccupant: $signalement['nomOccupant'],
+                prenomOccupant: $signalement['prenomOccupant'],
                 reference: '#'.$signalement['reference'],
                 adresse: $signalement['adresse'],
                 depotAt: $signalement['createdAt'],
@@ -564,8 +564,8 @@ class TabDataManager
                 : $signalement['suiviCategory']->label();
             $tabDossiers[] = new TabDossier(
                 uuid: $signalement['uuid'],
-                nomDeclarant: $signalement['nomOccupant'],
-                prenomDeclarant: $signalement['prenomOccupant'],
+                nomOccupant: $signalement['nomOccupant'],
+                prenomOccupant: $signalement['prenomOccupant'],
                 reference: '#'.$signalement['reference'],
                 adresse: $signalement['adresseOccupant'],
                 statut: $signalement['statut']->label(),

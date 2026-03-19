@@ -11,8 +11,8 @@ readonly class TabDossier
     public function __construct(
         public ?string $uuid = null,
         public ?ProfileDeclarant $profilDeclarant = null,
-        public ?string $nomDeclarant = null,
-        public ?string $prenomDeclarant = null,
+        public ?string $nomOccupant = null,
+        public ?string $prenomOccupant = null,
         public ?string $reference = null,
         public ?string $adresse = null,
         public ?\DateTimeImmutable $depotAt = null,

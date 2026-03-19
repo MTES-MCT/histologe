@@ -1752,8 +1752,8 @@ class SignalementRepository extends ServiceEntityRepository
         return array_map(
             fn (array $row) => new TabDossier(
                 uuid: $row['uuid'],
-                nomDeclarant: $row['nomOccupant'],
-                prenomDeclarant: $row['prenomOccupant'],
+                nomOccupant: $row['nomOccupant'],
+                prenomOccupant: $row['prenomOccupant'],
                 reference: $row['reference'],
                 adresse: $row['fullAddress'],
                 clotureAt: $row['lastClosedAt'] ? new \DateTimeImmutable($row['lastClosedAt']) : null,
@@ -1845,8 +1845,8 @@ class SignalementRepository extends ServiceEntityRepository
         return array_map(
             fn (array $row) => new TabDossier(
                 uuid: $row['uuid'],
-                nomDeclarant: $row['nomOccupant'],
-                prenomDeclarant: $row['prenomOccupant'],
+                nomOccupant: $row['nomOccupant'],
+                prenomOccupant: $row['prenomOccupant'],
                 reference: $row['reference'],
                 adresse: $row['fullAddress'],
                 clotureAt: $row['lastClosedAt'] ? new \DateTimeImmutable($row['lastClosedAt']) : null,
@@ -1925,8 +1925,8 @@ class SignalementRepository extends ServiceEntityRepository
         return array_map(
             fn (array $row) => new TabDossier(
                 uuid: $row['uuid'],
-                nomDeclarant: $row['nomOccupant'] ?? null,
-                prenomDeclarant: $row['prenomOccupant'] ?? null,
+                nomOccupant: $row['nomOccupant'] ?? null,
+                prenomOccupant: $row['prenomOccupant'] ?? null,
                 reference: $row['reference'] ?? null,
                 adresse: $row['fullAddress'] ?? null,
                 demandeFermetureUsagerDaysAgo: isset($row['demandeFermetureUsagerDaysAgo']) ? (int) $row['demandeFermetureUsagerDaysAgo'] : null,
@@ -2064,8 +2064,8 @@ class SignalementRepository extends ServiceEntityRepository
          */ function (array $row): TabDossier {
             return new TabDossier(
                 uuid: $row['uuid'],
-                nomDeclarant: $row['nom_occupant'],
-                prenomDeclarant: $row['prenom_occupant'],
+                nomOccupant: $row['nom_occupant'],
+                prenomOccupant: $row['prenom_occupant'],
                 reference: $row['reference'],
                 adresse: $row['fullAddress'],
                 nbRelanceDossier: (int) $row['nb_relances'],

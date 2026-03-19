@@ -291,8 +291,8 @@ class SignalementRepositoryTest extends KernelTestCase
         foreach ($dossiers as $dossier) {
             $this->assertNotNull($dossier->uuid);
             $this->assertNotNull($dossier->profilDeclarant);
-            $this->assertNotNull($dossier->nomDeclarant);
-            $this->assertNotNull($dossier->prenomDeclarant);
+            $this->assertNotNull($dossier->nomOccupant);
+            $this->assertNotNull($dossier->prenomOccupant);
             $this->assertNotNull($dossier->reference);
             $this->assertNotNull($dossier->adresse);
             $this->assertNotNull($dossier->depotAt);
@@ -324,8 +324,8 @@ class SignalementRepositoryTest extends KernelTestCase
         foreach ($dossiers as $dossier) {
             $this->assertNotNull($dossier->uuid);
             $this->assertNotNull($dossier->profilDeclarant);
-            $this->assertNotNull($dossier->nomDeclarant);
-            $this->assertNotNull($dossier->prenomDeclarant);
+            $this->assertNotNull($dossier->nomOccupant);
+            $this->assertNotNull($dossier->prenomOccupant);
             $this->assertNotNull($dossier->reference);
             $this->assertNotNull($dossier->adresse);
             $this->assertNotNull($dossier->depotAt);
