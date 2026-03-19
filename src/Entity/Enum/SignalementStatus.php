@@ -65,10 +65,10 @@ enum SignalementStatus: string
             self::ARCHIVED,
             self::DRAFT,
             self::DRAFT_ARCHIVED,
-            self::INJONCTION_CLOSED,
         ];
         if ($includeInjonctionBailleur) {
             $list[] = self::INJONCTION_BAILLEUR;
+            $list[] = self::INJONCTION_CLOSED;
         }
 
         return $list;
