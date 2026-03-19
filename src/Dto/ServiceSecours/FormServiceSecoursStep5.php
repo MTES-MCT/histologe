@@ -2,14 +2,14 @@
 
 namespace App\Dto\ServiceSecours;
 
-use App\Entity\DesordreCritere;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class FormServiceSecoursStep5
 {
-    public const string DESORDRE_AUTRE = 'desordres_service_secours_autre';
+    public const string DESORDRE_AUTRE_SLUG = 'desordres_service_secours_autre';
+    public const string DESORDRE_AUTRE_PRECISION_SLUG = 'desordres_service_secours_autre_precision';
 
-    /** @var array<DesordreCritere> */
+    /** @var array<string> */
     #[Assert\Count(
         min: 1,
         minMessage: 'Veuillez sélectionner au moins un désordre.',
@@ -41,6 +41,6 @@ class FormServiceSecoursStep5
 
     public function hasDesordreAutre(): bool
     {
-        return array_any($this->desordres, fn ($desordre) => self::DESORDRE_AUTRE === $desordre->getSlugCritere());
+        return in_array(self::DESORDRE_AUTRE_SLUG, $this->desordres, true);
     }
 }

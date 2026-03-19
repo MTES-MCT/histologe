@@ -125,7 +125,7 @@ class FileFactory
         $fileDescription = $file['description'] ?? null;
 
         return $this->createInstanceFrom(
-            filename: $file['file'] ?? $file['filePath'],
+            filename: $file['file'],
             title: $file['titre'],
             signalement: $signalement,
             documentType: $documentType,

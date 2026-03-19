@@ -3,8 +3,6 @@
 namespace App\Form\ServiceSecours;
 
 use App\Dto\ServiceSecours\FormServiceSecoursStep5;
-use App\Entity\DesordreCritere;
-use App\Entity\DesordrePrecision;
 use App\Entity\Enum\AppContext;
 use App\Repository\DesordreCritereRepository;
 use Symfony\Component\Form\AbstractType;
@@ -29,30 +27,23 @@ class ServiceSecoursStep5Type extends AbstractType
         $isAutreChecked = $data instanceof FormServiceSecoursStep5
             && \in_array('desordres_service_secours_autre', $data->desordres, true);
 
-        $desordres = $this->desordreCritereRepository->findAllWithPrecisions(AppContext::SERVICE_SECOURS);
+        [$choices, $hints] = $this->getDesordreChoicesAndHints();
 
         $builder->add('desordres', ChoiceType::class, [
-            'choices' => $desordres,
-            'choice_value' => fn (?DesordreCritere $desordre) => $desordre?->getSlugCritere(),
-            'choice_label' => fn (DesordreCritere $desordre) => $desordre->getLabelCritere(),
-            'choice_attr' => function (DesordreCritere $desordre): array {
-                $precision = $desordre->getDesordrePrecisions()->first();
-                /** @var DesordrePrecision $precision */
-                if ($precision) {
-                    $description = $precision->getLabel();
-                }
-
+            'choices' => $choices,
+            'choice_attr' => function (?string $slug) use ($hints): array {
                 return [
-                    'data-dsfr-hint' => $description ?? '',
+                    'data-dsfr-hint' => $hints[$slug] ?? '',
                 ];
             },
             'multiple' => true,
             'expanded' => true,
             'help' => 'Vous pouvez sélectionner plusieurs options.',
             'help_html' => true,
-            'label' => 'Désordres <span class="text-required">*</span><div class="fr-text--regular fr-mt-1v">
-            Sélectionnez les principaux éléments motivant le signalement.
-        </div>',
+            'label' => '<div class="fr-h5">Désordres <span class="text-required">*</span></div>
+                <div class="fr-text--regular fr-mt-1v">
+                    Sélectionnez les principaux éléments motivant le signalement.
+                </div>',
             'label_html' => true,
         ]);
 
@@ -106,6 +97,22 @@ class ServiceSecoursStep5Type extends AbstractType
             'allow_add' => true,
             'allow_delete' => true,
         ]);
+    }
+
+    private function getDesordreChoicesAndHints(): array
+    {
+        $desordres = $this->desordreCritereRepository->findAllWithPrecisions(AppContext::SERVICE_SECOURS);
+        $choices = [];
+        $hints = [];
+        foreach ($desordres as $desordre) {
+            $slug = $desordre->getSlugCritere();
+            $choices[$desordre->getLabelCritere()] = $slug;
+
+            $precision = $desordre->getDesordrePrecisions()->first();
+            $hints[$slug] = $precision ? $precision->getLabel() : '';
+        }
+
+        return [$choices, $hints];
     }
 
     public function configureOptions(OptionsResolver $resolver): void

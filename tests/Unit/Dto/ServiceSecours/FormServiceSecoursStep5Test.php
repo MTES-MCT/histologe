@@ -28,7 +28,7 @@ class FormServiceSecoursStep5Test extends TestCase
     public function provideHasDesordreAutreCases(): array
     {
         return [
-            'avec autre' => [[FormServiceSecoursStep5::DESORDRE_AUTRE], true],
+            'avec autre' => [[FormServiceSecoursStep5::DESORDRE_AUTRE_SLUG], true],
             'sans autre' => [['foo', 'bar'], false],
             'vide' => [[], false],
         ];

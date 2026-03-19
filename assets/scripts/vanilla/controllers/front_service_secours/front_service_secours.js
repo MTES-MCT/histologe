@@ -126,6 +126,7 @@ function initUploadPhotos() {
   /**
    * @type {Array<{
    *   titre: string,
+   *   file: string,
    *   filePath: string|null,
    *   progress: number,
    *   status: 'uploading'|'uploaded'|'error',
@@ -152,10 +153,12 @@ function initUploadPhotos() {
                 if (
                   parsedFile &&
                   typeof parsedFile.titre === 'string' &&
-                  typeof parsedFile.filePath === 'string'
+                  typeof parsedFile.filePath === 'string' &&
+                  typeof parsedFile.file === 'string'
                 ) {
                   return {
                     titre: parsedFile.titre,
+                    file: parsedFile.file,
                     filePath: parsedFile.filePath,
                     progress: 100,
                     status: 'uploaded',
@@ -170,11 +173,13 @@ function initUploadPhotos() {
 
             if (
               typeof file === 'object' &&
+              typeof file.file === 'string' &&
               typeof file.titre === 'string' &&
               typeof file.filePath === 'string'
             ) {
               return {
                 titre: file.titre,
+                file: file.file,
                 filePath: file.filePath,
                 progress: 100,
                 status: 'uploaded',
@@ -214,6 +219,7 @@ function initUploadPhotos() {
         if (validationError) {
           uploadedFiles.push({
             titre: file.name,
+            file: null,
             filePath: null,
             progress: 0,
             status: 'error',
@@ -226,6 +232,7 @@ function initUploadPhotos() {
         const fileIndex =
           uploadedFiles.push({
             titre: file.name,
+            file: null,
             filePath: null,
             progress: 0,
             status: 'uploading',
@@ -261,6 +268,7 @@ function initUploadPhotos() {
           uploadedFiles[fileIndex] = {
             titre: data.titre,
             filePath: data.filePath,
+            file: data.file,
             progress: 100,
             status: 'uploaded',
           };
@@ -368,6 +376,7 @@ function initUploadPhotos() {
         inputHidden.value = JSON.stringify({
           titre: file.titre,
           filePath: file.filePath,
+          file: file.file,
         });
         hiddenContainer.appendChild(inputHidden);
       });

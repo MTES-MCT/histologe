@@ -3,7 +3,8 @@
 namespace App\Factory;
 
 use App\Dto\ServiceSecours\FormServiceSecours;
-use App\Entity\DesordrePrecision;
+use App\Dto\ServiceSecours\FormServiceSecoursStep5;
+use App\Entity\DesordreCritere;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\MotifCloture;
@@ -15,6 +16,7 @@ use App\Entity\ServiceSecoursRoute;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\BailleurRepository;
+use App\Repository\DesordreCritereRepository;
 use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\Signalement\ZipcodeProvider;
 
@@ -24,6 +26,7 @@ class SignalementFactory
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly BailleurRepository $bailleurRepository,
+        private readonly DesordreCritereRepository $desordreCritereRepository,
     ) {
     }
 
@@ -169,12 +172,20 @@ class SignalementFactory
     private function handleStep5(FormServiceSecours $formServiceSecours, Signalement $signalement): void
     {
         $jsonContent = [];
-        foreach ($formServiceSecours->step5->desordres as $desordreCritere) {
-            /** @var DesordrePrecision $desordrePrecision */
-            $desordrePrecision = $desordreCritere->getDesordrePrecisions()->current();
+
+        $desordresCriteres = $this->desordreCritereRepository->findBySlugsWithPrecisions(
+            $formServiceSecours->step5->desordres
+        );
+
+        /** @var DesordreCritere $desordreCritere */
+        foreach ($desordresCriteres as $desordreCritere) {
+            $desordrePrecision = $desordreCritere->getDesordrePrecisions()->first();
+            if (false === $desordrePrecision) {
+                continue;
+            }
             $signalement->addDesordrePrecision($desordrePrecision);
 
-            if ('desordres_service_secours_autre_precision' === $desordrePrecision->getDesordrePrecisionSlug()) {
+            if (FormServiceSecoursStep5::DESORDRE_AUTRE_PRECISION_SLUG === $desordrePrecision->getDesordrePrecisionSlug()) {
                 $jsonContent[$desordrePrecision->getDesordrePrecisionSlug()] = $formServiceSecours->step5->desordresAutre;
             }
         }

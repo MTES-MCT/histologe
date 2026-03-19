@@ -29,7 +29,7 @@ class SignalementServiceSecoursFileMessageHandler
 
         $signalement = $this->signalementRepository->find($signalementId);
         $jsonContent = $signalement->getJsonContent();
-        $uploadedFiles = json_decode($jsonContent['uploadedFiles'], true);
+        $uploadedFiles = $jsonContent['uploadedFiles'] ?? [];
 
         foreach ($uploadedFiles as $uploadedFile) {
             $this->signalementFileAttacher->createAndAttach($signalement, $uploadedFile);

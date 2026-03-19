@@ -87,4 +87,15 @@ class DesordreCritereRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findBySlugsWithPrecisions(array $slugs): array
+    {
+        return $this->createQueryBuilder('dc')
+            ->leftJoin('dc.desordrePrecisions', 'dp')
+            ->addSelect('dp')
+            ->andWhere('dc.slugCritere IN (:slugs)')
+            ->setParameter('slugs', $slugs)
+            ->getQuery()
+            ->getResult();
+    }
 }
