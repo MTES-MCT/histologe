@@ -3,7 +3,6 @@
 namespace App\Tests\Unit\Dto\ServiceSecours;
 
 use App\Dto\ServiceSecours\FormServiceSecoursStep5;
-use App\Entity\DesordreCritere;
 use PHPUnit\Framework\TestCase;
 
 class FormServiceSecoursStep5Test extends TestCase
@@ -14,13 +13,7 @@ class FormServiceSecoursStep5Test extends TestCase
     public function testHasDesordreAutre(array $slugs, bool $expected): void
     {
         $dto = new FormServiceSecoursStep5();
-
-        $dto->desordres = array_map(function (string $slug) {
-            $mock = $this->createMock(DesordreCritere::class);
-            $mock->method('getSlugCritere')->willReturn($slug);
-
-            return $mock;
-        }, $slugs);
+        $dto->desordres = $slugs;
 
         self::assertSame($expected, $dto->hasDesordreAutre());
     }

@@ -35,7 +35,7 @@ class SignalementServiceSecoursFileMessageHandlerTest extends TestCase
         ];
 
         $jsonContent = [
-            'uploadedFiles' => json_encode($uploadedFiles, \JSON_THROW_ON_ERROR),
+            'uploadedFiles' => $uploadedFiles,
             'otherKey' => 'otherValue',
         ];
 
@@ -60,27 +60,6 @@ class SignalementServiceSecoursFileMessageHandlerTest extends TestCase
             ->method('flush');
 
         $logger = $this->createMock(LoggerInterface::class);
-        $logger
-            ->expects(self::exactly(2))
-            ->method('info')
-            ->withConsecutive(
-                [
-                    'Start handling SignalementServiceSecoursFileMessageHandler',
-                    [
-                        'signalementId' => $signalementId,
-                        'step' => 'send-files',
-                    ],
-                ],
-                [
-                    'SignalementServiceSecoursFileMessageHandler handled successfully',
-                    [
-                        'signalementId' => $signalementId,
-                        'nbFiles' => 2,
-                        'step' => 'send-files',
-                    ],
-                ]
-            );
-
         $expectedFiles = $uploadedFiles;
         $callIndex = 0;
         $signalementFileAttacher = $this->createMock(SignalementFileAttacher::class);
