@@ -73,7 +73,9 @@
           "slug": "vos_coordonnees_occupant_tel",
           "description": "Format attendu : Veuillez sélectionner le pays pour obtenir l'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
-            "message": "Veuillez renseigner votre numéro de téléphone."
+            "message": "Veuillez renseigner votre numéro de téléphone.",
+            "expression": "!formStore.data.vos_coordonnees_occupant_tel || !/[\\s\\+\\-\\.]/.test(formStore.data.vos_coordonnees_occupant_tel)",
+            "expressionMessage": "Le numéro de téléphone ne doit pas contenir d'espaces, de tirets, de points ou d'indicatif international. Format attendu : 0702030405"
           },
           "accessibility": {
             "name": "telephone",
@@ -192,7 +194,9 @@
           "slug": "coordonnees_bailleur_tel",
           "description": "Format attendu : Veuillez sélectionner le pays pour obtenir l'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
-            "required": false
+            "required": false,
+            "expression": "!formStore.data.coordonnees_bailleur_tel || !/[\\s\\+\\-\\.]/.test(formStore.data.coordonnees_bailleur_tel)",
+            "expressionMessage": "Le numéro de téléphone ne doit pas contenir d'espaces, de tirets, de points ou d'indicatif international. Format attendu : 0702030405"
           },
           "accessibility": {
             "name": "telephone",
@@ -599,7 +603,9 @@
           "slug": "coordonnees_bailleur_tel",
           "description": "Format attendu : Veuillez sélectionner le pays pour obtenir l'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l'indicatif). Exemple pour la France : 0702030405.",
           "validate": {
-            "required": false
+            "required": false,
+            "expression": "!formStore.data.coordonnees_bailleur_tel || !/[\\s\\+\\-\\.]/.test(formStore.data.coordonnees_bailleur_tel)",
+            "expressionMessage": "Le numéro de téléphone ne doit pas contenir d'espaces, de tirets, de points ou d'indicatif international. Format attendu : 0702030405"
           },
           "accessibility": {
             "name": "telephone",
@@ -1344,8 +1350,10 @@
           "slug": "composition_logement_nombre_personnes",
           "validate": {
             "message": "Veuillez renseigner le nombre de personnes vivant dans votre logement.",
-            "pattern": "^[0-9]*$",
-            "patternMessage": "Veuillez renseigner un nombre de personnes valide."
+            "pattern": "^[0-9]+$",
+            "patternMessage": "Veuillez renseigner un nombre de personnes valide.",
+            "expression": "parseInt(formStore.data.composition_logement_nombre_personnes) > 0",
+            "expressionMessage": "Le nombre de personnes doit être un nombre positif."
           },
           "accessibility": {
             "focus": true

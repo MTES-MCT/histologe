@@ -129,6 +129,7 @@
                 "label": "Autre",
                 "placeholder": "résidence, lieu-dit…",
                 "slug": "adresse_logement_complement_adresse_autre",
+                "maxlength": 255,
                 "description": "Format attendu : 255 caractères maximum",
                 "validate": {
                   "required": false,

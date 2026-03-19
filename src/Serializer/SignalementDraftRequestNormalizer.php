@@ -48,7 +48,9 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
                 if (str_contains($data[$key.'_countrycode'], ':')) {
                     $indicatif = explode(':', $data[$key.'_countrycode'])[1];
                 }
-                $phone = '+'.$indicatif.$value;
+                // Nettoyer le numéro avant de construire le format international
+                $cleanedValue = $this->cleanPhoneNumber($value);
+                $phone = '+'.$indicatif.$cleanedValue;
                 $transformedData[$key] = $phone;
             } elseif (preg_match(SignalementDraftRequest::PATTERN_FILE_UPLOAD, $key, $matches)) {
                 if (str_starts_with($key, 'desordres_')) {
@@ -134,5 +136,24 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
             InformationComplementaire::class => true,
             RequestInterface::class => true,
         ];
+    }
+
+    /**
+     * Nettoie un numéro de téléphone en supprimant les espaces, tirets, points
+     * et en supprimant les indicatifs internationaux qui seront ajoutés par le normalizer.
+     */
+    private function cleanPhoneNumber(string $phoneNumber): string
+    {
+        // Supprimer les espaces, tirets, points
+        $phoneNumber = preg_replace('/[\s\-\.]/', '', $phoneNumber);
+
+        // Supprimer +33 ou 0033 si présent (l'indicatif sera ajouté par le normalizer)
+        $phoneNumber = preg_replace('/^\+33/', '', $phoneNumber);
+        $phoneNumber = preg_replace('/^0033/', '', $phoneNumber);
+
+        // Si le numéro commence par un autre indicatif international, le supprimer aussi
+        $phoneNumber = preg_replace('/^\+\d+/', '', $phoneNumber);
+
+        return $phoneNumber;
     }
 }
