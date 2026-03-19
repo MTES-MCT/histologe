@@ -9,10 +9,18 @@ if (fieldsetAllocataire) {
     });
 
   function refreshCaisseAllocation() {
-    const containerCaisseAllocation = document.querySelector('#usager_situation_foyer_caisseAllocation').closest('.fr-fieldset__element');
-    const containerNumAllocataire = document.querySelector('#usager_situation_foyer_numAllocataire').closest('.fr-fieldset__element');
-    const containerTypeAllocation = document.querySelector('#usager_situation_foyer_typeAllocation').closest('.fr-fieldset__element');
-    const containerMontantAllocation = document.querySelector('#usager_situation_foyer_montantAllocation').closest('.fr-fieldset__element');
+    const containerCaisseAllocation = document
+      .querySelector('#usager_situation_foyer_caisseAllocation')
+      .closest('.fr-fieldset__element');
+    const containerNumAllocataire = document
+      .querySelector('#usager_situation_foyer_numAllocataire')
+      .closest('.fr-fieldset__element');
+    const containerTypeAllocation = document
+      .querySelector('#usager_situation_foyer_typeAllocation')
+      .closest('.fr-fieldset__element');
+    const containerMontantAllocation = document
+      .querySelector('#usager_situation_foyer_montantAllocation')
+      .closest('.fr-fieldset__element');
     if (document.querySelector('#usager_situation_foyer_allocataire_0').checked) {
       containerCaisseAllocation.classList.remove('fr-hidden');
       containerNumAllocataire.classList.remove('fr-hidden');
@@ -28,7 +36,9 @@ if (fieldsetAllocataire) {
   refreshCaisseAllocation();
 }
 
-const fieldsetAccompagnementTravailleurSocial = document?.querySelector('#usager_situation_foyer_accompagnementTravailleurSocial');
+const fieldsetAccompagnementTravailleurSocial = document?.querySelector(
+  '#usager_situation_foyer_accompagnementTravailleurSocial'
+);
 // le nom de la structure d'accompagnement (usager_situation_foyer_accompagnementTravailleurSocialNomStructure) s'affiche que si on a répondu oui
 if (fieldsetAccompagnementTravailleurSocial) {
   document
@@ -40,12 +50,18 @@ if (fieldsetAccompagnementTravailleurSocial) {
     });
 
   function refreshAccompagnementTravailleurSocial() {
-    const containerNomStructure = document.querySelector('#usager_situation_foyer_accompagnementTravailleurSocialNomStructure').closest('.fr-fieldset__element');
-    if (document.querySelector('#usager_situation_foyer_accompagnementTravailleurSocial_0').checked) {
+    const containerNomStructure = document
+      .querySelector('#usager_situation_foyer_accompagnementTravailleurSocialNomStructure')
+      .closest('.fr-fieldset__element');
+    if (
+      document.querySelector('#usager_situation_foyer_accompagnementTravailleurSocial_0').checked
+    ) {
       containerNomStructure.classList.remove('fr-hidden');
     } else {
       containerNomStructure.classList.add('fr-hidden');
-      document.querySelector('#usager_situation_foyer_accompagnementTravailleurSocialNomStructure').value = '';
+      document.querySelector(
+        '#usager_situation_foyer_accompagnementTravailleurSocialNomStructure'
+      ).value = '';
     }
   }
   refreshAccompagnementTravailleurSocial();
@@ -63,7 +79,9 @@ if (fieldsetDpe) {
     });
 
   function refreshClasseEnergetique() {
-    const containerClasseEnergetique = document.querySelector('#informations_generales_classeEnergetique').closest('.fr-fieldset__element');
+    const containerClasseEnergetique = document
+      .querySelector('#informations_generales_classeEnergetique')
+      .closest('.fr-fieldset__element');
     if (document.querySelector('#informations_generales_dpe_0').checked) {
       containerClasseEnergetique.classList.remove('fr-hidden');
     } else {
@@ -74,7 +92,7 @@ if (fieldsetDpe) {
   refreshClasseEnergetique();
 }
 
-const fieldsetNbEnfants= document?.querySelector('#informations_generales_nbEnfantsDansLogement');
+const fieldsetNbEnfants = document?.querySelector('#informations_generales_nbEnfantsDansLogement');
 // le choix de la classe énergétique ne s'affiche que si on a répondu oui au Dpe
 if (fieldsetNbEnfants) {
   fieldsetNbEnfants.addEventListener('input', () => {
@@ -82,7 +100,9 @@ if (fieldsetNbEnfants) {
   });
 
   function refreshEnfantsMoinsSixAns() {
-    const containerEnfantsMoinsSixAns = document.querySelector('#informations_generales_enfantsDansLogementMoinsSixAns').closest('.fr-fieldset__element');
+    const containerEnfantsMoinsSixAns = document
+      .querySelector('#informations_generales_enfantsDansLogementMoinsSixAns')
+      .closest('.fr-fieldset__element');
     if (document.querySelector('#informations_generales_nbEnfantsDansLogement').value > 0) {
       containerEnfantsMoinsSixAns.classList.remove('fr-hidden');
     } else {

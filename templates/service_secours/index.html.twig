@@ -101,8 +101,10 @@
                     {{ form_row(form.step3.isEnfantsMoinsSixAnsDansLogement, {display_mode: 'block'}) }}
                     {{ form_row(form.step3.autreVulnerabilite) }}
                 {% elseif current_step == 'step4' %}
-                    <h3 class="fr-h5">Informations sur le bailleur</h3>
-                    {{ form_row(form.step4.isBailleurAverti, {display_mode: 'block'}) }}
+                    {% if form.step4.isBailleurAverti is defined %}
+                        <h3 class="fr-h5">Informations sur le bailleur</h3>
+                        {{ form_row(form.step4.isBailleurAverti, {display_mode: 'block'}) }}
+                    {% endif %}
                     {% if form.step4.denominationProprio is defined %}
                         <div class="fr-input-group">
                             {{ form_label(form.step4.denominationProprio) }}
@@ -117,12 +119,18 @@
                     {% if form.step4.prenomProprio is defined %}
                         {{ form_row(form.step4.prenomProprio) }}
                     {% endif %}
-                    {{ form_row(form.step4.mailProprio) }}
-                    {{ form_row(form.step4.telProprio) }}
+                    {% if form.step4.mailProprio is defined %}
+                        {{ form_row(form.step4.mailProprio) }}
+                    {% endif %}
+                    {% if form.step4.telProprio is defined %}
+                        {{ form_row(form.step4.telProprio) }}
+                    {% endif %}
+                    {% if form.step4.isBailleurAverti is defined %}
                     <div class="fr-my-2w">
                         <button type="button" class="fr-link fr-link--icon-left fr-icon-add-line" id="show-informations-syndic-container">Ajouter les coordonnées du syndic</button>
                     </div>
-                    <div class="fr-hidden fr-mb-3w" id="informations-syndic-container">
+                    {% endif %}
+                    <div class="{% if form.step4.isBailleurAverti is defined %}fr-hidden{% endif %} fr-mb-3w" id="informations-syndic-container">
                         <h3 class="fr-h5">Informations sur le syndic</h3>
                         {{ form_row(form.step4.denominationSyndic) }}
                         {{ form_row(form.step4.nomSyndic) }}
