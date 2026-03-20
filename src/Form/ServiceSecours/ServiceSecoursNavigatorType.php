@@ -24,7 +24,12 @@ class ServiceSecoursNavigatorType extends AbstractType
             ])
             ->add('next', NextFlowType::class, [
                 'label' => 'Suivant',
-                'include_if' => fn (FormFlowCursor $cursor) => !$cursor->isLastStep(),
+                'include_if' => fn (FormFlowCursor $cursor) => !$cursor->isLastStep() && 'step5' !== $cursor->getCurrentStep(),
+                'attr' => ['class' => 'fr-btn--icon-right fr-icon-arrow-right-line'],
+            ])
+            ->add('nextReview', NextFlowType::class, [
+                'label' => 'Vérifier ma saisie',
+                'include_if' => fn (FormFlowCursor $cursor) => 'step5' === $cursor->getCurrentStep(),
                 'attr' => ['class' => 'fr-btn--icon-right fr-icon-arrow-right-line'],
             ])
             ->add('finish', FinishFlowType::class, [

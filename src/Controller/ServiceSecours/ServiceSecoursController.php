@@ -11,6 +11,7 @@ use Symfony\Component\Form\Flow\FormFlowInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -23,6 +24,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 ]
 class ServiceSecoursController extends AbstractController
 {
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/services-secours/{slug:serviceSecoursRoute}/{uuid:serviceSecoursRoute}',
         name: 'service_secours_index',
         methods: ['GET', 'POST'])
@@ -42,6 +46,9 @@ class ServiceSecoursController extends AbstractController
             // dump($signalement); // for testing purpose
             // TODO : persist and flush
             // voir les traitements fait dans App\Controller\Api\SignalementCreateController.php, création de la référence dans une transaction en particulier)
+
+            // $this->dispatchFileProcessing($signalement);
+
             return $this->render('service_secours/success.html.twig', ['serviceSecoursRoute' => $serviceSecoursRoute, 'signalement' => $signalement]);
         }
 
@@ -99,10 +106,25 @@ class ServiceSecoursController extends AbstractController
     #[Route(
         '/{any}',
         name: 'service_secours_fallback',
-        requirements: ['any' => '(?!_wdt/|_profiler/|csp-report|bailleurs).*'],
+        requirements: ['any' => '(?!_wdt/|_profiler/|csp-report|bailleurs|signalement/handle).*'],
     )]
     public function fallback(): Response
     {
         throw $this->createNotFoundException();
     }
+
+    //    /**
+    //     * Dispatch le traitement asynchrone pour les photos.
+    //     *
+    //     * @throws ExceptionInterface
+    //     * @throws ExceptionInterface
+    //     *
+    //     * @see SignalementServiceSecoursFileMessageHandler
+    //     */
+    //    private function dispatchFileProcessing(Signalement $signalement): void
+    //    {
+    //        $this->messageBus->dispatch(
+    //            new SignalementServiceSecoursFileMessage($signalement->getId())
+    //        );
+    //    }
 }

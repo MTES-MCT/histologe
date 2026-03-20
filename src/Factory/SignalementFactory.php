@@ -3,6 +3,8 @@
 namespace App\Factory;
 
 use App\Dto\ServiceSecours\FormServiceSecours;
+use App\Dto\ServiceSecours\FormServiceSecoursStep5;
+use App\Entity\DesordreCritere;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\MotifCloture;
@@ -14,6 +16,7 @@ use App\Entity\ServiceSecoursRoute;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Repository\BailleurRepository;
+use App\Repository\DesordreCritereRepository;
 use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\Signalement\ZipcodeProvider;
 
@@ -22,12 +25,15 @@ class SignalementFactory
     public function __construct(
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
-        private BailleurRepository $bailleurRepository,
+        private readonly BailleurRepository $bailleurRepository,
+        private readonly DesordreCritereRepository $desordreCritereRepository,
     ) {
     }
 
-    public function createInstanceFromFormServiceSecours(FormServiceSecours $formServiceSecours, ServiceSecoursRoute $serviceSecoursRoute): Signalement
-    {
+    public function createInstanceFromFormServiceSecours(
+        FormServiceSecours $formServiceSecours,
+        ServiceSecoursRoute $serviceSecoursRoute,
+    ): Signalement {
         $signalement = new Signalement();
         $typeCompositionLogement = new TypeCompositionLogement();
 
@@ -156,12 +162,44 @@ class SignalementFactory
         $signalement->setTelSyndic($formServiceSecours->step4->telSyndic);
         $signalement->setTelSyndicSecondaire($formServiceSecours->step4->telSyndicSecondaire);
 
-        // TODO : manage other steps
-        //
-        //
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
+        $this->handleStep5($formServiceSecours, $signalement);
+
         return $signalement;
+    }
+
+    private function handleStep5(FormServiceSecours $formServiceSecours, Signalement $signalement): void
+    {
+        $jsonContent = [];
+
+        $desordresCriteres = $this->desordreCritereRepository->findBySlugsWithPrecisions(
+            $formServiceSecours->step5->desordres
+        );
+
+        /** @var DesordreCritere $desordreCritere */
+        foreach ($desordresCriteres as $desordreCritere) {
+            $desordrePrecision = $desordreCritere->getDesordrePrecisions()->first();
+            if (false === $desordrePrecision) {
+                continue;
+            }
+            $signalement->addDesordrePrecision($desordrePrecision);
+
+            if (FormServiceSecoursStep5::DESORDRE_AUTRE_PRECISION_SLUG === $desordrePrecision->getDesordrePrecisionSlug()) {
+                $jsonContent[$desordrePrecision->getDesordrePrecisionSlug()] = $formServiceSecours->step5->desordresAutre;
+            }
+        }
+
+        if (!empty($uploadedFiles = $formServiceSecours->step5->uploadedFiles)) {
+            $jsonContent['uploadedFiles'] = array_map(
+                fn (string $file) => array_merge(json_decode($file, true), ['slug' => 'desordres_service_secours']),
+                $uploadedFiles
+            );
+        }
+
+        $jsonContent['autresOccupantsDesordre'] = $formServiceSecours->step5->autresOccupantsDesordre;
+
+        $signalement->setJsonContent($jsonContent);
     }
 
     /**

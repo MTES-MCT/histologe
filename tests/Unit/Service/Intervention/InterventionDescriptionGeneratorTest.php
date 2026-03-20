@@ -63,7 +63,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
 
     public function testVisiteDescriptionOnInterventionUpdated(): void
     {
-        $dateInFutur = (new \DateTimeImmutable())->add(new \DateInterval('P10D'));
+        $dateInFutur = (new \DateTimeImmutable())->add(new \DateInterval('P10D'))->setTimezone(new \DateTimeZone('Europe/Paris'));
         $intervention = $this->getIntervention(
             InterventionType::VISITE,
             $dateInFutur,
@@ -81,7 +81,9 @@ class InterventionDescriptionGeneratorTest extends TestCase
 
     public function testVisiteControleDescriptionOnInterventionUpdated(): void
     {
-        $dateInFutur = (new \DateTimeImmutable())->add(new \DateInterval('P10D'));
+        $dateInFutur = (new \DateTimeImmutable())
+            ->add(new \DateInterval('P10D'))
+            ->setTimezone(new \DateTimeZone('Europe/Paris'));
         $intervention = $this->getIntervention(
             InterventionType::VISITE_CONTROLE,
             $dateInFutur,
@@ -143,7 +145,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
             'ARS',
         ];
 
-        $dateInFutur = (new \DateTimeImmutable())->add(new \DateInterval('P10D'));
+        $dateInFutur = (new \DateTimeImmutable())->add(new \DateInterval('P10D'))->setTimezone(new \DateTimeZone('Europe/Paris'));
         yield 'Visite de contrôle dans le futur' => [
             $this->getIntervention(
                 InterventionType::VISITE_CONTROLE,
