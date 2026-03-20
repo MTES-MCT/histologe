@@ -182,26 +182,221 @@
                     </div>
                 {% elseif current_step == 'step6' %}
                     <div class="fr-mt-5v fr-mb-5v">
-                        //RECAP
+                        <h3 class="fr-h5">Récapitulatif et validation</h3>
+                        <div>Vérifiez les informations saisies puis validez le signalement.</div>
                     </div>
+                    
+                    <div class="signalement-group-data-card">
+                        <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
+                            <h4 class="fr-h6">Vos coordonnées</h4>
+                            <a href="{{ path('service_secours_index', {
+                                    'slug': serviceSecoursRoute.slug,
+                                    'uuid': serviceSecoursRoute.uuid,
+                                    'domain': root_domain(app.request.host),
+                                    'step': 'step1'
+                                }) }}"
+                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"><span class="fr-hidden fr-unhidden-md">Modifier</span></a>
+                        </div>
+                        {% if data.step1.matriculeDeclarant %}
+                            Matricule : {{ data.step1.matriculeDeclarant }}<br>
+                        {% endif %}
+                        {% if data.step1.nomDeclarant %}
+                            Nom : {{ data.step1.nomDeclarant }}<br>
+                        {% endif %}
+                        {% if data.step1.dateMission %}
+                            Date de la mission : {{ data.step1.dateMission|format_datetime(locale='fr', timezone=territory_timezone, pattern='d MMMM yyyy') }}<br>
+                        {% endif %}
+                        {% if data.step1.origineMission %}
+                            Ordre de la mission : {{ data.step1.origineMission }}<br>
+                        {% endif %}
+                        {% if data.step1.ordreMission %}
+                            Engin à l'origine du signalement : {{ data.step1.ordreMission }}<br>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="signalement-group-data-card">
+                        <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
+                            <h4 class="fr-h6">Infos sur le logement</h4>
+                            <a href="{{ path('service_secours_index', {
+                                    'slug': serviceSecoursRoute.slug,
+                                    'uuid': serviceSecoursRoute.uuid,
+                                    'domain': root_domain(app.request.host),
+                                    'step': 'step2'
+                                }) }}"
+                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"><span class="fr-hidden fr-unhidden-md">Modifier</span></a>
+                        </div>
+                        {{ data.step2.adresseOccupant }} <br>
+                        {% if data.step2.adresseAutreOccupant %}
+                            {{ data.step2.adresseAutreOccupant }}<br>
+                        {% endif %}
+                        {{ data.step2.cpOccupant }} {{ data.step2.villeOccupant }}<br>
+                        {% if data.step2.isLogementSocial %}
+                            Logement social : {{ data.step2.isLogementSocial|format_answer }}<br>
+                        {% endif %}
+                        {% if data.step2.natureLogement %}
+                            Nature du logement : {{ data.step2.natureLogement }}
+                            {% if  data.step2.natureLogement is same as 'autre' and data.step2.natureLogementAutre %}
+                                ({{ data.step2.natureLogementAutre }})
+                            {% endif %}
+                            <br>
+                        {% endif %}
+                        {% if data.step2.typeEtageLogement is not null %}
+                            Etage : {{ data.step2.typeEtageLogement.label }}
+                            {% if data.step2.typeEtageLogement is same as enum('\\App\\Entity\\Enum\\EtageType').AUTRE and data.step2.etageOccupant %}
+                                ({{ data.step2.etageOccupant }})
+                            {% endif %}
+                            <br>
+                        {% endif %}
+                        {% if data.step2.nbPiecesLogement %}
+                             Nombre de pièces à vivre : {{ data.step2.nbPiecesLogement }}<br>
+                        {% endif %}
+                        {% if data.step2.superficie %}
+                            Superficie : {{ data.step2.superficie }} m²<br>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="signalement-group-data-card">
+                        <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
+                            <h4 class="fr-h6">Occupation du logement</h4>
+                            <a href="{{ path('service_secours_index', {
+                                    'slug': serviceSecoursRoute.slug,
+                                    'uuid': serviceSecoursRoute.uuid,
+                                    'domain': root_domain(app.request.host),
+                                    'step': 'step3'
+                                }) }}"
+                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"><span class="fr-hidden fr-unhidden-md">Modifier</span></a>
+                        </div>
+                        {% if data.step3.nomOccupant %}
+                            {{ data.step3.nomOccupant }} 
+                            {% if data.step3.prenomOccupant %}
+                                {{ data.step3.prenomOccupant }}
+                            {% endif %}
+                            <br>
+                        {% endif %}
+                        {% if data.step3.profilOccupant and data.step3.profilOccupant is not same as 'indetermine' %}
+                            {% if data.step3.profilOccupant is same as 'logement_vacant' %}
+                                Logement vacant<br>
+                            {% else %}
+                                {% set ProfilOccupant = enum('\\App\\Entity\\Enum\\ProfileOccupant') %}
+                                {{ ProfilOccupant.from(data.step3.profilOccupant).label }}
+                                {{ data.step3.profilOccupant }}<br>
+                            {% endif %}
+                        {% endif %}
+                        {% if data.step3.mailOccupant %}
+                            {{ data.step3.mailOccupant }}<br>
+                        {% endif %}
+                        {% if data.step3.telOccupant %}
+                            {{ data.step3.telOccupant }}<br>
+                        {% endif %}
+                        {% if data.step3.nbAdultesDansLogement %}
+                            {{ singular_or_plural(data.step3.nbAdultesDansLogement, 'adulte', 'adultes') }}<br>
+                        {% endif %}
+                        {% if data.step3.nbEnfantsDansLogement %}
+                            {{ singular_or_plural(data.step3.nbEnfantsDansLogement, 'mineur', 'mineurs') }}<br>
+                        {% endif %}
+                        {% if data.step3.isEnfantsMoinsSixAnsDansLogement %}
+                             Mineurs de 6 ans ou moins : {{ data.step3.isEnfantsMoinsSixAnsDansLogement|format_answer }}<br>
+                        {% endif %}
+                        {% if data.step3.autreVulnerabilite %}
+                            Autre situation de vulnérabilité : {{ data.step3.autreVulnerabilite }}<br>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="signalement-group-data-card">
+                        <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
+                            <h4 class="fr-h6">Propriétaire / bailleur</h4>
+                            <a href="{{ path('service_secours_index', {
+                                    'slug': serviceSecoursRoute.slug,
+                                    'uuid': serviceSecoursRoute.uuid,
+                                    'domain': root_domain(app.request.host),
+                                    'step': 'step4'
+                                }) }}"
+                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"><span class="fr-hidden fr-unhidden-md">Modifier</span></a>
+                        </div>
+                        {% if data.step4.isBailleurAverti %}
+                            Bailleur averti : {{ data.step4.isBailleurAverti|format_answer }}<br>
+                        {% endif %}
+                        {% if data.step4.denominationProprio %}
+                            Dénomination du bailleur : {{ data.step4.denominationProprio }}<br>
+                        {% endif %}
+                        {% if data.step4.nomProprio %}                            
+                            Nom du bailleur  : {{ data.step4.nomProprio }}<br>
+                        {% endif %}
+                        {% if data.step4.prenomProprio %}
+                            Prénom du bailleur : {{ data.step4.prenomProprio }}<br>
+                        {% endif %}
+                        {% if data.step4.mailProprio %}
+                            Adresse e-mail du bailleur : {{ data.step4.mailProprio }}<br>
+                        {% endif %}
+                        {% if data.step4.telProprio %}
+                            Téléphone du bailleur : {{ data.step4.telProprio|phone }}<br>
+                        {% endif %}
+                        {% if data.step4.denominationSyndic %}
+                            Dénomination du syndic : {{ data.step4.denominationSyndic }}<br>
+                        {% endif %}
+                        {% if data.step4.nomSyndic %}
+                            Nom du ou de la représentante : {{ data.step4.nomSyndic }}<br>
+                        {% endif %}
+                        {% if data.step4.mailSyndic %}
+                            Adresse e-mail  : {{ data.step4.mailSyndic }}<br>
+                        {% endif %}
+                        {% if data.step4.telSyndic %}
+                            Téléphone : {{ data.step4.telSyndic|phone }}<br>
+                        {% endif %}
+                        {% if data.step4.telSyndicSecondaire %}
+                            Téléphone secondaire : {{ data.step4.telSyndicSecondaire|phone }}<br>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="signalement-group-data-card">
+                        <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
+                            <h4 class="fr-h6">Désordres</h4>
+                            <a href="{{ path('service_secours_index', {
+                                    'slug': serviceSecoursRoute.slug,
+                                    'uuid': serviceSecoursRoute.uuid,
+                                    'domain': root_domain(app.request.host),
+                                    'step': 'step5'
+                                }) }}"
+                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"><span class="fr-hidden fr-unhidden-md">Modifier</span></a>
+                        </div>
+                        {% if data.step5.autresOccupantsDesordre %}
+                            Désordres rencontrés par d'autres occupants de l'immeuble : {{ data.step5.autresOccupantsDesordre|format_answer }}<br>
+                        {% endif %}
+                        {% if data.step5.desordres %}
+                            <ul>
+                            {% for desordre in desordres %}
+                                {% if desordre.slugCritere in data.step5.desordres %}                                    
+                                    <li>{{ desordre.labelCritere }}
+                                    {% if desordre.labelCritere is same as 'Autre' and data.step5.desordresAutre %}
+                                        : </li>
+                                        <span class="fr-border--left-thick"><i>{{ data.step5.desordresAutre }}</i></span><br>
+                                    {% else %}
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+
                     {{form_row(form.step6.hidden)}}
                 {% endif %}
-
-                <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline fr-btns-group--icon-left">
-                    {% if form.navigator.finish is defined %}
-                        <li>{{ form_row(form.navigator.finish) }}</li>
-                    {% endif %}
-                    {% if form.navigator.nextReview is defined %}
-                        <li>{{ form_row(form.navigator.nextReview) }}</li>
-                    {% endif %}
-                    {% if form.navigator.next is defined %}
-                        <li>{{ form_row(form.navigator.next) }}</li>
-                    {% endif %}
-                    {% if form.navigator.previous is defined %}
-                        <li>{{ form_row(form.navigator.previous) }}</li>
-                    {% endif %}
-                </ul>
-
+                <div class="fr-col-12">
+                    <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                        {% if form.navigator.finish is defined %}
+                            <li>{{ form_row(form.navigator.finish) }}</li>
+                        {% endif %}
+                        {% if form.navigator.nextReview is defined %}
+                            <li>{{ form_row(form.navigator.nextReview) }}</li>
+                        {% endif %}
+                        {% if form.navigator.next is defined %}
+                            <li>{{ form_row(form.navigator.next) }}</li>
+                        {% endif %}
+                        {% if form.navigator.previous is defined %}
+                            <li>{{ form_row(form.navigator.previous) }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
                 {{ form_end(form) }}
 
             </div>

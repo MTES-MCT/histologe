@@ -55,6 +55,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFilter('badge_class', [$this, 'getBadgeClass']),
             new TwigFilter('badge_relance_class', [$this, 'getRelanceBadgeClass']),
             new TwigFilter('entity_label', [$this, 'getEntityLabel']),
+            new TwigFilter('format_answer', [$this, 'formatAnswer']),
         ];
     }
 
@@ -65,6 +66,20 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
         }
 
         return null;
+    }
+
+    public function formatAnswer(mixed $answer): mixed
+    {
+        switch ($answer) {
+            case 'oui':
+                return 'Oui';
+            case 'non':
+                return 'Non';
+            case 'nsp':
+                return 'Ne sait pas';
+            default:
+                return $answer;
+        }
     }
 
     public function getBadgeClass(?int $days): string
