@@ -110,7 +110,14 @@
 				{% endif %}
 			</div>
 			<div class="signalement-group-data-card">
-				<h3 class="title-blue-france fr-h5">Coordonnées de l'occupant</h3>
+				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
+					<h3 class="title-blue-france fr-h5">Coordonnées de l'occupant</h3>
+					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+						<a href="{{ path('front_suivi_signalement_complete_occupant', {'code': signalement.codeSuivi}) }}" 
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md"
+							>Modifier les coordonnées</a>
+					{% endif %}
+				</div>
 				{{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }}
 				{% if signalement.mailOccupant %}
 					<br>
@@ -126,6 +133,13 @@
 				{% if signalement.telOccupantBis %}
 					<br>
 					{{ signalement.telOccupantBisDecoded|phone }}
+				{% endif %}
+				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					<div class="fr-mt-3v">
+						<a href="{{ path('front_suivi_signalement_complete_occupant', {'code': signalement.codeSuivi}) }}" 
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md"
+							>Modifier les coordonnées</a>
+					</div>
 				{% endif %}
 			</div>
 

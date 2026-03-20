@@ -138,6 +138,21 @@ enum SuiviCategory: string
     }
 
     /** @return array<SuiviCategory> */
+    public static function categoriesSubmittedByUsager(): array
+    {
+        return [
+            self::MESSAGE_USAGER,
+            self::MESSAGE_USAGER_POST_CLOTURE,
+            self::DOCUMENT_DELETED_BY_USAGER,
+            self::DEMANDE_POURSUITE_PROCEDURE,
+            self::DEMANDE_ABANDON_PROCEDURE,
+            self::SIGNALEMENT_EDITED_FO,
+            self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
+            self::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER,
+        ];
+    }
+
+    /** @return array<SuiviCategory> */
     public static function injonctionBailleurCategories(): array
     {
         return [
