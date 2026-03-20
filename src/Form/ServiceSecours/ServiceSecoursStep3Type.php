@@ -22,7 +22,7 @@ class ServiceSecoursStep3Type extends AbstractType
                 'Locataire' => ProfileOccupant::LOCATAIRE->value,
                 'Propriétaire occupant' => ProfileOccupant::BAILLEUR_OCCUPANT->value,
                 'Logement vacant' => 'logement_vacant',
-                'Indeterminé' => 'indetermine',
+                'Indéterminé' => 'indetermine',
             ],
             'expanded' => true,
             'required' => false,
@@ -37,7 +37,6 @@ class ServiceSecoursStep3Type extends AbstractType
             'help' => 'Format attendu : exemple@domaine.com',
             'required' => false,
         ]);
-        // TODO : importer js associé + icone
         $builder->add('telOccupant', PhoneType::class, [
             'label' => 'Téléphone',
             'constraints' => [

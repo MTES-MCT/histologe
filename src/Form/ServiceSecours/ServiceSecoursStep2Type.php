@@ -22,6 +22,7 @@ class ServiceSecoursStep2Type extends AbstractType
                 'label_html' => true,
                 'help' => 'Format attendu : Tapez l\'adresse puis sélectionnez-la dans la liste. Si elle n\'apparaît pas, cliquez sur saisir une adresse manuellement.',
                 'mapped' => false,
+                'required' => false,
                 'attr' => [
                     'autocomplete' => 'off',
                     'data-fr-adresse-autocomplete' => 'true',

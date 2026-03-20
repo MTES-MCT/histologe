@@ -10,6 +10,7 @@ use App\Factory\SignalementFactory;
 use App\Form\ServiceSecours\ServiceSecoursType;
 use App\Repository\DesordreCritereRepository;
 use App\Manager\UserManager;
+use App\Messenger\Message\SignalementServiceSecoursFileMessage;
 use App\Repository\SignalementRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -25,6 +26,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -54,6 +56,7 @@ class ServiceSecoursController extends AbstractController
         AutoAssigner $autoAssigner,
         NotificationMailerRegistry $notificationMailerRegistry,
         ServiceSecoursPdfGenerator $serviceSecoursPdfGenerator,
+        MessageBusInterface $messageBus,
     ): Response {
         $session = $request->getSession();
         $serviceSecours = $session->get('service_secours_data', new FormServiceSecours());
@@ -72,8 +75,6 @@ class ServiceSecoursController extends AbstractController
         if ($flow->isSubmitted() && $flow->isValid() && $flow->isFinished()) {
             $signalement = $signalementFactory->createInstanceFromFormServiceSecours($flow->getData(), $serviceSecoursRoute);
 
-            // dump($signalement); // for testing purpose
-
             $entityManager->beginTransaction();
             $signalement->setReference($referenceGenerator->generateReference($signalement->getTerritory()));
             $signalementRepository->save($signalement, true);
@@ -90,9 +91,8 @@ class ServiceSecoursController extends AbstractController
                     attachment: $pdfContent,
                 )
             );
-
-
-            // $this->dispatchFileProcessing($signalement);
+            // traitement asynchrone pour les documents
+            $messageBus->dispatch(new SignalementServiceSecoursFileMessage($signalement->getId()));
 
             return $this->render('service_secours/success.html.twig', ['serviceSecoursRoute' => $serviceSecoursRoute, 'signalement' => $signalement]);
         }
@@ -121,7 +121,6 @@ class ServiceSecoursController extends AbstractController
         if ($signalement->getServiceSecours() !== $serviceSecoursRoute) {
             throw $this->createNotFoundException();
         }
-        // dump($signalement); // for testing purpose
         $pdfContent = $serviceSecoursPdfGenerator->generate($signalement);
 
         $response = new Response($pdfContent);
@@ -184,19 +183,4 @@ class ServiceSecoursController extends AbstractController
     {
         throw $this->createNotFoundException();
     }
-
-    //    /**
-    //     * Dispatch le traitement asynchrone pour les photos.
-    //     *
-    //     * @throws ExceptionInterface
-    //     * @throws ExceptionInterface
-    //     *
-    //     * @see SignalementServiceSecoursFileMessageHandler
-    //     */
-    //    private function dispatchFileProcessing(Signalement $signalement): void
-    //    {
-    //        $this->messageBus->dispatch(
-    //            new SignalementServiceSecoursFileMessage($signalement->getId())
-    //        );
-    //    }
 }
