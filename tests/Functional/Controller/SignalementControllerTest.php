@@ -558,6 +558,51 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertEquals(SignalementDraftStatus::EN_SIGNALEMENT, $signalementDraft->getStatus());
         $this->assertEquals(1, $signalementDraft->getSignalements()->count());
+        $firstSignalement = $signalementDraft->getSignalements()->first();
+        $this->assertNotFalse($firstSignalement);
+        $this->assertEquals(0, $firstSignalement->getSuivis()->count());
+    }
+
+    public function testCompleteSignalementDraftToInjonctionBailleur(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+
+        $payload = json_decode(
+            (string) file_get_contents(__DIR__.'../../../../src/DataFixtures/Files/signalement_draft_payload/locataire_injonction.json'),
+            true
+        );
+        $uuidSignalement = $payload['uuidSignalementDraft'];
+
+        /** @var RouterInterface $router */
+        $router = $client->getContainer()->get(RouterInterface::class);
+        $urlPutSignalement = $router->generate('mise_a_jour_formulaire_signalement_draft', [
+            'uuid' => $uuidSignalement,
+        ]);
+
+        $client->request('PUT', $urlPutSignalement, [], [], [], (string) json_encode($payload));
+
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+
+        $arrayResponse = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('uuid', $arrayResponse);
+        $this->assertArrayHasKey('signalementReference', $arrayResponse);
+        $this->assertArrayHasKey('lienSuivi', $arrayResponse);
+
+        /** @var SignalementDraftRepository $signalementDraftRepository */
+        $signalementDraftRepository = $entityManager->getRepository(SignalementDraft::class);
+        $signalementDraft = $signalementDraftRepository->findOneBy(['uuid' => $uuidSignalement]);
+        $this->assertEquals(SignalementDraftStatus::EN_SIGNALEMENT, $signalementDraft->getStatus());
+
+        $this->assertEquals(1, $signalementDraft->getSignalements()->count());
+        $signalement = $signalementDraft->getSignalements()->first();
+        $this->assertNotFalse($signalement);
+        $this->assertEquals(1, $signalement->getSuivis()->count());
+
+        $this->assertEquals(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());
+        $this->assertStringStartsWith('INJ-', $signalement->getReference());
     }
 
     public function testUpdateSignalementDraftArchived(): void

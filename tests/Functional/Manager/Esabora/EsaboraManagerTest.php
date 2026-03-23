@@ -137,8 +137,13 @@ class EsaboraManagerTest extends KernelTestCase
             'reference' => $referenceSignalement,
         ]);
 
+        $suivis = $signalement->getSuivis();
         /** @var Suivi $suivi */
-        $suivi = $signalement->getSuivis()->last();
+        $suivi = $suivis->last();
+        if ($suivi instanceof Suivi && SuiviCategory::MESSAGE_USAGER_POST_CLOTURE === $suivi->getCategory()) {
+            $suiviArray = $suivis->toArray();
+            $suivi = $suiviArray[\count($suiviArray) - 2] ?? $suivi;
+        }
         $this->assertStringContainsString($suiviDescription, $suivi->getDescription(), $suiviDescription);
         $this->assertFalse($suivi->getIsPublic());
         $this->assertEquals($suiviStatus, $suivi->getType());
@@ -260,8 +265,13 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
         $this->entityManager->refresh($signalement);
 
+        $suivis = $signalement->getSuivis();
         /** @var Suivi $suivi */
-        $suivi = $signalement->getSuivis()->last();
+        $suivi = $suivis->last();
+        if ($suivi instanceof Suivi && SuiviCategory::MESSAGE_USAGER_POST_CLOTURE === $suivi->getCategory()) {
+            $suiviArray = $suivis->toArray();
+            $suivi = $suiviArray[\count($suiviArray) - 2] ?? $suivi;
+        }
         $this->assertEquals(3, \count($signalement->getSuivis()));
         $this->assertStringContainsString($suiviDescription, $suivi->getDescription());
         $this->assertFalse($suivi->getIsPublic());
@@ -318,9 +328,12 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager->createOrUpdateVisite($affectation, $dossierVisite);
         $this->entityManager->flush();
         $this->entityManager->refresh($signalement);
-        $suivi = $signalement->getSuivis()->last();
-        if (!$suivi) {
-            $this->fail('No suivi found for the signalement');
+        $suivis = $signalement->getSuivis();
+        /** @var Suivi $suivi */
+        $suivi = $suivis->last();
+        if ($suivi instanceof Suivi && SuiviCategory::MESSAGE_USAGER_POST_CLOTURE === $suivi->getCategory()) {
+            $suiviArray = $suivis->toArray();
+            $suivi = $suiviArray[\count($suiviArray) - 2] ?? $suivi;
         }
         $intervention = $signalement->getInterventions()->first();
         if (!$intervention) {

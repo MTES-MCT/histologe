@@ -6,6 +6,7 @@ enum SuiviCategory: string
 {
     case ASK_DOCUMENT = 'ASK_DOCUMENT';
     case ASK_FEEDBACK_SENT = 'ASK_FEEDBACK_SENT';
+    case SIGNALEMENT_IS_INJONCTION = 'SIGNALEMENT_IS_INJONCTION';
     case SIGNALEMENT_IS_ACTIVE = 'SIGNALEMENT_IS_ACTIVE';
     case SIGNALEMENT_IS_CLOSED = 'SIGNALEMENT_IS_CLOSED';
     case SIGNALEMENT_IS_REFUSED = 'SIGNALEMENT_IS_REFUSED';
@@ -79,6 +80,7 @@ enum SuiviCategory: string
         return [
             'ASK_DOCUMENT' => 'Demande de document',
             'ASK_FEEDBACK_SENT' => 'Demande de feedback envoyée à l\'usager',
+            'SIGNALEMENT_IS_INJONCTION' => 'Dépôt de dossier en démarche accélérée',
             'SIGNALEMENT_IS_ACTIVE' => 'Validation du dossier',
             'SIGNALEMENT_IS_CLOSED' => 'Fermeture du dossier',
             'SIGNALEMENT_IS_REFUSED' => 'Refus du dossier',
@@ -162,6 +164,7 @@ enum SuiviCategory: string
     public static function injonctionBailleurCategories(): array
     {
         return [
+            self::SIGNALEMENT_IS_INJONCTION,
             self::INJONCTION_BAILLEUR_REPONSE_OUI,
             self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
             self::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES,
