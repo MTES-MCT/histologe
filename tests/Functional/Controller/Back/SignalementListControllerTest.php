@@ -75,7 +75,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Date de dernier suivi' => [['dateDernierSuiviDebut' => '2023-04-01', 'dateDernierSuiviFin' => '2023-04-18', 'isImported' => 'oui'], 2];
         yield 'Search by Statut de l\'affectation' => [['statusAffectation' => 'refuse', 'isImported' => 'oui'], 1];
         yield 'Search by Score criticite' => [['criticiteScoreMin' => 5, 'criticiteScoreMax' => 6, 'isImported' => 'oui'], 9];
-        yield 'Search by Declarant' => [['typeDeclarant' => 'locataire', 'isImported' => 'oui'], 52];
+        yield 'Search by Declarant' => [['typeDeclarant' => 'locataire', 'isImported' => 'oui'], 51];
         yield 'Search by Nature du parc' => [['natureParc' => 'public', 'isImported' => 'oui'], 7];
         yield 'Search by Allocataire CAF' => [['allocataire' => 'caf', 'isImported' => 'oui'], 16];
         yield 'Search by Allocataire MSA' => [['allocataire' => 'msa', 'isImported' => 'oui'], 1];
@@ -84,7 +84,9 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Situation Bail en cours' => [['situation' => 'bail_en_cours', 'isImported' => 'oui'], 17];
         yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart', 'isImported' => 'oui'], 1];
         yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement', 'isImported' => 'oui'], 2];
-        yield 'Search by Situation Logement vacant' => [['situation' => 'logement_vacant', 'isImported' => 'oui'], 1];
+        yield 'Search by Occupation logement Vacant' => [['occupationLogement' => 'logement_vacant', 'isImported' => 'oui'], 1];
+        yield 'Search by Occupation logement Occupé' => [['occupationLogement' => 'logement_occupe', 'isImported' => 'oui'], 15];
+        yield 'Search by Occupation logement Occupé locataire' => [['occupationLogement' => 'logement_occupe_locataire', 'isImported' => 'oui'], 36];
         yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 58];
         yield 'Search by Zones' => [['isImported' => 'oui', 'zones' => [1, 2, 3]], 5];
         yield 'Search by Zones on Territory 34' => [['isImported' => 'oui', 'zones' => [1, 2, 3], 'territoire' => '35'], 1];

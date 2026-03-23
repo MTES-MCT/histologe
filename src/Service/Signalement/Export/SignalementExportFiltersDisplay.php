@@ -29,9 +29,9 @@ class SignalementExportFiltersDisplay
         'statusAffectation' => 'Statut Affectation',
         'closed_affectation' => 'Affectation fermée',
         'enfantsM6' => 'Enfants de moins de 6 ans',
-        'scores' => 'Criticité',
         'typeDeclarant' => 'Type de déclarant',
         'situation' => 'Situation',
+        'occupationLogement' => 'Occupation du logement',
         'bailleurSocial' => 'Bailleur',
         'tags' => 'Etiquettes',
         'housetypes' => 'Nature du parc',
@@ -54,7 +54,15 @@ class SignalementExportFiltersDisplay
         'attente_relogement' => 'Attente de relogement',
         'bail_en_cours' => 'Bail en cours',
         'preavis_de_depart' => 'Préavis de départ',
+    ];
+
+    /** @var array<string> OCCUPATION_LOGEMENT_LIST */
+    private const array OCCUPATION_LOGEMENT_LIST = [
         'logement_vacant' => 'Logement vacant',
+        'logement_occupe' => 'Logement occupé',
+        'logement_occupe_bailleur_occupant' => 'Logement occupé : bailleur occupant',
+        'logement_occupe_locataire' => 'Logement occupé : locataire',
+        'non_renseigne' => 'Non renseigné',
     ];
 
     /** @var array<string> CLOSED_AFFECTATION_LIST */
@@ -138,15 +146,14 @@ class SignalementExportFiltersDisplay
                 $filterValue = self::CLOSED_AFFECTATION_LIST[$filterValue] ?? $filterValue;
             } elseif ('situation' === $filterName) {
                 $filterValue = self::SITUATION_LIST[$filterValue] ?? $filterValue;
+            } elseif ('occupationLogement' === $filterName) {
+                $filterValue = self::OCCUPATION_LOGEMENT_LIST[$filterValue] ?? $filterValue;
             } elseif ('housetypes' === $filterName) {
                 $filterValue = self::HOUSE_TYPES_LIST[$filterValue] ?? $filterValue;
             } elseif ('enfantsM6' === $filterName) {
                 $filterValue = self::CHILDREN_LIST[$filterValue] ?? $filterValue;
             } elseif ('allocs' === $filterName) {
                 $filterValue = self::ALLOCS_LIST[$filterValue] ?? $filterValue;
-            } elseif ('scores' === $filterName) {
-                $scores = explode(', ', $filterValue);
-                $filterValue = 'Entre '.implode(' et ', $scores);
             } elseif ('dates' === $filterName || 'datesDernierSuivi' === $filterName) {
                 $filterValue = $this->getDatesFilterValue($filterValue);
             } elseif ('territories' === $filterName) {

@@ -37,6 +37,7 @@ export const store = {
         allocataire: undefined,
         enfantsM6: undefined,
         situation: undefined,
+        occupationLogement: undefined,
         dateDepot: undefined,
         dateDernierSuivi: undefined,
         isImported: undefined as 'oui' | undefined,
@@ -52,8 +53,6 @@ export const store = {
         isActiviteRecente: undefined as 'oui' | undefined,
         showWithoutAffectationOnly: undefined as 'oui' | undefined,
         statusAffectation: undefined,
-        criticiteScoreMin: undefined,
-        criticiteScoreMax: undefined,
         motifCloture: undefined,
         createdFrom: undefined,
         relanceUsagerSansReponse: undefined as 'oui' | undefined
@@ -66,7 +65,6 @@ export const store = {
       isAgent: false,
       isMultiTerritoire: false,
       canSeeStatusAffectation: false,
-      canSeeScore: false,
       canSeeWithoutAffectation: false,
       partnerIds: new Array<string>()
     },
@@ -108,9 +106,14 @@ export const store = {
     situationList: [
       { Id: 'attente_relogement', Text: 'Attente de relogement' },
       { Id: 'bail_en_cours', Text: 'Bail en cours' },
-      { Id: 'preavis_de_depart', Text: 'Préavis de départ' },
+      { Id: 'preavis_de_depart', Text: 'Préavis de départ' }
+    ],
+    occupationLogementList: [
       { Id: 'logement_vacant', Text: 'Logement vacant' },
-      { Id: 'bailleur_occupant', Text: 'Bailleur occupant' }
+      { Id: 'logement_occupe', Text: 'Logement occupé' },
+      { Id: 'logement_occupe_bailleur_occupant', Text: 'Logement occupé : bailleur occupant' },
+      { Id: 'logement_occupe_locataire', Text: 'Logement occupé : locataire' },
+      { Id: 'non_renseigne', Text: 'Non renseigné' }
     ],
     procedureList: [
       { Id: 'non_decence_energetique', Text: 'Non décence énergétique' },

@@ -43,10 +43,6 @@ class SignalementSearchQuery
         private readonly ?string $dateDernierSuiviFin = null,
         #[Assert\Choice(['accepte', 'en_attente', 'refuse', 'cloture_un_partenaire', 'cloture_tous_partenaire', 'cloture_commune'], message: 'Statut d\'affectation invalide')]
         private readonly ?string $statusAffectation = null,
-        #[Assert\GreaterThanOrEqual(0)]
-        private readonly ?float $criticiteScoreMin = null,
-        #[Assert\LessThanOrEqual(100)]
-        private readonly ?float $criticiteScoreMax = null,
         #[Assert\Choice([
             'locataire',
             'bailleur_occupant',
@@ -61,8 +57,11 @@ class SignalementSearchQuery
         private readonly ?string $allocataire = null,
         #[Assert\Choice(['oui', 'non', 'non_renseigne'], message: 'Enfants de moins de 6 ans invalide')]
         private readonly ?string $enfantsM6 = null,
-        #[Assert\Choice(['attente_relogement', 'bail_en_cours', 'preavis_de_depart', 'logement_vacant', 'bailleur_occupant'], message: 'Situation invalide')]
+        #[Assert\Choice(['attente_relogement', 'bail_en_cours', 'preavis_de_depart'], message: 'Situation invalide')]
         private readonly ?string $situation = null,
+        #[Assert\Choice(['logement_vacant', 'logement_occupe', 'logement_occupe_bailleur_occupant', 'logement_occupe_locataire', 'non_renseigne'], message: 'Occupation du logement invalide')]
+        private readonly ?string $occupationLogement = null,
+
         #[Assert\Choice([
             'non_decence_energetique',
             'non_decence',
@@ -231,16 +230,6 @@ class SignalementSearchQuery
         return $this->statusAffectation;
     }
 
-    public function getCriticiteScoreMin(): ?float
-    {
-        return $this->criticiteScoreMin;
-    }
-
-    public function getCriticiteScoreMax(): ?float
-    {
-        return $this->criticiteScoreMax;
-    }
-
     public function getTypeDeclarant(): ?string
     {
         return !empty($this->typeDeclarant) ? strtoupper($this->typeDeclarant) : null;
@@ -264,6 +253,11 @@ class SignalementSearchQuery
     public function getSituation(): ?string
     {
         return $this->situation;
+    }
+
+    public function getOccupationLogement(): ?string
+    {
+        return $this->occupationLogement;
     }
 
     public function getProcedure(): ?string
@@ -400,12 +394,6 @@ class SignalementSearchQuery
         }
 
         $filters['visites'] = null !== $this->getVisiteStatus() ? [$this->getVisiteStatus()] : null;
-        if (null !== $this->getCriticiteScoreMin() || null !== $this->getCriticiteScoreMax()) {
-            $filters['scores'] = [
-                'on' => $this->getCriticiteScoreMin() ?? 0,
-                'off' => $this->getCriticiteScoreMax() ?? 100,
-            ];
-        }
         if (null !== $this->getDateDepotDebut() || null !== $this->getDateDepotFin()) {
             $filters['dates'] = [
                 'on' => $this->getDateDepotDebut(),
@@ -416,6 +404,7 @@ class SignalementSearchQuery
         $filters['zones'] = $this->getZones() ?? null;
         $filters['typeDeclarant'] = $this->getTypeDeclarant();
         $filters['situation'] = $this->getSituation();
+        $filters['occupationLogement'] = $this->getOccupationLogement();
         $filters['procedure'] = $this->getProcedure();
         $filters['procedureConstatee'] = $this->getProcedureConstatee();
         $filters['typeDernierSuivi'] = $this->getTypeDernierSuivi();
@@ -498,13 +487,12 @@ class SignalementSearchQuery
             dateDernierSuiviDebut: $params['dateDernierSuiviDebut'] ?? null,
             dateDernierSuiviFin: $params['dateDernierSuiviFin'] ?? null,
             statusAffectation: $params['statusAffectation'] ?? null,
-            criticiteScoreMin: isset($params['criticiteScoreMin']) ? (float) $params['criticiteScoreMin'] : null,
-            criticiteScoreMax: isset($params['criticiteScoreMax']) ? (float) $params['criticiteScoreMax'] : null,
             typeDeclarant: $params['typeDeclarant'] ?? null,
             natureParc: $params['natureParc'] ?? null,
             allocataire: $params['allocataire'] ?? null,
             enfantsM6: $params['enfantsM6'] ?? null,
             situation: $params['situation'] ?? null,
+            occupationLogement: $params['occupationLogement'] ?? null,
             procedure: $params['procedure'] ?? null,
             procedureConstatee: $params['procedureConstatee'] ?? null,
             page: isset($params['page']) ? (int) $params['page'] : 1,

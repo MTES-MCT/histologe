@@ -32,12 +32,6 @@ class SignalementSearchQueryFactory
             if (isset($filteredData['page'])) {
                 $filteredData['page'] = (int) $filteredData['page'];
             }
-            if (isset($filteredData['criticiteScoreMin'])) {
-                $filteredData['criticiteScoreMin'] = (float) $filteredData['criticiteScoreMin'];
-            }
-            if (isset($filteredData['criticiteScoreMax'])) {
-                $filteredData['criticiteScoreMax'] = (float) $filteredData['criticiteScoreMax'];
-            }
             if (isset($filteredData['usagerAbandonProcedure'])) {
                 $filteredData['usagerAbandonProcedure'] = filter_var($filteredData['usagerAbandonProcedure'], \FILTER_VALIDATE_BOOLEAN);
             }

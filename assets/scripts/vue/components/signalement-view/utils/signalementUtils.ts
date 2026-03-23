@@ -71,7 +71,6 @@ export function handleSettings (context: any, requestResponse: any): any {
   const isAdminOrAdminTerritoire = context.sharedState.user.isAdmin === true || context.sharedState.user.isResponsableTerritoire === true
   context.sharedState.user.canSeeStatusAffectation = isAdminOrAdminTerritoire
   context.sharedState.user.canSeeWithoutAffectation = isAdminOrAdminTerritoire
-  context.sharedState.user.canSeeScore = isAdminOrAdminTerritoire
   context.sharedState.user.partnerIds = requestResponse.partnerIds
   context.sharedState.hasSignalementImported = requestResponse.hasSignalementImported
   context.sharedState.input.filters.isImported = context.sharedState.hasSignalementImported ? "oui" : null

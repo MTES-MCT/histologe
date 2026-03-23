@@ -267,25 +267,6 @@
           <template #label>Statut de l'affectation</template>
         </HistoSelect>
       </div>
-      <div v-if="sharedState.user.canSeeScore"
-          :class="['histo-score-range', defineCssBlocAgent(2, 2)]">
-        <AppNumber
-            id="filter-score-min"
-            v-model="sharedState.input.filters.criticiteScoreMin"
-            title="Rechercher par un score de criticité minimum"
-            @update:modelValue="onChange(false)"
-          >
-          <template #label>Min Criticité</template>
-        </AppNumber>
-        <AppNumber
-            id="filter-score-max"
-            v-model="sharedState.input.filters.criticiteScoreMax"
-            title="Rechercher par un score de criticité maximum"
-            @update:modelValue="onChange(false)"
-          >
-          <template #label>Max Criticité</template>
-        </AppNumber>
-      </div>
       <div :class="defineCssBlocAgent(3, 2)">
         <HistoSelect
           id="filter-type-declarant"
@@ -357,6 +338,18 @@
           title="Rechercher par situation"
           >
           <template #label>Type de situation</template>
+        </HistoSelect>
+      </div>
+      <div :class="defineCssBlocAgent(3, 2)">
+        <HistoSelect
+          id="filter-occupation-logement"
+          v-model="sharedState.input.filters.occupationLogement"
+          @update:modelValue="onChange(false)"
+          :option-items=occupationLogementList
+          :placeholder="'Tous'"
+          title="Rechercher par occupation du logement"
+          >
+          <template #label>Occupation du logement</template>
         </HistoSelect>
       </div>
       <div :class="[defineCssBlocMultiTerritoire(3,3), 'grey-background']"
@@ -621,6 +614,7 @@ export default defineComponent({
         allocataire: undefined,
         enfantsM6: undefined,
         situation: undefined,
+        occupationLogement: undefined,
         dateDepot: undefined,
         dateDernierSuivi: undefined,
         isImported: keepIsImported,
@@ -636,8 +630,6 @@ export default defineComponent({
         isActiviteRecente: undefined,
         showWithoutAffectationOnly: undefined,
         statusAffectation: undefined,
-        criticiteScoreMin: undefined,
-        criticiteScoreMax: undefined,
         motifCloture: undefined,
         createdFrom: undefined,
         relanceUsagerSansReponse: undefined
@@ -682,6 +674,7 @@ export default defineComponent({
       statusAffectationList: store.state.statusAffectationList,
       statusVisiteList: store.state.statusVisiteList,
       situationList: store.state.situationList,
+      occupationLogementList: store.state.occupationLogementList,
       procedureList: store.state.procedureList,
       procedureConstateeList: store.state.procedureConstateeList,
       typeDernierSuiviList: store.state.typeDernierSuiviList,
