@@ -72,7 +72,7 @@ class VisiteUploadDocumentsControllerTest extends WebTestCase
         $data = json_decode((string) $response, true);
         $files = array_filter(
             $data['files'],
-            fn ($file) => DocumentType::PROCEDURE_RAPPORT_DE_VISITE->value === $file['documentType']
+            static fn ($file) => DocumentType::PROCEDURE_RAPPORT_DE_VISITE->value === $file['documentType']
         );
 
         $this->assertCount(1, $files);

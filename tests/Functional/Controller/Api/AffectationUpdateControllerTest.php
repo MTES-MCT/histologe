@@ -51,7 +51,7 @@ class AffectationUpdateControllerTest extends WebTestCase
         $affectations = $signalement->getAffectations();
 
         /** @var Affectation $affectation */
-        $affectation = $affectations->filter(function (Affectation $affectation) {
+        $affectation = $affectations->filter(static function (Affectation $affectation) {
             return 'Partenaire 13-01' === $affectation->getPartner()->getNom();
         })->current();
 
@@ -82,7 +82,7 @@ class AffectationUpdateControllerTest extends WebTestCase
         $affectation = null;
         if (null !== $affectations) {
             /** @var Affectation $affectation */
-            $affectation = $affectations->filter(function (Affectation $affectation) {
+            $affectation = $affectations->filter(static function (Affectation $affectation) {
                 return 'Partenaire 13-01' === $affectation->getPartner()->getNom();
             })->current();
         }

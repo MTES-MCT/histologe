@@ -38,7 +38,7 @@ class BailleurType extends AbstractType
                 'choices' => $this->territoryRepository->findAllList(),
                 'data' => $bailleur
                     ->getBailleurTerritories()
-                    ->map(fn ($bt) => $bt->getTerritory())
+                    ->map(static fn ($bt) => $bt->getTerritory())
                     ->toArray(),
             ])
             ->add('submit', SubmitType::class, [

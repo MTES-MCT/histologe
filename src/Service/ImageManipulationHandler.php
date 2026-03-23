@@ -50,7 +50,7 @@ class ImageManipulationHandler
             $this->imagePath = $path;
         }
         $image = $this->imageManager->make($this->fileStorage->readStream($this->imagePath));
-        $image->resize($max, $max, function ($constraint) {
+        $image->resize($max, $max, static function ($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
         });

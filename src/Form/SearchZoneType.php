@@ -37,7 +37,7 @@ class SearchZoneType extends AbstractType
 
         $builder->add('type', EnumType::class, [
             'class' => ZoneType::class,
-            'choice_label' => function ($choice) {
+            'choice_label' => static function ($choice) {
                 return $choice->label();
             },
             'required' => false,

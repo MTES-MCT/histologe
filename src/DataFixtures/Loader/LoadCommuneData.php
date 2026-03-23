@@ -53,7 +53,7 @@ class LoadCommuneData extends Fixture implements OrderedFixtureInterface
             $forceReload = 1 === $totalRead ? true : false;
             $territory = $this->zipcodeProvider->getTerritoryByInseeCode($itemCodeCommune, $forceReload);
 
-            if (array_filter(self::ZIP_CODES_ALLOWED, fn ($zipCodeAllowed) => $territory->getZip() === $zipCodeAllowed)) {
+            if (array_filter(self::ZIP_CODES_ALLOWED, static fn ($zipCodeAllowed) => $territory->getZip() === $zipCodeAllowed)) {
                 $commune = $this->communeFactory->createInstanceFrom(
                     $territory,
                     $itemNomCommune,

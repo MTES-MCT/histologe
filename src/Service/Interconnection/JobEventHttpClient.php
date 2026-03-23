@@ -135,7 +135,7 @@ class JobEventHttpClient implements HttpClientInterface
             return $payload;
         }
 
-        $payload['fieldList'] = array_filter($payload['fieldList'], function ($field) {
+        $payload['fieldList'] = array_filter($payload['fieldList'], static function ($field) {
             return isset($field['fieldName']) && 'PJ_Documents' !== $field['fieldName'];
         });
 

@@ -85,7 +85,7 @@ class AgentsSelectionTypeTest extends WebTestCase
             'csrf_protection' => false,
             'exclude_user' => $excluded,
         ]);
-        $choices = array_map(fn ($c) => $c->data, $form->createView()->children['agents']->vars['choices']);
+        $choices = array_map(static fn ($c) => $c->data, $form->createView()->children['agents']->vars['choices']);
 
         $this->assertNotContains($excluded, $choices, 'L’utilisateur exclu ne doit pas apparaître dans les choix.');
     }

@@ -177,7 +177,7 @@ class SignalementVoter extends Voter
         }
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
 
-        return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
+        return $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner?->getId() && AffectationStatus::ACCEPTED === $affectation->getStatut();
         })->count() > 0;
     }
@@ -251,7 +251,7 @@ class SignalementVoter extends Voter
             return false;
         }
 
-        return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
+        return $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner->getId();
         })->count() > 0;
     }
@@ -297,7 +297,7 @@ class SignalementVoter extends Voter
         }
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
 
-        return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
+        return $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner->getId()
                 && \in_array(Qualification::VISITES, $partner->getCompetence())
                 && AffectationStatus::ACCEPTED == $affectation->getStatut();
@@ -306,7 +306,7 @@ class SignalementVoter extends Voter
 
     private function canEditNDE(Signalement $signalement, User $user): bool
     {
-        $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(function ($qualification) {
+        $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(static function ($qualification) {
             return Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification();
         })->first();
 
@@ -351,7 +351,7 @@ class SignalementVoter extends Voter
 
         $partner = $user->getPartnerInTerritory($signalement->getTerritory());
 
-        return $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
+        return $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner->getId() && AffectationStatus::ACCEPTED == $affectation->getStatut();
         })->count() > 0;
     }

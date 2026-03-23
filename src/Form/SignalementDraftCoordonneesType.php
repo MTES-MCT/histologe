@@ -85,7 +85,7 @@ class SignalementDraftCoordonneesType extends AbstractType
             ->add('typeProprio', EnumType::class, [
                 'label' => 'Type de bailleur',
                 'class' => ProprioType::class,
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     return $choice->label();
                 },
                 'expanded' => true,

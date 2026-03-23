@@ -15,12 +15,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-#[
-    AsCommand(
-        name: 'app:update-communes',
-        description: 'Update communes from csv file'
-    )
-]
+#[AsCommand(
+    name: 'app:update-communes',
+    description: 'Update communes from csv file'
+)]
 class UpdateCommunesCommand extends Command
 {
     private SymfonyStyle $io;

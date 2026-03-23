@@ -26,8 +26,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     fields: ['email', 'territory', 'isArchive'],
     message: 'L\'e-mail de contact existe déjà pour ce territoire. Veuillez saisir un autre e-mail partenaire.',
     errorPath: 'email',
-    ignoreNull: true)
-]
+    ignoreNull: true)]
 class Partner implements EntityHistoryInterface
 {
     use TimestampableTrait;
@@ -176,7 +175,7 @@ class Partner implements EntityHistoryInterface
      */
     public function getUserPartners(): Collection
     {
-        return $this->userPartners->filter(function (UserPartner $userPartner) {
+        return $this->userPartners->filter(static function (UserPartner $userPartner) {
             return UserStatus::ARCHIVE !== $userPartner->getUser()->getStatut();
         });
     }

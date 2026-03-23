@@ -39,7 +39,7 @@ class TabPanelVoter extends Voter
             return false;
         }
 
-        if (!empty(array_filter($roles, fn ($role) => in_array($role, $accessConfig[$subject])))) {
+        if (!empty(array_filter($roles, static fn ($role) => in_array($role, $accessConfig[$subject])))) {
             return true;
         }
 

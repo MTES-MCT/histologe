@@ -104,7 +104,7 @@ class SignalementActionControllerTest extends WebTestCase
         foreach ($agents as $agent) {
             $agentIds[] = $agent->getId();
         }
-        $agentIds = array_map(fn ($id) => (string) $id, $agentIds);
+        $agentIds = array_map(static fn ($id) => (string) $id, $agentIds);
 
         $tokenId = 'agents_selection';
 
@@ -169,9 +169,9 @@ class SignalementActionControllerTest extends WebTestCase
         $route = $this->router->generate('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
         $csrfToken = $this->generateCsrfToken($this->client, 'add_suivi');
 
-        $filesIds = $signalement->getFiles()->filter(function (File $file) {
+        $filesIds = $signalement->getFiles()->filter(static function (File $file) {
             return $file->isTypeDocument() && !$file->getIsSuspicious();
-        })->map(fn ($file) => $file->getId())->toArray();
+        })->map(static fn ($file) => $file->getId())->toArray();
 
         $this->client->request('POST', $route, [
             'add_suivi' => [
@@ -567,7 +567,7 @@ class SignalementActionControllerTest extends WebTestCase
         $sub = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
         $this->assertNotNull($sub);
         $partnerUsers = $partner->getUsers();
-        $otherAgent = $partnerUsers->filter(fn ($u) => $u->getId() !== $user->getId())->first();
+        $otherAgent = $partnerUsers->filter(static fn ($u) => $u->getId() !== $user->getId())->first();
         if (!$otherAgent) {
             $this->fail('No other agent found for the partner');
         }

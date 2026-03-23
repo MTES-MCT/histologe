@@ -49,9 +49,9 @@ class QueryBuilderFactoryTest extends KernelTestCase
         }
 
         // Vérifie que les paramètres sont bien définis
-        $getParamValue = fn (string $name) => array_reduce(
+        $getParamValue = static fn (string $name) => array_reduce(
             $params->toArray(),
-            fn ($carry, $param) => $param->getName() === $name ? $param->getValue() : $carry,
+            static fn ($carry, $param) => $param->getName() === $name ? $param->getValue() : $carry,
             null
         );
 

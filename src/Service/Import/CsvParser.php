@@ -87,7 +87,7 @@ class CsvParser
             (string) $this->options['escape']
         );
 
-        return array_map(fn ($h) => trim((string) $h), $headers);
+        return array_map(static fn ($h) => trim((string) $h), $headers);
     }
 
     /**
@@ -110,8 +110,8 @@ class CsvParser
         );
 
         return [
-            'headers' => array_map(fn ($h) => trim((string) $h), $headers),
-            'rows' => array_map(fn ($row) => (string) $row, $rows),
+            'headers' => array_map(static fn ($h) => trim((string) $h), $headers),
+            'rows' => array_map(static fn ($row) => (string) $row, $rows),
         ];
     }
 

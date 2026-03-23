@@ -79,7 +79,7 @@ class FileVoter extends Voter
         $partner = $user->getPartnerInTerritory($file->getSignalement()->getTerritory());
 
         return $file->getSignalement()->getAffectations()->filter(
-            function (Affectation $affectation) use ($partner) {
+            static function (Affectation $affectation) use ($partner) {
                 return $affectation->getPartner()->getId() === $partner->getId();
             }
         )->count() > 0;

@@ -72,7 +72,7 @@ class UserType extends AbstractType
             ]);
         };
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, static function (FormEvent $event) use ($formModifier) {
             $data = $event->getData();
             $formModifier($event->getForm(), $data->getPartners()->count() ? $data->getFirstTerritory() : null);
         });
@@ -81,7 +81,7 @@ class UserType extends AbstractType
         });
         $builder->get('territory')->addEventListener(
             FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($formModifier) {
+            static function (FormEvent $event) use ($formModifier) {
                 $territory = $event->getForm()->getData();
                 $formModifier($event->getForm()->getParent(), $territory);
             }

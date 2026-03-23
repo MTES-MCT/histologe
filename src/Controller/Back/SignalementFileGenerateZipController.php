@@ -37,7 +37,7 @@ class SignalementFileGenerateZipController extends AbstractController
         $generateFileZipMessage = new GenerateFileZipMessage(userId: $user->getId(), signalementId: $signalement->getId());
         $count = $signalement
             ->getFiles()
-            ->filter(fn (File $file) => $file->isSituationImage())
+            ->filter(static fn (File $file) => $file->isSituationImage())
             ->count();
 
         if (0 === $count) {

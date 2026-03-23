@@ -20,7 +20,7 @@ class DesordreCritereManager extends AbstractManager
      */
     public function getCriteresSlugsInDraft(array $filteredDataOfDraft, array $availableCritereSlugs): array
     {
-        $criteresSlugs = array_filter($filteredDataOfDraft, function ($value, $slug) use ($availableCritereSlugs) {
+        $criteresSlugs = array_filter($filteredDataOfDraft, static function ($value, $slug) use ($availableCritereSlugs) {
             if (\in_array($slug, $availableCritereSlugs)) {
                 if (1 === $value) {
                     return true;

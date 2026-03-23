@@ -65,7 +65,7 @@ class BackStatistiquesController extends AbstractController
         $this->buildFilterLists($territory);
 
         $territoryKey = !empty($territory) ? $territory->getZip() : '';
-        $partnersIds = implode('-', $partners->map(fn ($partner) => $partner->getId())->toArray());
+        $partnersIds = implode('-', $partners->map(static fn ($partner) => $partner->getId())->toArray());
         $cacheKey = 'backGlobalStatistics-zip-'.$territoryKey.'-partners-'.$partnersIds;
         $backGlobalStatistics = $this->cache->get(
             $cacheKey,
@@ -114,7 +114,7 @@ class BackStatistiquesController extends AbstractController
         $epcis = json_decode(RequestDataExtractor::getString($requestData, 'epcis'));
         $statut = RequestDataExtractor::getString($requestData, 'statut');
         $strEtiquettes = json_decode(RequestDataExtractor::getString($requestData, 'etiquettes') ?? '[]');
-        $etiquettes = array_map(fn ($value): int => $value * 1, $strEtiquettes);
+        $etiquettes = array_map(static fn ($value): int => $value * 1, $strEtiquettes);
         $type = RequestDataExtractor::getString($requestData, 'type');
         $dateStartInput = RequestDataExtractor::getString($requestData, 'dateStart');
         $dateStart = (null !== $dateStartInput) ? new \DateTime($dateStartInput) : null;

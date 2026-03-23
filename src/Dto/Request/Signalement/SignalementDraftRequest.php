@@ -248,8 +248,7 @@ class SignalementDraftRequest
     private ?string $typeLogementNature = null;
     #[Assert\Length(
         max: 15,
-        maxMessage: 'Le champs typeLogementNatureAutrePrecision ne doit pas dépasser {{ limit }} caractères.')
-    ]
+        maxMessage: 'Le champs typeLogementNatureAutrePrecision ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $typeLogementNatureAutrePrecision = null;
     #[Assert\Choice(
         choices: ['oui', 'non'],

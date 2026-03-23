@@ -352,7 +352,7 @@ class GridAffectationLoader
     {
         $occurrencesEmails = array_count_values($emails);
 
-        return array_filter($occurrencesEmails, function ($value) {
+        return array_filter($occurrencesEmails, static function ($value) {
             return $value > 1;
         });
     }

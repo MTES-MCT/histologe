@@ -1749,7 +1749,7 @@ class SignalementRepository extends ServiceEntityRepository
         $rows = $qb->getQuery()->getArrayResult();
 
         return array_map(
-            fn (array $row) => new TabDossier(
+            static fn (array $row) => new TabDossier(
                 uuid: $row['uuid'],
                 nomDeclarant: $row['nomOccupant'],
                 prenomDeclarant: $row['prenomOccupant'],
@@ -1842,7 +1842,7 @@ class SignalementRepository extends ServiceEntityRepository
         $rows = $qb->getQuery()->getArrayResult();
 
         return array_map(
-            fn (array $row) => new TabDossier(
+            static fn (array $row) => new TabDossier(
                 uuid: $row['uuid'],
                 nomDeclarant: $row['nomOccupant'] ?? null,
                 prenomDeclarant: $row['prenomOccupant'] ?? null,
@@ -1980,7 +1980,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         return array_map(/**
          * @throws \DateMalformedStringException
-         */ function (array $row): TabDossier {
+         */ static function (array $row): TabDossier {
             return new TabDossier(
                 uuid: $row['uuid'],
                 nomDeclarant: $row['nom_occupant'],
@@ -2116,7 +2116,7 @@ class SignalementRepository extends ServiceEntityRepository
             $sql .= ' AND aff.partner_id IN (:partners)';
             $sql .= ' AND aff.statut IN (\'EN_COURS\', \'NOUVEAU\')';
             $paramsToBind['partners'] = array_map(
-                fn ($partner) => $partner->getId(),
+                static fn ($partner) => $partner->getId(),
                 $user->getPartners()->toArray()
             );
             $types['partners'] = ArrayParameterType::INTEGER;
@@ -2246,13 +2246,13 @@ class SignalementRepository extends ServiceEntityRepository
         $user = $this->security->getUser();
         if (null === $params->territoireId) {
             $params->partenairesId = $user->getPartners()
-                ->map(fn ($partner) => $partner->getId())
+                ->map(static fn ($partner) => $partner->getId())
                 ->toArray();
         }
 
         $signalements = $this->findDossiersNoAgentFrom(AffectationStatus::ACCEPTED, $params, false);
 
-        return array_map(fn (TabDossier $dossier) => $dossier->uuid, $signalements);
+        return array_map(static fn (TabDossier $dossier) => $dossier->uuid, $signalements);
     }
 
     public function trimFields(): void

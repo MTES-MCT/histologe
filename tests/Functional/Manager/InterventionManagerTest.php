@@ -79,7 +79,7 @@ class InterventionManagerTest extends KernelTestCase
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-10']);
         /** @var ?Affectation $affectation */
-        $affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) {
+        $affectation = $signalement->getAffectations()->filter(static function (Affectation $affectation) {
             return $affectation->getPartner()->hasCompetence(Qualification::VISITES);
         })->get(0);
 
@@ -123,7 +123,7 @@ class InterventionManagerTest extends KernelTestCase
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-10']);
         /** @var ?Affectation $affectation */
-        $affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) {
+        $affectation = $signalement->getAffectations()->filter(static function (Affectation $affectation) {
             return $affectation->getPartner()->hasCompetence(Qualification::VISITES);
         })->get(0);
 

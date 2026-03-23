@@ -113,7 +113,7 @@ class AffectationControllerTest extends WebTestCase
         foreach ($agents as $agent) {
             $agentIds[] = $agent->getId();
         }
-        $agentIds = array_map(fn ($id) => (string) $id, $agentIds);
+        $agentIds = array_map(static fn ($id) => (string) $id, $agentIds);
 
         $tokenId = 'agents_selection';
 
@@ -151,7 +151,7 @@ class AffectationControllerTest extends WebTestCase
         foreach ($agents as $agent) {
             $agentIds[] = $agent->getId();
         }
-        $agentIds = array_map(fn ($id) => (string) $id, $agentIds);
+        $agentIds = array_map(static fn ($id) => (string) $id, $agentIds);
 
         $tokenId = 'agents_selection';
 

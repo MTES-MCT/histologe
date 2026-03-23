@@ -559,7 +559,7 @@ class SignalementManager extends AbstractManager
             ->setTypeCompositionLogement($typeCompositionLogement)
             ->setNumeroInvariant($informationsLogementRequest->getBailDpeInvariant());
 
-        $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(function ($qualification) {
+        $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(static function ($qualification) {
             return Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification();
         })->first();
         if ($signalementQualificationNDE) {

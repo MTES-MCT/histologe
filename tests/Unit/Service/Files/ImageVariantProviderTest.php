@@ -30,7 +30,7 @@ class ImageVariantProviderTest extends KernelTestCase
         $this->tmpFileWriterMock = $this->createMock(TmpFileWriter::class);
         $this->tmpFileWriterMock
             ->method('putContents')
-            ->willReturnCallback(function (string $path, string $content): void {
+            ->willReturnCallback(static function (string $path, string $content): void {
                 $dir = \dirname($path);
                 if (!is_dir($dir)) {
                     mkdir($dir, 0777, true);
@@ -66,7 +66,7 @@ class ImageVariantProviderTest extends KernelTestCase
         $this->writeFile($this->bucketDir.'/'.$expectedFilename, 'content-'.$expectedSuffix);
 
         $this->fileStorageMock->method('fileExists')->willReturnCallback(
-            fn (string $path) => in_array($path, [$thumb, $resize, $expectedFilename], true)
+            static fn (string $path) => in_array($path, [$thumb, $resize, $expectedFilename], true)
         );
 
         $file = $this->provider->getFileVariant($original, $variant);

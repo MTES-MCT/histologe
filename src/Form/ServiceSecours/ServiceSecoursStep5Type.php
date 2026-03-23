@@ -16,8 +16,8 @@ class ServiceSecoursStep5Type extends AbstractType
     {
         $builder->add('desordres', ChoiceType::class, [
             'choices' => DesordreSecours::cases(),
-            'choice_value' => fn (?DesordreSecours $desordre) => $desordre?->value,
-            'choice_label' => fn (DesordreSecours $desordre) => $desordre->label(),
+            'choice_value' => static fn (?DesordreSecours $desordre) => $desordre?->value,
+            'choice_label' => static fn (DesordreSecours $desordre) => $desordre->label(),
             'multiple' => true,
             'expanded' => true,
             'label' => 'Désordres <span class="text-required">*</span>',

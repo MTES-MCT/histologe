@@ -44,14 +44,14 @@ class SearchTerritoryFilesType extends AbstractType
             'class' => DocumentType::class,
             'choice_filter' => ChoiceList::filter(
                 $this,
-                function ($choice) {
+                static function ($choice) {
                     if (!empty($choice)) {
                         return \array_key_exists($choice->name, DocumentType::getTerritoryFilesList()) ? $choice : false;
                     }
                 },
                 'doctype',
             ),
-            'choice_label' => function ($choice) {
+            'choice_label' => static function ($choice) {
                 return $choice->label();
             },
             'required' => false,

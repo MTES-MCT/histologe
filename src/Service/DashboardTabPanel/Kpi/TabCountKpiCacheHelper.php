@@ -41,7 +41,7 @@ class TabCountKpiCacheHelper
 
     private function generateKey(string $kpiName, User $user, ?TabQueryParameters $params): string
     {
-        $roleKey = implode('-', array_filter($user->getRoles(), fn ($role) => 'ROLE_USER' !== $role));
+        $roleKey = implode('-', array_filter($user->getRoles(), static fn ($role) => 'ROLE_USER' !== $role));
         $territoryKey = $this->getTerritoryKey($user, $params);
         $partnerKey = $this->getPartnerKey($kpiName, $user, $params);
         $otherParamsKey = '';
@@ -71,7 +71,7 @@ class TabCountKpiCacheHelper
                 $otherParamsKey = '-'.implode(
                     '-',
                     array_map(
-                        fn ($k, $v) => $k.'_'.$v,
+                        static fn ($k, $v) => $k.'_'.$v,
                         array_keys($otherParams),
                         array_values($otherParams)
                     )

@@ -215,7 +215,7 @@ class SignalementController extends AbstractController
                 }
             }
         }
-        $listConcludeProcedures = array_unique(array_map(function ($concludeProcedure) {
+        $listConcludeProcedures = array_unique(array_map(static function ($concludeProcedure) {
             return $concludeProcedure->label();
         }, $listConcludeProcedures));
 
@@ -296,7 +296,7 @@ class SignalementController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
-        $affectation = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
+        $affectation = $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner() === $partner;
         })->first();
         if (!$this->isGranted(SignalementVoter::SIGN_CLOSE, $signalement) && (!$affectation || !$this->isGranted(AffectationVoter::AFFECTATION_CLOSE, $affectation))) {

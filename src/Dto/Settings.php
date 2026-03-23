@@ -91,7 +91,7 @@ class Settings
         $this->lastname = $user->getNom();
         $this->avatarOrPlaceHolder = $avatarOrPlaceHolder;
         $this->roleLabel = $user->getRoleLabel();
-        $this->partnerIds = $user->getUserPartners()->map(fn ($userPartner) => $userPartner->getPartner()->getId())->toArray();
+        $this->partnerIds = $user->getUserPartners()->map(static fn ($userPartner) => $userPartner->getPartner()->getId())->toArray();
         $this->territories = $territories;
         $this->partners = $partners;
         $this->communes = $communes;

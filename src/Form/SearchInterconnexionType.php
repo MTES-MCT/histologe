@@ -67,7 +67,7 @@ class SearchInterconnexionType extends AbstractType
             $event->setData($data);
         });
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event) {
             /** @var SearchInterconnexion $searchInterconnexion */
             $searchInterconnexion = $event->getData();
             $actionValue = $searchInterconnexion->getAction();
@@ -142,7 +142,7 @@ class SearchInterconnexionType extends AbstractType
         $builder->add('partner', EntityType::class, [
             'class' => Partner::class,
             'choices' => $choicesPartners,
-            'choice_label' => function (Partner $partner) {
+            'choice_label' => static function (Partner $partner) {
                 return sprintf('%s (%s)', $partner->getNom(), str_pad($partner->getTerritory()->getZip(), 2, '0'));
             },
             'required' => false,

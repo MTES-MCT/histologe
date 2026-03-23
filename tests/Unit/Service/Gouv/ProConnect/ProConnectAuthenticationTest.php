@@ -108,7 +108,7 @@ class ProConnectAuthenticationTest extends KernelTestCase
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $urlGenerator
             ->method('generate')
-            ->willReturnCallback(fn ($routeName) => match ($routeName) {
+            ->willReturnCallback(static fn ($routeName) => match ($routeName) {
                 'app_user_proconnect_login_callback' => 'https://myapp.com/proconnect/login-callback',
                 'app_logout' => 'https://myapp.com/logout',
                 default => throw new \LogicException("Unexpected route: $routeName"),
@@ -130,7 +130,7 @@ class ProConnectAuthenticationTest extends KernelTestCase
         $httpClient
             ->expects(self::once())
             ->method('getLogoutUrl')
-            ->with($this->callback(function (LogoutRequest $request) {
+            ->with($this->callback(static function (LogoutRequest $request) {
                 return 'valid_id_token' === $request->idTokenHint
                     && 'valid_state' === $request->state
                     && 'https://myapp.com/logout' === $request->postLogoutRedirectUri;

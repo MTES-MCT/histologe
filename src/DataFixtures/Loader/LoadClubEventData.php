@@ -40,7 +40,7 @@ class LoadClubEventData extends Fixture implements OrderedFixtureInterface
             $clubEvent->setUserRoles($row['user_roles']);
         }
         if (isset($row['partner_types'])) {
-            $clubEvent->setPartnerTypes(array_map(fn ($type) => PartnerType::tryFrom($type), $row['partner_types']));
+            $clubEvent->setPartnerTypes(array_map(static fn ($type) => PartnerType::tryFrom($type), $row['partner_types']));
         }
         $manager->persist($clubEvent);
     }

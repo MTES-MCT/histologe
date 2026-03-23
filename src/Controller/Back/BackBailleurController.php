@@ -78,7 +78,7 @@ class BackBailleurController extends AbstractController
                 }
             }
             $currentTerritories = $bailleur->getBailleurTerritories()
-                ->map(fn ($bt) => $bt->getTerritory())
+                ->map(static fn ($bt) => $bt->getTerritory())
                 ->toArray();
 
             foreach ($selectedTerritories as $territory) {

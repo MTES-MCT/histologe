@@ -71,7 +71,7 @@ class NewSignalementCheckFileMessageHandler
             $newSignalementCheckFileMessage->getSignalementId()
         );
 
-        $suivisPublic = $signalement->getSuivis()->filter(function (Suivi $suivi) {
+        $suivisPublic = $signalement->getSuivis()->filter(static function (Suivi $suivi) {
             return $suivi->getIsPublic() && Suivi::TYPE_PARTNER === $suivi->getType();
         });
 

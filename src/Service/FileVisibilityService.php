@@ -58,8 +58,8 @@ class FileVisibilityService
             return true;
         }
 
-        $valuesA = array_map(fn ($e) => $e->value, $partnerParameter);
-        $valuesB = array_map(fn ($e) => $e->value, $fileParameter);
+        $valuesA = array_map(static fn ($e) => $e->value, $partnerParameter);
+        $valuesB = array_map(static fn ($e) => $e->value, $fileParameter);
 
         return (bool) array_intersect($valuesA, $valuesB);
     }
