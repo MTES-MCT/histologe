@@ -69,7 +69,7 @@ class TypeCompositionType extends AbstractType
             ->add('appartementEtage', EnumType::class, [
                 'label' => 'Localisation de l\'appartement',
                 'class' => EtageType::class,
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     return $choice->label();
                 },
                 'expanded' => true,
@@ -147,7 +147,7 @@ class TypeCompositionType extends AbstractType
                     ),
                     // Si le logement n'est pas une pièce unique (pieceUnique = 'plusieurs_pieces'), alors le nombre de pièces à vivre doit être supérieur ou égal à 2
                     new Assert\Callback(
-                        callback: function ($value, $context) {
+                        callback: static function ($value, $context) {
                             $form = $context->getRoot();
                             $pieceUnique = $form->get('pieceUnique')->getData();
 

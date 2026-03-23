@@ -531,7 +531,7 @@ class TabDataManager
 
         if (null === $tabQueryParameters->territoireId) {
             $tabQueryParameters->partenairesId = $user->getPartners()
-                ->map(fn ($partner) => $partner->getId())
+                ->map(static fn ($partner) => $partner->getId())
                 ->toArray();
         } else {
             $territoire = $territoires[$tabQueryParameters->territoireId];

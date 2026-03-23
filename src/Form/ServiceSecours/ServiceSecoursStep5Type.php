@@ -31,7 +31,7 @@ class ServiceSecoursStep5Type extends AbstractType
 
         $builder->add('desordres', ChoiceType::class, [
             'choices' => $choices,
-            'choice_attr' => function (?string $slug) use ($hints): array {
+            'choice_attr' => static function (?string $slug) use ($hints): array {
                 return [
                     'data-dsfr-hint' => $hints[$slug] ?? '',
                 ];

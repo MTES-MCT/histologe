@@ -28,7 +28,7 @@ class TokenAuthenticatorTest extends TestCase
         /** @var MockObject&TranslatorInterface $translator */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->method('trans')
-            ->willReturnCallback(function ($key) {
+            ->willReturnCallback(static function ($key) {
                 $translations = [
                     'Invalid credentials.' => 'Identifiants invalides.',
                     'An authentication exception occurred.' => 'Une exception d\'authentification s\'est produite.',

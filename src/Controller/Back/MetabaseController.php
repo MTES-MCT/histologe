@@ -55,9 +55,9 @@ class MetabaseController extends AbstractController
         if (empty($territoryNames)) {
             if ($isAdmin) {
                 $territories = $territoryRepository->findBy(['isActive' => true]);
-                $territoryNames = array_map(fn (Territory $territory) => $territory->getName(), $territories);
+                $territoryNames = array_map(static fn (Territory $territory) => $territory->getName(), $territories);
             } elseif ($user->isMultiTerritoire()) {
-                $territoryNames = array_map(fn (Territory $territory) => $territory->getName(), array_values($authorizedTerritories));
+                $territoryNames = array_map(static fn (Territory $territory) => $territory->getName(), array_values($authorizedTerritories));
             } elseif ($firstTerritory = $user->getFirstTerritory()) {
                 $territoryNames = [$firstTerritory->getName()];
             }

@@ -87,7 +87,7 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
                         .' - Signalement '.$row['signalement_uuid']
                         .' ('.$signalement->getId().') : '
                         .$e->getMessage();
-                    if (!($e instanceof \Exception)) {
+                    if (!$e instanceof \Exception) {
                         $message .= ' - '.$e->getFile().' ('.$e->getLine().')';
                     }
                     $io->error($message);

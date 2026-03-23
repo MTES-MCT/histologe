@@ -77,7 +77,7 @@ class InterventionArreteServiceHandlerTest extends TestCase
         $this->esaboraManager
             ->expects($this->exactly(2))
             ->method('createOrUpdateArrete')
-            ->willReturnCallback(function (Affectation $affectation, DossierArreteSISH $item) use (&$calls) {
+            ->willReturnCallback(static function (Affectation $affectation, DossierArreteSISH $item) use (&$calls) {
                 $calls[] = [$affectation, $item];
             });
 

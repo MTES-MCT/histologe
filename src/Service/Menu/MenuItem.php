@@ -111,7 +111,7 @@ class MenuItem
     {
         return array_values(array_filter(
             $this->children,
-            fn (self $child) => $child->isVisible($security)
+            static fn (self $child) => $child->isVisible($security)
         ));
     }
 }

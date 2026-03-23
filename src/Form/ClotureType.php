@@ -30,7 +30,7 @@ class ClotureType extends AbstractType
         $builder
             ->add('motifCloture', EnumType::class, [
                 'class' => MotifCloture::class,
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     return $choice->label();
                 },
                 'label' => 'Motif <span class="fr-text-default--error">*</span>',

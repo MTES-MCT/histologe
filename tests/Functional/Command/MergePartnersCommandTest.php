@@ -72,7 +72,7 @@ class MergePartnersCommandTest extends KernelTestCase
 
         // Given: Get affectations before merge to track status preservation
         $affectationsBeforeMerge = $this->affectationRepository->findBy(['partner' => $sourcePartner]);
-        $affectationIds = array_map(fn (Affectation $a) => $a->getId(), $affectationsBeforeMerge);
+        $affectationIds = array_map(static fn (Affectation $a) => $a->getId(), $affectationsBeforeMerge);
 
         // Given: Get initial subscription counts for users
         $users = $sourcePartner->getUsers();

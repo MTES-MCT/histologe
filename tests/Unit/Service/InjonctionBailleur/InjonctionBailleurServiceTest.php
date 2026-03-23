@@ -93,14 +93,14 @@ class InjonctionBailleurServiceTest extends KernelTestCase
             ->method('createSuivi')
             ->withConsecutive(
                 [
-                    $this->callback(fn ($arg) => $arg instanceof Signalement),
+                    $this->callback(static fn ($arg) => $arg instanceof Signalement),
                     $this->stringContains('arrêter la procédure d\'injonction'),
                     Suivi::TYPE_AUTO,
                     SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
                     $this->anything(), // on ignore les autres params facultatifs
                 ],
                 [
-                    $this->callback(fn ($arg) => $arg instanceof Signalement),
+                    $this->callback(static fn ($arg) => $arg instanceof Signalement),
                     'Le bailleur souhaite repasser en procédure classique.',
                     Suivi::TYPE_AUTO,
                     SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,
@@ -134,14 +134,14 @@ class InjonctionBailleurServiceTest extends KernelTestCase
             ->method('createSuivi')
             ->withConsecutive(
                 [
-                    $this->callback(fn ($arg) => $arg instanceof Signalement),
+                    $this->callback(static fn ($arg) => $arg instanceof Signalement),
                     $this->stringContains('Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés'),
                     Suivi::TYPE_AUTO,
                     SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
                     $this->anything(), // on ignore les autres params facultatifs
                 ],
                 [
-                    $this->callback(fn ($arg) => $arg instanceof Signalement),
+                    $this->callback(static fn ($arg) => $arg instanceof Signalement),
                     'Travaux faits.',
                     Suivi::TYPE_AUTO,
                     SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,

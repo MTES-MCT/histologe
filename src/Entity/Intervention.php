@@ -271,7 +271,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
 
         return implode(
             $separator,
-            array_map(fn (ProcedureType $procedure) => $procedure->label(), $this->concludeProcedure)
+            array_map(static fn (ProcedureType $procedure) => $procedure->label(), $this->concludeProcedure)
         );
     }
 

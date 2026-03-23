@@ -181,7 +181,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
         ->set('n.waitMailingSummary', ':waitMailingSummary')
         ->setParameter('waitMailingSummary', $data['waitMailingSummary'])
         ->where('n.id IN (:ids)')
-        ->setParameter('ids', array_map(fn (Notification $notification) => $notification->getId(), $notifications));
+        ->setParameter('ids', array_map(static fn (Notification $notification) => $notification->getId(), $notifications));
         if (isset($data['mailingSummarySentAt'])) {
             $qb->set('n.mailingSummarySentAt', ':mailingSummarySentAt')
                 ->setParameter('mailingSummarySentAt', $data['mailingSummarySentAt']);
@@ -196,7 +196,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
     public function getNotificationsFrom(Signalement $signalement): array
     {
         return array_map(
-            fn (array $row) => new NotificationSuiviUser(
+            static fn (array $row) => new NotificationSuiviUser(
                 (int) $row['suiviId'],
                 (int) $row['userId'],
                 (bool) $row['isSeen'],

@@ -125,14 +125,14 @@ class SignalementDraftDesordresType extends AbstractType
             ]);
 
         $signalementCriteres = $signalement ? $signalement->getDesordreCriteres()->toArray() : [];
-        $selectedCriteriaIds = array_map(fn ($critere) => $critere->getId(), $signalementCriteres);
+        $selectedCriteriaIds = array_map(static fn ($critere) => $critere->getId(), $signalementCriteres);
         foreach ($groupedCriteria as $zone => $categories) {
             foreach ($categories as $labelCategorie => $criteres) {
                 $firstCritereId = $criteres[0]->getId();
                 // TODO : voir avec Mathilde si on garde la catégorie Type et composition du logement, ou si on la calcule à la volée comme pour le front
                 $builder->add("desordres_{$zone}_{$firstCritereId}", SearchCheckboxType::class, [
                     'class' => DesordreCritere::class,
-                    'query_builder' => function (DesordreCritereRepository $repo) use ($zone, $labelCategorie) {
+                    'query_builder' => static function (DesordreCritereRepository $repo) use ($zone, $labelCategorie) {
                         return $repo->createQueryBuilder('c')
                             ->where('c.zoneCategorie = :zone')
                             ->andWhere('c.labelCategorie = :labelCategorie')
@@ -141,7 +141,7 @@ class SignalementDraftDesordresType extends AbstractType
                             ->orderBy('c.labelCritere', 'ASC');
                     },
                     'label' => $labelCategorie,
-                    'choice_label' => function (DesordreCritere $critere) {
+                    'choice_label' => static function (DesordreCritere $critere) {
                         // Cas particulier des critères ayant un label identique
                         if ('desordres_logement_humidite_cuisine' === $critere->getSlugCritere()) {
                             return 'Le logement est humide et a des traces de moisissures dans la cuisine';
@@ -159,7 +159,7 @@ class SignalementDraftDesordresType extends AbstractType
                     'nochoiceslabel' => 'Aucun critère disponible',
                     'mapped' => false,
                     'required' => false,
-                    'data' => array_filter($criteres, fn ($critere) => in_array($critere->getId(), $selectedCriteriaIds)),
+                    'data' => array_filter($criteres, static fn ($critere) => in_array($critere->getId(), $selectedCriteriaIds)),
                 ]);
             }
         }
@@ -181,7 +181,7 @@ class SignalementDraftDesordresType extends AbstractType
                 'row_attr' => ['class' => 'fr-ml-2w'],
             ]);
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event) {
             $form = $event->getForm();
 
             $selectedCriteres = [];

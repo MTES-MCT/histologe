@@ -267,7 +267,7 @@ class NotificationAndMailSender
         ?string $description = null,
     ): void {
         foreach ($recipients as $user) {
-            if (!($user instanceof User)) {
+            if (!$user instanceof User) {
                 continue;
             }
             if (in_array($type, [NotificationType::NOUVEAU_SUIVI, NotificationType::CLOTURE_SIGNALEMENT]) && $user === $suivi->getCreatedBy()) {

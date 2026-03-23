@@ -51,7 +51,7 @@ class BrevoWebhookController extends AbstractController
 
         $emailDeliveryIssueRepository = $this->entityManager->getRepository(EmailDeliveryIssue::class);
         if (!$this->emailExistsInSystem($email)) {
-            \Sentry\configureScope(function (Scope $scope) use ($email, $payload): void {
+            \Sentry\configureScope(static function (Scope $scope) use ($email, $payload): void {
                 $scope->setTag('email_recipient', $email);
                 $scope->setExtra('brevo_payload', $payload);
             });

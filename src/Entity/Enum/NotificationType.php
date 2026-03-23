@@ -36,7 +36,7 @@ enum NotificationType: string
      */
     public static function getForAgent(): array
     {
-        return array_filter(NotificationType::cases(), function (NotificationType $notificationType) {
+        return array_filter(NotificationType::cases(), static function (NotificationType $notificationType) {
             return self::SUIVI_USAGER !== $notificationType;
         });
     }
@@ -46,7 +46,7 @@ enum NotificationType: string
      */
     public static function getForUsager(): array
     {
-        return array_filter(NotificationType::cases(), function (NotificationType $notificationType) {
+        return array_filter(NotificationType::cases(), static function (NotificationType $notificationType) {
             return self::SUIVI_USAGER === $notificationType;
         });
     }

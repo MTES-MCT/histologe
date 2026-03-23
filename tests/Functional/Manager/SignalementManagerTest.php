@@ -169,7 +169,7 @@ class SignalementManagerTest extends WebTestCase
         $this->assertInstanceOf(\DateTimeInterface::class, $signalementClosed->getClosedAt());
 
         $signalementHasAllAffectationsClosed = $signalementClosed->getAffectations()
-            ->forAll(function (int $index, Affectation $affectation) {
+            ->forAll(static function (int $index, Affectation $affectation) {
                 return AffectationStatus::CLOSED === $affectation->getStatut()
                 && str_contains($affectation->getMotifCloture()->label(), 'Travaux faits ou en cours'); // TODO ??
             });

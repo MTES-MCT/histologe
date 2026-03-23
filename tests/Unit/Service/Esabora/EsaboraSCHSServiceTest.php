@@ -92,7 +92,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
 
     public function testGetStateDossierFromEsaboraThrownException(): void
     {
-        $mockHttpClient = new MockHttpClient(function () {
+        $mockHttpClient = new MockHttpClient(static function () {
             throw new TransportException();
         });
 
@@ -110,7 +110,7 @@ class EsaboraSCHSServiceTest extends KernelTestCase
      */
     public function testPushDossierToEsaboraThrownException(): void
     {
-        $mockHttpClient = new MockHttpClient(function () {
+        $mockHttpClient = new MockHttpClient(static function () {
             throw new TransportException();
         });
 

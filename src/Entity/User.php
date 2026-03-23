@@ -349,7 +349,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
      */
     public function getSignalementsCreatedByStatut(SignalementStatus $statut): Collection
     {
-        return $this->signalementsCreated->filter(function (Signalement $signalement) use ($statut) {
+        return $this->signalementsCreated->filter(static function (Signalement $signalement) use ($statut) {
             return $statut === $signalement->getStatut();
         });
     }

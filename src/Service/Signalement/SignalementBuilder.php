@@ -232,7 +232,7 @@ class SignalementBuilder
                 // on récupère tous les slugs des critères de cette catégorie de désordres
                 $availableCritereSlugs = array_filter(
                     array_keys($desordreCriteresBySlug),
-                    fn ($slug) => $categoryDisorderSlug === $desordreCriteresBySlug[$slug]->getSlugCategorie()
+                    static fn ($slug) => $categoryDisorderSlug === $desordreCriteresBySlug[$slug]->getSlugCategorie()
                 );
 
                 $critereSlugDraft = $this->desordreCritereManager->getCriteresSlugsInDraft(

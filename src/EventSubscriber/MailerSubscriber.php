@@ -36,9 +36,9 @@ readonly class MailerSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $originalTo = array_map(fn (Address $a) => $a->toString(), $message->getTo());
-        $originalCc = array_map(fn (Address $a) => $a->toString(), $message->getCc());
-        $originalBcc = array_map(fn (Address $a) => $a->toString(), $message->getBcc());
+        $originalTo = array_map(static fn (Address $a) => $a->toString(), $message->getTo());
+        $originalCc = array_map(static fn (Address $a) => $a->toString(), $message->getCc());
+        $originalBcc = array_map(static fn (Address $a) => $a->toString(), $message->getBcc());
 
         $headers = $message->getHeaders();
         $headers->remove('To');

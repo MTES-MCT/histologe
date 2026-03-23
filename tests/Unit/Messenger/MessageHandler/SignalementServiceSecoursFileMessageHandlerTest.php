@@ -66,7 +66,7 @@ class SignalementServiceSecoursFileMessageHandlerTest extends TestCase
         $signalementFileAttacher
             ->expects(self::exactly(2))
             ->method('createAndAttach')
-            ->willReturnCallback(function ($signalementArg, $uploadedFileArg) use ($signalement, $expectedFiles, &$callIndex) {
+            ->willReturnCallback(static function ($signalementArg, $uploadedFileArg) use ($signalement, $expectedFiles, &$callIndex) {
                 self::assertSame($signalement, $signalementArg);
                 self::assertSame($expectedFiles[$callIndex], $uploadedFileArg);
                 ++$callIndex;

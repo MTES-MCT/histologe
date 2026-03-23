@@ -81,7 +81,7 @@ class SearchFilterOptionDataProvider
             return $className.User::ROLE_ADMIN.'-territory-'.$territory?->getZip();
         }
         $role = $user->getRoles();
-        $partnersIds = implode('-', $user->getPartners()->map(fn ($partner) => $partner->getId())->toArray());
+        $partnersIds = implode('-', $user->getPartners()->map(static fn ($partner) => $partner->getId())->toArray());
 
         return $className.array_shift($role).'-partners-'.$partnersIds.'-territory-'.$territory?->getZip();
     }

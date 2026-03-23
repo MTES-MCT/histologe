@@ -50,7 +50,7 @@ class FileListServiceTest extends WebTestCase
 
         $files = $choices['Documents de la situation'];
 
-        $titles = array_map(fn ($file) => $file->getTitle(), $files);
+        $titles = array_map(static fn ($file) => $file->getTitle(), $files);
         $sorted = $titles;
         sort($sorted, \SORT_NATURAL | \SORT_FLAG_CASE);
 
@@ -76,7 +76,7 @@ class FileListServiceTest extends WebTestCase
 
         $files = $choices['Documents de la situation'];
 
-        $titles = array_map(fn ($file) => $file->getTitle(), $files);
+        $titles = array_map(static fn ($file) => $file->getTitle(), $files);
         $sorted = $titles;
         sort($sorted, \SORT_NATURAL | \SORT_FLAG_CASE);
 
@@ -102,7 +102,7 @@ class FileListServiceTest extends WebTestCase
 
         $files = $choices['Documents de la situation'];
 
-        $titles = array_map(fn ($file) => $file->getTitle(), $files);
+        $titles = array_map(static fn ($file) => $file->getTitle(), $files);
         $sorted = $titles;
         sort($sorted, \SORT_NATURAL | \SORT_FLAG_CASE);
 

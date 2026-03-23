@@ -319,7 +319,7 @@ class SignalementImportLoader
                 try {
                     if (null !== $this->indexedCriteres[$critereLabel]) {
                         /** @var Criticite $criticite */
-                        $criticite = $this->indexedCriteres[$critereLabel]->getCriticites()->filter(function (Criticite $c) use ($etat) {
+                        $criticite = $this->indexedCriteres[$critereLabel]->getCriticites()->filter(static function (Criticite $c) use ($etat) {
                             return $c->getScore() === Criticite::ETAT_LABEL[trim($etat)];
                         })->first();
                     } else {

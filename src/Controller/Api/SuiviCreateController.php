@@ -148,7 +148,7 @@ class SuiviCreateController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
-        $fileToAttach = $signalement->getFiles()->filter(function (File $file) use ($suiviRequest) {
+        $fileToAttach = $signalement->getFiles()->filter(static function (File $file) use ($suiviRequest) {
             return in_array($file->getUuid(), $suiviRequest->getFiles(), true);
         });
         $suivi = $this->suiviManager->createSuivi(

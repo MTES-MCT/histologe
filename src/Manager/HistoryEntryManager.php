@@ -111,13 +111,13 @@ class HistoryEntryManager extends AbstractManager
         if (isset($formattedHistory['N/A'])) {
             unset($formattedHistory['N/A']);
         }
-        $formattedHistory = array_filter($formattedHistory, function ($entry) {
+        $formattedHistory = array_filter($formattedHistory, static function ($entry) {
             return !empty($entry);
         });
 
         ksort($formattedHistory);
         foreach ($formattedHistory as &$partnerEvents) {
-            usort($partnerEvents, fn ($a, $b) => strcasecmp($b['Date'], $a['Date']));
+            usort($partnerEvents, static fn ($a, $b) => strcasecmp($b['Date'], $a['Date']));
         }
 
         return $formattedHistory;

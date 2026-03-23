@@ -17,24 +17,24 @@ class ServiceSecoursNavigatorType extends AbstractType
         $builder
             ->add('previous', PreviousFlowType::class, [
                 'label' => 'Précédent',
-                'include_if' => fn (FormFlowCursor $cursor) => !$cursor->isFirstStep(),
+                'include_if' => static fn (FormFlowCursor $cursor) => !$cursor->isFirstStep(),
                 'attr' => ['class' => 'fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line'],
                 'clear_submission' => false,
                 'validation_groups' => false,
             ])
             ->add('next', NextFlowType::class, [
                 'label' => 'Suivant',
-                'include_if' => fn (FormFlowCursor $cursor) => !$cursor->isLastStep() && 'step5' !== $cursor->getCurrentStep(),
+                'include_if' => static fn (FormFlowCursor $cursor) => !$cursor->isLastStep() && 'step5' !== $cursor->getCurrentStep(),
                 'attr' => ['class' => 'fr-btn--icon-right fr-icon-arrow-right-line'],
             ])
             ->add('nextReview', NextFlowType::class, [
                 'label' => 'Vérifier ma saisie',
-                'include_if' => fn (FormFlowCursor $cursor) => 'step5' === $cursor->getCurrentStep(),
+                'include_if' => static fn (FormFlowCursor $cursor) => 'step5' === $cursor->getCurrentStep(),
                 'attr' => ['class' => 'fr-btn--icon-right fr-icon-arrow-right-line'],
             ])
             ->add('finish', FinishFlowType::class, [
                 'label' => 'Valider le signalement',
-                'include_if' => fn (FormFlowCursor $cursor) => $cursor->isLastStep(),
+                'include_if' => static fn (FormFlowCursor $cursor) => $cursor->isLastStep(),
             ])
         ;
     }

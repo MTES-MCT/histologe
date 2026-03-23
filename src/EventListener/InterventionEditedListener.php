@@ -36,10 +36,10 @@ class InterventionEditedListener
             $before = $event->getOldValue('concludeProcedure') ?? [];
             $after = $event->getNewValue('concludeProcedure') ?? [];
             $before = is_array($before)
-                ? array_map(fn (string $procedure) => ProcedureType::tryFrom($procedure)->label(), $before)
+                ? array_map(static fn (string $procedure) => ProcedureType::tryFrom($procedure)->label(), $before)
                 : [];
             $after = is_array($after)
-                ? array_map(fn (string $procedure) => ProcedureType::tryFrom($procedure)->label(), $after)
+                ? array_map(static fn (string $procedure) => ProcedureType::tryFrom($procedure)->label(), $after)
                 : [];
             sort($before);
             sort($after);

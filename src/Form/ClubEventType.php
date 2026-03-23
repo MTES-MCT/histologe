@@ -36,7 +36,7 @@ class ClubEventType extends AbstractType
             'label' => 'Date de l\'événement',
             'widget' => 'single_text',
             'required' => false,
-            'getter' => function (ClubEvent $clubEvent) use ($timezoneProvider): ?\DateTimeInterface {
+            'getter' => static function (ClubEvent $clubEvent) use ($timezoneProvider): ?\DateTimeInterface {
                 $date = $clubEvent->getDateEvent();
                 if (null === $date) {
                     return null;
@@ -44,7 +44,7 @@ class ClubEventType extends AbstractType
 
                 return $date->setTimezone($timezoneProvider->getDateTimezone());
             },
-            'setter' => function (ClubEvent $clubEvent, ?\DateTimeInterface $date) use ($timezoneProvider): void {
+            'setter' => static function (ClubEvent $clubEvent, ?\DateTimeInterface $date) use ($timezoneProvider): void {
                 if (null === $date) {
                     return;
                 }
@@ -69,7 +69,7 @@ class ClubEventType extends AbstractType
         ]);
         $builder->add('partnerTypes', SearchCheckboxEnumType::class, [
             'class' => PartnerType::class,
-            'choice_label' => function ($choice) {
+            'choice_label' => static function ($choice) {
                 return $choice->label();
             },
             'label' => 'Type de partenaire (facultatif)',
@@ -80,7 +80,7 @@ class ClubEventType extends AbstractType
         ]);
         $builder->add('partnerCompetences', SearchCheckboxEnumType::class, [
             'class' => Qualification::class,
-            'choice_label' => function ($choice) {
+            'choice_label' => static function ($choice) {
                 return $choice->label();
             },
             'label' => 'Compétences (facultatif)',

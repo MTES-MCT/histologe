@@ -10,7 +10,7 @@ class TestExtension extends AbstractExtension
     public function getTests(): array
     {
         return [
-            new TwigTest('numeric', fn ($value) => is_numeric($value)),
+            new TwigTest('numeric', static fn ($value) => is_numeric($value)),
         ];
     }
 }

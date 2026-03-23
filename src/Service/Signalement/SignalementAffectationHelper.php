@@ -133,7 +133,7 @@ class SignalementAffectationHelper
         $procedures = explode(';', $rawConclusionProcedure);
         $lastProcedures = explode(',', $procedures[0]);
 
-        return array_map(function ($procedure) {
+        return array_map(static function ($procedure) {
             return ProcedureType::from($procedure)->label();
         }, $lastProcedures);
     }

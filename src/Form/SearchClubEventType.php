@@ -37,7 +37,7 @@ class SearchClubEventType extends AbstractType
         ]);
         $builder->add('partnerType', EnumType::class, [
             'class' => PartnerType::class,
-            'choice_label' => function ($choice) {
+            'choice_label' => static function ($choice) {
                 return $choice->label();
             },
             'placeholder' => 'Tous les types de partenaire',
@@ -46,7 +46,7 @@ class SearchClubEventType extends AbstractType
         ]);
         $builder->add('partnerCompetence', EnumType::class, [
             'class' => Qualification::class,
-            'choice_label' => function ($choice) {
+            'choice_label' => static function ($choice) {
                 return $choice->label();
             },
             'placeholder' => 'Toutes les compétences',

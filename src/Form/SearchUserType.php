@@ -146,7 +146,7 @@ class SearchUserType extends AbstractType
     {
         $builder->add('partners', SearchCheckboxType::class, [
             'class' => Partner::class,
-            'query_builder' => function (PartnerRepository $partnerRepository) use ($territory, $partnerType) {
+            'query_builder' => static function (PartnerRepository $partnerRepository) use ($territory, $partnerType) {
                 $query = $partnerRepository->createQueryBuilder('p')
                     ->where('p.territory = :territory')
                     ->setParameter('territory', $territory);
@@ -170,7 +170,7 @@ class SearchUserType extends AbstractType
     {
         $options = [
             'class' => PartnerType::class,
-            'choice_label' => function ($choice) {
+            'choice_label' => static function ($choice) {
                 return $choice->label();
             },
             'placeholder' => 'Tous les types de partenaire',

@@ -87,14 +87,14 @@ class PartnerType extends AbstractType
                 'label' => 'Type de partenaire',
                 'help' => 'Sélectionnez un type pour afficher les champs à remplir. Si vous ne trouvez pas de type de partenaire adapté, sélectionnez "Autre".',
                 'class' => EnumPartnerType::class,
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     return $choice->label();
                 },
                 'choice_attr' => function (EnumPartnerType $choice) {
                     $competences = $this->competencePerType[$choice->name] ?? [];
 
                     return [
-                        'data-competences' => json_encode(array_map(fn (Qualification $q) => $q->value, $competences)),
+                        'data-competences' => json_encode(array_map(static fn (Qualification $q) => $q->value, $competences)),
                     ];
                 },
                 'placeholder' => 'Sélectionner un type',
@@ -105,12 +105,12 @@ class PartnerType extends AbstractType
                 'class' => Qualification::class,
                 'choice_filter' => ChoiceList::filter(
                     $this,
-                    function ($choice) {
+                    static function ($choice) {
                         return Qualification::DANGER == $choice ? false : $choice;
                     },
                     'competence'
                 ),
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     return $choice->label();
                 },
                 'label' => 'Compétences (facultatif)',
@@ -188,7 +188,7 @@ class PartnerType extends AbstractType
         }
         $builder->add('bailleur', EntityType::class, [
             'class' => Bailleur::class,
-            'query_builder' => fn (BailleurRepository $bailleurRepository) => $bailleurRepository->getBailleursByTerritoryQueryBuilder($territoryZip),
+            'query_builder' => static fn (BailleurRepository $bailleurRepository) => $bailleurRepository->getBailleursByTerritoryQueryBuilder($territoryZip),
             'choice_label' => 'name',
             'placeholder' => 'Sélectionner une dénomination officielle pour le bailleur social',
             'required' => false,

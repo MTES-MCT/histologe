@@ -173,7 +173,7 @@ class AbstractSynchronizeEsaboraCommand extends AbstractCronCommand
         int $countSyncFailed,
     ): void {
         $partnerTypeLabel = is_array($partnerType)
-            ? implode('-', array_map(fn (PartnerType $type) => $type->value, $partnerType))
+            ? implode('-', array_map(static fn (PartnerType $type) => $type->value, $partnerType))
             : $partnerType->value;
 
         $this->notificationMailerRegistry->send(

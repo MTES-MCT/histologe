@@ -68,7 +68,7 @@ class SearchDashboardAverifierType extends AbstractType
     {
         $builder->add('partners', SearchCheckboxType::class, [
             'class' => Partner::class,
-            'query_builder' => function (PartnerRepository $partnerRepository) use ($territory) {
+            'query_builder' => static function (PartnerRepository $partnerRepository) use ($territory) {
                 $query = $partnerRepository->createQueryBuilder('p');
 
                 if ($territory) {

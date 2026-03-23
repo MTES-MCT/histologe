@@ -38,7 +38,7 @@ class AgentSelectionType extends AbstractType
 
         $choicesAgents = $this->getChoicesAgents($signalement, $options);
         $existingSubscriptions = $signalement->getUserSignalementSubscriptions();
-        $existingSubscriptionsInChoices = array_filter($existingSubscriptions->toArray(), function (UserSignalementSubscription $sub) use ($choicesAgents) {
+        $existingSubscriptionsInChoices = array_filter($existingSubscriptions->toArray(), static function (UserSignalementSubscription $sub) use ($choicesAgents) {
             foreach ($choicesAgents as $agent) {
                 if ($sub->getUser()->getId() === $agent->getId()) {
                     return true;
@@ -69,7 +69,7 @@ class AgentSelectionType extends AbstractType
             'class' => User::class,
             'choices' => $choicesAgents,
             'choice_label' => fn (User $user) => $this->getAgentLabel($user),
-            'choice_attr' => function (User $user) use ($existingSubscriptions) {
+            'choice_attr' => static function (User $user) use ($existingSubscriptions) {
                 foreach ($existingSubscriptions as $sub) {
                     if ($sub->getUser()->getId() === $user->getId()) {
                         return ['disabled' => 'disabled'];
@@ -117,7 +117,7 @@ class AgentSelectionType extends AbstractType
         }
 
         if ($options['exclude_user'] instanceof User) {
-            $choicesAgents = array_filter($choicesAgents, fn (User $u) => $u->getId() !== $options['exclude_user']->getId());
+            $choicesAgents = array_filter($choicesAgents, static fn (User $u) => $u->getId() !== $options['exclude_user']->getId());
         }
 
         return $choicesAgents;
@@ -135,7 +135,7 @@ class AgentSelectionType extends AbstractType
             'exclude_user' => null,
             'only_rt' => false,
             'label' => 'Sélectionnez le(s) agent(s) à abonner au dossier',
-            'validation_groups' => function (Options $options) {
+            'validation_groups' => static function (Options $options) {
                 return $options['only_rt'] ? ['only_rt'] : null;
             },
         ]);

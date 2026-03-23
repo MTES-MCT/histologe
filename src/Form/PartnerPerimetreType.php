@@ -34,7 +34,7 @@ class PartnerPerimetreType extends AbstractType
             ->add('insee', SearchCheckboxType::class, [
                 'class' => Commune::class,
                 'label' => 'Commune(s)',
-                'query_builder' => function (CommuneRepository $communeRepository) use ($territory) {
+                'query_builder' => static function (CommuneRepository $communeRepository) use ($territory) {
                     return $communeRepository->createQueryBuilder('c')
                         ->where('c.territory = :territory')
                         ->andWhere('c.id IN (
@@ -45,7 +45,7 @@ class PartnerPerimetreType extends AbstractType
                         ->setParameter('territory', $territory)
                         ->orderBy('c.nom', 'ASC');
                 },
-                'choice_label' => function (Commune $commune): string {
+                'choice_label' => static function (Commune $commune): string {
                     return $commune->getNom(withArrondissement: true);
                 },
                 'help' => 'Sélectionner la ou la liste des communes d\'intervention',
@@ -54,7 +54,7 @@ class PartnerPerimetreType extends AbstractType
                 'nochoiceslabel' => 'Aucune commune disponible',
             ])->add('zones', SearchCheckboxType::class, [
                 'class' => Zone::class,
-                'query_builder' => function (ZoneRepository $zoneRepository) use ($territory) {
+                'query_builder' => static function (ZoneRepository $zoneRepository) use ($territory) {
                     return $zoneRepository->createQueryBuilder('z')
                         ->where('z.territory = :territory')
                         ->setParameter('territory', $territory)
@@ -68,7 +68,7 @@ class PartnerPerimetreType extends AbstractType
                 'by_reference' => false,
             ])->add('excludedZones', SearchCheckboxType::class, [
                 'class' => Zone::class,
-                'query_builder' => function (ZoneRepository $zoneRepository) use ($territory) {
+                'query_builder' => static function (ZoneRepository $zoneRepository) use ($territory) {
                     return $zoneRepository->createQueryBuilder('z')
                         ->where('z.territory = :territory')
                         ->setParameter('territory', $territory)
@@ -90,7 +90,7 @@ class PartnerPerimetreType extends AbstractType
             function (array $arrayOfCodesInsee) {
                 return $this->communeRepository->findDistinctCommuneCodesInseeForCodeInseeList($arrayOfCodesInsee);
             },
-            function (array $arrayOfCommunes) {
+            static function (array $arrayOfCommunes) {
                 $codesInsee = [];
                 foreach ($arrayOfCommunes as $commune) {
                     $codesInsee[] = $commune->getCodeInsee();

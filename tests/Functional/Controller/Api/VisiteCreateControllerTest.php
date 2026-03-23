@@ -172,7 +172,7 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $errors = json_decode((string) $this->client->getResponse()->getContent(), true)['errors'];
         $this->assertStringContainsString($errorMessage, $errors[0]['message']);
-        $errors = array_map(function ($error) { return $error['property']; }, $errors);
+        $errors = array_map(static function ($error) { return $error['property']; }, $errors);
         $this->assertEquals($fieldsErrors, $errors);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }

@@ -24,7 +24,7 @@ class SummaryMailService
             return 0;
         }
         $events = $this->getEventsForMailingSummaryFromNotifications($notifications);
-        $hasEvents = (bool) array_filter($events, fn ($sub) => !empty($sub));
+        $hasEvents = (bool) array_filter($events, static fn ($sub) => !empty($sub));
 
         if (!$hasEvents) {
             return 0;

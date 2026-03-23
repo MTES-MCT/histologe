@@ -2274,7 +2274,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      */
     public function getTags(): Collection
     {
-        return $this->tags->filter(function (Tag $tag) {
+        return $this->tags->filter(static function (Tag $tag) {
             return !$tag->getIsArchive();
         });
     }
@@ -2482,7 +2482,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      */
     public function getPhotos(): Collection
     {
-        return $this->files->filter(function (File $file) {
+        return $this->files->filter(static function (File $file) {
             return $file->isTypeImage() && !$file->isTemp() && !$file->isIsWaitingSuivi();
         });
     }
@@ -2500,7 +2500,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      */
     public function getDocuments(): Collection
     {
-        return $this->files->filter(function (File $file) {
+        return $this->files->filter(static function (File $file) {
             return $file->isTypeDocument() && !$file->isTemp() && !$file->isIsWaitingSuivi();
         });
     }
@@ -2510,7 +2510,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      */
     public function getFiles(?bool $isWaitingSuivi = false): Collection
     {
-        return $this->files->filter(function (File $file) use ($isWaitingSuivi) {
+        return $this->files->filter(static function (File $file) use ($isWaitingSuivi) {
             if ($file->isTemp()) {
                 return false;
             }
@@ -2832,7 +2832,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function getDesordrePrecisionSlugs(): array
     {
         return $this->getDesordrePrecisions()->map(
-            fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug()
+            static fn (DesordrePrecision $desordrePrecision) => $desordrePrecision->getDesordrePrecisionSlug()
         )->toArray();
     }
 

@@ -123,7 +123,7 @@ class CoordonneesBailleurType extends AbstractType
                 ->add('infoProcedureBailMoyen', EnumType::class, [
                     'label' => 'Moyen de contact utilisé pour avertir le propriétaire',
                     'class' => MoyenContact::class,
-                    'choice_label' => function ($choice) {
+                    'choice_label' => static function ($choice) {
                         return $choice->label();
                     },
                     'placeholder' => 'Sélectionner un moyen de contact',

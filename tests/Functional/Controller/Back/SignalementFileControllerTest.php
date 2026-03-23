@@ -146,7 +146,7 @@ class SignalementFileControllerTest extends WebTestCase
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000009']);
         $route = $this->router->generate('back_signalement_edit_file', ['uuid' => $signalement->getUuid()]);
-        $file = $signalement->getFiles()->filter(function ($file) {
+        $file = $signalement->getFiles()->filter(static function ($file) {
             return $file->isTypeImage();
         })->current();
         if (!$file) {

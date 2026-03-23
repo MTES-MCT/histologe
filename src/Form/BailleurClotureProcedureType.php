@@ -33,7 +33,7 @@ class BailleurClotureProcedureType extends AbstractType
                     'class' => 'editor',
                 ],
             ])
-            ->addEventListener(FormEvents::POST_SUBMIT, function ($event) {
+            ->addEventListener(FormEvents::POST_SUBMIT, static function ($event) {
                 $form = $event->getForm();
                 $data = $event->getData();
 

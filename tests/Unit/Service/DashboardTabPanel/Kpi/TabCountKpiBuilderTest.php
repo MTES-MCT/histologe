@@ -93,7 +93,7 @@ class TabCountKpiBuilderTest extends TestCase
 
         $this->tabCountKpiCacheHelper
             ->method('getOrSet')
-            ->willReturnCallback(function ($kpiName) use ($countNouveaux, $countAfermer, $countMessages, $countAverifier) {
+            ->willReturnCallback(static function ($kpiName) use ($countNouveaux, $countAfermer, $countMessages, $countAverifier) {
                 return match ($kpiName) {
                     TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS => $countNouveaux,
                     TabCountKpiCacheHelper::DOSSIERS_A_FERMER => $countAfermer,
@@ -170,7 +170,7 @@ class TabCountKpiBuilderTest extends TestCase
 
         $this->tabCountKpiCacheHelper
             ->method('getOrSet')
-            ->willReturnCallback(function ($kpiName) use ($countNouveaux, $countAfermer, $countMessages, $countAverifier) {
+            ->willReturnCallback(static function ($kpiName) use ($countNouveaux, $countAfermer, $countMessages, $countAverifier) {
                 return match ($kpiName) {
                     TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS => $countNouveaux,
                     TabCountKpiCacheHelper::DOSSIERS_A_FERMER => $countAfermer,

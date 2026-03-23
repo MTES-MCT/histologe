@@ -118,7 +118,7 @@ class SearchFilter
         }
         if (!empty($filters['partners'])) {
             if ($user->isUserPartner() || $user->isPartnerAdmin()) {
-                $filterPartnerIds = array_filter($filters['partners'], fn ($v) => 'AUCUN' !== $v);
+                $filterPartnerIds = array_filter($filters['partners'], static fn ($v) => 'AUCUN' !== $v);
                 if (!empty($filterPartnerIds)) {
                     $subqueryOtherPartner = $this->entityManager->createQueryBuilder();
                     $subqueryOtherPartner
@@ -283,7 +283,7 @@ class SearchFilter
                     ->setParameter('statuses', $filters['statuses']);
             } else {
                 // @todo: filter more than one status for partner
-                $statuses = array_map(function ($status) {
+                $statuses = array_map(static function ($status) {
                     return SignalementStatus::tryFrom($status)?->mapAffectationStatus();
                 }, $filters['statuses']);
                 $statuses = array_shift($statuses);

@@ -192,7 +192,7 @@ class SignalementFactory
 
         if (!empty($uploadedFiles = $formServiceSecours->step5->uploadedFiles)) {
             $jsonContent['uploadedFiles'] = array_map(
-                fn (string $file) => array_merge(json_decode($file, true), ['slug' => 'desordres_service_secours']),
+                static fn (string $file) => array_merge(json_decode($file, true), ['slug' => 'desordres_service_secours']),
                 $uploadedFiles
             );
         }

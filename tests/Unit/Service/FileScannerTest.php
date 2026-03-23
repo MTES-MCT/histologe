@@ -44,7 +44,7 @@ class FileScannerTest extends TestCase
         $scanner
             ->expects($this->once())
             ->method('scan')
-            ->with($this->callback(function ($copiedFilepath) {
+            ->with($this->callback(static function ($copiedFilepath) {
                 return str_starts_with($copiedFilepath, 'tmp/clamav_');
             }))
             ->willReturn($scannedFile);

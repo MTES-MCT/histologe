@@ -38,7 +38,7 @@ class ClearEntitiesCommand extends AbstractCronCommand
             $entity = explode('\\', $entityCleanerRepository->getClassName()); // @phpstan-ignore-line
             $entityName = end($entity);
             $countDeletedSuccess = $this->clearEntitiesHandler->handle(
-                fn () => $entityCleanerRepository->cleanOlderThan(),// @phpstan-ignore-line
+                static fn () => $entityCleanerRepository->cleanOlderThan(),// @phpstan-ignore-line
                 $entityName,
                 sprintf('Suppression des enregistrements de la table %s', $entityName)
             );

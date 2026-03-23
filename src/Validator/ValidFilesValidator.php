@@ -37,7 +37,7 @@ class ValidFilesValidator extends ConstraintValidator
             return;
         }
 
-        $uuidFiles = array_map(fn (File $file) => $file->getUuid(), $signalement->getFiles()->toArray());
+        $uuidFiles = array_map(static fn (File $file) => $file->getUuid(), $signalement->getFiles()->toArray());
 
         foreach ($value as $uuid) {
             if (!is_string($uuid) || !UuidV4::isValid($uuid)) {
