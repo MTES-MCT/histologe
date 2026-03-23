@@ -16,7 +16,7 @@
 				<br>
 				<span class="info">
 					#{{ signalement.reference }}
-					{% if signalement.referenceInjonction and signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
+					{% if signalement.referenceInjonction and signalement.statut not in enum('App\\Entity\\Enum\\SignalementStatus').injonctionStatuses %}
 						<small>(#{{ signalement.referenceInjonction }})</small>
 					{% endif %}
 				</span>
