@@ -443,7 +443,7 @@ class SuiviManager extends Manager
         if ($value instanceof \DateTimeInterface) {
             $value = $value->format('d/m/Y');
         } else {
-            $dateFormatted = DateHelper::formatDateString($value, 'Y-m-d', self::DATE_FORMAT);
+            $dateFormatted = empty($value) ? false : DateHelper::formatDateString($value, 'Y-m-d', self::DATE_FORMAT);
             if (false !== $dateFormatted) {
                 return $dateFormatted;
             }

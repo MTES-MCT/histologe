@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Enum\EtageType;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -13,6 +14,7 @@ use App\Form\SignalementeEditFO\CoordonneesBailleurType;
 use App\Form\SignalementeEditFO\CoordonneesOccupantType;
 use App\Form\SignalementeEditFO\InformationsGeneralesType;
 use App\Form\SignalementeEditFO\ProcedureAssuranceType;
+use App\Form\SignalementeEditFO\TypeCompositionType;
 use App\Form\SignalementeEditFO\UsagerSituationFoyerType;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -408,6 +410,106 @@ class SignalementEditController extends AbstractController
         }
 
         return $this->render('front/edit-signalement/informations-generales.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{code}/completer/type-composition', name: 'front_suivi_signalement_complete_type_composition', methods: ['GET', 'POST'])]
+    public function suiviSignalementCompleteTypeComposition(
+        string $code,
+        SignalementRepository $signalementRepository,
+        Request $request,
+    ): Response {
+        $signalement = $signalementRepository->findOneByCodeForPublic($code);
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->cguTiersChecker->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
+        $form = $this->createForm(TypeCompositionType::class, $signalement);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
+
+            $typeCompositionLogement
+                ->setTypeLogementNatureAutrePrecision($form->get('natureAutrePrecision')->getData())
+                ->setCompositionLogementPieceUnique($form->get('pieceUnique')->getData())
+                ->setCompositionLogementNbPieces($form->get('nbPieces')->getData())
+                ->setTypeLogementCommoditesPieceAVivre9m($form->get('pieceAVivre9m')->getData());
+
+            if ('appartement' === $signalement->getNatureLogement()) {
+                /** @var EtageType $appartementEtage */
+                $appartementEtage = $form->get('appartementEtage')->getData();
+                $typeCompositionLogement->setTypeLogementAppartementEtage($appartementEtage->value);
+                if (EtageType::RDC === $appartementEtage) {
+                    $typeCompositionLogement->setTypeLogementRdc('oui');
+                } else {
+                    $typeCompositionLogement->setTypeLogementRdc('non');
+                }
+
+                $typeCompositionLogement->setTypeLogementAppartementAvecFenetres($form->get('appartementAvecFenetres')->getData());
+
+                if (EtageType::DERNIER_ETAGE === $appartementEtage) {
+                    $typeCompositionLogement->setTypeLogementDernierEtage('oui');
+                    if ('non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()) {
+                        $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('oui');
+                    }
+                } elseif (!empty($appartementEtage)) {
+                    $typeCompositionLogement->setTypeLogementDernierEtage('non');
+                    $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('non');
+                }
+
+                if (EtageType::SOUSSOL === $appartementEtage
+                        && 'non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()) {
+                    $typeCompositionLogement->setTypeLogementSousSolSansFenetre('oui');
+                }
+            }
+
+            $cuisine = $form->get('cuisine')->getData();
+            $typeCompositionLogement->setTypeLogementCommoditesCuisine($cuisine);
+            if ('non' === $cuisine) {
+                $typeCompositionLogement->setTypeLogementCommoditesCuisineCollective($form->get('cuisineCollective')->getData());
+            } else {
+                $typeCompositionLogement->setTypeLogementCommoditesCuisineCollective(null);
+            }
+
+            $sdb = $form->get('salleDeBain')->getData();
+            $typeCompositionLogement->setTypeLogementCommoditesSalleDeBain($sdb);
+            if ('non' === $sdb) {
+                $typeCompositionLogement->setTypeLogementCommoditesSalleDeBainCollective($form->get('salleDeBainCollective')->getData());
+            } else {
+                $typeCompositionLogement->setTypeLogementCommoditesSalleDeBainCollective(null);
+            }
+
+            $wc = $form->get('wc')->getData();
+            $typeCompositionLogement->setTypeLogementCommoditesWc($wc);
+            if ('non' === $wc) {
+                $typeCompositionLogement->setTypeLogementCommoditesWcCollective($form->get('wcCollective')->getData());
+            } else {
+                $typeCompositionLogement->setTypeLogementCommoditesWcCollective(null);
+            }
+
+            if ('oui' === $cuisine && 'oui' === $wc) {
+                $typeCompositionLogement->setTypeLogementCommoditesWcCuisine($form->get('wcCuisine')->getData());
+            } else {
+                $typeCompositionLogement->setTypeLogementCommoditesWcCuisine(null);
+            }
+
+            $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Le type et la composition du logement ont bien été mis à jour.']);
+
+            return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/edit-signalement/type-composition.html.twig', [
             'signalement' => $signalement,
             'form' => $form,
         ]);

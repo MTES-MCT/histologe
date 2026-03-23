@@ -144,6 +144,7 @@ class SignalementBoManager
                 }
             } elseif (!empty($appartementEtage)) {
                 $typeCompositionLogement->setTypeLogementDernierEtage('non');
+                $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('non');
             }
 
             if (EtageType::SOUSSOL === $appartementEtage

@@ -481,7 +481,15 @@
 			</div>
 
 			<div class="signalement-group-data-card">
-				<h3 class="title-blue-france fr-h5">Type et composition du logement</h3>
+				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
+					<h3 class="title-blue-france fr-h5">Type et composition du logement</h3>
+					{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+						<a href="{{ path('front_suivi_signalement_complete_type_composition', {'code': signalement.codeSuivi}) }}"
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden fr-unhidden-md">
+							Compléter les informations
+						</a>
+					{% endif %}
+				</div>
 				<ul>
 					<li>Nature du logement :
 						{{ signalement.natureLogement|capitalize }}
@@ -489,28 +497,34 @@
 							{% if signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
 								({{signalement.typeCompositionLogement.typeLogementNatureAutrePrecision}})
 							{% endif %}
-							{% if signalement.typeCompositionLogement.typeLogementRdc == 'oui' %}, RDC
-							{% endif %}
-							{% if signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' %}, Dernier étage
-							{% endif %}
-							{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre == 'oui' %}, Combles sans fenêtres
+							{% if signalement.natureLogement is same as 'appartement' %}
+								{% if signalement.typeCompositionLogement.typeLogementRdc == 'oui' %}, RDC
+								{% endif %}
+								{% if signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' %}, Dernier étage
+								{% endif %}
+								{% if signalement.typeCompositionLogement.typeLogementSousCombleSansFenetre == 'oui' %}, Combles sans fenêtres
+								{% endif %}
 							{% endif %}
 						{% endif %}
 					</li>
-					<li>Etage :
-						{% include '_partials/signalement/signalement-typecomposition-etage.html.twig' %}
-					</li>
-					<li>Avec fenêtres :
-						{% include '_partials/signalement/signalement-typecomposition-fenetres.html.twig' %}
-					</li>
+					{% if signalement.natureLogement is same as 'appartement' %}
+						<li>Etage :
+							{% include '_partials/signalement/signalement-typecomposition-etage.html.twig' %}
+						</li>
+						<li>Avec fenêtres :
+							{% include '_partials/signalement/signalement-typecomposition-fenetres.html.twig' %}
+						</li>
+					{% endif %}
 					<li>Superficie en m² : {{ signalement.superficie }} m²</li>
 					{% if signalement.typeCompositionLogement %}
 						<li>Une seule ou plusieurs pièces ?
 							{{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
 						</li>
-						<li>Nombre de pièces à vivre :
-							{{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
-						</li>
+						{% if signalement.typeCompositionLogement.compositionLogementPieceUnique(true) is same as 'plusieurs_pieces' %}
+							<li>Nombre de pièces à vivre :
+								{{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
+							</li>
+						{% endif %}
 						<li>Est-ce qu'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ?
 							{{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)|capitalize }}
 						</li>
@@ -543,6 +557,14 @@
 						{% endif %}
 					{% endif %}
 				</ul>
+				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
+					<div class="fr-mt-2v">
+						<a href="{{ path('front_suivi_signalement_complete_type_composition', {'code': signalement.codeSuivi}) }}"
+							class="fr-btn fr-btn--sm fr-icon-edit-line fr-btn--icon-left fr-btn--tertiary fr-hidden-md">
+							Compléter les informations
+						</a>
+					</div>
+				{% endif %}
 			</div>
 			<div class="signalement-group-data-card">
 				<div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
