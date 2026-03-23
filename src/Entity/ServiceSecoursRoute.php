@@ -23,6 +23,11 @@ class ServiceSecoursRoute implements EntityHistoryInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\ManyToOne(targetEntity: Territory::class)]
+    #[Assert\NotBlank]
+    #[ORM\JoinColumn]
+    private ?Territory $territory = null;
+
     #[ORM\Column(type: 'uuid', unique: true)]
     private ?Uuid $uuid = null;
 
@@ -58,6 +63,18 @@ class ServiceSecoursRoute implements EntityHistoryInterface
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getTerritory(): ?Territory
+    {
+        return $this->territory;
+    }
+
+    public function setTerritory(?Territory $territory): static
+    {
+        $this->territory = $territory;
+
+        return $this;
     }
 
     public function getUuid(): ?Uuid

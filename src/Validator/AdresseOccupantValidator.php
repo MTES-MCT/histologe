@@ -96,5 +96,13 @@ class AdresseOccupantValidator extends ConstraintValidator
                 ->atPath('adresseCompleteOccupant')
                 ->addViolation();
         }
+
+        $expectedTerritoryZip = $value->territoryZip ?? null;
+        if ($expectedTerritoryZip && $territory->getZip() !== $expectedTerritoryZip) {
+            $this->context
+                ->buildViolation($constraint->messageTerritoryMismatch)
+                ->atPath('adresseCompleteOccupant')
+                ->addViolation();
+        }
     }
 }

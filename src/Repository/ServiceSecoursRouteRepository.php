@@ -23,7 +23,9 @@ class ServiceSecoursRouteRepository extends ServiceEntityRepository
      */
     public function findFilteredPaginated(SearchServiceSecoursRoute $searchServiceSecoursRoute, int $maxResult): Paginator
     {
-        $qb = $this->createQueryBuilder('ssr');
+        $qb = $this->createQueryBuilder('ssr')
+            ->leftJoin('ssr.territory', 't')
+            ->addSelect('t');
 
         if (!empty($searchServiceSecoursRoute->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchServiceSecoursRoute->getOrderType());
