@@ -49,6 +49,7 @@ class ServiceSecoursController extends AbstractController
         /** @var FormFlowInterface $flow */
         $flow = $this->createForm(ServiceSecoursType::class, $serviceSecours);
         $flow->handleRequest($request);
+        $session->set('service_secours_data', $flow->getData());
 
         if ($flow->isSubmitted() && $flow->isValid() && $flow->isFinished()) {
             $signalement = $signalementFactory->createInstanceFromFormServiceSecours($flow->getData(), $serviceSecoursRoute);
