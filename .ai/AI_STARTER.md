@@ -1,4 +1,4 @@
-# Signal Logement - Guide pour Claude Code
+# Signal Logement - Guide pour Agent IA
 
 ## Vue d'ensemble du projet
 
