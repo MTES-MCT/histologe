@@ -8,4 +8,5 @@ enum PersonneType: string
     case OCCUPANT = 'OCCUPANT';
     case PROPRIETAIRE = 'PROPRIETAIRE';
     case AGENCE = 'AGENCE';
+    case SYNDIC = 'SYNDIC';
 }

@@ -370,6 +370,13 @@ class SignalementResponse
     public ?int $nbEnfantsDansLogement;
 
     #[OA\Property(
+        description: 'Autre situation de vulnérabilité à mentionner.',
+        example: 'Personne âgée',
+        nullable: true
+    )]
+    public ?string $autreSituationVulnerabilite;
+
+    #[OA\Property(
         description: 'Indique si l\'assurance du logement a été contactée.',
         example: true,
         nullable: true

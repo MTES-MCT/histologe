@@ -71,6 +71,12 @@ class Personne
         public ?string $prenom = null,
 
         #[OA\Property(
+            description: 'Matricule de la personne',
+            example: 'MAT12345',
+        )]
+        public ?string $matricule = null,
+
+        #[OA\Property(
             description: 'Adresse e-mail de la personne.',
             format: 'email',
             example: 'jean.dupont@email.com',

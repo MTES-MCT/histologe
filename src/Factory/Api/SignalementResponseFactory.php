@@ -29,6 +29,7 @@ readonly class SignalementResponseFactory
         PersonneType::DECLARANT,
         PersonneType::PROPRIETAIRE,
         PersonneType::AGENCE,
+        PersonneType::SYNDIC,
     ];
 
     public function __construct(
@@ -111,6 +112,7 @@ readonly class SignalementResponseFactory
         $signalementResponse->nbOccupantsLogement = $signalement->getNbOccupantsLogement();
         $signalementResponse->nbEnfantsDansLogement = $this->stringToInt($signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants());
         $signalementResponse->enfantsDansLogementMoinsSixAns = $this->stringToBoolStrict($signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants());
+        $signalementResponse->autreSituationVulnerabilite = $signalement->getAutreSituationVulnerabilite();
         $signalementResponse->assuranceContactee = $this->stringToBoolStrict($signalement->getInformationProcedure()?->getInfoProcedureAssuranceContactee());
         $signalementResponse->reponseAssurance = $signalement->getInformationProcedure()?->getInfoProcedureReponseAssurance();
         $signalementResponse->souhaiteQuitterLogement = $this->stringToBool($signalement->getSituationFoyer()?->getTravailleurSocialQuitteLogement());
@@ -254,6 +256,7 @@ readonly class SignalementResponseFactory
                 estTravailleurSocialPourOccupant: $this->stringToBoolStrict($signalement->getSituationFoyer()?->getTravailleurSocialAccompagnementDeclarant()),
                 nom: $signalement->getNomDeclarant(),
                 prenom: $signalement->getPrenomDeclarant(),
+                matricule: $signalement->getMatriculeDeclarant(),
                 email: $signalement->getMailDeclarant(),
                 telephone: $signalement->getTelDeclarant(),
                 telephoneSecondaire: $signalement->getTelDeclarantSecondaire()
@@ -300,6 +303,17 @@ readonly class SignalementResponseFactory
                 telephone: $signalement->getTelAgence(),
                 telephoneSecondaire: $signalement->getTelAgenceSecondaire(),
                 adresse: $adresse
+            );
+        }
+
+        if (PersonneType::SYNDIC === $personneType && !empty($signalement->getDenominationSyndic())) {
+            return new Personne(
+                personneType: $personneType,
+                structure: $signalement->getDenominationSyndic(),
+                nom: $signalement->getNomSyndic(),
+                email: $signalement->getMailSyndic(),
+                telephone: $signalement->getTelSyndic(),
+                telephoneSecondaire: $signalement->getTelSyndicSecondaire(),
             );
         }
 

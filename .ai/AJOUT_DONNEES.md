@@ -713,35 +713,6 @@ Le listener :
 )]
 #[Assert\Length(max: 255)]
 public ?string $denominationSyndic = null;
-
-#[OA\Property(
-    description: 'Nom de famille du contact du syndic.',
-    example: 'Dupont',
-)]
-#[Assert\Length(max: 255)]
-public ?string $nomSyndic = null;
-
-#[OA\Property(
-    description: 'E-mail du contact du syndic.',
-    example: 'contact@syndicpro.com',
-)]
-#[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du contact du syndic n\'est pas valide.')]
-#[Assert\Length(max: 255)]
-public ?string $mailSyndic = null;
-
-#[OA\Property(
-    description: 'Téléphone du contact du syndic.',
-    example: '0639988822',
-)]
-#[AppAssert\TelephoneFormat]
-public ?string $telSyndic = null;
-
-#[OA\Property(
-    description: 'Téléphone secondaire du contact du syndic.',
-    example: '0139988823',
-)]
-#[AppAssert\TelephoneFormat]
-public ?string $telSyndicSecondaire = null;
 ```
 
 ### Étape 2 : Mapper les champs dans le Factory
@@ -754,10 +725,6 @@ public function createFromSignalementRequest(SignalementRequest $request): Signa
     // ... code existant
 
     $signalement->setDenominationSyndic($request->denominationSyndic);
-    $signalement->setNomSyndic($request->nomSyndic);
-    $signalement->setMailSyndic($request->mailSyndic);
-    $signalement->setTelSyndic($request->telSyndic);
-    $signalement->setTelSyndicSecondaire($request->telSyndicSecondaire);
 
     // ... suite du code
 }
@@ -774,6 +741,12 @@ Ajouter les champs dans l'exemple OpenAPI si pertinent pour la documentation.
 **Fichier** : `src/Controller/Api/SignalementListController.php`
 
 Si le champ doit être retourné dans la liste des signalements.
+
+**Fichiers** : 
+- `src/Dto/Api/Response/SignalementResponse.php`
+- `src/Factory/Api/SignalementResponseFactory.php`
+
+Ajouter les informations dans la requête de retour.
 
 ---
 
