@@ -42,14 +42,13 @@ class ServiceSecoursController extends AbstractController
         $session = $request->getSession();
         $serviceSecours = $session->get('service_secours_data', new FormServiceSecours());
 
-        if ($request->isMethod('GET') && $request->query->has('step')) {
-            $step = $request->query->get('step');
+        if ($request->request->has('step')) {
+            $step = $request->request->get('step');
             $serviceSecours->currentStep = $step;
         }
         /** @var FormFlowInterface $flow */
         $flow = $this->createForm(ServiceSecoursType::class, $serviceSecours);
         $flow->handleRequest($request);
-        $session->set('service_secours_data', $flow->getData());
 
         if ($flow->isSubmitted() && $flow->isValid() && $flow->isFinished()) {
             $signalement = $signalementFactory->createInstanceFromFormServiceSecours($flow->getData(), $serviceSecoursRoute);

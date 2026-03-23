@@ -189,13 +189,13 @@
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
                             <h4 class="fr-h6">Vos coordonnées</h4>
-                            <a href="{{ path('service_secours_index', {
-                                    'slug': serviceSecoursRoute.slug,
-                                    'uuid': serviceSecoursRoute.uuid,
-                                    'domain': root_domain(app.request.host),
-                                    'step': 'step1'
-                                }) }}"
-                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"><span class="fr-hidden fr-unhidden-md">Modifier</span></a>
+                            <button
+                                type="submit"
+                                name="step"
+                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
+                                value="step1">
+                                <span class="fr-hidden fr-unhidden-md">Modifier</span>
+                            </button>
                         </div>
                         {% if data.step1.matriculeDeclarant %}
                             Matricule : {{ data.step1.matriculeDeclarant }}<br>
@@ -207,23 +207,23 @@
                             Date de la mission : {{ data.step1.dateMission|format_datetime(locale='fr', timezone=territory_timezone, pattern='d MMMM yyyy') }}<br>
                         {% endif %}
                         {% if data.step1.origineMission %}
-                            Ordre de la mission : {{ data.step1.origineMission }}<br>
+                            Engin à l'origine du signalement : {{ data.step1.origineMission }}<br>
                         {% endif %}
                         {% if data.step1.ordreMission %}
-                            Engin à l'origine du signalement : {{ data.step1.ordreMission }}<br>
+                            Ordre de la mission : {{ data.step1.ordreMission }}<br>
                         {% endif %}
                     </div>
                     
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
                             <h4 class="fr-h6">Infos sur le logement</h4>
-                            <a href="{{ path('service_secours_index', {
-                                    'slug': serviceSecoursRoute.slug,
-                                    'uuid': serviceSecoursRoute.uuid,
-                                    'domain': root_domain(app.request.host),
-                                    'step': 'step2'
-                                }) }}"
-                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"><span class="fr-hidden fr-unhidden-md">Modifier</span></a>
+                            <button
+                                type="submit"
+                                name="step"
+                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
+                                value="step2">
+                                <span class="fr-hidden fr-unhidden-md">Modifier</span>
+                            </button>
                         </div>
                         {{ data.step2.adresseOccupant }} <br>
                         {% if data.step2.adresseAutreOccupant %}
@@ -258,13 +258,13 @@
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
                             <h4 class="fr-h6">Occupation du logement</h4>
-                            <a href="{{ path('service_secours_index', {
-                                    'slug': serviceSecoursRoute.slug,
-                                    'uuid': serviceSecoursRoute.uuid,
-                                    'domain': root_domain(app.request.host),
-                                    'step': 'step3'
-                                }) }}"
-                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"><span class="fr-hidden fr-unhidden-md">Modifier</span></a>
+                            <button
+                                type="submit"
+                                name="step"
+                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
+                                value="step3">
+                                <span class="fr-hidden fr-unhidden-md">Modifier</span>
+                            </button>
                         </div>
                         {% if data.step3.nomOccupant %}
                             {{ data.step3.nomOccupant }} 
@@ -305,13 +305,13 @@
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
                             <h4 class="fr-h6">Propriétaire / bailleur</h4>
-                            <a href="{{ path('service_secours_index', {
-                                    'slug': serviceSecoursRoute.slug,
-                                    'uuid': serviceSecoursRoute.uuid,
-                                    'domain': root_domain(app.request.host),
-                                    'step': 'step4'
-                                }) }}"
-                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"><span class="fr-hidden fr-unhidden-md">Modifier</span></a>
+                            <button
+                                type="submit"
+                                name="step"
+                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
+                                value="step4">
+                                <span class="fr-hidden fr-unhidden-md">Modifier</span>
+                            </button>
                         </div>
                         {% if data.step4.isBailleurAverti %}
                             Bailleur averti : {{ data.step4.isBailleurAverti|format_answer }}<br>
@@ -351,13 +351,13 @@
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
                             <h4 class="fr-h6">Désordres</h4>
-                            <a href="{{ path('service_secours_index', {
-                                    'slug': serviceSecoursRoute.slug,
-                                    'uuid': serviceSecoursRoute.uuid,
-                                    'domain': root_domain(app.request.host),
-                                    'step': 'step5'
-                                }) }}"
-                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"><span class="fr-hidden fr-unhidden-md">Modifier</span></a>
+                            <button
+                                type="submit"
+                                name="step"
+                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
+                                value="step5">
+                                <span class="fr-hidden fr-unhidden-md">Modifier</span>
+                            </button>
                         </div>
                         {% if data.step5.autresOccupantsDesordre %}
                             Désordres rencontrés par d'autres occupants de l'immeuble : {{ data.step5.autresOccupantsDesordre|format_answer }}<br>

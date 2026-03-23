@@ -70,16 +70,13 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
 
     public function formatAnswer(mixed $answer): mixed
     {
-        switch ($answer) {
-            case 'oui':
-                return 'Oui';
-            case 'non':
-                return 'Non';
-            case 'nsp':
-                return 'Ne sait pas';
-            default:
-                return $answer;
-        }
+        return match (true) {
+            'oui' === $answer => 'Oui',
+            'non' === $answer => 'Non',
+            'nsp' === $answer => 'Ne sait pas',
+            'indetermine' === $answer => 'Indéterminé',
+            default => $answer,
+        };
     }
 
     public function getBadgeClass(?int $days): string

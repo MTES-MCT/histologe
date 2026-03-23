@@ -228,4 +228,26 @@ class AppExtensionTest extends WebTestCase
         yield 'production' => ['bo.signal-logement.beta.gouv.fr', 'signal-logement.beta.gouv.fr'];
         yield 'production service-secours' => ['services-secours.signal-logement.beta.gouv.fr', 'services-secours.signal-logement.beta.gouv.fr'];
     }
+
+    /**
+     * @dataProvider provideAnswer
+     */
+    public function testFormatAnswer(string $answer, string $expected): void
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+        /** @var AppExtension $appExtension */
+        $appExtension = $container->get(AppExtension::class);
+
+        $this->assertSame($expected, $appExtension->formatAnswer($answer));
+    }
+
+    public function provideAnswer(): \Generator
+    {
+        yield 'oui' => ['oui', 'Oui'];
+        yield 'non' => ['non', 'Non'];
+        yield 'nsp' => ['nsp', 'Ne sait pas'];
+        yield 'indetermine' => ['indetermine', 'Indéterminé'];
+        yield 'bloub' => ['bloub', 'bloub'];
+    }
 }
