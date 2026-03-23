@@ -1,13 +1,11 @@
 <style>
     @page {margin: 1.5cm;font-family: Arial, sans-serif; font-size: 12px;}
-    .page_break { page-break-before: always; }
     div {box-sizing: border-box;}
     table {border-collapse: collapse;}
-    table.main-table {width: 100%; margin-bottom: 20px;}
-    table.main-table th, table.main-table td {padding: 10px; border: 1px solid #c2c2c2; vertical-align: top;}
+    div.main-table {border: 1px solid #c2c2c2; padding: 10px;margin-bottom: 10px;}
     table.sub-table {width: 100%;}
     table.sub-table th, table.sub-table td {padding: 5px; border: none;font-weight: bold;}
-    table.sub-table th {width: 50%; font-weight: normal;}
+    table.sub-table th {width: 30%; font-weight: normal;}
 
     th {text-align: right;}
     h1, h2{text-align: center;}
@@ -16,280 +14,266 @@
 <div>
     <h1>Signalement #{{ signalement.reference }}</h1>
 
-    <table class="main-table">
-        <tr>
-            <td style="width: 50%;">
-                <h2>Déclarant</h2>
-                <table class="sub-table">
-                    <tr>
-                        <th>Matricule</th>
-                        <td>{{ signalement.matriculeDeclarant }}</td>
-                    </tr>
-                    <tr>
-                        <th>Nom</th>
-                        <td>{{ signalement.nomDeclarant }}</td>
-                    </tr>
-                    <tr>
-                        <th>Date de mission</th>
-                        <td>{{ signalement.DateMissionServiceSecours ? signalement.DateMissionServiceSecours|date('d/m/Y') : '' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Engin du BMPM / SDIS à l'origine du signalement</th>
-                        <td>{{ signalement.origineMissionServiceSecours }}</td>
-                    </tr>
-                    <tr>
-                        <th>Ordre de mission</th>
-                        <td>{{ signalement.ordreMissionServiceSecours }}</td>
-                    </tr>
-                </table>
-            </td>
-            <td>
-                <h2>Occupant</h2>
-                <table class="sub-table">
-                    {% if signalement.isLogementVacant %}
-                        <tr>
-                            <th>Logement vacant</th>
-                            <td>Oui</td>
-                        </tr>
+    <div class="main-table">
+        <h2>Déclarant</h2>
+        <table class="sub-table">
+            <tr>
+                <th>Matricule</th>
+            <td>{{ signalement.matriculeDeclarant }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ signalement.nomDeclarant }}</td>
+            </tr>
+            <tr>
+                <th>Date de mission</th>
+                <td>{{ signalement.DateMissionServiceSecours ? signalement.DateMissionServiceSecours|date('d/m/Y') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Engin du BMPM / SDIS à l'origine du signalement</th>
+                <td>{{ signalement.origineMissionServiceSecours }}</td>
+            </tr>
+            <tr>
+                <th>Ordre de mission</th>
+                <td>{{ signalement.ordreMissionServiceSecours }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="main-table">
+        <h2>Occupant</h2>
+        <table class="sub-table">
+            {% if signalement.isLogementVacant %}
+                <tr>
+                    <th>Logement vacant</th>
+                    <td>Oui</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <th>Profil de l'occupant</th>
+                    <td>
+                        {% if signalement.profileOccupant %}
+                            {{ signalement.profileOccupant.value }}
+                        {% else %}
+                            Indéterminé
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <th>Nom</th>
+                <td>{{ signalement.nomOccupant }}</td>
+            </tr>
+            <tr>
+                <th>Prénom</th>
+                <td>{{ signalement.prenomOccupant }}</td>
+            </tr>
+            <tr>
+                <th>Adresse e-mail</th>
+                <td>{{ signalement.mailOccupant }}</td>
+            </tr>
+            <tr>
+                <th>Téléphone</th>
+                <td>{{ signalement.telOccupantDecoded }}</td>
+            </tr>
+            <tr>
+                <th>Nombre d'occupants dans le logement</th>
+                <td>{{ signalement.nbOccupantsLogement }}</td>
+            </tr>
+            <tr>
+                <th>Nombre d'enfants dans le logement</th>
+                <td>
+                    {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
+                        {{ signalement.typeCompositionLogement.compositionLogementNombreEnfants }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Mineurs de 6 ans ou moins</th>
+                <td>
+                    {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.compositionLogementEnfants %}
+                        {{ signalement.typeCompositionLogement.compositionLogementEnfants|capitalize }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Autre situation de vulnérabilité</th>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="2">{{ signalement.autreSituationVulnerabilite|nl2br }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="main-table">
+        <h2>Logement</h2>
+        <table class="sub-table">
+            <tr>
+                <th>Numéro et voie</th>
+                <td>{{ signalement.adresseOccupant }}</td>
+            </tr>
+            <tr>
+                <th>Code postal</th>
+                <td>{{ signalement.cpOccupant }}</td>
+            </tr>
+            <tr>
+                <th>Ville</th>
+                <td>{{ signalement.villeOccupant }}</td>
+            </tr>
+            <tr>
+                <th>Complément d'adresse</th>
+                <td>{{ signalement.adresseAutreOccupant }}</td>
+            </tr>
+            <tr>
+                <th>Logement social</th>
+                <td>
+                    {% if signalement.isLogementSocial %}
+                        Oui
+                    {% elseif signalement.isLogementSocial is same as(false) %}
+                        Non
                     {% else %}
-                        <tr>
-                            <th>Profil de l'occupant</th>
-                            <td>
-                                {% if signalement.profileOccupant %}
-                                    {{ signalement.profileOccupant.value }}
-                                {% else %}
-                                    Indéterminé
-                                {% endif %}
-                            </td>
-                        </tr>
+                        Indéterminé
                     {% endif %}
-                    <tr>
-                        <th>Nom</th>
-                        <td>{{ signalement.nomOccupant }}</td>
-                    </tr>
-                    <tr>
-                        <th>Prénom</th>
-                        <td>{{ signalement.prenomOccupant }}</td>
-                    </tr>
-                    <tr>
-                        <th>Adresse e-mail</th>
-                        <td>{{ signalement.mailOccupant }}</td>
-                    </tr>
-                    <tr>
-                        <th>Téléphone</th>
-                        <td>{{ signalement.telOccupantDecoded }}</td>
-                    </tr>
-                    <tr>
-                        <th>Nombre d'occupants dans le logement</th>
-                        <td>{{ signalement.nbOccupantsLogement }}</td>
-                    </tr>
-                    <tr>
-                        <th>Nombre d'enfants dans le logement</th>
-                        <td>
-                            {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
-                                {{ signalement.typeCompositionLogement.compositionLogementNombreEnfants }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Mineurs de 6 ans ou moins</th>
-                        <td>
-                            {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.compositionLogementEnfants %}
-                                {{ signalement.typeCompositionLogement.compositionLogementEnfants|capitalize }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Autre situation de vulnérabilité</th>
-                        <td>{{ signalement.autreSituationVulnerabilite|nl2br }}</td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td style="width: 50%;">
-                <h2>Logement</h2>
-                <table class="sub-table">
-                    <tr>
-                        <th>Numéro et voie</th>
-                        <td>{{ signalement.adresseOccupant }}</td>
-                    </tr>
-                    <tr>
-                        <th>Code postal</th>
-                        <td>{{ signalement.cpOccupant }}</td>
-                    </tr>
-                    <tr>
-                        <th>Ville</th>
-                        <td>{{ signalement.villeOccupant }}</td>
-                    </tr>
-                    <tr>
-                        <th>Complément d'adresse</th>
-                        <td>{{ signalement.adresseAutreOccupant }}</td>
-                    </tr>
-                    <tr>
-                        <th>Logement social</th>
-                        <td>
-                            {% if signalement.isLogementSocial %}
-                                Oui
-                            {% elseif signalement.isLogementSocial is same as(false) %}
-                                Non
-                            {% else %}
-                                Indéterminé
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Nature du logement</th>
-                        <td>{{ signalement.natureLogement|capitalize }}</td>
-                    </tr>
-                    {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
-                        <tr>
-                            <th>Précision sur la nature du logement</th>
-                            <td>{{ signalement.typeCompositionLogement.typeLogementNatureAutrePrecision }}</td>
-                        </tr>
-                    {% endif %}
-                    {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.typeLogementRdc %}
-                        <tr>
-                            <th>Logement en rez-de-chaussée</th>
-                            <td>{{ signalement.typeCompositionLogement.typeLogementRdc|capitalize }}</td>
-                        </tr>
-                    {% endif %}
-                    {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.typeLogementDernierEtage %}
-                        <tr>
-                            <th>Logement au dernier étage</th>
-                            <td>{{ signalement.typeCompositionLogement.typeLogementDernierEtage|capitalize }}</td>
-                        </tr>
-                    {% endif %}
-                    {% if signalement.etageOccupant %}
-                        <tr>
-                            <th>Étage du logement</th>
-                            <td>
-                                {% if signalement.etageOccupant == '-1' %}
-                                    Rez-de-chaussée
-                                {% else %}
-                                    {{ signalement.etageOccupant }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endif %}
-                    <tr>
-                        <th>Nombre de pièces à vivre</th>
-                        <td>{{ signalement.nbPiecesLogement }}</td>
-                    </tr>
-                    <tr>
-                        <th>Superficie (m²)</th>
-                        <td>{{ signalement.superficie }}</td>
-                    </tr>
-                </table>
-            </td>
-            <td>
-                <h2>Bailleur / Syndic</h2>
-                <table class="sub-table">
-                    <tr>
-                        <th>Bailleur averti</th>
-                        <td>
-                            {% if signalement.isProprioAverti %}
-                                Oui
-                            {% elseif signalement.isProprioAverti is same as(false) %}
-                                Non
-                            {% else %}
-                                Indéterminé
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% if signalement.denominationProprio %}
-                        <tr>
-                            <th>Dénomination du bailleur</th>
-                            <td>{{ signalement.denominationProprio }}</td>
-                        </tr>
-                    {% endif %}
-                    {% if signalement.nomProprio %}
-                        <tr>
-                            <th>Nom du bailleur</th>
-                            <td>{{ signalement.nomProprio }}</td>
-                        </tr>
-                    {% endif %}
-                    {% if signalement.prenomProprio %}
-                        <tr>
-                            <th>Prénom du bailleur</th>
-                            <td>{{ signalement.prenomProprio }}</td>
-                        </tr>
-                    {% endif %}
-                    {% if signalement.mailProprio %}
-                        <tr>
-                            <th>Adresse e-mail du bailleur</th>
-                            <td>{{ signalement.mailProprio }}</td>
-                        </tr>
-                    {% endif %}
-                    {% if signalement.telProprioDecoded %}
-                        <tr>
-                            <th>Téléphone du bailleur</th>
-                            <td>{{ signalement.telProprioDecoded }}</td>
-                        </tr>
-                    {% endif %}
-                    {# syndic #}
-                    {% if signalement.denominationSyndic %}
-                        <tr>
-                            <th>Dénomination du syndic</th>
-                            <td>{{ signalement.denominationSyndic }}</td>
-                        </tr>
-                    {% endif %}
-                    {% if signalement.nomSyndic %}
-                        <tr>
-                            <th>Nom du ou de la représentante du syndic</th>
-                            <td>{{ signalement.nomSyndic }}</td>
-                        </tr>
-                    {% endif %}
-                    {% if signalement.mailSyndic %}
-                        <tr>
-                            <th>Adresse e-mail du syndic</th>
-                            <td>{{ signalement.mailSyndic }}</td>
-                        </tr>
-                    {% endif %}
-                    {% if signalement.telSyndicDecoded %}
-                        <tr>
-                            <th>Téléphone du syndic</th>
-                            <td>{{ signalement.telSyndicDecoded }}</td>
-                        </tr>
-                    {% endif %}
-                </table>
-            </td>
-        </tr>
-    </table>
-    <div class="page_break"></div>
-    <h2>Désordres</h2>
-    <table class="main-table">
-        <tr>
-            <td style="width: 50%;">
-                {% for precision in signalement.desordrePrecisions %}
-                    <div style="margin-bottom: 10px;">
-                        <strong>{{ precision.desordreCritere.labelCritere }}</strong>
-                        {% if precision.label %}
-                            <br>
-                            <small>{{ precision.label }}</small>
+                </td>
+            </tr>
+            <tr>
+                <th>Nature du logement</th>
+                <td>{{ signalement.natureLogement|capitalize }}</td>
+            </tr>
+            {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
+                <tr>
+                    <th>Précision sur la nature du logement</th>
+                    <td>{{ signalement.typeCompositionLogement.typeLogementNatureAutrePrecision }}</td>
+                </tr>
+            {% endif %}
+            {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.typeLogementRdc %}
+                <tr>
+                    <th>Logement en rez-de-chaussée</th>
+                    <td>{{ signalement.typeCompositionLogement.typeLogementRdc|capitalize }}</td>
+                </tr>
+            {% endif %}
+            {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.typeLogementDernierEtage %}
+                <tr>
+                    <th>Logement au dernier étage</th>
+                    <td>{{ signalement.typeCompositionLogement.typeLogementDernierEtage|capitalize }}</td>
+                </tr>
+            {% endif %}
+            {% if signalement.etageOccupant %}
+                <tr>
+                    <th>Étage du logement</th>
+                    <td>
+                        {% if signalement.etageOccupant == '-1' %}
+                            Rez-de-chaussée
+                        {% else %}
+                            {{ signalement.etageOccupant }}
                         {% endif %}
-                        {% if precision.desordrePrecisionSlug == 'desordres_service_secours_autre_precision' %}
-                            <br>
-                            <small>{{ signalement.jsonContent['desordres_service_secours_autre_precision']|nl2br }}</small>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </td>
-            <td>
-                <table class="sub-table">
-                    <tr>
-                        <th>D'autres occupants de l'immeuble ont-ils rencontré des désordres</th>
-                        <td>
-                            {% if signalement.autresOccupantsDesordre == 'nsp' %}
-                                Indéterminé
-                            {% else %}
-                                {{ signalement.autresOccupantsDesordre|capitalize }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <th>Nombre de pièces à vivre</th>
+                <td>{{ signalement.nbPiecesLogement }}</td>
+            </tr>
+            <tr>
+                <th>Superficie (m²)</th>
+                <td>{{ signalement.superficie }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="main-table">
+    <h2>Bailleur / Syndic</h2>
+    <table class="sub-table">
+            <tr>
+                <th>Bailleur averti</th>
+                <td>
+                    {% if signalement.isProprioAverti %}
+                        Oui
+                    {% elseif signalement.isProprioAverti is same as(false) %}
+                        Non
+                    {% else %}
+                        Indéterminé
+                    {% endif %}
+                </td>
+            </tr>
+            {% if signalement.denominationProprio %}
+                <tr>
+                    <th>Dénomination du bailleur</th>
+                    <td>{{ signalement.denominationProprio }}</td>
+                </tr>
+            {% endif %}
+            {% if signalement.nomProprio %}
+                <tr>
+                    <th>Nom du bailleur</th>
+                    <td>{{ signalement.nomProprio }}</td>
+                </tr>
+            {% endif %}
+            {% if signalement.prenomProprio %}
+                <tr>
+                    <th>Prénom du bailleur</th>
+                    <td>{{ signalement.prenomProprio }}</td>
+                </tr>
+            {% endif %}
+            {% if signalement.mailProprio %}
+                <tr>
+                    <th>Adresse e-mail du bailleur</th>
+                    <td>{{ signalement.mailProprio }}</td>
+                </tr>
+            {% endif %}
+            {% if signalement.telProprioDecoded %}
+                <tr>
+                    <th>Téléphone du bailleur</th>
+                    <td>{{ signalement.telProprioDecoded }}</td>
+                </tr>
+            {% endif %}
+            {# syndic #}
+            {% if signalement.denominationSyndic %}
+                <tr>
+                    <th>Dénomination du syndic</th>
+                    <td>{{ signalement.denominationSyndic }}</td>
+                </tr>
+            {% endif %}
+            {% if signalement.nomSyndic %}
+                <tr>
+                    <th>Nom du ou de la représentante du syndic</th>
+                    <td>{{ signalement.nomSyndic }}</td>
+                </tr>
+            {% endif %}
+            {% if signalement.mailSyndic %}
+                <tr>
+                    <th>Adresse e-mail du syndic</th>
+                    <td>{{ signalement.mailSyndic }}</td>
+                </tr>
+            {% endif %}
+            {% if signalement.telSyndicDecoded %}
+                <tr>
+                    <th>Téléphone du syndic</th>
+                    <td>{{ signalement.telSyndicDecoded }}</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+    <div class="main-table">
+        <h2>Désordres</h2>
+        {% for precision in signalement.desordrePrecisions %}
+            <div style="margin-bottom: 10px;">
+                <strong>{{ precision.desordreCritere.labelCritere }}</strong>
+                {% if precision.label %}
+                    <br>
+                    <small>{{ precision.label }}</small>
+                {% endif %}
+                {% if precision.desordrePrecisionSlug == 'desordres_service_secours_autre_precision' %}
+                    <br>
+                    <small>{{ signalement.jsonContent['desordres_service_secours_autre_precision']|nl2br }}</small>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div style="margin-bottom: 10px;">
+            <strong>D'autres occupants de l'immeuble ont-ils rencontré des désordres</strong>
+            <br>
+            {% if signalement.autresOccupantsDesordre == 'nsp' %}
+                Indéterminé
+            {% else %}
+                {{ signalement.autresOccupantsDesordre|capitalize }}
+            {% endif %}
+        </div>
+    </div>
 </div>

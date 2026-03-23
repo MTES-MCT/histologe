@@ -81,7 +81,6 @@ class ServiceSecoursController extends AbstractController
             $entityManager->commit();
             $userManager->createUsagersFromSignalement($signalement);
             $autoAssigner->assignOrSendNewSignalementNotification($signalement);
-            // acusé de reception
             $pdfContent = $serviceSecoursPdfGenerator->generate($signalement);
             $notificationMailerRegistry->send(
                 new NotificationMail(
@@ -91,7 +90,6 @@ class ServiceSecoursController extends AbstractController
                     attachment: $pdfContent,
                 )
             );
-            // traitement asynchrone pour les documents
             $messageBus->dispatch(new SignalementServiceSecoursFileMessage($signalement->getId()));
 
             return $this->render('service_secours/success.html.twig', ['serviceSecoursRoute' => $serviceSecoursRoute, 'signalement' => $signalement]);
@@ -118,7 +116,7 @@ class ServiceSecoursController extends AbstractController
         #[MapEntity(mapping: ['uuidSignalement' => 'uuid'])] Signalement $signalement,
         ServiceSecoursPdfGenerator $serviceSecoursPdfGenerator,
     ): Response {
-        if ($signalement->getServiceSecours() !== $serviceSecoursRoute) {
+        if ($signalement->getServiceSecours()?->getId() !== $serviceSecoursRoute->getId()) {
             throw $this->createNotFoundException();
         }
         $pdfContent = $serviceSecoursPdfGenerator->generate($signalement);
