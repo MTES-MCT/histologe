@@ -14,7 +14,7 @@ class CoordonneesSyndicRequest implements RequestInterface
         #[Assert\Length(max: 255, maxMessage: 'Le nom du syndic ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $nom = null,
         #[Email(mode: Email::VALIDATION_MODE_STRICT)]
-        #[Assert\Length(max: 255, maxMessage: 'L\'email du syndic ne doit pas dépasser {{ limit }} caractères.')]
+        #[Assert\Length(max: 255, maxMessage: 'L\'e-mail du syndic ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $mail = null,
         #[AppAssert\TelephoneFormat]
         private readonly ?string $telephone = null,
