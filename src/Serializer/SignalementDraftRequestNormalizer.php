@@ -151,9 +151,6 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
         $phoneNumber = preg_replace('/^\+33/', '', $phoneNumber);
         $phoneNumber = preg_replace('/^0033/', '', $phoneNumber);
 
-        // Si le numéro commence par un autre indicatif international, le supprimer aussi
-        $phoneNumber = preg_replace('/^\+\d+/', '', $phoneNumber);
-
         return $phoneNumber;
     }
 }
