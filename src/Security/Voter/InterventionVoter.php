@@ -54,7 +54,7 @@ class InterventionVoter extends Voter
         if (!$partner) {
             return false;
         }
-        $isUserInAffectedPartnerWithQualificationVisite = $signalement->getAffectations()->filter(function (Affectation $affectation) use ($partner) {
+        $isUserInAffectedPartnerWithQualificationVisite = $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner->getId()
                 && \in_array(Qualification::VISITES, $partner->getCompetence())
                 && AffectationStatus::ACCEPTED == $affectation->getStatut();

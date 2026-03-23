@@ -94,7 +94,7 @@ final class GenerateFileZipMessageHandler
 
     private function getFiles(Signalement $signalement, array $fileIds): array
     {
-        $files = $signalement->getFiles()->filter(function (File $file) use ($fileIds) {
+        $files = $signalement->getFiles()->filter(static function (File $file) use ($fileIds) {
             if ($file->getIsSuspicious()) {
                 return false;
             }

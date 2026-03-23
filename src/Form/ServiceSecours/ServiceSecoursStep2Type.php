@@ -101,7 +101,7 @@ class ServiceSecoursStep2Type extends AbstractType
             ])
             ->add('typeEtageLogement', EnumType::class, [
                 'class' => EtageType::class,
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     return $choice->label();
                 },
                 'expanded' => true,

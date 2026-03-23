@@ -43,7 +43,7 @@ trait SearchQueryTrait
                 if ($value->isEmpty()) {
                     continue;
                 }
-                $params[$key] = $value->map(fn ($partner) => $partner->getId())->toArray();
+                $params[$key] = $value->map(static fn ($partner) => $partner->getId())->toArray();
             } elseif (is_object($value)) {
                 if (isset($value->value)) {
                     $params[$key] = $value->value;

@@ -44,7 +44,7 @@ class ApiDesordreRequestValidator extends ConstraintValidator
 
             return;
         }
-        $existingPrecisionSlugs = array_map(fn ($precision) => $precision->getDesordrePrecisionSlug(), $desordreCritere->getDesordrePrecisions()->toArray());
+        $existingPrecisionSlugs = array_map(static fn ($precision) => $precision->getDesordrePrecisionSlug(), $desordreCritere->getDesordrePrecisions()->toArray());
         if ($desordreCritere->getDesordrePrecisions()->count() > 1) {
             // controle de la précision obligatoire
             if (0 === count($desordreRequest->precisions)) {

@@ -14,7 +14,7 @@ class JWKSResponse
     public function __construct(string $data)
     {
         $keys = json_decode($data, true);
-        $this->keys = array_map(fn ($key) => new JWK($key), $keys['keys']);
+        $this->keys = array_map(static fn ($key) => new JWK($key), $keys['keys']);
     }
 
     /**

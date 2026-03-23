@@ -65,7 +65,7 @@ class ClearStorageTmpFolderCommand extends AbstractCronCommand
 
         $files = $this->fileStorage
             ->listContents('tmp/')
-            ->filter(fn (StorageAttributes $attributes) => $attributes->lastModified() < $timestamp)
+            ->filter(static fn (StorageAttributes $attributes) => $attributes->lastModified() < $timestamp)
             ->toArray();
 
         $nbFiles = \count($files);

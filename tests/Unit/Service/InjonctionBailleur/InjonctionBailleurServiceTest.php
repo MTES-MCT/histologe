@@ -91,14 +91,14 @@ class InjonctionBailleurServiceTest extends KernelTestCase
             ->method('createSuivi')
             ->withConsecutive(
                 [
-                    $this->callback(fn ($arg) => $arg instanceof Signalement),
+                    $this->callback(static fn ($arg) => $arg instanceof Signalement),
                     $this->stringContains('arrêter la procédure d\'injonction'),
                     Suivi::TYPE_AUTO,
                     SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
                     $this->anything(), // on ignore les autres params facultatifs
                 ],
                 [
-                    $this->callback(fn ($arg) => $arg instanceof Signalement),
+                    $this->callback(static fn ($arg) => $arg instanceof Signalement),
                     'Le bailleur souhaite repasser en procédure classique.',
                     Suivi::TYPE_AUTO,
                     SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,

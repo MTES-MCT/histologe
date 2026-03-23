@@ -30,7 +30,7 @@ class AutoAffectationRuleType extends AbstractType
             ])
             ->add('partnerType', EnumType::class, [
                 'class' => PartnerType::class,
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     return $choice->label();
                 },
                 'placeholder' => 'Sélectionner le type de partenaire concerné par cette règle',
@@ -42,7 +42,7 @@ class AutoAffectationRuleType extends AbstractType
             ])
             ->add('profileDeclarant', ChoiceType::class, [
                 'choices' => ProfileDeclarant::getListWithGroup(),
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     return $choice;
                 },
                 'placeholder' => 'Choisissez un profil de déclarant parmi la liste ci-dessous.',
@@ -103,12 +103,12 @@ class AutoAffectationRuleType extends AbstractType
                 'class' => Qualification::class,
                 'choice_filter' => ChoiceList::filter(
                     $this,
-                    function ($choice) {
+                    static function ($choice) {
                         return \in_array($choice, Qualification::getProcedureSuspecteeList()) ? $choice : false;
                     },
                     'competence'
                 ),
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     return $choice->label();
                 },
                 'label' => 'Procédures suspectées (facultatif)',
@@ -119,11 +119,11 @@ class AutoAffectationRuleType extends AbstractType
             ])
         ;
         $builder->get('inseeToExclude')->addModelTransformer(new CallbackTransformer(
-            function ($tagsAsArray) {
+            static function ($tagsAsArray) {
                 // transform the array to a string
                 return null !== $tagsAsArray ? implode(',', $tagsAsArray) : null;
             },
-            function ($tagsAsString) {
+            static function ($tagsAsString) {
                 // transform the string back to an array
                 $pattern = '/\s*,\s*/';
 
@@ -131,11 +131,11 @@ class AutoAffectationRuleType extends AbstractType
             }
         ));
         $builder->get('partnerToExclude')->addModelTransformer(new CallbackTransformer(
-            function ($tagsAsArray) {
+            static function ($tagsAsArray) {
                 // transform the array to a string
                 return null !== $tagsAsArray ? implode(',', $tagsAsArray) : null;
             },
-            function ($tagsAsString) {
+            static function ($tagsAsString) {
                 // transform the string back to an array
                 $pattern = '/\s*,\s*/';
 

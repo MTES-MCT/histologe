@@ -180,7 +180,7 @@ final class ZipStreamBuilderTest extends TestCase
         $uploadHandler
             ->expects(self::exactly(2))
             ->method('openReadStream')
-            ->willReturnCallback(function (string $filename) use ($stream1, $stream2) {
+            ->willReturnCallback(static function (string $filename) use ($stream1, $stream2) {
                 return match ($filename) {
                     'a.pdf' => $stream1,
                     'b.pdf' => $stream2,

@@ -30,7 +30,7 @@ trait ApiHelper
         $this->assertInstanceOf(TestHandler::class, $testHandler);
 
         $records = $testHandler->getRecords();
-        $apiLogs = array_filter($records, function (LogRecord $record) {
+        $apiLogs = array_filter($records, static function (LogRecord $record) {
             $message = $record['message'];
             if (!is_string($message)) {
                 $message = match (true) {

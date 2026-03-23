@@ -83,7 +83,7 @@ class DashboardController extends AbstractController
                 $mesDossiersAverifier,
                 $mesDossiersActiviteRecente,
                 $searchDashboardAverifier->getQueryCommune(),
-                $searchDashboardAverifier->getPartners()->map(fn ($p) => $p->getId())->toArray()
+                $searchDashboardAverifier->getPartners()->map(static fn ($p) => $p->getId())->toArray()
             ),
             'territory' => $territory,
             'mesDossiersMessagesUsagers' => $mesDossiersMessagesUsagers,

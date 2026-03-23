@@ -21,7 +21,7 @@ class DescriptionFilesBuilder
     {
         $fileListAsHtml = '';
         $description = Sanitizer::sanitize($suiviRequest->getDescription());
-        $filesFiltered = $signalement->getFiles()->filter(function (File $file) use ($suiviRequest) {
+        $filesFiltered = $signalement->getFiles()->filter(static function (File $file) use ($suiviRequest) {
             return in_array($file->getUuid(), $suiviRequest->getFiles(), true);
         });
 

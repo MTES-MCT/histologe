@@ -88,7 +88,7 @@ class SignalementDesordresProcessor
         $criteres[DesordreCritereZone::LOGEMENT->value] = [];
         foreach ($signalement->getDesordreCriteres() as $desordreCritere) {
             $zone = $desordreCritere->getZoneCategorie();
-            $desordrePrecisionsSelected = $signalement->getDesordrePrecisions()->filter(function ($desordrePrecision) use ($desordreCritere) {
+            $desordrePrecisionsSelected = $signalement->getDesordrePrecisions()->filter(static function ($desordrePrecision) use ($desordreCritere) {
                 return $desordrePrecision->getDesordreCritere() == $desordreCritere;
             });
             $desordrePrecisionsLinked = $desordreCritere->getDesordrePrecisions();

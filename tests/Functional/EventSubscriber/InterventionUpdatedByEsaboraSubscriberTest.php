@@ -47,7 +47,7 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $signalement = $signalementRepository->findOneBy(['reference' => $reference]);
         $intervention = $signalement->getInterventions()->filter(
-            fn (Intervention $intervention) => Intervention::STATUS_PLANNED === $intervention->getStatus()
+            static fn (Intervention $intervention) => Intervention::STATUS_PLANNED === $intervention->getStatus()
                 && InterventionType::VISITE === $intervention->getType()
         )->first();
 

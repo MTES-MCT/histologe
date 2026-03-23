@@ -26,12 +26,12 @@ readonly class FileUploadedSubscriber implements EventSubscriberInterface
         $user = $event->getUser();
         $partner = $event->getPartner();
 
-        $files = array_map(function ($file) {
+        $files = array_map(static function ($file) {
             return $file['file'];
         }, $files);
 
         $signalement = $event->getSignalement();
-        $filesFiltered = $signalement->getFiles()->filter(function (File $file) use ($files) {
+        $filesFiltered = $signalement->getFiles()->filter(static function (File $file) use ($files) {
             return in_array($file->getFilename(), $files, true);
         });
 

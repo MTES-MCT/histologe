@@ -19,14 +19,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
     requirements: ['domain' => '[^.]+(?:\.[^.]+)*'],
     host: 'service-secours.{domain}',
     priority: 100
-)
-]
+)]
 class ServiceSecoursController extends AbstractController
 {
     #[Route('/services-secours/{slug:serviceSecoursRoute}/{uuid:serviceSecoursRoute}',
         name: 'service_secours_index',
-        methods: ['GET', 'POST'])
-    ]
+        methods: ['GET', 'POST'])]
     public function index(
         Request $request,
         ServiceSecoursRoute $serviceSecoursRoute,
@@ -53,8 +51,7 @@ class ServiceSecoursController extends AbstractController
 
     #[Route('/services-secours/{slug:serviceSecoursRoute}/{uuid:serviceSecoursRoute}/site.webmanifest',
         name: 'service_secours_webmanifest',
-        methods: ['GET'])
-    ]
+        methods: ['GET'])]
     public function webmanifest(ServiceSecoursRoute $serviceSecoursRoute, Request $request): JsonResponse
     {
         $startUrl = $this->generateUrl('service_secours_index', [

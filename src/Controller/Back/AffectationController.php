@@ -81,7 +81,7 @@ class AffectationController extends AbstractController
                 $filterInjonctionBailleur = (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut());
                 $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, $filterInjonctionBailleur);
                 $alreadyAffectedPartner = $affectablePartners['affected'];
-                $alreadyAffectedPartnersIds = array_map(fn (array $partner) => $partner['id'], $alreadyAffectedPartner);
+                $alreadyAffectedPartnersIds = array_map(static fn (array $partner) => $partner['id'], $alreadyAffectedPartner);
                 $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartnersIds);
                 $partnersIdToRemove = array_diff($alreadyAffectedPartnersIds, $postedPartner);
 
@@ -121,7 +121,7 @@ class AffectationController extends AbstractController
             $successMessage = 'Les affectations ont bien été effectuées.';
             if (!empty($unnotifiedPartners)) {
                 $successMessage .= '<br>Attention, certains partenaires affectés ont désactivé les notifications par e-mail : ';
-                $successMessage .= implode(', ', array_map(fn ($partner) => $partner->getNom(), $unnotifiedPartners));
+                $successMessage .= implode(', ', array_map(static fn ($partner) => $partner->getNom(), $unnotifiedPartners));
             }
             $flashMessage = ['type' => 'success', 'title' => 'Affectations enregistrées', 'message' => $successMessage];
             $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($signalement);

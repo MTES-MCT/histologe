@@ -27,7 +27,7 @@ class ReponseInjonctionBailleurType extends AbstractType
                 'placeholder' => false,
                 'expanded' => true,
                 'choice_label' => false, // on gère les labels dans le template
-                'choice_attr' => function (?string $choice, ?string $key, ?string $value) {
+                'choice_attr' => static function (?string $choice, ?string $key, ?string $value) {
                     return match ($value) {
                         ReponseInjonctionBailleur::REPONSE_OUI => [
                             'data-dsfr-label' => 'Oui, je m\'engage à réaliser les travaux nécessaires',

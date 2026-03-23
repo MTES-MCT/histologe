@@ -248,7 +248,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $pendingUsers = $statement->executeQuery()->fetchAllAssociative();
 
-        return array_map(function ($pendingUser) {
+        return array_map(static function ($pendingUser) {
             return [
                 'email' => $pendingUser['email'],
                 'nb_signalements' => (!empty($pendingUser['signalements'])) ? (int) $pendingUser['nb_signalements'] : 0,

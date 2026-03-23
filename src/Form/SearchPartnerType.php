@@ -90,7 +90,7 @@ class SearchPartnerType extends AbstractType
 
         $builder->add('partnerType', EnumType::class, [
             'class' => PartnerType::class,
-            'choice_label' => function ($choice) {
+            'choice_label' => static function ($choice) {
                 return $choice->label();
             },
             'placeholder' => 'Tous les types de partenaire',

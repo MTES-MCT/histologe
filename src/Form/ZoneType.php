@@ -48,7 +48,7 @@ class ZoneType extends AbstractType
             $territory = $zone->getTerritory();
             $builder->add('partners', SearchCheckboxType::class, [
                 'class' => Partner::class,
-                'query_builder' => function (PartnerRepository $partnerRepository) use ($territory) {
+                'query_builder' => static function (PartnerRepository $partnerRepository) use ($territory) {
                     return $partnerRepository->getPartnersQueryBuilder($territory)->orderBy('p.nom', 'ASC');
                 },
                 'choice_label' => 'nom',
@@ -60,7 +60,7 @@ class ZoneType extends AbstractType
             ]);
             $builder->add('excludedPartners', SearchCheckboxType::class, [
                 'class' => Partner::class,
-                'query_builder' => function (PartnerRepository $partnerRepository) use ($territory) {
+                'query_builder' => static function (PartnerRepository $partnerRepository) use ($territory) {
                     return $partnerRepository->getPartnersQueryBuilder($territory)->orderBy('p.nom', 'ASC');
                 },
                 'choice_label' => 'nom',
@@ -74,7 +74,7 @@ class ZoneType extends AbstractType
 
         $builder->add('type', EnumType::class, [
             'class' => EnumZoneType::class,
-            'choice_label' => function ($choice) {
+            'choice_label' => static function ($choice) {
                 return $choice->label();
             },
             'placeholder' => 'Sélectionner le type de zone',
@@ -110,7 +110,7 @@ class ZoneType extends AbstractType
             ]);
         }
         // Ajouter un écouteur d'événements pour valider les champs file et area
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event) {
             $form = $event->getForm();
             $file = $form->get('file')->getData();
             $area = $form->get('area')->getData();

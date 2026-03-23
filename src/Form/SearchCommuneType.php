@@ -29,7 +29,7 @@ class SearchCommuneType extends AbstractType
         $builder->add('territory', TerritoryChoiceType::class);
         $builder->add('epci', EntityType::class, [
             'class' => Epci::class,
-            'query_builder' => function (EntityRepository $er) {
+            'query_builder' => static function (EntityRepository $er) {
                 return $er->createQueryBuilder('e')->orderBy('e.nom', 'ASC');
             },
             'choice_label' => 'nom',

@@ -31,7 +31,7 @@ class RefusSignalementType extends AbstractType
                     MotifRefus::DOUBLON,
                     MotifRefus::AUTRE,
                 ],
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     return $choice->label();
                 },
                 'label' => 'Veuillez sélectionner le motif de refus <span class="fr-text-default--error">*</span>',

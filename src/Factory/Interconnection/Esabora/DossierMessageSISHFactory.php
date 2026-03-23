@@ -260,7 +260,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
     private function buildSuivi(Signalement $signalement): string
     {
         $suivis = $this->suiviRepository->findAllSuiviBy($signalement, Suivi::TYPE_PARTNER);
-        $cleanedSuivis = array_map(function (Suivi $suivi) {
+        $cleanedSuivis = array_map(static function (Suivi $suivi) {
             $mention = 'Par '.$suivi->getCreatedByLabel().', le '.$suivi->getCreatedAt()->format('d/m/Y');
             $cleanSuivi = HtmlCleaner::clean($suivi->getDescription(false));
 

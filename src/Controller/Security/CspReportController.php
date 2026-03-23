@@ -30,13 +30,13 @@ readonly class CspReportController
             }
 
             if (isset($report['violated-directive'])) {
-                \Sentry\configureScope(function (Scope $scope) use ($report): void {
+                \Sentry\configureScope(static function (Scope $scope) use ($report): void {
                     $scope->setTag('violated-directive', $report['violated-directive']);
                 });
             }
 
             if (isset($report['document-uri'])) {
-                \Sentry\configureScope(function (Scope $scope) use ($report): void {
+                \Sentry\configureScope(static function (Scope $scope) use ($report): void {
                     $scope->setTag('document-uri', $report['document-uri']);
                 });
             }

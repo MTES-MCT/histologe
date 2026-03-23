@@ -27,10 +27,10 @@ class UserApiPermissionType extends AbstractType
             ])
             ->add('partner', null, [
                 'label' => 'Partenaire',
-                'choice_label' => function (Partner $partner): string {
+                'choice_label' => static function (Partner $partner): string {
                     return $partner->getTerritory()->getZip().' - '.$partner->getNom();
                 },
-                'query_builder' => function (EntityRepository $er) {
+                'query_builder' => static function (EntityRepository $er) {
                     return $er->createQueryBuilder('p')
                         ->select('p, t')
                         ->innerJoin('p.territory', 't')
@@ -38,7 +38,7 @@ class UserApiPermissionType extends AbstractType
                         ->orderBy('t.zip', 'ASC')
                         ->addOrderBy('p.nom', 'ASC');
                 },
-                'choice_attr' => function (Partner $partner) {
+                'choice_attr' => static function (Partner $partner) {
                     return ['data-territoryid' => $partner->getTerritory()->getId()];
                 },
             ])
@@ -48,7 +48,7 @@ class UserApiPermissionType extends AbstractType
                 'label' => 'Type de partenaire',
                 'required' => false,
                 'placeholder' => 'Tous les types',
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     return $choice->label();
                 },
             ])

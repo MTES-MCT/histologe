@@ -65,7 +65,7 @@ class SettingsFactory
         $suggestionsCommuneZipCode = [...$filterOptionData['cities'], ...$filterOptionData['zipcodes']];
 
         $suggestionsCommuneZipCode = array_map(
-            fn ($suggestion): string => $suggestion['city'] ?? $suggestion['zipcode'] ?? '',
+            static fn ($suggestion): string => $suggestion['city'] ?? $suggestion['zipcode'] ?? '',
             $suggestionsCommuneZipCode
         );
 

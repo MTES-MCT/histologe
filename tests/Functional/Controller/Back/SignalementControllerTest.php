@@ -524,7 +524,7 @@ class SignalementControllerTest extends WebTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-12']);
 
         $tagIds = array_map(
-            function (Tag $tag) {
+            static function (Tag $tag) {
                 return $tag->getId();
             },
             $signalement->getTags()->toArray());

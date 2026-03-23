@@ -56,7 +56,7 @@ class PdfExportMessageHandler
                     }
                 }
             }
-            $listConcludeProcedures = array_unique(array_map(function ($concludeProcedure) {
+            $listConcludeProcedures = array_unique(array_map(static function ($concludeProcedure) {
                 return $concludeProcedure->label();
             }, $listConcludeProcedures));
 

@@ -62,7 +62,7 @@ class AutoAssigner
     public function assign(Signalement $signalement, bool $simulation = false, bool $subscribeTerritoryAdmins = true): array
     {
         $this->countAffectations = 0;
-        $autoAffectationRules = $signalement->getTerritory()->getAutoAffectationRules()->filter(function (AutoAffectationRule $autoAffectationRule) {
+        $autoAffectationRules = $signalement->getTerritory()->getAutoAffectationRules()->filter(static function (AutoAffectationRule $autoAffectationRule) {
             return AutoAffectationRule::STATUS_ACTIVE === $autoAffectationRule->getStatus();
         });
         if ($autoAffectationRules->isEmpty()) {

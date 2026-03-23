@@ -23,22 +23,22 @@ class FileListService
         $choices = [];
 
         // 1. Documents de la situation (ex "Documents du dossier")
-        $situationFiles = $signalement->getFiles()->filter(function (File $file) {
+        $situationFiles = $signalement->getFiles()->filter(static function (File $file) {
             return !$file->getIsSuspicious() && ($file->isSituation() || null === $file->getDocumentType());
         });
         $situationFilesSorted = $situationFiles->toArray();
-        usort($situationFilesSorted, function (File $a, File $b) {
+        usort($situationFilesSorted, static function (File $a, File $b) {
             return strcmp($a->getTitle(), $b->getTitle());
         });
         $choices['Documents de la situation'] = $situationFilesSorted;
 
         // 2. Documents liés à la procédure
-        $procedureFiles = $signalement->getFiles()->filter(function (File $file) {
+        $procedureFiles = $signalement->getFiles()->filter(static function (File $file) {
             return !$file->getIsSuspicious() && $file->isProcedure();
         });
         if (!$procedureFiles->isEmpty()) {
             $procedureFilesSorted = $procedureFiles->toArray();
-            usort($procedureFilesSorted, function (File $a, File $b) {
+            usort($procedureFilesSorted, static function (File $a, File $b) {
                 return strcmp($a->getTitle(), $b->getTitle());
             });
             $choices['Documents liés à la procédure'] = $procedureFilesSorted;

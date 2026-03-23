@@ -24,13 +24,13 @@ readonly class FirstAffectationAcceptedSpecification
             $signalement,
             '<p>Suite à votre signalement, le ou les partenaires compétents'
         );
-        $affectationAccepted = $signalement->getAffectations()->filter(function (Affectation $affectation) {
+        $affectationAccepted = $signalement->getAffectations()->filter(static function (Affectation $affectation) {
             return AffectationStatus::ACCEPTED === $affectation->getStatut();
         });
 
         $interventions = $signalement
             ->getInterventions()
-            ->filter(function (Intervention $intervention) {
+            ->filter(static function (Intervention $intervention) {
                 return Intervention::STATUS_PLANNED === $intervention->getStatus()
                     || Intervention::STATUS_DONE === $intervention->getStatus();
             });

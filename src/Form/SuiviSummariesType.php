@@ -71,7 +71,7 @@ class SuiviSummariesType extends AbstractType
                     'reponse-usager',
                     'dernier-suivi-20-jours',
                 ],
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     switch ($choice) {
                         case 'reponse-usager':
                             return 'Relancés automatiquement, dernier suivi de type usager';

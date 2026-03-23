@@ -50,7 +50,7 @@ class InjonctionBailleurVoter extends Voter
 
         return $user->isSuperAdmin()
             || ($user->isTerritoryAdmin() && in_array($user->getFirstTerritory()->getZip(), $arrayDepts))
-            || count($user->getPartners()->filter(function (Partner $partner) use ($arrayDepts) {
+            || count($user->getPartners()->filter(static function (Partner $partner) use ($arrayDepts) {
                 return $partner->hasCompetence(Qualification::AIDE_BAILLEURS) && in_array($partner->getTerritory()->getZip(), $arrayDepts);
             }));
     }

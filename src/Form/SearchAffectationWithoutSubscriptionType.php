@@ -23,7 +23,7 @@ class SearchAffectationWithoutSubscriptionType extends AbstractType
         $builder->add('signalementStatus', EnumType::class, [
             'class' => SignalementStatus::class,
             'label' => 'Statut du signalement',
-            'choice_label' => function ($choice) {
+            'choice_label' => static function ($choice) {
                 return $choice->label();
             },
             'required' => false,

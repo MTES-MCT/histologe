@@ -140,7 +140,7 @@ class AppExtensionTest extends WebTestCase
 
         $filters = $appExtension->getFilters();
 
-        $filterNames = array_map(fn ($f) => $f->getName(), $filters);
+        $filterNames = array_map(static fn ($f) => $f->getName(), $filters);
 
         $expectedFilters = [
             'date',

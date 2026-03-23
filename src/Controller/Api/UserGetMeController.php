@@ -105,7 +105,7 @@ class UserGetMeController extends AbstractController
         $user = $this->getUser();
 
         $authorizedPartners = $this->partnerAuthorizedResolver->resolveBy($user);
-        $authorizedPartnersDto = array_map(fn ($authorizedPartner) => new Partner($authorizedPartner), $authorizedPartners);
+        $authorizedPartnersDto = array_map(static fn ($authorizedPartner) => new Partner($authorizedPartner), $authorizedPartners);
         $userResponse = new UserMeResponse(
             email: $user->getEmail(), partners: $authorizedPartnersDto
         );

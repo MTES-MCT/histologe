@@ -37,7 +37,7 @@ class SignalementDuplicateChecker
         );
 
         if (!empty($existingSignalements)) {
-            $signalements = array_map(function (Signalement $existingSignalement) {
+            $signalements = array_map(static function (Signalement $existingSignalement) {
                 $todayDate = new \DateTimeImmutable();
                 $durationSinceCreated = $todayDate->diff($existingSignalement->getCreatedAt());
 

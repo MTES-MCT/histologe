@@ -21,7 +21,7 @@ class UsagerCancelProcedureType extends AbstractType
                 'multiple' => false,
                 'required' => false,
                 'placeholder' => false,
-                'choice_label' => fn (MotifClotureUsager $choice) => $choice->label(),
+                'choice_label' => static fn (MotifClotureUsager $choice) => $choice->label(),
                 'constraints' => [
                     new Assert\NotBlank(
                         message: 'Veuillez choisir une raison.',

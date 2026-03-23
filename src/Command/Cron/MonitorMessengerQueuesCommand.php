@@ -60,7 +60,7 @@ class MonitorMessengerQueuesCommand extends Command
             $typeMessage = $envelopeMessage::class;
             $jsonMessage = $this->serializer->serialize($envelopeMessage, 'json');
 
-            \Sentry\configureScope(function (Scope $scope) use ($row, $typeMessage, $jsonMessage): void {
+            \Sentry\configureScope(static function (Scope $scope) use ($row, $typeMessage, $jsonMessage): void {
                 $scope->setTag('type', $typeMessage);
                 $scope->setTag('queue_name', $row['queue_name']);
                 $scope->setExtra('message', $jsonMessage);

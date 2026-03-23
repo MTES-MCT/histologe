@@ -497,7 +497,7 @@ class SignalementCreateController extends AbstractController
                 }
                 $autoAssigner->assign($signalement, subscribeTerritoryAdmins: $subscribeTerritoryAdmins);
                 $this->addFlash('success', ['title' => 'Signalement validé', 'message' => 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis par l\'auto-affectation']);
-                $hasAssignable = $user->getPartners()->exists(function ($key, $partner) use ($assignablePartners) {
+                $hasAssignable = $user->getPartners()->exists(static function ($key, $partner) use ($assignablePartners) {
                     return in_array($partner, $assignablePartners, true);
                 });
                 if (!$this->isGranted('ROLE_ADMIN_TERRITORY') && !$hasAssignable) {

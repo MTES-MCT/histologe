@@ -80,7 +80,7 @@ class SignalementDraftLogementType extends AbstractType
             ->add('appartementEtage', EnumType::class, [
                 'label' => 'Localisation de l\'appartement',
                 'class' => EtageType::class,
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     return $choice->label();
                 },
                 'expanded' => true,
@@ -217,7 +217,7 @@ class SignalementDraftLogementType extends AbstractType
             ->add('typeChauffage', EnumType::class, [
                 'label' => 'Type de chauffage',
                 'class' => ChauffageType::class,
-                'choice_label' => function ($choice) {
+                'choice_label' => static function ($choice) {
                     return $choice->label();
                 },
                 'expanded' => false,

@@ -65,7 +65,7 @@ class UserPartnerType extends AbstractType
                 'data' => $user->getEmail(),
             ])
             ->add('email', HiddenType::class);
-            $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $event) {
                 $data = $event->getData();
                 $form = $event->getForm();
                 $form->add('emailDisplay', null, [

@@ -13,7 +13,7 @@ class PhotoHelper
      */
     public static function getPhotosBySlug(Signalement $signalement, string $desordrePrecisionSlug): ?array
     {
-        $photos = $signalement->getPhotos()->filter(function (File $file) use ($desordrePrecisionSlug) {
+        $photos = $signalement->getPhotos()->filter(static function (File $file) use ($desordrePrecisionSlug) {
             return DocumentType::PHOTO_SITUATION === $file->getDocumentType()
             && $file->getDesordreSlug() === $desordrePrecisionSlug;
         });
@@ -40,7 +40,7 @@ class PhotoHelper
         }
 
         foreach ($photoListByType as $key => &$photoArray) {
-            usort($photoArray, function (File $fileA, File $fileB) use ($key) {
+            usort($photoArray, static function (File $fileA, File $fileB) use ($key) {
                 if ('situation' === $key) {
                     if (DocumentType::PHOTO_SITUATION === $fileA->getDocumentType() && DocumentType::PHOTO_SITUATION === $fileB->getDocumentType()) {
                         return $fileA->getId() <=> $fileB->getId();

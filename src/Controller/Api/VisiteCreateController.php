@@ -231,7 +231,7 @@ class VisiteCreateController extends AbstractController
     private function getInterventionVisitePlanned(Signalement $signalement, Partner $partner): false|Intervention
     {
         return $signalement->getInterventions()
-            ->filter(fn (Intervention $intervention) => Intervention::STATUS_PLANNED === $intervention->getStatus()
+            ->filter(static fn (Intervention $intervention) => Intervention::STATUS_PLANNED === $intervention->getStatus()
                 && $intervention->getPartner() === $partner)
             ->first();
     }
