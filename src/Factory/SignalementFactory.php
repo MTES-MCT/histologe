@@ -196,10 +196,8 @@ class SignalementFactory
                 $uploadedFiles
             );
         }
-
-        $jsonContent['autresOccupantsDesordre'] = $formServiceSecours->step5->autresOccupantsDesordre;
-
         $signalement->setJsonContent($jsonContent);
+        $signalement->setAutresOccupantsDesordre($formServiceSecours->step5->autresOccupantsDesordre);
     }
 
     /**

@@ -280,10 +280,10 @@
                     <tr>
                         <th>D'autres occupants de l'immeuble ont-ils rencontré des désordres</th>
                         <td>
-                            {% if signalement.jsonContent['autresOccupantsDesordre'] == 'nsp' %}
+                            {% if signalement.autresOccupantsDesordre == 'nsp' %}
                                 Indéterminé
                             {% else %}
-                                {{ signalement.jsonContent['autresOccupantsDesordre']|capitalize }}
+                                {{ signalement.autresOccupantsDesordre|capitalize }}
                             {% endif %}
                         </td>
                     </tr>
