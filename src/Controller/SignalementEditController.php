@@ -388,8 +388,7 @@ class SignalementEditController extends AbstractController
                 ->setBailDpeBail($form->get('bail')->getData())
                 ->setBailDpeEtatDesLieux($form->get('etatDesLieux')->getData())
                 ->setBailDpeDpe($form->get('dpe')->getData())
-                ->setBailDpeClasseEnergetique($form->get('classeEnergetique')->getData())
-                ->setBailDpeDateEmmenagement($form->get('dateEntree')->getData() ? $form->get('dateEntree')->getData()->format('Y-m-d') : null);
+                ->setBailDpeClasseEnergetique($form->get('classeEnergetique')->getData());
             $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
             $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();

@@ -23,7 +23,6 @@ class InformationsGeneralesType extends AbstractType
         /** @var Signalement $signalement */
         $signalement = $builder->getData();
 
-        $dateEntree = $signalement->getDateEntree() ?? $signalement->getTypeCompositionLogement()?->getBailDpeDateEmmenagement();
         $nbEnfantsDansLogement = $signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants();
         $enfantsDansLogementMoinsSixAns = $signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants();
         $bail = $signalement->getTypeCompositionLogement()?->getBailDpeBail();
@@ -41,7 +40,6 @@ class InformationsGeneralesType extends AbstractType
                 'label' => 'Date arrivée (facultatif)',
                 'required' => false,
                 'placeholder' => false,
-                'data' => $dateEntree,
             ])
             ->add('dateEffetBail', DateType::class, [
                 'label' => 'Date d\'effet du bail (facultatif)',

@@ -274,8 +274,6 @@ class SignalementManager extends AbstractManager
             }
             if ($qualificationNDERequest->getDateEntree()) {
                 $signalement->setDateEntree(new \DateTimeImmutable($qualificationNDERequest->getDateEntree()));
-                $typeCompositionLogement
-                    ->setBailDpeDateEmmenagement($qualificationNDERequest->getDateEntree());
             }
             if ($qualificationNDERequest->getClasseEnergetique()) {
                 $typeCompositionLogement
@@ -552,8 +550,7 @@ class SignalementManager extends AbstractManager
             ->setBailDpeBail($informationsLogementRequest->getBailDpeBail())
             ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux())
             ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe())
-            ->setBailDpeClasseEnergetique($informationsLogementRequest->getBailDpeClasseEnergetique())
-            ->setBailDpeDateEmmenagement($signalement->getDateEntree()?->format('Y-m-d'));
+            ->setBailDpeClasseEnergetique($informationsLogementRequest->getBailDpeClasseEnergetique());
         $signalement
             ->setTypeCompositionLogement($typeCompositionLogement)
             ->setNumeroInvariant($informationsLogementRequest->getBailDpeInvariant());

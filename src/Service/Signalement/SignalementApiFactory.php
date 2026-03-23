@@ -128,7 +128,6 @@ class SignalementApiFactory
         $typeCompositionLogement->setBailDpeEtatDesLieux(self::convertBoolToString($request->isEtatDesLieux));
         if ($request->dateEntreeLogement) {
             $dateEntree = new \DateTimeImmutable($request->dateEntreeLogement);
-            $typeCompositionLogement->setBailDpeDateEmmenagement($dateEntree->format('Y-m-d'));
             $signalement->setDateEntree($dateEntree);
         }
         $informationComplementaire->setInformationsComplementairesLogementMontantLoyer((string) $request->montantLoyer);

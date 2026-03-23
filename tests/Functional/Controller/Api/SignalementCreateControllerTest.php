@@ -105,7 +105,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals($typeCompositionLogement->getDesordresLogementChauffageDetailsDpeAnnee(), 'before2023');
         $this->assertEquals($typeCompositionLogement->getBailDpeClasseEnergetique(), $payload['classeEnergetique']);
         $this->assertEquals($typeCompositionLogement->getBailDpeEtatDesLieux(), 'oui');
-        $this->assertEquals($typeCompositionLogement->getBailDpeDateEmmenagement(), $payload['dateEntreeLogement']);
+        $this->assertEquals($signalement->getDateEntree()->format('Y-m-d'), $payload['dateEntreeLogement']);
         $this->assertEquals($informationComplementaire->getInformationsComplementairesLogementMontantLoyer(), $payload['montantLoyer']);
         $this->assertEquals($informationComplementaire->getInformationsComplementairesSituationOccupantsLoyersPayes(), 'oui');
         $this->assertEquals($signalement->getIsAllocataire(), 'caf');

@@ -517,6 +517,7 @@ trait FixturesHelper
     public function getLocataireTypeComposition(
         bool $withCompositionLogementNombrePersonnes = false,
         bool $withCompositionLogementSuperficie = false,
+        bool $withDateEmmenagement = false,
     ): array {
         $typeComposition = [
             'bail_dpe_dpe' => 'oui',
@@ -525,7 +526,6 @@ trait FixturesHelper
             'type_logement_rdc' => 'non',
             'type_logement_nature' => 'appartement',
             'bail_dpe_etat_des_lieux' => 'oui',
-            'bail_dpe_date_emmenagement' => '2020-10-01',
             'type_logement_commodites_wc' => 'oui',
             'type_logement_dernier_etage' => 'non',
             'composition_logement_enfants' => 'oui',
@@ -546,6 +546,9 @@ trait FixturesHelper
         }
         if ($withCompositionLogementSuperficie) {
             $typeComposition['composition_logement_superficie'] = '45';
+        }
+        if ($withDateEmmenagement) {
+            $typeComposition['bail_dpe_date_emmenagement'] = '2020-01-01';
         }
 
         return $typeComposition;

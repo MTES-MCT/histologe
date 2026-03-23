@@ -35,7 +35,8 @@ class DataPropertyArrayFilterTest extends TestCase
             SignalementDraftRequest::PREFIX_PROPERTIES_TYPE_COMPOSITION,
             $this->getLocataireTypeComposition(
                 withCompositionLogementNombrePersonnes: true,
-                withCompositionLogementSuperficie: true
+                withCompositionLogementSuperficie: true,
+                withDateEmmenagement: true
             ),
         ];
 

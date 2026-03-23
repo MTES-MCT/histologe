@@ -29,7 +29,6 @@ class SignalementDraftSituationType extends AbstractType
         $classeEnergetique = $signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique();
         $dateDpe = $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeAnnee();
         $etatDesLieux = $signalement->getTypeCompositionLogement()->getBailDpeEtatDesLieux();
-        $dateEntreeLogement = $signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement() ? new \DateTime($signalement->getTypeCompositionLogement()->getBailDpeDateEmmenagement()) : null;
         $montantLoyer = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesLogementMontantLoyer() : null;
         $payementLoyersAJour = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsLoyersPayes() : '';
         $allocataire = '';
@@ -141,12 +140,10 @@ class SignalementDraftSituationType extends AbstractType
                 'mapped' => false,
                 'data' => $etatDesLieux,
             ])
-            ->add('dateEntreeLogement', DateType::class, [
+            ->add('dateEntree', DateType::class, [
                 'label' => 'Date d\'entrée dans le logement',
                 'required' => false,
                 'placeholder' => false,
-                'mapped' => false,
-                'data' => $dateEntreeLogement,
             ])
             ->add('montantLoyer', NumberType::class, [
                 'label' => 'Montant du loyer',
