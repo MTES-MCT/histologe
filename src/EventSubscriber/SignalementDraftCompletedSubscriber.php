@@ -4,12 +4,16 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
+use App\Entity\Suivi;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Manager\SignalementManager;
+use App\Manager\SuiviManager;
 use App\Messenger\Message\NewSignalementCheckFileMessage;
 use App\Messenger\Message\SignalementDraftProcessMessage;
+use App\Repository\UserRepository;
 use App\Service\Files\DocumentProvider;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -34,6 +38,8 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly SuiviManager $suiviManager,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -69,6 +75,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                     $signalement->getTerritory()->getName()
                 ));
                 $this->sendNotifications($signalement);
+                $this->createFirstSuivi($signalement);
                 $this->dispatchDraftProcessing($signalementDraft, $signalement);
                 $this->dispatchCheckFiles($signalement);
                 $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
@@ -98,6 +105,19 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                     signalement: $signalement,
                     attachment: $this->documentProvider->getModeleCourrierPourProprietaire($signalement),
                 )
+            );
+        }
+    }
+
+    private function createFirstSuivi(Signalement $signalement): void
+    {
+        if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
+            $this->suiviManager->createSuivi(
+                signalement: $signalement,
+                description: 'Dossier déposé dans le cadre de la démarche accélérée',
+                type: Suivi::TYPE_AUTO,
+                category: SuiviCategory::SIGNALEMENT_IS_INJONCTION,
+                user: $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')])
             );
         }
     }
