@@ -53,7 +53,6 @@ class SignalementDraftLogementType extends AbstractType
         $anneeConstruction = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementAnneeConstruction();
         $pieceUnique = $signalement->getTypeCompositionLogement()?->getCompositionLogementPieceUnique();
         $nombrePieces = $signalement->getTypeCompositionLogement()?->getCompositionLogementNbPieces();
-        $superficie = $signalement->getTypeCompositionLogement()?->getCompositionLogementSuperficie();
         $pieceAVivre9m = $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesPieceAVivre9m() ?? null;
 
         $cuisine = $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesCuisine();
@@ -142,8 +141,6 @@ class SignalementDraftLogementType extends AbstractType
                 'label' => 'Superficie du logement (en m²)',
                 'help' => 'La superficie permet de calculer le risque de suroccupation du logement. Format attendu : Saisir un nombre entier',
                 'required' => false,
-                'mapped' => false,
-                'data' => $superficie,
             ])
             ->add('pieceAVivre9m', ChoiceType::class, [
                 'label' => 'Au moins une pièce à vivre supérieure ou égale à 9m²',

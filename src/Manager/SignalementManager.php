@@ -626,6 +626,7 @@ class SignalementManager extends AbstractManager
                 && null !== $typeCompositionLogement
                 && $this->suroccupationSpecification->isSatisfiedBy(
                     (int) $signalement->getNbOccupantsLogement(),
+                    (int) $signalement->getSuperficie(),
                     $situationFoyer,
                     $typeCompositionLogement
                 )) {
@@ -673,7 +674,6 @@ class SignalementManager extends AbstractManager
         $typeCompositionLogement
             ->setTypeLogementNature($compositionLogementRequest->getType())
             ->setCompositionLogementPieceUnique($compositionLogementRequest->getTypeCompositionLogement())
-            ->setCompositionLogementSuperficie($compositionLogementRequest->getSuperficie())
             ->setCompositionLogementNbPieces($compositionLogementRequest->getCompositionLogementNbPieces())
             ->setTypeLogementAppartementEtage($compositionLogementRequest->getEtage())
             ->setTypeLogementAppartementAvecFenetres($compositionLogementRequest->getAvecFenetres())

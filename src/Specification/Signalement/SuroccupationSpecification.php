@@ -16,6 +16,7 @@ class SuroccupationSpecification
 
     public function isSatisfiedBy(
         int $nbOccupants,
+        int $superficie,
         SituationFoyer $situationFoyer,
         TypeCompositionLogement $typeCompositionLogement,
     ): bool {
@@ -23,7 +24,7 @@ class SuroccupationSpecification
             $situationFoyer->getLogementSocialAllocation(),
             $nbOccupants,
             (int) $typeCompositionLogement->getCompositionLogementNbPieces(),
-            $typeCompositionLogement->getCompositionLogementSuperficie(),
+            $superficie,
         );
     }
 

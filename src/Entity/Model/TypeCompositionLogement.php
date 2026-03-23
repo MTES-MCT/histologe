@@ -23,7 +23,6 @@ class TypeCompositionLogement
         private ?string $typeLogementCommoditesWcCollective = null,
         private ?string $typeLogementCommoditesWcCuisine = null,
         private ?string $compositionLogementPieceUnique = null,
-        private ?string $compositionLogementSuperficie = null,
         private ?string $compositionLogementNbPieces = null,
         private ?string $compositionLogementNombreEnfants = null,
         private ?string $compositionLogementEnfants = null,
@@ -245,18 +244,6 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getCompositionLogementSuperficie(): ?string
-    {
-        return $this->compositionLogementSuperficie;
-    }
-
-    public function setCompositionLogementSuperficie(?string $compositionLogementSuperficie): self
-    {
-        $this->compositionLogementSuperficie = $compositionLogementSuperficie;
-
-        return $this;
-    }
-
     public function getCompositionLogementNbPieces(): ?string
     {
         return $this->compositionLogementNbPieces;
@@ -438,7 +425,6 @@ class TypeCompositionLogement
             'type_logement_commodites_wc_collective' => $this->typeLogementCommoditesWcCollective,
             'type_logement_commodites_wc_cuisine' => $this->typeLogementCommoditesWcCuisine,
             'composition_logement_piece_unique' => $this->compositionLogementPieceUnique,
-            'composition_logement_superficie' => $this->compositionLogementSuperficie,
             'composition_logement_nb_pieces' => $this->compositionLogementNbPieces,
             'composition_logement_nombre_enfants' => $this->compositionLogementNombreEnfants,
             'composition_logement_enfants' => $this->compositionLogementEnfants,

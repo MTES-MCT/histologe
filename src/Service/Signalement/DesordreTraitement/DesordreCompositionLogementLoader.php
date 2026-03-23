@@ -36,9 +36,7 @@ class DesordreCompositionLogementLoader
         }
 
         if ('piece_unique' === $typeCompositionLogement->getCompositionLogementPieceUnique()) {
-            if (null !== $typeCompositionLogement->getCompositionLogementSuperficie()
-                && $typeCompositionLogement->getCompositionLogementSuperficie() < 9
-            ) {
+            if (null !== $signalement->getSuperficie() && $signalement->getSuperficie() < 9) {
                 $this->addDesordrePrecisionBySlug('desordres_type_composition_logement_piece_unique_superficie');
             } else {
                 $this->removeDesordrePrecisionBySlug('desordres_type_composition_logement_piece_unique_superficie');

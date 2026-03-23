@@ -48,7 +48,6 @@ readonly class TypeCompositionLogementFactory
             typeLogementCommoditesWcCollective: $data['type_logement_commodites_wc_collective'] ?? null,
             typeLogementCommoditesWcCuisine: $data['type_logement_commodites_wc_cuisine'] ?? null,
             compositionLogementPieceUnique: $data['composition_logement_piece_unique'] ?? null,
-            compositionLogementSuperficie: $data['composition_logement_superficie'] ?? null,
             compositionLogementNbPieces: $data['composition_logement_nb_pieces'] ?? null,
             compositionLogementNombreEnfants: $data['composition_logement_nombre_enfants'] ?? null,
             compositionLogementEnfants: $data['composition_logement_enfants'] ?? null,

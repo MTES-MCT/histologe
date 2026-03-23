@@ -514,8 +514,10 @@ trait FixturesHelper
     /**
      * @return array<string>
      */
-    public function getLocataireTypeComposition(bool $withCompositionLogementNombrePersonnes = false): array
-    {
+    public function getLocataireTypeComposition(
+        bool $withCompositionLogementNombrePersonnes = false,
+        bool $withCompositionLogementSuperficie = false,
+    ): array {
         $typeComposition = [
             'bail_dpe_dpe' => 'oui',
             'bail_dpe_classe_energetique' => 'G',
@@ -529,7 +531,6 @@ trait FixturesHelper
             'composition_logement_enfants' => 'oui',
             'composition_logement_nombre_enfants' => '1',
             'composition_logement_nb_pieces' => '2',
-            'composition_logement_superficie' => '45',
             'type_logement_commodites_cuisine' => 'oui',
             'type_logement_commodites_piece_a_vivre_9m' => 'oui',
             'composition_logement_piece_unique' => 'plusieurs_pieces',
@@ -542,6 +543,9 @@ trait FixturesHelper
 
         if ($withCompositionLogementNombrePersonnes) {
             $typeComposition['composition_logement_nombre_personnes'] = '3';
+        }
+        if ($withCompositionLogementSuperficie) {
+            $typeComposition['composition_logement_superficie'] = '45';
         }
 
         return $typeComposition;

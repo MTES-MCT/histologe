@@ -371,7 +371,7 @@ class SignalementQualificationUpdater
             listNDECriticites: $linkedDesordrePrecisions,
             dataConsoSizeYear: $signalement->getTypeCompositionLogement()?->getDesordresLogementChauffageDetailsDpeConsoFinale(),
             dataConsoYear: $signalement->getTypeCompositionLogement()?->getDesordresLogementChauffageDetailsDpeConso(),
-            dataConsoSize: $signalement->getTypeCompositionLogement()?->getCompositionLogementSuperficie(),
+            dataConsoSize: (string) $signalement->getSuperficie(),
             dataHasDPE: null !== $dataHasDPE ? (string) $dataHasDPE : null,
             dataDateDPE: $dataDateDPE,
             classeEnergetique: $signalement->getTypeCompositionLogement()?->getBailDpeClasseEnergetique()

@@ -104,7 +104,6 @@ class SignalementApiFactory
         }
         $typeCompositionLogement->setCompositionLogementNbPieces((string) $request->nombrePieces);
         $signalement->setSuperficie($request->superficie);
-        $typeCompositionLogement->setCompositionLogementSuperficie((string) $request->superficie);
         $typeCompositionLogement->setTypeLogementCommoditesPieceAVivre9m(self::convertBoolToString($request->isPieceAVivre9m));
         $typeCompositionLogement->setTypeLogementCommoditesCuisine(self::convertBoolToString($request->isCuisine));
         $typeCompositionLogement->setTypeLogementCommoditesSalleDeBain(self::convertBoolToString($request->isSalleDeBain));
