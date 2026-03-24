@@ -44,9 +44,9 @@
                 {{signalement.complementAdresseOccupant}}
             {% endif %}
         </strong>
-        {% if signalement.informationProcedure.infoProcedureBailDate %}
+        {% if signalement.proprioAvertiAt %}
             , en vertu du bail signé le 
-            <strong>{{ signalement.informationProcedure.infoProcedureBailDate  }}</strong>, 
+            <strong>{{ signalement.proprioAvertiAt|date('m/Y') }}</strong>, 
         {% endif %}
         vous m’avez signalé des manquements relatifs aux dispositions en vigueur notamment, les articles L. 1331-22 et suivants du code de la santé publique, 
         L. 511-22 du code de la construction et de l'habitation, ou encore le décret n°2002-120 du 30 janvier 2002 relatif aux caractéristiques du logement décent 

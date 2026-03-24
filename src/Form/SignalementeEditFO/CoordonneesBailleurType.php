@@ -37,9 +37,6 @@ class CoordonneesBailleurType extends AbstractType
         } else {
             $isProprioAverti = $signalement->getIsProprioAverti();
         }
-        $infoProcedureBailDate = $signalement->getProprioAvertiAt()
-            ? $signalement->getProprioAvertiAt()->format('m/Y')
-            : $signalement->getInformationProcedure()?->getInfoProcedureBailDate();
 
         if ($options['extended']) {
             $builder
@@ -131,18 +128,11 @@ class CoordonneesBailleurType extends AbstractType
                     'mapped' => false,
                     'data' => MoyenContact::tryFrom($signalement->getInformationProcedure()?->getInfoProcedureBailMoyen()),
                 ])
-                ->add('infoProcedureBailDate', TextType::class, [
+                ->add('proprioAvertiAt', TextType::class, [
                     'label' => 'Date d\'avertissement du propriétaire',
                     'help' => 'Format attendu : MM/YYYY',
                     'required' => false,
-                    'mapped' => false,
-                    'data' => $infoProcedureBailDate,
-                    'constraints' => [
-                        new Assert\Regex([
-                            'pattern' => '/^(0[1-9]|1[0-2])\/\d{4}$/',
-                            'message' => 'Le format de la date doit être MM/YYYY.',
-                        ]),
-                    ],
+                    'constraints' => [new Assert\DateTime(['format' => 'm/Y'])],
                 ])
                 ->add('infoProcedureBailReponse', TextareaType::class, [
                     'label' => 'Réponse du propriétaire',

@@ -47,7 +47,10 @@ class DataPropertyArrayFilterTest extends TestCase
 
         yield 'Données Procedure' => [
             SignalementDraftRequest::PREFIX_PROPERTIES_INFORMATION_PROCEDURE,
-            $this->getLocataireInformationProcedure(withInfoProcedureBailleurPrevenu: true),
+            $this->getLocataireInformationProcedure(
+                withInfoProcedureBailleurPrevenu: true,
+                withInfoProcedureBailDate: true
+            ),
         ];
 
         yield 'Données Information complémentaire' => [

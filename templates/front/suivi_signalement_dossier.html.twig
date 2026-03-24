@@ -270,11 +270,8 @@
 						</li>
 						<li>
 							Date d'information du bailleur :
-							{# todo : check format date #}
 							{% if signalement.proprioAvertiAt %}
 								{{ signalement.proprioAvertiAt | date('m/Y') }}
-							{% elseif signalement.informationProcedure.infoProcedureBailDate %}
-								{{ signalement.informationProcedure.infoProcedureBailDate  }}
 							{% endif %}
 						</li>
 						<li>

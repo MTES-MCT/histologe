@@ -33,7 +33,6 @@ class InformationProcedureFactory
     {
         return new InformationProcedure(
             infoProcedureBailMoyen: $data['info_procedure_bail_moyen'] ?? null,
-            infoProcedureBailDate: $data['info_procedure_bail_date'] ?? null,
             infoProcedureBailReponse: $data['info_procedure_bail_reponse'] ?? null,
             infoProcedureBailNumero: $data['info_procedure_bail_numero'] ?? null,
             infoProcedureAssuranceContactee: $data['info_procedure_assurance_contactee'] ?? null,

@@ -6,7 +6,6 @@ class InformationProcedure
 {
     public function __construct(
         private ?string $infoProcedureBailMoyen = null,
-        private ?string $infoProcedureBailDate = null,
         private ?string $infoProcedureBailReponse = null,
         private ?string $infoProcedureBailNumero = null,
         private ?string $infoProcedureAssuranceContactee = null,
@@ -27,18 +26,6 @@ class InformationProcedure
     public function setInfoProcedureBailMoyen(?string $infoProcedureBailMoyen): self
     {
         $this->infoProcedureBailMoyen = $infoProcedureBailMoyen;
-
-        return $this;
-    }
-
-    public function getInfoProcedureBailDate(): ?string
-    {
-        return $this->infoProcedureBailDate;
-    }
-
-    public function setInfoProcedureBailDate(?string $infoProcedureBailDate): self
-    {
-        $this->infoProcedureBailDate = $infoProcedureBailDate;
 
         return $this;
     }
@@ -164,7 +151,6 @@ class InformationProcedure
     {
         return [
             'info_procedure_bail_moyen' => $this->infoProcedureBailMoyen,
-            'info_procedure_bail_date' => $this->infoProcedureBailDate,
             'info_procedure_bail_reponse' => $this->infoProcedureBailReponse,
             'info_procedure_bail_numero' => $this->infoProcedureBailNumero,
             'info_procedure_assurance_contactee' => $this->infoProcedureAssuranceContactee,

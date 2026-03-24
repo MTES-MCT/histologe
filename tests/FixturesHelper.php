@@ -574,12 +574,13 @@ trait FixturesHelper
     /**
      * @return array<mixed>
      */
-    public function getLocataireInformationProcedure(bool $withInfoProcedureBailleurPrevenu = false): array
-    {
+    public function getLocataireInformationProcedure(
+        bool $withInfoProcedureBailleurPrevenu = false,
+        bool $withInfoProcedureBailDate = false,
+    ): array {
         $data = [
             'utilisation_service_ok_visite' => 1,
             'info_procedure_bail_moyen' => 'courrier',
-            'info_procedure_bail_date' => '11/2024',
             'info_procedure_bail_reponse' => 'Réponse du bailleur',
             'info_procedure_bail_numero' => 'R-TR45',
             'info_procedure_assurance_contactee' => 'oui',
@@ -591,6 +592,9 @@ trait FixturesHelper
         ];
         if ($withInfoProcedureBailleurPrevenu) {
             $data['info_procedure_bailleur_prevenu'] = 'oui';
+        }
+        if ($withInfoProcedureBailDate) {
+            $data['info_procedure_bail_date'] = '11/2024';
         }
 
         return $data;

@@ -834,7 +834,6 @@ class SignalementManager extends AbstractManager
 
         $informationProcedure
             ->setInfoProcedureBailMoyen($procedureDemarchesRequest->getInfoProcedureBailMoyen())
-            ->setInfoProcedureBailDate($procedureDemarchesRequest->getInfoProcedureBailDate())
             ->setInfoProcedureBailReponse($procedureDemarchesRequest->getInfoProcedureBailReponse())
             ->setInfoProcedureBailNumero($procedureDemarchesRequest->getInfoProcedureBailNumero())
             ->setInfoProcedureAssuranceContactee($procedureDemarchesRequest->getInfoProcedureAssuranceContactee())
@@ -847,6 +846,8 @@ class SignalementManager extends AbstractManager
             $informationComplementaire = clone $signalement->getInformationComplementaire();
         }
         $signalement->setInformationComplementaire($informationComplementaire);
+        $proprioAvertiAt = $procedureDemarchesRequest->getInfoProcedureBailDate() ? \DateTimeImmutable::createFromFormat('m/Y', $procedureDemarchesRequest->getInfoProcedureBailDate()) : null;
+        $proprioAvertiAt ? $signalement->setProprioAvertiAt($proprioAvertiAt) : $signalement->setProprioAvertiAt(null);
 
         if ($assuranceContacteeUpdated) {
             $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);

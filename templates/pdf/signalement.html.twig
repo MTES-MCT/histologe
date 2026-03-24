@@ -312,8 +312,8 @@
                                 </li>
                                 <li>
                                     <b>Date d'information du propriétaire :</b>
-                                    {% if signalement.informationProcedure.infoProcedureBailDate %}
-                                        {{ signalement.informationProcedure.infoProcedureBailDate }}
+                                    {% if signalement.proprioAvertiAt %}
+                                        {{ signalement.proprioAvertiAt | date('m/Y') }}
                                     {% endif %}
                                 </li>
                                 <li>
