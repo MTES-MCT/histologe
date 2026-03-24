@@ -33,6 +33,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'NON_DECENCE',
             'RSD',
             'INSALUBRITE',
+            'SUSPICION_INSALUBRE',
             'MISE_EN_SECURITE_PERIL',
             'LOGEMENT_DECENT',
             'RESPONSABILITE_OCCUPANT_ASSURANTIEL',
