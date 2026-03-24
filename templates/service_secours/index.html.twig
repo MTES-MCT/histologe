@@ -193,7 +193,8 @@
                                 type="submit"
                                 name="step"
                                 class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
-                                value="step1">
+                                value="step1"
+                                aria-label="Modifier les coordonnées" title="Modifier les coordonnées">
                                 <span class="fr-hidden fr-unhidden-md">Modifier</span>
                             </button>
                         </div>
@@ -221,7 +222,8 @@
                                 type="submit"
                                 name="step"
                                 class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
-                                value="step2">
+                                value="step2"
+                                aria-label="Modifier les infos sur le logement" title="Modifier les infos sur le logement">
                                 <span class="fr-hidden fr-unhidden-md">Modifier</span>
                             </button>
                         </div>
@@ -262,7 +264,8 @@
                                 type="submit"
                                 name="step"
                                 class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
-                                value="step3">
+                                value="step3"
+                                aria-label="Modifier l'occupation du logement" title="Modifier l'occupation du logement">
                                 <span class="fr-hidden fr-unhidden-md">Modifier</span>
                             </button>
                         </div>
@@ -278,8 +281,7 @@
                                 Logement vacant<br>
                             {% else %}
                                 {% set ProfilOccupant = enum('\\App\\Entity\\Enum\\ProfileOccupant') %}
-                                {{ ProfilOccupant.from(data.step3.profilOccupant).label }}
-                                {{ data.step3.profilOccupant }}<br>
+                                {{ ProfilOccupant.from(data.step3.profilOccupant).label }}<br>
                             {% endif %}
                         {% endif %}
                         {% if data.step3.mailOccupant %}
@@ -304,47 +306,59 @@
                     
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
-                            <h4 class="fr-h6">Propriétaire / bailleur</h4>
+                            <h4 class="fr-h6">Propriétaire / Syndic</h4>
                             <button
                                 type="submit"
                                 name="step"
                                 class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
-                                value="step4">
+                                value="step4"
+                                aria-label="Modifier les informations propriétaire / syndic" title="Modifier les informations propriétaire / syndic">
                                 <span class="fr-hidden fr-unhidden-md">Modifier</span>
                             </button>
                         </div>
-                        {% if data.step4.isBailleurAverti %}
-                            Bailleur averti : {{ data.step4.isBailleurAverti|format_answer }}<br>
+                        {% set showBailleur = data.step4.isBailleurAverti or data.step4.denominationProprio or data.step4.nomProprio or data.step4.prenomProprio or data.step4.mailProprio or data.step4.telProprio %}
+                        {% set showSyndic = data.step4.denominationSyndic or data.step4.nomSyndic or data.step4.mailSyndic or data.step4.telSyndic or data.step4.telSyndicSecondaire %}
+                        {% if showBailleur %}                            
+                            <strong>Propriétaire / Bailleur</strong><br>
+                            {% if data.step4.isBailleurAverti %}
+                                Bailleur averti : {{ data.step4.isBailleurAverti|format_answer }}<br>
+                            {% endif %}
+                            {% if data.step4.denominationProprio %}
+                                Dénomination du bailleur : {{ data.step4.denominationProprio }}<br>
+                            {% endif %}
+                            {% if data.step4.nomProprio %}                            
+                                Nom du bailleur  : {{ data.step4.nomProprio }}<br>
+                            {% endif %}
+                            {% if data.step4.prenomProprio %}
+                                Prénom du bailleur : {{ data.step4.prenomProprio }}<br>
+                            {% endif %}
+                            {% if data.step4.mailProprio %}
+                                Adresse e-mail du bailleur : {{ data.step4.mailProprio }}<br>
+                            {% endif %}
+                            {% if data.step4.telProprio %}
+                                Téléphone du bailleur : {{ data.step4.telProprio|phone }}<br>
+                            {% endif %}
                         {% endif %}
-                        {% if data.step4.denominationProprio %}
-                            Dénomination du bailleur : {{ data.step4.denominationProprio }}<br>
+                        {% if showBailleur and showSyndic %}
+                            <br><hr>
                         {% endif %}
-                        {% if data.step4.nomProprio %}                            
-                            Nom du bailleur  : {{ data.step4.nomProprio }}<br>
-                        {% endif %}
-                        {% if data.step4.prenomProprio %}
-                            Prénom du bailleur : {{ data.step4.prenomProprio }}<br>
-                        {% endif %}
-                        {% if data.step4.mailProprio %}
-                            Adresse e-mail du bailleur : {{ data.step4.mailProprio }}<br>
-                        {% endif %}
-                        {% if data.step4.telProprio %}
-                            Téléphone du bailleur : {{ data.step4.telProprio|phone }}<br>
-                        {% endif %}
-                        {% if data.step4.denominationSyndic %}
-                            Dénomination du syndic : {{ data.step4.denominationSyndic }}<br>
-                        {% endif %}
-                        {% if data.step4.nomSyndic %}
-                            Nom du ou de la représentante : {{ data.step4.nomSyndic }}<br>
-                        {% endif %}
-                        {% if data.step4.mailSyndic %}
-                            Adresse e-mail  : {{ data.step4.mailSyndic }}<br>
-                        {% endif %}
-                        {% if data.step4.telSyndic %}
-                            Téléphone : {{ data.step4.telSyndic|phone }}<br>
-                        {% endif %}
-                        {% if data.step4.telSyndicSecondaire %}
-                            Téléphone secondaire : {{ data.step4.telSyndicSecondaire|phone }}<br>
+                        {% if showSyndic %}
+                            <strong>Syndic</strong><br>
+                            {% if data.step4.denominationSyndic %}
+                                Dénomination du syndic : {{ data.step4.denominationSyndic }}<br>
+                            {% endif %}
+                            {% if data.step4.nomSyndic %}
+                                Nom du ou de la représentante : {{ data.step4.nomSyndic }}<br>
+                            {% endif %}
+                            {% if data.step4.mailSyndic %}
+                                Adresse e-mail  : {{ data.step4.mailSyndic }}<br>
+                            {% endif %}
+                            {% if data.step4.telSyndic %}
+                                Téléphone : {{ data.step4.telSyndic|phone }}<br>
+                            {% endif %}
+                            {% if data.step4.telSyndicSecondaire %}
+                                Téléphone secondaire : {{ data.step4.telSyndicSecondaire|phone }}<br>
+                            {% endif %}
                         {% endif %}
                     </div>
                     
@@ -355,7 +369,8 @@
                                 type="submit"
                                 name="step"
                                 class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
-                                value="step5">
+                                value="step5"
+                                aria-label="Modifier les désordres" title="Modifier les désordres">
                                 <span class="fr-hidden fr-unhidden-md">Modifier</span>
                             </button>
                         </div>
@@ -368,11 +383,10 @@
                                 {% if desordre.slugCritere in data.step5.desordres %}                                    
                                     <li>{{ desordre.labelCritere }}
                                     {% if desordre.labelCritere is same as 'Autre' and data.step5.desordresAutre %}
-                                        : </li>
+                                        : <br>
                                         <span class="fr-border--left-thick"><i>{{ data.step5.desordresAutre }}</i></span><br>
-                                    {% else %}
-                                        </li>
                                     {% endif %}
+                                    </li>
                                 {% endif %}
                             {% endfor %}
                             </ul>

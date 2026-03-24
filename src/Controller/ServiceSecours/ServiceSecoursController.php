@@ -44,7 +44,9 @@ class ServiceSecoursController extends AbstractController
 
         if ($request->request->has('step')) {
             $step = $request->request->get('step');
-            $serviceSecours->currentStep = $step;
+            if (in_array($step, ['step1', 'step2', 'step3', 'step4', 'step5']) && $step < $serviceSecours->currentStep) {
+                $serviceSecours->currentStep = $step;
+            }
         }
         /** @var FormFlowInterface $flow */
         $flow = $this->createForm(ServiceSecoursType::class, $serviceSecours);
