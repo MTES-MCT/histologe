@@ -396,7 +396,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import AppAutoComplete from '../../common/AppAutoComplete.vue'
-import AppNumber from '../../common/AppNumber.vue'
 import AppSearch from '../../common/AppSearch.vue'
 import HistoSelect from '../../common/HistoSelect.vue'
 import HistoDatePicker from '../../common/external/HistoDatePicker.vue'
@@ -409,7 +408,6 @@ import { removeLocalStorage, sanitizeFilters } from '../utils/signalementUtils'
 export default defineComponent({
   name: 'SignalementViewFilters',
   components: {
-    AppNumber,
     AppAutoComplete,
     AppSearch,
     HistoMultiSelect,
