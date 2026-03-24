@@ -53,6 +53,7 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
             <li>`NON_DECENCE`</li>
             <li>`RSD`</li>
             <li>`INSALUBRITE`</li>
+            <li>`SUSPICION_INSALUBRE`</li>
             <li>`MISE_EN_SECURITE_PERIL`</li>
             <li>`LOGEMENT_DECENT`</li>
             <li>`RESPONSABILITE_OCCUPANT_ASSURANTIEL`</li>
@@ -69,6 +70,7 @@ class VisiteRequest implements RequestInterface, RequestFileInterface
             'NON_DECENCE',
             'RSD',
             'INSALUBRITE',
+            'SUSPICION_INSALUBRE',
             'MISE_EN_SECURITE_PERIL',
             'LOGEMENT_DECENT',
             'RESPONSABILITE_OCCUPANT_ASSURANTIEL',

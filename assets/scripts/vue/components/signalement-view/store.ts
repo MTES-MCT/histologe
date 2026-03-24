@@ -127,6 +127,7 @@ export const store = {
       { Id: 'non_decence', Text: 'Non décence' },
       { Id: 'rsd', Text: 'Infraction RSD' },
       { Id: 'insalubrite', Text: 'Insalubrité' },
+      { Id: 'suspicion_insalubre', Text: 'Suspicion d\'insalubrité' },
       { Id: 'mise_en_securite_peril', Text: 'Mise en sécurité / Péril' },
       { Id: 'logement_decent', Text: 'Logement décent / Pas d\'infraction' },
       { Id: 'responsabilite_occupant_assurantiel', Text: 'Responsabilité occupant / Assurantiel' },
