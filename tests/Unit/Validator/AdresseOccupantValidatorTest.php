@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Validator;
 
 use App\Dto\ServiceSecours\FormServiceSecoursStep2;
 use App\Entity\Territory;
+use App\Repository\TerritoryRepository;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Validator\AdresseOccupant;
 use App\Validator\AdresseOccupantValidator;
@@ -16,12 +17,14 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
 {
     private ZipcodeProvider&MockObject $zipcodeProvider;
+    private TerritoryRepository&MockObject $territoryRepository;
 
     protected function createValidator(): AdresseOccupantValidator
     {
         $this->zipcodeProvider = $this->createMock(ZipcodeProvider::class);
+        $this->territoryRepository = $this->createMock(TerritoryRepository::class);
 
-        return new AdresseOccupantValidator($this->zipcodeProvider);
+        return new AdresseOccupantValidator($this->zipcodeProvider, $this->territoryRepository);
     }
 
     /**
@@ -109,16 +112,31 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
         $territory->method('isIsActive')->willReturn(true);
         $territory->method('getZip')->willReturn('13002');
 
+        $expectedTerritory = $this->createMock(Territory::class);
+        $expectedTerritory->method('getZip')->willReturn('75001');
+        $expectedTerritory->method('getZipAndName')->willReturn('75001 Paris');
+
         $this->zipcodeProvider
             ->expects($this->once())
             ->method('getTerritoryByInseeCode')
             ->with('13055')
             ->willReturn($territory);
 
+        $this->zipcodeProvider
+            ->expects($this->never())
+            ->method('getTerritoryByPostalCode');
+
+        $this->territoryRepository
+            ->expects($this->once())
+            ->method('findOneBy')
+            ->with(['zip' => '75001'])
+            ->willReturn($expectedTerritory);
+
         $this->validator->validate($form, $constraint);
 
         $this
             ->buildViolation($constraint->messageTerritoryMismatch)
+            ->setParameter('{{ territory }}', '75001 Paris')
             ->atPath('property.path.adresseCompleteOccupant')
             ->assertRaised();
     }
