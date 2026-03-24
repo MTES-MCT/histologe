@@ -2295,7 +2295,12 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         if ($params->partners && count($params->partners) > 0) {
-            $sql .= ' AND a.partner_id IN (:partnersId)';
+            $sql .= ' AND EXISTS (
+                SELECT 1
+                FROM affectation af
+                WHERE af.signalement_id = s.id
+                AND af.partner_id IN (:partnersId)
+            )';
             $paramsToBind['partnersId'] = $params->partners;
             $types['partnersId'] = ArrayParameterType::INTEGER;
         }
