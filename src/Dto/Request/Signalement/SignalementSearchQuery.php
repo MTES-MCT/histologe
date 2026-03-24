@@ -41,7 +41,7 @@ class SignalementSearchQuery
         private readonly ?string $dateDernierSuiviDebut = null,
         #[Assert\Date(message: 'La date de fin n\'est pas une date valide')]
         private readonly ?string $dateDernierSuiviFin = null,
-        #[Assert\Choice(['accepte', 'en_attente', 'refuse', 'cloture_un_partenaire', 'cloture_tous_partenaire', 'cloture_commune'], message: 'Statut d\'affectation invalide')]
+        #[Assert\Choice(['accepte', 'en_attente', 'refuse', 'aucune_affectation_acceptee', 'cloture_un_partenaire', 'cloture_tous_partenaire', 'cloture_commune'], message: 'Statut d\'affectation invalide')]
         private readonly ?string $statusAffectation = null,
         #[Assert\GreaterThanOrEqual(0)]
         private readonly ?float $criticiteScoreMin = null,
@@ -427,6 +427,7 @@ class SignalementSearchQuery
         }
         $filters['statusAffectation'] = $this->getStatusAffectation();
         $filters['closed_affectation'] = match ($filters['statusAffectation']) {
+            'aucune_affectation_acceptee' => ['AUCUNE_AFFECTATION_ACCEPTEE'],
             'cloture_un_partenaire' => ['ONE_CLOSED'],
             'cloture_tous_partenaire' => ['ALL_CLOSED'],
             'cloture_commune' => ['COMMUNE_CLOSED'],

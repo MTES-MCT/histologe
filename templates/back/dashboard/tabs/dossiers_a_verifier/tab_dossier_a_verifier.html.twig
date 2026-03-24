@@ -9,6 +9,11 @@
             Chargement...
         </div>
     {% endif %}
+    {% if is_granted('TAB_PANEL_VIEW', 'dossiers-sans-affectation-acceptee') %}
+        <div id="dossiers-sans-affectation-acceptee" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-sans-affectation-acceptee' }) }}">
+            Chargement...
+        </div>
+    {% endif %}
     {% if is_granted('TAB_PANEL_VIEW', 'dossiers-adresse-email-a-verifier') %}
         <div id="dossiers-adresse-email-a-verifier" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'dossiers-adresse-email-a-verifier' }) }}">
             Chargement...

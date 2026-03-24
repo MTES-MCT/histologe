@@ -44,6 +44,7 @@ class SignalementExportFiltersDisplay
         'accepte' => 'Acceptée',
         'en_attente' => 'En attente',
         'refuse' => 'Refusée',
+        'aucune_affectation_acceptee' => 'Aucune affectation acceptée',
         'cloture_un_partenaire' => 'Clôturée par au moins un partenaire',
         'cloture_tous_partenaire' => 'Clôturée par tous les partenaires',
         'cloture_commune' => 'Clôturée par la commune',

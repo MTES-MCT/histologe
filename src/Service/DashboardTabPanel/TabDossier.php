@@ -44,6 +44,8 @@ readonly class TabDossier
         public ?\DateTimeImmutable $dernierSuiviPublicAt = null,
         public ?string $dernierTypeSuivi = null,
         public ?string $profilNonDeliverable = null,
+        public ?\DateTimeImmutable $derniereAffectationAt = null,
+        public ?int $nbAffectations = null,
     ) {
     }
 }

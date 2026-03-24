@@ -131,8 +131,9 @@ class TabCountKpiBuilder
     private function countAllDossiersAVerifier(User $user, ?TabQueryParameters $params): CountDossiersAVerifier
     {
         return new CountDossiersAVerifier(
-            $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params),
-            $this->signalementRepository->countNonDeliverableSignalements($user, $params)
+            countSignalementsSansSuiviPartenaireDepuis60Jours: $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params),
+            countSignalementsSansAffectationAcceptee: $this->signalementRepository->countSignalementsSansAffectationAcceptee($user, $params),
+            countAdresseEmailAVerifier: $this->signalementRepository->countNonDeliverableSignalements($user, $params)
         );
     }
 }

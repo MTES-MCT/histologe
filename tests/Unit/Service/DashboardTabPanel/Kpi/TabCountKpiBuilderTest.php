@@ -65,7 +65,7 @@ class TabCountKpiBuilderTest extends TestCase
         $countNouveaux = new CountNouveauxDossiers(1, 2, 3, 4);
         $countMessages = new CountDossiersMessagesUsagers(1, 2, 3);
         $countAfermer = new CountAfermer(1, 1, 1, 1);
-        $countAverifier = new CountDossiersAVerifier(3, 9);
+        $countAverifier = new CountDossiersAVerifier(3, 2, 9);
 
         $this->signalementRepository
             ->expects($this->never())
@@ -114,7 +114,7 @@ class TabCountKpiBuilderTest extends TestCase
         $this->assertSame(10, $tabCountKpi->countNouveauxDossiers);
         $this->assertSame(6, $tabCountKpi->countDossiersMessagesUsagers);
         $this->assertSame(4, $tabCountKpi->countDossiersAFermer);
-        $this->assertSame(12, $tabCountKpi->countDossiersAVerifier);
+        $this->assertSame(14, $tabCountKpi->countDossiersAVerifier);
     }
 
     public function testWithTabCountKpiForNonAdmin(): void

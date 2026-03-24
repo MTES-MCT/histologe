@@ -489,6 +489,33 @@ class TabDataManager
         return new TabDossierResult($tabDossiers, $count);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function getDossiersAVerifierSansAffectationAcceptee(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $signalements = $this->signalementRepository->findSignalementsSansAffectationAcceptee(user: $user, params: $tabQueryParameters);
+        $tabDossiers = [];
+        for ($i = 0; $i < \count($signalements); ++$i) {
+            $signalement = $signalements[$i];
+            $tabDossiers[] = new TabDossier(
+                uuid: $signalement['uuid'],
+                nomOccupant: $signalement['nomOccupant'],
+                prenomOccupant: $signalement['prenomOccupant'],
+                reference: '#'.$signalement['reference'],
+                adresse: $signalement['adresse'],
+                parc: $signalement['parc'],
+                derniereAffectationAt: new \DateTimeImmutable($signalement['lastAffectationAt']),
+                nbAffectations: $signalement['nbAffectations'],
+            );
+        }
+        $count = $this->signalementRepository->countSignalementsSansAffectationAcceptee(user: $user, params: $tabQueryParameters);
+
+        return new TabDossierResult($tabDossiers, $count);
+    }
+
     public function getDossiersAVerifierAdresseEmailAverifier(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
         /** @var User $user */

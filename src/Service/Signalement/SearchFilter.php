@@ -229,6 +229,22 @@ class SearchFilter
                 )
                 ->setParameter('idClosedCommuneAffectation', $subquery->getQuery()->getSingleColumnResult());
             }
+
+            if (\in_array('AUCUNE_AFFECTATION_ACCEPTEE', $filters['closed_affectation'])) {
+                $subExists = $this->entityManager->createQueryBuilder()
+                    ->select('1')
+                    ->from(Affectation::class, 'a1')
+                    ->where('a1.signalement = s');
+                $subNotExists = $this->entityManager->createQueryBuilder()
+                    ->select('1')
+                    ->from(Affectation::class, 'a2')
+                    ->where('a2.signalement = s')
+                    ->andWhere('a2.statut IN (:statut_list)');
+
+                $qb->andWhere($qb->expr()->exists($subExists->getDQL()))
+                ->andWhere($qb->expr()->not($qb->expr()->exists($subNotExists->getDQL())))
+                ->setParameter('statut_list', [AffectationStatus::ACCEPTED->value, AffectationStatus::CLOSED->value]);
+            }
         }
 
         if (!empty($filters['usager_abandon_procedure'])) {

@@ -541,6 +541,47 @@ class TabDataManagerTest extends WebTestCase
         $this->assertInstanceOf('DateTimeImmutable', $result->dossiers[0]->derniereActionAt);
     }
 
+    public function testGetDossiersAVerifierSansAffectationAcceptee(): void
+    {
+        /** @var MockObject&User $user */
+        $user = $this->createMock(User::class);
+        $this->security->method('getUser')->willReturn($user);
+        $this->signalementRepository->method('findSignalementsSansAffectationAcceptee')->with($user)->willReturn([
+            [
+                'nomOccupant' => 'Lemoine',
+                'prenomOccupant' => 'Claire',
+                'reference' => '2024-003',
+                'adresse' => '30 boulevard Nation',
+                'parc' => 'PRIVE',
+                'lastAffectationAt' => '2024-06-20 12:00:00',
+                'nbAffectations' => 3,
+                'uuid' => 'uuid-999',
+            ],
+        ]);
+        $this->signalementRepository->method('countSignalementsSansAffectationAcceptee')->with($user)->willReturn(1);
+
+        $tabDataManager = new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder,
+        );
+
+        $result = $tabDataManager->getDossiersAVerifierSansAffectationAcceptee();
+        $this->assertCount(1, $result->dossiers);
+        $this->assertSame(1, $result->count);
+        $this->assertSame('Lemoine', $result->dossiers[0]->nomOccupant);
+        $this->assertSame('Claire', $result->dossiers[0]->prenomOccupant);
+        $this->assertSame('#2024-003', $result->dossiers[0]->reference);
+        $this->assertSame(3, $result->dossiers[0]->nbAffectations);
+        $this->assertSame('uuid-999', $result->dossiers[0]->uuid);
+        $this->assertInstanceOf('DateTimeImmutable', $result->dossiers[0]->derniereAffectationAt);
+    }
+
     public function testCountDataKpi(): void
     {
         $tabDataManager = new TabDataManager(
