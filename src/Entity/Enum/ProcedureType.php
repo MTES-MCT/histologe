@@ -7,6 +7,7 @@ enum ProcedureType: string
     case NON_DECENCE = 'NON_DECENCE';
     case RSD = 'RSD';
     case INSALUBRITE = 'INSALUBRITE';
+    case SUSPICION_INSALUBRITE = 'SUSPICION_INSALUBRITE';
     case MISE_EN_SECURITE_PERIL = 'MISE_EN_SECURITE_PERIL';
     case LOGEMENT_DECENT = 'LOGEMENT_DECENT';
     case RESPONSABILITE_OCCUPANT_ASSURANTIEL = 'RESPONSABILITE_OCCUPANT_ASSURANTIEL';
@@ -25,6 +26,7 @@ enum ProcedureType: string
             'NON_DECENCE' => 'Non décence',
             'RSD' => 'Infraction RSD',
             'INSALUBRITE' => 'Insalubrité',
+            'SUSPICION_INSALUBRITE' => 'Suspicion d\'insalubrité',
             'MISE_EN_SECURITE_PERIL' => 'Mise en sécurité / Péril',
             'LOGEMENT_DECENT' => 'Logement décent / Pas d\'infraction',
             'RESPONSABILITE_OCCUPANT_ASSURANTIEL' => 'Responsabilité occupant / Assurantiel',
