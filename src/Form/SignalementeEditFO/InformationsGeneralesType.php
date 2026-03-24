@@ -33,7 +33,6 @@ class InformationsGeneralesType extends AbstractType
         $payementLoyersAJour = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsLoyersPayes() : '';
         $anneeConstruction = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementAnneeConstruction();
         $dateEffetBail = $signalement->getInformationComplementaire()?->getInformationsComplementairesSituationBailleurDateEffetBail() ? \DateTime::createFromFormat('Y-m-d', $signalement->getInformationComplementaire()->getInformationsComplementairesSituationBailleurDateEffetBail()) : null;
-        $loyer = $signalement->getLoyer() ?? $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementMontantLoyer();
 
         $builder
             ->add('dateEntree', DateType::class, [
@@ -168,7 +167,6 @@ class InformationsGeneralesType extends AbstractType
             ->add('loyer', NumberType::class, [
                 'label' => 'Montant du loyer (facultatif)',
                 'required' => false,
-                'data' => $loyer,
             ])
             ->add('payementLoyersAJour', ChoiceType::class, [
                 'label' => 'Paiement des loyers à jour (facultatif)',

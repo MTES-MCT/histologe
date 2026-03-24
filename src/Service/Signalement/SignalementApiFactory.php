@@ -130,7 +130,7 @@ class SignalementApiFactory
             $dateEntree = new \DateTimeImmutable($request->dateEntreeLogement);
             $signalement->setDateEntree($dateEntree);
         }
-        $informationComplementaire->setInformationsComplementairesLogementMontantLoyer((string) $request->montantLoyer);
+        $signalement->setLoyer($request->montantLoyer);
         $informationComplementaire->setInformationsComplementairesSituationOccupantsLoyersPayes(self::convertBoolToString($request->isPaiementLoyersAJour));
 
         if ($request->isAllocataire) {

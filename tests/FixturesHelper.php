@@ -599,15 +599,19 @@ trait FixturesHelper
     /**
      * @return array<string>
      */
-    public function getLocataireInformationComplementaire(): array
+    public function getLocataireInformationComplementaire(bool $withMontantLoyer = false): array
     {
-        return [
-            'informations_complementaires_logement_montant_loyer' => '500',
+        $data = [
             'informations_complementaires_logement_nombre_etages' => '5',
             'informations_complementaires_logement_annee_construction' => '1970',
             'informations_complementaires_situation_occupants_beneficiaire_fsl' => 'non',
             'informations_complementaires_situation_occupants_beneficiaire_rsa' => 'non',
         ];
+        if ($withMontantLoyer) {
+            $data['informations_complementaires_logement_montant_loyer'] = '500';
+        }
+
+        return $data;
     }
 
     public function getAutoAffectationRule(

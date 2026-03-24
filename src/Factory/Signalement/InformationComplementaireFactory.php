@@ -45,7 +45,6 @@ class InformationComplementaireFactory
             informationsComplementairesSituationBailleurBeneficiaireFsl: $data['informations_complementaires_situation_bailleur_beneficiaire_fsl'] ?? null,
             informationsComplementairesSituationBailleurRevenuFiscal: $data['informations_complementaires_situation_bailleur_revenu_fiscal'] ?? null,
             informationsComplementairesSituationBailleurDateNaissance: $data['informations_complementaires_situation_bailleur_date_naissance'] ?? null,
-            informationsComplementairesLogementMontantLoyer: $data['informations_complementaires_logement_montant_loyer'] ?? null,
             informationsComplementairesLogementNombreEtages: $data['informations_complementaires_logement_nombre_etages'] ?? null,
             informationsComplementairesLogementAnneeConstruction: $data['informations_complementaires_logement_annee_construction'] ?? null
         );

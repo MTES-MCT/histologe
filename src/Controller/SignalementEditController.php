@@ -395,7 +395,6 @@ class SignalementEditController extends AbstractController
             $dateEffetBail = $form->get('dateEffetBail')->getData() ? $form->get('dateEffetBail')->getData()->format('Y-m-d') : null;
             $informationComplementaire
                 ->setInformationsComplementairesSituationBailleurDateEffetBail($dateEffetBail)
-                ->setInformationsComplementairesLogementMontantLoyer($form->get('loyer')->getData())
                 ->setInformationsComplementairesSituationOccupantsLoyersPayes($form->get('payementLoyersAJour')->getData())
                 ->setInformationsComplementairesLogementAnneeConstruction($form->get('anneeConstruction')->getData());
             $signalement->setInformationComplementaire($informationComplementaire);

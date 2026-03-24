@@ -52,7 +52,7 @@ class DataPropertyArrayFilterTest extends TestCase
 
         yield 'Données Information complémentaire' => [
             SignalementDraftRequest::PREFIX_PROPERTIES_INFORMATION_COMPLEMENTAIRE,
-            $this->getLocataireInformationComplementaire(),
+            $this->getLocataireInformationComplementaire(withMontantLoyer: true),
         ];
     }
 }

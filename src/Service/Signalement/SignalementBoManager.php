@@ -204,7 +204,6 @@ class SignalementBoManager
         $typeCompositionLogement->setBailDpeClasseEnergetique($form->get('classeEnergetique')->getData());
         $typeCompositionLogement->setDesordresLogementChauffageDetailsDpeAnnee($form->get('dateDpe')->getData());
         $typeCompositionLogement->setBailDpeEtatDesLieux($form->get('etatDesLieux')->getData());
-        $informationComplementaire->setInformationsComplementairesLogementMontantLoyer($form->get('montantLoyer')->getData());
         $informationComplementaire->setInformationsComplementairesSituationOccupantsLoyersPayes($form->get('payementLoyersAJour')->getData());
         $this->situationFoyerProcessor->processIsAllocataire($signalement, $form->get('allocataire')->getData(), $form->get('caisseAllocation')->getData());
 
