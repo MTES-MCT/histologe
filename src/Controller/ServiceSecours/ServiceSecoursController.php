@@ -3,9 +3,11 @@
 namespace App\Controller\ServiceSecours;
 
 use App\Dto\ServiceSecours\FormServiceSecours;
+use App\Entity\Enum\AppContext;
 use App\Entity\ServiceSecoursRoute;
 use App\Factory\SignalementFactory;
 use App\Form\ServiceSecours\ServiceSecoursType;
+use App\Repository\DesordreCritereRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Flow\FormFlowInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -33,11 +35,22 @@ class ServiceSecoursController extends AbstractController
         Request $request,
         ServiceSecoursRoute $serviceSecoursRoute,
         SignalementFactory $signalementFactory,
+        DesordreCritereRepository $desordreCritereRepository,
     ): Response {
-        $serviceSecours = new FormServiceSecours();
+        $session = $request->getSession();
+        $serviceSecours = $session->get('service_secours_data', new FormServiceSecours());
+
+        if ($request->request->has('step')) {
+            $step = $request->request->get('step');
+            if (in_array($step, ['step1', 'step2', 'step3', 'step4', 'step5']) && $step < $serviceSecours->currentStep) {
+                $serviceSecours->currentStep = $step;
+            }
+        }
         /** @var FormFlowInterface $flow */
         $flow = $this->createForm(ServiceSecoursType::class, $serviceSecours);
         $flow->handleRequest($request);
+        $session->set('service_secours_data', $flow->getData());
+
         if ($flow->isSubmitted() && $flow->isValid() && $flow->isFinished()) {
             $signalement = $signalementFactory->createInstanceFromFormServiceSecours($flow->getData(), $serviceSecoursRoute);
 
@@ -49,9 +62,13 @@ class ServiceSecoursController extends AbstractController
 
             return $this->render('service_secours/success.html.twig', ['serviceSecoursRoute' => $serviceSecoursRoute, 'signalement' => $signalement]);
         }
+        $step = $flow->getStepForm()->getCursor()->getCurrentStep();
+        $desordres = 'step6' === $step ? $desordreCritereRepository->findAllWithPrecisions(AppContext::SERVICE_SECOURS) : null;
 
         return $this->render('service_secours/index.html.twig', [
             'form' => $flow->getStepForm(),
+            'data' => $flow->getData(),
+            'desordres' => $desordres,
             'serviceSecoursRoute' => $serviceSecoursRoute,
         ]);
     }

@@ -39,6 +39,11 @@ html, body {
     padding-left: 10px;
 }
 
+.fr-border--left-thick {
+    border-left: 4px solid var(--blue-france-main-525);
+    padding-left: 10px;
+}
+
 .bloc-suivi-content-row p {
     margin: 0;
 }
