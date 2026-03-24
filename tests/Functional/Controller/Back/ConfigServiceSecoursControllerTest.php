@@ -66,6 +66,7 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
         $client->request('POST', $route, [
             'service_secours_route' => [
                 'name' => 'TI DU DUT',
+                'territory' => '13',
                 'email' => 'ti-du-dut@example.com',
                 'phone' => '',
                 '_token' => $csrfToken,
