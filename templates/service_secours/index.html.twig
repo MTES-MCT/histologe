@@ -61,6 +61,11 @@
                     {{ form_row(form.step1.ordreMission) }}
                 {% elseif current_step == 'step2' %}
                     {{ form_row(form.step2.adresseCompleteOccupant) }}
+                    <input
+                            type="hidden"
+                            id="signalement_draft_address_filterSearchAddressTerritory"
+                            value="{{ serviceSecoursRoute.territory.zip }}|{{ serviceSecoursRoute.territory.name }}"
+                    />
                     <div id="fo-form-service-secours-adresse">
                         <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group">
                         </div>

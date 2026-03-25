@@ -60,6 +60,7 @@ class ServiceSecoursController extends AbstractController
     ): Response {
         $session = $request->getSession();
         $serviceSecours = $session->get('service_secours_data', new FormServiceSecours());
+        $serviceSecours->step2->territoryZip = $serviceSecoursRoute->getTerritory()->getZip();
 
         if ($request->request->has('step')) {
             $step = $request->request->get('step');

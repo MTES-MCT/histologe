@@ -1,6 +1,7 @@
 <section class="fr-col-12" id="table-list-results">
     {% set tableHead %}
         <th scope="col">ID</th>
+        <th scope="col">Territoire</th>
         <th scope="col">Nom</th>
         <th scope="col">E-mail/Téléphone</th>
         <th scope="col">URL</th>
@@ -11,6 +12,7 @@
         {% for serviceSecoursRoute in serviceSecoursRoutes %}
             <tr class="autoaffectationrule-row">
                 <td>{{ serviceSecoursRoute.id }}</td>
+                <td>{{ serviceSecoursRoute.territory ? serviceSecoursRoute.territory.zipAndName : 'aucun' }}</td>
                 <td>{{ serviceSecoursRoute.name }}</td>
                 <td>
                     {{ serviceSecoursRoute.email }}

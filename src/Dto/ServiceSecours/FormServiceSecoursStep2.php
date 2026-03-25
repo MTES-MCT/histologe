@@ -11,6 +11,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[NatureLogementAutreRequired(groups: ['step2'])]
 class FormServiceSecoursStep2
 {
+    public ?string $territoryZip = null;
+
     public ?string $adresseCompleteOccupant = null;
 
     public ?string $adresseOccupant = null;

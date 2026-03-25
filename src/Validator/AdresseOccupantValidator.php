@@ -3,6 +3,7 @@
 namespace App\Validator;
 
 use App\Dto\ServiceSecours\FormServiceSecoursStep2;
+use App\Repository\TerritoryRepository;
 use App\Service\Signalement\ZipcodeProvider;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -12,6 +13,7 @@ class AdresseOccupantValidator extends ConstraintValidator
 {
     public function __construct(
         private readonly ZipcodeProvider $zipcodeProvider,
+        private readonly TerritoryRepository $territoryRepository,
     ) {
     }
 
@@ -93,6 +95,16 @@ class AdresseOccupantValidator extends ConstraintValidator
             $this->context
                 ->buildViolation($message)
                 ->setParameter('{{ code }}', $code ?? '')
+                ->atPath('adresseCompleteOccupant')
+                ->addViolation();
+        }
+
+        $expectedTerritoryZip = $value->territoryZip ?? null;
+        if ($expectedTerritoryZip && $territory->getZip() !== $expectedTerritoryZip) {
+            $expectedTerritory = $this->territoryRepository->findOneBy(['zip' => $expectedTerritoryZip]);
+            $this->context
+                ->buildViolation($constraint->messageTerritoryMismatch)
+                ->setParameter('{{ territory }}', $expectedTerritory->getZipAndName() ?? '')
                 ->atPath('adresseCompleteOccupant')
                 ->addViolation();
         }

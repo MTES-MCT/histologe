@@ -3,6 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\ServiceSecoursRoute;
+use App\Repository\TerritoryRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -10,6 +11,10 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadServiceSecoursRouteData extends Fixture implements OrderedFixtureInterface
 {
+    public function __construct(private TerritoryRepository $territoryRepository)
+    {
+    }
+
     public function load(ObjectManager $manager): void
     {
         $serviceSecoursRoutes = Yaml::parseFile(__DIR__.'/../Files/ServiceSecoursRoute.yml');
@@ -26,6 +31,7 @@ class LoadServiceSecoursRouteData extends Fixture implements OrderedFixtureInter
     {
         $serviceSecoursRoute = (new ServiceSecoursRoute())->setName($row['name']);
         $serviceSecoursRoute->setEmail($row['email']);
+        $serviceSecoursRoute->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]));
         $manager->persist($serviceSecoursRoute);
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Form\Type\TerritoryChoiceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -10,6 +11,9 @@ class ServiceSecoursRouteType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder->add('territory', TerritoryChoiceType::class, [
+            'placeholder' => 'Sélectionner un territoire',
+        ]);
         $builder->add('name', null, [
             'label' => 'Nom du service de secours',
             'help' => 'Sera enregistré comme structure du déclarant.',
@@ -21,7 +25,7 @@ class ServiceSecoursRouteType extends AbstractType
             'required' => false,
         ]);
         $builder->add('phone', null, [
-            'label' => 'Téléphone du service de secours',
+            'label' => 'Téléphone du service de secours (facultatif)',
             'help' => 'Sera enregistré comme téléphone du déclarant.',
             'required' => false,
         ]);

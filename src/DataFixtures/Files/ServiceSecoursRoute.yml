@@ -2,7 +2,9 @@ service_secours_routes:
 -
   name: "PIN PON"
   email: "pin-pon@example.com"
+  territory: "Bouches-du-Rhône"
 -
   name: "WOUIP WOUIP"
   email: "wouip-wouip@example.com"
+  territory: "Bouches-du-Rhône"
 
