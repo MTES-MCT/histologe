@@ -25,7 +25,7 @@ class ServiceSecoursRouteType extends AbstractType
             'required' => false,
         ]);
         $builder->add('phone', null, [
-            'label' => 'Téléphone du service de secours',
+            'label' => 'Téléphone du service de secours (facultatif)',
             'help' => 'Sera enregistré comme téléphone du déclarant.',
             'required' => false,
         ]);
