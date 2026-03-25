@@ -41,7 +41,7 @@ class ServiceSecoursStep4Type extends AbstractType
                         'choices' => [
                             'Oui' => 'oui',
                             'Non' => 'non',
-                            'Indeterminé' => 'indetermine',
+                            'Indéterminé' => 'indetermine',
                         ],
                         'constraints' => [
                             new Assert\NotBlank([

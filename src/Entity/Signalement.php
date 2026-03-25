@@ -579,6 +579,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $autreSituationVulnerabilite = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $autresOccupantsDesordre = null;
+
     /** @var Collection<int, TiersInvitation> $tiersInvitations */
     #[ORM\OneToMany(
         mappedBy: 'signalement',
@@ -3146,6 +3149,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setAutreSituationVulnerabilite(?string $autreSituationVulnerabilite): static
     {
         $this->autreSituationVulnerabilite = $autreSituationVulnerabilite;
+
+        return $this;
+    }
+
+    public function getAutresOccupantsDesordre(): ?string
+    {
+        return $this->autresOccupantsDesordre;
+    }
+
+    public function setAutresOccupantsDesordre(?string $autresOccupantsDesordre): static
+    {
+        $this->autresOccupantsDesordre = $autresOccupantsDesordre;
 
         return $this;
     }

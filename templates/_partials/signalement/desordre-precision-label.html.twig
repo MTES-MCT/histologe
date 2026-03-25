@@ -7,7 +7,8 @@
             {# Affichage des données spécifiques liées au critère #}
             {% if signalement.jsonContent[precision.desordreCritere.slugCritere] is defined %}
                 Commentaire usager : <i>{{ signalement.jsonContent[precision.desordreCritere.slugCritere] }}</i>
-            {# Affichage des données spécifiques liées aux précisions sur la taille des pièces (à standardiser si nécessaire) #}
+            {% elseif signalement.jsonContent[precision.desordrePrecisionSlug] is defined and precision.desordrePrecisionSlug == 'desordres_service_secours_autre_precision' %}
+                Précision : <i>{{ signalement.jsonContent[precision.desordrePrecisionSlug]|nl2br }}</i>
             {% elseif signalement.jsonContent[precision.desordrePrecisionSlug] is defined %}
                 Taille (en cm) : <i>{{ signalement.jsonContent[precision.desordrePrecisionSlug] }}</i>
             {% endif %}

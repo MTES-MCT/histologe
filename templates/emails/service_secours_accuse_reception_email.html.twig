@@ -1,0 +1,15 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>
+        Nous vous informons qu'un signalement a été enregistré sur la plateforme {{ platform.name }} : 
+    </p>
+    <ul>
+        <li>Référence : {{reference}}</li> 
+        <li>Adresse du logement : {{adresse_logement}}</li>
+        <li>Matricule déclarant : {{matricule_declarant}}</li>
+        <li>Date de dépôt : {{date_depot}}</li>
+    </ul>
+    <p>Le signalement a été automatiquement transmis aux services de lutte contre l'habitat indigne compétents.</p>
+{% endblock %}
