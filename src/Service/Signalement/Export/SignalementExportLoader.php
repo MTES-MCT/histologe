@@ -116,7 +116,7 @@ readonly class SignalementExportLoader
     private function removeColFromHeaders(string $colName, array &$headers): void
     {
         $indexToUnset = array_search($colName, $headers);
-        if ($indexToUnset > 0 && isset($headers[$indexToUnset])) {
+        if (false !== $indexToUnset && isset($headers[$indexToUnset])) {
             unset($headers[$indexToUnset]);
         }
     }
