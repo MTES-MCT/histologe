@@ -291,6 +291,7 @@ run-concurrency-request: ## Run concurrency request based postman collection ex:
 scalingo-job-build: ## Build Scalingo sync job container
 	@echo "\033[33mBuilding Scalingo job image...\033[0m"
 	docker build \
+		--no-cache \
 		-f $(METABASE_SYNC_SCALINGO_JOB_DOCKERFILE) \
 		-t $(METABASE_SYNC_IMAGE_NAME):local \
 		.
@@ -308,7 +309,7 @@ scalingo-job-run: ## Run Scalingo sync job locally
 	docker run --rm \
 		-e SCALINGO_API_TOKEN=$(METABASE_SYNC_SCALINGO_API_TOKEN) \
 		-e METABASE_SYNC_SCALINGO_APP=$(METABASE_SYNC_SCALINGO_APP) \
-		-e METABASE_SYNC_LOCAL_MODE=0 \
+		-e METABASE_SYNC_LOCAL_MODE=1 \
 		$(METABASE_SYNC_IMAGE_NAME):local
 
 scalingo-job-tag: ## Tag the local image with a version for Scaleway registry - make scalingo-job-tag IMAGE_VERSION=1.0.x
