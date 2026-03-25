@@ -289,7 +289,7 @@ class SignalementBuilder
         $suroccupationSpecification = new SuroccupationSpecification();
         if ($suroccupationSpecification->isSatisfiedBy(
             (int) $this->signalement->getNbOccupantsLogement(),
-            (int) $this->signalement->getSuperficie(),
+            $this->signalement->getSuperficie(),
             $situationFoyer,
             $typeCompositionLogement
         )) {

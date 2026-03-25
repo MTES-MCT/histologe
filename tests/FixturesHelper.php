@@ -548,7 +548,7 @@ trait FixturesHelper
             $typeComposition['composition_logement_superficie'] = '45';
         }
         if ($withDateEmmenagement) {
-            $typeComposition['bail_dpe_date_emmenagement'] = '2020-01-01';
+            $typeComposition['bail_dpe_date_emmenagement'] = '2020-10-01';
         }
 
         return $typeComposition;

@@ -622,7 +622,7 @@ class SignalementManager extends AbstractManager
                 && null !== $typeCompositionLogement
                 && $this->suroccupationSpecification->isSatisfiedBy(
                     (int) $signalement->getNbOccupantsLogement(),
-                    (int) $signalement->getSuperficie(),
+                    $signalement->getSuperficie(),
                     $situationFoyer,
                     $typeCompositionLogement
                 )) {

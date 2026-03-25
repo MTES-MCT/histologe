@@ -16,7 +16,7 @@ class SuroccupationSpecification
 
     public function isSatisfiedBy(
         int $nbOccupants,
-        int $superficie,
+        ?float $superficie,
         SituationFoyer $situationFoyer,
         TypeCompositionLogement $typeCompositionLogement,
     ): bool {

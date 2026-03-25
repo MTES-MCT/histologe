@@ -190,7 +190,7 @@ class SuroccupationSpecificationTest extends KernelTestCase
         $this->situationFoyer->setLogementSocialAllocation('oui');
         $isSuroccupation = $this->suroccupationSpecification->isSatisfiedBy(
             1,
-            0,
+            null,
             $this->situationFoyer,
             $this->typeCompositionLogement
         );
