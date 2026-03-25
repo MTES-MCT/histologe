@@ -20,7 +20,6 @@ class ServiceSecoursStep2Type extends AbstractType
             ->add('adresseCompleteOccupant', TextType::class, [
                 'label' => '<span class="fr-h5">Adresse du logement <span class="text-required">*</span></span>',
                 'label_html' => true,
-                'required' => false,
                 'help' => 'Format attendu : Tapez l\'adresse puis sélectionnez-la dans la liste. Si elle n\'apparaît pas, cliquez sur saisir une adresse manuellement.',
                 'mapped' => false,
                 'required' => false,
