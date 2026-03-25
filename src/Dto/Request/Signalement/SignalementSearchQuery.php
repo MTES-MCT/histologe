@@ -79,6 +79,7 @@ class SignalementSearchQuery
             'non_decence',
             'rsd',
             'insalubrite',
+            'suspicion_insalubre',
             'mise_en_securite_peril',
             'logement_decent',
             'responsabilite_occupant_assurantiel',
