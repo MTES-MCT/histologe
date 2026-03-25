@@ -311,6 +311,7 @@ class SignalementBuilder
                 $this->informationProcedureFactory->createFromSignalementDraftPayload($this->payload)
             )
             ->setIsProprioAverti($this->evalBoolean($this->signalementDraftRequest->getInfoProcedureBailleurPrevenu()))
+            ->setProprioAvertiAt(SignalementDraftHelper::computeBailleurPrevenuAtFromRequest($this->signalementDraftRequest))
             ->setLoyer($loyer)
             ->setNbNiveauxLogement($nbEtages)
             ->setIsFondSolidariteLogement(

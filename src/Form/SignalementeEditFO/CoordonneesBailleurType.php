@@ -6,6 +6,7 @@ use App\Entity\Enum\MoyenContact;
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -128,11 +129,13 @@ class CoordonneesBailleurType extends AbstractType
                     'mapped' => false,
                     'data' => MoyenContact::tryFrom($signalement->getInformationProcedure()?->getInfoProcedureBailMoyen()),
                 ])
-                ->add('proprioAvertiAt', TextType::class, [
+                ->add('proprioAvertiAt', DateType::class, [
                     'label' => 'Date d\'avertissement du propriétaire',
-                    'help' => 'Format attendu : MM/YYYY',
+                    'help' => 'Format attendu : MM/AAAA',
                     'required' => false,
-                    'constraints' => [new Assert\DateTime(['format' => 'm/Y'])],
+                    'html5' => false,
+                    'input' => 'datetime_immutable',
+                    'format' => 'MM/yyyy',
                 ])
                 ->add('infoProcedureBailReponse', TextareaType::class, [
                     'label' => 'Réponse du propriétaire',
