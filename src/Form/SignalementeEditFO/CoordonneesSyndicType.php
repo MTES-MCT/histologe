@@ -53,6 +53,7 @@ class CoordonneesSyndicType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Signalement::class,
+            'validation_groups' => ['fo_coordonnees_syndic'],
         ]);
     }
 }

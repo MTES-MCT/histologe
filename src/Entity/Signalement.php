@@ -273,23 +273,23 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $mailAgence = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, groups: ['Default', 'fo_coordonnees_syndic'])]
     private ?string $denominationSyndic = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, groups: ['Default', 'fo_coordonnees_syndic'])]
     private ?string $nomSyndic = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du syndic n\'est pas valide.')]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du syndic n\'est pas valide.', groups: ['Default', 'fo_coordonnees_syndic'])]
     private ?string $mailSyndic = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
-    #[AppAssert\TelephoneFormat]
+    #[AppAssert\TelephoneFormat(groups: ['Default', 'fo_coordonnees_syndic'])]
     private ?string $telSyndic = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
-    #[AppAssert\TelephoneFormat]
+    #[AppAssert\TelephoneFormat(groups: ['Default', 'fo_coordonnees_syndic'])]
     private ?string $telSyndicSecondaire = null;
 
     #[ORM\Column(type: 'boolean')]
