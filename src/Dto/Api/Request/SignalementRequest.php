@@ -672,7 +672,7 @@ class SignalementRequest implements RequestInterface
 
     #[OA\Property(
         description: 'Matricule du déclarant.
-                     <br>⚠️Pris en compte uniquement dans le cas où profilDeclarant = "SERVICE_SECOURS", "BAILLEUR", "TIERS_PRO" ou "TIERS_PARTICULIER".',
+                     <br>⚠️Pris en compte uniquement dans le cas où profilDeclarant = "SERVICE_SECOURS" ou "TIERS_PRO".',
         example: 'MAT12345',
     )]
     #[Assert\Length(max: 255)]
@@ -851,6 +851,9 @@ class SignalementRequest implements RequestInterface
             }
             if (in_array($this->profilDeclarant, [ProfileDeclarant::LOCATAIRE->value, ProfileDeclarant::BAILLEUR_OCCUPANT->value, ProfileDeclarant::BAILLEUR->value]) && !empty($this->profilOccupant)) {
                 $context->buildViolation('Le champ profilOccupant ne doit pas être renseigné si le profilDeclarant = LOCATAIRE, BAILLEUR_OCCUPANT ou BAILLEUR.')->atPath('profilOccupant')->addViolation();
+            }
+            if (!in_array($this->profilDeclarant, [ProfileDeclarant::TIERS_PRO->value, ProfileDeclarant::SERVICE_SECOURS->value]) && $this->matriculeDeclarant) {
+                $context->buildViolation('Le champ matriculeDeclarant ne doit être renseigné que si le profilDeclarant = SERVICE_SECOURS ou TIERS_PRO.')->atPath('matriculeDeclarant')->addViolation();
             }
         }
         if ($this->natureLogementAutre && 'autre' !== $this->natureLogement) {

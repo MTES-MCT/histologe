@@ -79,6 +79,7 @@ class SignalementCreateController extends AbstractController
                             'nbOccupantsLogement' => 4,
                             'nbEnfantsDansLogement' => 2,
                             'isEnfantsMoinsSixAnsDansLogement' => true,
+                            'autreSituationVulnerabilite ' => 'Personne âgée de plus de 80 ans',
                             'natureLogement' => 'appartement',
                             'natureLogementAutre' => null,
                             'etageAppartement' => 'RDC',
@@ -141,6 +142,7 @@ class SignalementCreateController extends AbstractController
                             'structureDeclarant' => null,
                             'nomDeclarant' => 'El Allali',
                             'prenomDeclarant' => 'Hakim',
+                            'matriculeDeclarant' => null,
                             'mailDeclarant' => 'el-allali.hakim@example.com',
                             'telDeclarant' => '0639980906',
                             'denominationAgence' => 'IMMO 3600',
@@ -148,6 +150,14 @@ class SignalementCreateController extends AbstractController
                             'prenomAgence' => 'Victoria',
                             'mailAgence' => 'victoria.apollo@immo3600.com',
                             'telAgence' => '0639988821',
+                            'adresseAgence' => '185 Rue Léon Blum',
+                            'codePostalAgence' => '34000',
+                            'communeAgence' => 'Montpellier',
+                            'denominationSyndic' => 'Syndic de copropriété ABC',
+                            'nomSyndic' => 'Mr Dethoor',
+                            'mailSyndic' => 'abc.syndic@example.com',
+                            'telSyndic' => '',
+                            'telSyndicSecondaire' => '',
                             'desordres' => [
                                 [
                                     'identifiant' => 'desordres_logement_humidite_salle_de_bain',
@@ -258,9 +268,9 @@ class SignalementCreateController extends AbstractController
 
     private function checkPartnerAndTerritory(Partner $partner, SignalementRequest $signalementRequest, Signalement $signalement, ConstraintViolationListInterface $errors): ConstraintViolationListInterface
     {
-        if (!$signalement->getInseeOccupant()) {
+        if (!$signalement->getInseeOccupant() || !$signalement->getTerritory()) {
             $violation = new ConstraintViolation(
-                'L\'adresse de l\'occupant est invalide ou incomplète, merci de vérifier le code postal et la commune.',
+                'L\'adresse de l\'occupant est invalide ou incomplète, merci de la vérifier ainsi que le code postal et la commune.',
                 null,
                 [],
                 $signalementRequest,
