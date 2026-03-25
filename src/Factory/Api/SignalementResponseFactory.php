@@ -306,7 +306,7 @@ readonly class SignalementResponseFactory
             );
         }
 
-        if (PersonneType::SYNDIC === $personneType && !empty($signalement->getDenominationSyndic())) {
+        if (PersonneType::SYNDIC === $personneType && $signalement->hasInfosSyndic()) {
             return new Personne(
                 personneType: $personneType,
                 structure: $signalement->getDenominationSyndic(),

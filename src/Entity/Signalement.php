@@ -269,27 +269,27 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $telAgenceSecondaire = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'agence n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees'])]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail de l\'agence n\'est pas valide.', groups: ['Default', 'bo_step_coordonnees', 'bo_step_coordonnees'])]
     private ?string $mailAgence = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Length(max: 255, groups: ['Default', 'fo_coordonnees_syndic'])]
+    #[Assert\Length(max: 255, groups: ['Default', 'fo_coordonnees_syndic', 'bo_step_coordonnees'])]
     private ?string $denominationSyndic = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Length(max: 255, groups: ['Default', 'fo_coordonnees_syndic'])]
+    #[Assert\Length(max: 255, groups: ['Default', 'fo_coordonnees_syndic', 'bo_step_coordonnees'])]
     private ?string $nomSyndic = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du syndic n\'est pas valide.', groups: ['Default', 'fo_coordonnees_syndic'])]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du syndic n\'est pas valide.', groups: ['Default', 'fo_coordonnees_syndic', 'bo_step_coordonnees'])]
     private ?string $mailSyndic = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
-    #[AppAssert\TelephoneFormat(groups: ['Default', 'fo_coordonnees_syndic'])]
+    #[AppAssert\TelephoneFormat(groups: ['Default', 'fo_coordonnees_syndic', 'bo_step_coordonnees'])]
     private ?string $telSyndic = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
-    #[AppAssert\TelephoneFormat(groups: ['Default', 'fo_coordonnees_syndic'])]
+    #[AppAssert\TelephoneFormat(groups: ['Default', 'fo_coordonnees_syndic', 'bo_step_coordonnees'])]
     private ?string $telSyndicSecondaire = null;
 
     #[ORM\Column(type: 'boolean')]

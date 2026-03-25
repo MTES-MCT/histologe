@@ -128,6 +128,7 @@ class SignalementUpdatedListener
                 'loyer' => 'Montant du loyer',
                 'typeCompositionLogement.composition_logement_nombre_enfants' => 'Nombre d\'enfants occupant le logement',
                 'typeCompositionLogement.composition_logement_enfants' => 'Présence d\'enfants de moins de 6 ans',
+                'autreSituationVulnerabilite' => 'Autre situation de vulnérabilité',
                 'typeCompositionLogement.bail_dpe_bail' => 'Contrat de location (bail)',
                 'typeCompositionLogement.bail_dpe_etat_des_lieux' => 'Etat des lieux',
                 'typeCompositionLogement.bail_dpe_dpe' => 'Diagnostic performance énergétique (DPE)',
