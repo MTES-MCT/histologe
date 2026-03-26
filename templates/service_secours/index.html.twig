@@ -4,8 +4,6 @@
     <main class="fr-container fr-mb-5w" id="content">
         <section class="fr-grid-row fr-grid-row--center">
             <div class="fr-mt-5v fr-col-md-12">
-                <h1>Bienvenue {{serviceSecoursRoute.name}}</h1>
-
                 {% set current_step = form.vars.cursor.currentStep %}
                 {% if current_step === 'step1' %}
                     {% set step_number = 1 %}
@@ -30,9 +28,9 @@
 
                 {% if current_step != 'step6' %}
                     <div class="fr-stepper">
-                        <h2 class="fr-stepper__title">
+                        <h1 class="fr-stepper__title">
                             {{step_title}} <span class="fr-stepper__state">Étape {{ step_number }} sur 5</span>
-                        </h2>
+                        </h1>
                         <div class="fr-stepper__steps" data-fr-current-step="{{ step_number }}" data-fr-steps="5"></div>
                         {% if next_step_title is defined %}
                             <p class="fr-stepper__details">
@@ -53,7 +51,7 @@
                 {% endfor %}
 
                 {% if current_step == 'step1' %}
-                    <h3 class="fr-h5">Vos coordonnées</h3>
+                    <h2 class="fr-h5">Vos coordonnées</h2>
                     {{ form_row(form.step1.matriculeDeclarant) }}
                     {{ form_row(form.step1.nomDeclarant) }}
                     {{ form_row(form.step1.dateMission) }}
@@ -94,20 +92,20 @@
                     {{ form_row(form.step2.nbPiecesLogement) }}
                     {{ form_row(form.step2.superficie) }}
                 {% elseif current_step == 'step3' %}
-                    <h3 class="fr-h5">Coordonnées de l'occupant</h3>
+                    <h2 class="fr-h5">Coordonnées de l'occupant</h2>
                     {{ form_row(form.step3.profilOccupant, {display_mode: 'block'}) }}
                     {{ form_row(form.step3.nomOccupant) }}
                     {{ form_row(form.step3.prenomOccupant) }}
                     {{ form_row(form.step3.mailOccupant) }}
                     {{ form_row(form.step3.telOccupant) }}
-                    <h3 class="fr-h5">Situation du foyer</h3>
+                    <h2 class="fr-h5">Situation du foyer</h2>
                     {{ form_row(form.step3.nbAdultesDansLogement) }}
                     {{ form_row(form.step3.nbEnfantsDansLogement) }}
                     {{ form_row(form.step3.isEnfantsMoinsSixAnsDansLogement, {display_mode: 'block'}) }}
                     {{ form_row(form.step3.autreVulnerabilite) }}
                 {% elseif current_step == 'step4' %}
                     {% if form.step4.isBailleurAverti is defined %}
-                        <h3 class="fr-h5">Informations sur le bailleur</h3>
+                        <h2 class="fr-h5">Informations sur le bailleur</h2>
                         {{ form_row(form.step4.isBailleurAverti, {display_mode: 'block'}) }}
                     {% endif %}
                     {% if form.step4.denominationProprio is defined %}
@@ -136,7 +134,7 @@
                     </div>
                     {% endif %}
                     <div class="{% if form.step4.isBailleurAverti is defined %}fr-hidden{% endif %} fr-mb-3w" id="informations-syndic-container">
-                        <h3 class="fr-h5">Informations sur le syndic</h3>
+                        <h2 class="fr-h5">Informations sur le syndic</h2>
                         {{ form_row(form.step4.denominationSyndic) }}
                         {{ form_row(form.step4.nomSyndic) }}
                         {{ form_row(form.step4.mailSyndic) }}
@@ -187,7 +185,7 @@
                     </div>
                 {% elseif current_step == 'step6' %}
                     <div class="fr-mt-5v fr-mb-5v">
-                        <h3 class="fr-h5">Récapitulatif et validation</h3>
+                        <h2 class="fr-h5">Récapitulatif et validation</h2>
                         <div>Vérifiez les informations saisies puis validez le signalement.</div>
                     </div>
                     
@@ -371,7 +369,7 @@
                     Ne pas modifier l'ordre HTML sans adapter aussi la navigation clavier.
                 #}
                 <div class="fr-col-12 fr-col-lg">
-                    <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters form-nav-row-reverse">
+                    <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters form-nav-row-reverse fr-mt-4w">
                         <div class="fr-col-12 fr-col-lg">
                             <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left  fr-btns-group--inline-reverse">
                                 {% if form.navigator.next is defined %}
