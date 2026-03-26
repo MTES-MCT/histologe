@@ -19,6 +19,7 @@ class SignalementUpdatedListener
     public const string EDIT_COORDONNEES_OCCUPANT = 'coordonnees_occupant';
     public const string EDIT_COORDONNEES_BAILLEUR = 'coordonnees_bailleur';
     public const string EDIT_COORDONNEES_AGENCE = 'coordonnees_agence';
+    public const string EDIT_COORDONNEES_SYNDIC = 'coordonnees_syndic';
     public const string EDIT_INFORMATIONS_ASSURANCE = 'informations_assurance';
     public const string EDIT_SITUATION_FOYER = 'situation_foyer';
     public const string EDIT_INFORMATIONS_GENERALES = 'informations_generales';
@@ -81,6 +82,16 @@ class SignalementUpdatedListener
                 'villeAgence' => 'Ville',
             ],
         ],
+        self::EDIT_COORDONNEES_SYNDIC => [
+            'label' => 'Les coordonnées du syndic',
+            'fields' => [
+                'denominationSyndic' => 'Dénomination',
+                'nomSyndic' => 'Nom',
+                'mailSyndic' => 'E-mail',
+                'telSyndic' => 'Téléphone',
+                'telSyndicSecondaire' => 'Téléphone secondaire',
+            ],
+        ],
         self::EDIT_INFORMATIONS_ASSURANCE => [
             'label' => 'Les informations d\'assurance',
             'fields' => [
@@ -117,6 +128,7 @@ class SignalementUpdatedListener
                 'loyer' => 'Montant du loyer',
                 'typeCompositionLogement.composition_logement_nombre_enfants' => 'Nombre d\'enfants occupant le logement',
                 'typeCompositionLogement.composition_logement_enfants' => 'Présence d\'enfants de moins de 6 ans',
+                'autreSituationVulnerabilite' => 'Autre situation de vulnérabilité',
                 'typeCompositionLogement.bail_dpe_bail' => 'Contrat de location (bail)',
                 'typeCompositionLogement.bail_dpe_etat_des_lieux' => 'Etat des lieux',
                 'typeCompositionLogement.bail_dpe_dpe' => 'Diagnostic performance énergétique (DPE)',

@@ -92,7 +92,7 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals('en cours', $signalementExportFactory->statut);
         $this->assertEquals(MotifCloture::INSALUBRITE->label(), $signalementExportFactory->motifCloture);
         $this->assertEquals(ProfileDeclarant::LOCATAIRE->label(), $signalementExportFactory->typeDeclarant);
-        $this->assertEquals(ProfileOccupant::LOCATAIRE->label(), $signalementExportFactory->typeOccupant);
+        $this->assertEquals(ProfileOccupant::LOCATAIRE->label(), $signalementExportFactory->profileOccupant);
 
         $dateFormatted = (new \DateTimeImmutable())->format(SignalementExportFactory::DATE_FORMAT);
         $this->assertEquals($dateFormatted, $signalementExportFactory->createdAt);

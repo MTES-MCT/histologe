@@ -72,6 +72,7 @@ class SignalementApiFactory
         $signalement->setNbOccupantsLogement($request->nbOccupantsLogement);
         $typeCompositionLogement->setCompositionLogementNombreEnfants((string) $request->nbEnfantsDansLogement);
         $typeCompositionLogement->setCompositionLogementEnfants((string) $request->isEnfantsMoinsSixAnsDansLogement);
+        $signalement->setAutreSituationVulnerabilite($request->autreSituationVulnerabilite);
         $signalement->setNatureLogement($request->natureLogement);
         $typeCompositionLogement->setTypeLogementNatureAutrePrecision($request->natureLogementAutre);
         $apptAvecFenetre = self::convertBoolToString($request->isAppartementAvecFenetres);
@@ -203,6 +204,7 @@ class SignalementApiFactory
             $signalement->setStructureDeclarant($request->structureDeclarant);
             $signalement->setNomDeclarant($request->nomDeclarant);
             $signalement->setPrenomDeclarant($request->prenomDeclarant);
+            $signalement->setMatriculeDeclarant($request->matriculeDeclarant);
             $signalement->setMailDeclarant($request->mailDeclarant);
             $signalement->setTelDeclarant($request->telDeclarant);
         } else {
@@ -213,6 +215,11 @@ class SignalementApiFactory
         $signalement->setPrenomAgence($request->prenomAgence);
         $signalement->setMailAgence($request->mailAgence);
         $signalement->setTelAgence($request->telAgence);
+        $signalement->setDenominationSyndic($request->denominationSyndic);
+        $signalement->setNomSyndic($request->nomSyndic);
+        $signalement->setMailSyndic($request->mailSyndic);
+        $signalement->setTelSyndic($request->telSyndic);
+        $signalement->setTelSyndicSecondaire($request->telSyndicSecondaire);
 
         foreach ($request->desordres as $desordre) {
             if (count($desordre->precisions)) {

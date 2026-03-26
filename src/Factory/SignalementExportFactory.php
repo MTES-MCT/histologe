@@ -46,7 +46,7 @@ class SignalementExportFactory
 
         $motifCloture = $data['motifCloture'] instanceof MotifCloture ? $data['motifCloture']->label() : null;
         $typeDeclarant = $data['profileDeclarant'] instanceof ProfileDeclarant ? $data['profileDeclarant']->label() : null;
-        $typeOccupant = $data['profileOccupant'] instanceof ProfileOccupant ? $data['profileOccupant']->label() : null;
+        $profileOccupant = $data['profileOccupant'] instanceof ProfileOccupant ? $data['profileOccupant']->label() : null;
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);
 
         $geoloc = $data['geoloc'];
@@ -101,7 +101,7 @@ class SignalementExportFactory
             escalierOccupant: $data['escalierOccupant'] ?? self::NON_RENSEIGNE,
             numAppartOccupant: $data['numAppartOccupant'] ?? self::NON_RENSEIGNE,
             adresseAutreOccupant: $data['adresseAutreOccupant'] ?? self::NON_RENSEIGNE,
-            typeOccupant: $typeOccupant ?? self::NON_RENSEIGNE,
+            profileOccupant: $profileOccupant ?? self::NON_RENSEIGNE,
             situations: $data['listDesordreCategories'] ?? $data['oldSituations'] ?? null,
             desordres: $data['listDesordreCriteres'] ?? $data['oldCriteres'] ?? null,
             score: $data['score'],
@@ -124,6 +124,7 @@ class SignalementExportFactory
             nbPersonnes: $data['nbOccupantsLogement'],
             nbEnfants: $nbEnfants,
             enfantsM6: $enfantsM6,
+            autreSituationVulnerabilite: $data['autreSituationVulnerabilite'] ?? '-',
             isAllocataire: $this->mapData($data, 'isAllocataire'),
             numAllocataire: $data['numAllocataire'] ?? self::NON_RENSEIGNE,
             natureLogement: $data['natureLogement'] ?? self::NON_RENSEIGNE,
@@ -133,6 +134,7 @@ class SignalementExportFactory
             isRelogement: $this->mapData($data, 'isRelogement'),
             isNotOccupant: 1 == $data['isNotOccupant'] ? self::OUI : self::NON,
             nomDeclarant: $data['nomDeclarant'] ?? '-',
+            matriculeDeclarant: $data['matriculeDeclarant'] ?? '-',
             emailDeclarant: $data['mailDeclarant'] ?? '-',
             structureDeclarant: $data['structureDeclarant'] ?? '-',
             lienDeclarantOccupant: $data['lienDeclarantOccupant'] ?? '-',

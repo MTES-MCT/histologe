@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -89,6 +90,14 @@ class InformationsGeneralesType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $enfantsDansLogementMoinsSixAns,
+            ])
+            ->add('autreSituationVulnerabilite', TextareaType::class, [
+                'label' => 'Autre situation de vulnérabilité (facultatif)',
+                'help' => 'Précisez toute autre situation de vulnérabilité (personne âgée, etc.). Ne saisissez aucune donnée de santé.',
+                'required' => false,
+                'attr' => [
+                    'rows' => 3,
+                ],
             ])
             ->add('bail', ChoiceType::class, [
                 'label' => 'Contrat de location (bail) (facultatif)',

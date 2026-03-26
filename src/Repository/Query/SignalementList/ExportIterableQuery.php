@@ -68,6 +68,7 @@ class ExportIterableQuery
             s.isPreavisDepart,
             s.isRelogement,
             s.nomDeclarant,
+            s.matriculeDeclarant,
             s.mailDeclarant,
             s.structureDeclarant,
             s.lienDeclarantOccupant,

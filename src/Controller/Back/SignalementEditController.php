@@ -7,6 +7,7 @@ use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\CoordonneesAgenceRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
+use App\Dto\Request\Signalement\CoordonneesSyndicRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
 use App\Dto\Request\Signalement\InviteTiersRequest;
@@ -387,6 +388,61 @@ class SignalementEditController extends AbstractController
             [
                 'target' => '#signalement-information-agence-container',
                 'content' => $this->renderView('back/signalement/view/information/information-agence.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
+    }
+
+    #[Route('/{uuid:signalement}/edit-coordonnees-syndic', name: 'back_signalement_edit_coordonnees_syndic', methods: 'POST')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
+    public function editCoordonneesSyndic(
+        Signalement $signalement,
+        Request $request,
+        SignalementManager $signalementManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+    ): JsonResponse {
+        /** @var array<string, mixed> $payload */
+        $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
+        if (!$this->isCsrfTokenValid('signalement_edit_coordonnees_syndic_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+
+        /** @var CoordonneesSyndicRequest $coordonneesSyndicRequest */
+        $coordonneesSyndicRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            CoordonneesSyndicRequest::class,
+            'json'
+        );
+        $validationGroups = ['Default'];
+        if ($signalement->getProfileDeclarant()) {
+            $validationGroups[] = $signalement->getProfileDeclarant()->value;
+        }
+        $errorMessage = FormHelper::getErrorsFromRequest(
+            $validator,
+            $coordonneesSyndicRequest,
+            $validationGroups
+        );
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromCoordonneesSyndicRequest($signalement, $coordonneesSyndicRequest);
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les coordonnées du syndic ont bien été modifiées.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-information-syndic-container',
+                'content' => $this->renderView('back/signalement/view/information/information-syndic.html.twig', ['signalement' => $signalement]),
             ],
         ];
 

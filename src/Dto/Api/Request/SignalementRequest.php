@@ -165,6 +165,12 @@ class SignalementRequest implements RequestInterface
     public ?bool $isEnfantsMoinsSixAnsDansLogement = null;
 
     #[OA\Property(
+        description: 'Autre situation de vulnérabilité à mentionner.',
+        example: 'Personne âgée',
+    )]
+    public ?string $autreSituationVulnerabilite = null;
+
+    #[OA\Property(
         description: 'Nature du logement.',
         example: 'appartement',
     )]
@@ -663,6 +669,14 @@ class SignalementRequest implements RequestInterface
     )]
     #[Assert\Length(max: 50)]
     public ?string $prenomDeclarant = null;
+
+    #[OA\Property(
+        description: 'Matricule du déclarant.
+                     <br>⚠️Pris en compte uniquement dans le cas où profilDeclarant = "SERVICE_SECOURS" ou "TIERS_PRO".',
+        example: 'MAT12345',
+    )]
+    #[Assert\Length(max: 255)]
+    public ?string $matriculeDeclarant = null;
     #[OA\Property(
         description: 'E-mail du déclarant.
                      <br>⚠️Pris en compte uniquement dans le cas où profilDeclarant = "SERVICE_SECOURS", "BAILLEUR", "TIERS_PRO" ou "TIERS_PARTICULIER".
@@ -736,6 +750,42 @@ class SignalementRequest implements RequestInterface
     #[Assert\Length(max: 100)]
     public ?string $communeAgence = null;
 
+    #[OA\Property(
+        description: 'Dénomination du syndic.',
+        example: 'Syndic Pro',
+    )]
+    #[Assert\Length(max: 255)]
+    public ?string $denominationSyndic = null;
+
+    #[OA\Property(
+        description: 'Nom du contact du syndic.',
+        example: 'Dupont',
+    )]
+    #[Assert\Length(max: 255)]
+    public ?string $nomSyndic = null;
+
+    #[OA\Property(
+        description: 'E-mail du contact du syndic.',
+        example: 'contact@syndicpro.com',
+    )]
+    #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail du contact du syndic n\'est pas valide.')]
+    #[Assert\Length(max: 255)]
+    public ?string $mailSyndic = null;
+
+    #[OA\Property(
+        description: 'Téléphone du contact du syndic.',
+        example: '0639988822',
+    )]
+    #[AppAssert\TelephoneFormat]
+    public ?string $telSyndic = null;
+
+    #[OA\Property(
+        description: 'Téléphone secondaire du contact du syndic.',
+        example: '0139988823',
+    )]
+    #[AppAssert\TelephoneFormat]
+    public ?string $telSyndicSecondaire = null;
+
     /** @var array<DesordreRequest> $desordres */
     #[OA\Property(
         description: 'Liste des désordres constatés.
@@ -801,6 +851,9 @@ class SignalementRequest implements RequestInterface
             }
             if (in_array($this->profilDeclarant, [ProfileDeclarant::LOCATAIRE->value, ProfileDeclarant::BAILLEUR_OCCUPANT->value, ProfileDeclarant::BAILLEUR->value]) && !empty($this->profilOccupant)) {
                 $context->buildViolation('Le champ profilOccupant ne doit pas être renseigné si le profilDeclarant = LOCATAIRE, BAILLEUR_OCCUPANT ou BAILLEUR.')->atPath('profilOccupant')->addViolation();
+            }
+            if (!in_array($this->profilDeclarant, [ProfileDeclarant::TIERS_PRO->value, ProfileDeclarant::SERVICE_SECOURS->value]) && $this->matriculeDeclarant) {
+                $context->buildViolation('Le champ matriculeDeclarant ne doit être renseigné que si le profilDeclarant = SERVICE_SECOURS ou TIERS_PRO.')->atPath('matriculeDeclarant')->addViolation();
             }
         }
         if ($this->natureLogementAutre && 'autre' !== $this->natureLogement) {

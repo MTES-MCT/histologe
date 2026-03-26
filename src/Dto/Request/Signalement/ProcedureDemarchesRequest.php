@@ -95,6 +95,15 @@ class ProcedureDemarchesRequest implements RequestInterface
 
         #[Assert\Length(max: 50)]
         private readonly ?string $preavisDepart = null,
+
+        #[Assert\DateTime('Y-m-d')]
+        private readonly ?string $dateMissionServiceSecours = null,
+
+        #[Assert\Length(max: 255, maxMessage: 'L\'origine de la mission ne doit pas dépasser {{ limit }} caractères.')]
+        private readonly ?string $origineMissionServiceSecours = null,
+
+        #[Assert\Length(max: 255, maxMessage: 'L\'ordre de mission ne doit pas dépasser {{ limit }} caractères.')]
+        private readonly ?string $ordreMissionServiceSecours = null,
     ) {
     }
 
@@ -141,5 +150,20 @@ class ProcedureDemarchesRequest implements RequestInterface
     public function getPreavisDepart(): ?string
     {
         return $this->preavisDepart;
+    }
+
+    public function getDateMissionServiceSecours(): ?string
+    {
+        return $this->dateMissionServiceSecours;
+    }
+
+    public function getOrigineMissionServiceSecours(): ?string
+    {
+        return $this->origineMissionServiceSecours;
+    }
+
+    public function getOrdreMissionServiceSecours(): ?string
+    {
+        return $this->ordreMissionServiceSecours;
     }
 }

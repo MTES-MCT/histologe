@@ -97,6 +97,11 @@
                                     {% endif %}
                                 {% endif %}
                             </li>
+                            {% if signalement.autreSituationVulnerabilite %}
+                            <li>
+                                <b>Autre situation de vulnérabilité :</b> {{ signalement.autreSituationVulnerabilite }}
+                            </li>
+                            {% endif %}
                             <li><b>Date d'entrée :</b> {{ signalement.dateEntree ? signalement.dateEntree|date('d/m/Y') : 'N/R' }}
                             </li>
                             <li>
@@ -127,6 +132,9 @@
                             <ul style="list-style:none; margin-left:0px;padding-left:0px;">
                                 <li><b>Nom :</b> {{ signalement.nomDeclarant }} -
                                     <b>Prénom :</b> {{ signalement.prenomDeclarant }}</li>
+                                {% if signalement.matriculeDeclarant %}
+                                    <li><b>Matricule :</b> {{ signalement.matriculeDeclarant }}</li>
+                                {% endif %}
                                 <li><b>Courriel :</b><a
                                             href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
                                 </li>
@@ -281,6 +289,21 @@
                     </td>
                 </tr>
                 {% endif %}
+
+                {% if signalement.hasInfosSyndic %}
+                <tr>
+                    <td>
+                        <h3 style="margin-bottom: 0">Informations sur le syndic</h3>
+                        <ul style="list-style:none; margin-left:0px;padding-left:0px;">
+                            <li><b>Dénomination :</b> {{ signalement.denominationSyndic }}</li>
+                            <li><b>Nom :</b> {{ signalement.nomSyndic ?? 'N/R' }}</li>
+                            <li><b>Courriel :</b> {{ signalement.mailSyndic ?? 'N/R' }}</li>
+                            <li><b>Tel. :</b> {{ signalement.telSyndic ? signalement.telSyndicDecoded|phone : 'N/R' }}</li>
+                            <li><b>Tel. sec. :</b> {{ signalement.telSyndicSecondaire ? signalement.telSyndicSecondaireDecoded|phone : 'N/R' }}</li>
+                        </ul>
+                    </td>
+                </tr>
+                {% endif %}
             </table>
         </section>
         <section>
@@ -376,6 +399,23 @@
                                             {{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)}}
                                         {% endif %}
                                 </li>
+                            {% endif %}
+                            {% if signalement.serviceSecours %}
+                                {% if signalement.dateMissionServiceSecours %}
+                                <li>
+                                    <b>Date de la mission du service de secours :</b> {{ signalement.dateMissionServiceSecours|date('d/m/Y') }}
+                                </li>
+                                {% endif %}
+                                {% if signalement.origineMissionServiceSecours %}
+                                <li>
+                                    <b>Origine de la mission du service de secours :</b> {{ signalement.origineMissionServiceSecours }}
+                                </li>
+                                {% endif %}
+                                {% if signalement.ordreMissionServiceSecours %}
+                                <li>
+                                    <b>Ordre de mission du service de secours :</b> {{ signalement.ordreMissionServiceSecours }}
+                                </li>
+                                {% endif %}
                             {% endif %}
                         </ul>
                     </td>

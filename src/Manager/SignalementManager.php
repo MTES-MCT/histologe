@@ -7,6 +7,7 @@ use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\CoordonneesAgenceRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
+use App\Dto\Request\Signalement\CoordonneesSyndicRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
@@ -359,8 +360,10 @@ class SignalementManager extends AbstractManager
                     : null
                 );
         }
-        $signalement->setNomDeclarant($coordonneesTiersRequest->getNom())
+        $signalement
+            ->setNomDeclarant($coordonneesTiersRequest->getNom())
             ->setPrenomDeclarant($coordonneesTiersRequest->getPrenom())
+            ->setMatriculeDeclarant($coordonneesTiersRequest->getMatricule())
             ->setMailDeclarant($coordonneesTiersRequest->getMail())
             ->setTelDeclarant($coordonneesTiersRequest->getTelephone())
             ->setLienDeclarantOccupant($coordonneesTiersRequest->getLien())
@@ -523,6 +526,25 @@ class SignalementManager extends AbstractManager
         );
     }
 
+    public function updateFromCoordonneesSyndicRequest(
+        Signalement $signalement,
+        CoordonneesSyndicRequest $coordonneesSyndicRequest,
+    ): bool {
+        $signalement
+            ->setDenominationSyndic($coordonneesSyndicRequest->getDenomination())
+            ->setNomSyndic($coordonneesSyndicRequest->getNom())
+            ->setMailSyndic($coordonneesSyndicRequest->getMail())
+            ->setTelSyndic($coordonneesSyndicRequest->getTelephone())
+            ->setTelSyndicSecondaire($coordonneesSyndicRequest->getTelephoneBis());
+
+        $this->save($signalement);
+
+        return $this->suiviManager->addSuiviIfNeeded(
+            signalement: $signalement,
+            description: 'Les coordonnées du syndic ont été modifiées par ',
+        );
+    }
+
     public function updateFromInformationsLogementRequest(
         Signalement $signalement,
         InformationsLogementRequest $informationsLogementRequest,
@@ -553,7 +575,8 @@ class SignalementManager extends AbstractManager
             ->setBailDpeClasseEnergetique($informationsLogementRequest->getBailDpeClasseEnergetique());
         $signalement
             ->setTypeCompositionLogement($typeCompositionLogement)
-            ->setNumeroInvariant($informationsLogementRequest->getBailDpeInvariant());
+            ->setNumeroInvariant($informationsLogementRequest->getBailDpeInvariant())
+            ->setAutreSituationVulnerabilite($informationsLogementRequest->getAutreSituationVulnerabilite());
 
         $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(static function ($qualification) {
             return Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification();
@@ -840,6 +863,14 @@ class SignalementManager extends AbstractManager
             ->setInfoProcedureReponseAssurance($procedureDemarchesRequest->getInfoProcedureReponseAssurance())
             ->setInfoProcedureDepartApresTravaux($procedureDemarchesRequest->getInfoProcedureDepartApresTravaux());
         $signalement->setInformationProcedure($informationProcedure);
+
+        if ($signalement->getServiceSecours()) {
+            if ($procedureDemarchesRequest->getDateMissionServiceSecours()) {
+                $signalement->setDateMissionServiceSecours(new \DateTimeImmutable($procedureDemarchesRequest->getDateMissionServiceSecours()));
+            }
+            $signalement->setOrigineMissionServiceSecours($procedureDemarchesRequest->getOrigineMissionServiceSecours());
+            $signalement->setOrdreMissionServiceSecours($procedureDemarchesRequest->getOrdreMissionServiceSecours());
+        }
 
         $informationComplementaire = new InformationComplementaire();
         if (!empty($signalement->getInformationComplementaire())) {

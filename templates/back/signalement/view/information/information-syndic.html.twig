@@ -1,0 +1,42 @@
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+        <h4 class="fr-h6">Informations sur le syndic</h4>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+            <button href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-syndic" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line">
+                Modifier
+            </button>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-12">
+        <strong>Dénomination :</strong> {{ signalement.denominationSyndic }}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Nom :</strong> {{ signalement.nomSyndic }}
+    </div>
+    <div class="fr-col-12">
+        <strong>Courriel :</strong>
+        {% if signalement.mailSyndic %}
+            <a href="mailto:{{ signalement.mailSyndic }}">{{ signalement.mailSyndic }}</a>
+            {% if show_email_alert(signalement.mailSyndic) %}
+                <p class="fr-badge fr-badge--error">Format non valide</p>
+            {% endif %}
+            {% if show_email_usager_alert_brevo('syndic', signalement.mailSyndic) %}
+                <p class="fr-badge fr-badge--warning">Problème d'e-mail non remis</p>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Tél. :</strong>
+        {% if signalement.telSyndic %}
+            <a href="mailto:{{ signalement.telSyndicDecoded }}">{{ signalement.telSyndicDecoded|phone }}</a>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <strong>Tél. sec. :</strong>
+        {% if signalement.telSyndicSecondaire %}
+            <a href="mailto:{{ signalement.telSyndicSecondaireDecoded }}">{{ signalement.telSyndicSecondaireDecoded|phone }}</a>
+        {% endif %}
+    </div>
+</div>

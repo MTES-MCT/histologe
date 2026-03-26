@@ -25,6 +25,7 @@ class InformationsLogementRequest implements RequestInterface
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR'])]
         #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "Enfants -6 ans" est incorrect.')]
         private readonly ?string $compositionLogementEnfants = null,
+        private readonly ?string $autreSituationVulnerabilite = null,
         #[Assert\NotBlank(message: 'Merci de définir la date d\'arrivée.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\DateTime('Y-m-d')]
         private readonly ?string $dateEntree = null,
@@ -68,6 +69,11 @@ class InformationsLogementRequest implements RequestInterface
     public function getCompositionLogementEnfants(): ?string
     {
         return $this->compositionLogementEnfants;
+    }
+
+    public function getAutreSituationVulnerabilite(): ?string
+    {
+        return $this->autreSituationVulnerabilite;
     }
 
     public function getDateEntree(): ?string
