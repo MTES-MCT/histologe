@@ -366,20 +366,9 @@
                     {{form_row(form.step6.hidden)}}
                 {% endif %}
                 <div class="fr-col-12 fr-col-lg">
-                    <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
+                    <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters form-nav-row-reverse">
                         <div class="fr-col-12 fr-col-lg">
-                            {% if form.navigator.reset is defined %}
-                                <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left">
-                                    <li>{{ form_widget(form.navigator.reset) }}</li>
-                                </ul>
-                            {% endif %}
-                        </div>
-
-                        <div class="fr-col-12 fr-col-lg">
-                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
-                                {% if form.navigator.previous is defined %}
-                                    <li>{{ form_widget(form.navigator.previous) }}</li>
-                                {% endif %}
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left  fr-btns-group--inline-reverse">
                                 {% if form.navigator.next is defined %}
                                     <li>{{ form_widget(form.navigator.next) }}</li>
                                 {% endif %}
@@ -389,7 +378,17 @@
                                 {% if form.navigator.finish is defined %}
                                     <li>{{ form_widget(form.navigator.finish) }}</li>
                                 {% endif %}
+                                {% if form.navigator.previous is defined %}
+                                    <li>{{ form_widget(form.navigator.previous) }}</li>
+                                {% endif %}
                             </ul>
+                        </div>
+                        <div class="fr-col-12 fr-col-lg">
+                            {% if form.navigator.reset is defined %}
+                                <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                    <li>{{ form_widget(form.navigator.reset) }}</li>
+                                </ul>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
