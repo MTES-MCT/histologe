@@ -673,6 +673,12 @@ function initBoFormSignalementAdresse() {
       '#signalement_draft_logement_appartementAvecFenetres',
       natureLogementValue === 'appartement'
     );
+    refreshElementEnable(
+      'enable',
+      'logement',
+      '#signalement_draft_logement_autresOccupantsDesordre',
+      natureLogementValue === 'appartement'
+    );
   }
 
   const profileDeclarantInputs = boFormSignalementAdresse?.querySelectorAll(

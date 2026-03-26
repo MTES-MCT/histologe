@@ -5,6 +5,8 @@
         via API par {{ signalement.createdBy.email }} pour le partenaire {{ signalement.createdByPartner.nom }}.
     {% elseif signalement.creationSource is same as enum('App\\Entity\\Enum\\CreationSource').FORM_PRO_BO %}
         par {{ signalement.createdBy.prenom }} {{ signalement.createdBy.nom }}{% if signalement.createdBy.getPartnerInTerritory(signalement.territory) %}, du partenaire {{ signalement.createdBy.getPartnerInTerritory(signalement.territory).nom }}{% endif %} depuis le formulaire pro.
+    {% elseif signalement.creationSource is same as enum('App\\Entity\\Enum\\CreationSource').FORM_SERVICE_SECOURS %}
+        depuis le formulaire Service Secours
     {% elseif signalement.creationSource is same as enum('App\\Entity\\Enum\\CreationSource').IMPORT %}
         par import
     {% else %}

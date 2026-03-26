@@ -595,7 +595,8 @@ class SignalementManager extends AbstractManager
         $signalement
             ->setTypeCompositionLogement($typeCompositionLogement)
             ->setNumeroInvariant($informationsLogementRequest->getBailDpeInvariant())
-            ->setAutreSituationVulnerabilite($informationsLogementRequest->getAutreSituationVulnerabilite());
+            ->setAutreSituationVulnerabilite($informationsLogementRequest->getAutreSituationVulnerabilite())
+            ->setAutresOccupantsDesordre($informationsLogementRequest->getAutresOccupantsDesordre());
 
         $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(static function ($qualification) {
             return Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification();

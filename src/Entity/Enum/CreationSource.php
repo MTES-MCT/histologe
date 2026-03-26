@@ -53,6 +53,7 @@ enum CreationSource: string
         return [
             self::FORM_PRO_BO,
             self::API,
+            self::FORM_SERVICE_SECOURS,
         ];
     }
 }

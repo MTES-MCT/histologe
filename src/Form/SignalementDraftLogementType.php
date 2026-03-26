@@ -26,6 +26,7 @@ class SignalementDraftLogementType extends AbstractType
 
         $appartementEtage = null;
         $appartementAvecFenetres = '';
+        $autresOccupantsDesordre = null;
         if ('appartement' === $signalement->getNatureLogement()) {
             if ($signalement->getTypeCompositionLogement()) {
                 if (!empty($signalement->getTypeCompositionLogement()->getTypeLogementAppartementEtage())) {
@@ -48,6 +49,7 @@ class SignalementDraftLogementType extends AbstractType
                     $appartementAvecFenetres = 'non';
                 }
             }
+            $autresOccupantsDesordre = $signalement->getAutresOccupantsDesordre();
         }
         $nombreEtages = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementNombreEtages();
         $anneeConstruction = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementAnneeConstruction();
@@ -115,6 +117,20 @@ class SignalementDraftLogementType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $anneeConstruction,
+            ])
+            ->add('autresOccupantsDesordre', ChoiceType::class, [
+                'label' => 'D\'autres occupants de l\'immeuble ont-ils rencontré des désordres ?',
+                'choices' => [
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                    'Ne sait pas' => 'nsp',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $autresOccupantsDesordre,
             ])
 
             ->add('pieceUnique', ChoiceType::class, [

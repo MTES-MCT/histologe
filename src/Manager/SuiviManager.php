@@ -18,6 +18,7 @@ use App\Event\SuiviCreatedEvent;
 use App\Security\User\SignalementUser;
 use App\Service\Sanitizer;
 use App\Utils\DateHelper;
+use App\Utils\DictionaryProvider;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\ClockInterface;
@@ -40,6 +41,7 @@ class SuiviManager extends Manager
         #[Autowire(env: 'EDITION_SUIVI_ENABLE')]
         private readonly bool $editionSuiviEnable,
         private readonly ClockInterface $clock,
+        private readonly DictionaryProvider $dictionaryProvider,
         string $entityName = Suivi::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -447,6 +449,7 @@ class SuiviManager extends Manager
             if (false !== $dateFormatted) {
                 return $dateFormatted;
             }
+            $value = $this->dictionaryProvider->translate($value, 'suivi');
             $value = nl2br(htmlentities($value));
         }
         if (null === $value || '' === $value) {

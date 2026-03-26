@@ -187,12 +187,13 @@ export const store = {
     ],
     createdFromList: [
       { Id: 'formulaire-usager', Text: 'Formulaire usager (v1, actuel et import)' },
-      { Id: 'formulaire-pro', Text: 'Formulaire pro (BO et api)' },
+      { Id: 'formulaire-pro', Text: 'Formulaire pro (BO, API et Service Secours)' },
       { Id: 'FORM_USAGER_V1', Text: 'Formulaire usager v1' },
       { Id: 'FORM_USAGER_V2', Text: 'Formulaire usager actuel' },
       { Id: 'FORM_PRO_BO', Text: 'Formulaire pro BO' },
       { Id: 'API', Text: 'API' },
-      { Id: 'IMPORT', Text: 'Import' }
+      { Id: 'IMPORT', Text: 'Import' },
+      { Id: 'FORM_SERVICE_SECOURS', Text: 'Formulaire service secours' }
     ],
     selectedSavedSearchId: undefined as string | undefined,
     savedSearchSelectKey: 0,

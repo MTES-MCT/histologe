@@ -196,6 +196,19 @@ class InformationsGeneralesType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $anneeConstruction,
+            ])
+            ->add('autresOccupantsDesordre', ChoiceType::class, [
+                'label' => 'D\'autres occupants de l\'immeuble ont rencontré des désordres (facultatif)',
+                'choices' => [
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                    'Je ne sais pas' => 'nsp',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'data' => $signalement->getAutresOccupantsDesordre(),
             ]);
         $builder->add('save', SubmitType::class, [
             'label' => 'Envoyer',

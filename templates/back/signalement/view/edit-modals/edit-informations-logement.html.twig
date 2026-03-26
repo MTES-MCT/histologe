@@ -213,6 +213,20 @@
                                 <label class="fr-label" for="informationLogementAnneeConstruction">Année de construction (facultatif)</label>
                                 <input class="fr-input" type="number" id="informationLogementAnneeConstruction" name="anneeConstruction" value="{{ anneeConstruction }}">
                             </div>
+                            
+
+                            <div class="fr-select-group">
+                                {% set autresOccupantsDesordre = signalement.autresOccupantsDesordre %}
+                                <label class="fr-label" for="autresOccupantsDesordre">D'autres occupants de l'immeuble ont-ils rencontré des désordres (facultatif)
+                                </label>
+                                <select class="fr-select" id="autresOccupantsDesordre" name="autresOccupantsDesordre">
+                                    <option value="" {{ autresOccupantsDesordre not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                                    <option value="oui" {{ autresOccupantsDesordre == 'oui' ? 'selected' : '' }}>Oui</option>
+                                    <option value="non" {{ autresOccupantsDesordre == 'non' ? 'selected' : '' }}>Non</option>
+                                    <option value="nsp" {{ autresOccupantsDesordre == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                                </select>
+                            </div>
+
                             <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_informations_logement_'~signalement.id) }}">
                         </div>
                         

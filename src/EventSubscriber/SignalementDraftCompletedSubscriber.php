@@ -66,7 +66,6 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 ->withDesordres()
                 ->withStatus()
                 ->build();
-
             if (null !== $signalement) {
                 $this->signalementManager->save($signalement);
                 $this->logger->info(sprintf(

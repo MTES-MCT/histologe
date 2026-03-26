@@ -151,6 +151,7 @@ class SignalementBoManager
                     && 'non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()) {
                 $typeCompositionLogement->setTypeLogementSousSolSansFenetre('oui');
             }
+            $signalement->setAutresOccupantsDesordre($form->get('autresOccupantsDesordre')->getData());
         }
 
         $informationComplementaire->setInformationsComplementairesLogementNombreEtages($form->get('nombreEtages')->getData());
