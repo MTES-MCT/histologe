@@ -22,6 +22,7 @@
       :multiple="component.multiple"
       :ariaControls="component.ariaControls"
       :tagWhenEdit="component.tagWhenEdit"
+      :maxlength="component.maxlength"
       v-model="formStore.data[component.slug]"
       :hasError="formStore.validationErrors[component.slug] !== undefined"
       :error="formStore.validationErrors[component.slug]"
