@@ -20,7 +20,8 @@ class ServiceSecoursNavigatorType extends AbstractType
         $builder
             ->add('reset', ResetFlowType::class, [
                 'label' => 'Annuler',
-                'attr' => ['class' => 'fr-btn fr-btn--secondary fr-icon-close-line'],
+                'include_if' => static fn (FormFlowCursor $cursor) => 'step1' !== $cursor->getCurrentStep(),
+                'attr' => ['class' => 'fr-btn fr-btn--tertiary-no-outline fr-icon-close-line'],
             ])
             ->add('previous', PreviousFlowType::class, [
                 'label' => 'Précédent',
