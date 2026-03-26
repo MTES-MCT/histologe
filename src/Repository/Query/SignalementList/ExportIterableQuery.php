@@ -56,6 +56,7 @@ class ExportIterableQuery
             s.telProprioSecondaire,
             s.mailProprio,
             s.isProprioAverti,
+            s.proprioAvertiAt,
             s.nbOccupantsLogement,
             s.nbEnfantsM6,
             s.nbEnfantsP6,

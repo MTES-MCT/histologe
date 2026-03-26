@@ -18,7 +18,6 @@ class InformationComplementaire
         private ?string $informationsComplementairesSituationBailleurBeneficiaireFsl = null,
         private ?string $informationsComplementairesSituationBailleurRevenuFiscal = null,
         private ?string $informationsComplementairesSituationBailleurDateNaissance = null,
-        private ?string $informationsComplementairesLogementMontantLoyer = null,
         private ?string $informationsComplementairesLogementNombreEtages = null,
         private ?string $informationsComplementairesLogementAnneeConstruction = null,
     ) {
@@ -189,18 +188,6 @@ class InformationComplementaire
         return $this;
     }
 
-    public function getInformationsComplementairesLogementMontantLoyer(): ?string
-    {
-        return $this->informationsComplementairesLogementMontantLoyer;
-    }
-
-    public function setInformationsComplementairesLogementMontantLoyer(?string $informationsComplementairesLogementMontantLoyer): self
-    {
-        $this->informationsComplementairesLogementMontantLoyer = $informationsComplementairesLogementMontantLoyer;
-
-        return $this;
-    }
-
     public function getInformationsComplementairesLogementNombreEtages(): ?string
     {
         return $this->informationsComplementairesLogementNombreEtages;
@@ -242,7 +229,6 @@ class InformationComplementaire
             'informations_complementaires_situation_bailleur_beneficiaire_fsl' => $this->informationsComplementairesSituationBailleurBeneficiaireFsl,
             'informations_complementaires_situation_bailleur_revenu_fiscal' => $this->informationsComplementairesSituationBailleurRevenuFiscal,
             'informations_complementaires_situation_bailleur_date_naissance' => $this->informationsComplementairesSituationBailleurDateNaissance,
-            'informations_complementaires_logement_montant_loyer' => $this->informationsComplementairesLogementMontantLoyer,
             'informations_complementaires_logement_nombre_etages' => $this->informationsComplementairesLogementNombreEtages,
             'informations_complementaires_logement_annee_construction' => $this->informationsComplementairesLogementAnneeConstruction,
         ];

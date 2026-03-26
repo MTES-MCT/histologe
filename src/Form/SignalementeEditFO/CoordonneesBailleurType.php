@@ -6,6 +6,7 @@ use App\Entity\Enum\MoyenContact;
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -37,9 +38,6 @@ class CoordonneesBailleurType extends AbstractType
         } else {
             $isProprioAverti = $signalement->getIsProprioAverti();
         }
-        $infoProcedureBailDate = $signalement->getProprioAvertiAt()
-            ? $signalement->getProprioAvertiAt()->format('m/Y')
-            : $signalement->getInformationProcedure()?->getInfoProcedureBailDate();
 
         if ($options['extended']) {
             $builder
@@ -131,18 +129,13 @@ class CoordonneesBailleurType extends AbstractType
                     'mapped' => false,
                     'data' => MoyenContact::tryFrom($signalement->getInformationProcedure()?->getInfoProcedureBailMoyen()),
                 ])
-                ->add('infoProcedureBailDate', TextType::class, [
+                ->add('proprioAvertiAt', DateType::class, [
                     'label' => 'Date d\'avertissement du propriétaire',
-                    'help' => 'Format attendu : MM/YYYY',
+                    'help' => 'Format attendu : MM/AAAA',
                     'required' => false,
-                    'mapped' => false,
-                    'data' => $infoProcedureBailDate,
-                    'constraints' => [
-                        new Assert\Regex([
-                            'pattern' => '/^(0[1-9]|1[0-2])\/\d{4}$/',
-                            'message' => 'Le format de la date doit être MM/YYYY.',
-                        ]),
-                    ],
+                    'html5' => false,
+                    'input' => 'datetime_immutable',
+                    'format' => 'MM/yyyy',
                 ])
                 ->add('infoProcedureBailReponse', TextareaType::class, [
                     'label' => 'Réponse du propriétaire',

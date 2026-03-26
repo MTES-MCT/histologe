@@ -514,8 +514,11 @@ trait FixturesHelper
     /**
      * @return array<string>
      */
-    public function getLocataireTypeComposition(bool $withCompositionLogementNombrePersonnes = false): array
-    {
+    public function getLocataireTypeComposition(
+        bool $withCompositionLogementNombrePersonnes = false,
+        bool $withCompositionLogementSuperficie = false,
+        bool $withDateEmmenagement = false,
+    ): array {
         $typeComposition = [
             'bail_dpe_dpe' => 'oui',
             'bail_dpe_classe_energetique' => 'G',
@@ -523,13 +526,11 @@ trait FixturesHelper
             'type_logement_rdc' => 'non',
             'type_logement_nature' => 'appartement',
             'bail_dpe_etat_des_lieux' => 'oui',
-            'bail_dpe_date_emmenagement' => '2020-10-01',
             'type_logement_commodites_wc' => 'oui',
             'type_logement_dernier_etage' => 'non',
             'composition_logement_enfants' => 'oui',
             'composition_logement_nombre_enfants' => '1',
             'composition_logement_nb_pieces' => '2',
-            'composition_logement_superficie' => '45',
             'type_logement_commodites_cuisine' => 'oui',
             'type_logement_commodites_piece_a_vivre_9m' => 'oui',
             'composition_logement_piece_unique' => 'plusieurs_pieces',
@@ -542,6 +543,12 @@ trait FixturesHelper
 
         if ($withCompositionLogementNombrePersonnes) {
             $typeComposition['composition_logement_nombre_personnes'] = '3';
+        }
+        if ($withCompositionLogementSuperficie) {
+            $typeComposition['composition_logement_superficie'] = '45';
+        }
+        if ($withDateEmmenagement) {
+            $typeComposition['bail_dpe_date_emmenagement'] = '2020-10-01';
         }
 
         return $typeComposition;
@@ -567,12 +574,13 @@ trait FixturesHelper
     /**
      * @return array<mixed>
      */
-    public function getLocataireInformationProcedure(bool $withInfoProcedureBailleurPrevenu = false): array
-    {
+    public function getLocataireInformationProcedure(
+        bool $withInfoProcedureBailleurPrevenu = false,
+        bool $withInfoProcedureBailDate = false,
+    ): array {
         $data = [
             'utilisation_service_ok_visite' => 1,
             'info_procedure_bail_moyen' => 'courrier',
-            'info_procedure_bail_date' => '11/2024',
             'info_procedure_bail_reponse' => 'Réponse du bailleur',
             'info_procedure_bail_numero' => 'R-TR45',
             'info_procedure_assurance_contactee' => 'oui',
@@ -585,6 +593,9 @@ trait FixturesHelper
         if ($withInfoProcedureBailleurPrevenu) {
             $data['info_procedure_bailleur_prevenu'] = 'oui';
         }
+        if ($withInfoProcedureBailDate) {
+            $data['info_procedure_bail_date'] = '11/2024';
+        }
 
         return $data;
     }
@@ -592,15 +603,19 @@ trait FixturesHelper
     /**
      * @return array<string>
      */
-    public function getLocataireInformationComplementaire(): array
+    public function getLocataireInformationComplementaire(bool $withMontantLoyer = false): array
     {
-        return [
-            'informations_complementaires_logement_montant_loyer' => '500',
+        $data = [
             'informations_complementaires_logement_nombre_etages' => '5',
             'informations_complementaires_logement_annee_construction' => '1970',
             'informations_complementaires_situation_occupants_beneficiaire_fsl' => 'non',
             'informations_complementaires_situation_occupants_beneficiaire_rsa' => 'non',
         ];
+        if ($withMontantLoyer) {
+            $data['informations_complementaires_logement_montant_loyer'] = '500';
+        }
+
+        return $data;
     }
 
     public function getAutoAffectationRule(

@@ -53,6 +53,7 @@ class SignalementExportFactoryTest extends TestCase
             'photos' => [],
             'documents' => [],
             'isProprioAverti' => true,
+            'proprioAvertiAt' => new \DateTimeImmutable('2026-03-01'),
             'nbEnfantsM6' => 1,
             'nbOccupantsLogement' => 1,
             'isAllocataire' => 'CAF',
@@ -113,7 +114,7 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals('-', $signalementExportFactory->photos);
         $this->assertEquals('-', $signalementExportFactory->documents);
         $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->isProprioAverti);
-        $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->isProprioAverti);
+        $this->assertEquals('03/2026', $signalementExportFactory->infoProcedureBailDate);
         $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->isAllocataire);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->isLogementSocial);
         $this->assertEquals(SignalementExportFactory::NON, $signalementExportFactory->isPreavisDepart);

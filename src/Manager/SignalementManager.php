@@ -274,8 +274,6 @@ class SignalementManager extends AbstractManager
             }
             if ($qualificationNDERequest->getDateEntree()) {
                 $signalement->setDateEntree(new \DateTimeImmutable($qualificationNDERequest->getDateEntree()));
-                $typeCompositionLogement
-                    ->setBailDpeDateEmmenagement($qualificationNDERequest->getDateEntree());
             }
             if ($qualificationNDERequest->getClasseEnergetique()) {
                 $typeCompositionLogement
@@ -552,8 +550,7 @@ class SignalementManager extends AbstractManager
             ->setBailDpeBail($informationsLogementRequest->getBailDpeBail())
             ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux())
             ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe())
-            ->setBailDpeClasseEnergetique($informationsLogementRequest->getBailDpeClasseEnergetique())
-            ->setBailDpeDateEmmenagement($signalement->getDateEntree()?->format('Y-m-d'));
+            ->setBailDpeClasseEnergetique($informationsLogementRequest->getBailDpeClasseEnergetique());
         $signalement
             ->setTypeCompositionLogement($typeCompositionLogement)
             ->setNumeroInvariant($informationsLogementRequest->getBailDpeInvariant());
@@ -588,7 +585,6 @@ class SignalementManager extends AbstractManager
             $informationComplementaire = clone $signalement->getInformationComplementaire();
         }
         $informationComplementaire
-            ->setInformationsComplementairesLogementMontantLoyer($informationsLogementRequest->getLoyer())
             ->setInformationsComplementairesSituationOccupantsLoyersPayes(
                 $informationsLogementRequest->getLoyersPayes()
             )
@@ -626,6 +622,7 @@ class SignalementManager extends AbstractManager
                 && null !== $typeCompositionLogement
                 && $this->suroccupationSpecification->isSatisfiedBy(
                     (int) $signalement->getNbOccupantsLogement(),
+                    $signalement->getSuperficie(),
                     $situationFoyer,
                     $typeCompositionLogement
                 )) {
@@ -673,7 +670,6 @@ class SignalementManager extends AbstractManager
         $typeCompositionLogement
             ->setTypeLogementNature($compositionLogementRequest->getType())
             ->setCompositionLogementPieceUnique($compositionLogementRequest->getTypeCompositionLogement())
-            ->setCompositionLogementSuperficie($compositionLogementRequest->getSuperficie())
             ->setCompositionLogementNbPieces($compositionLogementRequest->getCompositionLogementNbPieces())
             ->setTypeLogementAppartementEtage($compositionLogementRequest->getEtage())
             ->setTypeLogementAppartementAvecFenetres($compositionLogementRequest->getAvecFenetres())
@@ -838,7 +834,6 @@ class SignalementManager extends AbstractManager
 
         $informationProcedure
             ->setInfoProcedureBailMoyen($procedureDemarchesRequest->getInfoProcedureBailMoyen())
-            ->setInfoProcedureBailDate($procedureDemarchesRequest->getInfoProcedureBailDate())
             ->setInfoProcedureBailReponse($procedureDemarchesRequest->getInfoProcedureBailReponse())
             ->setInfoProcedureBailNumero($procedureDemarchesRequest->getInfoProcedureBailNumero())
             ->setInfoProcedureAssuranceContactee($procedureDemarchesRequest->getInfoProcedureAssuranceContactee())
@@ -851,6 +846,8 @@ class SignalementManager extends AbstractManager
             $informationComplementaire = clone $signalement->getInformationComplementaire();
         }
         $signalement->setInformationComplementaire($informationComplementaire);
+        $proprioAvertiAt = $procedureDemarchesRequest->getInfoProcedureBailDate() ? \DateTimeImmutable::createFromFormat('m/Y', $procedureDemarchesRequest->getInfoProcedureBailDate()) : null;
+        $proprioAvertiAt ? $signalement->setProprioAvertiAt($proprioAvertiAt) : $signalement->setProprioAvertiAt(null);
 
         if ($assuranceContacteeUpdated) {
             $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);

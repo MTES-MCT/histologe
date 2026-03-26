@@ -104,7 +104,6 @@ class SignalementApiFactory
         }
         $typeCompositionLogement->setCompositionLogementNbPieces((string) $request->nombrePieces);
         $signalement->setSuperficie($request->superficie);
-        $typeCompositionLogement->setCompositionLogementSuperficie((string) $request->superficie);
         $typeCompositionLogement->setTypeLogementCommoditesPieceAVivre9m(self::convertBoolToString($request->isPieceAVivre9m));
         $typeCompositionLogement->setTypeLogementCommoditesCuisine(self::convertBoolToString($request->isCuisine));
         $typeCompositionLogement->setTypeLogementCommoditesSalleDeBain(self::convertBoolToString($request->isSalleDeBain));
@@ -129,10 +128,9 @@ class SignalementApiFactory
         $typeCompositionLogement->setBailDpeEtatDesLieux(self::convertBoolToString($request->isEtatDesLieux));
         if ($request->dateEntreeLogement) {
             $dateEntree = new \DateTimeImmutable($request->dateEntreeLogement);
-            $typeCompositionLogement->setBailDpeDateEmmenagement($dateEntree->format('Y-m-d'));
             $signalement->setDateEntree($dateEntree);
         }
-        $informationComplementaire->setInformationsComplementairesLogementMontantLoyer((string) $request->montantLoyer);
+        $signalement->setLoyer($request->montantLoyer);
         $informationComplementaire->setInformationsComplementairesSituationOccupantsLoyersPayes(self::convertBoolToString($request->isPaiementLoyersAJour));
 
         if ($request->isAllocataire) {

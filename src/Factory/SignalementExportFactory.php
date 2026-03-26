@@ -71,10 +71,7 @@ class SignalementExportFactory
             $enfantsM6 = ($data['nbEnfantsM6'] > 0) ? 'oui' : 'non';
         }
 
-        $infoProcedureBailDate = null;
-        if (isset($data['informationProcedure']) && $data['informationProcedure'] instanceof InformationProcedure) {
-            $infoProcedureBailDate = $data['informationProcedure']->getInfoProcedureBailDate();
-        }
+        $infoProcedureBailDate = $data['proprioAvertiAt'] ? $data['proprioAvertiAt']->format('m/Y') : null;
 
         $infoProcedureBailMoyen = $infoProcedureBailMoyenLabel = null;
         if (isset($data['informationProcedure'])

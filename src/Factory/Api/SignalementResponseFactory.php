@@ -119,7 +119,7 @@ readonly class SignalementResponseFactory
         $signalementResponse->nomStructureAccompagnement = $signalement->getSituationFoyer()?->getTravailleurSocialAccompagnementNomStructure();
         $signalementResponse->proprietaireAverti = $signalement->getIsProprioAverti();
         $signalementResponse->moyenInformationProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailMoyen();
-        $signalementResponse->dateInformationProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailDate();
+        $signalementResponse->dateInformationProprietaire = $signalement->getProprioAvertiAt()?->format('m/Y');
         $signalementResponse->reponseProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailReponse();
         $signalementResponse->numeroReclamationProprietaire = $signalement->getInformationProcedure()?->getInfoProcedureBailNumero();
         $signalementResponse->loyer = $signalement->getLoyer();

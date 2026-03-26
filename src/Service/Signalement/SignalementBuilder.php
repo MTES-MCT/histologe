@@ -287,7 +287,12 @@ class SignalementBuilder
 
         $situationFoyer = $this->situationFoyerFactory->createFromSignalementDraftPayload($this->payload);
         $suroccupationSpecification = new SuroccupationSpecification();
-        if ($suroccupationSpecification->isSatisfiedBy((int) $this->signalement->getNbOccupantsLogement(), $situationFoyer, $typeCompositionLogement)) {
+        if ($suroccupationSpecification->isSatisfiedBy(
+            (int) $this->signalement->getNbOccupantsLogement(),
+            $this->signalement->getSuperficie(),
+            $situationFoyer,
+            $typeCompositionLogement
+        )) {
             $precisionToLink = $this->desordrePrecisionRepository->findOneBy(
                 ['desordrePrecisionSlug' => $suroccupationSpecification->getSlug()]
             );
@@ -306,6 +311,7 @@ class SignalementBuilder
                 $this->informationProcedureFactory->createFromSignalementDraftPayload($this->payload)
             )
             ->setIsProprioAverti($this->evalBoolean($this->signalementDraftRequest->getInfoProcedureBailleurPrevenu()))
+            ->setProprioAvertiAt(SignalementDraftHelper::computeBailleurPrevenuAtFromRequest($this->signalementDraftRequest))
             ->setLoyer($loyer)
             ->setNbNiveauxLogement($nbEtages)
             ->setIsFondSolidariteLogement(

@@ -119,8 +119,6 @@ class SignalementFactory
         $signalement->setNbPiecesLogement((int) $formServiceSecours->step2->nbPiecesLogement)
             ->setSuperficie((int) $formServiceSecours->step2->superficie);
 
-        $typeCompositionLogement->setCompositionLogementSuperficie($formServiceSecours->step2->superficie);
-
         // data from step3
         $profilOccupant = $formServiceSecours->step3->profilOccupant;
         if ('logement_vacant' === $profilOccupant) {

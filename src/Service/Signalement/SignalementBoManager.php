@@ -158,8 +158,6 @@ class SignalementBoManager
 
         $typeCompositionLogement->setCompositionLogementPieceUnique($form->get('pieceUnique')->getData());
         $typeCompositionLogement->setCompositionLogementNbPieces($form->get('nombrePieces')->getData());
-        $signalement->setSuperficie($form->get('superficie')->getData());
-        $typeCompositionLogement->setCompositionLogementSuperficie($form->get('superficie')->getData());
         $typeCompositionLogement->setTypeLogementCommoditesPieceAVivre9m($form->get('pieceAVivre9m')->getData());
 
         $cuisine = $form->get('cuisine')->getData();
@@ -207,11 +205,6 @@ class SignalementBoManager
         $typeCompositionLogement->setBailDpeClasseEnergetique($form->get('classeEnergetique')->getData());
         $typeCompositionLogement->setDesordresLogementChauffageDetailsDpeAnnee($form->get('dateDpe')->getData());
         $typeCompositionLogement->setBailDpeEtatDesLieux($form->get('etatDesLieux')->getData());
-        if ($form->get('dateEntreeLogement')->getData()) {
-            $typeCompositionLogement->setBailDpeDateEmmenagement($form->get('dateEntreeLogement')->getData()->format('Y-m-d'));
-            $signalement->setDateEntree($form->get('dateEntreeLogement')->getData());
-        }
-        $informationComplementaire->setInformationsComplementairesLogementMontantLoyer($form->get('montantLoyer')->getData());
         $informationComplementaire->setInformationsComplementairesSituationOccupantsLoyersPayes($form->get('payementLoyersAJour')->getData());
         $this->situationFoyerProcessor->processIsAllocataire($signalement, $form->get('allocataire')->getData(), $form->get('caisseAllocation')->getData());
 

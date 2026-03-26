@@ -203,17 +203,6 @@ class SignalementEditController extends AbstractController
                 $signalement->setIsProprioAverti(false);
             }
             $informationProcedure->setInfoProcedureBailMoyen($formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData() ? $formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData()->value : null);
-
-            $infoProcedureBailDateFormData = $formCoordonneesBailleur->get('infoProcedureBailDate')->getData();
-            if ($infoProcedureBailDateFormData) {
-                $informationProcedure->setInfoProcedureBailDate($infoProcedureBailDateFormData);
-                $infoProcedureBailDateFormDataFormat = \DateTimeImmutable::createFromFormat('m/Y', $infoProcedureBailDateFormData);
-                $signalement->setProprioAvertiAt(!empty($infoProcedureBailDateFormDataFormat) ? $infoProcedureBailDateFormDataFormat : null);
-            } else {
-                $informationProcedure->setInfoProcedureBailDate('');
-                $signalement->setProprioAvertiAt(null);
-            }
-
             $informationProcedure->setInfoProcedureBailReponse($formCoordonneesBailleur->get('infoProcedureBailReponse')->getData());
 
             if ($signalement->getIsLogementSocial()) {
@@ -390,15 +379,13 @@ class SignalementEditController extends AbstractController
                 ->setBailDpeBail($form->get('bail')->getData())
                 ->setBailDpeEtatDesLieux($form->get('etatDesLieux')->getData())
                 ->setBailDpeDpe($form->get('dpe')->getData())
-                ->setBailDpeClasseEnergetique($form->get('classeEnergetique')->getData())
-                ->setBailDpeDateEmmenagement($form->get('dateEntree')->getData() ? $form->get('dateEntree')->getData()->format('Y-m-d') : null);
+                ->setBailDpeClasseEnergetique($form->get('classeEnergetique')->getData());
             $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
             $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();
             $dateEffetBail = $form->get('dateEffetBail')->getData() ? $form->get('dateEffetBail')->getData()->format('Y-m-d') : null;
             $informationComplementaire
                 ->setInformationsComplementairesSituationBailleurDateEffetBail($dateEffetBail)
-                ->setInformationsComplementairesLogementMontantLoyer($form->get('loyer')->getData())
                 ->setInformationsComplementairesSituationOccupantsLoyersPayes($form->get('payementLoyersAJour')->getData())
                 ->setInformationsComplementairesLogementAnneeConstruction($form->get('anneeConstruction')->getData());
             $signalement->setInformationComplementaire($informationComplementaire);
