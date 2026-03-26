@@ -247,7 +247,7 @@ readonly class SignalementResponseFactory
             );
         }
 
-        if (PersonneType::DECLARANT === $personneType && !empty($signalement->getLienDeclarantOccupant())) {
+        if (PersonneType::DECLARANT === $personneType) {
             return new Personne(
                 personneType: $personneType,
                 structure: $signalement->getStructureDeclarant(),
