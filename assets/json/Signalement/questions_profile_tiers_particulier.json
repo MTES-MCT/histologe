@@ -2022,6 +2022,7 @@
           "type": "SignalementFormTextarea",
           "label": "Quelle a été la réponse de l'assurance ? (facultatif)",
           "slug": "info_procedure_reponse_assurance",
+          "description": "Format attendu : 255 caractères maximum",
           "maxlength": 255,
           "conditional": {
             "show": "formStore.data.info_procedure_assurance_contactee === 'oui'"
