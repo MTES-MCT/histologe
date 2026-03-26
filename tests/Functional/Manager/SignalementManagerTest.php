@@ -15,7 +15,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
-use App\Factory\SignalementFactory;
+use App\Factory\SignalementImportFactory;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -49,7 +49,7 @@ class SignalementManagerTest extends WebTestCase
     private EntityManagerInterface $entityManager;
     private Security $security;
     private ManagerRegistry $managerRegistry;
-    private SignalementFactory $signalementFactory;
+    private SignalementImportFactory $signalementImportFactory;
     private QualificationStatusService $qualificationStatusService;
     private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
     private SignalementExportFactory $signalementExportFactory;
@@ -77,7 +77,7 @@ class SignalementManagerTest extends WebTestCase
         $this->entityManager = $em;
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->security = static::getContainer()->get('security.helper');
-        $this->signalementFactory = static::getContainer()->get(SignalementFactory::class);
+        $this->signalementImportFactory = static::getContainer()->get(SignalementImportFactory::class);
         $this->qualificationStatusService = static::getContainer()->get(QualificationStatusService::class);
         $this->signalementAffectationListViewFactory = static::getContainer()->get(
             SignalementAffectationListViewFactory::class
@@ -101,7 +101,7 @@ class SignalementManagerTest extends WebTestCase
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
             $this->security,
-            $this->signalementFactory,
+            $this->signalementImportFactory,
             $this->qualificationStatusService,
             $this->signalementAffectationListViewFactory,
             $this->signalementExportFactory,

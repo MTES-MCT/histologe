@@ -4,11 +4,7 @@ namespace App\Tests\Unit\Factory;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Territory;
-use App\Factory\SignalementFactory;
-use App\Repository\BailleurRepository;
-use App\Repository\DesordreCritereRepository;
-use App\Service\Signalement\SignalementAddressUpdater;
-use App\Service\Signalement\ZipcodeProvider;
+use App\Factory\SignalementImportFactory;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -97,17 +93,8 @@ class SignalementFactoryTest extends KernelTestCase
             ->setZip('01')
             ->setIsActive(true);
 
-        $zipCodeProvider = static::getContainer()->get(ZipcodeProvider::class);
-        $bailleurRepository = static::getContainer()->get(BailleurRepository::class);
-        $signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
-        $desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
-        $signalementFactory = new SignalementFactory(
-            $zipCodeProvider,
-            $signalementAddressUpdater,
-            $bailleurRepository,
-            $desordreCritereRepository,
-        );
-        $signalement = $signalementFactory->createInstanceFromArrayForImport($territory, $data);
+        $signalementImportFactory = new SignalementImportFactory();
+        $signalement = $signalementImportFactory->create($territory, $data);
 
         $this->assertEquals($data['reference'], $signalement->getReference());
         $this->assertEquals($data['nomDeclarant'], $signalement->getNomDeclarant());

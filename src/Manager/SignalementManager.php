@@ -36,7 +36,7 @@ use App\Entity\TiersInvitation;
 use App\Entity\User;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
-use App\Factory\SignalementFactory;
+use App\Factory\SignalementImportFactory;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
@@ -62,7 +62,7 @@ class SignalementManager extends AbstractManager
     public function __construct(
         protected ManagerRegistry $managerRegistry,
         private readonly Security $security,
-        private readonly SignalementFactory $signalementFactory,
+        private readonly SignalementImportFactory $signalementImportFactory,
         private readonly QualificationStatusService $qualificationStatusService,
         private readonly SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
         private readonly SignalementExportFactory $signalementExportFactory,
@@ -100,9 +100,7 @@ class SignalementManager extends AbstractManager
             return $this->update($signalement, $data);
         }
 
-        $signalement = $this->signalementFactory->createInstanceFromArrayForImport($territory, $data);
-
-        return $signalement;
+        return $this->signalementImportFactory->create($territory, $data);
     }
 
     /**

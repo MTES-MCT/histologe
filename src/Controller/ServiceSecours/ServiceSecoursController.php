@@ -6,7 +6,7 @@ use App\Dto\ServiceSecours\FormServiceSecours;
 use App\Entity\Enum\AppContext;
 use App\Entity\ServiceSecoursRoute;
 use App\Entity\Signalement;
-use App\Factory\SignalementFactory;
+use App\Factory\SignalementServiceSecoursFactory;
 use App\Form\ServiceSecours\ServiceSecoursType;
 use App\Manager\UserManager;
 use App\Messenger\Message\SignalementServiceSecoursFileMessage;
@@ -47,7 +47,7 @@ class ServiceSecoursController extends AbstractController
     public function index(
         Request $request,
         ServiceSecoursRoute $serviceSecoursRoute,
-        SignalementFactory $signalementFactory,
+        SignalementServiceSecoursFactory $signalementServiceSecoursFactory,
         DesordreCritereRepository $desordreCritereRepository,
         SignalementRepository $signalementRepository,
         EntityManagerInterface $entityManager,
@@ -63,7 +63,7 @@ class ServiceSecoursController extends AbstractController
         $flow = $this->createForm(ServiceSecoursType::class, $serviceSecours);
         $flow->handleRequest($request);
         if ($flow->isSubmitted() && $flow->isValid() && $flow->isFinished()) {
-            $signalement = $signalementFactory->createInstanceFromFormServiceSecours($flow->getData(), $serviceSecoursRoute);
+            $signalement = $signalementServiceSecoursFactory->create($flow->getData(), $serviceSecoursRoute);
 
             $entityManager->beginTransaction();
             $signalement->setReference($referenceGenerator->generateReference($signalement->getTerritory()));
