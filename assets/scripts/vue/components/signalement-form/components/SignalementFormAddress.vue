@@ -401,7 +401,8 @@ export default defineComponent({
 
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
               maxZoom: 19,
-              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+              referrerPolicy: "origin"
             }).addTo(this.map)
 
             // Initialiser la couche vectorielle RNB
@@ -433,7 +434,8 @@ export default defineComponent({
 
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
               maxZoom: 19,
-              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+              referrerPolicy: "origin"
             }).addTo(this.map)
           })
         })

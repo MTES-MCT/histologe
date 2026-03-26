@@ -74,9 +74,9 @@ export default defineComponent({
         maxBounds: this.bounds,
         minZoom: 2,
         maxZoom: 18,
-        zoom: this.defaultZoom
+        zoom: this.defaultZoom,
       })
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { crossOrigin: true }).addTo(this.map as unknown as L.Map)
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { crossOrigin: true, referrerPolicy: "origin" }).addTo(this.map as unknown as L.Map)
     },
     addMarkers (signalements: any[]) {
       this.markers.clearLayers()

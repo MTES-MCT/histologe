@@ -1,7 +1,8 @@
 var map = L.map('zone_map').setView([47, 2], 6);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    referrerPolicy: "origin"
 }).addTo(map);
 
 // Correction des chemins des icônes

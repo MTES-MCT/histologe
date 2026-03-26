@@ -13,6 +13,7 @@ if (modalLocalisation) {
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        referrerPolicy: "origin"
       }).addTo(map);
     }
     let btn = document.getElementById('fr-modal-localisation-btn');
@@ -27,6 +28,7 @@ if (modalPickLocalisation) {
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    referrerPolicy: "origin"
   }).addTo(map);
 
   modalPickLocalisation.addEventListener('dsfr.disclose', () => {
