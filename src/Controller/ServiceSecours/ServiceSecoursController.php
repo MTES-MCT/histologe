@@ -58,21 +58,10 @@ class ServiceSecoursController extends AbstractController
         ServiceSecoursPdfGenerator $serviceSecoursPdfGenerator,
         MessageBusInterface $messageBus,
     ): Response {
-        $session = $request->getSession();
-        $serviceSecours = $session->get('service_secours_data', new FormServiceSecours());
-        $serviceSecours->step2->territoryZip = $serviceSecoursRoute->getTerritory()->getZip();
-
-        if ($request->request->has('step')) {
-            $step = $request->request->get('step');
-            if (in_array($step, ['step1', 'step2', 'step3', 'step4', 'step5']) && $step < $serviceSecours->currentStep) {
-                $serviceSecours->currentStep = $step;
-            }
-        }
+        $serviceSecours = new FormServiceSecours();
         /** @var FormFlowInterface $flow */
         $flow = $this->createForm(ServiceSecoursType::class, $serviceSecours);
         $flow->handleRequest($request);
-        $session->set('service_secours_data', $flow->getData());
-
         if ($flow->isSubmitted() && $flow->isValid() && $flow->isFinished()) {
             $signalement = $signalementFactory->createInstanceFromFormServiceSecours($flow->getData(), $serviceSecoursRoute);
 

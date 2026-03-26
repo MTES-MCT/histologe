@@ -194,14 +194,7 @@
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
                             <h4 class="fr-h6">Vos coordonnées</h4>
-                            <button
-                                type="submit"
-                                name="step"
-                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
-                                value="step1"
-                                aria-label="Modifier les coordonnées" title="Modifier les coordonnées">
-                                <span class="fr-hidden fr-unhidden-md">Modifier</span>
-                            </button>
+                            {{ form_row(form.navigator.editStep1) }}
                         </div>
                         {% if data.step1.matriculeDeclarant %}
                             Matricule : {{ data.step1.matriculeDeclarant }}<br>
@@ -223,14 +216,7 @@
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
                             <h4 class="fr-h6">Infos sur le logement</h4>
-                            <button
-                                type="submit"
-                                name="step"
-                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
-                                value="step2"
-                                aria-label="Modifier les infos sur le logement" title="Modifier les infos sur le logement">
-                                <span class="fr-hidden fr-unhidden-md">Modifier</span>
-                            </button>
+                            {{ form_row(form.navigator.editStep2) }}
                         </div>
                         {{ data.step2.adresseOccupant }} <br>
                         {% if data.step2.adresseAutreOccupant %}
@@ -265,14 +251,7 @@
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
                             <h4 class="fr-h6">Occupation du logement</h4>
-                            <button
-                                type="submit"
-                                name="step"
-                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
-                                value="step3"
-                                aria-label="Modifier l'occupation du logement" title="Modifier l'occupation du logement">
-                                <span class="fr-hidden fr-unhidden-md">Modifier</span>
-                            </button>
+                            {{ form_row(form.navigator.editStep3) }}
                         </div>
                         {% if data.step3.nomOccupant %}
                             {{ data.step3.nomOccupant }} 
@@ -312,14 +291,7 @@
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
                             <h4 class="fr-h6">Propriétaire / Syndic</h4>
-                            <button
-                                type="submit"
-                                name="step"
-                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
-                                value="step4"
-                                aria-label="Modifier les informations propriétaire / syndic" title="Modifier les informations propriétaire / syndic">
-                                <span class="fr-hidden fr-unhidden-md">Modifier</span>
-                            </button>
+                            {{ form_row(form.navigator.editStep4) }}
                         </div>
                         {% set showBailleur = data.step4.isBailleurAverti or data.step4.denominationProprio or data.step4.nomProprio or data.step4.prenomProprio or data.step4.mailProprio or data.step4.telProprio %}
                         {% set showSyndic = data.step4.denominationSyndic or data.step4.nomSyndic or data.step4.mailSyndic or data.step4.telSyndic or data.step4.telSyndicSecondaire %}
@@ -370,14 +342,7 @@
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
                             <h4 class="fr-h6">Désordres</h4>
-                            <button
-                                type="submit"
-                                name="step"
-                                class="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-edit-line fr-btn--icon-left"
-                                value="step5"
-                                aria-label="Modifier les désordres" title="Modifier les désordres">
-                                <span class="fr-hidden fr-unhidden-md">Modifier</span>
-                            </button>
+                            {{ form_row(form.navigator.editStep5) }}
                         </div>
                         {% if data.step5.autresOccupantsDesordre %}
                             Désordres rencontrés par d'autres occupants de l'immeuble : {{ data.step5.autresOccupantsDesordre|format_answer }}<br>
@@ -400,21 +365,37 @@
 
                     {{form_row(form.step6.hidden)}}
                 {% endif %}
-                <div class="fr-col-12">
-                    <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
-                        {% if form.navigator.finish is defined %}
-                            <li>{{ form_row(form.navigator.finish) }}</li>
-                        {% endif %}
-                        {% if form.navigator.nextReview is defined %}
-                            <li>{{ form_row(form.navigator.nextReview) }}</li>
-                        {% endif %}
-                        {% if form.navigator.next is defined %}
-                            <li>{{ form_row(form.navigator.next) }}</li>
-                        {% endif %}
-                        {% if form.navigator.previous is defined %}
-                            <li>{{ form_row(form.navigator.previous) }}</li>
-                        {% endif %}
-                    </ul>
+                {#
+                    Ordre DOM volontaire pour la tabulation : next => previous => reset
+                    L'ordre visuel est géré en CSS via les classes form-nav-row-reverse et fr-btns-group--inline-reverse
+                    Ne pas modifier l'ordre HTML sans adapter aussi la navigation clavier.
+                #}
+                <div class="fr-col-12 fr-col-lg">
+                    <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters form-nav-row-reverse">
+                        <div class="fr-col-12 fr-col-lg">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left  fr-btns-group--inline-reverse">
+                                {% if form.navigator.next is defined %}
+                                    <li>{{ form_widget(form.navigator.next) }}</li>
+                                {% endif %}
+                                {% if form.navigator.nextReview is defined %}
+                                    <li>{{ form_widget(form.navigator.nextReview) }}</li>
+                                {% endif %}
+                                {% if form.navigator.finish is defined %}
+                                    <li>{{ form_widget(form.navigator.finish) }}</li>
+                                {% endif %}
+                                {% if form.navigator.previous is defined %}
+                                    <li>{{ form_widget(form.navigator.previous) }}</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <div class="fr-col-12 fr-col-lg">
+                            {% if form.navigator.reset is defined %}
+                                <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                    <li>{{ form_widget(form.navigator.reset) }}</li>
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
                 {{ form_end(form) }}
 
