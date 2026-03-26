@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Dto\CountPartner;
 use App\Entity\Affectation;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
@@ -275,7 +276,7 @@ class PartnerRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<int, array<string, int|string>>
+     * @return list<array{id: int, name: string, type: string}>
      *
      * @throws Exception
      */
@@ -363,7 +364,7 @@ class PartnerRepository extends ServiceEntityRepository
         }
 
         $sql = '
-                SELECT DISTINCT p.id, p.nom as name
+                SELECT DISTINCT p.id, p.nom as name, p.type
                 FROM partner p
                 LEFT JOIN partner_zone pz ON p.id = pz.partner_id
                 LEFT JOIN zone z ON pz.zone_id = z.id
@@ -435,12 +436,27 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByIds(array $partnerIds): array
+    /**
+     * @param list<int>         $partnerIds
+     * @param list<PartnerType> $types
+     *
+     * @return array<int, Partner>
+     */
+    public function findByIds(array $partnerIds, array $types = []): array
     {
-        return $this->createQueryBuilder('p')
+        if ([] === $partnerIds) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('p', 'p.id')
             ->andWhere('p.id IN (:ids)')
-            ->setParameter('ids', $partnerIds)
-            ->getQuery()
-            ->getResult();
+            ->setParameter('ids', $partnerIds);
+
+        if ([] !== $types) {
+            $qb->andWhere('p.type IN (:types)')
+                ->setParameter('types', $types);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

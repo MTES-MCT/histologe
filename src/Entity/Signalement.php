@@ -12,7 +12,6 @@ use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\MotifRefus;
-use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
@@ -2194,12 +2193,16 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return null;
     }
 
-    public function getAffectationByPartnerTypeConnectedToSish(PartnerType $partnerType): ?Affectation
+    public function getRelatedAffectationsConnectedToSish(Partner $partnerAlreadyAffected): ?Affectation
     {
         foreach ($this->affectations as $affectation) {
-            if ($affectation->getPartner()->getType() === $partnerType
-                && $affectation->getPartner()->canSyncWithEsabora()
-                && $affectation->getPartner()->isConnectedToSanteHabitat()
+            $partner = $affectation->getPartner();
+            if ($partner->getId() === $partnerAlreadyAffected->getId()) {
+                continue;
+            }
+
+            if ($partner->canSyncWithEsabora()
+                && $partner->isConnectedToSanteHabitat()
             ) {
                 return $affectation;
             }

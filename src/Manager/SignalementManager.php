@@ -17,6 +17,7 @@ use App\Dto\SignalementAffectationClose;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
@@ -74,6 +75,7 @@ class SignalementManager extends AbstractManager
         private readonly SuiviManager $suiviManager,
         private readonly UserManager $userManager,
         private readonly BailleurRepository $bailleurRepository,
+        private readonly PartnerRepository $partnerRepository,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly ExportIterableQuery $exportIterableQuery,
@@ -221,6 +223,19 @@ class SignalementManager extends AbstractManager
             affected: false,
             filterInjonctionBailleur: $filterInjonctionBailleur,
         );
+
+        $partnerIds = array_column($partners['not_affected'], 'id');
+        $notAffectedPartners = $this->partnerRepository->findByIds($partnerIds, [PartnerType::ARS, PartnerType::COMMUNE_SCHS]);
+
+        foreach ($partners['not_affected'] as $key => $partnerNotAffected) {
+            if (!isset($notAffectedPartners[$partnerNotAffected['id']])) {
+                continue;
+            }
+            $affectation = $signalement->getRelatedAffectationsConnectedToSish($notAffectedPartners[$partnerNotAffected['id']]);
+            if ($affectation) {
+                $partners['not_affected'][$key]['is_disabled'] = true;
+            }
+        }
 
         return $partners;
     }
