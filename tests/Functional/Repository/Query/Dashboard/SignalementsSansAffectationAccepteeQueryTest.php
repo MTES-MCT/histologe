@@ -32,7 +32,7 @@ class SignalementsSansAffectationAccepteeQueryTest extends KernelTestCase
         $this->signalementsSansAffectationAccepteeQuery = static::getContainer()->get(SignalementsSansAffectationAccepteeQuery::class);
     }
 
-    public function testCountSignalementsSansAffectationAcceptee(): void
+    public function testCountSignalements(): void
     {
         $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_13]);
         $this->assertNotNull($user);
@@ -48,7 +48,7 @@ class SignalementsSansAffectationAccepteeQueryTest extends KernelTestCase
         $this->assertGreaterThanOrEqual(0, $count);
     }
 
-    public function testFindSignalementsSansAffectationAcceptee(): void
+    public function testfindSignalements(): void
     {
         $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_13]);
 
@@ -91,7 +91,7 @@ class SignalementsSansAffectationAccepteeQueryTest extends KernelTestCase
         }
     }
 
-    public function testFindSignalementsSansAffectationAccepteeSortByAffectedAt(): void
+    public function testfindSignalementsSortByAffectedAt(): void
     {
         $user = $this->userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_13]);
 

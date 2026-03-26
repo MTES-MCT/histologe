@@ -429,7 +429,7 @@ class TabDataManagerTest extends WebTestCase
         /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
-        $this->signalementRepository->method('findSignalementsSansAffectationAcceptee')->with($user)->willReturn([
+        $this->signalementsSansAffectationAccepteeQuery->method('findSignalements')->with($user)->willReturn([
             [
                 'nomOccupant' => 'Lemoine',
                 'prenomOccupant' => 'Claire',
@@ -441,7 +441,7 @@ class TabDataManagerTest extends WebTestCase
                 'uuid' => 'uuid-999',
             ],
         ]);
-        $this->signalementRepository->method('countSignalementsSansAffectationAcceptee')->with($user)->willReturn(1);
+        $this->signalementsSansAffectationAccepteeQuery->method('countSignalements')->with($user)->willReturn(1);
 
         $tabDataManager = $this->getTabDataManager();
 
