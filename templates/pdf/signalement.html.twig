@@ -531,7 +531,7 @@
                             <li>
                                 <b>Classe énergétique :</b> {{ signalement.typeCompositionLogement.bailDpeClasseEnergetique(false) ?? 'N/R' }}
                             </li>
-                            {% if signalement.autresOccupantsDesordre is not same as null %}
+                            {% if signalement.natureLogement is same as 'appartement' and signalement.autresOccupantsDesordre is not same as null %}
                                 <li><b>D'autres occupants de l'immeuble ont rencontré des désordres :</b>
                                     {{signalement.autresOccupantsDesordre}}
                                 </li>

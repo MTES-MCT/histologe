@@ -196,8 +196,9 @@ class InformationsGeneralesType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $anneeConstruction,
-            ])
-            ->add('autresOccupantsDesordre', ChoiceType::class, [
+            ]);
+        if ('appartement' === $signalement->getNatureLogement()) {
+            $builder->add('autresOccupantsDesordre', ChoiceType::class, [
                 'label' => 'D\'autres occupants de l\'immeuble ont rencontré des désordres (facultatif)',
                 'choices' => [
                     'Oui' => 'oui',
@@ -210,6 +211,7 @@ class InformationsGeneralesType extends AbstractType
                 'placeholder' => false,
                 'data' => $signalement->getAutresOccupantsDesordre(),
             ]);
+        }
         $builder->add('save', SubmitType::class, [
             'label' => 'Envoyer',
             'attr' => [

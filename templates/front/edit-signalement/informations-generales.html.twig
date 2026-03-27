@@ -73,9 +73,11 @@
 				<div class="fr-fieldset__element">
 					{{ form_row(form.anneeConstruction) }}
 				</div>
-				<div class="fr-fieldset__element">
-					{{ form_row(form.autresOccupantsDesordre) }}
-				</div>
+    			{% if signalement.natureLogement is same as 'appartement' %}					
+					<div class="fr-fieldset__element">
+						{{ form_row(form.autresOccupantsDesordre) }}
+					</div>
+				{% endif %}
 			</fieldset>
 		</div>
 		<div class="fr-col-12">
