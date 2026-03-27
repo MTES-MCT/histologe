@@ -60,6 +60,11 @@ class CommuneRepository extends ServiceEntityRepository
 
     public function findDistinctCommuneCodesInseeForCodeInseeList(array $codesInsee): array
     {
+        $cleanedCodesInsee = array_filter(array_map('trim', $codesInsee));
+        if (empty($cleanedCodesInsee)) {
+            return [];
+        }
+
         return $this->createQueryBuilder('c')
             ->where('c.codeInsee IN (:codesInsee)')
             ->andWhere('c.id IN (
@@ -67,7 +72,7 @@ class CommuneRepository extends ServiceEntityRepository
                 WHERE c2.codeInsee IN (:codesInsee) 
                 GROUP BY c2.codeInsee
             )')
-            ->setParameter('codesInsee', $codesInsee)
+            ->setParameter('codesInsee', $cleanedCodesInsee)
             ->orderBy('c.nom', 'ASC')
             ->getQuery()
             ->getResult();

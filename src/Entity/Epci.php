@@ -30,9 +30,16 @@ class Epci
     #[ORM\OneToMany(mappedBy: 'epci', targetEntity: Commune::class)]
     private Collection $communes;
 
+    /**
+     * @var Collection<int, Partner>
+     */
+    #[ORM\ManyToMany(targetEntity: Partner::class, mappedBy: 'epcis')]
+    private Collection $partners;
+
     public function __construct()
     {
         $this->communes = new ArrayCollection();
+        $this->partners = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -77,6 +84,33 @@ class Epci
         if (!$this->communes->contains($commune)) {
             $this->communes->add($commune);
             $commune->setEpci($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Partner>
+     */
+    public function getPartners(): Collection
+    {
+        return $this->partners;
+    }
+
+    public function addPartner(Partner $partner): static
+    {
+        if (!$this->partners->contains($partner)) {
+            $this->partners->add($partner);
+            $partner->addEpci($this);
+        }
+
+        return $this;
+    }
+
+    public function removePartner(Partner $partner): static
+    {
+        if ($this->partners->removeElement($partner)) {
+            $partner->removeEpci($this);
         }
 
         return $this;

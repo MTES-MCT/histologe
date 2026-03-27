@@ -37,13 +37,16 @@
                 <h2>Périmètre d'intervention</h2>
                 <p>
                     Définissez ci-dessous les zones géographiques dans lesquelles le partenaire doit intervenir. 
-                    Il peut s'agir de communes et / ou de zones définies au préalable dans la partie Outils Admin > Zones.
+                    Il peut s'agir de communes{% if not partner.isCommune %}, d'EPCI{% endif %} et / ou de zones définies au préalable dans la partie Outils Admin > Zones.
                 </p>
                 {{ form_start(form)}}
                 {{ form_errors(form) }}
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-6">
                         {{ form_row(form.insee) }}
+                        {% if not partner.isCommune %}
+                            {{ form_row(form.epcis) }}
+                        {% endif %}
                     </div>
                     <div class="fr-col-6">
                         {{ form_row(form.zones) }}

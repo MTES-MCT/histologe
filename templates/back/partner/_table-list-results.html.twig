@@ -7,6 +7,7 @@
     <th scope="col">Type</th>
     <th scope="col">Compétences</th>
     <th scope="col">Communes</th>
+    <th scope="col">EPCI</th>
     <th scope="col">Zones</th>
     <th scope="col">Notifiable</th>
     <th scope="col">Nb utilisateurs actifs</th>
@@ -41,6 +42,13 @@
                 {% if communes|length > 3 %}
                     <div class="fr-badge fr-mb-1v">+{{communes|length - 3}}</div>
                 {% endif %}
+            </td>
+            <td>
+                {% for epci in partner.epcis %}
+                    <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ epci.nom }}</div>
+                {% else %}
+                    /
+                {% endfor %}
             </td>
             <td>
                 {% if partner.zones or partner.excludedZones %}

@@ -196,6 +196,7 @@ class PartnerController extends AbstractController
         }
 
         $previousTerritory = $partner->getTerritory();
+        $previousType = $partner->getType();
 
         $form = $this->createForm(PartnerType::class, $partner);
         $form->handleRequest($request);
@@ -237,6 +238,16 @@ class PartnerController extends AbstractController
                     visiteNotifier: $visiteNotifier,
                     interventionPlanningStateMachine: $interventionPlanningStateMachine,
                     interventionManager: $interventionManager,
+                );
+            }
+
+            if ($partner->getType() != $previousType && EnumPartnerType::COMMUNE_SCHS === $partner->getType() && !$partner->getEpcis()->isEmpty()) {
+                $partner->getEpcis()->clear();
+                $this->addFlash('warning',
+                    [
+                        'title' => 'Changement de type de partenaire',
+                        'message' => 'Le type de partenaire Commune ne peut pas avoir un périmètre de type EPCI. Le périmètre a été mis à jour.',
+                    ]
                 );
             }
 
