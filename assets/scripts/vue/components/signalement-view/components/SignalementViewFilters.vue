@@ -444,6 +444,9 @@ export default defineComponent({
   watch: {
     'sharedState.filtersApplyKey': function (newList) {
       this.syncToggleStatesWithFilters()
+    },
+    'sharedState.input.filters.showMySignalementsOnly': function (newVal) {
+      this.toggleStates.showMySignalementsOnly = newVal === 'oui'
     }
   },
   methods: {
