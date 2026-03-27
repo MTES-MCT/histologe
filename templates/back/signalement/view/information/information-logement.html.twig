@@ -136,8 +136,10 @@
             {{ signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction }}
         {% endif %}
     </div>
-    <div class="fr-col-12 fr-col-md-6">
-        <strong>D'autres occupants de l'immeuble ont rencontré des désordres :</strong>
-        {{ signalement.autresOccupantsDesordre|format_answer }}
-    </div>
+    {% if signalement.natureLogement is same as 'appartement' %}
+        <div class="fr-col-12 fr-col-md-6">
+            <strong>D'autres occupants de l'immeuble ont rencontré des désordres :</strong>
+            {{ signalement.autresOccupantsDesordre|format_answer }}
+        </div>
+    {% endif %}
 </div>

@@ -60,6 +60,7 @@ class SignalementExportHeader
             'Allocataire',
             'Numéro allocataire',
             'Nature du logement',
+            'Autres occupants désordres',
             'Superficie',
             'Logement social',
             'Préavis de départ',

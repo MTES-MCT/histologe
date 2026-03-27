@@ -53,6 +53,7 @@ class SignalementExport
         public ?string $isAllocataire = null,
         public ?string $numAllocataire = null,
         public ?string $natureLogement = null,
+        public ?string $autresOccupantsDesordre = null,
         public ?string $superficie = null,
         public ?string $isLogementSocial = null,
         public ?string $isPreavisDepart = null,

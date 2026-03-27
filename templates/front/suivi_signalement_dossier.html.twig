@@ -695,7 +695,7 @@
 							</li>
 						{% endif %}
 					{% endif %}
-					{% if signalement.autresOccupantsDesordre is not same as null %}
+					{% if signalement.natureLogement is same as 'appartement' and signalement.autresOccupantsDesordre is not same as null %}
 						<li>D'autres occupants de l'immeuble ont rencontré des désordres :
 							{{ signalement.autresOccupantsDesordre|format_answer}}
 						</li>

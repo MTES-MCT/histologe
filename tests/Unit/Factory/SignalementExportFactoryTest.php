@@ -109,6 +109,7 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->adresseAutreOccupant);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->numAllocataire);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->natureLogement);
+        $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->autresOccupantsDesordre);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->superficie);
 
         $this->assertEquals('-', $signalementExportFactory->photos);

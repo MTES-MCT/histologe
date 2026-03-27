@@ -592,11 +592,16 @@ class SignalementManager extends AbstractManager
             ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux())
             ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe())
             ->setBailDpeClasseEnergetique($informationsLogementRequest->getBailDpeClasseEnergetique());
-        $signalement
-            ->setTypeCompositionLogement($typeCompositionLogement)
+
+        $signalement->setTypeCompositionLogement($typeCompositionLogement)
             ->setNumeroInvariant($informationsLogementRequest->getBailDpeInvariant())
-            ->setAutreSituationVulnerabilite($informationsLogementRequest->getAutreSituationVulnerabilite())
-            ->setAutresOccupantsDesordre($informationsLogementRequest->getAutresOccupantsDesordre());
+            ->setAutreSituationVulnerabilite($informationsLogementRequest->getAutreSituationVulnerabilite());
+
+        if ('appartement' === $signalement->getNatureLogement()) {
+            $signalement->setAutresOccupantsDesordre($informationsLogementRequest->getAutresOccupantsDesordre());
+        } else {
+            $signalement->setAutresOccupantsDesordre(null);
+        }
 
         $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(static function ($qualification) {
             return Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification();
