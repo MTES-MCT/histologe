@@ -90,7 +90,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $this->requestStartFlow($client);
         $crawler = $this->submitStep1($client, $crawler);
-        $this->submitStep2($client, $crawler, 'oui');
+        $this->submitStep2($client, $crawler, 'oui', EtageType::RDC->value);
 
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('label', 'Profil de l\'occupant');
@@ -101,7 +101,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $this->requestStartFlow($client);
         $crawler = $this->submitStep1($client, $crawler);
-        $crawler = $this->submitStep2($client, $crawler, 'oui');
+        $crawler = $this->submitStep2($client, $crawler, 'oui', EtageType::SOUSSOL->value);
         $this->submitStep3($client, $crawler);
 
         self::assertResponseIsSuccessful();
@@ -113,7 +113,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $this->requestStartFlow($client);
         $crawler = $this->submitStep1($client, $crawler);
-        $crawler = $this->submitStep2($client, $crawler, 'non');
+        $crawler = $this->submitStep2($client, $crawler, 'non', EtageType::DERNIER_ETAGE->value);
         $crawler = $this->submitStep3($client, $crawler);
 
         $this->submitStep4($client, $crawler);
@@ -128,7 +128,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         $client = static::createClient();
         $crawler = $this->requestStartFlow($client);
         $crawler = $this->submitStep1($client, $crawler);
-        $crawler = $this->submitStep2($client, $crawler, 'non');
+        $crawler = $this->submitStep2($client, $crawler, 'non', EtageType::DERNIER_ETAGE->value);
         $crawler = $this->submitStep3($client, $crawler);
         $crawler = $this->submitStep4($client, $crawler);
 
@@ -172,6 +172,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         $this->assertSame('44179', $signalement->getInseeOccupant());
         $this->assertSame('44850', $signalement->getCpOccupant());
         $this->assertFalse($signalement->getIsLogementSocial());
+        $this->assertSame('2', $signalement->getEtageOccupant());
         $this->assertSame('Martin', $signalement->getNomProprio());
         $this->assertSame('Syndic Bueno SCI', $signalement->getDenominationSyndic());
         $this->assertSame('Hello world!!!', $signalement->getAutreSituationVulnerabilite());
@@ -179,6 +180,11 @@ class ServiceSecoursControllerTest extends WebTestCase
         $this->assertArrayHasKey('desordres_service_secours_autre_precision', $signalement->getJsonContent());
         $this->assertSame('Lorem ipsum', $signalement->getJsonContent()['desordres_service_secours_autre_precision']);
         $this->assertSame('oui', $signalement->getAutresOccupantsDesordre());
+        $this->assertSame('non', $signalement->getTypeCompositionLogement()->getTypeLogementRdc());
+        $this->assertSame('non', $signalement->getTypeCompositionLogement()->getTypeLogementDernierEtage());
+        $this->assertSame('1', $signalement->getTypeCompositionLogement()->getCompositionLogementNombreEnfants());
+        $this->assertSame('non', $signalement->getTypeCompositionLogement()->getCompositionLogementEnfants());
+        $this->assertSame(3, $signalement->getNbOccupantsLogement()); // 2 adultes + 1 enfant
     }
 
     private function requestStartFlow(KernelBrowser $client): Crawler
@@ -215,8 +221,12 @@ class ServiceSecoursControllerTest extends WebTestCase
         return $client->submit($form);
     }
 
-    private function submitStep2(KernelBrowser $client, Crawler $crawler, string $isLogementSocial = 'non'): Crawler
-    {
+    private function submitStep2(
+        KernelBrowser $client,
+        Crawler $crawler,
+        string $isLogementSocial = 'non',
+        string $typeEtageLogement = EtageType::AUTRE->value,
+    ): Crawler {
         $form = $crawler->selectButton('Suivant')->form([
             'service_secours[step2][adresseOccupant]' => '8 Rue de la tourmentinerie',
             'service_secours[step2][cpOccupant]' => '44850',
@@ -225,7 +235,7 @@ class ServiceSecoursControllerTest extends WebTestCase
             'service_secours[step2][adresseAutreOccupant]' => 'Bâtiment A',
             'service_secours[step2][isLogementSocial]' => $isLogementSocial,
             'service_secours[step2][natureLogement]' => 'appartement',
-            'service_secours[step2][typeEtageLogement]' => EtageType::AUTRE->value,
+            'service_secours[step2][typeEtageLogement]' => $typeEtageLogement,
             'service_secours[step2][etageOccupant]' => '2',
             'service_secours[step2][nbPiecesLogement]' => '3',
             'service_secours[step2][superficie]' => '65',

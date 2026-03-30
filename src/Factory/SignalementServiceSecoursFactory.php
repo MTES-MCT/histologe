@@ -47,8 +47,9 @@ class SignalementServiceSecoursFactory
         $this->handleStep1($formServiceSecours, $signalement);
         $this->handleStep2($formServiceSecours, $signalement, $typeCompositionLogement);
         $this->handleStep3($formServiceSecours, $signalement, $typeCompositionLogement);
-        $this->handleStep4($formServiceSecours, $signalement, $typeCompositionLogement);
+        $this->handleStep4($formServiceSecours, $signalement);
         $this->handleStep5($formServiceSecours, $signalement);
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
         return $signalement;
     }
@@ -162,7 +163,6 @@ class SignalementServiceSecoursFactory
     private function handleStep4(
         FormServiceSecours $formServiceSecours,
         Signalement $signalement,
-        TypeCompositionLogement $typeCompositionLogement,
     ): void {
         if ('oui' === $formServiceSecours->step4->isBailleurAverti) {
             $signalement->setIsProprioAverti(true);
@@ -183,8 +183,6 @@ class SignalementServiceSecoursFactory
         $signalement->setMailSyndic($formServiceSecours->step4->mailSyndic);
         $signalement->setTelSyndic($formServiceSecours->step4->telSyndic);
         $signalement->setTelSyndicSecondaire($formServiceSecours->step4->telSyndicSecondaire);
-
-        $signalement->setTypeCompositionLogement($typeCompositionLogement);
     }
 
     private function handleStep5(FormServiceSecours $formServiceSecours, Signalement $signalement): void
