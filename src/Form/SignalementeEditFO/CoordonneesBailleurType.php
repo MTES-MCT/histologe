@@ -127,7 +127,7 @@ class CoordonneesBailleurType extends AbstractType
                     'placeholder' => 'Sélectionner un moyen de contact',
                     'required' => false,
                     'mapped' => false,
-                    'data' => MoyenContact::tryFrom($signalement->getInformationProcedure()?->getInfoProcedureBailMoyen()),
+                    'data' => MoyenContact::tryFromString($signalement->getInformationProcedure()?->getInfoProcedureBailMoyen()),
                 ])
                 ->add('proprioAvertiAt', DateType::class, [
                     'label' => 'Date d\'avertissement du propriétaire',

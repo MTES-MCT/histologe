@@ -203,7 +203,7 @@ class SignalementEditController extends AbstractController
             } else {
                 $signalement->setIsProprioAverti(false);
             }
-            $informationProcedure->setInfoProcedureBailMoyen($formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData() ? $formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData()->value : null);
+            $informationProcedure->setInfoProcedureBailMoyen($formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData() ? mb_strtolower($formCoordonneesBailleur->get('infoProcedureBailMoyen')->getData()->value) : null);
             $informationProcedure->setInfoProcedureBailReponse($formCoordonneesBailleur->get('infoProcedureBailReponse')->getData());
 
             if ($signalement->getIsLogementSocial()) {
