@@ -216,6 +216,10 @@ class File implements EntityHistoryInterface
 
     public function isPartnerFile(): ?bool
     {
+        if ($this->getPartner()) {
+            return true;
+        }
+
         return null !== $this->uploadedBy
         && ($this->uploadedBy->isSuperAdmin()
         || $this->uploadedBy->isTerritoryAdmin()

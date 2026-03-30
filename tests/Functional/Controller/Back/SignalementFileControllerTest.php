@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Signalement\SignalementFileProcessor;
@@ -174,5 +175,70 @@ class SignalementFileControllerTest extends WebTestCase
             'La description ne doit pas d\u00e9passer 255 caract\u00e8res',
             (string) $this->client->getResponse()->getContent()
         );
+    }
+
+    public function testDeleteFileForRT(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $fileRepository = static::getContainer()->get(FileRepository::class);
+        $fileToDelete = $fileRepository->findOneBy(['signalement' => $this->signalement]);
+
+        $route = $this->router->generate('back_signalement_delete_file', ['uuid' => $this->signalement->getUuid(), 'id' => $fileToDelete->getId()]);
+        $token = $this->generateCsrfToken($this->client, 'signalement_delete_file_'.$this->signalement->getId());
+        $this->client->request('POST', $route, ['_token' => $token, 'file_id' => $fileToDelete->getId()]);
+        $this->assertResponseStatusCodeSame(302);
+    }
+
+    public function testDeleteFileWithoutUploadByForRT(): void
+    {
+        $entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $fileRepository = static::getContainer()->get(FileRepository::class);
+        $fileToDelete = $fileRepository->findOneBy(['signalement' => $this->signalement]);
+        $route = $this->router->generate('back_signalement_delete_file', ['uuid' => $this->signalement->getUuid(), 'id' => $fileToDelete->getId()]);
+        $token = $this->generateCsrfToken($this->client, 'signalement_delete_file_'.$this->signalement->getId());
+        // ok sans l'user car il reste le partenaire (cas des doc uploadé par un Esabora)
+        $fileToDelete->setUploadedBy(null);
+        $entityManager->flush();
+        $this->client->request('POST', $route, ['_token' => $token, 'file_id' => $fileToDelete->getId()]);
+        $this->assertResponseStatusCodeSame(302);
+    }
+
+    public function testDeleteFileWithoutUploadByAndPartnerForRT(): void
+    {
+        $entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $fileRepository = static::getContainer()->get(FileRepository::class);
+        $fileToDelete = $fileRepository->findOneBy(['signalement' => $this->signalement]);
+        $route = $this->router->generate('back_signalement_delete_file', ['uuid' => $this->signalement->getUuid(), 'id' => $fileToDelete->getId()]);
+        $token = $this->generateCsrfToken($this->client, 'signalement_delete_file_'.$this->signalement->getId());
+        // nok sans user ni partenaire
+        $fileToDelete->setUploadedBy(null);
+        $fileToDelete->setPartner(null);
+        $entityManager->flush();
+        $this->client->request('POST', $route, ['_token' => $token, 'file_id' => $fileToDelete->getId()]);
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testDeleteFileOnOtherTerritoryForRT(): void
+    {
+        $entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $fileRepository = static::getContainer()->get(FileRepository::class);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000002']);
+        $fileToDelete = $fileRepository->findOneBy(['signalement' => $signalement]);
+        $route = $this->router->generate('back_signalement_delete_file', ['uuid' => $signalement->getUuid(), 'id' => $fileToDelete->getId()]);
+        $token = $this->generateCsrfToken($this->client, 'signalement_delete_file_'.$signalement->getId());
+        $entityManager->flush();
+        $this->client->request('POST', $route, ['_token' => $token, 'file_id' => $fileToDelete->getId()]);
+        $this->assertResponseStatusCodeSame(403);
     }
 }
