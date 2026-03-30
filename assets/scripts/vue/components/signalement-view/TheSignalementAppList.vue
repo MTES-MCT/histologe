@@ -65,7 +65,7 @@
       <h2 class="fr-text--light" v-if="sharedState.hasErrorLoading">Erreur lors du chargement de la liste.</h2>
       <p v-if="sharedState.hasErrorLoading">Veuillez recharger la page ou nous prévenir <a :href="sharedProps.ajaxurlContact">via le formulaire de contact</a>.</p>
     </section>
-    <section v-else class="fr-col-12 fr-background-alt--blue-france fr-mt-0">
+    <section v-else-if="sharedState.signalements.pagination.total_items > 0" class="fr-col-12 fr-background-alt--blue-france fr-mt-0">
         <div :class="['fr-p-3w', 'fr-container-sml']">
           <SignalementListHeader
               :total="sharedState.signalements.pagination.total_items"
@@ -77,6 +77,21 @@
               :pagination="sharedState.signalements.pagination"
               @changePage="handlePageChange"/>
         </div>
+    </section>
+    <section v-else class="fr-col-12 fr-background-alt--blue-france fr-mt-0">
+      <div :class="['fr-p-3w', 'fr-container-sml']">
+        <div class="fr-grid-row fr-mb-1w">
+          <div class="fr-col fr-col-md-9">
+            <h2>{{ sharedState.selectedSavedSearchId !== undefined ? 'Résultats de la recherche sauvegardée - ' : '' }}{{ sharedState.signalements.pagination.total_items }} signalement{{sharedState.signalements.pagination.total_items > 1 ? 's' : ''}} trouv{{sharedState.signalements.pagination.total_items > 1 ? 'és' : 'é'}}</h2>
+          </div>    
+        </div>
+        <div>
+          Votre recherche n'a donné aucun résultat <span v-if="sharedState.input.filters.showMySignalementsOnly=='oui'">parmi les dossiers auxquels vous êtes abonné</span>. <br>
+        </div>
+        <button v-if="sharedState.input.filters.showMySignalementsOnly=='oui'" class="fr-link fr-link--icon-left fr-icon-add-circle-line" @click="removeMySignalementsOnlyFilter">
+          Cliquez ici pour élargir la recherche à tous les dossiers affectés à votre partenaire.
+        </button>   
+      </div>
     </section>
   </div>
 </template>
@@ -220,6 +235,10 @@ export default defineComponent({
     },
     applySavedSearch(value: string) {
       applySavedSearch(this, value)
+    },
+    removeMySignalementsOnlyFilter() {
+      this.sharedState.input.filters.showMySignalementsOnly = undefined
+      this.handleFilters()
     },
     async deleteItem (item: SignalementItem|null) {
       clearScreen(this)
