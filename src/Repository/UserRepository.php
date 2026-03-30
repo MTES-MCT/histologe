@@ -448,31 +448,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * @param array<int, Territory> $territories
-     */
-    public function countAgentsPbEmail(User $user, array $territories = []): int
-    {
-        $qb = $this->createQueryBuilder('u')
-            ->leftJoin('u.userPartners', 'up')
-            ->leftJoin('up.partner', 'p')
-            ->andWhere('JSON_CONTAINS(u.roles, :roleUsager) = 0')
-            ->setParameter('roleUsager', '"ROLE_USAGER"');
-
-        if (\count($territories)) {
-            $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $territories);
-        } elseif (!$user->isSuperAdmin()) {
-            $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
-        }
-
-        $existsByEmailDql = $this->emailDeliveryIssueRepository->getExistsByEmailDql('u.email');
-
-        $qb->andWhere($qb->expr()->exists($existsByEmailDql));
-        $qb->select('COUNT(u.id)');
-
-        return (int) $qb->getQuery()->getSingleScalarResult();
-    }
-
-    /**
      * @return Paginator<User>
      */
     public function findFilteredPaginated(SearchUser $searchUser, int $maxResult): Paginator

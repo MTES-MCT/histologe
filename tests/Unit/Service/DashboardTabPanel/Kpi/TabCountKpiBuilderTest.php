@@ -3,9 +3,12 @@
 namespace App\Tests\Unit\Service\DashboardTabPanel\Kpi;
 
 use App\Entity\User;
+use App\Repository\Query\Dashboard\DossiersQuery;
+use App\Repository\Query\Dashboard\DossiersSansSuivisPartenaireQuery;
+use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
+use App\Repository\Query\Dashboard\DossiersUndeliverableEmailQuery;
 use App\Repository\Query\Dashboard\SignalementsSansAffectationAccepteeQuery;
 use App\Repository\SignalementRepository;
-use App\Repository\SuiviRepository;
 use App\Service\DashboardTabPanel\Kpi\CountAfermer;
 use App\Service\DashboardTabPanel\Kpi\CountDossiersAVerifier;
 use App\Service\DashboardTabPanel\Kpi\CountDossiersMessagesUsagers;
@@ -21,26 +24,35 @@ use Symfony\Bundle\SecurityBundle\Security;
 class TabCountKpiBuilderTest extends TestCase
 {
     protected MockObject&SignalementRepository $signalementRepository;
-    protected MockObject&SuiviRepository $suiviRepository;
     protected MockObject&Security $security;
     protected TabCountKpiBuilder $tabCountKpiBuilder;
     protected MockObject&TabCountKpiCacheHelper $tabCountKpiCacheHelper;
     protected MockObject&SignalementsSansAffectationAccepteeQuery $signalementsSansAffectationAccepteeQuery;
+    protected MockObject&DossiersQuery $dossiersQuery;
+    protected MockObject&DossiersSuivisUsagerQuery $dossiersSuivisUsagerQuery;
+    protected MockObject&DossiersSansSuivisPartenaireQuery $dossiersSansSuivisPartenaireQuery;
+    protected MockObject&DossiersUndeliverableEmailQuery $dossiersUndeliverableEmailQuery;
 
     protected function setUp(): void
     {
         $this->signalementRepository = $this->createMock(SignalementRepository::class);
-        $this->suiviRepository = $this->createMock(SuiviRepository::class);
         $this->security = $this->createMock(Security::class);
+        $this->dossiersQuery = $this->createMock(DossiersQuery::class);
+        $this->dossiersSuivisUsagerQuery = $this->createMock(DossiersSuivisUsagerQuery::class);
+        $this->dossiersSansSuivisPartenaireQuery = $this->createMock(DossiersSansSuivisPartenaireQuery::class);
+        $this->dossiersUndeliverableEmailQuery = $this->createMock(DossiersUndeliverableEmailQuery::class);
         $this->tabCountKpiCacheHelper = $this->createMock(TabCountKpiCacheHelper::class);
         $this->signalementsSansAffectationAccepteeQuery = $this->createMock(SignalementsSansAffectationAccepteeQuery::class);
 
         $this->tabCountKpiBuilder = new TabCountKpiBuilder(
             $this->signalementRepository,
-            $this->suiviRepository,
             $this->security,
             $this->tabCountKpiCacheHelper,
             $this->signalementsSansAffectationAccepteeQuery,
+            $this->dossiersSuivisUsagerQuery,
+            $this->dossiersQuery,
+            $this->dossiersSansSuivisPartenaireQuery,
+            $this->dossiersUndeliverableEmailQuery,
         );
     }
 
@@ -77,21 +89,21 @@ class TabCountKpiBuilderTest extends TestCase
             ->with($territories)
             ->willReturn($countNouveaux);
 
-        $this->signalementRepository
+        $this->dossiersQuery
             ->expects($this->never())
             ->method('countAllDossiersAferme')
             ->with($user, $params)
             ->willReturn($countAfermer);
 
-        $this->suiviRepository
+        $this->dossiersSuivisUsagerQuery
             ->expects($this->never())
             ->method('countAllMessagesUsagers')
             ->with($user, $params)
             ->willReturn($countMessages);
 
-        $this->signalementRepository
+        $this->dossiersSansSuivisPartenaireQuery
             ->expects($this->never())
-            ->method('countSignalementsSansSuiviPartenaireDepuis60Jours')
+            ->method('countSignalements')
             ->with($user, $params)
             ->willReturn(3);
 
@@ -154,21 +166,21 @@ class TabCountKpiBuilderTest extends TestCase
             ->with($territories, $user)
             ->willReturn($countNouveaux);
 
-        $this->suiviRepository
+        $this->dossiersSuivisUsagerQuery
             ->expects($this->never())
             ->method('countAllMessagesUsagers')
             ->with($user, $params)
             ->willReturn($countMessages);
 
-        $this->signalementRepository
+        $this->dossiersQuery
             ->expects($this->never())
             ->method('countAllDossiersAferme')
             ->with($user, $params)
             ->willReturn($countAfermer);
 
-        $this->signalementRepository
+        $this->dossiersSansSuivisPartenaireQuery
             ->expects($this->never())
-            ->method('countSignalementsSansSuiviPartenaireDepuis60Jours')
+            ->method('countSignalements')
             ->with($user, $params)
             ->willReturn(2);
 

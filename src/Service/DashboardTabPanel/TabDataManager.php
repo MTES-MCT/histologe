@@ -9,10 +9,14 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\JobEventRepository;
-use App\Repository\PartnerRepository;
+use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
+use App\Repository\Query\Dashboard\DossiersAvecRelanceSansReponseQuery;
+use App\Repository\Query\Dashboard\DossiersQuery;
+use App\Repository\Query\Dashboard\DossiersSansSuivisPartenaireQuery;
+use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
+use App\Repository\Query\Dashboard\DossiersUndeliverableEmailQuery;
+use App\Repository\Query\Dashboard\KpiQuery;
 use App\Repository\Query\Dashboard\SignalementsSansAffectationAccepteeQuery;
-use App\Repository\SignalementRepository;
-use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpi;
@@ -30,13 +34,17 @@ class TabDataManager
     public function __construct(
         private readonly Security $security,
         private readonly JobEventRepository $jobEventRepository,
-        private readonly SuiviRepository $suiviRepository,
         private readonly TerritoryRepository $territoryRepository,
         private readonly UserRepository $userRepository,
-        private readonly PartnerRepository $partnerRepository,
-        private readonly SignalementRepository $signalementRepository,
         private readonly TabCountKpiBuilder $tabCountKpiBuilder,
         private readonly SignalementsSansAffectationAccepteeQuery $signalementsSansAffectationAccepteeQuery,
+        private readonly DossiersQuery $dossiersQuery,
+        private readonly DossiersActiviteRecenteQuery $dossiersActiviteRecenteQuery,
+        private readonly DossiersAvecRelanceSansReponseQuery $dossiersAvecRelanceSansReponseQuery,
+        private readonly DossiersSuivisUsagerQuery $dossiersSuivisUsagerQuery,
+        private readonly DossiersSansSuivisPartenaireQuery $dossiersSansSuivisPartenaireQuery,
+        private readonly DossiersUndeliverableEmailQuery $dossiersUndeliverableEmailQuery,
+        private readonly KpiQuery $kpiQuery,
     ) {
     }
 
@@ -75,7 +83,7 @@ class TabDataManager
         if ($tabQueryParameters && $tabQueryParameters->territoireId) {
             $territory = $this->territoryRepository->find($tabQueryParameters->territoireId);
         }
-        $signalements = $this->suiviRepository->findLastSignalementsWithUserSuivi($user, $territory, 10);
+        $signalements = $this->dossiersActiviteRecenteQuery->findLastSignalementsWithUserSuivi($user, $territory, 10);
         $tabDossiers = [];
         if (empty($signalements)) {
             return $tabDossiers;
@@ -106,7 +114,7 @@ class TabDataManager
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $injonctions = $this->signalementRepository->countInjonctions($user, $tabQueryParameters);
+        $injonctions = $this->kpiQuery->countInjonctions($user, $tabQueryParameters);
 
         return $injonctions;
     }
@@ -135,7 +143,7 @@ class TabDataManager
             $territories[] = $this->territoryRepository->find($tabQueryParameters->territoireId);
         }
 
-        return $this->userRepository->countAgentsPbEmail($user, $territories);
+        return $this->kpiQuery->countAgentsPbEmail($user, $territories);
     }
 
     public function countPartenairesNonNotifiables(?TabQueryParameters $tabQueryParameters = null): int
@@ -146,7 +154,7 @@ class TabDataManager
         }
 
         /** @var CountPartner $countPartnerDto */
-        $countPartnerDto = $this->partnerRepository->countPartnerNonNotifiables($territories);
+        $countPartnerDto = $this->kpiQuery->countPartnerNonNotifiables($territories);
 
         return $countPartnerDto->getNonNotifiables();
     }
@@ -158,7 +166,7 @@ class TabDataManager
             $territories[] = $this->territoryRepository->find($tabQueryParameters->territoireId);
         }
 
-        return $this->partnerRepository->countPartnerInterfaces($territories);
+        return $this->kpiQuery->countPartnerInterfaces($territories);
     }
 
     /**
@@ -190,6 +198,7 @@ class TabDataManager
         }
 
         $searchInterconnexion->setStatus('failed');
+
         $errorConnectionLastDay = $this->jobEventRepository->findLastJobEventByTerritory(
             1,
             $searchInterconnexion,
@@ -231,13 +240,13 @@ class TabDataManager
             );
         }
 
-        $dossiers = $this->signalementRepository->findNewDossiersFrom(
+        $dossiers = $this->dossiersQuery->findNewDossiersFrom(
             signalementStatus: $signalementStatus,
             affectationStatus: $affectationStatus,
             tabQueryParameters: $tabQueryParameters
         );
 
-        $count = $this->signalementRepository->countNewDossiersFrom(
+        $count = $this->dossiersQuery->countNewDossiersFrom(
             signalementStatus: $signalementStatus,
             affectationStatus: $affectationStatus,
             tabQueryParameters: $tabQueryParameters
@@ -262,12 +271,12 @@ class TabDataManager
             $territoires,
         );
 
-        $dossiers = $this->signalementRepository->findDossiersNoAgentFrom(
+        $dossiers = $this->dossiersQuery->findDossiersNoAgentFrom(
             affectationStatus: $affectationStatus,
             tabQueryParameters: $tabQueryParameters
         );
 
-        $count = $this->signalementRepository->countDossiersNoAgentFrom(
+        $count = $this->dossiersQuery->countDossiersNoAgentFrom(
             affectationStatus: $affectationStatus,
             tabQueryParameters: $tabQueryParameters
         );
@@ -285,12 +294,12 @@ class TabDataManager
     ): TabDossierResult {
         $tabQueryParameters->partenairesId = ['AUCUN'];
 
-        $dossiers = $this->signalementRepository->findNewDossiersFrom(
+        $dossiers = $this->dossiersQuery->findNewDossiersFrom(
             signalementStatus: $signalementStatus,
             tabQueryParameters: $tabQueryParameters
         );
 
-        $count = $this->signalementRepository->countNewDossiersFrom(
+        $count = $this->dossiersQuery->countNewDossiersFrom(
             signalementStatus: $signalementStatus,
             tabQueryParameters: $tabQueryParameters
         );
@@ -303,11 +312,11 @@ class TabDataManager
      */
     public function getDossiersFermePartenaireTous(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        $dossiers = $this->signalementRepository->findDossiersFermePartenaireTous(
+        $dossiers = $this->dossiersQuery->findDossiersFermePartenaireTous(
             tabQueryParameters: $tabQueryParameters
         );
 
-        $count = $this->signalementRepository->countDossiersFermePartenaireTous(
+        $count = $this->dossiersQuery->countDossiersFermePartenaireTous(
             tabQueryParameters: $tabQueryParameters
         );
 
@@ -319,11 +328,11 @@ class TabDataManager
      */
     public function getDossiersFermePartenaireCommune(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        $dossiers = $this->signalementRepository->findDossiersFermePartenaireCommune(
+        $dossiers = $this->dossiersQuery->findDossiersFermePartenaireCommune(
             tabQueryParameters: $tabQueryParameters
         );
 
-        $count = $this->signalementRepository->countDossiersFermePartenaireCommune(
+        $count = $this->dossiersQuery->countDossiersFermePartenaireCommune(
             tabQueryParameters: $tabQueryParameters
         );
 
@@ -337,11 +346,11 @@ class TabDataManager
      */
     public function getDossiersDemandesFermetureByUsager(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        $dossiers = $this->signalementRepository->findDossiersDemandesFermetureByUsager(
+        $dossiers = $this->dossiersQuery->findDossiersDemandesFermetureByUsager(
             tabQueryParameters: $tabQueryParameters
         );
 
-        $count = $this->signalementRepository->countDossiersDemandesFermetureByUsager(
+        $count = $this->dossiersQuery->countDossiersDemandesFermetureByUsager(
             tabQueryParameters: $tabQueryParameters
         );
 
@@ -354,11 +363,11 @@ class TabDataManager
      */
     public function getDossiersRelanceSansReponse(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
     {
-        $dossiers = $this->signalementRepository->findSignalementsAvecRelancesSansReponse(
+        $dossiers = $this->dossiersAvecRelanceSansReponseQuery->findSignalements(
             tabQueryParameters: $tabQueryParameters
         );
 
-        $count = $this->signalementRepository->countSignalementsAvecRelancesSansReponse(tabQueryParameters: $tabQueryParameters);
+        $count = $this->dossiersAvecRelanceSansReponseQuery->countSignalements(tabQueryParameters: $tabQueryParameters);
 
         return new TabDossierResult($dossiers, $count);
     }
@@ -374,7 +383,7 @@ class TabDataManager
         $user = $this->security->getUser();
 
         // Regroupe les signalements dont le dernier suivi est un message usager spontané, c'est-à-dire qui ne fait pas immédiatement suite à une relance auto.
-        $suivis = $this->suiviRepository->findSuivisUsagersWithoutAskFeedbackBefore(user: $user, params: $tabQueryParameters);
+        $suivis = $this->dossiersSuivisUsagerQuery->findSuivisUsagersWithoutAskFeedbackBefore(user: $user, params: $tabQueryParameters);
         $tabDossiers = [];
         for ($i = 0; $i < \count($suivis); ++$i) {
             $suivi = $suivis[$i];
@@ -391,7 +400,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->suiviRepository->countSuivisUsagersWithoutAskFeedbackBefore(user: $user, params: $tabQueryParameters);
+        $count = $this->dossiersSuivisUsagerQuery->countSuivisUsagersWithoutAskFeedbackBefore(user: $user, params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }
@@ -405,7 +414,7 @@ class TabDataManager
         $user = $this->security->getUser();
 
         // Signalements fermés dont l'usager a fait un dernier suivi après fermeture
-        $suivis = $this->suiviRepository->findSuivisPostCloture(user: $user, params: $tabQueryParameters);
+        $suivis = $this->dossiersSuivisUsagerQuery->findSuivisPostCloture(user: $user, params: $tabQueryParameters);
         $tabDossiers = [];
         for ($i = 0; $i < \count($suivis); ++$i) {
             $suivi = $suivis[$i];
@@ -423,7 +432,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->suiviRepository->countSuivisPostCloture(user: $user, params: $tabQueryParameters);
+        $count = $this->dossiersSuivisUsagerQuery->countSuivisPostCloture(user: $user, params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }
@@ -437,7 +446,7 @@ class TabDataManager
         $user = $this->security->getUser();
 
         // signalements ayant un message usager ou demande de poursuite de procédure sans suivis partenaires public depuis la demande de feedback
-        $suivis = $this->suiviRepository->findSuivisUsagerOrPoursuiteWithAskFeedbackBefore(user: $user, params: $tabQueryParameters);
+        $suivis = $this->dossiersSuivisUsagerQuery->findSuivisUsagerOrPoursuiteWithAskFeedbackBefore(user: $user, params: $tabQueryParameters);
         $tabDossiers = [];
         for ($i = 0; $i < \count($suivis); ++$i) {
             $suivi = $suivis[$i];
@@ -455,7 +464,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->suiviRepository->countSuivisUsagerOrPoursuiteWithAskFeedbackBefore(user: $user, params: $tabQueryParameters);
+        $count = $this->dossiersSuivisUsagerQuery->countSuivisUsagerOrPoursuiteWithAskFeedbackBefore(user: $user, params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }
@@ -467,7 +476,7 @@ class TabDataManager
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        $signalements = $this->signalementRepository->findSignalementsSansSuiviPartenaireDepuis60Jours(user: $user, params: $tabQueryParameters);
+        $signalements = $this->dossiersSansSuivisPartenaireQuery->findSignalements(user: $user, params: $tabQueryParameters);
         $tabDossiers = [];
         for ($i = 0; $i < \count($signalements); ++$i) {
             $signalement = $signalements[$i];
@@ -486,7 +495,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours(user: $user, params: $tabQueryParameters);
+        $count = $this->dossiersSansSuivisPartenaireQuery->countSignalements(user: $user, params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }
@@ -522,7 +531,7 @@ class TabDataManager
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        $signalements = $this->signalementRepository->findActiveSignalementsWithInvalidEmails(user: $user, params: $tabQueryParameters);
+        $signalements = $this->dossiersUndeliverableEmailQuery->findSignalements(user: $user, params: $tabQueryParameters);
         $tabDossiers = [];
         for ($i = 0; $i < \count($signalements); ++$i) {
             $signalement = $signalements[$i];
@@ -539,7 +548,7 @@ class TabDataManager
             );
         }
 
-        $count = $this->signalementRepository->countNonDeliverableSignalements(user: $user, params: $tabQueryParameters);
+        $count = $this->dossiersUndeliverableEmailQuery->count(user: $user, params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }
@@ -580,7 +589,7 @@ class TabDataManager
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $signalements = $this->suiviRepository->findLastSignalementsWithOtherUserSuivi($user, $tabQueryParameters, 11);
+        $signalements = $this->dossiersActiviteRecenteQuery->findLastSignalementsWithOtherUserSuivi($user, $tabQueryParameters, 11);
         $tabDossiers = [];
         if (empty($signalements)) {
             return new TabDossierResult($tabDossiers, 0);
