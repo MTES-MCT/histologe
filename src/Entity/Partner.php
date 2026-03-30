@@ -133,6 +133,12 @@ class Partner implements EntityHistoryInterface
     #[ORM\OneToMany(mappedBy: 'partner', targetEntity: UserPartner::class, orphanRemoval: true)]
     private Collection $userPartners;
 
+    /**
+     * @var Collection<int, Epci>
+     */
+    #[ORM\ManyToMany(targetEntity: Epci::class, inversedBy: 'partners', cascade: ['persist'])]
+    private Collection $epcis;
+
     public function __construct()
     {
         $this->uuid = Uuid::v4();
@@ -144,6 +150,7 @@ class Partner implements EntityHistoryInterface
         $this->userPartners = new ArrayCollection();
         $this->excludedZones = new ArrayCollection();
         $this->emailNotifiable = true;
+        $this->epcis = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -559,6 +566,30 @@ class Partner implements EntityHistoryInterface
     public function setUuid(?string $uuid): static
     {
         $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Epci>
+     */
+    public function getEpcis(): Collection
+    {
+        return $this->epcis;
+    }
+
+    public function addEpci(Epci $epci): static
+    {
+        if (!$this->epcis->contains($epci)) {
+            $this->epcis->add($epci);
+        }
+
+        return $this;
+    }
+
+    public function removeEpci(Epci $epci): static
+    {
+        $this->epcis->removeElement($epci);
 
         return $this;
     }

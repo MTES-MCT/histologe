@@ -177,6 +177,16 @@
                         <b><i>Aucune commune</i></b>
                     {% endfor %}
                 </div>
+                {% if not partner.isCommune %}
+                    <div class="fr-col-12">
+                        <h3>EPCI</h3>
+                        {% for epci in partner.epcis %}
+                            <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ epci.nom }}</span>
+                        {% else %}
+                            <b><i>Aucun EPCI</i></b>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <div class="fr-col-12">
                     <h3>Zones</h3>
                     <p>

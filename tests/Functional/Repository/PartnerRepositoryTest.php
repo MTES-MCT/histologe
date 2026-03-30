@@ -162,6 +162,24 @@ class PartnerRepositoryTest extends KernelTestCase
         $this->assertCount(0, $partnerZone);
     }
 
+    public function testFindPartnerAffectableEpcis(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        $signalementOutEpci = $signalementRepository->findOneBy(['reference' => '2026-01']);
+        $signalementInEpci = $signalementRepository->findOneBy(['reference' => '2025-09']);
+
+        $partners = $this->partnerRepository->findByLocalization($signalementOutEpci, false);
+        $this->assertCount(1, $partners);
+        foreach ($partners as $partner) {
+            $this->assertNotEquals('Alès Agglomération', $partner['name']);
+        }
+
+        $partners = $this->partnerRepository->findByLocalization($signalementInEpci, false);
+        $this->assertCount(2, $partners);
+    }
+
     public function testFindPartnersInjonctionBailleur(): void
     {
         /** @var SignalementRepository $signalementRepository */

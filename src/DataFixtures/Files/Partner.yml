@@ -614,6 +614,8 @@ partners:
     is_archive: 0
     territory: "Gard"
     type: "EPCI"
+    epcis:
+      - "200066918"
   -
     nom: "CAF 30"
     email: "partenaire-30-02@signal-logement.fr"

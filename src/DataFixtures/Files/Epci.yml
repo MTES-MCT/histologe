@@ -33,3 +33,439 @@ epcis:
       - nom: "Saint-Mars-du-Désert"
         codesPostaux:
           - "44850"
+  -
+    code: "200066918"
+    nom: "CA Alès Agglomération"
+    communes:
+      -
+        nom: "Alès"
+        codesPostaux:
+          - "30100"
+      -
+        nom: "Sainte-Cécile-d'Andorge"
+        codesPostaux:
+          - "30110"
+      -
+        nom: "Laval-Pradel"
+        codesPostaux:
+          - "30110"
+      -
+        nom: "Branoux-les-Taillades"
+        codesPostaux:
+          - "30110"
+      -
+        nom: "Lamelouze"
+        codesPostaux:
+          - "30110"
+      -
+        nom: "La Grand-Combe"
+        codesPostaux:
+          - "30110"
+      -
+        nom: "Soustelle"
+        codesPostaux:
+          - "30110"
+      -
+        nom: "Les Salles-du-Gardon"
+        codesPostaux:
+          - "30110"
+      -
+        nom: "Anduze"
+        codesPostaux:
+          - "30140"
+      -
+        nom: "Mialet"
+        codesPostaux:
+          - "30140"
+      -
+        nom: "Massillargues-Attuech"
+        codesPostaux:
+          - "30140"
+      -
+        nom: "Saint-Jean-du-Pin"
+        codesPostaux:
+          - "30140"
+      -
+        nom: "Générargues"
+        codesPostaux:
+          - "30140"
+      -
+        nom: "Saint-Sébastien-d'Aigrefeuille"
+        codesPostaux:
+          - "30140"
+      -
+        nom: "Corbès"
+        codesPostaux:
+          - "30140"
+      -
+        nom: "Bagard"
+        codesPostaux:
+          - "30140"
+      -
+        nom: "Boisset-et-Gaujac"
+        codesPostaux:
+          - "30140"
+      -
+        nom: "Tornac"
+        codesPostaux:
+          - "30140"
+      -
+        nom: "Thoiras"
+        codesPostaux:
+          - "30140"
+      -
+        nom: "Boucoiran-et-Nozières"
+        codesPostaux:
+          - "30190"
+      -
+        nom: "Brignon"
+        codesPostaux:
+          - "30190"
+      -
+        nom: "Castelnau-Valence"
+        codesPostaux:
+          - "30190"
+      -
+        nom: "Saint-Jean-du-Gard"
+        codesPostaux:
+          - "30270"
+      -
+        nom: "Saint-Julien-les-Rosiers"
+        codesPostaux:
+          - "30340"
+      -
+        nom: "Les Plans"
+        codesPostaux:
+          - "30340"
+      -
+        nom: "Rousson"
+        codesPostaux:
+          - "30340"
+      -
+        nom: "Salindres"
+        codesPostaux:
+          - "30340"
+      -
+        nom: "Mons"
+        codesPostaux:
+          - "30340"
+      -
+        nom: "Saint-Privat-des-Vieux"
+        codesPostaux:
+          - "30340"
+      -
+        nom: "Méjannes-lès-Alès"
+        codesPostaux:
+          - "30340"
+      -
+        nom: "Servas"
+        codesPostaux:
+          - "30340"
+      -
+        nom: "Saint-Jean-de-Serres"
+        codesPostaux:
+          - "30350"
+      -
+        nom: "Massanes"
+        codesPostaux:
+          - "30350"
+      -
+        nom: "Lézan"
+        codesPostaux:
+          - "30350"
+      -
+        nom: "Saint-Jean-de-Ceyrargues"
+        codesPostaux:
+          - "30360"
+      -
+        nom: "Saint-Hippolyte-de-Caton"
+        codesPostaux:
+          - "30360"
+      -
+        nom: "Saint-Étienne-de-l'Olm"
+        codesPostaux:
+          - "30360"
+      -
+        nom: "Saint-Césaire-de-Gauzignan"
+        codesPostaux:
+          - "30360"
+      -
+        nom: "Saint-Maurice-de-Cazevieille"
+        codesPostaux:
+          - "30360"
+      -
+        nom: "Vézénobres"
+        codesPostaux:
+          - "30360"
+      -
+        nom: "Deaux"
+        codesPostaux:
+          - "30360"
+      -
+        nom: "Euzet"
+        codesPostaux:
+          - "30360"
+      -
+        nom: "Cruviers-Lascours"
+        codesPostaux:
+          - "30360"
+      -
+        nom: "Ners"
+        codesPostaux:
+          - "30360"
+      -
+        nom: "Monteils"
+        codesPostaux:
+          - "30360"
+      -
+        nom: "Martignargues"
+        codesPostaux:
+          - "30360"
+      -
+        nom: "Saint-Christol-lez-Alès"
+        codesPostaux:
+          - "30380"
+      -
+        nom: "Sénéchas"
+        codesPostaux:
+          - "30450"
+      -
+        nom: "Génolhac"
+        codesPostaux:
+          - "30450"
+      -
+        nom: "Concoules"
+        codesPostaux:
+          - "30450"
+      -
+        nom: "Chambon"
+        codesPostaux:
+          - "30450"
+      -
+        nom: "Bonnevaux"
+        codesPostaux:
+          - "30450"
+      -
+        nom: "Aujac"
+        codesPostaux:
+          - "30450"
+      -
+        nom: "Vabres"
+        codesPostaux:
+          - "30460"
+      -
+        nom: "Saint-Bonnet-de-Salendrinque"
+        codesPostaux:
+          - "30460"
+      -
+        nom: "Sainte-Croix-de-Caderle"
+        codesPostaux:
+          - "30460"
+      -
+        nom: "Cendras"
+        codesPostaux:
+          - "30480"
+      -
+        nom: "Saint-Paul-la-Coste"
+        codesPostaux:
+          - "30480"
+      -
+        nom: "Saint-Julien-de-Cassagnas"
+        codesPostaux:
+          - "30500"
+      -
+        nom: "Saint-Martin-de-Valgalgues"
+        codesPostaux:
+          - "30520"
+      -
+        nom: "Chamborigaud"
+        codesPostaux:
+          - "30530"
+      -
+        nom: "Portes"
+        codesPostaux:
+          - "30530"
+      -
+        nom: "La Vernarède"
+        codesPostaux:
+          - "30530"
+      -
+        nom: "Saint-Hilaire-de-Brethmas"
+        codesPostaux:
+          - "30560"
+      -
+        nom: "Saint-Just-et-Vacquières"
+        codesPostaux:
+          - "30580"
+      -
+        nom: "Seynes"
+        codesPostaux:
+          - "30580"
+      -
+        nom: "Brouzet-lès-Alès"
+        codesPostaux:
+          - "30580"
+      -
+        nom: "Ribaute-les-Tavernes"
+        codesPostaux:
+          - "30720"
+      -
+        nom: "Les Mages"
+        codesPostaux:
+          - "30960"
+      -
+        nom: "Saint-Jean-de-Valériscle"
+        codesPostaux:
+          - "30960"
+      -
+        nom: "Le Martinet"
+        codesPostaux:
+          - "30960"
+      -
+        nom: "Saint-Florent-sur-Auzonnet"
+        codesPostaux:
+          - "30960"
+  -
+    code: "200034379"
+    nom: "CC Pays d'Uzès"
+    communes:
+      -
+        nom: "Aigaliers"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Argilliers"
+        codesPostaux:
+          - "30210"
+      -
+        nom: "Arpaillargues-et-Aureillac"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Aubussargues"
+        codesPostaux:
+          - "30190"
+      -
+        nom: "Baron"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "La Bastide-d'Engras"
+        codesPostaux:
+          - "30330"
+      -
+        nom: "Belvézet"
+        codesPostaux:
+          - "30580"
+      -
+        nom: "Blauzac"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Bouquet"
+        codesPostaux:
+          - "30580"
+      -
+        nom: "Bourdic"
+        codesPostaux:
+          - "30190"
+      -
+        nom: "La Bruguière"
+        codesPostaux:
+          - "30580"
+      -
+        nom: "La Capelle-et-Masmolène"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Castillon-du-Gard"
+        codesPostaux:
+          - "30210"
+      -
+        nom: "Collorgues"
+        codesPostaux:
+          - "30190"
+      -
+        nom: "Flaux"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Foissac"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Fons-sur-Lussan"
+        codesPostaux:
+          - "30580"
+      -
+        nom: "Fontarèches"
+        codesPostaux:
+          - "30580"
+      -
+        nom: "Garrigues-Sainte-Eulalie"
+        codesPostaux:
+          - "30190"
+      -
+        nom: "Lussan"
+        codesPostaux:
+          - "30580"
+      -
+        nom: "Montaren-et-Saint-Médiers"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Moussac"
+        codesPostaux:
+          - "30190"
+      -
+        nom: "Pougnadoresse"
+        codesPostaux:
+          - "30330"
+      -
+        nom: "Saint-Dézéry"
+        codesPostaux:
+          - "30190"
+      -
+        nom: "Saint-Hippolyte-de-Montaigu"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Saint-Laurent-la-Vernède"
+        codesPostaux:
+          - "30330"
+      -
+        nom: "Saint-Maximin"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Saint-Quentin-la-Poterie"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Saint-Siffret"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Saint-Victor-des-Oules"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Sanilhac-Sagriès"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Serviers-et-Labaume"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Uzès"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Vallabrix"
+        codesPostaux:
+          - "30700"
+      -
+        nom: "Vallérargues"
+        codesPostaux:
+          - "30580"

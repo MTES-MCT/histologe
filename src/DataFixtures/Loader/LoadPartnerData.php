@@ -6,6 +6,7 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
 use App\Repository\BailleurRepository;
+use App\Repository\EpciRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Sanitizer;
 use App\Service\Token\TokenGeneratorInterface;
@@ -19,6 +20,7 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
     public function __construct(
         private TerritoryRepository $territoryRepository,
         private BailleurRepository $bailleurRepository,
+        private EpciRepository $epciRepository,
         private TokenGeneratorInterface $tokenGenerator,
     ) {
     }
@@ -83,6 +85,12 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
         }
         if (isset($row['idoss_url'])) {
             $partner->setIdossUrl($row['idoss_url']);
+        }
+        if (isset($row['epcis'])) {
+            foreach ($row['epcis'] as $epciCode) {
+                $epci = $this->epciRepository->findOneBy(['code' => $epciCode]);
+                $partner->addEpci($epci);
+            }
         }
 
         $manager->persist($partner);

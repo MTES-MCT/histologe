@@ -50,6 +50,6 @@ class LoadEpciData extends Fixture implements OrderedFixtureInterface
 
     public function getOrder(): int
     {
-        return 18;
+        return 3;
     }
 }

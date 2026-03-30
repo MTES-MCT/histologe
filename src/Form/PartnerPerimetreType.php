@@ -3,10 +3,12 @@
 namespace App\Form;
 
 use App\Entity\Commune;
+use App\Entity\Epci;
 use App\Entity\Partner;
 use App\Entity\Zone;
 use App\Form\Type\SearchCheckboxType;
 use App\Repository\CommuneRepository;
+use App\Repository\EpciRepository;
 use App\Repository\ZoneRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -30,61 +32,80 @@ class PartnerPerimetreType extends AbstractType
         $partner = $builder->getData();
         $territory = $partner->getTerritory();
 
-        $builder
-            ->add('insee', SearchCheckboxType::class, [
-                'class' => Commune::class,
-                'label' => 'Commune(s)',
-                'query_builder' => static function (CommuneRepository $communeRepository) use ($territory) {
-                    return $communeRepository->createQueryBuilder('c')
-                        ->where('c.territory = :territory')
-                        ->andWhere('c.id IN (
+        $builder->add('insee', SearchCheckboxType::class, [
+            'class' => Commune::class,
+            'label' => 'Commune(s)',
+            'query_builder' => static function (CommuneRepository $communeRepository) use ($territory) {
+                return $communeRepository->createQueryBuilder('c')
+                    ->where('c.territory = :territory')
+                    ->andWhere('c.id IN (
                             SELECT MIN(c2.id) FROM '.Commune::class.' c2 
                             WHERE c2.territory = :territory 
                             GROUP BY c2.codeInsee
                         )')
+                    ->setParameter('territory', $territory)
+                    ->orderBy('c.nom', 'ASC');
+            },
+            'choice_label' => static function (Commune $commune): string {
+                return $commune->getNom(withArrondissement: true);
+            },
+            'help' => 'Sélectionner la ou la liste des communes d\'intervention',
+            'required' => false,
+            'noselectionlabel' => 'Sélectionnez les communes',
+            'nochoiceslabel' => 'Aucune commune disponible',
+        ]);
+        if (!$partner->getIsCommune()) {
+            $builder->add('epcis', SearchCheckboxType::class, [
+                'class' => Epci::class,
+                'label' => 'EPCI',
+                'query_builder' => static function (EpciRepository $epciRepository) use ($territory) {
+                    return $epciRepository->createQueryBuilder('e')
+                        ->innerJoin('e.communes', 'c')
+                        ->where('c.territory = :territory')
                         ->setParameter('territory', $territory)
-                        ->orderBy('c.nom', 'ASC');
+                        ->groupBy('e.id')
+                        ->orderBy('e.nom', 'ASC');
                 },
-                'choice_label' => static function (Commune $commune): string {
-                    return $commune->getNom(withArrondissement: true);
-                },
-                'help' => 'Sélectionner la ou la liste des communes d\'intervention',
+                'choice_label' => 'nom',
+                'help' => 'Sélectionner la ou la liste des EPCI d\'intervention',
                 'required' => false,
-                'noselectionlabel' => 'Sélectionnez les communes',
-                'nochoiceslabel' => 'Aucune commune disponible',
-            ])->add('zones', SearchCheckboxType::class, [
-                'class' => Zone::class,
-                'query_builder' => static function (ZoneRepository $zoneRepository) use ($territory) {
-                    return $zoneRepository->createQueryBuilder('z')
-                        ->where('z.territory = :territory')
-                        ->setParameter('territory', $territory)
-                        ->orderBy('z.name', 'ASC');
-                },
-                'choice_label' => 'name',
-                'label' => 'Zones',
-                'help' => 'Sélectionnez les zones à inclure dans la liste',
-                'noselectionlabel' => 'Sélectionnez les zones',
-                'nochoiceslabel' => 'Aucune zone disponible',
-                'by_reference' => false,
-            ])->add('excludedZones', SearchCheckboxType::class, [
-                'class' => Zone::class,
-                'query_builder' => static function (ZoneRepository $zoneRepository) use ($territory) {
-                    return $zoneRepository->createQueryBuilder('z')
-                        ->where('z.territory = :territory')
-                        ->setParameter('territory', $territory)
-                        ->orderBy('z.name', 'ASC');
-                },
-                'choice_label' => 'name',
-                'label' => 'Zones à exclure',
-                'help' => 'Sélectionnez les zones à exclure dans la liste',
-                'noselectionlabel' => 'Sélectionnez les zones',
-                'nochoiceslabel' => 'Aucune zone disponible',
-                'by_reference' => false,
-            ])->add('save', SubmitType::class, [
-                'label' => 'Valider',
-                'attr' => ['class' => 'fr-btn fr-icon-check-line fr-btn--icon-left'],
-                'row_attr' => ['class' => 'fr-text--right'],
+                'noselectionlabel' => 'Sélectionnez les EPCI',
+                'nochoiceslabel' => 'Aucun EPCI disponible',
             ]);
+        }
+        $builder->add('zones', SearchCheckboxType::class, [
+            'class' => Zone::class,
+            'query_builder' => static function (ZoneRepository $zoneRepository) use ($territory) {
+                return $zoneRepository->createQueryBuilder('z')
+                    ->where('z.territory = :territory')
+                    ->setParameter('territory', $territory)
+                    ->orderBy('z.name', 'ASC');
+            },
+            'choice_label' => 'name',
+            'label' => 'Zones',
+            'help' => 'Sélectionnez les zones à inclure dans la liste',
+            'noselectionlabel' => 'Sélectionnez les zones',
+            'nochoiceslabel' => 'Aucune zone disponible',
+            'by_reference' => false,
+        ])->add('excludedZones', SearchCheckboxType::class, [
+            'class' => Zone::class,
+            'query_builder' => static function (ZoneRepository $zoneRepository) use ($territory) {
+                return $zoneRepository->createQueryBuilder('z')
+                    ->where('z.territory = :territory')
+                    ->setParameter('territory', $territory)
+                    ->orderBy('z.name', 'ASC');
+            },
+            'choice_label' => 'name',
+            'label' => 'Zones à exclure',
+            'help' => 'Sélectionnez les zones à exclure dans la liste',
+            'noselectionlabel' => 'Sélectionnez les zones',
+            'nochoiceslabel' => 'Aucune zone disponible',
+            'by_reference' => false,
+        ])->add('save', SubmitType::class, [
+            'label' => 'Valider',
+            'attr' => ['class' => 'fr-btn fr-icon-check-line fr-btn--icon-left'],
+            'row_attr' => ['class' => 'fr-text--right'],
+        ]);
 
         $builder->get('insee')->addModelTransformer(new CallbackTransformer(
             function (array $arrayOfCodesInsee) {
