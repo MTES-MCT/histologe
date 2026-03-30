@@ -6,7 +6,7 @@ use App\Entity\Enum\DocumentType;
 use App\Entity\Signalement;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
-use App\Factory\SignalementFactory;
+use App\Factory\SignalementImportFactory;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
@@ -31,7 +31,7 @@ class PhotoHelperTest extends KernelTestCase
 {
     private Security $security;
     private ManagerRegistry $managerRegistry;
-    private SignalementFactory $signalementFactory;
+    private SignalementImportFactory $signalementImportFactory;
     private QualificationStatusService $qualificationStatusService;
     private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
     private SignalementExportFactory $signalementExportFactory;
@@ -55,7 +55,7 @@ class PhotoHelperTest extends KernelTestCase
     {
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->security = static::getContainer()->get('security.helper');
-        $this->signalementFactory = static::getContainer()->get(SignalementFactory::class);
+        $this->signalementImportFactory = static::getContainer()->get(SignalementImportFactory::class);
         $this->qualificationStatusService = static::getContainer()->get(QualificationStatusService::class);
         $this->signalementAffectationListViewFactory = static::getContainer()->get(
             SignalementAffectationListViewFactory::class
@@ -78,7 +78,7 @@ class PhotoHelperTest extends KernelTestCase
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
             $this->security,
-            $this->signalementFactory,
+            $this->signalementImportFactory,
             $this->qualificationStatusService,
             $this->signalementAffectationListViewFactory,
             $this->signalementExportFactory,

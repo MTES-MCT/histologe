@@ -185,13 +185,13 @@
                     </div>
                 {% elseif current_step == 'step6' %}
                     <div class="fr-mt-5v fr-mb-5v">
-                        <h2 class="fr-h5">Récapitulatif et validation</h2>
+                        <h1 class="fr-h5">Récapitulatif et validation</h1>
                         <div>Vérifiez les informations saisies puis validez le signalement.</div>
                     </div>
                     
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
-                            <h4 class="fr-h6">Vos coordonnées</h4>
+                            <h2 class="fr-h6">Vos coordonnées</h2>
                             {{ form_row(form.navigator.editStep1) }}
                         </div>
                         {% if data.step1.matriculeDeclarant %}
@@ -213,7 +213,7 @@
                     
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
-                            <h4 class="fr-h6">Infos sur le logement</h4>
+                            <h2 class="fr-h6">Infos sur le logement</h2>
                             {{ form_row(form.navigator.editStep2) }}
                         </div>
                         {{ data.step2.adresseOccupant }} <br>
@@ -248,7 +248,7 @@
                     
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
-                            <h4 class="fr-h6">Occupation du logement</h4>
+                            <h2 class="fr-h6">Occupation du logement</h2>
                             {{ form_row(form.navigator.editStep3) }}
                         </div>
                         {% if data.step3.nomOccupant %}
@@ -288,7 +288,7 @@
                     
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
-                            <h4 class="fr-h6">Propriétaire / Syndic</h4>
+                            <h2 class="fr-h6">Propriétaire / Syndic</h2>
                             {{ form_row(form.navigator.editStep4) }}
                         </div>
                         {% set showBailleur = data.step4.isBailleurAverti or data.step4.denominationProprio or data.step4.nomProprio or data.step4.prenomProprio or data.step4.mailProprio or data.step4.telProprio %}
@@ -339,7 +339,7 @@
                     
                     <div class="signalement-group-data-card">
                         <div class="fr-display-flex-row fr-justify-content-space-between fr-align-items-center">
-                            <h4 class="fr-h6">Désordres</h4>
+                            <h2 class="fr-h6">Désordres</h2>
                             {{ form_row(form.navigator.editStep5) }}
                         </div>
                         {% if data.step5.autresOccupantsDesordre %}

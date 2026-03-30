@@ -7,20 +7,17 @@ use App\Dto\ServiceSecours\FormServiceSecoursStep5;
 use App\Entity\DesordreCritere;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\EtageType;
-use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\ServiceSecoursRoute;
 use App\Entity\Signalement;
-use App\Entity\Territory;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\Signalement\ZipcodeProvider;
 
-class SignalementFactory
+class SignalementServiceSecoursFactory
 {
     public function __construct(
         private readonly ZipcodeProvider $zipcodeProvider,
@@ -30,7 +27,7 @@ class SignalementFactory
     ) {
     }
 
-    public function createInstanceFromFormServiceSecours(
+    public function create(
         FormServiceSecours $formServiceSecours,
         ServiceSecoursRoute $serviceSecoursRoute,
     ): Signalement {
@@ -47,14 +44,30 @@ class SignalementFactory
         $signalement->setMailDeclarant($serviceSecoursRoute->getEmail());
         $signalement->setTelDeclarant($serviceSecoursRoute->getPhone());
 
-        // data from step1
+        $this->handleStep1($formServiceSecours, $signalement);
+        $this->handleStep2($formServiceSecours, $signalement, $typeCompositionLogement);
+        $this->handleStep3($formServiceSecours, $signalement, $typeCompositionLogement);
+        $this->handleStep4($formServiceSecours, $signalement);
+        $this->handleStep5($formServiceSecours, $signalement);
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+        return $signalement;
+    }
+
+    private function handleStep1(FormServiceSecours $formServiceSecours, Signalement $signalement): void
+    {
         $signalement->setMatriculeDeclarant($formServiceSecours->step1->matriculeDeclarant);
         $signalement->setNomDeclarant($formServiceSecours->step1->nomDeclarant);
         $signalement->setDateMissionServiceSecours($formServiceSecours->step1->dateMission);
         $signalement->setOrigineMissionServiceSecours($formServiceSecours->step1->origineMission);
         $signalement->setOrdreMissionServiceSecours($formServiceSecours->step1->ordreMission);
+    }
 
-        // data from step2
+    private function handleStep2(
+        FormServiceSecours $formServiceSecours,
+        Signalement $signalement,
+        TypeCompositionLogement $typeCompositionLogement,
+    ): void {
         $signalement->setAdresseOccupant($formServiceSecours->step2->adresseOccupant)
             ->setCpOccupant($formServiceSecours->step2->cpOccupant)
             ->setVilleOccupant($formServiceSecours->step2->villeOccupant)
@@ -67,14 +80,12 @@ class SignalementFactory
             $signalement->setInseeOccupant($formServiceSecours->step2->inseeOccupant);
         }
 
-        switch ($formServiceSecours->step2->isLogementSocial) {
-            case 'oui':
-                $signalement->setIsLogementSocial(true);
-                break;
-            case 'non':
-                $signalement->setIsLogementSocial(false);
-                break;
-                // case 'nsp' si null, which is the default value of the entity
+        $isLogementSocial = $formServiceSecours->step2->isLogementSocial;
+        // case 'nsp' si null, which is the default value of the entity
+        if ('oui' === $isLogementSocial) {
+            $signalement->setIsLogementSocial(true);
+        } elseif ('non' === $isLogementSocial) {
+            $signalement->setIsLogementSocial(false);
         }
 
         $this->signalementAddressUpdater->updateAddressOccupantFromBanData(signalement: $signalement);
@@ -110,16 +121,25 @@ class SignalementFactory
                         $typeCompositionLogement->setTypeLogementRdc('non')
                             ->setTypeLogementDernierEtage('non');
                         break;
+                    default:
+                        // Alerte sonar - cas théoriquement pas possible
+                        break;
                 }
             }
         } elseif ('autre' === $signalement->getNatureLogement()) {
             $typeCompositionLogement->setTypeLogementNatureAutrePrecision($formServiceSecours->step2->natureLogementAutre);
         }
 
-        $signalement->setNbPiecesLogement((int) $formServiceSecours->step2->nbPiecesLogement)
+        $signalement
+            ->setNbPiecesLogement((int) $formServiceSecours->step2->nbPiecesLogement)
             ->setSuperficie((int) $formServiceSecours->step2->superficie);
+    }
 
-        // data from step3
+    private function handleStep3(
+        FormServiceSecours $formServiceSecours,
+        Signalement $signalement,
+        TypeCompositionLogement $typeCompositionLogement,
+    ): void {
         $profilOccupant = $formServiceSecours->step3->profilOccupant;
         if ('logement_vacant' === $profilOccupant) {
             $signalement->setIsLogementVacant(true);
@@ -138,8 +158,12 @@ class SignalementFactory
         $typeCompositionLogement->setCompositionLogementNombreEnfants($formServiceSecours->step3->nbEnfantsDansLogement);
         $typeCompositionLogement->setCompositionLogementEnfants($formServiceSecours->step3->isEnfantsMoinsSixAnsDansLogement);
         $signalement->setAutreSituationVulnerabilite($formServiceSecours->step3->autreVulnerabilite);
+    }
 
-        // data from step4
+    private function handleStep4(
+        FormServiceSecours $formServiceSecours,
+        Signalement $signalement,
+    ): void {
         if ('oui' === $formServiceSecours->step4->isBailleurAverti) {
             $signalement->setIsProprioAverti(true);
         } elseif ('non' === $formServiceSecours->step4->isBailleurAverti) {
@@ -159,12 +183,6 @@ class SignalementFactory
         $signalement->setMailSyndic($formServiceSecours->step4->mailSyndic);
         $signalement->setTelSyndic($formServiceSecours->step4->telSyndic);
         $signalement->setTelSyndicSecondaire($formServiceSecours->step4->telSyndicSecondaire);
-
-        $signalement->setTypeCompositionLogement($typeCompositionLogement);
-
-        $this->handleStep5($formServiceSecours, $signalement);
-
-        return $signalement;
     }
 
     private function handleStep5(FormServiceSecours $formServiceSecours, Signalement $signalement): void
@@ -196,98 +214,5 @@ class SignalementFactory
         }
         $signalement->setJsonContent($jsonContent);
         $signalement->setAutresOccupantsDesordre($formServiceSecours->step5->autresOccupantsDesordre);
-    }
-
-    /**
-     * @param array<string, mixed> $data
-     */
-    public function createInstanceFromArrayForImport(Territory $territory, array $data): Signalement
-    {
-        if (empty($data['statut'])) {
-            $data['statut'] = SignalementStatus::ACTIVE;
-            if ($data['motifCloture'] || $data['closedAt']) {
-                $data['statut'] = SignalementStatus::CLOSED;
-            }
-        }
-
-        return (new Signalement())
-            ->setIsImported(true)
-            ->setCreationSource(CreationSource::IMPORT)
-            ->setTerritory($territory)
-            ->setDetails($data['details'])
-            ->setIsProprioAverti((bool) $data['isProprioAverti'])
-            ->setNbAdultes($data['nbAdultes'])
-            ->setNbEnfantsM6($data['nbEnfantsM6'])
-            ->setNbEnfantsP6($data['nbEnfantsP6'])
-            ->setIsAllocataire($data['isAllocataire'])
-            ->setNumAllocataire($data['numAllocataire'])
-            ->setNatureLogement($data['natureLogement'])
-            ->setSuperficie($data['superficie'])
-            ->setLoyer($data['loyer'])
-            ->setIsBailEnCours((bool) $data['isBailEnCours'])
-            ->setDateEntree($data['dateEntree'])
-            ->setNomProprio($data['nomProprio'])
-            ->setAdresseProprio($data['adresseProprio'])
-            ->setTelProprio($data['telProprio'])
-            ->setMailProprio($data['mailProprio'])
-            ->setIsLogementSocial((bool) $data['isLogementSocial'])
-            ->setIsPreavisDepart((bool) $data['isPreavisDepart'])
-            ->setIsRelogement((bool) $data['isRelogement'])
-            ->setIsRefusIntervention($data['isRefusIntervention'])
-            ->setRaisonRefusIntervention($data['raisonRefusIntervention'])
-            ->setIsNotOccupant((bool) $data['isNotOccupant'])
-            ->setNomDeclarant($data['nomDeclarant'])
-            ->setPrenomDeclarant($data['prenomDeclarant'])
-            ->setTelDeclarant($data['telDeclarant'])
-            ->setMailDeclarant($data['mailDeclarant'])
-            ->setStructureDeclarant($data['structureDeclarant'])
-            ->setNomOccupant($data['nomOccupant'])
-            ->setPrenomOccupant($data['prenomOccupant'])
-            ->setTelOccupant($data['telOccupant'])
-            ->setMailOccupant($data['mailOccupant'])
-            ->setAdresseOccupant($data['adresseOccupant'])
-            ->setCpOccupant($data['cpOccupant'])
-            ->setVilleOccupant($data['villeOccupant'])
-            ->setIsCguAccepted((bool) $data['isCguAccepted'])
-            ->setCreatedAt($data['createdAt'])
-            ->setModifiedAt($data['modifiedAt'])
-            ->setStatut($data['statut'])
-            ->setValidatedAt(
-                SignalementStatus::ACTIVE === $data['statut'] ? $data['createdAt'] : new \DateTimeImmutable()
-            )
-            ->setReference($data['reference'])
-            ->setMontantAllocation((float) $data['montantAllocation'])
-            ->setCodeProcedure($data['codeProcedure'])
-            ->setEtageOccupant($data['etageOccupant'])
-            ->setEscalierOccupant($data['escalierOccupant'])
-            ->setNumAppartOccupant($data['numAppartOccupant'])
-            ->setAdresseAutreOccupant($data['adresseAutreOccupant'])
-            ->setInseeOccupant($data['inseeOccupant'])
-            ->setLienDeclarantOccupant($data['lienDeclarantOccupant'])
-            ->setIsConsentementTiers((bool) $data['isConsentementTiers'])
-            ->setIsRsa((bool) $data['isRsa'])
-            ->setAnneeConstruction($data['anneeConstruction'])
-            ->setTypeEnergieLogement($data['typeEnergieLogement'])
-            ->setOrigineSignalement($data['origineSignalement'])
-            ->setSituationOccupant($data['situationOccupant'])
-            ->setSituationProOccupant($data['situationProOccupant'])
-            ->setNaissanceOccupants($data['naissanceOccupants'])
-            ->setIsLogementCollectif((bool) $data['isLogementCollectif'])
-            ->setIsConstructionAvant1949((bool) $data['isConstructionAvant1949'])
-            ->setIsRisqueSurOccupation((bool) $data['isRisqueSurOccupation'])
-            ->setProprioAvertiAt($data['prorioAvertiAt'])
-            ->setNomReferentSocial($data['nomReferentSocial'])
-            ->setStructureReferentSocial($data['StructureReferentSocial'])
-            ->setNumeroInvariant($data['numeroInvariant'])
-            ->setNbPiecesLogement((int) $data['nbPiecesLogement'])
-            ->setNbChambresLogement((int) $data['nbChambresLogement'])
-            ->setNbNiveauxLogement((int) $data['nbNiveauxLogement'])
-            ->setNbOccupantsLogement((int) $data['nbOccupantsLogement'])
-            ->setMotifCloture(
-                null !== $data['motifCloture']
-                ? MotifCloture::tryFrom($data['motifCloture'])
-                : null)
-            ->setClosedAt($data['closedAt'])
-            ->setIsFondSolidariteLogement((bool) $data['isFondSolidariteLogement']);
     }
 }
