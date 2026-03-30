@@ -22,7 +22,8 @@ class JobEvent
 
     public const string STATUS_SUCCESS = 'success';
     public const string STATUS_FAILED = 'failed';
-    public const string EXPIRATION_PERIOD = '- 6 months';
+    public const string EXPIRATION_PERIOD_FAILED = '- 6 months';
+    public const string EXPIRATION_PERIOD_DEFAULT = '- 1 month';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

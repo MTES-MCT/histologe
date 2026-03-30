@@ -217,12 +217,15 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
     /**
      * @throws \Exception
      */
-    public function cleanOlderThan(string $period = JobEvent::EXPIRATION_PERIOD): int
+    public function cleanOlderThan(string $periodFailed = JobEvent::EXPIRATION_PERIOD_FAILED): int
     {
+        $periodDefault = JobEvent::EXPIRATION_PERIOD_DEFAULT;
         $queryBuilder = $this->createQueryBuilder('j');
         $queryBuilder->delete()
-            ->andWhere('DATE(j.createdAt) <= :created_at')
-            ->setParameter('created_at', (new \DateTimeImmutable($period))->format('Y-m-d'));
+            ->andWhere('(DATE(j.createdAt) <= :created_at AND j.status = :status_failed) OR (DATE(j.createdAt) <= :created_at_default AND j.status != :status_failed)')
+            ->setParameter('created_at', (new \DateTimeImmutable($periodFailed))->format('Y-m-d'))
+            ->setParameter('created_at_default', (new \DateTimeImmutable($periodDefault))->format('Y-m-d'))
+            ->setParameter('status_failed', JobEvent::STATUS_FAILED);
 
         return $queryBuilder->getQuery()->execute();
     }
