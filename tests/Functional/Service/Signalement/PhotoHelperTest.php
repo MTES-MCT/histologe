@@ -124,7 +124,7 @@ class PhotoHelperTest extends KernelTestCase
         $this->assertCount(3, $photos);
         $this->assertEquals(DocumentType::PHOTO_SITUATION, $photos[0]->getDocumentType());
         $this->assertEquals('Capture-d-ecran-du-2023-06-13-12-58-43-648b2a6b9730f.png', $photos[0]->getTitle());
-        $this->assertEquals(DocumentType::PHOTO_SITUATION, $photos[1]->getDocumentType());
-        $this->assertEquals(DocumentType::AUTRE, $photos[2]->getDocumentType());
+        $this->assertEquals(DocumentType::AUTRE, $photos[1]->getDocumentType());
+        $this->assertEquals(DocumentType::PHOTO_SITUATION, $photos[2]->getDocumentType());
     }
 }

@@ -41,17 +41,7 @@ class PhotoHelper
 
         foreach ($photoListByType as $key => &$photoArray) {
             usort($photoArray, static function (File $fileA, File $fileB) use ($key) {
-                if ('situation' === $key) {
-                    if (DocumentType::PHOTO_SITUATION === $fileA->getDocumentType() && DocumentType::PHOTO_SITUATION === $fileB->getDocumentType()) {
-                        return $fileA->getId() <=> $fileB->getId();
-                    }
-                    if (DocumentType::PHOTO_SITUATION === $fileA->getDocumentType()) {
-                        return -1;
-                    }
-                    if (DocumentType::PHOTO_SITUATION === $fileB->getDocumentType()) {
-                        return 1;
-                    }
-                } elseif ('visite' === $key) {
+                if ('visite' === $key) {
                     $interventionA = $fileA->getIntervention();
                     $interventionB = $fileB->getIntervention();
                     if (null === $interventionA && null === $interventionB) {
@@ -67,7 +57,8 @@ class PhotoHelper
                     return $interventionA->getId() <=> $interventionB->getId();
                 }
 
-                return $fileA->getId() <=> $fileB->getId();
+                // par défaut ordre antéchronologique
+                return $fileB->getCreatedAt() <=> $fileA->getCreatedAt();
             });
         }
         if ($type) {
