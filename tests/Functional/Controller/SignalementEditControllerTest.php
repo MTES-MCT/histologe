@@ -7,6 +7,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Manager\UserManager;
 use App\Repository\SuiviRepository;
 use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
@@ -185,5 +186,46 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertStringContainsString('Ville', $description);
         $this->assertStringContainsString('Téléphone', $description);
         $this->assertStringContainsString('Téléphone secondaire', $description);
+    }
+
+    public function testSubmitsuiviSignalementCompleteOccupantWithEmptyMailOccupant(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
+        $signalementUser = $this->getSignalementUser($signalement, UserManager::DECLARANT);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_occupant', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('Envoyer')->form([
+            'coordonnees_occupant[civiliteOccupant]' => 'mr',
+            'coordonnees_occupant[nomOccupant]' => 'NomOccupant',
+            'coordonnees_occupant[prenomOccupant]' => 'PrenomOccupant',
+            'coordonnees_occupant[mailOccupantTemp]' => '',
+            'coordonnees_occupant[telOccupant]' => '',
+            'coordonnees_occupant[telOccupantBis]' => '',
+        ]);
+
+        $client->submit($form);
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+        $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
+
+        $this->assertNull($signalement->getMailOccupant());
+        $this->assertNull($signalement->getMailOccupantTemp());
+        $this->assertEmailCount(0);
+
+        /** @var SuiviRepository $suiviRepository */
+        $suiviRepository = $entityManager->getRepository(Suivi::class);
+        $suivi = $suiviRepository->findBy(['signalement' => $signalement, 'category' => SuiviCategory::SIGNALEMENT_EDITED_FO]);
+        $this->assertCount(1, $suivi);
     }
 }
