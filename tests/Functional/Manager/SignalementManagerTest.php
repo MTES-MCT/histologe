@@ -22,6 +22,7 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
+use App\Repository\PartnerRepository;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
 use App\Repository\Query\SignalementList\ListPaginatorQuery;
 use App\Repository\SignalementRepository;
@@ -62,6 +63,7 @@ class SignalementManagerTest extends WebTestCase
     private SuiviManager $suiviManager;
     private UserManager $userManager;
     private BailleurRepository $bailleurRepository;
+    private PartnerRepository $partnerRepository;
     private SignalementAddressUpdater $signalementAddressUpdater;
     private AffectationManager $affectationManager;
     private ZipcodeProvider $zipcodeProvider;
@@ -91,6 +93,7 @@ class SignalementManagerTest extends WebTestCase
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->userManager = static::getContainer()->get(UserManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
+        $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $this->affectationManager = static::getContainer()->get(AffectationManager::class);
         $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
@@ -113,6 +116,7 @@ class SignalementManagerTest extends WebTestCase
             $this->suiviManager,
             $this->userManager,
             $this->bailleurRepository,
+            $this->partnerRepository,
             $this->signalementAddressUpdater,
             $this->zipcodeProvider,
             $this->exportIterableQuery,

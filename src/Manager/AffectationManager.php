@@ -6,7 +6,6 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
-use App\Entity\Enum\PartnerType;
 use App\Entity\File;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -141,33 +140,11 @@ class AffectationManager extends Manager
 
         $this->persist($affectation);
 
-        if ($dispatchInterconnection && $this->shouldDispatchInterconnection($affectation)) {
+        if ($dispatchInterconnection) {
             $this->interconnectionBus->dispatch($affectation);
         }
 
         return $affectation;
-    }
-
-    private function shouldDispatchInterconnection(Affectation $affectation): bool
-    {
-        $partner = $affectation->getPartner();
-        $relatedAffectation = $this->findRelatedAffectationConnectedToSish($affectation);
-
-        if (PartnerType::COMMUNE_SCHS === $partner->getType() && !$partner->isConnectedToSanteHabitat()
-            || null === $relatedAffectation
-        ) {
-            return true;
-        }
-
-        return !$relatedAffectation->isSynchronized();
-    }
-
-    private function findRelatedAffectationConnectedToSish(Affectation $affectation): ?Affectation
-    {
-        $partner = $affectation->getPartner();
-        $signalement = $affectation->getSignalement();
-
-        return $signalement->getRelatedAffectationsConnectedToSish($partner);
     }
 
     public function closeBySignalement(

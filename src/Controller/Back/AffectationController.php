@@ -20,6 +20,7 @@ use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\EmailAlertChecker;
 use App\Service\FormHelper;
+use App\Service\Interconnection\Esabora\AffectationEsaboraPolicy;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\MessageHelper;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
@@ -42,6 +43,7 @@ class AffectationController extends AbstractController
         private readonly SignalementManager $signalementManager,
         private readonly AffectationManager $affectationManager,
         private readonly PartnerRepository $partnerRepository,
+        private readonly AffectationEsaboraPolicy $affectationEsaboraPolicy,
         private readonly EmailAlertChecker $emailAlertChecker,
     ) {
     }
@@ -86,7 +88,7 @@ class AffectationController extends AbstractController
                 $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartnersIds);
                 $partnersIdToRemove = array_diff($alreadyAffectedPartnersIds, $postedPartner);
 
-                if ($this->hasSameEsaboraUrl($partnersIdToAdd)) {
+                if ($this->affectationEsaboraPolicy->hasUrlConflict($partnersIdToAdd)) {
                     $message = sprintf('Impossible d\'affecter simultanément des partenaires interconnectés %s avec les mêmes identifiants.
                     Sélectionnez uniquement le partenaire d\'envoi, puis ajoutez le second après validation.', EsaboraSISHService::NAME_SI);
 
@@ -112,6 +114,11 @@ class AffectationController extends AbstractController
                     }
                     $partner = $this->partnerRepository->find($partnerIdToAdd);
                     if (!$partner) {
+                        continue;
+                    }
+
+                    $canAffectPartner = $this->affectationEsaboraPolicy->canBeAffected($signalement, $partner);
+                    if (!$canAffectPartner) {
                         continue;
                     }
                     $affectation = $this->affectationManager->createAffectationFrom(
@@ -302,29 +309,5 @@ class AffectationController extends AbstractController
         $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return $this->json(['redirect' => true, 'url' => $url]);
-    }
-
-    private function hasSameEsaboraUrl(array $partnerIds): bool
-    {
-        if (empty($partnerIds)) {
-            return false;
-        }
-
-        $partners = $this->partnerRepository->findByIds($partnerIds);
-        $countByUrl = [];
-        foreach ($partners as $partner) {
-            if (!$partner->canSyncWithEsabora()) {
-                continue;
-            }
-
-            $key = $partner->getEsaboraUrl();
-            $countByUrl[$key] = ($countByUrl[$key] ?? 0) + 1;
-
-            if ($countByUrl[$key] > 1) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

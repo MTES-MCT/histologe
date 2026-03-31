@@ -276,7 +276,7 @@ class PartnerRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return list<array{id: int, name: string, type: string}>
+     * @return array<int, array<string, int|string>>
      *
      * @throws Exception
      */
@@ -437,7 +437,7 @@ class PartnerRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param list<int>         $partnerIds
+     * @param list<int|string>  $partnerIds
      * @param list<PartnerType> $types
      *
      * @return array<int, Partner>

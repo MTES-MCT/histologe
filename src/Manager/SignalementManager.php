@@ -227,12 +227,14 @@ class SignalementManager extends AbstractManager
         $partnerIds = array_column($partners['not_affected'], 'id');
         $notAffectedPartners = $this->partnerRepository->findByIds($partnerIds, [PartnerType::ARS, PartnerType::COMMUNE_SCHS]);
 
-        foreach ($partners['not_affected'] as $key => $partnerNotAffected) {
-            if (!isset($notAffectedPartners[$partnerNotAffected['id']])) {
+        foreach ($partners['not_affected'] as $key => $partnerNotAffectedItem) {
+            /* @var Partner $partnerNotAffected */
+            if (!isset($notAffectedPartners[$partnerNotAffectedItem['id']])) {
                 continue;
             }
-            $affectation = $signalement->getRelatedAffectationsConnectedToSish($notAffectedPartners[$partnerNotAffected['id']]);
-            if ($affectation) {
+            $partnerNotAffected = $notAffectedPartners[$partnerNotAffectedItem['id']];
+            $affectation = $signalement->getRelatedAffectationsConnectedToSish();
+            if ($affectation && $partnerNotAffected->isConnectedToSanteHabitat()) {
                 $partners['not_affected'][$key]['is_disabled'] = true;
             }
         }

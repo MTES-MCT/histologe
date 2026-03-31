@@ -2193,16 +2193,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return null;
     }
 
-    public function getRelatedAffectationsConnectedToSish(Partner $partnerAlreadyAffected): ?Affectation
+    public function getRelatedAffectationsConnectedToSish(): ?Affectation
     {
         foreach ($this->affectations as $affectation) {
             $partner = $affectation->getPartner();
-            if ($partner->getId() === $partnerAlreadyAffected->getId()) {
-                continue;
-            }
-
             if ($partner->canSyncWithEsabora()
                 && $partner->isConnectedToSanteHabitat()
+                && $affectation->isSynchronizeWithEsabora()
             ) {
                 return $affectation;
             }
