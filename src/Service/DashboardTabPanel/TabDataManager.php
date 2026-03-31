@@ -10,6 +10,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\Query\Dashboard\SignalementsSansAffectationAccepteeQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
@@ -35,6 +36,7 @@ class TabDataManager
         private readonly PartnerRepository $partnerRepository,
         private readonly SignalementRepository $signalementRepository,
         private readonly TabCountKpiBuilder $tabCountKpiBuilder,
+        private readonly SignalementsSansAffectationAccepteeQuery $signalementsSansAffectationAccepteeQuery,
     ) {
     }
 
@@ -485,6 +487,33 @@ class TabDataManager
         }
 
         $count = $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours(user: $user, params: $tabQueryParameters);
+
+        return new TabDossierResult($tabDossiers, $count);
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function getDossiersAVerifierSansAffectationAcceptee(?TabQueryParameters $tabQueryParameters = null): TabDossierResult
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $signalements = $this->signalementsSansAffectationAccepteeQuery->findSignalements(user: $user, params: $tabQueryParameters);
+        $tabDossiers = [];
+        for ($i = 0; $i < \count($signalements); ++$i) {
+            $signalement = $signalements[$i];
+            $tabDossiers[] = new TabDossier(
+                uuid: $signalement['uuid'],
+                nomOccupant: $signalement['nomOccupant'],
+                prenomOccupant: $signalement['prenomOccupant'],
+                reference: '#'.$signalement['reference'],
+                adresse: $signalement['adresse'],
+                parc: $signalement['parc'],
+                derniereAffectationAt: new \DateTimeImmutable($signalement['lastAffectationAt']),
+                nbAffectations: $signalement['nbAffectations'],
+            );
+        }
+        $count = $this->signalementsSansAffectationAccepteeQuery->countSignalements(user: $user, params: $tabQueryParameters);
 
         return new TabDossierResult($tabDossiers, $count);
     }

@@ -11,6 +11,7 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\User;
 use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\Query\Dashboard\SignalementsSansAffectationAccepteeQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
@@ -35,6 +36,7 @@ class TabDataManagerTest extends WebTestCase
     protected MockObject&PartnerRepository $partnerRepository;
     protected MockObject&SignalementRepository $signalementRepository;
     protected MockObject&TabCountKpiBuilder $tabCountKpiBuilder;
+    protected MockObject&SignalementsSansAffectationAccepteeQuery $signalementsSansAffectationAccepteeQuery;
 
     protected function setUp(): void
     {
@@ -46,6 +48,22 @@ class TabDataManagerTest extends WebTestCase
         $this->partnerRepository = $this->createMock(PartnerRepository::class);
         $this->signalementRepository = $this->createMock(SignalementRepository::class);
         $this->tabCountKpiBuilder = $this->createMock(TabCountKpiBuilder::class);
+        $this->signalementsSansAffectationAccepteeQuery = $this->createMock(SignalementsSansAffectationAccepteeQuery::class);
+    }
+
+    private function getTabDataManager(): TabDataManager
+    {
+        return new TabDataManager(
+            $this->security,
+            $this->jobEventRepository,
+            $this->suiviRepository,
+            $this->territoryRepository,
+            $this->userRepository,
+            $this->partnerRepository,
+            $this->signalementRepository,
+            $this->tabCountKpiBuilder,
+            $this->signalementsSansAffectationAccepteeQuery,
+        );
     }
 
     public function testGetDernierActionDossiersReturnsExpectedTabDossier(): void
@@ -72,16 +90,7 @@ class TabDataManagerTest extends WebTestCase
             ],
         ]);
 
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
 
         $result = $tabDataManager->getDernierActionDossiers();
         $this->assertIsArray($result);
@@ -105,16 +114,7 @@ class TabDataManagerTest extends WebTestCase
         $this->security->method('getUser')->willReturn($user);
         $this->signalementRepository->method('countInjonctions')->willReturn(5);
 
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
 
         $result = $tabDataManager->countInjonctions();
         $this->assertSame(5, $result);
@@ -127,16 +127,7 @@ class TabDataManagerTest extends WebTestCase
         $this->security->method('getUser')->willReturn($user);
         $this->userRepository->method('findUsersPendingToArchive')->willReturn([1, 2, 3]);
 
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
 
         $result = $tabDataManager->countUsersPendingToArchive();
         $this->assertSame(3, $result);
@@ -148,16 +139,7 @@ class TabDataManagerTest extends WebTestCase
         $countPartnerDto->method('getNonNotifiables')->willReturn(7);
         $this->partnerRepository->method('countPartnerNonNotifiables')->willReturn($countPartnerDto);
 
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
 
         $result = $tabDataManager->countPartenairesNonNotifiables();
         $this->assertSame(7, $result);
@@ -167,16 +149,7 @@ class TabDataManagerTest extends WebTestCase
     {
         $this->partnerRepository->method('countPartnerInterfaces')->willReturn(5);
 
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
 
         $result = $tabDataManager->countPartenairesInterfaces();
         $this->assertSame(5, $result);
@@ -189,16 +162,7 @@ class TabDataManagerTest extends WebTestCase
         $this->jobEventRepository->method('findLastJobEventByTerritory')
             ->willReturnOnConsecutiveCalls($lastSynchro, $lastError);
 
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
 
         $result = $tabDataManager->getInterconnexions();
         $this->assertIsArray($result);
@@ -232,16 +196,7 @@ class TabDataManagerTest extends WebTestCase
             ->method('countDossiersNoAgentFrom')
             ->with(AffectationStatus::ACCEPTED, $params)
             ->willReturn($expectedCount);
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder
-        );
+        $tabDataManager = $this->getTabDataManager();
         $result = $tabDataManager->getDossiersNoAgentWithCount($params, AffectationStatus::ACCEPTED);
 
         $this->assertInstanceOf(TabDossierResult::class, $result);
@@ -262,16 +217,7 @@ class TabDataManagerTest extends WebTestCase
             ->method('countDossiersDemandesFermetureByUsager')
             ->with(null)
             ->willReturn($expectedCount);
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
         $result = $tabDataManager->getDossiersDemandesFermetureByUsager();
 
         $this->assertInstanceOf(TabDossierResult::class, $result);
@@ -299,16 +245,7 @@ class TabDataManagerTest extends WebTestCase
         ]);
         $this->suiviRepository->method('countSuivisUsagersWithoutAskFeedbackBefore')->with($user)->willReturn(1);
 
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
         $result = $tabDataManager->getMessagesUsagersNouveauxMessages();
         $this->assertCount(1, $result->dossiers);
         $this->assertSame(1, $result->count);
@@ -333,16 +270,7 @@ class TabDataManagerTest extends WebTestCase
             ->method('countSignalementsAvecRelancesSansReponse')
             ->with($params)
             ->willReturn($expectedCount);
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
         $result = $tabDataManager->getDossiersRelanceSansReponse($params);
 
         $this->assertInstanceOf(TabDossierResult::class, $result);
@@ -371,16 +299,7 @@ class TabDataManagerTest extends WebTestCase
         ]);
         $this->suiviRepository->method('countSuivisPostCloture')->with($user)->willReturn(1);
 
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
         $result = $tabDataManager->getMessagesUsagersMessageApresFermeture();
         $this->assertCount(1, $result->dossiers);
         $this->assertSame(1, $result->count);
@@ -404,16 +323,7 @@ class TabDataManagerTest extends WebTestCase
             ->method('countDossiersFermePartenaireTous')
             ->with($params)
             ->willReturn($expectedCount);
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
         $result = $tabDataManager->getDossiersFermePartenaireTous($params);
 
         $this->assertInstanceOf(TabDossierResult::class, $result);
@@ -435,16 +345,7 @@ class TabDataManagerTest extends WebTestCase
             ->method('countDossiersFermePartenaireCommune')
             ->with($params)
             ->willReturn($expectedCount);
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
         $result = $tabDataManager->getDossiersFermePartenaireCommune($params);
 
         $this->assertInstanceOf(TabDossierResult::class, $result);
@@ -473,16 +374,7 @@ class TabDataManagerTest extends WebTestCase
         ]);
         $this->suiviRepository->method('countSuivisUsagerOrPoursuiteWithAskFeedbackBefore')->with($user)->willReturn(1);
 
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
 
         $result = $tabDataManager->getMessagesUsagersMessagesSansReponse();
         $this->assertCount(1, $result->dossiers);
@@ -518,16 +410,7 @@ class TabDataManagerTest extends WebTestCase
         ]);
         $this->signalementRepository->method('countSignalementsSansSuiviPartenaireDepuis60Jours')->with($user)->willReturn(1);
 
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
 
         $result = $tabDataManager->getDossiersAVerifierSansActivitePartenaires();
         $this->assertCount(1, $result->dossiers);
@@ -541,18 +424,41 @@ class TabDataManagerTest extends WebTestCase
         $this->assertInstanceOf('DateTimeImmutable', $result->dossiers[0]->derniereActionAt);
     }
 
+    public function testGetDossiersAVerifierSansAffectationAcceptee(): void
+    {
+        /** @var MockObject&User $user */
+        $user = $this->createMock(User::class);
+        $this->security->method('getUser')->willReturn($user);
+        $this->signalementsSansAffectationAccepteeQuery->method('findSignalements')->with($user)->willReturn([
+            [
+                'nomOccupant' => 'Lemoine',
+                'prenomOccupant' => 'Claire',
+                'reference' => '2024-003',
+                'adresse' => '30 boulevard Nation',
+                'parc' => 'PRIVE',
+                'lastAffectationAt' => '2024-06-20 12:00:00',
+                'nbAffectations' => 3,
+                'uuid' => 'uuid-999',
+            ],
+        ]);
+        $this->signalementsSansAffectationAccepteeQuery->method('countSignalements')->with($user)->willReturn(1);
+
+        $tabDataManager = $this->getTabDataManager();
+
+        $result = $tabDataManager->getDossiersAVerifierSansAffectationAcceptee();
+        $this->assertCount(1, $result->dossiers);
+        $this->assertSame(1, $result->count);
+        $this->assertSame('Lemoine', $result->dossiers[0]->nomOccupant);
+        $this->assertSame('Claire', $result->dossiers[0]->prenomOccupant);
+        $this->assertSame('#2024-003', $result->dossiers[0]->reference);
+        $this->assertSame(3, $result->dossiers[0]->nbAffectations);
+        $this->assertSame('uuid-999', $result->dossiers[0]->uuid);
+        $this->assertInstanceOf('DateTimeImmutable', $result->dossiers[0]->derniereAffectationAt);
+    }
+
     public function testCountDataKpi(): void
     {
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
 
         $result = $tabDataManager->countDataKpi(
             territories: [],
@@ -592,16 +498,7 @@ class TabDataManagerTest extends WebTestCase
                 ],
             ]);
 
-        $tabDataManager = new TabDataManager(
-            $this->security,
-            $this->jobEventRepository,
-            $this->suiviRepository,
-            $this->territoryRepository,
-            $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
-            $this->tabCountKpiBuilder,
-        );
+        $tabDataManager = $this->getTabDataManager();
 
         $result = $tabDataManager->getDossiersActiviteRecente($params);
         $this->assertCount(1, $result->dossiers);

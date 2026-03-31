@@ -6,6 +6,7 @@ readonly class CountDossiersAVerifier
 {
     public function __construct(
         public int $countSignalementsSansSuiviPartenaireDepuis60Jours = 0,
+        public int $countSignalementsSansAffectationAcceptee = 0,
         public int $countAdresseEmailAVerifier = 0,
     ) {
     }
@@ -13,6 +14,7 @@ readonly class CountDossiersAVerifier
     public function total(): int
     {
         return $this->countSignalementsSansSuiviPartenaireDepuis60Jours
+            + $this->countSignalementsSansAffectationAcceptee
             + $this->countAdresseEmailAVerifier;
     }
 }

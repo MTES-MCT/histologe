@@ -3,6 +3,7 @@
 namespace App\Service\DashboardTabPanel\Kpi;
 
 use App\Entity\User;
+use App\Repository\Query\Dashboard\SignalementsSansAffectationAccepteeQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -29,6 +30,7 @@ class TabCountKpiBuilder
         private readonly SuiviRepository $suiviRepository,
         private readonly Security $security,
         private readonly TabCountKpiCacheHelper $tabCountKpiCacheHelper,
+        private readonly SignalementsSansAffectationAccepteeQuery $signalementsSansAffectationAccepteeQuery,
     ) {
     }
 
@@ -131,8 +133,9 @@ class TabCountKpiBuilder
     private function countAllDossiersAVerifier(User $user, ?TabQueryParameters $params): CountDossiersAVerifier
     {
         return new CountDossiersAVerifier(
-            $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params),
-            $this->signalementRepository->countNonDeliverableSignalements($user, $params)
+            countSignalementsSansSuiviPartenaireDepuis60Jours: $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params),
+            countSignalementsSansAffectationAcceptee: $this->signalementsSansAffectationAccepteeQuery->countSignalements($user, $params),
+            countAdresseEmailAVerifier: $this->signalementRepository->countNonDeliverableSignalements($user, $params)
         );
     }
 }
