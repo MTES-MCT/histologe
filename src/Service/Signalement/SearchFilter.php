@@ -522,11 +522,11 @@ class SearchFilter
                 $qb->andWhere('s.isLogementVacant IS NULL');
                 break;
             case 'logement_occupe_bailleur_occupant':
-                $qb->andWhere('s.isLogementVacant = :is_logement_vacant OR s.isLogementVacant IS NULL')->setParameter('is_logement_vacant', false);
+                $qb->andWhere('s.isLogementVacant = :is_logement_vacant')->setParameter('is_logement_vacant', false);
                 $qb->andWhere('s.profileOccupant = :profile_occupant')->setParameter('profile_occupant', ProfileOccupant::BAILLEUR_OCCUPANT);
                 break;
             case 'logement_occupe_locataire':
-                $qb->andWhere('s.isLogementVacant = :is_logement_vacant OR s.isLogementVacant IS NULL')->setParameter('is_logement_vacant', false);
+                $qb->andWhere('s.isLogementVacant = :is_logement_vacant')->setParameter('is_logement_vacant', false);
                 $qb->andWhere('s.profileOccupant = :profile_occupant')->setParameter('profile_occupant', ProfileOccupant::LOCATAIRE);
                 break;
             default:

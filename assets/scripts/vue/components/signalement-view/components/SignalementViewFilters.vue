@@ -695,22 +695,6 @@ export default defineComponent({
     }
   }
 
-  .histo-score-range {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .filters-vertical {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .filters-horizontal {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
   .filters-sidebar {
     display: flex;
     flex-direction: column;
