@@ -131,7 +131,7 @@ class TabDataManagerTest extends WebTestCase
         /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
-        $this->signalementRepository->method('countInjonctions')->willReturn(5);
+        $this->kpiQuery->method('countInjonctions')->willReturn(5);
 
         $tabDataManager = $this->getTabDataManager();
 
