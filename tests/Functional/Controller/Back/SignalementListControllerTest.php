@@ -84,7 +84,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Situation Prévis de départ' => [['situation' => 'preavis_de_depart', 'isImported' => 'oui'], 1];
         yield 'Search by Situation Attente de relogement' => [['situation' => 'attente_relogement', 'isImported' => 'oui'], 2];
         yield 'Search by Occupation logement Vacant' => [['occupationLogement' => 'logement_vacant', 'isImported' => 'oui'], 1];
-        yield 'Search by Occupation logement Occupé' => [['occupationLogement' => 'logement_occupe', 'isImported' => 'oui'], 15];
+        yield 'Search by Occupation logement Occupé' => [['occupationLogement' => 'logement_occupe', 'isImported' => 'oui'], 16];
         yield 'Search by Occupation logement Occupé locataire' => [['occupationLogement' => 'logement_occupe_locataire', 'isImported' => 'oui'], 36];
         yield 'Search by Signalement Imported' => [['isImported' => 'oui'], 58];
         yield 'Search by Zones' => [['isImported' => 'oui', 'zones' => [1, 2, 3]], 5];
