@@ -144,8 +144,12 @@ class SignalementEditController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $msg = 'Les coordonnées de l\'occupant ont bien été mises à jour.';
-            if ($mailOccupant != $form->get('mailOccupantTemp')->getData()) {
-                $signalement->setMailOccupantTemp($form->get('mailOccupantTemp')->getData());
+            $mailTemp = $form->get('mailOccupantTemp')->getData();
+            if (!$mailTemp) { // email vide possible en cas de signalement tiers déclarant
+                $signalement->setMailOccupant(null);
+                $signalement->setMailOccupantTemp(null);
+            } elseif ($mailOccupant != $mailTemp) {
+                $signalement->setMailOccupantTemp($mailTemp);
                 $notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_SIGNALEMENT_EDIT_MAIL_OCCUPANT,
