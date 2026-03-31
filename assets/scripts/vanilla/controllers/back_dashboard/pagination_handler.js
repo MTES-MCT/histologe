@@ -10,7 +10,7 @@ export default function paginationHandler(loadPanelContent) {
 
     if (!page) return;
 
-    const container = link.closest('[data-url]');
+    let container = link.closest('[data-url]');
     if (!container) {
       container = link.closest('.fr-tabs__panel')?.querySelector('[data-url]');
     }

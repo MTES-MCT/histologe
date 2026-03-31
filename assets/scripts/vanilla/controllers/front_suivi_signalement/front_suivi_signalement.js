@@ -425,8 +425,9 @@ if (infoProcedureAssuranceContactee) {
   toggleReponseAssurance();
 }
 
-
-const fieldsetBailleurClotureProcedureReponse = document?.querySelector('#bailleur_cloture_procedure_reponse');
+const fieldsetBailleurClotureProcedureReponse = document?.querySelector(
+  '#bailleur_cloture_procedure_reponse'
+);
 if (fieldsetBailleurClotureProcedureReponse) {
   document
     .querySelectorAll('#bailleur_cloture_procedure_reponse input[type="radio"]')
@@ -437,7 +438,9 @@ if (fieldsetBailleurClotureProcedureReponse) {
     });
 
   function refreshBailleurClotureProcedurePrecision() {
-    const containerBailleurClotureProcedurePrecision = document.querySelector('#bailleur_cloture_procedure_description').closest('.fr-fieldset__element');
+    const containerBailleurClotureProcedurePrecision = document
+      .querySelector('#bailleur_cloture_procedure_description')
+      .closest('.fr-fieldset__element');
     if (document.querySelector('#bailleur_cloture_procedure_reponse_1').checked) {
       containerBailleurClotureProcedurePrecision.classList.remove('fr-hidden');
     } else {
