@@ -3,6 +3,7 @@
 namespace App\Factory\Interconnection\Esabora;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
@@ -18,6 +19,7 @@ use App\Utils\AddressParser;
 use App\Utils\EscalierParser;
 use App\Utils\EtageParser;
 use Doctrine\ORM\NonUniqueResultException;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -28,15 +30,21 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly ParameterBagInterface $parameterBag,
         private readonly UrlGeneratorInterface $urlGenerator,
+        #[Autowire(env: 'FEATURE_SCHS_DISPATCH_SISH_ENABLE')]
+        private readonly bool $featureSchsDispatchSishEnable,
     ) {
         parent::__construct($this->uploadHandlerService);
     }
 
     public function supports(Affectation $affectation): bool
     {
-        return $this->isEsaboraPartnerActive($affectation)
-            && in_array($affectation->getPartner()->getType(), DossierMessageSISH::CAN_SYNC_SISH_ESABORA)
-            && $this->isConnectedToSish($affectation);
+        if ($this->featureSchsDispatchSishEnable) {
+            return $this->isEsaboraPartnerActive($affectation)
+                && in_array($affectation->getPartner()->getType(), DossierMessageSISH::CAN_SYNC_SISH_ESABORA)
+                && $this->isConnectedToSish($affectation);
+        }
+
+        return $this->isEsaboraPartnerActive($affectation) && PartnerType::ARS === $affectation->getPartner()->getType();
     }
 
     /**

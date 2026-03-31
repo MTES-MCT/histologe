@@ -22,7 +22,7 @@ class AffectationEsaboraPolicyTest extends KernelTestCase
      */
     public function testHasUrlConflict(array $partnerIds, bool $result): void
     {
-        $affectationEsaboraPolicy = new AffectationEsaboraPolicy($this->partnerRepository);
+        $affectationEsaboraPolicy = new AffectationEsaboraPolicy($this->partnerRepository, true);
         self::assertSame($result, $affectationEsaboraPolicy->hasUrlConflict($partnerIds));
     }
 
@@ -36,7 +36,7 @@ class AffectationEsaboraPolicyTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2024-10']);
         $partner = $this->partnerRepository->findOneBy(['nom' => $partnerName]);
 
-        $affectationEsaboraPolicy = new AffectationEsaboraPolicy($this->partnerRepository);
+        $affectationEsaboraPolicy = new AffectationEsaboraPolicy($this->partnerRepository, true);
         self::assertSame($result, $affectationEsaboraPolicy->canBeAffected($signalement, $partner));
     }
 

@@ -98,7 +98,8 @@ class PhotoHelperTest extends KernelTestCase
             $this->zipcodeProvider,
             $this->exportIterableQuery,
             $this->listPaginatorQuery,
-            $this->htmlSanitizerInterface
+            $this->htmlSanitizerInterface,
+            true
         );
     }
 

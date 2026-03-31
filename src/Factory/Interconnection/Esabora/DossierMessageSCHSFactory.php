@@ -10,6 +10,7 @@ use App\Service\Interconnection\Esabora\AttachmentsUtils;
 use App\Service\UploadHandlerService;
 use App\Utils\AddressParser;
 use App\Utils\EtageParser;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 {
@@ -17,15 +18,22 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
 
     public function __construct(
         private readonly UploadHandlerService $uploadHandlerService,
+        #[Autowire(env: 'FEATURE_SCHS_DISPATCH_SISH_ENABLE')]
+        private readonly bool $featureSchsDispatchSishEnable,
     ) {
         parent::__construct($this->uploadHandlerService);
     }
 
     public function supports(Affectation $affectation): bool
     {
-        return $this->isEsaboraPartnerActive($affectation)
+        if ($this->featureSchsDispatchSishEnable) {
+            return $this->isEsaboraPartnerActive($affectation)
             && in_array($affectation->getPartner()->getType(), DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA)
             && !$this->isConnectedToSish($affectation);
+        }
+
+        return $this->isEsaboraPartnerActive($affectation)
+            && in_array($affectation->getPartner()->getType(), DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA);
     }
 
     public function createInstance(Affectation $affectation): DossierMessageSCHS

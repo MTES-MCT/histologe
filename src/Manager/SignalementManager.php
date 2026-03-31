@@ -82,6 +82,8 @@ class SignalementManager extends AbstractManager
         private readonly ListPaginatorQuery $listPaginatorQuery,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
+        #[Autowire(env: 'FEATURE_SCHS_DISPATCH_SISH_ENABLE')]
+        private readonly bool $featureSchsDispatchSishEnable,
         string $entityName = Signalement::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -224,18 +226,20 @@ class SignalementManager extends AbstractManager
             filterInjonctionBailleur: $filterInjonctionBailleur,
         );
 
-        $partnerIds = array_column($partners['not_affected'], 'id');
-        $notAffectedPartners = $this->partnerRepository->findByIds($partnerIds, [PartnerType::ARS, PartnerType::COMMUNE_SCHS]);
+        if ($this->featureSchsDispatchSishEnable) {
+            $partnerIds = array_column($partners['not_affected'], 'id');
+            $notAffectedPartners = $this->partnerRepository->findByIds($partnerIds, [PartnerType::ARS, PartnerType::COMMUNE_SCHS]);
 
-        foreach ($partners['not_affected'] as $key => $partnerNotAffectedItem) {
-            /* @var Partner $partnerNotAffected */
-            if (!isset($notAffectedPartners[$partnerNotAffectedItem['id']])) {
-                continue;
-            }
-            $partnerNotAffected = $notAffectedPartners[$partnerNotAffectedItem['id']];
-            $affectation = $signalement->getRelatedAffectationsConnectedToSish();
-            if ($affectation && $partnerNotAffected->isConnectedToSanteHabitat()) {
-                $partners['not_affected'][$key]['is_disabled'] = true;
+            foreach ($partners['not_affected'] as $key => $partnerNotAffectedItem) {
+                /* @var Partner $partnerNotAffected */
+                if (!isset($notAffectedPartners[$partnerNotAffectedItem['id']])) {
+                    continue;
+                }
+                $partnerNotAffected = $notAffectedPartners[$partnerNotAffectedItem['id']];
+                $affectation = $signalement->getRelatedAffectationsConnectedToSish();
+                if ($affectation && $partnerNotAffected->isConnectedToSanteHabitat()) {
+                    $partners['not_affected'][$key]['is_disabled'] = true;
+                }
             }
         }
 

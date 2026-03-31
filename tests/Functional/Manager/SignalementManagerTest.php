@@ -122,6 +122,7 @@ class SignalementManagerTest extends WebTestCase
             $this->exportIterableQuery,
             $this->listPaginatorQuery,
             $this->htmlSanitizerInterface,
+            true,
         );
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);

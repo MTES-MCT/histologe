@@ -30,6 +30,7 @@ env:
   EDITION_SUIVI_ENABLE: 1
   DELAY_SUIVI_EDITABLE_IN_MINUTES: 20
   FEATURE_IMPRIM_FIP: 1
+  FEATURE_SCHS_DISPATCH_SISH_ENABLE: 1
 jobs:
   code-quality:
     name: Signal-logement (PHP ${{ matrix.php-versions }})

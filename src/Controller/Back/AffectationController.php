@@ -73,6 +73,8 @@ class AffectationController extends AbstractController
         Signalement $signalement,
         TagAwareCacheInterface $cache,
     ): RedirectResponse|JsonResponse {
+        $hasAffectPartnerError = false;
+        $partnerNameNotAffected = '';
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $unnotifiedPartners = [];
             $requestData = $request->request->all();
@@ -119,6 +121,8 @@ class AffectationController extends AbstractController
 
                     $canAffectPartner = $this->affectationEsaboraPolicy->canBeAffected($signalement, $partner);
                     if (!$canAffectPartner) {
+                        $hasAffectPartnerError = true;
+                        $partnerNameNotAffected = $partner->getNom();
                         continue;
                     }
                     $affectation = $this->affectationManager->createAffectationFrom(
@@ -144,7 +148,18 @@ class AffectationController extends AbstractController
                 $successMessage .= '<br>Attention, certains partenaires affectés ont désactivé les notifications par e-mail : ';
                 $successMessage .= implode(', ', array_map(static fn ($partner) => $partner->getNom(), $unnotifiedPartners));
             }
-            $flashMessage = ['type' => 'success', 'title' => 'Affectations enregistrées', 'message' => $successMessage];
+            $flashMessage[] = ['type' => 'success', 'title' => 'Affectations enregistrées', 'message' => $successMessage];
+            if ($hasAffectPartnerError) {
+                $flashMessage[] = [
+                    'type' => 'alert',
+                    'title' => 'Affectation non enregistrée',
+                    'message' => sprintf(
+                        'Impossible d\'affecter le partenaire %s : le dossier a déjà été envoyé à %s.',
+                        $partnerNameNotAffected,
+                        EsaboraSISHService::NAME_SI
+                    ),
+                ];
+            }
             $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($signalement);
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
