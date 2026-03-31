@@ -21,7 +21,7 @@ class DossiersUndeliverableEmailQuery
     ) {
     }
 
-    private function buildBaseQb(User $user, ?TabQueryParameters $params): QueryBuilder
+    private function getBaseQB(User $user, ?TabQueryParameters $params): QueryBuilder
     {
         $qb = $this->entityManager->createQueryBuilder();
 
@@ -98,7 +98,7 @@ class DossiersUndeliverableEmailQuery
      */
     public function findSignalements(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params);
+        $qb = $this->getBaseQB($user, $params);
 
         $qb->select(
             's.uuid AS uuid,
@@ -140,7 +140,7 @@ class DossiersUndeliverableEmailQuery
      */
     public function findIds(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params);
+        $qb = $this->getBaseQB($user, $params);
         $qb->select('s.id')->groupBy('s.id');
 
         return $qb->getQuery()->getSingleColumnResult();
@@ -148,7 +148,7 @@ class DossiersUndeliverableEmailQuery
 
     public function count(User $user, ?TabQueryParameters $params): int
     {
-        $qb = $this->buildBaseQb($user, $params);
+        $qb = $this->getBaseQB($user, $params);
         $qb->select('COUNT(DISTINCT s.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();

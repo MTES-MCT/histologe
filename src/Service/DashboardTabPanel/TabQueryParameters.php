@@ -27,6 +27,7 @@ class TabQueryParameters
         public ?string $mesDossiersAverifier = null,
         public ?string $mesDossiersActiviteRecente = null,
         public ?string $queryCommune = null,
+        public ?int $page = null,
     ) {
     }
 }

@@ -28,7 +28,7 @@ class DossiersQuery
     ) {
     }
 
-    private function getBaseQueryBuilder(
+    private function getBaseQB(
         User $user,
         ?SignalementStatus $signalementStatus = null,
         ?AffectationStatus $affectationStatus = null,
@@ -100,7 +100,7 @@ class DossiersQuery
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $qb = $this->getBaseQueryBuilder(
+        $qb = $this->getBaseQB(
             user: $user,
             signalementStatus: $signalementStatus,
             affectationStatus: $affectationStatus,
@@ -164,7 +164,7 @@ class DossiersQuery
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $qb = $this->getBaseQueryBuilder(
+        $qb = $this->getBaseQB(
             user: $user,
             signalementStatus: $signalementStatus,
             affectationStatus: $affectationStatus,
@@ -187,7 +187,7 @@ class DossiersQuery
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $qb = $this->getBaseQueryBuilder(
+        $qb = $this->getBaseQB(
             user: $user,
             affectationStatus: $affectationStatus,
             onlyWithoutSubscription: true,
@@ -242,7 +242,7 @@ class DossiersQuery
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $qb = $this->getBaseQueryBuilder(
+        $qb = $this->getBaseQB(
             user: $user,
             affectationStatus: $affectationStatus,
             onlyWithoutSubscription: true,
@@ -282,7 +282,7 @@ class DossiersQuery
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $qb = $this->getBaseQueryBuilder(
+        $qb = $this->getBaseQB(
             user: $user,
             signalementStatus: SignalementStatus::ACTIVE,
             tabQueryParameters: $tabQueryParameters
@@ -332,7 +332,7 @@ class DossiersQuery
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $qb = $this->getBaseQueryBuilder(
+        $qb = $this->getBaseQB(
             user: $user,
             signalementStatus: SignalementStatus::ACTIVE,
             tabQueryParameters: $tabQueryParameters
@@ -370,7 +370,7 @@ class DossiersQuery
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $qb = $this->getBaseQueryBuilder(
+        $qb = $this->getBaseQB(
             user: $user,
             signalementStatus: SignalementStatus::ACTIVE,
             tabQueryParameters: $tabQueryParameters
@@ -423,7 +423,7 @@ class DossiersQuery
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $qb = $this->getBaseQueryBuilder(
+        $qb = $this->getBaseQB(
             user: $user,
             signalementStatus: SignalementStatus::ACTIVE,
             tabQueryParameters: $tabQueryParameters
@@ -450,7 +450,7 @@ class DossiersQuery
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $qb = $this->getBaseQueryBuilder(
+        $qb = $this->getBaseQB(
             user: $user,
             signalementStatus: SignalementStatus::ACTIVE,
             tabQueryParameters: $tabQueryParameters
@@ -509,7 +509,7 @@ class DossiersQuery
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $qb = $this->getBaseQueryBuilder(
+        $qb = $this->getBaseQB(
             user: $user,
             signalementStatus: SignalementStatus::ACTIVE,
             tabQueryParameters: $tabQueryParameters

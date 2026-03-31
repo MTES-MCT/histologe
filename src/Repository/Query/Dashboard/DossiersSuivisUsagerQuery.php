@@ -26,7 +26,7 @@ class DossiersSuivisUsagerQuery
     /**
      * @param SuiviCategory[] $categories
      */
-    private function buildBaseQb(
+    private function getBaseQB(
         User $user,
         ?TabQueryParameters $params,
         array $categories,
@@ -165,7 +165,7 @@ class DossiersSuivisUsagerQuery
      */
     public function getSignalementsIdWithSuivisUsagersWithoutAskFeedbackBefore(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], true, true);
+        $qb = $this->getBaseQB($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], true, true);
         $qb = $this->addFilterNoPreviousAskFeedback($qb);
         $qb = $this->addSelectAndOrder($qb, $params, false, true);
 
@@ -177,7 +177,7 @@ class DossiersSuivisUsagerQuery
      */
     public function findSuivisUsagersWithoutAskFeedbackBefore(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], true, false);
+        $qb = $this->getBaseQB($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], true, false);
         $qb = $this->addFilterNoPreviousAskFeedback($qb);
         $qb = $this->addSelectAndOrder($qb, $params);
 
@@ -186,7 +186,7 @@ class DossiersSuivisUsagerQuery
 
     public function countSuivisUsagersWithoutAskFeedbackBefore(User $user, ?TabQueryParameters $params): int
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], true, true);
+        $qb = $this->getBaseQB($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], true, true);
         $qb = $this->addFilterNoPreviousAskFeedback($qb);
         $qb = $this->addSelectAndOrder($qb, $params, true);
 
@@ -219,7 +219,7 @@ class DossiersSuivisUsagerQuery
      */
     public function getSignalementsIdWithSuivisPostCloture(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], false, true);
+        $qb = $this->getBaseQB($user, $params, [SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], false, true);
         $qb = $this->addFilterNotificationNotSeen($qb, $user);
         $qb = $this->addSelectAndOrder($qb, $params, false, true);
 
@@ -231,7 +231,7 @@ class DossiersSuivisUsagerQuery
      */
     public function findSuivisPostCloture(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], false, false);
+        $qb = $this->getBaseQB($user, $params, [SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], false, false);
         $qb = $this->addFilterNotificationNotSeen($qb, $user);
         $qb = $this->addSelectAndOrder($qb, $params);
 
@@ -240,7 +240,7 @@ class DossiersSuivisUsagerQuery
 
     public function countSuivisPostCloture(User $user, ?TabQueryParameters $params): int
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], false, true);
+        $qb = $this->getBaseQB($user, $params, [SuiviCategory::MESSAGE_USAGER_POST_CLOTURE], false, true);
         $qb = $this->addFilterNotificationNotSeen($qb, $user);
         $qb = $this->addSelectAndOrder($qb, $params, true);
 
@@ -291,7 +291,7 @@ class DossiersSuivisUsagerQuery
      */
     public function getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false, true);
+        $qb = $this->getBaseQB($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false, true);
         $qb = $this->addFilterAskFeedbackBeforeAndNoPublicAfter($qb);
         $qb = $this->addSelectAndOrder($qb, $params, false, true);
 
@@ -303,7 +303,7 @@ class DossiersSuivisUsagerQuery
      */
     public function findSuivisUsagerOrPoursuiteWithAskFeedbackBefore(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false, false);
+        $qb = $this->getBaseQB($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false, false);
         $qb = $this->addFilterAskFeedbackBeforeAndNoPublicAfter($qb);
         $qb = $this->addSelectAndOrder($qb, $params);
 
@@ -312,7 +312,7 @@ class DossiersSuivisUsagerQuery
 
     public function countSuivisUsagerOrPoursuiteWithAskFeedbackBefore(User $user, ?TabQueryParameters $params): int
     {
-        $qb = $this->buildBaseQb($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false, true);
+        $qb = $this->getBaseQB($user, $params, [SuiviCategory::MESSAGE_USAGER, SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], false, true);
         $qb = $this->addFilterAskFeedbackBeforeAndNoPublicAfter($qb);
         $qb = $this->addSelectAndOrder($qb, $params, true);
 

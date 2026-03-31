@@ -27,6 +27,7 @@ use App\Service\DashboardTabPanel\TabDataManager;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabDossierResult;
 use App\Service\DashboardTabPanel\TabQueryParameters;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -94,7 +95,7 @@ class TabDataManagerTest extends WebTestCase
         $signalementStatus = SignalementStatus::ACTIVE;
         $suiviCategory = SuiviCategory::MESSAGE_PARTNER;
 
-        $this->dossiersActiviteRecenteQuery->method('findLastSignalementsWithUserSuivi')->willReturn([
+        $rawData = [
             [
                 'nomOccupant' => 'Dupont',
                 'prenomOccupant' => 'Jean',
@@ -107,23 +108,43 @@ class TabDataManagerTest extends WebTestCase
                 'hasNewerSuivi' => true,
                 'uuid' => 'uuid-123',
             ],
-        ]);
+        ];
+
+        /** @var MockObject&Paginator $paginator */
+        $paginator = $this->createMock(Paginator::class);
+        $paginator->method('getIterator')->willReturn(new \ArrayIterator($rawData));
+        $paginator->method('count')->willReturn(1);
+
+        $this->dossiersActiviteRecenteQuery
+            ->method('findPaginatedLastSignalementsWithUserSuivi')
+            ->willReturn($paginator);
+
+        $this->dossiersActiviteRecenteQuery
+            ->method('countLastSignalementsWithUserSuivi')
+            ->willReturn(1);
 
         $tabDataManager = $this->getTabDataManager();
 
         $result = $tabDataManager->getDernierActionDossiers();
         $this->assertIsArray($result);
-        $this->assertCount(1, $result);
-        $this->assertInstanceOf(TabDossier::class, $result[0]);
-        $this->assertSame('Dupont', $result[0]->nomOccupant);
-        $this->assertSame('Jean', $result[0]->prenomOccupant);
-        $this->assertSame('#2023-001', $result[0]->reference);
-        $this->assertSame('1 rue de Paris', $result[0]->adresse);
-        $this->assertSame('en cours', $result[0]->statut);
-        $this->assertSame('Suivi visible par l\'usager', $result[0]->derniereAction);
-        $this->assertSame('10/06/2024', $result[0]->derniereActionAt->format('d/m/Y'));
-        $this->assertSame('OUI', $result[0]->actionDepuis);
-        $this->assertSame('uuid-123', $result[0]->uuid);
+        $this->assertArrayHasKey('data', $result);
+        $this->assertArrayHasKey('total', $result);
+        $this->assertArrayHasKey('page', $result);
+        $this->assertSame(1, $result['total']);
+        $this->assertSame(1, $result['page']);
+        $firstResult = $result['data'][0];
+        $this->assertInstanceOf(TabDossier::class, $firstResult);
+        $this->assertSame('Dupont', $firstResult->nomOccupant);
+        $this->assertSame('Jean', $firstResult->prenomOccupant);
+        $this->assertSame('#2023-001', $firstResult->reference);
+        $this->assertSame('1 rue de Paris', $firstResult->adresse);
+        $this->assertSame('en cours', $firstResult->statut);
+        $this->assertSame('Suivi visible par l\'usager', $firstResult->derniereAction);
+        $this->assertSame('10/06/2024', $firstResult->derniereActionAt->format('d/m/Y'));
+        $this->assertSame('OUI', $firstResult->actionDepuis);
+        $this->assertSame('uuid-123', $firstResult->uuid);
+        $this->assertSame('OUI', $firstResult->actionDepuis);
+        $this->assertSame('uuid-123', $firstResult->uuid);
     }
 
     public function testCountInjonctions(): void

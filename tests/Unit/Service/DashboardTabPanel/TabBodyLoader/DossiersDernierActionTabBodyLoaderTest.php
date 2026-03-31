@@ -39,7 +39,7 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
         $tabDataManager = $this->createMock(TabDataManager::class);
         $tabQueryParameters = new TabQueryParameters(territoireId: 42);
 
-        $expectedData = ['foo' => 'bar'];
+        $expectedData = ['data' => 'bar', 'total' => 1, 'page' => 1];
         $expectedKpi = [
             'comptes_en_attente' => 3,
             'comptes_pb_email' => 0,
@@ -84,7 +84,9 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
 
         $data = $tabBody->getData();
         $this->assertIsArray($data);
-        $this->assertSame($expectedData, $data['data']);
+        $this->assertSame($expectedData['data'], $data['data']);
+        $this->assertSame($expectedData['total'], $tabBody->getCount());
+        $this->assertSame($expectedData['page'], $data['page']);
         $this->assertSame($expectedKpi, $data['data_kpi']);
         $this->assertSame($expectedInterconnexion, $data['data_interconnexion']);
         $this->assertSame(42, $data['territory_id']);
@@ -106,7 +108,7 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
         $tabDataManager = $this->createMock(TabDataManager::class);
         $tabQueryParameters = new TabQueryParameters(territoireId: 42);
 
-        $expectedData = ['foo' => 'bar'];
+        $expectedData = ['data' => 'bar', 'total' => 1, 'page' => 1];
 
         $tabDataManager->expects($this->once())
             ->method('getDernierActionDossiers')
@@ -123,7 +125,9 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
 
         $data = $tabBody->getData();
         $this->assertIsArray($data);
-        $this->assertSame($expectedData, $data['data']);
+        $this->assertSame($expectedData['data'], $data['data']);
+        $this->assertSame($expectedData['total'], $tabBody->getCount());
+        $this->assertSame($expectedData['page'], $data['page']);
         $this->assertArrayNotHasKey('data_kpi', $data);
         $this->assertArrayNotHasKey('data_interconnexion', $data);
         $this->assertSame(42, $data['territory_id']);

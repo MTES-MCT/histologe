@@ -12,6 +12,7 @@ use App\Entity\UserSignalementSubscription;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class DossiersActiviteRecenteQuery
 {
@@ -20,7 +21,7 @@ class DossiersActiviteRecenteQuery
     ) {
     }
 
-    private function getBaseQueryBuilder(User $user, ?TabQueryParameters $params): QueryBuilder
+    private function getBaseQB(User $user, ?TabQueryParameters $params): QueryBuilder
     {
         $subQb = $this->entityManager->createQueryBuilder()
             ->from(Suivi::class, 'sq')
@@ -84,7 +85,7 @@ class DossiersActiviteRecenteQuery
      */
     public function findIdsLastSignalementsWithOtherUserSuivi(User $user, ?TabQueryParameters $params): array
     {
-        $qb = $this->getBaseQueryBuilder($user, $params);
+        $qb = $this->getBaseQB($user, $params);
         $qb->select('signalement.id')
         ->groupBy('signalement.id');
 
@@ -96,7 +97,7 @@ class DossiersActiviteRecenteQuery
      */
     public function findLastSignalementsWithOtherUserSuivi(User $user, TabQueryParameters $params, int $limit = 10): array
     {
-        $qb = $this->getBaseQueryBuilder($user, $params);
+        $qb = $this->getBaseQB($user, $params);
 
         $qb->select('
             signalement.reference AS reference,
@@ -119,10 +120,7 @@ class DossiersActiviteRecenteQuery
         return $qb->getQuery()->getArrayResult();
     }
 
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function findLastSignalementsWithUserSuivi(User $user, ?Territory $territory, int $limit = 10): array
+    private function getBaseQBUserActivity(User $user, ?Territory $territory): QueryBuilder
     {
         $subQb = $this->entityManager->createQueryBuilder()
             ->from(Suivi::class, 'sq')
@@ -137,40 +135,67 @@ class DossiersActiviteRecenteQuery
             ->andWhere('signalement.statut NOT IN (:excludedStatus)')
             ->andWhere('suivi.createdAt = ('.$subQb->getDQL().')')
             ->setParameter('user', $user)
-            ->setParameter('excludedStatus', SignalementStatus::excludedStatuses())
-            ->orderBy('suivi.createdAt', 'DESC')
-            ->setMaxResults($limit);
-
-        $statutField = 'signalement.statut';
+            ->setParameter('excludedStatus', SignalementStatus::excludedStatuses());
 
         if ($user->isPartnerAdmin() || $user->isUserPartner()) {
             $qb->innerJoin('signalement.affectations', 'affectation')
                ->andWhere('affectation.partner IN (:partners)')
                ->setParameter('partners', $user->getPartners());
-            $statutField = 'affectation.statut';
         }
-
-        $qb->select('
-                signalement.reference AS reference,
-                signalement.nomOccupant AS nomOccupant,
-                signalement.prenomOccupant AS prenomOccupant,
-                CONCAT(signalement.adresseOccupant, \' \' , signalement.cpOccupant, \' \' , signalement.villeOccupant) AS adresseOccupant,
-                signalement.uuid AS uuid,
-                '.$statutField.' AS statut,
-                suivi.createdAt AS suiviCreatedAt,
-                suivi.category AS suiviCategory,
-                suivi.isPublic AS suiviIsPublic,
-                (
-                    SELECT CASE WHEN MAX(s2.createdAt) > suivi.createdAt THEN 1 ELSE 0 END
-                    FROM '.Suivi::class.' s2
-                    WHERE s2.signalement = signalement
-                ) AS hasNewerSuivi
-            ');
         if (null !== $territory) {
             $qb->andWhere('signalement.territory = :territory')
                 ->setParameter('territory', $territory);
         }
 
-        return $qb->getQuery()->getArrayResult();
+        return $qb;
+    }
+
+    /**
+     * @return Paginator<array<string, mixed>>
+     */
+    public function findPaginatedLastSignalementsWithUserSuivi(
+        User $user,
+        ?Territory $territory,
+        int $page,
+        int $maxResult,
+    ): Paginator {
+        $offset = ($page - 1) * $maxResult;
+
+        $qb = $this->getBaseQBUserActivity($user, $territory);
+        $qb->orderBy('suivi.createdAt', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($maxResult);
+
+        $statutField = 'signalement.statut';
+
+        if ($user->isPartnerAdmin() || $user->isUserPartner()) {
+            $statutField = 'affectation.statut';
+        }
+
+        $qb->select('
+            signalement.reference AS reference,
+            signalement.nomOccupant AS nomOccupant,
+            signalement.prenomOccupant AS prenomOccupant,
+            CONCAT(signalement.adresseOccupant, \' \' , signalement.cpOccupant, \' \' , signalement.villeOccupant) AS adresseOccupant,
+            signalement.uuid AS uuid,
+            '.$statutField.' AS statut,
+            suivi.createdAt AS suiviCreatedAt,
+            suivi.category AS suiviCategory,
+            suivi.isPublic AS suiviIsPublic,
+            (
+                SELECT CASE WHEN MAX(s2.createdAt) > suivi.createdAt THEN 1 ELSE 0 END
+                FROM '.Suivi::class.' s2
+                WHERE s2.signalement = signalement
+            ) AS hasNewerSuivi
+        ');
+
+        return new Paginator($qb->getQuery(), fetchJoinCollection: false);
+    }
+
+    public function countLastSignalementsWithUserSuivi(User $user, ?Territory $territory): int
+    {
+        $qb = $this->getBaseQBUserActivity($user, $territory);
+
+        return (int) $qb->select('COUNT(DISTINCT signalement.id)')->getQuery()->getSingleScalarResult();
     }
 }

@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import sortHandler from './sort_handler';
+import paginationHandler from './pagination_handler';
 
 export default function initTabsLoader() {
   let currentAbortController = null;
@@ -109,4 +110,5 @@ export default function initTabsLoader() {
   }
 
   sortHandler(loadPanelContent);
+  paginationHandler(loadPanelContent);
 }

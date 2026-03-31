@@ -73,7 +73,11 @@ class TabDataManager
     }
 
     /**
-     * @return TabDossier[]
+     * @return array{
+     *     data: TabDossier[],
+     *     total: int,
+     *     page: int
+     * }
      */
     public function getDernierActionDossiers(?TabQueryParameters $tabQueryParameters = null): array
     {
@@ -83,13 +87,13 @@ class TabDataManager
         if ($tabQueryParameters && $tabQueryParameters->territoireId) {
             $territory = $this->territoryRepository->find($tabQueryParameters->territoireId);
         }
-        $signalements = $this->dossiersActiviteRecenteQuery->findLastSignalementsWithUserSuivi($user, $territory, 10);
+        $page = $tabQueryParameters?->page ?? 1;
+        $limit = TabDossier::MAX_ITEMS_DERNIERES_ACTIONS;
+
+        $paginator = $this->dossiersActiviteRecenteQuery
+            ->findPaginatedLastSignalementsWithUserSuivi($user, $territory, $page, $limit);
         $tabDossiers = [];
-        if (empty($signalements)) {
-            return $tabDossiers;
-        }
-        for ($i = 0; $i < \count($signalements); ++$i) {
-            $signalement = $signalements[$i];
+        foreach ($paginator as $signalement) {
             $derniereAction = (SuiviCategory::MESSAGE_PARTNER === $signalement['suiviCategory'])
                 ? ($signalement['suiviIsPublic'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
                 : $signalement['suiviCategory']->label();
@@ -105,8 +109,14 @@ class TabDataManager
                 actionDepuis: $signalement['hasNewerSuivi'] ? 'OUI' : 'NON',
             );
         }
+        $count = $this->dossiersActiviteRecenteQuery
+                ->countLastSignalementsWithUserSuivi($user, $territory);
 
-        return $tabDossiers;
+        return [
+            'data' => $tabDossiers,
+            'total' => $count,
+            'page' => $page,
+        ];
     }
 
     public function countInjonctions(?TabQueryParameters $tabQueryParameters = null): int

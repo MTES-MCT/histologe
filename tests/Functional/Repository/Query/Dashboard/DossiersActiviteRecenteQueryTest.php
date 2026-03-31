@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -40,16 +41,21 @@ class DossiersActiviteRecenteQueryTest extends KernelTestCase
         $this->assertIsArray($result);
     }
 
-    public function testFindLastSignalementsWithUserSuivi(): void
+    public function testFindPaginatedLastSignalementsWithUserSuivi(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
         $territory = null;
-        $limit = 5;
-        $result = $this->dossiersActiviteRecenteQuery->findLastSignalementsWithUserSuivi($user, $territory, $limit);
-        $this->assertIsArray($result);
-        $this->assertLessThanOrEqual($limit, count($result));
-        if (count($result) > 0) {
-            $row = $result[0];
+        $page = 1;
+        $maxResult = 5;
+
+        $paginator = $this->dossiersActiviteRecenteQuery
+            ->findPaginatedLastSignalementsWithUserSuivi($user, $territory, $page, $maxResult);
+
+        $this->assertInstanceOf(Paginator::class, $paginator);
+
+        $rows = iterator_to_array($paginator);
+        if (count($rows) > 0) {
+            $row = $rows[0];
             $this->assertArrayHasKey('reference', $row);
             $this->assertArrayHasKey('nomOccupant', $row);
             $this->assertArrayHasKey('prenomOccupant', $row);
@@ -61,5 +67,25 @@ class DossiersActiviteRecenteQueryTest extends KernelTestCase
             $this->assertArrayHasKey('suiviIsPublic', $row);
             $this->assertArrayHasKey('hasNewerSuivi', $row);
         }
+    }
+
+    public function testCountLastSignalementsWithUserSuivi(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_ADMIN]);
+        $territory = null;
+
+        $count = $this->dossiersActiviteRecenteQuery->countLastSignalementsWithUserSuivi($user, $territory);
+
+        $this->assertIsInt($count);
+        $this->assertGreaterThanOrEqual(0, $count);
+
+        $paginator = $this->dossiersActiviteRecenteQuery->findPaginatedLastSignalementsWithUserSuivi(
+            $user,
+            $territory,
+            1,
+            1000
+        );
+        $rows = iterator_to_array($paginator);
+        $this->assertSame($count, count($rows));
     }
 }
