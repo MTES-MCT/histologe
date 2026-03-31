@@ -162,7 +162,7 @@ class AffectationController extends AbstractController
             }
             $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($signalement);
 
-            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessage, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
         $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
