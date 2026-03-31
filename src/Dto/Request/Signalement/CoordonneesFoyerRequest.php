@@ -50,7 +50,7 @@ class CoordonneesFoyerRequest implements RequestInterface
             groups: ['LOCATAIRE', 'BAILLEUR'])]
         #[Assert\EqualTo(
             value: 'BAILLEUR_OCCUPANT',
-            message: 'Le type d\'occupant doit être Propriétaire occupant pour les déclarant de type Bailleur occupant.',
+            message: 'Le type d\'occupant doit être Propriétaire occupant pour les déclarant de type Propriétaire occupant.',
             groups: ['BAILLEUR_OCCUPANT'])]
         private readonly ?string $profileOccupant = null,
     ) {

@@ -145,7 +145,7 @@ export const store = {
     ],
     typeDeclarantList: [
       { Id: 'locataire', Text: 'Occupant' },
-      { Id: 'bailleur_occupant', Text: 'Bailleur occupant' },
+      { Id: 'bailleur_occupant', Text: 'Propriétaire occupant' },
       { Id: 'bailleur', Text: 'Tiers bailleur' },
       { Id: 'tiers_particulier', Text: 'Tiers particulier' },
       { Id: 'tiers_pro', Text: 'Tiers professionnel' },

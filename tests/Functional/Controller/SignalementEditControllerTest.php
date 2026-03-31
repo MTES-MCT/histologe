@@ -120,16 +120,11 @@ class SignalementEditControllerTest extends WebTestCase
         ]);
 
         $client->request('GET', $url);
-
-        if (in_array($profile, [ProfileDeclarant::BAILLEUR, ProfileDeclarant::BAILLEUR_OCCUPANT])) {
-            $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-        } else {
-            $this->assertResponseIsSuccessful();
-            $this->assertSelectorExists('form#form-usager-complete-dossier');
-            $this->assertSelectorTextContains('button[type=submit]', 'Envoyer');
-            $this->assertSelectorExists('h1');
-            $this->assertSelectorTextContains('h1', 'Compléter les informations');
-        }
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('form#form-usager-complete-dossier');
+        $this->assertSelectorTextContains('button[type=submit]', 'Envoyer');
+        $this->assertSelectorExists('h1');
+        $this->assertSelectorTextContains('h1', 'Compléter les informations');
     }
 
     public function testSubmitSuiviSignalementComplete(): void
