@@ -247,10 +247,10 @@ class SignalementUpdatedListener
                     continue;
                 }
 
-                if ($diffProperty['new']) {
+                if (array_key_exists('new', $diffProperty)) {
                     $fieldChanges[$field] = [
                         'label' => $label,
-                        'new' => $this->dictionaryProvider->translate($diffProperty['new'], 'suivi'),
+                        'new' => null !== $diffProperty['new'] ? $this->dictionaryProvider->translate($diffProperty['new'], 'suivi') : null,
                     ];
                 }
             }
