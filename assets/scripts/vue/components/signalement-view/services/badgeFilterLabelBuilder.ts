@@ -70,14 +70,6 @@ export function buildBadge (key: string, value: any): string | undefined | null 
     }
   }
 
-  if (typeof value === 'string' && key === 'criticiteScoreMin') {
-    return `Criticité Minimum : ${value}`
-  }
-
-  if (typeof value === 'string' && key === 'criticiteScoreMax') {
-    return `Criticité Maximum : ${value}`
-  }
-
   if (key === 'dateDernierSuivi' || key === 'dateDepot') {
     return buildRangeDateBadge(key, value)
   }
@@ -187,6 +179,7 @@ function buildStaticBadge (value: any): string | undefined {
     store.state.statusAffectationList,
     store.state.statusVisiteList,
     store.state.situationList,
+    store.state.occupationLogementList,
     store.state.typeDernierSuiviList,
     store.state.typeDeclarantList,
     store.state.natureParcList

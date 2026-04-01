@@ -9,6 +9,7 @@ use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
@@ -34,7 +35,6 @@ use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\ReferenceGenerator;
-use App\Service\Signalement\SignalementProfileOccupantMapper;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -143,7 +143,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             )
             ->setIsUsagerAbandonProcedure($row['usager_abandon_procedure'] ?? null);
 
-        $signalement->setProfileOccupant(SignalementProfileOccupantMapper::map('', $signalement->getProfileDeclarant()));
+        $signalement->setProfileOccupant(ProfileOccupant::from($row['profile_occupant'] ?? ''));
 
         if (isset($row['is_not_occupant'])) {
             $linkChoices = OccupantLink::getLabelList();
@@ -384,7 +384,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setNbPiecesLogement($row['nb_pieces_logement'] ?? 1)
             ->setIsLogementVacant($row['logement_vacant'] ?? false);
 
-        $signalement->setProfileOccupant(SignalementProfileOccupantMapper::map('', $signalement->getProfileDeclarant()));
+        $signalement->setProfileOccupant(ProfileOccupant::from($row['profile_occupant'] ?? ''));
 
         if (isset($row['created_from_uuid'])) {
             $signalement->setCreatedFrom(

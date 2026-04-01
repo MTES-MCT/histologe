@@ -387,16 +387,6 @@ class SearchFilter
             $qb->andWhere('s.isProprioAverti IN (:proprios)')
                 ->setParameter('proprios', $filters['proprios']);
         }
-        if (!empty($filters['scores'])) {
-            if (!empty($filters['scores']['on'])) {
-                $qb->andWhere('s.score >= :score_on')
-                    ->setParameter('score_on', $filters['scores']['on']);
-            }
-            if (!empty($filters['scores']['off'])) {
-                $qb->andWhere('s.score <= :score_off')
-                    ->setParameter('score_off', $filters['scores']['off']);
-            }
-        }
         if (!empty($filters['territories'])) {
             $qb->andWhere('s.territory IN (:territories)')
                 ->setParameter('territories', $filters['territories']);
@@ -424,6 +414,10 @@ class SearchFilter
 
         if (!empty($filters['situation'])) {
             $qb = $this->addFilterSituation($qb, $filters['situation']);
+        }
+
+        if (!empty($filters['occupationLogement'])) {
+            $qb = $this->addFilterOccupationLogement($qb, $filters['occupationLogement']);
         }
 
         if (!empty($filters['procedure'])) {
@@ -525,12 +519,34 @@ class SearchFilter
             case 'preavis_de_depart':
                 $qb->andWhere('s.isPreavisDepart = :is_preavis_depart')->setParameter('is_preavis_depart', true);
                 break;
+        }
+
+        return $qb;
+    }
+
+    private function addFilterOccupationLogement(QueryBuilder $qb, string $occupationLogement): QueryBuilder
+    {
+        $whereFilterLogementVacant = 's.isLogementVacant = :is_logement_vacant';
+        switch ($occupationLogement) {
             case 'logement_vacant':
-                $qb->andWhere('s.isLogementVacant = :is_logement_vacant')->setParameter('is_logement_vacant', true);
+                $qb->andWhere($whereFilterLogementVacant)->setParameter('is_logement_vacant', true);
                 break;
-            case 'bailleur_occupant':
+            case 'logement_occupe':
+                $qb->andWhere($whereFilterLogementVacant)->setParameter('is_logement_vacant', false);
+                break;
+            case 'non_renseigne':
+                $qb->andWhere('s.isLogementVacant IS NULL');
+                break;
+            case 'logement_occupe_bailleur_occupant':
+                $qb->andWhere('s.isLogementVacant = :is_logement_vacant')->setParameter('is_logement_vacant', false);
                 $qb->andWhere('s.profileOccupant = :profile_occupant')->setParameter('profile_occupant', ProfileOccupant::BAILLEUR_OCCUPANT);
                 break;
+            case 'logement_occupe_locataire':
+                $qb->andWhere('s.isLogementVacant = :is_logement_vacant')->setParameter('is_logement_vacant', false);
+                $qb->andWhere('s.profileOccupant = :profile_occupant')->setParameter('profile_occupant', ProfileOccupant::LOCATAIRE);
+                break;
+            default:
+                return $qb;
         }
 
         return $qb;
