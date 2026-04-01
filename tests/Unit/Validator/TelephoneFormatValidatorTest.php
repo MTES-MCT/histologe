@@ -49,6 +49,7 @@ class TelephoneFormatValidatorTest extends ConstraintValidatorTestCase
         yield 'french format with 0 and dashes' => ['08-08-08-08-08'];
         yield 'french format with country code' => ['33808080808'];
         yield 'french format with + and country code' => ['+33808080808'];
+        yield 'french format with +330 (formulaire front)' => ['+330808080808'];
         yield 'french format with + and spaces' => ['+33 8 08 08 08 08'];
 
         // Formats étrangers
