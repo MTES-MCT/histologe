@@ -11,40 +11,17 @@ import { initZipSelectionPhotos } from './zip_selection_photos';
 function reinitDsfrTooltips(container) {
   if (!container) return;
 
-  // Trouver tous les tooltips dans le container
   const tooltips = container.querySelectorAll('.fr-tooltip');
 
   tooltips.forEach((tooltip) => {
-    // Trouver l'élément parent qui doit être enregistré avec DSFR
     const parent = tooltip.closest('.signalement-file-item, .fr-col-6');
 
     if (parent) {
-      // Méthode 1: Réinitialiser via l'API DSFR moderne (v1.11+)
-      if (window.dsfr && window.dsfr.core && window.dsfr.core.register) {
-        window.dsfr.core.register(parent);
-      }
-      // Méthode 2: Réinitialiser via l'API DSFR classique
-      else if (window.dsfr && window.dsfr.Tooltip) {
-        new window.dsfr.Tooltip(tooltip);
-      }
-      // Méthode 3: Forcer la réinitialisation en supprimant et rajoutant l'attribut
-      else {
-        const describedById = parent.querySelector('[aria-describedby]');
-        if (describedById) {
-          const ariaValue = describedById.getAttribute('aria-describedby');
-          describedById.removeAttribute('aria-describedby');
-          // Forcer le reflow
-          void describedById.offsetWidth;
-          describedById.setAttribute('aria-describedby', ariaValue);
-        }
+      if (globalThis.dsfr && globalThis.dsfr.core && globalThis.dsfr.core.register) {
+        globalThis.dsfr.core.register(parent);
       }
     }
   });
-
-  // Si DSFR est complètement chargé, forcer une réinitialisation globale du container
-  if (window.dsfr && window.dsfr.core && window.dsfr.core.register) {
-    window.dsfr.core.register(container);
-  }
 }
 
 if (document?.querySelector('.fr-breadcrumb.can-fix')) {
