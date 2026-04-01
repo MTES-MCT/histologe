@@ -82,7 +82,7 @@
 
 {% set DocumentType = enum('\\App\\Entity\\Enum\\DocumentType') %}
 {% if listAllPhotos is not defined %}
-    <div class="container-{{ filesFilter }}">
+    <div class="container-{{ filesFilter }} container-context-{{ context }}">
 {% endif %}
         <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters fr-mb-3v">
             {% if filesFilter is same as 'visite' %}
@@ -99,8 +99,9 @@
             {% for photo in photos %}
                 {% if listAllPhotos is not defined and filesFilter is same as 'situation' and nbPhotos > 12 and loop.index == 12 %}
                     <div class="fr-col-6 fr-col-md-2 fr-text--center">
-                        <button class="fr-btn fr-btn--tertiary-no-outline btn-list-all-photo-situation" type="button" 
-                            data-url="{{ path('back_signalement_list_all_photo_situation', {uuid: signalement.uuid}) }}">
+                        <button class="fr-btn fr-btn--tertiary-no-outline btn-list-all-photo-situation" type="button"
+                            data-url="{{ path('back_signalement_list_all_photo_situation', {uuid: signalement.uuid}) }}"
+                            data-context="{{ context }}">
                             Voir les {{nbPhotos}} photos
                         </button>
                     </div>

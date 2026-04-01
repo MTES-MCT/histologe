@@ -4,6 +4,26 @@ import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_
 import { initTinyMCE } from '../../services/form/form_helper';
 import { initZipSelectionPhotos } from './zip_selection_photos';
 
+/**
+ * Réinitialise les tooltips DSFR dans un conteneur donné
+ * @param {HTMLElement} container - Le conteneur dans lequel réinitialiser les tooltips
+ */
+function reinitDsfrTooltips(container) {
+  if (!container) return;
+
+  const tooltips = container.querySelectorAll('.fr-tooltip');
+
+  tooltips.forEach((tooltip) => {
+    const parent = tooltip.closest('.signalement-file-item, .fr-col-6');
+
+    if (parent) {
+      if (globalThis.dsfr && globalThis.dsfr.core && globalThis.dsfr.core.register) {
+        globalThis.dsfr.core.register(parent);
+      }
+    }
+  });
+}
+
 if (document?.querySelector('.fr-breadcrumb.can-fix')) {
   window.onscroll = function () {
     const yPos = window.scrollY;
@@ -30,10 +50,15 @@ document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
     button.setAttribute('disabled', 'disabled');
     button.textContent = 'Chargement...';
     const url = e.target.dataset.url;
+    const context = e.target.dataset.context;
+
     fetch(url, { method: 'GET' }).then((response) => {
       if (response.ok) {
         response.json().then((data) => {
-          document.querySelectorAll('.container-situation').forEach((container) => {
+          // Cibler uniquement le container avec le bon contexte
+          const container = document.querySelector(`.container-context-${context}`);
+
+          if (container) {
             container.innerHTML = data.html;
             openPhotoAlbumAddEventListeners();
             btnSignalementFileEditAddEventListeners();
@@ -47,7 +72,10 @@ document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
               zipSelectionButton.title = 'Choisir les photos à télécharger au format zip';
             }
             initZipSelectionPhotos();
-          });
+
+            // Réinitialiser les tooltips DSFR
+            reinitDsfrTooltips(container);
+          }
         });
       }
     });
