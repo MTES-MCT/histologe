@@ -29,6 +29,28 @@ class TelephoneFormatValidator extends ConstraintValidator
         try {
             $phoneNumberUtil = PhoneNumberUtil::getInstance();
             $phoneNumberParsed = $phoneNumberUtil->parse($value, 'FR');
+
+            // Vérifications pour numéro français :
+            // la valeur saisie correspond exactement au numéro parsé (contrôle pour éviter que des caractères indésirables soient ignorés)
+            $normalizedInput = preg_replace('/[\s\-\(\)\.]+/', '', $value);
+            $formattedE164 = $phoneNumberUtil->format($phoneNumberParsed, \libphonenumber\PhoneNumberFormat::E164);
+
+            // Accepter les formats: +33808080808, 33808080808, 0808080808
+            // Rejeter: 0808080808D ou tout format avec caractères invalides
+            $validFormats = [
+                $formattedE164,                           // +33808080808
+                ltrim($formattedE164, '+'),              // 33808080808
+                '0'.substr(ltrim($formattedE164, '+'), 2), // 0808080808
+            ];
+
+            if (!in_array($normalizedInput, $validFormats, true)) {
+                $this->context->buildViolation($constraint->message)
+                    ->setParameter('{{ value }}', $value)
+                    ->addViolation();
+
+                return;
+            }
+
             $isPossible = $phoneNumberUtil->isPossibleNumber($phoneNumberParsed);
             if (!$isPossible) {
                 $this->context->buildViolation($constraint->message)
