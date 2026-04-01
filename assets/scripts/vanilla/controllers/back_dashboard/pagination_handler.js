@@ -1,3 +1,5 @@
+import * as Sentry from '@sentry/browser';
+
 export default function paginationHandler(loadPanelContent) {
   document.addEventListener('click', async function (e) {
     const link = e.target.closest('.fr-pagination__link');
@@ -15,7 +17,9 @@ export default function paginationHandler(loadPanelContent) {
       container = link.closest('.fr-tabs__panel')?.querySelector('[data-url]');
     }
     if (!container) {
-      console.error('Pagination: aucun container avec data-url trouvé');
+      const error = "Pagination: aucun container avec data-url trouvé";
+      console.error(error);
+      Sentry.captureException(new Error(error));
       return;
     }
 

@@ -6,7 +6,6 @@ use App\Entity\User;
 use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -50,8 +49,6 @@ class DossiersActiviteRecenteQueryTest extends KernelTestCase
 
         $paginator = $this->dossiersActiviteRecenteQuery
             ->findPaginatedLastSignalementsWithUserSuivi($user, $territory, $page, $maxResult);
-
-        $this->assertInstanceOf(Paginator::class, $paginator);
 
         $rows = iterator_to_array($paginator);
         if (count($rows) > 0) {

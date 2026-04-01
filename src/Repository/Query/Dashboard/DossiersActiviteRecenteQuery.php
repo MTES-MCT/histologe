@@ -16,6 +16,8 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class DossiersActiviteRecenteQuery
 {
+    public const string LIMIT_DATE = '-3 months';
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
     ) {
@@ -47,12 +49,11 @@ class DossiersActiviteRecenteQuery
             ->setParameter('partners', $user->getPartners());
         }
 
-        // Filtrer sur activité récente (< 3 mois)
-        $threeMonthsAgo = new \DateTime('-3 months');
+        $threeMonthsAgo = new \DateTime(self::LIMIT_DATE);
         $qb->andWhere('suivi.createdAt >= :threeMonthsAgo')
         ->setParameter('threeMonthsAgo', $threeMonthsAgo);
 
-        if ($params && $params->mesDossiersActiviteRecente && '1' === $params->mesDossiersActiviteRecente) {
+        if ($params && '1' === $params->mesDossiersActiviteRecente) {
             $existsSubscription = $this->entityManager->createQueryBuilder()
                 ->select('1')
                 ->from(UserSignalementSubscription::class, 'uss')

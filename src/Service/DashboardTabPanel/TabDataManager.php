@@ -87,8 +87,14 @@ class TabDataManager
         if ($tabQueryParameters && $tabQueryParameters->territoireId) {
             $territory = $this->territoryRepository->find($tabQueryParameters->territoireId);
         }
+
+        $count = $this->dossiersActiviteRecenteQuery
+                ->countLastSignalementsWithUserSuivi($user, $territory);
+
         $page = $tabQueryParameters?->page ?? 1;
         $limit = TabDossier::MAX_ITEMS_DERNIERES_ACTIONS;
+        $totalPages = max(1, (int) ceil($count / $limit));
+        $page = max(1, min($page, $totalPages));
 
         $paginator = $this->dossiersActiviteRecenteQuery
             ->findPaginatedLastSignalementsWithUserSuivi($user, $territory, $page, $limit);
@@ -109,8 +115,6 @@ class TabDataManager
                 actionDepuis: $signalement['hasNewerSuivi'] ? 'OUI' : 'NON',
             );
         }
-        $count = $this->dossiersActiviteRecenteQuery
-                ->countLastSignalementsWithUserSuivi($user, $territory);
 
         return [
             'data' => $tabDossiers,
