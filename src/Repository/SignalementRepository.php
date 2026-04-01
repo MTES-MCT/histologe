@@ -1416,6 +1416,248 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    private function createSignalementQueryBuilder(
+        User $user,
+        ?SignalementStatus $signalementStatus = null,
+        ?AffectationStatus $affectationStatus = null,
+        ?bool $onlyWithoutSubscription = false,
+        ?TabQueryParameters $tabQueryParameters = null,
+    ): QueryBuilder {
+        $qb = $this->createQueryBuilder('s');
+
+        if (null !== $signalementStatus) {
+            $qb
+                ->andWhere('s.statut = :statut')
+                ->setParameter('statut', $signalementStatus);
+        }
+
+        if ($tabQueryParameters?->territoireId) {
+            $qb
+                ->andWhere('s.territory = :territoireId')
+                ->setParameter('territoireId', $tabQueryParameters->territoireId);
+        } elseif (!$user->isSuperAdmin()) {
+            $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+        }
+
+        if ($tabQueryParameters->createdFrom) {
+            if (CreationSource::CREATED_FROM_FORMULAIRE_USAGER === $tabQueryParameters->createdFrom) {
+                $qb->andWhere('s.creationSource IN (:creationSources)')
+                    ->setParameter('creationSources', CreationSource::getFormUsagerValues());
+            } elseif (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
+                $qb->andWhere('s.creationSource IN (:creationSources)')
+                    ->setParameter('creationSources', CreationSource::getFormProValues());
+            }
+        }
+
+        if (!empty($tabQueryParameters->partenairesId)) {
+            if (\in_array('AUCUN', $tabQueryParameters->partenairesId)) {
+                $qb->leftJoin('s.affectations', 'a')->andWhere('a.partner IS NULL');
+            } else {
+                $qb
+                    ->leftJoin('s.affectations', 'a')
+                    ->andWhere('a.partner IN (:partenairesId)')
+                    ->setParameter('partenairesId', $tabQueryParameters->partenairesId);
+            }
+        }
+
+        if ($affectationStatus) {
+            $qb->andWhere('a.statut = :affectationStatus');
+            $qb->setParameter('affectationStatus', $affectationStatus);
+        }
+
+        if ($onlyWithoutSubscription) {
+            $subquery = 'SELECT u FROM '.User::class.' u JOIN u.userPartners up JOIN up.partner p WHERE p IN (:partners)';
+            $qb
+                ->leftJoin('s.userSignalementSubscriptions', 'uss', 'WITH', 'uss.user IN ('.$subquery.')')
+                ->andWhere('uss.id IS NULL')
+                ->setParameter('partners', $user->getPartners());
+        }
+
+        return $qb;
+    }
+
+    /**
+     * @return TabDossier[]
+     */
+    public function findNewDossiersFrom(
+        ?SignalementStatus $signalementStatus = null,
+        ?AffectationStatus $affectationStatus = null,
+        ?TabQueryParameters $tabQueryParameters = null,
+    ): array {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createSignalementQueryBuilder(
+            user: $user,
+            signalementStatus: $signalementStatus,
+            affectationStatus: $affectationStatus,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        if (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
+            $qb
+                ->leftJoin('s.createdBy', 'u')
+                ->leftJoin('u.userPartners', 'up')
+                ->leftJoin('up.partner', 'p')
+                ->leftJoin('s.serviceSecours', 'ssr');
+        }
+
+        $qb->select(
+            \sprintf(
+                'NEW %s(
+                    s.uuid,
+                    s.profileDeclarant,
+                    s.nomOccupant,
+                    s.prenomOccupant,
+                    s.reference,
+                    CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)),
+                    s.createdAt,
+                    %s
+                    CASE
+                        WHEN s.isLogementSocial = true THEN \'PUBLIC\'
+                        ELSE \'PRIVÉ\'
+                    END,
+                    s.validatedAt
+                )',
+                TabDossier::class,
+
+                CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom
+                ? "
+                    (CASE
+                        WHEN s.creationSource = :formServiceSecours
+                        THEN s.matriculeDeclarant
+                        ELSE CONCAT(UPPER(u.nom), ' ', u.prenom)
+                    END),
+                    (CASE
+                        WHEN s.creationSource = :formServiceSecours
+                        THEN ssr.name
+                        ELSE p.nom
+                    END),
+                    "
+                : "'', '',"
+            )
+        );
+
+        if (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
+            $qb->setParameter('formServiceSecours', CreationSource::FORM_SERVICE_SECOURS);
+        }
+
+        if (null !== $tabQueryParameters
+            && in_array($tabQueryParameters->sortBy, ['createdAt', 'nomOccupant'], true)
+            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+        ) {
+            $qb->orderBy('s.'.$tabQueryParameters->sortBy, $tabQueryParameters->orderBy);
+        } else {
+            $qb->orderBy('s.createdAt', 'DESC');
+        }
+
+        $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countNewDossiersFrom(
+        ?SignalementStatus $signalementStatus = null,
+        ?AffectationStatus $affectationStatus = null,
+        ?TabQueryParameters $tabQueryParameters = null,
+    ): int {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createSignalementQueryBuilder(
+            user: $user,
+            signalementStatus: $signalementStatus,
+            affectationStatus: $affectationStatus,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $qb->select('COUNT(s.id)');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @return TabDossier[]
+     */
+    public function findDossiersNoAgentFrom(
+        ?AffectationStatus $affectationStatus = null,
+        ?TabQueryParameters $tabQueryParameters = null,
+        bool $isLimitApplied = true,
+    ): array {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createSignalementQueryBuilder(
+            user: $user,
+            affectationStatus: $affectationStatus,
+            onlyWithoutSubscription: true,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $qb->select(
+            \sprintf(
+                'NEW %s(
+                    s.uuid,
+                    s.profileDeclarant,
+                    s.nomOccupant,
+                    s.prenomOccupant,
+                    s.reference,
+                    CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)),
+                    s.createdAt,'.
+                    '\'\' , \'\' ,
+                    CASE
+                        WHEN s.isLogementSocial = true THEN \'PUBLIC\'
+                        ELSE \'PRIVÉ\'
+                    END,
+                    s.validatedAt
+                )',
+                TabDossier::class
+            )
+        );
+
+        if (null !== $tabQueryParameters
+            && in_array($tabQueryParameters->sortBy, ['createdAt', 'nomOccupant'], true)
+            && in_array($tabQueryParameters->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)
+        ) {
+            $qb->orderBy('s.'.$tabQueryParameters->sortBy, $tabQueryParameters->orderBy);
+        } else {
+            $qb->orderBy('s.createdAt', 'DESC');
+        }
+
+        if ($isLimitApplied) {
+            $qb->setMaxResults(TabDossier::MAX_ITEMS_LIST);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countDossiersNoAgentFrom(
+        ?AffectationStatus $affectationStatus = null,
+        ?TabQueryParameters $tabQueryParameters = null,
+    ): int {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $qb = $this->createSignalementQueryBuilder(
+            user: $user,
+            affectationStatus: $affectationStatus,
+            onlyWithoutSubscription: true,
+            tabQueryParameters: $tabQueryParameters
+        );
+
+        $qb->select('COUNT(s.id)');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
     /**
      * @param array<int, mixed> $territories
      *

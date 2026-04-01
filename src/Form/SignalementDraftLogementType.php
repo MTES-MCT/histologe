@@ -26,7 +26,6 @@ class SignalementDraftLogementType extends AbstractType
 
         $appartementEtage = null;
         $appartementAvecFenetres = '';
-        $autresOccupantsDesordre = null;
         if ('appartement' === $signalement->getNatureLogement()) {
             if ($signalement->getTypeCompositionLogement()) {
                 if (!empty($signalement->getTypeCompositionLogement()->getTypeLogementAppartementEtage())) {
@@ -49,7 +48,6 @@ class SignalementDraftLogementType extends AbstractType
                     $appartementAvecFenetres = 'non';
                 }
             }
-            $autresOccupantsDesordre = $signalement->getAutresOccupantsDesordre();
         }
         $nombreEtages = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementNombreEtages();
         $anneeConstruction = $signalement->getInformationComplementaire()?->getInformationsComplementairesLogementAnneeConstruction();
@@ -131,7 +129,7 @@ class SignalementDraftLogementType extends AbstractType
                 'required' => false,
                 'placeholder' => false,
                 'mapped' => false,
-                'data' => $autresOccupantsDesordre,
+                'data' => $signalement->getAutresOccupantsDesordre(),
             ]);
         }
         $builder->add('pieceUnique', ChoiceType::class, [

@@ -209,7 +209,6 @@ class InformationsGeneralesType extends AbstractType
                 'multiple' => false,
                 'required' => false,
                 'placeholder' => false,
-                'data' => $signalement->getAutresOccupantsDesordre(),
             ]);
         }
         $builder->add('save', SubmitType::class, [

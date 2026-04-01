@@ -495,6 +495,8 @@ class SignalementEditController extends AbstractController
                         && 'non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()) {
                     $typeCompositionLogement->setTypeLogementSousSolSansFenetre('oui');
                 }
+            } else {
+                $signalement->setAutresOccupantsDesordre(null);
             }
 
             $cuisine = $form->get('cuisine')->getData();

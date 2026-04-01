@@ -739,6 +739,9 @@ class SignalementManager extends AbstractManager
             ->setTypeLogementCommoditesWcCuisine($compositionLogementRequest->getTypeLogementCommoditesWcCuisine());
 
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
+        if ('appartement' !== $signalement->getNatureLogement()) {
+            $signalement->setAutresOccupantsDesordre(null);
+        }
 
         $this->desordreCompositionLogementLoader->load($signalement, $typeCompositionLogement);
 

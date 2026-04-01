@@ -449,8 +449,10 @@ class SuiviManager extends Manager
             if (false !== $dateFormatted) {
                 return $dateFormatted;
             }
-            $value = $this->dictionaryProvider->translate($value, 'suivi');
-            $value = nl2br(htmlentities($value));
+            if (null !== $value) {
+                $value = $this->dictionaryProvider->translate($value, 'suivi');
+                $value = nl2br(htmlentities($value));
+            }
         }
         if (null === $value || '' === $value) {
             $value = '<i>(valeur supprimée)</i>';
