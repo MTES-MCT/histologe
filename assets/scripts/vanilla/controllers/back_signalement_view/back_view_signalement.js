@@ -4,6 +4,49 @@ import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_
 import { initTinyMCE } from '../../services/form/form_helper';
 import { initZipSelectionPhotos } from './zip_selection_photos';
 
+/**
+ * Réinitialise les tooltips DSFR dans un conteneur donné
+ * @param {HTMLElement} container - Le conteneur dans lequel réinitialiser les tooltips
+ */
+function reinitDsfrTooltips(container) {
+  if (!container) return;
+
+  // Trouver tous les tooltips dans le container
+  const tooltips = container.querySelectorAll('.fr-tooltip');
+
+  tooltips.forEach((tooltip) => {
+    // Trouver l'élément parent qui doit être enregistré avec DSFR
+    const parent = tooltip.closest('.signalement-file-item, .fr-col-6');
+
+    if (parent) {
+      // Méthode 1: Réinitialiser via l'API DSFR moderne (v1.11+)
+      if (window.dsfr && window.dsfr.core && window.dsfr.core.register) {
+        window.dsfr.core.register(parent);
+      }
+      // Méthode 2: Réinitialiser via l'API DSFR classique
+      else if (window.dsfr && window.dsfr.Tooltip) {
+        new window.dsfr.Tooltip(tooltip);
+      }
+      // Méthode 3: Forcer la réinitialisation en supprimant et rajoutant l'attribut
+      else {
+        const describedById = parent.querySelector('[aria-describedby]');
+        if (describedById) {
+          const ariaValue = describedById.getAttribute('aria-describedby');
+          describedById.removeAttribute('aria-describedby');
+          // Forcer le reflow
+          void describedById.offsetWidth;
+          describedById.setAttribute('aria-describedby', ariaValue);
+        }
+      }
+    }
+  });
+
+  // Si DSFR est complètement chargé, forcer une réinitialisation globale du container
+  if (window.dsfr && window.dsfr.core && window.dsfr.core.register) {
+    window.dsfr.core.register(container);
+  }
+}
+
 if (document?.querySelector('.fr-breadcrumb.can-fix')) {
   window.onscroll = function () {
     const yPos = window.scrollY;
@@ -30,10 +73,15 @@ document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
     button.setAttribute('disabled', 'disabled');
     button.textContent = 'Chargement...';
     const url = e.target.dataset.url;
+    const context = e.target.dataset.context;
+
     fetch(url, { method: 'GET' }).then((response) => {
       if (response.ok) {
         response.json().then((data) => {
-          document.querySelectorAll('.container-situation').forEach((container) => {
+          // Cibler uniquement le container avec le bon contexte
+          const container = document.querySelector(`.container-context-${context}`);
+
+          if (container) {
             container.innerHTML = data.html;
             openPhotoAlbumAddEventListeners();
             btnSignalementFileEditAddEventListeners();
@@ -47,7 +95,10 @@ document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
               zipSelectionButton.title = 'Choisir les photos à télécharger au format zip';
             }
             initZipSelectionPhotos();
-          });
+
+            // Réinitialiser les tooltips DSFR
+            reinitDsfrTooltips(container);
+          }
         });
       }
     });
