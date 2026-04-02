@@ -90,19 +90,6 @@ class ServiceSecoursStep5Type extends AbstractType
             ],
         );
 
-        // $builder->add('autresOccupantsDesordre', ChoiceType::class, [
-        //     'label' => 'D\'autres occupants de l\'immeuble ont-ils rencontré des désordres ? <span class="text-required">*</span>',
-        //     'label_html' => true,
-        //     'required' => false,
-        //     'expanded' => true,
-        //     'placeholder' => false,
-        //     'choices' => [
-        //         'Oui' => 'oui',
-        //         'Non' => 'non',
-        //         'Indéterminé' => 'nsp',
-        //     ],
-        // ]);
-
         $builder->add('photos', FileType::class, [
             'label' => 'Ajouter des photos',
             'attr' => [

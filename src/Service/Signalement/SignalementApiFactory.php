@@ -80,8 +80,6 @@ class SignalementApiFactory
 
         if ('appartement' === $request->natureLogement) {
             $signalement->setAutresOccupantsDesordre(self::convertBoolToString($request->autresOccupantsDesordre));
-        } else {
-            $signalement->setAutresOccupantsDesordre(null);
         }
 
         if ($request->etageAppartement) {

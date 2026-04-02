@@ -86,7 +86,7 @@ class SignalementBoManager
             $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
         }
 
-        if ('appartement' === $signalement->getNatureLogement()) {
+        if ('appartement' !== $signalement->getNatureLogement()) {
             $signalement->setAutresOccupantsDesordre(null);
         }
 
@@ -156,8 +156,6 @@ class SignalementBoManager
                 $typeCompositionLogement->setTypeLogementSousSolSansFenetre('oui');
             }
             $signalement->setAutresOccupantsDesordre($form->get('autresOccupantsDesordre')->getData());
-        } else {
-            $signalement->setAutresOccupantsDesordre(null);
         }
 
         $informationComplementaire->setInformationsComplementairesLogementNombreEtages($form->get('nombreEtages')->getData());

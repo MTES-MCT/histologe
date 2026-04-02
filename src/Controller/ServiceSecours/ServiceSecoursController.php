@@ -62,6 +62,12 @@ class ServiceSecoursController extends AbstractController
         /** @var FormFlowInterface $flow */
         $flow = $this->createForm(ServiceSecoursType::class, $serviceSecours);
         $flow->handleRequest($request);
+        if ($flow->isSubmitted() && $flow->isValid()) {
+            $data = $flow->getData();
+            if ('step2' === $data->currentStep && 'appartement' !== $data->step2->natureLogement) {
+                $data->step5->autresOccupantsDesordre = null;
+            }
+        }
         if ($flow->isSubmitted() && $flow->isValid() && $flow->isFinished()) {
             $signalement = $signalementServiceSecoursFactory->create($flow->getData(), $serviceSecoursRoute);
 

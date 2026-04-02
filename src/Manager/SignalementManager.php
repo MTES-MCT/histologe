@@ -599,8 +599,6 @@ class SignalementManager extends AbstractManager
 
         if ('appartement' === $signalement->getNatureLogement()) {
             $signalement->setAutresOccupantsDesordre($informationsLogementRequest->getAutresOccupantsDesordre());
-        } else {
-            $signalement->setAutresOccupantsDesordre(null);
         }
 
         $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(static function ($qualification) {
