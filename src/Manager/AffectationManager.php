@@ -132,7 +132,10 @@ class AffectationManager extends Manager
             ->setTerritory($signalement->getTerritory());
 
         if ($dispatchEvent) {
-            $this->eventDispatcher->dispatch(new AffectationCreatedEvent($affectation), AffectationCreatedEvent::NAME);
+            $this->eventDispatcher->dispatch(
+                new AffectationCreatedEvent($affectation),
+                AffectationCreatedEvent::NAME
+            );
         }
 
         $this->persist($affectation);

@@ -20,6 +20,8 @@ use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\EmailAlertChecker;
 use App\Service\FormHelper;
+use App\Service\Interconnection\Esabora\AffectationEsaboraPolicy;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\MessageHelper;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Psr\Cache\InvalidArgumentException;
@@ -41,6 +43,7 @@ class AffectationController extends AbstractController
         private readonly SignalementManager $signalementManager,
         private readonly AffectationManager $affectationManager,
         private readonly PartnerRepository $partnerRepository,
+        private readonly AffectationEsaboraPolicy $affectationEsaboraPolicy,
         private readonly EmailAlertChecker $emailAlertChecker,
     ) {
     }
@@ -70,6 +73,8 @@ class AffectationController extends AbstractController
         Signalement $signalement,
         TagAwareCacheInterface $cache,
     ): RedirectResponse|JsonResponse {
+        $hasAffectPartnerError = false;
+        $partnerNameNotAffected = '';
         if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $unnotifiedPartners = [];
             $requestData = $request->request->all();
@@ -85,6 +90,19 @@ class AffectationController extends AbstractController
                 $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartnersIds);
                 $partnersIdToRemove = array_diff($alreadyAffectedPartnersIds, $postedPartner);
 
+                if ($this->affectationEsaboraPolicy->hasUrlConflict($partnersIdToAdd)) {
+                    $message = sprintf('Impossible d\'affecter simultanément des partenaires interconnectés %s avec les mêmes identifiants.
+                    Sélectionnez uniquement le partenaire d\'envoi, puis ajoutez le second après validation.', EsaboraSISHService::NAME_SI);
+
+                    $flashMessage = [
+                        'type' => 'alert',
+                        'title' => 'Erreur',
+                        'message' => $message,
+                    ];
+
+                    return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
+                }
+
                 foreach ($partnersIdToAdd as $partnerIdToAdd) {
                     $canAffectPartner = false;
                     foreach ($affectablePartners['not_affected'] as $affectablePartner) {
@@ -98,6 +116,13 @@ class AffectationController extends AbstractController
                     }
                     $partner = $this->partnerRepository->find($partnerIdToAdd);
                     if (!$partner) {
+                        continue;
+                    }
+
+                    $canAffectPartner = $this->affectationEsaboraPolicy->canBeAffected($signalement, $partner);
+                    if (!$canAffectPartner) {
+                        $hasAffectPartnerError = true;
+                        $partnerNameNotAffected = $partner->getNom();
                         continue;
                     }
                     $affectation = $this->affectationManager->createAffectationFrom(
@@ -123,10 +148,21 @@ class AffectationController extends AbstractController
                 $successMessage .= '<br>Attention, certains partenaires affectés ont désactivé les notifications par e-mail : ';
                 $successMessage .= implode(', ', array_map(static fn ($partner) => $partner->getNom(), $unnotifiedPartners));
             }
-            $flashMessage = ['type' => 'success', 'title' => 'Affectations enregistrées', 'message' => $successMessage];
+            $flashMessage[] = ['type' => 'success', 'title' => 'Affectations enregistrées', 'message' => $successMessage];
+            if ($hasAffectPartnerError) {
+                $flashMessage[] = [
+                    'type' => 'alert',
+                    'title' => 'Affectation non enregistrée',
+                    'message' => sprintf(
+                        'Impossible d\'affecter le partenaire %s : le dossier a déjà été envoyé à %s.',
+                        $partnerNameNotAffected,
+                        EsaboraSISHService::NAME_SI
+                    ),
+                ];
+            }
             $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($signalement);
 
-            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessage, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
         }
         $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 

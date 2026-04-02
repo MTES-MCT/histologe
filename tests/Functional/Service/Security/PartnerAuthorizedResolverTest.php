@@ -159,7 +159,7 @@ class PartnerAuthorizedResolverTest extends KernelTestCase
 
         yield 'api-oilhi@signal-logement.fr' => [
             'email' => 'api-oilhi@signal-logement.fr',
-            'countExpectedPartner' => 31,
+            'countExpectedPartner' => 32,
         ];
 
         yield 'api-34-01@signal-logement.fr' => [

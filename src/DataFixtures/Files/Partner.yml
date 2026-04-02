@@ -668,3 +668,12 @@ partners:
     type: "ASSOCIATION"
     competence:
       - 'AIDE_BAILLEURS'
+  -
+    nom: "Partenaire SCHS via Santé Habitat"
+    email: "partenaire-13-11@signal-logement.fr"
+    is_archive: 0
+    territory: "Bouches-du-Rhône"
+    competence: "VISITES"
+    esabora_url: "http://signal_logement_wiremock:8080/ARS/ws/rest"
+    is_esabora_active: 1
+    type: "COMMUNE_SCHS"

@@ -29,7 +29,8 @@
                                         id="signalement-affectation-select-disponible"
                                         size="10" multiple>
                                     {% for partner in partners['not_affected'] %}
-                                            <option value="{{ partner['id'] }}">{{ partner['name']|upper }} 
+                                        {% set isDisabled = partner['is_disabled']|default(false) %}
+                                        <option value="{{ partner['id'] }}" {{ isDisabled ? 'disabled' : '' }}>{{ partner['name']|upper }}
                                             {% if partner.competence|default %}
                                                ({% for competence in partner.competence %}
                                                     {{ competence.label }}

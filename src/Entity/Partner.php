@@ -421,6 +421,12 @@ class Partner implements EntityHistoryInterface
             && $this->isEsaboraActive;
     }
 
+    public function isConnectedToSanteHabitat(): bool
+    {
+        return str_contains($this->esaboraUrl, 'sante-habitat')
+            || str_contains($this->esaboraUrl, 'ARS');
+    }
+
     public function canSyncWithOilhi(Signalement $signalement): bool
     {
         $inseeAllowed = !empty(array_intersect($this->getInsee(), self::OILHI_CODE_INSEE_ALLOWED));

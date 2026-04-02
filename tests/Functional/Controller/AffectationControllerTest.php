@@ -26,14 +26,14 @@ class AffectationControllerTest extends WebTestCase
 {
     use SessionHelper;
 
-    public const USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@signal-logement.fr';
-    public const USER_PARTNER_TERRITORY_13 = 'user-13-01@signal-logement.fr';
-    public const USER_PARTNER_TERRITORY_34_30 = 'user-partenaire-multi-ter-34-30@signal-logement.fr';
-    public const USER_ADMIN_TERRITORY_34 = 'admin-territoire-34-01@signal-logement.fr';
-    public const SIGNALEMENT_REFERENCE = '2022-1';
-    public const SIGNALEMENT_ACTIVE_UUID = '00000000-0000-0000-2022-000000000001';
-    public const SIGNALEMENT_NEED_VALIDATION_UUID = '00000000-0000-0000-2023-000000000016';
-    public const SIGNALEMENT_INJONCTION_BAILLEUR_UUID = '00000000-0000-0000-2025-000000000012';
+    public const string USER_ADMIN_TERRITORY_13 = 'admin-territoire-13-01@signal-logement.fr';
+    public const string USER_PARTNER_TERRITORY_13 = 'user-13-01@signal-logement.fr';
+    public const string USER_PARTNER_TERRITORY_34_30 = 'user-partenaire-multi-ter-34-30@signal-logement.fr';
+    public const string USER_ADMIN_TERRITORY_34 = 'admin-territoire-34-01@signal-logement.fr';
+    public const string SIGNALEMENT_REFERENCE = '2022-1';
+    public const string SIGNALEMENT_ACTIVE_UUID = '00000000-0000-0000-2022-000000000001';
+    public const string SIGNALEMENT_NEED_VALIDATION_UUID = '00000000-0000-0000-2023-000000000016';
+    public const string SIGNALEMENT_INJONCTION_BAILLEUR_UUID = '00000000-0000-0000-2025-000000000012';
 
     private ?KernelBrowser $client = null;
     private UserRepository $userRepository;
@@ -538,5 +538,42 @@ class AffectationControllerTest extends WebTestCase
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('flashMessages', $response);
         $this->assertEquals('alert', $response['flashMessages'][0]['type']);
+    }
+
+    public function testPartnerARSAndSCHSWithSameUrl(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => self::USER_ADMIN_TERRITORY_13]);
+        $this->client->loginUser($user);
+
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy([
+            'reference' => '2022-11',
+        ]);
+
+        $routeSignalementView = $this->router->generate('back_signalement_view', [
+            'uuid' => $signalement->getUuid(),
+        ]);
+
+        $crawler = $this->client->request('GET', $routeSignalementView);
+        $token = $crawler->filter('#signalement-affectation-form input[name=_token]')->attr('value');
+
+        $routeAffectationResponse = $this->router->generate('back_signalement_toggle_affectation', [
+            'uuid' => $signalement->getUuid(),
+        ]);
+
+        $this->client->request('POST', $routeAffectationResponse, [
+            'signalement-affectation' => [
+                'partners' => [7, 94],
+            ],
+            '_token' => $token,
+        ]);
+
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $messageFlash = 'Impossible d\'affecter simultanément des partenaires interconnectés SI-Santé Habitat (SI-SH)';
+        $this->assertStringContainsString($messageFlash, $response['flashMessages'][0]['message']);
     }
 }

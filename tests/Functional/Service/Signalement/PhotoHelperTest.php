@@ -12,6 +12,7 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
+use App\Repository\PartnerRepository;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
 use App\Repository\Query\SignalementList\ListPaginatorQuery;
 use App\Service\Signalement\CriticiteCalculator;
@@ -44,6 +45,7 @@ class PhotoHelperTest extends KernelTestCase
     private SuiviManager $suiviManager;
     private UserManager $userManager;
     private BailleurRepository $bailleurRepository;
+    private PartnerRepository $partnerRepository;
     private SignalementAddressUpdater $signalementAddressUpdater;
     private ZipcodeProvider $zipcodeProvider;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
@@ -69,6 +71,7 @@ class PhotoHelperTest extends KernelTestCase
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->userManager = static::getContainer()->get(UserManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
+        $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
         $this->exportIterableQuery = static::getContainer()->get(ExportIterableQuery::class);
@@ -90,11 +93,13 @@ class PhotoHelperTest extends KernelTestCase
             $this->suiviManager,
             $this->userManager,
             $this->bailleurRepository,
+            $this->partnerRepository,
             $this->signalementAddressUpdater,
             $this->zipcodeProvider,
             $this->exportIterableQuery,
             $this->listPaginatorQuery,
-            $this->htmlSanitizerInterface
+            $this->htmlSanitizerInterface,
+            true
         );
     }
 

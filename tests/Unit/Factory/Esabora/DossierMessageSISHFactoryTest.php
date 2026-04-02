@@ -62,6 +62,7 @@ class DossierMessageSISHFactoryTest extends TestCase
             $uploadHandlerServiceMock,
             $parameterBagMock,
             $urlGeneratorMock,
+            true
         );
 
         $signalement->setNumAppartOccupant('à gauche de l\'entrée principale, appart 11');

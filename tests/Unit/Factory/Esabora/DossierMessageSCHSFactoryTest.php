@@ -23,7 +23,7 @@ class DossierMessageSCHSFactoryTest extends TestCase
             ->method('getTmpFilepath')
             ->willReturn(self::FILE);
 
-        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock);
+        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock, true);
         $dossierMessage = $dossierMessageFactory->createInstance(
             $this->getSignalementAffectation(PartnerType::COMMUNE_SCHS)
         );
@@ -47,7 +47,7 @@ class DossierMessageSCHSFactoryTest extends TestCase
             ->method('getTmpFilepath')
             ->willReturn(self::FILE);
 
-        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock);
+        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock, true);
         $signalement = (new Signalement())->setNbEnfantsM6($nbEnfantsM6)->setNbEnfantsP6($nbEnfantsP6);
 
         $buildNbEnfantsMethod = new \ReflectionMethod(DossierMessageSCHSFactory::class, 'buildNbEnfants');
