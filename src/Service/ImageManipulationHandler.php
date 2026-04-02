@@ -49,13 +49,9 @@ class ImageManipulationHandler
         if ($path) {
             $this->imagePath = $path;
         }
-        $image = $this->imageManager->make($this->fileStorage->readStream($this->imagePath));
-        $image->resize($max, $max, static function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-        $resource = $image->stream()->detach();
-        $this->fileStorage->writeStream($this->getNewPath(self::SUFFIX_RESIZE), $resource);
+        $image = $this->imageManager->decode($this->fileStorage->read($this->imagePath));
+        $image->scaleDown($max, $max);
+        $this->fileStorage->write($this->getNewPath(self::SUFFIX_RESIZE), (string) $image->encode());
 
         return $this;
     }
@@ -68,10 +64,9 @@ class ImageManipulationHandler
         if ($path) {
             $this->imagePath = $path;
         }
-        $image = $this->imageManager->make($this->fileStorage->readStream($this->imagePath));
-        $image->fit($size, $size);
-        $resource = $image->stream()->detach();
-        $this->fileStorage->writeStream($this->getNewPath(self::SUFFIX_THUMB), $resource);
+        $image = $this->imageManager->decode($this->fileStorage->read($this->imagePath));
+        $image->cover($size, $size);
+        $this->fileStorage->write($this->getNewPath(self::SUFFIX_THUMB), (string) $image->encode());
 
         return $this;
     }
@@ -84,10 +79,9 @@ class ImageManipulationHandler
         if ($path) {
             $this->imagePath = $path;
         }
-        $image = $this->imageManager->make($this->fileStorage->readStream($this->imagePath));
-        $image->fit($size, $size);
-        $resource = $image->stream()->detach();
-        $this->fileStorage->writeStream($path, $resource);
+        $image = $this->imageManager->decode($this->fileStorage->read($this->imagePath));
+        $image->cover($size, $size);
+        $this->fileStorage->write($path, (string) $image->encode());
 
         return $this;
     }
@@ -103,10 +97,9 @@ class ImageManipulationHandler
             if (!$this->fileStorage->fileExists($variant)) {
                 continue;
             }
-            $image = $this->imageManager->make($this->fileStorage->readStream($variant));
+            $image = $this->imageManager->decode($this->fileStorage->read($variant));
             $image->rotate($angle);
-            $resource = $image->stream()->detach();
-            $this->fileStorage->writeStream($variant, $resource);
+            $this->fileStorage->write($variant, (string) $image->encode());
         }
     }
 

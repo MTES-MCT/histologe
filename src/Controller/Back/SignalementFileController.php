@@ -338,7 +338,7 @@ class SignalementFileController extends AbstractController
 
             return $this->redirect($this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid(), '_fragment' => 'documents']));
         }
-        $angle = $rotate * 90 * -1;
+        $angle = $rotate * 90;
         $imageManipulationHandler->rotate($file, $angle);
         $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'La photo a bien été modifiée.']);
 
