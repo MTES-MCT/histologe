@@ -93,6 +93,12 @@ export default function initTabsLoader() {
             '<div class="fr-text--error">Accès refusé, vos droits sont insuffisants pour accéder à ce contenu. Merci de contacter un administrateur.</div>';
         }
 
+        if (err.message.includes('404')) {
+          loader.innerHTML =
+              '<div class="fr-text--error">Chargement de données impossible.</div>';
+          continue;
+        }
+
         console.error('Erreur chargement:', err);
         Sentry.captureException(err);
         setTimeout(() => {
