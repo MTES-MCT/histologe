@@ -117,13 +117,16 @@ const natureLogementSelect = document?.querySelector('#type_composition_natureLo
 if (natureLogementSelect) {
   const natureAutrePrecisionContainer = document.querySelector('#type_composition_natureAutrePrecision')?.closest('.fr-fieldset__element');
   const etageContainer = document.querySelector('#type_composition_appartementEtage')?.closest('.fr-fieldset__element');
+  const avecFenetresContainer = document.querySelector('#type_composition_appartementAvecFenetres')?.closest('.fr-fieldset__element');
 
   function refreshNatureAutrePrecision() {
     if (natureAutrePrecisionContainer) {
       if (natureLogementSelect.value === 'appartement') {
         etageContainer.classList.remove('fr-hidden');
+        avecFenetresContainer.classList.remove('fr-hidden');
       } else {
         etageContainer.classList.add('fr-hidden');
+        avecFenetresContainer.classList.add('fr-hidden');
       }
       if (natureLogementSelect.value === 'autre') {
         natureAutrePrecisionContainer.classList.remove('fr-hidden');

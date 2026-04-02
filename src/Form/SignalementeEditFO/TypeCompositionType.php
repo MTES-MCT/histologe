@@ -93,8 +93,17 @@ class TypeCompositionType extends AbstractType
                 'mapped' => false,
                 'data' => $avecFenetres,
                 'constraints' => [
-                    new Assert\NotNull(
-                        message: 'Veuillez indiquer si le logement a des fenêtres.',
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $natureLogement = $form->get('natureLogement')->getData();
+
+                            if ('appartement' === $natureLogement && null === $value) {
+                                $context
+                                    ->buildViolation('Veuillez indiquer si l\'appartement a des fenêtres.')
+                                    ->addViolation();
+                            }
+                        },
                     ),
                 ],
             ])
