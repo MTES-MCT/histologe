@@ -295,7 +295,12 @@ class SignalementCreateControllerTest extends WebTestCase
             'signalement_draft_coordonnees[nomOccupant]' => 'Bernard',
             'signalement_draft_coordonnees[prenomOccupant]' => 'Florent',
             'signalement_draft_coordonnees[mailOccupant]' => 'florent.bernard@floodcast.fr',
+            'signalement_draft_coordonnees[telOccupant]' => '',
             'signalement_draft_coordonnees[denominationAgence]' => 'Arnaque & cie',
+            'signalement_draft_coordonnees[nomDeclarant]' => 'Menielle',
+            'signalement_draft_coordonnees[mailDeclarant]' => 'adrien@floodcast.fr',
+            'signalement_draft_coordonnees[telDeclarant]' => '',
+            'signalement_draft_coordonnees[telProprio]' => '',
         ]);
         $this->client->submit($form);
 
