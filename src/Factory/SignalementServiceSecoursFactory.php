@@ -14,6 +14,7 @@ use App\Entity\ServiceSecoursRoute;
 use App\Entity\Signalement;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
+use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\Signalement\ZipcodeProvider;
 
@@ -24,6 +25,7 @@ class SignalementServiceSecoursFactory
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly BailleurRepository $bailleurRepository,
         private readonly DesordreCritereRepository $desordreCritereRepository,
+        private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
     ) {
     }
 
@@ -50,6 +52,8 @@ class SignalementServiceSecoursFactory
         $this->handleStep4($formServiceSecours, $signalement);
         $this->handleStep5($formServiceSecours, $signalement);
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+        $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
         return $signalement;
     }
