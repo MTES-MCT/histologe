@@ -17,7 +17,6 @@ use App\Dto\SignalementAffectationClose;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
-use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
@@ -38,6 +37,7 @@ use App\Entity\User;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementImportFactory;
+use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
@@ -228,7 +228,7 @@ class SignalementManager extends AbstractManager
 
         if ($this->featureSchsDispatchSishEnable) {
             $partnerIds = array_column($partners['not_affected'], 'id');
-            $notAffectedPartners = $this->partnerRepository->findByIds($partnerIds, [PartnerType::ARS, PartnerType::COMMUNE_SCHS]);
+            $notAffectedPartners = $this->partnerRepository->findByIds($partnerIds, DossierMessageSISH::CAN_SYNC_SISH_ESABORA);
 
             foreach ($partners['not_affected'] as $key => $partnerNotAffectedItem) {
                 /* @var Partner $partnerNotAffected */
