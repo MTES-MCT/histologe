@@ -45,7 +45,7 @@
     "file-loader": "6.2.0",
     "globals": "15.15.0",
     "jiti": "2.6.1",
-    "lodash": "4.17.23",
+    "lodash": "4.18.1",
     "prettier": "3.6.2",
     "sass": "1.94.0",
     "sass-loader": "16.0.6",
