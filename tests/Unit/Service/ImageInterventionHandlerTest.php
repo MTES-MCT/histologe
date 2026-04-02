@@ -3,13 +3,12 @@
 namespace App\Tests\Unit\Service;
 
 use App\Service\ImageManipulationHandler;
-use App\Tests\MockableResizeImage;
-use App\Tests\MockableThumbnailImage;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Interfaces\EncodedImageInterface;
+use Intervention\Image\Interfaces\ImageInterface;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\StreamInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class ImageInterventionHandlerTest extends TestCase
@@ -24,7 +23,7 @@ class ImageInterventionHandlerTest extends TestCase
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
         $this->fileStorage
             ->expects($this->atLeast(0))
-            ->method('writeStream');
+            ->method('write');
 
         $this->fileStorage
             ->expects($this->atLeast(0))
@@ -39,24 +38,21 @@ class ImageInterventionHandlerTest extends TestCase
      */
     public function testResize(): void
     {
-        $manager = new ImageManager();
-        $image = $manager->make(__DIR__.'/../../files/sample.jpg');
+        $encodedMock = $this->createMock(EncodedImageInterface::class);
+        $encodedMock->method('__toString')->willReturn('encoded-content');
 
-        $imageMock = $this->createMock(MockableResizeImage::class);
+        $imageMock = $this->createMock(ImageInterface::class);
         $imageMock->expects($this->once())
-            ->method('resize')
-            ->with(1000, 1000, $this->isType('callable'))
-            ->willReturn($image);
-
-        $streamMock = $this->createMock(StreamInterface::class);
-        $imageMock
-            ->expects($this->once())
-            ->method('stream')->willReturn($streamMock);
+            ->method('scaleDown')
+            ->with(1000, 1000)
+            ->willReturnSelf();
+        $imageMock->expects($this->once())
+            ->method('encode')
+            ->willReturn($encodedMock);
 
         $this->imageManager
             ->expects($this->once())
-            ->method('make')
-            ->with(__DIR__.'/../../files/sample.jpg')
+            ->method('decode')
             ->willReturn($imageMock);
 
         $imageManipulationHandler = new ImageManipulationHandler(
@@ -75,25 +71,21 @@ class ImageInterventionHandlerTest extends TestCase
      */
     public function testThumbnail(): void
     {
-        $manager = new ImageManager();
-        $image = $manager->make(__DIR__.'/../../files/sample.jpg');
+        $encodedMock = $this->createMock(EncodedImageInterface::class);
+        $encodedMock->method('__toString')->willReturn('encoded-content');
 
-        $imageMock = $this->createMock(MockableThumbnailImage::class);
+        $imageMock = $this->createMock(ImageInterface::class);
         $imageMock->expects($this->once())
-            ->method('fit')
+            ->method('cover')
             ->with(400, 400)
-            ->willReturn($image);
-
-        $streamMock = $this->createMock(StreamInterface::class);
-        $imageMock
-            ->expects($this->once())
-            ->method('stream')
-            ->willReturn($streamMock);
+            ->willReturnSelf();
+        $imageMock->expects($this->once())
+            ->method('encode')
+            ->willReturn($encodedMock);
 
         $this->imageManager
             ->expects($this->once())
-            ->method('make')
-            ->with(__DIR__.'/../../files/sample.jpg')
+            ->method('decode')
             ->willReturn($imageMock);
 
         $imageManipulationHandler = new ImageManipulationHandler(

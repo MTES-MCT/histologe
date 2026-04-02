@@ -17,7 +17,7 @@
         "endroid/qr-code": "^6.0",
         "getbrevo/brevo-php": "^1.0",
         "giggsey/libphonenumber-for-php": "^8.13",
-        "intervention/image": "^2.7",
+        "intervention/image": "^4.0",
         "lcobucci/jwt": "^5.5",
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/flysystem-bundle": "^3.0",

@@ -146,6 +146,8 @@ services:
             $normalizers:
                 - '@App\Serializer\SignalementDraftRequestNormalizer'
     Intervention\Image\ImageManager:
+        arguments:
+            $driver: 'Intervention\Image\Drivers\Gd\Driver'
 
     App\Service\Signalement\DesordreTraitement\DesordreTraitementNuisibles:
         tags:
