@@ -4,6 +4,7 @@ namespace App\EventListener;
 
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Security\User\SignalementUser;
 use App\Service\History\EntityComparator;
 use App\Utils\DictionaryProvider;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
@@ -300,10 +301,6 @@ class SignalementUpdatedListener
         /** @var User $user */
         $user = $this->security->getUser();
 
-        if (!$user) {
-            return false;
-        }
-
-        return in_array('ROLE_USAGER', $user->getRoles(), true);
+        return $user instanceof SignalementUser;
     }
 }
