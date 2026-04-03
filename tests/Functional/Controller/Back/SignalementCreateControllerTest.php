@@ -236,6 +236,27 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertStringContainsString('pas le droit de créer un signalement sur ce territoire.', $response['tabContent']);
     }
 
+    public function testEditAddressWithInvalidAddress(): void
+    {
+        $crawler = $this->getCrawler();
+
+        $form = $crawler->filter('#bo-form-signalement-adresse')->form();
+        $form->setValues([
+            'signalement_draft_address[adresseOccupant]' => 'xrickr jdjerdhjf',
+            'signalement_draft_address[cpOccupant]' => '99999',
+            'signalement_draft_address[villeOccupant]' => 'vlspeotmdmzor',
+            'signalement_draft_address[isLogementSocial]' => '1',
+            'signalement_draft_address[profileDeclarant]' => 'LOCATAIRE',
+            'signalement_draft_address[natureLogement]' => 'appartement',
+        ]);
+        $this->client->submit($form);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('tabContent', $response);
+        $this->assertStringContainsString('L&#039;adresse renseignée ne correspond pas à un territoire actif.', $response['tabContent']);
+    }
+
     public function testEditLogement(): void
     {
         $crawler = $this->getCrawler();
@@ -530,5 +551,21 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertNull($signalementUsager->getDeclarant());
 
         $this->assertEmailCount(2);
+    }
+
+    public function testDeleteDraftSignalementSuccess(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'user-44-02@signal-logement.fr']);
+        $this->client->loginUser($user);
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000008']);
+
+        $route = $this->router->generate('back_signalement_delete_draft', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('POST', $route, [
+            '_token' => $this->generateCsrfToken($this->client, 'draft_delete'),
+            'draft_id' => $signalement->getId(),
+        ]);
+        $this->assertResponseRedirects($this->router->generate('back_signalement_drafts'));
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000008']);
+        $this->assertEquals(SignalementStatus::DRAFT_ARCHIVED, $signalement->getStatut());
     }
 }

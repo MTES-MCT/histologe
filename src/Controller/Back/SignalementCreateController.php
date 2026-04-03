@@ -99,7 +99,7 @@ class SignalementCreateController extends AbstractController
             && $this->isCsrfTokenValid('draft_delete', (string) $request->request->get('_token'))
         ) {
             $signalement->setStatut(SignalementStatus::DRAFT_ARCHIVED);
-            // $entityManager->flush();
+            $entityManager->flush();
             $this->addFlash('success', ['title' => 'Brouillon supprimé', 'message' => 'Le brouillon a bien été supprimé.']);
 
             return $this->redirectToRoute('back_signalement_drafts', [], Response::HTTP_SEE_OTHER);
