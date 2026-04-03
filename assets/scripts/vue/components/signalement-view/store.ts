@@ -112,7 +112,7 @@ export const store = {
     occupationLogementList: [
       { Id: 'logement_vacant', Text: 'Logement vacant' },
       { Id: 'logement_occupe', Text: 'Logement occupé' },
-      { Id: 'logement_occupe_bailleur_occupant', Text: 'Logement occupé : bailleur occupant' },
+      { Id: 'logement_occupe_bailleur_occupant', Text: 'Logement occupé : propriétaire occupant' },
       { Id: 'logement_occupe_locataire', Text: 'Logement occupé : locataire' },
       { Id: 'non_renseigne', Text: 'Non renseigné' }
     ],
@@ -145,7 +145,7 @@ export const store = {
     ],
     typeDeclarantList: [
       { Id: 'locataire', Text: 'Occupant' },
-      { Id: 'bailleur_occupant', Text: 'Bailleur occupant' },
+      { Id: 'bailleur_occupant', Text: 'Propriétaire occupant' },
       { Id: 'bailleur', Text: 'Tiers bailleur' },
       { Id: 'tiers_particulier', Text: 'Tiers particulier' },
       { Id: 'tiers_pro', Text: 'Tiers professionnel' },

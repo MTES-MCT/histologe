@@ -2,7 +2,6 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -120,15 +119,6 @@ class SignalementFoVoter extends Voter
 
     private function canUsagerCompleteDossier(Signalement $signalement): bool
     {
-        // Pour l'instant, on ne peut compléter que les infos du bailleur, donc on filtre sur le profil
-        if (
-            $this->canUsagerEdit($signalement)
-            && ProfileDeclarant::BAILLEUR !== $signalement->getProfileDeclarant()
-            && ProfileDeclarant::BAILLEUR_OCCUPANT !== $signalement->getProfileDeclarant()
-        ) {
-            return true;
-        }
-
-        return false;
+        return $this->canUsagerEdit($signalement);
     }
 }

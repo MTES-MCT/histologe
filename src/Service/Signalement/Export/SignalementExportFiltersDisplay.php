@@ -61,7 +61,7 @@ class SignalementExportFiltersDisplay
     private const array OCCUPATION_LOGEMENT_LIST = [
         'logement_vacant' => 'Logement vacant',
         'logement_occupe' => 'Logement occupé',
-        'logement_occupe_bailleur_occupant' => 'Logement occupé : bailleur occupant',
+        'logement_occupe_bailleur_occupant' => 'Logement occupé : propriétaire occupant',
         'logement_occupe_locataire' => 'Logement occupé : locataire',
         'non_renseigne' => 'Non renseigné',
     ];
