@@ -3,9 +3,12 @@
 namespace App\Service\DashboardTabPanel\Kpi;
 
 use App\Entity\User;
+use App\Repository\Query\Dashboard\DossiersQuery;
+use App\Repository\Query\Dashboard\DossiersSansSuivisPartenaireQuery;
+use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
+use App\Repository\Query\Dashboard\DossiersUndeliverableEmailQuery;
 use App\Repository\Query\Dashboard\SignalementsSansAffectationAccepteeQuery;
 use App\Repository\SignalementRepository;
-use App\Repository\SuiviRepository;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -27,10 +30,13 @@ class TabCountKpiBuilder
 
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
-        private readonly SuiviRepository $suiviRepository,
         private readonly Security $security,
         private readonly TabCountKpiCacheHelper $tabCountKpiCacheHelper,
         private readonly SignalementsSansAffectationAccepteeQuery $signalementsSansAffectationAccepteeQuery,
+        private readonly DossiersSuivisUsagerQuery $dossiersSuivisUsagerQuery,
+        private readonly DossiersQuery $dossiersQuery,
+        private readonly DossiersSansSuivisPartenaireQuery $dossiersSansSuivisPartenaireQuery,
+        private readonly DossiersUndeliverableEmailQuery $dossiersUndeliverableEmailQuery,
     ) {
     }
 
@@ -100,13 +106,13 @@ class TabCountKpiBuilder
             TabCountKpiCacheHelper::DOSSIERS_A_FERMER,
             $user,
             $params,
-            fn () => $this->signalementRepository->countAllDossiersAferme($user, $params)
+            fn () => $this->dossiersQuery->countAllDossiersAferme($user, $params)
         );
         $countDossiersMessagesUsagers = $this->tabCountKpiCacheHelper->getOrSet(
             TabCountKpiCacheHelper::DOSSIERS_MESSAGES_USAGERS,
             $user,
             $params,
-            fn () => $this->suiviRepository->countAllMessagesUsagers($user, $params)
+            fn () => $this->dossiersSuivisUsagerQuery->countAllMessagesUsagers($user, $params)
         );
         $countDossiersAVerifier = $this->tabCountKpiCacheHelper->getOrSet(
             TabCountKpiCacheHelper::DOSSIERS_A_VERIFIER,
@@ -133,9 +139,9 @@ class TabCountKpiBuilder
     private function countAllDossiersAVerifier(User $user, ?TabQueryParameters $params): CountDossiersAVerifier
     {
         return new CountDossiersAVerifier(
-            countSignalementsSansSuiviPartenaireDepuis60Jours: $this->signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params),
             countSignalementsSansAffectationAcceptee: $this->signalementsSansAffectationAccepteeQuery->countSignalements($user, $params),
-            countAdresseEmailAVerifier: $this->signalementRepository->countNonDeliverableSignalements($user, $params)
+            countSignalementsSansSuiviPartenaireDepuis60Jours: $this->dossiersSansSuivisPartenaireQuery->countSignalements($user, $params),
+            countAdresseEmailAVerifier: $this->dossiersUndeliverableEmailQuery->count($user, $params)
         );
     }
 }

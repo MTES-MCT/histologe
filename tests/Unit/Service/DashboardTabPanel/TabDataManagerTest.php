@@ -10,10 +10,15 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\User;
 use App\Repository\JobEventRepository;
-use App\Repository\PartnerRepository;
+use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
+use App\Repository\Query\Dashboard\DossiersAvecRelanceSansReponseQuery;
+use App\Repository\Query\Dashboard\DossiersQuery;
+use App\Repository\Query\Dashboard\DossiersSansSuivisPartenaireQuery;
+use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
+use App\Repository\Query\Dashboard\DossiersUndeliverableEmailQuery;
+use App\Repository\Query\Dashboard\KpiQuery;
 use App\Repository\Query\Dashboard\SignalementsSansAffectationAccepteeQuery;
 use App\Repository\SignalementRepository;
-use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpi;
@@ -22,6 +27,7 @@ use App\Service\DashboardTabPanel\TabDataManager;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabDossierResult;
 use App\Service\DashboardTabPanel\TabQueryParameters;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -30,25 +36,35 @@ class TabDataManagerTest extends WebTestCase
 {
     protected MockObject&Security $security;
     protected MockObject&JobEventRepository $jobEventRepository;
-    protected MockObject&SuiviRepository $suiviRepository;
     protected MockObject&TerritoryRepository $territoryRepository;
     protected MockObject&UserRepository $userRepository;
-    protected MockObject&PartnerRepository $partnerRepository;
     protected MockObject&SignalementRepository $signalementRepository;
     protected MockObject&TabCountKpiBuilder $tabCountKpiBuilder;
     protected MockObject&SignalementsSansAffectationAccepteeQuery $signalementsSansAffectationAccepteeQuery;
+    protected MockObject&DossiersQuery $dossiersQuery;
+    protected MockObject&DossiersActiviteRecenteQuery $dossiersActiviteRecenteQuery;
+    protected MockObject&DossiersAvecRelanceSansReponseQuery $dossiersAvecRelanceSansReponseQuery;
+    protected MockObject&DossiersSuivisUsagerQuery $dossiersSuivisUsagerQuery;
+    protected MockObject&DossiersSansSuivisPartenaireQuery $dossiersSansSuivisPartenaireQuery;
+    protected MockObject&DossiersUndeliverableEmailQuery $dossiersUndeliverableEmailQuery;
+    protected MockObject&KpiQuery $kpiQuery;
 
     protected function setUp(): void
     {
         $this->security = $this->createMock(Security::class);
         $this->jobEventRepository = $this->createMock(JobEventRepository::class);
-        $this->suiviRepository = $this->createMock(SuiviRepository::class);
         $this->territoryRepository = $this->createMock(TerritoryRepository::class);
         $this->userRepository = $this->createMock(UserRepository::class);
-        $this->partnerRepository = $this->createMock(PartnerRepository::class);
         $this->signalementRepository = $this->createMock(SignalementRepository::class);
         $this->tabCountKpiBuilder = $this->createMock(TabCountKpiBuilder::class);
         $this->signalementsSansAffectationAccepteeQuery = $this->createMock(SignalementsSansAffectationAccepteeQuery::class);
+        $this->dossiersQuery = $this->createMock(DossiersQuery::class);
+        $this->dossiersActiviteRecenteQuery = $this->createMock(DossiersActiviteRecenteQuery::class);
+        $this->dossiersAvecRelanceSansReponseQuery = $this->createMock(DossiersAvecRelanceSansReponseQuery::class);
+        $this->dossiersSuivisUsagerQuery = $this->createMock(DossiersSuivisUsagerQuery::class);
+        $this->dossiersSansSuivisPartenaireQuery = $this->createMock(DossiersSansSuivisPartenaireQuery::class);
+        $this->dossiersUndeliverableEmailQuery = $this->createMock(DossiersUndeliverableEmailQuery::class);
+        $this->kpiQuery = $this->createMock(KpiQuery::class);
     }
 
     private function getTabDataManager(): TabDataManager
@@ -56,13 +72,17 @@ class TabDataManagerTest extends WebTestCase
         return new TabDataManager(
             $this->security,
             $this->jobEventRepository,
-            $this->suiviRepository,
             $this->territoryRepository,
             $this->userRepository,
-            $this->partnerRepository,
-            $this->signalementRepository,
             $this->tabCountKpiBuilder,
             $this->signalementsSansAffectationAccepteeQuery,
+            $this->dossiersQuery,
+            $this->dossiersActiviteRecenteQuery,
+            $this->dossiersAvecRelanceSansReponseQuery,
+            $this->dossiersSuivisUsagerQuery,
+            $this->dossiersSansSuivisPartenaireQuery,
+            $this->dossiersUndeliverableEmailQuery,
+            $this->kpiQuery
         );
     }
 
@@ -75,7 +95,7 @@ class TabDataManagerTest extends WebTestCase
         $signalementStatus = SignalementStatus::ACTIVE;
         $suiviCategory = SuiviCategory::MESSAGE_PARTNER;
 
-        $this->suiviRepository->method('findLastSignalementsWithUserSuivi')->willReturn([
+        $rawData = [
             [
                 'nomOccupant' => 'Dupont',
                 'prenomOccupant' => 'Jean',
@@ -88,23 +108,43 @@ class TabDataManagerTest extends WebTestCase
                 'hasNewerSuivi' => true,
                 'uuid' => 'uuid-123',
             ],
-        ]);
+        ];
+
+        /** @var MockObject&Paginator $paginator */
+        $paginator = $this->createMock(Paginator::class);
+        $paginator->method('getIterator')->willReturn(new \ArrayIterator($rawData));
+        $paginator->method('count')->willReturn(1);
+
+        $this->dossiersActiviteRecenteQuery
+            ->method('findPaginatedLastSignalementsWithUserSuivi')
+            ->willReturn($paginator);
+
+        $this->dossiersActiviteRecenteQuery
+            ->method('countLastSignalementsWithUserSuivi')
+            ->willReturn(1);
 
         $tabDataManager = $this->getTabDataManager();
 
         $result = $tabDataManager->getDernierActionDossiers();
         $this->assertIsArray($result);
-        $this->assertCount(1, $result);
-        $this->assertInstanceOf(TabDossier::class, $result[0]);
-        $this->assertSame('Dupont', $result[0]->nomOccupant);
-        $this->assertSame('Jean', $result[0]->prenomOccupant);
-        $this->assertSame('#2023-001', $result[0]->reference);
-        $this->assertSame('1 rue de Paris', $result[0]->adresse);
-        $this->assertSame('en cours', $result[0]->statut);
-        $this->assertSame('Suivi visible par l\'usager', $result[0]->derniereAction);
-        $this->assertSame('10/06/2024', $result[0]->derniereActionAt->format('d/m/Y'));
-        $this->assertSame('OUI', $result[0]->actionDepuis);
-        $this->assertSame('uuid-123', $result[0]->uuid);
+        $this->assertArrayHasKey('data', $result);
+        $this->assertArrayHasKey('total', $result);
+        $this->assertArrayHasKey('page', $result);
+        $this->assertSame(1, $result['total']);
+        $this->assertSame(1, $result['page']);
+        $firstResult = $result['data'][0];
+        $this->assertInstanceOf(TabDossier::class, $firstResult);
+        $this->assertSame('Dupont', $firstResult->nomOccupant);
+        $this->assertSame('Jean', $firstResult->prenomOccupant);
+        $this->assertSame('#2023-001', $firstResult->reference);
+        $this->assertSame('1 rue de Paris', $firstResult->adresse);
+        $this->assertSame('en cours', $firstResult->statut);
+        $this->assertSame('Suivi visible par l\'usager', $firstResult->derniereAction);
+        $this->assertSame('10/06/2024', $firstResult->derniereActionAt->format('d/m/Y'));
+        $this->assertSame('OUI', $firstResult->actionDepuis);
+        $this->assertSame('uuid-123', $firstResult->uuid);
+        $this->assertSame('OUI', $firstResult->actionDepuis);
+        $this->assertSame('uuid-123', $firstResult->uuid);
     }
 
     public function testCountInjonctions(): void
@@ -112,7 +152,7 @@ class TabDataManagerTest extends WebTestCase
         /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
-        $this->signalementRepository->method('countInjonctions')->willReturn(5);
+        $this->kpiQuery->method('countInjonctions')->willReturn(5);
 
         $tabDataManager = $this->getTabDataManager();
 
@@ -137,7 +177,7 @@ class TabDataManagerTest extends WebTestCase
     {
         $countPartnerDto = $this->createMock(CountPartner::class);
         $countPartnerDto->method('getNonNotifiables')->willReturn(7);
-        $this->partnerRepository->method('countPartnerNonNotifiables')->willReturn($countPartnerDto);
+        $this->kpiQuery->method('countPartnerNonNotifiables')->willReturn($countPartnerDto);
 
         $tabDataManager = $this->getTabDataManager();
 
@@ -147,7 +187,7 @@ class TabDataManagerTest extends WebTestCase
 
     public function testCountPartenairesInterfacesReturnsCount(): void
     {
-        $this->partnerRepository->method('countPartnerInterfaces')->willReturn(5);
+        $this->kpiQuery->method('countPartnerInterfaces')->willReturn(5);
 
         $tabDataManager = $this->getTabDataManager();
 
@@ -188,11 +228,11 @@ class TabDataManagerTest extends WebTestCase
         $expectedCount = 0;
         $params = new TabQueryParameters(null, null);
 
-        $this->signalementRepository
+        $this->dossiersQuery
             ->method('findDossiersNoAgentFrom')
             ->with(AffectationStatus::ACCEPTED, $params)
             ->willReturn($expectedDossiers);
-        $this->signalementRepository
+        $this->dossiersQuery
             ->method('countDossiersNoAgentFrom')
             ->with(AffectationStatus::ACCEPTED, $params)
             ->willReturn($expectedCount);
@@ -209,11 +249,11 @@ class TabDataManagerTest extends WebTestCase
         $expectedDossiers = [['id' => 1], ['id' => 2]];
         $expectedCount = 2;
 
-        $this->signalementRepository
+        $this->dossiersQuery
             ->method('findDossiersDemandesFermetureByUsager')
             ->with(null)
             ->willReturn($expectedDossiers);
-        $this->signalementRepository
+        $this->dossiersQuery
             ->method('countDossiersDemandesFermetureByUsager')
             ->with(null)
             ->willReturn($expectedCount);
@@ -230,7 +270,7 @@ class TabDataManagerTest extends WebTestCase
         /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
-        $this->suiviRepository->method('findSuivisUsagersWithoutAskFeedbackBefore')->with($user)->willReturn([
+        $this->dossiersSuivisUsagerQuery->method('findSuivisUsagersWithoutAskFeedbackBefore')->with($user)->willReturn([
             [
                 'nomOccupant' => 'Martin',
                 'prenomOccupant' => 'Alice',
@@ -243,7 +283,7 @@ class TabDataManagerTest extends WebTestCase
                 'uuid' => 'uuid-456',
             ],
         ]);
-        $this->suiviRepository->method('countSuivisUsagersWithoutAskFeedbackBefore')->with($user)->willReturn(1);
+        $this->dossiersSuivisUsagerQuery->method('countSuivisUsagersWithoutAskFeedbackBefore')->with($user)->willReturn(1);
 
         $tabDataManager = $this->getTabDataManager();
         $result = $tabDataManager->getMessagesUsagersNouveauxMessages();
@@ -262,12 +302,12 @@ class TabDataManagerTest extends WebTestCase
         $expectedCount = 1;
         $params = new TabQueryParameters(null, null);
 
-        $this->signalementRepository
-            ->method('findSignalementsAvecRelancesSansReponse')
+        $this->dossiersAvecRelanceSansReponseQuery
+            ->method('findSignalements')
             ->with($params)
             ->willReturn($expectedDossiers);
-        $this->signalementRepository
-            ->method('countSignalementsAvecRelancesSansReponse')
+        $this->dossiersAvecRelanceSansReponseQuery
+            ->method('countSignalements')
             ->with($params)
             ->willReturn($expectedCount);
         $tabDataManager = $this->getTabDataManager();
@@ -283,7 +323,7 @@ class TabDataManagerTest extends WebTestCase
         /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
-        $this->suiviRepository->method('findSuivisPostCloture')->with($user)->willReturn([
+        $this->dossiersSuivisUsagerQuery->method('findSuivisPostCloture')->with($user)->willReturn([
             [
                 'nomOccupant' => 'Durand',
                 'prenomOccupant' => 'Paul',
@@ -297,7 +337,7 @@ class TabDataManagerTest extends WebTestCase
                 'uuid' => 'uuid-789',
             ],
         ]);
-        $this->suiviRepository->method('countSuivisPostCloture')->with($user)->willReturn(1);
+        $this->dossiersSuivisUsagerQuery->method('countSuivisPostCloture')->with($user)->willReturn(1);
 
         $tabDataManager = $this->getTabDataManager();
         $result = $tabDataManager->getMessagesUsagersMessageApresFermeture();
@@ -315,11 +355,11 @@ class TabDataManagerTest extends WebTestCase
         $expectedCount = 1;
         $params = new TabQueryParameters(null, null);
 
-        $this->signalementRepository
+        $this->dossiersQuery
             ->method('findDossiersFermePartenaireTous')
             ->with($params)
             ->willReturn($expectedDossiers);
-        $this->signalementRepository
+        $this->dossiersQuery
             ->method('countDossiersFermePartenaireTous')
             ->with($params)
             ->willReturn($expectedCount);
@@ -337,11 +377,11 @@ class TabDataManagerTest extends WebTestCase
         $expectedCount = 1;
         $params = new TabQueryParameters(null, null);
 
-        $this->signalementRepository
+        $this->dossiersQuery
             ->method('findDossiersFermePartenaireCommune')
             ->with($params)
             ->willReturn($expectedDossiers);
-        $this->signalementRepository
+        $this->dossiersQuery
             ->method('countDossiersFermePartenaireCommune')
             ->with($params)
             ->willReturn($expectedCount);
@@ -358,7 +398,7 @@ class TabDataManagerTest extends WebTestCase
         /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
-        $this->suiviRepository->method('findSuivisUsagerOrPoursuiteWithAskFeedbackBefore')->with($user)->willReturn([
+        $this->dossiersSuivisUsagerQuery->method('findSuivisUsagerOrPoursuiteWithAskFeedbackBefore')->with($user)->willReturn([
             [
                 'nomOccupant' => 'Lemoine',
                 'prenomOccupant' => 'Claire',
@@ -372,7 +412,7 @@ class TabDataManagerTest extends WebTestCase
                 'uuid' => 'uuid-999',
             ],
         ]);
-        $this->suiviRepository->method('countSuivisUsagerOrPoursuiteWithAskFeedbackBefore')->with($user)->willReturn(1);
+        $this->dossiersSuivisUsagerQuery->method('countSuivisUsagerOrPoursuiteWithAskFeedbackBefore')->with($user)->willReturn(1);
 
         $tabDataManager = $this->getTabDataManager();
 
@@ -392,7 +432,7 @@ class TabDataManagerTest extends WebTestCase
         /** @var MockObject&User $user */
         $user = $this->createMock(User::class);
         $this->security->method('getUser')->willReturn($user);
-        $this->signalementRepository->method('findSignalementsSansSuiviPartenaireDepuis60Jours')->with($user)->willReturn([
+        $this->dossiersSansSuivisPartenaireQuery->method('findSignalements')->with($user)->willReturn([
             [
                 'nomOccupant' => 'Lemoine',
                 'prenomOccupant' => 'Claire',
@@ -408,7 +448,7 @@ class TabDataManagerTest extends WebTestCase
                 'uuid' => 'uuid-999',
             ],
         ]);
-        $this->signalementRepository->method('countSignalementsSansSuiviPartenaireDepuis60Jours')->with($user)->willReturn(1);
+        $this->dossiersSansSuivisPartenaireQuery->method('countSignalements')->with($user)->willReturn(1);
 
         $tabDataManager = $this->getTabDataManager();
 
@@ -479,7 +519,7 @@ class TabDataManagerTest extends WebTestCase
 
         $this->security->method('getUser')->willReturn($user);
         $params = new TabQueryParameters(null, null);
-        $this->suiviRepository->method('findLastSignalementsWithOtherUserSuivi')
+        $this->dossiersActiviteRecenteQuery->method('findLastSignalementsWithOtherUserSuivi')
             ->with($user, $params, 11)
             ->willReturn([
                 [

@@ -7,6 +7,7 @@ use App\Entity\Enum\ProfileDeclarant;
 readonly class TabDossier
 {
     public const int MAX_ITEMS_LIST = 5;
+    public const int MAX_ITEMS_DERNIERES_ACTIONS = 10;
 
     public function __construct(
         public ?string $uuid = null,

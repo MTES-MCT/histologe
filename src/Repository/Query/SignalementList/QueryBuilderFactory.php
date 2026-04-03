@@ -7,6 +7,10 @@ use App\Entity\Affectation;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Repository\Query\Dashboard\DossiersAvecRelanceSansReponseQuery;
+use App\Repository\Query\Dashboard\DossiersQuery;
+use App\Repository\Query\Dashboard\DossiersSansSuivisPartenaireQuery;
+use App\Repository\Query\Dashboard\DossiersUndeliverableEmailQuery;
 use App\Repository\SignalementRepository;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use App\Service\Signalement\SearchFilter;
@@ -19,6 +23,10 @@ readonly class QueryBuilderFactory
     public function __construct(
         private EntityManagerInterface $em,
         private SearchFilter $searchFilter,
+        private DossiersQuery $dossiersQuery,
+        private DossiersAvecRelanceSansReponseQuery $dossiersAvecRelanceSansReponseQuery,
+        private DossiersSansSuivisPartenaireQuery $dossiersSansSuivisPartenaireQuery,
+        private DossiersUndeliverableEmailQuery $dossiersUndeliverableEmailQuery,
     ) {
     }
 
@@ -108,27 +116,27 @@ readonly class QueryBuilderFactory
         $qb = $this->searchFilter->applyFilters($qb, $options, $user);
 
         if (!empty($options['relanceUsagerSansReponse'])) {
-            $signalementIds = $signalementRepository->getSignalementsIdAvecRelancesSansReponse($user);
+            $signalementIds = $this->dossiersAvecRelanceSansReponseQuery->getSignalementsId($user);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
         if (!empty($options['isDossiersSansActivite'])) {
             $params = new TabQueryParameters();
-            $signalementIds = $signalementRepository->getSignalementsIdSansSuiviPartenaireDepuis60Jours($user, $params);
+            $signalementIds = $this->dossiersSansSuivisPartenaireQuery->getSignalementsId($user, $params);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
         if (!empty($options['isEmailAVerifier'])) {
-            $signalementIds = $signalementRepository->findIdsNonDeliverableSignalements($user, null);
+            $signalementIds = $this->dossiersUndeliverableEmailQuery->findIds($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
         if (!empty($options['isDossiersSansAgent'])) {
             $params = new TabQueryParameters();
-            $signalementUuids = $signalementRepository->getSignalementsUuidSansAgent($params);
+            $signalementUuids = $this->dossiersQuery->getSignalementsUuidSansAgent($params);
             $qb->andWhere('s.uuid IN (:signalement_uuids)')
                 ->setParameter('signalement_uuids', $signalementUuids);
         }

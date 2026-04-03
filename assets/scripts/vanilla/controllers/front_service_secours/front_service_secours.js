@@ -84,12 +84,7 @@ function attachFormServiceSecoursEvent() {
 }
 
 function initUploadPhotos() {
-  const ALLOWED_MIME_TYPES = [
-    'image/jpeg',
-    'image/png',
-    'image/gif',
-    'application/pdf'
-  ];
+  const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
 
   const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 

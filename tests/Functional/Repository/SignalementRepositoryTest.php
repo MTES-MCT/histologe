@@ -4,7 +4,6 @@ namespace App\Tests\Functional\Repository;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
-use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
@@ -16,11 +15,9 @@ use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Service\DashboardTabPanel\TabQueryParameters;
 use App\Service\ListFilters\SearchSignalementInjonction;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Clock\ClockInterface;
@@ -30,7 +27,6 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 class SignalementRepositoryTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
-    private const string USER_PARTNER_TERRITORY_13 = 'user-13-01@signal-logement.fr';
 
     protected function setUp(): void
     {
@@ -265,188 +261,6 @@ class SignalementRepositoryTest extends KernelTestCase
 
         $signalementsOnSameAddress = $signalementRepository->findOnSameAddress($new);
         $this->assertCount(2, $signalementsOnSameAddress);
-    }
-
-    public function testFindNewDossiersFromFormulaireUsager(): void
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
-        $user = new User();
-        $user->setRoles(['ROLE_ADMIN']);
-        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
-        static::getContainer()->get('security.token_storage')->setToken($token);
-
-        $tabQueryParameter = new TabQueryParameters(
-            createdFrom: CreationSource::CREATED_FROM_FORMULAIRE_USAGER,
-            sortBy: 'createdAt',
-            orderBy: 'DESC',
-        );
-
-        $dossiers = $signalementRepository->findNewDossiersFrom(
-            signalementStatus: SignalementStatus::NEED_VALIDATION,
-            tabQueryParameters: $tabQueryParameter,
-        );
-
-        foreach ($dossiers as $dossier) {
-            $this->assertNotNull($dossier->uuid);
-            $this->assertNotNull($dossier->profilDeclarant);
-            $this->assertNotNull($dossier->nomOccupant);
-            $this->assertNotNull($dossier->prenomOccupant);
-            $this->assertNotNull($dossier->reference);
-            $this->assertNotNull($dossier->adresse);
-            $this->assertNotNull($dossier->depotAt);
-            $this->assertEquals('', $dossier->depotBy);
-        }
-    }
-
-    public function testFindNewDossiersFromFormulairePro(): void
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
-        $user = new User();
-        $user->setRoles(['ROLE_ADMIN']);
-        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
-        static::getContainer()->get('security.token_storage')->setToken($token);
-
-        $tabQueryParameter = new TabQueryParameters(
-            createdFrom: CreationSource::CREATED_FROM_FORMULAIRE_PRO,
-            sortBy: 'createdAt',
-            orderBy: 'DESC',
-        );
-
-        $dossiers = $signalementRepository->findNewDossiersFrom(
-            signalementStatus: SignalementStatus::NEED_VALIDATION,
-            tabQueryParameters: $tabQueryParameter,
-        );
-
-        foreach ($dossiers as $dossier) {
-            $this->assertNotNull($dossier->uuid);
-            $this->assertNotNull($dossier->profilDeclarant);
-            $this->assertNotNull($dossier->nomOccupant);
-            $this->assertNotNull($dossier->prenomOccupant);
-            $this->assertNotNull($dossier->reference);
-            $this->assertNotNull($dossier->adresse);
-            $this->assertNotNull($dossier->depotAt);
-            $this->assertNotNull($dossier->depotBy);
-        }
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-    public function testCountInjonctions(): void
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
-        $user = new User();
-        $user->setRoles(['ROLE_ADMIN']);
-        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
-        static::getContainer()->get('security.token_storage')->setToken($token);
-
-        $tabQueryParameter = new TabQueryParameters(
-            sortBy: 'createdAt',
-            orderBy: 'DESC',
-        );
-
-        $countInjonctions = $signalementRepository->countInjonctions(
-            user: $user,
-            params: $tabQueryParameter
-        );
-
-        $this->assertEquals(2, $countInjonctions);
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-    public function testCountNewDossiersFromFormulaireUsager(): void
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
-        $user = new User();
-        $user->setRoles(['ROLE_ADMIN']);
-        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
-        static::getContainer()->get('security.token_storage')->setToken($token);
-
-        $tabQueryParameter = new TabQueryParameters(
-            createdFrom: CreationSource::CREATED_FROM_FORMULAIRE_USAGER,
-            sortBy: 'createdAt',
-            orderBy: 'DESC',
-        );
-
-        $countDossiers = $signalementRepository->countNewDossiersFrom(
-            signalementStatus: SignalementStatus::NEED_VALIDATION,
-            tabQueryParameters: $tabQueryParameter
-        );
-        $this->assertEquals(8, $countDossiers);
-    }
-
-    /**
-     * @covers \App\Repository\SignalementRepository::countSignalementsSansSuiviPartenaireDepuis60Jours
-     * @covers \App\Repository\SignalementRepository::getSignalementsIdSansSuiviPartenaireDepuis60Jours
-     * @covers \App\Repository\SignalementRepository::findSignalementsSansSuiviPartenaireDepuis60Jours
-     */
-    public function testSignalementsSansSuiviPartenaireDepuis60Jours(): void
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        /** @var UserRepository $userRepository */
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_13]);
-
-        $this->assertNotNull($user, 'User partenaire doit exister en base de test');
-
-        // On fabrique des params simples (sans tri ni filtre particulier)
-        $params = new TabQueryParameters();
-        $params->partners = [];
-        $params->mesDossiersAverifier = null;
-        $params->queryCommune = null;
-
-        $count = $signalementRepository->countSignalementsSansSuiviPartenaireDepuis60Jours($user, $params);
-        $this->assertIsInt($count);
-        $this->assertGreaterThanOrEqual(0, $count);
-
-        $ids = $signalementRepository->getSignalementsIdSansSuiviPartenaireDepuis60Jours($user, $params);
-        $this->assertIsArray($ids);
-        foreach ($ids as $id) {
-            $this->assertIsInt($id);
-        }
-
-        $results = $signalementRepository->findSignalementsSansSuiviPartenaireDepuis60Jours($user, $params);
-        $this->assertIsArray($results);
-
-        foreach ($results as $row) {
-            $this->assertArrayHasKey('id', $row);
-            $this->assertArrayHasKey('uuid', $row);
-            $this->assertArrayHasKey('reference', $row);
-            $this->assertArrayHasKey('adresse', $row);
-            $this->assertArrayHasKey('dernierSuiviAt', $row);
-            $this->assertArrayHasKey('nbJoursDepuisDernierSuivi', $row);
-        }
-    }
-
-    public function testFindSignalementsSansSuiviPartenaireAvecFiltreCommune(): void
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        /** @var UserRepository $userRepository */
-        $userRepository = $this->entityManager->getRepository(User::class);
-
-        $user = $userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_13]);
-        $params = new TabQueryParameters();
-        $params->queryCommune = 'Marseille';
-
-        $results = $signalementRepository->findSignalementsSansSuiviPartenaireDepuis60Jours($user, $params);
-        $this->assertIsArray($results);
-        foreach ($results as $row) {
-            $this->assertStringContainsStringIgnoringCase('Marseille', $row['adresse']);
-        }
     }
 
     public function testFindOneForLoginBailleur(): void
@@ -713,51 +527,5 @@ class SignalementRepositoryTest extends KernelTestCase
             null
         );
         $this->assertEquals(1, $paginator->count());
-    }
-
-    public function testCountAndFindDossiersFermePartenaireCommune(): void
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
-        $user = new User();
-        $user->setRoles(['ROLE_ADMIN']);
-        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
-        static::getContainer()->get('security.token_storage')->setToken($token);
-
-        // Ferleture des affectations
-        $affRepo = $this->entityManager->getRepository(Affectation::class);
-        $affectations = $affRepo->createQueryBuilder('a')
-            ->innerJoin('a.signalement', 's')
-            ->innerJoin('a.partner', 'p')
-            ->where('s.reference IN (:refs)')
-            ->andWhere('p.nom = :partnerName')
-            ->setParameter('refs', ['2023-15', '2023-14'])
-            ->setParameter('partnerName', 'Partenaire 13-05 ESABORA SCHS')
-            ->getQuery()
-            ->getResult();
-        foreach ($affectations as $aff) {
-            $aff->setStatut(AffectationStatus::CLOSED);
-            $aff->setAnsweredAt(new \DateTimeImmutable());
-        }
-
-        $this->entityManager->flush();
-
-        $tabQueryParameter = new TabQueryParameters(
-            sortBy: 'createdAt',
-            orderBy: 'DESC',
-        );
-
-        $count = $signalementRepository->countDossiersFermePartenaireCommune(tabQueryParameters: $tabQueryParameter);
-        $this->assertIsInt($count);
-        $this->assertEquals(2, $count);
-
-        $result = $signalementRepository->findDossiersFermePartenaireCommune(tabQueryParameters: $tabQueryParameter);
-        $this->assertIsArray($result);
-        $this->assertEquals(2, count($result));
-        foreach ($result as $dossier) {
-            $this->assertNotNull($dossier->uuid);
-            $this->assertNotNull($dossier->reference);
-        }
     }
 }

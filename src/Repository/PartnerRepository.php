@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Dto\CountPartner;
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
@@ -16,7 +15,6 @@ use App\Service\ListFilters\SearchArchivedPartner;
 use App\Service\ListFilters\SearchPartner;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -134,69 +132,6 @@ class PartnerRepository extends ServiceEntityRepository
         $paginator = new Paginator($queryBuilder->getQuery());
 
         return $paginator;
-    }
-
-    /**
-     * @param array<int, mixed> $territories
-     */
-    public function countPartnerInterfaces(array $territories): int
-    {
-        $queryBuilder = $this->createQueryBuilder('p')
-        ->select('COUNT(p.id)');
-
-        $queryBuilder->andWhere('p.isArchive = 0');
-        $queryBuilder->andWhere('p.isEsaboraActive = 1 or p.isIdossActive = 1');
-
-        if (!empty($territories)) {
-            $queryBuilder
-                ->andWhere('p.territory IN (:territories)')
-                ->setParameter('territories', $territories);
-        }
-
-        return (int) $queryBuilder->getQuery()->getSingleScalarResult();
-    }
-
-    /**
-     * @param array<int, mixed> $territories
-     */
-    public function countPartnerNonNotifiables(array $territories): CountPartner
-    {
-        $queryBuilder = $this->createQueryBuilder('p')
-        ->select('p.id');
-
-        // Filtre sur les partenaires non notifiables
-        $queryBuilder->addSelect(
-            '(CASE
-                WHEN (p.email IS NOT NULL AND p.email != \'\' AND p.emailNotifiable = 1) THEN 1
-                WHEN EXISTS (
-                    SELECT 1
-                    FROM '.UserPartner::class.' up2
-                    JOIN up2.user u2
-                    WHERE up2.partner = p
-                    AND u2.email IS NOT NULL
-                    AND u2.statut LIKE \''.UserStatus::ACTIVE->value.'\'
-                    AND u2.isMailingActive = 1
-                ) THEN 1
-                ELSE 0
-            END) AS isNotifiable'
-        );
-        $queryBuilder->andHaving('isNotifiable = 0');
-
-        $queryBuilder->andWhere('p.isArchive = 0');
-
-        // Filtrer par territoires si précisé
-        if (!empty($territories)) {
-            $queryBuilder
-                ->andWhere('p.territory IN (:territories)')
-                ->setParameter('territories', $territories);
-        }
-        try {
-            $count = count($queryBuilder->getQuery()->getSingleColumnResult());
-        } catch (NonUniqueResultException) {
-            $count = 0;
-        }
-
-        return new CountPartner((int) $count);
     }
 
     /**

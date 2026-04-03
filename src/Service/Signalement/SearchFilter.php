@@ -17,8 +17,9 @@ use App\Entity\Partner;
 use App\Entity\User;
 use App\Repository\BailleurRepository;
 use App\Repository\EpciRepository;
+use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
+use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
 use App\Repository\SignalementQualificationRepository;
-use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Utils\CommuneHelper;
@@ -35,12 +36,13 @@ class SearchFilter
     private SignalementSearchQuery $request;
 
     public function __construct(
-        private SuiviRepository $suiviRepository,
         private TerritoryRepository $territoryRepository,
         private EntityManagerInterface $entityManager,
         private SignalementQualificationRepository $signalementQualificationRepository,
         private EpciRepository $epciRepository,
         private BailleurRepository $bailleurRepository,
+        private DossiersActiviteRecenteQuery $dossiersActiviteRecenteQuery,
+        private DossiersSuivisUsagerQuery $dossiersSuivisUsagerQuery,
     ) {
     }
 
@@ -481,25 +483,25 @@ class SearchFilter
         }
 
         if (!empty($filters['isNouveauMessage'])) {
-            $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisUsagersWithoutAskFeedbackBefore($user, null);
+            $signalementIds = $this->dossiersSuivisUsagerQuery->getSignalementsIdWithSuivisUsagersWithoutAskFeedbackBefore($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
         if (!empty($filters['isMessagePostCloture'])) {
-            $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisPostCloture($user, null);
+            $signalementIds = $this->dossiersSuivisUsagerQuery->getSignalementsIdWithSuivisPostCloture($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
         if (!empty($filters['isMessageWithoutResponse'])) {
-            $signalementIds = $this->suiviRepository->getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore($user, null);
+            $signalementIds = $this->dossiersSuivisUsagerQuery->getSignalementsIdWithSuivisUsagerOrPoursuiteWithAskFeedbackBefore($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }
 
         if (!empty($filters['isActiviteRecente'])) {
-            $signalementIds = $this->suiviRepository->findIdsLastSignalementsWithOtherUserSuivi($user, null);
+            $signalementIds = $this->dossiersActiviteRecenteQuery->findIdsLastSignalementsWithOtherUserSuivi($user, null);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
         }

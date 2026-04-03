@@ -8,7 +8,7 @@
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-md-8 fr-pr-10v">
             <h1 class="fr-mb-3v fr-text-label--blue-france tab-panel-title-with-calendar-icon">Vos dernières actions</h1>
-            <div class="fr-text--sm fr-mb-3v">Aperçu des 10 derniers dossiers sur lesquels vous avez effectué une action</div>
+            <div class="fr-text--sm fr-mb-3v">Aperçu des dossiers des 3 derniers mois sur lesquels vous avez effectué une action</div>
             <hr class="hr--blue-france">
             <div class="fr-container--fluid">
                 {% for item in items.data %}
@@ -40,6 +40,10 @@
                         link: path('back_signalement_view', {'uuid' : item.uuid})
                     } %}
                 {% endfor %}
+                <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" role="navigation" aria-label="Pagination de la liste des dernières actions">
+                    {% import '_partials/macros.html.twig' as macros %}
+                    {{ macros.customPagination(items.pages, items.page, 'back_dashboard', app.request.query.all) }}
+                </div>
             </div>
         </div>
         <div class="fr-col-12 fr-col-md-4">

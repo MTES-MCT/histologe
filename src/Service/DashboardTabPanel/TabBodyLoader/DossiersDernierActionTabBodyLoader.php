@@ -8,6 +8,7 @@ use App\Service\ClubEventService;
 use App\Service\DashboardTabPanel\TabBody;
 use App\Service\DashboardTabPanel\TabBodyType;
 use App\Service\DashboardTabPanel\TabDataManager;
+use App\Service\DashboardTabPanel\TabDossier;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
@@ -29,7 +30,10 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
         parent::load($tabBody);
 
         $data = [];
-        $data['data'] = $this->tabDataManager->getDernierActionDossiers($this->tabQueryParameters);
+        $paginatedDossiers = $this->tabDataManager->getDernierActionDossiers($this->tabQueryParameters);
+        $data['data'] = $paginatedDossiers['data'];
+        $data['page'] = $paginatedDossiers['page'];
+        $data['pages'] = ceil((int) $paginatedDossiers['total'] / TabDossier::MAX_ITEMS_DERNIERES_ACTIONS);
         if ($user->isTerritoryAdmin() || $user->isSuperAdmin()) {
             $data['data_kpi'] = [
                 'comptes_en_attente' => $this->tabDataManager->countUsersPendingToArchive($this->tabQueryParameters),
@@ -48,6 +52,7 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
         $data['nextClubEvent'] = $this->clubEventService->getNextClubEventForUser($user);
 
         $tabBody->setData($data);
+        $tabBody->setCount($paginatedDossiers['total']);
         $tabBody->setTemplate('back/dashboard/tabs/accueil/_body_derniere_action_dossiers.html.twig');
     }
 }

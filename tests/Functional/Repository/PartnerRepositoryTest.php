@@ -267,32 +267,6 @@ class PartnerRepositoryTest extends KernelTestCase
         $this->assertGreaterThan(1, $partnersQueryBuilder->getQuery()->getResult());
     }
 
-    public function testCountPartnerNonNotifiables(): void
-    {
-        $count = $this->partnerRepository->countPartnerNonNotifiables([]);
-        $this->assertEquals(1, $count->getNonNotifiables());
-
-        $count = $this->partnerRepository->countPartnerNonNotifiables([13]);
-        $this->assertEquals(1, $count->getNonNotifiables());
-
-        $count = $this->partnerRepository->countPartnerNonNotifiables([1]);
-        $this->assertEquals(0, $count->getNonNotifiables());
-    }
-
-    public function testCountPartnerInterfaces(): void
-    {
-        $countAll = $this->partnerRepository->countPartnerInterfaces([]);
-        $this->assertIsInt($countAll);
-        $this->assertEquals(4, $countAll);
-
-        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy([]);
-        if ($territory) {
-            $countTerritory = $this->partnerRepository->countPartnerInterfaces([$territory->getId()]);
-            $this->assertIsInt($countTerritory);
-            $this->assertEquals(0, $countTerritory);
-        }
-    }
-
     protected function tearDown(): void
     {
         $this->entityManager->close();
