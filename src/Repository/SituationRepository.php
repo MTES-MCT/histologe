@@ -20,20 +20,4 @@ class SituationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Situation::class);
     }
-
-    /**
-     * @return array<int, Situation>
-     */
-    public function findAllActive(): array
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.isActive = true')
-            ->leftJoin('s.criticites', 'criticites', 'WITH', 'criticites.isArchive != 1')
-            ->leftJoin('criticites.critere', 'criteres', 'WITH', 'criteres.isArchive != 1')
-            ->addSelect('criteres')
-            ->addSelect('criticites')
-            ->orderBy('s.id', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
 }

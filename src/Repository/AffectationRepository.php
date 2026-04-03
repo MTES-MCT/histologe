@@ -7,12 +7,10 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
-use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\JobEvent;
 use App\Entity\Signalement;
 use App\Entity\Territory;
-use App\Entity\User;
 use App\Service\ListFilters\SearchAffectationWithoutSubscription;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -33,63 +31,6 @@ class AffectationRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Affectation::class);
-    }
-
-    public function save(Affectation $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(Affectation $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    /**
-     * @param array<int, int>                 $territories
-     * @param array<int, QualificationStatus> $qualificationStatuses
-     *
-     * @return array<int, array<string, mixed>>
-     */
-    public function countByStatusForUser(User $user, array $territories, ?Qualification $qualification = null, ?array $qualificationStatuses = null): array
-    {
-        $qb = $this->createQueryBuilder('a')
-            ->select('COUNT(a.signalement) as count')
-            ->leftJoin('a.signalement', 's', 'WITH', 's = a.signalement')
-            ->andWhere('s.statut NOT IN (:signalement_status_list)')
-            ->setParameter('signalement_status_list', SignalementStatus::excludedStatuses())
-            ->addSelect('a.statut')
-            ->andWhere('a.partner IN (:partners)')
-            ->setParameter('partners', $user->getPartners());
-        if (\count($territories)) {
-            $qb->leftJoin('a.partner', 'p')
-                ->andWhere('p.territory IN (:territories)')
-                ->setParameter('territories', $territories);
-        }
-
-        if ($qualification) {
-            $qb->innerJoin('s.signalementQualifications', 'sq')
-                ->andWhere('sq.qualification = :qualification')
-                ->setParameter('qualification', $qualification);
-
-            if (!empty($qualificationStatuses)) {
-                $qb->andWhere('sq.status IN (:statuses)')
-                ->setParameter('statuses', $qualificationStatuses);
-            }
-        }
-
-        return $qb->indexBy('a', 'a.statut')
-            ->groupBy('a.statut')
-            ->getQuery()
-            ->getResult();
     }
 
     /**
@@ -151,48 +92,6 @@ class AffectationRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @param array<int, int> $territories
-     *
-     * @return array<int, array<string, mixed>>
-     */
-    public function countAffectationPartner(array $territories): array
-    {
-        $qb = $this->createQueryBuilder('a');
-        $qb->select('SUM(CASE WHEN a.statut = :statut_wait THEN 1 ELSE 0 END) AS waiting')
-            ->addSelect('SUM(CASE WHEN a.statut = :statut_refused THEN 1 ELSE 0 END) AS refused')
-            ->addSelect('t.zip', 'p.nom')
-            ->innerJoin('a.territory', 't')
-            ->innerJoin('a.partner', 'p')
-            ->setParameter('statut_wait', AffectationStatus::WAIT)
-            ->setParameter('statut_refused', AffectationStatus::REFUSED);
-
-        if (\count($territories)) {
-            $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $territories);
-        }
-        $qb->groupBy('t.zip, p.nom');
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @param array<int, int> $territories
-     */
-    public function countAffectationForUser(User $user, array $territories): int
-    {
-        $qb = $this->createQueryBuilder('a');
-        $qb->select('COUNT(a.id) as nb_affectation')
-            ->where('a.partner IN (:partners)')
-            ->setParameter('partners', $user->getPartners())
-            ->andWhere('a.statut = :statut_wait')
-            ->setParameter('statut_wait', AffectationStatus::WAIT);
-        if (\count($territories)) {
-            $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $territories);
-        }
-
-        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -262,54 +161,6 @@ class AffectationRepository extends ServiceEntityRepository
             ->setParameter('uuid_signalement', $uuidSignalement);
 
         return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @return array<array{signalement_id: int, partner_id: int, answered_at: string}>
-     */
-    public function findAllActiveAffectationsOnActiveSignalements(): array
-    {
-        $sql = '
-            SELECT a.signalement_id, a.partner_id, a.answered_at
-            FROM affectation a
-            INNER JOIN signalement s ON a.signalement_id = s.id
-            WHERE s.statut = :signalement_status
-            AND a.statut = :affectation_status
-        ';
-
-        $connection = $this->getEntityManager()->getConnection();
-        $stmt = $connection->prepare($sql);
-        $stmt->bindValue('signalement_status', SignalementStatus::ACTIVE->value);
-        $stmt->bindValue('affectation_status', AffectationStatus::ACCEPTED->value);
-
-        return $stmt->executeQuery()->fetchAllAssociative(); // @phpstan-ignore-line
-    }
-
-    /**
-     * @return array<array{signalement_id: int, partner_id: int}>
-     */
-    public function findAllActiveAffectationOnPartnerWithRt(\DateTimeImmutable $date): array
-    {
-        $sql = '
-            SELECT DISTINCT a.signalement_id, a.partner_id
-            FROM affectation a
-            INNER JOIN signalement s ON a.signalement_id = s.id
-            INNER JOIN partner p ON a.partner_id = p.id
-            INNER JOIN user_partner up ON p.id = up.partner_id
-            INNER JOIN user u ON up.user_id = u.id
-            WHERE JSON_CONTAINS(u.roles, \'\"ROLE_ADMIN_TERRITORY\"\') = 1
-            AND a.answered_at <= :date
-            AND s.statut = :signalement_status
-            AND a.statut = :affectation_status
-        ';
-
-        $connection = $this->getEntityManager()->getConnection();
-        $stmt = $connection->prepare($sql);
-        $stmt->bindValue('signalement_status', SignalementStatus::ACTIVE->value);
-        $stmt->bindValue('affectation_status', AffectationStatus::ACCEPTED->value);
-        $stmt->bindValue('date', $date->format('Y-m-d H:i:s'));
-
-        return $stmt->executeQuery()->fetchAllAssociative(); // @phpstan-ignore-line
     }
 
     /**

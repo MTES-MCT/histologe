@@ -514,14 +514,6 @@ class UploadHandlerService
         return false;
     }
 
-    /**
-     * @return array<mixed>
-     */
-    public function getFile(): array
-    {
-        return $this->file;
-    }
-
     private function isFileEmpty(UploadedFile $file): bool
     {
         if (0 === $file->getSize() || 'application/x-empty' === $file->getMimeType()) {

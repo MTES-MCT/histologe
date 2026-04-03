@@ -103,44 +103,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getResult();
     }
 
-    /**
-     * @return array<array{id: int, partner_id: int}>
-     */
-    public function findAllUnarchivedUserPartnerOrAdminPartner(): ?array
-    {
-        $sql = "
-            SELECT u.id, up.partner_id
-            FROM user u
-            INNER JOIN user_partner up ON u.id = up.user_id
-            WHERE u.statut != '".UserStatus::ARCHIVE->value."'
-            AND (JSON_CONTAINS(u.roles, '\"ROLE_ADMIN_PARTNER\"') = 1 OR JSON_CONTAINS(u.roles, '\"ROLE_USER_PARTNER\"') = 1)
-        ";
-
-        $connection = $this->getEntityManager()->getConnection();
-        $stmt = $connection->prepare($sql);
-
-        return $stmt->executeQuery()->fetchAllAssociative(); // @phpstan-ignore-line
-    }
-
-    /**
-     * @return array<array{id: int, partner_id: int}>
-     */
-    public function findAllUnarchivedRT(): ?array
-    {
-        $sql = "
-            SELECT u.id, up.partner_id
-            FROM user u
-            INNER JOIN user_partner up ON u.id = up.user_id
-            WHERE u.statut != '".UserStatus::ARCHIVE->value."'
-            AND (JSON_CONTAINS(u.roles, '\"ROLE_ADMIN_TERRITORY\"') = 1)
-        ";
-
-        $connection = $this->getEntityManager()->getConnection();
-        $stmt = $connection->prepare($sql);
-
-        return $stmt->executeQuery()->fetchAllAssociative(); // @phpstan-ignore-line
-    }
-
     public function findArchivedUserByEmail(string $email): ?User
     {
         $queryBuilder = $this->createQueryBuilder('u');
@@ -331,34 +293,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);
-    }
-
-    /**
-     * @return array<int, User>
-     */
-    public function findExpiredUsagers(string $limitConservation = '5 years'): array
-    {
-        $dateLimit = new \DateTimeImmutable('-'.$limitConservation);
-        // retourne les usagers :
-        // - non connectés depuis plus de limitConservation
-        // - et n'etant pas occupant ou declarant sur des signalements actif (creation/edition/dernier suivi) depuis limitConservation
-        $qb = $this->createQueryBuilder('u')
-            ->select('u')
-            ->leftJoin('u.signalementUsagerDeclarants', 'sud')
-            ->leftJoin('u.signalementUsagerOccupants', 'suo')
-            ->leftJoin('sud.signalement', 'sd')
-            ->leftJoin('suo.signalement', 'so')
-
-            ->where('(u.lastLoginAt IS NOT NULL AND u.lastLoginAt < :dateLimit) OR (u.lastLoginAt IS NULL AND u.createdAt < :dateLimit)')
-            ->andWhere('sd.createdAt IS NULL OR (sd.createdAt < :dateLimit AND so.createdAt < :dateLimit)')
-            ->andWhere('(sd.modifiedAt IS NULL OR sd.modifiedAt < :dateLimit) AND (so.modifiedAt IS NULL OR so.modifiedAt < :dateLimit)')
-            ->andWhere('(sd.lastSuiviAt IS NULL OR sd.lastSuiviAt < :dateLimit) AND (so.lastSuiviAt IS NULL OR so.lastSuiviAt < :dateLimit)')
-            ->andWhere('JSON_CONTAINS(u.roles, :roles) = 1')
-
-            ->setParameter('dateLimit', $dateLimit)
-            ->setParameter('roles', '"ROLE_USAGER"');
-
-        return $qb->getQuery()->execute();
     }
 
     /**

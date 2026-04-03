@@ -30,36 +30,6 @@ class JobEventRepository extends ServiceEntityRepository implements EntityCleane
     }
 
     /**
-     * @param array<int, int> $territories
-     *
-     * @return array<int, array<string, mixed>>
-     */
-    public function findLastJobEventByInterfacageType(
-        string $type,
-        int $dayPeriod,
-        array $territories,
-    ): array {
-        $qb = $this->createQueryBuilder('j')
-            ->select('j.createdAt, p.id, p.nom, s.reference, j.status, j.action, j.codeStatus, j.response')
-            ->innerJoin(Signalement::class, 's', 'WITH', 's.id = j.signalementId')
-            ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
-            ->where('j.service = :service')
-            ->andWhere('j.createdAt >= :date_limit');
-
-        if (\count($territories)) {
-            $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $territories);
-        }
-
-        $qb->setParameter('service', $type)
-            ->setParameter('date_limit', new \DateTimeImmutable('-'.$dayPeriod.' days'))
-            ->orderBy('j.createdAt', 'DESC');
-
-        $qb->setMaxResults(1000);
-
-        return $qb->getQuery()->getArrayResult();
-    }
-
-    /**
      * @throws \DateMalformedStringException
      */
     private function createJobEventByTerritoryQueryBuilder(

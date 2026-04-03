@@ -68,30 +68,6 @@ class UserSignalementSubscriptionRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    /**
-     * @return array<UserSignalementSubscription>
-     */
-    public function findLegacyForUserInactiveOnSignalement(User $user): array
-    {
-        $acceptedAffectationSubQuery = $this->_em->createQueryBuilder()
-            ->select('1')
-            ->from(Affectation::class, 'a')
-            ->where('a.signalement = s.signalement')
-            ->andWhere('a.answeredBy = s.user')
-            ->andWhere('a.statut = :statut');
-
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->leftJoin(Suivi::class, 'suivi', 'WITH', 'suivi.signalement = s.signalement AND suivi.createdBy = s.user')
-            ->where('s.user = :user')
-            ->andWhere('suivi.id IS NULL')
-            ->andWhere('s.isLegacy = true')
-            ->andWhere($queryBuilder->expr()->not($queryBuilder->expr()->exists($acceptedAffectationSubQuery->getDQL())))
-            ->setParameter('user', $user)
-            ->setParameter('statut', AffectationStatus::ACCEPTED);
-
-        return $queryBuilder->getQuery()->getResult();
-    }
-
     public function countSubscriptionsOnActiveSignalementsForUser(User $user): int
     {
         $qb = $this->createQueryBuilder('sub')

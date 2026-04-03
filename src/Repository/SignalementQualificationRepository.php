@@ -24,24 +24,6 @@ class SignalementQualificationRepository extends ServiceEntityRepository
         parent::__construct($registry, SignalementQualification::class);
     }
 
-    public function save(SignalementQualification $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(SignalementQualification $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
     /**
      * @param array<int, QualificationStatus>|null $statuses
      *
