@@ -217,7 +217,7 @@
                             {% if signalement.natureLogement == 'appartement' %}
                             <div class="fr-select-group">
                                 {% set autresOccupantsDesordre = signalement.autresOccupantsDesordre %}
-                                <label class="fr-label" for="autresOccupantsDesordre">D'autres occupants de l'immeuble ont-ils rencontré des désordres (facultatif)
+                                <label class="fr-label" for="autresOccupantsDesordre">D'autres occupants de l'immeuble ont rencontré des désordres (facultatif)
                                 </label>
                                 <select class="fr-select" id="autresOccupantsDesordre" name="autresOccupantsDesordre">
                                     <option value="" {{ autresOccupantsDesordre not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
