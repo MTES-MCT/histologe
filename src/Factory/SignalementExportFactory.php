@@ -82,17 +82,15 @@ class SignalementExportFactory
         }
 
         $autresOccupantsDesordre = self::NON_RENSEIGNE;
-        if (isset($data['natureLogement']) && 'appartement' === $data['natureLogement']) {
-            $autresOccupantsDesordreRaw = $data['autresOccupantsDesordre'] ?? null;
-            if ('oui' === $autresOccupantsDesordreRaw) {
-                $autresOccupantsDesordre = self::OUI;
-            } elseif ('non' === $autresOccupantsDesordreRaw) {
-                $autresOccupantsDesordre = self::NON;
-            } elseif ('nsp' === $autresOccupantsDesordreRaw) {
-                $autresOccupantsDesordre = 'NSP';
-            } else {
-                $autresOccupantsDesordre = self::NON_RENSEIGNE;
-            }
+        $autresOccupantsDesordreRaw = $data['autresOccupantsDesordre'] ?? null;
+        if ('oui' === $autresOccupantsDesordreRaw) {
+            $autresOccupantsDesordre = self::OUI;
+        } elseif ('non' === $autresOccupantsDesordreRaw) {
+            $autresOccupantsDesordre = self::NON;
+        } elseif ('nsp' === $autresOccupantsDesordreRaw) {
+            $autresOccupantsDesordre = 'NSP';
+        } else {
+            $autresOccupantsDesordre = self::NON_RENSEIGNE;
         }
 
         return new SignalementExport(

@@ -63,6 +63,7 @@ class ExportIterableQuery
             s.isAllocataire,
             s.numAllocataire,
             s.natureLogement,
+            s.autresOccupantsDesordre,
             s.superficie,
             s.isLogementSocial,
             s.isPreavisDepart,

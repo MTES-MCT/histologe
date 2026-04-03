@@ -115,9 +115,8 @@ class SignalementDraftLogementType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $anneeConstruction,
-            ]);
-        if ('appartement' === $signalement->getNatureLogement()) {
-            $builder->add('autresOccupantsDesordre', ChoiceType::class, [
+            ])
+            ->add('autresOccupantsDesordre', ChoiceType::class, [
                 'label' => 'D\'autres occupants de l\'immeuble ont-ils rencontré des désordres ?',
                 'choices' => [
                     'Oui' => 'oui',
@@ -130,21 +129,20 @@ class SignalementDraftLogementType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $signalement->getAutresOccupantsDesordre(),
-            ]);
-        }
-        $builder->add('pieceUnique', ChoiceType::class, [
-            'label' => 'Composition du logement',
-            'choices' => [
-                'Pièce unique' => 'piece_unique',
-                'Plusieurs pièces' => 'plusieurs_pieces',
-            ],
-            'expanded' => true,
-            'multiple' => false,
-            'required' => false,
-            'placeholder' => false,
-            'mapped' => false,
-            'data' => $pieceUnique,
-        ])
+            ])
+            ->add('pieceUnique', ChoiceType::class, [
+                'label' => 'Composition du logement',
+                'choices' => [
+                    'Pièce unique' => 'piece_unique',
+                    'Plusieurs pièces' => 'plusieurs_pieces',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $pieceUnique,
+            ])
             ->add('nombrePieces', NumberType::class, [
                 'label' => 'Nombre de pièces à vivre (salon, chambre)',
                 'help' => 'Format attendu : saisir un nombre entier',

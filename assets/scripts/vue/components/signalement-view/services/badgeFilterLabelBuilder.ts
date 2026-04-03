@@ -75,11 +75,19 @@ export function buildBadge (key: string, value: any): string | undefined | null 
   }
 
   if (key === 'createdFrom') {
-    if( value === 'api' || value === 'import' ) {
-      return  `Signalement(s) créé(s) par l'${value}`
-    } else {
+    if( value === 'formulaire-usager' || value === 'formulaire-pro' ) {
       var re = /-/gi;
       return  `Signalement(s) créé(s) depuis le ${value.replace(re, ' ')}`
+    } else {
+      const item = store.state.createdFromList.find(item => item.Id === value)
+      if (item != null && item !== undefined) {
+        value = item.Text
+      }
+      if ( value === 'API' || value === 'Import' ) {
+        return  `Signalement(s) créé(s) par ${value}`
+      }
+      const label = value[0]?.toLowerCase() + value.slice(1)
+      return `Signalement(s) créé(s) depuis le ${label}`
     }
   }
 

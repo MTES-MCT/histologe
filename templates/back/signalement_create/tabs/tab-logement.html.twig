@@ -22,11 +22,9 @@
             <div class="fr-fieldset__element">
                 {{ form_row(formLogement.anneeConstruction) }}
             </div>
-            {% if formLogement.autresOccupantsDesordre is defined %}                
-                <div class="fr-fieldset__element">
-                    {{ form_row(formLogement.autresOccupantsDesordre) }}
-                </div>
-            {% endif %}
+            <div class="fr-fieldset__element">
+                {{ form_row(formLogement.autresOccupantsDesordre) }}
+            </div>
         </fieldset>
 
         <fieldset class="fr-fieldset">
