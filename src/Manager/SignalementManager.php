@@ -592,10 +592,14 @@ class SignalementManager extends AbstractManager
             ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux())
             ->setBailDpeDpe($informationsLogementRequest->getBailDpeDpe())
             ->setBailDpeClasseEnergetique($informationsLogementRequest->getBailDpeClasseEnergetique());
-        $signalement
-            ->setTypeCompositionLogement($typeCompositionLogement)
+
+        $signalement->setTypeCompositionLogement($typeCompositionLogement)
             ->setNumeroInvariant($informationsLogementRequest->getBailDpeInvariant())
             ->setAutreSituationVulnerabilite($informationsLogementRequest->getAutreSituationVulnerabilite());
+
+        if ('appartement' === $signalement->getNatureLogement()) {
+            $signalement->setAutresOccupantsDesordre($informationsLogementRequest->getAutresOccupantsDesordre());
+        }
 
         $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(static function ($qualification) {
             return Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification();
@@ -733,6 +737,9 @@ class SignalementManager extends AbstractManager
             ->setTypeLogementCommoditesWcCuisine($compositionLogementRequest->getTypeLogementCommoditesWcCuisine());
 
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
+        if ('appartement' !== $signalement->getNatureLogement()) {
+            $signalement->setAutresOccupantsDesordre(null);
+        }
 
         $this->desordreCompositionLogementLoader->load($signalement, $typeCompositionLogement);
 

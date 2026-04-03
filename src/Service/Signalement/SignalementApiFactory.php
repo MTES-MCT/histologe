@@ -78,6 +78,10 @@ class SignalementApiFactory
         $apptAvecFenetre = self::convertBoolToString($request->isAppartementAvecFenetres);
         $typeCompositionLogement->setTypeLogementAppartementAvecFenetres($apptAvecFenetre);
 
+        if ('appartement' === $request->natureLogement) {
+            $signalement->setAutresOccupantsDesordre(self::convertBoolToString($request->autresOccupantsDesordre));
+        }
+
         if ($request->etageAppartement) {
             $typeCompositionLogement->setTypeLogementDernierEtage('non');
             $typeCompositionLogement->setTypeLogementRdc('non');

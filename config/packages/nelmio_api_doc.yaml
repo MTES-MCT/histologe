@@ -3,6 +3,13 @@ nelmio_api_doc:
         info:
             title: '%platform_name%'
             description:  |
+             ## CHANGELOG 1.3.2 - 2026-03
+             Cette version introduit de nouvelles données pour les signalements et les visites.
+             ### AJOUTS
+             - Ajout de la conclusion de visite `SUSPICION_INSALUBRE` sur `POST /api/signalements/{uuid}/visites`.
+             - Ajout du champ Autre situation de vulnérabilité à mentionner `autreSituationVulnerabilite` sur `GET /api/signalements/{uuid}` et `POST /api/signalements`.
+             - Ajout du matricule du déclarant `matriculeDeclarant` conditionné au profils déclarants `TIERS_PRO` et `SERVICE_SECOURS` sur `GET /api/signalements/{uuid}` et `POST /api/signalements`.
+             - Ajout des informations de syndic `denominationSyndic`, `nomSyndic`, `mailSyndic`, `telSyndic` et `telSyndicSecondaire` sur `GET /api/signalements/{uuid}` et `POST /api/signalements`.
              ## CHANGELOG 1.3.1 - 2026-02
              Cette version introduit un nouveau filtre pour la liste des signalements.
              ### AJOUTS

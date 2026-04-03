@@ -695,6 +695,11 @@
 							</li>
 						{% endif %}
 					{% endif %}
+					{% if signalement.natureLogement is same as 'appartement' and signalement.autresOccupantsDesordre is not same as null %}
+						<li>D'autres occupants de l'immeuble ont rencontré des désordres :
+							{{ signalement.autresOccupantsDesordre|format_answer}}
+						</li>
+					{% endif %}
 				</ul>
 				{% if (is_granted('SIGN_USAGER_COMPLETE', signalement)) %}
 					<a href="{{ path('front_suivi_signalement_complete_informations_generales', {'code': signalement.codeSuivi}) }}" 

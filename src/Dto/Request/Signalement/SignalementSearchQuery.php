@@ -120,6 +120,7 @@ class SignalementSearchQuery
             CreationSource::FORM_USAGER_V1->value,
             CreationSource::FORM_USAGER_V2->value,
             CreationSource::FORM_PRO_BO->value,
+            CreationSource::FORM_SERVICE_SECOURS->value,
             CreationSource::API->value,
             CreationSource::IMPORT->value,
         ], message: 'Source de création invalide')]

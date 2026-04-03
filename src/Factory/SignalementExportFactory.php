@@ -81,6 +81,18 @@ class SignalementExportFactory
             $infoProcedureBailMoyenLabel = MoyenContact::tryFrom($infoProcedureBailMoyen)?->label();
         }
 
+        $autresOccupantsDesordre = self::NON_RENSEIGNE;
+        $autresOccupantsDesordreRaw = $data['autresOccupantsDesordre'] ?? null;
+        if ('oui' === $autresOccupantsDesordreRaw) {
+            $autresOccupantsDesordre = self::OUI;
+        } elseif ('non' === $autresOccupantsDesordreRaw) {
+            $autresOccupantsDesordre = self::NON;
+        } elseif ('nsp' === $autresOccupantsDesordreRaw) {
+            $autresOccupantsDesordre = 'NSP';
+        } else {
+            $autresOccupantsDesordre = self::NON_RENSEIGNE;
+        }
+
         return new SignalementExport(
             reference: $data['reference'],
             createdAt: $createdAt,
@@ -128,6 +140,7 @@ class SignalementExportFactory
             isAllocataire: $this->mapData($data, 'isAllocataire'),
             numAllocataire: $data['numAllocataire'] ?? self::NON_RENSEIGNE,
             natureLogement: $data['natureLogement'] ?? self::NON_RENSEIGNE,
+            autresOccupantsDesordre: $autresOccupantsDesordre,
             superficie: $data['superficie'] ?? self::NON_RENSEIGNE,
             isLogementSocial: $this->mapData($data, 'isLogementSocial'),
             isPreavisDepart: $this->mapData($data, 'isPreavisDepart'),

@@ -56,6 +56,7 @@ class SignalementExportSelectableColumns
         'IS_ALLOCATAIRE' => ['name' => 'Allocataire', 'description' => 'Si l\'usager est allocataire ou non', 'export' => 'isAllocataire', 'preselected' => true],
         'NUM_ALLOCATAIRE' => ['name' => 'Numéro allocataire', 'description' => 'Le numéro d\'allocataire de l\'occupant', 'export' => 'numAllocataire', 'preselected' => false],
         'NATURE_LOGEMENT' => ['name' => 'Nature du logement', 'description' => 'La nature du logement (maison, appartement, autre)', 'export' => 'natureLogement', 'preselected' => false],
+        'AUTRES_OCCUPANTS_DESORDRE' => ['name' => 'Autres occupants désordres', 'description' => 'Autres occupants de l’immeuble ayant rencontré des désordres', 'export' => 'autresOccupantsDesordre', 'preselected' => false],
         'SUPERFICIE' => ['name' => 'Superficie', 'description' => 'La superficie du logement en m²', 'export' => 'superficie', 'preselected' => false],
         'IS_LOGEMENT_SOCIAL' => ['name' => 'Logement social', 'description' => 'S\'il s\'agit d\'un logement social ou non', 'export' => 'isLogementSocial', 'preselected' => true],
         'PREAVIS_DEPART' => ['name' => 'Préavis de départ', 'description' => 'Si le foyer a déposé un préavis de départ ou non', 'export' => 'isPreavisDepart', 'preselected' => false],

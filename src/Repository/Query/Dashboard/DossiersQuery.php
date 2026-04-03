@@ -111,7 +111,8 @@ class DossiersQuery
             $qb
                 ->leftJoin('s.createdBy', 'u')
                 ->leftJoin('u.userPartners', 'up')
-                ->leftJoin('up.partner', 'p');
+                ->leftJoin('up.partner', 'p')
+                ->leftJoin('s.serviceSecours', 'ssr');
         }
 
         $qb->select(
@@ -122,21 +123,36 @@ class DossiersQuery
                     s.nomOccupant,
                     s.prenomOccupant,
                     s.reference,
-                    CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)),
-                    s.createdAt,'.
-                    (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom
-                        ? 'CONCAT(UPPER(u.nom), \' \', u.prenom), p.nom,'
-                        : '\'\' , \'\' ,'
-                    ).
-                    'CASE
+                    CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)),                    s.createdAt,
+                    %s
+                    CASE
                         WHEN s.isLogementSocial = true THEN \'PUBLIC\'
                         ELSE \'PRIVÉ\'
                     END,
                     s.validatedAt
                 )',
-                TabDossier::class
+                TabDossier::class,
+
+                CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom
+                ? "
+                    (CASE
+                        WHEN s.creationSource = :formServiceSecours
+                        THEN s.matriculeDeclarant
+                        ELSE CONCAT(UPPER(u.nom), ' ', u.prenom)
+                    END),
+                    (CASE
+                        WHEN s.creationSource = :formServiceSecours
+                        THEN ssr.name
+                        ELSE p.nom
+                    END),
+                    "
+                : "'', '',"
             )
         );
+
+        if (CreationSource::CREATED_FROM_FORMULAIRE_PRO === $tabQueryParameters->createdFrom) {
+            $qb->setParameter('formServiceSecours', CreationSource::FORM_SERVICE_SECOURS);
+        }
 
         if (null !== $tabQueryParameters
             && in_array($tabQueryParameters->sortBy, ['createdAt', 'nomOccupant'], true)

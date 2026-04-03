@@ -2,16 +2,19 @@
 
 namespace App\Form\ServiceSecours;
 
+use App\Dto\ServiceSecours\FormServiceSecours;
 use App\Dto\ServiceSecours\FormServiceSecoursStep5;
 use App\Entity\Enum\AppContext;
 use App\Repository\DesordreCritereRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ServiceSecoursStep5Type extends AbstractType
@@ -22,6 +25,29 @@ class ServiceSecoursStep5Type extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, static function (PreSetDataEvent $event): void {
+            $form = $event->getForm();
+            $rootData = $form->getRoot()->getData();
+            $isAppartement = 'appartement' === $rootData->step2->natureLogement;
+
+            if ($rootData instanceof FormServiceSecours) {
+                if ($isAppartement) {
+                    $form->add('autresOccupantsDesordre', ChoiceType::class, [
+                        'label' => 'D\'autres occupants de l\'immeuble ont-ils rencontré des désordres ? <span class="text-required">*</span>',
+                        'label_html' => true,
+                        'required' => false,
+                        'expanded' => true,
+                        'placeholder' => false,
+                        'choices' => [
+                            'Oui' => 'oui',
+                            'Non' => 'non',
+                            'Indéterminé' => 'nsp',
+                        ],
+                    ]);
+                }
+            }
+        });
+
         /** @var FormServiceSecoursStep5|null $data */
         $data = $options['data'] ?? null;
         $isAutreChecked = $data instanceof FormServiceSecoursStep5
@@ -63,18 +89,6 @@ class ServiceSecoursStep5Type extends AbstractType
                 ],
             ],
         );
-        $builder->add('autresOccupantsDesordre', ChoiceType::class, [
-            'label' => 'D\'autres occupants de l\'immeuble ont-ils rencontré des désordres ? <span class="text-required">*</span>',
-            'label_html' => true,
-            'required' => false,
-            'expanded' => true,
-            'placeholder' => false,
-            'choices' => [
-                'Oui' => 'oui',
-                'Non' => 'non',
-                'Indéterminé' => 'nsp',
-            ],
-        ]);
 
         $builder->add('photos', FileType::class, [
             'label' => 'Ajouter des photos',

@@ -86,6 +86,7 @@ class SignalementCreateController extends AbstractController
                             'isAppartementAvecFenetres' => true,
                             'nombreEtages' => 0,
                             'anneeConstruction' => 1970,
+                            'autresOccupantsDesordre' => true,
                             'nombrePieces' => 4,
                             'superficie' => 85.5,
                             'isPieceAVivre9m' => true,

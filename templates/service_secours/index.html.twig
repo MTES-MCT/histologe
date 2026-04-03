@@ -144,7 +144,9 @@
                 {% elseif current_step == 'step5' %}
                     {{ form_row(form.step5.desordres) }}
                     {{ form_row(form.step5.desordresAutre) }}
-                    {{ form_row(form.step5.autresOccupantsDesordre, {display_mode: 'block'}) }}
+                    {% if form.step5.autresOccupantsDesordre is defined %}
+                        {{ form_row(form.step5.autresOccupantsDesordre, {display_mode: 'block'}) }}
+                    {% endif %}
                     <div
                             class="fr-upload-group js-upload-photos"
                             data-ajaxurl-handle-upload="{{ path('handle_upload') }}">

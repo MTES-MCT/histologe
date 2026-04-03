@@ -266,14 +266,16 @@
                 {% endif %}
             </div>
         {% endfor %}
-        <div style="margin-bottom: 10px;">
-            <strong>D'autres occupants de l'immeuble ont-ils rencontré des désordres</strong>
-            <br>
-            {% if signalement.autresOccupantsDesordre == 'nsp' %}
-                Indéterminé
-            {% else %}
-                {{ signalement.autresOccupantsDesordre|capitalize }}
-            {% endif %}
-        </div>
+        {% if signalement.natureLogement is same as 'appartement' %}
+            <div style="margin-bottom: 10px;">
+                <strong>D'autres occupants de l'immeuble ont rencontré des désordres :</strong>
+                <br>
+                {% if signalement.autresOccupantsDesordre == 'nsp' %}
+                    Indéterminé
+                {% else %}
+                    {{ signalement.autresOccupantsDesordre|capitalize }}
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
 </div>

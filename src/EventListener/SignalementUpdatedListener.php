@@ -6,7 +6,6 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Security\User\SignalementUser;
 use App\Service\History\EntityComparator;
-use App\Utils\DictionaryProvider;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
@@ -127,6 +126,7 @@ class SignalementUpdatedListener
                 'nbOccupantsLogement' => 'Nombre de personnes occupant le logement',
                 'numeroInvariant' => 'Invariant fiscal',
                 'loyer' => 'Montant du loyer',
+                'autresOccupantsDesordre' => 'Autres occupants de l\'immeuble ayant rencontré des désordres',
                 'typeCompositionLogement.composition_logement_nombre_enfants' => 'Nombre d\'enfants occupant le logement',
                 'typeCompositionLogement.composition_logement_enfants' => 'Présence d\'enfants de moins de 6 ans',
                 'autreSituationVulnerabilite' => 'Autre situation de vulnérabilité',
@@ -171,7 +171,6 @@ class SignalementUpdatedListener
     public function __construct(
         private readonly Security $security,
         private readonly EntityComparator $entityComparator,
-        private readonly DictionaryProvider $dictionaryProvider,
     ) {
     }
 
@@ -251,7 +250,7 @@ class SignalementUpdatedListener
                 if (array_key_exists('new', $diffProperty)) {
                     $fieldChanges[$field] = [
                         'label' => $label,
-                        'new' => null !== $diffProperty['new'] ? $this->dictionaryProvider->translate($diffProperty['new'], 'suivi') : null,
+                        'new' => $diffProperty['new'],
                     ];
                 }
             }

@@ -53,6 +53,8 @@ class InformationsLogementRequest implements RequestInterface
         private readonly ?string $loyersPayes = null,
         #[Assert\Regex(pattern: '/^[0-9]{4}$/', message: 'L\'année de construction doit être composée de 4 chiffres.')]
         private readonly ?string $anneeConstruction = null,
+        #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "D\'autres occupants de l\'immeuble ont-ils rencontré des désordres" est incorrect.')]
+        private readonly ?string $autresOccupantsDesordre = null,
     ) {
     }
 
@@ -129,5 +131,10 @@ class InformationsLogementRequest implements RequestInterface
     public function getAnneeConstruction(): ?string
     {
         return $this->anneeConstruction;
+    }
+
+    public function getAutresOccupantsDesordre(): ?string
+    {
+        return $this->autresOccupantsDesordre;
     }
 }

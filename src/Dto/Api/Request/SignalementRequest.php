@@ -228,6 +228,14 @@ class SignalementRequest implements RequestInterface
     )]
     #[Assert\Regex(pattern: '/^\d{4}$/', message: 'Veuillez saisir une année sur 4 chiffres.')]
     public ?int $anneeConstruction = null;
+
+    #[OA\Property(
+        description: 'D\'autres occupants de l\'immeuble ayant rencontré des désordres.
+                    <br>⚠️Pris en compte uniquement dans le cas où natureLogement = "appartement".',
+        example: true,
+    )]
+    public ?bool $autresOccupantsDesordre = null;
+
     #[OA\Property(
         description: 'Nombre de pièces à vivre dans le logement (salon, chambre).',
         example: 4,
@@ -861,6 +869,9 @@ class SignalementRequest implements RequestInterface
         }
         if ($this->etageAppartement && 'appartement' !== $this->natureLogement) {
             $context->buildViolation('Le champ etageAppartement ne peut être true que si natureLogement = "appartement".')->atPath('etageAppartement')->addViolation();
+        }
+        if (null !== $this->autresOccupantsDesordre && 'appartement' !== $this->natureLogement) {
+            $context->buildViolation('Le champ autresOccupantsDesordre ne peut être renseigné que si natureLogement = "appartement".')->atPath('autresOccupantsDesordre')->addViolation();
         }
         if ($this->isAppartementAvecFenetres && 'appartement' !== $this->natureLogement) {
             $context->buildViolation('Le champ isAppartementAvecFenetres ne peut être true que si natureLogement = "appartement".')->atPath('isAppartementAvecFenetres')->addViolation();

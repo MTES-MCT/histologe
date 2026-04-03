@@ -116,7 +116,20 @@ class SignalementDraftLogementType extends AbstractType
                 'mapped' => false,
                 'data' => $anneeConstruction,
             ])
-
+            ->add('autresOccupantsDesordre', ChoiceType::class, [
+                'label' => 'D\'autres occupants de l\'immeuble ont-ils rencontré des désordres ?',
+                'choices' => [
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                    'Ne sait pas' => 'nsp',
+                ],
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $signalement->getAutresOccupantsDesordre(),
+            ])
             ->add('pieceUnique', ChoiceType::class, [
                 'label' => 'Composition du logement',
                 'choices' => [

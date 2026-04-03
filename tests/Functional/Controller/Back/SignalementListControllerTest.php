@@ -97,6 +97,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Provenance IMPORT' => [['createdFrom' => CreationSource::IMPORT->value, 'isImported' => 'oui'], 6];
         yield 'Search by Provenance FORM_USAGER_V1' => [['createdFrom' => CreationSource::FORM_USAGER_V1->value], 35];
         yield 'Search by Provenance FORM_USAGER_V2' => [['createdFrom' => CreationSource::FORM_USAGER_V2->value], 6];
+        yield 'Search by Provenance FORM_SERVICE_SECOURS' => [['createdFrom' => CreationSource::FORM_SERVICE_SECOURS->value], 0];
         yield 'Search by Provenance FORM_PRO_BO' => [['createdFrom' => CreationSource::FORM_PRO_BO->value], 11];
         yield 'Search by Provenance API' => [['createdFrom' => CreationSource::API->value], 0];
         yield 'Search by Mes dossiers' => [['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], 0];

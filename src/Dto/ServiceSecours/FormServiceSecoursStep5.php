@@ -34,7 +34,6 @@ class FormServiceSecoursStep5
     )]
     public ?string $desordresAutre = null;
 
-    #[Assert\NotBlank(groups: ['step5'])]
     public ?string $autresOccupantsDesordre = null;
 
     public array $uploadedFiles = [];

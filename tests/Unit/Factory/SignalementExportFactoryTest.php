@@ -59,6 +59,7 @@ class SignalementExportFactoryTest extends TestCase
             'isAllocataire' => 'CAF',
             'numAllocataire' => null,
             'natureLogement' => null,
+            'autresOccupantsDesordre' => 'oui',
             'superficie' => null,
             'nomProprio' => $faker->company(),
             'isLogementSocial' => null,
@@ -109,6 +110,7 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->adresseAutreOccupant);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->numAllocataire);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->natureLogement);
+        $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->autresOccupantsDesordre);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->superficie);
 
         $this->assertEquals('-', $signalementExportFactory->photos);

@@ -176,6 +176,18 @@ class SignalementResponse
     public ?string $anneeConstruction;
 
     #[OA\Property(
+        description: 'Autres occupants de l\'immeuble ayant rencontré des désordres.<br>
+        <ul>
+           <li>`true` pour "oui"</li>
+           <li>`false` pour "non"</li>
+           <li>`nsp` pour "Je ne sais pas".</li>
+        </ul>',
+        example: true,
+        nullable: true
+    )]
+    public bool|string|null $autresOccupantsDesordre;
+
+    #[OA\Property(
         description: 'Indique si la construction du logement est antérieure à 1949.',
         example: true,
         nullable: true
