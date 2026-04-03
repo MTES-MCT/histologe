@@ -20,7 +20,6 @@ parameters:
     file_dir: '%kernel.project_dir%/public/build/files/'
     admin_email: '%env(resolve:ADMIN_EMAIL)%'
     notifications_email: '%env(resolve:NOTIFICATIONS_EMAIL)%'
-    contact_email: '%env(resolve:CONTACT_EMAIL)%'
     user_system_email: '%env(resolve:USER_SYSTEM_EMAIL)%'
     reply_to_email: '%env(resolve:REPLY_TO_EMAIL)%'
     host_url: '%env(resolve:APP_URL)%'

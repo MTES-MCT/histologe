@@ -15,7 +15,6 @@ use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationClose;
 use App\Dto\SignalementAffectationListView;
-use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
@@ -256,26 +255,6 @@ class SignalementManager extends AbstractManager
             ->setComCloture($this->htmlSanitizer->sanitize($signalementAffectationClose->getDescription()));
 
         return $signalement;
-    }
-
-    /**
-     * @return array<int, User>
-     */
-    public function findUsersAffectedToSignalement(
-        Signalement $signalement,
-        AffectationStatus $statusAffectation,
-        ?Partner $partnerToExclude,
-    ): array {
-        $list = [];
-        $affectations = $signalement->getAffectations();
-        foreach ($affectations as $affectation) {
-            $partner = $affectation->getPartner();
-            if ((null === $partnerToExclude || $partnerToExclude != $partner) && $affectation->getStatut() === $statusAffectation->value) {
-                $list = array_merge($list, $partner->getUsers()->toArray());
-            }
-        }
-
-        return array_unique($list, \SORT_REGULAR);
     }
 
     /**

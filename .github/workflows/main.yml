@@ -139,7 +139,6 @@ jobs:
           APP_SECRET: ${{ secrets.APP_SECRET }}
           DATABASE_URL: mysql://root:signallogement@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/signal_logement_db
           NOTIFICATIONS_EMAIL: notifications@signal-logement.beta.gouv.fr
-          CONTACT_EMAIL: formulaire-contact@signal-logement.beta.gouv.fr
           APP_URL: http://localhost:8080
           SERVER_NAME: localhost:8080
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}
@@ -161,7 +160,6 @@ jobs:
           DATABASE_URL: mysql://root:signallogement@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/signal_logement_db
           ADMIN_EMAIL: support@signal-logement.beta.gouv.fr
           NOTIFICATIONS_EMAIL: notifications@signal-logement.beta.gouv.fr
-          CONTACT_EMAIL: formulaire-contact@signal-logement.beta.gouv.fr
           APP_URL: http://localhost:8080
           SERVER_NAME: localhost:8080
           MAILER_DSN: ${{ secrets.MAILER_DSN_CI }}

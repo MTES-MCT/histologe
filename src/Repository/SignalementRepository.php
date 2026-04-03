@@ -52,7 +52,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SignalementRepository extends ServiceEntityRepository
 {
-    public const int MARKERS_PAGE_SIZE = 9000; // @todo: is high cause duplicate result, the query findAllWithGeoData should be reviewed
     private const string DATE_FEEDBACK_USAGER_ONLINE = '2023-03-28';
 
     public function __construct(
@@ -1041,27 +1040,6 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<int, string> $needles
-     *
-     * @return array<int, Signalement>
-     */
-    public function findByEmailContainStrings(array $needles, string $field, bool $strict = false): array
-    {
-        if (empty($needles)) {
-            return [];
-        }
-
-        $qb = $this->createQueryBuilder('s');
-        foreach ($needles as $index => $needle) {
-            $needle = $strict ? $needle : '%'.$needle.'%';
-            $qb->orWhere('s.'.$field.' LIKE :needle'.$index)
-                ->setParameter('needle'.$index, $needle);
-        }
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
      * @return array<int, Signalement>
      */
     public function findSignalementsWithFilesToUploadOnIdoss(Partner $partner): array
@@ -1160,18 +1138,6 @@ class SignalementRepository extends ServiceEntityRepository
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);
-    }
-
-    /**
-     * @return array<int, array{id: int}>
-     */
-    public function findNullBanId(): array
-    {
-        return $this->createQueryBuilder('s')
-            ->select('s.id')
-            ->where('s.banIdOccupant IS NULL')
-            ->getQuery()
-            ->getResult();
     }
 
     /**
@@ -1471,37 +1437,6 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getSingleResult();
-    }
-
-    public function trimFields(): void
-    {
-        $connection = $this->getEntityManager()->getConnection();
-        // Replace unbreakable spaces, and then trim
-        $sql = 'UPDATE signalement SET
-            mail_occupant = TRIM(REPLACE(mail_occupant, UNHEX("C2A0"), " ")),
-            prenom_occupant = TRIM(REPLACE(prenom_occupant, UNHEX("C2A0"), " ")),
-            nom_occupant = TRIM(REPLACE(nom_occupant, UNHEX("C2A0"), " ")),
-            mail_declarant = TRIM(REPLACE(mail_declarant, UNHEX("C2A0"), " ")),
-            prenom_declarant = TRIM(REPLACE(prenom_declarant, UNHEX("C2A0"), " ")),
-            nom_declarant = TRIM(REPLACE(nom_declarant, UNHEX("C2A0"), " ")),
-            mail_proprio = TRIM(REPLACE(mail_proprio, UNHEX("C2A0"), " ")),
-            prenom_proprio = TRIM(REPLACE(prenom_proprio, UNHEX("C2A0"), " ")),
-            nom_proprio = TRIM(REPLACE(nom_proprio, UNHEX("C2A0"), " "))';
-
-        $connection->prepare($sql)->executeStatement();
-    }
-
-    /**
-     * @return array<int, Signalement>
-     */
-    public function findLogementSocialWithoutBailleurLink(): array
-    {
-        return $this->createQueryBuilder('s')
-            ->where('s.isLogementSocial = 1')
-            ->andWhere('s.bailleur IS NULL')
-            ->andWhere('s.nomProprio IS NOT NULL')
-            ->getQuery()
-            ->getResult();
     }
 
     /**

@@ -27,19 +27,6 @@ class UserSearchFilterRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    /**
-     * @return UserSearchFilter[]
-     */
-    public function findByUser(User $user): array
-    {
-        return $this->createQueryBuilder('s')
-            ->where('s.user = :user')
-            ->orderBy('s.createdAt', 'DESC')
-            ->setParameter('user', $user)
-            ->getQuery()
-            ->getResult();
-    }
-
     public function findAllForUserArray(User $user): array
     {
         $qb = $this->createQueryBuilder('uss')

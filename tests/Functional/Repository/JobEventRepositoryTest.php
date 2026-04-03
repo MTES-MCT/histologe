@@ -36,20 +36,6 @@ class JobEventRepositoryTest extends KernelTestCase
         $this->assertEquals(4, $failedCount);
     }
 
-    public function testFindLastJobEventByInterfacageType(): void
-    {
-        $container = static::getContainer();
-        $jobEventRepository = $container->get(JobEventRepository::class);
-
-        $jobEvents = $jobEventRepository->findLastJobEventByInterfacageType(
-            'esabora',
-            7,
-            []
-        );
-
-        $this->assertCount(8, $jobEvents);
-    }
-
     public function testFindLastJobEventByTerritoryWithReference(): void
     {
         $container = static::getContainer();

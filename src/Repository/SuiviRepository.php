@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -346,26 +345,6 @@ class SuiviRepository extends ServiceEntityRepository
         $qb->orderBy('s.createdAt', 'DESC')->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    /**
-     * @return array<array{id: int, signalement_id: int, created_at: string}>
-     */
-    public function findWithUnarchivedRtDistinctByUserAndSignalement(): ?array
-    {
-        $sql = "
-            SELECT u.id, s.signalement_id, MIN(s.created_at) AS created_at
-            FROM suivi s
-            INNER JOIN user u ON u.id = s.created_by_id
-            WHERE u.statut != '".UserStatus::ARCHIVE->value."'
-            AND (JSON_CONTAINS(u.roles, '\"ROLE_ADMIN_TERRITORY\"') = 1)
-            GROUP BY u.id, s.signalement_id
-        ";
-
-        $connection = $this->getEntityManager()->getConnection();
-        $stmt = $connection->prepare($sql);
-
-        return $stmt->executeQuery()->fetchAllAssociative(); // @phpstan-ignore-line
     }
 
     /**

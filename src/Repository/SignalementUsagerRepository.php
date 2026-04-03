@@ -20,22 +20,4 @@ class SignalementUsagerRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, SignalementUsager::class);
     }
-
-    public function save(SignalementUsager $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
-    public function remove(SignalementUsager $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
 }

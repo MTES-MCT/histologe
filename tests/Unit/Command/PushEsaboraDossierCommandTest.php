@@ -61,10 +61,6 @@ class PushEsaboraDossierCommandTest extends TestCase
             )
             ->willReturn($affectations);
 
-        $this->affectationRepository
-            ->expects($this->atMost(3))
-            ->method('save');
-
         $this->esaboraBus
             ->expects($this->atMost(2))
             ->method('dispatch')
@@ -100,10 +96,6 @@ class PushEsaboraDossierCommandTest extends TestCase
                 $this->equalTo('00000000-0000-0000-2023-000000000010')
             )
             ->willReturn($affectations);
-
-        $this->affectationRepository
-            ->expects($this->atMost(2))
-            ->method('save');
 
         $this->esaboraBus
             ->expects($this->once())

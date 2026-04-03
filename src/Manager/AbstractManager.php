@@ -53,24 +53,6 @@ abstract class AbstractManager implements ManagerInterface
         return $this->getRepository()->findOneBy($criteria);
     }
 
-    /**
-     * @param array<string, mixed> $criteria
-     *
-     * @return array<int, object>
-     */
-    public function findBy(array $criteria): array
-    {
-        return $this->getRepository()->findBy($criteria);
-    }
-
-    /**
-     * @return array<int, object>
-     */
-    public function findAll(): array
-    {
-        return $this->getRepository()->findAll();
-    }
-
     // @phpstan-ignore-next-line
     public function getRepository(): ObjectRepository
     {

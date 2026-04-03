@@ -35,15 +35,6 @@ class InterventionRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Intervention $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
     /**
      * @return array<int, Intervention>
      */
