@@ -30,6 +30,7 @@ use App\Repository\AffectationRepository;
 use App\Repository\CritereRepository;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
+use App\Repository\EpciRepository;
 use App\Repository\FileRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\NotificationRepository;
@@ -89,6 +90,7 @@ class SignalementController extends AbstractController
         CritereRepository $critereRepository,
         FileRepository $fileRepository,
         UserRepository $userRepository,
+        EpciRepository $epciRepository,
         SuiviSeenMarker $suiviSeenMarker,
         UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
         SignalementRepository $signalementRepository,
@@ -243,6 +245,8 @@ class SignalementController extends AbstractController
         );
         $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
 
+        $epciOccupant = $epciRepository->findOneByCommuneInseeAndPostalCode($signalement->getInseeOccupant(), $signalement->getCpOccupant());
+
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',
             'situations' => $infoDesordres['criticitesArranged'],
@@ -251,6 +255,7 @@ class SignalementController extends AbstractController
             'affectation' => $affectation,
             'isDanger' => $infoDesordres['isDanger'],
             'signalement' => $signalement,
+            'epciOccupant' => $epciOccupant,
             'partner' => $partner,
             'partners' => $partners,
             'clotureForm' => $clotureForm,

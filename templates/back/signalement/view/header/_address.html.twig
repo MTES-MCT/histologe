@@ -1,4 +1,4 @@
-<span class="fr-h5">
+<div class="fr-h5">
     {{ signalement.adresseOccupant }}
     {% if signalement.complementAdresseOccupant %}- {{signalement.complementAdresseOccupant}}{% endif %},
     {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|capitalize }}
@@ -7,13 +7,25 @@
             Modifier
         </a>
     {% endif %}
-</span>
+</div>
 
 {% if signalement.manualAddressOccupant %}
     <div class="fr-alert fr-alert--info fr-alert--sm fr-mb-3v">
         Cette adresse a été éditée manuellement.
     </div>
 {% endif %}
+
+<div class="fr-mb-3v">
+{% if epciOccupant %}
+    <p class="fr-badge fr-badge--info fr-badge--no-icon">
+        {{ epciOccupant.nom }}
+    </p>
+{% else %}
+    <p class="fr-badge fr-badge--warning">
+        Aucun EPCI trouvé pour ce couple code postal ({{ signalement.cpOccupant }}) - code insee ({{ signalement.inseeOccupant }}).
+    </p>
+{% endif %}
+</div>
 
 <div class="fr-mt-3v">
     <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left fr-btns-group--sm">
