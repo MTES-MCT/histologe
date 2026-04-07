@@ -52,7 +52,7 @@ class EpciRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function findOneByCommuneInseeAndPostalCode(string $codeInsee, string $postalCode): ?Epci
+    public function findOneByCommuneInseeAndPostalCode(?string $codeInsee, ?string $postalCode): ?Epci
     {
         if (empty($codeInsee) || empty($postalCode)) {
             return null;
