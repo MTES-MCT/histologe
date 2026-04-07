@@ -16,6 +16,9 @@
                     <a aria-disabled="true" role="link">{{ title }}</a>
                 {% endif %}
             </h3>
+            {% if description is defined %}
+                <p class="fr-tile__desc">{{ description }}</p>
+            {% endif %}
         </div>
     </div>
     <div class="fr-tile__header">

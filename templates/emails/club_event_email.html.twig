@@ -1,0 +1,28 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>
+        Signal Logement vous invite à participer à l'évènement <strong>{{name}}</strong> qui aura lieu le <strong>{{date}}</strong> à <strong>{{hour}}</strong>.
+        <br>
+        Pour vous inscrire à cet évènement, cliquez sur le bouton ci-dessous.
+    </p>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
+           style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="left">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr style="text-align: center;width: 100%">
+                        <td>
+                            <a href="{{ url|raw }}" target="_blank" rel="noopener">S'inscrire à l'évènement</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ url|raw }}">cliquez ici</a></p>
+{% endblock %}
