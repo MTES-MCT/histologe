@@ -137,7 +137,7 @@
 {% endblock choice_widget_expanded %}
 
 {% block choice_enum_widget_expanded %}
-    <div {{ block('widget_container_attributes') }}>
+    <fieldset {{ block('widget_container_attributes') }}>
     {% if not form|length and not form.vars.choices|length and nochoiceslabel is defined %}
         {{ nochoiceslabel }}
     {% else %}
@@ -181,7 +181,7 @@
             {% endif %}
         {% endfor %}
     {% endif %}
-    </div>
+    </fieldset>
 {% endblock choice_enum_widget_expanded %}
 
 {% block search_checkbox_row %}
