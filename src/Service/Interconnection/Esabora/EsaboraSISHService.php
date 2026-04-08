@@ -20,6 +20,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class EsaboraSISHService extends AbstractEsaboraService
 {
+    public const string SERVICE_TYPE = 'sish';
     public const string NAME_SI = 'SI-Santé Habitat (SI-SH)';
 
     public function __construct(
