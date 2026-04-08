@@ -39,36 +39,6 @@ class PartnerTest extends KernelTestCase
     }
 
     /**
-     * @dataProvider provideDataSyncOilhi
-     */
-    public function testPartnerSCHSCompetenceRSDWithSpecificInseeCanSyncWithOilhi(
-        string $zip,
-        string $territoryName,
-        string $insee,
-        string $partnerName,
-    ): void {
-        $territory = $this->getTerritory($territoryName)->setZip($zip);
-        $signalement = $this->getSignalement($territory);
-        $signalement->setInseeOccupant($insee);
-        $partner = (new Partner())
-            ->setNom($partnerName)
-            ->setType(PartnerType::COMMUNE_SCHS)
-            ->setCompetence([Qualification::RSD])
-            ->setInsee([(int) $insee])
-            ->setTerritory($territory);
-
-        $this->assertTrue($partner->canSyncWithOilhi($signalement));
-    }
-
-    public function provideDataSyncOilhi(): \Generator
-    {
-        yield 'Code insee 62091' => ['zip' => '62', 'Pas-de-Calais', '62091', 'BEAUDRICOURT'];
-        yield 'Code insee 55502' => ['zip' => '55', 'Meuse', '55502', 'STENAY'];
-        yield 'Code insee 55029' => ['zip' => '55', 'Meuse', '55029', 'BAR-LE-DUC'];
-        yield 'Code insee 55545' => ['zip' => '55', 'Meuse', '55545', 'VERDUN'];
-    }
-
-    /**
      * @dataProvider provideDataForTestPartnerWithEmail
      */
     public function testCreatePartnerNoValidWithEmailExistInTerritory(int $zip, int $countErrors): void

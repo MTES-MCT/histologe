@@ -27,7 +27,6 @@ parameters:
     cron_enable: '%env(bool:CRON_ENABLE)%'
     mail_enable: '%env(bool:MAIL_ENABLE)%'
     csp_enable: '%env(bool:CSP_ENABLE)%'
-    feature_oilhi_enable: '%env(bool:FEATURE_OILHI_ENABLE)%'
     platform_name: '%env(resolve:PLATFORM_NAME)%'
     platform_logo: '%env(resolve:PLATFORM_LOGO)%'
     matomo_enable: '%env(bool:MATOMO_ENABLE)%'
@@ -130,10 +129,6 @@ services:
             - '@App\Service\Interconnection\JobEventHttpClient'
 
     App\Service\Interconnection\Esabora\EsaboraSISHService:
-        arguments:
-            - '@App\Service\Interconnection\JobEventHttpClient'
-
-    App\Service\Interconnection\Oilhi\HookZapierService:
         arguments:
             - '@App\Service\Interconnection\JobEventHttpClient'
 
