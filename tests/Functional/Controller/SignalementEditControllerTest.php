@@ -127,7 +127,68 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'Compléter les informations');
     }
 
-    public function testSubmitSuiviSignalementComplete(): void
+    public function testSubmitSuiviSignalementCompleteAdresseLogement(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
+            'statut' => SignalementStatus::ACTIVE,
+        ]);
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_adresse_logement', [
+            'code' => $signalement->getCodeSuivi(),
+        ]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('Envoyer')->form([
+            'adresse_logement[etageOccupant]' => 'AAAAAA',
+        ]);
+
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertSelectorExists('.fr-error-text');
+        $this->assertSelectorTextContains('.fr-error-text', 'L\'étage doit contenir au maximum 5 caractères.');
+
+        $form = $crawler->selectButton('Envoyer')->form([
+            'adresse_logement[etageOccupant]' => '1',
+            'adresse_logement[escalierOccupant]' => 'A',
+            'adresse_logement[numAppartOccupant]' => '42',
+            'adresse_logement[adresseAutreOccupant]' => 'Lieu-dit de la Patate',
+        ]);
+
+        $client->submit($form);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+        $entityManager->clear(); // facultatif mais sûr
+        $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
+
+        /** @var SuiviRepository $suiviRepository */
+        $suiviRepository = $entityManager->getRepository(Suivi::class);
+        $suivi = $suiviRepository->findOneBy([
+            'signalement' => $signalement,
+            'category' => SuiviCategory::SIGNALEMENT_EDITED_FO,
+        ]);
+        $this->assertNotNull($suivi);
+        $this->assertStringContainsString('adresse du logement', $description = $suivi->getDescription());
+        $crawler = new Crawler($description);
+        $this->assertEquals(4, $crawler->filter('li')->count());
+        $this->assertEquals('1', $signalement->getEtageOccupant());
+        $this->assertEquals('A', $signalement->getEscalierOccupant());
+        $this->assertEquals('42', $signalement->getNumAppartOccupant());
+        $this->assertEquals('Lieu-dit de la Patate', $signalement->getAdresseAutreOccupant());
+    }
+
+    public function testSubmitSuiviSignalementCompleteBailleur(): void
     {
         $client = static::createClient();
 
@@ -183,7 +244,7 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertStringContainsString('Téléphone secondaire', $description);
     }
 
-    public function testSubmitsuiviSignalementCompleteOccupantWithEmptyMailOccupant(): void
+    public function testSubmitSuiviSignalementCompleteOccupantWithEmptyMailOccupant(): void
     {
         $client = static::createClient();
 
