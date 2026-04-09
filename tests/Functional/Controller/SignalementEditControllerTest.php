@@ -284,4 +284,73 @@ class SignalementEditControllerTest extends WebTestCase
         $suivi = $suiviRepository->findBy(['signalement' => $signalement, 'category' => SuiviCategory::SIGNALEMENT_EDITED_FO]);
         $this->assertCount(1, $suivi);
     }
+
+    public function testSubmitSuiviSignalementCompleteAgence(): void
+    {
+        $fieldValue = 'cest-remy@auber.fr';
+        $signalement = $this->doTestAgenceAndSyndic('front_suivi_signalement_complete_agence', 'coordonnees_agence[mailAgence]', $fieldValue, 'agence');
+        $this->assertEquals($fieldValue, $signalement->getMailAgence());
+    }
+
+    public function testSubmitSuiviSignalementCompleteSyndic(): void
+    {
+        $fieldValue = 'cest-remy@auber.fr';
+        $signalement = $this->doTestAgenceAndSyndic('front_suivi_signalement_complete_syndic', 'coordonnees_syndic[mailSyndic]', $fieldValue, 'syndic');
+        $this->assertEquals($fieldValue, $signalement->getMailSyndic());
+    }
+
+    private function doTestAgenceAndSyndic(string $urlName, string $fieldName, string $fieldValue, string $descriptionValue): Signalement
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
+            'statut' => SignalementStatus::ACTIVE,
+        ]);
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $url = $router->generate($urlName, [
+            'code' => $signalement->getCodeSuivi(),
+        ]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('Envoyer')->form([
+            $fieldName => 'AAAAAA',
+        ]);
+
+        $client->submit($form);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $this->assertSelectorExists('.fr-error-text');
+        $this->assertSelectorTextContains('.fr-error-text', "n'est pas valide.");
+
+        $form = $crawler->selectButton('Envoyer')->form([
+            $fieldName => $fieldValue,
+        ]);
+
+        $client->submit($form);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+        $entityManager->clear(); // facultatif mais sûr
+        $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
+        /** @var SuiviRepository $suiviRepository */
+        $suiviRepository = $entityManager->getRepository(Suivi::class);
+        $suivi = $suiviRepository->findOneBy([
+            'signalement' => $signalement,
+            'category' => SuiviCategory::SIGNALEMENT_EDITED_FO,
+        ]);
+        $this->assertNotNull($suivi);
+        $this->assertStringContainsString($descriptionValue, $description = $suivi->getDescription());
+        $crawler = new Crawler($description);
+        $this->assertEquals(1, $crawler->filter('li')->count());
+
+        return $signalement;
+    }
 }
