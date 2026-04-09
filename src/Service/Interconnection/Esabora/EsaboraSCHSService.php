@@ -18,6 +18,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class EsaboraSCHSService extends AbstractEsaboraService
 {
+    public const string SERVICE_TYPE = 'schs';
     public const string ACTION_SYNC_EVENTS = 'sync_events';
     public const string ACTION_SYNC_EVENTFILES = 'sync_eventfiles';
 

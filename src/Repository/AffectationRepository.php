@@ -11,6 +11,8 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\JobEvent;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Service\Interconnection\Esabora\EsaboraSCHSService;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\ListFilters\SearchAffectationWithoutSubscription;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -72,8 +74,10 @@ class AffectationRepository extends ServiceEntityRepository
             ->setParameter('signalement_status_list', SignalementStatus::excludedStatuses());
 
         if (is_array($partnerType)) {
+            $serviceType = in_array(PartnerType::ARS, $partnerType) ? EsaboraSISHService::SERVICE_TYPE : EsaboraSCHSService::SERVICE_TYPE;
             $qb->andWhere('p.type IN (:partner_types)')->setParameter('partner_types', $partnerType);
         } else {
+            $serviceType = PartnerType::ARS === $partnerType ? EsaboraSISHService::SERVICE_TYPE : EsaboraSCHSService::SERVICE_TYPE;
             $qb->andWhere('p.type = :partner_type')->setParameter('partner_type', $partnerType);
         }
 
@@ -89,6 +93,19 @@ class AffectationRepository extends ServiceEntityRepository
 
         if (null !== $territory) {
             $qb->andWhere('a.territory = :territory')->setParameter('territory', $territory);
+        }
+
+        $esaboraCondition = $qb->expr()->orX(
+            'p.esaboraUrl LIKE :esabora_url', 'p.esaboraUrl LIKE :esabora_url_local'
+        );
+        $qb
+            ->setParameter('esabora_url', '%sante-habitat%')
+            ->setParameter('esabora_url_local', '%ARS%');
+
+        if (EsaboraSISHService::SERVICE_TYPE === $serviceType) {
+            $qb->andWhere($esaboraCondition);
+        } else {
+            $qb->andWhere($qb->expr()->not($esaboraCondition));
         }
 
         return $qb->getQuery()->getResult();

@@ -2,7 +2,7 @@
 
 namespace App\Command\Cron;
 
-use App\Entity\Enum\PartnerType;
+use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\AffectationRepository;
 use App\Service\Interconnection\Esabora\EsaboraManager;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
@@ -50,7 +50,7 @@ class SynchronizeEsaboraSISHCommand extends AbstractSynchronizeEsaboraCommand
             $input,
             $output,
             $this->esaboraService,
-            PartnerType::ARS,
+            DossierMessageSISH::CAN_SYNC_SISH_ESABORA,
         );
 
         return Command::SUCCESS;

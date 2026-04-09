@@ -6,6 +6,7 @@ use App\Command\PushEsaboraDossierCommand;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Territory;
 use App\Messenger\InterconnectionBus;
+use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\AffectationRepository;
 use App\Repository\TerritoryRepository;
 use App\Tests\FixturesHelper;
@@ -16,7 +17,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class PushEsaboraDossierCommandTest extends TestCase
 {
     use FixturesHelper;
-    private const ENV = 'dev';
+    private const string ENV = 'dev';
 
     private MockObject&AffectationRepository $affectationRepository;
     private MockObject&TerritoryRepository $territoryRepository;
@@ -54,7 +55,7 @@ class PushEsaboraDossierCommandTest extends TestCase
             ->expects($this->once())
             ->method('findAffectationSubscribedToEsabora')
             ->with(
-                $this->equalTo(PartnerType::ARS),
+                $this->equalTo(DossierMessageSISH::CAN_SYNC_SISH_ESABORA),
                 null,
                 null,
                 (new Territory())->setZip('01')->setIsActive(true)->setName('Ain')
@@ -91,7 +92,7 @@ class PushEsaboraDossierCommandTest extends TestCase
             ->expects($this->once())
             ->method('findAffectationSubscribedToEsabora')
             ->with(
-                $this->equalTo(PartnerType::ARS),
+                $this->equalTo(DossierMessageSISH::CAN_SYNC_SISH_ESABORA),
                 $this->equalTo(false),
                 $this->equalTo('00000000-0000-0000-2023-000000000010')
             )

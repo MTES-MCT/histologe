@@ -2,9 +2,9 @@
 
 namespace App\Command;
 
-use App\Entity\Enum\PartnerType;
 use App\Messenger\InterconnectionBus;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
+use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\AffectationRepository;
 use App\Repository\TerritoryRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
 #[AsCommand(
     name: 'app:push-esabora-dossier',
@@ -43,6 +44,9 @@ class PushEsaboraDossierCommand extends Command
             ->addOption('uuid', null, InputOption::VALUE_OPTIONAL, 'Signalement Uuid');
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -59,7 +63,9 @@ class PushEsaboraDossierCommand extends Command
         $affectations = null;
         if ($uuid) {
             $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
-                partnerType: 'sish' === $serviceType ? PartnerType::ARS : DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA,
+                partnerType: 'sish' === $serviceType
+                    ? DossierMessageSISH::CAN_SYNC_SISH_ESABORA
+                    : DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA,
                 isSynchronized: false,
                 uuidSignalement: $uuid
             );
@@ -76,7 +82,9 @@ class PushEsaboraDossierCommand extends Command
             }
 
             $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
-                partnerType: 'sish' === $serviceType ? PartnerType::ARS : PartnerType::COMMUNE_SCHS,
+                partnerType: 'sish' === $serviceType
+                    ? DossierMessageSISH::CAN_SYNC_SISH_ESABORA
+                    : DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA,
                 isSynchronized: false,
                 territory: $territory
             );

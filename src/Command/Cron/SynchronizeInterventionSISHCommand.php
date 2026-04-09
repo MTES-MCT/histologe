@@ -2,8 +2,8 @@
 
 namespace App\Command\Cron;
 
-use App\Entity\Enum\PartnerType;
 use App\Manager\JobEventManager;
+use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
@@ -70,7 +70,7 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
         $io = new SymfonyStyle($input, $output);
         $uuidSignalement = $input->getArgument('uuid_signalement') ?? null;
         $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
-            partnerType: PartnerType::ARS,
+            partnerType: DossierMessageSISH::CAN_SYNC_SISH_ESABORA,
             uuidSignalement: $uuidSignalement
         );
         $count = 0;
