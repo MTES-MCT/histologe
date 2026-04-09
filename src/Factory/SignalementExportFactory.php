@@ -12,9 +12,9 @@ use App\Entity\Intervention;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\User;
-use App\Utils\HtmlCleaner;
 use App\Service\Signalement\SignalementAffectationHelper;
 use App\Utils\DateHelper;
+use App\Utils\HtmlCleaner;
 
 class SignalementExportFactory
 {

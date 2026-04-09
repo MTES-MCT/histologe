@@ -9,7 +9,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
-use App\Service\NotificationAndMailSender;
+use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

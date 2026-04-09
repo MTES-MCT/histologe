@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Service;
 
-use App\Service\ImageManipulationHandler;
+use App\Service\Files\ImageManipulationHandler;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\EncodedImageInterface;
 use Intervention\Image\Interfaces\ImageInterface;

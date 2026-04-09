@@ -4,7 +4,7 @@ namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use App\Service\ImageManipulationHandler;
+use App\Service\Files\ImageManipulationHandler;
 use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use App\Tests\SessionHelper;
