@@ -50,6 +50,9 @@ class AffectationController extends AbstractController
 
     private function getHtmlTargetContentsForAffectationWithActionItems(Signalement $signalement): array
     {
+        $filterInjonctionBailleur = (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut());
+        $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, $filterInjonctionBailleur);
+
         return [
             [
                 'target' => '#affectations-with-action',
@@ -58,6 +61,13 @@ class AffectationController extends AbstractController
                     'partnerEmailAlerts' => $this->emailAlertChecker->buildPartnerEmailAlert($signalement),
                 ]
                 ),
+            ],
+            [
+                'target' => '#signalement-affectation-form-row',
+                'content' => $this->renderView('_partials/_modal_affectation_selects.html.twig', [
+                    'signalement' => $signalement,
+                    'partners' => $affectablePartners,
+                ]),
             ],
         ];
     }
@@ -94,13 +104,10 @@ class AffectationController extends AbstractController
                     $message = sprintf('Impossible d\'affecter simultanément des partenaires interconnectés %s avec les mêmes identifiants.
                     Sélectionnez uniquement le partenaire d\'envoi, puis ajoutez le second après validation.', EsaboraSISHService::NAME_SI);
 
-                    $flashMessage = [
-                        'type' => 'alert',
-                        'title' => 'Erreur',
-                        'message' => $message,
-                    ];
+                    $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => $message];
+                    $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($signalement);
 
-                    return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
+                    return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'htmlTargetContents' => $htmlTargetContents]);
                 }
 
                 foreach ($partnersIdToAdd as $partnerIdToAdd) {

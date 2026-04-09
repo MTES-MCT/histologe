@@ -169,9 +169,12 @@ class InformationsGeneralesType extends AbstractType
             ])
             ->add('numeroInvariant', TextType::class, [
                 'label' => 'Invariant fiscal (facultatif)',
-                'help' => 'Format attendu : 255 caractères maximum',
+                'help' => 'Format attendu : 12 caractères maximum',
                 'required' => false,
                 'data' => $signalement->getNumeroInvariant(),
+                'attr' => [
+                    'maxlength' => 12,
+                ],
             ])
             ->add('loyer', NumberType::class, [
                 'label' => 'Montant du loyer (facultatif)',

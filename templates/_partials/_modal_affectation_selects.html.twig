@@ -1,0 +1,48 @@
+<div class="fr-col-5">
+    <label for="signalement-affectation-select-disponible" class="fr-label fr-text--bold">Partenaires disponibles</label>
+    <select class="fr-select" aria-multiselectable="true" id="signalement-affectation-select-disponible" size="10" multiple>
+        {% for partner in partners['not_affected'] %}
+            {% set isDisabled = partner['is_disabled']|default(false) %}
+            <option value="{{ partner['id'] }}" {{ isDisabled ? 'disabled' : '' }}>{{ partner['name']|upper }}
+                {% if partner.competence|default %}
+                    ({% for competence in partner.competence %}
+                        {{ competence.label }}
+                    {% endfor %})
+                {% endif %}
+                </option>
+        {% endfor %}
+    </select>
+</div>
+<div class="fr-col-2 fr-text--center">
+    <button class="fr-btn fr-btn--secondary fr-fi-arrow-left-s-line-double"
+            data-fr-select-source="signalement-affectation-select-affecte"
+            data-fr-select-target="signalement-affectation-select-disponible"></button>
+    <button class="fr-btn fr-fi-arrow-right-s-line-double"
+            data-fr-select-source="signalement-affectation-select-disponible"
+            data-fr-select-target="signalement-affectation-select-affecte"></button>
+</div>
+<div class="fr-col-5">
+    <form method="POST" 
+            name="signalement-affectation" 
+            id="signalement-affectation-form" 
+            action="{{ path('back_signalement_toggle_affectation',{uuid:signalement.uuid}) }}"
+            data-submit-type="formData"
+            >
+        <label for="signalement-affectation-select-affecte" class="fr-label fr-text--bold">Partenaire(s) affecté(s)</label>
+        <select id="signalement-affectation-select-affecte" multiple
+                class="fr-select" aria-multiselectable="true"
+                size="10" data-fr-select-count="fr-modal-affectation-count"
+                name="signalement-affectation[partners][]">
+            {% for partner in partners['affected'] %}
+                <option value="{{ partner['id'] }}" selected>{{ partner['name']|upper }}
+                {% if partner.competence|default %}
+                    ({% for competence in partner.competence %}
+                        {{ competence.label }}
+                    {% endfor %})
+                {% endif %}
+                </option>
+            {% endfor %}
+        </select>
+        <input type="hidden" name="_token" value="{{ csrf_token('signalement_affectation_'~signalement.id) }}">
+    </form>
+</div>
