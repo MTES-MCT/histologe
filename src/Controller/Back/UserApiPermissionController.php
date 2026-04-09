@@ -10,7 +10,7 @@ use App\Form\UserApiPermissionType;
 use App\Form\UserApiType;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
-use App\Service\FormHelper;
+use App\Utils\FormHelper;
 use App\Service\ListFilters\SearchUser;
 use App\Service\MessageHelper;
 use Doctrine\ORM\EntityManagerInterface;

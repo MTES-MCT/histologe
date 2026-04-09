@@ -7,7 +7,7 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\UserSearchFilterRepository;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
-use App\Service\UserAvatar;
+use App\Service\Files\UserAvatar;
 use Psr\Cache\InvalidArgumentException;
 
 class SettingsFactory

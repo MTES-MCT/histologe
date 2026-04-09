@@ -5,7 +5,7 @@ namespace App\Service\Signalement;
 use App\Dto\Api\Request\RequestFileInterface;
 use App\Entity\File;
 use App\Entity\Signalement;
-use App\Service\Sanitizer;
+use App\Utils\Sanitizer;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DescriptionFilesBuilder

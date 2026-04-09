@@ -23,7 +23,7 @@ use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\InterventionRepository;
 use App\Service\Files\ZipHelper;
-use App\Service\ImageManipulationHandler;
+use App\Service\Files\ImageManipulationHandler;
 use App\Service\Interconnection\Esabora\Enum\EsaboraStatus;
 use App\Service\Interconnection\Esabora\Response\DossierEventFilesSCHSResponse;
 use App\Service\Interconnection\Esabora\Response\DossierResponseInterface;

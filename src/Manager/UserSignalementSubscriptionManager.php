@@ -7,7 +7,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
 use App\Repository\UserRepository;
-use App\Service\NotificationAndMailSender;
+use App\Service\Notification\NotificationAndMailSender;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;

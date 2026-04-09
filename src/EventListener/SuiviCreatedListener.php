@@ -4,7 +4,7 @@ namespace App\EventListener;
 
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Service\Signalement\SuiviHelper;
+use App\Service\Signalement\Suivi\SuiviHelper;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;

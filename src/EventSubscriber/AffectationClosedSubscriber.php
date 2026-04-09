@@ -7,7 +7,7 @@ use App\Entity\Suivi;
 use App\Event\AffectationClosedEvent;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
-use App\Service\NotificationAndMailSender;
+use App\Service\Notification\NotificationAndMailSender;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 readonly class AffectationClosedSubscriber implements EventSubscriberInterface

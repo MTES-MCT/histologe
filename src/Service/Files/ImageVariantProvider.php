@@ -2,7 +2,7 @@
 
 namespace App\Service\Files;
 
-use App\Service\ImageManipulationHandler;
+use App\Service\Files\ImageManipulationHandler;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;

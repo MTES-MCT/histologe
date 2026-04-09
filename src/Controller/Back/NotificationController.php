@@ -6,7 +6,7 @@ use App\Entity\Notification;
 use App\Entity\User;
 use App\Form\SearchNotificationType;
 use App\Repository\NotificationRepository;
-use App\Service\FormHelper;
+use App\Utils\FormHelper;
 use App\Service\ListFilters\SearchNotification;
 use App\Service\MessageHelper;
 use Doctrine\ORM\Tools\Pagination\Paginator;

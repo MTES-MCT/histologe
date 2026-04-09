@@ -10,7 +10,7 @@ use App\Repository\CommuneRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\FormHelper;
+use App\Utils\FormHelper;
 use App\Service\Gouv\Ban\AddressService;
 use App\Service\ListFilters\SearchCommune;
 use Doctrine\ORM\EntityManagerInterface;

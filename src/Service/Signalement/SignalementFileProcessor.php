@@ -13,7 +13,7 @@ use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
-use App\Service\ImageManipulationHandler;
+use App\Service\Files\ImageManipulationHandler;
 use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;

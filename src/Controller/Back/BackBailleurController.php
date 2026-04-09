@@ -6,7 +6,7 @@ use App\Entity\Bailleur;
 use App\Form\BailleurType;
 use App\Form\SearchBailleurType;
 use App\Repository\BailleurRepository;
-use App\Service\FormHelper;
+use App\Utils\FormHelper;
 use App\Service\ListFilters\SearchBailleur;
 use App\Service\MessageHelper;
 use Doctrine\ORM\EntityManagerInterface;

@@ -17,7 +17,7 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
-use App\Service\HtmlCleaner;
+use App\Utils\HtmlCleaner;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\UploadHandlerService;

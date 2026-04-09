@@ -12,7 +12,7 @@ use App\Entity\Intervention;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\User;
-use App\Service\HtmlCleaner;
+use App\Utils\HtmlCleaner;
 use App\Service\Signalement\SignalementAffectationHelper;
 use App\Utils\DateHelper;
 

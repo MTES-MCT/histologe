@@ -8,7 +8,7 @@ use App\Entity\Partner;
 use App\Repository\BailleurRepository;
 use App\Repository\EpciRepository;
 use App\Repository\TerritoryRepository;
-use App\Service\Sanitizer;
+use App\Utils\Sanitizer;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;

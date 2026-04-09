@@ -6,7 +6,7 @@ use App\Entity\ServiceSecoursRoute;
 use App\Form\SearchServiceSecoursRouteType;
 use App\Form\ServiceSecoursRouteType;
 use App\Repository\ServiceSecoursRouteRepository;
-use App\Service\FormHelper;
+use App\Utils\FormHelper;
 use App\Service\ListFilters\SearchServiceSecoursRoute;
 use App\Service\MessageHelper;
 use Doctrine\ORM\EntityManagerInterface;

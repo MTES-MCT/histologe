@@ -5,7 +5,7 @@ namespace App\EventListener;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Intervention;
-use App\Service\HtmlCleaner;
+use App\Utils\HtmlCleaner;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;

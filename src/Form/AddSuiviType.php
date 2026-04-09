@@ -5,7 +5,7 @@ namespace App\Form;
 use App\Entity\File;
 use App\Entity\Suivi;
 use App\Form\Type\SearchCheckboxType;
-use App\Service\FileListService;
+use App\Service\Files\FileListService;
 use App\Validator\EmailFormatValidator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

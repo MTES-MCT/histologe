@@ -10,7 +10,7 @@ use App\EventListener\UserCreatedListener;
 use App\Factory\UserFactory;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
-use App\Service\Sanitizer;
+use App\Utils\Sanitizer;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\DBAL\Exception;

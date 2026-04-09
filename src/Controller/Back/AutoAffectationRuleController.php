@@ -6,7 +6,7 @@ use App\Entity\AutoAffectationRule;
 use App\Form\AutoAffectationRuleType;
 use App\Form\SearchAutoAffectationRuleType;
 use App\Repository\AutoAffectationRuleRepository;
-use App\Service\FormHelper;
+use App\Utils\FormHelper;
 use App\Service\ListFilters\SearchAutoAffectationRule;
 use App\Service\MessageHelper;
 use Doctrine\ORM\EntityManagerInterface;

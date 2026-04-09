@@ -5,7 +5,7 @@ namespace App\Messenger\Message\Idoss;
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Messenger\Message\DossierMessageInterface;
-use App\Utils\AddressParser;
+use App\Utils\Address\AddressParser;
 
 final class DossierMessage implements DossierMessageInterface
 {

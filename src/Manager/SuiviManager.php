@@ -16,7 +16,7 @@ use App\Entity\TiersInvitation;
 use App\Entity\User;
 use App\Event\SuiviCreatedEvent;
 use App\Security\User\SignalementUser;
-use App\Service\Sanitizer;
+use App\Utils\Sanitizer;
 use App\Utils\DateHelper;
 use App\Utils\DictionaryProvider;
 use Doctrine\Persistence\ManagerRegistry;

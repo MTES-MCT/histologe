@@ -24,7 +24,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Security\Voter\SignalementVoter;
 use App\Service\ListFilters\SearchDraft;
-use App\Service\NotificationAndMailSender;
+use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;

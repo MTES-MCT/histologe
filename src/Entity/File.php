@@ -9,7 +9,7 @@ use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Repository\FileRepository;
-use App\Service\ImageManipulationHandler;
+use App\Service\Files\ImageManipulationHandler;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;

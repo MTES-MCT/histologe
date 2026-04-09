@@ -27,7 +27,7 @@ use App\Service\InjonctionBailleur\BailleurLoginCodeGenerator;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\TimezoneProvider;
-use App\Utils\CommuneHelper;
+use App\Utils\Address\CommuneHelper;
 use App\Utils\Phone;
 use App\Utils\TrimHelper;
 use App\Validator as AppAssert;

@@ -5,7 +5,7 @@ namespace App\Factory\Interconnection\Esabora;
 use App\Entity\Affectation;
 use App\Entity\Signalement;
 use App\Factory\Interconnection\DossierMessageFactoryInterface;
-use App\Service\HtmlCleaner;
+use App\Utils\HtmlCleaner;
 use App\Service\UploadHandlerService;
 
 abstract class AbstractDossierMessageFactory implements DossierMessageFactoryInterface

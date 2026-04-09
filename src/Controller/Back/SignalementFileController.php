@@ -15,7 +15,7 @@ use App\Repository\FileRepository;
 use App\Repository\InterventionRepository;
 use App\Security\Voter\FileVoter;
 use App\Security\Voter\SignalementVoter;
-use App\Service\ImageManipulationHandler;
+use App\Service\Files\ImageManipulationHandler;
 use App\Service\MessageHelper;
 use App\Service\RequestDataExtractor;
 use App\Service\Signalement\SignalementDesordresProcessor;

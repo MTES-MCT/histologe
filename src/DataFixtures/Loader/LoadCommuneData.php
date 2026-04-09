@@ -6,7 +6,7 @@ use App\Factory\CommuneFactory;
 use App\Manager\CommuneManager;
 use App\Service\Import\CsvParser;
 use App\Service\Signalement\ZipcodeProvider;
-use App\Utils\ImportCommune;
+use App\Utils\Address\ImportCommune;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;

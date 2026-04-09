@@ -23,7 +23,7 @@ use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Security\Voter\SignalementVoter;
 use App\Security\Voter\SuiviVoter;
-use App\Service\FormHelper;
+use App\Utils\FormHelper;
 use App\Service\Gouv\Rnb\RnbService;
 use App\Service\HtmlTargetContentsService;
 use App\Service\MessageHelper;

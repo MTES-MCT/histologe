@@ -10,7 +10,7 @@ use App\Form\SearchTagType;
 use App\Manager\TagManager;
 use App\Repository\TagRepository;
 use App\Security\Voter\TagVoter;
-use App\Service\FormHelper;
+use App\Utils\FormHelper;
 use App\Service\ListFilters\SearchTag;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Doctrine\ORM\EntityManagerInterface;

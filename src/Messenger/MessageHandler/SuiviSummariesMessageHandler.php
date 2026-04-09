@@ -6,7 +6,7 @@ use App\Messenger\Message\SuiviSummariesMessage;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Service\HtmlCleaner;
+use App\Utils\HtmlCleaner;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;

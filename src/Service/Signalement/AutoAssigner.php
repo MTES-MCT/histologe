@@ -12,7 +12,7 @@ use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
-use App\Service\NotificationAndMailSender;
+use App\Service\Notification\NotificationAndMailSender;
 use App\Specification\Affectation\AllocataireSpecification;
 use App\Specification\Affectation\CodeInseeSpecification;
 use App\Specification\Affectation\ParcSpecification;

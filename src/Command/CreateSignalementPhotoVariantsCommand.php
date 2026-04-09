@@ -5,7 +5,7 @@ namespace App\Command;
 use App\Entity\File;
 use App\Entity\Territory;
 use App\Repository\FileRepository;
-use App\Service\ImageManipulationHandler;
+use App\Service\Files\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;

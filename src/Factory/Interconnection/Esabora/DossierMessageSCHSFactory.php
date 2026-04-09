@@ -8,8 +8,8 @@ use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Esabora\AttachmentsUtils;
 use App\Service\UploadHandlerService;
-use App\Utils\AddressParser;
-use App\Utils\EtageParser;
+use App\Utils\Address\AddressParser;
+use App\Utils\Address\EtageParser;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class DossierMessageSCHSFactory extends AbstractDossierMessageFactory

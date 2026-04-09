@@ -11,7 +11,7 @@ use App\Entity\Suivi;
 use App\Entity\User;
 use App\Manager\SuiviManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
-use App\Service\Sanitizer;
+use App\Utils\Sanitizer;
 use App\Service\Security\PartnerAuthorizedResolver;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;

@@ -24,7 +24,7 @@ use App\Manager\SuiviManager;
 use App\Repository\TiersInvitationRepository;
 use App\Security\Voter\SignalementVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
-use App\Service\FormHelper;
+use App\Utils\FormHelper;
 use App\Service\HtmlTargetContentsService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
