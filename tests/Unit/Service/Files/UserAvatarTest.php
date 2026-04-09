@@ -52,7 +52,7 @@ class UserAvatarTest extends WebTestCase
             $fileStorage,
         );
 
-        $user->setAvatarFilename(__DIR__.'/../../files/sample.jpg');
+        $user->setAvatarFilename(__DIR__.'/../../../files/sample.jpg');
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user);
 
         $this->assertStringContainsString('<img src="data:image/jpg;base64,', $outputSpan);
