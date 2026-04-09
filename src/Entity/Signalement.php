@@ -424,6 +424,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $structureReferentSocial = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 12, maxMessage: 'L\'invariant fiscal ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $numeroInvariant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
