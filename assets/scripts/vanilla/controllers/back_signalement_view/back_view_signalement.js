@@ -264,16 +264,17 @@ const rotatePhotoAlbumImage = (photoId, direction) => {
 
 loadWindowWithLocalStorage('click', '[data-filter-list-signalement]', 'back_link_signalement_view');
 
-document?.querySelectorAll('[data-fr-select-target]')?.forEach((t) => {
-  const source = document?.querySelector('#' + t.getAttribute('data-fr-select-source'));
-  const target = document?.querySelector('#' + t.getAttribute('data-fr-select-target'));
-  t.addEventListeners('click touchdown', () => {
-    [...source.selectedOptions].forEach((s) => {
-      target.append(s);
-    });
-    document?.querySelectorAll('#signalement-affectation-select-affecte option').forEach((o) => {
-      o.selected = true;
-    });
+const signalementAffectationFormRow = document.getElementById('signalement-affectation-form-row');
+signalementAffectationFormRow?.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-fr-select-target]');
+  if (!t) return;
+  const source = document.querySelector('#' + t.getAttribute('data-fr-select-source'));
+  const target = document.querySelector('#' + t.getAttribute('data-fr-select-target'));
+  [...source.selectedOptions].forEach((s) => {
+    target.append(s);
+  });
+  document.querySelectorAll('#signalement-affectation-select-affecte option').forEach((o) => {
+    o.selected = true;
   });
 });
 
