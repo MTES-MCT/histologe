@@ -84,7 +84,7 @@ class ProfilControllerTest extends WebTestCase
         $csrfToken = $this->generateCsrfToken($this->client, 'user_profil_info');
 
         $imageFile = new UploadedFile(
-            __DIR__.'/../../../../files/sample.jpg',
+            __DIR__.'/../../../files/sample.jpg',
             'sample.jpg',
             'image/jpeg',
             null,
@@ -130,7 +130,7 @@ class ProfilControllerTest extends WebTestCase
         $csrfToken = $this->generateCsrfToken($this->client, 'user_profil_info');
 
         $imageFile = new UploadedFile(
-            __DIR__.'/../../../../files/sample.jpg',
+            __DIR__.'/../../../files/sample.jpg',
             'sample.jpg',
             'image/jpeg',
             null,
@@ -166,7 +166,7 @@ class ProfilControllerTest extends WebTestCase
         $csrfToken = $this->generateCsrfToken($this->client, 'user_profil_info');
 
         $imageFile = new UploadedFile(
-            __DIR__.'/../../../../files/sample.pdf',
+            __DIR__.'/../../../files/sample.pdf',
             'sample.pdf',
             'application/pdf',
             null,
