@@ -47,9 +47,11 @@ export function jsonResponseProcess(response) {
       const openModalElement = document.querySelector('.fr-modal--opened');
       if (openModalElement) {
         dsfr(openModalElement).modal.conceal();
-        const formElement = openModalElement.querySelector('form');
-        if (formElement) {
-          formElement.reset();
+        if(response.resetForm) {
+          const formElement = openModalElement.querySelector('form');
+          if (formElement) {
+            formElement.reset();
+          }
         }
       }
     }

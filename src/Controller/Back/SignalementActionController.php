@@ -239,7 +239,7 @@ class SignalementActionController extends AbstractController
         $htmlTargetContents = [['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])]];
         $functions = [['name' => 'applyFilter']];
 
-        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions, 'resetForm' => true]);
     }
 
     #[Route('/{uuid:signalement}/suivi/delete', name: 'back_signalement_delete_suivi', methods: 'POST')]
