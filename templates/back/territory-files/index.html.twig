@@ -49,12 +49,15 @@
             </div>
             {% endif %}
             <div class="fr-col-12">
-                <ul id="form-field-type-tag-list" class="fr-tags-group">
-                {% for label, value in field_choices(form.type) %}
-                    <li><button type="button" class="fr-tag" aria-pressed="{{ field_value(form.type) is same as value ? 'true' : 'false' }}" data-value="{{ value }}">{{ label }}</button></li>
-                {% endfor %}
-                </ul>
-                <input type="hidden" id="form-field-type-value" name="{{ form.type.vars.full_name }}" value="{{ field_value(form.type) }}">
+                <fieldset class="fr-fieldset fr-ml-0 fr-pl-0">
+                    <legend class="fr-label">Type de document</legend>
+                    <ul id="form-field-type-tag-list" class="fr-tags-group fr-mt-2v">
+                    {% for label, value in field_choices(form.type) %}
+                        <li><button type="button" class="fr-tag" aria-pressed="{{ field_value(form.type) is same as value ? 'true' : 'false' }}" aria-controls="form-field-type-value" data-value="{{ value }}">{{ label }}</button></li>
+                    {% endfor %}
+                    </ul>
+                    <input type="hidden" id="form-field-type-value" name="{{ form.type.vars.full_name }}" value="{{ field_value(form.type) }}">
+                </fieldset> 
             </div>
         </div>
     </section>
