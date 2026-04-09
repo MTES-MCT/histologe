@@ -29,10 +29,13 @@ class TerritoryRepository extends ServiceEntityRepository
      *
      * @throws QueryException
      */
-    public function findAllList(): array
+    public function findAllList(bool $onlyActive = true): array
     {
-        $qb = $this->createQueryBuilder('t')
-            ->where('t.isActive = 1');
+        $qb = $this->createQueryBuilder('t');
+
+        if ($onlyActive) {
+            $qb->where('t.isActive = 1');
+        }
 
         return $qb->indexBy('t', 't.id')
             ->getQuery()
