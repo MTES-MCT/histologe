@@ -40,7 +40,7 @@ class ProfilControllerTest extends WebTestCase
         static::getContainer()->set('App\Service\Security\FileScanner', $this->fileScannerMock);
 
         $this->imageManipulationHandlerMock = $this->createMock(ImageManipulationHandler::class);
-        static::getContainer()->set('App\Service\ImageManipulationHandler', $this->imageManipulationHandlerMock);
+        static::getContainer()->set('App\Service\Files\ImageManipulationHandler', $this->imageManipulationHandlerMock);
 
         $this->user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($this->user);

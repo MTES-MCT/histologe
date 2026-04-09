@@ -743,7 +743,7 @@
                         <small>Ajoutée par {{ photo.uploadedBy.nomComplet ?? 'N/R' }}</small><br>
                     {% endif %}
                     <small>le {{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}</small><br>                    
-                    {% set encodedImage = photo.filename(constant('App\\Service\\ImageManipulationHandler::SUFFIX_RESIZE')) | image64 %}
+                    {% set encodedImage = photo.filename(constant('App\\Service\\Files\\ImageManipulationHandler::SUFFIX_RESIZE')) | image64 %}
                     {% if encodedImage is not null %}                    
                         <img src="{{ encodedImage }}" style="max-width:100%" id="{{ photo.filename }}" alt="{{ photo.title }}"/>
                     {% else %}
