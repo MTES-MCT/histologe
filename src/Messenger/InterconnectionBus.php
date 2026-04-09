@@ -32,7 +32,6 @@ class InterconnectionBus
     public function dispatch(Affectation $affectation): void
     {
         if (!$affectation->getPartner()->canSyncWithEsabora()
-            && !$affectation->getPartner()->canSyncWithOilhi($affectation->getSignalement())
             && !$affectation->getPartner()->canSyncWithIdoss()
         ) {
             return;

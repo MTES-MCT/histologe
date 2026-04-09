@@ -11,7 +11,6 @@ use App\Repository\TerritoryRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Esabora\EsaboraSCHSService;
 use App\Service\Interconnection\Idoss\IdossService;
-use App\Service\Interconnection\Oilhi\HookZapierService;
 use App\Service\ListFilters\SearchInterconnexion;
 use App\Service\ListFilters\SearchPartner;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -106,7 +105,6 @@ class SearchInterconnexionType extends AbstractType
                 IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_PUSH_DOSSIER => IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_PUSH_DOSSIER,
                 IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_LIST_STATUTS => IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_LIST_STATUTS,
                 IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_UPLOAD_FILES => IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_UPLOAD_FILES,
-                HookZapierService::TYPE_SERVICE.' - '.HookZapierService::ACTION_PUSH_DOSSIER => HookZapierService::TYPE_SERVICE.' - '.HookZapierService::ACTION_PUSH_DOSSIER,
             ],
         ]);
         $builder->add('orderType', ChoiceType::class, [

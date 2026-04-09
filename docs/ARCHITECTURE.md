@@ -94,9 +94,6 @@ L'analyse des visites et parcours sur le site est faite grâce à ce service.
 #### DGS - Esabora
 Nous communiquons avec 2 types d'instances Esabora (SI-SH et SCHS) pour leur faire parvenir des dossiers.
 
-#### Zapier
-Nous envoyons des requêtes vers Zapier pour communiquer avec OILHI, une autre start-up d'Etat.
-
 #### Sentry
 Sentry, hébergée par les services nationaux, nous permet :
 - de retrouver les erreurs listées par le service

@@ -32,10 +32,6 @@ class Partner implements EntityHistoryInterface
     use TimestampableTrait;
 
     public const string DEFAULT_PARTNER = 'Administrateurs Signal-logement';
-    /** @var int[] */
-    public const array OILHI_TERRITORY_ZIP_ALLOWED = [62, 55]; // Should be replaced by OILHI_CODE_INSEE_ALLOWED
-    /** @var int[] */
-    public const array OILHI_CODE_INSEE_ALLOWED = [62091, 55502, 55029, 55545]; // for testing production
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -425,20 +421,6 @@ class Partner implements EntityHistoryInterface
     {
         return str_contains($this->esaboraUrl, 'sante-habitat')
             || str_contains($this->esaboraUrl, 'ARS');
-    }
-
-    public function canSyncWithOilhi(Signalement $signalement): bool
-    {
-        $inseeAllowed = !empty(array_intersect($this->getInsee(), self::OILHI_CODE_INSEE_ALLOWED));
-
-        return $this->hasCompetence(Qualification::RSD)
-            && PartnerType::COMMUNE_SCHS === $this->type
-            && \in_array(
-                $this->territory->getZip(),
-                self::OILHI_TERRITORY_ZIP_ALLOWED
-            )
-            && $inseeAllowed
-            && in_array($signalement->getInseeOccupant(), self::OILHI_CODE_INSEE_ALLOWED);
     }
 
     public function canSyncWithIdoss(): bool

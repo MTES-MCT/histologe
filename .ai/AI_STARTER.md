@@ -203,7 +203,6 @@ npm run build       # Build production
 
 ### Interconnexions externes
 - **Esabora** : Synchronisation avec SIShab
-- **OILHI** : API Zapier/Airtable
 - **API Gouv** : Adresse, Entreprise, etc.
 
 ## Tests et qualité
