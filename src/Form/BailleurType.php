@@ -6,6 +6,7 @@ use App\Entity\Bailleur;
 use App\Entity\Territory;
 use App\Form\Type\SearchCheckboxType;
 use App\Repository\TerritoryRepository;
+use Doctrine\ORM\Query\QueryException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,6 +21,8 @@ class BailleurType extends AbstractType
 
     /**
      * @param array<string, mixed> $options
+     *
+     * @throws QueryException
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -35,7 +38,7 @@ class BailleurType extends AbstractType
                 'noselectionlabel' => 'Sélectionnez un ou plusieurs territoires à associer',
                 'nochoiceslabel' => 'Aucun territoire associable disponible',
                 'mapped' => false,
-                'choices' => $this->territoryRepository->findAllList(),
+                'choices' => $this->territoryRepository->findAllList(onlyActive: false),
                 'data' => $bailleur
                     ->getBailleurTerritories()
                     ->map(static fn ($bt) => $bt->getTerritory())
