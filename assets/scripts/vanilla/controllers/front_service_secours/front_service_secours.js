@@ -2,6 +2,8 @@ import {
   attacheAutocompleteAddressEvent,
   initComponentAddress,
 } from '../../services/component/component_search_address';
+import { jsonResponseHandler } from '../../services/component/component_json_response_handler';
+
 import axios from 'axios';
 
 attachFormServiceSecoursEvent();
@@ -114,31 +116,22 @@ function initPickLocalisationButton() {
   const submitBtn = document.getElementById('fr-modal-pick-localisation-submit');
   if (submitBtn) {
     const form = submitBtn.form;
-    submitBtn.addEventListener('click', async (event) => {
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      const data = {
-        rnbId: document.getElementById('fr-modal-pick-localisation-rnb-id').value,
-        _token: document.getElementById('fr-modal-pick-localisation-token').value,
-      };
-      try {
-        const response = await fetch(form.action, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-        const result = await response.json();
-        console.log('Response from server:', result);
-        if (result.success) {
-          document.getElementById('service_secours_step2_rnbId').value = result.rnbId;
-          document.getElementById('service_secours_step2_lat').value = result.lat;
-          document.getElementById('service_secours_step2_lng').value = result.lng;
-          const modal = document.getElementById('fr-modal-pick-localisation');
-          if (modal) dsfr(modal).modal.conceal();
-        } else {
-          alert(result.message || result.response || 'Erreur.');
-        }
-      } catch (error) {
-        alert('Erreur réseau.');
+      const formData = new FormData(form);
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: JSON.stringify(Object.fromEntries(formData)),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const responseClone = response.clone();
+      const data = await response.json();
+
+      jsonResponseHandler(responseClone);
+      if (data.success) {
+        document.getElementById('service_secours_step2_lat').value = data.lat;
+        document.getElementById('service_secours_step2_lng').value = data.lng;
+        document.getElementById('service_secours_step2_rnbId').value = data.rnbId;
       }
     });
   }

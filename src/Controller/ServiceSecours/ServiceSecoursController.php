@@ -108,8 +108,8 @@ class ServiceSecoursController extends AbstractController
         methods: 'POST',
         defaults: ['_signed' => true]
     )]
-    public function setRnbId(
-        ServiceSecoursRoute $serviceSecoursRoute,
+    public function completeLocalisation(
+        ServiceSecoursRoute $serviceSecoursRoute, // Valide la route (slug/uuid/domaine)
         Request $request,
         RnbService $rnbService,
     ): JsonResponse {
@@ -119,13 +119,30 @@ class ServiceSecoursController extends AbstractController
         if (!$this->isCsrfTokenValid('service_secours_set_rnb', $token)) {
             $errorMsg = 'Token CSRF invalide, veuillez recharger la page';
 
-            return $this->json(['response' => $errorMsg, 'errors' => ['custom' => ['errors' => [$errorMsg]]]], Response::HTTP_BAD_REQUEST);
+            return $this->json([
+                'success' => false,
+                'stayOnPage' => true,
+                'flashMessages' => [
+                    [
+                        'type' => 'alert',
+                        'title' => 'Erreur',
+                        'message' => $errorMsg,
+                    ],
+                ],
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$rnbId) {
             return $this->json([
                 'success' => false,
-                'message' => 'RNB ID manquant',
+                'stayOnPage' => true,
+                'flashMessages' => [
+                    [
+                        'type' => 'alert',
+                        'title' => 'Erreur',
+                        'message' => 'RNB ID manquant ou bâtiment non trouvé.',
+                    ],
+                ],
             ], Response::HTTP_BAD_REQUEST);
         }
 
@@ -133,15 +150,31 @@ class ServiceSecoursController extends AbstractController
         if (!$building) {
             return $this->json([
                 'success' => false,
-                'message' => 'Bâtiment introuvable',
+                'stayOnPage' => true,
+                'flashMessages' => [
+                    [
+                        'type' => 'alert',
+                        'title' => 'Erreur',
+                        'message' => 'Bâtiment introuvable.',
+                    ],
+                ],
             ], Response::HTTP_NOT_FOUND);
         }
 
         return $this->json([
             'success' => true,
-            'rnbId' => $building->getRnbId(),
+            'stayOnPage' => true,
+            'closeModal' => true,
             'lat' => $building->getLat(),
             'lng' => $building->getLng(),
+            'rnbId' => $building->getRnbId(),
+            'flashMessages' => [
+                [
+                    'type' => 'success',
+                    'title' => 'Succès',
+                    'message' => 'Bâtiment sélectionné avec succès.',
+                ],
+            ],
         ]);
     }
 
