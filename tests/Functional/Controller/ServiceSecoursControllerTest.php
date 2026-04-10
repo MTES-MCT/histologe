@@ -7,13 +7,19 @@ use App\Entity\Enum\EtageType;
 use App\Entity\ServiceSecoursRoute;
 use App\Repository\ServiceSecoursRouteRepository;
 use App\Repository\SignalementRepository;
+use App\Service\Gouv\Rnb\Response\RnbBuilding;
+use App\Service\Gouv\Rnb\RnbService;
+use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class ServiceSecoursControllerTest extends WebTestCase
 {
+    use SessionHelper;
+
     public function testRoutes(): void
     {
         $client = static::createClient();
@@ -232,6 +238,7 @@ class ServiceSecoursControllerTest extends WebTestCase
             'service_secours[step2][cpOccupant]' => '44850',
             'service_secours[step2][villeOccupant]' => 'Saint-Mars-du-Désert',
             'service_secours[step2][inseeOccupant]' => '44179',
+            'service_secours[step2][rnbId]' => 'plop',
             'service_secours[step2][adresseAutreOccupant]' => 'Bâtiment A',
             'service_secours[step2][isLogementSocial]' => $isLogementSocial,
             'service_secours[step2][natureLogement]' => 'appartement',
@@ -307,5 +314,62 @@ class ServiceSecoursControllerTest extends WebTestCase
     {
         $form = $crawler->selectButton('Valider le signalement')->form();
         $client->submit($form);
+    }
+
+    public function testCompleteLocalisation(): void
+    {
+        $client = static::createClient();
+        $serviceSecoursRoute = $this->getServiceSecoursRoute();
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+
+        $router->getContext()->setHost('service-secours.localhost');
+        $router->getContext()->setScheme('http');
+        $router->getContext()->setHttpPort(8080);
+
+        $unsignedUrl = $router->generate(
+            'service_secours_complete_localisation',
+            [
+                'slug' => $serviceSecoursRoute->getSlug(),
+                'uuid' => $serviceSecoursRoute->getUuid(),
+                'domain' => 'localhost',
+            ],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        $urlSigner = self::getContainer()->get('url_signer.signer');
+        $url = $urlSigner->sign($unsignedUrl, new \DateTimeImmutable('+1 hour'));
+
+        $client->setServerParameters([
+            'HTTP_HOST' => 'service-secours.localhost',
+            'SERVER_PORT' => 8080,
+        ]);
+
+        $rnbService = $this->createMock(RnbService::class);
+        $building = new RnbBuilding([
+            'rnb_id' => 'RNB123',
+            'point' => [
+                'coordinates' => [-1.456, 47.123],
+            ],
+        ]);
+        $rnbService->method('getBuilding')->willReturn($building);
+
+        static::getContainer()->set(RnbService::class, $rnbService);
+        $client->request('POST', $url, [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], (string) json_encode([
+            'rnbId' => 'RNB123',
+            '_token' => $this->generateCsrfToken($client, 'service_secours_set_rnb'),
+        ]));
+
+        $this->assertResponseIsSuccessful();
+
+        $data = json_decode((string) $client->getResponse()->getContent(), true);
+
+        $this->assertTrue($data['success']);
+        $this->assertSame(47.123, $data['lat']);
+        $this->assertSame(-1.456, $data['lng']);
+        $this->assertSame('RNB123', $data['rnbId']);
     }
 }

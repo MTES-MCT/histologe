@@ -65,7 +65,7 @@ class AdresseOccupantValidator extends ConstraintValidator
 
             if ($value instanceof FormServiceSecoursStep2) {
                 if (empty($value->rnbId)) {
-                    $this->context->buildViolation('Veuillez sélectionner un bâtiment sur la carte.')
+                    $this->context->buildViolation($constraint->messageRnbId)
                         ->atPath('adresseCompleteOccupant')
                         ->addViolation();
                     $hasViolation = true;
