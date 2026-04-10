@@ -6,6 +6,7 @@
     "require": {
         "php": "~8.4",
         "ext-sodium": "*",
+        "ext-imagick": "*",
         "beberlei/doctrineextensions": "^1.3",
         "codercat/jwk-to-pem": "^1.1",
         "composer/package-versions-deprecated": "1.11.99.4",

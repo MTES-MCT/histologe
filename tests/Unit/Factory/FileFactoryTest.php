@@ -6,8 +6,11 @@ use App\Entity\Enum\DocumentType;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Factory\FileFactory;
+use App\Service\Files\ImageVariantProvider;
 use App\Tests\FixturesHelper;
+use Intervention\Image\ImageManager;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class FileFactoryTest extends TestCase
 {
@@ -15,7 +18,11 @@ class FileFactoryTest extends TestCase
 
     public function testCreateInstance(): void
     {
-        $file = (new FileFactory())->createInstanceFrom(
+        $file = (new FileFactory(
+            $this->createMock(ImageManager::class),
+            $this->createMock(ImageVariantProvider::class),
+            $this->createMock(LoggerInterface::class)
+        ))->createInstanceFrom(
             'sample-123.jpg',
             'sample.jpg',
             $this->getSignalement(),
@@ -43,7 +50,11 @@ class FileFactoryTest extends TestCase
         DocumentType $documentType,
     ): void {
         $signalement = $this->getSignalement();
-        $file = (new FileFactory())->createFromFileArray($dataItem, $signalement);
+        $file = (new FileFactory(
+            $this->createMock(ImageManager::class),
+            $this->createMock(ImageVariantProvider::class),
+            $this->createMock(LoggerInterface::class)
+        ))->createFromFileArray($dataItem, $signalement);
 
         $this->assertEquals($isTypeDocument, $file->isTypeDocument());
         $this->assertEquals($documentType, $file->getDocumentType());
