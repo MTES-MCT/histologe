@@ -16,6 +16,7 @@ export function jsonResponseHandler(response) {
 }
 
 export function jsonResponseProcess(response) {
+  console.log('JSON Response:', response);
   if (response.redirect) {
     const targetUrl = new URL(response.url, window.location.origin);
     const currentUrl = new URL(window.location.href);

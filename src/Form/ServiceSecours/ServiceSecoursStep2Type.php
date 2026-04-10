@@ -61,6 +61,15 @@ class ServiceSecoursStep2Type extends AbstractType
                     'data-autocomplete-insee' => 'true',
                 ],
             ])
+            ->add('rnbId', HiddenType::class, [
+                'required' => false,
+            ])
+            ->add('lat', HiddenType::class, [
+                'required' => false,
+            ])
+            ->add('lng', HiddenType::class, [
+                'required' => false,
+            ])
 
             ->add('adresseAutreOccupant', TextType::class, [
                 'label' => 'Complément d\'adresse',

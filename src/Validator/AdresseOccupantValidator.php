@@ -39,6 +39,14 @@ class AdresseOccupantValidator extends ConstraintValidator
             // Si on est en mode adresse manuelle, tous les champs sont requis
             $hasViolation = false;
 
+            if ($value instanceof FormServiceSecoursStep2) {
+                if (empty($value->rnbId)) {
+                    $this->context->buildViolation('Veuillez sélectionner un bâtiment sur la carte.')
+                        ->atPath('adresseCompleteOccupant')
+                        ->addViolation();
+                    $hasViolation = true;
+                }
+            }
             if (empty($value->adresseOccupant)) {
                 $this->context
                     ->buildViolation($constraint->messageAdresse)

@@ -12,6 +12,7 @@ use App\Manager\UserManager;
 use App\Messenger\Message\SignalementServiceSecoursFileMessage;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\SignalementRepository;
+use App\Service\Gouv\Rnb\RnbService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -98,6 +99,49 @@ class ServiceSecoursController extends AbstractController
             'data' => $flow->getData(),
             'desordres' => $desordres,
             'serviceSecoursRoute' => $serviceSecoursRoute,
+        ]);
+    }
+
+    #[Route(
+        '/services-secours/{slug:serviceSecoursRoute}/{uuid:serviceSecoursRoute}/completer/localisation',
+        name: 'service_secours_complete_localisation',
+        methods: 'POST',
+        defaults: ['_signed' => true]
+    )]
+    public function setRnbId(
+        ServiceSecoursRoute $serviceSecoursRoute,
+        Request $request,
+        RnbService $rnbService,
+    ): JsonResponse {
+        $requestData = json_decode($request->getContent(), true);
+        $rnbId = $requestData['rnbId'] ?? null;
+        $token = $requestData['_token'] ?? null;
+        if (!$this->isCsrfTokenValid('service_secours_set_rnb', $token)) {
+            $errorMsg = 'Token CSRF invalide, veuillez recharger la page';
+
+            return $this->json(['response' => $errorMsg, 'errors' => ['custom' => ['errors' => [$errorMsg]]]], Response::HTTP_BAD_REQUEST);
+        }
+
+        if (!$rnbId) {
+            return $this->json([
+                'success' => false,
+                'message' => 'RNB ID manquant',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $building = $rnbService->getBuilding($rnbId);
+        if (!$building) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Bâtiment introuvable',
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json([
+            'success' => true,
+            'rnbId' => $building->getRnbId(),
+            'lat' => $building->getLat(),
+            'lng' => $building->getLng(),
         ]);
     }
 

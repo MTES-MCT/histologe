@@ -81,6 +81,67 @@ function attachFormServiceSecoursEvent() {
 
   initDesordresAutreToggle();
   initUploadPhotos();
+  initPickLocalisationButton();
+}
+
+function initPickLocalisationButton() {
+  const adresseInput = document.querySelector('#service_secours_step2_adresseOccupant');
+  const cpInput = document.querySelector('#service_secours_step2_cpOccupant');
+  const pickButton = document.querySelector('.btn-pick-localisation');
+  const modal = document.querySelector('#fr-modal-pick-localisation');
+
+  if (!adresseInput || !cpInput || !pickButton || !modal) {
+    return;
+  }
+
+  function updatePickButton() {
+    const address = adresseInput.value.trim();
+    const postcode = cpInput.value.trim();
+    if (address && postcode) {
+      pickButton.classList.remove('fr-hidden');
+      modal.setAttribute('data-address', address);
+      modal.setAttribute('data-postcode', postcode);
+    } else {
+      pickButton.classList.add('fr-hidden');
+    }
+  }
+
+  adresseInput.addEventListener('input', updatePickButton);
+  cpInput.addEventListener('input', updatePickButton);
+
+  updatePickButton();
+
+  const submitBtn = document.getElementById('fr-modal-pick-localisation-submit');
+  if (submitBtn) {
+    const form = submitBtn.form;
+    submitBtn.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const data = {
+        rnbId: document.getElementById('fr-modal-pick-localisation-rnb-id').value,
+        _token: document.getElementById('fr-modal-pick-localisation-token').value,
+      };
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const result = await response.json();
+        console.log('Response from server:', result);
+        if (result.success) {
+          document.getElementById('service_secours_step2_rnbId').value = result.rnbId;
+          document.getElementById('service_secours_step2_lat').value = result.lat;
+          document.getElementById('service_secours_step2_lng').value = result.lng;
+          const modal = document.getElementById('fr-modal-pick-localisation');
+          if (modal) dsfr(modal).modal.conceal();
+        } else {
+          alert(result.message || result.response || 'Erreur.');
+        }
+      } catch (error) {
+        alert('Erreur réseau.');
+      }
+    });
+  }
 }
 
 function initUploadPhotos() {

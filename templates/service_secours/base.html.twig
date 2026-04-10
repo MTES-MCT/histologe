@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-device/icons-device.min.css') }}">
     <link rel="stylesheet" href={{ asset('build/app.css') }}>
     
+    {% block stylesheets %}{% endblock %}
+
     {% block customscripts %}
         {{ encore_entry_script_tags('app') }}
         {{ encore_entry_link_tags('app') }}
