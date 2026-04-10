@@ -14,7 +14,7 @@ use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\NotificationAndMailSender;
+use App\Service\Notification\NotificationAndMailSender;
 use Doctrine\ORM\EntityManagerInterface;
 
 class VisiteNotifier

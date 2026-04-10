@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Controller\Webhook;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\EmailDeliveryIssueRepository;
-use App\Service\Sanitizer;
+use App\Utils\Sanitizer;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 

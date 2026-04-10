@@ -6,7 +6,7 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\SuiviCategory;
 use App\Repository\SuiviRepository;
-use App\Service\SuiviTransformerService;
+use App\Service\Signalement\Suivi\SuiviTransformerService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;

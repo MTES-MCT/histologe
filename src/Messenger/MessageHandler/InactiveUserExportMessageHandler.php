@@ -4,7 +4,7 @@ namespace App\Messenger\MessageHandler;
 
 use App\Messenger\Message\InactiveUserExportMessage;
 use App\Repository\UserRepository;
-use App\Service\InactiveUserExportLoader;
+use App\Service\Export\InactiveUserExportLoader;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;

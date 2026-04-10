@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Controller\Api;
 use App\Entity\User;
 use App\Entity\UserApiPermission;
 use App\Repository\SignalementRepository;
-use App\Service\ImageManipulationHandler;
+use App\Service\Files\ImageManipulationHandler;
 use App\Service\UploadHandlerService;
 use App\Tests\ApiHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;

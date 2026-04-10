@@ -6,7 +6,7 @@ use App\Dto\RefusSignalement;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\File;
 use App\Form\Type\SearchCheckboxType;
-use App\Service\FileListService;
+use App\Service\Files\FileListService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;

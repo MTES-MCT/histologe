@@ -5,7 +5,7 @@ namespace App\Messenger\MessageHandler;
 use App\Entity\Enum\SignalementStatus;
 use App\Messenger\Message\SignalementDraftProcessMessage;
 use App\Repository\SignalementRepository;
-use App\Service\NotificationAndMailSender;
+use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\SignalementAddressUpdater;
 use Doctrine\ORM\EntityManagerInterface;

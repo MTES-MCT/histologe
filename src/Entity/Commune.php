@@ -5,7 +5,7 @@ namespace App\Entity;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Repository\CommuneRepository;
-use App\Utils\ImportCommune;
+use App\Utils\Address\ImportCommune;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\UniqueConstraint;
 

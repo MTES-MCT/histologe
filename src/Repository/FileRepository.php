@@ -7,7 +7,7 @@ use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Service\FileVisibilityService;
+use App\Service\Files\FileVisibilityService;
 use App\Service\ListFilters\SearchTerritoryFiles;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;

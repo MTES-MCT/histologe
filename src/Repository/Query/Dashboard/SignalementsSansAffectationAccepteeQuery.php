@@ -5,7 +5,7 @@ namespace App\Repository\Query\Dashboard;
 use App\Entity\User;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabQueryParameters;
-use App\Utils\CommuneHelper;
+use App\Utils\Address\CommuneHelper;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 

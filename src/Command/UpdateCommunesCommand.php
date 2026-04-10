@@ -6,7 +6,7 @@ use App\Entity\Commune;
 use App\Factory\CommuneFactory;
 use App\Service\Import\CsvParser;
 use App\Service\Signalement\ZipcodeProvider;
-use App\Utils\ImportCommune;
+use App\Utils\Address\ImportCommune;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

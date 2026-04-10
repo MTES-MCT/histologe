@@ -5,7 +5,7 @@ namespace App\Tests\Unit\Entity;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\SignalementDraft;
-use App\Utils\AddressParser;
+use App\Utils\Address\AddressParser;
 use PHPUnit\Framework\TestCase;
 
 class SignalementDraftTest extends TestCase

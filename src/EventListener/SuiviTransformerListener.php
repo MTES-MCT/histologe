@@ -3,7 +3,7 @@
 namespace App\EventListener;
 
 use App\Entity\Suivi;
-use App\Service\SuiviTransformerService;
+use App\Service\Signalement\Suivi\SuiviTransformerService;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Events;

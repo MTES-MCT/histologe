@@ -3,7 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Event\AffectationCreatedEvent;
-use App\Service\NotificationAndMailSender;
+use App\Service\Notification\NotificationAndMailSender;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AffectationCreatedSubscriber implements EventSubscriberInterface

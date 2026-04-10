@@ -27,7 +27,7 @@ use App\Service\ListFilters\SearchSignalementInjonction;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Service\Statistics\CriticitePercentStatisticProvider;
-use App\Utils\CommuneHelper;
+use App\Utils\Address\CommuneHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

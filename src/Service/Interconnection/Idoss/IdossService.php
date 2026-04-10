@@ -10,7 +10,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\Idoss\DossierMessage;
-use App\Service\ImageManipulationHandler;
+use App\Service\Files\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use Psr\Log\LoggerInterface;

@@ -4,7 +4,7 @@ namespace App\Dto\Request\Signalement;
 
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\SignalementStatus;
-use App\Service\UrlHelper;
+use App\Utils\UrlHelper;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SignalementSearchQuery

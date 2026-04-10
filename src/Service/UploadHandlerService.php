@@ -8,6 +8,7 @@ use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
 use App\Repository\FileRepository;
 use App\Service\Files\FilenameGenerator;
+use App\Service\Files\ImageManipulationHandler;
 use App\Service\Files\TmpFileWriter;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;

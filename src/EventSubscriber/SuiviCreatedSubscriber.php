@@ -6,7 +6,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\SuiviCreatedEvent;
-use App\Service\NotificationAndMailSender;
+use App\Service\Notification\NotificationAndMailSender;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SuiviCreatedSubscriber implements EventSubscriberInterface

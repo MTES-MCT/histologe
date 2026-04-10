@@ -4,11 +4,11 @@ namespace App\Messenger\MessageHandler;
 
 use App\Messenger\Message\UserExportMessage;
 use App\Repository\UserRepository;
+use App\Service\Export\UserExportLoader;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\TimezoneProvider;
-use App\Service\UserExportLoader;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Psr\Log\LoggerInterface;

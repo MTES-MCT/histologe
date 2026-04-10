@@ -4,7 +4,7 @@ namespace App\Tests\Unit\Service\Signalement;
 
 use App\Factory\FileFactory;
 use App\Service\Files\FilenameGenerator;
-use App\Service\ImageManipulationHandler;
+use App\Service\Files\ImageManipulationHandler;
 use App\Service\Security\FileScanner;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;

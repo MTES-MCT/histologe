@@ -2,7 +2,7 @@
 
 namespace App\Validator;
 
-use App\Service\Sanitizer;
+use App\Utils\Sanitizer;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;

@@ -2,9 +2,9 @@
 
 namespace App\Tests\Unit\Service\Files;
 
+use App\Service\Files\ImageManipulationHandler;
 use App\Service\Files\ImageVariantProvider;
 use App\Service\Files\TmpFileWriter;
-use App\Service\ImageManipulationHandler;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
