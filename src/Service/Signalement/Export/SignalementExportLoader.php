@@ -42,48 +42,53 @@ readonly class SignalementExportLoader
 
         $rowIndex = 2;
         $hasFormattedDateColumns = false;
-        foreach ($this->getDataChunks($user, $filters) as $chunk) {
-            foreach ($chunk as $signalementExportItem) {
-                $rowArray = get_object_vars($signalementExportItem);
+        $counter = 0;
+        foreach ($this->signalementManager->findSignalementAffectationIterable($user, $filters, $selectedColumns) as $signalementExportItem) {
+            $rowArray = get_object_vars($signalementExportItem);
 
-                foreach ($keysToRemove as $index) {
-                    unset($rowArray[$index]);
+            $rowKeys = array_keys($rowArray);
+            foreach ($keysToRemove as $numericIndex) {
+                if (isset($rowKeys[$numericIndex])) {
+                    unset($rowArray[$rowKeys[$numericIndex]]);
                 }
-
-                if (ListExportMessage::FORMAT_XLSX === $format) {
-                    foreach (self::DATE_COLUMNS as $key) {
-                        if (!empty($rowArray[$key])) {
-                            $dateTime = \DateTimeImmutable::createFromFormat('d/m/Y', $rowArray[$key]);
-                            if ($dateTime) {
-                                $rowArray[$key] = ExcelDate::PHPToExcel($dateTime);
-                            }
-                        }
-                    }
-
-                    if (!$hasFormattedDateColumns) {
-                        $keys = array_keys($rowArray);
-                        foreach (self::DATE_COLUMNS as $key) {
-                            if (($i = array_search($key, $keys, true)) !== false) {
-                                $columnIndex = Coordinate::stringFromColumnIndex($i + 1);
-                                $sheet->getStyle($columnIndex)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DDMMYYYY);
-                            }
-                        }
-                        $hasFormattedDateColumns = true;
-                    }
-                }
-
-                $sheet->fromArray([$rowArray], null, 'A'.$rowIndex++);
             }
 
-            $spreadsheet->garbageCollect();
+            if (ListExportMessage::FORMAT_XLSX === $format) {
+                foreach (self::DATE_COLUMNS as $key) {
+                    if (!empty($rowArray[$key])) {
+                        $dateTime = \DateTimeImmutable::createFromFormat('d/m/Y', $rowArray[$key]);
+                        if ($dateTime) {
+                            $rowArray[$key] = ExcelDate::PHPToExcel($dateTime);
+                        }
+                    }
+                }
+
+                if (!$hasFormattedDateColumns) {
+                    $keys = array_keys($rowArray);
+                    foreach (self::DATE_COLUMNS as $key) {
+                        if (($i = array_search($key, $keys, true)) !== false) {
+                            $columnIndex = Coordinate::stringFromColumnIndex($i + 1);
+                            $sheet->getStyle($columnIndex)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DDMMYYYY);
+                        }
+                    }
+                    $hasFormattedDateColumns = true;
+                }
+            }
+
+            $sheet->fromArray([$rowArray], null, 'A'.$rowIndex++);
+
+            if (0 === ++$counter % self::CHUNK_SIZE) {
+                $spreadsheet->garbageCollect();
+            }
         }
+        $spreadsheet->garbageCollect();
 
         return $spreadsheet;
     }
 
     /**
      * @param array<string> $headers
-     * @param array<string> $keysToRemove
+     * @param array<int>    $keysToRemove
      * @param array<string> $selectedColumns
      *
      * @return array<string>
@@ -95,14 +100,20 @@ readonly class SignalementExportLoader
             $searchSelectedCol = array_search($columnIndex, $selectedColumns);
             // Unchecked col: delete from list
             if (false === $searchSelectedCol) {
-                if ('geoloc' === $selectableColumn['export']) {
-                    $this->removeColFromHeaders('Longitude', $headers);
-                    $keysToRemove[] = 'longitude';
-                    $this->removeColFromHeaders('Latitude', $headers);
-                    $keysToRemove[] = 'latitude';
+                if ('s.geoloc' === $selectableColumn['export']) {
+                    $lonIndex = $this->removeColFromHeaders('Longitude', $headers);
+                    if (false !== $lonIndex) {
+                        $keysToRemove[] = $lonIndex;
+                    }
+                    $latIndex = $this->removeColFromHeaders('Latitude', $headers);
+                    if (false !== $latIndex) {
+                        $keysToRemove[] = $latIndex;
+                    }
                 } else {
-                    $this->removeColFromHeaders($selectableColumn['name'], $headers);
-                    $keysToRemove[] = $selectableColumn['export'];
+                    $colIndex = $this->removeColFromHeaders($selectableColumn['name'], $headers);
+                    if (false !== $colIndex) {
+                        $keysToRemove[] = $colIndex;
+                    }
                 }
             }
         }
@@ -113,37 +124,15 @@ readonly class SignalementExportLoader
     /**
      * @param array<string> $headers
      */
-    private function removeColFromHeaders(string $colName, array &$headers): void
+    private function removeColFromHeaders(string $colName, array &$headers): int|false
     {
         $indexToUnset = array_search($colName, $headers);
         if (false !== $indexToUnset && isset($headers[$indexToUnset])) {
             unset($headers[$indexToUnset]);
-        }
-    }
 
-    /**
-     * @param ?array<string> $filters
-     *
-     * @throws Exception
-     */
-    private function getDataChunks(User $user, ?array $filters): \Generator
-    {
-        $data = [];
-        $counter = 0;
-
-        foreach ($this->signalementManager->findSignalementAffectationIterable($user, $filters) as $row) {
-            $data[] = $row;
-            ++$counter;
-
-            if ($counter >= self::CHUNK_SIZE) {
-                yield $data; // return chunk by chunk
-                $data = [];
-                $counter = 0;
-            }
+            return $indexToUnset;
         }
 
-        if (!empty($data)) {
-            yield $data; // return the last chunk
-        }
+        return false;
     }
 }
