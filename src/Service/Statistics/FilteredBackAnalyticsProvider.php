@@ -3,12 +3,12 @@
 namespace App\Service\Statistics;
 
 use App\Dto\StatisticsFilters;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Statistics\FilteredStatisticsQuery;
 
 class FilteredBackAnalyticsProvider
 {
     public function __construct(
-        private SignalementRepository $signalementRepository,
+        private FilteredStatisticsQuery $filteredStatisticsQuery,
         private MonthStatisticProvider $monthStatisticProvider,
         private PartenaireStatisticProvider $partenaireStatisticProvider,
         private SituationStatisticProvider $situationStatisticProvider,
@@ -42,12 +42,12 @@ class FilteredBackAnalyticsProvider
 
     private function getCountSignalementData(StatisticsFilters $statisticsFilters): int
     {
-        return $this->signalementRepository->countFiltered($statisticsFilters);
+        return $this->filteredStatisticsQuery->countFiltered($statisticsFilters);
     }
 
     private function getAverageCriticiteData(StatisticsFilters $statisticsFilters): float
     {
-        $data = $this->signalementRepository->getAverageCriticiteFiltered($statisticsFilters);
+        $data = $this->filteredStatisticsQuery->getAverageCriticiteFiltered($statisticsFilters);
         if (empty($data)) {
             $data = 0;
         }

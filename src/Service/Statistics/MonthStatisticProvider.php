@@ -4,7 +4,7 @@ namespace App\Service\Statistics;
 
 use App\Dto\StatisticsFilters;
 use App\Entity\Territory;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Statistics\MonthStatisticsQuery;
 
 class MonthStatisticProvider
 {
@@ -13,7 +13,7 @@ class MonthStatisticProvider
      */
     private const array MONTH_NAMES = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
-    public function __construct(private SignalementRepository $signalementRepository)
+    public function __construct(private MonthStatisticsQuery $monthStatisticsQuery)
     {
     }
 
@@ -22,7 +22,7 @@ class MonthStatisticProvider
      */
     public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
-        $countPerMonths = $this->signalementRepository->countByMonthFiltered($statisticsFilters);
+        $countPerMonths = $this->monthStatisticsQuery->countByMonthFiltered($statisticsFilters);
 
         return $this->createFullArray($countPerMonths);
     }
@@ -32,7 +32,7 @@ class MonthStatisticProvider
      */
     public function getData(?Territory $territory, ?int $year): array
     {
-        $countPerMonths = $this->signalementRepository->countByMonth($territory, $year, true);
+        $countPerMonths = $this->monthStatisticsQuery->countByMonth($territory, $year, true);
 
         return $this->createFullArray($countPerMonths);
     }

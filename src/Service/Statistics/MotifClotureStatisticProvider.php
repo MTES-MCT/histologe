@@ -4,11 +4,11 @@ namespace App\Service\Statistics;
 
 use App\Dto\StatisticsFilters;
 use App\Entity\Territory;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Statistics\MotifClotureStatisticsQuery;
 
 class MotifClotureStatisticProvider
 {
-    public function __construct(private SignalementRepository $signalementRepository)
+    public function __construct(private MotifClotureStatisticsQuery $motifClotureStatisticsQuery)
     {
     }
 
@@ -17,7 +17,7 @@ class MotifClotureStatisticProvider
      */
     public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
-        $countPerMotifsCloture = $this->signalementRepository->countByMotifClotureFiltered($statisticsFilters);
+        $countPerMotifsCloture = $this->motifClotureStatisticsQuery->countByMotifClotureFiltered($statisticsFilters);
 
         return $this->createFullArray($countPerMotifsCloture);
     }
@@ -30,7 +30,7 @@ class MotifClotureStatisticProvider
         ?int $year,
         string $type = 'doughnut',
     ): array {
-        $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture($territory, $year, true);
+        $countPerMotifsCloture = $this->motifClotureStatisticsQuery->countByMotifCloture($territory, $year, true);
 
         if ('doughnut' === $type) {
             return $this->createFullArray($countPerMotifsCloture);

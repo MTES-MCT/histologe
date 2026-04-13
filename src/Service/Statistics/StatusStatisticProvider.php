@@ -5,12 +5,15 @@ namespace App\Service\Statistics;
 use App\Dto\StatisticsFilters;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Territory;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Statistics\GlobalStatisticsQuery;
+use App\Repository\Query\Statistics\StatusStatisticsQuery;
 
 class StatusStatisticProvider
 {
-    public function __construct(private SignalementRepository $signalementRepository)
-    {
+    public function __construct(
+        private StatusStatisticsQuery $statusStatisticsQuery,
+        private GlobalStatisticsQuery $globalStatisticsQuery,
+    ) {
     }
 
     /**
@@ -18,7 +21,7 @@ class StatusStatisticProvider
      */
     public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
-        $countPerSituations = $this->signalementRepository->countByStatusFiltered($statisticsFilters);
+        $countPerSituations = $this->statusStatisticsQuery->countByStatusFiltered($statisticsFilters);
 
         return $this->createFullArray($countPerSituations);
     }
@@ -33,7 +36,7 @@ class StatusStatisticProvider
         if ($territory) {
             $territories[(int) $territory->getId()] = $territory;
         }
-        $countPerStatuses = $this->signalementRepository->countByStatus(
+        $countPerStatuses = $this->globalStatisticsQuery->countByStatus(
             territories: $territories,
             partners: null,
             year: $year,

@@ -150,6 +150,30 @@ Ce guide détaille les 9 contextes où un champ doit potentiellement être ajout
 - [ ] Lister les index importants pour les performances
 - [ ] Documenter les tables principales et leurs relations
 
+### Organisation des Repositories
+
+Les repositories Doctrine sont progressivement réorganisés pour séparer les responsabilités :
+
+**Principe général :**
+- Les méthodes de Repository doivent retourner des **entités** ou des collections d'entités
+- Les méthodes qui retournent des **données agrégées** (comptages, moyennes, statistiques) doivent être déplacées dans des **Query Services** dans `src/Repository/Query/`
+
+**Structure de `src/Repository/Query/` :**
+```
+src/Repository/Query/
+├── Dashboard/          # Requêtes pour le tableau de bord
+├── EmailAlert/         # Requêtes pour les alertes email
+├── SignalementList/    # Requêtes pour les listes de signalements
+└── Statistics/         # Requêtes pour les statistiques (nouveau)
+```
+
+**Pattern des Query Services :**
+- Namespace : `App\Repository\Query\{Domain}\`
+- Injection : `EntityManagerInterface` (pas de Repository)
+- Méthodes : retournent des données brutes (int, array, float, etc.)
+- Nommage : suffixe `Query` (ex: `StatisticsCountQuery`)
+```
+
 ## Commandes utiles
 
 ### Développement local
