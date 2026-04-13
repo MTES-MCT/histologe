@@ -18,7 +18,7 @@ install-scalingo-cli
 
 # Install additional tools to interact with the database:
 echo ">>> Install additional tools to interact with the database"
-dbclient-fetcher mysql 8.0
+dbclient-fetcher mysql 8.4
 
 # Login to Scalingo, using the token stored in `DUPLICATE_API_TOKEN`:
 echo ">>> Login to Scalingo"
