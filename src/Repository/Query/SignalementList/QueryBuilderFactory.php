@@ -11,7 +11,6 @@ use App\Repository\Query\Dashboard\DossiersAvecRelanceSansReponseQuery;
 use App\Repository\Query\Dashboard\DossiersQuery;
 use App\Repository\Query\Dashboard\DossiersSansSuivisPartenaireQuery;
 use App\Repository\Query\Dashboard\DossiersUndeliverableEmailQuery;
-use App\Repository\SignalementRepository;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use App\Service\Signalement\SearchFilter;
 use Doctrine\DBAL\Exception;
@@ -35,47 +34,17 @@ readonly class QueryBuilderFactory
      *
      * @throws Exception
      */
-    public function create(User $user, array $options = []): QueryBuilder
+    public function create(User $user, array $options = [], bool $withSelectedData = true): QueryBuilder
     {
         $qb = $this->em->createQueryBuilder()->from(Signalement::class, 's');
 
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->em->getRepository(Signalement::class);
-        $qb->select('
-            DISTINCT s.id,
-            s.uuid,
-            s.reference,
-            s.referenceInjonction,
-            s.createdAt,
-            s.statut,
-            s.score,
-            s.isNotOccupant,
-            s.nomOccupant,
-            s.prenomOccupant,
-            s.adresseOccupant,
-            s.cpOccupant,
-            s.villeOccupant,
-            s.lastSuiviAt,
-            s.lastSuiviBy,
-            s.lastSuiviIsPublic,
-            s.profileDeclarant,
-            s.isLogementSocial,
-            territory.id as territoryId,
-            GROUP_CONCAT(DISTINCT CONCAT(p.nom, :concat_separator, a.statut) SEPARATOR :group_concat_separator) as rawAffectations,
-            GROUP_CONCAT(DISTINCT p.nom SEPARATOR :group_concat_separator) as affectationPartnerName,
-            GROUP_CONCAT(DISTINCT a.statut SEPARATOR :group_concat_separator) as affectationStatus,
-            GROUP_CONCAT(DISTINCT sq.qualification SEPARATOR :group_concat_separator) as qualifications,
-            GROUP_CONCAT(DISTINCT sq.status SEPARATOR :group_concat_separator) as qualificationsStatuses,
-            GROUP_CONCAT(DISTINCT i.concludeProcedure ORDER BY i.scheduledAt DESC SEPARATOR :group_concat_separator) as conclusionsProcedure')
-            ->leftJoin('s.affectations', 'a')
-            ->leftJoin('a.partner', 'p')
-            ->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'')
-            ->leftJoin('s.interventions', 'i', 'WITH', 'i.type LIKE \'VISITE\' OR i.type LIKE \'ARRETE_PREFECTORAL\'')
-            ->leftJoin('s.territory', 'territory')
-            ->where('s.statut NOT IN (:statusList)')
-            ->groupBy('s.id')
-            ->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT)
-            ->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
+        $qb->select('s.id');
+        $qb->leftJoin('s.affectations', 'a');
+        $qb->groupBy('s.id');
+        if ($withSelectedData) {
+            $this->addDataSelect($qb);
+        }
+        $qb->where('s.statut NOT IN (:statusList)');
 
         if ($user->isTerritoryAdmin()) {
             if (empty($options['territories'])) {
@@ -141,6 +110,66 @@ readonly class QueryBuilderFactory
                 ->setParameter('signalement_uuids', $signalementUuids);
         }
 
+        $this->applySort($qb, $options);
+
+        return $qb;
+    }
+
+    /**
+     * @param array<int> $ids
+     */
+    public function createForIds(array $ids, array $options = []): QueryBuilder
+    {
+        $qb = $this->em->createQueryBuilder()->from(Signalement::class, 's');
+
+        $qb->select('s.id');
+        $qb->leftJoin('s.affectations', 'a');
+        $qb->groupBy('s.id');
+        $this->addDataSelect($qb);
+
+        $qb->where('s.id IN (:ids)')->setParameter('ids', $ids);
+
+        $this->applySort($qb, $options);
+
+        return $qb;
+    }
+
+    private function addDataSelect(QueryBuilder $qb): void
+    {
+        $qb->addSelect('
+            s.statut,
+            s.reference,
+            s.referenceInjonction,
+            s.nomOccupant,
+            s.prenomOccupant,
+            s.adresseOccupant,
+            s.cpOccupant,
+            s.villeOccupant,
+            s.isLogementSocial,
+            s.createdAt,
+            s.profileDeclarant,
+            GROUP_CONCAT(DISTINCT sq.qualification SEPARATOR :group_concat_separator) as qualifications,
+            GROUP_CONCAT(DISTINCT sq.status SEPARATOR :group_concat_separator) as qualificationsStatuses,
+            GROUP_CONCAT(DISTINCT i.concludeProcedure ORDER BY i.scheduledAt DESC SEPARATOR :group_concat_separator) as conclusionsProcedure,
+            GROUP_CONCAT(DISTINCT CONCAT(p.nom, :concat_separator, a.statut) SEPARATOR :group_concat_separator) as rawAffectations,
+            s.lastSuiviBy,
+            s.lastSuiviAt,
+            s.lastSuiviIsPublic,
+            s.uuid,
+            IDENTITY(s.territory) as territoryId
+            ');
+        $qb->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'');
+        $qb->leftJoin('s.interventions', 'i', 'WITH', 'i.type LIKE \'VISITE\' OR i.type LIKE \'ARRETE_PREFECTORAL\'');
+        $qb->leftJoin('a.partner', 'p');
+        $qb->setParameter('concat_separator', SignalementAffectationListView::SEPARATOR_CONCAT);
+        $qb->setParameter('group_concat_separator', SignalementAffectationListView::SEPARATOR_GROUP_CONCAT);
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    private function applySort(QueryBuilder $qb, array $options): void
+    {
         if (isset($options['sortBy'])) {
             switch ($options['sortBy']) {
                 case 'reference':
@@ -166,7 +195,5 @@ readonly class QueryBuilderFactory
         } else {
             $qb->orderBy('s.createdAt', 'DESC');
         }
-
-        return $qb;
     }
 }
