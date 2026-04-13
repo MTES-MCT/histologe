@@ -81,8 +81,6 @@ services:
     image: wiremock/wiremock:3x-alpine
     container_name: signal_logement_wiremock
     command: [ "--extensions", "org.wiremock.webhooks.Webhooks" ]
-    profiles:
-      - full
     ports:
       - "8082:8080"
     volumes:
@@ -96,7 +94,6 @@ services:
     image: clamav/clamav
     container_name: signal_logement_clamav
     profiles:
-      - clamav
       - full
     ports:
       - "3310:3310"

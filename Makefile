@@ -27,24 +27,19 @@ help:
 build: ## Install local environment (use SKIP_NPM_BUILD=1 to skip npm-build step)
 	@if [ "$(SKIP_NPM_BUILD)" = "1" ]; then \
 		echo "Skipping npm-build step"; \
-		bash -l -c 'make .check .env .destroy .setup run-all-services .sleep composer create-db create-db-test npm-ci mock-stop mock-start'; \
+		bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db create-db-test npm-ci mock-stop mock-start'; \
 	else \
-		bash -l -c 'make .check .env .destroy .setup run-all-services .sleep composer create-db create-db-test npm-ci npm-build mock-stop mock-start'; \
+		bash -l -c 'make .check .env .destroy .setup run .sleep composer create-db create-db-test npm-ci npm-build mock-stop mock-start'; \
 	fi
 run: ## Start containers
 	@echo -e '\e[1;32mStart containers\032'
-	@bash -l -c '$(DOCKER_COMP) up -d'
+	@bash -l -c '$(DOCKER_COMP) --profile full up -d'
 	@echo -e '\e[1;32mContainers running\032'
 
-run-all-services: ## Full environment
+run-min: ## Minimum profile environment
 	@echo -e '\e[1;32mStart containers with all services\032'
-	@bash -l -c '$(DOCKER_COMP) --profile full up -d'
+	@bash -l -c '$(DOCKER_COMP) up -d'
 	@echo -e '\e[1;32mContainers running with all services\032'
-
-run-with-clamav: ## Start containers with Clamav
-	@echo -e '\e[1;32mStart containers with Clamav\032'
-	@bash -l -c '$(DOCKER_COMP) --profile clamav up -d'
-	@echo -e '\e[1;32mContainers running (with Clamav)\032'
 
 down: ## Shutdown containers
 	@echo -e '\e[1;32mStop containers\032'
