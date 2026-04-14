@@ -33,17 +33,17 @@ build: ## Install local environment (use SKIP_NPM_BUILD=1 to skip npm-build step
 	fi
 run: ## Start containers
 	@echo -e '\e[1;32mStart containers\032'
-	@bash -l -c '$(DOCKER_COMP) up -d'
+	@bash -l -c '$(DOCKER_COMP) --profile full up -d'
 	@echo -e '\e[1;32mContainers running\032'
 
-run-with-clamav: ## Start containers with Clamav
-	@echo -e '\e[1;32mStart containers with Clamav\032'
-	@bash -l -c '$(DOCKER_COMP) --profile clamav up -d'
-	@echo -e '\e[1;32mContainers running (with Clamav)\032'
+run-min: ## Minimum profile environment
+	@echo -e '\e[1;32mStart containers with all services\032'
+	@bash -l -c '$(DOCKER_COMP) up -d'
+	@echo -e '\e[1;32mContainers running with all services\032'
 
 down: ## Shutdown containers
 	@echo -e '\e[1;32mStop containers\032'
-	@bash -l -c '$(DOCKER_COMP) --profile clamav down'
+	@bash -l -c '$(DOCKER_COMP) --profile full down'
 	@echo -e '\e[1;32mContainers stopped\032'
 
 sh: ## Log to phpfpm container
@@ -76,6 +76,7 @@ worker-status:## Get status worker
 
 worker-start: ## Start worker
 	@echo -e '\e[1;32mStart worker\032'
+	@bash -l -c '$(DOCKER_COMP) up -d signal_logement_phpworker'
 	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_phpworker supervisorctl start all'
 
 worker-stop: ## Stop worker

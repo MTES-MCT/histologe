@@ -1,7 +1,7 @@
 # docker-compose.yml
 services:
   signal_logement_mysql:
-    image: 'mysql:8.0.45'
+    image: 'mysql:8.4.8'
     command: --max_allowed_packet=32505856
     container_name: signal_logement_mysql
     restart: always
@@ -10,9 +10,8 @@ services:
       MYSQL_DATABASE: signal_logement_db
       MYSQL_USER: signal_logement
       MYSQL_PASSWORD: signal_logement
-      MYSQL_TCP_PORT: 3307
     ports:
-      - 3307:3307
+      - "3307:3306"
     volumes:
       - dbdata:/var/lib/mysql
       - ./.docker/mysql:/docker-entrypoint-initdb.d
@@ -25,17 +24,15 @@ services:
     container_name: signal_logement_phpmyadmin
     environment:
       PMA_HOST: signal_logement_mysql
-      PMA_PORT: 3307
+      PMA_PORT: 3306
       PMA_USER: signal_logement
       PMA_PASSWORD: signal_logement
     ports:
-      - 8081:80
+      - "8081:80"
 
   signal_logement_phpfpm:
     build: .docker/php-fpm
     container_name: signal_logement_phpfpm
-    depends_on:
-      - signal_logement_wiremock
     working_dir: /app
     environment:
       DATABASE_URL: ${DATABASE_URL}
@@ -49,6 +46,8 @@ services:
   signal_logement_phpworker:
     build: .docker/php-worker
     container_name: signal_logement_worker
+    profiles:
+      - full
     working_dir: /app
     environment:
       DATABASE_URL: ${DATABASE_URL}
@@ -69,35 +68,35 @@ services:
       - .:/app/
       - ./.scalingo/nginx/server.location:/etc/nginx/conf.d/server.location
     ports:
-      - 8080:80
+      - "8080:80"
 
   signal_logement_mailer:
     image: schickling/mailcatcher
     container_name: signal_logement_mailer
     ports:
-      - 1025:1025
-      - 1080:1080
+      - "1025:1025"
+      - "1080:1080"
 
   signal_logement_wiremock:
     image: wiremock/wiremock:3x-alpine
     container_name: signal_logement_wiremock
     command: [ "--extensions", "org.wiremock.webhooks.Webhooks" ]
     ports:
-      - 8082:8080
+      - "8082:8080"
     volumes:
       - .:/home/wiremock
 
   signal_logement_redis:
-    image: redis:7.2.9-alpine
+    image: redis:7.2.13-alpine
     container_name: signal_logement_redis
 
   signal_logement_clamav:
     image: clamav/clamav
     container_name: signal_logement_clamav
     profiles:
-      - clamav
+      - full
     ports:
-      - 3310:3310
+      - "3310:3310"
     volumes:
       - .:/app/
 

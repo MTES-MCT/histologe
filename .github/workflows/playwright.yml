@@ -10,7 +10,7 @@ env:
   APP_ENV: test
   APP_SECRET: test_secret_key_for_github_actions
   MAILER_DSN: smtp://signal_logement_mailer:1025
-  DATABASE_URL: mysql://signal_logement:signal_logement@signal_logement_mysql:3307/signal_logement_db
+  DATABASE_URL: mysql://signal_logement:signal_logement@signal_logement_mysql:3306/signal_logement_db
   CORS_ALLOW_ORIGIN: '^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$'
   WKHTMLTOPDF_PATH: wkhtmltopdf
   WKHTMLTOIMAGE_PATH: wkhtmltoimage
