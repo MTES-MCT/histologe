@@ -1,18 +1,18 @@
 <table>
     <tr>
-        <td class="fr-text--right">Transmis par : </td>
-        <th>{{ photo.uploadedBy.nomComplet ?? 'N/R' }}</th>
+        <th class="fr-text--right">Transmis par : </th>
+        <td>{{ photo.uploadedBy.nomComplet ?? 'N/R' }}</td>
     </tr>
     {% if photo.createdAt %}
         <tr>
-            <td class="fr-text--right">Transmis le : </td>
-            <th>{{ photo.createdAt|date('d/m/Y') }}</th>
+            <th class="fr-text--right">Transmis le : </th>
+            <td>{{ photo.createdAt|date('d/m/Y') }}</td>
         </tr>
     {% endif %}
     {% if photo.datePriseDeVue %}
         <tr>
-            <td class="fr-text--right">Pris le : </td>
-            <th>{{ photo.datePriseDeVue|date('d/m/Y') }}</th>
+            <th class="fr-text--right">Pris le : </th>
+            <td>{{ photo.datePriseDeVue|date('d/m/Y') }}</td>
         </tr>
     {% endif %}
 </table>
