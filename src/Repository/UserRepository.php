@@ -601,21 +601,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             // restriction sur le role
             $whereClause .= ' OR (JSON_CONTAINS(u.roles, :roleAdminPartner) = 1 ';
             $qb->setParameter('roleAdminPartner', '"ROLE_ADMIN_PARTNER"');
-            // restriction sur le type de partenaire
-            if ($clubEvent->getPartnerTypes()) {
-                $whereClause .= ' AND p.type IN (:adminPartnerTypes)';
-                $qb->setParameter('adminPartnerTypes', $clubEvent->getPartnerTypes());
-            }
-            // restriction sur la compétence du partenaire
-            if ($clubEvent->getPartnerCompetences()) {
-                $competenceConditions = [];
-                foreach ($clubEvent->getPartnerCompetences() as $index => $competence) {
-                    $paramName = 'adminPartnerCompetence_'.$index;
-                    $competenceConditions[] = 'FIND_IN_SET(:'.$paramName.', p.competence) > 0';
-                    $qb->setParameter($paramName, $competence->value);
-                }
-                $whereClause .= ' AND ('.implode(' OR ', $competenceConditions).')';
-            }
+            $whereClause .= $this->_findUserToNotifiyForClubEventRestrictPartnerTypeAndCompetenceForRole($qb, $clubEvent, 'admin');
             // fin de condition ROLE_ADMIN_PARTNER
             $whereClause .= ')';
         }
@@ -624,21 +610,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             // restriction sur le role
             $whereClause .= ' OR (JSON_CONTAINS(u.roles, :roleUserPartner) = 1 ';
             $qb->setParameter('roleUserPartner', '"ROLE_USER_PARTNER"');
-            // restriction sur le type de partenaire
-            if ($clubEvent->getPartnerTypes()) {
-                $whereClause .= ' AND p.type IN (:userPartnerTypes)';
-                $qb->setParameter('userPartnerTypes', $clubEvent->getPartnerTypes());
-            }
-            // restriction sur la compétence du partenaire
-            if ($clubEvent->getPartnerCompetences()) {
-                $competenceConditions = [];
-                foreach ($clubEvent->getPartnerCompetences() as $index => $competence) {
-                    $paramName = 'userPartnerCompetence_'.$index;
-                    $competenceConditions[] = 'FIND_IN_SET(:'.$paramName.', p.competence) > 0';
-                    $qb->setParameter($paramName, $competence->value);
-                }
-                $whereClause .= ' AND ('.implode(' OR ', $competenceConditions).')';
-            }
+            $whereClause .= $this->_findUserToNotifiyForClubEventRestrictPartnerTypeAndCompetenceForRole($qb, $clubEvent, 'user');
             // fin de condition ROLE_USER_PARTNER
             $whereClause .= ')';
         }
@@ -649,5 +621,27 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->andWhere('u.isMailingClubEvent = 1');
 
         return $qb->getQuery()->getResult();
+    }
+
+    private function _findUserToNotifiyForClubEventRestrictPartnerTypeAndCompetenceForRole(QueryBuilder $qb, ClubEvent $clubEvent, string $paramPrefix): string
+    {
+        $whereClause = '';
+        // restriction sur le type de partenaire
+        if ($clubEvent->getPartnerTypes()) {
+            $whereClause .= ' AND p.type IN (:'.$paramPrefix.'PartnerTypes)';
+            $qb->setParameter($paramPrefix.'PartnerTypes', $clubEvent->getPartnerTypes());
+        }
+        // restriction sur la compétence du partenaire
+        if ($clubEvent->getPartnerCompetences()) {
+            $competenceConditions = [];
+            foreach ($clubEvent->getPartnerCompetences() as $index => $competence) {
+                $paramName = $paramPrefix.'PartnerCompetence_'.$index;
+                $competenceConditions[] = 'FIND_IN_SET(:'.$paramName.', p.competence) > 0';
+                $qb->setParameter($paramName, $competence->value);
+            }
+            $whereClause .= ' AND ('.implode(' OR ', $competenceConditions).')';
+        }
+
+        return $whereClause;
     }
 }
