@@ -7,8 +7,8 @@ use App\Repository\Query\Dashboard\DossiersQuery;
 use App\Repository\Query\Dashboard\DossiersSansSuivisPartenaireQuery;
 use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
 use App\Repository\Query\Dashboard\DossiersUndeliverableEmailQuery;
+use App\Repository\Query\Dashboard\NouveauxDossiersKpiQuery;
 use App\Repository\Query\Dashboard\SignalementsSansAffectationAccepteeQuery;
-use App\Repository\SignalementRepository;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -29,7 +29,7 @@ class TabCountKpiBuilder
     private array $partners = [];
 
     public function __construct(
-        private readonly SignalementRepository $signalementRepository,
+        private readonly NouveauxDossiersKpiQuery $nouveauxDossiersKpiQuery,
         private readonly Security $security,
         private readonly TabCountKpiCacheHelper $tabCountKpiCacheHelper,
         private readonly SignalementsSansAffectationAccepteeQuery $signalementsSansAffectationAccepteeQuery,
@@ -92,14 +92,14 @@ class TabCountKpiBuilder
                 TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS,
                 $user,
                 $params,
-                fn () => $this->signalementRepository->countNouveauxDossiersKpi($this->territories)
+                fn () => $this->nouveauxDossiersKpiQuery->countNouveauxDossiersKpi($this->territories)
             );
         } else {
             $countNouveauxDossiers = $this->tabCountKpiCacheHelper->getOrSet(
                 TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS,
                 $user,
                 $params,
-                fn () => $this->signalementRepository->countNouveauxDossiersKpi($this->territories, $user)
+                fn () => $this->nouveauxDossiersKpiQuery->countNouveauxDossiersKpi($this->territories, $user)
             );
         }
         $countDossiersAFermer = $this->tabCountKpiCacheHelper->getOrSet(

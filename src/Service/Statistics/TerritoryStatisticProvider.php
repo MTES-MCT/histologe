@@ -2,12 +2,13 @@
 
 namespace App\Service\Statistics;
 
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Service\Signalement\ZipcodeProvider;
 
 class TerritoryStatisticProvider
 {
-    public function __construct(private SignalementRepository $signalementRepository)
+    public function __construct(
+        private readonly CountStatisticsQuery $countStatisticsQuery, )
     {
     }
 
@@ -18,7 +19,7 @@ class TerritoryStatisticProvider
     {
         $data = [];
 
-        $countSignalementsByTerritories = $this->signalementRepository->countByTerritory(true);
+        $countSignalementsByTerritories = $this->countStatisticsQuery->countByTerritory(true);
         $rhoneId = null;
         $metropoleDeLyonId = null;
         foreach ($countSignalementsByTerritories as $countSignalementsByTerritory) {

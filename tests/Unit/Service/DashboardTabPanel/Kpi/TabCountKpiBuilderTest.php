@@ -7,8 +7,8 @@ use App\Repository\Query\Dashboard\DossiersQuery;
 use App\Repository\Query\Dashboard\DossiersSansSuivisPartenaireQuery;
 use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
 use App\Repository\Query\Dashboard\DossiersUndeliverableEmailQuery;
+use App\Repository\Query\Dashboard\NouveauxDossiersKpiQuery;
 use App\Repository\Query\Dashboard\SignalementsSansAffectationAccepteeQuery;
-use App\Repository\SignalementRepository;
 use App\Service\DashboardTabPanel\Kpi\CountAfermer;
 use App\Service\DashboardTabPanel\Kpi\CountDossiersAVerifier;
 use App\Service\DashboardTabPanel\Kpi\CountDossiersMessagesUsagers;
@@ -23,7 +23,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class TabCountKpiBuilderTest extends TestCase
 {
-    protected MockObject&SignalementRepository $signalementRepository;
+    protected MockObject&NouveauxDossiersKpiQuery $nouveauxDossiersKpiQuery;
     protected MockObject&Security $security;
     protected TabCountKpiBuilder $tabCountKpiBuilder;
     protected MockObject&TabCountKpiCacheHelper $tabCountKpiCacheHelper;
@@ -35,7 +35,7 @@ class TabCountKpiBuilderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->signalementRepository = $this->createMock(SignalementRepository::class);
+        $this->nouveauxDossiersKpiQuery = $this->createMock(NouveauxDossiersKpiQuery::class);
         $this->security = $this->createMock(Security::class);
         $this->dossiersQuery = $this->createMock(DossiersQuery::class);
         $this->dossiersSuivisUsagerQuery = $this->createMock(DossiersSuivisUsagerQuery::class);
@@ -45,7 +45,7 @@ class TabCountKpiBuilderTest extends TestCase
         $this->signalementsSansAffectationAccepteeQuery = $this->createMock(SignalementsSansAffectationAccepteeQuery::class);
 
         $this->tabCountKpiBuilder = new TabCountKpiBuilder(
-            $this->signalementRepository,
+            $this->nouveauxDossiersKpiQuery,
             $this->security,
             $this->tabCountKpiCacheHelper,
             $this->signalementsSansAffectationAccepteeQuery,
@@ -83,7 +83,7 @@ class TabCountKpiBuilderTest extends TestCase
         $countAfermer = new CountAfermer(1, 1, 1, 1);
         $countAverifier = new CountDossiersAVerifier(3, 2, 9);
 
-        $this->signalementRepository
+        $this->nouveauxDossiersKpiQuery
             ->expects($this->never())
             ->method('countNouveauxDossiersKpi')
             ->with($territories)
@@ -160,7 +160,7 @@ class TabCountKpiBuilderTest extends TestCase
         $countAfermer = new CountAfermer(1, 0, 0, 2);
         $countAverifier = new CountDossiersAVerifier(2, 2);
 
-        $this->signalementRepository
+        $this->nouveauxDossiersKpiQuery
             ->expects($this->never())
             ->method('countNouveauxDossiersKpi')
             ->with($territories, $user)

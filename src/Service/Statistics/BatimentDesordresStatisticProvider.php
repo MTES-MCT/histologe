@@ -4,12 +4,13 @@ namespace App\Service\Statistics;
 
 use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Territory;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Statistics\CountStatisticsQuery;
 
 class BatimentDesordresStatisticProvider
 {
-    public function __construct(private SignalementRepository $signalementRepository)
-    {
+    public function __construct(
+        private readonly CountStatisticsQuery $countStatisticsQuery,
+    ) {
     }
 
     /**
@@ -17,7 +18,7 @@ class BatimentDesordresStatisticProvider
      */
     public function getData(?Territory $territory, ?int $year): array
     {
-        $countPerBatimentDesordres = $this->signalementRepository->countByDesordresCriteres(
+        $countPerBatimentDesordres = $this->countStatisticsQuery->countByDesordresCriteres(
             $territory,
             $year,
             DesordreCritereZone::BATIMENT

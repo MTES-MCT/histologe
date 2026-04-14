@@ -11,6 +11,7 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\AffectationRepository;
+use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
@@ -109,17 +110,17 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function testCountRefused(): void
     {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalementsRefused = $signalementRepository->countRefused();
+        /** @var CountStatisticsQuery $countStatisticsQuery */
+        $countStatisticsQuery = $this->entityManager->getRepository(CountStatisticsQuery::class);
+        $signalementsRefused = $countStatisticsQuery->countRefused();
         $this->assertEquals(1, $signalementsRefused);
     }
 
     public function testCountCritereByZone(): void
     {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $zones = $signalementRepository->countCritereByZone(null, null);
+        /** @var CountStatisticsQuery $countStatisticsQuery */
+        $countStatisticsQuery = $this->entityManager->getRepository(CountStatisticsQuery::class);
+        $zones = $countStatisticsQuery->countCritereByZone(null, null);
         $this->assertEquals(4, \count($zones));
         $this->assertArrayHasKey('critere_batiment_count', $zones);
         $this->assertArrayHasKey('critere_logement_count', $zones);
@@ -129,9 +130,9 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function testCountByDesordresCriteres(): void
     {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $desordreCriteres = $signalementRepository->countByDesordresCriteres(null, null, null);
+        /** @var CountStatisticsQuery $countStatisticsQuery */
+        $countStatisticsQuery = $this->entityManager->getRepository(CountStatisticsQuery::class);
+        $desordreCriteres = $countStatisticsQuery->countByDesordresCriteres(null, null, null);
         $this->assertEquals(5, \count($desordreCriteres));
         $this->assertArrayHasKey('count', $desordreCriteres[0]);
         $this->assertArrayHasKey('labelCritere', $desordreCriteres[0]);
@@ -139,9 +140,9 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function testCountSignalementUsagerAbandonProcedure(): void
     {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalementsUsagerAbandonProcedure = $signalementRepository->countSignalementUsagerAbandonProcedure([]);
+        /** @var CountStatisticsQuery $countStatisticsQuery */
+        $countStatisticsQuery = $this->entityManager->getRepository(CountStatisticsQuery::class);
+        $signalementsUsagerAbandonProcedure = $countStatisticsQuery->countSignalementUsagerAbandonProcedure([]);
         $this->assertEquals(2, $signalementsUsagerAbandonProcedure);
     }
 
@@ -150,9 +151,9 @@ class SignalementRepositoryTest extends KernelTestCase
         /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
         $territory = $territoryRepository->findOneBy(['zip' => '13']);
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalementsUsagerAbandonProcedure = $signalementRepository->countSignalementUsagerAbandonProcedure([$territory]);
+        /** @var CountStatisticsQuery $countStatisticsQuery */
+        $countStatisticsQuery = $this->entityManager->getRepository(CountStatisticsQuery::class);
+        $signalementsUsagerAbandonProcedure = $countStatisticsQuery->countSignalementUsagerAbandonProcedure([$territory]);
         $this->assertEquals(1, $signalementsUsagerAbandonProcedure);
     }
 

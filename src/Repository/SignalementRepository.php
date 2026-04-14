@@ -5,8 +5,6 @@ namespace App\Repository;
 use App\Dto\Api\Request\SignalementListQueryParams;
 use App\Entity\Commune;
 use App\Entity\Enum\AffectationStatus;
-use App\Entity\Enum\CreationSource;
-use App\Entity\Enum\DesordreCritereZone;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Partner;
@@ -14,8 +12,6 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Entity\UserSignalementSubscription;
-use App\Service\DashboardTabPanel\Kpi\CountNouveauxDossiers;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchArchivedSignalement;
@@ -61,173 +57,6 @@ class SignalementRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-    public function countImported(?Territory $territory = null, ?User $user = null): int
-    {
-        $qb = $this->createQueryBuilder('s')
-            ->select('COUNT(s.id)')
-            ->andWhere('s.statut NOT IN (:statutList)')
-            ->setParameter('statutList', SignalementStatus::excludedStatuses())
-            ->andWhere('s.isImported = 1');
-
-        if (null !== $territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
-        }
-
-        if ($user && !$user->isSuperAdmin()) {
-            $qb->innerJoin('s.affectations', 'a')
-                ->innerJoin('a.partner', 'partner')
-                ->andWhere('partner IN (:partners)')
-                ->setParameter('partners', $user->getPartners());
-        }
-
-        return (int) $qb->getQuery()->getSingleScalarResult();
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-    public function countValidated(bool $removeImported = false): int
-    {
-        $notStatus = array_merge([SignalementStatus::NEED_VALIDATION], SignalementStatus::excludedStatuses());
-        $qb = $this->createQueryBuilder('s');
-        $qb->select('COUNT(s.id)');
-        $qb->andWhere('s.statut NOT IN (:notStatus)')
-            ->setParameter('notStatus', $notStatus);
-
-        if ($removeImported) {
-            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
-        }
-
-        return (int) $qb->getQuery()->getSingleScalarResult();
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-    public function countClosed(bool $removeImported = false): int
-    {
-        $qb = $this->createQueryBuilder('s');
-        $qb->select('COUNT(s.id)');
-        $qb->andWhere('s.statut = :closedStatus')
-            ->setParameter('closedStatus', SignalementStatus::CLOSED);
-
-        if ($removeImported) {
-            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
-        }
-
-        return (int) $qb->getQuery()->getSingleScalarResult();
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-    public function countRefused(): int
-    {
-        $qb = $this->createQueryBuilder('s');
-        $qb->select('COUNT(s.id)');
-        $qb->andWhere('s.statut = :refusedStatus')
-            ->setParameter('refusedStatus', SignalementStatus::REFUSED);
-
-        $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
-
-        return (int) $qb->getQuery()->getSingleScalarResult();
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function countByTerritory(bool $removeImported = false): array
-    {
-        $qb = $this->createQueryBuilder('s');
-        $qb->select('COUNT(s.id) AS count, t.zip, t.name, t.id')
-            ->leftJoin('s.territory', 't')
-            ->where('s.statut NOT IN (:statutList)')
-            ->setParameter('statutList', SignalementStatus::excludedStatuses());
-
-        if ($removeImported) {
-            $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
-        }
-
-        $qb->groupBy('t.id');
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function countCritereByZone(?Territory $territory, ?int $year): array
-    {
-        $qb = $this->createQueryBuilder('s');
-
-        $qb->select('SUM(CASE WHEN c.type = :batiment THEN 1 ELSE 0 END) AS critere_batiment_count')
-            ->addSelect('SUM(CASE WHEN c.type = :logement THEN 1 ELSE 0 END) AS critere_logement_count')
-            ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :batimentString THEN 1 ELSE 0 END) AS desordrecritere_batiment_count')
-            ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :logementString THEN 1 ELSE 0 END) AS desordrecritere_logement_count')
-            ->leftJoin('s.criticites', 'criticites')
-            ->leftJoin('criticites.critere', 'c')
-            ->leftJoin('s.desordrePrecisions', 'dp')
-            ->leftJoin('dp.desordreCritere', 'dc')
-            ->setParameter('batiment', 1)
-            ->setParameter('logement', 2)
-            ->setParameter('batimentString', 'BATIMENT')
-            ->setParameter('logementString', 'LOGEMENT');
-
-        $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
-
-        if ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
-        }
-        if ($year) {
-            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
-        }
-
-        return $qb->getQuery()->getSingleResult();
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function countByDesordresCriteres(
-        ?Territory $territory,
-        ?int $year,
-        ?DesordreCritereZone $desordreCritereZone = null,
-    ): array {
-        $qb = $this->createQueryBuilder('s');
-        $qb->select('COUNT(s.id) AS count, desordreCriteres.labelCritere')
-            ->leftJoin('s.desordrePrecisions', 'dp')
-            ->leftJoin('dp.desordreCritere', 'desordreCriteres')
-            ->where('s.statut NOT IN (:statutList)')
-            ->setParameter('statutList', SignalementStatus::excludedStatuses())
-            ->andWhere('s.creationSource = :creationSource')
-            ->setParameter('creationSource', CreationSource::FORM_USAGER_V2);
-
-        if ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
-        }
-        if ($year) {
-            $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
-        }
-
-        if ($desordreCritereZone) {
-            $qb->andWhere('desordreCriteres.zoneCategorie = :desordreCritereZone')
-                ->setParameter('desordreCritereZone', $desordreCritereZone);
-        }
-
-        $qb->groupBy('desordreCriteres.labelCritere')
-            ->orderBy('count', 'DESC')
-            ->setMaxResults(5);
-
-        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -341,24 +170,6 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('reference', '%'.$chunkReference.'%')
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    /**
-     * @param array<int, Territory> $territories
-     */
-    public function countSignalementUsagerAbandonProcedure(array $territories): ?int
-    {
-        $qb = $this->createQueryBuilder('s');
-        $qb->select('COUNT(s.id)')
-            ->where('s.statut IN (:statutList)')
-            ->andWhere('s.isUsagerAbandonProcedure = 1')
-            ->setParameter('statutList', [SignalementStatus::ACTIVE]);
-
-        if (\count($territories)) {
-            $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $territories);
-        }
-
-        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -820,61 +631,9 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<int, mixed> $territories
-     *
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countNouveauxDossiersKpi(array $territories = [], ?User $user = null): CountNouveauxDossiers
-    {
-        $select = sprintf(
-            'NEW %s(
-            %s, -- countFormulaireUsager
-            %s, -- countFormulairePro
-            %s, -- countSansAffectation
-            %s, -- countNouveauxDossiers
-            %s  -- countNoAgentDossiers
-        )',
-            CountNouveauxDossiers::class,
-            $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_validation AND s.createdBy IS NULL THEN 1 ELSE 0 END), 0)',
-            $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_validation AND s.createdBy IS NOT NULL THEN 1 ELSE 0 END), 0)',
-            $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_active AND a.id IS NULL THEN 1 ELSE 0 END), 0)',
-            $user ? 'COALESCE(SUM(CASE WHEN a.partner IN (:partners) AND a.statut = :affectation_wait THEN 1 ELSE 0 END), 0)' : 0,
-            $user ? 'COALESCE(SUM(CASE WHEN a.partner IN (:partners) AND a.statut = :affectation_accepted AND NOT EXISTS(
-                        SELECT 1 FROM '.UserSignalementSubscription::class.' uss
-                        WHERE uss.signalement = s
-                        AND EXISTS(
-                            SELECT 1 FROM '.User::class.' u2
-                            JOIN u2.userPartners up2
-                            WHERE uss.user = u2
-                            AND up2.partner IN (:partners)
-                        )
-                    ) THEN 1 ELSE 0 END), 0)' : 0,
-        );
-
-        $qb = $this
-            ->createQueryBuilder('s')
-            ->select($select)
-            ->leftJoin('s.affectations', 'a');
-
-        if (null === $user) {
-            $qb->setParameter('statut_active', SignalementStatus::ACTIVE);
-            $qb->setParameter('statut_validation', SignalementStatus::NEED_VALIDATION);
-        }
-
-        if (!empty($territories)) {
-            $qb->andWhere('s.territory IN (:territories)')
-                ->setParameter('territories', $territories);
-        }
-
-        if ($user?->isUserPartner() || $user?->isPartnerAdmin()) {
-            $qb->setParameter('partners', $user->getPartners())
-                ->setParameter('affectation_wait', AffectationStatus::WAIT)
-                ->setParameter('affectation_accepted', AffectationStatus::ACCEPTED);
-        }
-
-        return $qb->getQuery()->getSingleResult();
-    }
 
     /**
      * @throws NonUniqueResultException
@@ -1157,16 +916,6 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
-    }
-
-    public function countForCommune(Commune $commune): int
-    {
-        $qb = $this->createQueryBuilder('s');
-        $qb->select('COUNT(s.id)')
-            ->where('s.inseeOccupant = :insee')
-            ->setParameter('insee', $commune->getCodeInsee());
-
-        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     public function findWithInconsistentCommuneName(Commune $commune): array
