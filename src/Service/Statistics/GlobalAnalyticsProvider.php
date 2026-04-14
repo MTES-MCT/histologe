@@ -3,6 +3,8 @@
 namespace App\Service\Statistics;
 
 use App\Entity\Enum\MotifCloture;
+use App\Repository\Query\Statistics\GlobalStatisticsQuery;
+use App\Repository\Query\Statistics\MotifClotureStatisticsQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 
@@ -11,6 +13,8 @@ class GlobalAnalyticsProvider
     public function __construct(
         private SignalementRepository $signalementRepository,
         private TerritoryRepository $territoryRepository,
+        private GlobalStatisticsQuery $globalStatisticsQuery,
+        private MotifClotureStatisticsQuery $motifClotureStatisticsQuery,
     ) {
     }
 
@@ -33,7 +37,7 @@ class GlobalAnalyticsProvider
 
     public function getCountSignalementResoluData(): int
     {
-        $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture(
+        $countPerMotifsCloture = $this->motifClotureStatisticsQuery->countByMotifCloture(
             territory: null,
             year: null,
             removeImported: true
@@ -56,7 +60,7 @@ class GlobalAnalyticsProvider
 
     public function getCountSignalementData(): int
     {
-        return $this->signalementRepository->countAll(territory: null, partners: null);
+        return $this->globalStatisticsQuery->countAll(territory: null, partners: null);
     }
 
     public function getCountTerritoryData(): int

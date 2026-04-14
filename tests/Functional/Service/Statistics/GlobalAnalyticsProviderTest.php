@@ -2,8 +2,6 @@
 
 namespace App\Tests\Functional\Service\Statistics;
 
-use App\Repository\SignalementRepository;
-use App\Repository\TerritoryRepository;
 use App\Service\Statistics\GlobalAnalyticsProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -12,11 +10,9 @@ class GlobalAnalyticsProviderTest extends KernelTestCase
     public function testGetData(): void
     {
         self::bootKernel();
-        /** @var TerritoryRepository $territoryRepository */
-        $territoryRepository = self::getContainer()->get(TerritoryRepository::class);
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
-        $data = (new GlobalAnalyticsProvider($signalementRepository, $territoryRepository))->getData();
+        /** @var GlobalAnalyticsProvider $globalAnalyticsProvider */
+        $globalAnalyticsProvider = self::getContainer()->get(GlobalAnalyticsProvider::class);
+        $data = $globalAnalyticsProvider->getData();
 
         $this->assertEquals(7, \count($data));
         $this->assertArrayHasKey('count_signalement_resolus', $data);

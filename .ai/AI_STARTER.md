@@ -277,6 +277,34 @@ npm run build       # Build production
 
 ## Pièges courants et bonnes pratiques
 
+### Workflow de développement recommandé
+
+**IMPORTANT : Toujours vérifier la qualité du code après les modifications**
+
+Après avoir effectué des modifications de code (création, modification, suppression de fichiers PHP), **toujours** exécuter dans l'ordre :
+
+1. **`make cs-fix`** - Corriger automatiquement le formatage du code (PHP-CS-Fixer)
+2. **`make stan`** - Vérifier l'analyse statique (PHPStan niveau 6)
+
+Ces commandes permettent de :
+- Respecter les conventions de code PSR-12
+- Détecter les erreurs de typage et les problèmes potentiels
+- Maintenir la qualité du code du projet
+
+**Exemple de workflow complet :**
+```bash
+# 1. Faire les modifications de code
+# 2. Corriger le formatage
+make cs-fix
+
+# 3. Vérifier l'analyse statique
+make stan
+
+# 4. Si tout est OK, commiter
+git add .
+git commit -m "Description des modifications"
+```
+
 **TODO :**
 - [ ] Lister les erreurs fréquentes (ex: oublier de flush() Doctrine)
 - [ ] Documenter les problèmes de cache à éviter

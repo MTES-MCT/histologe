@@ -11,6 +11,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\JobEvent;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Repository\Query\Statistics\FilteredStatisticsQuery;
 use App\Service\Interconnection\Esabora\EsaboraSCHSService;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\ListFilters\SearchAffectationWithoutSubscription;
@@ -30,8 +31,10 @@ class AffectationRepository extends ServiceEntityRepository
 {
     private const int DELAY_VISITE_AFTER_AFFECTATION = 15;
 
-    public function __construct(ManagerRegistry $registry)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly FilteredStatisticsQuery $filteredStatisticsQuery,
+    ) {
         parent::__construct($registry, Affectation::class);
     }
 
@@ -47,7 +50,7 @@ class AffectationRepository extends ServiceEntityRepository
             $qb->leftJoin('a.partner', 'partner');
         }
 
-        $qb = SignalementRepository::addFiltersToQueryBuilder($qb, $statisticsFilters);
+        $qb = $this->filteredStatisticsQuery->addFiltersToQueryBuilder($qb, $statisticsFilters);
 
         return $qb->getQuery()
             ->getResult();
