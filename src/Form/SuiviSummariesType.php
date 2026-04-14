@@ -18,7 +18,7 @@ class SuiviSummariesType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('territory', TerritoryChoiceType::class)
+        $builder->add('territory', TerritoryChoiceType::class, ['constraints' => [new Assert\NotBlank()]])
 
             ->add('count', NumberType::class, [
                 'data' => 300,
