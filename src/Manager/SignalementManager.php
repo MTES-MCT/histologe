@@ -911,7 +911,7 @@ class SignalementManager extends AbstractManager
 
         $total = $this->queryBuilderFactory->create($user, $options, false)->select('COUNT(DISTINCT s.id)')->resetDQLPart('groupBy')->getQuery()->getSingleScalarResult();
         if ($count) {
-            return $total;
+            return (int) $total;
         }
         $maxResult = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
         $page = \array_key_exists('page', $options) ? (int) $options['page'] : 1;

@@ -14,7 +14,7 @@ use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
-use App\Repository\Query\SignalementList\ListPaginatorQuery;
+use App\Repository\Query\SignalementList\QueryBuilderFactory;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\PhotoHelper;
@@ -51,7 +51,7 @@ class PhotoHelperTest extends KernelTestCase
     private HtmlSanitizerInterface $htmlSanitizerInterface;
 
     private ExportIterableQuery $exportIterableQuery;
-    private ListPaginatorQuery $listPaginatorQuery;
+    private QueryBuilderFactory $queryBuilderFactory;
 
     protected function setUp(): void
     {
@@ -75,7 +75,7 @@ class PhotoHelperTest extends KernelTestCase
         $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
         $this->exportIterableQuery = static::getContainer()->get(ExportIterableQuery::class);
-        $this->listPaginatorQuery = static::getContainer()->get(ListPaginatorQuery::class);
+        $this->queryBuilderFactory = static::getContainer()->get(QueryBuilderFactory::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
         $this->signalementManager = new SignalementManager(
@@ -97,7 +97,7 @@ class PhotoHelperTest extends KernelTestCase
             $this->signalementAddressUpdater,
             $this->zipcodeProvider,
             $this->exportIterableQuery,
-            $this->listPaginatorQuery,
+            $this->queryBuilderFactory,
             $this->htmlSanitizerInterface,
             true
         );

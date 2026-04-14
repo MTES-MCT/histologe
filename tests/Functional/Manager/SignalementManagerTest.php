@@ -24,7 +24,7 @@ use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
-use App\Repository\Query\SignalementList\ListPaginatorQuery;
+use App\Repository\Query\SignalementList\QueryBuilderFactory;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Signalement\CriticiteCalculator;
@@ -68,7 +68,7 @@ class SignalementManagerTest extends WebTestCase
     private AffectationManager $affectationManager;
     private ZipcodeProvider $zipcodeProvider;
     private ExportIterableQuery $exportIterableQuery;
-    private ListPaginatorQuery $listPaginatorQuery;
+    private QueryBuilderFactory $queryBuilderFactory;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
 
     protected function setUp(): void
@@ -98,7 +98,7 @@ class SignalementManagerTest extends WebTestCase
         $this->affectationManager = static::getContainer()->get(AffectationManager::class);
         $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
         $this->exportIterableQuery = static::getContainer()->get(ExportIterableQuery::class);
-        $this->listPaginatorQuery = static::getContainer()->get(ListPaginatorQuery::class);
+        $this->queryBuilderFactory = static::getContainer()->get(QueryBuilderFactory::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
         $this->signalementManager = new SignalementManager(
@@ -120,7 +120,7 @@ class SignalementManagerTest extends WebTestCase
             $this->signalementAddressUpdater,
             $this->zipcodeProvider,
             $this->exportIterableQuery,
-            $this->listPaginatorQuery,
+            $this->queryBuilderFactory,
             $this->htmlSanitizerInterface,
             true,
         );
