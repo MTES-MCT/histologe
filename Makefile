@@ -76,6 +76,7 @@ worker-status:## Get status worker
 
 worker-start: ## Start worker
 	@echo -e '\e[1;32mStart worker\032'
+	@bash -l -c '$(DOCKER_COMP) up -d signal_logement_phpworker'
 	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_phpworker supervisorctl start all'
 
 worker-stop: ## Stop worker
