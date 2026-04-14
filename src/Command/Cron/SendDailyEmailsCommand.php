@@ -33,7 +33,6 @@ class SendDailyEmailsCommand extends AbstractCronCommand
         private readonly SummaryMailService $summaryMailService,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
-        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
         parent::__construct($this->parameterBag);
     }
