@@ -97,7 +97,7 @@ class ClubEventServiceTest extends KernelTestCase
             $userElligibleForClub = $userRepository->findUsersToNotifyForClubEvent($club);
             foreach ($users as $user) {
                 $isUserEligibleForClubEvent = $service->isUserEligibleForClubEvent($user, $club);
-                if ($isUserEligibleForClubEvent && !in_array($user, $userElligibleForClub, true)) {
+                if ($user->getIsMailingClubEvent() && $isUserEligibleForClubEvent && !in_array($user, $userElligibleForClub, true)) {
                     $this->fail('User '.$user->getEmail().' is eligible for club event '.$club->getName().' but is not in the list of users to notify.');
                 }
                 if (!$isUserEligibleForClubEvent && in_array($user, $userElligibleForClub, true)) {

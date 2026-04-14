@@ -125,6 +125,10 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             $user->setIsMailingSummary($row['is_mailing_summary']);
         }
 
+        if (isset($row['is_mailing_club_event'])) {
+            $user->setIsMailingClubEvent($row['is_mailing_club_event']);
+        }
+
         if (isset($row['has_checked_last_cgu'])) {
             $user->setCguVersionChecked($this->parameterBag->get('cgu_current_version'));
         }

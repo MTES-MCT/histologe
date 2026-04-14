@@ -26,7 +26,18 @@ class UserNotificationEmailType extends AbstractType
             'label' => 'Notifications e-mails',
             'required' => false,
             'placeholder' => false,
+            'mapped' => false,
             'data' => $user->getIsMailingActive() ? $user->getIsMailingSummary() : null,
+        ]);
+        $builder->add('isMailingClubEvent', ChoiceType::class, [
+            'choices' => [
+                'Oui' => true,
+                'Non' => false,
+            ],
+            'expanded' => true,
+            'label' => 'Recevoir les notifications des événements du club',
+            'required' => false,
+            'placeholder' => false,
         ]);
         $builder->add('isSubmitted', HiddenType::class, ['mapped' => false]);
     }
@@ -35,6 +46,7 @@ class UserNotificationEmailType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'validation_groups' => ['notification_email'],
         ]);
     }
 

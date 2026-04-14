@@ -645,7 +645,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $qb->where($whereClause)
             ->andWhere('u.statut = :active')
-            ->setParameter('active', UserStatus::ACTIVE);
+            ->setParameter('active', UserStatus::ACTIVE)
+            ->andWhere('u.isMailingClubEvent = 1');
 
         return $qb->getQuery()->getResult();
     }

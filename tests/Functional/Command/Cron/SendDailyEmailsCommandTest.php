@@ -26,9 +26,9 @@ class SendDailyEmailsCommandTest extends KernelTestCase
         $this->assertStringContainsString(' emails récapitulatifs envoyés.', $recapLine);
         $nb = (int) str_replace(['[OK] ', ' emails récapitulatifs envoyés.'], '', $recapLine);
         ++$nb;
-        $this->assertStringContainsString('15 emails de clubs envoyés à moins 7 jours.', $output); // 15 email + 1
-        $this->assertStringContainsString('20 emails de clubs envoyés à moins 2 jours.', $output); // 20 email + 1
-        $this->assertEmailCount($nb + 21 + 16);
+        $this->assertStringContainsString('14 emails de clubs envoyés à moins 7 jours.', $output); // 14 email + 1
+        $this->assertStringContainsString('19 emails de clubs envoyés à moins 2 jours.', $output); // 19 email + 1
+        $this->assertEmailCount($nb + 15 + 20);
 
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
@@ -37,8 +37,8 @@ class SendDailyEmailsCommandTest extends KernelTestCase
         $recapLine = $explodedOutput[count($explodedOutput) - 13];
         $this->assertStringContainsString('0 emails récapitulatifs envoyés.', $recapLine);
         ++$nb;
-        $this->assertStringContainsString('15 emails de clubs envoyés à moins 7 jours.', $output); // 15 email + 1
-        $this->assertStringContainsString('20 emails de clubs envoyés à moins 2 jours.', $output); // 20 email + 1
-        $this->assertEmailCount($nb + 21 + 16 + 21 + 16);
+        $this->assertStringContainsString('14 emails de clubs envoyés à moins 7 jours.', $output); // 14 email + 1
+        $this->assertStringContainsString('19 emails de clubs envoyés à moins 2 jours.', $output); // 19 email + 1
+        $this->assertEmailCount($nb + 15 + 20 + 15 + 20);
     }
 }

@@ -14,15 +14,24 @@
 </div>
 <div>
     Vos préférences en matière d'e-mails :
-    <br>
-    Activité sur {{ platform.name }} : 
-    <strong>
-        {% if app.user.isMailingActive %}
-            {{ app.user.isMailingSummary ? 'Récapitulatif quotidien' : 'Tous les e-mails' }}
-        {% else %}
-            Aucun
-        {% endif %}
-    </strong>
+    <ul>
+    <li>
+        Activité sur {{ platform.name }} : 
+        <strong>
+            {% if app.user.isMailingActive %}
+                {{ app.user.isMailingSummary ? 'Récapitulatif quotidien' : 'Tous les e-mails' }}
+            {% else %}
+                Aucun
+            {% endif %}
+        </strong>
+    </li>
+    <li>
+        Prochains clubs utilisateurs :
+        <strong>
+            {{ app.user.isMailingClubEvent ? 'Oui' : 'Non' }}
+        </strong>
+    </li>
+    </ul>
     <div class="fr-alert fr-alert--info fr-alert--sm fr-mt-2w">
         <p>
             Quel que soit votre paramétrage, vous recevrez toujours les e-mails relatifs à la sécurité de votre compte 
