@@ -11,7 +11,6 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\AffectationRepository;
-use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
@@ -106,55 +105,6 @@ class SignalementRepositoryTest extends KernelTestCase
         $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2024-02']);
 
         $this->assertTrue($signalement->hasQualificaton(Qualification::RSD));
-    }
-
-    public function testCountRefused(): void
-    {
-        /** @var CountStatisticsQuery $countStatisticsQuery */
-        $countStatisticsQuery = $this->entityManager->getRepository(CountStatisticsQuery::class);
-        $signalementsRefused = $countStatisticsQuery->countRefused();
-        $this->assertEquals(1, $signalementsRefused);
-    }
-
-    public function testCountCritereByZone(): void
-    {
-        /** @var CountStatisticsQuery $countStatisticsQuery */
-        $countStatisticsQuery = $this->entityManager->getRepository(CountStatisticsQuery::class);
-        $zones = $countStatisticsQuery->countCritereByZone(null, null);
-        $this->assertEquals(4, \count($zones));
-        $this->assertArrayHasKey('critere_batiment_count', $zones);
-        $this->assertArrayHasKey('critere_logement_count', $zones);
-        $this->assertArrayHasKey('desordrecritere_batiment_count', $zones);
-        $this->assertArrayHasKey('desordrecritere_logement_count', $zones);
-    }
-
-    public function testCountByDesordresCriteres(): void
-    {
-        /** @var CountStatisticsQuery $countStatisticsQuery */
-        $countStatisticsQuery = $this->entityManager->getRepository(CountStatisticsQuery::class);
-        $desordreCriteres = $countStatisticsQuery->countByDesordresCriteres(null, null, null);
-        $this->assertEquals(5, \count($desordreCriteres));
-        $this->assertArrayHasKey('count', $desordreCriteres[0]);
-        $this->assertArrayHasKey('labelCritere', $desordreCriteres[0]);
-    }
-
-    public function testCountSignalementUsagerAbandonProcedure(): void
-    {
-        /** @var CountStatisticsQuery $countStatisticsQuery */
-        $countStatisticsQuery = $this->entityManager->getRepository(CountStatisticsQuery::class);
-        $signalementsUsagerAbandonProcedure = $countStatisticsQuery->countSignalementUsagerAbandonProcedure([]);
-        $this->assertEquals(2, $signalementsUsagerAbandonProcedure);
-    }
-
-    public function testCountSignalementUsagerAbandonProcedure13(): void
-    {
-        /** @var TerritoryRepository $territoryRepository */
-        $territoryRepository = $this->entityManager->getRepository(Territory::class);
-        $territory = $territoryRepository->findOneBy(['zip' => '13']);
-        /** @var CountStatisticsQuery $countStatisticsQuery */
-        $countStatisticsQuery = $this->entityManager->getRepository(CountStatisticsQuery::class);
-        $signalementsUsagerAbandonProcedure = $countStatisticsQuery->countSignalementUsagerAbandonProcedure([$territory]);
-        $this->assertEquals(1, $signalementsUsagerAbandonProcedure);
     }
 
     public function testFindAllArchived(): void

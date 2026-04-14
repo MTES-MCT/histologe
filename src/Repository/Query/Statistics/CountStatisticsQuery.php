@@ -196,8 +196,9 @@ class CountStatisticsQuery
      */
     public function countSignalementUsagerAbandonProcedure(array $territories): ?int
     {
-        $qb = $this->entityManager->createQueryBuilder();
-        $qb->select('COUNT(s.id)')
+        $qb = $this->entityManager->createQueryBuilder()
+            ->from(Signalement::class, 's')
+            ->select('COUNT(s.id)')
             ->where('s.statut IN (:statutList)')
             ->andWhere('s.isUsagerAbandonProcedure = 1')
             ->setParameter('statutList', [SignalementStatus::ACTIVE]);
