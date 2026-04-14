@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsCommand(
     name: 'app:send-daily-emails',
@@ -32,6 +33,7 @@ class SendDailyEmailsCommand extends AbstractCronCommand
         private readonly SummaryMailService $summaryMailService,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -101,6 +103,7 @@ class SendDailyEmailsCommand extends AbstractCronCommand
                             'date' => $club->getDateEvent()->format('d/m/Y'),
                             'hour' => $club->getDateEvent()->format('H:i'),
                             'url' => $club->getUrl(),
+                            'urlProfile' => $this->urlGenerator->generate('back_profil', [], UrlGeneratorInterface::ABSOLUTE_URL),
                         ],
                     )
                 );
