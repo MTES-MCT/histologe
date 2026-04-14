@@ -103,7 +103,6 @@ class SendDailyEmailsCommand extends AbstractCronCommand
                             'date' => $club->getDateEvent()->format('d/m/Y'),
                             'hour' => $club->getDateEvent()->format('H:i'),
                             'url' => $club->getUrl(),
-                            'urlProfile' => $this->urlGenerator->generate('back_profil', [], UrlGeneratorInterface::ABSOLUTE_URL),
                         ],
                     )
                 );
