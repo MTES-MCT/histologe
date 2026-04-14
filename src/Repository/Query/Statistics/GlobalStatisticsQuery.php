@@ -2,10 +2,10 @@
 
 namespace App\Repository\Query\Statistics;
 
+use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Partner;
-use App\Entity\Qualification;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use Doctrine\Common\Collections\ArrayCollection;

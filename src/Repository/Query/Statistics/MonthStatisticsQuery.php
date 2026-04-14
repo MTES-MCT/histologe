@@ -6,7 +6,7 @@ use App\Dto\StatisticsFilters;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
-use App\Provider\ZipcodeProvider;
+use App\Service\Signalement\ZipcodeProvider;
 use Doctrine\ORM\EntityManagerInterface;
 
 class MonthStatisticsQuery

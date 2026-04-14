@@ -6,7 +6,7 @@ use App\Dto\StatisticsFilters;
 use App\Entity\Commune;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
-use App\Helper\CommuneHelper;
+use App\Utils\Address\CommuneHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
