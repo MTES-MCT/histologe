@@ -24,6 +24,22 @@ class ClubEventRepository extends ServiceEntityRepository
     /**
      * @return array<ClubEvent>
      */
+    public function findInExactlyNbDays(int $nbDays): array
+    {
+        $targetDate = $this->clock->now()->modify("+$nbDays days");
+
+        $qb = $this->createQueryBuilder('c')
+            ->andWhere('c.dateEvent BETWEEN :startOfDay AND :endOfDay')
+            ->setParameter('startOfDay', $targetDate->setTime(0, 0, 0))
+            ->setParameter('endOfDay', $targetDate->setTime(23, 59, 59))
+            ->orderBy('c.dateEvent', 'ASC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return array<ClubEvent>
+     */
     public function findInFuture(): array
     {
         $qb = $this->createQueryBuilder('c')

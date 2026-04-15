@@ -105,13 +105,21 @@ class ProfilController extends AbstractController
         $form = $this->createForm(UserNotificationEmailType::class, $user, ['action' => $this->generateUrl('back_profil_edit_notification_email')]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setIsMailingActive(true);
+            // si un choix est fait pour les notifications de signalements on active aussi les email sur le profil (au cas ou il étaient désactivé)
+            if (null !== $form->get('isMailingSummary')->getData()) {
+                $user->setIsMailingSummary($form->get('isMailingSummary')->getData());
+                $user->setIsMailingActive(true);
+            }
             $entityManager->flush();
             $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Vos préférences en matière de notifications par e-mail ont bien été enregistrées.'];
             $htmlTargetContents = [
                 [
                     'target' => '#notifications-email',
-                    'content' => $this->renderView('back/profil/_notifications-email.html.twig'),
+                    'content' => $this->renderView('back/profil/_notifications-email.html.twig', ['user' => $user]),
+                ],
+                [
+                    'target' => '#modal-profil-notification-email-alert-signalement',
+                    'content' => $this->renderView('back/profil/_modal_profil_notification_email_alert_signalement.html.twig'),
                 ],
             ];
 

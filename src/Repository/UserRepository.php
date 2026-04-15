@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\ClubEvent;
 use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -574,5 +575,73 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('statutInactive', UserStatus::INACTIVE);
 
         return $queryBuilder->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @return array<int, User>
+     *
+     * Attention : Une modification sur cette méthode doit être répercutée dans la méthode isUserEligibleForClubEvent du ClubEventService
+     */
+    public function findUsersToNotifyForClubEvent(ClubEvent $clubEvent): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->select('u')
+            ->leftJoin('u.userPartners', 'up')
+            ->leftJoin('up.partner', 'p');
+        // SA : toujours
+        $whereClause = 'JSON_CONTAINS(u.roles, :roleAdmin) = 1';
+        $qb->setParameter('roleAdmin', '"ROLE_ADMIN"');
+        // RT : toujours si pas des restriction de role ou si restriction de role et que le role correspond
+        if (!$clubEvent->getUserRoles() || in_array(User::ROLE_ADMIN_TERRITORY, $clubEvent->getUserRoles(), true)) {
+            $whereClause .= ' OR (JSON_CONTAINS(u.roles, :roleAdminTerritory) = 1)';
+            $qb->setParameter('roleAdminTerritory', '"ROLE_ADMIN_TERRITORY"');
+        }
+        // ROLE_ADMIN_PARTNER
+        if (!$clubEvent->getUserRoles() || in_array(User::ROLE_ADMIN_PARTNER, $clubEvent->getUserRoles(), true)) {
+            // restriction sur le role
+            $whereClause .= ' OR (JSON_CONTAINS(u.roles, :roleAdminPartner) = 1 ';
+            $qb->setParameter('roleAdminPartner', '"ROLE_ADMIN_PARTNER"');
+            $whereClause .= $this->_findUserToNotifiyForClubEventRestrictPartnerTypeAndCompetenceForRole($qb, $clubEvent, 'admin');
+            // fin de condition ROLE_ADMIN_PARTNER
+            $whereClause .= ')';
+        }
+        // ROLE_USER_PARTNER
+        if (!$clubEvent->getUserRoles() || in_array(User::ROLE_USER_PARTNER, $clubEvent->getUserRoles(), true)) {
+            // restriction sur le role
+            $whereClause .= ' OR (JSON_CONTAINS(u.roles, :roleUserPartner) = 1 ';
+            $qb->setParameter('roleUserPartner', '"ROLE_USER_PARTNER"');
+            $whereClause .= $this->_findUserToNotifiyForClubEventRestrictPartnerTypeAndCompetenceForRole($qb, $clubEvent, 'user');
+            // fin de condition ROLE_USER_PARTNER
+            $whereClause .= ')';
+        }
+
+        $qb->where($whereClause)
+            ->andWhere('u.statut = :active')
+            ->setParameter('active', UserStatus::ACTIVE)
+            ->andWhere('u.isMailingClubEvent = 1');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    private function _findUserToNotifiyForClubEventRestrictPartnerTypeAndCompetenceForRole(QueryBuilder $qb, ClubEvent $clubEvent, string $paramPrefix): string
+    {
+        $whereClause = '';
+        // restriction sur le type de partenaire
+        if ($clubEvent->getPartnerTypes()) {
+            $whereClause .= ' AND p.type IN (:'.$paramPrefix.'PartnerTypes)';
+            $qb->setParameter($paramPrefix.'PartnerTypes', $clubEvent->getPartnerTypes());
+        }
+        // restriction sur la compétence du partenaire
+        if ($clubEvent->getPartnerCompetences()) {
+            $competenceConditions = [];
+            foreach ($clubEvent->getPartnerCompetences() as $index => $competence) {
+                $paramName = $paramPrefix.'PartnerCompetence_'.$index;
+                $competenceConditions[] = 'FIND_IN_SET(:'.$paramName.', p.competence) > 0';
+                $qb->setParameter($paramName, $competence->value);
+            }
+            $whereClause .= ' AND ('.implode(' OR ', $competenceConditions).')';
+        }
+
+        return $whereClause;
     }
 }

@@ -18,20 +18,30 @@ class ClubEventService
         $clubEvents = $this->clubEventRepository->findInFuture();
 
         foreach ($clubEvents as $clubEvent) {
-            if ($user->isSuperAdmin()) {
-                return $clubEvent;
-            }
-            // Les RT ont accès à tous les évènements correspondant à leur rôle
-            if ($user->isTerritoryAdmin() && $this->isRoleMatch($clubEvent, $user)) {
-                return $clubEvent;
-            }
-            // Les autres utilisateurs doivent correspondre aux critères de rôle, type et compétence
-            if ($this->isRoleMatch($clubEvent, $user) && $this->isPartnerTypeMatch($clubEvent, $user) && $this->isPartnerCompetenceMatch($clubEvent, $user)) {
+            if ($this->isUserEligibleForClubEvent($user, $clubEvent)) {
                 return $clubEvent;
             }
         }
 
         return null;
+    }
+
+    // Attention : Une modification sur cette méthode doit être répercutée dans la méthode findUsersToNotifyForClubEvent du NotificationMailService
+    public function isUserEligibleForClubEvent(User $user, ClubEvent $clubEvent): bool
+    {
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+        // Les RT ont accès à tous les évènements correspondant à leur rôle
+        if ($user->isTerritoryAdmin() && $this->isRoleMatch($clubEvent, $user)) {
+            return true;
+        }
+        // Les autres utilisateurs doivent correspondre aux critères de rôle, type et compétence
+        if ($this->isRoleMatch($clubEvent, $user) && $this->isPartnerTypeMatch($clubEvent, $user) && $this->isPartnerCompetenceMatch($clubEvent, $user)) {
+            return true;
+        }
+
+        return false;
     }
 
     private function isRoleMatch(ClubEvent $clubEvent, User $user): bool

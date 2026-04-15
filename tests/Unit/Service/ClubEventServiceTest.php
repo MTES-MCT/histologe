@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Tests\Unit\Service\InjonctionBailleur;
+namespace App\Tests\Unit\Service;
 
+use App\Entity\Enum\UserStatus;
 use App\Repository\ClubEventRepository;
 use App\Repository\UserRepository;
 use App\Service\ClubEventService;
@@ -78,5 +79,31 @@ class ClubEventServiceTest extends KernelTestCase
         $service = new ClubEventService($clubEventRepository);
         $nextClubEvent = $service->getNextClubEventForUser($user);
         $this->assertNull($nextClubEvent);
+    }
+
+    public function testGetNextClubEventForUserAndFindUsersToNotifyForClubEventConsistency(): void
+    {
+        $container = self::getContainer();
+        $clubEventRepository = $container->get(ClubEventRepository::class);
+        $userRepository = $container->get(UserRepository::class);
+        $service = new ClubEventService($clubEventRepository);
+
+        $users = $userRepository->findBy(['statut' => UserStatus::ACTIVE->value]);
+        $this->assertGreaterThan(0, count($users));
+        $clubs = $clubEventRepository->findAll();
+        $this->assertGreaterThan(0, count($clubs));
+
+        foreach ($clubs as $club) {
+            $userElligibleForClub = $userRepository->findUsersToNotifyForClubEvent($club);
+            foreach ($users as $user) {
+                $isUserEligibleForClubEvent = $service->isUserEligibleForClubEvent($user, $club);
+                if ($user->getIsMailingClubEvent() && $isUserEligibleForClubEvent && !in_array($user, $userElligibleForClub, true)) {
+                    $this->fail('User '.$user->getEmail().' is eligible for club event '.$club->getName().' but is not in the list of users to notify.');
+                }
+                if (!$isUserEligibleForClubEvent && in_array($user, $userElligibleForClub, true)) {
+                    $this->fail('User '.$user->getEmail().' is not eligible for club event '.$club->getName().' but is in the list of users to notify.');
+                }
+            }
+        }
     }
 }

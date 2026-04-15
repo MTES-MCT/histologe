@@ -20,13 +20,13 @@ club_events:
 -
   name: "Club Utilisateurs (RT)"
   url: "https://example.com/club-utilisateurs-rt"
-  date_event: "2026-04-09 14:00:00"
+  date_event: "+2 days 14:00:00"
   user_roles:
     - "ROLE_ADMIN_TERRITORY"
 -
   name: "Club partenaires Communes/SCHS/EPCI/CCAS"
   url: "https://example.com/club-partenaires-communes-schs-epci-ccas"
-  date_event: "2026-01-20 14:00:00"
+  date_event: "+7 days 14:00:00"
   user_roles:
     - "ROLE_ADMIN_PARTNER"
     - "ROLE_USER_PARTNER"
@@ -37,7 +37,7 @@ club_events:
 -
   name: "Club partenaires Communes/SCHS/EPCI/CCAS"
   url: "https://example.com/club-partenaires-communes-schs-epci-ccas"
-  date_event: "2026-03-03 14:00:00"
+  date_event: "+1 month 10:00:00"
   user_roles:
     - "ROLE_ADMIN_PARTNER"
     - "ROLE_USER_PARTNER"

@@ -1,0 +1,15 @@
+{% if app.user.isMailingActive %}
+    <div class="fr-alert fr-alert--info fr-alert--sm">
+        <p>
+            Pour désactiver complètement vos e-mails concernant l'activité des signalements, contactez vos responsables de territoire ! 
+        </p>
+    </div>
+{% else %}
+    <div class="fr-alert fr-alert--warning fr-alert--sm">
+        <p>
+            Votre compte est actuellement configuré pour ne recevoir aucun e-mail concernant l'activité des signalements. 
+            <br>
+            Laisser les deux options ci-dessus vide pour conserver ce paramétrage.
+        </p>
+    </div>
+{% endif %}

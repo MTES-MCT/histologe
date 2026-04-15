@@ -1,0 +1,29 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>
+        L'évènement <strong>{{name}}</strong> a lieu dans 2 jours, le <strong>{{date}}</strong> à <strong>{{hour}}</strong>.
+        <br>
+        Si ce n'est pas déjà fait, cliquez sur le bouton ci-dessous pour vous inscrire à cet évènement.
+    </p>
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
+           style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="left">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr style="text-align: center;width: 100%">
+                        <td>
+                            <a href="{{ url|raw }}" target="_blank" rel="noopener">S'inscrire à l'évènement</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ url|raw }}">cliquez ici</a></p>
+    <p>Si vous ne souhaitez plus recevoir ces e-mails, vous pouvez les désactiver dans les options de votre profil en cliquant sur <a href="{{url('back_profil')}}">ce lien</a>.</p>
+{% endblock %}

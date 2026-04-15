@@ -673,13 +673,15 @@ class ProfilControllerTest extends WebTestCase
         $route = $this->router->generate('back_profil');
         $crawler = $this->client->request('GET', $route);
         $form = $crawler->filter('#notification_email_form')->form();
+        $form->remove('isMailingClubEvent');
+
         $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $expectedJson = [
             'code' => Response::HTTP_BAD_REQUEST,
             'errors' => [
-                'isMailingSummary' => [
+                'isMailingClubEvent' => [
                     'errors' => ['Merci de choisir une option de notification.'],
                 ],
             ],
@@ -695,6 +697,7 @@ class ProfilControllerTest extends WebTestCase
 
         $form->setValues([
             'isMailingSummary' => 0,
+            'isMailingClubEvent' => 0,
         ]);
 
         $this->client->submit($form);
@@ -704,6 +707,7 @@ class ProfilControllerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->assertFalse($user->getIsMailingSummary());
         $this->assertTrue($user->getIsMailingActive());
+        $this->assertFalse($user->getIsMailingClubEvent());
     }
 
     public function testSubscribeAndUnsubscribeRT(): void

@@ -138,6 +138,10 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[Assert\NotNull(message: 'Merci de choisir une option de notification.')]
     private ?bool $isMailingSummary;
 
+    #[ORM\Column(type: 'boolean')]
+    #[Assert\NotNull(message: 'Merci de choisir une option de notification.', groups: ['notification_email'])]
+    private ?bool $isMailingClubEvent;
+
     /** @var Collection<int, Notification> $notifications */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class)]
     private Collection $notifications;
@@ -232,6 +236,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->userPartners = new ArrayCollection();
         $this->popNotifications = new ArrayCollection();
         $this->isMailingSummary = true;
+        $this->isMailingClubEvent = true;
         $this->userSignalementSubscriptions = new ArrayCollection();
         $this->userApiPermissions = new ArrayCollection();
         $this->userSearchFilters = new ArrayCollection();
@@ -624,6 +629,18 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     public function setIsMailingSummary(?bool $isMailingSummary): static
     {
         $this->isMailingSummary = $isMailingSummary;
+
+        return $this;
+    }
+
+    public function getIsMailingClubEvent(): ?bool
+    {
+        return $this->isMailingClubEvent;
+    }
+
+    public function setIsMailingClubEvent(?bool $isMailingClubEvent): static
+    {
+        $this->isMailingClubEvent = $isMailingClubEvent;
 
         return $this;
     }
