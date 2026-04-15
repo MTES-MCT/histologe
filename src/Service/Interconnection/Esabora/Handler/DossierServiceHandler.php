@@ -16,7 +16,7 @@ class DossierServiceHandler extends AbstractDossierSISHHandler
         parent::__construct();
     }
 
-    public function handle(DossierMessageSISH $dossierMessageSISH): void
+    public function handle(DossierMessageSISH $dossierMessageSISH): bool
     {
         $piecesJointes = $dossierMessageSISH->getPiecesJointesDocuments();
         if (!empty($piecesJointes)) {
@@ -30,7 +30,8 @@ class DossierServiceHandler extends AbstractDossierSISHHandler
         $dossierMessageSISH->setAction($this->action);
         $this->response = $this->esaboraSISHService->pushDossier($dossierMessageSISH);
         $dossierMessageSISH->setSasDossierId($this->response->getSasId());
-        parent::handle($dossierMessageSISH);
+
+        return parent::handle($dossierMessageSISH);
     }
 
     public static function getPriority(): int

@@ -9,6 +9,7 @@ class DossierPushSISHResponse implements DossierResponseInterface
     private ?int $sasId = null;
     private ?int $statusCode = null;
     private ?string $errorReason = null;
+    private ?string $errorCode = null;
 
     /**
      * @param array<mixed> $response
@@ -21,6 +22,7 @@ class DossierPushSISHResponse implements DossierResponseInterface
                 $this->sasId = $data;
             } else {
                 $this->errorReason = (string) json_encode($response);
+                $this->errorCode = $response['code'] ?? null;
             }
         }
         $this->statusCode = $statusCode;
@@ -64,5 +66,10 @@ class DossierPushSISHResponse implements DossierResponseInterface
     public function getNameSI(): ?string
     {
         return EsaboraSISHService::NAME_SI;
+    }
+
+    public function getErrorCode(): ?string
+    {
+        return $this->errorCode;
     }
 }

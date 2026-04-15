@@ -19,6 +19,8 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
             'doTreatment',
             'Import HISTOLOGE',
             'ws_import.json',
+            200,
+            null,
             self::BASE_PATH,
             self::RESOURCES_DIR,
         );
@@ -49,7 +51,7 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
 
         self::createCustomStateDossierMock(
             $wiremock,
-            self::SIGNALEMENT_SUBCRIBED_SISH_SCHS,
+            self::SIGNALEMENT_SUBSCRIBED_SISH_SCHS,
             'etat_termine.json'
         );
 
@@ -58,7 +60,7 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
             '00000000-0000-0000-2022-000000000002',
             '00000000-0000-0000-2022-000000000008',
             '00000000-0000-0000-2023-000000000009',
-            self::SIGNALEMENT_SUBCRIBED_SISH_SCHS,
+            self::SIGNALEMENT_SUBSCRIBED_SISH_SCHS,
         ];
 
         self::createSearchDossierMock(

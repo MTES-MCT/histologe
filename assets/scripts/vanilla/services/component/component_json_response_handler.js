@@ -47,7 +47,7 @@ export function jsonResponseProcess(response) {
       const openModalElement = document.querySelector('.fr-modal--opened');
       if (openModalElement) {
         dsfr(openModalElement).modal.conceal();
-        if(response.resetForm) {
+        if (response.resetForm) {
           const formElement = openModalElement.querySelector('form');
           if (formElement) {
             formElement.reset();

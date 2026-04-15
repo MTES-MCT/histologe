@@ -242,6 +242,16 @@ class AffectationManager extends Manager
 
     public function removeAffectationAndSubscriptions(Affectation $affectation): void
     {
+        if ($affectation->isSynchronized() && AffectationStatus::ACCEPTED === $affectation->getStatut()) {
+            $message = \sprintf(
+                '[%s][%s] Suppression du partenaire %s sur le dossier synchronisé #%s',
+                $affectation->getSignalement()->getTerritory()->getZipAndName(),
+                $affectation->getPartner()->getType()->value,
+                $affectation->getPartner()->getId(),
+                $affectation->getSignalement()->getReference()
+            );
+            \Sentry\captureMessage($message);
+        }
         $this->removeSubscriptionsOfAffectation($affectation);
         $this->remove($affectation);
     }

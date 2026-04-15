@@ -88,6 +88,8 @@ final class DossierMessageSISH implements DossierMessageInterface
      */
     private ?array $personnes = null;
 
+    private ?string $errorCode = null;
+
     public function __construct()
     {
         $this->personnes = [];
@@ -887,6 +889,18 @@ final class DossierMessageSISH implements DossierMessageInterface
     public function setAttachmentsSize(?int $attachmentsSize): self
     {
         $this->attachmentsSize = $attachmentsSize;
+
+        return $this;
+    }
+
+    public function getErrorCode(): ?string
+    {
+        return $this->errorCode;
+    }
+
+    public function setErrorCode(?string $errorCode): self
+    {
+        $this->errorCode = $errorCode;
 
         return $this;
     }

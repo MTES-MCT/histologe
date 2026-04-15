@@ -4,6 +4,7 @@ namespace App\Factory;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\InterventionType;
+use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Intervention;
 
@@ -40,7 +41,13 @@ class InterventionFactory
             ->setAdditionalInformation($additionalInformation);
 
         if ($doneBy) {
-            if ('ARS' === $doneBy) {
+            $partnerType = match ($doneBy) {
+                'SCHS' => PartnerType::COMMUNE_SCHS,
+                'ARS' => PartnerType::ARS,
+                default => PartnerType::tryFrom($doneBy),
+            };
+
+            if (null !== $partnerType && $affectation->getPartner()->getType() === $partnerType) {
                 $intervention->setPartner($affectation->getPartner());
             } else {
                 $intervention->setExternalOperator($doneBy)->setPartner(null);

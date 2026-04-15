@@ -17,7 +17,7 @@ export default function paginationHandler(loadPanelContent) {
       container = link.closest('.fr-tabs__panel')?.querySelector('[data-url]');
     }
     if (!container) {
-      const error = "Pagination: aucun container avec data-url trouvé";
+      const error = 'Pagination: aucun container avec data-url trouvé';
       console.error(error);
       Sentry.captureException(new Error(error));
       return;

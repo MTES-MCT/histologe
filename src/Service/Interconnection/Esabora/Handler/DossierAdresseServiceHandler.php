@@ -16,7 +16,7 @@ class DossierAdresseServiceHandler extends AbstractDossierSISHHandler
         parent::__construct();
     }
 
-    public function handle(DossierMessageSISH $dossierMessageSISH): void
+    public function handle(DossierMessageSISH $dossierMessageSISH): bool
     {
         $dossierMessageSISH
             ->setAction($this->action)
@@ -24,7 +24,12 @@ class DossierAdresseServiceHandler extends AbstractDossierSISHHandler
             ->setAttachmentsCount(null);
         $this->response = $this->esaboraSISHService->pushAdresse($dossierMessageSISH);
         $dossierMessageSISH->setSasAdresse($this->response->getSasId());
-        parent::handle($dossierMessageSISH);
+
+        if (null !== $this->response->getErrorCode()) {
+            $dossierMessageSISH->setErrorCode($this->response->getErrorCode());
+        }
+
+        return parent::handle($dossierMessageSISH);
     }
 
     public static function getPriority(): int

@@ -95,8 +95,7 @@ export default function initTabsLoader() {
         }
 
         if (err.message.includes('404')) {
-          loader.innerHTML =
-              '<div class="fr-text--error">Chargement de données impossible.</div>';
+          loader.innerHTML = '<div class="fr-text--error">Chargement de données impossible.</div>';
           continue;
         }
 

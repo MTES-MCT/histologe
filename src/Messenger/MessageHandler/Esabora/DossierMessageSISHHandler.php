@@ -33,9 +33,14 @@ final class DossierMessageSISHHandler
     {
         /** @var DossierSISHHandlerInterface $dossierSISHHandler */
         foreach ($this->dossierSISHHandlers as $dossierSISHHandler) {
-            $dossierSISHHandler->handle($dossierMessageSISH);
+            $isSuccessful = $dossierSISHHandler->handle($dossierMessageSISH);
+
             if ($dossierSISHHandler->canFlagAsSynchronized()) {
                 $this->affectationManager->flagAsSynchronized($dossierMessageSISH);
+            }
+
+            if (!$isSuccessful) {
+                break;
             }
         }
     }
