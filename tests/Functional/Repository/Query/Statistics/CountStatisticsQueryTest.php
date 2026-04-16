@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Repository\Query\Dashboard;
+namespace App\Tests\Functional\Repository\Query\Statistics;
 
 use App\Entity\Territory;
 use App\Repository\Query\Statistics\CountStatisticsQuery;
