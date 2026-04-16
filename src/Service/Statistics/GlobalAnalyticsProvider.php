@@ -92,7 +92,7 @@ class GlobalAnalyticsProvider
     {
         $total = $this->getCountSignalementData();
         if ($total > 0) {
-            return round($this->countStatisticsQuery->countRefused() / $total * 1000) / 10;
+            return round($this->countStatisticsQuery->countRefused(true) / $total * 1000) / 10;
         }
 
         return '-';

@@ -70,13 +70,13 @@ class CountStatisticsQuery
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function countClosed(bool $removeImported = false): int
+    private function countByStatus(SignalementStatus $status, bool $removeImported = false): int
     {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('COUNT(s.id)')
-            ->andWhere('s.statut = :closedStatus')
-            ->setParameter('closedStatus', SignalementStatus::CLOSED);
+            ->andWhere('s.statut = :status')
+            ->setParameter('status', $status);
 
         if ($removeImported) {
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
@@ -85,20 +85,14 @@ class CountStatisticsQuery
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-    public function countRefused(): int
+    public function countClosed(bool $removeImported = false): int
     {
-        $qb = $this->entityManager->createQueryBuilder()
-            ->from(Signalement::class, 's')
-            ->select('COUNT(s.id)')
-            ->andWhere('s.statut = :refusedStatus')
-            ->setParameter('refusedStatus', SignalementStatus::REFUSED)
-            ->andWhere('s.isImported IS NULL OR s.isImported = 0');
+        return $this->countByStatus(SignalementStatus::CLOSED, $removeImported);
+    }
 
-        return (int) $qb->getQuery()->getSingleScalarResult();
+    public function countRefused(bool $removeImported = false): int
+    {
+        return $this->countByStatus(SignalementStatus::REFUSED, $removeImported);
     }
 
     /**
