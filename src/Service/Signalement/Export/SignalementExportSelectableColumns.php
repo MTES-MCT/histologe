@@ -12,7 +12,7 @@ class SignalementExportSelectableColumns
     private const array SELECTABLE_COLS = [
         'REFERENCE' => ['name' => 'Référence', 'description' => 'La référence du signalement', 'export' => 's.reference', 'preselected' => true],
         'CREATED_AT' => ['name' => 'Déposé le', 'description' => 'La date de dépôt du signalement', 'export' => 's.createdAt', 'preselected' => true],
-        'STATUT' => ['name' => 'Statut', 'description' => 'Le statut du signalement (nouveau, en cours, fermé)', 'export' => 's.statut', 'preselected' => true],
+        'STATUT' => ['name' => 'Statut', 'description' => 'Le statut du signalement (nouveau, en cours, fermé)', 'export' => 'statut', 'preselected' => true, 'specificSelect' => true],
         'DESCRIPTION' => ['name' => 'Description', 'description' => 'Le message laissé par l\'usager au dépôt du signalement, décrivant la situation', 'export' => 's.details', 'preselected' => true],
         'TYPE_DECLARANT' => ['name' => 'Type déclarant', 'description' => 'Le type de déclarant (occupant, tiers, propriétaire occupant, services de secours...)', 'export' => 's.profileDeclarant', 'preselected' => true],
         'NOM_OCCUPANT' => ['name' => 'Nom occupant', 'description' => 'Le nom de l\'occupant du logement', 'export' => 's.nomOccupant', 'preselected' => true],
@@ -24,7 +24,7 @@ class SignalementExportSelectableColumns
         'CP_OCCUPANT' => ['name' => 'Code postal', 'description' => 'Le code postal du logement', 'export' => 's.cpOccupant', 'preselected' => true],
         'VILLE_OCCUPANT' => ['name' => 'Commune', 'description' => 'La commune du logement', 'export' => 's.villeOccupant', 'preselected' => true],
         'INSEE' => ['name' => 'Code INSEE', 'description' => 'Le code INSEE de la commune du signalement', 'export' => 's.inseeOccupant', 'preselected' => false],
-        'EPCI_NOM' => ['name' => 'EPCI', 'description' => 'L\'EPCI auquel appartient la commune du logement', 'export' => 'e.nom', 'preselected' => false],
+        'EPCI_NOM' => ['name' => 'EPCI', 'description' => 'L\'EPCI auquel appartient la commune du logement', 'export' => 'epci', 'preselected' => false, 'specificSelect' => true],
         'ETAGE' => ['name' => 'Étage', 'description' => 'L\'étage du logement', 'export' => 's.etageOccupant', 'preselected' => false],
         'ESCALIER' => ['name' => 'Escalier', 'description' => 'Le numéro d\'escalier du logement', 'export' => 's.escalierOccupant', 'preselected' => false],
         'APPARTEMENT' => ['name' => 'Appartement', 'description' => 'Le numéro d\'appartement du logement', 'export' => 's.numAppartOccupant', 'preselected' => false],

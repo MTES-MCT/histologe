@@ -99,7 +99,6 @@ class ExportIterableQuery
     {
         $columns = SignalementExportSelectableColumns::getColumns();
         $specificSelectKeys = array_keys(array_filter($columns, static fn ($col) => isset($col['specificSelect'])));
-        $handledSeparately = array_merge($specificSelectKeys, ['EPCI_NOM', 'STATUT']);
 
         $qb = $this->em->createQueryBuilder()
             ->from(Signalement::class, 's')
@@ -109,7 +108,7 @@ class ExportIterableQuery
             ->groupBy('s.id');
 
         foreach ($selectedColumns as $column) {
-            if (\in_array($column, $handledSeparately, true)) {
+            if (\in_array($column, $specificSelectKeys, true)) {
                 continue;
             }
             $export = $columns[$column]['export'];

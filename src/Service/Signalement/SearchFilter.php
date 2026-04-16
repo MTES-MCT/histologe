@@ -456,8 +456,7 @@ class SearchFilter
             $qb = $this->addFilterStatusAffectation($qb, $filters['statusAffectation']);
         }
 
-        if (!empty($filters['isImported'])) {
-        } else {
+        if (empty($filters['isImported'])) {
             $qb->andWhere('s.isImported = false');
         }
 
