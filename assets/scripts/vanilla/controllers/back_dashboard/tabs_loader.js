@@ -31,16 +31,6 @@ export default function initTabsLoader() {
     });
   });
 
-  document.querySelectorAll('.fr-tabs__tab').forEach((tab) => {
-    tab?.addEventListener('click', () => {
-      const panelId = tab.getAttribute('aria-controls');
-      const panel = document.getElementById(panelId);
-      if (panel) {
-        loadPanelContent(panel);
-      }
-    });
-  });
-
   async function loadPanelContent(panelOrBody) {
     if (currentAbortController) {
       currentAbortController.abort();
