@@ -25,11 +25,9 @@ export default function initTabsLoader() {
     }
   });
 
-  document.querySelectorAll('.fr-tabs__tab').forEach((tab) => {
-    tab.addEventListener('click', function () {
-      const panelId = this.getAttribute('aria-controls');
-      const panel = document.getElementById(panelId);
-      loadPanelContent(panel);
+  document.querySelectorAll('[data-fr-js-tab-panel]').forEach((panel) => {
+    panel?.addEventListener('dsfr.disclose', (e) => {
+      loadPanelContent(e.target);
     });
   });
 
