@@ -31,6 +31,16 @@ export default function initTabsLoader() {
     });
   });
 
+  document.querySelectorAll('.fr-tabs__tab').forEach((tab) => {
+    tab?.addEventListener('click', () => {
+      const panelId = tab.getAttribute('aria-controls');
+      const panel = document.getElementById(panelId);
+      if (panel) {
+        loadPanelContent(panel);
+      }
+    });
+  });
+
   async function loadPanelContent(panelOrBody) {
     if (currentAbortController) {
       currentAbortController.abort();
@@ -93,8 +103,7 @@ export default function initTabsLoader() {
         }
 
         if (err.message.includes('404')) {
-          loader.innerHTML =
-              '<div class="fr-text--error">Chargement de données impossible.</div>';
+          loader.innerHTML = '<div class="fr-text--error">Chargement de données impossible.</div>';
           continue;
         }
 
