@@ -7,13 +7,17 @@ use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Messenger\MessageHandler\Esabora\DossierMessageSCHSHandler;
 use App\Messenger\MessageHandler\Esabora\DossierMessageSISHHandler;
 use App\Service\Interconnection\Esabora\EsaboraSCHSService;
+use App\Service\Interconnection\Esabora\EsaboraSISHService;
+use App\Service\Interconnection\Esabora\Handler\DossierAdresseServiceHandler;
 use App\Service\Interconnection\Esabora\Handler\DossierSISHHandlerInterface;
+use App\Service\Interconnection\Esabora\Response\DossierPushSISHResponse;
 use App\Tests\FixturesHelper;
 use Faker\Factory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
@@ -81,5 +85,30 @@ class DossierMessageHandlerTest extends TestCase
 
         $handler = new DossierMessageSISHHandler(['handler' => $dossierSISHHandlerMock], $affectationManagerMock);
         $handler($dossierMessageSISH);
+    }
+
+    public function testHandleReturnsFalseAndCanFlagAsSynchronizedWhenWsErrSql(): void
+    {
+        $esaboraSISHService = $this->createMock(EsaboraSISHService::class);
+        $esaboraSISHService
+            ->expects($this->once())
+            ->method('pushAdresse')
+            ->willReturn(
+                new DossierPushSISHResponse(
+                    [
+                        'code' => 'WS_ERR_SQL',
+                        'message' => '23505 - ERROR:  duplicate key value violates unique constraint',
+                    ],
+                    Response::HTTP_BAD_REQUEST
+                )
+            );
+
+        $handler = new DossierAdresseServiceHandler($esaboraSISHService);
+        $dossierMessageSISH = $this->getDossierMessageSISH();
+        $isSuccessful = $handler->handle($dossierMessageSISH);
+
+        self::assertFalse($isSuccessful);
+        self::assertTrue($handler->canFlagAsSynchronized());
+        self::assertTrue($handler->dossierAlreadyExists());
     }
 }

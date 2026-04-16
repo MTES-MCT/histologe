@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Controller;
+namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
