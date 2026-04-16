@@ -866,41 +866,11 @@ ul + p {
     font-weight: bold;
 }
 
-.avatar-124 {
-    width: 124px;
-    height: 124px;
-    font-size: 62px;
-}
-
-.avatar-80 {
-    width: 80px;
-    height: 80px;
-    font-size: 62px;
-}
-
-.avatar-74 {
-    width: 74px;
-    height: 74px;
-    font-size: 37px;
-}
-
-.avatar-45 {
-    width: 45px;
-    height: 45px;
-    font-size: 23px;
-}
-
-.avatar-26 {
-    width: 26px;
-    height: 26px;
-    font-size: 13px;
-}
-
-.avatar-18 {
-    width: 18px;
-    height: 18px;
-    font-size: 8px;
-}
+.avatar-124 {font-size: 62px; width: 2em; height: 2em; }
+.avatar-80 { font-size: 50px; width: 1.6em; height: 1.6em; }
+.avatar-74 { font-size: 37px; width: 2em; height: 2em; }
+.avatar-45 {font-size: 23px; width: 2em; height: 2em; }
+.avatar-18 { font-size: 9px; width: 2em; height: 2em; }
 
 .search-checkbox-container {
     position: relative;
