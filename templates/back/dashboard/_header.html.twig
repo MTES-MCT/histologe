@@ -1,6 +1,6 @@
 <section class="fr-p-3v fr-container-sml fr-mb-5v">
     <div class="fr-grid-row fr-grid-row--middle">
-        <div class="fr-col fr-col-md-9">
+        <div class="fr-col-12 fr-col-lg-9">
             <div class="fr-display-inline-flex fr-align-items-center">
                 {{ user_avatar_or_placeholder(app.user, 80) }}
                 <div class="fr-ml-3v fr-mt-3v">
@@ -12,7 +12,7 @@
         </div>
 
         {% if is_granted('ROLE_ADMIN') or settings.isMultiTerritoire %}
-            <div class="fr-col fr-col-md-3">
+            <div class="fr-col-12 fr-col-lg-3">
                 <div class="fr-select-group">
                     <label class="fr-label" for="filter-territoires">Territoire</label>
                     <select class="fr-select"
