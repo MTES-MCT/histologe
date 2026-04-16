@@ -1,11 +1,21 @@
 import { test, Page } from '@playwright/test';
 
 async function clickTabAndTriggerDisclose(page: Page, tabName: string) {
-  await page.getByRole('tab', { name: tabName }).click();
-  await page.evaluate(() => {
-    const panel = document.querySelector('.fr-tabs__panel--selected');
-    if (panel) panel.dispatchEvent(new Event('dsfr.disclose', { bubbles: true }));
-  });
+  const tab = page.getByRole('tab', { name: tabName });
+  await tab.click();
+
+  // Attendre que le DSFR ait changé le panel actif
+  const panelId = await tab.getAttribute('aria-controls');
+  
+  // Dispatcher l'événement sur le bon panel et vérifier
+  await page.evaluate((id) => {
+    const panel = document.getElementById(id);
+    if (panel) {
+      panel.dispatchEvent(new Event('dsfr.disclose', { bubbles: true }));
+      return true;
+    }
+    return false;
+  }, panelId);
 }
 
 test('dashboard tabs for admin', async ({page, context}) => {

@@ -25,7 +25,7 @@ export default function initTabsLoader() {
     }
   });
 
-  document.querySelectorAll('[data-fr-js-tab-panel]').forEach((panel) => {
+  document.querySelectorAll('.fr-tabs__panel').forEach((panel) => {
     panel?.addEventListener('dsfr.disclose', (e) => {
       loadPanelContent(e.target);
     });
