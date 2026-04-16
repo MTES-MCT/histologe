@@ -150,6 +150,30 @@ Ce guide détaille les 9 contextes où un champ doit potentiellement être ajout
 - [ ] Lister les index importants pour les performances
 - [ ] Documenter les tables principales et leurs relations
 
+### Organisation des Repositories
+
+Les repositories Doctrine sont progressivement réorganisés pour séparer les responsabilités :
+
+**Principe général :**
+- Les méthodes de Repository doivent retourner des **entités** ou des collections d'entités
+- Les méthodes qui retournent des **données agrégées** (comptages, moyennes, statistiques) doivent être déplacées dans des **Query Services** dans `src/Repository/Query/`
+
+**Structure de `src/Repository/Query/` :**
+```
+src/Repository/Query/
+├── Dashboard/          # Requêtes pour le tableau de bord
+├── EmailAlert/         # Requêtes pour les alertes email
+├── SignalementList/    # Requêtes pour les listes de signalements
+└── Statistics/         # Requêtes pour les statistiques (nouveau)
+```
+
+**Pattern des Query Services :**
+- Namespace : `App\Repository\Query\{Domain}\`
+- Injection : `EntityManagerInterface` (pas de Repository)
+- Méthodes : retournent des données brutes (int, array, float, etc.)
+- Nommage : suffixe `Query` (ex: `StatisticsCountQuery`)
+```
+
 ## Commandes utiles
 
 ### Développement local
@@ -252,6 +276,34 @@ npm run build       # Build production
 - **Local** : http://localhost:8080
 
 ## Pièges courants et bonnes pratiques
+
+### Workflow de développement recommandé
+
+**IMPORTANT : Toujours vérifier la qualité du code après les modifications**
+
+Après avoir effectué des modifications de code (création, modification, suppression de fichiers PHP), **toujours** exécuter dans l'ordre :
+
+1. **`make cs-fix`** - Corriger automatiquement le formatage du code (PHP-CS-Fixer)
+2. **`make stan`** - Vérifier l'analyse statique (PHPStan niveau 6)
+
+Ces commandes permettent de :
+- Respecter les conventions de code PSR-12
+- Détecter les erreurs de typage et les problèmes potentiels
+- Maintenir la qualité du code du projet
+
+**Exemple de workflow complet :**
+```bash
+# 1. Faire les modifications de code
+# 2. Corriger le formatage
+make cs-fix
+
+# 3. Vérifier l'analyse statique
+make stan
+
+# 4. Si tout est OK, commiter
+git add .
+git commit -m "Description des modifications"
+```
 
 **TODO :**
 - [ ] Lister les erreurs fréquentes (ex: oublier de flush() Doctrine)

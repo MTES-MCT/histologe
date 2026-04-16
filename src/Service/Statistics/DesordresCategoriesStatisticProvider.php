@@ -3,11 +3,12 @@
 namespace App\Service\Statistics;
 
 use App\Entity\Territory;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Statistics\CountStatisticsQuery;
 
 class DesordresCategoriesStatisticProvider
 {
-    public function __construct(private SignalementRepository $signalementRepository)
+    public function __construct(
+        private readonly CountStatisticsQuery $countStatisticsQuery, )
     {
     }
 
@@ -16,7 +17,7 @@ class DesordresCategoriesStatisticProvider
      */
     public function getData(?Territory $territory, ?int $year): array
     {
-        $countPerDesordresCategories = $this->signalementRepository->countCritereByZone(
+        $countPerDesordresCategories = $this->countStatisticsQuery->countCritereByZone(
             $territory,
             $year
         );

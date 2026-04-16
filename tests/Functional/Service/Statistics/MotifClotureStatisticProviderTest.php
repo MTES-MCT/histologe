@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Service\Statistics;
 
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Statistics\MotifClotureStatisticsQuery;
 use App\Service\Statistics\MotifClotureStatisticProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -11,9 +11,10 @@ class MotifClotureStatisticProviderTest extends KernelTestCase
     public function testGetDataDoughnut(): void
     {
         self::bootKernel();
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
-        $data = (new MotifClotureStatisticProvider($signalementRepository))->getData(null, null);
+
+        /** @var MotifClotureStatisticsQuery $motifClotureStatisticsQuery */
+        $motifClotureStatisticsQuery = self::getContainer()->get(MotifClotureStatisticsQuery::class);
+        $data = (new MotifClotureStatisticProvider($motifClotureStatisticsQuery))->getData(null, null);
 
         $this->assertEquals(15, \count($data));
         $this->assertArrayHasKey('TRAVAUX_FAITS_OU_EN_COURS', $data);
@@ -27,9 +28,9 @@ class MotifClotureStatisticProviderTest extends KernelTestCase
     public function testGetDataBar(): void
     {
         self::bootKernel();
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
-        $data = (new MotifClotureStatisticProvider($signalementRepository))->getData(null, null, 'bar');
+        /** @var MotifClotureStatisticsQuery $motifClotureStatisticsQuery */
+        $motifClotureStatisticsQuery = self::getContainer()->get(MotifClotureStatisticsQuery::class);
+        $data = (new MotifClotureStatisticProvider($motifClotureStatisticsQuery))->getData(null, null, 'bar');
         $this->assertEquals(4, \count($data));
         $this->assertArrayHasKey('Abandon de procédure / absence de réponse', $data);
         $this->assertEquals(1, $data['Abandon de procédure / absence de réponse']);

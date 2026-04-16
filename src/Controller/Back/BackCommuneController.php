@@ -8,6 +8,7 @@ use App\Form\SearchCommuneType;
 use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\CommuneRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\Query\Commune\CommuneStatisticsQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Gouv\Ban\AddressService;
@@ -69,6 +70,7 @@ class BackCommuneController extends AbstractController
         Commune $commune,
         Request $request,
         SignalementRepository $signalementRepository,
+        CommuneStatisticsQuery $communeStatisticsQuery,
         AutoAffectationRuleRepository $autoAffectationRuleRepository,
         PartnerRepository $partnerRepository,
         TerritoryRepository $territoryRepository,
@@ -76,7 +78,7 @@ class BackCommuneController extends AbstractController
         AddressService $addressService,
     ): Response {
         $poiCommune = $addressService->getMunicipalityByCityCode($commune->getNom(), $commune->getCodeInsee());
-        $countSignalementsWithCommune = $signalementRepository->countForCommune($commune);
+        $countSignalementsWithCommune = $communeStatisticsQuery->countForCommune($commune);
         $inconsistentSignalements = $signalementRepository->findWithInconsistentCommuneName($commune);
         $form = $this->createForm(CommuneType::class, $commune);
         $originalNom = $commune->getNom();

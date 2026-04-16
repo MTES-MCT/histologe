@@ -9,6 +9,7 @@ use App\Repository\BailleurRepository;
 use App\Repository\CommuneRepository;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
@@ -33,6 +34,7 @@ class SearchFilterOptionDataProvider
         private readonly QualificationStatusService $qualificationStatusService,
         private readonly BailleurRepository $bailleurRepository,
         private readonly ZoneRepository $zoneRepository,
+        private readonly CountStatisticsQuery $countStatisticsQuery,
     ) {
     }
 
@@ -66,7 +68,7 @@ class SearchFilterOptionDataProvider
                     'listQualificationStatus' => $this->qualificationStatusService->getList(),
                     'listVisiteStatus' => VisiteStatus::getLabelList(),
                     'hasSignalementsImported' => $user->isSuperAdmin() || $user->isTerritoryAdmin()
-                        ? $this->signalementRepository->countImported($territory) : $this->signalementRepository->countImported($territory, $user),
+                        ? $this->countStatisticsQuery->countImported($territory) : $this->countStatisticsQuery->countImported($territory, $user),
                     'bailleursSociaux' => $this->bailleurRepository->findBailleursByTerritory($user, $territory),
                 ];
             }

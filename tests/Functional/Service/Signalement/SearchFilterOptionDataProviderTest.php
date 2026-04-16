@@ -6,6 +6,7 @@ use App\Repository\BailleurRepository;
 use App\Repository\CommuneRepository;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
@@ -29,6 +30,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
     private TagAwareCacheInterface $cache;
     private QualificationStatusService $qualificationStatusService;
     private ZoneRepository $zoneRepository;
+    private CountStatisticsQuery $countStatisticsQuery;
 
     protected function setUp(): void
     {
@@ -44,6 +46,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         $this->cache = self::getContainer()->get(TagAwareCacheInterface::class);
         $this->qualificationStatusService = self::getContainer()->get(QualificationStatusService::class);
         $this->zoneRepository = self::getContainer()->get(ZoneRepository::class);
+        $this->countStatisticsQuery = self::getContainer()->get(CountStatisticsQuery::class);
 
         $this->searchFilterOptionDataProvider = new SearchFilterOptionDataProvider(
             $this->critereRepository,
@@ -55,7 +58,8 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
             $this->cache,
             $this->qualificationStatusService,
             $this->bailleurRepository,
-            $this->zoneRepository
+            $this->zoneRepository,
+            $this->countStatisticsQuery,
         );
     }
 

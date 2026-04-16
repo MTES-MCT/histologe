@@ -4,11 +4,11 @@ namespace App\Service\Statistics;
 
 use App\Dto\StatisticsFilters;
 use App\Entity\Territory;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Statistics\SituationStatisticsQuery;
 
 class SituationStatisticProvider
 {
-    public function __construct(private SignalementRepository $signalementRepository)
+    public function __construct(private SituationStatisticsQuery $situationStatisticsQuery)
     {
     }
 
@@ -17,7 +17,7 @@ class SituationStatisticProvider
      */
     public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
-        $countPerSituations = $this->signalementRepository->countBySituationFiltered($statisticsFilters);
+        $countPerSituations = $this->situationStatisticsQuery->countBySituationFiltered($statisticsFilters);
 
         return $this->createFullArray($countPerSituations);
     }
@@ -27,7 +27,7 @@ class SituationStatisticProvider
      */
     public function getData(?Territory $territory, ?int $year): array
     {
-        $countPerSituations = $this->signalementRepository->countBySituation($territory, $year, true);
+        $countPerSituations = $this->situationStatisticsQuery->countBySituation($territory, $year, true);
 
         return $this->createFullArray($countPerSituations);
     }

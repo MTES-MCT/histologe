@@ -5,13 +5,13 @@ namespace App\Service\Statistics;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Partner;
 use App\Entity\Territory;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Statistics\GlobalStatisticsQuery;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class GlobalBackAnalyticsProvider
 {
     public function __construct(
-        private SignalementRepository $signalementRepository,
+        private GlobalStatisticsQuery $globalStatisticsQuery,
     ) {
     }
 
@@ -34,7 +34,7 @@ class GlobalBackAnalyticsProvider
 
         $data['count_signalement_archives'] = 0;
         $data['count_signalement_refuses'] = 0;
-        $countByStatus = $this->signalementRepository->countByStatus($territories, $partners, null, true, keepArchivedSignalements: true);
+        $countByStatus = $this->globalStatisticsQuery->countByStatus($territories, $partners, null, true, keepArchivedSignalements: true);
         foreach ($countByStatus as $countByStatusItem) {
             switch ($countByStatusItem['statut']) {
                 case SignalementStatus::ARCHIVED:
@@ -56,7 +56,7 @@ class GlobalBackAnalyticsProvider
      */
     private function getCountSignalementData(?Territory $territory, ArrayCollection $partners): int
     {
-        return $this->signalementRepository->countAll(territory: $territory, partners: $partners);
+        return $this->globalStatisticsQuery->countAll(territory: $territory, partners: $partners);
     }
 
     /**
@@ -64,7 +64,7 @@ class GlobalBackAnalyticsProvider
      */
     private function getAverageCriticiteData(?Territory $territory, ArrayCollection $partners): float
     {
-        return round($this->signalementRepository->getAverageCriticite(territory: $territory, partners: $partners) * 10) / 10;
+        return round($this->globalStatisticsQuery->getAverageCriticite(territory: $territory, partners: $partners) * 10) / 10;
     }
 
     /**
@@ -72,7 +72,7 @@ class GlobalBackAnalyticsProvider
      */
     private function getAverageDaysValidationData(?Territory $territory, ArrayCollection $partners): float
     {
-        return round($this->signalementRepository->getAverageDaysValidation(territory: $territory, partners: $partners) * 10) / 10;
+        return round($this->globalStatisticsQuery->getAverageDaysValidation(territory: $territory, partners: $partners) * 10) / 10;
     }
 
     /**
@@ -80,6 +80,6 @@ class GlobalBackAnalyticsProvider
      */
     private function getAverageDaysClosureData(?Territory $territory, ArrayCollection $partners): float
     {
-        return round($this->signalementRepository->getAverageDaysClosure(territory: $territory, partners: $partners) * 10) / 10;
+        return round($this->globalStatisticsQuery->getAverageDaysClosure(territory: $territory, partners: $partners) * 10) / 10;
     }
 }

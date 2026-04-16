@@ -3,14 +3,18 @@
 namespace App\Service\Statistics;
 
 use App\Entity\Enum\MotifCloture;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Statistics\CountStatisticsQuery;
+use App\Repository\Query\Statistics\GlobalStatisticsQuery;
+use App\Repository\Query\Statistics\MotifClotureStatisticsQuery;
 use App\Repository\TerritoryRepository;
 
 class GlobalAnalyticsProvider
 {
     public function __construct(
-        private SignalementRepository $signalementRepository,
         private TerritoryRepository $territoryRepository,
+        private GlobalStatisticsQuery $globalStatisticsQuery,
+        private MotifClotureStatisticsQuery $motifClotureStatisticsQuery,
+        private CountStatisticsQuery $countStatisticsQuery,
     ) {
     }
 
@@ -33,7 +37,7 @@ class GlobalAnalyticsProvider
 
     public function getCountSignalementResoluData(): int
     {
-        $countPerMotifsCloture = $this->signalementRepository->countByMotifCloture(
+        $countPerMotifsCloture = $this->motifClotureStatisticsQuery->countByMotifCloture(
             territory: null,
             year: null,
             removeImported: true
@@ -56,7 +60,7 @@ class GlobalAnalyticsProvider
 
     public function getCountSignalementData(): int
     {
-        return $this->signalementRepository->countAll(territory: null, partners: null);
+        return $this->globalStatisticsQuery->countAll(territory: null, partners: null);
     }
 
     public function getCountTerritoryData(): int
@@ -68,7 +72,7 @@ class GlobalAnalyticsProvider
     {
         $total = $this->getCountSignalementData();
         if ($total > 0) {
-            return round($this->signalementRepository->countValidated(true) / $total * 1000) / 10;
+            return round($this->countStatisticsQuery->countValidated(true) / $total * 1000) / 10;
         }
 
         return '-';
@@ -78,7 +82,7 @@ class GlobalAnalyticsProvider
     {
         $total = $this->getCountSignalementData();
         if ($total > 0) {
-            return round($this->signalementRepository->countClosed(true) / $total * 1000) / 10;
+            return round($this->countStatisticsQuery->countClosed(true) / $total * 1000) / 10;
         }
 
         return '-';
@@ -88,7 +92,7 @@ class GlobalAnalyticsProvider
     {
         $total = $this->getCountSignalementData();
         if ($total > 0) {
-            return round($this->signalementRepository->countRefused() / $total * 1000) / 10;
+            return round($this->countStatisticsQuery->countRefused(true) / $total * 1000) / 10;
         }
 
         return '-';
@@ -96,6 +100,6 @@ class GlobalAnalyticsProvider
 
     private function getImportedData(): int
     {
-        return $this->signalementRepository->countImported();
+        return $this->countStatisticsQuery->countImported();
     }
 }

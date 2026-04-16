@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Service\Statistics;
 
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Service\Statistics\LogementDesordresStatisticProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -11,9 +11,9 @@ class LogementDesordresStatisticProviderTest extends KernelTestCase
     public function testGetData(): void
     {
         self::bootKernel();
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
-        $data = (new LogementDesordresStatisticProvider($signalementRepository))->getData(null, null);
+        /** @var CountStatisticsQuery $countStatisticsQuery */
+        $countStatisticsQuery = self::getContainer()->get(CountStatisticsQuery::class);
+        $data = (new LogementDesordresStatisticProvider($countStatisticsQuery))->getData(null, null);
 
         $this->assertEquals(5, \count($data));
         $this->assertArrayHasKey('label', $data[0]);

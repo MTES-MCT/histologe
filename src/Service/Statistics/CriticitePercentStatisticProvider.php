@@ -3,7 +3,7 @@
 namespace App\Service\Statistics;
 
 use App\Dto\StatisticsFilters;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\Statistics\CriticitePercentStatisticsQuery;
 
 class CriticitePercentStatisticProvider
 {
@@ -11,14 +11,14 @@ class CriticitePercentStatisticProvider
     public const CRITICITE_WEAK = 'De 10 à 30 %';
     public const CRITICITE_STRONG = '> 30 %';
 
-    public function __construct(private SignalementRepository $signalementRepository)
+    public function __construct(private CriticitePercentStatisticsQuery $criticitePercentStatisticsQuery)
     {
     }
 
     /** @return array<string, string> */
     public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
-        $countPerCriticites = $this->signalementRepository->countByCriticitePercentFiltered($statisticsFilters);
+        $countPerCriticites = $this->criticitePercentStatisticsQuery->countByCriticitePercentFiltered($statisticsFilters);
 
         $data = self::initPerCriticitePercent();
 
