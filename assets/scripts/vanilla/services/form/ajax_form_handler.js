@@ -209,7 +209,12 @@ document.addEventListener('click', (event) => {
 
   event.preventDefault();
 
-  if (confirm('Voulez-vous vraiment supprimer cet élément ?')) {
+  let messageConfirmation = 'Voulez-vous vraiment supprimer cet élément ?';
+  if (actionBtn.dataset.isSynchronized === '1') {
+    messageConfirmation =
+      'Attention, ce dossier est synchronisé avec un service externe.\nVoulez-vous vraiment supprimer cet élément ?';
+  }
+  if (confirm(messageConfirmation)) {
     const formData = new FormData();
     formData.append('_token', actionBtn.getAttribute('data-token'));
     fetch(actionBtn.getAttribute('data-delete'), {

@@ -16,7 +16,7 @@ class DossierPersonneServiceHandler extends AbstractDossierSISHHandler
         parent::__construct();
     }
 
-    public function handle(DossierMessageSISH $dossierMessageSISH): void
+    public function handle(DossierMessageSISH $dossierMessageSISH): bool
     {
         $dossierMessageSISH
             ->setAction($this->action)
@@ -27,6 +27,8 @@ class DossierPersonneServiceHandler extends AbstractDossierSISHHandler
             $this->response = $this->esaboraSISHService->pushPersonne($dossierMessageSISH, $dossierPersonne);
             parent::handle($dossierMessageSISH);
         }
+
+        return true; // last SISH web service called; no need to handle further
     }
 
     public static function getPriority(): int

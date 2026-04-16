@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag('app.dossier_sish_handler')]
 interface DossierSISHHandlerInterface
 {
-    public function handle(DossierMessageSISH $dossierMessageSISH): void;
+    public function handle(DossierMessageSISH $dossierMessageSISH): bool;
 
     public function canFlagAsSynchronized(): bool;
 

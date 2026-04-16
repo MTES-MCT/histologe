@@ -1,0 +1,34 @@
+{
+  "searchId": "00000000-0000-0000-2023-000000000020",
+  "nbResults": 1,
+  "columnList": [
+    "Sas_LogicielProvenance",
+    "Reference_Dossier",
+    "SISH_DossNum",
+    "SISH_VisiteDate",
+    "SISH_VisiteNum",
+    "SISH_VisiteType",
+    "SISH_VisitePar"
+  ],
+  "keyList": [
+    "i1.imdo_id",
+    "v4_t2.visi_id"
+  ],
+  "rowList": [
+    {
+      "columnDataList": [
+        "Histologe",
+        "00000000-0000-0000-2023-000000000020",
+        "2023/DD13/0011",
+        "16/05/2025 10:00",
+        "2023/DD13/00665-13/05/2025 10:16",
+        "Visite",
+        "ARS"
+      ],
+      "keyDataList": [
+        10,
+        799
+      ]
+    }
+  ]
+}

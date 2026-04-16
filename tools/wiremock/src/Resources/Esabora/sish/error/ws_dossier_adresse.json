@@ -1,0 +1,4 @@
+{
+  "code": "WS_ERR_SQL",
+  "message": "23505 - ERROR:  duplicate key value violates unique constraint \"imdo_cledoss_unik\"\nDETAIL:  Key (imdo_cledoss, imdo_typimport)=(00000000-0000-0000-2023-000000000020, H) already exists."
+}

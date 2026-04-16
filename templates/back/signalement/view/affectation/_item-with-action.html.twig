@@ -65,6 +65,7 @@
                             {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
                                 <button title="Désaffecter le partenaire"
                                         data-delete="{{ path('back_signalement_remove_partner',{uuid:signalement.uuid,affectation:partnerAffectation.id}) }}"
+                                        data-is-synchronized="{{ partnerAffectation.isSynchronized and partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED ? 1 : 0 }}"
                                         data-token="{{ csrf_token('signalement_remove_partner_'~signalement.id) }}"
                                         data-move-affectation-partner-id="{{ partnerAffectation.partner.id }}"
                                         class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-delete-line partner-row-delete"></button>
