@@ -66,6 +66,7 @@ class AffectationRepository extends ServiceEntityRepository
         ?bool $isSynchronized = true,
         ?string $uuidSignalement = null,
         ?Territory $territory = null,
+        ?AffectationStatus $affectationStatus = null,
     ): array {
         $qb = $this->createQueryBuilder('a');
         $qb->select('a AS affectation', 's.uuid AS signalement_uuid');
@@ -109,6 +110,12 @@ class AffectationRepository extends ServiceEntityRepository
             $qb->andWhere($esaboraCondition);
         } else {
             $qb->andWhere($qb->expr()->not($esaboraCondition));
+        }
+
+        if (null !== $affectationStatus) {
+            $qb
+                ->andWhere('a.statut = :status')
+                ->setParameter('status', $affectationStatus);
         }
 
         return $qb->getQuery()->getResult();
