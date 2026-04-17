@@ -21,6 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PartnerRepository::class)]
 #[ORM\Index(columns: ['territory_id'], name: 'idx_partner_territory_id')]
+#[ORM\Index(columns: ['type'], name: 'idx_partner_type')]
 #[ORM\HasLifecycleCallbacks()]
 #[UniqueEntity(
     fields: ['email', 'territory', 'isArchive'],
