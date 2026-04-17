@@ -51,35 +51,35 @@ class ExportIterableQuery
         }
     }
 
-    private function streamBatch(array $batchIds, array $selectedColumns): \Generator
+    private function streamBatch(array $signalementIds, array $selectedColumns): \Generator
     {
         // Requête principale : champs scalaires + STATUT + EPCI (pas de produit cartésien)
-        $mainRows = $this->fetchMainData($batchIds, $selectedColumns);
+        $mainRows = $this->fetchMainData($signalementIds, $selectedColumns);
 
         // Requêtes secondaires isolées (chacune évite le produit cartésien inter-tables)
         $desordresData = [];
         if (\in_array('SITUATIONS', $selectedColumns, true) || \in_array('DESORDRES', $selectedColumns, true)) {
-            $desordresData = $this->fetchDesordresData($batchIds, $selectedColumns);
+            $desordresData = $this->fetchDesordresData($signalementIds, $selectedColumns);
         }
 
         $etiquettesData = [];
         if (\in_array('ETIQUETTES', $selectedColumns, true)) {
-            $etiquettesData = $this->fetchEtiquettesData($batchIds);
+            $etiquettesData = $this->fetchEtiquettesData($signalementIds);
         }
 
         $photosData = [];
         if (\in_array('PHOTOS', $selectedColumns, true)) {
-            $photosData = $this->fetchPhotosData($batchIds);
+            $photosData = $this->fetchPhotosData($signalementIds);
         }
 
         $documentsData = [];
         if (\in_array('DOCUMENTS', $selectedColumns, true)) {
-            $documentsData = $this->fetchDocumentsData($batchIds);
+            $documentsData = $this->fetchDocumentsData($signalementIds);
         }
 
         $visiteData = [];
         if (!empty(array_intersect(self::VISITE_COLUMNS, $selectedColumns))) {
-            $visiteData = $this->fetchVisiteData($batchIds, $selectedColumns);
+            $visiteData = $this->fetchVisiteData($signalementIds, $selectedColumns);
         }
 
         foreach ($mainRows as $row) {
@@ -95,7 +95,7 @@ class ExportIterableQuery
         }
     }
 
-    private function fetchMainData(array $batchIds, array $selectedColumns): array
+    private function fetchMainData(array $signalementIds, array $selectedColumns): array
     {
         $columns = SignalementExportSelectableColumns::getColumns();
         $specificSelectKeys = array_keys(array_filter($columns, static fn ($col) => isset($col['specificSelect'])));
@@ -103,8 +103,8 @@ class ExportIterableQuery
         $qb = $this->em->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('s.id')
-            ->where('s.id IN (:batchIds)')
-            ->setParameter('batchIds', $batchIds)
+            ->where('s.id IN (:signalementIds)')
+            ->setParameter('signalementIds', $signalementIds)
             ->groupBy('s.id');
 
         foreach ($selectedColumns as $column) {
@@ -147,10 +147,10 @@ class ExportIterableQuery
             $indexed[$row['id']] = $row;
         }
 
-        return array_values(array_filter(array_map(static fn (int $id) => $indexed[$id] ?? null, $batchIds)));
+        return array_values(array_filter(array_map(static fn (int $id) => $indexed[$id] ?? null, $signalementIds)));
     }
 
-    private function fetchDesordresData(array $batchIds, array $selectedColumns): array
+    private function fetchDesordresData(array $signalementIds, array $selectedColumns): array
     {
         $qb = $this->em->createQueryBuilder()
             ->from(Signalement::class, 's')
@@ -161,8 +161,8 @@ class ExportIterableQuery
             ->leftJoin('s.desordrePrecisions', 'desordrePrecisions')
             ->leftJoin('desordrePrecisions.desordreCritere', 'desordreCriteres')
             ->leftJoin('desordreCriteres.desordreCategorie', 'desordreCategories')
-            ->where('s.id IN (:batchIds)')
-            ->setParameter('batchIds', $batchIds)
+            ->where('s.id IN (:signalementIds)')
+            ->setParameter('signalementIds', $signalementIds)
             ->setParameter('sep', SignalementExport::SEPARATOR_GROUP_CONCAT)
             ->groupBy('s.id');
 
@@ -188,14 +188,14 @@ class ExportIterableQuery
         return $indexed;
     }
 
-    private function fetchEtiquettesData(array $batchIds): array
+    private function fetchEtiquettesData(array $signalementIds): array
     {
         $result = $this->em->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('s.id')
             ->leftJoin('s.tags', 'tags')
-            ->where('s.id IN (:batchIds)')
-            ->setParameter('batchIds', $batchIds)
+            ->where('s.id IN (:signalementIds)')
+            ->setParameter('signalementIds', $signalementIds)
             ->setParameter('sep', SignalementExport::SEPARATOR_GROUP_CONCAT)
             ->groupBy('s.id')
             ->addSelect('GROUP_CONCAT(DISTINCT tags.label SEPARATOR :sep) as etiquettes')
@@ -210,14 +210,14 @@ class ExportIterableQuery
         return $indexed;
     }
 
-    private function fetchPhotosData(array $batchIds): array
+    private function fetchPhotosData(array $signalementIds): array
     {
         $result = $this->em->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('s.id')
             ->leftJoin('s.files', 'photos', Join::WITH, 'photos.extension IN (:photo_extensions)')
-            ->where('s.id IN (:batchIds)')
-            ->setParameter('batchIds', $batchIds)
+            ->where('s.id IN (:signalementIds)')
+            ->setParameter('signalementIds', $signalementIds)
             ->setParameter('photo_extensions', File::RESIZABLE_EXTENSION)
             ->setParameter('sep', SignalementExport::SEPARATOR_GROUP_CONCAT)
             ->groupBy('s.id')
@@ -233,14 +233,14 @@ class ExportIterableQuery
         return $indexed;
     }
 
-    private function fetchDocumentsData(array $batchIds): array
+    private function fetchDocumentsData(array $signalementIds): array
     {
         $result = $this->em->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('s.id')
             ->leftJoin('s.files', 'documents', Join::WITH, 'documents.extension NOT IN (:photo_extensions)')
-            ->where('s.id IN (:batchIds)')
-            ->setParameter('batchIds', $batchIds)
+            ->where('s.id IN (:signalementIds)')
+            ->setParameter('signalementIds', $signalementIds)
             ->setParameter('photo_extensions', File::RESIZABLE_EXTENSION)
             ->setParameter('sep', SignalementExport::SEPARATOR_GROUP_CONCAT)
             ->groupBy('s.id')
@@ -256,13 +256,13 @@ class ExportIterableQuery
         return $indexed;
     }
 
-    private function fetchVisiteData(array $batchIds, array $selectedColumns): array
+    private function fetchVisiteData(array $signalementIds, array $selectedColumns): array
     {
         $qb = $this->em->createQueryBuilder()
             ->from(ViewLatestIntervention::class, 'vli')
             ->select('vli.signalementId')
-            ->where('vli.signalementId IN (:batchIds)')
-            ->setParameter('batchIds', $batchIds)
+            ->where('vli.signalementId IN (:signalementIds)')
+            ->setParameter('signalementIds', $signalementIds)
             ->groupBy('vli.signalementId');
 
         if (\in_array('NB_VISITES', $selectedColumns, true)) {

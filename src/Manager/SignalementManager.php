@@ -914,21 +914,18 @@ class SignalementManager extends AbstractManager
             return (int) $total;
         }
         $maxResult = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
-        $page = \array_key_exists('page', $options) ? (int) $options['page'] : 1;
+        $page = isset($options['page']) ? (int) $options['page'] : 1;
         $firstResult = (max($page, 1) - 1) * $maxResult;
 
         // Passe 1 : récupérer uniquement les IDs paginés (requête légère)
-        $idsResult = $this->queryBuilderFactory->create($user, $options, false)->setFirstResult($firstResult)->setMaxResults($maxResult)->getQuery()->getArrayResult();
-        $ids = array_column($idsResult, 'id');
-
-        if (!empty($ids)) {
+        $signalementIds = $this->queryBuilderFactory->create($user, $options, false)->setFirstResult($firstResult)->setMaxResults($maxResult)->getQuery()->getSingleColumnResult();
+        $dataResultList = [];
+        if (!empty($signalementIds)) {
             // Passe 2 : charger les données complètes uniquement pour ces 25 IDs
-            $dataResultList = $this->queryBuilderFactory->createForIds($ids, $options)->getQuery()->getResult();
+            $dataResultList = $this->queryBuilderFactory->createForIds($signalementIds, $options)->getQuery()->getResult();
             // Réordonner selon l'ordre de la passe 1
-            $dataById = array_column($dataResultList, null, 'id');
-            $dataResultList = array_filter(array_map(static fn ($id) => $dataById[$id] ?? null, $ids));
-        } else {
-            $dataResultList = [];
+            $signalementListIndexedById = array_column($dataResultList, null, 'id');
+            $dataResultList = array_filter(array_map(static fn ($id) => $signalementListIndexedById[$id] ?? null, $signalementIds));
         }
         /** @var User $user */
         $user = $this->security->getUser();
@@ -942,7 +939,7 @@ class SignalementManager extends AbstractManager
         return [
             'pagination' => [
                 'total_items' => $total,
-                'current_page' => \array_key_exists('page', $options) ? (int) $options['page'] : 1,
+                'current_page' => isset($options['page']) ? (int) $options['page'] : 1,
                 'total_pages' => (int) ceil($total / $maxListPagination),
                 'items_per_page' => $maxListPagination,
             ],
