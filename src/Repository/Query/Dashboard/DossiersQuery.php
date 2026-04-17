@@ -445,13 +445,19 @@ class DossiersQuery
             tabQueryParameters: $tabQueryParameters
         );
 
-        $qb->select('COUNT(DISTINCT s.id)')
-            ->innerJoin('s.affectations', 'a')
-            ->innerJoin('a.partner', 'p')
-            ->andWhere('p.type = :partnerType')
-            ->andWhere('a.statut = :closed')
-            ->setParameter('partnerType', PartnerType::COMMUNE_SCHS)
-            ->setParameter('closed', AffectationStatus::CLOSED);
+        $existsAffectationFermeeCommune = $this->entityManager->createQueryBuilder()
+            ->select('1')
+            ->from(Affectation::class, 'a_sub')
+            ->innerJoin('a_sub.partner', 'p_sub')
+            ->where('a_sub.signalement = s')
+            ->andWhere('a_sub.statut = :closed')
+            ->andWhere('p_sub.type = :partnerType')
+            ->getDQL();
+
+        $qb->andWhere($qb->expr()->exists($existsAffectationFermeeCommune))
+            ->select('COUNT(s.id)')
+            ->setParameter('closed', AffectationStatus::CLOSED)
+            ->setParameter('partnerType', PartnerType::COMMUNE_SCHS);
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }

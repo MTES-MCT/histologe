@@ -16,6 +16,7 @@ use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: AffectationRepository::class)]
 #[ORM\UniqueConstraint(name: 'unique_affectation_signalement_partner', columns: ['signalement_id', 'partner_id'])]
+#[ORM\Index(columns: ['statut', 'partner_id', 'signalement_id'], name: 'idx_affectation_statut_partner_sig')]
 class Affectation implements EntityHistoryInterface
 {
     #[ORM\Id]
