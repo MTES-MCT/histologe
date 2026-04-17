@@ -1,7 +1,7 @@
     <div id="tabpanel-dernieres-actions-panel"
          class="fr-tabs__panel fr-tabs__panel--selected"
          role="tabpanel"
-         aria-labelledby=tabpanel-dernieres-actions"
+         aria-labelledby="tabpanel-dernieres-actions"
          tabindex="0">
         {% if is_granted('TAB_PANEL_VIEW', 'derniers-dossiers') %}
             <div id="derniers-dossiers" data-url="{{ path('back_tab_panel_body', {tabBodyType : 'derniers-dossiers' }) }}">
