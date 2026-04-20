@@ -12,8 +12,8 @@
         {% if current_step == 'step2' %}
             <div data-ajax-form>
                 <form action="{{ sign_url(path('service_secours_complete_localisation', {
-                    'slug': 'ppp', 
-                    'uuid': 'serviceSecoursRoute.uuid', 
+                    'slug': serviceSecoursRoute.slug, 
+                    'uuid': serviceSecoursRoute.uuid, 
                     'domain': root_domain(app.request.host)
                 }), 3600) }}" method="POST" id="fr-modal-pick-localisation-form">
 

@@ -63,15 +63,6 @@ class AdresseOccupantValidator extends ConstraintValidator
                 $hasViolation = true;
             }
 
-            if ($value instanceof FormServiceSecoursStep2) {
-                if (empty($value->rnbId)) {
-                    $this->context->buildViolation($constraint->messageRnbId)
-                        ->atPath('adresseCompleteOccupant')
-                        ->addViolation();
-                    $hasViolation = true;
-                }
-            }
-
             // S'il y a des violations, on s'arrête ici
             if ($hasViolation) {
                 return;
