@@ -84,7 +84,8 @@ class LoadInterventionData extends Fixture implements OrderedFixtureInterface
                     partner: $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getTerritory()),
                     user: $user,
                     intervention: $intervention,
-                    documentType: DocumentType::PROCEDURE_RAPPORT_DE_VISITE
+                    documentType: DocumentType::PROCEDURE_RAPPORT_DE_VISITE,
+                    setDatePriseDeVueFromExifData: false,
                 );
                 $manager->persist($file);
             }

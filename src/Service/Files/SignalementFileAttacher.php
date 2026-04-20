@@ -29,8 +29,8 @@ class SignalementFileAttacher
         array $fileData,
         ?User $uploadedBy = null,
     ): void {
+        $this->uploadHandlerService->moveFromBucketTempFolder($fileData['file']);
         $file = $this->fileFactory->createFromFileArray(file: $fileData, signalement: $signalement);
-        $this->uploadHandlerService->moveFromBucketTempFolder($file->getFilename());
         $fileSize = $this->uploadHandlerService->getFileSize($file->getFilename());
 
         $file->setSize(null !== $fileSize ? (string) $fileSize : null);

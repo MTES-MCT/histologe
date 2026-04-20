@@ -13,14 +13,14 @@
                     <strong class="fr-ws-nowrap">
                         {{ suivi.createdByNomComplet }}
                     </strong>
-                    <hr class="fr-pb-1v">
+                    <hr>
                     <span class="fr-ws-nowrap">{{ suivi.createdBy.email }}</span>
                     {% if suivi.createdBy.fonction %}
-                        <hr class="fr-pb-1v">
+                        <hr>
                         <span class="fr-ws-nowrap">{{ suivi.createdBy.fonction }}</span>
                     {% endif %}
                     {% if suivi.createdBy.phone %}
-                        <hr class="fr-pb-1v">
+                        <hr>
                         <span class="fr-ws-nowrap">{{ suivi.createdBy.phoneDecoded }}</span>
                     {% endif %}
                 </span>
@@ -31,7 +31,7 @@
                 <span class="fr-tooltip fr-placement" id="tooltip_suivi_{{ suivi.id }}" role="tooltip">
                     <strong class="fr-ws-nowrap">{{ suivi.signalement.displayedNomProprio }}</strong>
                     {% if suivi.signalement.mailProprio %}
-                        <hr class="fr-pb-1v">
+                        <hr>
                         <span class="fr-ws-nowrap">{{ suivi.signalement.mailProprio }}</span>
                     {% endif %}
                 </span>

@@ -7,7 +7,7 @@ use League\Flysystem\FilesystemOperator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
-readonly class ImageVariantProvider
+class ImageVariantProvider
 {
     public function __construct(
         private FilesystemOperator $fileStorage,

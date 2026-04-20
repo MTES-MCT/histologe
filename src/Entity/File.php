@@ -133,6 +133,9 @@ class File implements EntityHistoryInterface
     #[Assert\Length(max: 255, maxMessage: 'La description ne doit pas dépasser {{ limit }} caractères')]
     private ?string $description = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $datePriseDeVue = null;
+
     #[ORM\Column]
     private ?bool $isWaitingSuivi = null;
 
@@ -367,6 +370,18 @@ class File implements EntityHistoryInterface
     {
         $description = null !== $description ? trim($description) : null;
         $this->description = $description ?: null;
+
+        return $this;
+    }
+
+    public function getDatePriseDeVue(): ?\DateTimeImmutable
+    {
+        return $this->datePriseDeVue;
+    }
+
+    public function setDatePriseDeVue(?\DateTimeImmutable $datePriseDeVue): static
+    {
+        $this->datePriseDeVue = $datePriseDeVue;
 
         return $this;
     }

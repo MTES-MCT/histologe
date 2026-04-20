@@ -141,7 +141,7 @@ services:
                 - '@App\Serializer\SignalementDraftRequestNormalizer'
     Intervention\Image\ImageManager:
         arguments:
-            $driver: 'Intervention\Image\Drivers\Gd\Driver'
+            $driver: 'Intervention\Image\Drivers\Imagick\Driver'
 
     App\Service\Signalement\DesordreTraitement\DesordreTraitementNuisibles:
         tags:

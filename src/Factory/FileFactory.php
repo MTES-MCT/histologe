@@ -11,10 +11,16 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Service\Files\FileReaderExif;
 use App\Service\Signalement\SignalementDocumentTypeMapper;
 
 class FileFactory
 {
+    public function __construct(
+        private readonly FileReaderExif $fileReaderExif,
+    ) {
+    }
+
     /**
      * @param Qualification[] $partnerCompetence
      * @param PartnerType[]   $partnerType
@@ -38,6 +44,7 @@ class FileFactory
         ?Territory $territory = null,
         ?array $partnerCompetence = null,
         ?array $partnerType = null,
+        ?bool $setDatePriseDeVueFromExifData = true,
     ): ?File {
         $extension = strtolower(pathinfo($filename, \PATHINFO_EXTENSION));
         $title = basename($title);
@@ -48,6 +55,9 @@ class FileFactory
             ->setIsWaitingSuivi($isWaitingSuivi)
             ->setIsTemp($isTemp);
 
+        if ($setDatePriseDeVueFromExifData && in_array($file->getExtension(), File::RESIZABLE_EXTENSION)) {
+            $this->fileReaderExif->setDatePriseDeVueFromExifData($file);
+        }
         if (null !== $documentType) {
             $file->setDocumentType($documentType);
         } else {

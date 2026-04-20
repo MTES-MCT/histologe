@@ -61,6 +61,12 @@
                     </div>
                     <div class="fr-mt-1w">
                         Photo ajoutée par {{ photo.uploadedBy.nomComplet ?? 'l\'usager' }}
+                        {% if photo.createdAt %}
+                            le {{ photo.createdAt|date('d/m/Y') }}
+                        {% endif %}
+                        {% if photo.datePriseDeVue %}
+                            / prise le {{ photo.datePriseDeVue|date('d/m/Y') }}
+                        {% endif %}
                     </div>
                     <div class="fr-grid-row fr-mt-2v fr-grid-row--right" id="zoom">
                         <button class="photos-album-btn-zoom-out fr-btn fr-btn--icon-center fr-icon-zoom-out-line fr-mr-4v" data-id="{{ photo.id }}"></button>

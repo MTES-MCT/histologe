@@ -293,7 +293,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                 signalement: $signalement,
                 partner: $partner,
                 user: $user,
-                documentType: DocumentType::AUTRE
+                documentType: DocumentType::AUTRE,
+                setDatePriseDeVueFromExifData: false,
             );
             if (\in_array($document['mimeType'], File::RESIZABLE_MIME_TYPES)) {
                 $file->setIsVariantsGenerated(true);
@@ -312,7 +313,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     signalement: $signalement,
                     partner: $user?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                     user: $user,
-                    documentType: DocumentType::AUTRE
+                    documentType: DocumentType::AUTRE,
+                    setDatePriseDeVueFromExifData: false,
                 );
                 $manager->persist($file);
                 ++$countMorePhoto;
@@ -504,7 +506,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
                     signalement: $signalement,
                     // user: $user,
                     documentType: DocumentType::tryFrom($document['document_type']) ?? DocumentType::PHOTO_SITUATION,
-                    desordreSlug: $document['slug'] ?? null
+                    desordreSlug: $document['slug'] ?? null,
+                    setDatePriseDeVueFromExifData: false
                 );
                 $manager->persist($file);
             }

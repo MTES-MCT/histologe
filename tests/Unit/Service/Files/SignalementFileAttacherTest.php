@@ -36,7 +36,7 @@ class SignalementFileAttacherTest extends TestCase
             ->willReturn($file);
 
         $file
-            ->expects(self::exactly(3))
+            ->expects(self::exactly(2))
             ->method('getFilename')
             ->willReturn('document.pdf');
 
@@ -116,7 +116,7 @@ class SignalementFileAttacherTest extends TestCase
             ->willReturn($file);
 
         $file
-            ->expects(self::exactly(5))
+            ->expects(self::exactly(4))
             ->method('getFilename')
             ->willReturn('document.pdf');
 
@@ -204,7 +204,7 @@ class SignalementFileAttacherTest extends TestCase
             ->willReturn($file);
 
         $file
-            ->expects(self::exactly(5))
+            ->expects(self::exactly(4))
             ->method('getFilename')
             ->willReturn('infected.pdf');
 
@@ -293,7 +293,7 @@ class SignalementFileAttacherTest extends TestCase
             ->willReturn($file);
 
         $file
-            ->expects(self::exactly(4))
+            ->expects(self::exactly(3))
             ->method('getFilename')
             ->willReturn('photo.jpg');
 

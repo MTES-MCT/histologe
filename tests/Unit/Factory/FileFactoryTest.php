@@ -6,6 +6,7 @@ use App\Entity\Enum\DocumentType;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Factory\FileFactory;
+use App\Service\Files\FileReaderExif;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -15,7 +16,8 @@ class FileFactoryTest extends TestCase
 
     public function testCreateInstance(): void
     {
-        $file = (new FileFactory())->createInstanceFrom(
+        $file = (new FileFactory($this->createMock(FileReaderExif::class)))
+        ->createInstanceFrom(
             'sample-123.jpg',
             'sample.jpg',
             $this->getSignalement(),
@@ -43,7 +45,8 @@ class FileFactoryTest extends TestCase
         DocumentType $documentType,
     ): void {
         $signalement = $this->getSignalement();
-        $file = (new FileFactory())->createFromFileArray($dataItem, $signalement);
+        $file = (new FileFactory($this->createMock(FileReaderExif::class)))
+        ->createFromFileArray($dataItem, $signalement);
 
         $this->assertEquals($isTypeDocument, $file->isTypeDocument());
         $this->assertEquals($documentType, $file->getDocumentType());

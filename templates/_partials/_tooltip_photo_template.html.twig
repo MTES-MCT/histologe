@@ -1,3 +1,18 @@
-<strong class="fr-ws-nowrap">{{ photo.uploadedBy.nomComplet ?? 'N/R' }}</strong>
-<hr class="fr-pb-1v">
-<span class="fr-ws-nowrap">{{ photo.createdAt is defined ? photo.createdAt|date('d/m/Y') : 'N/R' }}</span>
+<table>
+    <tr>
+        <th class="fr-text--right">Transmis par : </th>
+        <td>{{ photo.uploadedBy.nomComplet ?? 'N/R' }}</td>
+    </tr>
+    {% if photo.createdAt %}
+        <tr>
+            <th class="fr-text--right">Transmis le : </th>
+            <td>{{ photo.createdAt|date('d/m/Y') }}</td>
+        </tr>
+    {% endif %}
+    {% if photo.datePriseDeVue %}
+        <tr>
+            <th class="fr-text--right">Pris le : </th>
+            <td>{{ photo.datePriseDeVue|date('d/m/Y') }}</td>
+        </tr>
+    {% endif %}
+</table>
