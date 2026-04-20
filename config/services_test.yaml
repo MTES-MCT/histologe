@@ -7,3 +7,19 @@ services:
 
   Symfony\Contracts\HttpClient\HttpClientInterface:
     class: Symfony\Component\HttpClient\MockHttpClient
+
+  # Make services public for functional tests
+  App\Service\EmailAlertChecker:
+    public: true
+
+  App\Service\ImageManipulationHandler:
+    public: true
+
+  App\Service\NotificationAndMailSender:
+    public: true
+
+  App\Service\FileVisibilityService:
+    public: true
+
+  App\Service\UserAvatar:
+    public: true

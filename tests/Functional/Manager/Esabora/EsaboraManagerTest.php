@@ -74,7 +74,7 @@ class EsaboraManagerTest extends KernelTestCase
         $this->zipHelper = self::getContainer()->get(ZipHelper::class);
         $this->fileScanner = self::getContainer()->get(FileScanner::class);
         $this->uploadHander = self::getContainer()->get(UploadHandlerService::class);
-        $this->imageManipulationHandler = self::getContainer()->get(ImageManipulationHandler::class);
+        $this->imageManipulationHandler = self::getContainer()->get(ImageManipulationHandler::class); // @phpstan-ignore-line Service is public in test environment
         $this->fileFactory = self::getContainer()->get(FileFactory::class);
         $this->signalementQualificationUpdater = self::getContainer()->get(SignalementQualificationUpdater::class);
         $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');

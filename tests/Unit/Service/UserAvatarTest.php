@@ -21,7 +21,7 @@ class UserAvatarTest extends WebTestCase
         self::bootKernel();
         $container = static::getContainer();
         /** @var UserAvatar $userAvatar */
-        $userAvatar = $container->get(UserAvatar::class);
+        $userAvatar = $container->get(UserAvatar::class); // @phpstan-ignore-line Service is public in test environment
 
         $user = (new User())
             ->setRoles([User::ROLES['Super Admin']]);

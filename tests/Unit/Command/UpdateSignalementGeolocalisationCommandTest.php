@@ -141,8 +141,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         } else {
             $signalementRepository
                 ->expects($this->once())
-                ->method($method)
-
+                ->method($method) // @phpstan-ignore-line Method name comes from data provider and is always non-empty
                 ->willReturn($countSignalements > 0 ? $this->getSignalements($countSignalements) : []);
         }
 

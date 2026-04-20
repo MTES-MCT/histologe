@@ -52,7 +52,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->userRepository = $this->entityManager->getRepository(User::class);
         $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $this->partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $this->notificationAndMailSender = self::getContainer()->get(NotificationAndMailSender::class);
+        $this->notificationAndMailSender = self::getContainer()->get(NotificationAndMailSender::class); // @phpstan-ignore-line Service is public in test environment
     }
 
     public function testAutoAssignmentSeineStDenis(): void

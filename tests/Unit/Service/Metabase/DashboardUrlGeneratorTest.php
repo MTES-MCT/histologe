@@ -56,6 +56,8 @@ class DashboardUrlGeneratorTest extends TestCase
         $this->assertNotEmpty($segments);
         $tokenString = end($segments);
         $this->assertNotEmpty($tokenString, 'Token should be present at the end of the path');
+        $this->assertIsString($tokenString);
+        /** @var non-empty-string $tokenString */
 
         // Parser le token JWT avec la même configuration
         $jwtConfig = Configuration::forSymmetricSigner(
