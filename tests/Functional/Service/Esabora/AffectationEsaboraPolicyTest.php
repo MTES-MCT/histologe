@@ -40,7 +40,7 @@ class AffectationEsaboraPolicyTest extends KernelTestCase
         self::assertSame($result, $affectationEsaboraPolicy->canBeAffected($signalement, $partner));
     }
 
-    public function providePartnerIds(): \Generator
+    public static function providePartnerIds(): \Generator
     {
         yield 'Partners with same url' => [[7, 94], true];
         yield 'Partners with different url' => [[6, 7], false];
@@ -48,7 +48,7 @@ class AffectationEsaboraPolicyTest extends KernelTestCase
         yield 'Partners with empty array' => [[], false];
     }
 
-    public function providePartnerName(): \Generator
+    public static function providePartnerName(): \Generator
     {
         yield 'PARTENAIRE SCHS VIA SANTÉ HABITAT' => ['PARTENAIRE SCHS VIA SANTÉ HABITAT', false];
         yield 'PARTENAIRE 13-05 ESABORA SCHS' => ['PARTENAIRE 13-05 ESABORA SCHS', true];

@@ -107,7 +107,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         ));
     }
 
-    public function provideVisiteIntervention(): \Generator
+    public static function provideVisiteIntervention(): \Generator
     {
         yield 'Visite de contrôle dans le passé' => [
             $this->getIntervention(

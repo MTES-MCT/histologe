@@ -29,7 +29,7 @@ class DataPropertyArrayFilterTest extends TestCase
         $this->assertEquals($filteredDataExpected, $filteredData);
     }
 
-    public function provideData(): \Generator
+    public static function provideData(): \Generator
     {
         yield 'Données Type composition' => [
             SignalementDraftRequest::PREFIX_PROPERTIES_TYPE_COMPOSITION,

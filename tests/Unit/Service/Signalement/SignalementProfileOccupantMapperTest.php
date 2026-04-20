@@ -17,7 +17,7 @@ class SignalementProfileOccupantMapperTest extends TestCase
         $this->assertEquals($profileOccupant, SignalementProfileOccupantMapper::map($profileOccupantInput, $profileDeclarant));
     }
 
-    public function provideInputValue(): \Generator
+    public static function provideInputValue(): \Generator
     {
         yield 'Occupant empty, Declarant locataire' => ['', ProfileDeclarant::LOCATAIRE, ProfileOccupant::LOCATAIRE];
         yield 'Occupant empty, Declarant bailleur' => ['', ProfileDeclarant::BAILLEUR, ProfileOccupant::LOCATAIRE];

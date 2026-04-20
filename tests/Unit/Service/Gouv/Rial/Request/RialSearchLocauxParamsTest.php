@@ -35,7 +35,7 @@ class RialSearchLocauxParamsTest extends TestCase
         $this->assertNull($result);
     }
 
-    public function provideDataParsed(): \Generator
+    public static function provideDataParsed(): \Generator
     {
         yield '63113_1650_0001' => ['63113_1650_0001', '63', '113', '1650', '1', null];
         yield '97120_0460_00067' => ['97120_0460_00067', '971', '20', '0460', '67', null];
@@ -45,7 +45,7 @@ class RialSearchLocauxParamsTest extends TestCase
         yield '47157_0940_00019_ter' => ['47157_0940_00019_ter', '47', '157', '0940', '19', 'T'];
     }
 
-    public function provideDataNull(): \Generator
+    public static function provideDataNull(): \Generator
     {
         yield '37261' => ['37261'];
         yield '37261_1679' => ['37261_1679'];

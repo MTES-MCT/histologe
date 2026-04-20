@@ -34,7 +34,7 @@ class ValidProfileDeclarantValidatorTest extends ConstraintValidatorTestCase
         }
     }
 
-    public function provideProfil(): \Generator
+    public static function provideProfil(): \Generator
     {
         yield 'all' => ['all', true];
         yield 'tiers' => ['tiers', true];

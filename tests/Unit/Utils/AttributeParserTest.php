@@ -25,7 +25,7 @@ class AttributeParserTest extends TestCase
         $this->assertEquals($result, $label);
     }
 
-    public function provideData(): \Generator
+    public static function provideData(): \Generator
     {
         yield 'New form - show label as facultatif' => [
             CoordonneesBailleurRequest::class,

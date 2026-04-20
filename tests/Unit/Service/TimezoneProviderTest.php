@@ -36,7 +36,7 @@ class TimezoneProviderTest extends KernelTestCase
         $this->assertEquals(new \DateTimeZone($timezone), $timezoneProvider->getDateTimezone());
     }
 
-    public function provideTimezones(): \Generator
+    public static function provideTimezones(): \Generator
     {
         yield 'Fuseau horaire Martinique' => ['admin-territoire-972-01@signal-logement.fr', 'America/Martinique'];
         yield 'Fuseau horaire France' => ['user-62-01@signal-logement.fr', 'Europe/Paris'];

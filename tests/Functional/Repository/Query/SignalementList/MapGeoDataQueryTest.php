@@ -28,7 +28,7 @@ class MapGeoDataQueryTest extends KernelTestCase
         $this->assertCount($nbResult, $signalements);
     }
 
-    public function provideSearchWithGeoData(): \Generator
+    public static function provideSearchWithGeoData(): \Generator
     {
         yield 'Search all for super admin' => [self::USER_ADMIN, [], 48];
         yield 'Search in Marseille for super admin' => [self::USER_ADMIN, ['cities' => ['Marseille']], 25];

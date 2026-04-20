@@ -374,7 +374,7 @@ class SignalementEditControllerTest extends WebTestCase
         ];
     }
 
-    public function provideEditSignalementRoutes(): \Generator
+    public static function provideEditSignalementRoutes(): \Generator
     {
         yield 'Edition Adresse logement' => [
             'back_signalement_edit_address',

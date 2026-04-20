@@ -60,7 +60,7 @@ class PartnerTest extends KernelTestCase
         $this->assertTrue($partner->canSyncWithOilhi($signalement));
     }
 
-    public function provideDataSyncOilhi(): \Generator
+    public static function provideDataSyncOilhi(): \Generator
     {
         yield 'Code insee 62091' => ['zip' => '62', 'Pas-de-Calais', '62091', 'BEAUDRICOURT'];
         yield 'Code insee 55502' => ['zip' => '55', 'Meuse', '55502', 'STENAY'];
@@ -87,7 +87,7 @@ class PartnerTest extends KernelTestCase
         $this->assertEquals($countErrors, $errors->count());
     }
 
-    public function provideDataForTestPartnerWithEmail(): \Generator
+    public static function provideDataForTestPartnerWithEmail(): \Generator
     {
         yield 'Create partner not valid with email exists in territory' => [13, 1];
 

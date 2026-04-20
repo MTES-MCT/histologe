@@ -43,7 +43,7 @@ class CodeInseeSpecificationTest extends KernelTestCase
         }
     }
 
-    public function provideRulesAndSignalement(): \Generator
+    public static function provideRulesAndSignalement(): \Generator
     {
         yield 'empty - same insee as partner - no exclude' => [self::INSEE_STMARS, [self::INSEE_STMARS], '', null, true];
         yield 'empty - same insee as partner - but excluded' => [self::INSEE_STMARS, [self::INSEE_STMARS], '', [self::INSEE_STMARS], false];

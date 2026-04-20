@@ -32,7 +32,7 @@ class UserGetMeControllerTest extends WebTestCase
         $this->assertCount($nbPartners, $response['partenairesAutorises']);
     }
 
-    public function provideUserEmailApi(): \Generator
+    public static function provideUserEmailApi(): \Generator
     {
         yield 'Partenaire id 2' => ['api-01@signal-logement.fr', 3];
         yield 'Partenaire id 84' => ['api-02@signal-logement.fr', 1];

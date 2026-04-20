@@ -26,7 +26,7 @@ class QuestionControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    public function provideProfil(): \Generator
+    public static function provideProfil(): \Generator
     {
         yield 'tous' => ['tous'];
         yield 'locataire' => ['locataire'];

@@ -155,7 +155,7 @@ class EsaboraManagerTest extends KernelTestCase
         $this->assertEquals($expectedAffectationStatus, $affectationUpdated->getStatut());
     }
 
-    public function provideDataForSynchronization(): \Generator
+    public static function provideDataForSynchronization(): \Generator
     {
         yield EsaboraStatus::ESABORA_WAIT->value => [
             '2022-8',

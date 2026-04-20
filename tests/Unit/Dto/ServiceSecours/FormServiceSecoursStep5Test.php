@@ -18,7 +18,7 @@ class FormServiceSecoursStep5Test extends TestCase
         self::assertSame($expected, $dto->hasDesordreAutre());
     }
 
-    public function provideHasDesordreAutreCases(): array
+    public static function provideHasDesordreAutreCases(): array
     {
         return [
             'avec autre' => [[FormServiceSecoursStep5::DESORDRE_AUTRE_SLUG], true],

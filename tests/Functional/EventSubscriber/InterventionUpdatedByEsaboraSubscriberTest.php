@@ -80,7 +80,7 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
         $this->assertStringContainsString('a été modifiée', $suivi->getDescription());
     }
 
-    public function provideSignalement(): \Generator
+    public static function provideSignalement(): \Generator
     {
         yield 'Do not notify on signalement tiers' => ['2022-1', 0];
         yield 'Notify on signalement occupant' => ['2023-9', 1];

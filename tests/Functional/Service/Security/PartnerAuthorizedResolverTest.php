@@ -140,7 +140,7 @@ class PartnerAuthorizedResolverTest extends KernelTestCase
         $this->assertCount($countExpectedPartner, $resultPartners);
     }
 
-    public function provideUsersWithApiRole(): \Generator
+    public static function provideUsersWithApiRole(): \Generator
     {
         yield 'api-01@signal-logement.fr' => [
             'email' => 'api-01@signal-logement.fr',

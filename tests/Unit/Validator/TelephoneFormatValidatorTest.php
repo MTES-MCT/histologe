@@ -38,7 +38,7 @@ class TelephoneFormatValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function provideValidPhoneNumbers(): \Generator
+    public static function provideValidPhoneNumbers(): \Generator
     {
         yield 'null value' => [null];
         yield 'empty value' => [''];
@@ -59,7 +59,7 @@ class TelephoneFormatValidatorTest extends ConstraintValidatorTestCase
         yield 'swiss phone number' => ['+41 22 345 67 89'];
     }
 
-    public function provideInvalidPhoneNumbers(): \Generator
+    public static function provideInvalidPhoneNumbers(): \Generator
     {
         yield 'phone with letter at end' => ['0808080808D'];
         yield 'phone with letters' => ['08ABCD0808'];

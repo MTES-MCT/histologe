@@ -95,7 +95,7 @@ class JobEventRepositoryTest extends KernelTestCase
         $this->assertCount($expectedCount, $affectationsWithFailedJobEvents);
     }
 
-    public function provideDataForFailedJobEvents(): \Generator
+    public static function provideDataForFailedJobEvents(): \Generator
     {
         yield 'sish - push dossier adresse' => [
             InterfacageType::ESABORA->value,
