@@ -15,7 +15,7 @@ class EmailAlertCheckerTest extends KernelTestCase
         parent::setUp();
         self::bootKernel();
         /** @var EmailAlertChecker $emailAlertChecker */
-        $emailAlertChecker = static::getContainer()->get(EmailAlertChecker::class);
+        $emailAlertChecker = static::getContainer()->get(EmailAlertChecker::class); // @phpstan-ignore-line Service is public in test environment
         $this->emailAlertChecker = $emailAlertChecker;
     }
 

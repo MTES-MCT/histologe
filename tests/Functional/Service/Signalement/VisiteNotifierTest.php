@@ -27,7 +27,7 @@ class VisiteNotifierTest extends KernelTestCase
         $notificationFactory = static::getContainer()->get(NotificationFactory::class);
         $notificationMailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $notificationAndMailerSender = static::getContainer()->get(NotificationAndMailSender::class);
+        $notificationAndMailerSender = static::getContainer()->get(NotificationAndMailSender::class); // @phpstan-ignore-line Service is public in test environment
         $userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
 
         $this->visiteNotifier = new VisiteNotifier(

@@ -433,7 +433,7 @@ class SignalementActionControllerTest extends WebTestCase
         }
     }
 
-    public function provideSignalementToSetRnbId(): \Generator
+    public static function provideSignalementToSetRnbId(): \Generator
     {
         yield 'Signalement without geoloc' => ['00000000-0000-0000-2025-000000000004', true];
         yield 'Signalement with geoloc' => ['00000000-0000-0000-2025-000000000003', false];

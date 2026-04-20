@@ -109,7 +109,7 @@ class AffectationUpdateControllerTest extends WebTestCase
         );
     }
 
-    public function provideValidTransitionData(): \Generator
+    public static function provideValidTransitionData(): \Generator
     {
         yield 'NOUVEAU ==> EN_COURS' => [
             '00000000-0000-0000-2022-000000000001',
@@ -151,7 +151,7 @@ class AffectationUpdateControllerTest extends WebTestCase
         ];
     }
 
-    public function provideUnvalidData(): \Generator
+    public static function provideUnvalidData(): \Generator
     {
         yield 'NOUVEAU ==> FERME' => [
             '00000000-0000-0000-2022-000000000001',

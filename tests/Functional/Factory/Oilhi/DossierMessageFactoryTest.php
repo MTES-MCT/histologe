@@ -148,7 +148,7 @@ class DossierMessageFactoryTest extends KernelTestCase
         $this->assertEquals('HTTP request failed', $responseData['message']);
     }
 
-    public function provideReference(): \Generator
+    public static function provideReference(): \Generator
     {
         yield 'Dossier avec l\'ancien formulaire 2024-01' => ['2024-01'];
         yield 'Dossier avec le nouveau formulaire 2024-02' => ['2024-02'];

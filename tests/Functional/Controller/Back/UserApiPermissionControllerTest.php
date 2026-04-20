@@ -37,7 +37,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         }
     }
 
-    public function provideParamsUserApiList(): \Generator
+    public static function provideParamsUserApiList(): \Generator
     {
         yield 'Search without params' => [[], 7];
         yield 'Search with queryUser api-0' => [['queryUser' => 'api-0'], 3];

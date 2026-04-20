@@ -7,3 +7,24 @@ services:
 
   Symfony\Contracts\HttpClient\HttpClientInterface:
     class: Symfony\Component\HttpClient\MockHttpClient
+
+  # Make services public for functional tests (they will be autowired)
+  App\Service\EmailAlertChecker:
+    autowire: true
+    public: true
+
+  App\Service\ImageManipulationHandler:
+    autowire: true
+    public: true
+
+  App\Service\NotificationAndMailSender:
+    autowire: true
+    public: true
+
+  App\Service\FileVisibilityService:
+    autowire: true
+    public: true
+
+  App\Service\UserAvatar:
+    autowire: true
+    public: true

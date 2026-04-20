@@ -17,7 +17,7 @@ class UrlHelperTest extends TestCase
         $this->assertEquals(UrlHelper::arrayToQueryString($origin), $result);
     }
 
-    public function provideDataToQueryString(): \Generator
+    public static function provideDataToQueryString(): \Generator
     {
         yield 'empty' => [[], ''];
         yield 'single' => [['searchTerms' => 'saint médard'], '?searchTerms=saint+m%C3%A9dard'];

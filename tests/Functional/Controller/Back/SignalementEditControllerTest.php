@@ -242,7 +242,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadCoordonneesFoyer(): array
+    private static function getPayloadCoordonneesFoyer(): array
     {
         return [
             'civilite' => 'mme',
@@ -257,7 +257,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadInformationLogement(): array
+    private static function getPayloadInformationLogement(): array
     {
         return [
             'nombrePersonnes' => '4',
@@ -279,7 +279,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadCompositionLogement(): array
+    private static function getPayloadCompositionLogement(): array
     {
         return [
             'type' => 'maison',
@@ -304,7 +304,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadSituationFoyer(): array
+    private static function getPayloadSituationFoyer(): array
     {
         return [
             'isLogementSocial' => 'non',
@@ -324,7 +324,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadProcedureDemarches(): array
+    private static function getPayloadProcedureDemarches(): array
     {
         return [
             'isProprioAverti' => '1',
@@ -341,7 +341,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadAddress(): array
+    private static function getPayloadAddress(): array
     {
         return [
             'adresse' => '17 Boulevard saade - quai joliette',
@@ -362,7 +362,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadCoordonneesTiers(): array
+    private static function getPayloadCoordonneesTiers(): array
     {
         return [
             'nom' => 'Quatorze',
@@ -374,46 +374,46 @@ class SignalementEditControllerTest extends WebTestCase
         ];
     }
 
-    public function provideEditSignalementRoutes(): \Generator
+    public static function provideEditSignalementRoutes(): \Generator
     {
         yield 'Edition Adresse logement' => [
             'back_signalement_edit_address',
-            $this->getPayloadAddress(),
+            self::getPayloadAddress(),
             'signalement_edit_address_',
         ];
 
         yield 'Edition Coordonnées du foyer' => [
             'back_signalement_edit_coordonnees_foyer',
-            $this->getPayloadCoordonneesFoyer(),
+            self::getPayloadCoordonneesFoyer(),
             'signalement_edit_coordonnees_foyer_',
         ];
 
         yield 'Edition Coordonnées Tiers' => [
             'back_signalement_edit_coordonnees_tiers',
-            $this->getPayloadCoordonneesTiers(),
+            self::getPayloadCoordonneesTiers(),
             'signalement_edit_coordonnees_tiers_',
         ];
 
         yield 'Edition Informations sur le logement' => [
             'back_signalement_edit_informations_logement',
-            $this->getPayloadInformationLogement(),
+            self::getPayloadInformationLogement(),
             'signalement_edit_informations_logement_',
         ];
 
         yield 'Edition Description du logement' => [
             'back_signalement_edit_composition_logement',
-            $this->getPayloadCompositionLogement(),
+            self::getPayloadCompositionLogement(),
             'signalement_edit_composition_logement_',
         ];
         yield 'Edition Situation du foyer' => [
             'back_signalement_edit_situation_foyer',
-            $this->getPayloadSituationFoyer(),
+            self::getPayloadSituationFoyer(),
             'signalement_edit_situation_foyer_',
         ];
 
         yield 'Edition Procédure et démarches' => [
             'back_signalement_edit_procedure_demarches',
-            $this->getPayloadProcedureDemarches(),
+            self::getPayloadProcedureDemarches(),
             'signalement_edit_procedure_demarches_',
         ];
     }

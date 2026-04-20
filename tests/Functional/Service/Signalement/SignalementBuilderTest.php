@@ -416,7 +416,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->commit();
     }
 
-    public function provideAllocataireCases(): \Generator
+    public static function provideAllocataireCases(): \Generator
     {
         // certains cas ne sont pas sensés arriver
         yield 'oui - caf' => ['oui', 'caf', 'CAF'];

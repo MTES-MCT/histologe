@@ -16,7 +16,7 @@ class BackStatistiquesControllerTest extends WebTestCase
     private const USER_ADMIN_PARTNER_MULTI_TERRITORIES = 'admin-partenaire-multi-ter-13-01@signal-logement.fr';
     private const USER_USER_PARTNER_MULTI_TERRITORIES = 'user-partenaire-multi-ter-34-30@signal-logement.fr';
 
-    public function provideRoutesHomepage(): \Generator
+    public static function provideRoutesHomepage(): \Generator
     {
         yield 'Super Admin' => ['back_statistiques', self::USER_SUPER_ADMIN];
         yield 'Responsable Territoire' => ['back_statistiques', self::USER_ADMIN_TERRITOIRE];
@@ -47,7 +47,7 @@ class BackStatistiquesControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    public function provideRoutesStatistiquesDatas(): \Generator
+    public static function provideRoutesStatistiquesDatas(): \Generator
     {
         yield 'Super Admin' => ['back_statistiques_filter', [], self::USER_SUPER_ADMIN, [
             ['result' => 52, 'label' => 'count_signalement'],

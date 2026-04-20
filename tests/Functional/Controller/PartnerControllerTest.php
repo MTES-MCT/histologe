@@ -212,7 +212,7 @@ class PartnerControllerTest extends WebTestCase
         }
     }
 
-    public function provideAgentEmailToAddOnPartner(): \Generator
+    public static function provideAgentEmailToAddOnPartner(): \Generator
     {
         yield 'Invalid email' => ['nanana', 'L&#039;adresse e-mail est invalide.'];
         yield 'Partner email already exists' => ['partenaire-13-02@signal-logement.fr', 'Un partenaire existe déjà avec cette adresse e-mail.'];
@@ -259,7 +259,7 @@ class PartnerControllerTest extends WebTestCase
         }
     }
 
-    public function provideMultiTerAgentEmailToAddOnPartner(): \Generator
+    public static function provideMultiTerAgentEmailToAddOnPartner(): \Generator
     {
         yield 'Invalid email' => ['nanana', 'L&#039;adresse e-mail est invalide.'];
         yield 'Partner email already exists' => ['partenaire-13-02@signal-logement.fr', 'Un partenaire existe déjà avec cette adresse e-mail.'];
@@ -351,7 +351,7 @@ class PartnerControllerTest extends WebTestCase
         }
     }
 
-    public function provideAgentEmailToEdit(): \Generator
+    public static function provideAgentEmailToEdit(): \Generator
     {
         yield 'Invalid email' => ['nanana', 'L&#039;adresse e-mail est invalide.', 0];
         yield 'Partner email already exists' => ['partenaire-13-02@signal-logement.fr', 'Un partenaire existe déjà avec cette adresse e-mail.', 0];

@@ -108,14 +108,14 @@ class SuiviCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    public function provideData(): \Generator
+    public static function provideData(): \Generator
     {
         yield 'test create suivi with usager notification' => ['00000000-0000-0000-2022-000000000006', true];
         yield 'test create suivi with no usager notification' => ['00000000-0000-0000-2022-000000000006', false];
         yield 'test create suivi with unknown signalement' => ['0000', false];
     }
 
-    public function provideDataFailure403(): \Generator
+    public static function provideDataFailure403(): \Generator
     {
         yield 'test create suivi with new affectation' => ['00000000-0000-0000-2022-000000000001', 'Partenaire 13-01', 'L\'affectation doit être au statut EN_COURS'];
         yield 'test create suivi with closed signalement' => ['00000000-0000-0000-2022-000000000003', 'Partenaire 13-01', 'Le signalement n\'est pas actif.'];

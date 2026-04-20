@@ -54,7 +54,7 @@ class QualificationStatusServiceTest extends KernelTestCase
         $this->assertEquals($qualificationStatus, $status);
     }
 
-    public function provideNDERequestAndStatus(): \Generator
+    public static function provideNDERequestAndStatus(): \Generator
     {
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: null,

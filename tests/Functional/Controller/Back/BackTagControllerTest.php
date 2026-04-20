@@ -157,7 +157,7 @@ class BackTagControllerTest extends WebTestCase
         }
     }
 
-    public function provideTagDataForCreateForm(): \Generator
+    public static function provideTagDataForCreateForm(): \Generator
     {
         yield 'Success with all data' => [
             'Moisissure',
@@ -192,7 +192,7 @@ class BackTagControllerTest extends WebTestCase
         ];
     }
 
-    public function provideTagDataForEditForm(): \Generator
+    public static function provideTagDataForEditForm(): \Generator
     {
         yield 'Success with all data' => [
             '1',

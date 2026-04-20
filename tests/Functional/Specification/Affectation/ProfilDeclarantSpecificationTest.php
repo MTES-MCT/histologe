@@ -33,7 +33,7 @@ class ProfilDeclarantSpecificationTest extends KernelTestCase
         }
     }
 
-    public function provideRulesAndSignalement(): \Generator
+    public static function provideRulesAndSignalement(): \Generator
     {
         yield 'all - LOCATAIRE' => [ProfileDeclarant::LOCATAIRE, 'all', true];
         yield 'all - BAILLEUR' => [ProfileDeclarant::BAILLEUR, 'all', true];

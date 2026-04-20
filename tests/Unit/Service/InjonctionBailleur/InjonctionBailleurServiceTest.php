@@ -89,24 +89,23 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         $stopProcedure->setDescription('Le bailleur souhaite repasser en procédure classique.');
 
         // On s'attend à 2 appels à createSuivi
+        $callIndex = 0;
         $this->suiviManager->expects($this->exactly(2))
             ->method('createSuivi')
-            ->withConsecutive(
-                [
-                    $this->callback(static fn ($arg) => $arg instanceof Signalement),
-                    $this->stringContains('arrêter la procédure d\'injonction'),
-                    Suivi::TYPE_AUTO,
-                    SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
-                    $this->anything(), // on ignore les autres params facultatifs
-                ],
-                [
-                    $this->callback(static fn ($arg) => $arg instanceof Signalement),
-                    'Le bailleur souhaite repasser en procédure classique.',
-                    Suivi::TYPE_AUTO,
-                    SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,
-                    $this->anything(),
-                ]
-            );
+            ->willReturnCallback(function (...$args) use (&$callIndex) {
+                if (0 === $callIndex) {
+                    $this->assertInstanceOf(Signalement::class, $args[0]);
+                    $this->assertStringContainsString('arrêter la procédure d\'injonction', $args[1]);
+                    $this->assertSame(Suivi::TYPE_AUTO, $args[2]);
+                    $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR, $args[3]);
+                } elseif (1 === $callIndex) {
+                    $this->assertInstanceOf(Signalement::class, $args[0]);
+                    $this->assertSame('Le bailleur souhaite repasser en procédure classique.', $args[1]);
+                    $this->assertSame(Suivi::TYPE_AUTO, $args[2]);
+                    $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE, $args[3]);
+                }
+                ++$callIndex;
+            });
 
         $this->autoAssigner->expects($this->once())->method('assignOrSendNewSignalementNotification')->with($signalement);
         $this->entityManager->beginTransaction();
@@ -130,24 +129,23 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         $stopProcedure->setDescription('Travaux faits.');
 
         // On s'attend à 2 appels à createSuivi
+        $callIndex = 0;
         $this->suiviManager->expects($this->exactly(2))
             ->method('createSuivi')
-            ->withConsecutive(
-                [
-                    $this->callback(static fn ($arg) => $arg instanceof Signalement),
-                    $this->stringContains('Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés'),
-                    Suivi::TYPE_AUTO,
-                    SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
-                    $this->anything(), // on ignore les autres params facultatifs
-                ],
-                [
-                    $this->callback(static fn ($arg) => $arg instanceof Signalement),
-                    'Travaux faits.',
-                    Suivi::TYPE_AUTO,
-                    SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,
-                    $this->anything(),
-                ]
-            );
+            ->willReturnCallback(function (...$args) use (&$callIndex) {
+                if (0 === $callIndex) {
+                    $this->assertInstanceOf(Signalement::class, $args[0]);
+                    $this->assertStringContainsString('Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés', $args[1]);
+                    $this->assertSame(Suivi::TYPE_AUTO, $args[2]);
+                    $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR, $args[3]);
+                } elseif (1 === $callIndex) {
+                    $this->assertInstanceOf(Signalement::class, $args[0]);
+                    $this->assertSame('Travaux faits.', $args[1]);
+                    $this->assertSame(Suivi::TYPE_AUTO, $args[2]);
+                    $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE, $args[3]);
+                }
+                ++$callIndex;
+            });
 
         $this->autoAssigner->expects($this->never())->method('assignOrSendNewSignalementNotification')->with($signalement);
         $this->entityManager->beginTransaction();

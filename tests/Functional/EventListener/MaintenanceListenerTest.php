@@ -41,7 +41,7 @@ class MaintenanceListenerTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isRedirect());
     }
 
-    public function provideRoutes(): \Generator
+    public static function provideRoutes(): \Generator
     {
         yield 'Contact' => ['front_contact'];
         yield 'Lock dépot signalement' => ['front_signalement'];

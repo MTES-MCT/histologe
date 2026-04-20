@@ -116,7 +116,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         $commandTester->assertCommandIsSuccessful();
     }
 
-    public function provideTestCases(): \Generator
+    public static function provideTestCases(): \Generator
     {
         yield 'With date option' => ['findSignalementsBetweenDates', ['--from_created_at' => '2024-01-01']];
         yield 'With territory option' => ['findSignalementsByYear', ['--zip' => 1, '--year' => '2024']];
@@ -141,8 +141,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         } else {
             $signalementRepository
                 ->expects($this->once())
-                ->method($method)
-
+                ->method($method) // @phpstan-ignore-line Method name comes from data provider and is always non-empty
                 ->willReturn($countSignalements > 0 ? $this->getSignalements($countSignalements) : []);
         }
 

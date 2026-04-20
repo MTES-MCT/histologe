@@ -70,7 +70,7 @@ class UserTest extends KernelTestCase
         $this->assertEquals($tmp, $user->getAnonymizedAt());
     }
 
-    public function provideInvalidPassword(): \Generator
+    public static function provideInvalidPassword(): \Generator
     {
         yield 'blank' => ['Cette valeur ne doit pas être vide', ''];
         yield 'short' => ['Le mot de passe doit contenir au moins 12 caractères', 'short'];

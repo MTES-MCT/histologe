@@ -38,7 +38,7 @@ class InseeToIncludeValidatorTest extends ConstraintValidatorTestCase
         }
     }
 
-    public function provideValues(): \Generator
+    public static function provideValues(): \Generator
     {
         yield 'null' => [null, false, self::ERROR];
         yield 'empty' => ['', true];

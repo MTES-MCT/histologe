@@ -100,7 +100,7 @@ class SecurityControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
-    public function provideJsonLogin(): \Generator
+    public static function provideJsonLogin(): \Generator
     {
         yield 'Success login with ROLE_API_USER' => [
             'status' => Response::HTTP_OK,

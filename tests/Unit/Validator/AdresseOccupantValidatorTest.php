@@ -73,11 +73,11 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function provideInvalidTerritoryCases(): iterable
+    public static function provideInvalidTerritoryCases(): iterable
     {
         // territoire inactif via INSEE
-        $inactiveTerritory = $this->createMock(Territory::class);
-        $inactiveTerritory->method('isIsActive')->willReturn(false);
+        $inactiveTerritory = new Territory();
+        $inactiveTerritory->setIsActive(false);
 
         yield 'territory inactive via insee' => [
             $inactiveTerritory,

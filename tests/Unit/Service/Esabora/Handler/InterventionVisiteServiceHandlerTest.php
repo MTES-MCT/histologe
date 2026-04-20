@@ -59,16 +59,18 @@ class InterventionVisiteServiceHandlerTest extends TestCase
             );
 
         $this->esaboraManager = $this->createMock(EsaboraManager::class);
+        $invocationCount = 0;
         $this->esaboraManager
-            ->expects($matcher = $this->exactly(2))
+            ->expects($this->exactly(2))
             ->method('createOrUpdateVisite')
             ->willReturnCallback(
                 function (
                     Affectation $affectation,
                     DossierVisiteSISH $dossierVisiteSISH,
-                ) use ($dossierVisiteSISHCollectionResponse, $matcher) {
+                ) use ($dossierVisiteSISHCollectionResponse, &$invocationCount) {
                     $this->assertEquals($this->affectation, $affectation);
-                    match ($matcher->getInvocationCount()) {
+                    ++$invocationCount;
+                    match ($invocationCount) {
                         1 => $this->assertEquals(
                             $dossierVisiteSISHCollectionResponse->getCollection()[0],
                             $dossierVisiteSISH

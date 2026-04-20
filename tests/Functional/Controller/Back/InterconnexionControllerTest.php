@@ -33,7 +33,7 @@ class InterconnexionControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h2#desc-table', 'connexion'); // include singular and plural
     }
 
-    public function provideParamsInterconnexionList(): \Generator
+    public static function provideParamsInterconnexionList(): \Generator
     {
         yield 'Search without params' => [[]];
         yield 'Search with status warning' => [['status' => 'warning']];

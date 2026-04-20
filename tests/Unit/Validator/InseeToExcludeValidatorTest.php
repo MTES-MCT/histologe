@@ -37,7 +37,7 @@ class InseeToExcludeValidatorTest extends ConstraintValidatorTestCase
         }
     }
 
-    public function provideValues(): \Generator
+    public static function provideValues(): \Generator
     {
         yield 'all' => [['all'], false, self::ERROR];
         yield '[44058]' => [[44058], true];

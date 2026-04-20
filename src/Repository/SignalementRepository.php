@@ -1580,7 +1580,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->andWhere('s.createdAt <= :date')
             ->andWhere('s.mailProprio IS NOT NULL');
 
-        // Pas de réponse "oui" ou "oui avec aide" ou "oui démarches commencées
+        // Pas de réponse "oui" ou "oui avec aide" ou "oui démarches commencées"
         // ET Pas de rappel déjà envoyé (pas de suivi de catégorie INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR)
         $qb->andWhere(
             $qb->expr()->not(

@@ -89,7 +89,7 @@ class BackSignalementQualificationControllerTest extends WebTestCase
         $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
-    public function provideDataNDE(): \Generator
+    public static function provideDataNDE(): \Generator
     {
         yield 'Submit qualification NDE Check' => [
             [

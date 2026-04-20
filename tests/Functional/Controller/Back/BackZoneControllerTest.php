@@ -34,7 +34,7 @@ class BackZoneControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h2#desc-table', $nb.' zone');
     }
 
-    public function provideParamsZoneList(): \Generator
+    public static function provideParamsZoneList(): \Generator
     {
         yield 'Search without params' => [[], 3];
         yield 'Search with queryName agde' => [['queryName' => 'agde'], 1];

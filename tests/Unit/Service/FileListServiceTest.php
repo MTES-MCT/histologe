@@ -27,7 +27,7 @@ class FileListServiceTest extends WebTestCase
         $this->security = self::getContainer()->get(Security::class);
         $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
         $this->userRepository = self::getContainer()->get(UserRepository::class);
-        $this->fileVisibilityService = self::getContainer()->get(FileVisibilityService::class);
+        $this->fileVisibilityService = self::getContainer()->get(FileVisibilityService::class); // @phpstan-ignore-line Service is public in test environment
 
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);

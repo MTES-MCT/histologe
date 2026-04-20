@@ -36,7 +36,7 @@ class SignalementControllerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    public function provideStatusSignalement(): \Generator
+    public static function provideStatusSignalement(): \Generator
     {
         yield 'Actif' => [SignalementStatus::ACTIVE->value];
         yield 'Fermé' => [SignalementStatus::CLOSED->value];
@@ -48,7 +48,7 @@ class SignalementControllerTest extends WebTestCase
         yield 'Injonction clôturée' => [SignalementStatus::INJONCTION_CLOSED->value];
     }
 
-    public function provideProfileDeclarant(): \Generator
+    public static function provideProfileDeclarant(): \Generator
     {
         yield 'LOCATAIRE' => [ProfileDeclarant::LOCATAIRE];
         yield 'BAILLEUR' => [ProfileDeclarant::BAILLEUR];
@@ -677,7 +677,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
     }
 
-    public function provideSignalementRequestPayload(): \Generator
+    public static function provideSignalementRequestPayload(): \Generator
     {
         yield 'Post signalement as locataire (Mails sent: Occupant)' => [
             'step/validation_signalement/locataire.json',
@@ -704,7 +704,7 @@ class SignalementControllerTest extends WebTestCase
         ];
     }
 
-    public function provideSignalementDraftUuid(): \Generator
+    public static function provideSignalementDraftUuid(): \Generator
     {
         yield 'Locataire at informations_complementaires step' => [
             '00000000-0000-0000-2023-locataire001',

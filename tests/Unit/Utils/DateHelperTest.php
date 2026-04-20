@@ -16,7 +16,7 @@ class DateHelperTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function provideDates(): \Generator
+    public static function provideDates(): \Generator
     {
         yield 'valid date default format' => ['2023-10-05 12:34:56', 'Y-m-d H:i:s', true];
         yield 'invalid date default format' => ['2023-30-02 12:34:56', 'Y-m-d H:i:s', false];

@@ -20,18 +20,25 @@ class InterventionDescriptionGeneratorTest extends TestCase
      * @dataProvider provideVisiteIntervention
      */
     public function testVisiteDescriptionOnInterventionCreated(
-        Intervention $intervention,
+        InterventionType $interventionType,
+        \DateTimeImmutable $interventionScheduledAt,
+        string $interventionStatus,
         string $label,
         string $address,
         string $scheduledAt,
         string $partnerName,
     ): void {
+        $intervention = $this->getIntervention(
+            $interventionType,
+            $interventionScheduledAt,
+            $interventionStatus
+        );
         $description = InterventionDescriptionGenerator::generate(
             $intervention,
             InterventionCreatedEvent::NAME
         );
 
-        $this->assertStringStartsWith($label, $description);
+        $this->assertStringStartsWith($label, $description); // @phpstan-ignore-line Label comes from data provider and is always non-empty
         $this->assertStringContainsString($address, $description);
         $this->assertStringContainsString($scheduledAt, $description);
         $this->assertStringContainsString($partnerName, $description);
@@ -107,14 +114,12 @@ class InterventionDescriptionGeneratorTest extends TestCase
         ));
     }
 
-    public function provideVisiteIntervention(): \Generator
+    public static function provideVisiteIntervention(): \Generator
     {
         yield 'Visite de contrôle dans le passé' => [
-            $this->getIntervention(
-                InterventionType::VISITE_CONTROLE,
-                new \DateTimeImmutable('2023-09-01'),
-                Intervention::STATUS_DONE
-            ),
+            InterventionType::VISITE_CONTROLE,
+            new \DateTimeImmutable('2023-09-01'),
+            Intervention::STATUS_DONE,
             'Visite de contrôle réalisée :',
             '25 rue du test',
             '01/09/2023',
@@ -122,11 +127,9 @@ class InterventionDescriptionGeneratorTest extends TestCase
         ];
 
         yield 'Visite dans le passé' => [
-            $this->getIntervention(
-                InterventionType::VISITE,
-                new \DateTimeImmutable('2023-10-01'),
-                Intervention::STATUS_DONE
-            ),
+            InterventionType::VISITE,
+            new \DateTimeImmutable('2023-10-01'),
+            Intervention::STATUS_DONE,
             'Visite réalisée',
             '25 rue du test',
             '01/10/2023',
@@ -134,11 +137,9 @@ class InterventionDescriptionGeneratorTest extends TestCase
         ];
 
         yield 'Visite dans le passé mais au status planned' => [
-            $this->getIntervention(
-                InterventionType::VISITE,
-                new \DateTimeImmutable('2023-10-01'),
-                Intervention::STATUS_PLANNED
-            ),
+            InterventionType::VISITE,
+            new \DateTimeImmutable('2023-10-01'),
+            Intervention::STATUS_PLANNED,
             'Visite programmée',
             '25 rue du test',
             '01/10/2023',
@@ -147,11 +148,9 @@ class InterventionDescriptionGeneratorTest extends TestCase
 
         $dateInFutur = (new \DateTimeImmutable())->add(new \DateInterval('P10D'))->setTimezone(new \DateTimeZone('Europe/Paris'));
         yield 'Visite de contrôle dans le futur' => [
-            $this->getIntervention(
-                InterventionType::VISITE_CONTROLE,
-                $dateInFutur,
-                Intervention::STATUS_PLANNED
-            ),
+            InterventionType::VISITE_CONTROLE,
+            $dateInFutur,
+            Intervention::STATUS_PLANNED,
             'Visite de contrôle programmée :',
             '25 rue du test',
             $dateInFutur->format('d/m/Y'),
@@ -159,11 +158,9 @@ class InterventionDescriptionGeneratorTest extends TestCase
         ];
 
         yield 'Visite dans le futur' => [
-            $this->getIntervention(
-                InterventionType::VISITE,
-                $dateInFutur,
-                Intervention::STATUS_PLANNED
-            ),
+            InterventionType::VISITE,
+            $dateInFutur,
+            Intervention::STATUS_PLANNED,
             'Visite programmée',
             '25 rue du test',
             $dateInFutur->format('d/m/Y'),

@@ -19,19 +19,8 @@ class DataPropertyArrayFilterTest extends TestCase
      */
     public function testFilterByPrefix(array $prefixes, array $filteredDataExpected): void
     {
-        $data = json_decode(
-            (string) file_get_contents(__DIR__.'/../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
-            true
-        );
-
-        $filteredData = DataPropertyArrayFilter::filterByPrefix($data, $prefixes);
-
-        $this->assertEquals($filteredDataExpected, $filteredData);
-    }
-
-    public function provideData(): \Generator
-    {
-        yield 'Données Type composition' => [
+        $provideData = [];
+        $provideData[] = [
             SignalementDraftRequest::PREFIX_PROPERTIES_TYPE_COMPOSITION,
             $this->getLocataireTypeComposition(
                 withCompositionLogementNombrePersonnes: true,
@@ -39,23 +28,32 @@ class DataPropertyArrayFilterTest extends TestCase
                 withDateEmmenagement: true
             ),
         ];
-
-        yield 'Données Situation Foyer' => [
+        $provideData[] = [
             SignalementDraftRequest::PREFIX_PROPERTIES_SITUATION_FOYER,
             $this->getLocataireSituationFoyer(),
         ];
-
-        yield 'Données Procedure' => [
+        $provideData[] = [
             SignalementDraftRequest::PREFIX_PROPERTIES_INFORMATION_PROCEDURE,
             $this->getLocataireInformationProcedure(
                 withInfoProcedureBailleurPrevenu: true,
                 withInfoProcedureBailDate: true
             ),
         ];
-
-        yield 'Données Information complémentaire' => [
+        $provideData[] = [
             SignalementDraftRequest::PREFIX_PROPERTIES_INFORMATION_COMPLEMENTAIRE,
             $this->getLocataireInformationComplementaire(withMontantLoyer: true),
         ];
+
+        foreach ($provideData as $dataItem) {
+            [$prefixes, $filteredDataExpected] = $dataItem;
+            $data = json_decode(
+                (string) file_get_contents(__DIR__.'/../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+                true
+            );
+
+            $filteredData = DataPropertyArrayFilter::filterByPrefix($data, $prefixes);
+
+            $this->assertEquals($filteredDataExpected, $filteredData);
+        }
     }
 }

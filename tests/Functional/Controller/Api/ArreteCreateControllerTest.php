@@ -133,7 +133,7 @@ class ArreteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    public function provideDataFailure403(): \Generator
+    public static function provideDataFailure403(): \Generator
     {
         yield 'test create arrete with new affectation' => ['00000000-0000-0000-2022-000000000001', 'Partenaire 13-01', 'L\'affectation doit être au statut EN_COURS'];
         yield 'test create arrete with closed signalement' => ['00000000-0000-0000-2022-000000000003', 'Partenaire 13-01', 'Le signalement n\'est pas actif.'];
@@ -141,7 +141,7 @@ class ArreteCreateControllerTest extends WebTestCase
         yield 'test create arrete with partner with no competence visite' => ['00000000-0000-0000-2023-000000000026', 'Partenaire 13-03', 'Le partenaire n\'a pas la compétence visite.', true];
     }
 
-    public function providePayloadFailure(): \Generator
+    public static function providePayloadFailure(): \Generator
     {
         yield 'Wrong payload with future date' => [
             [
@@ -167,7 +167,7 @@ class ArreteCreateControllerTest extends WebTestCase
         ];
     }
 
-    public function providePayloadSuccess(): \Generator
+    public static function providePayloadSuccess(): \Generator
     {
         yield 'Payload arrêté' => [
             'arrete',

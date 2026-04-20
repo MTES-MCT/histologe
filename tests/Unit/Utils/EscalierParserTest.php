@@ -15,7 +15,7 @@ class EscalierParserTest extends TestCase
         $this->assertEquals($EscalierParsed, EscalierParser::parse($currentEscalierValue));
     }
 
-    public function provideEscalier(): \Generator
+    public static function provideEscalier(): \Generator
     {
         yield '-2' => ['-2', '-2'];
         yield '0' => ['0', '0'];

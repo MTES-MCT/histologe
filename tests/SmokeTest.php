@@ -85,7 +85,7 @@ class SmokeTest extends WebTestCase
         );
     }
 
-    public function provideRoutes(): \Generator
+    public static function provideRoutes(): \Generator
     {
         /** @var RouterInterface $router */
         $router = self::getContainer()->get(RouterInterface::class);
