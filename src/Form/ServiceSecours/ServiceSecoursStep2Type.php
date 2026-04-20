@@ -64,12 +64,6 @@ class ServiceSecoursStep2Type extends AbstractType
             ->add('rnbId', HiddenType::class, [
                 'required' => false,
             ])
-            ->add('lat', HiddenType::class, [
-                'required' => false,
-            ])
-            ->add('lng', HiddenType::class, [
-                'required' => false,
-            ])
 
             ->add('adresseAutreOccupant', TextType::class, [
                 'label' => 'Complément d\'adresse',

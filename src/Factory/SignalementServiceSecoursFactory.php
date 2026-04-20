@@ -80,8 +80,7 @@ class SignalementServiceSecoursFactory
 
         if (empty($formServiceSecours->step2->inseeOccupant)) {
             $signalement->setManualAddressOccupant(true);
-            $signalement->setRnbIdOccupant($formServiceSecours->step2->rnbId)
-                ->setGeoloc(['lat' => $formServiceSecours->step2->lat, 'lng' => $formServiceSecours->step2->lng]);
+            $signalement->setRnbIdOccupant($formServiceSecours->step2->rnbId);
             $this->signalementAddressUpdater->updateAddressOccupantFromBanData(signalement: $signalement, updateRnbId: false);
         } else {
             $signalement->setInseeOccupant($formServiceSecours->step2->inseeOccupant);

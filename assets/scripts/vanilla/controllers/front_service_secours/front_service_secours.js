@@ -2,7 +2,6 @@ import {
   attacheAutocompleteAddressEvent,
   initComponentAddress,
 } from '../../services/component/component_search_address';
-import { jsonResponseHandler } from '../../services/component/component_json_response_handler';
 
 import axios from 'axios';
 
@@ -115,23 +114,16 @@ function initPickLocalisationButton() {
 
   const submitBtn = document.getElementById('fr-modal-pick-localisation-submit');
   if (submitBtn) {
-    const form = submitBtn.form;
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const formData = new FormData(form);
-      const response = await fetch(form.action, {
-        method: 'POST',
-        body: JSON.stringify(Object.fromEntries(formData)),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const responseClone = response.clone();
-      const data = await response.json();
+    submitBtn.addEventListener('click', () => {
+      const clickedBatRnbId = document.getElementById('fr-modal-pick-localisation-rnb-id').value;
+      const formRnbIdInput = document.getElementById('service_secours_step2_rnbId');
+      const modalPickLocalisation = document.getElementById('fr-modal-pick-localisation');
 
-      jsonResponseHandler(responseClone);
-      if (data.success) {
-        document.getElementById('service_secours_step2_lat').value = data.lat;
-        document.getElementById('service_secours_step2_lng').value = data.lng;
-        document.getElementById('service_secours_step2_rnbId').value = data.rnbId;
+      if (clickedBatRnbId && formRnbIdInput) {
+        formRnbIdInput.value = clickedBatRnbId;
+      }
+      if (modalPickLocalisation) {
+        dsfr(modalPickLocalisation).modal.conceal();
       }
     });
   }

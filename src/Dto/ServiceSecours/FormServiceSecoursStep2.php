@@ -25,10 +25,6 @@ class FormServiceSecoursStep2
 
     public ?string $rnbId = null;
 
-    public ?float $lat = null;
-
-    public ?float $lng = null;
-
     #[Assert\Length(max: 255, groups: ['step2'])]
     public ?string $adresseAutreOccupant = null;
 
