@@ -917,6 +917,13 @@ ul + p {
         }
     }
 }
+.pick-location-success {
+  color: #18753c;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
 
 .notification-icon {
     position: relative;

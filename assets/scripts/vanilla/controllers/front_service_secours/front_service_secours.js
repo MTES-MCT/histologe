@@ -88,8 +88,10 @@ function attachFormServiceSecoursEvent() {
 function initPickLocalisationButton() {
   const adresseInput = document.querySelector('#service_secours_step2_adresseOccupant');
   const cpInput = document.querySelector('#service_secours_step2_cpOccupant');
+  const formRnbIdInput = document.getElementById('service_secours_step2_rnbId');
   const pickButton = document.querySelector('.btn-pick-localisation');
   const modal = document.querySelector('#fr-modal-pick-localisation');
+  const pickLocationSuccess = document.getElementById('pick-location-success');
 
   if (!adresseInput || !cpInput || !pickButton || !modal) {
     return;
@@ -98,12 +100,19 @@ function initPickLocalisationButton() {
   function updatePickButton() {
     const address = adresseInput.value.trim();
     const postcode = cpInput.value.trim();
+    const rnbId = formRnbIdInput ? formRnbIdInput.value.trim() : null;
     if (address && postcode) {
       pickButton.classList.remove('fr-hidden');
       modal.setAttribute('data-address', address);
       modal.setAttribute('data-postcode', postcode);
+      if (pickLocationSuccess && rnbId) {
+        pickLocationSuccess.classList.remove('fr-hidden');
+      }
     } else {
       pickButton.classList.add('fr-hidden');
+      if (pickLocationSuccess) {
+        pickLocationSuccess.classList.add('fr-hidden');
+      }
     }
   }
 
@@ -116,11 +125,13 @@ function initPickLocalisationButton() {
   if (submitBtn) {
     submitBtn.addEventListener('click', () => {
       const clickedBatRnbId = document.getElementById('fr-modal-pick-localisation-rnb-id').value;
-      const formRnbIdInput = document.getElementById('service_secours_step2_rnbId');
       const modalPickLocalisation = document.getElementById('fr-modal-pick-localisation');
 
       if (clickedBatRnbId && formRnbIdInput) {
         formRnbIdInput.value = clickedBatRnbId;
+        if (pickLocationSuccess) {
+          pickLocationSuccess.classList.remove('fr-hidden');
+        }
       }
       if (modalPickLocalisation) {
         dsfr(modalPickLocalisation).modal.conceal();
