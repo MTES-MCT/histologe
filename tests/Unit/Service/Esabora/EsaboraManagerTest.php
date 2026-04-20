@@ -171,7 +171,7 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager->createOrUpdateArrete($this->getAffectation(PartnerType::ARS), $dossierArrete);
     }
 
-    public static function provideEsaboraManagerForIntervention(string $action, InterventionType $interventionType): EsaboraManager
+    private function provideEsaboraManagerForIntervention(string $action, InterventionType $interventionType): EsaboraManager
     {
         $this->interventionRepository
             ->expects($this->once())
