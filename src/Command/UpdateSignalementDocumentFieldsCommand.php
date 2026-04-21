@@ -10,6 +10,7 @@ use App\Repository\SignalementRepository;
 use App\Service\Import\CsvParser;
 use App\Service\Import\Signalement\SignalementImportImageHeader;
 use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -39,6 +40,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly FileManager $fileManager,
         private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
@@ -99,7 +101,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                         unset($file);
                         unset($signalement);
                         if (0 === $key % self::BATCH_SIZE) {
-                            $this->fileManager->flush();
+                            $this->entityManager->flush();
                         }
                         ++$countFile;
                     }
@@ -115,7 +117,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
             }
         }
 
-        $this->fileManager->flush();
+        $this->entityManager->flush();
         $io->success(\sprintf('%s files signalement(s) updated', $countFile));
 
         return Command::SUCCESS;

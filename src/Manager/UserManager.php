@@ -11,6 +11,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\TokenGeneratorInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
@@ -28,6 +29,7 @@ class UserManager extends AbstractManager
         protected ManagerRegistry $managerRegistry,
         private SignalementUsagerManager $signalementUsagerManager,
         private UserFactory $userFactory,
+        private EntityManagerInterface $entityManager,
         string $entityName = User::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -42,6 +44,7 @@ class UserManager extends AbstractManager
             if ($userPartner->getPartner() === $fromPartner) {
                 $userPartner->setPartner($toPartner);
                 $this->save($userPartner);
+                $this->entityManager->flush();
                 break;
             }
         }
@@ -73,6 +76,7 @@ class UserManager extends AbstractManager
             ->setTokenExpiredAt(null);
 
         $this->save($user);
+        $this->entityManager->flush();
         $password = null;
 
         return $user;
@@ -97,7 +101,10 @@ class UserManager extends AbstractManager
             ->setTokenExpiredAt(
                 (new \DateTimeImmutable())->modify($this->parameterBag->get('token_lifetime'))
             );
-        $this->save($user, $flush);
+        $this->save($user);
+        if ($flush) {
+            $this->entityManager->flush();
+        }
 
         return $user;
     }
@@ -139,6 +146,7 @@ class UserManager extends AbstractManager
 
                 $user->setIsMailingActive(true);
                 $this->save($user);
+                $this->entityManager->flush();
             }
         }
 

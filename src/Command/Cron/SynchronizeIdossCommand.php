@@ -136,7 +136,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
                         case IdossService::STATUS_IN_PROGRESS:
                             $description = 'Le signalement a été accepté par IDOSS';
                             $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
-                            $this->userSignalementSubscriptionManager->flush();
+                            $this->entityManager->flush();
                             break;
                         case IdossService::STATUS_CLOSED:
                             $description = 'Le signalement a été clôturé par IDOSS avec le motif suivant : "'.$item['motif'].'"';

@@ -5,12 +5,16 @@ namespace App\Manager;
 use App\Entity\Signalement;
 use App\Entity\SignalementUsager;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 class SignalementUsagerManager extends AbstractManager
 {
-    public function __construct(protected ManagerRegistry $managerRegistry, string $entityName = SignalementUsager::class)
-    {
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        protected ManagerRegistry $managerRegistry,
+        string $entityName = SignalementUsager::class,
+    ) {
         parent::__construct($managerRegistry, $entityName);
     }
 
@@ -31,6 +35,7 @@ class SignalementUsagerManager extends AbstractManager
             $signalementUsager->setDeclarant($userDeclarant);
         }
         $this->save($signalementUsager);
+        $this->entityManager->flush();
 
         return $signalementUsager;
     }

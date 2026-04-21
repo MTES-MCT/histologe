@@ -9,6 +9,7 @@ use App\Service\Import\GridAffectation\GridAffectationLoader;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -29,6 +30,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
     private MockObject&UploadHandlerService $uploadHandlerServiceMock;
     private MockObject&NotificationMailerRegistry $notificationMailerRegistryMock;
     private MockObject&UrlGeneratorInterface $urlGeneratorMock;
+    private MockObject&EntityManagerInterface $entityManagerMock;
 
     protected function setUp(): void
     {
@@ -40,6 +42,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
         $this->uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
         $this->notificationMailerRegistryMock = $this->createMock(NotificationMailerRegistry::class);
         $this->urlGeneratorMock = $this->createMock(UrlGeneratorInterface::class);
+        $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
         $this->urlGeneratorMock
             ->expects($this->once())
             ->method('generate')
@@ -85,6 +88,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             $this->uploadHandlerServiceMock,
             $this->notificationMailerRegistryMock,
             $this->urlGeneratorMock,
+            $this->entityManagerMock
         ));
 
         $commandTester = new CommandTester($command);
@@ -129,6 +133,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             $this->uploadHandlerServiceMock,
             $this->notificationMailerRegistryMock,
             $this->urlGeneratorMock,
+            $this->entityManagerMock
         ));
 
         $commandTester = new CommandTester($command);

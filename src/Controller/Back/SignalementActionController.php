@@ -15,7 +15,6 @@ use App\Entity\User;
 use App\Form\AddSuiviType;
 use App\Form\AgentSelectionType;
 use App\Form\RefusSignalementType;
-use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
@@ -377,8 +376,8 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         Request $request,
         RnbService $rnbService,
-        SignalementManager $signalementManager,
         HtmlTargetContentsService $htmlTargetContentsService,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_NEED_VALIDATION, $signalement)) {
             throw $this->createAccessDeniedException();
@@ -404,7 +403,7 @@ class SignalementActionController extends AbstractController
         }
         $signalement->setRnbIdOccupant($building->getRnbId());
         $signalement->setGeoloc(['lat' => $building->getLat(), 'lng' => $building->getLng()]);
-        $signalementManager->flush();
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Le bâtiment a bien été mis à jour.'];
         $htmlTargetContents = $htmlTargetContentsService->getHtmlTargetContentsForSignalementAddress($signalement);
 
@@ -451,6 +450,7 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         UserSignalementSubscriptionManager $signalementSubscriptionManager,
         Request $request,
+        EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_SUBSCRIBE, $signalement);
         $token = $request->query->get('_token');
@@ -464,7 +464,7 @@ class SignalementActionController extends AbstractController
         $user = $this->getUser();
 
         $signalementSubscriptionManager->createOrGet($user, $signalement, $user);
-        $signalementSubscriptionManager->flush();
+        $entityManager->flush();
 
         $msg = 'Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents abonnés au dossier.
         Le dossier apparaît dans vos dossiers sur votre tableau de bord et vous recevrez les mises à jour du dossier.';
@@ -480,6 +480,7 @@ class SignalementActionController extends AbstractController
         UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
         AffectationRepository $affectationRepository,
         Request $request,
+        EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_SUBSCRIBE, $signalement);
         $successMsg = 'Vous avez quitté le dossier, vous n\'apparaissez plus dans la liste des agents abonnés au dossier et vous ne recevrez plus les mises à jour du dossier.';
@@ -535,8 +536,8 @@ class SignalementActionController extends AbstractController
                     $this->unsubscribeUser($user, $signalement, $signalementSubscriptionManager, $signalementSubscriptionRepository);
                     foreach ($agentsSelection->getAgents() as $agent) {
                         $signalementSubscriptionManager->createOrGet($agent, $signalement, $user, $affectation);
-                        $signalementSubscriptionManager->flush();
                     }
+                    $entityManager->flush();
                     $this->addFlash('success', ['title' => $successMsgTitle, 'message' => $successMsg]);
 
                     $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -560,6 +561,7 @@ class SignalementActionController extends AbstractController
         }
 
         $this->unsubscribeUser($user, $signalement, $signalementSubscriptionManager, $signalementSubscriptionRepository);
+        $entityManager->flush();
 
         $this->addFlash('success', ['title' => $successMsgTitle, 'message' => $successMsg]);
 

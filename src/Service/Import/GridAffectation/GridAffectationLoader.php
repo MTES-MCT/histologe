@@ -9,7 +9,6 @@ use App\Entity\User;
 use App\Entity\UserPartner;
 use App\Factory\PartnerFactory;
 use App\Factory\UserFactory;
-use App\Manager\ManagerInterface;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
@@ -49,7 +48,6 @@ class GridAffectationLoader
         private readonly PartnerManager $partnerManager,
         private readonly UserFactory $userFactory,
         private readonly UserManager $userManager,
-        private readonly ManagerInterface $manager,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
@@ -236,7 +234,7 @@ class GridAffectationLoader
                     /** @var ConstraintViolationList $errors */
                     $errors = $this->validator->validate($partner);
                     if (0 === $errors->count() && $isNewPartner) {
-                        $this->partnerManager->save($partner, false);
+                        $this->partnerManager->save($partner);
                         ++$this->metadata['nb_partners'];
                         $newPartnerNames[] = $partnerName;
                     } elseif ($errors->count() > 0) {
@@ -302,9 +300,9 @@ class GridAffectationLoader
                         /** @var ConstraintViolationList $errors */
                         $errors = $this->validator->validate($user);
                         if (0 === $errors->count()) {
-                            $this->userManager->save($user, false);
-                            $this->userManager->persist($partner);
-                            $this->userManager->persist($userPartner);
+                            $this->userManager->save($user);
+                            $this->partnerManager->save($partner);
+                            $this->entityManager->persist($userPartner);
                         } else {
                             $this->metadata['errors'][] = \sprintf('line : %s', (string) $errors);
                         }
@@ -313,7 +311,7 @@ class GridAffectationLoader
 
                 if (0 === $countNewUsers % self::FLUSH_COUNT) {
                     $this->logger->info(\sprintf('in progress - %s users created or updated', $countNewUsers));
-                    $this->manager->flush();
+                    $this->entityManager->flush();
                 }
             }
             if (null !== $output) {
@@ -321,7 +319,7 @@ class GridAffectationLoader
             }
         }
 
-        $this->manager->flush();
+        $this->entityManager->flush();
         if (null !== $output) {
             $progressBar->finish();
             $progressBar->clear();

@@ -11,30 +11,14 @@ abstract class AbstractManager implements ManagerInterface
     {
     }
 
-    public function save(object $entity, bool $flush = true): void
+    public function save(object $entity): void
     {
         $this->managerRegistry->getManager()->persist($entity);
-        if ($flush) {
-            $this->flush();
-        }
     }
 
-    public function remove(object $entity, bool $flush = true): void
+    public function remove(object $entity): void
     {
         $this->managerRegistry->getManager()->remove($entity);
-        if ($flush) {
-            $this->flush();
-        }
-    }
-
-    public function persist(object $entity): void
-    {
-        $this->save($entity, false);
-    }
-
-    public function flush(): void
-    {
-        $this->managerRegistry->getManager()->flush();
     }
 
     /**

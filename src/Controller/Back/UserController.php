@@ -13,6 +13,7 @@ use App\Security\Voter\UserVoter;
 use App\Service\EmailAlert\EmailAlertChecker;
 use App\Service\Export\UserExportLoader;
 use App\Service\ListFilters\SearchUser;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
@@ -135,6 +136,7 @@ class UserController extends AbstractController
         Request $request,
         UserManager $userManager,
         UserPasswordHasherInterface $passwordHasher,
+        EntityManagerInterface $entityManager,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -166,6 +168,7 @@ class UserController extends AbstractController
         $user->setStatut(UserStatus::INACTIVE);
         $user->setPassword($passwordHasher->hashPassword($user, bin2hex(random_bytes(32))));
         $userManager->save($user);
+        $entityManager->flush();
         $this->addFlash('success', ['title' => 'Compte désactivé',
             'message' => 'L\'utilisateur '.$user->getNomComplet(true).' a bien été désactivé.',
         ]);

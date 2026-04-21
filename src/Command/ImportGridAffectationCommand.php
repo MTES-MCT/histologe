@@ -11,6 +11,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -43,6 +44,7 @@ class ImportGridAffectationCommand extends Command
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
@@ -150,6 +152,7 @@ class ImportGridAffectationCommand extends Command
             $ioSuccessMessage = $territory->getName().' has been activated';
             $territory->setIsActive(true);
             $this->territoryManager->save($territory);
+            $this->entityManager->flush();
         }
 
         $io->success($ioSuccessMessage);

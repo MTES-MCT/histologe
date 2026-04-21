@@ -4,12 +4,14 @@ namespace App\Messenger\MessageHandler;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\User;
+use App\Manager\SignalementManager;
 use App\Manager\UserManager;
 use App\Messenger\Message\SignalementDraftProcessMessage;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Files\SignalementFileAttacher;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -18,11 +20,13 @@ class SignalementDraftFileMessageHandler
 {
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
+        private readonly SignalementManager $signalementManager,
         private readonly SignalementDraftRepository $signalementDraftRepository,
         private readonly SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
         private readonly LoggerInterface $logger,
         private readonly UserManager $userManager,
         private readonly SignalementFileAttacher $signalementFileAttacher,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -58,7 +62,8 @@ class SignalementDraftFileMessageHandler
                     );
                 }
             }
-            $this->signalementRepository->save($signalement, true);
+            $this->signalementManager->save($signalement);
+            $this->entityManager->flush();
         }
 
         $this->logger->info('SignalementDraftFileMessageHandler handled successfully', [

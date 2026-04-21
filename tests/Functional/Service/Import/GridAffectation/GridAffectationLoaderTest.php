@@ -6,7 +6,6 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Factory\PartnerFactory;
 use App\Factory\UserFactory;
-use App\Manager\ManagerInterface;
 use App\Manager\PartnerManager;
 use App\Manager\UserManager;
 use App\Service\Import\GridAffectation\GridAffectationLoader;
@@ -50,7 +49,6 @@ class GridAffectationLoaderTest extends KernelTestCase
             self::getContainer()->get(PartnerManager::class),
             self::getContainer()->get(UserFactory::class),
             self::getContainer()->get(UserManager::class),
-            self::getContainer()->get(ManagerInterface::class),
             self::getContainer()->get(ValidatorInterface::class),
             self::getContainer()->get(LoggerInterface::class),
             self::getContainer()->get(NotificationMailerRegistry::class),

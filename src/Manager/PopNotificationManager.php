@@ -32,7 +32,7 @@ class PopNotificationManager extends Manager
         if (!$popNotification) {
             $popNotification = new PopNotification();
             $user->addPopNotification($popNotification);
-            $this->persist($popNotification);
+            $this->save($popNotification);
             $popNotification->setUser($user);
         }
         switch ($type) {
@@ -44,7 +44,7 @@ class PopNotificationManager extends Manager
                 break;
         }
         if (empty($popNotification->getParams()['addedPartners']) && empty($popNotification->getParams()['removedPartners'])) {
-            $this->remove($popNotification, false);
+            $this->remove($popNotification);
 
             return null;
         }

@@ -249,6 +249,7 @@ class AutoAssignerTest extends KernelTestCase
             $this->userSignalementSubscriptionManager,
             $this->notificationAndMailSender,
             $logger,
+            $this->entityManager,
         );
 
         $autoAssigner->assign($signalement);

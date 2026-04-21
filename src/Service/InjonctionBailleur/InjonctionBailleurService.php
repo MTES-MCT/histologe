@@ -120,7 +120,8 @@ class InjonctionBailleurService
 
         $filename = $this->uploadHandlerService->uploadFromFilename($filename);
 
-        $this->fileManager->createOrUpdate(filename: $filename, title: 'Engagement travaux', signalement: $signalement, flush: true, documentType: DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR);
+        $this->fileManager->createOrUpdate(filename: $filename, title: 'Engagement travaux', signalement: $signalement, documentType: DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR);
+        $this->entityManager->flush();
     }
 
     private function createInjonctionBailleurCommentaireSuivi(Signalement $signalement, string $description): void
@@ -153,7 +154,7 @@ class InjonctionBailleurService
                 $signalement->addAffectation($affectation);
             }
         }
-        $this->affectationManager->flush();
+        $this->entityManager->flush();
     }
 
     public function handleStopProcedure(StopProcedure $stopProcedure): void

@@ -173,7 +173,7 @@ class IdossService
             $statusCode = 9999;
         }
 
-        return $this->jobEventManager->createJobEvent(
+        $jobEvent = $this->jobEventManager->createJobEvent(
             service: self::TYPE_SERVICE,
             action: $jobAction,
             message: $jobMessage,
@@ -184,6 +184,9 @@ class IdossService
             partnerId: $partner->getId(),
             partnerType: $partner->getType(),
         );
+        $this->entityManager->flush();
+
+        return $jobEvent;
     }
 
     /**

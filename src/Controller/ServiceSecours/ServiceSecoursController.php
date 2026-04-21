@@ -8,10 +8,10 @@ use App\Entity\ServiceSecoursRoute;
 use App\Entity\Signalement;
 use App\Factory\SignalementServiceSecoursFactory;
 use App\Form\ServiceSecours\ServiceSecoursType;
+use App\Manager\SignalementManager;
 use App\Manager\UserManager;
 use App\Messenger\Message\SignalementServiceSecoursFileMessage;
 use App\Repository\DesordreCritereRepository;
-use App\Repository\SignalementRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -49,7 +49,7 @@ class ServiceSecoursController extends AbstractController
         ServiceSecoursRoute $serviceSecoursRoute,
         SignalementServiceSecoursFactory $signalementServiceSecoursFactory,
         DesordreCritereRepository $desordreCritereRepository,
-        SignalementRepository $signalementRepository,
+        SignalementManager $signalementManager,
         EntityManagerInterface $entityManager,
         ReferenceGenerator $referenceGenerator,
         UserManager $userManager,
@@ -73,7 +73,7 @@ class ServiceSecoursController extends AbstractController
 
             $entityManager->beginTransaction();
             $signalement->setReference($referenceGenerator->generateReference($signalement->getTerritory()));
-            $signalementRepository->save($signalement, true);
+            $signalementManager->save($signalement);
             $entityManager->commit();
             $userManager->createUsagersFromSignalement($signalement);
             $autoAssigner->assignOrSendNewSignalementNotification($signalement);

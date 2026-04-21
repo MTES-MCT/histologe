@@ -13,6 +13,7 @@ use App\Manager\SuiviManager;
 use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -31,6 +32,7 @@ class AffectationManagerTest extends WebTestCase
     private EventDispatcherInterface $eventDispatcher;
     private InterconnectionBus $interconnectionBus;
     private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
+    private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
@@ -42,6 +44,7 @@ class AffectationManagerTest extends WebTestCase
         $this->eventDispatcher = self::getContainer()->get(EventDispatcherInterface::class);
         $this->interconnectionBus = self::getContainer()->get(InterconnectionBus::class);
         $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
         $this->affectationManager = new AffectationManager(
             $this->managerRegistry,
             $this->suiviManager,
@@ -50,6 +53,7 @@ class AffectationManagerTest extends WebTestCase
             $this->eventDispatcher,
             $this->interconnectionBus,
             $this->userSignalementSubscriptionRepository,
+            $this->entityManager,
             Affectation::class,
         );
     }

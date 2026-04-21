@@ -50,15 +50,6 @@ class SignalementRepository extends ServiceEntityRepository
         parent::__construct($registry, Signalement::class);
     }
 
-    public function save(Signalement $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->persist($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
     /**
      * @return array<int, array<string, mixed>>|int|string
      */

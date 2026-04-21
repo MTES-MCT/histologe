@@ -13,6 +13,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,6 +35,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
         private readonly VisiteNotifier $visiteNotifier,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -93,6 +95,8 @@ class NotifyVisitsCommand extends AbstractCronCommand
             ++$countFutureVisits;
         }
 
+        $this->entityManager->flush();
+
         $listPastVisits = $this->interventionRepository->getPastVisits();
         foreach ($listPastVisits as $intervention) {
             $signalement = $intervention->getSignalement();
@@ -109,6 +113,8 @@ class NotifyVisitsCommand extends AbstractCronCommand
             $this->interventionManager->save($intervention);
             ++$countPastVisits;
         }
+
+        $this->entityManager->flush();
 
         // Notifs for visits that should be planned
         $listAffectations = $this->affectationRepository->findAcceptedAffectationsFromVisitesPartner();

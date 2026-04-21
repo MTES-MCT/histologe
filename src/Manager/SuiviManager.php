@@ -92,7 +92,7 @@ class SuiviManager extends Manager
         }
         foreach ($files as $file) {
             $suiviFile = (new SuiviFile())->setFile($file)->setSuivi($suivi)->setTitle($file->getTitle());
-            $this->persist($suiviFile);
+            $this->save($suiviFile);
             $suivi->addSuiviFile($suiviFile);
         }
         // abonnement au signalement si le suivi est crée par un agent non abonné
@@ -104,10 +104,9 @@ class SuiviManager extends Manager
                 subscriptionCreated: $subscriptionCreated
             );
         }
+        $this->save($suivi);
         if ($flush) {
-            $this->save($suivi);
-        } else {
-            $this->persist($suivi);
+            $this->managerRegistry->getManager()->flush();
         }
         $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME);
 

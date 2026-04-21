@@ -41,7 +41,7 @@ class UserSignalementSubscriptionManager extends AbstractManager
             ->setSignalement($signalement)
             ->setCreatedBy($createdBy);
 
-            $this->persist($subscription);
+            $this->save($subscription);
             if ($affectation) {
                 $this->notificationAndMailSender->sendNewSubscription($subscription, $affectation);
             }

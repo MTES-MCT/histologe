@@ -272,6 +272,7 @@ class PartnerController extends AbstractController
         Request $request,
         Partner $partner,
         PartnerManager $partnerManager,
+        EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_EDIT, $partner);
         if ($partner->getIsArchive()) {
@@ -282,6 +283,7 @@ class PartnerController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $partnerManager->save($partner);
+            $entityManager->flush();
             $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'Le périmètre a bien été modifié.']);
 
             return $this->redirectToRoute('back_partner_view', ['id' => $partner->getId(), '_fragment' => 'perimetre']);
@@ -417,6 +419,7 @@ class PartnerController extends AbstractController
         UserManager $userManager,
         NotificationMailerRegistry $notificationMailerRegistry,
         PopNotificationManager $popNotificationManager,
+        EntityManagerInterface $entityManager,
     ): JsonResponse|RedirectResponse {
         $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_USER_CREATE, $partner);
         $userTmp = new User();
@@ -431,6 +434,7 @@ class PartnerController extends AbstractController
                 $userPartner->setUser($user);
                 $popNotificationManager->createOrUpdatePopNotification($user, 'addPartner', $partner);
                 $userManager->save($userPartner);
+                $entityManager->flush();
                 $notificationMailerRegistry->send(
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_ACCOUNT_NEW_TERRITORY,
@@ -460,6 +464,7 @@ class PartnerController extends AbstractController
         Request $request,
         Partner $partner,
         UserManager $userManager,
+        EntityManagerInterface $entityManager,
     ): JsonResponse|RedirectResponse {
         $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_USER_CREATE, $partner);
         $user = new User();
@@ -493,8 +498,9 @@ class PartnerController extends AbstractController
                 $user = $userExist;
                 $userManager->sendAccountActivationNotification($user);
             }
-            $userManager->persist($userPartner);
+            $userManager->save($userPartner);
             $userManager->save($user);
+            $entityManager->flush();
             $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
             $this->addFlash('success', ['title' => 'Utilisateur ajouté', 'message' => $message]);
 
@@ -513,6 +519,7 @@ class PartnerController extends AbstractController
         User $user,
         Request $request,
         UserManager $userManager,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(UserVoter::USER_EDIT, $user);
         $originalEmail = $user->getEmail();
@@ -534,7 +541,7 @@ class PartnerController extends AbstractController
                     $userManager->sendAccountActivationNotification($user);
                 }
                 $user->setRoles([$formUserPartner->get('role')->getData()]);
-                $userManager->flush();
+                $entityManager->flush();
 
                 if ('users' == $request->query->get('from')) {
                     $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'L\'utilisateur a bien été modifié.']);
@@ -597,6 +604,7 @@ class PartnerController extends AbstractController
         UserManager $userManager,
         NotificationMailerRegistry $notificationMailerRegistry,
         PopNotificationManager $popNotificationManager,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var int|string $userId */
         $userId = $request->request->get('user_id');
@@ -626,6 +634,7 @@ class PartnerController extends AbstractController
                 if ($userPartner->getPartner()->getId() === $partner->getId()) {
                     $popNotificationManager->createOrUpdatePopNotification($user, 'removePartner', $partner);
                     $userManager->remove($userPartner);
+                    $entityManager->flush();
                     break;
                 }
             }
@@ -654,6 +663,7 @@ class PartnerController extends AbstractController
         $user->setStatut(UserStatus::ARCHIVE);
         $user->setProConnectUserId(null);
         $userManager->save($user);
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Utilisateur supprimé', 'message' => 'L\'utilisateur a bien été supprimé.'];
         $htmlTargetContents = $this->getHtmlTargetContentsForPartnerAgentList($partner);
 
