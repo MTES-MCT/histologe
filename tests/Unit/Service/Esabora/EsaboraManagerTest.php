@@ -3,9 +3,12 @@
 namespace App\Tests\Unit\Service\Esabora;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Intervention;
+use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
@@ -14,9 +17,12 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\InterventionRepository;
+use App\Repository\SuiviRepository;
 use App\Service\Files\ImageManipulationHandler;
 use App\Service\Files\ZipHelper;
+use App\Service\Interconnection\Esabora\Enum\EsaboraStatus;
 use App\Service\Interconnection\Esabora\EsaboraManager;
+use App\Service\Interconnection\Esabora\Response\DossierResponseInterface;
 use App\Service\Security\FileScanner;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\TimezoneProvider;
@@ -344,5 +350,69 @@ class EsaboraManagerTest extends KernelTestCase
         $this->assertEquals(new \DateTimeImmutable('2023-05-03 08:16:00'), $intervention->getScheduledAt());
         $this->assertEquals('SH', $intervention->getDoneBy());
         $this->assertEquals('SH', $intervention->getExternalOperator());
+    }
+
+    /**
+     * @throws \DateInvalidTimeZoneException
+     * @throws \DateMalformedStringException
+     */
+    public function testUpdateStatusAndBuildDescriptionWithResynchronisation(): void
+    {
+        $signalement = $this->getSignalement();
+        $partner = $this->getPartner();
+        $partner->setNom('Partenaire 01-01');
+        $affectation = $this->getAffectation(PartnerType::ARS);
+        $affectation->setPartner($partner);
+        $affectation->setSignalement($signalement);
+        $affectation->setStatut(AffectationStatus::WAIT);
+        $user = $this->getUser([User::ROLE_ADMIN]);
+
+        $dossierResponse = $this->createMock(DossierResponseInterface::class);
+        $dossierResponse->method('getSasEtat')->willReturn(EsaboraStatus::ESABORA_ACCEPTED->value);
+        $dossierResponse->method('getEtat')->willReturn(EsaboraStatus::ESABORA_IN_PROGRESS->value);
+        $dossierResponse->method('getNameSI')->willReturn('SISH');
+        $dossierResponse->method('getDossNum')->willReturn('2023/SISH/0010');
+
+        $suiviRepository = $this->createMock(SuiviRepository::class);
+        $this->suiviManager->method('getRepository')->willReturn($suiviRepository);
+
+        $suiviRepository
+            ->expects($this->once())
+            ->method('findSuiviByDescription')
+            ->with(
+                $signalement,
+                'Signalement <b>accepté par Partenaire 01-01 via SISH',
+                SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO
+            )
+            ->willReturn([new Suivi()]);
+
+        $this->userManager
+            ->expects($this->once())
+            ->method('getSystemUser')
+            ->willReturn($user);
+
+        $esaboraManager = new EsaboraManager(
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->interventionRepository,
+            $this->interventionFactory,
+            $this->eventDispatcher,
+            $this->userManager,
+            $this->logger,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHandler,
+            $this->imageManipulationHandler,
+            $this->fileFactory,
+            $this->signalementQualificationUpdater,
+            $this->htmlSanitizer,
+            $this->workflow,
+            $this->userSignalementSubscriptionManager,
+            true,
+        );
+
+        $description = $esaboraManager->updateStatusAndBuildDescription($affectation, $user, $dossierResponse);
+        $this->assertStringContainsString('resynchronisé avec Partenaire 01-01 via SISH (Dossier 2023/SISH/0010)', $description);
     }
 }

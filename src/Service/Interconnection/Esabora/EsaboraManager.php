@@ -22,6 +22,7 @@ use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\InterventionRepository;
+use App\Repository\SuiviRepository;
 use App\Service\Files\ImageManipulationHandler;
 use App\Service\Files\ZipHelper;
 use App\Service\Interconnection\Esabora\Enum\EsaboraStatus;
@@ -112,6 +113,7 @@ class EsaboraManager
         : '';
 
         $namePartner = $affectation->getPartner()->getNom();
+        $signalement = $affectation->getSignalement();
         switch ($esaboraStatus) {
             case EsaboraStatus::ESABORA_WAIT->value:
                 if (AffectationStatus::WAIT !== $currentStatus) {
@@ -125,7 +127,19 @@ class EsaboraManager
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::ACCEPTED, $affectation->getPartner());
                     $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
                     $this->userSignalementSubscriptionManager->flush();
+
+                    /** @var SuiviRepository $suiviRepository */
+                    $suiviRepository = $this->suiviManager->getRepository();
                     $description = 'accepté par '.$namePartner.' via '.$dossierResponse->getNameSI();
+                    $suivis = $suiviRepository->findSuiviByDescription(
+                        $signalement,
+                        'Signalement <b>'.$description,
+                        SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO
+                    );
+
+                    if (count($suivis) > 0) {
+                        $description = 'resynchronisé avec '.$namePartner.' via '.$dossierResponse->getNameSI();
+                    }
                 }
 
                 if ($this->shouldBeClosedViaEsabora($esaboraDossierStatus, $currentStatus)) {
