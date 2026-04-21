@@ -6,18 +6,19 @@ use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Messenger\Message\ListExportMessage;
 use Doctrine\DBAL\Exception;
-use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Writer\CSV\Options as CsvOptions;
+use OpenSpout\Writer\CSV\Writer as CsvWriter;
+use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 
 readonly class SignalementExportLoader
 {
-    public const int CHUNK_SIZE = 1000;
     public const array DATE_COLUMNS = ['createdAt', 'dateVisite', 'modifiedAt', 'closedAt', 'infoProcedureBailDate'];
 
     public function __construct(
-        private SignalementManager $signalementManager,
+        private readonly SignalementManager $signalementManager,
     ) {
     }
 
@@ -27,10 +28,15 @@ readonly class SignalementExportLoader
      *
      * @throws Exception
      */
-    public function load(User $user, string $format, ?array $filters, ?array $selectedColumns = null): Spreadsheet
+    public function load(User $user, string $format, string $outputFilePath, ?array $filters, ?array $selectedColumns = null): void
     {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+        if (ListExportMessage::FORMAT_CSV === $format) {
+            $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: SignalementExportHeader::SEPARATOR));
+        } else {
+            $writer = new XlsxWriter();
+        }
+
+        $writer->openToFile($outputFilePath);
 
         $keysToRemove = [];
         $headers = SignalementExportHeader::getHeaders();
@@ -38,11 +44,9 @@ readonly class SignalementExportLoader
             $selectedColumns = [];
         }
         $headers = $this->getHeadersWithSelectedColumns($headers, $keysToRemove, $selectedColumns);
-        $sheet->fromArray([$headers]);
+        $writer->addRow($this->buildRow(array_values($headers)));
 
-        $rowIndex = 2;
-        $hasFormattedDateColumns = false;
-        $counter = 0;
+        $dateStyle = new Style(format: 'DD/MM/YYYY');
         foreach ($this->signalementManager->findSignalementAffectationIterable($user, $filters, $selectedColumns) as $signalementExportItem) {
             $rowArray = get_object_vars($signalementExportItem);
 
@@ -53,37 +57,32 @@ readonly class SignalementExportLoader
                 }
             }
 
-            if (ListExportMessage::FORMAT_XLSX === $format) {
-                foreach (self::DATE_COLUMNS as $key) {
-                    if (!empty($rowArray[$key])) {
-                        $dateTime = \DateTimeImmutable::createFromFormat('d/m/Y', $rowArray[$key]);
-                        if ($dateTime) {
-                            $rowArray[$key] = ExcelDate::PHPToExcel($dateTime);
-                        }
+            $cells = [];
+            foreach ($rowArray as $key => $value) {
+                if (ListExportMessage::FORMAT_XLSX === $format && \in_array($key, self::DATE_COLUMNS, true) && !empty($value)) {
+                    $dateTime = \DateTimeImmutable::createFromFormat('d/m/Y', $value);
+                    if ($dateTime) {
+                        $cells[] = Cell::fromValue($dateTime, $dateStyle);
+                        continue;
                     }
                 }
-
-                if (!$hasFormattedDateColumns) {
-                    $keys = array_keys($rowArray);
-                    foreach (self::DATE_COLUMNS as $key) {
-                        if (($i = array_search($key, $keys, true)) !== false) {
-                            $columnIndex = Coordinate::stringFromColumnIndex($i + 1);
-                            $sheet->getStyle($columnIndex)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DDMMYYYY);
-                        }
-                    }
-                    $hasFormattedDateColumns = true;
-                }
+                $cells[] = Cell::fromValue($value);
             }
 
-            $sheet->fromArray([$rowArray], null, 'A'.$rowIndex++);
-
-            if (0 === ++$counter % self::CHUNK_SIZE) {
-                $spreadsheet->garbageCollect();
-            }
+            $writer->addRow(new Row($cells));
         }
-        $spreadsheet->garbageCollect();
 
-        return $spreadsheet;
+        $writer->close();
+    }
+
+    /**
+     * @param array<string> $values
+     */
+    private function buildRow(array $values): Row
+    {
+        $cells = array_map(static fn ($v) => Cell::fromValue($v), $values);
+
+        return new Row($cells);
     }
 
     /**
