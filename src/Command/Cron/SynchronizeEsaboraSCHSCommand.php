@@ -3,6 +3,7 @@
 namespace App\Command\Cron;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Suivi;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Repository\AffectationRepository;
@@ -80,6 +81,7 @@ class SynchronizeEsaboraSCHSCommand extends AbstractSynchronizeEsaboraCommand
     {
         $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
             partnerType: DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA,
+            affectationStatus: AffectationStatus::ACCEPTED
         );
         $this->existingEvents = $this->suiviRepository->findExistingEventsForSCHS();
         $count = 0;
