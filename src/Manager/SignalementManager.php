@@ -970,7 +970,7 @@ class SignalementManager extends AbstractManager
     {
         $signalement->setStatut(SignalementStatus::ACTIVE);
         $signalement->setValidatedAt(new \DateTimeImmutable());
-        $this->persist($signalement);
+        $this->save($signalement);
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: 'Signalement validé',
@@ -983,6 +983,6 @@ class SignalementManager extends AbstractManager
             flush: false,
             createSubscription: $createSubscription,
         );
-        $this->persist($suivi);
+        $this->save($suivi);
     }
 }

@@ -25,7 +25,6 @@ class JobEventManager extends AbstractManager
         ?PartnerType $partnerType,
         ?int $attachmentsCount = null,
         ?int $attachmentsSize = null,
-        ?bool $flush = true,
     ): JobEvent {
         $jobEvent = (new JobEvent())
             ->setSignalementId($signalementId)
@@ -40,7 +39,7 @@ class JobEventManager extends AbstractManager
             ->setAttachmentsSize($attachmentsSize)
             ->setCodeStatus($codeStatus);
 
-        $this->save($jobEvent, $flush);
+        $this->save($jobEvent);
 
         return $jobEvent;
     }

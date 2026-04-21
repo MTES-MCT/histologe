@@ -4,6 +4,7 @@ namespace App\Service\Interconnection;
 
 use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpClient\HttpClientTrait;
@@ -23,6 +24,7 @@ class JobEventHttpClient implements HttpClientInterface
         private readonly HttpClientInterface $httpClient,
         private readonly JobEventManager $jobEventManager,
         private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
         #[Autowire(env: 'APP_URL')]
         private readonly string $host,
     ) {
@@ -113,8 +115,11 @@ class JobEventHttpClient implements HttpClientInterface
             partnerType: $jobEventMetaData->getPartnerType(),
             attachmentsCount: $jobEventMetaData->getAttachmentsCount(),
             attachmentsSize: $jobEventMetaData->getAttachmentsSize(),
-            flush: 'esabora' === $jobEventMetaData->getService() && str_contains($jobEventMetaData->getAction(), 'sync') ? false : true,
         );
+        $flush = 'esabora' !== $jobEventMetaData->getService() || !str_contains($jobEventMetaData->getAction(), 'sync');
+        if ($flush) {
+            $this->entityManager->flush();
+        }
 
         return $response;
     }

@@ -3,11 +3,13 @@
 namespace App\Tests\Functional\Messenger\MessageHandler;
 
 use App\Entity\Enum\SignalementStatus;
+use App\Manager\SignalementManager;
 use App\Messenger\Message\SignalementDraftProcessMessage;
 use App\Messenger\MessageHandler\SignalementAddressUpdateAndAutoAssignMessageHandler;
 use App\Repository\AffectationRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -82,7 +84,10 @@ class SignalementAddressUpdateAndAutoAssignMessageHandlerTest extends WebTestCas
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $signalement = $signalementRepository->findOneBy(['reference' => '2025-05']);
         $signalement->setStatut(SignalementStatus::INJONCTION_BAILLEUR);
-        $signalementRepository->save($signalement, true);
+        $signalementManager = static::getContainer()->get(SignalementManager::class);
+        $signalementManager->save($signalement);
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->flush();
 
         $notificationRepository = static::getContainer()->get(NotificationRepository::class);
         $notifications = $notificationRepository->findBy(['signalement' => $signalement, 'type' => 'NOUVEAU_SIGNALEMENT']);

@@ -12,6 +12,7 @@ use App\Manager\TerritoryManager;
 use App\Repository\SignalementRepository;
 use App\Service\Import\CsvParser;
 use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -29,6 +30,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
     private MockObject&UploadHandlerService $uploadHandlerService;
     private MockObject&FileManager $fileManager;
     private MockObject&LoggerInterface $logger;
+    private MockObject&EntityManagerInterface $entityManager;
     private Territory $territory;
 
     protected function setUp(): void
@@ -41,6 +43,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
         $this->uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $this->fileManager = $this->createMock(FileManager::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->entityManager = $this->createMock(EntityManagerInterface::class);
         $this->territory = (new Territory())->setZip('01')->setName('Ain');
     }
 
@@ -127,7 +130,8 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             $this->fileStorage,
             $this->uploadHandlerService,
             $this->fileManager,
-            $this->logger
+            $this->logger,
+            $this->entityManager,
         );
 
         $commandTester = new CommandTester($command);
@@ -155,7 +159,8 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             $this->fileStorage,
             $this->uploadHandlerService,
             $this->fileManager,
-            $this->logger
+            $this->logger,
+            $this->entityManager,
         );
         $commandTester = new CommandTester($command);
 
@@ -189,7 +194,8 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             $this->fileStorage,
             $this->uploadHandlerService,
             $this->fileManager,
-            $this->logger
+            $this->logger,
+            $this->entityManager,
         );
         $commandTester = new CommandTester($command);
 

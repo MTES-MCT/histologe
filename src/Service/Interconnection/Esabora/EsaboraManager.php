@@ -126,7 +126,7 @@ class EsaboraManager
                 if ($this->shouldBeAcceptedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::ACCEPTED, $affectation->getPartner());
                     $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
-                    $this->userSignalementSubscriptionManager->flush();
+                    $this->entityManager->flush();
 
                     /** @var SuiviRepository $suiviRepository */
                     $suiviRepository = $this->suiviManager->getRepository();

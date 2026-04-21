@@ -10,6 +10,7 @@ use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Repository\PartnerRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Tests\FixturesHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,7 +37,8 @@ class WorkerMessageEventSubscriberTest extends TestCase
         $jobEventManagerMock = $this->createMock(JobEventManager::class);
         $serializerMock = $this->createMock(SerializerInterface::class);
         $partnerRepositoryMock = $this->createMock(PartnerRepository::class);
-        $subscriber = new WorkerMessageEventSubscriber($jobEventManagerMock, $serializerMock, $partnerRepositoryMock);
+        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        $subscriber = new WorkerMessageEventSubscriber($jobEventManagerMock, $serializerMock, $partnerRepositoryMock, $entityManagerMock);
 
         $dossierMessage = new DossierMessageSCHS();
         $dossierMessage->setAction('push_dossier');

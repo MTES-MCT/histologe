@@ -49,7 +49,7 @@ class UserManagerTest extends KernelTestCase
         $entityManager = $doctrine->getManager();
 
         $this->entityManager = $entityManager;
-        $this->signalementUsagerManager = new SignalementUsagerManager($this->managerRegistry, SignalementUsager::class);
+        $this->signalementUsagerManager = new SignalementUsagerManager($this->entityManager, $this->managerRegistry, SignalementUsager::class);
         $this->userFactory = static::getContainer()->get(UserFactory::class);
         $this->userManager = new UserManager(
             $this->notificationMailerRegistry,
@@ -59,6 +59,7 @@ class UserManagerTest extends KernelTestCase
             $this->managerRegistry,
             $this->signalementUsagerManager,
             $this->userFactory,
+            $this->entityManager,
             User::class,
         );
     }

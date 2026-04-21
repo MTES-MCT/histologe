@@ -53,7 +53,6 @@ readonly class ListExportMessageHandler
                     filename: $filename,
                     title: $filename,
                     user: $user,
-                    flush: true,
                     documentType: DocumentType::EXPORT
                 );
 

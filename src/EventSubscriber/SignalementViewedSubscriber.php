@@ -90,7 +90,7 @@ class SignalementViewedSubscriber implements EventSubscriberInterface
         if (empty($signalement->getInseeOccupant())) {
             $address = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
             $this->signalementManager->updateAddressOccupantFromAddress($signalement, $address);
-            $this->signalementManager->persist($signalement);
+            $this->entityManager->persist($signalement);
         }
     }
 }

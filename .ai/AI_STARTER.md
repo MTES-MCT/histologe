@@ -131,6 +131,58 @@ Ce guide détaille les 9 contextes où un champ doit potentiellement être ajout
 - [ ] Ajouter les règles de gestion des exceptions métier
 - [ ] Préciser la convention pour les méthodes de Repository (find*, get*)
 
+### Gestion de la persistance avec Doctrine
+
+**Séparation des responsabilités : Managers vs EntityManager**
+
+Pour améliorer la lisibilité et la clarté du code, nous suivons le principe suivant :
+
+**Les Entity Managers (classes dans `src/Manager/`) ne doivent PAS gérer directement les opérations de flush.**
+
+#### Règles à respecter :
+
+1. **Méthodes `save()` et `remove()` des Managers** :
+   - Ne doivent **jamais** accepter de paramètre `$flush`
+   - Ne doivent **jamais** appeler `flush()` automatiquement
+   - Doivent uniquement appeler `persist()` ou `remove()` sur l'EntityManager
+
+2. **Opération `flush()`** :
+   - Doit **toujours** être appelée via l'injection de `EntityManagerInterface`
+   - Ne doit **jamais** être déléguée aux Managers d'entités
+   - Rend explicite le fait que **toutes** les entités en attente sont persistées (pas seulement l'entité du Manager)
+
+#### Pourquoi cette règle ?
+
+Appeler `$this->fileManager->flush()` induit en erreur : on pense flusher uniquement les entités `File`, alors que **toutes** les entités en attente dans l'EntityManager sont persistées.
+
+En injectant explicitement `EntityManagerInterface` et en appelant `$this->entityManager->flush()`, on rend cette opération globale **évidente et intentionnelle**.
+
+#### Exemple correct :
+
+```php
+class MyCommand extends Command
+{
+    public function __construct(
+        private readonly FileManager $fileManager,
+        private readonly EntityManagerInterface $entityManager, // ✅ Injection explicite
+    ) {
+        parent::__construct();
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        // Préparer les entités
+        $file = $this->fileManager->createOrUpdate(/* ... */);
+
+        // Flusher explicitement
+        $this->entityManager->flush(); // ✅ Intention claire
+
+        return Command::SUCCESS;
+    }
+}
+```
+```
+
 ### JavaScript/TypeScript
 - **ESLint** : Linting avec configs séparées (vanilla / Vue)
 - **Prettier** : Formatage automatique

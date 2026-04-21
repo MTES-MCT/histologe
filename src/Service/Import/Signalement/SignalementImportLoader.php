@@ -183,14 +183,14 @@ class SignalementImportLoader
             $this->metadata['count_signalement'] = $countSignalement;
             if (0 === $countSignalement % self::FLUSH_COUNT) {
                 $this->logger->info(\sprintf('in progress - %s signalements saved', $countSignalement));
-                $this->signalementManager->flush();
+                $this->entityManager->flush();
             }
             if ($output) {
                 $progressBar->advance();
             }
         }
 
-        $this->signalementManager->flush();
+        $this->entityManager->flush();
         if ($output) {
             $progressBar->finish();
         }

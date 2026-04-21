@@ -8,6 +8,7 @@ use App\Manager\UserManager;
 use App\Repository\HistoryEntryRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
@@ -65,11 +66,14 @@ class AuthentificationSuccessListenerTest extends WebTestCase
         $userManager = static::getContainer()->get(UserManager::class);
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $authentificationSuccessListener = new AuthentificationSuccessListener(
             $historyEntryManager,
             $userManager,
             $this->logger,
             $signalementRepository,
+            $entityManager,
             '1'
         );
 

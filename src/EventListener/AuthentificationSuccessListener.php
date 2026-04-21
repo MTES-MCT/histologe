@@ -10,6 +10,7 @@ use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementBailleur;
 use App\Security\User\SignalementUser;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -25,6 +26,7 @@ class AuthentificationSuccessListener
         private readonly UserManager $userManager,
         private readonly LoggerInterface $logger,
         private readonly SignalementRepository $signalementRepository,
+        private readonly EntityManagerInterface $entityManager,
         #[Autowire(env: 'HISTORY_TRACKING_ENABLE')]
         private readonly string $historyTrackingEnable,
     ) {
@@ -67,10 +69,11 @@ class AuthentificationSuccessListener
 
         if ($user instanceof User) {
             $user->setLastLoginAt(new \DateTimeImmutable());
-            $this->userManager->save($user, true);
+            $this->userManager->save($user);
         }
 
         $this->createAuthentificationHistory($eventType, $user);
+        $this->entityManager->flush();
     }
 
     private function createAuthentificationHistory(HistoryEntryEvent $historyEntryEvent, UserInterface $user): void

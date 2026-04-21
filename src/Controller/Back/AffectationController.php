@@ -24,6 +24,7 @@ use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\MessageHelper;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use App\Utils\FormHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -82,6 +83,7 @@ class AffectationController extends AbstractController
         Request $request,
         Signalement $signalement,
         TagAwareCacheInterface $cache,
+        EntityManagerInterface $entityManager,
     ): RedirectResponse|JsonResponse {
         $hasAffectPartnerError = false;
         $partnerNameNotAffected = '';
@@ -148,7 +150,7 @@ class AffectationController extends AbstractController
             } else {
                 $this->affectationManager->removeAffectationsFrom($signalement);
             }
-            $this->affectationManager->flush();
+            $entityManager->flush();
             $successMessage = 'Les affectations ont bien été effectuées.';
             if (!empty($unnotifiedPartners)) {
                 $successMessage .= '<br>Attention, certains partenaires affectés ont désactivé les notifications par e-mail : ';
@@ -181,6 +183,7 @@ class AffectationController extends AbstractController
         Request $request,
         Signalement $signalement,
         AffectationRepository $affectationRepository,
+        EntityManagerInterface $entityManager,
     ): RedirectResponse|JsonResponse {
         $idAffectation = $request->query->get('affectation');
         $affectation = $affectationRepository->findOneBy(['id' => $idAffectation]);
@@ -193,7 +196,7 @@ class AffectationController extends AbstractController
             $partnersIdToRemove = [];
             $partnersIdToRemove[] = $affectation->getPartner()->getId();
             $this->affectationManager->removeAffectationsFrom($signalement, [], $partnersIdToRemove);
-            $this->affectationManager->flush();
+            $entityManager->flush();
             $flashMessage = ['type' => 'success', 'title' => 'Affectation supprimée', 'message' => 'L\'affectation du partenaire '.$affectation->getPartner()->getNom().' a bien été supprimée.'];
             $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($signalement);
 
@@ -209,6 +212,7 @@ class AffectationController extends AbstractController
     public function reinitAffectation(
         Affectation $affectation,
         Request $request,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(AffectationVoter::AFFECTATION_REINIT, $affectation);
         $message = 'Une erreur est survenue lors de la réinitialisation de l\'affectation.';
@@ -217,7 +221,7 @@ class AffectationController extends AbstractController
             $user = $this->getUser();
             $this->affectationManager->removeAffectationAndSubscriptions($affectation);
             $this->affectationManager->createAffectation($affectation->getSignalement(), $affectation->getPartner(), $user);
-            $this->affectationManager->flush();
+            $entityManager->flush();
             $flashMessage = ['type' => 'success', 'title' => 'Affectation réinitialisée', 'message' => 'L\'affectation du partenaire '.$affectation->getPartner()->getNom().' a bien été réinitialisée.'];
             $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($affectation->getSignalement());
 
@@ -235,6 +239,7 @@ class AffectationController extends AbstractController
         Affectation $affectation,
         Request $request,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
+        EntityManagerInterface $entityManager,
     ): Response {
         if (!$this->isGranted(AffectationVoter::AFFECTATION_ACCEPT_OR_REFUSE, subject: $affectation)
             && !$this->isGranted(AffectationVoter::AFFECTATION_CANCEL_REFUSED, subject: $affectation)) {
@@ -263,8 +268,8 @@ class AffectationController extends AbstractController
             }
             foreach ($agentsSelection->getAgents() as $agent) {
                 $userSignalementSubscriptionManager->createOrGet($agent, $signalement, $user, $affectation);
-                $userSignalementSubscriptionManager->flush();
             }
+            $entityManager->flush();
             $this->affectationManager->updateAffectation(
                 affectation: $affectation,
                 user: $user,
@@ -285,7 +290,7 @@ class AffectationController extends AbstractController
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
             );
             $userSignalementSubscriptionManager->createOrGet($user, $signalement, $user, $affectation);
-            $userSignalementSubscriptionManager->flush();
+            $entityManager->flush();
 
             $this->addFlash('success', ['title' => 'Affectation acceptée', 'message' => 'L\'affectation a bien été acceptée.']);
         } else {

@@ -9,6 +9,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\SignalementDraftHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,6 +29,7 @@ class RemindPendingDraftsCommand extends AbstractCronCommand
         private readonly SignalementDraftHelper $signalementDraftHelper,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -63,6 +65,8 @@ class RemindPendingDraftsCommand extends AbstractCronCommand
                 $this->signalementDraftManager->save($signalementDraft);
             }
         }
+
+        $this->entityManager->flush();
 
         $io->success(\sprintf('%s usagers have been notified', $count));
 

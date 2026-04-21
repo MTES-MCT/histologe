@@ -17,7 +17,6 @@ use App\Form\SignalementeEditFO\InformationsGeneralesType;
 use App\Form\SignalementeEditFO\ProcedureAssuranceType;
 use App\Form\SignalementeEditFO\TypeCompositionType;
 use App\Form\SignalementeEditFO\UsagerSituationFoyerType;
-use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
@@ -88,7 +87,7 @@ class SignalementEditController extends AbstractController
         SignalementRepository $signalementRepository,
         Request $request,
         RnbService $rnbService,
-        SignalementManager $signalementManager,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE, $signalement);
@@ -115,7 +114,7 @@ class SignalementEditController extends AbstractController
         }
         $signalement->setRnbIdOccupant($building->getRnbId());
         $signalement->setGeoloc(['lat' => $building->getLat(), 'lng' => $building->getLng()]);
-        $signalementManager->flush();
+        $entityManager->flush();
 
         $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'La localisation du bâtiment a bien été mise à jour.']);
 

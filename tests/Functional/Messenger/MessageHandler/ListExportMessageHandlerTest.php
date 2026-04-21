@@ -10,6 +10,7 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Signalement\Export\SignalementExporter;
 use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -59,7 +60,8 @@ class ListExportMessageHandlerTest extends WebTestCase
             static::getContainer()->get(UserRepository::class),
             static::getContainer()->get(ParameterBagInterface::class),
             $uploadHandlerServiceMock,
-            static::getContainer()->get(FileManager::class)
+            static::getContainer()->get(FileManager::class),
+            static::getContainer()->get(EntityManagerInterface::class),
         );
 
         $handler($message);
@@ -98,7 +100,8 @@ class ListExportMessageHandlerTest extends WebTestCase
             static::getContainer()->get(UserRepository::class),
             static::getContainer()->get(ParameterBagInterface::class),
             $uploadHandlerServiceMock,
-            static::getContainer()->get(FileManager::class)
+            static::getContainer()->get(FileManager::class),
+            static::getContainer()->get(EntityManagerInterface::class),
         );
 
         $handler($message);

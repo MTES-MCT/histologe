@@ -25,7 +25,6 @@ class FileManager extends AbstractManager
         ?string $title = null,
         ?Signalement $signalement = null,
         ?User $user = null,
-        bool $flush = false,
         ?DocumentType $documentType = null,
         ?string $description = null,
     ): File {
@@ -49,7 +48,7 @@ class FileManager extends AbstractManager
             ->setDocumentType($documentType ?? DocumentType::AUTRE)
             ->setDescription($description);
 
-        $this->save($file, $flush);
+        $this->save($file);
 
         return $file;
     }
