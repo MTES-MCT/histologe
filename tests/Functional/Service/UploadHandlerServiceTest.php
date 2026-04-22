@@ -66,7 +66,7 @@ class UploadHandlerServiceTest extends KernelTestCase
             $this->fileDeleter,
             static::getContainer()->get(EntityManagerInterface::class)
         );
-    }   
+    }
 
     /**
      * @throws UnsupportedFileFormatException
