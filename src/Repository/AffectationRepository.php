@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Dto\StatisticsFilters;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\PartnerType;
@@ -11,7 +10,6 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\JobEvent;
 use App\Entity\Signalement;
 use App\Entity\Territory;
-use App\Repository\Query\Statistics\FilteredStatisticsQuery;
 use App\Service\Interconnection\Esabora\EsaboraSCHSService;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\ListFilters\SearchAffectationWithoutSubscription;
@@ -33,27 +31,8 @@ class AffectationRepository extends ServiceEntityRepository
 
     public function __construct(
         ManagerRegistry $registry,
-        private readonly FilteredStatisticsQuery $filteredStatisticsQuery,
     ) {
         parent::__construct($registry, Affectation::class);
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function countByPartenaireFiltered(StatisticsFilters $statisticsFilters): array
-    {
-        $qb = $this->createQueryBuilder('a');
-        $qb->select('a.id, a.statut, partner.id, partner.nom')
-            ->leftJoin('a.signalement', 's');
-        if (!$statisticsFilters->getPartners() || $statisticsFilters->getPartners()->isEmpty()) {
-            $qb->leftJoin('a.partner', 'partner');
-        }
-
-        $qb = $this->filteredStatisticsQuery->addFiltersToQueryBuilder($qb, $statisticsFilters);
-
-        return $qb->getQuery()
-            ->getResult();
     }
 
     /**
@@ -156,18 +135,6 @@ class AffectationRepository extends ServiceEntityRepository
             ->setParameter('day_delay', self::DELAY_VISITE_AFTER_AFFECTATION);
 
         return $qb->getQuery()->getResult();
-    }
-
-    public function updateStatusBySignalement(AffectationStatus $status, Signalement $signalement): void
-    {
-        $qb = $this->createQueryBuilder('a');
-        $qb->update()
-            ->set('a.statut', ':status')
-            ->where('a.signalement = :signalement')
-            ->setParameter('status', $status)
-            ->setParameter('signalement', $signalement)
-            ->getQuery()
-            ->execute();
     }
 
     /**

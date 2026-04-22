@@ -4,11 +4,11 @@ namespace App\Service\Statistics;
 
 use App\Dto\StatisticsFilters;
 use App\Entity\Enum\AffectationStatus;
-use App\Repository\AffectationRepository;
+use App\Repository\Query\Statistics\FilteredStatisticsQuery;
 
 class PartenaireStatisticProvider
 {
-    public function __construct(private AffectationRepository $affectationRepository)
+    public function __construct(private FilteredStatisticsQuery $filteredStatisticsQuery)
     {
     }
 
@@ -17,7 +17,7 @@ class PartenaireStatisticProvider
      */
     public function getFilteredData(StatisticsFilters $statisticsFilters): array
     {
-        $countPerPartenaires = $this->affectationRepository->countByPartenaireFiltered($statisticsFilters);
+        $countPerPartenaires = $this->filteredStatisticsQuery->countAffectationsByPartenaireFiltered($statisticsFilters);
 
         $data = [];
         foreach ($countPerPartenaires as $countPerPartenaire) {
