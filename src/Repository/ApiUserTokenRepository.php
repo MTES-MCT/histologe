@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\ApiUserToken;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
-use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;

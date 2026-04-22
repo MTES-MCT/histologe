@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Command\Cron\RetryFailedEmailsCommand;
 use App\Entity\FailedEmail;
-use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,7 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method FailedEmail[]    findAll()
  * @method FailedEmail[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class FailedEmailRepository extends ServiceEntityRepository implements EntityCleanerRepositoryInterface
+class FailedEmailRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -40,18 +39,5 @@ class FailedEmailRepository extends ServiceEntityRepository implements EntityCle
             ->getQuery()
             ->getResult()
         ;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function cleanOlderThan(string $period = FailedEmail::EXPIRATION_PERIOD): int
-    {
-        $queryBuilder = $this->createQueryBuilder('f');
-        $queryBuilder->delete()
-            ->andWhere('DATE(f.createdAt) <= :createdAt')
-            ->setParameter('createdAt', (new \DateTimeImmutable($period))->format('Y-m-d'));
-
-        return $queryBuilder->getQuery()->execute();
     }
 }

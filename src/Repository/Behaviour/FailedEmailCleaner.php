@@ -2,11 +2,11 @@
 
 namespace App\Repository\Behaviour;
 
-use App\Entity\ApiUserToken;
+use App\Entity\FailedEmail;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 
-class ApiUserTokenCleaner implements EntityCleanerRepositoryInterface
+class FailedEmailCleaner implements EntityCleanerRepositoryInterface
 {
     public function __construct(private readonly Connection $connection)
     {
@@ -16,23 +16,23 @@ class ApiUserTokenCleaner implements EntityCleanerRepositoryInterface
      * @throws Exception
      * @throws \DateMalformedStringException
      */
-    public function cleanOlderThan(string $period = ApiUserToken::CLEAN_EXPIRATION_PERIOD): int
+    public function cleanOlderThan(string $period = FailedEmail::EXPIRATION_PERIOD): int
     {
         $schemaManager = $this->connection->createSchemaManager();
-        if (!$schemaManager->tablesExist(['api_user_token'])) {
+        if (!$schemaManager->tablesExist(['failed_email'])) {
             return 0;
         }
 
-        $sql = 'DELETE FROM api_user_token
-                WHERE expires_at < :expires_at';
+        $sql = 'DELETE FROM failed_email
+                WHERE created_at < :created_at';
 
         return (int) $this->connection->executeStatement($sql, [
-            'expires_at' => (new \DateTimeImmutable($period))->format('Y-m-d H:i:s'),
+            'created_at' => (new \DateTimeImmutable($period))->format('Y-m-d H:i:s'),
         ]);
     }
 
     public function getClassName(): string
     {
-        return 'api_user_token';
+        return 'failed_email';
     }
 }
