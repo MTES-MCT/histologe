@@ -26,9 +26,9 @@ class ClearEntitiesCommandTest extends KernelTestCase
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('JobEvent(s) deleted', $output);
         $this->assertStringContainsString('Notification(s) deleted', $output);
-        $this->assertStringContainsString('FailedEmail(s) deleted', $output);
+        $this->assertStringContainsString('failed_email(s) deleted', $output);
         $this->assertStringContainsString('SignalementDraft(s) deleted', $output);
-        $this->assertStringContainsString('ApiUserToken(s) deleted', $output);
+        $this->assertStringContainsString('api_user_token(s) deleted', $output);
         $this->assertStringContainsString('messenger_messages(s) deleted', $output);
         $this->assertEmailCount(6);
     }

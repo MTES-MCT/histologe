@@ -2,6 +2,7 @@
 
 namespace App\Command\Cron;
 
+use App\Repository\Behaviour\FileUpdater;
 use App\Repository\FileRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -30,6 +31,7 @@ class ClearStorageOriginalFileCommand extends AbstractCronCommand
         private readonly FileRepository $fileRepository,
         private readonly FilesystemOperator $fileStorage,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly FileUpdater $fileUpdater,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -63,7 +65,7 @@ class ClearStorageOriginalFileCommand extends AbstractCronCommand
             }
             $progressBar->advance();
         }
-        $this->fileRepository->updateWithOriginalAndVariants($ids);
+        $this->fileUpdater->updateWithOriginalAndVariants($ids);
         $progressBar->finish();
         $this->io->newLine();
         $this->io->success($nbFilesToProcess.' files processed with '.$nbErrors.' files not found');

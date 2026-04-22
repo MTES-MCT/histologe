@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Command\Cron;
 
 use App\Command\Cron\ClearStorageOriginalFileCommand;
+use App\Repository\Behaviour\FileUpdater;
 use App\Repository\FileRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
 use League\Flysystem\FilesystemOperator;
@@ -18,6 +19,7 @@ class ClearStorageOriginalFileCommandTest extends KernelTestCase
     private FileRepository $fileRepository;
     private MockObject&FilesystemOperator $fileStorage;
     private NotificationMailerRegistry $mailerRegistry;
+    private FileUpdater $fileUpdater;
 
     protected function setUp(): void
     {
@@ -25,6 +27,7 @@ class ClearStorageOriginalFileCommandTest extends KernelTestCase
         $this->fileRepository = self::getContainer()->get(FileRepository::class);
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
         $this->mailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
+        $this->fileUpdater = self::getContainer()->get(FileUpdater::class);
     }
 
     public function testExecuteTwice(): void
@@ -34,6 +37,7 @@ class ClearStorageOriginalFileCommandTest extends KernelTestCase
             $this->fileRepository,
             $this->fileStorage,
             $this->mailerRegistry,
+            $this->fileUpdater,
         );
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
