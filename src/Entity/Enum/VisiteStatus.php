@@ -2,17 +2,15 @@
 
 namespace App\Entity\Enum;
 
+use App\Entity\Behaviour\EnumTrait;
+
 enum VisiteStatus: string
 {
+    use EnumTrait;
     case NON_PLANIFIEE = 'Non planifiée';
     case PLANIFIEE = 'Planifiée';
     case CONCLUSION_A_RENSEIGNER = 'Conclusion à renseigner';
     case TERMINEE = 'Terminée';
-
-    public function label(): string
-    {
-        return self::getLabelList()[$this->name];
-    }
 
     /** @return array<string, string> */
     public static function getLabelList(): array

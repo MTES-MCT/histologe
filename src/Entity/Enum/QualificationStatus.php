@@ -2,8 +2,11 @@
 
 namespace App\Entity\Enum;
 
+use App\Entity\Behaviour\EnumTrait;
+
 enum QualificationStatus: string
 {
+    use EnumTrait;
     case ARCHIVED = 'ARCHIVED';
     case DANGER_CHECK = 'DANGER_CHECK';
     case SUROCCUPATION_CHECK = 'SUROCCUPATION_CHECK';
@@ -22,11 +25,6 @@ enum QualificationStatus: string
     case RSD_AVEREE = 'RSD_AVEREE';
     case SALETE_CHECK = 'SALETE_CHECK';
     case SALETE_AVEREE = 'SALETE_AVEREE';
-
-    public function label(): string
-    {
-        return self::getLabelList()[$this->name];
-    }
 
     /** @return array<string, string> */
     public static function getLabelList(): array

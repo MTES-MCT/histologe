@@ -2,8 +2,11 @@
 
 namespace App\Entity\Enum;
 
+use App\Entity\Behaviour\EnumTrait;
+
 enum SuiviCategory: string
 {
+    use EnumTrait;
     case ASK_DOCUMENT = 'ASK_DOCUMENT';
     case ASK_FEEDBACK_SENT = 'ASK_FEEDBACK_SENT';
     case SIGNALEMENT_IS_INJONCTION = 'SIGNALEMENT_IS_INJONCTION';
@@ -56,11 +59,6 @@ enum SuiviCategory: string
     case INJONCTION_BAILLEUR_REMINDER_FOR_USAGER = 'INJONCTION_BAILLEUR_REMINDER_FOR_USAGER';
     case INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR = 'INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR';
     case INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE = 'INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE';
-
-    public function label(): string
-    {
-        return self::getLabelList()[$this->name];
-    }
 
     public function labelReponseBailleur(): string
     {

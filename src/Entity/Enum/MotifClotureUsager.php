@@ -13,11 +13,6 @@ enum MotifClotureUsager: string
     case TRAVAUX_FAITS_OU_EN_COURS = 'TRAVAUX_FAITS_OU_EN_COURS';
     case AUTRE = 'AUTRE';
 
-    public function label(): string
-    {
-        return self::getLabelList()[$this->name];
-    }
-
     /** @return array<string, string> */
     public static function getLabelList(): array
     {

@@ -2,8 +2,11 @@
 
 namespace App\Entity\Enum;
 
+use App\Entity\Behaviour\EnumTrait;
+
 enum ProcedureType: string
 {
+    use EnumTrait;
     case NON_DECENCE = 'NON_DECENCE';
     case RSD = 'RSD';
     case INSALUBRITE = 'INSALUBRITE';
@@ -13,11 +16,6 @@ enum ProcedureType: string
     case RESPONSABILITE_OCCUPANT_ASSURANTIEL = 'RESPONSABILITE_OCCUPANT_ASSURANTIEL';
     case SALETE = 'SALETE';
     case AUTRE = 'AUTRE';
-
-    public function label(): string
-    {
-        return self::getLabelList()[$this->name];
-    }
 
     /** @return array<string, string> */
     public static function getLabelList(): array

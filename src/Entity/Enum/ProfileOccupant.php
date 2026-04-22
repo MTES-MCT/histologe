@@ -2,15 +2,13 @@
 
 namespace App\Entity\Enum;
 
+use App\Entity\Behaviour\EnumTrait;
+
 enum ProfileOccupant: string
 {
+    use EnumTrait;
     case LOCATAIRE = 'LOCATAIRE';
     case BAILLEUR_OCCUPANT = 'BAILLEUR_OCCUPANT';
-
-    public function label(): string
-    {
-        return self::getLabelList()[$this->name];
-    }
 
     /** @return array<string, string> */
     public static function getLabelList(): array
