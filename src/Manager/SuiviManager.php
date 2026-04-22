@@ -6,6 +6,7 @@ use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Partner;
@@ -49,6 +50,7 @@ class SuiviManager extends Manager
 
     /**
      * @param iterable<File> $files
+     * @param array<SuiviVisibility> $visibility
      */
     public function createSuivi(
         Signalement $signalement,
@@ -57,7 +59,7 @@ class SuiviManager extends Manager
         SuiviCategory $category,
         ?Partner $partner = null,
         ?User $user = null,
-        bool $isPublic = false,
+        array $visibility = [SuiviVisibility::PARTENAIRES_AFFECTES],
         ?\DateTimeImmutable $createdAt = null,
         ?string $context = null,
         bool $sendMail = true,
@@ -67,8 +69,8 @@ class SuiviManager extends Manager
         bool &$subscriptionCreated = false,
     ): Suivi {
         // ticket #5252 Bloquer les emails aux usagers quand logement vacant
-        if ($signalement->getIsLogementVacant() && $isPublic) {
-            $isPublic = false;
+        if ($signalement->getIsLogementVacant()) {
+            $visibility = array_values(array_filter($visibility, fn (SuiviVisibility $v) => SuiviVisibility::USAGERS !== $v));
         }
         $suivi = (new Suivi())
             ->setCreatedBy($user)
@@ -76,7 +78,7 @@ class SuiviManager extends Manager
             ->setSignalement($signalement)
             ->setDescription($this->htmlSanitizer->sanitize($description))
             ->setType($type)
-            ->setIsPublic($isPublic)
+            ->setVisibility($visibility)
             ->setContext($context)
             ->setSendMail($sendMail)
             ->setCategory($category);
@@ -186,7 +188,7 @@ class SuiviManager extends Manager
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $user,
-            isPublic: true,
+            isPublic: true,// TODO : à changer
             subscriptionCreated: $subscriptionCreated
         );
 
@@ -209,7 +211,7 @@ class SuiviManager extends Manager
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $this->userManager->getSystemUser(),
-            isPublic: false,
+            isPublic: false,// TODO : à changer
         );
     }
 
@@ -229,7 +231,7 @@ class SuiviManager extends Manager
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $this->userManager->getSystemUser(),
-            isPublic: true,
+            isPublic: true,// TODO : à changer
         );
     }
 
@@ -249,7 +251,7 @@ class SuiviManager extends Manager
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $this->userManager->getSystemUser(),
-            isPublic: true,
+            isPublic: true,// TODO : à changer
         );
     }
 
@@ -349,7 +351,7 @@ class SuiviManager extends Manager
             category: SuiviCategory::NEW_DOCUMENT,
             partner: $partner,
             user: $user,
-            isPublic: $isVisibleUsager,
+            isPublic: $isVisibleUsager,// TODO : à changer
             files: $files,
             flush: false,
             subscriptionCreated: $subscriptionCreated
@@ -435,7 +437,7 @@ class SuiviManager extends Manager
             type: Suivi::TYPE_USAGER,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $user,
-            isPublic: true,
+            isPublic: true,// TODO : à changer
         );
     }
 

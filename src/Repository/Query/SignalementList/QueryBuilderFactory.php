@@ -41,6 +41,7 @@ readonly class QueryBuilderFactory
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->em->getRepository(Signalement::class);
+        // TODO : à changer ?
         $qb->select('
             DISTINCT s.id,
             s.uuid,

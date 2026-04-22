@@ -72,7 +72,7 @@ class NewSignalementCheckFileMessageHandler
         );
 
         $suivisPublic = $signalement->getSuivis()->filter(static function (Suivi $suivi) {
-            return $suivi->getIsPublic() && Suivi::TYPE_PARTNER === $suivi->getType();
+            return $suivi->getIsPublic() && Suivi::TYPE_PARTNER === $suivi->getType();// TODO : à changer
         });
 
         if (SignalementStatus::REFUSED === $signalement->getStatut()
@@ -230,7 +230,7 @@ class NewSignalementCheckFileMessageHandler
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::ASK_DOCUMENT,
             user: $userAdmin,
-            isPublic: true,
+            isPublic: true,// TODO : à changer
             context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
         );
     }

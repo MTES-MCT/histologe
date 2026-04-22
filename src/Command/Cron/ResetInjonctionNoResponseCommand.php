@@ -65,7 +65,7 @@ class ResetInjonctionNoResponseCommand extends AbstractCronCommand
                     type: Suivi::TYPE_AUTO,
                     category: SuiviCategory::INJONCTION_BAILLEUR_EXPIREE,
                     user: $this->userManager->getSystemUser(),
-                    isPublic: true
+                    isPublic: true// TODO : à changer
                 );
                 $this->entityManager->commit();
             } catch (\Exception $e) {

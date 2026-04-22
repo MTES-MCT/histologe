@@ -252,6 +252,7 @@ class DossiersSuivisUsagerQuery
         // TODO : essayer d'améliorer les perfs
         // une demande de feedback avant le message usager ou demande poursuite procedure
         // mais pas de suivi public entre les deux
+        // TODO : à changer (isPublic)
         $qb->andWhere('EXISTS (
             SELECT 1
             FROM '.Suivi::class.' s_ask

@@ -38,8 +38,8 @@ class SuiviSeenMarkerTest extends KernelTestCase
         $marker->markSeenByUsager($signalement);
         /** @var Collection<int, Suivi> $suivis */
         $suivis = $signalement->getSuivis();
-        $publicSuivis = $suivis->filter(static fn (Suivi $s, int $i): bool => $s->getIsPublic())->toArray();
-        $internalSuivis = $suivis->filter(static fn (Suivi $s, int $i): bool => !$s->getIsPublic())->toArray();
+        $publicSuivis = $suivis->filter(static fn (Suivi $s, int $i): bool => $s->getIsPublic())->toArray();// TODO : à changer
+        $internalSuivis = $suivis->filter(static fn (Suivi $s, int $i): bool => !$s->getIsPublic())->toArray();// TODO : à changer
         /** @var Suivi $suivi */
         foreach ($publicSuivis as $suivi) {
             $this->assertTrue(

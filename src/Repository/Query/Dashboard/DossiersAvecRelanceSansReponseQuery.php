@@ -26,7 +26,7 @@ class DossiersAvecRelanceSansReponseQuery
             $clauseTerritoriesSi3 = ' AND si3.territory_id IN (:territories_ids) ';
             $clauseTerritoriesSi = ' AND si.territory_id IN (:territories_ids) ';
         }
-
+// TODO : à changer
         return <<<SQL
             FROM (
                 SELECT

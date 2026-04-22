@@ -64,7 +64,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             category : $suiviCategory,
             partner: $event->getPartner(),
             user: $event->getUser(),
-            isPublic: $isPublic,
+            isPublic: $isPublic,// TODO : à changer
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $event->setSuivi($suivi);
@@ -78,7 +78,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             );
         }
 
-        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsPublic()) {
+        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsPublic()) {// TODO : à changer
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,

@@ -33,6 +33,6 @@ class SuiviResponse
     {
         $this->dateCreation = $suivi->getCreatedAt()->format(\DATE_ATOM);
         $this->description = $suivi->getDescription();
-        $this->public = $suivi->getIsPublic();
+        $this->public = $suivi->getIsPublic();// TODO : à changer
     }
 }

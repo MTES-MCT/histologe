@@ -71,7 +71,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
                 description: $description,
                 type: Suivi::TYPE_TECHNICAL,
                 category: SuiviCategory::INTERVENTION_PLANNED_REMINDER,
-                isPublic: true,
+                isPublic: true,// TODO : à changer
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 
@@ -121,7 +121,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
                     description: $description,
                     type: Suivi::TYPE_TECHNICAL,
                     category: SuiviCategory::INTERVENTION_IS_REQUIRED,
-                    isPublic: false,
+                    isPublic: false,// TODO : à changer
                     context: Suivi::CONTEXT_INTERVENTION,
                 );
 

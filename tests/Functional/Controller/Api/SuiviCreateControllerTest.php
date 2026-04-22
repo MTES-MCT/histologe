@@ -71,7 +71,7 @@ class SuiviCreateControllerTest extends WebTestCase
 
             $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
             $this->assertTrue($suiviCreated->isWaitingNotification());
-            $this->assertEquals($notifyUsager, $suiviCreated->getIsPublic());
+            $this->assertEquals($notifyUsager, $suiviCreated->getIsPublic());// TODO : à changer
             $this->assertEmailCount(0);
 
             $crawler = new Crawler($suiviCreated->getDescription());

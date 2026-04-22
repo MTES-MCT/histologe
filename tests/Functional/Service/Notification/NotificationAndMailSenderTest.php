@@ -183,7 +183,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description')
         ->setType(Suivi::TYPE_PARTNER)
-        ->setIsPublic(true);
+        ->setIsPublic(true);// TODO : à changer
 
         $this->entityManager->persist($suivi);
         $existingNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
@@ -212,7 +212,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description')
         ->setType(Suivi::TYPE_PARTNER)
-        ->setIsPublic(true);
+        ->setIsPublic(true);// TODO : à changer
 
         $this->entityManager->persist($suivi);
 
@@ -265,7 +265,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description')
         ->setType(Suivi::TYPE_PARTNER)
-        ->setIsPublic(true);
+        ->setIsPublic(true);// TODO : à changer
 
         $this->entityManager->persist($suivi);
 
@@ -307,7 +307,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description')
         ->setType(Suivi::TYPE_PARTNER)
-        ->setIsPublic(true);
+        ->setIsPublic(true);// TODO : à changer
 
         $this->entityManager->persist($suivi);
 
@@ -353,7 +353,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description')
         ->setType(Suivi::TYPE_PARTNER)
-        ->setIsPublic(true);
+        ->setIsPublic(true);// TODO : à changer
 
         $this->entityManager->persist($suivi);
 

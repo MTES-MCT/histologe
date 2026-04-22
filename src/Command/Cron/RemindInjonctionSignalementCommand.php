@@ -70,7 +70,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                     description: $description,
                     type: Suivi::TYPE_AUTO,
                     category: SuiviCategory::INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR,
-                    isPublic: false
+                    isPublic: false// TODO : à changer
                 );
             }
         }
@@ -117,7 +117,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER,
-                isPublic: true
+                isPublic: true// TODO : à changer
             );
 
             $output->writeln(sprintf('#%s reminded', $signalement->getUuid()));

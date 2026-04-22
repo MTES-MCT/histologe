@@ -103,7 +103,7 @@ class TabDataManagerTest extends WebTestCase
                 'adresseOccupant' => '1 rue de Paris',
                 'statut' => $signalementStatus,
                 'suiviCategory' => $suiviCategory,
-                'suiviIsPublic' => true,
+                'suiviIsPublic' => true,// TODO : à changer
                 'suiviCreatedAt' => new \DateTimeImmutable('2024-06-10'),
                 'hasNewerSuivi' => true,
                 'uuid' => 'uuid-123',
@@ -531,7 +531,7 @@ class TabDataManagerTest extends WebTestCase
                     'statut' => SignalementStatus::ACTIVE,
                     'suiviCreatedAt' => new \DateTimeImmutable('2024-06-20 12:00:00'),
                     'suiviCategory' => SuiviCategory::MESSAGE_PARTNER,
-                    'suiviIsPublic' => true,
+                    'suiviIsPublic' => true,// TODO : à changer
                     'derniereActionPartenaireNom' => 'SUPER PARTENAIRE',
                     'derniereActionPartenaireNomAgent' => 'Robert',
                     'derniereActionPartenairePrenomAgent' => 'Sophie',

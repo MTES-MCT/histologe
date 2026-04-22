@@ -4,6 +4,7 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Suivi;
 use App\Event\SuiviCreatedEvent;
 use App\Manager\SuiviManager;
@@ -46,7 +47,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
-                isPublic: true,
+                visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
                 context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
                 flush: false,
             );
@@ -98,7 +99,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             category: $category,
             partner: $createdBy?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $createdBy,
-            isPublic: $row['is_public'],
+            visibility: $row['is_public'] == 1 ? [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS] : [SuiviVisibility::PARTENAIRES_AFFECTES],// TODO : à changer ? (avec le yml)
             createdAt: $createdAt,
             context: $context,
             flush: false,

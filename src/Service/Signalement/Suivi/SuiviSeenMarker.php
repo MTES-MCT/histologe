@@ -17,7 +17,7 @@ readonly class SuiviSeenMarker
         $lastSeenDate = $this->getLastSeenAt($signalement);
 
         foreach ($signalement->getSuivis() as $suivi) {
-            if (!$suivi->getIsPublic()) {
+            if (!$suivi->getIsPublic()) {// TODO : à changer
                 continue;
             }
 

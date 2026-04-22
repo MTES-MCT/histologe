@@ -92,7 +92,7 @@ class SignalementActionController extends AbstractController
             category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             partner: $partner,
             user : $user,
-            isPublic: true,
+            isPublic: true,// TODO : à changer
             context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             createSubscription: false
         );
@@ -128,7 +128,7 @@ class SignalementActionController extends AbstractController
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 partner: $partner,
                 user : $user,
-                isPublic: true,
+                isPublic: true,// TODO : à changer
                 context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
                 subscriptionCreated: $subscriptionCreated,
             );
@@ -176,7 +176,7 @@ class SignalementActionController extends AbstractController
             category: SuiviCategory::SIGNALEMENT_IS_REFUSED,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user : $user,
-            isPublic: true,
+            isPublic: true,// TODO : à changer
             context: Suivi::CONTEXT_SIGNALEMENT_REFUSED,
             files: $refusSignalement->getFiles(),
             subscriptionCreated: $subscriptionCreated,
@@ -223,7 +223,7 @@ class SignalementActionController extends AbstractController
                 category: SuiviCategory::MESSAGE_PARTNER,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
-                isPublic: $suivi->getIsPublic(),
+                isPublic: $suivi->getIsPublic(),// TODO : à changer
                 files: $form->get('files')->getData(),
                 subscriptionCreated: $subscriptionCreated,
             );
@@ -359,7 +359,7 @@ class SignalementActionController extends AbstractController
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
-                isPublic: '1' === $request->query->get('publicSuivi'),
+                isPublic: '1' === $request->query->get('publicSuivi'),// TODO : à changer
                 subscriptionCreated: $subscriptionCreated,
             );
             $this->addFlash('success', ['title' => 'Réouverture enregistrée', 'message' => 'Le dossier a bien été rouvert.']);

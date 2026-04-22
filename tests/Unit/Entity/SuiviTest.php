@@ -32,7 +32,7 @@ class SuiviTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription($faker->text())
         ->setType(Suivi::TYPE_USAGER)
-        ->setIsPublic(true);
+        ->setIsPublic(true);// TODO : à changer
 
         /** @var ConstraintViolationList $errors */
         $errors = $validator->validate($suivi);

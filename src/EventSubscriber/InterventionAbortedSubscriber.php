@@ -50,7 +50,7 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
                 category: SuiviCategory::INTERVENTION_IS_ABORTED,
                 partner: $context['createdByPartner'],
                 user: $currentUser,
-                isPublic: true,
+                isPublic: true,// TODO : à changer
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 

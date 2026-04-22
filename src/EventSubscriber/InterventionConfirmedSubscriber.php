@@ -63,7 +63,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
                 category: SuiviCategory::INTERVENTION_HAS_CONCLUSION,
                 partner: $context['createdByPartner'],
                 user: $currentUser,
-                isPublic: $isUsagerNotified,
+                isPublic: $isUsagerNotified,// TODO : à changer
                 context: Suivi::CONTEXT_INTERVENTION,
                 files: $intervention->getFiles(),
             );

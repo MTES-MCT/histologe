@@ -58,7 +58,7 @@ class SuiviRepository extends ServiceEntityRepository
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_active' => SignalementStatus::ACTIVE->value,
         ];
-
+// TODO : à changer
         $sql = 'SELECT s.id, s.created_at
         FROM signalement s
         JOIN (
@@ -107,7 +107,7 @@ class SuiviRepository extends ServiceEntityRepository
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_active' => SignalementStatus::ACTIVE->value,
         ];
-
+// TODO : à changer
         $sql = 'SELECT s.id
                 FROM signalement s
                 JOIN (
@@ -248,7 +248,7 @@ class SuiviRepository extends ServiceEntityRepository
         $havingClause = null !== $exactCount
             ? 'HAVING COUNT(*) = '.$exactCount
             : 'HAVING COUNT(*) >= :nb_suivi_technical';
-
+// TODO : à changer
         return 'SELECT s.id
                 FROM signalement s
                 '.$joinMaxDateSuivi.'
@@ -345,7 +345,7 @@ class SuiviRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.signalement = :signalement')
-            ->andWhere('s.isPublic = 1')
+            ->andWhere('s.isPublic = 1')// TODO : à changer
             ->andWhere('s.deletedBy IS NULL')
             ->setParameter('signalement', $signalement)
             ->andWhere('s.category NOT IN (:excludedCategories)')// ignore suivi usager
