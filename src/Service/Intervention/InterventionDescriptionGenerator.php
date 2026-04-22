@@ -34,7 +34,6 @@ class InterventionDescriptionGenerator
         $isInPast = $today > $intervention->getScheduledAt()
             && Intervention::STATUS_DONE === $intervention->getStatus();
         $commentBeforeVisite = !$isInPast ? $intervention->getCommentBeforeVisite() : '';
-        $timezone = $intervention->getSignalement()->getTimezone() ?? 'Europe/Paris';
 
         return \sprintf(
             '%s %s : une %s du logement situé %s %s le %s.<br>La %s %s par %s.%s',
@@ -43,7 +42,7 @@ class InterventionDescriptionGenerator
             $labelVisite,
             $intervention->getSignalement()->getAdresseOccupant(),
             $isInPast ? 'a été effectuée' : 'est prévue',
-            $intervention->getScheduledAt()->setTimezone(new \DateTimeZone($timezone))->format('d/m/Y'),
+            $intervention->getScheduledAtFormated(),
             $labelVisite,
             $isInPast ? 'a été réalisée' : 'sera effectuée',
             $partnerName,

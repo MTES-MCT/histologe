@@ -469,7 +469,8 @@ trait FixturesHelper
         return (new Territory())
             ->setName($name)
             ->setZip($zip)
-            ->setIsActive((bool) $isActive);
+            ->setIsActive((bool) $isActive)
+            ->setTimezone('Europe/Paris');
     }
 
     public function getClosedTerritory(): Territory

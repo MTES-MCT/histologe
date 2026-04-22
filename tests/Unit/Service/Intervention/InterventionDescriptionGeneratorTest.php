@@ -158,7 +158,19 @@ class InterventionDescriptionGeneratorTest extends TestCase
             'ARS',
         ];
 
-        yield 'Visite dans le futur' => [
+        yield 'Visite dans le futur à minuit' => [
+            $this->getIntervention(
+                InterventionType::VISITE,
+                $dateInFutur->setTime(0, 0, 0),
+                Intervention::STATUS_PLANNED
+            ),
+            'Visite programmée',
+            '25 rue du test',
+            $dateInFutur->format('d/m/Y').'.',
+            'ARS',
+        ];
+
+        yield 'Visite dans le futur avec heure' => [
             $this->getIntervention(
                 InterventionType::VISITE,
                 $dateInFutur,
@@ -166,7 +178,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
             ),
             'Visite programmée',
             '25 rue du test',
-            $dateInFutur->format('d/m/Y'),
+            $dateInFutur->format('d/m/Y à H:i'),
             'ARS',
         ];
     }
