@@ -63,6 +63,11 @@ class SearchInterconnexionType extends AbstractType
             if (isset($data['page']) && (!is_numeric($data['page']))) {
                 $data['page'] = 1;
             }
+
+            if (isset($data['service']) && isset($data['action'])) {
+                $data['action'] = $data['service'].' - '.$data['action'];
+                unset($data['service']);
+            }
             $event->setData($data);
         });
 
