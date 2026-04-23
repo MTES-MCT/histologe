@@ -31,7 +31,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
             InterventionCreatedEvent::NAME
         );
 
-        $this->assertStringStartsWith($label, $description);
+        $this->assertStringStartsWith($label, $description); // @phpstan-ignore-line
         $this->assertStringContainsString($address, $description);
         $this->assertStringContainsString($scheduledAt, $description);
         $this->assertStringContainsString($partnerName, $description);
