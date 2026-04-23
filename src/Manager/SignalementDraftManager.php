@@ -14,6 +14,7 @@ use App\Repository\SignalementRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\SignalementDraftHelper;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -23,6 +24,7 @@ class SignalementDraftManager extends AbstractManager
     public const LAST_STEP = 'validation_signalement';
 
     public function __construct(
+        protected EntityManagerInterface $entityManager,
         protected SignalementDraftFactory $signalementDraftFactory,
         protected EventDispatcherInterface $eventDispatcher,
         protected ManagerRegistry $managerRegistry,
@@ -45,6 +47,7 @@ class SignalementDraftManager extends AbstractManager
     ): ?string {
         $signalementDraft = $this->signalementDraftFactory->createInstanceFrom($signalementDraftRequest, $payload);
         $this->save($signalementDraft);
+        $this->entityManager->flush();
 
         return $signalementDraft->getUuid();
     }

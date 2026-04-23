@@ -111,7 +111,7 @@ class EsaboraManagerTest extends KernelTestCase
             ->expects($this->never())
             ->method('createInstanceFrom');
 
-        $this->interventionRepository
+        $this->interventionManager
             ->expects($this->never())
             ->method('save');
 
@@ -194,7 +194,7 @@ class EsaboraManagerTest extends KernelTestCase
                     Intervention::STATUS_DONE)
             );
 
-        $this->interventionRepository
+        $this->interventionManager
             ->expects($this->once())
             ->method('save');
 
@@ -255,10 +255,10 @@ class EsaboraManagerTest extends KernelTestCase
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionResponse()->getCollection();
         $dossierVisite = $dossierVisiteCollection[0];
 
-        $this->interventionRepository
+        $this->interventionManager
             ->expects($this->once())
             ->method('save')
-            ->with($intervention, true);
+            ->with($intervention);
 
         $this->userManager
         ->expects($this->once())
@@ -319,7 +319,7 @@ class EsaboraManagerTest extends KernelTestCase
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionResponse()->getCollection();
         $dossierVisite = $dossierVisiteCollection[0];
 
-        $this->interventionRepository
+        $this->interventionManager
             ->expects($this->never())
             ->method('save');
 
