@@ -258,6 +258,7 @@ class SignalementCreateController extends AbstractController
         $this->entityManager->beginTransaction();
         $signalement->setReference($this->referenceGenerator->generateReference($signalement->getTerritory()));
         $this->signalementManager->save($signalement);
+        $this->entityManager->flush();
         $this->entityManager->commit();
         $this->userManager->createUsagersFromSignalement($signalement);
         $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);

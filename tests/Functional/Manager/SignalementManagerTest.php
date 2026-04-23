@@ -105,6 +105,7 @@ class SignalementManagerTest extends WebTestCase
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
             $this->security,
+            $this->entityManager,
             $this->signalementImportFactory,
             $this->qualificationStatusService,
             $this->signalementAffectationListViewFactory,

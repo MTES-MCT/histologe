@@ -396,12 +396,12 @@ class PartnerController extends AbstractController
                         $user = $this->getUser();
                         $context = ['createdByPartner' => $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getTerritory())];
                         $interventionPlanningStateMachine->apply($intervention, 'cancel', $context);
-                        $interventionManager->save($intervention);
+                        $interventionManager->save($intervention); // flushed in bulk at the end of the loop to avoid multiple flush if many interventions
 
                     // planned visites in the past are un-assigned
                     } else {
                         $intervention->setPartner(null);
-                        $interventionManager->save($intervention);
+                        $interventionManager->save($intervention); // flushed in bulk at the end of the loop to avoid multiple flush if many interventions
 
                         $visiteNotifier->notifyVisiteToConclude($intervention);
                     }

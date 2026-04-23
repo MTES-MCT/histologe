@@ -23,6 +23,7 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Specification\Signalement\SuroccupationSpecification;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -32,6 +33,7 @@ class PhotoHelperTest extends KernelTestCase
 {
     private Security $security;
     private ManagerRegistry $managerRegistry;
+    private EntityManagerInterface $entityManager;
     private SignalementImportFactory $signalementImportFactory;
     private QualificationStatusService $qualificationStatusService;
     private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
@@ -57,6 +59,7 @@ class PhotoHelperTest extends KernelTestCase
     {
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->security = static::getContainer()->get('security.helper');
+        $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->signalementImportFactory = static::getContainer()->get(SignalementImportFactory::class);
         $this->qualificationStatusService = static::getContainer()->get(QualificationStatusService::class);
         $this->signalementAffectationListViewFactory = static::getContainer()->get(
@@ -81,6 +84,7 @@ class PhotoHelperTest extends KernelTestCase
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,
             $this->security,
+            $this->entityManager,
             $this->signalementImportFactory,
             $this->qualificationStatusService,
             $this->signalementAffectationListViewFactory,
