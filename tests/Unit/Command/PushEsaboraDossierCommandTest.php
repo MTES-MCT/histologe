@@ -58,7 +58,7 @@ class PushEsaboraDossierCommandTest extends TestCase
                 $this->equalTo(DossierMessageSISH::CAN_SYNC_SISH_ESABORA),
                 null,
                 null,
-                (new Territory())->setZip('01')->setIsActive(true)->setName('Ain')
+                (new Territory())->setZip('01')->setIsActive(true)->setName('Ain')->setTimezone('Europe/Paris')
             )
             ->willReturn($affectations);
 
