@@ -263,15 +263,36 @@ class Suivi implements EntityHistoryInterface
     /** @return array<SuiviVisibility> */
     public function getVisibility(): array
     {
-        return array_map(fn (string $v) => SuiviVisibility::from($v), $this->visibility);
+        return array_map(static fn (string $v) => SuiviVisibility::from($v), $this->visibility);
     }
 
     /** @param array<SuiviVisibility> $visibility */
     public function setVisibility(array $visibility): static
     {
-        $this->visibility = array_map(fn (SuiviVisibility $v) => $v->value, $visibility);
+        $this->visibility = array_map(static fn (SuiviVisibility $v) => $v->value, $visibility);
 
         return $this;
+    }
+
+    public function addVisibility(SuiviVisibility $visibility): static
+    {
+        if (!in_array($visibility->value, $this->visibility, true)) {
+            $this->visibility[] = $visibility->value;
+        }
+
+        return $this;
+    }
+
+    public function removeVisibility(SuiviVisibility $visibility): static
+    {
+        $this->visibility = array_filter($this->visibility, static fn (string $v) => $v !== $visibility->value);
+
+        return $this;
+    }
+
+    public function isVisibleForUsager(): bool
+    {
+        return in_array(SuiviVisibility::USAGERS->value, $this->visibility, true);
     }
 
     public function getSignalement(): ?Signalement

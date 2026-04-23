@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Suivi;
 use App\Event\InterventionUpdatedByEsaboraEvent;
 use App\Manager\SuiviManager;
@@ -54,13 +55,13 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             category: $suiviCategory,
             partner: $event->getPartner(),
             user: $event->getUser(),
-            isPublic: !$signalement->isTiersDeclarant(),// TODO : à changer
+            visibility: SuiviVisibility::getAvailableFor(!$signalement->isTiersDeclarant()),
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $event->setSuivi($suivi);
         if (InterventionType::VISITE === $intervention->getType()
             && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
-            && $suivi->getIsPublic()// TODO : à changer
+            && $suivi->isVisibleForUsager()
         ) {
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
@@ -70,7 +71,7 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             );
         }
 
-        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsPublic()) {// TODO : à changer
+        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->isVisibleForUsager()) {
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,

@@ -10,6 +10,7 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\File;
 use App\Entity\Signalement;
@@ -624,7 +625,7 @@ class SignalementController extends AbstractController
                 type: $suiviType,
                 category: $suiviCategory,
                 user: $signalementUser->getUser(),
-                isPublic: true,// TODO : à changer
+                visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
                 files: $filesToAttach
             );
 
@@ -703,7 +704,7 @@ class SignalementController extends AbstractController
                             type: Suivi::TYPE_USAGER,
                             category: SuiviCategory::MESSAGE_USAGER,
                             user: $signalementUser->getUser(),
-                            isPublic: true,// TODO : à changer
+                            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
                             files: $filesToAttach
                         );
                         $this->addFlash('success', ['title' => 'Documents ajoutés', 'message' => 'Vos documents ont bien été enregistrés.']);
@@ -806,7 +807,7 @@ class SignalementController extends AbstractController
                 type: Suivi::TYPE_USAGER,
                 category: $category,
                 user: $user,
-                isPublic: true,// TODO : à changer
+                visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
             );
 
             $signalementManager->save($signalement);
@@ -869,7 +870,7 @@ class SignalementController extends AbstractController
                 type: Suivi::TYPE_USAGER,
                 category: SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
                 user: $user,
-                isPublic: true,// TODO : à changer
+                visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
             );
 
             $signalementManager->save($signalement);
@@ -923,7 +924,7 @@ class SignalementController extends AbstractController
                     type: Suivi::TYPE_USAGER,
                     category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
                     user: $user,
-                    isPublic: true,// TODO : à changer
+                    visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
                 );
 
                 $injonctionBailleurService->switchFromInjonctionToProcedure($signalement);
@@ -1019,7 +1020,7 @@ class SignalementController extends AbstractController
                     type: Suivi::TYPE_USAGER,
                     category: $category,
                     user: $user,
-                    isPublic: true,// TODO : à changer
+                    visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
                 );
 
                 if ('non' === $reponse) {
@@ -1089,7 +1090,7 @@ class SignalementController extends AbstractController
             type: Suivi::TYPE_USAGER,
             category: SuiviCategory::MESSAGE_USAGER,
             user: $user,
-            isPublic: true,// TODO : à changer
+            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
         );
         $signalement->setIsProprioAverti(true);
         $signalementManager->save($signalement);

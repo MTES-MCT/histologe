@@ -6,6 +6,7 @@ use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
@@ -72,7 +73,7 @@ class NewSignalementCheckFileMessageHandler
         );
 
         $suivisPublic = $signalement->getSuivis()->filter(static function (Suivi $suivi) {
-            return $suivi->getIsPublic() && Suivi::TYPE_PARTNER === $suivi->getType();// TODO : à changer
+            return $suivi->isVisibleForUsager() && Suivi::TYPE_PARTNER === $suivi->getType();
         });
 
         if (SignalementStatus::REFUSED === $signalement->getStatut()
@@ -230,7 +231,7 @@ class NewSignalementCheckFileMessageHandler
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::ASK_DOCUMENT,
             user: $userAdmin,
-            isPublic: true,// TODO : à changer
+            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
             context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
         );
     }

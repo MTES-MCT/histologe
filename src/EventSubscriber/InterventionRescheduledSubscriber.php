@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Event\InterventionRescheduledEvent;
@@ -52,7 +53,7 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
                 category: SuiviCategory::INTERVENTION_IS_RESCHEDULED,
                 partner: $event->getPartner(),
                 user: $event->getUser(),
-                isPublic: true,// TODO : à changer
+                visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 

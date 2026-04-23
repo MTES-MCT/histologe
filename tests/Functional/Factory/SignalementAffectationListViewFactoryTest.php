@@ -58,7 +58,7 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'cpOccupant' => $faker->postcode(),
             'lastSuiviAt' => new \DateTimeImmutable(),
             'lastSuiviBy' => $faker->name(),
-            'lastSuiviIsPublic' => false,// TODO : à changer ?
+            'lastSuiviIsPublic' => false, // TODO : à changer ?
             'profileDeclarant' => ProfileDeclarant::LOCATAIRE,
             'rawAffectations' => 'Partenaire 13-02||EN_COURS;Partenaire 13-03||EN_COURS;Partenaire 13-04||EN_COURS',
             'qualifications' => 'NON_DECENCE_ENERGETIQUE',

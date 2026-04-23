@@ -5,6 +5,7 @@ namespace App\EventSubscriber;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
@@ -71,7 +72,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 partner: $event->getPartner(),
                 user: $user,
-                isPublic: $affectation->getHasNotificationUsagerToCreate(),// TODO : à changer
+                visibility: SuiviVisibility::getAvailableFor($affectation->getHasNotificationUsagerToCreate()),
             );
         }
         $this->createSuiviOnFirstAcceptedAffectation($event->getAffectation());
@@ -93,7 +94,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::AFFECTATION_IS_ACCEPTED,
                 user: $adminUser,
-                isPublic: true,// TODO : à changer
+                visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
                 context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
             );
         }

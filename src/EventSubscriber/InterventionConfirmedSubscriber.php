@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -63,7 +64,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
                 category: SuiviCategory::INTERVENTION_HAS_CONCLUSION,
                 partner: $context['createdByPartner'],
                 user: $currentUser,
-                isPublic: $isUsagerNotified,// TODO : à changer
+                visibility: SuiviVisibility::getAvailableFor($isUsagerNotified),
                 context: Suivi::CONTEXT_INTERVENTION,
                 files: $intervention->getFiles(),
             );

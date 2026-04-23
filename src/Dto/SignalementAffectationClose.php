@@ -24,7 +24,7 @@ class SignalementAffectationClose
     /** @var array<File> */
     private array $files = [];
 
-    private bool $isPublic = true;// TODO : à changer
+    private bool $isPublic = true; // TODO : à changer
 
     private ?string $subject = null;
 
@@ -91,12 +91,14 @@ class SignalementAffectationClose
 
         return $this;
     }
-// TODO : à changer
+
+    // TODO : à changer ?
     public function isPublic(): bool
     {
         return $this->isPublic;
     }
-// TODO : à changer ?
+
+    // TODO : à changer ?
     public function setIsPublic(bool $isPublic): self
     {
         $this->isPublic = $isPublic;

@@ -4,6 +4,7 @@ namespace App\Command\Cron;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Suivi;
 use App\Manager\InterventionManager;
 use App\Manager\SuiviManager;
@@ -71,7 +72,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
                 description: $description,
                 type: Suivi::TYPE_TECHNICAL,
                 category: SuiviCategory::INTERVENTION_PLANNED_REMINDER,
-                isPublic: true,// TODO : à changer
+                visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 
@@ -121,7 +122,6 @@ class NotifyVisitsCommand extends AbstractCronCommand
                     description: $description,
                     type: Suivi::TYPE_TECHNICAL,
                     category: SuiviCategory::INTERVENTION_IS_REQUIRED,
-                    isPublic: false,// TODO : à changer
                     context: Suivi::CONTEXT_INTERVENTION,
                 );
 

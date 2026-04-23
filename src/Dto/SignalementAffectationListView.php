@@ -41,7 +41,7 @@ class SignalementAffectationListView
         private readonly ?string $villeOccupant = null,
         private readonly \DateTimeImmutable|string|null $lastSuiviAt = null,
         private readonly ?string $lastSuiviBy = null,
-        private readonly ?bool $lastSuiviIsPublic = null,// TODO : à changer
+        private readonly ?bool $lastSuiviIsPublic = null,// TODO : à changer ?
         private readonly ?string $profileDeclarant = null,
         private readonly ?array $affectations = null,
         private readonly ?array $qualifications = null,
@@ -132,9 +132,9 @@ class SignalementAffectationListView
         return $this->lastSuiviBy;
     }
 
-    public function getLastSuiviIsPublic(): ?bool// TODO : à changer
+    public function getLastSuiviIsPublic(): ?bool// TODO : à changer ?
     {
-        return $this->lastSuiviIsPublic;// TODO : à changer
+        return $this->lastSuiviIsPublic; // TODO : à changer ?
     }
 
     public function getProfileDeclarant(): ?string

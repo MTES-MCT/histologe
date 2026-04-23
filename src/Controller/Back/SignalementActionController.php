@@ -8,6 +8,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\SuiviFile;
@@ -92,7 +93,7 @@ class SignalementActionController extends AbstractController
             category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             partner: $partner,
             user : $user,
-            isPublic: true,// TODO : à changer
+            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
             context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             createSubscription: false
         );
@@ -128,7 +129,7 @@ class SignalementActionController extends AbstractController
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 partner: $partner,
                 user : $user,
-                isPublic: true,// TODO : à changer
+                visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
                 context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
                 subscriptionCreated: $subscriptionCreated,
             );
@@ -176,7 +177,7 @@ class SignalementActionController extends AbstractController
             category: SuiviCategory::SIGNALEMENT_IS_REFUSED,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user : $user,
-            isPublic: true,// TODO : à changer
+            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
             context: Suivi::CONTEXT_SIGNALEMENT_REFUSED,
             files: $refusSignalement->getFiles(),
             subscriptionCreated: $subscriptionCreated,
@@ -223,7 +224,7 @@ class SignalementActionController extends AbstractController
                 category: SuiviCategory::MESSAGE_PARTNER,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
-                isPublic: $suivi->getIsPublic(),// TODO : à changer
+                visibility: $suivi->getVisibility(),
                 files: $form->get('files')->getData(),
                 subscriptionCreated: $subscriptionCreated,
             );
@@ -359,7 +360,7 @@ class SignalementActionController extends AbstractController
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
-                isPublic: '1' === $request->query->get('publicSuivi'),// TODO : à changer
+                visibility: SuiviVisibility::getAvailableFor('1' === $request->query->get('publicSuivi')),
                 subscriptionCreated: $subscriptionCreated,
             );
             $this->addFlash('success', ['title' => 'Réouverture enregistrée', 'message' => 'Le dossier a bien été rouvert.']);

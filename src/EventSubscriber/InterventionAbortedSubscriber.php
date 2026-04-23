@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -50,7 +51,7 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
                 category: SuiviCategory::INTERVENTION_IS_ABORTED,
                 partner: $context['createdByPartner'],
                 user: $currentUser,
-                isPublic: true,// TODO : à changer
+                visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 

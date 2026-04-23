@@ -9,6 +9,7 @@ use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\AffectationManager;
@@ -59,7 +60,7 @@ class InjonctionBailleurService
                     description: $contenu,
                     type: Suivi::TYPE_AUTO,
                     category: $category,
-                    isPublic: true// TODO : à changer
+                    visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]
                 );
                 if (!empty($description)) {
                     $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
@@ -70,11 +71,11 @@ class InjonctionBailleurService
                 $contenu = 'Le bailleur s\'engage à résoudre les désordres signalés.';
                 $category = SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE;
                 $this->suiviManager->createSuivi(
-                    signalement: $signalement, 
-                    description: $contenu, 
-                    type: Suivi::TYPE_AUTO, 
-                    category: $category, 
-                    isPublic: true// TODO : à changer
+                    signalement: $signalement,
+                    description: $contenu,
+                    type: Suivi::TYPE_AUTO,
+                    category: $category,
+                    visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]
                 );
                 $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
                 $this->saveEngagementTravauxBailleurPdf($signalement);
@@ -84,11 +85,11 @@ class InjonctionBailleurService
                 $contenu = 'Le bailleur s\'engage à résoudre les désordres signalés, et indique que les démarches ont déjà commencé.';
                 $category = SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES;
                 $this->suiviManager->createSuivi(
-                    signalement: $signalement, 
-                    description: $contenu, 
-                    type: Suivi::TYPE_AUTO, 
-                    category: $category, 
-                    isPublic: true// TODO : à changer
+                    signalement: $signalement,
+                    description: $contenu,
+                    type: Suivi::TYPE_AUTO,
+                    category: $category,
+                    visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]
                 );
                 $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
                 $this->saveEngagementTravauxBailleurPdf($signalement);
@@ -97,11 +98,11 @@ class InjonctionBailleurService
                 $contenu = 'Le bailleur refuse de résoudre les désordres signalés, le signalement va être pris en charge par les partenaires compétents.';
                 $category = SuiviCategory::INJONCTION_BAILLEUR_REPONSE_NON;
                 $this->suiviManager->createSuivi(
-                    signalement: $signalement, 
-                    description: $contenu, 
-                    type: Suivi::TYPE_AUTO, 
-                    category: $category, 
-                    isPublic: true// TODO : à changer
+                    signalement: $signalement,
+                    description: $contenu,
+                    type: Suivi::TYPE_AUTO,
+                    category: $category,
+                    visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]
                 );
                 $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
                 $this->switchFromInjonctionToProcedure($signalement);
@@ -167,7 +168,7 @@ class InjonctionBailleurService
                 description: 'Le bailleur souhaite arrêter la procédure d\'injonction, le signalement va être pris en charge par les partenaires compétents.',
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
-                isPublic: true// TODO : à changer
+                visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]
             );
 
             $this->suiviManager->createSuivi(
@@ -186,7 +187,7 @@ class InjonctionBailleurService
                 description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
-                isPublic: true// TODO : à changer
+                visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]
             );
 
             $this->suiviManager->createSuivi(

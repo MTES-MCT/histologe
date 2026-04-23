@@ -3,6 +3,7 @@
 namespace App\Command\Cron;
 
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
@@ -70,7 +71,6 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                     description: $description,
                     type: Suivi::TYPE_AUTO,
                     category: SuiviCategory::INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR,
-                    isPublic: false// TODO : à changer
                 );
             }
         }
@@ -117,7 +117,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                 description: $description,
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER,
-                isPublic: true// TODO : à changer
+                visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]
             );
 
             $output->writeln(sprintf('#%s reminded', $signalement->getUuid()));

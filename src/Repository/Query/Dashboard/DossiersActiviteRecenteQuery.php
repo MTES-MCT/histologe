@@ -99,7 +99,7 @@ class DossiersActiviteRecenteQuery
     public function findLastSignalementsWithOtherUserSuivi(User $user, TabQueryParameters $params, int $limit = 10): array
     {
         $qb = $this->getBaseQB($user, $params);
-// TODO : à changer
+        // TODO : à changer
         $qb->select('
             signalement.reference AS reference,
             signalement.nomOccupant AS nomOccupant,
@@ -172,7 +172,7 @@ class DossiersActiviteRecenteQuery
         if ($user->isPartnerAdmin() || $user->isUserPartner()) {
             $statutField = 'affectation.statut';
         }
-// TODO : à changer
+        // TODO : à changer
         $qb->select('
             signalement.reference AS reference,
             signalement.nomOccupant AS nomOccupant,

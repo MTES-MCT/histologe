@@ -21,4 +21,19 @@ enum SuiviVisibility: string
             'PARTENAIRES_AFFECTES' => 'Partenaires affectés',
         ];
     }
+
+    /** @return array<SuiviVisibility> */
+    public static function getAvailableFor(bool $isPublic): array
+    {
+        if ($isPublic) {
+            return [
+                self::USAGERS,
+                self::PARTENAIRES_AFFECTES,
+            ];
+        }
+
+        return [
+            self::PARTENAIRES_AFFECTES,
+        ];
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\SignalementClosedEvent;
@@ -46,7 +47,7 @@ readonly class SignalementClosedSubscriber implements EventSubscriberInterface
             category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
             partner: $event->getPartner(),
             user: $user,
-            isPublic: $signalementAffectationClose->isPublic(),// TODO : à changer
+            visibility: SuiviVisibility::getAvailableFor($signalementAffectationClose->isPublic()),
             context: Suivi::CONTEXT_SIGNALEMENT_CLOSED,
             files: $signalementAffectationClose->getFiles(),
         );

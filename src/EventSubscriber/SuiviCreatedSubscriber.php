@@ -2,9 +2,9 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Suivi;
 use App\Event\SuiviCreatedEvent;
 use App\Service\Notification\NotificationAndMailSender;

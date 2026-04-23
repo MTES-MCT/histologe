@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Service\Notification;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\NotificationType;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -183,7 +184,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description')
         ->setType(Suivi::TYPE_PARTNER)
-        ->setIsPublic(true);// TODO : à changer
+        ->setVisibility([SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]);
 
         $this->entityManager->persist($suivi);
         $existingNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
@@ -212,7 +213,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description')
         ->setType(Suivi::TYPE_PARTNER)
-        ->setIsPublic(true);// TODO : à changer
+        ->setVisibility([SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]);
 
         $this->entityManager->persist($suivi);
 
@@ -265,7 +266,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description')
         ->setType(Suivi::TYPE_PARTNER)
-        ->setIsPublic(true);// TODO : à changer
+        ->setVisibility([SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]);
 
         $this->entityManager->persist($suivi);
 
@@ -307,7 +308,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description')
         ->setType(Suivi::TYPE_PARTNER)
-        ->setIsPublic(true);// TODO : à changer
+        ->setVisibility([SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]);
 
         $this->entityManager->persist($suivi);
 
@@ -353,7 +354,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description')
         ->setType(Suivi::TYPE_PARTNER)
-        ->setIsPublic(true);// TODO : à changer
+        ->setVisibility([SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]);
 
         $this->entityManager->persist($suivi);
 

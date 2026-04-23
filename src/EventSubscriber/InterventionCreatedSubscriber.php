@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Event\InterventionCreatedEvent;
@@ -64,7 +65,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             category : $suiviCategory,
             partner: $event->getPartner(),
             user: $event->getUser(),
-            isPublic: $isPublic,// TODO : à changer
+            visibility: SuiviVisibility::getAvailableFor($isPublic),
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $event->setSuivi($suivi);
@@ -78,7 +79,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             );
         }
 
-        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsPublic()) {// TODO : à changer
+        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->isVisibleForUsager()) {
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
