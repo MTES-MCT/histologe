@@ -444,7 +444,6 @@ class SignalementCreateController extends AbstractController
         $signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
         $signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $this->setSignalementDataConsistentBeforeValidation($signalement);
-        $entityManager->flush();
         $errorMsgs = $this->getErrorMsgsOnValidation($signalement);
 
         $partners = [];
@@ -563,6 +562,7 @@ class SignalementCreateController extends AbstractController
                 $this->interconnectionBus->dispatchAll($signalement);
             }
 
+            $entityManager->flush();
             $entityManager->commit();
 
             return $this->json(['redirect' => true, 'url' => $this->generateUrl($route, $params, UrlGeneratorInterface::ABSOLUTE_URL)]);
