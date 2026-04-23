@@ -48,13 +48,13 @@
         </div>
         {% set nbCol = is_granted('SUIVI_DELETE', suivi) or is_granted('SUIVI_EDIT', suivi) ? '2' : '3' %}
         <div class="fr-col-{{ nbCol }}">
-            {% if suivi.isPublic %}
+            {% if suivi.isVisibleForUsager %}
                 <span class="fr-badge fr-badge--no-icon" title="Visible par l'usager">Visible par l'usager</span>
             {% else %}
                 <span class="fr-badge fr-badge--no-icon" title="Suivi interne">Suivi interne</span>
             {% endif %}
             <br>
-            {% if suivi.isPublic and suivi.type is not same as constant('App\\Entity\\Suivi::TYPE_USAGER') %}
+            {% if suivi.isVisibleForUsager and suivi.type is not same as constant('App\\Entity\\Suivi::TYPE_USAGER') %}
                 <span class="fr-badge fr-badge--{{ suivi.isSeenByUsager ? 'success fr-background--notif-info' : 'error fr-background--notif-error' }} fr-mt-1v">{{ suivi.isSeenByUsager ? 'Lu' : 'Non lu' }}</span>
             {% endif %}
         </div>

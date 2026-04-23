@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Notification;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -252,7 +253,6 @@ class DossiersSuivisUsagerQuery
         // TODO : essayer d'améliorer les perfs
         // une demande de feedback avant le message usager ou demande poursuite procedure
         // mais pas de suivi public entre les deux
-        // TODO : à changer (isPublic)
         $qb->andWhere('EXISTS (
             SELECT 1
             FROM '.Suivi::class.' s_ask
@@ -263,7 +263,7 @@ class DossiersSuivisUsagerQuery
                   SELECT 1
                   FROM '.Suivi::class.' s_pub_before
                   WHERE s_pub_before.signalement = signalement
-                    AND s_pub_before.isPublic = 1
+                    AND JSON_CONTAINS(s_pub_before.visibility, :usagers) = 1
                     AND s_pub_before.createdAt > s_ask.createdAt
                     AND s_pub_before.createdAt < s.createdAt
               )
@@ -274,7 +274,7 @@ class DossiersSuivisUsagerQuery
             SELECT 1
             FROM '.Suivi::class.' s_pub
             WHERE s_pub.signalement = signalement
-              AND s_pub.isPublic = true
+              AND JSON_CONTAINS(s_pub.visibility, :usagers) = 1
               AND s_pub.category NOT IN (:usagerCategory, :poursuiteCategory)
               AND s_pub.createdAt > s.createdAt
         )');
@@ -282,7 +282,8 @@ class DossiersSuivisUsagerQuery
            ->setParameter('statut', SignalementStatus::ACTIVE)
            ->setParameter('askFeedbackCategory', SuiviCategory::ASK_FEEDBACK_SENT)
            ->setParameter('usagerCategory', SuiviCategory::MESSAGE_USAGER)
-           ->setParameter('poursuiteCategory', SuiviCategory::DEMANDE_POURSUITE_PROCEDURE);
+           ->setParameter('poursuiteCategory', SuiviCategory::DEMANDE_POURSUITE_PROCEDURE)
+           ->setParameter('usagers', json_encode(SuiviVisibility::USAGERS->value));
 
         return $qb;
     }

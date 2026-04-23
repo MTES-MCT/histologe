@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -57,14 +58,14 @@ class SuiviRepository extends ServiceEntityRepository
             'day_period' => $period,
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_active' => SignalementStatus::ACTIVE->value,
+            'usagers' => json_encode(SuiviVisibility::USAGERS->value),
         ];
-        // TODO : à changer
         $sql = 'SELECT s.id, s.created_at
         FROM signalement s
         JOIN (
             SELECT signalement_id, MAX(created_at) AS last_public
             FROM suivi
-            WHERE is_public = 1
+            WHERE JSON_CONTAINS(suivi.visibility, :usagers) = 1
             GROUP BY signalement_id
         ) pub ON pub.signalement_id = s.id
         LEFT JOIN (
@@ -106,15 +107,15 @@ class SuiviRepository extends ServiceEntityRepository
             'day_period' => $period,
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_active' => SignalementStatus::ACTIVE->value,
+            'usagers' => json_encode(SuiviVisibility::USAGERS->value),
         ];
-        // TODO : à changer
         $sql = 'SELECT s.id
                 FROM signalement s
                 JOIN (
                     -- dernier suivi public
                     SELECT signalement_id, MAX(created_at) AS last_public
                     FROM suivi
-                    WHERE is_public = 1
+                    WHERE JSON_CONTAINS(suivi.visibility, :usagers) = 1
                     GROUP BY signalement_id
                 ) pub ON pub.signalement_id = s.id
                 JOIN (
@@ -124,7 +125,7 @@ class SuiviRepository extends ServiceEntityRepository
                     JOIN (
                         SELECT signalement_id, MAX(created_at) AS last_public
                         FROM suivi
-                        WHERE is_public = 1
+                        WHERE JSON_CONTAINS(suivi.visibility, :usagers) = 1
                         GROUP BY signalement_id
                     ) pub2 ON pub2.signalement_id = su.signalement_id
                     WHERE su.category = :category_ask_feedback
@@ -161,6 +162,7 @@ class SuiviRepository extends ServiceEntityRepository
         $parameters = [
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_active' => SignalementStatus::ACTIVE->value,
+            'usagers' => json_encode(SuiviVisibility::USAGERS->value),
         ];
 
         $sql = $this->getSignalementsLastAskFeedbackSuivisQuery(
@@ -193,6 +195,7 @@ class SuiviRepository extends ServiceEntityRepository
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_active' => SignalementStatus::ACTIVE->value,
             'nb_suivi_technical' => 3,
+            'usagers' => json_encode(SuiviVisibility::USAGERS->value),
         ];
 
         $sql = $this->getSignalementsLastAskFeedbackSuivisQuery(
@@ -249,7 +252,6 @@ class SuiviRepository extends ServiceEntityRepository
             ? 'HAVING COUNT(*) = '.$exactCount
             : 'HAVING COUNT(*) >= :nb_suivi_technical';
 
-        // TODO : à changer
         return 'SELECT s.id
                 FROM signalement s
                 '.$joinMaxDateSuivi.'
@@ -260,7 +262,7 @@ class SuiviRepository extends ServiceEntityRepository
                     INNER JOIN signalement s2 ON s2.id = su.signalement_id
                     WHERE su.category = :category_ask_feedback
                     AND su.created_at > COALESCE(
-                        (SELECT MAX(created_at) FROM suivi WHERE signalement_id = su.signalement_id AND is_public = 1),
+                        (SELECT MAX(created_at) FROM suivi WHERE signalement_id = su.signalement_id AND JSON_CONTAINS(suivi.visibility, :usagers) = 1),
                         s2.created_at
                     )
                     GROUP BY su.signalement_id
@@ -346,7 +348,8 @@ class SuiviRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.signalement = :signalement')
-            ->andWhere('s.isPublic = 1')// TODO : à changer
+            ->andWhere('JSON_CONTAINS(s.visibility, :usagers) = 1')
+            ->setParameter('usagers', json_encode(SuiviVisibility::USAGERS->value))
             ->andWhere('s.deletedBy IS NULL')
             ->setParameter('signalement', $signalement)
             ->andWhere('s.category NOT IN (:excludedCategories)')// ignore suivi usager
