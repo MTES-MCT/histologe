@@ -59,6 +59,7 @@ class SignalementActionController extends AbstractController
         Request $request,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
         SuiviManager $suiviManager,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VALIDATE, $signalement);
         /** @var User $user */
@@ -95,6 +96,9 @@ class SignalementActionController extends AbstractController
             context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             createSubscription: false
         );
+
+        $entityManager->flush();
+
         $this->addFlash('success', ['title' => 'Signalement accepté', 'message' => 'Le signalement a bien été accepté.']);
 
         return $this->json(['redirect' => true, 'url' => $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()])]);

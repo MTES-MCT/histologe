@@ -79,6 +79,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 $this->dispatchDraftProcessing($signalementDraft, $signalement);
                 $this->dispatchCheckFiles($signalement);
                 $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
+                $this->entityManager->flush();
                 $this->entityManager->commit();
             } else {
                 $this->entityManager->rollback();

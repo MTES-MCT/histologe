@@ -74,6 +74,7 @@ class ServiceSecoursController extends AbstractController
             $entityManager->beginTransaction();
             $signalement->setReference($referenceGenerator->generateReference($signalement->getTerritory()));
             $signalementManager->save($signalement);
+            $entityManager->flush();
             $entityManager->commit();
             $userManager->createUsagersFromSignalement($signalement);
             $autoAssigner->assignOrSendNewSignalementNotification($signalement);

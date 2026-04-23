@@ -22,7 +22,7 @@ class TagManager extends AbstractManager
                 ->setLabel($label)
                 ->setTerritory($territory);
 
-            $this->save($tag);
+            $this->save($tag); // flushed by caller
 
             return $tag;
         }

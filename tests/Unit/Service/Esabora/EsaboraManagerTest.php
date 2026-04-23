@@ -13,6 +13,7 @@ use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
+use App\Manager\InterventionManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
@@ -46,6 +47,7 @@ class EsaboraManagerTest extends KernelTestCase
     protected MockObject&SuiviManager $suiviManager;
     protected MockObject&InterventionRepository $interventionRepository;
     protected MockObject&InterventionFactory $interventionFactory;
+    protected MockObject&InterventionManager $interventionManager;
     protected EventDispatcher $eventDispatcher;
     protected MockObject&UserManager $userManager;
     private MockObject&LoggerInterface $logger;
@@ -66,6 +68,7 @@ class EsaboraManagerTest extends KernelTestCase
         $this->suiviManager = $this->createMock(SuiviManager::class);
         $this->interventionRepository = $this->createMock(InterventionRepository::class);
         $this->interventionFactory = $this->createMock(InterventionFactory::class);
+        $this->interventionManager = $this->createMock(InterventionManager::class);
         $this->userManager = $this->createMock(UserManager::class);
         $this->eventDispatcher = new EventDispatcher();
         $this->logger = $this->createMock(LoggerInterface::class);
@@ -126,6 +129,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->suiviManager,
             $this->interventionRepository,
             $this->interventionFactory,
+            $this->interventionManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -210,6 +214,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->suiviManager,
             $this->interventionRepository,
             $this->interventionFactory,
+            $this->interventionManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -264,6 +269,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->suiviManager,
             $this->interventionRepository,
             $this->interventionFactory,
+            $this->interventionManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -326,6 +332,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->suiviManager,
             $this->interventionRepository,
             $this->interventionFactory,
+            $this->interventionManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -396,6 +403,7 @@ class EsaboraManagerTest extends KernelTestCase
             $this->suiviManager,
             $this->interventionRepository,
             $this->interventionFactory,
+            $this->interventionManager,
             $this->eventDispatcher,
             $this->userManager,
             $this->logger,

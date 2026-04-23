@@ -52,6 +52,7 @@ use App\Service\Signalement\SignalementInputValueMapper;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -62,6 +63,7 @@ class SignalementManager extends AbstractManager
     public function __construct(
         protected ManagerRegistry $managerRegistry,
         private readonly Security $security,
+        private readonly EntityManagerInterface $entityManager,
         private readonly SignalementImportFactory $signalementImportFactory,
         private readonly QualificationStatusService $qualificationStatusService,
         private readonly SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
@@ -313,6 +315,8 @@ class SignalementManager extends AbstractManager
         }
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
         $this->save($signalement);
+
+        $this->entityManager->flush();
     }
 
     public function updateFromAdresseOccupantRequest(
@@ -339,6 +343,8 @@ class SignalementManager extends AbstractManager
         }
 
         $this->save($signalement);
+
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -380,6 +386,8 @@ class SignalementManager extends AbstractManager
 
         $this->save($signalement);
 
+        $this->entityManager->flush();
+
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'Les coordonnées du tiers déclarant ont été modifiées par ',
@@ -399,6 +407,8 @@ class SignalementManager extends AbstractManager
         $this->userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
 
         $this->save($signalement);
+
+        $this->entityManager->flush();
 
         $this->suiviManager->addAccepteInvitationSuivi($signalement);
     }
@@ -437,6 +447,8 @@ class SignalementManager extends AbstractManager
         }
 
         $this->save($signalement);
+
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -495,6 +507,8 @@ class SignalementManager extends AbstractManager
 
         $this->save($signalement);
 
+        $this->entityManager->flush();
+
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'Les coordonnées du bailleur ont été modifiées par ',
@@ -518,6 +532,8 @@ class SignalementManager extends AbstractManager
 
         $this->save($signalement);
 
+        $this->entityManager->flush();
+
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'Les coordonnées de l\'agence ont été modifiées par ',
@@ -536,6 +552,7 @@ class SignalementManager extends AbstractManager
             ->setTelSyndicSecondaire($coordonneesSyndicRequest->getTelephoneBis());
 
         $this->save($signalement);
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -628,6 +645,8 @@ class SignalementManager extends AbstractManager
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
         $this->save($signalement);
+
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -735,6 +754,8 @@ class SignalementManager extends AbstractManager
 
         $this->save($signalement);
 
+        $this->entityManager->flush();
+
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'La description du logement a été modifiée par ',
@@ -837,6 +858,8 @@ class SignalementManager extends AbstractManager
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $this->save($signalement);
 
+        $this->entityManager->flush();
+
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'La situation du foyer a été modifiée par ',
@@ -890,6 +913,8 @@ class SignalementManager extends AbstractManager
         }
 
         $this->save($signalement);
+
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -984,5 +1009,7 @@ class SignalementManager extends AbstractManager
             createSubscription: $createSubscription,
         );
         $this->save($suivi);
+
+        $this->entityManager->flush();
     }
 }

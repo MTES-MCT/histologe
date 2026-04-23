@@ -937,6 +937,7 @@ class SignalementController extends AbstractController
 
                 $injonctionBailleurService->switchFromInjonctionToProcedure($signalement);
                 $signalementManager->save($signalement);
+                $entityManager->flush();
                 $entityManager->commit();
             } catch (\Exception $e) {
                 $entityManager->rollback();
@@ -1038,6 +1039,7 @@ class SignalementController extends AbstractController
                     $signalement->setMotifCloture(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS);
                 }
                 $signalementManager->save($signalement);
+                $entityManager->flush();
                 $entityManager->commit();
             } catch (\Exception $e) {
                 $entityManager->rollback();
