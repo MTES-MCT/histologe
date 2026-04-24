@@ -159,7 +159,7 @@ class SuiviCreateController extends AbstractController
             category: SuiviCategory::MESSAGE_PARTNER,
             partner: $partner,
             user: $user,
-            visibility: SuiviVisibility::getAvailableFor($suiviRequest->notifyUsager),
+            visibility: SuiviVisibility::fromIsPublic($suiviRequest->notifyUsager),
             files: $fileToAttach,
         );
 

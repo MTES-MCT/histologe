@@ -65,7 +65,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             category : $suiviCategory,
             partner: $event->getPartner(),
             user: $event->getUser(),
-            visibility: SuiviVisibility::getAvailableFor($isPublic),
+            visibility: SuiviVisibility::fromIsPublic($isPublic),
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $event->setSuivi($suivi);

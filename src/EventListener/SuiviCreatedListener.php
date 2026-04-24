@@ -2,7 +2,6 @@
 
 namespace App\EventListener;
 
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Service\Signalement\Suivi\SuiviHelper;
@@ -24,7 +23,7 @@ class SuiviCreatedListener
                 $signalement = $entity->getSignalement();
                 $signalement->setLastSuiviAt($entity->getCreatedAt());
                 $signalement->setLastSuiviBy(SuiviHelper::getLastLabelFromSuivi($entity));
-                $signalement->setLastSuiviIsPublic(in_array(SuiviVisibility::USAGERS, $entity->getVisibility(), true));
+                $signalement->setLastSuiviIsVisibleForUsager($entity->isVisibleForUsager());
                 $metaData = $entityManager->getClassMetadata(Signalement::class);
                 $entityManager->persist($signalement);
                 //  used to recompute the changes of a specific signalement entity

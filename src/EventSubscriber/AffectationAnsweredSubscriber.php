@@ -72,7 +72,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 partner: $event->getPartner(),
                 user: $user,
-                visibility: SuiviVisibility::getAvailableFor($affectation->getHasNotificationUsagerToCreate()),
+                visibility: SuiviVisibility::fromIsPublic($affectation->getHasNotificationUsagerToCreate()),
             );
         }
         $this->createSuiviOnFirstAcceptedAffectation($event->getAffectation());

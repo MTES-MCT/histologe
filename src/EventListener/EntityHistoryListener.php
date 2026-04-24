@@ -28,7 +28,7 @@ class EntityHistoryListener
         'updatedAt',
         'lastSuiviAt',
         'lastSuiviBy',
-        'lastSuiviIsPublic', // TODO : à changer ?
+        'lastSuiviIsVisibleForUsager',
     ];
 
     public function __construct(

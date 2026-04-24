@@ -529,7 +529,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?Bailleur $bailleur = null;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $lastSuiviIsPublic = null; // TODO : à changer ?
+    private ?bool $lastSuiviIsVisibleForUsager = null;
 
     /** @var array<mixed> $synchroData */
     #[ORM\Column(nullable: true)]
@@ -2887,15 +2887,14 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function isLastSuiviIsPublic(): ?bool
-    {// TODO : à changer ?
-        return $this->lastSuiviIsPublic;
+    public function isLastSuiviIsVisibleForUsager(): ?bool
+    {
+        return $this->lastSuiviIsVisibleForUsager;
     }
 
-    public function setLastSuiviIsPublic(?bool $lastSuiviIsPublic): static
+    public function setLastSuiviIsVisibleForUsager(?bool $lastSuiviIsVisibleForUsager): static
     {
-        // TODO : à changer ?
-        $this->lastSuiviIsPublic = $lastSuiviIsPublic;
+        $this->lastSuiviIsVisibleForUsager = $lastSuiviIsVisibleForUsager;
 
         return $this;
     }

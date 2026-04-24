@@ -23,7 +23,7 @@ enum SuiviVisibility: string
     }
 
     /** @return array<SuiviVisibility> */
-    public static function getAvailableFor(bool $isPublic): array
+    public static function fromIsPublic(bool $isPublic): array
     {
         if ($isPublic) {
             return [

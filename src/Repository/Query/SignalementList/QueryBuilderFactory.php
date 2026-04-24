@@ -11,7 +11,6 @@ use App\Repository\Query\Dashboard\DossiersAvecRelanceSansReponseQuery;
 use App\Repository\Query\Dashboard\DossiersQuery;
 use App\Repository\Query\Dashboard\DossiersSansSuivisPartenaireQuery;
 use App\Repository\Query\Dashboard\DossiersUndeliverableEmailQuery;
-use App\Repository\SignalementRepository;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use App\Service\Signalement\SearchFilter;
 use Doctrine\DBAL\Exception;
@@ -39,9 +38,6 @@ readonly class QueryBuilderFactory
     {
         $qb = $this->em->createQueryBuilder()->from(Signalement::class, 's');
 
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->em->getRepository(Signalement::class);
-        // TODO : à changer ?
         $qb->select('
             DISTINCT s.id,
             s.uuid,
@@ -58,7 +54,7 @@ readonly class QueryBuilderFactory
             s.villeOccupant,
             s.lastSuiviAt,
             s.lastSuiviBy,
-            s.lastSuiviIsPublic,
+            s.lastSuiviIsVisibleForUsager,
             s.profileDeclarant,
             s.isLogementSocial,
             territory.id as territoryId,

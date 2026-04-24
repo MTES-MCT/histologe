@@ -321,7 +321,7 @@ class SignalementController extends AbstractController
             return $this->json($response, $response['code']);
         }
         if (!$this->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $signalementAffectationClose->setIsPublic(false); // TODO : à changer ?
+            $signalementAffectationClose->setIsVisibleForUsager(false);
         }
         $signalementAffectationClose->setSubject($partner->getNom());
 

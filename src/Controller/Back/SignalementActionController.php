@@ -360,7 +360,7 @@ class SignalementActionController extends AbstractController
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
-                visibility: SuiviVisibility::getAvailableFor('1' === $request->query->get('publicSuivi')),
+                visibility: SuiviVisibility::fromIsPublic('1' === $request->query->get('publicSuivi')),
                 subscriptionCreated: $subscriptionCreated,
             );
             $this->addFlash('success', ['title' => 'Réouverture enregistrée', 'message' => 'Le dossier a bien été rouvert.']);

@@ -99,7 +99,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             category: $category,
             partner: $createdBy?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $createdBy,
-            visibility: SuiviVisibility::getAvailableFor(1 == $row['is_public']),
+            visibility: SuiviVisibility::fromIsPublic(1 == $row['is_public']),
             createdAt: $createdAt,
             context: $context,
             flush: false,

@@ -61,7 +61,7 @@
                 <p v-if="item.lastSuiviBy !== null">
                   <span class="fr-icon-discuss-line" aria-hidden="true"></span>
                   Dernier suivi par {{ getSuiviLabel(item.lastSuiviBy) }} le {{ formatDate(item.lastSuiviAt) }}
-                  <span :class="getBadgeSuivi(item.lastSuiviBy)">{{ getSuiviVisibility(item.lastSuiviIsPublic) }}</span>
+                  <span :class="getBadgeSuivi(item.lastSuiviBy)">{{ getSuiviVisibility(item.lastSuiviIsVisibleForUsager) }}</span>
                 </p>
                 <p v-else>
                   <span class="fr-icon-discuss-line" aria-hidden="true"></span> Aucun suivi effectué

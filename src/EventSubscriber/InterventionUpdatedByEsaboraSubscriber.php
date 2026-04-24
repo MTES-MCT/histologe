@@ -55,7 +55,7 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             category: $suiviCategory,
             partner: $event->getPartner(),
             user: $event->getUser(),
-            visibility: SuiviVisibility::getAvailableFor(!$signalement->isTiersDeclarant()),
+            visibility: SuiviVisibility::fromIsPublic(!$signalement->isTiersDeclarant()),
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $event->setSuivi($suivi);
