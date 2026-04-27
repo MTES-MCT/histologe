@@ -1,9 +1,5 @@
 {% extends 'service_secours/base.html.twig' %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('build/leaflet/leaflet.css')}}">
-{% endblock %}
-
 {% block body %}
     <main class="fr-container fr-mb-5w" id="content">
         {% set current_step = form.vars.cursor.currentStep %}

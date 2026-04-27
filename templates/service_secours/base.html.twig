@@ -18,8 +18,7 @@
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-device/icons-device.min.css') }}">
     <link rel="stylesheet" href="{{ asset('build/dsfr/utility/icons/icons-map/icons-map.min.css') }}">
     <link rel="stylesheet" href={{ asset('build/app.css') }}>
-    
-    {% block stylesheets %}{% endblock %}
+    <link rel="stylesheet" href="{{ asset('build/leaflet/leaflet.css')}}">
 
     {% block customscripts %}
         {{ encore_entry_script_tags('app') }}

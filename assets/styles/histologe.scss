@@ -918,7 +918,7 @@ ul + p {
     }
 }
 .pick-location-success {
-  color: #18753c;
+  color: var(--background-flat-success);
   font-weight: 500;
   display: inline-flex;
   align-items: center;
