@@ -13,7 +13,6 @@ use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
-use App\Manager\InterventionManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
@@ -45,9 +44,9 @@ class EsaboraManagerTest extends KernelTestCase
 
     protected MockObject&AffectationManager $affectationManager;
     protected MockObject&SuiviManager $suiviManager;
+    protected MockObject&SuiviRepository $suiviRepository;
     protected MockObject&InterventionRepository $interventionRepository;
     protected MockObject&InterventionFactory $interventionFactory;
-    protected MockObject&InterventionManager $interventionManager;
     protected EventDispatcher $eventDispatcher;
     protected MockObject&UserManager $userManager;
     private MockObject&LoggerInterface $logger;
@@ -66,9 +65,9 @@ class EsaboraManagerTest extends KernelTestCase
     {
         $this->affectationManager = $this->createMock(AffectationManager::class);
         $this->suiviManager = $this->createMock(SuiviManager::class);
+        $this->suiviRepository = $this->createMock(SuiviRepository::class);
         $this->interventionRepository = $this->createMock(InterventionRepository::class);
         $this->interventionFactory = $this->createMock(InterventionFactory::class);
-        $this->interventionManager = $this->createMock(InterventionManager::class);
         $this->userManager = $this->createMock(UserManager::class);
         $this->eventDispatcher = new EventDispatcher();
         $this->logger = $this->createMock(LoggerInterface::class);
@@ -111,10 +110,6 @@ class EsaboraManagerTest extends KernelTestCase
             ->expects($this->never())
             ->method('createInstanceFrom');
 
-        $this->interventionManager
-            ->expects($this->never())
-            ->method('save');
-
         $this->logger
             ->expects($this->once())
             ->method('error');
@@ -127,9 +122,9 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
+            $this->suiviRepository,
             $this->interventionRepository,
             $this->interventionFactory,
-            $this->interventionManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -194,10 +189,6 @@ class EsaboraManagerTest extends KernelTestCase
                     Intervention::STATUS_DONE)
             );
 
-        $this->interventionManager
-            ->expects($this->once())
-            ->method('save');
-
         if (self::CREATE_ACTION === $action) {
             $this->interventionFactory
                 ->expects($this->once())
@@ -212,9 +203,9 @@ class EsaboraManagerTest extends KernelTestCase
         return new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
+            $this->suiviRepository,
             $this->interventionRepository,
             $this->interventionFactory,
-            $this->interventionManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -255,11 +246,6 @@ class EsaboraManagerTest extends KernelTestCase
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionResponse()->getCollection();
         $dossierVisite = $dossierVisiteCollection[0];
 
-        $this->interventionManager
-            ->expects($this->once())
-            ->method('save')
-            ->with($intervention);
-
         $this->userManager
         ->expects($this->once())
         ->method('getSystemUser')
@@ -267,9 +253,9 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
+            $this->suiviRepository,
             $this->interventionRepository,
             $this->interventionFactory,
-            $this->interventionManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -319,10 +305,6 @@ class EsaboraManagerTest extends KernelTestCase
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionResponse()->getCollection();
         $dossierVisite = $dossierVisiteCollection[0];
 
-        $this->interventionManager
-            ->expects($this->never())
-            ->method('save');
-
         $this->userManager
         ->expects($this->once())
         ->method('getSystemUser')
@@ -330,9 +312,9 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
+            $this->suiviRepository,
             $this->interventionRepository,
             $this->interventionFactory,
-            $this->interventionManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -401,9 +383,9 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
+            $this->suiviRepository,
             $this->interventionRepository,
             $this->interventionFactory,
-            $this->interventionManager,
             $this->eventDispatcher,
             $this->userManager,
             $this->logger,

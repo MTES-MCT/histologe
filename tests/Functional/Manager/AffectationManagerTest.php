@@ -12,6 +12,7 @@ use App\Manager\HistoryEntryManager;
 use App\Manager\SuiviManager;
 use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
+use App\Repository\PartnerRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -32,6 +33,8 @@ class AffectationManagerTest extends WebTestCase
     private EventDispatcherInterface $eventDispatcher;
     private InterconnectionBus $interconnectionBus;
     private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
+    private PartnerRepository $partnerRepository;
+    private AffectationRepository $affectationRepository;
     private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
@@ -45,6 +48,8 @@ class AffectationManagerTest extends WebTestCase
         $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);
         $this->interconnectionBus = static::getContainer()->get(InterconnectionBus::class);
         $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
+        $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
         $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->affectationManager = new AffectationManager(
             $this->managerRegistry,
@@ -54,6 +59,8 @@ class AffectationManagerTest extends WebTestCase
             $this->eventDispatcher,
             $this->interconnectionBus,
             $this->userSignalementSubscriptionRepository,
+            $this->partnerRepository,
+            $this->affectationRepository,
             $this->entityManager,
             Affectation::class,
         );

@@ -6,7 +6,6 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\User;
 use App\Manager\HistoryEntryManager;
-use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementBailleur;
 use App\Security\User\SignalementUser;
@@ -23,7 +22,6 @@ class AuthentificationSuccessListener
 
     public function __construct(
         private readonly HistoryEntryManager $historyEntryManager,
-        private readonly UserManager $userManager,
         private readonly LoggerInterface $logger,
         private readonly SignalementRepository $signalementRepository,
         private readonly EntityManagerInterface $entityManager,
@@ -69,7 +67,7 @@ class AuthentificationSuccessListener
 
         if ($user instanceof User) {
             $user->setLastLoginAt(new \DateTimeImmutable());
-            $this->userManager->save($user);
+            $this->entityManager->persist($user);
         }
 
         $this->createAuthentificationHistory($eventType, $user);
@@ -97,7 +95,7 @@ class AuthentificationSuccessListener
 
             $source = $this->historyEntryManager->getSource();
             $historyEntry->setSource($source);
-            $this->historyEntryManager->save($historyEntry);
+            $this->entityManager->persist($historyEntry);
 
             return;
         } catch (\Throwable $exception) {

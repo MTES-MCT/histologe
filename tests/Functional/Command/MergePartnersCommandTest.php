@@ -5,7 +5,6 @@ namespace App\Tests\Functional\Command;
 use App\Entity\Affectation;
 use App\Entity\Partner;
 use App\Entity\User;
-use App\Entity\UserSignalementSubscription;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
@@ -34,10 +33,10 @@ class MergePartnersCommandTest extends KernelTestCase
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $doctrine->getManager();
         $this->entityManager = $entityManager;
-        $this->partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $this->userRepository = $this->entityManager->getRepository(User::class);
-        $this->affectationRepository = $this->entityManager->getRepository(Affectation::class);
-        $this->subscriptionRepository = $this->entityManager->getRepository(UserSignalementSubscription::class);
+        $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
+        $this->userRepository = static::getContainer()->get(UserRepository::class);
+        $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
+        $this->subscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
 
         $application = new Application($kernel);
         $command = $application->find('app:merge-partners');

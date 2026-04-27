@@ -3,7 +3,6 @@
 namespace App\DataFixtures\Loader;
 
 use App\Factory\CommuneFactory;
-use App\Manager\CommuneManager;
 use App\Service\Import\CsvParser;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Utils\Address\ImportCommune;
@@ -21,7 +20,6 @@ class LoadCommuneData extends Fixture implements OrderedFixtureInterface
     public function __construct(
         private readonly ParameterBagInterface $params,
         private readonly CommuneFactory $communeFactory,
-        private readonly CommuneManager $communeManager,
         private readonly CsvParser $csvParser,
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly EntityManagerInterface $entityManager,
@@ -65,7 +63,7 @@ class LoadCommuneData extends Fixture implements OrderedFixtureInterface
 
                 $existingCpAndInseeCode[$keyCommune] = 1;
 
-                $this->communeManager->save($commune);
+                $this->entityManager->persist($commune);
                 if (0 === $totalRead % self::FLUSH_COUNT) {
                     $this->entityManager->flush();
                 }

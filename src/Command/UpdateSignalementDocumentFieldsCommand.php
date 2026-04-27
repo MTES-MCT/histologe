@@ -4,9 +4,8 @@ namespace App\Command;
 
 use App\Entity\Territory;
 use App\Manager\FileManager;
-use App\Manager\SignalementManager;
-use App\Manager\TerritoryManager;
 use App\Repository\SignalementRepository;
+use App\Repository\TerritoryRepository;
 use App\Service\Import\CsvParser;
 use App\Service\Import\Signalement\SignalementImportImageHeader;
 use App\Service\UploadHandlerService;
@@ -32,8 +31,8 @@ class UpdateSignalementDocumentFieldsCommand extends Command
     private const int BATCH_SIZE = 200;
 
     public function __construct(
-        private readonly TerritoryManager $territoryManager,
-        private readonly SignalementManager $signalementManager,
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly SignalementRepository $signalementRepository,
         private readonly CsvParser $csvParser,
         private readonly ParameterBagInterface $parameterBag,
         private readonly FilesystemOperator $fileStorage,
@@ -58,7 +57,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $zip = $input->getArgument('zip');
         /** @var ?Territory $territory */
-        $territory = $this->territoryManager->findOneBy(['zip' => $zip]);
+        $territory = $this->territoryRepository->findOneBy(['zip' => $zip]);
         if (null === $territory) {
             $io->error('Territory does not exist');
 
@@ -77,8 +76,6 @@ class UpdateSignalementDocumentFieldsCommand extends Command
 
         $rows = $this->csvParser->parseAsDict($toFile);
 
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->signalementManager->getRepository();
         $currentReference = $rows[0][SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
         $countFile = 0;
         foreach ($rows as $key => $row) {
@@ -91,7 +88,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                 if (null !== $filename) {
                     $currentReference = $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
 
-                    $signalement = $signalementRepository->findByReferenceChunk($territory, $currentReference);
+                    $signalement = $this->signalementRepository->findByReferenceChunk($territory, $currentReference);
                     if (null !== $signalement) {
                         $file = $this->fileManager->createOrUpdate(
                             filename: $filename,

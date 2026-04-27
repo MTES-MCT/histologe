@@ -5,7 +5,6 @@ namespace App\Command\Cron;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
-use App\Manager\InterventionManager;
 use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\InterventionRepository;
@@ -29,7 +28,6 @@ class NotifyVisitsCommand extends AbstractCronCommand
 {
     public function __construct(
         private readonly InterventionRepository $interventionRepository,
-        private readonly InterventionManager $interventionManager,
         private readonly AffectationRepository $affectationRepository,
         private readonly SuiviManager $suiviManager,
         private readonly VisiteNotifier $visiteNotifier,
@@ -90,7 +88,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
             );
 
             $intervention->setReminderBeforeSentAt(new \DateTimeImmutable());
-            $this->interventionManager->save($intervention);
+            $this->entityManager->persist($intervention);
 
             ++$countFutureVisits;
         }
@@ -110,7 +108,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
             );
 
             $intervention->setReminderConclusionSentAt(new \DateTimeImmutable());
-            $this->interventionManager->save($intervention);
+            $this->entityManager->persist($intervention);
             ++$countPastVisits;
         }
 

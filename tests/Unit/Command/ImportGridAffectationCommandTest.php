@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Command;
 
 use App\Command\ImportGridAffectationCommand;
-use App\Manager\TerritoryManager;
+use App\Repository\TerritoryRepository;
 use App\Service\Import\CsvParser;
 use App\Service\Import\GridAffectation\GridAffectationLoader;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -24,7 +24,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
 
     private MockObject&FilesystemOperator $fileStorage;
     private ParameterBagInterface $parameterBag;
-    private MockObject&TerritoryManager $territoryManager;
+    private MockObject&TerritoryRepository $territoryRepository;
     private MockObject&CsvParser $csvParser;
     private MockObject&GridAffectationLoader $gridAffectationLoader;
     private MockObject&UploadHandlerService $uploadHandlerServiceMock;
@@ -36,7 +36,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
     {
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        $this->territoryManager = $this->createMock(TerritoryManager::class);
+        $this->territoryRepository = $this->createMock(TerritoryRepository::class);
         $this->csvParser = $this->createMock(CsvParser::class);
         $this->gridAffectationLoader = $this->createMock(GridAffectationLoader::class);
         $this->uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
@@ -60,7 +60,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             ->with('csv/grille_affectation_01.csv')
             ->willReturn(true);
 
-        $this->territoryManager
+        $this->territoryRepository
             ->expects($this->once())
             ->method('findOneBy')
             ->willReturn($this->getTerritory(isActive: 0));
@@ -83,7 +83,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             $this->fileStorage,
             $this->parameterBag,
             $this->csvParser,
-            $this->territoryManager,
+            $this->territoryRepository,
             $this->gridAffectationLoader,
             $this->uploadHandlerServiceMock,
             $this->notificationMailerRegistryMock,
@@ -114,7 +114,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             ->with('csv/grille_affectation_13-1.csv')
             ->willReturn(true);
 
-        $this->territoryManager
+        $this->territoryRepository
             ->expects($this->once())
             ->method('findOneBy')
             ->willReturn($this->getTerritory(name: 'Bouches-du-Rhône', zip: '13', isActive: 1));
@@ -128,7 +128,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             $this->fileStorage,
             $this->parameterBag,
             $this->csvParser,
-            $this->territoryManager,
+            $this->territoryRepository,
             $this->gridAffectationLoader,
             $this->uploadHandlerServiceMock,
             $this->notificationMailerRegistryMock,

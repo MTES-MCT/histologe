@@ -3,7 +3,6 @@
 namespace App\Tests\Functional\Messenger\MessageHandler;
 
 use App\Entity\Enum\SignalementStatus;
-use App\Manager\SignalementManager;
 use App\Messenger\Message\SignalementDraftProcessMessage;
 use App\Messenger\MessageHandler\SignalementAddressUpdateAndAutoAssignMessageHandler;
 use App\Repository\AffectationRepository;
@@ -84,9 +83,8 @@ class SignalementAddressUpdateAndAutoAssignMessageHandlerTest extends WebTestCas
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $signalement = $signalementRepository->findOneBy(['reference' => '2025-05']);
         $signalement->setStatut(SignalementStatus::INJONCTION_BAILLEUR);
-        $signalementManager = static::getContainer()->get(SignalementManager::class);
-        $signalementManager->save($signalement);
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->persist($signalement);
         $entityManager->flush();
 
         $notificationRepository = static::getContainer()->get(NotificationRepository::class);

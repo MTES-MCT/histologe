@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Repository\Query\Statistics;
+namespace App\Tests\Functional\Repository\Behaviour;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
@@ -27,7 +27,9 @@ class AffectationUpdaterTest extends KernelTestCase
         $entityManager = $doctrine->getManager();
 
         $this->entityManager = $entityManager;
-        $this->affectationUpdater = static::getContainer()->get(AffectationUpdater::class);
+        /** @var AffectationUpdater $affectationUpdater */
+        $affectationUpdater = static::getContainer()->get(AffectationUpdater::class);
+        $this->affectationUpdater = $affectationUpdater;
     }
 
     public function testUpdateStatusBySignalement(): void

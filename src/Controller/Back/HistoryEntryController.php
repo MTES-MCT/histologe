@@ -12,6 +12,7 @@ use App\Repository\SignalementRepository;
 use App\Security\Voter\SignalementVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,6 +47,7 @@ class HistoryEntryController extends AbstractController
     public function historyEntryDetails(
         HistoryEntryRepository $historyEntryRepository,
         EntityManagerInterface $entityManager,
+        ManagerRegistry $managerRegistry,
         Request $request,
     ): Response {
         $entity_name = $request->query->get('entity_name', '');
@@ -62,7 +64,7 @@ class HistoryEntryController extends AbstractController
             $fullEntityName = 'App\\Entity\\'.$entity_name;
             /** @var class-string $fullEntityName */
             $historyEntries = $historyEntryRepository->findBy(['entityId' => $entity_id, 'entityName' => $fullEntityName], ['createdAt' => $orderType]);
-            $entity = $entityManager->getRepository($fullEntityName)->find($entity_id);
+            $entity = $managerRegistry->getRepository($fullEntityName)->find($entity_id);
             $entityUrl = match (true) {
                 $entity instanceof Signalement => $this->generateUrl('back_signalement_view', ['uuid' => $entity->getUuid()]),
                 $entity instanceof Partner => $this->generateUrl('back_partner_view', ['id' => $entity->getId()]),
@@ -76,7 +78,7 @@ class HistoryEntryController extends AbstractController
                         if ('HistoryEntry' === $shortName) {
                             continue;
                         }
-                        $relatedEntities[$shortName] = $entityManager->getRepository($metadata->getName())->findBy([$fieldName => $entity]);
+                        $relatedEntities[$shortName] = $managerRegistry->getRepository($metadata->getName())->findBy([$fieldName => $entity]);
                     }
                 }
             }

@@ -27,7 +27,9 @@ class ClearStorageOriginalFileCommandTest extends KernelTestCase
         $this->fileRepository = static::getContainer()->get(FileRepository::class);
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
         $this->mailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
-        $this->fileUpdater = static::getContainer()->get(FileUpdater::class);
+        /** @var FileUpdater $fileUpdater */
+        $fileUpdater = static::getContainer()->get(FileUpdater::class);
+        $this->fileUpdater = $fileUpdater;
     }
 
     public function testExecuteTwice(): void

@@ -8,7 +8,7 @@ use App\Entity\Territory;
 use App\Repository\PartnerRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-class PartnerManager extends AbstractManager
+class PartnerManager extends Manager
 {
     public function __construct(
         private PartnerRepository $partnerRepository,

@@ -11,6 +11,7 @@ use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
+use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Interconnection\Idoss\IdossService;
@@ -43,6 +44,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
         private readonly EntityManagerInterface $entityManager,
         private readonly SignalementRepository $signalementRepository,
         private readonly AffectationRepository $affectationRepository,
+        private readonly PartnerRepository $partnerRepository,
         private readonly UserRepository $userRepository,
         private readonly SuiviManager $suiviManager,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
@@ -52,7 +54,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
         private readonly AffectationManager $affectationManager,
     ) {
         parent::__construct($this->parameterBag);
-        $this->partners = $this->entityManager->getRepository(Partner::class)->findBy(['isIdossActive' => true]);
+        $this->partners = $this->partnerRepository->findBy(['isIdossActive' => true]);
         $this->adminUser = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
     }
 

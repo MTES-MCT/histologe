@@ -4,7 +4,6 @@ namespace App\Tests\Functional\EventListener;
 
 use App\EventListener\AuthentificationSuccessListener;
 use App\Manager\HistoryEntryManager;
-use App\Manager\UserManager;
 use App\Repository\HistoryEntryRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
@@ -62,15 +61,12 @@ class AuthentificationSuccessListenerTest extends WebTestCase
     public function testOnSchebTwoFactorAuthenticationSuccess(): void
     {
         $historyEntryManager = static::getContainer()->get(HistoryEntryManager::class);
-        /** @var UserManager $userManager */
-        $userManager = static::getContainer()->get(UserManager::class);
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $authentificationSuccessListener = new AuthentificationSuccessListener(
             $historyEntryManager,
-            $userManager,
             $this->logger,
             $signalementRepository,
             $entityManager,

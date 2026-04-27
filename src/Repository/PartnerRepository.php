@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\UserStatus;
@@ -31,6 +30,7 @@ class PartnerRepository extends ServiceEntityRepository
 {
     public function __construct(
         private readonly TerritoryRepository $territoryRepository,
+        private readonly AffectationRepository $affectationRepository,
         ManagerRegistry $registry,
     ) {
         parent::__construct($registry, Partner::class);
@@ -250,7 +250,7 @@ class PartnerRepository extends ServiceEntityRepository
             $partnerIds = array_merge($partnerIds, array_column($resultSet->fetchAllAssociative(), 'id'));
         }
 
-        return $this->getEntityManager()->getRepository(Partner::class)->findBy(['id' => $partnerIds]);
+        return $this->findBy(['id' => $partnerIds]);
     }
 
     /**
@@ -264,7 +264,7 @@ class PartnerRepository extends ServiceEntityRepository
     {
         $operator = $affected ? 'IN' : 'NOT IN';
 
-        $subquery = $this->getEntityManager()->getRepository(Affectation::class)->createQueryBuilder('a')
+        $subquery = $this->affectationRepository->createQueryBuilder('a')
             ->select('IDENTITY(a.partner)')
             ->where('a.signalement = :signalement')
             ->setParameter('signalement', $signalement);

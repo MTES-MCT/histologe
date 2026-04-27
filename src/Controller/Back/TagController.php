@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Form\AddTagType;
 use App\Form\EditTagType;
 use App\Form\SearchTagType;
-use App\Manager\TagManager;
 use App\Repository\TagRepository;
 use App\Security\Voter\TagVoter;
 use App\Service\ListFilters\SearchTag;
@@ -159,14 +158,14 @@ class TagController extends AbstractController
     #[Route('/supprimer', name: 'back_tags_delete', methods: 'POST')]
     public function deleteTag(
         Request $request,
-        TagManager $tagManager,
+        TagRepository $tagRepository,
         EntityManagerInterface $entityManager,
         TagAwareCacheInterface $cache,
     ): Response {
         /** @var string|int $tagId */
         $tagId = $request->request->get('tag_id');
         /** @var Tag $tag */
-        $tag = $tagManager->find($tagId);
+        $tag = $tagRepository->find($tagId);
         $this->denyAccessUnlessGranted(TagVoter::TAG_DELETE, $tag);
 
         if ($tag && $this->isCsrfTokenValid('tag_delete', (string) $request->request->get('_token'))) {

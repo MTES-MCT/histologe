@@ -17,8 +17,6 @@ use App\Form\SearchPartnerType;
 use App\Form\UserPartnerEmailType;
 use App\Form\UserPartnerType;
 use App\Manager\AffectationManager;
-use App\Manager\InterventionManager;
-use App\Manager\PartnerManager;
 use App\Manager\PopNotificationManager;
 use App\Manager\UserManager;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
@@ -185,7 +183,6 @@ class PartnerController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         VisiteNotifier $visiteNotifier,
         WorkflowInterface $interventionPlanningStateMachine,
-        InterventionManager $interventionManager,
     ): Response {
         $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_EDIT, $partner);
         if ($partner->getIsArchive()) {
@@ -237,7 +234,7 @@ class PartnerController extends AbstractController
                     partner: $partner,
                     visiteNotifier: $visiteNotifier,
                     interventionPlanningStateMachine: $interventionPlanningStateMachine,
-                    interventionManager: $interventionManager,
+                    entityManager: $entityManager,
                 );
             }
 
@@ -271,7 +268,6 @@ class PartnerController extends AbstractController
     public function editPerimetre(
         Request $request,
         Partner $partner,
-        PartnerManager $partnerManager,
         EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_EDIT, $partner);
@@ -282,7 +278,7 @@ class PartnerController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $partnerManager->save($partner);
+            $entityManager->persist($partner);
             $entityManager->flush();
             $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'Le périmètre a bien été modifié.']);
 
@@ -301,19 +297,18 @@ class PartnerController extends AbstractController
     #[Route('/supprimer', name: 'back_partner_delete', methods: ['POST'])]
     public function delete(
         Request $request,
-        PartnerManager $partnerManager,
+        PartnerRepository $partnerRepository,
         EntityManagerInterface $entityManager,
         NotificationMailerRegistry $notificationMailerRegistry,
         VisiteNotifier $visiteNotifier,
         WorkflowInterface $interventionPlanningStateMachine,
-        InterventionManager $interventionManager,
         AffectationManager $affectationManager,
         PopNotificationManager $popNotificationManager,
     ): Response {
         /** @var int|string $partnerId */
         $partnerId = $request->request->get('partner_id');
         /** @var ?Partner $partner */
-        $partner = $partnerManager->find($partnerId);
+        $partner = $partnerRepository->find($partnerId);
         $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_DELETE, $partner);
         if (
             $partner
@@ -351,7 +346,7 @@ class PartnerController extends AbstractController
                 partner: $partner,
                 visiteNotifier: $visiteNotifier,
                 interventionPlanningStateMachine: $interventionPlanningStateMachine,
-                interventionManager: $interventionManager,
+                entityManager: $entityManager,
             );
 
             $entityManager->persist($partner);
@@ -382,7 +377,7 @@ class PartnerController extends AbstractController
         Partner $partner,
         VisiteNotifier $visiteNotifier,
         WorkflowInterface $interventionPlanningStateMachine,
-        InterventionManager $interventionManager,
+        EntityManagerInterface $entityManager,
     ): void {
         if (\in_array(Qualification::VISITES, $partner->getCompetence())) {
             /** @var Intervention $intervention */
@@ -396,12 +391,12 @@ class PartnerController extends AbstractController
                         $user = $this->getUser();
                         $context = ['createdByPartner' => $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getTerritory())];
                         $interventionPlanningStateMachine->apply($intervention, 'cancel', $context);
-                        $interventionManager->save($intervention); // flushed in bulk at the end of the loop to avoid multiple flush if many interventions
+                        $entityManager->persist($intervention); // flushed in bulk at the end of the loop to avoid multiple flush if many interventions
 
                     // planned visites in the past are un-assigned
                     } else {
                         $intervention->setPartner(null);
-                        $interventionManager->save($intervention); // flushed in bulk at the end of the loop to avoid multiple flush if many interventions
+                        $entityManager->persist($intervention); // flushed in bulk at the end of the loop to avoid multiple flush if many interventions
 
                         $visiteNotifier->notifyVisiteToConclude($intervention);
                     }
@@ -416,7 +411,6 @@ class PartnerController extends AbstractController
         Request $request,
         Partner $partner,
         UserRepository $userRepository,
-        UserManager $userManager,
         NotificationMailerRegistry $notificationMailerRegistry,
         PopNotificationManager $popNotificationManager,
         EntityManagerInterface $entityManager,
@@ -433,7 +427,7 @@ class PartnerController extends AbstractController
             if ($user) {
                 $userPartner->setUser($user);
                 $popNotificationManager->createOrUpdatePopNotification($user, 'addPartner', $partner);
-                $userManager->save($userPartner);
+                $entityManager->persist($userPartner);
                 $entityManager->flush();
                 $notificationMailerRegistry->send(
                     new NotificationMail(
@@ -464,6 +458,7 @@ class PartnerController extends AbstractController
         Request $request,
         Partner $partner,
         UserManager $userManager,
+        UserRepository $userRepository,
         EntityManagerInterface $entityManager,
     ): JsonResponse|RedirectResponse {
         $this->denyAccessUnlessGranted(PartnerVoter::PARTNER_USER_CREATE, $partner);
@@ -474,7 +469,7 @@ class PartnerController extends AbstractController
         $formUserPartner = $this->createForm(UserPartnerType::class, $user, ['action' => $addUserRoute]);
         $formUserPartner->handleRequest($request);
         if ($formUserPartner->isSubmitted() && $formUserPartner->isValid()) {
-            $userExist = $userManager->findOneBy(['email' => $user->getEmail()]);
+            $userExist = $userRepository->findOneBy(['email' => $user->getEmail()]);
             if ($userExist instanceof User && !\in_array('ROLE_USAGER', $userExist->getRoles())) {
                 $addUserOnPartnerRoute = $this->generateUrl('back_partner_add_user_multi', ['id' => $partner->getId()]);
                 $formMultiMail = $this->createForm(UserPartnerEmailType::class, $user, ['action' => $addUserOnPartnerRoute]);
@@ -498,8 +493,8 @@ class PartnerController extends AbstractController
                 $user = $userExist;
                 $userManager->sendAccountActivationNotification($user);
             }
-            $userManager->save($userPartner);
-            $userManager->save($user);
+            $entityManager->persist($userPartner);
+            $entityManager->persist($user);
             $entityManager->flush();
             $message = 'L\'utilisateur a bien été créé. Un e-mail de confirmation a été envoyé à '.$user->getEmail();
             $this->addFlash('success', ['title' => 'Utilisateur ajouté', 'message' => $message]);
@@ -561,7 +556,7 @@ class PartnerController extends AbstractController
     }
 
     #[Route('/{id}/transfererutilisateur', name: 'back_partner_user_transfer', methods: ['POST'])]
-    public function transferUser(Request $request, Partner $fromPartner, UserManager $userManager, PartnerManager $partnerManager, PartnerRepository $partnerRepository): JsonResponse
+    public function transferUser(Request $request, Partner $fromPartner, UserManager $userManager, UserRepository $userRepository, PartnerRepository $partnerRepository): JsonResponse
     {
         $requestData = $request->request->all();
         $data = RequestDataExtractor::getArray($requestData, 'user_transfer');
@@ -572,9 +567,9 @@ class PartnerController extends AbstractController
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         /** @var Partner $toPartner */
-        $toPartner = $partnerManager->find($data['partner']);
+        $toPartner = $partnerRepository->find($data['partner']);
         /** @var User $user */
-        $user = $userManager->find($data['user']);
+        $user = $userRepository->find($data['user']);
         if (!$toPartner || !$user) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le partenaire ou l\'utilisateur est introuvable.'];
 
@@ -601,7 +596,7 @@ class PartnerController extends AbstractController
     public function deleteUser(
         Request $request,
         Partner $partner,
-        UserManager $userManager,
+        UserRepository $userRepository,
         NotificationMailerRegistry $notificationMailerRegistry,
         PopNotificationManager $popNotificationManager,
         EntityManagerInterface $entityManager,
@@ -615,7 +610,7 @@ class PartnerController extends AbstractController
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         /** @var User $user */
-        $user = $userManager->find($userId);
+        $user = $userRepository->find($userId);
         if (!$user || !$user->hasPartner($partner)) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur de suppression', 'message' => 'L\'utilisateur ne fait pas partie de ce partenaire.'];
 
@@ -633,7 +628,7 @@ class PartnerController extends AbstractController
             foreach ($user->getUserPartners() as $userPartner) {
                 if ($userPartner->getPartner()->getId() === $partner->getId()) {
                     $popNotificationManager->createOrUpdatePopNotification($user, 'removePartner', $partner);
-                    $userManager->remove($userPartner);
+                    $entityManager->remove($userPartner);
                     $entityManager->flush();
                     break;
                 }
@@ -662,7 +657,7 @@ class PartnerController extends AbstractController
         $user->setEmail(Sanitizer::tagArchivedEmail($user->getEmail()));
         $user->setStatut(UserStatus::ARCHIVE);
         $user->setProConnectUserId(null);
-        $userManager->save($user);
+        $entityManager->persist($user);
         $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Utilisateur supprimé', 'message' => 'L\'utilisateur a bien été supprimé.'];
         $htmlTargetContents = $this->getHtmlTargetContentsForPartnerAgentList($partner);

@@ -3,7 +3,6 @@
 namespace App\Command\Cron;
 
 use App\Entity\SignalementDraft;
-use App\Manager\SignalementDraftManager;
 use App\Repository\SignalementDraftRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -25,7 +24,6 @@ class RemindPendingDraftsCommand extends AbstractCronCommand
 {
     public function __construct(
         private readonly SignalementDraftRepository $signalementDraftRepository,
-        private readonly SignalementDraftManager $signalementDraftManager,
         private readonly SignalementDraftHelper $signalementDraftHelper,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
@@ -62,7 +60,7 @@ class RemindPendingDraftsCommand extends AbstractCronCommand
                     )
                 );
                 $signalementDraft->setPendingDraftRemindedAtValue();
-                $this->signalementDraftManager->save($signalementDraft);
+                $this->entityManager->persist($signalementDraft);
             }
         }
 

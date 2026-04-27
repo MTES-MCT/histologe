@@ -3,7 +3,6 @@
 namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\User;
-use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use App\Service\Files\ImageManipulationHandler;
 use App\Service\Security\FileScanner;
@@ -23,7 +22,6 @@ class ProfilControllerTest extends WebTestCase
 
     private ?KernelBrowser $client = null;
     private UserRepository $userRepository;
-    private UserManager $userManager;
     private EntityManagerInterface $entityManager;
     private RouterInterface $router;
     private User $user;
@@ -36,7 +34,6 @@ class ProfilControllerTest extends WebTestCase
         self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
-        $this->userManager = static::getContainer()->get(UserManager::class);
         $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->router = static::getContainer()->get(RouterInterface::class);
 
@@ -240,7 +237,7 @@ class ProfilControllerTest extends WebTestCase
     public function testDeleteAvatarSuccess(): void
     {
         $this->user->setAvatarFilename('path/to/avatar.jpg');
-        $this->userManager->save($this->user);
+        $this->entityManager->persist($this->user);
         $this->entityManager->flush();
 
         $this->uploadHandlerServiceMock->expects($this->once())

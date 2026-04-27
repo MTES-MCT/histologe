@@ -19,6 +19,7 @@ use App\Security\User\SignalementUser;
 use App\Utils\DateHelper;
 use App\Utils\DictionaryProvider;
 use App\Utils\Sanitizer;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\ClockInterface;
@@ -33,6 +34,7 @@ class SuiviManager extends Manager
     public function __construct(
         protected ManagerRegistry $managerRegistry,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly EntityManagerInterface $entityManager,
         private readonly Security $security,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
@@ -92,7 +94,7 @@ class SuiviManager extends Manager
         }
         foreach ($files as $file) {
             $suiviFile = (new SuiviFile())->setFile($file)->setSuivi($suivi)->setTitle($file->getTitle());
-            $this->save($suiviFile);
+            $this->entityManager->persist($suiviFile);
             $suivi->addSuiviFile($suiviFile);
         }
         // abonnement au signalement si le suivi est crée par un agent non abonné
@@ -104,9 +106,9 @@ class SuiviManager extends Manager
                 subscriptionCreated: $subscriptionCreated
             );
         }
-        $this->save($suivi);
+        $this->entityManager->persist($suivi);
         if ($flush) {
-            $this->managerRegistry->getManager()->flush();
+            $this->entityManager->flush();
         }
         $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME);
 

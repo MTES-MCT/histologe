@@ -19,10 +19,12 @@ class JobEventManagerTest extends KernelTestCase
 
     public function testCreateJobEvent(): void
     {
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
 
-        $jobEventManager = new JobEventManager($managerRegistry, JobEvent::class);
+        $jobEventManager = new JobEventManager($entityManager, $managerRegistry, JobEvent::class);
         $jobEvent = $jobEventManager->createJobEvent(
             'esabora',
             'push_dossier',
@@ -35,8 +37,6 @@ class JobEventManagerTest extends KernelTestCase
             PartnerType::COMMUNE_SCHS
         );
 
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $entityManager->flush();
 
         $this->assertInstanceOf(JobEvent::class, $jobEvent);

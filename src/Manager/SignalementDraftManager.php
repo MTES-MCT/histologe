@@ -19,7 +19,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SignalementDraftManager extends AbstractManager
+class SignalementDraftManager extends Manager
 {
     public const LAST_STEP = 'validation_signalement';
 
@@ -46,7 +46,7 @@ class SignalementDraftManager extends AbstractManager
         array $payload,
     ): ?string {
         $signalementDraft = $this->signalementDraftFactory->createInstanceFrom($signalementDraftRequest, $payload);
-        $this->save($signalementDraft);
+        $this->entityManager->persist($signalementDraft);
         $this->entityManager->flush();
 
         return $signalementDraft->getUuid();
@@ -84,7 +84,7 @@ class SignalementDraftManager extends AbstractManager
                 }
             }
         }
-        $this->save($signalementDraft);
+        $this->entityManager->persist($signalementDraft);
         $this->entityManager->flush();
 
         if (SignalementDraftStatus::EN_SIGNALEMENT === $signalementDraft->getStatus() && isset($signalement) && $signalement) {
