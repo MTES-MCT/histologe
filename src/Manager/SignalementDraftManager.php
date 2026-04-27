@@ -85,6 +85,7 @@ class SignalementDraftManager extends AbstractManager
             }
         }
         $this->save($signalementDraft);
+        $this->entityManager->flush();
 
         if (SignalementDraftStatus::EN_SIGNALEMENT === $signalementDraft->getStatus() && isset($signalement) && $signalement) {
             return [
