@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\ApiUserToken;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
-use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -13,7 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<ApiUserToken>
  */
-class ApiUserTokenRepository extends ServiceEntityRepository implements EntityCleanerRepositoryInterface
+class ApiUserTokenRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -38,18 +37,5 @@ class ApiUserTokenRepository extends ServiceEntityRepository implements EntityCl
             ->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    /**
-     * @throws \DateMalformedStringException
-     */
-    public function cleanOlderThan(string $period = ApiUserToken::CLEAN_EXPIRATION_PERIOD): int
-    {
-        $qb = $this->createQueryBuilder('a');
-        $qb->delete()
-            ->andWhere('a.expiresAt < :now')
-            ->setParameter('now', new \DateTimeImmutable($period));
-
-        return $qb->getQuery()->execute();
     }
 }

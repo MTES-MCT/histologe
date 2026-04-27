@@ -19,6 +19,7 @@ use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Messenger\InterconnectionBus;
 use App\Repository\BailleurRepository;
+use App\Repository\Behaviour\FileUpdater;
 use App\Repository\FileRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
@@ -434,10 +435,10 @@ class SignalementCreateController extends AbstractController
         AutoAssigner $autoAssigner,
         AffectationManager $affectationManager,
         UserManager $userManager,
-        FileRepository $fileRepository,
         ReferenceGenerator $referenceGenerator,
         NotificationAndMailSender $notificationAndMailSender,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
+        FileUpdater $fileUpdater,
         EntityManagerInterface $entityManager,
     ): Response {
         $signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
@@ -554,7 +555,7 @@ class SignalementCreateController extends AbstractController
             $signalement->setReference($referenceGenerator->generateReference($signalement->getTerritory()));
             $signalement->setCreatedAt(new \DateTimeImmutable());
             $userManager->createUsagersFromSignalement($signalement);
-            $fileRepository->updateIsWaitingSuiviForSignalement($signalement);
+            $fileUpdater->updateIsWaitingSuiviForSignalement($signalement);
 
             if ($this->isGranted('ROLE_ADMIN_TERRITORY')
                 && $signalement->getAffectations()->count() > 0

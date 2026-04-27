@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Dto\AgentSelection;
 use App\Dto\RefusSignalement;
+use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
@@ -18,6 +19,7 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
+use App\Repository\Behaviour\AffectationUpdater;
 use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
@@ -321,8 +323,8 @@ class SignalementActionController extends AbstractController
     public function reopenSignalement(
         Signalement $signalement,
         Request $request,
-        AffectationRepository $affectationRepository,
         SuiviManager $suiviManager,
+        AffectationUpdater $affectationUpdater,
     ): RedirectResponse|JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
@@ -330,7 +332,7 @@ class SignalementActionController extends AbstractController
         $response = RequestDataExtractor::getArray($requestData, 'signalement-action');
         if ($this->isCsrfTokenValid('signalement_reopen_'.$signalement->getId(), (string) $request->query->get('_token')) && !empty($response)) {
             if ($this->isGranted('ROLE_ADMIN_TERRITORY') && isset($response['reopenAll'])) {
-                $affectationRepository->updateStatusBySignalement(AffectationStatus::WAIT, $signalement);
+                $affectationUpdater->updateStatusBySignalement(AffectationStatus::WAIT, $signalement);
                 $reopenFor = 'tous les partenaires';
             } elseif (!$this->isGranted('ROLE_ADMIN_TERRITORY') && SignalementStatus::CLOSED === $signalement->getStatut()) {
                 $this->addFlash('error', ['title' => 'Accès refusé', 'message' => 'Seul un responsable de territoire peut réouvrir un dossier fermé.']);

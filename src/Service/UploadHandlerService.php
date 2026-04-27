@@ -6,10 +6,11 @@ use App\Entity\File;
 use App\Exception\File\EmptyFileException;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
-use App\Repository\FileRepository;
+use App\Repository\Behaviour\FileDeleter;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Files\ImageManipulationHandler;
 use App\Service\Files\TmpFileWriter;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
@@ -31,8 +32,9 @@ class UploadHandlerService
         private readonly ParameterBagInterface $parameterBag,
         private readonly LoggerInterface $logger,
         private readonly FilenameGenerator $filenameGenerator,
-        private readonly FileRepository $fileRepository,
         private readonly TmpFileWriter $tmpFileWriter,
+        private readonly FileDeleter $fileDeleter,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -248,7 +250,8 @@ class UploadHandlerService
     {
         try {
             $this->deleteFileInBucket($file);
-            $this->fileRepository->remove($file, true);
+            $this->fileDeleter->remove($file);
+            $this->entityManager->flush();
         } catch (\Throwable $exception) {
             $this->logger->error('Erreur lors de la suppression du fichier.', [
                 'exception' => $exception->getMessage(),

@@ -31,15 +31,6 @@ class FileRepository extends ServiceEntityRepository
         parent::__construct($registry, File::class);
     }
 
-    public function remove(File $entity, bool $flush = false): void
-    {
-        $this->getEntityManager()->remove($entity);
-
-        if ($flush) {
-            $this->getEntityManager()->flush();
-        }
-    }
-
     /**
      * @return array<int, File>
      */
@@ -71,23 +62,6 @@ class FileRepository extends ServiceEntityRepository
         return (int) $this->initQueryWithOriginalAndVariants($limit)->select('count(f)')->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * @param array<int, int> $ids
-     */
-    public function updateWithOriginalAndVariants(array $ids): void
-    {
-        if (!empty($ids)) {
-            // Étape 2 : Mettre à jour les enregistrements sélectionnés
-            $this->createQueryBuilder('f')
-                ->update()
-                ->set('f.isOriginalDeleted', true)
-                ->where('f.id IN (:ids)')
-                ->setParameter('ids', $ids)
-                ->getQuery()
-                ->execute();
-        }
-    }
-
     private function initQueryWithOriginalAndVariants(\DateTimeInterface $limit): QueryBuilder
     {
         return $this->createQueryBuilder('f')
@@ -108,18 +82,6 @@ class FileRepository extends ServiceEntityRepository
             ->setParameter('documentType', DocumentType::EXPORT)
             ->setParameter('limit', $limit)
             ->getQuery()->getResult();
-    }
-
-    public function updateIsWaitingSuiviForSignalement(Signalement $signalement): void
-    {
-        $this->createQueryBuilder('f')
-            ->update()
-            ->set('f.isWaitingSuivi', ':isWaitingSuivi')
-            ->where('f.signalement = :signalement')
-            ->setParameter('isWaitingSuivi', false)
-            ->setParameter('signalement', $signalement)
-            ->getQuery()
-            ->execute();
     }
 
     /**

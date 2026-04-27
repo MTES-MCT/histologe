@@ -3,6 +3,7 @@
 namespace App\Repository\Query\Statistics;
 
 use App\Dto\StatisticsFilters;
+use App\Entity\Affectation;
 use App\Entity\Commune;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
@@ -169,5 +170,23 @@ class FilteredStatisticsQuery
         }
 
         return $qb;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function countAffectationsByPartenaireFiltered(StatisticsFilters $statisticsFilters): array
+    {
+        $qb = $this->entityManager->createQueryBuilder()->from(Affectation::class, 'a');
+        $qb->select('a.id, a.statut, partner.id, partner.nom')
+            ->leftJoin('a.signalement', 's');
+        if (!$statisticsFilters->getPartners() || $statisticsFilters->getPartners()->isEmpty()) {
+            $qb->leftJoin('a.partner', 'partner');
+        }
+
+        $qb = $this->addFiltersToQueryBuilder($qb, $statisticsFilters);
+
+        return $qb->getQuery()
+            ->getResult();
     }
 }

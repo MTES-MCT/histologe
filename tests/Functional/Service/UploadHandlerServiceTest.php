@@ -5,10 +5,11 @@ namespace App\Tests\Functional\Service;
 use App\Exception\File\EmptyFileException;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
-use App\Repository\FileRepository;
+use App\Repository\Behaviour\FileDeleter;
 use App\Service\Files\FilenameGenerator;
 use App\Service\Files\TmpFileWriter;
 use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -25,7 +26,7 @@ class UploadHandlerServiceTest extends KernelTestCase
     private ParameterBagInterface $parameterBag;
     private MockObject&LoggerInterface $logger;
     private MockObject&FilenameGenerator $filenameGenerator;
-    private MockObject&FileRepository $fileRepository;
+    private MockObject&FileDeleter $fileDeleter;
     private TmpFileWriter $tmpFileWriter;
 
     private string $projectDir = '';
@@ -50,8 +51,21 @@ class UploadHandlerServiceTest extends KernelTestCase
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->filenameGenerator = $this->createMock(FilenameGenerator::class);
-        $this->fileRepository = $this->createMock(FileRepository::class);
         $this->tmpFileWriter = $this->createMock(TmpFileWriter::class);
+        $this->fileDeleter = $this->createMock(FileDeleter::class);
+    }
+
+    private function getUploadHandlerService(): UploadHandlerService
+    {
+        return new UploadHandlerService(
+            $this->filesystemOperator,
+            $this->parameterBag,
+            $this->logger,
+            $this->filenameGenerator,
+            $this->tmpFileWriter,
+            $this->fileDeleter,
+            static::getContainer()->get(EntityManagerInterface::class)
+        );
     }
 
     /**
@@ -81,14 +95,7 @@ class UploadHandlerServiceTest extends KernelTestCase
             ->method('getTitle')
             ->willReturn('sample-target.png');
 
-        $uploadHandlerService = new UploadHandlerService(
-            $this->filesystemOperator,
-            $this->parameterBag,
-            $this->logger,
-            $this->filenameGenerator,
-            $this->fileRepository,
-            $this->tmpFileWriter
-        );
+        $uploadHandlerService = $this->getUploadHandlerService();
 
         $fileResult = $uploadHandlerService->toTempFolder($uploadFile);
         $this->assertIsArray($fileResult);
@@ -100,22 +107,7 @@ class UploadHandlerServiceTest extends KernelTestCase
 
     public function testUploadBigFileShouldThrowsException(): void
     {
-        /** @var ParameterBagInterface $parameterBag */
-        $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        /** @var MockObject&FilesystemOperator $fileSystem */
-        $fileSystem = $this->createMock(FilesystemOperator::class);
-        /** @var MockObject&FilenameGenerator $fileName */
-        $fileName = $this->createMock(FilenameGenerator::class);
-        /** @var MockObject&LoggerInterface $logger */
-        $logger = $this->createMock(LoggerInterface::class);
-        $uploadHandlerService = new UploadHandlerService(
-            $fileSystem,
-            $parameterBag,
-            $logger,
-            $fileName,
-            $this->fileRepository,
-            $this->tmpFileWriter
-        );
+        $uploadHandlerService = $this->getUploadHandlerService();
 
         /** @var MockObject&UploadedFile $uploadedFileMock */
         $uploadedFileMock = $this->createMock(UploadedFile::class);
@@ -131,22 +123,7 @@ class UploadHandlerServiceTest extends KernelTestCase
 
     public function testUploadVideoFileShouldThrowsException(): void
     {
-        /** @var ParameterBagInterface $parameterBag */
-        $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        /** @var MockObject&FilesystemOperator $fileSystem */
-        $fileSystem = $this->createMock(FilesystemOperator::class);
-        /** @var MockObject&FilenameGenerator $fileName */
-        $fileName = $this->createMock(FilenameGenerator::class);
-        /** @var MockObject&LoggerInterface $logger */
-        $logger = $this->createMock(LoggerInterface::class);
-        $uploadHandlerService = new UploadHandlerService(
-            $fileSystem,
-            $parameterBag,
-            $logger,
-            $fileName,
-            $this->fileRepository,
-            $this->tmpFileWriter
-        );
+        $uploadHandlerService = $this->getUploadHandlerService();
 
         /** @var MockObject&UploadedFile $uploadedFileMock */
         $uploadedFileMock = $this->createMock(UploadedFile::class);
@@ -185,14 +162,7 @@ class UploadHandlerServiceTest extends KernelTestCase
         ->method('writeStream')
         ->willThrowException(new FileException());
 
-        $uploadHandlerService = new UploadHandlerService(
-            $this->filesystemOperator,
-            $this->parameterBag,
-            $this->logger,
-            $this->filenameGenerator,
-            $this->fileRepository,
-            $this->tmpFileWriter
-        );
+        $uploadHandlerService = $this->getUploadHandlerService();
 
         $uploadHandler = $uploadHandlerService->toTempFolder($uploadFile);
         $this->assertIsArray($uploadHandler);
