@@ -6,7 +6,6 @@ use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Partner;
@@ -49,8 +48,7 @@ class SuiviManager extends Manager
     }
 
     /**
-     * @param iterable<File>         $files
-     * @param array<SuiviVisibility> $visibility
+     * @param iterable<File> $files
      */
     public function createSuivi(
         Signalement $signalement,
@@ -59,7 +57,8 @@ class SuiviManager extends Manager
         SuiviCategory $category,
         ?Partner $partner = null,
         ?User $user = null,
-        array $visibility = [SuiviVisibility::PARTENAIRES_AFFECTES],
+        bool $isVisibleForUsager = false,
+        bool $isVisibleForBailleur = false,
         ?\DateTimeImmutable $createdAt = null,
         ?string $context = null,
         bool $sendMail = true,
@@ -69,8 +68,8 @@ class SuiviManager extends Manager
         bool &$subscriptionCreated = false,
     ): Suivi {
         // ticket #5252 Bloquer les emails aux usagers quand logement vacant
-        if ($signalement->getIsLogementVacant()) {
-            $visibility = array_values(array_filter($visibility, static fn (SuiviVisibility $v) => SuiviVisibility::USAGERS !== $v));
+        if ($signalement->getIsLogementVacant() && $isVisibleForUsager) {
+            $isVisibleForUsager = false;
         }
         $suivi = (new Suivi())
             ->setCreatedBy($user)
@@ -78,7 +77,8 @@ class SuiviManager extends Manager
             ->setSignalement($signalement)
             ->setDescription($this->htmlSanitizer->sanitize($description))
             ->setType($type)
-            ->setVisibility($visibility)
+            ->setIsVisibleForUsager($isVisibleForUsager)
+            ->setIsVisibleForBailleur($isVisibleForBailleur)
             ->setContext($context)
             ->setSendMail($sendMail)
             ->setCategory($category);
@@ -188,7 +188,7 @@ class SuiviManager extends Manager
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $user,
-            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
+            isVisibleForUsager: true,
             subscriptionCreated: $subscriptionCreated
         );
 
@@ -230,7 +230,7 @@ class SuiviManager extends Manager
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $this->userManager->getSystemUser(),
-            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
+            isVisibleForUsager: true,
         );
     }
 
@@ -250,7 +250,7 @@ class SuiviManager extends Manager
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $this->userManager->getSystemUser(),
-            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
+            isVisibleForUsager: true,
         );
     }
 
@@ -292,7 +292,7 @@ class SuiviManager extends Manager
             $intervention = $file->getIntervention();
         }
         $description = '';
-        $visibility = [SuiviVisibility::PARTENAIRES_AFFECTES];
+        $isVisibleForUsager = false;
 
         if (
             \array_key_exists($documentType?->value, DocumentType::getOrderedProcedureList())
@@ -306,7 +306,7 @@ class SuiviManager extends Manager
         }
 
         if (\array_key_exists($documentType?->value, DocumentType::getOrderedSituationList())) {
-            $visibility[] = SuiviVisibility::USAGERS;
+            $isVisibleForUsager = true;
             if ($nbDocs > 0) {
                 $description .= $nbDocs;
                 $description .= $nbDocs > 1 ? ' documents ' : ' document ';
@@ -316,7 +316,7 @@ class SuiviManager extends Manager
         }
 
         if (DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $documentType && null !== $intervention) {
-            $visibility[] = SuiviVisibility::USAGERS;
+            $isVisibleForUsager = true;
             $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
             if ($nbDocs > 0) {
                 $description .= \sprintf(
@@ -330,7 +330,7 @@ class SuiviManager extends Manager
         }
 
         if (DocumentType::PHOTO_VISITE === $documentType && null !== $intervention) {
-            $visibility[] = SuiviVisibility::USAGERS;
+            $isVisibleForUsager = true;
             $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
             if ($nbDocs > 0) {
                 $description .= \sprintf(
@@ -350,7 +350,8 @@ class SuiviManager extends Manager
             category: SuiviCategory::NEW_DOCUMENT,
             partner: $partner,
             user: $user,
-            visibility: $visibility,
+            isVisibleForUsager: $isVisibleForUsager,
+            isVisibleForBailleur: false,
             files: $files,
             flush: false,
             subscriptionCreated: $subscriptionCreated
@@ -436,7 +437,7 @@ class SuiviManager extends Manager
             type: Suivi::TYPE_USAGER,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $user,
-            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
+            isVisibleForUsager: true,
         );
     }
 

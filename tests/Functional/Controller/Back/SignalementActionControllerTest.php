@@ -175,7 +175,7 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->client->request('POST', $route, [
             'add_suivi' => [
-                'isPublic' => '1', // TODO : à changer plus tard
+                'isVisibleForUsager' => '1', // TODO : à changer plus tard
                 'description' => 'La procédure avance bien, nous vous tiendrons informé de la suite, bon courage !',
                 'files' => $filesIds,
                 '_token' => $csrfToken,
@@ -207,7 +207,7 @@ class SignalementActionControllerTest extends WebTestCase
         $csrfToken = $this->generateCsrfToken($this->client, 'add_suivi');
         $this->client->request('POST', $route, [
             'add_suivi' => [
-                'isPublic' => '1', // TODO : à changer dans les prochains tickets
+                'isVisibleForUsager' => '1', // TODO : à changer dans les prochains tickets
                 'description' => 'La procédure avance bien, nous vous tiendrons informé de la suite, bon courage !',
                 'files' => [1, 2],
                 '_token' => $csrfToken,
@@ -227,7 +227,7 @@ class SignalementActionControllerTest extends WebTestCase
         $this->client->request('POST', $route, [
             'add_suivi' => [
                 'description' => 'Je v',
-                'isPublic' => '1', // TODO : à changer dans les prochains tickets
+                'isVisibleForUsager' => '1', // TODO : à changer dans les prochains tickets
                 '_token' => $csrfToken,
             ],
         ]);
@@ -320,7 +320,7 @@ class SignalementActionControllerTest extends WebTestCase
             $route,
             [
                 'add_suivi' => [
-                    'isPublic' => '1', // TODO : à changer dans les prochains tickets
+                    'isVisibleForUsager' => '1', // TODO : à changer dans les prochains tickets
                     'description' => 'Un message de suivi modifié',
                     '_token' => $this->generateCsrfToken($this->client, 'add_suivi'),
                 ],
@@ -330,7 +330,7 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(200);
         $suivi = $this->suiviRepository->find($suiviId);
         $this->assertEquals('Un message de suivi modifié', $suivi->getDescription());
-        $this->assertTrue($suivi->isVisibleForUsager());
+        $this->assertTrue($suivi->getIsVisibleForUsager());
     }
 
     public function testEditSuiviExpired(): void
@@ -348,7 +348,7 @@ class SignalementActionControllerTest extends WebTestCase
             $route,
             [
                 'add_suivi' => [
-                    'isPublic' => '1', // TODO : à changer dans les prochains tickets
+                    'isVisibleForUsager' => '1', // TODO : à changer dans les prochains tickets
                     'description' => 'Un message de suivi modifié',
                     '_token' => $this->generateCsrfToken($this->client, 'add_suivi'),
                 ],
@@ -371,7 +371,7 @@ class SignalementActionControllerTest extends WebTestCase
             $route,
             [
                 'add_suivi' => [
-                    'isPublic' => '1', // TODO : à changer dans les prochains tickets
+                    'isVisibleForUsager' => '1', // TODO : à changer dans les prochains tickets
                     'description' => 'Un message de suivi modifié',
                     '_token' => $this->generateCsrfToken($this->client, 'add_suivi'),
                 ],

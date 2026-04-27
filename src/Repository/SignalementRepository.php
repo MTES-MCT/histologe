@@ -7,7 +7,6 @@ use App\Entity\Commune;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -118,8 +117,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s')
             ->andWhere('s.codeSuivi = :code')
             ->setParameter('code', $code)
-            ->leftJoin('s.suivis', 'suivis', Join::WITH, 'JSON_CONTAINS(suivis.visibility, :usagers) = 1')
-            ->setParameter('usagers', json_encode(SuiviVisibility::USAGERS->value))
+            ->leftJoin('s.suivis', 'suivis', Join::WITH, 'suivis.isVisibleForUsager = 1')
             ->addSelect('suivis')
             ->andWhere('s.statut NOT IN (:statutDraft)')
             ->setParameter('statutDraft', [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);

@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
@@ -33,7 +32,7 @@ class SignalementConfirmEditController extends AbstractController
                 description: $this->renderView('suivi/front_signalement_confirm_edit_email_occupant.html.twig', ['old' => $old, 'new' => $signalement->getMailOccupant()]),
                 type: Suivi::TYPE_USAGER,
                 category: SuiviCategory::SIGNALEMENT_EDITED_FO,
-                visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
+                isVisibleForUsager: true,
             );
             $this->addFlash('success', 'L\'adresse e-mail de l\'occupant a été mise à jour avec succès.');
         }

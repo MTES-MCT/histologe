@@ -23,7 +23,7 @@ class SuiviCreatedListener
                 $signalement = $entity->getSignalement();
                 $signalement->setLastSuiviAt($entity->getCreatedAt());
                 $signalement->setLastSuiviBy(SuiviHelper::getLastLabelFromSuivi($entity));
-                $signalement->setLastSuiviIsVisibleForUsager($entity->isVisibleForUsager());
+                $signalement->setLastSuiviIsVisibleForUsager($entity->getIsVisibleForUsager());
                 $metaData = $entityManager->getClassMetadata(Signalement::class);
                 $entityManager->persist($signalement);
                 //  used to recompute the changes of a specific signalement entity

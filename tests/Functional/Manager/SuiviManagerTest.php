@@ -4,7 +4,6 @@ namespace App\Tests\Functional\Manager;
 
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -86,7 +85,7 @@ class SuiviManagerTest extends KernelTestCase
             category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $user,
-            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]
+            isVisibleForUsager: true
         );
         $signalement->addSuivi($suivi);
         $countSuivisAfterCreate = $signalement->getSuivis()->count();
@@ -96,8 +95,7 @@ class SuiviManagerTest extends KernelTestCase
         $this->assertInstanceOf(Suivi::class, $suivi);
         $desc = Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.' test avec le motif suivant <br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
         $this->assertEquals($desc, $suivi->getDescription());
-        $this->assertContains(SuiviVisibility::PARTENAIRES_AFFECTES, $suivi->getVisibility());
-        $this->assertContains(SuiviVisibility::USAGERS, $suivi->getVisibility());
+        $this->assertTrue($suivi->getIsVisibleForUsager());
         $this->assertTrue($suivi->getIsSanitized());
         $this->assertInstanceOf(UserInterface::class, $suivi->getCreatedBy());
     }
@@ -119,8 +117,7 @@ class SuiviManagerTest extends KernelTestCase
             category: SuiviCategory::MESSAGE_USAGER,
         );
         $this->assertEquals($descSanitized, $suivi->getDescription());
-        $this->assertContains(SuiviVisibility::PARTENAIRES_AFFECTES, $suivi->getVisibility());
-        $this->assertNotContains(SuiviVisibility::USAGERS, $suivi->getVisibility());
+        $this->assertFalse($suivi->getIsVisibleForUsager());
     }
 
     public function testCreateSuiviWithAutoSubscription(): void
@@ -142,8 +139,7 @@ class SuiviManagerTest extends KernelTestCase
             'user' => $user,
         ]);
         $this->assertCount(1, $sub);
-        $this->assertContains(SuiviVisibility::PARTENAIRES_AFFECTES, $suivi->getVisibility());
-        $this->assertNotContains(SuiviVisibility::USAGERS, $suivi->getVisibility());
+        $this->assertFalse($suivi->getIsVisibleForUsager());
     }
 
     public function testCreateSuiviLogementVacant(): void
@@ -171,7 +167,7 @@ class SuiviManagerTest extends KernelTestCase
             category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $user,
-            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]
+            isVisibleForUsager: true
         );
         $signalement->addSuivi($suivi);
         $countSuivisAfterCreate = $signalement->getSuivis()->count();
@@ -181,8 +177,7 @@ class SuiviManagerTest extends KernelTestCase
         $this->assertInstanceOf(Suivi::class, $suivi);
         $desc = Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.' test avec le motif suivant <br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
         $this->assertEquals($desc, $suivi->getDescription());
-        $this->assertContains(SuiviVisibility::PARTENAIRES_AFFECTES, $suivi->getVisibility());
-        $this->assertNotContains(SuiviVisibility::USAGERS, $suivi->getVisibility());
+        $this->assertFalse($suivi->getIsVisibleForUsager());
         $this->assertTrue($suivi->getIsSanitized());
         $this->assertInstanceOf(UserInterface::class, $suivi->getCreatedBy());
     }

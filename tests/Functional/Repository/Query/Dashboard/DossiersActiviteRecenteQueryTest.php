@@ -61,7 +61,7 @@ class DossiersActiviteRecenteQueryTest extends KernelTestCase
             $this->assertArrayHasKey('statut', $row);
             $this->assertArrayHasKey('suiviCreatedAt', $row);
             $this->assertArrayHasKey('suiviCategory', $row);
-            $this->assertArrayHasKey('suiviVisibility', $row);
+            $this->assertArrayHasKey('suiviIsVisibleForUsager', $row);
             $this->assertArrayHasKey('hasNewerSuivi', $row);
         }
     }

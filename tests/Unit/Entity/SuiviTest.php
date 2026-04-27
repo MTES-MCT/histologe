@@ -2,7 +2,6 @@
 
 namespace App\Tests\Unit\Entity;
 
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -33,7 +32,7 @@ class SuiviTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription($faker->text())
         ->setType(Suivi::TYPE_USAGER)
-        ->setVisibility([SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]);
+        ->setIsVisibleForUsager(true);
 
         /** @var ConstraintViolationList $errors */
         $errors = $validator->validate($suivi);

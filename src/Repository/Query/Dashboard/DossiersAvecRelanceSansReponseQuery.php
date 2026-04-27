@@ -2,7 +2,6 @@
 
 namespace App\Repository\Query\Dashboard;
 
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\User;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -27,7 +26,6 @@ class DossiersAvecRelanceSansReponseQuery
             $clauseTerritoriesSi3 = ' AND si3.territory_id IN (:territories_ids) ';
             $clauseTerritoriesSi = ' AND si.territory_id IN (:territories_ids) ';
         }
-        $usagersJson = json_encode(SuiviVisibility::USAGERS->value);
 
         return <<<SQL
             FROM (
@@ -53,7 +51,7 @@ class DossiersAvecRelanceSansReponseQuery
                     MAX(s.created_at) AS shared_usager_at,
                     MAX(s.type) AS type
                 FROM suivi s
-                WHERE JSON_CONTAINS(s.visibility, '$usagersJson') = 1
+                WHERE s.is_visible_for_usager = 1
                   AND EXISTS (
                     SELECT 1 FROM signalement si3
                     WHERE si3.id = s.signalement_id

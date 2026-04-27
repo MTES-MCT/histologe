@@ -5,7 +5,6 @@ namespace App\Controller\Api;
 use App\Dto\Api\Request\SuiviRequest;
 use App\Dto\Api\Response\SuiviResponse;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -159,7 +158,7 @@ class SuiviCreateController extends AbstractController
             category: SuiviCategory::MESSAGE_PARTNER,
             partner: $partner,
             user: $user,
-            visibility: SuiviVisibility::fromIsPublic($suiviRequest->notifyUsager),
+            isVisibleForUsager: $suiviRequest->notifyUsager,
             files: $fileToAttach,
         );
 

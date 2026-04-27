@@ -4,7 +4,6 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Suivi;
 use App\Event\SuiviCreatedEvent;
 use App\Service\Notification\NotificationAndMailSender;
@@ -71,7 +70,7 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
 
     private function sendToUsagers(Suivi $suivi): void
     {
-        if ($suivi->getSendMail() && in_array(SuiviVisibility::USAGERS, $suivi->getVisibility(), true)) {
+        if ($suivi->getSendMail() && $suivi->getIsVisibleForUsager()) {
             if (SuiviCategory::DEMANDE_ABANDON_PROCEDURE === $suivi->getCategory()) {
                 $this->notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
 

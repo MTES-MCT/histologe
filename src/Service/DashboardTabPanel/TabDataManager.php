@@ -6,7 +6,6 @@ use App\Dto\CountPartner;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\JobEventRepository;
@@ -103,7 +102,7 @@ class TabDataManager
         foreach ($paginator as $signalement) {
             $derniereAction = (SuiviCategory::MESSAGE_PARTNER === $signalement['suiviCategory'])
                 // TODO : à faire évoluer pour les suivis visibles aux bailleurs
-                ? (in_array(SuiviVisibility::USAGERS->value, $signalement['suiviVisibility'], true) ? 'Suivi visible par l\'usager' : 'Suivi interne')
+                ? ($signalement['suiviIsVisibleForUsager'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
                 : $signalement['suiviCategory']->label();
             $tabDossiers[] = new TabDossier(
                 uuid: $signalement['uuid'],
@@ -615,7 +614,7 @@ class TabDataManager
         foreach ($displayedSignalements as $signalement) {
             $derniereAction = (SuiviCategory::MESSAGE_PARTNER === $signalement['suiviCategory'])
                 // TODO : à faire évoluer pour les suivis visibles aux bailleurs
-                ? (in_array(SuiviVisibility::USAGERS->value, $signalement['suiviVisibility'], true) ? 'Suivi visible par l\'usager' : 'Suivi interne')
+                ? ($signalement['suiviIsVisibleForUsager'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
                 : $signalement['suiviCategory']->label();
             $tabDossiers[] = new TabDossier(
                 uuid: $signalement['uuid'],

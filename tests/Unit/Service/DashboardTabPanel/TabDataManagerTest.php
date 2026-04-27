@@ -8,7 +8,6 @@ use App\Dto\CountPartner;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\User;
 use App\Repository\JobEventRepository;
 use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
@@ -104,7 +103,7 @@ class TabDataManagerTest extends WebTestCase
                 'adresseOccupant' => '1 rue de Paris',
                 'statut' => $signalementStatus,
                 'suiviCategory' => $suiviCategory,
-                'suiviVisibility' => [SuiviVisibility::PARTENAIRES_AFFECTES->value, SuiviVisibility::USAGERS->value],
+                'suiviIsVisibleForUsager' => true,
                 'suiviCreatedAt' => new \DateTimeImmutable('2024-06-10'),
                 'hasNewerSuivi' => true,
                 'uuid' => 'uuid-123',
@@ -532,7 +531,7 @@ class TabDataManagerTest extends WebTestCase
                     'statut' => SignalementStatus::ACTIVE,
                     'suiviCreatedAt' => new \DateTimeImmutable('2024-06-20 12:00:00'),
                     'suiviCategory' => SuiviCategory::MESSAGE_PARTNER,
-                    'suiviVisibility' => [SuiviVisibility::PARTENAIRES_AFFECTES->value, SuiviVisibility::USAGERS->value],
+                    'suiviIsVisibleForUsager' => true,
                     'derniereActionPartenaireNom' => 'SUPER PARTENAIRE',
                     'derniereActionPartenaireNomAgent' => 'Robert',
                     'derniereActionPartenairePrenomAgent' => 'Sophie',

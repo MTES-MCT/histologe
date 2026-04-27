@@ -156,7 +156,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         $object = $params['entity'] ?? null;
         $notifyUsager = false;
         if ($object instanceof Suivi) {
-            $notifyUsager = $object->isVisibleForUsager();
+            $notifyUsager = $object->getIsVisibleForUsager();
         } elseif (str_contains($this->mailerType->name, 'USAGER')) {
             $notifyUsager = true;
         }

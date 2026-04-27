@@ -11,43 +11,29 @@ final class Version20260422120000 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Remplacement de is_public par visibility (json) sur suivi, et renommage de last_suivi_is_public en last_suivi_is_visible_for_usager sur signalement.';
+        return 'Renommage de is_public en is_visible_for_usager et ajout de is_visible_for_bailleur sur suivi, et renommage de last_suivi_is_public en last_suivi_is_visible_for_usager sur signalement.';
     }
 
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE signalement RENAME COLUMN last_suivi_is_public TO last_suivi_is_visible_for_usager');
-
-        $this->addSql("ALTER TABLE suivi ADD visibility JSON NOT NULL COMMENT 'Values from SuiviVisibility enum'");
-        $this->addSql("UPDATE suivi SET visibility = '[\"PARTENAIRES_AFFECTES\"]' WHERE is_public = 0");
-        $this->addSql("UPDATE suivi SET visibility = '[\"PARTENAIRES_AFFECTES\",\"USAGERS\"]' WHERE is_public = 1");
-
-        $this->addSql('DROP INDEX idx_suivi_is_public_signalement_created_at ON suivi');
-        $this->addSql('DROP INDEX idx_suivi_signalement_is_public_created_at_category ON suivi');
-        $this->addSql('DROP INDEX idx_suivi_is_public_signalement_created_at_type ON suivi');
-        $this->addSql('DROP INDEX idx_suivi_signid_cat_createdat_ispublic_createdby ON suivi');
-
-        $this->addSql('CREATE INDEX idx_suivi_signalement_created_at_type ON suivi (signalement_id, created_at, type)');
-        $this->addSql('CREATE INDEX idx_suivi_signid_cat_createdat_createdby ON suivi (signalement_id, category, created_at, created_by_id)');
-
-        $this->addSql('ALTER TABLE suivi DROP COLUMN is_public');
+        $this->addSql('ALTER TABLE suivi RENAME COLUMN is_public TO is_visible_for_usager');
+        $this->addSql('ALTER TABLE suivi ADD is_visible_for_bailleur TINYINT(1) NOT NULL DEFAULT 0');
+        $this->addSql('ALTER TABLE suivi RENAME INDEX idx_suivi_is_public_signalement_created_at TO idx_suivi_is_visible_for_usager_signalement_created_at');
+        $this->addSql('ALTER TABLE suivi RENAME INDEX idx_suivi_is_public_signalement_created_at_type TO idx_suivi_is_visible_for_usager_signalement_created_at_type');
+        $this->addSql('ALTER TABLE suivi RENAME INDEX idx_suivi_signalement_is_public_created_at_category TO idx_suivi_signalement_is_visible_for_usager_created_at_category');
+        $this->addSql('ALTER TABLE suivi RENAME INDEX idx_suivi_signid_cat_createdat_ispublic_createdby TO idx_suivi_signid_cat_createdat_is_visible_for_usager_createdby');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE suivi ADD is_public TINYINT(1) NOT NULL DEFAULT 0');
-        $this->addSql("UPDATE suivi SET is_public = 1 WHERE JSON_CONTAINS(visibility, '\"USAGERS\"')");
+        $this->addSql('ALTER TABLE suivi RENAME INDEX idx_suivi_is_visible_for_usager_signalement_created_at TO idx_suivi_is_public_signalement_created_at');
+        $this->addSql('ALTER TABLE suivi RENAME INDEX idx_suivi_is_visible_for_usager_signalement_created_at_type TO idx_suivi_is_public_signalement_created_at_type');
+        $this->addSql('ALTER TABLE suivi RENAME INDEX idx_suivi_signalement_is_visible_for_usager_created_at_category TO idx_suivi_signalement_is_public_created_at_category');
+        $this->addSql('ALTER TABLE suivi RENAME INDEX idx_suivi_signid_cat_createdat_is_visible_for_usager_createdby TO idx_suivi_signid_cat_createdat_ispublic_createdby');
 
-        $this->addSql('DROP INDEX idx_suivi_signalement_created_at_type ON suivi');
-        $this->addSql('DROP INDEX idx_suivi_signid_cat_createdat_createdby ON suivi');
-
-        $this->addSql('CREATE INDEX idx_suivi_is_public_signalement_created_at ON suivi (is_public, signalement_id, created_at)');
-        $this->addSql('CREATE INDEX idx_suivi_signalement_is_public_created_at_category ON suivi (signalement_id, is_public, created_at, category)');
-        $this->addSql('CREATE INDEX idx_suivi_is_public_signalement_created_at_type ON suivi (is_public, signalement_id, created_at, type)');
-        $this->addSql('CREATE INDEX idx_suivi_signid_cat_createdat_ispublic_createdby ON suivi (signalement_id, category, created_at, is_public, created_by_id)');
-
-        $this->addSql('ALTER TABLE suivi DROP COLUMN visibility');
-
+        $this->addSql('ALTER TABLE suivi DROP COLUMN is_visible_for_bailleur');
+        $this->addSql('ALTER TABLE suivi RENAME COLUMN is_visible_for_usager TO is_public');
         $this->addSql('ALTER TABLE signalement RENAME COLUMN last_suivi_is_visible_for_usager TO last_suivi_is_public');
     }
 }

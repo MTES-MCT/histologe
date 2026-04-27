@@ -8,7 +8,6 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
@@ -813,7 +812,7 @@ class SignalementControllerTest extends WebTestCase
             description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
-            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
+            isVisibleForUsager: true,
             flush: true
         );
         $signalement->addSuivi($suivi);
@@ -889,7 +888,7 @@ class SignalementControllerTest extends WebTestCase
             description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
-            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
+            isVisibleForUsager: true,
             flush: true
         );
         $signalement->addSuivi($suivi);
@@ -956,7 +955,7 @@ class SignalementControllerTest extends WebTestCase
             description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
-            visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS],
+            isVisibleForUsager: true,
             flush: true
         );
         $signalement->addSuivi($suivi);

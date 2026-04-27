@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\SuiviVisibility;
 use App\Repository\SuiviRepository;
 use App\Service\Signalement\Suivi\SuiviTransformerService;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -18,11 +17,13 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['signalement_id', 'type', 'created_at'], name: 'idx_suivi_signalement_type_created_at')]
 #[ORM\Index(columns: ['context'], name: 'idx_suivi_context')]
 #[ORM\Index(columns: ['category', 'signalement_id', 'created_at'], name: 'idx_suivi_category_signalement_created_at')]
+#[ORM\Index(columns: ['is_public_for_usager', 'signalement_id', 'created_at'], name: 'idx_suivi_is_visible_for_usager_signalement_created_at')]
 #[ORM\Index(columns: ['signalement_id', 'created_at'], name: 'idx_suivi_signalement_created_at')]
 #[ORM\Index(columns: ['category'], name: 'idx_suivi_category')]
 #[ORM\Index(columns: ['signalement_id', 'category', 'created_at'], name: 'idx_suivi_signalement_category_created_at')]
-#[ORM\Index(columns: ['signalement_id', 'created_at', 'type'], name: 'idx_suivi_signalement_created_at_type')]
-#[ORM\Index(columns: ['signalement_id', 'category', 'created_at', 'created_by_id'], name: 'idx_suivi_signid_cat_createdat_createdby')]
+#[ORM\Index(columns: ['signalement_id', 'is_public_for_usager', 'created_at', 'category'], name: 'idx_suivi_signalement_is_visible_for_usager_created_at_category')]
+#[ORM\Index(columns: ['is_public_for_usager', 'signalement_id', 'created_at', 'type'], name: 'idx_suivi_is_visible_for_usager_signalement_created_at_type')]
+#[ORM\Index(columns: ['signalement_id', 'category', 'created_at', 'is_public_for_usager', 'created_by_id'], name: 'idx_suivi_signid_cat_createdat_is_visible_for_usager_createdby')]
 #[ORM\Index(columns: ['waiting_notification'], name: 'idx_suivi_waiting_notification')]
 class Suivi implements EntityHistoryInterface
 {
@@ -63,9 +64,11 @@ class Suivi implements EntityHistoryInterface
     #[ORM\Column(type: 'text')]
     private ?string $description = null;
 
-    /** @var array<string> */
-    #[ORM\Column(type: 'json', options: ['comment' => 'Values from SuiviVisibility enum'])]
-    private array $visibility = [];
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $isVisibleForUsager = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $isVisibleForBailleur = null;
 
     #[ORM\Column(type: 'integer')]
     private ?int $type = null;
@@ -118,7 +121,8 @@ class Suivi implements EntityHistoryInterface
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-        $this->visibility = [SuiviVisibility::PARTENAIRES_AFFECTES->value];
+        $this->isVisibleForUsager = false;
+        $this->isVisibleForBailleur = false;
         $this->isSanitized = true;
         $this->suiviFiles = new ArrayCollection();
         $this->waitingNotification = false;
@@ -260,39 +264,28 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
-    /** @return array<SuiviVisibility> */
-    public function getVisibility(): array
+    public function getIsVisibleForUsager(): ?bool
     {
-        return array_map(static fn (string $v) => SuiviVisibility::from($v), $this->visibility);
+        return $this->isVisibleForUsager;
     }
 
-    /** @param array<SuiviVisibility> $visibility */
-    public function setVisibility(array $visibility): static
+    public function setIsVisibleForUsager(bool $isVisibleForUsager): self
     {
-        $this->visibility = array_map(static fn (SuiviVisibility $v) => $v->value, $visibility);
+        $this->isVisibleForUsager = $isVisibleForUsager;
 
         return $this;
     }
 
-    public function addVisibility(SuiviVisibility $visibility): static
+    public function getIsVisibleForBailleur(): ?bool
     {
-        if (!in_array($visibility->value, $this->visibility, true)) {
-            $this->visibility[] = $visibility->value;
-        }
-
-        return $this;
+        return $this->isVisibleForBailleur;
     }
 
-    public function removeVisibility(SuiviVisibility $visibility): static
+    public function setIsVisibleForBailleur(bool $isVisibleForBailleur): self
     {
-        $this->visibility = array_filter($this->visibility, static fn (string $v) => $v !== $visibility->value);
+        $this->isVisibleForBailleur = $isVisibleForBailleur;
 
         return $this;
-    }
-
-    public function isVisibleForUsager(): bool
-    {
-        return in_array(SuiviVisibility::USAGERS->value, $this->visibility, true);
     }
 
     public function getSignalement(): ?Signalement

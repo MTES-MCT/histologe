@@ -108,7 +108,7 @@ class DossiersActiviteRecenteQuery
             signalement.statut AS statut,
             suivi.createdAt AS suiviCreatedAt,
             suivi.category AS suiviCategory,
-            suivi.visibility AS suiviVisibility,
+            suivi.isVisibleForUsager AS suiviIsVisibleForUsager,
             MAX(p.nom) AS derniereActionPartenaireNom,
             u.nom AS derniereActionPartenaireNomAgent,
             u.prenom AS derniereActionPartenairePrenomAgent
@@ -180,7 +180,7 @@ class DossiersActiviteRecenteQuery
             '.$statutField.' AS statut,
             suivi.createdAt AS suiviCreatedAt,
             suivi.category AS suiviCategory,
-            suivi.visibility AS suiviVisibility,
+            suivi.isVisibleForUsager AS suiviIsVisibleForUsager,
             (
                 SELECT CASE WHEN MAX(s2.createdAt) > suivi.createdAt THEN 1 ELSE 0 END
                 FROM '.Suivi::class.' s2

@@ -3,7 +3,6 @@
 namespace App\Command\Cron;
 
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
@@ -66,7 +65,7 @@ class ResetInjonctionNoResponseCommand extends AbstractCronCommand
                     type: Suivi::TYPE_AUTO,
                     category: SuiviCategory::INJONCTION_BAILLEUR_EXPIREE,
                     user: $this->userManager->getSystemUser(),
-                    visibility: [SuiviVisibility::PARTENAIRES_AFFECTES, SuiviVisibility::USAGERS]
+                    isVisibleForUsager: true
                 );
                 $this->entityManager->commit();
             } catch (\Exception $e) {

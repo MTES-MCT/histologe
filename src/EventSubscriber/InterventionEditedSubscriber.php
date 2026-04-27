@@ -4,7 +4,6 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Suivi;
 use App\Event\InterventionEditedEvent;
 use App\Manager\SuiviManager;
@@ -65,7 +64,7 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
                 category: SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED,
                 partner: $event->getPartner(),
                 user: $currentUser,
-                visibility: SuiviVisibility::fromIsPublic($event->isUsagerNotified()),
+                isVisibleForUsager: $event->isUsagerNotified(),
                 context: Suivi::CONTEXT_INTERVENTION,
                 files: $intervention->getFiles(),
             );

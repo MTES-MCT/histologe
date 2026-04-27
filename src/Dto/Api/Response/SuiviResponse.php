@@ -33,6 +33,6 @@ class SuiviResponse
     {
         $this->dateCreation = $suivi->getCreatedAt()->format(\DATE_ATOM);
         $this->description = $suivi->getDescription();
-        $this->public = $suivi->isVisibleForUsager(); // TODO : à changer quand on ajoute bailleur ?
+        $this->public = $suivi->getIsVisibleForUsager(); // TODO : à changer quand on ajoute bailleur ?
     }
 }

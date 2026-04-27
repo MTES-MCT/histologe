@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\File;
 use App\Entity\Suivi;
 use App\Form\Type\SearchCheckboxType;
@@ -11,8 +10,6 @@ use App\Validator\EmailFormatValidator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -30,10 +27,7 @@ class AddSuiviType extends AbstractType
         $isNotNotifiable = EmailFormatValidator::isInvalidEmail($signalement->getMailDeclarant()) && EmailFormatValidator::isInvalidEmail($signalement->getMailOccupant());
         $isLogementVacant = $signalement->getIsLogementVacant();
 
-        // TODO : à changer dans les prochains tickets
-        $builder->add('isPublic', CheckboxType::class, [
-            'mapped' => false,
-            'data' => in_array(SuiviVisibility::USAGERS, $suivi->getVisibility(), true),
+        $builder->add('isVisibleForUsager', CheckboxType::class, [
             'label' => 'En cochant cette case, le suivi sera envoyé à l\'usager',
             'row_attr' => [
                 'class' => $isNotNotifiable ? 'fr-hidden' : 'fr-toggle',
@@ -47,16 +41,6 @@ class AddSuiviType extends AbstractType
             'required' => false,
             'disabled' => $isNotNotifiable || $isLogementVacant,
         ]);
-        $builder->addEventListener(FormEvents::SUBMIT, static function (FormEvent $event) {
-            /** @var Suivi $suivi */
-            $suivi = $event->getData();
-            $isVisibleForUsager = (bool) $event->getForm()->get('isPublic')->getData();
-            $visibility = [SuiviVisibility::PARTENAIRES_AFFECTES];
-            if ($isVisibleForUsager) {
-                $visibility[] = SuiviVisibility::USAGERS;
-            }
-            $suivi->setVisibility($visibility);
-        });
         $builder->add('description', null, [
             'label' => false,
             'help' => 'Décrivez la ou les action(s) menée(s). 10 caractères minimum <span class="fr-text-default--error">*</span>',

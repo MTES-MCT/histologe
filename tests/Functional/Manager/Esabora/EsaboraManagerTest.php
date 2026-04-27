@@ -145,7 +145,7 @@ class EsaboraManagerTest extends KernelTestCase
             $suivi = $suiviArray[\count($suiviArray) - 2] ?? $suivi;
         }
         $this->assertStringContainsString($suiviDescription, $suivi->getDescription(), $suiviDescription);
-        $this->assertFalse($suivi->isVisibleForUsager());
+        $this->assertFalse($suivi->getIsVisibleForUsager());
         $this->assertEquals($suiviStatus, $suivi->getType());
         $this->assertEquals($suiviCategory, $suivi->getCategory());
         $this->assertEmailCount($mailSent ? 1 : 0);
@@ -274,7 +274,7 @@ class EsaboraManagerTest extends KernelTestCase
         }
         $this->assertEquals(3, \count($signalement->getSuivis()));
         $this->assertStringContainsString($suiviDescription, $suivi->getDescription());
-        $this->assertFalse($suivi->isVisibleForUsager());
+        $this->assertFalse($suivi->getIsVisibleForUsager());
         $this->assertEquals($suiviStatus, $suivi->getType());
 
         /** @var Affectation $affectationUpdated */

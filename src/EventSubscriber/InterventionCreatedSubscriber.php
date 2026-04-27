@@ -4,7 +4,6 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\SuiviVisibility;
 use App\Entity\Intervention;
 use App\Entity\Suivi;
 use App\Event\InterventionCreatedEvent;
@@ -35,9 +34,9 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
         $intervention = $event->getIntervention();
         $signalement = $intervention->getSignalement();
         $description = (string) InterventionDescriptionGenerator::generate($intervention, InterventionCreatedEvent::NAME);
-        $isPublic = true;
+        $isVisibleForUsager = true;
         if (EsaboraSISHService::NAME_SI === $event->getSource() && $signalement->isTiersDeclarant()) {
-            $isPublic = false;
+            $isVisibleForUsager = false;
         }
 
         $today = new \DateTimeImmutable();
@@ -65,7 +64,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             category : $suiviCategory,
             partner: $event->getPartner(),
             user: $event->getUser(),
-            visibility: SuiviVisibility::fromIsPublic($isPublic),
+            isVisibleForUsager: $isVisibleForUsager,
             context: Suivi::CONTEXT_INTERVENTION,
         );
         $event->setSuivi($suivi);
@@ -79,7 +78,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             );
         }
 
-        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->isVisibleForUsager()) {
+        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType() && $suivi->getIsVisibleForUsager()) {
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
