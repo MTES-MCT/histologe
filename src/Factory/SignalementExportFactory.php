@@ -141,8 +141,8 @@ class SignalementExportFactory
             score: $data['score'],
             debutDesordres: $this->mapData($data, 'debutDesordres'),
             etiquettes: $data['etiquettes'] ?? null,
-            photos: $data['photosName'] ?? self::NON,
-            documents: $data['documentsName'] ?? self::NON,
+            photos: $this->extractBasenames($data['photosName'] ?? null) ?? self::NON,
+            documents: $this->extractBasenames($data['documentsName'] ?? null) ?? self::NON,
             nomProprio: $data['nomProprio'] ?? '-',
             prenomProprio: $data['prenomProprio'] ?? '-',
             denominationProprio: $data['denominationProprio'] ?? '-',
@@ -221,6 +221,15 @@ class SignalementExportFactory
         }
 
         return $value;
+    }
+
+    private function extractBasenames(?string $filenames): ?string
+    {
+        if (null === $filenames) {
+            return null;
+        }
+
+        return implode(SignalementExport::SEPARATOR_GROUP_CONCAT, array_map('basename', explode(SignalementExport::SEPARATOR_GROUP_CONCAT, $filenames)));
     }
 
     private function mapInterventionStatus(?string $scheduledAt = null, ?string $status = null): string
