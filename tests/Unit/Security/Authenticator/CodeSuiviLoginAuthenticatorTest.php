@@ -255,12 +255,23 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         string $codeSuivi,
         string $email,
     ): Signalement {
-        return (new Signalement())
+        $signalement = (new Signalement())
            ->setNomOccupant($nom)
            ->setPrenomOccupant($prenom)
            ->setCpOccupant($codePostal)
            ->setCodeSuivi($codeSuivi)
            ->setMailOccupant($email)
            ->setProfileDeclarant($profileDeclarant);
+
+        if (ProfileDeclarant::TIERS_PARTICULIER === $profileDeclarant
+                || ProfileDeclarant::TIERS_PRO === $profileDeclarant
+                || ProfileDeclarant::BAILLEUR === $profileDeclarant
+                || ProfileDeclarant::SERVICE_SECOURS === $profileDeclarant
+        ) {
+            $signalement->setNomDeclarant($nom);
+            $signalement->setPrenomDeclarant($prenom);
+        }
+
+        return $signalement;
     }
 }
