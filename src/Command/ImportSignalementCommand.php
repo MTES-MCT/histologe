@@ -2,11 +2,10 @@
 
 namespace App\Command;
 
-use App\Entity\Territory;
+use App\Repository\TerritoryRepository;
 use App\Service\Import\CsvParser;
 use App\Service\Import\Signalement\SignalementImportLoader;
 use App\Service\UploadHandlerService;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -27,10 +26,10 @@ class ImportSignalementCommand extends Command
     public function __construct(
         private readonly CsvParser $csvParser,
         private readonly ParameterBagInterface $parameterBag,
-        private readonly EntityManagerInterface $entityManager,
         private readonly FilesystemOperator $fileStorage,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly SignalementImportLoader $signalementImportLoader,
+        private readonly TerritoryRepository $territoryRepository,
     ) {
         parent::__construct();
     }
@@ -48,7 +47,7 @@ class ImportSignalementCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $territoryZip = $input->getArgument('territory_zip');
-        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => $territoryZip]);
+        $territory = $this->territoryRepository->findOneBy(['zip' => $territoryZip]);
         if (null === $territory) {
             $io->error('Territory does not exists');
 

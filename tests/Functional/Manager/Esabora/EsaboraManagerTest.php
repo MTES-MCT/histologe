@@ -11,11 +11,11 @@ use App\Entity\Suivi;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\AffectationManager;
-use App\Manager\InterventionManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\InterventionRepository;
+use App\Repository\SuiviRepository;
 use App\Service\Files\ImageManipulationHandler;
 use App\Service\Files\ZipHelper;
 use App\Service\Interconnection\Esabora\Enum\EsaboraStatus;
@@ -42,8 +42,8 @@ class EsaboraManagerTest extends KernelTestCase
     private EntityManagerInterface $entityManager;
     private AffectationManager $affectationManager;
     private SuiviManager $suiviManager;
+    private SuiviRepository $suiviRepository;
     private InterventionRepository $interventionRepository;
-    private InterventionManager $interventionManager;
     private EventDispatcherInterface $eventDispatcher;
     private UserManager $userManager;
     private LoggerInterface $logger;
@@ -69,8 +69,8 @@ class EsaboraManagerTest extends KernelTestCase
         $this->entityManager = $entityManager;
         $this->affectationManager = self::getContainer()->get(AffectationManager::class);
         $this->suiviManager = self::getContainer()->get(SuiviManager::class);
+        $this->suiviRepository = self::getContainer()->get(SuiviRepository::class);
         $this->interventionRepository = self::getContainer()->get(InterventionRepository::class);
-        $this->interventionManager = self::getContainer()->get(InterventionManager::class);
 
         $this->eventDispatcher = self::getContainer()->get(EventDispatcherInterface::class);
         $this->userManager = self::getContainer()->get(UserManager::class);
@@ -116,9 +116,9 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
+            $this->suiviRepository,
             $this->interventionRepository,
             new InterventionFactory(),
-            $this->interventionManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -249,9 +249,9 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
+            $this->suiviRepository,
             $this->interventionRepository,
             new InterventionFactory(),
-            $this->interventionManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,
@@ -308,9 +308,9 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
+            $this->suiviRepository,
             $this->interventionRepository,
             new InterventionFactory(),
-            $this->interventionManager,
             $this->eventDispatcher, // @phpstan-ignore-line
             $this->userManager,
             $this->logger,

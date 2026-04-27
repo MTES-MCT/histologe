@@ -15,6 +15,7 @@ use App\Entity\Enum\VisiteStatus;
 use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\User;
+use App\Repository\AffectationRepository;
 use App\Repository\BailleurRepository;
 use App\Repository\EpciRepository;
 use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
@@ -37,6 +38,7 @@ class SearchFilter
 
     public function __construct(
         private TerritoryRepository $territoryRepository,
+        private AffectationRepository $affectationRepository,
         private EntityManagerInterface $entityManager,
         private SignalementQualificationRepository $signalementQualificationRepository,
         private EpciRepository $epciRepository,
@@ -167,7 +169,7 @@ class SearchFilter
             $qb->andWhere($qb->expr()->exists($subQbHasAffectation->getDQL()));
             if (\in_array('ALL_OPEN', $filters['closed_affectation'])) {
                 // les id de tous les signalements ayant au moins une affectation fermée :
-                $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
+                $subquery = $this->affectationRepository->createQueryBuilder('a')
                     ->select('DISTINCT s.id')
                     ->innerJoin('a.signalement', 's')
                     ->where('a.statut = :statut_affectation_closed')
@@ -179,8 +181,7 @@ class SearchFilter
             }
             if (\in_array('ONE_CLOSED', $filters['closed_affectation'])) {
                 // les id de tous les signalements ayant au moins une affectation fermée :
-                $subqueryClosedAffectation = $this->entityManager->getRepository(Affectation::class)
-                    ->createQueryBuilder('a')
+                $subqueryClosedAffectation = $this->affectationRepository->createQueryBuilder('a')
                     ->select('DISTINCT IDENTITY(a.signalement)')
                     ->innerJoin('a.signalement', 's')
                     ->where('a.statut = :statut_affectation_closed')
@@ -201,7 +202,7 @@ class SearchFilter
 
             if (\in_array('ALL_CLOSED', $filters['closed_affectation'])) {
                 // les id de tous les signalements ayant au moins une affectation non fermée :
-                $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
+                $subquery = $this->affectationRepository->createQueryBuilder('a')
                     ->select('DISTINCT s.id')
                     ->leftJoin('a.signalement', 's')
                     ->where('a.statut != :statut_affectation_closed')
@@ -220,8 +221,7 @@ class SearchFilter
             }
 
             if (\in_array('COMMUNE_CLOSED', $filters['closed_affectation'])) {
-                $subquery = $this->entityManager->getRepository(Affectation::class)
-                    ->createQueryBuilder('a')
+                $subquery = $this->affectationRepository->createQueryBuilder('a')
                     ->select('DISTINCT s.id')
                     ->leftJoin('a.signalement', 's')
                     ->innerJoin('a.partner', 'p')

@@ -10,7 +10,6 @@ use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
@@ -24,7 +23,10 @@ use App\Manager\TagManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
+use App\Repository\FileRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\SuiviRepository;
+use App\Repository\UserRepository;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -94,6 +96,9 @@ class SignalementImportLoader
         private readonly CritereRepository $critereRepository,
         private readonly CriticiteRepository $criticiteRepository,
         private readonly PartnerRepository $partnerRepository,
+        private readonly UserRepository $userRepository,
+        private readonly FileRepository $fileRepository,
+        private readonly SuiviRepository $suiviRepository,
     ) {
     }
 
@@ -107,7 +112,7 @@ class SignalementImportLoader
     public function load(Territory $territory, array $data, array $headers, ?OutputInterface $output = null): void
     {
         $countSignalement = 0;
-        $this->userSystem = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
+        $this->userSystem = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
         if ($output) {
             $output->writeln('Vérification des données à importer.');
         }
@@ -157,7 +162,7 @@ class SignalementImportLoader
                     $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PARTICULIER);
                 }
             }
-            $this->signalementManager->save($signalement);
+            $this->entityManager->persist($signalement);
 
             $this->loadTags($signalement, $territory, $dataMapped);
             foreach (self::SITUATIONS as $situation) {
@@ -361,7 +366,7 @@ class SignalementImportLoader
                 $createdAt = array_shift($matches);
                 $description = mb_trim(preg_replace(self::REGEX_DATE_FORMAT_CSV, '', $suivi));
 
-                $suivi = $this->suiviManager->findOneBy([
+                $suivi = $this->suiviRepository->findOneBy([
                     'description' => $this->htmlSanitizer->sanitize($description),
                     'createdBy' => $this->userSystem,
                     'signalement' => $signalement,
@@ -396,7 +401,7 @@ class SignalementImportLoader
 
         $fileList = explode('|', $data);
         foreach ($fileList as $filename) {
-            $exist = $this->entityManager->getRepository(File::class)->findOneBy(['filename' => $filename]);
+            $exist = $this->fileRepository->findOneBy(['filename' => $filename]);
             if ($exist) {
                 continue;
             }

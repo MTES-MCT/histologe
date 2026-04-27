@@ -65,7 +65,7 @@ class BackBailleurController extends AbstractController
     public function edit(
         Bailleur $bailleur,
         Request $request,
-        EntityManagerInterface $em,
+        EntityManagerInterface $entityManager,
     ): Response {
         $form = $this->createForm(BailleurType::class, $bailleur);
         $form->handleRequest($request);
@@ -74,7 +74,7 @@ class BackBailleurController extends AbstractController
             foreach ($bailleur->getBailleurTerritories() as $bt) {
                 if (!in_array($bt->getTerritory(), $selectedTerritories, true)) {
                     $bailleur->removeBailleurTerritory($bt);
-                    $em->remove($bt);
+                    $entityManager->remove($bt);
                 }
             }
             $currentTerritories = $bailleur->getBailleurTerritories()
@@ -87,7 +87,7 @@ class BackBailleurController extends AbstractController
                 }
             }
 
-            $em->flush();
+            $entityManager->flush();
             $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'Le bailleur a bien été modifié.']);
 
             return $this->redirectToRoute('back_bailleur_edit', ['bailleur' => $bailleur->getId()]);
@@ -103,7 +103,7 @@ class BackBailleurController extends AbstractController
     public function delete(
         Bailleur $bailleur,
         Request $request,
-        EntityManagerInterface $em,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         if (!$this->isCsrfTokenValid('bailleur_delete', $request->query->get('_token'))) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
@@ -116,10 +116,10 @@ class BackBailleurController extends AbstractController
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
         }
         foreach ($bailleur->getBailleurTerritories() as $bailleurTerritory) {
-            $em->remove($bailleurTerritory);
+            $entityManager->remove($bailleurTerritory);
         }
-        $em->remove($bailleur);
-        $em->flush();
+        $entityManager->remove($bailleur);
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Bailleur supprimé', 'message' => 'Le bailleur a bien été supprimé.'];
 
         [, $searchBailleur, $paginatedBailleurs] = $this->handleSearch($request, true);

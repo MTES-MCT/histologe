@@ -3,7 +3,6 @@
 namespace App\Command\Cron;
 
 use App\Entity\User;
-use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -23,7 +22,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 class RemindInactiveUserCommand extends AbstractCronCommand
 {
     public function __construct(
-        private readonly UserManager $userManager,
+        private readonly UserRepository $userRepository,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
     ) {
@@ -53,9 +52,7 @@ class RemindInactiveUserCommand extends AbstractCronCommand
             return Command::FAILURE;
         }
 
-        /** @var UserRepository $userRepository */
-        $userRepository = $this->userManager->getRepository();
-        $userList = $userRepository->findInactiveWithNbAffectationPending();
+        $userList = $this->userRepository->findInactiveWithNbAffectationPending();
         $nbUsers = \count($userList);
         if ($input->getOption('debug')) {
             $io->info(\sprintf('%s users will be notified', $nbUsers));
@@ -65,7 +62,7 @@ class RemindInactiveUserCommand extends AbstractCronCommand
 
         foreach ($userList as $userItem) {
             /** @var User $user */
-            $user = $this->userManager->findOneBy(['email' => $userItem['email']]);
+            $user = $this->userRepository->findOneBy(['email' => $userItem['email']]);
 
             if ($user->isActivateAccountNotificationEnabled()) {
                 $this->notificationMailerRegistry->send(

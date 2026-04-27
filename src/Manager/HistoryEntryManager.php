@@ -30,7 +30,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
-class HistoryEntryManager extends AbstractManager
+class HistoryEntryManager extends Manager
 {
     use DoctrineListenerRemoverTrait;
 

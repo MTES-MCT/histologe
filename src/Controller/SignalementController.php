@@ -349,7 +349,7 @@ class SignalementController extends AbstractController
             $signalementDraft
         ) {
             $signalementDraft->setStatus(SignalementDraftStatus::ARCHIVE);
-            $signalementDraftManager->save($signalementDraft);
+            $entityManager->persist($signalementDraft);
             $entityManager->flush();
 
             return $this->json(['success' => true]);
@@ -530,7 +530,7 @@ class SignalementController extends AbstractController
                 $this->addFlash('error', 'Vous devez accepter les CGU pour accéder au dossier.');
             } else {
                 $signalement->setIsCguTiersAccepted(true);
-                $signalementManager->save($signalement);
+                $entityManager->persist($signalement);
                 $entityManager->flush();
 
                 return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
@@ -815,7 +815,7 @@ class SignalementController extends AbstractController
                 isVisibleForUsager: true,
             );
 
-            $signalementManager->save($signalement);
+            $entityManager->persist($signalement);
             $entityManager->flush();
             $this->addFlash('success', ['title' => 'Demande enregistrée', 'message' => 'Votre demande d\'arrêt de procédure a bien été prise en compte. Elle sera examinée par l\'administration.']);
 
@@ -880,7 +880,7 @@ class SignalementController extends AbstractController
                 isVisibleForUsager: true,
             );
 
-            $signalementManager->save($signalement);
+            $entityManager->persist($signalement);
             $entityManager->flush();
             $this->addFlash('success', ['title' => 'Demande enregistrée', 'message' => 'Votre demande de poursuivre la procédure a bien été prise en compte. Elle a été transmise à l\'administration.']);
 
@@ -936,7 +936,7 @@ class SignalementController extends AbstractController
                 );
 
                 $injonctionBailleurService->switchFromInjonctionToProcedure($signalement);
-                $signalementManager->save($signalement);
+                $entityManager->persist($signalement);
                 $entityManager->flush();
                 $entityManager->commit();
             } catch (\Exception $e) {
@@ -1038,7 +1038,7 @@ class SignalementController extends AbstractController
                     $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
                     $signalement->setMotifCloture(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS);
                 }
-                $signalementManager->save($signalement);
+                $entityManager->persist($signalement);
                 $entityManager->flush();
                 $entityManager->commit();
             } catch (\Exception $e) {
@@ -1104,7 +1104,7 @@ class SignalementController extends AbstractController
             isVisibleForUsager: true,
         );
         $signalement->setIsProprioAverti(true);
-        $signalementManager->save($signalement);
+        $entityManager->persist($signalement);
         $entityManager->flush();
 
         $this->addFlash('success', ['title' => 'Bailleur prévenu',

@@ -64,6 +64,7 @@ class SignalementManagerTest extends WebTestCase
     private UserManager $userManager;
     private BailleurRepository $bailleurRepository;
     private PartnerRepository $partnerRepository;
+    private SignalementRepository $signalementRepository;
     private SignalementAddressUpdater $signalementAddressUpdater;
     private AffectationManager $affectationManager;
     private ZipcodeProvider $zipcodeProvider;
@@ -94,6 +95,7 @@ class SignalementManagerTest extends WebTestCase
         $this->userManager = static::getContainer()->get(UserManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
+        $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
         $this->affectationManager = static::getContainer()->get(AffectationManager::class);
         $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
@@ -118,6 +120,7 @@ class SignalementManagerTest extends WebTestCase
             $this->userManager,
             $this->bailleurRepository,
             $this->partnerRepository,
+            $this->signalementRepository,
             $this->signalementAddressUpdater,
             $this->zipcodeProvider,
             $this->exportIterableQuery,
@@ -132,7 +135,7 @@ class SignalementManagerTest extends WebTestCase
     public function testFindAffectablePartnersAffectedAndNotAffectedBySignalementLocalization(): void
     {
         /** @var Signalement $signalement */
-        $signalement = $this->signalementManager->findOneBy(['territory' => self::TERRITORY_13]);
+        $signalement = $this->signalementRepository->findOneBy(['territory' => self::TERRITORY_13]);
         $partners = $this->signalementManager->findAffectablePartners($signalement);
 
         $this->assertArrayHasKey('affected', $partners);
@@ -238,7 +241,7 @@ class SignalementManagerTest extends WebTestCase
     public function testUpdateFromEmptyCompositionLogementRequest(): void
     {
         /** @var Signalement $signalement */
-        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-8']);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-8']);
         $emptyCompositionLogementRequest = new CompositionLogementRequest(
             type: '',
             typeLogementNatureAutrePrecision: '',
@@ -301,7 +304,7 @@ class SignalementManagerTest extends WebTestCase
     public function testUpdateFromSignalementQualificationWithNdeRequest(): void
     {
         /** @var Signalement $signalement */
-        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-8']);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-8']);
         /** @var SignalementQualification $signalementQualification */
         $signalementQualification = $signalement->getSignalementQualifications()->first();
         $qualificationNDERequest = new QualificationNDERequest(
@@ -319,7 +322,7 @@ class SignalementManagerTest extends WebTestCase
     public function testUpdateFromSignalementQualificationWithNullNdeRequest(): void
     {
         /** @var Signalement $signalement */
-        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-8']);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-8']);
         /** @var SignalementQualification $signalementQualification */
         $signalementQualification = $signalement->getSignalementQualifications()->first();
         $qualificationNDERequest = new QualificationNDERequest(

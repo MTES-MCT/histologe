@@ -5,13 +5,15 @@ namespace App\Manager;
 use App\Entity\Signalement;
 use App\Entity\SignalementUsager;
 use App\Entity\User;
+use App\Repository\SignalementUsagerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
-class SignalementUsagerManager extends AbstractManager
+class SignalementUsagerManager extends Manager
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly SignalementUsagerRepository $signalementUsagerRepository,
         protected ManagerRegistry $managerRegistry,
         string $entityName = SignalementUsager::class,
     ) {
@@ -21,7 +23,7 @@ class SignalementUsagerManager extends AbstractManager
     public function createOrUpdate(Signalement $signalement, ?User $userOccupant, ?User $userDeclarant): SignalementUsager
     {
         /** @var SignalementUsager|null $signalementUsager */
-        $signalementUsager = $this->getRepository()->findOneBy([
+        $signalementUsager = $this->signalementUsagerRepository->findOneBy([
             'signalement' => $signalement,
         ]);
         if (null === $signalementUsager) {
@@ -34,7 +36,7 @@ class SignalementUsagerManager extends AbstractManager
         if (null !== $userDeclarant) {
             $signalementUsager->setDeclarant($userDeclarant);
         }
-        $this->save($signalementUsager);
+        $this->entityManager->persist($signalementUsager);
         $this->entityManager->flush();
 
         return $signalementUsager;

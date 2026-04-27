@@ -7,18 +7,22 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
 use App\Repository\UserRepository;
+use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Notification\NotificationAndMailSender;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class UserSignalementSubscriptionManager extends AbstractManager
+class UserSignalementSubscriptionManager extends Manager
 {
     public function __construct(
         ManagerRegistry $managerRegistry,
         private readonly NotificationAndMailSender $notificationAndMailSender,
+        private readonly EntityManagerInterface $entityManager,
         private readonly Security $security,
         private readonly UserRepository $userRepository,
+        private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
         #[Autowire(env: 'USER_SYSTEM_EMAIL')]
         private readonly string $userSystemEmail,
         protected string $entityName = UserSignalementSubscription::class,
@@ -34,14 +38,14 @@ class UserSignalementSubscriptionManager extends AbstractManager
         bool &$subscriptionCreated = false,
     ): ?UserSignalementSubscription {
         /** @var ?UserSignalementSubscription $subscription */
-        $subscription = $this->findOneBy(['user' => $userToSubscribe, 'signalement' => $signalement]);
+        $subscription = $this->userSignalementSubscriptionRepository->findOneBy(['user' => $userToSubscribe, 'signalement' => $signalement]);
         if (null === $subscription) {
             $subscription = (new UserSignalementSubscription())
             ->setUser($userToSubscribe)
             ->setSignalement($signalement)
             ->setCreatedBy($createdBy);
 
-            $this->save($subscription);
+            $this->entityManager->persist($subscription);
             if ($affectation) {
                 $this->notificationAndMailSender->sendNewSubscription($subscription, $affectation);
             }

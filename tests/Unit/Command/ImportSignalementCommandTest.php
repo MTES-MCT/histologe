@@ -84,10 +84,10 @@ class ImportSignalementCommandTest extends KernelTestCase
         $command = $application->add(new ImportSignalementCommand(
             $csvParser,
             $parameterBag,
-            $entityManager,
             $fileStorage,
             $uploadHandlerService,
-            $signalementImportLoader
+            $signalementImportLoader,
+            $territoryRepository,
         ));
 
         $commandTester = new CommandTester($command);
@@ -126,10 +126,10 @@ class ImportSignalementCommandTest extends KernelTestCase
         $command = $application->add(new ImportSignalementCommand(
             $csvParser,
             $parameterBag,
-            $entityManager,
             $fileStorage,
             $uploadHandlerService,
-            $signalementImportLoader
+            $signalementImportLoader,
+            $territoryRepository,
         ));
 
         $commandTester = new CommandTester($command);
@@ -178,10 +178,10 @@ class ImportSignalementCommandTest extends KernelTestCase
         $command = $application->add(new ImportSignalementCommand(
             $csvParser,
             $parameterBag,
-            $entityManager,
             $fileStorage,
             $uploadHandlerService,
-            $signalementImportLoader
+            $signalementImportLoader,
+            $territoryRepository,
         ));
 
         $commandTester = new CommandTester($command);

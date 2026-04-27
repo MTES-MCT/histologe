@@ -2,7 +2,7 @@
 
 namespace App\Tests\Functional\Command\Cron;
 
-use App\Entity\Suivi;
+use App\Repository\SuiviRepository;
 use Psr\Clock\ClockInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -30,6 +30,8 @@ class SendSuiviWaitingNotificationCommandTest extends KernelTestCase
         $this->assertEquals('[OK] Les notifications de 6 suivis ont été envoyées avec succès.', trim($output));
         $this->assertEmailCount(10);
 
-        $this->assertEquals(0, self::getContainer()->get('doctrine')->getManager()->getRepository(Suivi::class)->count(['waitingNotification' => 1]));
+        $suiviRepository = static::getContainer()->get(SuiviRepository::class);
+
+        $this->assertEquals(0, $suiviRepository->count(['waitingNotification' => 1]));
     }
 }

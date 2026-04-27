@@ -240,7 +240,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
                 flush: false
             );
 
-            $this->suiviManager->save($suivi);
+            $this->entityManager->persist($suivi);
 
             if (0 === $totalRead % self::FLUSH_COUNT) {
                 $this->entityManager->flush();

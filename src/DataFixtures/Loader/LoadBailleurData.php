@@ -4,6 +4,7 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\Bailleur;
 use App\Entity\Territory;
+use App\Repository\BailleurRepository;
 use App\Repository\TerritoryRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
@@ -12,8 +13,10 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadBailleurData extends Fixture implements OrderedFixtureInterface
 {
-    public function __construct(private TerritoryRepository $territoryRepository)
-    {
+    public function __construct(
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly BailleurRepository $bailleurRepository,
+    ) {
     }
 
     public function load(ObjectManager $manager): void
@@ -32,7 +35,7 @@ class LoadBailleurData extends Fixture implements OrderedFixtureInterface
         /** @var Territory $territory */
         $territory = $this->territoryRepository->findOneBy(['name' => $row['territory']]);
         /** @var ?Bailleur $bailleur */
-        $bailleur = $manager->getRepository(Bailleur::class)->findOneBy(['name' => $row['name']]);
+        $bailleur = $this->bailleurRepository->findOneBy(['name' => $row['name']]);
         if (null === $bailleur) {
             $bailleur = (new Bailleur())
                 ->setName($row['name'])

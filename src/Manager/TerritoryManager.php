@@ -5,7 +5,7 @@ namespace App\Manager;
 use App\Entity\Territory;
 use Doctrine\Persistence\ManagerRegistry;
 
-class TerritoryManager extends AbstractManager
+class TerritoryManager extends Manager
 {
     public function __construct(
         protected ManagerRegistry $managerRegistry,

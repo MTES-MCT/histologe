@@ -3,8 +3,8 @@
 namespace App\Command;
 
 use App\Entity\File;
-use App\Entity\Territory;
 use App\Repository\FileRepository;
+use App\Repository\TerritoryRepository;
 use App\Service\Files\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
@@ -28,6 +28,8 @@ class CreateSignalementPhotoVariantsCommand extends Command
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly FileRepository $fileRepository,
         private readonly FilesystemOperator $fileStorage,
         private readonly ImageManipulationHandler $imageManipulationHandler,
     ) {
@@ -50,16 +52,14 @@ class CreateSignalementPhotoVariantsCommand extends Command
         $territoryZip = $input->getArgument('territory_zip');
         $territory = null;
         if ($territoryZip) {
-            $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => $territoryZip]);
+            $territory = $this->territoryRepository->findOneBy(['zip' => $territoryZip]);
             if (null === $territory) {
                 $this->io->error('Territory does not exists');
 
                 return Command::FAILURE;
             }
         }
-        /** @var FileRepository $fileRepository */
-        $fileRepository = $this->entityManager->getRepository(File::class);
-        $this->files = $fileRepository->getPhotosWihoutVariants($territory);
+        $this->files = $this->fileRepository->getPhotosWihoutVariants($territory);
         foreach ($this->files as $file) {
             $this->processFile($file);
             ++$this->i;

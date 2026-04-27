@@ -9,8 +9,7 @@ use App\Entity\User;
 use App\Entity\UserPartner;
 use App\Factory\PartnerFactory;
 use App\Factory\UserFactory;
-use App\Manager\PartnerManager;
-use App\Manager\UserManager;
+use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -45,9 +44,9 @@ class GridAffectationLoader
 
     public function __construct(
         private readonly PartnerFactory $partnerFactory,
-        private readonly PartnerManager $partnerManager,
+        private readonly PartnerRepository $partnerRepository,
         private readonly UserFactory $userFactory,
-        private readonly UserManager $userManager,
+        private readonly UserRepository $userRepository,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
@@ -97,7 +96,7 @@ class GridAffectationLoader
 
                     if (!$isModeUpdate) {
                         /** @var Partner $partnerToCheck */
-                        $partnerToCheck = $this->partnerManager->findOneBy([
+                        $partnerToCheck = $this->partnerRepository->findOneBy([
                             'email' => $emailPartner,
                             'isArchive' => false,
                             'territory' => $territory]
@@ -134,9 +133,7 @@ class GridAffectationLoader
                         );
                     }
                     if ($isModeUpdate) {
-                        /** @var UserRepository $userRepository */
-                        $userRepository = $this->entityManager->getRepository(User::class);
-                        $user = $userRepository->findOneBy(['email' => $emailUser]);
+                        $user = $this->userRepository->findOneBy(['email' => $emailUser]);
                         if ($user) {
                             continue;
                         }
@@ -208,8 +205,6 @@ class GridAffectationLoader
             $progressBar = new ProgressBar($output, \count($data));
             $progressBar->start();
         }
-        /** @var UserRepository $userRepository */
-        $userRepository = $this->entityManager->getRepository(User::class);
         foreach ($data as $item) {
             $canAddUserPartner = false;
             $isNewPartner = false;
@@ -218,7 +213,7 @@ class GridAffectationLoader
                 $partnerType = PartnerType::tryFromLabel($item[GridAffectationHeader::PARTNER_TYPE]);
 
                 if (!\in_array($partnerName, $newPartnerNames)) {
-                    $partner = $this->partnerManager->findOneBy(['nom' => $partnerName, 'territory' => $territory]);
+                    $partner = $this->partnerRepository->findOneBy(['nom' => $partnerName, 'territory' => $territory]);
                     if (null === $partner) {
                         $partner = $this->partnerFactory->createInstanceFrom(
                             territory: $territory,
@@ -234,7 +229,7 @@ class GridAffectationLoader
                     /** @var ConstraintViolationList $errors */
                     $errors = $this->validator->validate($partner);
                     if (0 === $errors->count() && $isNewPartner) {
-                        $this->partnerManager->save($partner);
+                        $this->entityManager->persist($partner);
                         ++$this->metadata['nb_partners'];
                         $newPartnerNames[] = $partnerName;
                     } elseif ($errors->count() > 0) {
@@ -248,7 +243,7 @@ class GridAffectationLoader
                 $phone = TrimHelper::safeTrim(isset($item[GridAffectationHeader::USER_PHONE]) ? $item[GridAffectationHeader::USER_PHONE] : null);
                 $fonction = TrimHelper::safeTrim(isset($item[GridAffectationHeader::USER_FONCTION]) ? $item[GridAffectationHeader::USER_FONCTION] : null);
                 if (!empty($roleLabel) && !empty($email)) {
-                    $user = $userRepository->findOneBy(['email' => $email]);
+                    $user = $this->userRepository->findOneBy(['email' => $email]);
                     if (null === $user) {
                         ++$countNewUsers;
                         $user = $this->userFactory->createInstanceFrom(
@@ -300,8 +295,8 @@ class GridAffectationLoader
                         /** @var ConstraintViolationList $errors */
                         $errors = $this->validator->validate($user);
                         if (0 === $errors->count()) {
-                            $this->userManager->save($user);
-                            $this->partnerManager->save($partner);
+                            $this->entityManager->persist($user);
+                            $this->entityManager->persist($partner);
                             $this->entityManager->persist($userPartner);
                         } else {
                             $this->metadata['errors'][] = \sprintf('line : %s', (string) $errors);

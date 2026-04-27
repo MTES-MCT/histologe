@@ -6,7 +6,9 @@ use App\Entity\Enum\DocumentType;
 use App\Entity\Signalement;
 use App\Factory\FileFactory;
 use App\Manager\FileManager;
+use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -16,9 +18,13 @@ class FileManagerTest extends KernelTestCase
     {
         /** @var FileFactory $fileFactory */
         $fileFactory = static::getContainer()->get(FileFactory::class);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        /** @var FileRepository $fileRepository */
+        $fileRepository = static::getContainer()->get(FileRepository::class);
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
-        $fileManager = new FileManager($fileFactory, $managerRegistry);
+        $fileManager = new FileManager($fileFactory, $entityManager, $fileRepository, $managerRegistry);
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $managerRegistry->getRepository(Signalement::class);
@@ -41,9 +47,13 @@ class FileManagerTest extends KernelTestCase
     {
         /** @var FileFactory $fileFactory */
         $fileFactory = static::getContainer()->get(FileFactory::class);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        /** @var FileRepository $fileRepository */
+        $fileRepository = static::getContainer()->get(FileRepository::class);
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
-        $fileManager = new FileManager($fileFactory, $managerRegistry);
+        $fileManager = new FileManager($fileFactory, $entityManager, $fileRepository, $managerRegistry);
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $managerRegistry->getRepository(Signalement::class);

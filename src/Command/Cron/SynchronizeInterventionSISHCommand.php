@@ -2,7 +2,6 @@
 
 namespace App\Command\Cron;
 
-use App\Manager\JobEventManager;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
@@ -36,7 +35,7 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
     /** @param iterable<InterventionSISHHandlerInterface> $interventionHandlers */
     public function __construct(
         private readonly EsaboraManager $esaboraManager,
-        private readonly JobEventManager $jobEventManager,
+        private readonly JobEventRepository $jobEventRepository,
         private readonly AffectationRepository $affectationRepository,
         private readonly SerializerInterface $serializer,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
@@ -100,10 +99,8 @@ class SynchronizeInterventionSISHCommand extends AbstractSynchronizeEsaboraComma
             }
         }
         $this->entityManager->flush();
-        /** @var JobEventRepository $jobEventRepository */
-        $jobEventRepository = $this->jobEventManager->getRepository();
         ['success_count' => $countSuccess, 'failed_count' => $countFailed] =
-             $jobEventRepository->getReportEsaboraAction(
+             $this->jobEventRepository->getReportEsaboraAction(
                  AbstractEsaboraService::ACTION_SYNC_DOSSIER_ARRETE,
                  AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE
              );

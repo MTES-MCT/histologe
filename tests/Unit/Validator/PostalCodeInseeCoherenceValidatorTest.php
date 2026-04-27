@@ -34,7 +34,7 @@ class PostalCodeInseeCoherenceValidatorTest extends ConstraintValidatorTestCase
             ->with(Commune::class)
             ->willReturn($this->communeRepository);
 
-        return new PostalCodeInseeCoherenceValidator($entityManager, $this->postalCodeHomeChecker);
+        return new PostalCodeInseeCoherenceValidator($this->postalCodeHomeChecker, $this->communeRepository);
     }
 
     /**

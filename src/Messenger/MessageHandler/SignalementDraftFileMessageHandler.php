@@ -4,11 +4,10 @@ namespace App\Messenger\MessageHandler;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\User;
-use App\Manager\SignalementManager;
-use App\Manager\UserManager;
 use App\Messenger\Message\SignalementDraftProcessMessage;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\UserRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Files\SignalementFileAttacher;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,11 +19,10 @@ class SignalementDraftFileMessageHandler
 {
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
-        private readonly SignalementManager $signalementManager,
         private readonly SignalementDraftRepository $signalementDraftRepository,
         private readonly SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
         private readonly LoggerInterface $logger,
-        private readonly UserManager $userManager,
+        private readonly UserRepository $userRepository,
         private readonly SignalementFileAttacher $signalementFileAttacher,
         private readonly EntityManagerInterface $entityManager,
     ) {
@@ -50,7 +48,7 @@ class SignalementDraftFileMessageHandler
 
         $signalement = $this->signalementRepository->find($signalementDraftProcessMessage->getSignalementId());
         /** @var User|null $uploadUser */
-        $uploadUser = $this->userManager->findOneBy(['email' => $signalement->getMailDeclarant()]);
+        $uploadUser = $this->userRepository->findOneBy(['email' => $signalement->getMailDeclarant()]);
         if ($files = $signalementDraftRequest->getFiles()) {
             foreach ($files as $key => $fileList) {
                 foreach ($fileList as $fileItem) {
@@ -62,7 +60,7 @@ class SignalementDraftFileMessageHandler
                     );
                 }
             }
-            $this->signalementManager->save($signalement);
+            $this->entityManager->persist($signalement);
             $this->entityManager->flush();
         }
 

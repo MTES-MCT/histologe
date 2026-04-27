@@ -11,6 +11,7 @@ use App\Manager\SignalementUsagerManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\SignalementUsagerRepository;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Token\TokenGeneratorInterface;
@@ -48,8 +49,18 @@ class UserManagerTest extends KernelTestCase
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $doctrine->getManager();
 
+        /** @var SignalementUsagerRepository $signalementUsagerRepository */
+        $signalementUsagerRepository = self::getContainer()->get(SignalementUsagerRepository::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = self::getContainer()->get(UserRepository::class);
+
         $this->entityManager = $entityManager;
-        $this->signalementUsagerManager = new SignalementUsagerManager($this->entityManager, $this->managerRegistry, SignalementUsager::class);
+        $this->signalementUsagerManager = new SignalementUsagerManager(
+            $this->entityManager,
+            $signalementUsagerRepository,
+            $this->managerRegistry,
+            SignalementUsager::class
+        );
         $this->userFactory = static::getContainer()->get(UserFactory::class);
         $this->userManager = new UserManager(
             $this->notificationMailerRegistry,
@@ -59,6 +70,7 @@ class UserManagerTest extends KernelTestCase
             $this->managerRegistry,
             $this->signalementUsagerManager,
             $this->userFactory,
+            $userRepository,
             $this->entityManager,
             User::class,
         );

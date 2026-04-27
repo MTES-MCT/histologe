@@ -4,10 +4,11 @@ namespace App\Manager;
 
 use Doctrine\Persistence\ManagerRegistry;
 
-class Manager extends AbstractManager
+class Manager
 {
-    public function __construct(protected ManagerRegistry $managerRegistry, protected string $entityName = '')
-    {
-        parent::__construct($managerRegistry, $entityName);
+    public function __construct(
+        protected ManagerRegistry $managerRegistry,
+        protected string $entityName = '',
+    ) {
     }
 }

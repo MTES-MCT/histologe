@@ -61,7 +61,7 @@ class ReinitAdminPasswordsCommand extends Command
                 return Command::FAILURE;
             }
 
-            $this->userManager->save($user);
+            $this->entityManager->persist($user);
 
             $this->notificationMailerRegistry->send(
                 new NotificationMail(

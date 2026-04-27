@@ -5,7 +5,6 @@ namespace App\EventSubscriber;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\AffectationClosedEvent;
-use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Service\Notification\NotificationAndMailSender;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +14,6 @@ readonly class AffectationClosedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly NotificationAndMailSender $notificationAndMailSender,
-        private readonly SignalementManager $signalementManager,
         private readonly SuiviManager $suiviManager,
         private readonly EntityManagerInterface $entityManager,
     ) {
@@ -48,7 +46,7 @@ readonly class AffectationClosedSubscriber implements EventSubscriberInterface
 
         $signalement->addSuivi($suivi);
         $this->notificationAndMailSender->sendAffectationClosed($affectation);
-        $this->signalementManager->save($signalement);
+        $this->entityManager->persist($signalement);
         $this->entityManager->flush();
     }
 }
