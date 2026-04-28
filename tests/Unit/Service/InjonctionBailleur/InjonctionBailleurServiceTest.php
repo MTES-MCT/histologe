@@ -105,6 +105,8 @@ class InjonctionBailleurServiceTest extends KernelTestCase
                     $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE, $args[3]);
                 }
                 ++$callIndex;
+
+                return new Suivi();
             });
 
         $this->autoAssigner->expects($this->once())->method('assignOrSendNewSignalementNotification')->with($signalement);
@@ -145,6 +147,8 @@ class InjonctionBailleurServiceTest extends KernelTestCase
                     $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE, $args[3]);
                 }
                 ++$callIndex;
+
+                return new Suivi();
             });
 
         $this->autoAssigner->expects($this->never())->method('assignOrSendNewSignalementNotification')->with($signalement);
