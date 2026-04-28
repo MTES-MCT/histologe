@@ -1,6 +1,12 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% block title %}Partenaire{% endblock %}
+{% block title %}
+    {% if create %}
+        Ajouter un partenaire
+    {% else %}
+        Modifier le partenaire {{ partner.nom }}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
     <section class="fr-col-12 fr-pt-4v">
