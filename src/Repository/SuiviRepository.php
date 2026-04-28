@@ -63,7 +63,7 @@ class SuiviRepository extends ServiceEntityRepository
         JOIN (
             SELECT signalement_id, MAX(created_at) AS last_public
             FROM suivi
-            WHERE suivi.isVisibleForUsager = 1
+            WHERE suivi.is_visible_for_usager = 1
             GROUP BY signalement_id
         ) pub ON pub.signalement_id = s.id
         LEFT JOIN (
@@ -112,7 +112,7 @@ class SuiviRepository extends ServiceEntityRepository
                     -- dernier suivi public
                     SELECT signalement_id, MAX(created_at) AS last_public
                     FROM suivi
-                    WHERE suivi.isVisibleForUsager = 1
+                    WHERE suivi.is_visible_for_usager = 1
                     GROUP BY signalement_id
                 ) pub ON pub.signalement_id = s.id
                 JOIN (
@@ -122,7 +122,7 @@ class SuiviRepository extends ServiceEntityRepository
                     JOIN (
                         SELECT signalement_id, MAX(created_at) AS last_public
                         FROM suivi
-                        WHERE suivi.isVisibleForUsager = 1
+                        WHERE suivi.is_visible_for_usager = 1
                         GROUP BY signalement_id
                     ) pub2 ON pub2.signalement_id = su.signalement_id
                     WHERE su.category = :category_ask_feedback
@@ -257,7 +257,7 @@ class SuiviRepository extends ServiceEntityRepository
                     INNER JOIN signalement s2 ON s2.id = su.signalement_id
                     WHERE su.category = :category_ask_feedback
                     AND su.created_at > COALESCE(
-                        (SELECT MAX(created_at) FROM suivi WHERE signalement_id = su.signalement_id AND suivi.isVisibleForUsager = 1),
+                        (SELECT MAX(created_at) FROM suivi WHERE signalement_id = su.signalement_id AND suivi.is_visible_for_usager = 1),
                         s2.created_at
                     )
                     GROUP BY su.signalement_id
