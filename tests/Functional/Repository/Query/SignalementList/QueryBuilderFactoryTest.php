@@ -65,7 +65,7 @@ class QueryBuilderFactoryTest extends KernelTestCase
     /**
      * @return array<string, array<mixed, mixed>>
      */
-    public function userOptionsProvider(): array
+    public static function userOptionsProvider(): array
     {
         return [
             'Partner user, simple options' => [

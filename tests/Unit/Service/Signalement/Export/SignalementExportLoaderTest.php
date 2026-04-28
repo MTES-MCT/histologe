@@ -57,7 +57,7 @@ class SignalementExportLoaderTest extends TestCase
         }
     }
 
-    protected function provideFileFormat(): \Generator
+    public static function provideFileFormat(): \Generator
     {
         yield 'export with xlsx' => ['xlsx', NumberFormat::FORMAT_DATE_DDMMYYYY];
         yield 'export with csv' => ['csv', 'General'];

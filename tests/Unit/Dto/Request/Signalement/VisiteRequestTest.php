@@ -40,7 +40,7 @@ class VisiteRequestTest extends KernelTestCase
         $this->assertEquals($expectedUTC, $visiteRequest->getDateTimeUTC());
     }
 
-    public function visiteRequestDataProvider(): \Generator
+    public static function visiteRequestDataProvider(): \Generator
     {
         yield 'France' => [
             'date' => '2024-08-13',
