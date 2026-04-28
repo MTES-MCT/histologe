@@ -7,7 +7,6 @@ use App\Service\Metabase\DashboardUrlGenerator;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Token;
 use Lcobucci\JWT\UnencryptedToken;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -63,6 +62,8 @@ class DashboardUrlGeneratorTest extends TestCase
             InMemory::plainText($secretKey)
         );
 
+        $this->assertNotEmpty($tokenString, 'Token string should not be empty');
+        /** @var non-empty-string $tokenString */
         $token = $jwtConfig->parser()->parse($tokenString);
 
         /** @var UnencryptedToken $token */
