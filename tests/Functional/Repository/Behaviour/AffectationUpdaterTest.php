@@ -27,9 +27,7 @@ class AffectationUpdaterTest extends KernelTestCase
         $entityManager = $doctrine->getManager();
 
         $this->entityManager = $entityManager;
-        /** @var AffectationUpdater $affectationUpdater */
-        $affectationUpdater = static::getContainer()->get(AffectationUpdater::class);
-        $this->affectationUpdater = $affectationUpdater;
+        $this->affectationUpdater = new AffectationUpdater($entityManager);
     }
 
     public function testUpdateStatusBySignalement(): void

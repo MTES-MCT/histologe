@@ -118,7 +118,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
 
         $command = new UpdateSignalementDocumentFieldsCommand(
             $this->territoryRepository,
-            $this->signalementRepository,
+            $signalementRepositoryMock,
             $this->csvParser,
             $this->parameterBag,
             $this->fileStorage,
