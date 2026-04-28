@@ -363,7 +363,6 @@ class EsaboraManagerTest extends KernelTestCase
         $dossierResponse->method('getDossNum')->willReturn('2023/SISH/0010');
 
         $suiviRepository = $this->createMock(SuiviRepository::class);
-        $this->suiviManager->method('getRepository')->willReturn($suiviRepository);
 
         $suiviRepository
             ->expects($this->once())
@@ -383,7 +382,7 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
-            $this->suiviRepository,
+            $suiviRepository,
             $this->interventionRepository,
             $this->interventionFactory,
             $this->eventDispatcher,
