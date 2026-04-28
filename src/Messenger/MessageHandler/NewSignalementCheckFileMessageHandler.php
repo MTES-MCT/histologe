@@ -71,12 +71,12 @@ class NewSignalementCheckFileMessageHandler
             $newSignalementCheckFileMessage->getSignalementId()
         );
 
-        $suivisPublic = $signalement->getSuivis()->filter(static function (Suivi $suivi) {
-            return $suivi->getIsPublic() && Suivi::TYPE_PARTNER === $suivi->getType();
+        $suivisVisiblesForUsager = $signalement->getSuivis()->filter(static function (Suivi $suivi) {
+            return $suivi->getIsVisibleForUsager() && Suivi::TYPE_PARTNER === $suivi->getType();
         });
 
         if (SignalementStatus::REFUSED === $signalement->getStatut()
-            || (SignalementStatus::ACTIVE === $signalement->getStatut() && $suivisPublic->count() > 0)
+            || (SignalementStatus::ACTIVE === $signalement->getStatut() && $suivisVisiblesForUsager->count() > 0)
         ) {
             $this->suivi = null;
 
@@ -230,7 +230,7 @@ class NewSignalementCheckFileMessageHandler
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::ASK_DOCUMENT,
             user: $userAdmin,
-            isPublic: true,
+            isVisibleForUsager: true,
             context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
         );
     }

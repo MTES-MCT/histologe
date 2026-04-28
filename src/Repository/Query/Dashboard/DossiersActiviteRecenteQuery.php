@@ -99,7 +99,6 @@ class DossiersActiviteRecenteQuery
     public function findLastSignalementsWithOtherUserSuivi(User $user, TabQueryParameters $params, int $limit = 10): array
     {
         $qb = $this->getBaseQB($user, $params);
-
         $qb->select('
             signalement.reference AS reference,
             signalement.nomOccupant AS nomOccupant,
@@ -109,7 +108,7 @@ class DossiersActiviteRecenteQuery
             signalement.statut AS statut,
             suivi.createdAt AS suiviCreatedAt,
             suivi.category AS suiviCategory,
-            suivi.isPublic AS suiviIsPublic,
+            suivi.isVisibleForUsager AS suiviIsVisibleForUsager,
             MAX(p.nom) AS derniereActionPartenaireNom,
             u.nom AS derniereActionPartenaireNomAgent,
             u.prenom AS derniereActionPartenairePrenomAgent
@@ -172,7 +171,6 @@ class DossiersActiviteRecenteQuery
         if ($user->isPartnerAdmin() || $user->isUserPartner()) {
             $statutField = 'affectation.statut';
         }
-
         $qb->select('
             signalement.reference AS reference,
             signalement.nomOccupant AS nomOccupant,
@@ -182,7 +180,7 @@ class DossiersActiviteRecenteQuery
             '.$statutField.' AS statut,
             suivi.createdAt AS suiviCreatedAt,
             suivi.category AS suiviCategory,
-            suivi.isPublic AS suiviIsPublic,
+            suivi.isVisibleForUsager AS suiviIsVisibleForUsager,
             (
                 SELECT CASE WHEN MAX(s2.createdAt) > suivi.createdAt THEN 1 ELSE 0 END
                 FROM '.Suivi::class.' s2

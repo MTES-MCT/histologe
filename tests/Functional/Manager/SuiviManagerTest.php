@@ -84,8 +84,8 @@ class SuiviManagerTest extends KernelTestCase
             type : Suivi::TYPE_PARTNER,
             category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
-            user : $user,
-            isPublic : true,
+            user: $user,
+            isVisibleForUsager: true
         );
         $signalement->addSuivi($suivi);
         $countSuivisAfterCreate = $signalement->getSuivis()->count();
@@ -95,7 +95,7 @@ class SuiviManagerTest extends KernelTestCase
         $this->assertInstanceOf(Suivi::class, $suivi);
         $desc = Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.' test avec le motif suivant <br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
         $this->assertEquals($desc, $suivi->getDescription());
-        $this->assertTrue($suivi->getIsPublic());
+        $this->assertTrue($suivi->getIsVisibleForUsager());
         $this->assertTrue($suivi->getIsSanitized());
         $this->assertInstanceOf(UserInterface::class, $suivi->getCreatedBy());
     }
@@ -117,6 +117,7 @@ class SuiviManagerTest extends KernelTestCase
             category: SuiviCategory::MESSAGE_USAGER,
         );
         $this->assertEquals($descSanitized, $suivi->getDescription());
+        $this->assertFalse($suivi->getIsVisibleForUsager());
     }
 
     public function testCreateSuiviWithAutoSubscription(): void
@@ -124,7 +125,7 @@ class SuiviManagerTest extends KernelTestCase
         $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000008']);
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-34-02@signal-logement.fr']);
 
-        $this->suiviManager->createSuivi(
+        $suivi = $this->suiviManager->createSuivi(
             signalement : $signalement,
             description : 'prise en charge du signalement',
             type : Suivi::TYPE_PARTNER,
@@ -138,5 +139,46 @@ class SuiviManagerTest extends KernelTestCase
             'user' => $user,
         ]);
         $this->assertCount(1, $sub);
+        $this->assertFalse($suivi->getIsVisibleForUsager());
+    }
+
+    public function testCreateSuiviLogementVacant(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
+            ['reference' => self::REF_SIGNALEMENT]
+        );
+        $signalement->setIsLogementVacant(true);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->managerRegistry->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => 'user-13-03@signal-logement.fr']);
+
+        $countSuivisBeforeCreate = $signalement->getSuivis()->count();
+        $params = [
+            'motif_suivi' => 'Lorem ipsum suivi sit amet, consectetur adipiscing elit.',
+            'motif_cloture' => MotifCloture::tryFrom('NON_DECENCE'),
+            'subject' => 'test',
+        ];
+        $suivi = $this->suiviManager->createSuivi(
+            signalement : $signalement,
+            description : SuiviManager::buildDescriptionClotureSignalement($params),
+            type : Suivi::TYPE_PARTNER,
+            category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+            user: $user,
+            isVisibleForUsager: true
+        );
+        $signalement->addSuivi($suivi);
+        $countSuivisAfterCreate = $signalement->getSuivis()->count();
+
+        $this->assertEquals(Suivi::TYPE_PARTNER, $suivi->getType());
+        $this->assertNotEquals($countSuivisBeforeCreate, $countSuivisAfterCreate);
+        $this->assertInstanceOf(Suivi::class, $suivi);
+        $desc = Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.' test avec le motif suivant <br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
+        $this->assertEquals($desc, $suivi->getDescription());
+        $this->assertFalse($suivi->getIsVisibleForUsager());
+        $this->assertTrue($suivi->getIsSanitized());
+        $this->assertInstanceOf(UserInterface::class, $suivi->getCreatedBy());
     }
 }

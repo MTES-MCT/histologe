@@ -2,8 +2,11 @@
 
 namespace App\Entity\Enum;
 
+use App\Entity\Behaviour\EnumTrait;
+
 enum PartnerType: string
 {
+    use EnumTrait;
     case ADIL = 'ADIL';
     case ARS = 'ARS';
     case ASSOCIATION = 'ASSOCIATION';
@@ -22,11 +25,6 @@ enum PartnerType: string
     case PREFECTURE = 'PREFECTURE';
     case TRIBUNAL = 'TRIBUNAL';
     case AUTRE = 'AUTRE';
-
-    public function label(): string
-    {
-        return self::getLabelList()[$this->name];
-    }
 
     /** @return array<string, string> */
     public static function getLabelList(): array
@@ -51,30 +49,5 @@ enum PartnerType: string
             'TRIBUNAL' => 'Tribunal',
             'AUTRE' => 'Autre',
         ];
-    }
-
-    public static function fromLabel(string $label): self
-    {
-        $key = self::getKeyFromLabel($label);
-        if (null === $key) {
-            throw new \ValueError("No case for label $label");
-        }
-
-        return self::from($key);
-    }
-
-    public static function tryFromLabel(string $label): ?self
-    {
-        $key = self::getKeyFromLabel($label);
-
-        return null === $key ? null : self::tryFrom($key);
-    }
-
-    private static function getKeyFromLabel(string $label): ?string
-    {
-        $label = mb_trim($label);
-        $key = array_search($label, self::getLabelList(), true);
-
-        return (false === $key || !is_string($key)) ? null : $key;
     }
 }

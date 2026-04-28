@@ -23,11 +23,6 @@ enum AffectationStatus: string
         };
     }
 
-    public function label(): string
-    {
-        return self::getLabel($this);
-    }
-
     public static function getLabel(self $value): string
     {
         return match ($value) {

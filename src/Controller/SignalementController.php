@@ -624,7 +624,7 @@ class SignalementController extends AbstractController
                 type: $suiviType,
                 category: $suiviCategory,
                 user: $signalementUser->getUser(),
-                isPublic: true,
+                isVisibleForUsager: true,
                 files: $filesToAttach
             );
 
@@ -703,7 +703,7 @@ class SignalementController extends AbstractController
                             type: Suivi::TYPE_USAGER,
                             category: SuiviCategory::MESSAGE_USAGER,
                             user: $signalementUser->getUser(),
-                            isPublic: true,
+                            isVisibleForUsager: true,
                             files: $filesToAttach
                         );
                         $this->addFlash('success', ['title' => 'Documents ajoutés', 'message' => 'Vos documents ont bien été enregistrés.']);
@@ -806,7 +806,7 @@ class SignalementController extends AbstractController
                 type: Suivi::TYPE_USAGER,
                 category: $category,
                 user: $user,
-                isPublic: true,
+                isVisibleForUsager: true,
             );
 
             $signalementManager->save($signalement);
@@ -869,7 +869,7 @@ class SignalementController extends AbstractController
                 type: Suivi::TYPE_USAGER,
                 category: SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
                 user: $user,
-                isPublic: true,
+                isVisibleForUsager: true,
             );
 
             $signalementManager->save($signalement);
@@ -923,7 +923,7 @@ class SignalementController extends AbstractController
                     type: Suivi::TYPE_USAGER,
                     category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
                     user: $user,
-                    isPublic: true,
+                    isVisibleForUsager: true,
                 );
 
                 $injonctionBailleurService->switchFromInjonctionToProcedure($signalement);
@@ -1019,7 +1019,7 @@ class SignalementController extends AbstractController
                     type: Suivi::TYPE_USAGER,
                     category: $category,
                     user: $user,
-                    isPublic: true,
+                    isVisibleForUsager: true,
                 );
 
                 if ('non' === $reponse) {
@@ -1089,7 +1089,7 @@ class SignalementController extends AbstractController
             type: Suivi::TYPE_USAGER,
             category: SuiviCategory::MESSAGE_USAGER,
             user: $user,
-            isPublic: true,
+            isVisibleForUsager: true,
         );
         $signalement->setIsProprioAverti(true);
         $signalementManager->save($signalement);

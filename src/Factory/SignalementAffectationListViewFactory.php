@@ -47,7 +47,7 @@ class SignalementAffectationListViewFactory
             villeOccupant: $data['villeOccupant'],
             lastSuiviAt: $data['lastSuiviAt'],
             lastSuiviBy: $data['lastSuiviBy'],
-            lastSuiviIsPublic: $data['lastSuiviIsPublic'],
+            lastSuiviIsVisibleForUsager: $data['lastSuiviIsVisibleForUsager'],
             profileDeclarant: $profileDeclarant?->label(),
             affectations: $affectations,
             qualifications: SignalementAffectationHelper::getQualificationFrom($data),

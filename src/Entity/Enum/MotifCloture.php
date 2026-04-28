@@ -2,8 +2,11 @@
 
 namespace App\Entity\Enum;
 
+use App\Entity\Behaviour\EnumTrait;
+
 enum MotifCloture: string
 {
+    use EnumTrait;
     case ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE = 'ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE';
     case DEPART_OCCUPANT = 'DEPART_OCCUPANT';
     case INSALUBRITE = 'INSALUBRITE';
@@ -19,11 +22,6 @@ enum MotifCloture: string
     case TRAVAUX_FAITS_OU_EN_COURS = 'TRAVAUX_FAITS_OU_EN_COURS';
     case DOUBLON = 'DOUBLON';
     case AUTRE = 'AUTRE';
-
-    public function label(): string
-    {
-        return self::getLabelList()[$this->name];
-    }
 
     /** @return array<string, string> */
     public static function getLabelList(): array

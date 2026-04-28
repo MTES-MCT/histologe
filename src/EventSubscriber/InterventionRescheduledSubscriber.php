@@ -52,7 +52,7 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
                 category: SuiviCategory::INTERVENTION_IS_RESCHEDULED,
                 partner: $event->getPartner(),
                 user: $event->getUser(),
-                isPublic: true,
+                isVisibleForUsager: true,
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 

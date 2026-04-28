@@ -44,7 +44,7 @@ class Suivi
     ) {
         $this->dateCreation = $suivi->getCreatedAt()->format(\DATE_ATOM);
         $this->description = $suivi->getDescription();
-        $this->public = $suivi->getIsPublic();
+        $this->public = $suivi->getIsVisibleForUsager(); // TODO : à changer quand on ajoute bailleur ?
         $this->createdBy = $suivi->getCreatedByLabel();
     }
 }

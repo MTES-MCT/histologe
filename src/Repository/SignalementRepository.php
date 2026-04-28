@@ -117,7 +117,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s')
             ->andWhere('s.codeSuivi = :code')
             ->setParameter('code', $code)
-            ->leftJoin('s.suivis', 'suivis', Join::WITH, 'suivis.isPublic = 1')
+            ->leftJoin('s.suivis', 'suivis', Join::WITH, 'suivis.isVisibleForUsager = 1')
             ->addSelect('suivis')
             ->andWhere('s.statut NOT IN (:statutDraft)')
             ->setParameter('statutDraft', [SignalementStatus::DRAFT, SignalementStatus::DRAFT_ARCHIVED]);

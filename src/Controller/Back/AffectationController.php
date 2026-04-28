@@ -99,7 +99,6 @@ class AffectationController extends AbstractController
                 $alreadyAffectedPartnersIds = array_map(static fn (array $partner) => $partner['id'], $alreadyAffectedPartner);
                 $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartnersIds);
                 $partnersIdToRemove = array_diff($alreadyAffectedPartnersIds, $postedPartner);
-
                 if ($this->affectationEsaboraPolicy->hasUrlConflict($partnersIdToAdd)) {
                     $message = sprintf('Impossible d\'affecter simultanément des partenaires interconnectés %s avec les mêmes identifiants.
                     Sélectionnez uniquement le partenaire d\'envoi, puis ajoutez le second après validation.', EsaboraSISHService::NAME_SI);

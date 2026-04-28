@@ -71,7 +71,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 partner: $event->getPartner(),
                 user: $user,
-                isPublic: $affectation->getHasNotificationUsagerToCreate(),
+                isVisibleForUsager: $affectation->getHasNotificationUsagerToCreate(),
             );
         }
         $this->createSuiviOnFirstAcceptedAffectation($event->getAffectation());
@@ -93,7 +93,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::AFFECTATION_IS_ACCEPTED,
                 user: $adminUser,
-                isPublic: true,
+                isVisibleForUsager: true,
                 context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
             );
         }

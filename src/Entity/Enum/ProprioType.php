@@ -2,15 +2,13 @@
 
 namespace App\Entity\Enum;
 
+use App\Entity\Behaviour\EnumTrait;
+
 enum ProprioType: string
 {
+    use EnumTrait;
     case PARTICULIER = 'PARTICULIER';
     case ORGANISME_SOCIETE = 'ORGANISME_SOCIETE';
-
-    public function label(): string
-    {
-        return self::getLabelList()[$this->name];
-    }
 
     /** @return array<string, string> */
     public static function getLabelList(): array

@@ -965,7 +965,7 @@ class SignalementManager extends AbstractManager
             category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             partner: $partner,
             user: $adminUser,
-            isPublic: true,
+            isVisibleForUsager: true,
             context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             flush: false,
             createSubscription: $createSubscription,

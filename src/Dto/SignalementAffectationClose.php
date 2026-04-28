@@ -24,7 +24,7 @@ class SignalementAffectationClose
     /** @var array<File> */
     private array $files = [];
 
-    private bool $isPublic = true;
+    private bool $isVisibleForUsager = true;
 
     private ?string $subject = null;
 
@@ -92,14 +92,14 @@ class SignalementAffectationClose
         return $this;
     }
 
-    public function isPublic(): bool
+    public function isVisibleForUsager(): bool
     {
-        return $this->isPublic;
+        return $this->isVisibleForUsager;
     }
 
-    public function setIsPublic(bool $isPublic): self
+    public function setIsVisibleForUsager(bool $isVisibleForUsager): self
     {
-        $this->isPublic = $isPublic;
+        $this->isVisibleForUsager = $isVisibleForUsager;
 
         return $this;
     }

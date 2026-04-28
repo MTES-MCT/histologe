@@ -262,7 +262,7 @@ class DossiersSuivisUsagerQuery
                   SELECT 1
                   FROM '.Suivi::class.' s_pub_before
                   WHERE s_pub_before.signalement = signalement
-                    AND s_pub_before.isPublic = 1
+                    AND s_pub_before.isVisibleForUsager = 1
                     AND s_pub_before.createdAt > s_ask.createdAt
                     AND s_pub_before.createdAt < s.createdAt
               )
@@ -273,7 +273,7 @@ class DossiersSuivisUsagerQuery
             SELECT 1
             FROM '.Suivi::class.' s_pub
             WHERE s_pub.signalement = signalement
-              AND s_pub.isPublic = true
+              AND s_pub.isVisibleForUsager = true
               AND s_pub.category NOT IN (:usagerCategory, :poursuiteCategory)
               AND s_pub.createdAt > s.createdAt
         )');

@@ -101,7 +101,8 @@ class TabDataManager
         $tabDossiers = [];
         foreach ($paginator as $signalement) {
             $derniereAction = (SuiviCategory::MESSAGE_PARTNER === $signalement['suiviCategory'])
-                ? ($signalement['suiviIsPublic'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
+                // TODO : à faire évoluer pour les suivis visibles aux bailleurs
+                ? ($signalement['suiviIsVisibleForUsager'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
                 : $signalement['suiviCategory']->label();
             $tabDossiers[] = new TabDossier(
                 uuid: $signalement['uuid'],
@@ -612,7 +613,8 @@ class TabDataManager
 
         foreach ($displayedSignalements as $signalement) {
             $derniereAction = (SuiviCategory::MESSAGE_PARTNER === $signalement['suiviCategory'])
-                ? ($signalement['suiviIsPublic'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
+                // TODO : à faire évoluer pour les suivis visibles aux bailleurs
+                ? ($signalement['suiviIsVisibleForUsager'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
                 : $signalement['suiviCategory']->label();
             $tabDossiers[] = new TabDossier(
                 uuid: $signalement['uuid'],

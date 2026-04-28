@@ -58,7 +58,7 @@ class ClotureType extends AbstractType
                 'choices' => $this->fileListService->getFileChoicesForSignalement($signalement),
             ]);
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $builder->add('isPublic', ChoiceType::class, [
+            $builder->add('isVisibleForUsager', ChoiceType::class, [// TODO : à changer dans les prochains tickets
                 'label' => 'Notifier l\'usager par e-mail de la clôture du signalement.',
                 'expanded' => true,
                 'choices' => [

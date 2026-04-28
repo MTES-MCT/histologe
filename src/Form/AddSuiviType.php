@@ -8,6 +8,7 @@ use App\Form\Type\SearchCheckboxType;
 use App\Service\Files\FileListService;
 use App\Validator\EmailFormatValidator;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -26,7 +27,7 @@ class AddSuiviType extends AbstractType
         $isNotNotifiable = EmailFormatValidator::isInvalidEmail($signalement->getMailDeclarant()) && EmailFormatValidator::isInvalidEmail($signalement->getMailOccupant());
         $isLogementVacant = $signalement->getIsLogementVacant();
 
-        $builder->add('isPublic', null, [
+        $builder->add('isVisibleForUsager', CheckboxType::class, [
             'label' => 'En cochant cette case, le suivi sera envoyé à l\'usager',
             'row_attr' => [
                 'class' => $isNotNotifiable ? 'fr-hidden' : 'fr-toggle',

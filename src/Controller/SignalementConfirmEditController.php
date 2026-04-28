@@ -32,7 +32,7 @@ class SignalementConfirmEditController extends AbstractController
                 description: $this->renderView('suivi/front_signalement_confirm_edit_email_occupant.html.twig', ['old' => $old, 'new' => $signalement->getMailOccupant()]),
                 type: Suivi::TYPE_USAGER,
                 category: SuiviCategory::SIGNALEMENT_EDITED_FO,
-                isPublic: true,
+                isVisibleForUsager: true,
             );
             $this->addFlash('success', 'L\'adresse e-mail de l\'occupant a été mise à jour avec succès.');
         }

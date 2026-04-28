@@ -17,13 +17,13 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['signalement_id', 'type', 'created_at'], name: 'idx_suivi_signalement_type_created_at')]
 #[ORM\Index(columns: ['context'], name: 'idx_suivi_context')]
 #[ORM\Index(columns: ['category', 'signalement_id', 'created_at'], name: 'idx_suivi_category_signalement_created_at')]
-#[ORM\Index(columns: ['is_public', 'signalement_id', 'created_at'], name: 'idx_suivi_is_public_signalement_created_at')]
+#[ORM\Index(columns: ['is_visible_for_usager', 'signalement_id', 'created_at'], name: 'idx_suivi_is_visible_for_usager_signalement_created_at')]
 #[ORM\Index(columns: ['signalement_id', 'created_at'], name: 'idx_suivi_signalement_created_at')]
 #[ORM\Index(columns: ['category'], name: 'idx_suivi_category')]
 #[ORM\Index(columns: ['signalement_id', 'category', 'created_at'], name: 'idx_suivi_signalement_category_created_at')]
-#[ORM\Index(columns: ['signalement_id', 'is_public', 'created_at', 'category'], name: 'idx_suivi_signalement_is_public_created_at_category')]
-#[ORM\Index(columns: ['is_public', 'signalement_id', 'created_at', 'type'], name: 'idx_suivi_is_public_signalement_created_at_type')]
-#[ORM\Index(columns: ['signalement_id', 'category', 'created_at', 'is_public', 'created_by_id'], name: 'idx_suivi_signid_cat_createdat_ispublic_createdby')]
+#[ORM\Index(columns: ['signalement_id', 'is_visible_for_usager', 'created_at', 'category'], name: 'idx_suivi_signalement_is_visible_for_usager_created_at_category')]
+#[ORM\Index(columns: ['is_visible_for_usager', 'signalement_id', 'created_at', 'type'], name: 'idx_suivi_is_visible_for_usager_signalement_created_at_type')]
+#[ORM\Index(columns: ['signalement_id', 'category', 'created_at', 'is_visible_for_usager', 'created_by_id'], name: 'idx_suivi_signid_cat_createdat_is_visible_for_usager_createdby')]
 #[ORM\Index(columns: ['waiting_notification'], name: 'idx_suivi_waiting_notification')]
 class Suivi implements EntityHistoryInterface
 {
@@ -65,7 +65,10 @@ class Suivi implements EntityHistoryInterface
     private ?string $description = null;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isPublic = null;
+    private ?bool $isVisibleForUsager = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private ?bool $isVisibleForBailleur = null;
 
     #[ORM\Column(type: 'integer')]
     private ?int $type = null;
@@ -118,7 +121,8 @@ class Suivi implements EntityHistoryInterface
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-        $this->isPublic = false;
+        $this->isVisibleForUsager = false;
+        $this->isVisibleForBailleur = false;
         $this->isSanitized = true;
         $this->suiviFiles = new ArrayCollection();
         $this->waitingNotification = false;
@@ -260,14 +264,26 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
-    public function getIsPublic(): ?bool
+    public function getIsVisibleForUsager(): ?bool
     {
-        return $this->isPublic;
+        return $this->isVisibleForUsager;
     }
 
-    public function setIsPublic(bool $isPublic): self
+    public function setIsVisibleForUsager(bool $isVisibleForUsager): self
     {
-        $this->isPublic = $isPublic;
+        $this->isVisibleForUsager = $isVisibleForUsager;
+
+        return $this;
+    }
+
+    public function getIsVisibleForBailleur(): ?bool
+    {
+        return $this->isVisibleForBailleur;
+    }
+
+    public function setIsVisibleForBailleur(bool $isVisibleForBailleur): self
+    {
+        $this->isVisibleForBailleur = $isVisibleForBailleur;
 
         return $this;
     }

@@ -51,7 +51,7 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
                 category: SuiviCategory::INTERVENTION_IS_CANCELED,
                 partner: $context['createdByPartner'],
                 user: $currentUser,
-                isPublic: true,
+                isVisibleForUsager: true,
                 context: Suivi::CONTEXT_INTERVENTION,
             );
 

@@ -58,13 +58,12 @@ class SuiviRepository extends ServiceEntityRepository
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_active' => SignalementStatus::ACTIVE->value,
         ];
-
         $sql = 'SELECT s.id, s.created_at
         FROM signalement s
         JOIN (
             SELECT signalement_id, MAX(created_at) AS last_public
             FROM suivi
-            WHERE is_public = 1
+            WHERE suivi.is_visible_for_usager = 1
             GROUP BY signalement_id
         ) pub ON pub.signalement_id = s.id
         LEFT JOIN (
@@ -107,14 +106,13 @@ class SuiviRepository extends ServiceEntityRepository
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_active' => SignalementStatus::ACTIVE->value,
         ];
-
         $sql = 'SELECT s.id
                 FROM signalement s
                 JOIN (
                     -- dernier suivi public
                     SELECT signalement_id, MAX(created_at) AS last_public
                     FROM suivi
-                    WHERE is_public = 1
+                    WHERE suivi.is_visible_for_usager = 1
                     GROUP BY signalement_id
                 ) pub ON pub.signalement_id = s.id
                 JOIN (
@@ -124,7 +122,7 @@ class SuiviRepository extends ServiceEntityRepository
                     JOIN (
                         SELECT signalement_id, MAX(created_at) AS last_public
                         FROM suivi
-                        WHERE is_public = 1
+                        WHERE suivi.is_visible_for_usager = 1
                         GROUP BY signalement_id
                     ) pub2 ON pub2.signalement_id = su.signalement_id
                     WHERE su.category = :category_ask_feedback
@@ -259,7 +257,7 @@ class SuiviRepository extends ServiceEntityRepository
                     INNER JOIN signalement s2 ON s2.id = su.signalement_id
                     WHERE su.category = :category_ask_feedback
                     AND su.created_at > COALESCE(
-                        (SELECT MAX(created_at) FROM suivi WHERE signalement_id = su.signalement_id AND is_public = 1),
+                        (SELECT MAX(created_at) FROM suivi WHERE signalement_id = su.signalement_id AND suivi.is_visible_for_usager = 1),
                         s2.created_at
                     )
                     GROUP BY su.signalement_id
@@ -345,7 +343,7 @@ class SuiviRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.signalement = :signalement')
-            ->andWhere('s.isPublic = 1')
+            ->andWhere('s.isVisibleForUsager = 1')
             ->andWhere('s.deletedBy IS NULL')
             ->setParameter('signalement', $signalement)
             ->andWhere('s.category NOT IN (:excludedCategories)')// ignore suivi usager

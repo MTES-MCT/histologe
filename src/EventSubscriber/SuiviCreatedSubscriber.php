@@ -70,7 +70,7 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
 
     private function sendToUsagers(Suivi $suivi): void
     {
-        if ($suivi->getSendMail() && $suivi->getIsPublic()) {
+        if ($suivi->getSendMail() && $suivi->getIsVisibleForUsager()) {
             if (SuiviCategory::DEMANDE_ABANDON_PROCEDURE === $suivi->getCategory()) {
                 $this->notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
 

@@ -673,7 +673,7 @@
                 <h2>Suivi(s)</h2>
                 <table class="fr-stripped">
                     {% for suivi in signalement.suivis|reverse %}
-                        {% if (isForUsager and suivi.isPublic) or isForUsager is same as false  %}                            
+                        {% if (isForUsager and suivi.isVisibleForUsager) or isForUsager is same as false  %}                            
                             <tr>
                                 <td style="padding:.5rem;width: 15%">
                                     {% set isSuiviUsager = false %}
