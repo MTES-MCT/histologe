@@ -69,7 +69,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
 
         $command = new UpdateSignalementGeolocalisationCommand(
             $this->territoryRepository,
-            $this->signalementRepository,
+            $signalementRepository,
             $this->entityManager,
             $this->signalementAddressUpdater,
             $this->historyEntryManager,
@@ -101,7 +101,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
 
         $command = new UpdateSignalementGeolocalisationCommand(
             $this->territoryRepository,
-            $this->signalementRepository,
+            $signalementRepository,
             $this->entityManager,
             $this->signalementAddressUpdater,
             $this->historyEntryManager,
