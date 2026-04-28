@@ -21,7 +21,7 @@ class DossierPushSISHResponseTest extends TestCase
         $this->assertNull($dossierResponse->getErrorReason());
     }
 
-    public function provideFilename(): \Generator
+    public static function provideFilename(): \Generator
     {
         yield 'Response Dossier Adresse' => ['ws_dossier_adresse.json'];
         yield 'Response Dossier' => ['ws_dossier.json'];

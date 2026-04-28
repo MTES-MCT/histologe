@@ -34,7 +34,7 @@ class CronReportingControllerTest extends WebTestCase
         }
     }
 
-    public function provideCronPayloads(): \Generator
+    public static function provideCronPayloads(): \Generator
     {
         yield 'Success case' => [
             'payload' => [

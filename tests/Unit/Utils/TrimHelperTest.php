@@ -15,7 +15,7 @@ class TrimHelperTest extends TestCase
         $this->assertEquals($dataOut, TrimHelper::safeTrim($dataIn));
     }
 
-    public function provideData(): \Generator
+    public static function provideData(): \Generator
     {
         yield 'null' => [null, null];
         yield 'empty string' => ['', ''];

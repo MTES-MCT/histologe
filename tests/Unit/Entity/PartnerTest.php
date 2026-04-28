@@ -57,7 +57,7 @@ class PartnerTest extends KernelTestCase
         $this->assertEquals($countErrors, $errors->count());
     }
 
-    public function provideDataForTestPartnerWithEmail(): \Generator
+    public static function provideDataForTestPartnerWithEmail(): \Generator
     {
         yield 'Create partner not valid with email exists in territory' => [13, 1];
 

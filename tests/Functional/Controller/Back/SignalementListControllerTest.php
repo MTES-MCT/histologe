@@ -44,7 +44,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertEquals($results, $result['pagination']['total_items'], (string) json_encode($result['list']));
     }
 
-    public function provideNewFilterSearch(): \Generator
+    public static function provideNewFilterSearch(): \Generator
     {
         yield 'Search Terms with Reference' => [['searchTerms' => '2022-1', 'isImported' => 'oui'], 1];
         yield 'Search Terms with cp Occupant' => [['searchTerms' => '13003', 'isImported' => 'oui'], 12];
@@ -134,7 +134,7 @@ class SignalementListControllerTest extends WebTestCase
         );
     }
 
-    public function provideUserEmail(): \Generator
+    public static function provideUserEmail(): \Generator
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -207,7 +207,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    public function provideLinkFilter(): \Generator
+    public static function provideLinkFilter(): \Generator
     {
         $adminUser = 'admin-01@signal-logement.fr';
         yield 'SUPER_ADMIN - Nouveaux signalements' => [$adminUser, '?statut='.SignalementStatus::NEED_VALIDATION->value];
@@ -252,7 +252,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
     }
 
-    public function provideFilterSearchMultiTerritorAdminPartner(): \Generator
+    public static function provideFilterSearchMultiTerritorAdminPartner(): \Generator
     {
         yield 'Search All' => [['isImported' => 'oui'], 7];
         yield 'Search by Commune' => [['communes' => ['gex', 'marseille'], 'isImported' => 'oui'], 7];

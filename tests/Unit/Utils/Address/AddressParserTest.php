@@ -22,7 +22,7 @@ class AddressParserTest extends TestCase
         $this->assertEquals($street, $result['street']);
     }
 
-    public function provideAdresse(): \Generator
+    public static function provideAdresse(): \Generator
     {
         yield '123Rue de Canteraine' => [
             '123Rue de Canteraine',

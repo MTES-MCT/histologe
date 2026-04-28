@@ -23,7 +23,7 @@ class InterventionTypeTest extends TestCase
         $this->assertNull($intervention);
     }
 
-    public function provideInterventionType(): \Generator
+    public static function provideInterventionType(): \Generator
     {
         yield 'Visite contrôle' => ['Visite contrôle', InterventionType::VISITE_CONTROLE];
         yield 'Visite de contrôle' => ['Visite de contrôle', InterventionType::VISITE_CONTROLE];

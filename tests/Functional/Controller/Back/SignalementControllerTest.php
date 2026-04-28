@@ -55,7 +55,7 @@ class SignalementControllerTest extends WebTestCase
         }
     }
 
-    public function provideRoutes(): \Generator
+    public static function provideRoutes(): \Generator
     {
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
@@ -93,7 +93,7 @@ class SignalementControllerTest extends WebTestCase
         );
     }
 
-    public function provideRoleSignalementRoutes(): \Generator
+    public static function provideRoleSignalementRoutes(): \Generator
     {
         yield 'SA - Nouveau' => [
             'admin-01@signal-logement.fr',
@@ -210,7 +210,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals($currentAffectationStatus, $affectation->getStatut());
     }
 
-    public function provideSignalementSyncRoutes(): \Generator
+    public static function provideSignalementSyncRoutes(): \Generator
     {
         yield 'Agent - ARS' => [
             'user-13-06@signal-logement.fr',

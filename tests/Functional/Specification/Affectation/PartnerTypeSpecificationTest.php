@@ -31,7 +31,7 @@ class PartnerTypeSpecificationTest extends KernelTestCase
         }
     }
 
-    public function provideRulesAndSignalement(): \Generator
+    public static function provideRulesAndSignalement(): \Generator
     {
         yield 'ADIL - ADIL' => [PartnerType::ADIL, PartnerType::ADIL, true];
         yield 'ADIL - EPCI' => [PartnerType::ADIL, PartnerType::EPCI, false];
@@ -100,7 +100,7 @@ class PartnerTypeSpecificationTest extends KernelTestCase
         }
     }
 
-    public function provideRulesAndSignalementWithBailleur(): \Generator
+    public static function provideRulesAndSignalementWithBailleur(): \Generator
     {
         $bailleurHabitat = (new Bailleur())->setName('Habitat 44')->setRaisonSociale('1111');
         $bailleurOPH = (new Bailleur())->setName('OPH 44')->setRaisonSociale('2222');

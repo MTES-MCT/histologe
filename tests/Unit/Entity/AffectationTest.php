@@ -19,7 +19,7 @@ class AffectationTest extends TestCase
         $this->assertEquals($isSynchronized, $affectation->isSynchronizeWithEsabora());
     }
 
-    public function providePartnerType(): \Generator
+    public static function providePartnerType(): \Generator
     {
         yield 'ARS success' => [PartnerType::ARS, true];
         yield 'ARS failed' => [PartnerType::ARS, false];

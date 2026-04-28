@@ -38,7 +38,7 @@ class DashboardTabPanelControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403, sprintf('Accès interdit pour la section "%s".', $tabBodyType));
     }
 
-    public function provideAuthorizedTabBodyType(): \Generator
+    public static function provideAuthorizedTabBodyType(): \Generator
     {
         yield 'with derniers-dossiers' => [TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS];
         yield 'with dossiers-form-pro' => [TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_PRO];
@@ -53,7 +53,7 @@ class DashboardTabPanelControllerTest extends WebTestCase
         yield 'with dossiers-sans-activite-partenaire' => [TabBodyType::TAB_DATA_TYPE_SANS_ACTIVITE_PARTENAIRE];
     }
 
-    public function provideUnauthorizedTabBodyType(): \Generator
+    public static function provideUnauthorizedTabBodyType(): \Generator
     {
         yield 'with dossiers-form-pro' => [TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_PRO];
         yield 'with dossiers-form-usager' => [TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_USAGER];

@@ -29,7 +29,7 @@ class AllocataireSpecificationTest extends KernelTestCase
         }
     }
 
-    public function provideRulesAndSignalement(): \Generator
+    public static function provideRulesAndSignalement(): \Generator
     {
         yield 'all - 0' => ['0', 'all', true];
         yield 'all - 1' => ['1', 'all', true];

@@ -109,7 +109,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
-    public function provideDataSignalementByUuid(): \Generator
+    public static function provideDataSignalementByUuid(): \Generator
     {
         yield 'api-02 user with signalement 2024-12' => ['api-02@signal-logement.fr', '00000000-0000-0000-2024-000000000012', 1, 7];
         yield 'api-01 user with signalement 2023-26' => ['api-01@signal-logement.fr', '00000000-0000-0000-2023-000000000026', 3, 0];
@@ -139,7 +139,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
-    public function provideQueryParameters(): \Generator
+    public static function provideQueryParameters(): \Generator
     {
         yield 'Out of range limit' => [['limit' => '115151'], 1];
         yield 'Wrong type limit' => [['limit' => 'hello'], 2];

@@ -34,7 +34,7 @@ class ValidPartnerTypeValidatorTest extends ConstraintValidatorTestCase
         }
     }
 
-    public function providePartnerType(): \Generator
+    public static function providePartnerType(): \Generator
     {
         yield PartnerType::ADIL->value => [PartnerType::ADIL, true];
         yield PartnerType::CCAS->value => [PartnerType::CCAS, true];

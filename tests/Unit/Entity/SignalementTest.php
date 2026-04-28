@@ -69,7 +69,7 @@ class SignalementTest extends KernelTestCase
         $this->assertEquals($profileDeclarant, $signalement->getProfileDeclarant());
     }
 
-    public function provideProfile(): \Generator
+    public static function provideProfile(): \Generator
     {
         yield 'TIERS_PRO' => [ProfileDeclarant::TIERS_PRO];
         yield 'BAILLEUR' => [ProfileDeclarant::BAILLEUR];

@@ -15,7 +15,7 @@ class SignalementInputValueMapperTest extends TestCase
         $this->assertEquals($mappedInputValue, SignalementInputValueMapper::map($inputValue));
     }
 
-    public function provideInputValue(): \Generator
+    public static function provideInputValue(): \Generator
     {
         yield 'Input with Oui value' => ['oui', true];
         yield 'Input with Non value' => ['non', false];

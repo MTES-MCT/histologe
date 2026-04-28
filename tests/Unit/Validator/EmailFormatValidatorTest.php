@@ -15,7 +15,7 @@ class EmailFormatValidatorTest extends KernelTestCase
         $this->assertEquals($isEmailValid, EmailFormatValidator::validate($email));
     }
 
-    public function provideEmail(): \Generator
+    public static function provideEmail(): \Generator
     {
         yield 'joey.starr@supreme.fr' => ['joey.starr@supreme.fr', true];
         yield 'lino@ärsenik.fr' => ['lino@ärsenik.fr', true];

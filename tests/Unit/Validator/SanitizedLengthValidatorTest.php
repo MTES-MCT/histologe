@@ -39,14 +39,14 @@ class SanitizedLengthValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function provideValidValues(): \Generator
+    public static function provideValidValues(): \Generator
     {
         yield 'null value' => [null];
         yield 'empty value' => [''];
         yield 'valid value' => ['<p>Lorem ipsum dolor sit amet</p>'];
     }
 
-    public function provideInvalidValues(): \Generator
+    public static function provideInvalidValues(): \Generator
     {
         yield 'too short value with no html' => ['Hi buddy!'];
         yield 'too short value with html' => ['<b>Hi buddy!</b>'];

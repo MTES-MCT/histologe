@@ -29,7 +29,7 @@ class ParcSpecificationTest extends KernelTestCase
         }
     }
 
-    public function provideRulesAndSignalement(): \Generator
+    public static function provideRulesAndSignalement(): \Generator
     {
         yield 'all - isLogementSocial' => [true, 'all', true];
         yield 'all - not isLogementSocial' => [false, 'all', true];

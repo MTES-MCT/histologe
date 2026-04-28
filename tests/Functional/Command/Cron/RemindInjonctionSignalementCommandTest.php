@@ -81,7 +81,7 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $this->assertStringContainsString('Aucun rappel n\'a été envoyé pour les bailleurs.', $output);
     }
 
-    public function provideReminderSentData(): \Generator
+    public static function provideReminderSentData(): \Generator
     {
         yield 'One reminder, no suivi' => [
             '',

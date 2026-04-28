@@ -99,7 +99,7 @@ class ImageInterventionHandlerTest extends TestCase
         $this->assertInstanceOf(ImageManipulationHandler::class, $result);
     }
 
-    public function provideFile(): \Generator
+    public static function provideFile(): \Generator
     {
         yield 'sample.jpg is image' => [__DIR__.'/../../files/sample.jpg', true];
         yield 'sample.pdf is not image ' => [__DIR__.'/../../files/sample.pdf', false];

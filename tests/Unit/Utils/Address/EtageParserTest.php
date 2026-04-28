@@ -15,7 +15,7 @@ class EtageParserTest extends TestCase
         $this->assertEquals($etageParsed, EtageParser::parse($currentEtageValue));
     }
 
-    public function provideEtage(): \Generator
+    public static function provideEtage(): \Generator
     {
         yield '3 ème étage porte à droite' => ['3 ème étage porte à droite', 3];
 

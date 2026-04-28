@@ -203,7 +203,7 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    public function provideDataFailure403(): \Generator
+    public static function provideDataFailure403(): \Generator
     {
         yield 'test create visite with new affectation' => ['00000000-0000-0000-2022-000000000001', 'Partenaire 13-01', 'L\'affectation doit être au statut EN_COURS'];
         yield 'test create visite with closed signalement' => ['00000000-0000-0000-2022-000000000003', 'Partenaire 13-01', 'Le signalement n\'est pas actif.'];
@@ -211,7 +211,7 @@ class VisiteCreateControllerTest extends WebTestCase
         yield 'test create visite with partner with no competence visite' => ['00000000-0000-0000-2023-000000000026', 'Partenaire 13-03', 'Le partenaire n\'a pas la compétence visite.'];
     }
 
-    public function provideDataForNotification(): \Generator
+    public static function provideDataForNotification(): \Generator
     {
         yield 'test create visite confirmed with usager notification' => [
             'visite_confirmed',
@@ -259,7 +259,7 @@ class VisiteCreateControllerTest extends WebTestCase
         ];
     }
 
-    public function provideDataForPendingVisite(): \Generator
+    public static function provideDataForPendingVisite(): \Generator
     {
         yield 'test create visite planned' => [
             [
@@ -284,7 +284,7 @@ class VisiteCreateControllerTest extends WebTestCase
         ];
     }
 
-    public function provideDataErrorPayload(): \Generator
+    public static function provideDataErrorPayload(): \Generator
     {
         yield 'test create visite confirmed with missing data' => [
             [

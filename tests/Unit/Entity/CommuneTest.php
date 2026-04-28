@@ -16,7 +16,7 @@ class CommuneTest extends TestCase
         $this->assertEquals($nomCleaned, $commune->getNom());
     }
 
-    public function provideCommune(): \Generator
+    public static function provideCommune(): \Generator
     {
         yield 'Lyon 1er Arrondissement' => ['Lyon 1er Arrondissement', 'Lyon'];
         yield 'Marseille 1er Arrondissement' => ['Marseille 1er Arrondissement', 'Marseille'];

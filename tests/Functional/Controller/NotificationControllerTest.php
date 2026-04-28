@@ -42,7 +42,7 @@ class NotificationControllerTest extends WebTestCase
         $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
-    public function provideAllNotificationOptions(): \Generator
+    public static function provideAllNotificationOptions(): \Generator
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -90,7 +90,7 @@ class NotificationControllerTest extends WebTestCase
         $this->assertEquals([], $response['flashMessages']);
     }
 
-    public function provideSelectedNotificationOptions(): \Generator
+    public static function provideSelectedNotificationOptions(): \Generator
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);

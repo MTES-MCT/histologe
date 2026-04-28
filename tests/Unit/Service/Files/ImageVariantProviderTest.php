@@ -76,7 +76,7 @@ class ImageVariantProviderTest extends KernelTestCase
         $this->assertSame('content-'.$expectedSuffix, file_get_contents($this->tmpDir.$expectedFilename));
     }
 
-    public function provideVariants(): \Generator
+    public static function provideVariants(): \Generator
     {
         yield 'thumb' => ['thumb', ImageManipulationHandler::SUFFIX_THUMB];
         yield 'resize' => ['resize', ImageManipulationHandler::SUFFIX_RESIZE];

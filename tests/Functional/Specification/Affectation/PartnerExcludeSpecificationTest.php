@@ -30,7 +30,7 @@ class PartnerExcludeSpecificationTest extends KernelTestCase
         }
     }
 
-    public function provideRulesAndSignalement(): \Generator
+    public static function provideRulesAndSignalement(): \Generator
     {
         yield 'null' => [null, true];
         yield 'not in id array' => [[2, 3, 4, 5], true];

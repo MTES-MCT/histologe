@@ -16,7 +16,7 @@ class PhoneTest extends TestCase
         $this->assertEquals($phoneNationalFormatted, Phone::format($phoneNumber, true));
     }
 
-    public function providePhone(): \Generator
+    public static function providePhone(): \Generator
     {
         yield 'null' => [null, null, null];
 

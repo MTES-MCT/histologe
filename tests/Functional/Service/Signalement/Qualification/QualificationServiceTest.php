@@ -61,7 +61,7 @@ class QualificationServiceTest extends KernelTestCase
         $this->assertEquals(\count($qualificationsToCheck), \count($signalementQualifications));
     }
 
-    public function provideScoreAndCriticite(): \Generator
+    public static function provideScoreAndCriticite(): \Generator
     {
         yield 'RSD, NON_DECENCE' => [5, [], [Qualification::RSD, Qualification::NON_DECENCE]];
 
@@ -159,7 +159,7 @@ class QualificationServiceTest extends KernelTestCase
         $this->assertEquals(\count($qualificationsToCheck), \count($signalementQualifications));
     }
 
-    public function provideScoreAndDesordresPrecisions(): \Generator
+    public static function provideScoreAndDesordresPrecisions(): \Generator
     {
         yield 'nothing' => [
             5,

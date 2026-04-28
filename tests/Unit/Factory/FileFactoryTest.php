@@ -57,7 +57,7 @@ class FileFactoryTest extends TestCase
         }
     }
 
-    public function provideFileItem(): \Generator
+    public static function provideFileItem(): \Generator
     {
         yield 'DPE document' => [
             [

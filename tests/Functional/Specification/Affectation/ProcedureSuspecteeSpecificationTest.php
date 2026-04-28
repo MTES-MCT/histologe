@@ -37,7 +37,7 @@ class ProcedureSuspecteeSpecificationTest extends KernelTestCase
         }
     }
 
-    public function provideRulesAndSignalement(): \Generator
+    public static function provideRulesAndSignalement(): \Generator
     {
         yield 'procedureSuspecte NULL - qualification RSD' => [
             null,

@@ -58,7 +58,7 @@ class DossierMessageSCHSFactoryTest extends TestCase
         $this->assertStringContainsString($expectedResult, $actualResult);
     }
 
-    public function provideNbChildren(): \Generator
+    public static function provideNbChildren(): \Generator
     {
         yield 'No child' => ['0 Enfant(s)', null, null];
         yield '1 children M6, 0 children P6' => ['1 Enfant(s)', '1', null];

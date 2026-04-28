@@ -43,7 +43,7 @@ class BackBailleurControllerTest extends WebTestCase
         }
     }
 
-    public function provideParamsBailleurList(): \Generator
+    public static function provideParamsBailleurList(): \Generator
     {
         yield 'Search without params' => [[], 67];
         yield 'Search with queryName Habitat' => [['queryName' => 'Habitat'], 28];

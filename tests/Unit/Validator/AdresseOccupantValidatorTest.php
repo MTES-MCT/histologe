@@ -31,8 +31,8 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
      * @dataProvider provideInvalidTerritoryCases
      */
     public function testItAddsViolationWhenTerritoryIsInvalid(
-        ?Territory $territoryFromInsee,
-        ?Territory $territoryFromPostal,
+        bool $isInactiveTerritory,
+        bool $hasTerritoryFromInsee,
         string $expectedMessage,
         string $expectedCode,
         bool $expectPostalFallback,
@@ -46,6 +46,12 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
         $form->villeOccupant = 'Marseille';
         $form->inseeOccupant = '13055';
 
+        $territoryFromInsee = null;
+        if ($hasTerritoryFromInsee) {
+            $territoryFromInsee = $this->createMock(Territory::class);
+            $territoryFromInsee->method('isIsActive')->willReturn(!$isInactiveTerritory);
+        }
+
         $this->zipcodeProvider
             ->expects($this->once())
             ->method('getTerritoryByInseeCode')
@@ -57,7 +63,7 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
                 ->expects($this->once())
                 ->method('getTerritoryByPostalCode')
                 ->with('13002')
-                ->willReturn($territoryFromPostal);
+                ->willReturn(null);
         } else {
             $this->zipcodeProvider
                 ->expects($this->never())
@@ -73,23 +79,19 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function provideInvalidTerritoryCases(): iterable
+    public static function provideInvalidTerritoryCases(): iterable
     {
-        // territoire inactif via INSEE
-        $inactiveTerritory = $this->createMock(Territory::class);
-        $inactiveTerritory->method('isIsActive')->willReturn(false);
-
         yield 'territory inactive via insee' => [
-            $inactiveTerritory,
-            null,
+            true,   // isInactiveTerritory
+            true,   // hasTerritoryFromInsee
             (new AdresseOccupant())->messageInsee,
             '13055',
             false,
         ];
 
         yield 'no territory found' => [
-            null,
-            null,
+            false,  // isInactiveTerritory
+            false,  // hasTerritoryFromInsee
             (new AdresseOccupant())->messagePostalCode,
             '13002',
             true,

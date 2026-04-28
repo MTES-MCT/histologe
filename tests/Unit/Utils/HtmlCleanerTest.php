@@ -15,7 +15,7 @@ class HtmlCleanerTest extends TestCase
         $this->assertEquals(HtmlCleaner::clean($textToClean), $textCleaned);
     }
 
-    public function providePartnerType(): \Generator
+    public static function providePartnerType(): \Generator
     {
         yield 'Bold' => ['<strong>Fat</strong> Joe', 'Fat Joe'];
         yield 'Accents' => ['&eacute;&egrave;&agrave;&ugrave;', 'éèàù'];

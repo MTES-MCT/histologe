@@ -150,7 +150,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame($expectedStatusCode);
     }
 
-    public function provideCanEditSignalementData(): \Generator
+    public static function provideCanEditSignalementData(): \Generator
     {
         yield 'edit NEED_VALIDATION signalement' => [
             'userEmail' => 'admin-01@signal-logement.fr',

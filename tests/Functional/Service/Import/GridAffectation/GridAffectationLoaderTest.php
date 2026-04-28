@@ -158,7 +158,7 @@ class GridAffectationLoaderTest extends KernelTestCase
     /**
      * @return array<mixed>
      */
-    public function provideValidData(): array
+    public static function provideValidData(): array
     {
         $faker = Factory::create();
 
@@ -211,7 +211,7 @@ class GridAffectationLoaderTest extends KernelTestCase
     /**
      * @return array<mixed>
      */
-    public function provideInvalidDataWithDuplicatePartnersAndUsers(): array
+    public static function provideInvalidDataWithDuplicatePartnersAndUsers(): array
     {
         $faker = Factory::create();
 

@@ -66,7 +66,7 @@ class BrevoWebhookControllerTest extends WebTestCase
         $this->assertEquals($expectedContent, (string) $client->getResponse()->getContent());
     }
 
-    public function provideWebhookTestData(): \Generator
+    public static function provideWebhookTestData(): \Generator
     {
         yield 'Valid IP and valid event' => [
             'remoteAddr' => '127.0.0.1',
@@ -165,7 +165,7 @@ class BrevoWebhookControllerTest extends WebTestCase
         }
     }
 
-    public function provideWebhookEventTestData(): \Generator
+    public static function provideWebhookEventTestData(): \Generator
     {
         yield 'Soft bounce event' => [
             'event' => 'soft_bounce',

@@ -141,7 +141,7 @@ class SignalementFileUploadControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    public function provideErrorInput(): \Generator
+    public static function provideErrorInput(): \Generator
     {
         yield 'test upload with bad request' => ['00000000-0000-0000-2022-000000000006', Response::HTTP_FORBIDDEN];
         yield 'test upload with not found' => ['00000000-0000-0000-2022-000000000000', Response::HTTP_NOT_FOUND];

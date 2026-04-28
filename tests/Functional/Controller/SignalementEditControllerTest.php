@@ -27,7 +27,7 @@ class SignalementEditControllerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    public function provideStatusSignalement(): \Generator
+    public static function provideStatusSignalement(): \Generator
     {
         yield 'Actif' => [SignalementStatus::ACTIVE->value];
         yield 'Fermé' => [SignalementStatus::CLOSED->value];
@@ -39,7 +39,7 @@ class SignalementEditControllerTest extends WebTestCase
         yield 'Injonction clôturée' => [SignalementStatus::INJONCTION_CLOSED->value];
     }
 
-    public function provideProfileDeclarant(): \Generator
+    public static function provideProfileDeclarant(): \Generator
     {
         yield 'LOCATAIRE' => [ProfileDeclarant::LOCATAIRE];
         yield 'BAILLEUR' => [ProfileDeclarant::BAILLEUR];
