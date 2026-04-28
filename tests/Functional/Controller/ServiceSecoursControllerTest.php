@@ -7,6 +7,7 @@ use App\Entity\Enum\EtageType;
 use App\Entity\ServiceSecoursRoute;
 use App\Repository\ServiceSecoursRouteRepository;
 use App\Repository\SignalementRepository;
+use App\Tests\SessionHelper;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -14,6 +15,8 @@ use Symfony\Component\Routing\RouterInterface;
 
 class ServiceSecoursControllerTest extends WebTestCase
 {
+    use SessionHelper;
+
     public function testRoutes(): void
     {
         $client = static::createClient();
@@ -232,6 +235,7 @@ class ServiceSecoursControllerTest extends WebTestCase
             'service_secours[step2][cpOccupant]' => '44850',
             'service_secours[step2][villeOccupant]' => 'Saint-Mars-du-Désert',
             'service_secours[step2][inseeOccupant]' => '44179',
+            'service_secours[step2][rnbId]' => 'plop',
             'service_secours[step2][adresseAutreOccupant]' => 'Bâtiment A',
             'service_secours[step2][isLogementSocial]' => $isLogementSocial,
             'service_secours[step2][natureLogement]' => 'appartement',

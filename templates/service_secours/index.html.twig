@@ -2,9 +2,52 @@
 
 {% block body %}
     <main class="fr-container fr-mb-5w" id="content">
+        {% set current_step = form.vars.cursor.currentStep %}
+        {% if current_step == 'step2' %}
+            <dialog 
+                aria-labelledby="fr-modal-pick-localisation-title" 
+                id="fr-modal-pick-localisation" 
+                class="fr-modal" 
+                data-address="{{form.step2.adresseOccupant.vars.value}}"
+                data-postcode="{{form.step2.cpOccupant.vars.value}}"
+                data-loaded="false"
+                >
+                <div class="fr-container fr-container--fluid fr-container-md">
+                    <div class="fr-grid-row fr-grid-row--center">
+                        <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                            <div class="fr-modal__body">
+                                <div class="fr-modal__header">
+                                <button type="button" class="fr-btn--close fr-btn" aria-controls="fr-modal-pick-localisation">Fermer</button>
+                                </div>
+                                <div class="fr-modal__content">
+                                    <h1 class="fr-modal__title">Sélectionner le bâtiment correspondant au logement</h1>  
+                                    <div id="fr-modal-pick-localisation-message">Chargement en cours</div>
+                                    <div id="fr-modal-pick-localisation-map"></div>
+                                </div>
+                                <input type="hidden" name="rnbId" id="fr-modal-pick-localisation-rnb-id">
+                                <input type="hidden" name="_token" id="fr-modal-pick-localisation-token" value="{{ csrf_token('service_secours_set_rnb') }}">
+                                <div class="fr-modal__footer">
+                                    <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                        <li>
+                                            <button class="fr-btn fr-icon-check-line" id="fr-modal-pick-localisation-submit" disabled type="button">
+                                                Valider
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" class="fr-btn fr-btn--secondary fr-icon-close-line" aria-controls="fr-modal-pick-localisation">
+                                                Annuler
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </dialog>
+        {% endif %}
         <section class="fr-grid-row fr-grid-row--center">
             <div class="fr-mt-5v fr-col-md-12">
-                {% set current_step = form.vars.cursor.currentStep %}
                 {% if current_step === 'step1' %}
                     {% set step_number = 1 %}
                     {% set step_title = 'Vos coordonnées' %}
@@ -76,6 +119,16 @@
                         {{ form_row(form.step2.cpOccupant) }}
                         {{ form_row(form.step2.villeOccupant) }}
                         {{ form_row(form.step2.inseeOccupant) }}
+                        {{ form_widget(form.step2.rnbId) }}
+                        <button 
+                            type="button"
+                            class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-map-pin-2-line btn-pick-localisation fr-hidden" 
+                            data-fr-opened="false" 
+                            aria-controls="fr-modal-pick-localisation"
+                            >
+                            Sélectionner le bâtiment sur la carte
+                        </button>
+                        <span class="fr-hidden pick-location-success fr-ml-2v" id="pick-location-success"><span class="fr-icon-check-line" aria-hidden="true"></span> Bâtiment sélectionné </span>
                     </div>
                     {{ form_row(form.step2.adresseAutreOccupant) }}
 					{{ form_row(form.step2.isLogementSocial, {display_mode: 'block'}) }}

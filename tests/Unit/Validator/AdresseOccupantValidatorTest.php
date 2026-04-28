@@ -27,23 +27,13 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
         return new AdresseOccupantValidator($this->zipcodeProvider, $this->territoryRepository);
     }
 
-    /**
-     * @dataProvider provideInvalidTerritoryCases
-     */
-    public function testItAddsViolationWhenTerritoryIsInvalid(
-        ?Territory $territoryFromInsee,
-        ?Territory $territoryFromPostal,
-        string $expectedMessage,
-        string $expectedCode,
-        bool $expectPostalFallback,
-    ): void {
+    public function testItAddsViolationWhenTerritoryInactive(): void
+    {
+        $territoryFromInsee = $this->createMock(Territory::class);
         $constraint = new AdresseOccupant();
 
         $form = new FormServiceSecoursStep2();
         $form->adresseCompleteOccupant = '19 Quai de la Joliette, 13002 Marseille';
-        $form->adresseOccupant = '19 Quai de la Joliette';
-        $form->cpOccupant = '13002';
-        $form->villeOccupant = 'Marseille';
         $form->inseeOccupant = '13055';
 
         $this->zipcodeProvider
@@ -52,51 +42,20 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
             ->with('13055')
             ->willReturn($territoryFromInsee);
 
-        if ($expectPostalFallback) {
-            $this->zipcodeProvider
-                ->expects($this->once())
-                ->method('getTerritoryByPostalCode')
-                ->with('13002')
-                ->willReturn($territoryFromPostal);
-        } else {
-            $this->zipcodeProvider
-                ->expects($this->never())
-                ->method('getTerritoryByPostalCode');
-        }
+        $this->zipcodeProvider
+            ->expects($this->never())
+            ->method('getTerritoryByPostalCode');
 
         $this->validator->validate($form, $constraint);
 
         $this
-            ->buildViolation($expectedMessage)
-            ->setParameter('{{ code }}', $expectedCode)
+            ->buildViolation($constraint->messageInsee)
+            ->setParameter('{{ code }}', '13055')
             ->atPath('property.path.adresseCompleteOccupant')
             ->assertRaised();
     }
 
-    public function provideInvalidTerritoryCases(): iterable
-    {
-        // territoire inactif via INSEE
-        $inactiveTerritory = $this->createMock(Territory::class);
-        $inactiveTerritory->method('isIsActive')->willReturn(false);
-
-        yield 'territory inactive via insee' => [
-            $inactiveTerritory,
-            null,
-            (new AdresseOccupant())->messageInsee,
-            '13055',
-            false,
-        ];
-
-        yield 'no territory found' => [
-            null,
-            null,
-            (new AdresseOccupant())->messagePostalCode,
-            '13002',
-            true,
-        ];
-    }
-
-    public function testItAddsViolationWhenExpectedTerritoryZipDoesNotMatch(): void
+    public function testItAddsViolationWhenTerritoryNotFound(): void
     {
         $constraint = new AdresseOccupant();
 
@@ -105,6 +64,36 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
         $form->adresseOccupant = '19 Quai de la Joliette';
         $form->cpOccupant = '13002';
         $form->villeOccupant = 'Marseille';
+        $form->rnbId = '13055';
+        $form->inseeOccupant = '13055';
+
+        $this->zipcodeProvider
+            ->expects($this->once())
+            ->method('getTerritoryByInseeCode')
+            ->with('13055')
+            ->willReturn(null);
+
+        $this->zipcodeProvider
+            ->expects($this->once())
+            ->method('getTerritoryByPostalCode')
+            ->with('13002')
+            ->willReturn(null);
+
+        $this->validator->validate($form, $constraint);
+
+        $this
+            ->buildViolation($constraint->messagePostalCode)
+            ->setParameter('{{ code }}', '13002')
+            ->atPath('property.path.adresseCompleteOccupant')
+            ->assertRaised();
+    }
+
+    public function testItAddsViolationWhenExpectedTerritoryZipDoesNotMatch(): void
+    {
+        $constraint = new AdresseOccupant();
+
+        $form = new FormServiceSecoursStep2();
+        $form->adresseCompleteOccupant = '19 Quai de la Joliette, 13002 Marseille';
         $form->inseeOccupant = '13055';
         $form->territoryZip = '75001';
 
@@ -132,6 +121,7 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
             ->with(['zip' => '75001'])
             ->willReturn($expectedTerritory);
 
+        $territory->method('getZip')->willReturn('13002');
         $this->validator->validate($form, $constraint);
 
         $this

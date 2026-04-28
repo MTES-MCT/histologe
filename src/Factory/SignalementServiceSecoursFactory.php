@@ -80,8 +80,11 @@ class SignalementServiceSecoursFactory
 
         if (empty($formServiceSecours->step2->inseeOccupant)) {
             $signalement->setManualAddressOccupant(true);
+            $signalement->setRnbIdOccupant($formServiceSecours->step2->rnbId);
+            $this->signalementAddressUpdater->updateAddressOccupantFromBanData(signalement: $signalement, updateRnbId: false);
         } else {
             $signalement->setInseeOccupant($formServiceSecours->step2->inseeOccupant);
+            $this->signalementAddressUpdater->updateAddressOccupantFromBanData(signalement: $signalement);
         }
 
         $isLogementSocial = $formServiceSecours->step2->isLogementSocial;
@@ -91,8 +94,6 @@ class SignalementServiceSecoursFactory
         } elseif ('non' === $isLogementSocial) {
             $signalement->setIsLogementSocial(false);
         }
-
-        $this->signalementAddressUpdater->updateAddressOccupantFromBanData(signalement: $signalement);
 
         $signalement->setTerritory(
             territory: $this->zipcodeProvider->getTerritoryByInseeCode($signalement->getInseeOccupant())

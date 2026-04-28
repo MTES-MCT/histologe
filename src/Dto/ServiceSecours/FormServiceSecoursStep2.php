@@ -23,6 +23,8 @@ class FormServiceSecoursStep2
 
     public ?string $inseeOccupant = null;
 
+    public ?string $rnbId = null;
+
     #[Assert\Length(max: 255, groups: ['step2'])]
     public ?string $adresseAutreOccupant = null;
 
