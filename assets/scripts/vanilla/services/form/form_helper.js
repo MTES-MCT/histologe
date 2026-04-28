@@ -50,13 +50,14 @@ export function reloadTinyMCE(selector) {
 }
 
 document.querySelectorAll('label[for]').forEach((label) => {
-  const target = document.getElementById(label.htmlFor);
+  const scope = label.closest('form, dialog, [role="dialog"], .fr-modal') ?? document;
+  const target = scope.querySelector(`#${CSS.escape(label.htmlFor)}`);
   if (!target || target.tagName !== 'SELECT' || target.disabled) {
     return;
   }
   label.addEventListener('click', (e) => {
     e.preventDefault();
-    target.focus();
+    target.focus({ focusVisible: true });
     if (typeof target.showPicker === 'function') {
       try {
         target.showPicker();
