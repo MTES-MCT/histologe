@@ -48,3 +48,21 @@ export function reloadTinyMCE(selector) {
 
   initTinyMCE(selector);
 }
+
+document.querySelectorAll('label[for]').forEach((label) => {
+  const target = document.getElementById(label.htmlFor);
+  if (!target || target.tagName !== 'SELECT' || target.disabled) {
+    return;
+  }
+  label.addEventListener('click', (e) => {
+    e.preventDefault();
+    target.focus();
+    if (typeof target.showPicker === 'function') {
+      try {
+        target.showPicker();
+      } catch {
+        // showPicker() fails if the element is not visible or not attached
+      }
+    }
+  });
+});
