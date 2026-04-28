@@ -17,13 +17,13 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['signalement_id', 'type', 'created_at'], name: 'idx_suivi_signalement_type_created_at')]
 #[ORM\Index(columns: ['context'], name: 'idx_suivi_context')]
 #[ORM\Index(columns: ['category', 'signalement_id', 'created_at'], name: 'idx_suivi_category_signalement_created_at')]
-#[ORM\Index(columns: ['is_public_for_usager', 'signalement_id', 'created_at'], name: 'idx_suivi_is_visible_for_usager_signalement_created_at')]
+#[ORM\Index(columns: ['is_visible_for_usager', 'signalement_id', 'created_at'], name: 'idx_suivi_is_visible_for_usager_signalement_created_at')]
 #[ORM\Index(columns: ['signalement_id', 'created_at'], name: 'idx_suivi_signalement_created_at')]
 #[ORM\Index(columns: ['category'], name: 'idx_suivi_category')]
 #[ORM\Index(columns: ['signalement_id', 'category', 'created_at'], name: 'idx_suivi_signalement_category_created_at')]
-#[ORM\Index(columns: ['signalement_id', 'is_public_for_usager', 'created_at', 'category'], name: 'idx_suivi_signalement_is_visible_for_usager_created_at_category')]
-#[ORM\Index(columns: ['is_public_for_usager', 'signalement_id', 'created_at', 'type'], name: 'idx_suivi_is_visible_for_usager_signalement_created_at_type')]
-#[ORM\Index(columns: ['signalement_id', 'category', 'created_at', 'is_public_for_usager', 'created_by_id'], name: 'idx_suivi_signid_cat_createdat_is_visible_for_usager_createdby')]
+#[ORM\Index(columns: ['signalement_id', 'is_visible_for_usager', 'created_at', 'category'], name: 'idx_suivi_signalement_is_visible_for_usager_created_at_category')]
+#[ORM\Index(columns: ['is_visible_for_usager', 'signalement_id', 'created_at', 'type'], name: 'idx_suivi_is_visible_for_usager_signalement_created_at_type')]
+#[ORM\Index(columns: ['signalement_id', 'category', 'created_at', 'is_visible_for_usager', 'created_by_id'], name: 'idx_suivi_signid_cat_createdat_is_visible_for_usager_createdby')]
 #[ORM\Index(columns: ['waiting_notification'], name: 'idx_suivi_waiting_notification')]
 class Suivi implements EntityHistoryInterface
 {
