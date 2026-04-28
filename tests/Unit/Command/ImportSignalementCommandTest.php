@@ -8,7 +8,6 @@ use App\Repository\TerritoryRepository;
 use App\Service\Import\CsvParser;
 use App\Service\Import\Signalement\SignalementImportLoader;
 use App\Service\UploadHandlerService;
-use Doctrine\ORM\EntityManager;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -32,12 +31,6 @@ class ImportSignalementCommandTest extends KernelTestCase
                     ->setName('Ain')
                     ->setIsActive(true)
             );
-
-        $entityManager = $this->createMock(EntityManager::class);
-        $entityManager->expects($this->once())
-            ->method('getRepository')
-            ->with(Territory::class)
-            ->willReturn($territoryRepository);
 
         $uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $uploadHandlerService->expects($this->once())
@@ -111,12 +104,6 @@ class ImportSignalementCommandTest extends KernelTestCase
             ->with(['zip' => '999'])
             ->willReturn(null);
 
-        $entityManager = $this->createMock(EntityManager::class);
-        $entityManager->expects($this->once())
-            ->method('getRepository')
-            ->with(Territory::class)
-            ->willReturn($territoryRepository);
-
         $uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $signalementImportLoader = $this->createMock(SignalementImportLoader::class);
         $csvParser = $this->createMock(CsvParser::class);
@@ -157,12 +144,6 @@ class ImportSignalementCommandTest extends KernelTestCase
                     ->setName('Ain')
                     ->setIsActive(true)
             );
-
-        $entityManager = $this->createMock(EntityManager::class);
-        $entityManager->expects($this->once())
-            ->method('getRepository')
-            ->with(Territory::class)
-            ->willReturn($territoryRepository);
 
         $uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $signalementImportLoader = $this->createMock(SignalementImportLoader::class);
