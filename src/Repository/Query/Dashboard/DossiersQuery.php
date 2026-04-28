@@ -9,6 +9,7 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\User;
 use App\Service\DashboardTabPanel\Kpi\CountAfermer;
 use App\Service\DashboardTabPanel\TabDossier;
@@ -537,10 +538,16 @@ class DossiersQuery
             tabQueryParameters: $tabQueryParameters
         );
 
+        $subQb = $this->entityManager->createQueryBuilder()
+            ->select('1')
+            ->from(Suivi::class, 'su')
+            ->where('su.signalement = s')
+            ->andWhere('su.category = :suivi_category_abandon_procedure');
+
         $qb
-            ->select('COUNT(DISTINCT s.uuid)')
-            ->innerJoin('s.suivis', 'su', 'WITH', 'su.category = :suivi_category_abandon_procedure')
+            ->select('COUNT(s.id)')
             ->andWhere('s.isUsagerAbandonProcedure = 1')
+            ->andWhere($qb->expr()->exists($subQb->getDQL()))
             ->setParameter('suivi_category_abandon_procedure', SuiviCategory::DEMANDE_ABANDON_PROCEDURE);
 
         return (int) $qb->getQuery()->getSingleScalarResult();

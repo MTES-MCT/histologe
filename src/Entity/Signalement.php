@@ -50,8 +50,10 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['cp_occupant'], name: 'idx_signalement_cp_occupant')]
 #[ORM\Index(columns: ['statut', 'territory_id'], name: 'idx_signalement_statut_territory')]
 #[ORM\Index(columns: ['statut', 'id'], name: 'idx_signalement_statut_id')]
+#[ORM\Index(columns: ['statut', 'created_by_id'], name: 'idx_signalement_statut_created_by')]
 #[ORM\Index(columns: ['mail_occupant'], name: 'idx_signalement_mail_occupant')]
 #[ORM\Index(columns: ['mail_declarant'], name: 'idx_signalement_mail_declarant')]
+#[ORM\Index(columns: ['is_usager_abandon_procedure'], name: 'idx_signalement_is_usager_abandon_procedure')]
 class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInterface
 {
     use EntityChangesTrait;
@@ -335,11 +337,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\OrderBy(['createdAt' => 'ASC'])]
     private Collection $suivis;
 
+    #[ORM\ManyToOne(targetEntity: Suivi::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Suivi $lastSuivi = null;
+
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastSuiviAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?string $lastSuiviBy = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $lastSuiviIsPublic = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $codeProcedure = null;
@@ -2290,14 +2299,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     /**
-     * @return false|mixed|Suivi
-     */
-    public function getLastSuivi(): mixed
-    {
-        return $this->suivis->last();
-    }
-
-    /**
      * @return Collection<int, Tag>
      */
     public function getTags(): Collection
@@ -2362,18 +2363,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getLastSuiviAt(): ?\DateTimeImmutable
-    {
-        return $this->lastSuiviAt;
-    }
-
-    public function setLastSuiviAt(?\DateTimeImmutable $lastSuiviAt): static
-    {
-        $this->lastSuiviAt = $lastSuiviAt;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, SignalementQualification>
      */
@@ -2400,6 +2389,30 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
                 $signalementQualification->setSignalement(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLastSuivi(): ?Suivi
+    {
+        return $this->lastSuivi;
+    }
+
+    public function setLastSuivi(?Suivi $lastSuivi): static
+    {
+        $this->lastSuivi = $lastSuivi;
+
+        return $this;
+    }
+
+    public function getLastSuiviAt(): ?\DateTimeImmutable
+    {
+        return $this->lastSuiviAt;
+    }
+
+    public function setLastSuiviAt(?\DateTimeImmutable $lastSuiviAt): static
+    {
+        $this->lastSuiviAt = $lastSuiviAt;
 
         return $this;
     }

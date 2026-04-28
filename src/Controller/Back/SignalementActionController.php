@@ -29,6 +29,7 @@ use App\Service\Gouv\Rnb\RnbService;
 use App\Service\HtmlTargetContentsService;
 use App\Service\MessageHelper;
 use App\Service\RequestDataExtractor;
+use App\Service\Signalement\Suivi\SuiviHelper;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -254,6 +255,7 @@ class SignalementActionController extends AbstractController
         $this->denyAccessUnlessGranted(SuiviVoter::SUIVI_DELETE, $suivi);
         if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $limit = new \DateTimeImmutable('-'.$this->delaySuiviEditableInMinutes.' minutes');
+            $isLastSuivi = $suivi === $signalement->getLastSuivi();
             if ($suivi->getCreatedAt() > $limit && $this->editionSuiviEnable) {
                 $doctrine->getManager()->remove($suivi);
             } else {
@@ -261,6 +263,13 @@ class SignalementActionController extends AbstractController
                 $user = $this->getUser();
                 $suivi->setDeletedAt(new \DateTimeImmutable());
                 $suivi->setDeletedBy($user);
+            }
+            if ($isLastSuivi) {
+                $newLastSuivi = $signalement->getSuivis()->filter(static fn (Suivi $s) => $s !== $suivi && null === $s->getDeletedAt())->last() ?: null;
+                $signalement->setLastSuivi($newLastSuivi);
+                $signalement->setLastSuiviAt($newLastSuivi?->getCreatedAt());
+                $signalement->setLastSuiviBy($newLastSuivi ? SuiviHelper::getLastLabelFromSuivi($newLastSuivi) : null);
+                $signalement->setLastSuiviIsPublic($newLastSuivi?->getIsPublic());
             }
             $doctrine->getManager()->flush();
             $flashMessages[] = ['type' => 'success', 'title' => 'Suivi supprimé', 'message' => 'Le suivi a été supprimé.'];

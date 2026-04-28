@@ -7,6 +7,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Notification;
+use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
@@ -33,22 +34,18 @@ class DossiersSuivisUsagerQuery
         bool $onlyLastSuivi = true,
         bool $forCount = false,
     ): QueryBuilder {
-        $qb = $this->entityManager->createQueryBuilder()
-            ->from(Suivi::class, 's')
-            ->innerJoin('s.signalement', 'signalement')
-            ->where('s.category IN (:categories)')
-            ->setParameter('categories', $categories);
+        $qb = $this->entityManager->createQueryBuilder()->from(Signalement::class, 'signalement');
+
+        if ($onlyLastSuivi) {
+            $qb->innerJoin('signalement.lastSuivi', 's', 'WITH', 's.category IN (:categories)');
+        } else {
+            $qb->innerJoin('signalement.suivis', 's', 'WITH', 's.category IN (:categories)');
+        }
+
+        $qb->setParameter('categories', $categories);
 
         if (!$forCount) {
             $qb->leftJoin('s.createdBy', 'user');
-        }
-
-        if ($onlyLastSuivi) {
-            $subQb = $this->entityManager->createQueryBuilder()
-                ->select('MAX(s2.createdAt)')
-                ->from(Suivi::class, 's2')
-                ->where('s2.signalement = signalement');
-            $qb->andWhere('s.createdAt = ('.$subQb->getDQL().')');
         }
 
         if ($params?->territoireId) {

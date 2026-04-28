@@ -2,6 +2,7 @@
 
 namespace App\Repository\Query\Dashboard;
 
+use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
@@ -33,7 +34,7 @@ class NouveauxDossiersKpiQuery
             CountNouveauxDossiers::class,
             $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_validation AND s.createdBy IS NULL THEN 1 ELSE 0 END), 0)',
             $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_validation AND s.createdBy IS NOT NULL THEN 1 ELSE 0 END), 0)',
-            $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_active AND a.id IS NULL THEN 1 ELSE 0 END), 0)',
+            $user ? 0 : 'COALESCE(SUM(CASE WHEN s.statut = :statut_active AND NOT EXISTS(SELECT 1 FROM '.Affectation::class.' a2 WHERE a2.signalement = s) THEN 1 ELSE 0 END), 0)',
             $user ? 'COALESCE(SUM(CASE WHEN a.partner IN (:partners) AND a.statut = :affectation_wait THEN 1 ELSE 0 END), 0)' : 0,
             $user ? 'COALESCE(SUM(CASE WHEN a.partner IN (:partners) AND a.statut = :affectation_accepted AND NOT EXISTS(
                         SELECT 1 FROM '.UserSignalementSubscription::class.' uss
@@ -49,8 +50,11 @@ class NouveauxDossiersKpiQuery
 
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
-            ->select($select)
-            ->leftJoin('s.affectations', 'a');
+            ->select($select);
+
+        if ($user) {
+            $qb->leftJoin('s.affectations', 'a');
+        }
 
         if (null === $user) {
             $qb->setParameter('statut_active', SignalementStatus::ACTIVE);

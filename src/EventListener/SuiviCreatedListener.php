@@ -21,6 +21,7 @@ class SuiviCreatedListener
         foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
             if ($this->supports($entity)) {
                 $signalement = $entity->getSignalement();
+                $signalement->setLastSuivi($entity);
                 $signalement->setLastSuiviAt($entity->getCreatedAt());
                 $signalement->setLastSuiviBy(SuiviHelper::getLastLabelFromSuivi($entity));
                 $signalement->setLastSuiviIsVisibleForUsager($entity->getIsVisibleForUsager());

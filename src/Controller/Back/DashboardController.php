@@ -118,7 +118,8 @@ class DashboardController extends AbstractController
 
         if (null === $territory) {
             if ($this->isGranted('ROLE_ADMIN')) {
-                $territories = $territoryRepository->findAllList();
+                // $territories = $territoryRepository->findAllList();
+                $territories = [];
             } else {
                 $territories = $authorizedTerritories;
             }
