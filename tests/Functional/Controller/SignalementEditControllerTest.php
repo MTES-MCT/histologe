@@ -52,6 +52,7 @@ class SignalementEditControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideStatusSignalement')]
     public function testDisplaySuiviSignalementCompleteByStatus(string $status): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -88,6 +89,7 @@ class SignalementEditControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideProfileDeclarant')]
     public function testDisplaySuiviSignalementCompleteByProfile(ProfileDeclarant $profile): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -125,6 +127,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     public function testSubmitSuiviSignalementCompleteAdresseLogement(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -185,6 +188,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     public function testSubmitSuiviSignalementCompleteBailleur(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -240,6 +244,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     public function testSubmitSuiviSignalementCompleteOccupantWithEmptyMailOccupant(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -295,6 +300,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     private function doTestAgenceAndSyndic(string $urlName, string $fieldName, string $fieldValue, string $descriptionValue): Signalement
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -349,6 +355,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     public function testSubmitSuiviSignalementCompleteSituationFoyer(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -406,6 +413,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     public function testSubmitSuiviSignalementCompleteAssurance(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -436,6 +444,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     public function testSubmitSuiviSignalementCompleteInformationsGenerales(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -468,6 +477,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     public function testSubmitSuiviSignalementCompleteTypeComposition(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */

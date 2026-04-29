@@ -13,7 +13,7 @@ class FormServiceSecoursStep5Test extends TestCase
         $dto = new FormServiceSecoursStep5();
         $dto->desordres = $slugs;
 
-        self::assertSame($expected, $dto->hasDesordreAutre());
+        $this->assertSame($expected, $dto->hasDesordreAutre());
     }
 
     public static function provideHasDesordreAutreCases(): array

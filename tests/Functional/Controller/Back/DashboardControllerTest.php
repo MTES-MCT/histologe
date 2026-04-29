@@ -12,6 +12,7 @@ class DashboardControllerTest extends WebTestCase
 
     public function testIndexWithDashboard(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
@@ -27,6 +28,7 @@ class DashboardControllerTest extends WebTestCase
 
     public function testPartnerUserIsRedirectedWithQueryParams(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
@@ -46,6 +48,7 @@ class DashboardControllerTest extends WebTestCase
 
     public function testIndexDisplaysSearchDashboardAverifierForm(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
@@ -63,6 +66,7 @@ class DashboardControllerTest extends WebTestCase
 
     public function testIndexWithInvalidTerritoryIdDoesNotFail(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
@@ -79,6 +83,7 @@ class DashboardControllerTest extends WebTestCase
 
     public function testIndexDisplaysTabAdmin(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
@@ -100,6 +105,7 @@ class DashboardControllerTest extends WebTestCase
 
     public function testIndexDisplaysTabPartner(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
@@ -127,6 +133,7 @@ class DashboardControllerTest extends WebTestCase
 
     public function testIndexDisplayTabPartnerMultiTerritory(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */

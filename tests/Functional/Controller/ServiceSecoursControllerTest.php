@@ -16,6 +16,7 @@ class ServiceSecoursControllerTest extends WebTestCase
 {
     public function testRoutes(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var ServiceSecoursRouteRepository $serviceSecoursRouteRepository */
         $serviceSecoursRouteRepository = static::getContainer()->get(ServiceSecoursRouteRepository::class);
@@ -67,49 +68,54 @@ class ServiceSecoursControllerTest extends WebTestCase
 
     public function testItDisplaysFirstStep(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $this->requestStartFlow($client);
 
-        self::assertResponseIsSuccessful();
-        self::assertSelectorExists('form');
-        self::assertSelectorTextContains('label', 'Matricule');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('form');
+        $this->assertSelectorTextContains('label', 'Matricule');
     }
 
     public function testSubmitToStep2(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $crawler = $this->requestStartFlow($client);
         $this->submitStep1($client, $crawler);
 
-        self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('label', 'Adresse du logement');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('label', 'Adresse du logement');
     }
 
     public function testSubmitToStep3(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $crawler = $this->requestStartFlow($client);
         $crawler = $this->submitStep1($client, $crawler);
         $this->submitStep2($client, $crawler, 'oui', EtageType::RDC->value);
 
-        self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('label', 'Profil de l\'occupant');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('label', 'Profil de l\'occupant');
     }
 
     public function testSubmitToStep4(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $crawler = $this->requestStartFlow($client);
         $crawler = $this->submitStep1($client, $crawler);
         $crawler = $this->submitStep2($client, $crawler, 'oui', EtageType::SOUSSOL->value);
         $this->submitStep3($client, $crawler);
 
-        self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('label', 'Bailleur averti');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('label', 'Bailleur averti');
     }
 
     public function testSubmitToStep5(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $crawler = $this->requestStartFlow($client);
         $crawler = $this->submitStep1($client, $crawler);
@@ -118,13 +124,14 @@ class ServiceSecoursControllerTest extends WebTestCase
 
         $this->submitStep4($client, $crawler);
 
-        self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('label', 'Désordres');
-        self::assertSelectorTextContains('button[data-upload-photos-trigger]', 'Ajouter des photos');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('label', 'Désordres');
+        $this->assertSelectorTextContains('button[data-upload-photos-trigger]', 'Ajouter des photos');
     }
 
     public function testSubmitToStep6(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $crawler = $this->requestStartFlow($client);
         $crawler = $this->submitStep1($client, $crawler);
@@ -134,17 +141,18 @@ class ServiceSecoursControllerTest extends WebTestCase
 
         $this->submitStep5($client, $crawler);
 
-        self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Récapitulatif et validation');
-        self::assertSelectorCount(1, 'h2:contains("Vos coordonnées")');
-        self::assertSelectorCount(1, 'h2:contains("Infos sur le logement")');
-        self::assertSelectorCount(1, 'h2:contains("Occupation du logement")');
-        self::assertSelectorCount(1, 'h2:contains("Propriétaire / Syndic")');
-        self::assertSelectorCount(1, 'h2:contains("Désordres")');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Récapitulatif et validation');
+        $this->assertSelectorCount(1, 'h2:contains("Vos coordonnées")');
+        $this->assertSelectorCount(1, 'h2:contains("Infos sur le logement")');
+        $this->assertSelectorCount(1, 'h2:contains("Occupation du logement")');
+        $this->assertSelectorCount(1, 'h2:contains("Propriétaire / Syndic")');
+        $this->assertSelectorCount(1, 'h2:contains("Désordres")');
     }
 
     public function testSubmitToFinalStep(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $crawler = $this->requestStartFlow($client);
         $crawler = $this->submitStep1($client, $crawler);
@@ -154,11 +162,11 @@ class ServiceSecoursControllerTest extends WebTestCase
         $crawler = $this->submitStep5($client, $crawler);
 
         $this->submitStep6($client, $crawler);
-        self::assertResponseIsSuccessful();
-        self::assertSelectorTextContains('h1', 'Le signalement a bien été enregistré !');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Le signalement a bien été enregistré !');
 
-        self::assertSelectorTextContains('a.fr-btn.fr-icon-download-line', 'Télécharger le PDF');
-        self::assertSelectorTextContains('a.fr-btn.fr-btn--secondary', 'Saisir un autre signalement');
+        $this->assertSelectorTextContains('a.fr-btn.fr-icon-download-line', 'Télécharger le PDF');
+        $this->assertSelectorTextContains('a.fr-btn.fr-btn--secondary', 'Saisir un autre signalement');
 
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $signalement = $signalementRepository->findOneBy(['creationSource' => CreationSource::FORM_SERVICE_SECOURS]);

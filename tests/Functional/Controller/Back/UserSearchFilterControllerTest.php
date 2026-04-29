@@ -21,6 +21,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testSaveSearchInvalidCsrf(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $url = static::getContainer()->get(UrlGeneratorInterface::class)
             ->generate('back_user_search_filters_save');
@@ -47,6 +48,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testSaveSearchEmptyParams(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $url = static::getContainer()->get(UrlGeneratorInterface::class)
             ->generate('back_user_search_filters_save');
@@ -73,6 +75,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testSaveSearchLimitReached(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
         $url = static::getContainer()->get(UrlGeneratorInterface::class)
@@ -111,6 +114,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testSaveSearchSuccess(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $url = static::getContainer()->get(UrlGeneratorInterface::class)
             ->generate('back_user_search_filters_save');
@@ -141,6 +145,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testDeleteSearchInvalidCsrf(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $url = static::getContainer()->get(UrlGeneratorInterface::class)
             ->generate('back_user_search_filters_delete', ['id' => 999]);
@@ -163,6 +168,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testDeleteSearchNotFound(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $url = static::getContainer()->get(UrlGeneratorInterface::class)
             ->generate('back_user_search_filters_delete', ['id' => 999999]);
@@ -186,6 +192,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testDeleteSearchSuccess(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
         $repo = static::getContainer()->get(UserRepository::class);
@@ -218,6 +225,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testDeleteSearchNotOwned(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
         $userRepo = static::getContainer()->get(UserRepository::class);
@@ -254,6 +262,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testEditSearchInvalidCsrf(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $url = static::getContainer()->get(UrlGeneratorInterface::class)
             ->generate('back_user_search_filters_edit', ['id' => 1234]);
@@ -276,6 +285,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testEditSearchEmptyName(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
         $userRepo = static::getContainer()->get(UserRepository::class);
@@ -311,6 +321,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testEditSearchTooLongName(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
         $userRepo = static::getContainer()->get(UserRepository::class);
@@ -346,6 +357,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testEditSearchNotFound(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $userRepo = static::getContainer()->get(UserRepository::class);
         $client->loginUser($userRepo->findOneBy(['email' => 'admin-01@signal-logement.fr']));
@@ -372,6 +384,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testEditSearchSuccess(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
 
@@ -408,6 +421,7 @@ class UserSearchFilterControllerTest extends WebTestCase
 
     public function testSaveSearchDuplicateName(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $em = static::getContainer()->get(EntityManagerInterface::class);
         $url = static::getContainer()->get(UrlGeneratorInterface::class)

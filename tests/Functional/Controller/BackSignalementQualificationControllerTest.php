@@ -22,6 +22,7 @@ class BackSignalementQualificationControllerTest extends WebTestCase
         int $consommationEnergie,
         QualificationStatus $qualificationStatus,
     ): void {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */

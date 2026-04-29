@@ -13,6 +13,7 @@ class CspReportControllerTest extends WebTestCase
         array $payload,
         bool $shouldReport = false,
     ): void {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         if ($shouldReport) {
@@ -106,6 +107,7 @@ class CspReportControllerTest extends WebTestCase
 
     public function testCspReportWithGetMethod(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         $client->request('GET', '/csp-report');

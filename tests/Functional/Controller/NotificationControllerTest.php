@@ -23,6 +23,7 @@ class NotificationControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideAllNotificationOptions')]
     public function testAllNotifications(string $route, string $tokenName, string $tokenId, string $msgFlash): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -63,6 +64,7 @@ class NotificationControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideSelectedNotificationOptions')]
     public function testSelectedNotifications(string $route, string $tokenId, string $filter, string $msgFlash): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);

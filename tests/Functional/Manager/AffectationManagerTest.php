@@ -34,6 +34,7 @@ class AffectationManagerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);

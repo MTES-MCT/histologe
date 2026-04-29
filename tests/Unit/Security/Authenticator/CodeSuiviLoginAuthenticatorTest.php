@@ -55,7 +55,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
     public static function provideSuccessfulAuthenticationCases(): \Generator
     {
         yield 'occupant' => [
-            self::createMockSignalement(
+            $this->createMockSignalement(
                 ProfileDeclarant::LOCATAIRE,
                 'Martin',
                 'Luc',
@@ -79,7 +79,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         ];
 
         yield 'declarant' => [
-            self::createMockSignalement(
+            $this->createMockSignalement(
                 ProfileDeclarant::TIERS_PARTICULIER,
                 'Durand',
                 'Nadia',
@@ -102,7 +102,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
             ],
         ];
         yield 'occupant accentué minuscule' => [
-            self::createMockSignalement(
+            $this->createMockSignalement(
                 ProfileDeclarant::LOCATAIRE,
                 'Morin',
                 'Édith',
@@ -125,7 +125,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
             ],
         ];
         yield 'occupant accentué majuscule' => [
-            self::createMockSignalement(
+            $this->createMockSignalement(
                 ProfileDeclarant::LOCATAIRE,
                 'Morin',
                 'Édith',
@@ -148,7 +148,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
             ],
         ];
         yield 'occupant accentué sans accentuation' => [
-            self::createMockSignalement(
+            $this->createMockSignalement(
                 ProfileDeclarant::LOCATAIRE,
                 'Morin',
                 'Édith',

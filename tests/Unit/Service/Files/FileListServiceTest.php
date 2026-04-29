@@ -22,6 +22,7 @@ class FileListServiceTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->fileRepository = static::getContainer()->get(FileRepository::class);
         $this->security = static::getContainer()->get(Security::class);

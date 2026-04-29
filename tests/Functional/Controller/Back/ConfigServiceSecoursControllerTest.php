@@ -14,6 +14,7 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
 
     public function testIndex(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -31,6 +32,7 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
 
     public function testIndexForUnauthorizedUser(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -52,6 +54,7 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
 
     public function testAdd(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);

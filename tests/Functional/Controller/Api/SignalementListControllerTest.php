@@ -13,6 +13,7 @@ class SignalementListControllerTest extends WebTestCase
 
     public function testGetSignalementList(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
@@ -35,6 +36,7 @@ class SignalementListControllerTest extends WebTestCase
 
     public function testGetSignalementListUserApi02(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-02@signal-logement.fr',
@@ -59,6 +61,7 @@ class SignalementListControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideGoodQueryParameters')]
     public function testGetSignalementListWithFilters(array $queryParameters, int $count): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
@@ -89,6 +92,7 @@ class SignalementListControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideDataSignalementByUuid')]
     public function testGetSignalementByUuid(string $email, string $uuid, int $nbAffectations, int $nbDesordres): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => $email,
@@ -115,6 +119,7 @@ class SignalementListControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideQueryParameters')]
     public function testGetSignalementListWithErrorsFilter(array $queryParameters, int $countErrors): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
@@ -159,6 +164,7 @@ class SignalementListControllerTest extends WebTestCase
 
     public function testGetUnAffectedSignalementByUuid(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
 
@@ -172,6 +178,7 @@ class SignalementListControllerTest extends WebTestCase
 
     public function testGetUnAffectedSignalementCreatedByMeByUuid(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
 

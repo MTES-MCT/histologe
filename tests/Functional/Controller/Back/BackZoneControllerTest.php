@@ -15,6 +15,7 @@ class BackZoneControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsZoneList')]
     public function testZoneList(array $params, int $nb): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -39,6 +40,7 @@ class BackZoneControllerTest extends WebTestCase
 
     public function testZoneShow(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -60,6 +62,7 @@ class BackZoneControllerTest extends WebTestCase
 
     public function testZoneEdit(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);

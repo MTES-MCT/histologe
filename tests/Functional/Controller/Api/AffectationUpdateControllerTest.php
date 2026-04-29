@@ -28,6 +28,7 @@ class AffectationUpdateControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $user = static::getContainer()->get(UserRepository::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',

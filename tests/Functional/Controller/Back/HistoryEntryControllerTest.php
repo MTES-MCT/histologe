@@ -15,6 +15,7 @@ class HistoryEntryControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->router = static::getContainer()->get(RouterInterface::class);

@@ -25,6 +25,7 @@ class CartographieControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideUserEmail')]
     public function testCartographieSuccessfullyOrRedirectWithoutError500(string $email): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -60,6 +61,7 @@ class CartographieControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideFilterSearch')]
     public function testCartographieWithFilter(string $email, string $filter, string|array $terms): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);

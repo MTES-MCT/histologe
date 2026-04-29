@@ -25,6 +25,7 @@ class SuiviBailleurControllerTest extends WebTestCase
 
     public function testDossierBailleurSubmitOui(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -73,6 +74,7 @@ class SuiviBailleurControllerTest extends WebTestCase
 
     public function testDossierBailleurSubmitOuiAide(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -126,6 +128,7 @@ class SuiviBailleurControllerTest extends WebTestCase
 
     public function testDossierBailleurSubmitNon(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -179,6 +182,7 @@ class SuiviBailleurControllerTest extends WebTestCase
 
     public function testDossierBailleurStopProcedureAutre(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -246,6 +250,7 @@ class SuiviBailleurControllerTest extends WebTestCase
 
     public function testDossierBailleurStopTravaux(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */

@@ -46,6 +46,7 @@ class BrevoWebhookControllerTest extends WebTestCase
         int $expectedStatusCode,
         string $expectedContent,
     ): void {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         $client->request(
@@ -126,6 +127,7 @@ class BrevoWebhookControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideWebhookEventTestData')]
     public function testHandleWebhookWithEvent(string $event, string $email, bool $expectDeliveryIssue, ?array $expectedPayload): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = static::getContainer();
 
@@ -181,6 +183,7 @@ class BrevoWebhookControllerTest extends WebTestCase
 
     public function testArchivedUsersWithSameEmailPrefixCreatesDeliveryIssue(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = static::getContainer();
         $em = $container->get('doctrine')->getManager();

@@ -27,6 +27,7 @@ class SignalementControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutes')]
     public function testSignalementSuccessfullyDisplay(string $route, Signalement $signalement): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -72,6 +73,7 @@ class SignalementControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideRoleSignalementRoutes')]
     public function testButtonsDisplayedByRole(string $email, string $uuid, string $elementSelector = '', string $elementText = ''): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -182,6 +184,7 @@ class SignalementControllerTest extends WebTestCase
         AffectationStatus $currentAffectationStatus,
         string $elementText,
     ): void {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -229,6 +232,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSignalementNDESuccessfullyDisplay(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -255,6 +259,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testAdminSubmitClotureSignalementWithEmailSentToPartners(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
@@ -301,6 +306,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testAdminTerritorySubmitClotureSignalementWithEmailSentToPartnersAndUsagers(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
@@ -347,6 +353,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testAdminPartnerSubmitClotureSignalementWithEmailSentToRT(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
@@ -389,6 +396,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testUserPartnerSubmitClotureSignalementWithEmailSentToPartnersAndRT(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
@@ -434,6 +442,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testUserPartnerSubmitClotureSignalementWithoutMotifSuivi(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
@@ -469,6 +478,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testNewDeleteSignalement(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
@@ -503,6 +513,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSaveNewTagSignalement(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -553,6 +564,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSendMailBailleur(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */

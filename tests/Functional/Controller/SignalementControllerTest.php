@@ -61,6 +61,7 @@ class SignalementControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideStatusSignalement')]
     public function testDisplaySuiviSignalement(string $status): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -102,6 +103,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSuiviSignalementProcedure(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get('doctrine');
@@ -122,6 +124,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSuiviSignalementProcedureAbandon(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get('doctrine');
@@ -161,6 +164,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSuiviSignalementProcedureAbandonOnInjonctionBailleur(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get('doctrine');
@@ -201,6 +205,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSuiviSignalementProcedurePoursuite(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get('doctrine');
@@ -239,6 +244,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSuiviSignalementProcedureBascule(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get('doctrine');
@@ -272,6 +278,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSuiviSignalementProcedureBasculeOnActiveSignalement(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get('doctrine');
@@ -291,6 +298,7 @@ class SignalementControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideStatusSignalement')]
     public function testPostUsagerResponse(string $status): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get('doctrine');
@@ -331,6 +339,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testUsagerCoordonneesTiers(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -377,6 +386,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testCoordonneesTiersBloqueSiInvitationExistante(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = $client->getContainer();
         $entityManager = $container->get('doctrine')->getManager();
@@ -411,6 +421,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testUsagerAddDocuments(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -462,6 +473,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testUsagerAddInvalidDocuments(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -500,6 +512,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testPostSignalementDraft(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var RouterInterface $router */
@@ -518,6 +531,7 @@ class SignalementControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideSignalementRequestPayload')]
     public function testCompleteSignalementDraft(string $path, string $uuidSignalement, int $countEmailSent): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -559,6 +573,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testCompleteSignalementDraftToInjonctionBailleur(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -601,6 +616,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testUpdateSignalementDraftArchived(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var RouterInterface $router */
@@ -621,6 +637,7 @@ class SignalementControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideSignalementDraftUuid')]
     public function testGetSignalementDraft(string $uuid, string $step): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var RouterInterface $router */
@@ -635,6 +652,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSignalementEdit(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var RouterInterface $router */
@@ -658,6 +676,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSendMailContinueFromNotValidDraft(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var RouterInterface $router */
@@ -731,6 +750,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSignalementBailleurPrevenu(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get('doctrine');
@@ -785,6 +805,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSuiviSignalementProcedureBailleurClotureOui(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -861,6 +882,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSuiviSignalementProcedureBailleurClotureNon(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
@@ -931,6 +953,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testDisplaySuiviSignalementProcedureBailleurCloture(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         $entityManager = static::getContainer()->get('doctrine');

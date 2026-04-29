@@ -26,6 +26,7 @@ class BackStatistiquesControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutesHomepage')]
     public function testStatistiquesHomepage(string $route, string $email): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -96,6 +97,7 @@ class BackStatistiquesControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutesStatistiquesDatas')]
     public function testStatistiquesDatas(string $route, array $params, string $email, array $expectedResponses): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -122,6 +124,7 @@ class BackStatistiquesControllerTest extends WebTestCase
 
     public function testStatistiquesFilterRouteNotLogged(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var RouterInterface $router */

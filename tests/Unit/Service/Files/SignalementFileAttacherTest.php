@@ -30,58 +30,58 @@ class SignalementFileAttacherTest extends TestCase
         $fileScanner = $this->createMock(FileScanner::class);
 
         $fileFactory
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('createFromFileArray')
             ->with(file: $fileData, signalement: $signalement)
             ->willReturn($file);
 
         $file
-            ->expects(self::exactly(2))
+            ->expects($this->exactly(2))
             ->method('getFilename')
             ->willReturn('document.pdf');
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('moveFromBucketTempFolder')
             ->with('document.pdf');
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getFileSize')
             ->with('document.pdf')
             ->willReturn(12345);
 
         $file
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setSize')
             ->with('12345');
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('hasVariants')
             ->with('document.pdf')
             ->willReturn(true);
 
         $file
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setIsVariantsGenerated')
             ->with(true);
 
         $file
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setUploadedBy')
             ->with($user);
 
         $file
-            ->expects(self::never())
+            ->expects($this->never())
             ->method('setScannedAt');
 
         $file
-            ->expects(self::never())
+            ->expects($this->never())
             ->method('setIsSuspicious');
 
         $signalement
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('addFile')
             ->with($file);
 
@@ -111,65 +111,65 @@ class SignalementFileAttacherTest extends TestCase
         $fileScanner = $this->createMock(FileScanner::class);
 
         $fileFactory
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('createFromFileArray')
             ->willReturn($file);
 
         $file
-            ->expects(self::exactly(4))
+            ->expects($this->exactly(4))
             ->method('getFilename')
             ->willReturn('document.pdf');
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('moveFromBucketTempFolder')
             ->with('document.pdf');
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getFileSize')
             ->with('document.pdf')
             ->willReturn(500);
 
         $file
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setSize')
             ->with('500');
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('hasVariants')
             ->with('document.pdf')
             ->willReturn(false);
 
         $file
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setIsVariantsGenerated')
             ->with(false);
 
         $file
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setScannedAt')
             ->with(self::isInstanceOf(\DateTimeImmutable::class));
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getTmpFilepath')
             ->with('document.pdf')
             ->willReturn('/tmp/document.pdf');
 
         $fileScanner
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('isClean')
             ->with('/tmp/document.pdf')
             ->willReturn(true);
 
         $file
-            ->expects(self::never())
+            ->expects($this->never())
             ->method('setIsSuspicious');
 
         $signalement
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('addFile')
             ->with($file);
 
@@ -199,66 +199,66 @@ class SignalementFileAttacherTest extends TestCase
         $fileScanner = $this->createMock(FileScanner::class);
 
         $fileFactory
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('createFromFileArray')
             ->willReturn($file);
 
         $file
-            ->expects(self::exactly(4))
+            ->expects($this->exactly(4))
             ->method('getFilename')
             ->willReturn('infected.pdf');
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('moveFromBucketTempFolder')
             ->with('infected.pdf');
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getFileSize')
             ->with('infected.pdf')
             ->willReturn(null);
 
         $file
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setSize')
             ->with(null);
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('hasVariants')
             ->with('infected.pdf')
             ->willReturn(false);
 
         $file
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setIsVariantsGenerated')
             ->with(false);
 
         $file
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setScannedAt')
             ->with(self::isInstanceOf(\DateTimeImmutable::class));
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getTmpFilepath')
             ->with('infected.pdf')
             ->willReturn('/tmp/infected.pdf');
 
         $fileScanner
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('isClean')
             ->with('/tmp/infected.pdf')
             ->willReturn(false);
 
         $file
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setIsSuspicious')
             ->with(true);
 
         $signalement
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('addFile')
             ->with($file);
 
@@ -288,61 +288,61 @@ class SignalementFileAttacherTest extends TestCase
         $fileScanner = $this->createMock(FileScanner::class);
 
         $fileFactory
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('createFromFileArray')
             ->willReturn($file);
 
         $file
-            ->expects(self::exactly(3))
+            ->expects($this->exactly(3))
             ->method('getFilename')
             ->willReturn('photo.jpg');
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('moveFromBucketTempFolder')
             ->with('photo.jpg');
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getFileSize')
             ->with('photo.jpg')
             ->willReturn(200);
 
         $file
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setSize')
             ->with('200');
 
         $uploadHandlerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('hasVariants')
             ->with('photo.jpg')
             ->willReturn(true);
 
         $file
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setIsVariantsGenerated')
             ->with(true);
 
         $file
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('setScannedAt')
             ->with(self::isInstanceOf(\DateTimeImmutable::class));
 
         $uploadHandlerService
-            ->expects(self::never())
+            ->expects($this->never())
             ->method('getTmpFilepath');
 
         $fileScanner
-            ->expects(self::never())
+            ->expects($this->never())
             ->method('isClean');
 
         $file
-            ->expects(self::never())
+            ->expects($this->never())
             ->method('setIsSuspicious');
 
         $signalement
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('addFile')
             ->with($file);
 

@@ -13,6 +13,7 @@ class UserAccountControllerTest extends WebTestCase
     {
         $faker = Factory::create();
 
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -36,6 +37,7 @@ class UserAccountControllerTest extends WebTestCase
 
     public function testUserLogin(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         $client->request('GET', '/connexion');
@@ -50,6 +52,7 @@ class UserAccountControllerTest extends WebTestCase
 
     public function testUserApiLogin(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         $client->request('GET', '/connexion');
@@ -66,6 +69,7 @@ class UserAccountControllerTest extends WebTestCase
     {
         $faker = Factory::create();
 
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -92,6 +96,7 @@ class UserAccountControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidPassword')]
     public function testActivationUserFormSubmitWithInvalidPassword(string $expectedResult, string $password): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */

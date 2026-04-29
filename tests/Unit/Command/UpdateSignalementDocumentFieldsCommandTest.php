@@ -64,7 +64,7 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
         $signalementRepositoryMock
             ->expects($this->atLeast(1))
             ->method('findByReferenceChunk')
-            ->willReturnCallback(function ($territory, $reference) use ($expectedCalls, &$callIndex) {
+            ->willReturnCallback(static function ($territory, $reference) use ($expectedCalls, &$callIndex) {
                 $this->assertSame($expectedCalls[$callIndex][0], $territory);
                 $this->assertSame($expectedCalls[$callIndex][1], $reference);
 

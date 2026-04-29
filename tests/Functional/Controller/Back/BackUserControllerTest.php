@@ -11,6 +11,7 @@ class BackUserControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsUserList')]
     public function testUserList(array $params, int $nb): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -46,6 +47,7 @@ class BackUserControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsUserExport')]
     public function testUserExport(array $params, int $nb): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -75,6 +77,7 @@ class BackUserControllerTest extends WebTestCase
 
     public function testUserExportSA(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -96,6 +99,7 @@ class BackUserControllerTest extends WebTestCase
 
     public function testInactiveAccounts(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);

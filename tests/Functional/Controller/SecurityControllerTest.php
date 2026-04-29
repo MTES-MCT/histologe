@@ -22,6 +22,7 @@ class SecurityControllerTest extends WebTestCase
 
     public function testLoginBailleurWithValidLoginPOST(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
         $payload = [
@@ -35,6 +36,7 @@ class SecurityControllerTest extends WebTestCase
 
     public function testLoginBailleurFailedWithValidLoginGET(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
         $client->request('GET', '/connexion-bailleur', [
@@ -46,6 +48,7 @@ class SecurityControllerTest extends WebTestCase
 
     public function testLoginBailleurWithInvalidLoginPOST(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
         $payload = [
@@ -62,6 +65,7 @@ class SecurityControllerTest extends WebTestCase
 
     public function testFOLoginOnOccupantWithoutEmail(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $signalement = $client->getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2022-1']);
         $payload = [
@@ -90,6 +94,7 @@ class SecurityControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideJsonLogin')]
     public function testJsonLogin(?int $status = null, ?string $email = null, ?string $password = null): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $payload = [
             'email' => $email,
@@ -127,6 +132,7 @@ class SecurityControllerTest extends WebTestCase
 
     public function testShowUploadedFileSucceed(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -141,6 +147,7 @@ class SecurityControllerTest extends WebTestCase
 
     public function testShowUploadedFileFailed(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -157,6 +164,7 @@ class SecurityControllerTest extends WebTestCase
 
     public function testShowUploadedWithInvalidToken(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $client->request('GET', '/_up/check.png');
 
@@ -166,6 +174,7 @@ class SecurityControllerTest extends WebTestCase
     public function testShowExportPdfUsagerLogged(): void
     {
         $_GET['folder'] = '_up';
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $uuid = '00000000-0000-0000-2024-000000000012';
         $filename = 'export-pdf-signalement-'.$uuid.'.pdf';
@@ -190,6 +199,7 @@ class SecurityControllerTest extends WebTestCase
     public function testShowExportPdfUsagerNotLogged(): void
     {
         $_GET['folder'] = '_up';
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $uuid = '00000000-0000-0000-2022-000000000001';
         $filename = 'export-pdf-signalement-'.$uuid.'.pdf';

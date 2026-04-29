@@ -35,6 +35,7 @@ class SignalementActionControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->router = static::getContainer()->get(RouterInterface::class);
         $this->userRepository = static::getContainer()->get(UserRepository::class);

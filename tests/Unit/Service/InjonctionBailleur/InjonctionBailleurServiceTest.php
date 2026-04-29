@@ -92,7 +92,7 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         $callIndex = 0;
         $this->suiviManager->expects($this->exactly(2))
             ->method('createSuivi')
-            ->willReturnCallback(function (...$args) use (&$callIndex) {
+            ->willReturnCallback(static function (...$args) use (&$callIndex) {
                 if (0 === $callIndex) {
                     $this->assertInstanceOf(Signalement::class, $args[0]);
                     $this->assertStringContainsString('arrêter la procédure d\'injonction', $args[1]);
@@ -134,7 +134,7 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         $callIndex = 0;
         $this->suiviManager->expects($this->exactly(2))
             ->method('createSuivi')
-            ->willReturnCallback(function (...$args) use (&$callIndex) {
+            ->willReturnCallback(static function (...$args) use (&$callIndex) {
                 if (0 === $callIndex) {
                     $this->assertInstanceOf(Signalement::class, $args[0]);
                     $this->assertStringContainsString('Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés', $args[1]);

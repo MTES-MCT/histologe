@@ -13,6 +13,7 @@ class DashboardTabPanelControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideAuthorizedTabBodyType')]
     public function testAccessGrantedForAuthorizedUsers(string $tabBodyType): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
@@ -27,6 +28,7 @@ class DashboardTabPanelControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideUnauthorizedTabBodyType')]
     public function testAccessDeniedForUnauthorizedUsers(string $tabBodyType): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $router = static::getContainer()->get('router');
         $userRepository = static::getContainer()->get(UserRepository::class);

@@ -21,7 +21,7 @@ class AffectationEsaboraPolicyTest extends KernelTestCase
     public function testHasUrlConflict(array $partnerIds, bool $result): void
     {
         $affectationEsaboraPolicy = new AffectationEsaboraPolicy($this->partnerRepository, true);
-        self::assertSame($result, $affectationEsaboraPolicy->hasUrlConflict($partnerIds));
+        $this->assertSame($result, $affectationEsaboraPolicy->hasUrlConflict($partnerIds));
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('providePartnerName')]
@@ -33,7 +33,7 @@ class AffectationEsaboraPolicyTest extends KernelTestCase
         $partner = $this->partnerRepository->findOneBy(['nom' => $partnerName]);
 
         $affectationEsaboraPolicy = new AffectationEsaboraPolicy($this->partnerRepository, true);
-        self::assertSame($result, $affectationEsaboraPolicy->canBeAffected($signalement, $partner));
+        $this->assertSame($result, $affectationEsaboraPolicy->canBeAffected($signalement, $partner));
     }
 
     public static function providePartnerIds(): \Generator

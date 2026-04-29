@@ -10,6 +10,7 @@ class SettingsControllerTest extends WebTestCase
 {
     public function testSettings(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -32,6 +33,7 @@ class SettingsControllerTest extends WebTestCase
 
     public function testSettingsWithTerritory(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -53,6 +55,7 @@ class SettingsControllerTest extends WebTestCase
 
     public function testSettingsWithoutImported(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */

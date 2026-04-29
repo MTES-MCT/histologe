@@ -12,6 +12,7 @@ class UserGetMeControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideUserEmailApi')]
     public function testUserGetMe(string $email, int $nbPartners): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => $email,

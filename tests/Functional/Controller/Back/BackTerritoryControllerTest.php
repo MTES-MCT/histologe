@@ -11,6 +11,7 @@ class BackTerritoryControllerTest extends WebTestCase
 {
     public function testGetBailleursList(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */

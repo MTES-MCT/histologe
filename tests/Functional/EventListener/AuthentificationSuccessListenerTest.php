@@ -28,6 +28,7 @@ class AuthentificationSuccessListenerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
         $this->historyEntryRepository = static::getContainer()->get(HistoryEntryRepository::class);

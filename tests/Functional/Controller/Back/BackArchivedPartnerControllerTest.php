@@ -15,6 +15,7 @@ class BackArchivedPartnerControllerTest extends WebTestCase
 
     public function testAccountList(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -36,6 +37,7 @@ class BackArchivedPartnerControllerTest extends WebTestCase
 
     public function testAccountListWithTerritory(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */

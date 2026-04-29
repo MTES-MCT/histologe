@@ -15,6 +15,7 @@ class UserApiPermissionControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsUserApiList')]
     public function testIndex(array $params, int $nb): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -42,6 +43,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testIndexAccess(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -58,6 +60,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testPermissionCreate(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -88,6 +91,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testPermissionCreateOnBadUser(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -112,6 +116,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testPermissionCreateDuplication(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -142,6 +147,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testPermissionEdit(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -173,6 +179,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testPermissionDelete(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -210,6 +217,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testAddUser(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -234,6 +242,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testAddExistingUser(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);

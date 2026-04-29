@@ -12,6 +12,7 @@ class CronReportingControllerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideCronPayloads')]
     public function testHandleSendEmail(array $payload, int $expectedStatusCode, bool $useCorrectToken, int $expectedEmailCount): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $token = $useCorrectToken
             ? $client->getContainer()->getParameter('send_error_email_token')

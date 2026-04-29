@@ -15,6 +15,7 @@ class MaintenanceListenerTest extends WebTestCase
 
     public function testMaintenanceForApiRoutes(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '1';
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -29,6 +30,7 @@ class MaintenanceListenerTest extends WebTestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutes')]
     public function testMaintenanceRedirect(string $routeName, array $parameters = []): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '1';
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -49,6 +51,7 @@ class MaintenanceListenerTest extends WebTestCase
 
     public function testNonMaintenanceRequest(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '0';
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -60,6 +63,7 @@ class MaintenanceListenerTest extends WebTestCase
 
     public function testMaintenanceNoRedirectForSuperAdmin(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '1';
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -77,6 +81,7 @@ class MaintenanceListenerTest extends WebTestCase
 
     public function testMaintenanceRedirectForNoSuperAdmin(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '1';
         /** @var UrlGeneratorInterface $generatorUrl */

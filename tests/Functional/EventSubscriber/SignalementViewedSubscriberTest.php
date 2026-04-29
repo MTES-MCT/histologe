@@ -31,6 +31,7 @@ class SignalementViewedSubscriberTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         static::createClient();
         $this->addressServiceMock = $this->createMock(AddressService::class);
         /** @var EntityManagerInterface $em */

@@ -43,20 +43,20 @@ class SignalementServiceSecoursFileMessageHandlerTest extends TestCase
 
         $signalement = $this->createMock(Signalement::class);
         $signalement
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getJsonContent')
             ->willReturn($jsonContent);
 
         $signalementRepository = $this->createMock(SignalementRepository::class);
         $signalementRepository
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('find')
             ->with($signalementId)
             ->willReturn($signalement);
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('flush');
 
         $logger = $this->createMock(LoggerInterface::class);
@@ -64,11 +64,11 @@ class SignalementServiceSecoursFileMessageHandlerTest extends TestCase
         $callIndex = 0;
         $signalementFileAttacher = $this->createMock(SignalementFileAttacher::class);
         $signalementFileAttacher
-            ->expects(self::exactly(2))
+            ->expects($this->exactly(2))
             ->method('createAndAttach')
             ->willReturnCallback(static function ($signalementArg, $uploadedFileArg) use ($signalement, $expectedFiles, &$callIndex) {
-                self::assertSame($signalement, $signalementArg);
-                self::assertSame($expectedFiles[$callIndex], $uploadedFileArg);
+                $this->assertSame($signalement, $signalementArg);
+                $this->assertSame($expectedFiles[$callIndex], $uploadedFileArg);
                 ++$callIndex;
             });
 

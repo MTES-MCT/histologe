@@ -31,6 +31,7 @@ class SignalementFileControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);

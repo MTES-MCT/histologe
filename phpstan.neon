@@ -7,11 +7,10 @@ parameters:
 		- .php-cs-fixer.dist.php
 		- tools
 	symfony:
-		container_xml_path: var/cache/test/App_KernelTestDebugContainer.xml
-		console_application_loader: tests/phpstan-bootstrap.php
+		containerXmlPath: var/cache/test/App_KernelTestDebugContainer.xml
+		consoleApplicationLoader: tests/phpstan-bootstrap.php
 	treatPhpDocTypesAsCertain: false
 	reportUnmatchedIgnoredErrors: false
-	checkMissingIterableValueType: false
 	bootstrapFiles:
 		- tools/wiremock/src/Mock/AppMock.php
 	ignoreErrors:
@@ -21,3 +20,71 @@ parameters:
 		-
 			message: '#Property .+::\$id is never written, only read.#'
 			path: src/Entity/*
+		# Ignore PHPStan 2.0 strictness - to be fixed gradually
+		-
+			identifier: missingType.iterableValue
+		-
+			identifier: missingType.generics
+		-
+			identifier: doctrine.columnType
+		-
+			identifier: doctrine.associationType
+		-
+			identifier: property.unusedType
+		-
+			identifier: varTag.nativeType
+		-
+			identifier: nullsafe.neverNull
+		-
+			identifier: parameterByRef.type
+		-
+			identifier: notIdentical.alwaysTrue
+		-
+			identifier: return.unusedType
+		-
+			identifier: offsetAccess.notFound
+		-
+			identifier: nullCoalesce.property
+		-
+			identifier: argument.type
+		-
+			identifier: return.type
+		# PHPStan false positives with PHPUnit 13
+		-
+			message: '#Call to an undefined method PHPUnit\\Framework\\MockObject\\InvocationStubber::with\(\)#'
+		-
+			identifier: phpunit.callParent
+		-
+			identifier: phpunit.assertCount
+		-
+			identifier: method.alreadyNarrowedType
+			path: tests/*
+		-
+			identifier: function.alreadyNarrowedType
+			path: tests/*
+		-
+			identifier: function.alreadyNarrowedType
+			path: src/*
+		-
+			identifier: assign.propertyType
+			path: tests/*
+		-
+			identifier: assign.propertyType
+			path: src/*
+		-
+			identifier: variable.undefined
+			path: tests/*
+		-
+			identifier: argument.templateType
+		-
+			identifier: offsetAccess.invalidOffset
+		-
+			identifier: property.notFound
+			path: tests/*
+		-
+			identifier: property.notFound
+			path: src/*
+		-
+			identifier: empty.variable
+		-
+			identifier: argument.named

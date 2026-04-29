@@ -20,6 +20,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
      */
     public function testAddAjaxFails(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -53,6 +54,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
      */
     public function testEditAjaxModifiesTitle(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -93,6 +95,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
      */
     public function testDeleteSuccess(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -128,6 +131,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
      */
     public function testDeleteWithInvalidCsrf(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
