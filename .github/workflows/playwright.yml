@@ -90,3 +90,6 @@ jobs:
         working-directory: tests/e2e
         run: npx playwright test
 
+      - name: Run Lighthouse tests
+        run: npm run lighthouse
+

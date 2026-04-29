@@ -1,0 +1,17 @@
+{
+    "ci": {
+        "collect": {
+            "numberOfRuns": 1,
+            "url": [
+                "http://localhost:8080/connexion"
+            ]
+        },
+        "assert": {
+            "assertions": {
+                "categories:performance": "off",
+                "categories:pwa": "off",
+                "categories:accessibility": ["error", { "minScore": 1 }]
+            }
+        }
+    }
+}

@@ -2,6 +2,7 @@
   "dependencies": {
     "@braintree/sanitize-url": "6.0.4",
     "@gouvfr/dsfr": "1.14.2",
+    "@lhci/cli": "^0.15.1",
     "@popperjs/core": "2.11.8",
     "@sentry/browser": "8.55.0",
     "@sentry/tracing": "7.120.4",
@@ -70,7 +71,8 @@
     "es-vue-check": "node_modules/.bin/eslint --config=eslint.vue.config.mjs --fix-dry-run assets/scripts/vue/**/*.{ts,vue}",
     "es-js-fix": "node_modules/.bin/eslint --config=eslint.vanilla.config.mjs --fix assets/scripts/vanilla/*",
     "es-js-check": "node_modules/.bin/eslint --config=eslint.vanilla.config.mjs --fix-dry-run assets/scripts/vanilla/*",
-    "es-js-prettier-fix": "node_modules/.bin/prettier --write 'assets/scripts/vanilla/**/*.js'"
+    "es-js-prettier-fix": "node_modules/.bin/prettier --write 'assets/scripts/vanilla/**/*.js'",
+    "lighthouse": "lhci autorun"
   },
   "engines": {
     "node": "24"
