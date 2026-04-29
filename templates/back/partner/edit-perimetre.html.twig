@@ -1,6 +1,6 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% block title %}Modifier le partenaire {{ partner.nom }}{% endblock %}
+{% block title %}Modifier le périmètre du partenaire {{ partner.nom }}{% endblock %}
 
 {% block content %}
     <section class="fr-col-12 fr-pt-4v">
@@ -19,7 +19,6 @@
                 'level5Label': '',
             } %}
             <h1>Modifier le périmètre d'intervention du partenaire {{partner.nom}}</h1>
-            <span>Tous les champs sont facultatifs.</span>
 
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12">
@@ -35,6 +34,8 @@
                         Par exemple : vous ajoutez le code INSEE d'une commune et une zone OPAH à un partenaire, le partenaire pourra être affecté aux dossiers qui sont dans la commune <u>ET</u> aux dossiers se trouvant dans la zone OPAH sélectionnée, même si elle ne correspond pas à ce code INSEE.
                     </p>
                 </div>
+                <span>Tous les champs sont facultatifs.</span>
+                <br><br>
                 <h2>Périmètre d'intervention</h2>
                 <p>
                     Définissez ci-dessous les zones géographiques dans lesquelles le partenaire doit intervenir. 

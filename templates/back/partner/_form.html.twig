@@ -81,11 +81,13 @@
 	<div class="fr-col-12">
 		<ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline fr-btns-group--icon-left">
 			<li>
-				{% if create %}
-					<button class="fr-btn fr-btn--primary fr-fi-check-line fr-btn--icon-left" id="submit_btn_partner">Créer le partenaire</button>
-				{% else %}
-					<button class="fr-btn fr-btn--primary fr-fi-check-line fr-btn--icon-left" id="submit_btn_partner">Enregistrer</button>
-				{% endif %}
+				<button class="fr-btn fr-btn--primary fr-fi-check-line fr-btn--icon-left" id="submit_btn_partner">
+					{% if create %}
+						Créer le partenaire
+					{% else %}
+						Enregistrer
+					{% endif %}
+				</button>
 			</li>
 			<li>
 				{% if create %}
