@@ -60,7 +60,6 @@ class SignalementDraftFileMessageHandler
                     );
                 }
             }
-            $this->entityManager->persist($signalement);
             $this->entityManager->flush();
         }
 

@@ -286,7 +286,7 @@ class AffectationManager extends Manager
         if (isset($affectation)) {
             $affectation->setIsSynchronized(true);
             $this->entityManager->persist($affectation);
+            $this->entityManager->flush();
         }
-        $this->entityManager->flush();
     }
 }

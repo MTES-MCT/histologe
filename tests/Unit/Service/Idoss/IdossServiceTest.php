@@ -37,7 +37,7 @@ class IdossServiceTest extends KernelTestCase
         $this->entityManager = $entityManager;
     }
 
-    protected function getIdossService(MockHttpClient $mockHttpClient, ?Partner $partner = null): IdossService
+    protected function getIdossService(MockHttpClient $mockHttpClient, Partner $partner): IdossService
     {
         /** @var ContainerBagInterface&MockObject $containerBagInterface */
         $containerBagInterface = $this->createMock(ContainerBagInterface::class);
@@ -45,9 +45,7 @@ class IdossServiceTest extends KernelTestCase
         $jobEventManager = $this->createMock(JobEventManager::class);
         /** @var PartnerRepository&MockObject $partnerRepository */
         $partnerRepository = $this->createMock(PartnerRepository::class);
-        if ($partner) {
-            $partnerRepository->method('find')->willReturn($partner);
-        }
+        $partnerRepository->method('find')->willReturn($partner);
         /** @var SignalementRepository&MockObject $signalementRepository */
         $signalementRepository = $this->createMock(SignalementRepository::class);
         /** @var SerializerInterface&MockObject $serializerMock */
