@@ -67,6 +67,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
 
             if (null !== $signalement) {
                 $this->entityManager->persist($signalement);
+                $this->entityManager->flush();
                 $this->logger->info(sprintf(
                     'Signalement saved with reference #%s in territory %s',
                     $signalement->getReference(),
