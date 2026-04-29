@@ -21,7 +21,7 @@
                     {% endif %}
                     {% if suivi.createdBy.phone %}
                         <hr>
-                        <span class="fr-ws-nowrap">{{ suivi.createdBy.phoneDecoded }}</span>
+                        <span class="fr-ws-nowrap">{{ suivi.createdBy.phoneDecoded|phone }}</span>
                     {% endif %}
                 </span>
                 <span aria-describedby="tooltip_suivi_{{ suivi.id }}">
