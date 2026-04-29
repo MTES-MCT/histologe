@@ -93,7 +93,8 @@ class SignalementActionController extends AbstractController
             user : $user,
             isVisibleForUsager: true,
             context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
-            createSubscription: false
+            createSubscription: false,
+            flush: false,
         );
 
         $entityManager->flush();

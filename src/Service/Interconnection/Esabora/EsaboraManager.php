@@ -434,7 +434,6 @@ class EsaboraManager
         }
 
         if ($hasChanged) {
-            $this->entityManager->persist($intervention);
             $this->entityManager->flush();
         }
 
@@ -482,7 +481,6 @@ class EsaboraManager
         if ($hasChanged) {
             $newDetails = InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH);
             $intervention->setDetails($this->htmlSanitizer->sanitize($newDetails));
-            $this->entityManager->persist($intervention);
             $this->entityManager->flush();
         }
 

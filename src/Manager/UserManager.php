@@ -77,7 +77,6 @@ class UserManager extends Manager
             ->setStatut(UserStatus::ACTIVE)
             ->setTokenExpiredAt(null);
 
-        $this->entityManager->persist($user);
         $this->entityManager->flush();
         $password = null;
 
