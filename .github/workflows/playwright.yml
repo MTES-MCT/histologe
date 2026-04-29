@@ -90,6 +90,12 @@ jobs:
         working-directory: tests/e2e
         run: npx playwright test
 
+      - name: Switch to prod environment for Lighthouse
+        run: |
+          docker compose exec -T signal_logement_phpfpm bash -c 'echo "APP_ENV=prod" > .env.local && echo "APP_DEBUG=0" >> .env.local'
+          docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=prod --no-warmup
+          docker compose exec -T signal_logement_phpfpm php bin/console cache:warmup --env=prod
+
       - name: Run Lighthouse CI
         run: |
           npm run lighthouse
