@@ -15,11 +15,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class BackSignalementQualificationControllerTest extends WebTestCase
 {
-    /**
-     * @dataProvider provideDataNDE
-     *
-     * @param array<mixed> $payload
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataNDE')]
     public function testSubmitQualificationNDE(
         array $payload,
         int $superficie,
@@ -29,7 +25,7 @@ class BackSignalementQualificationControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
         /** @var SignalementQualification $signalementQualification */
@@ -38,12 +34,12 @@ class BackSignalementQualificationControllerTest extends WebTestCase
         $this->assertEquals(Qualification::NON_DECENCE_ENERGETIQUE, $signalementQualification->getQualification());
 
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate(
             'back_signalement_qualification_editer',
             ['uuid' => $signalement->getUuid(), 'signalementQualification' => $signalementQualification->getId()]

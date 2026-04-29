@@ -59,7 +59,7 @@ class SignalementTest extends KernelTestCase
         $this->assertEquals(ProfileDeclarant::LOCATAIRE, $signalement->getProfileDeclarant());
     }
 
-    /** @dataProvider provideProfile */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideProfile')]
     public function testSetProfileDeclarantFromDraft(ProfileDeclarant $profileDeclarant): void
     {
         $signalement = new Signalement();

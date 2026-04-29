@@ -450,9 +450,7 @@ class SignalementBuilderTest extends KernelTestCase
         yield 'empty - empty' => ['', '', null];
     }
 
-    /**
-     * @dataProvider provideAllocataireCases
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAllocataireCases')]
     public function testResolveIsAllocataire(
         ?string $logementSocialAllocation,
         ?string $logementSocialCaisse,

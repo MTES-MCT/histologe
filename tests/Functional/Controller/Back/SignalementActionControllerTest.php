@@ -36,7 +36,7 @@ class SignalementActionControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->router = self::getContainer()->get(RouterInterface::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->suiviRepository = static::getContainer()->get(SuiviRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
@@ -67,7 +67,7 @@ class SignalementActionControllerTest extends WebTestCase
         $this->client->followRedirect();
         $this->assertSelectorTextContains('.fr-notice--success p', 'Le signalement a bien été accepté.');
 
-        $nbSuiviActive = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::SIGNALEMENT_IS_ACTIVE, 'signalement' => $signalement]);
+        $nbSuiviActive = static::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::SIGNALEMENT_IS_ACTIVE, 'signalement' => $signalement]);
         $this->assertEquals(1, $nbSuiviActive);
     }
 
@@ -127,7 +127,7 @@ class SignalementActionControllerTest extends WebTestCase
         $successMessages = $flashBag->get('success');
         $this->assertEquals(['title' => 'Signalement accepté', 'message' => 'Le signalement a bien été accepté.'], $successMessages[0]);
 
-        $nbSuiviActive = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::SIGNALEMENT_IS_ACTIVE, 'signalement' => $signalement]);
+        $nbSuiviActive = static::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::SIGNALEMENT_IS_ACTIVE, 'signalement' => $signalement]);
         $this->assertEquals(1, $nbSuiviActive);
 
         $nbSubscriptions = $this->userSignalementSubscriptionRepository->count(['signalement' => $signalement]);
@@ -380,9 +380,7 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403);
     }
 
-    /**
-     * @dataProvider provideSignalementToSetRnbId
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideSignalementToSetRnbId')]
     public function testSetRnbId(string $uuid, bool $isGeolocUpdated): void
     {
         $buildingData = json_decode((string) file_get_contents(__DIR__.'/../../../files/betagouv/get_api_rnb_buildings_response.json'), true);
@@ -396,7 +394,7 @@ class SignalementActionControllerTest extends WebTestCase
             $rnbService->expects($this->never())
             ->method('getBuilding');
         }
-        self::getContainer()->set(RnbService::class, $rnbService);
+        static::getContainer()->set(RnbService::class, $rnbService);
 
         $signalement = $this->signalementRepository->findOneBy(['uuid' => $uuid]);
 
@@ -549,7 +547,7 @@ class SignalementActionControllerTest extends WebTestCase
             ->setTerritory($territory);
 
         $signalement->addAffectation($affectation);
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $em = static::getContainer()->get('doctrine')->getManager();
         $em->persist($affectation);
         $em->flush();
         $em->refresh($affectation);
@@ -622,7 +620,7 @@ class SignalementActionControllerTest extends WebTestCase
         $sub->setSignalement($signalement);
         $sub->setUser($user);
         $sub->setCreatedBy($user);
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $em = static::getContainer()->get('doctrine')->getManager();
         $em->persist($sub);
         $em->flush();
 

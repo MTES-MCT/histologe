@@ -16,7 +16,7 @@ class SendSuiviWaitingNotificationCommandTest extends KernelTestCase
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        $container = self::getContainer();
+        $container = static::getContainer();
         $mockClock = new MockClock(new \DateTimeImmutable('+30 minutes'));
         $container->set(ClockInterface::class, $mockClock);
 
@@ -30,6 +30,6 @@ class SendSuiviWaitingNotificationCommandTest extends KernelTestCase
         $this->assertEquals('[OK] Les notifications de 6 suivis ont été envoyées avec succès.', trim($output));
         $this->assertEmailCount(10);
 
-        $this->assertEquals(0, self::getContainer()->get('doctrine')->getManager()->getRepository(Suivi::class)->count(['waitingNotification' => 1]));
+        $this->assertEquals(0, static::getContainer()->get('doctrine')->getManager()->getRepository(Suivi::class)->count(['waitingNotification' => 1]));
     }
 }

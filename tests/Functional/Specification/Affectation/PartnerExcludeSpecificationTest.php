@@ -10,11 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class PartnerExcludeSpecificationTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideRulesAndSignalement
-     *
-     * @param ?array<int> $partnerExcluded
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(?array $partnerExcluded, bool $isSatisfied): void
     {
         $partner = new Partner();

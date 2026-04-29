@@ -36,12 +36,7 @@ class QualificationServiceTest extends KernelTestCase
         $this->signalementQualificationUpdater = $container->get(SignalementQualificationUpdater::class);
     }
 
-    /**
-     * @dataProvider provideScoreAndCriticite
-     *
-     * @param array<string>        $listCriticites
-     * @param array<Qualification> $qualificationsToCheck
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideScoreAndCriticite')]
     public function testInitQualification(int $score, array $listCriticites, array $qualificationsToCheck): void
     {
         /** @var SignalementRepository $signalementRepository */
@@ -109,13 +104,7 @@ class QualificationServiceTest extends KernelTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideScoreAndDesordresPrecisions
-     *
-     * @param array<string>              $listDesordrePrecision
-     * @param array<Qualification>       $qualificationsToCheck
-     * @param array<QualificationStatus> $qualificationsStatusToCheck
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideScoreAndDesordresPrecisions')]
     public function testInitQualificationNewSignalements(
         int $score,
         array $listDesordrePrecision,

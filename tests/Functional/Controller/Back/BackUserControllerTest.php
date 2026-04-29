@@ -8,11 +8,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class BackUserControllerTest extends WebTestCase
 {
-    /**
-     * @dataProvider provideParamsUserList
-     *
-     * @param array<mixed> $params
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsUserList')]
     public function testUserList(array $params, int $nb): void
     {
         $client = static::createClient();
@@ -22,7 +18,7 @@ class BackUserControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_user_index');
         $client->request('GET', $route, $params);
@@ -47,11 +43,7 @@ class BackUserControllerTest extends WebTestCase
         yield 'Search with territory 13 and partnerType Ars' => [['territory' => 13, 'partnerType' => 'ARS'], 1];
     }
 
-    /**
-     * @dataProvider provideParamsUserExport
-     *
-     * @param array<mixed> $params
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsUserExport')]
     public function testUserExport(array $params, int $nb): void
     {
         $client = static::createClient();
@@ -61,7 +53,7 @@ class BackUserControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_user_export');
         $client->request('GET', $route, $params);
@@ -90,7 +82,7 @@ class BackUserControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_user_export');
         $client->request('GET', $route, ['territory' => 13]);
@@ -111,7 +103,7 @@ class BackUserControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_user_inactive_accounts');
         $client->request('GET', $route);
 

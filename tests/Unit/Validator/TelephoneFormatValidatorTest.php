@@ -16,9 +16,7 @@ class TelephoneFormatValidatorTest extends ConstraintValidatorTestCase
         return new TelephoneFormatValidator();
     }
 
-    /**
-     * @dataProvider provideValidPhoneNumbers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidPhoneNumbers')]
     public function testValidPhoneNumbers(mixed $phoneNumber): void
     {
         $constraint = new TelephoneFormat();
@@ -26,9 +24,7 @@ class TelephoneFormatValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    /**
-     * @dataProvider provideInvalidPhoneNumbers
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidPhoneNumbers')]
     public function testInvalidPhoneNumbers(string $phoneNumber): void
     {
         $constraint = new TelephoneFormat();

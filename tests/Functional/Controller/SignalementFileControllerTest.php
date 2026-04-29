@@ -35,7 +35,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
         $this->signalementUser = $this->getSignalementUser($this->signalement);
-        $this->router = self::getContainer()->get(RouterInterface::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
     }
 
     public function testAddSuccessFileSignalement(): void
@@ -79,7 +79,7 @@ class SignalementFileControllerTest extends WebTestCase
             ->method('isValid')
             ->willReturn(true);
 
-        self::getContainer()->set(SignalementFileProcessor::class, $signalementFileProcessor);
+        static::getContainer()->set(SignalementFileProcessor::class, $signalementFileProcessor);
 
         $route = $this->router->generate('signalement_add_file', ['code' => $this->signalement->getCodeSuivi()]);
         $this->client->request('POST', $route,
@@ -132,7 +132,7 @@ class SignalementFileControllerTest extends WebTestCase
             ->method('deleteFile')
             ->willReturn(true);
 
-        self::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
+        static::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
 
         $signalementUser = $this->getSignalementUser($signalement);
         $this->client->loginUser($signalementUser, 'code_suivi');

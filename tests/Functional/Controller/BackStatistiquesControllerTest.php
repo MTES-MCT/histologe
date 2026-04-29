@@ -23,19 +23,17 @@ class BackStatistiquesControllerTest extends WebTestCase
         yield 'Partner' => ['back_statistiques', self::USER_PARTNER];
     }
 
-    /**
-     * @dataProvider provideRoutesHomepage
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutesHomepage')]
     public function testStatistiquesHomepage(string $route, string $email): void
     {
         $client = static::createClient();
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => $email]);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $client->request(
             'GET',
             $router->generate(
@@ -95,22 +93,17 @@ class BackStatistiquesControllerTest extends WebTestCase
         ]];
     }
 
-    /**
-     * @dataProvider provideRoutesStatistiquesDatas
-     *
-     * @param array<mixed> $params
-     * @param array<mixed> $expectedResponses
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutesStatistiquesDatas')]
     public function testStatistiquesDatas(string $route, array $params, string $email, array $expectedResponses): void
     {
         $client = static::createClient();
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => $email]);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $client->request(
             'POST',
             $router->generate(
@@ -132,7 +125,7 @@ class BackStatistiquesControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $client->request(
             'GET',
             $router->generate(

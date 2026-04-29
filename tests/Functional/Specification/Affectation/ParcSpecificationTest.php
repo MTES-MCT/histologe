@@ -10,9 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ParcSpecificationTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideRulesAndSignalement
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(?bool $isLogementSocial, string $parcRule, bool $isSatisfied): void
     {
         $partner = new Partner();

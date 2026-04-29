@@ -12,7 +12,7 @@ class StatistiquesControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $client->request(
             'GET',
             $router->generate(

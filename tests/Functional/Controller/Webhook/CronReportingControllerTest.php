@@ -9,9 +9,7 @@ class CronReportingControllerTest extends WebTestCase
 {
     private const string ENDPOINT = '/webhook/cron-report-mail';
 
-    /**
-     * @dataProvider provideCronPayloads
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideCronPayloads')]
     public function testHandleSendEmail(array $payload, int $expectedStatusCode, bool $useCorrectToken, int $expectedEmailCount): void
     {
         $client = static::createClient();

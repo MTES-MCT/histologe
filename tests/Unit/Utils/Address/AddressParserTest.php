@@ -8,9 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class AddressParserTest extends TestCase
 {
-    /**
-     * @dataProvider provideAdresse
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAdresse')]
     public function testAdressParser(string $address, ?string $number, ?string $suffix, ?string $street): void
     {
         $result = AddressParser::parse($address);

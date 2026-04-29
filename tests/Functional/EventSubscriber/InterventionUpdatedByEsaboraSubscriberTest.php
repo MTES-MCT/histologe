@@ -32,9 +32,7 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * @dataProvider provideSignalement
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideSignalement')]
     public function testBuildVisiteUpdated(string $reference, int $countMail): void
     {
         $eventDispatcher = new EventDispatcher();

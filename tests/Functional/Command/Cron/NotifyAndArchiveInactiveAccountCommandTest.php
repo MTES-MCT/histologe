@@ -20,7 +20,7 @@ class NotifyAndArchiveInactiveAccountCommandTest extends KernelTestCase
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        $container = self::getContainer();
+        $container = static::getContainer();
         $mockClock = new MockClock(new \DateTimeImmutable(date('Y-m-15')));
         $container->set(ClockInterface::class, $mockClock);
 

@@ -28,11 +28,11 @@ class SuiviBailleurControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $urlDossierBailleur = $router->generate('front_dossier_bailleur');
         $uuid = $signalement->getUuid();
         if (empty($uuid)) {
@@ -52,7 +52,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $this->assertEmailCount(1);
 
         /** @var FileRepository $fileRepository */
-        $fileRepository = self::getContainer()->get(FileRepository::class);
+        $fileRepository = static::getContainer()->get(FileRepository::class);
         $file = $fileRepository->findOneBy(['signalement' => $signalement, 'documentType' => DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR]);
         $this->assertNotNull($file);
 
@@ -76,14 +76,14 @@ class SuiviBailleurControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
         $signalement->setMailProprio(null);
         $entityManager->flush();
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $urlDossierBailleur = $router->generate('front_dossier_bailleur');
         $uuid = $signalement->getUuid();
         if (empty($uuid)) {
@@ -103,7 +103,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $this->assertEmailCount(1);
 
         /** @var FileRepository $fileRepository */
-        $fileRepository = self::getContainer()->get(FileRepository::class);
+        $fileRepository = static::getContainer()->get(FileRepository::class);
         $file = $fileRepository->findOneBy(['signalement' => $signalement, 'documentType' => DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR]);
         $this->assertNotNull($file);
 
@@ -129,12 +129,12 @@ class SuiviBailleurControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $urlDossierBailleur = $router->generate('front_dossier_bailleur');
         $uuid = $signalement->getUuid();
         if (empty($uuid)) {
@@ -154,7 +154,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $this->assertEmailCount(1);
 
         /** @var FileRepository $fileRepository */
-        $fileRepository = self::getContainer()->get(FileRepository::class);
+        $fileRepository = static::getContainer()->get(FileRepository::class);
         $file = $fileRepository->findOneBy(['signalement' => $signalement, 'documentType' => DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR]);
         $this->assertNull($file);
 
@@ -182,7 +182,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
 
@@ -195,7 +195,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $entityManager->flush();
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $urlDossierBailleur = $router->generate('front_dossier_bailleur_cloture');
         $uuid = $signalement->getUuid();
         if (empty($uuid)) {
@@ -249,7 +249,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
 
@@ -262,7 +262,7 @@ class SuiviBailleurControllerTest extends WebTestCase
         $entityManager->flush();
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $urlDossierBailleur = $router->generate('front_dossier_bailleur_cloture');
         $uuid = $signalement->getUuid();
         if (empty($uuid)) {

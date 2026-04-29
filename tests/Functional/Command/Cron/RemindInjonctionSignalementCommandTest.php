@@ -10,9 +10,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class RemindInjonctionSignalementCommandTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideReminderSentData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideReminderSentData')]
     public function testReminderSent(string $dateModifier, string $outputSuivi, string $outputReminderBailleurs, int $expectedEmailCount): void
     {
         putenv('APP=test');
@@ -20,7 +18,7 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        $container = self::getContainer();
+        $container = static::getContainer();
         if (!empty($dateModifier)) {
             $mockClock = new MockClock(new \DateTimeImmutable($dateModifier));
             $container->set(ClockInterface::class, $mockClock);
@@ -45,7 +43,7 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        $container = self::getContainer();
+        $container = static::getContainer();
         $mockClock = new MockClock(new \DateTimeImmutable('+1 months'));
         $container->set(ClockInterface::class, $mockClock);
 

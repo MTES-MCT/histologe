@@ -7,9 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class SignalementInputValueMapperTest extends TestCase
 {
-    /**
-     * @dataProvider provideInputValue
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInputValue')]
     public function testMap(?string $inputValue, bool|string|null $mappedInputValue): void
     {
         $this->assertEquals($mappedInputValue, SignalementInputValueMapper::map($inputValue));

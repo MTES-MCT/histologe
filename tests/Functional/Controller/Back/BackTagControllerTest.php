@@ -22,7 +22,7 @@ class BackTagControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
-        $this->router = self::getContainer()->get(RouterInterface::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
 
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -41,7 +41,7 @@ class BackTagControllerTest extends WebTestCase
     public function testDeleteNewTagSuccess(): void
     {
         /** @var TagRepository $tagRepository */
-        $tagRepository = self::getContainer()->get(TagRepository::class);
+        $tagRepository = static::getContainer()->get(TagRepository::class);
         $tag = $tagRepository->findOneBy(['label' => 'Commission du 12/08', 'isArchive' => 0]);
         $route = $this->router->generate('back_tags_delete');
         $this->client->request(
@@ -71,7 +71,7 @@ class BackTagControllerTest extends WebTestCase
     public function testDeleteNewTagFailed(): void
     {
         /** @var TagRepository $tagRepository */
-        $tagRepository = self::getContainer()->get(TagRepository::class);
+        $tagRepository = static::getContainer()->get(TagRepository::class);
         $tag = $tagRepository->findOneBy(['label' => 'Commission du 12/08', 'isArchive' => 0]);
         $route = $this->router->generate('back_tags_delete');
         $this->client->request(
@@ -94,9 +94,7 @@ class BackTagControllerTest extends WebTestCase
         $this->assertEquals(6, $total);
     }
 
-    /**
-     * @dataProvider provideTagDataForCreateForm
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideTagDataForCreateForm')]
     public function testCreateNewTag(
         string $tagLabel,
         string $tagTerritory,
@@ -105,7 +103,7 @@ class BackTagControllerTest extends WebTestCase
         string $message,
     ): void {
         /** @var TagRepository $tagRepository */
-        $tagRepository = self::getContainer()->get(TagRepository::class);
+        $tagRepository = static::getContainer()->get(TagRepository::class);
         $route = $this->router->generate('back_tags_add');
         $this->client->request(
             'POST',
@@ -126,9 +124,7 @@ class BackTagControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @dataProvider provideTagDataForEditForm
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideTagDataForEditForm')]
     public function testEditNewTag(
         string $tagId,
         string $tagLabel,
@@ -137,7 +133,7 @@ class BackTagControllerTest extends WebTestCase
         string $message,
     ): void {
         /** @var TagRepository $tagRepository */
-        $tagRepository = self::getContainer()->get(TagRepository::class);
+        $tagRepository = static::getContainer()->get(TagRepository::class);
         $route = $this->router->generate('back_tags_edit', ['tag' => $tagId]);
         $this->client->request(
             'POST',

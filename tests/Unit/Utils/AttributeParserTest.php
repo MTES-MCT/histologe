@@ -10,9 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class AttributeParserTest extends TestCase
 {
-    /**
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function testShowLabelAsFacultatif(
         string $dto,
         string $field,

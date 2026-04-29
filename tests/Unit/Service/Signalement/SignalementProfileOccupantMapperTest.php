@@ -9,9 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class SignalementProfileOccupantMapperTest extends TestCase
 {
-    /**
-     * @dataProvider provideInputValue
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInputValue')]
     public function testMap(?string $profileOccupantInput, ?ProfileDeclarant $profileDeclarant, ?ProfileOccupant $profileOccupant): void
     {
         $this->assertEquals($profileOccupant, SignalementProfileOccupantMapper::map($profileOccupantInput, $profileDeclarant));

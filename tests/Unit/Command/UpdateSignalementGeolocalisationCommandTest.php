@@ -81,11 +81,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         $commandTester->assertCommandIsSuccessful();
     }
 
-    /**
-     * @dataProvider provideTestCases
-     *
-     * @param array<string, mixed> $option
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideTestCases')]
     public function testExecuteCommandWith(string $providerMethod, array $option): void
     {
         $signalementRepository = $this->createMock(SignalementRepository::class);
@@ -139,10 +135,10 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
                 ->with($option['--year'], $this->getTerritory(), false)
                 ->willReturn($countSignalements > 0 ? $this->getSignalements($countSignalements) : []);
         } else {
+            \assert(!empty($method));
             $signalementRepository
                 ->expects($this->once())
                 ->method($method)
-
                 ->willReturn($countSignalements > 0 ? $this->getSignalements($countSignalements) : []);
         }
 

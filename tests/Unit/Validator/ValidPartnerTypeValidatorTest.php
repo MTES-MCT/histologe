@@ -18,9 +18,7 @@ class ValidPartnerTypeValidatorTest extends ConstraintValidatorTestCase
         return new ValidPartnerTypeValidator();
     }
 
-    /**
-     * @dataProvider providePartnerType
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('providePartnerType')]
     public function testPartnerType(PartnerType|string $type, bool $isTypeValid, ?string $message = null): void
     {
         $constraint = new ValidPartnerType();

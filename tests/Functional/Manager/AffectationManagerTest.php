@@ -35,13 +35,13 @@ class AffectationManagerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->managerRegistry = self::getContainer()->get(ManagerRegistry::class);
-        $this->suiviManager = self::getContainer()->get(SuiviManager::class);
-        $this->logger = self::getContainer()->get(LoggerInterface::class);
-        $this->historyEntryManager = self::getContainer()->get(HistoryEntryManager::class);
-        $this->eventDispatcher = self::getContainer()->get(EventDispatcherInterface::class);
-        $this->interconnectionBus = self::getContainer()->get(InterconnectionBus::class);
-        $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
+        $this->suiviManager = static::getContainer()->get(SuiviManager::class);
+        $this->logger = static::getContainer()->get(LoggerInterface::class);
+        $this->historyEntryManager = static::getContainer()->get(HistoryEntryManager::class);
+        $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);
+        $this->interconnectionBus = static::getContainer()->get(InterconnectionBus::class);
+        $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
         $this->affectationManager = new AffectationManager(
             $this->managerRegistry,
             $this->suiviManager,

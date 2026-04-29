@@ -43,17 +43,17 @@ class GridAffectationLoaderTest extends KernelTestCase
     protected function setUp(): void
     {
         /** @var EntityManagerInterface $em */
-        $em = self::getContainer()->get('doctrine.orm.entity_manager');
+        $em = static::getContainer()->get('doctrine.orm.entity_manager');
         $this->entityManager = $em;
         $this->gridAffectationLoader = new GridAffectationLoader(
-            self::getContainer()->get(PartnerFactory::class),
-            self::getContainer()->get(PartnerManager::class),
-            self::getContainer()->get(UserFactory::class),
-            self::getContainer()->get(UserManager::class),
-            self::getContainer()->get(ManagerInterface::class),
-            self::getContainer()->get(ValidatorInterface::class),
-            self::getContainer()->get(LoggerInterface::class),
-            self::getContainer()->get(NotificationMailerRegistry::class),
+            static::getContainer()->get(PartnerFactory::class),
+            static::getContainer()->get(PartnerManager::class),
+            static::getContainer()->get(UserFactory::class),
+            static::getContainer()->get(UserManager::class),
+            static::getContainer()->get(ManagerInterface::class),
+            static::getContainer()->get(ValidatorInterface::class),
+            static::getContainer()->get(LoggerInterface::class),
+            static::getContainer()->get(NotificationMailerRegistry::class),
             $this->entityManager,
         );
     }

@@ -9,11 +9,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class InterconnexionControllerTest extends WebTestCase
 {
-    /**
-     * @dataProvider provideParamsInterconnexionList
-     *
-     * @param array<mixed> $params
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsInterconnexionList')]
     public function testInterconnexionList(array $params): void
     {
         $client = static::createClient();
@@ -23,7 +19,7 @@ class InterconnexionControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_interconnexion_index');
         $client->request('GET', $route, $params);

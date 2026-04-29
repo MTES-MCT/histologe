@@ -11,9 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SignalementDraftHelperTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideDeclarantData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDeclarantData')]
     public function testDeclarantData(string $draftUuid, bool $isTiersDeclarant, string $emailDeclarant): void
     {
         /** @var SignalementDraftRepository $signalementDraftRepository */
@@ -39,9 +37,7 @@ class SignalementDraftHelperTest extends KernelTestCase
         yield 'Tiers particulier' => ['00000000-0000-0000-2023-tierspart001', true, 'tiers_particulier-01@signal-logement.fr'];
     }
 
-    /**
-     * @dataProvider provideIsPublicData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideIsPublicData')]
     public function testIsPublicAndBailleurPrevenuPeriodPassed(string $draftUuid, bool $returnValue): void
     {
         /** @var SignalementDraftHelper $signalementDraftHelper */
@@ -84,9 +80,7 @@ class SignalementDraftHelperTest extends KernelTestCase
         $this->assertNull($result);
     }
 
-    /**
-     * @dataProvider provideComputeCases
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideComputeCases')]
     public function testComputeBailleurPrevenuAtFromRequest(
         ?string $bailleurPrevenu,
         ?string $bailDate,

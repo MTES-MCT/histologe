@@ -29,21 +29,17 @@ class AffectationUpdateControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $user = self::getContainer()->get(UserRepository::class)->findOneBy([
+        $user = static::getContainer()->get(UserRepository::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
-        $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
-        $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
-        $this->notificationRepository = self::getContainer()->get(NotificationRepository::class);
+        $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->notificationRepository = static::getContainer()->get(NotificationRepository::class);
 
         $this->client->loginUser($user, 'api');
     }
 
-    /**
-     * @dataProvider provideValidTransitionData
-     *
-     * @param array<mixed> $payload
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidTransitionData')]
     public function testValidWorkflow(string $signalementUuid, array $payload, string $statut, int $mailSent): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => $signalementUuid]);
@@ -68,11 +64,7 @@ class AffectationUpdateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /**
-     * @dataProvider provideUnvalidData
-     *
-     * @param array<mixed> $payload
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideUnvalidData')]
     public function testInvalidWorkflow(string $signalementUuid, array $payload, string $errorMessage, int $httpCodeStatus): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => $signalementUuid]);

@@ -44,7 +44,7 @@ class RemindPendingDraftsCommandTest extends KernelTestCase
             'uuid' => '00000000-0000-0000-2023-tierspart002',
         ]);
 
-        $container = self::getContainer();
+        $container = static::getContainer();
         $mockClock = new MockClock($dateTest);
         $container->set(ClockInterface::class, $mockClock);
 

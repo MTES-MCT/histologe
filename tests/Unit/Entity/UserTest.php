@@ -21,9 +21,7 @@ class UserTest extends KernelTestCase
         $this->assertEquals('DOE John', $user->getNomComplet());
     }
 
-    /**
-     * @dataProvider provideInvalidPassword
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidPassword')]
     public function testPasswordValidationError(string $expectedResult, string $password): void
     {
         /** @var ValidatorInterface $validator */

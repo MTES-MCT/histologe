@@ -8,11 +8,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class VisiteRequestTest extends KernelTestCase
 {
-    /**
-     * @dataProvider visiteRequestDataProvider
-     *
-     * @throws \Exception
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('visiteRequestDataProvider')]
     public function testDatesVisiteRequestDTO(
         string $date,
         string $time,
@@ -24,7 +20,7 @@ class VisiteRequestTest extends KernelTestCase
         self::bootKernel();
 
         /** @var ValidatorInterface $validator */
-        $validator = self::getContainer()->get('validator');
+        $validator = static::getContainer()->get('validator');
 
         $visiteRequest = new VisiteRequest(
             date: $date,

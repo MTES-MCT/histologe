@@ -12,11 +12,7 @@ class MapGeoDataQueryTest extends KernelTestCase
     private const string USER_ADMIN_MULTI_13 = 'admin-partenaire-multi-ter-13-01@signal-logement.fr';
     private const string USER_AGENT_MULTI_34 = 'user-partenaire-multi-ter-34-30@signal-logement.fr';
 
-    /**
-     * @dataProvider provideSearchWithGeoData
-     *
-     * @param array<string, mixed> $options
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideSearchWithGeoData')]
     public function testGetData(string $email, array $options, int $nbResult): void
     {
         /** @var UserRepository $userRepository */

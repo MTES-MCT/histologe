@@ -13,7 +13,7 @@ class MotifClotureStatisticProviderTest extends KernelTestCase
         self::bootKernel();
 
         /** @var MotifClotureStatisticsQuery $motifClotureStatisticsQuery */
-        $motifClotureStatisticsQuery = self::getContainer()->get(MotifClotureStatisticsQuery::class);
+        $motifClotureStatisticsQuery = static::getContainer()->get(MotifClotureStatisticsQuery::class);
         $data = (new MotifClotureStatisticProvider($motifClotureStatisticsQuery))->getData(null, null);
 
         $this->assertEquals(15, \count($data));
@@ -29,7 +29,7 @@ class MotifClotureStatisticProviderTest extends KernelTestCase
     {
         self::bootKernel();
         /** @var MotifClotureStatisticsQuery $motifClotureStatisticsQuery */
-        $motifClotureStatisticsQuery = self::getContainer()->get(MotifClotureStatisticsQuery::class);
+        $motifClotureStatisticsQuery = static::getContainer()->get(MotifClotureStatisticsQuery::class);
         $data = (new MotifClotureStatisticProvider($motifClotureStatisticsQuery))->getData(null, null, 'bar');
         $this->assertEquals(4, \count($data));
         $this->assertArrayHasKey('Abandon de procédure / absence de réponse', $data);

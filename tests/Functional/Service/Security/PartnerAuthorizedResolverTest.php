@@ -128,9 +128,7 @@ class PartnerAuthorizedResolverTest extends KernelTestCase
         $this->assertFalse($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerKO));
     }
 
-    /**
-     * @dataProvider provideUsersWithApiRole
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideUsersWithApiRole')]
     public function testResolveBy(string $email, int $countExpectedPartner): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);

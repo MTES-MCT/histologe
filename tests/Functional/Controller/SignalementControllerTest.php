@@ -58,21 +58,19 @@ class SignalementControllerTest extends WebTestCase
         yield 'SERVICE_SECOURS' => [ProfileDeclarant::SERVICE_SECOURS];
     }
 
-    /**
-     * @dataProvider provideStatusSignalement
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideStatusSignalement')]
     public function testDisplaySuiviSignalement(string $status): void
     {
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine');
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
             'statut' => $status,
         ]);
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUser = $router->generate('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
 
         $signalementUser = $this->getSignalementUser($signalement);
@@ -106,14 +104,14 @@ class SignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine');
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
             'statut' => SignalementStatus::ACTIVE,
             'isUsagerAbandonProcedure' => 0,
         ]);
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure', ['code' => $signalement->getCodeSuivi()]);
         $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');
@@ -126,7 +124,7 @@ class SignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine');
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
             'statut' => SignalementStatus::ACTIVE,
@@ -134,7 +132,7 @@ class SignalementControllerTest extends WebTestCase
         ]);
         $this->assertFalse($signalement->getIsUsagerAbandonProcedure());
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_abandon', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
 
         $signalementUser = $this->getSignalementUser($signalement);
@@ -165,11 +163,11 @@ class SignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine');
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000011']);
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_abandon', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
 
         $signalementUser = $this->getSignalementUser($signalement);
@@ -205,7 +203,7 @@ class SignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine');
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
             'statut' => SignalementStatus::ACTIVE,
@@ -213,7 +211,7 @@ class SignalementControllerTest extends WebTestCase
         ]);
         $this->assertNull($signalement->getIsUsagerAbandonProcedure());
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_poursuite', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
 
         $signalementUser = $this->getSignalementUser($signalement);
@@ -243,11 +241,11 @@ class SignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine');
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000011']);
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_bascule', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
 
         $signalementUser = $this->getSignalementUser($signalement);
@@ -276,11 +274,11 @@ class SignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine');
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-10']);
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_procedure_bascule', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
 
         $signalementUser = $this->getSignalementUser($signalement);
@@ -290,20 +288,18 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @dataProvider provideStatusSignalement
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideStatusSignalement')]
     public function testPostUsagerResponse(string $status): void
     {
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine');
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
             'statut' => $status,
         ]);
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_messages', ['code' => $codeSuivi = $signalement->getCodeSuivi()]);
 
         $signalementUser = $this->getSignalementUser($signalement);
@@ -317,7 +313,7 @@ class SignalementControllerTest extends WebTestCase
         ]);
         if (in_array($status, [SignalementStatus::ACTIVE->value, SignalementStatus::INJONCTION_BAILLEUR->value])) {
             $this->assertResponseRedirects('/suivre-mon-signalement/'.$codeSuivi.'/messages');
-            $suivisUsager = self::getContainer()->get(SuiviRepository::class)->findBy(['category' => SuiviCategory::MESSAGE_USAGER, 'signalement' => $signalement]);
+            $suivisUsager = static::getContainer()->get(SuiviRepository::class)->findBy(['category' => SuiviCategory::MESSAGE_USAGER, 'signalement' => $signalement]);
             $this->assertEquals(1, count($suivisUsager));
             $this->assertEquals('Lorem Ipsum is simply dummy text of the printing and typesetting &lt;b&gt;industry&lt;/b&gt;', $suivisUsager[0]->getDescription());
         } elseif (SignalementStatus::REFUSED->value === $status) {
@@ -519,9 +515,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertNotEmpty($response['uuid']);
     }
 
-    /**
-     * @dataProvider provideSignalementRequestPayload
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideSignalementRequestPayload')]
     public function testCompleteSignalementDraft(string $path, string $uuidSignalement, int $countEmailSent): void
     {
         $client = static::createClient();
@@ -624,9 +618,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @dataProvider provideSignalementDraftUuid
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideSignalementDraftUuid')]
     public function testGetSignalementDraft(string $uuid, string $step): void
     {
         $client = static::createClient();
@@ -741,7 +733,7 @@ class SignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine');
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
@@ -750,7 +742,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertNotNull($signalement, 'Le signalement 2023-2 doit exister en base de test.');
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate('front_suivi_signalement_bailleur_prevenu', [
             'code' => $signalement->getCodeSuivi(),
         ]);
@@ -796,7 +788,7 @@ class SignalementControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine');
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
@@ -818,7 +810,7 @@ class SignalementControllerTest extends WebTestCase
         $signalement->addSuivi($suivi);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $url = $router->generate(
             'front_suivi_signalement_procedure_bailleur_cloture',
@@ -872,7 +864,7 @@ class SignalementControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine');
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
@@ -894,7 +886,7 @@ class SignalementControllerTest extends WebTestCase
         $signalement->addSuivi($suivi);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $url = $router->generate(
             'front_suivi_signalement_procedure_bailleur_cloture',
@@ -941,7 +933,7 @@ class SignalementControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $entityManager = self::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine');
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
@@ -960,7 +952,7 @@ class SignalementControllerTest extends WebTestCase
         );
         $signalement->addSuivi($suivi);
 
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $url = $router->generate(
             'front_suivi_signalement_procedure_bailleur_cloture',

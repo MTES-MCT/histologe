@@ -76,8 +76,8 @@ class EsaboraManagerTest extends KernelTestCase
         $this->imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
         $this->fileFactory = $this->createMock(FileFactory::class);
         $this->signalementQualificationUpdater = $this->createMock(SignalementQualificationUpdater::class);
-        $this->htmlSanitizer = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
-        $this->workflow = self::getContainer()->get('state_machine.intervention_planning');
+        $this->htmlSanitizer = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->workflow = static::getContainer()->get('state_machine.intervention_planning');
         $this->userSignalementSubscriptionManager = $this->createMock(UserSignalementSubscriptionManager::class);
     }
 

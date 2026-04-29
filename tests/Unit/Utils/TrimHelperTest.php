@@ -7,9 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class TrimHelperTest extends TestCase
 {
-    /**
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function testTrimHelper(mixed $dataIn, mixed $dataOut): void
     {
         $this->assertEquals($dataOut, TrimHelper::safeTrim($dataIn));

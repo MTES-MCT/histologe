@@ -21,11 +21,7 @@ class SignalementListControllerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    /**
-     * @dataProvider provideNewFilterSearch
-     *
-     * @param array<string> $filter
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideNewFilterSearch')]
     public function testFilterSignalements(array $filter, int $results, string $email = 'admin-01@signal-logement.fr'): void
     {
         $client = static::createClient();
@@ -112,9 +108,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Partner 13-01 & 13-06 for agent Partenaire 13-05' => [['partenaires' => ['2', '7'], 'isImported' => 'oui'], 2, 'user-13-05@signal-logement.fr'];
     }
 
-    /**
-     * @dataProvider provideUserEmail
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideUserEmail')]
     public function testListSignalementSuccessfullyOrRedirectWithoutError500(string $email): void
     {
         $client = static::createClient();
@@ -188,9 +182,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertEquals(2, $content['pagination']['total_items']);
     }
 
-    /**
-     * @dataProvider provideLinkFilter
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideLinkFilter')]
     public function testLinkFilter(string $emailUser, string $filter): void
     {
         $client = static::createClient();
@@ -228,9 +220,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'PARTNER - Tous les signalements' => [$partnerUser, '?territoire_id=13'];
     }
 
-    /**
-     * @dataProvider provideUserEmail
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideUserEmail')]
     public function testListSignalementAsJson(string $email): void
     {
         $client = static::createClient();
@@ -266,11 +256,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Status Fermé on Territory 13' => [['territoire' => '13', 'isImported' => 'oui', 'status' => 'ferme'], 2];
     }
 
-    /**
-     * @dataProvider provideFilterSearchMultiTerritorAdminPartner
-     *
-     * @param array<string> $filter
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideFilterSearchMultiTerritorAdminPartner')]
     public function testFilterSignalementsMultiTerritorAdminPartner(array $filter, int $results): void
     {
         $client = static::createClient();
@@ -289,9 +275,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertEquals($results, $result['pagination']['total_items'], (string) json_encode($result['list']));
     }
 
-    /**
-     * @dataProvider provideUserEmail
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideUserEmail')]
     public function testTotalFilterByUser(string $email): void
     {
         $client = static::createClient();

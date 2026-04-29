@@ -10,9 +10,7 @@ class AffectationTest extends TestCase
 {
     use FixturesHelper;
 
-    /**
-     * @dataProvider providePartnerType
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('providePartnerType')]
     public function testIsSynchronizeWithEsabora(PartnerType $partnerType, bool $isSynchronized): void
     {
         $affectation = $this->getAffectation($partnerType, $isSynchronized);

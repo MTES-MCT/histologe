@@ -17,9 +17,7 @@ class SanitizedLengthValidatorTest extends ConstraintValidatorTestCase
         return new SanitizedLengthValidator();
     }
 
-    /**
-     * @dataProvider provideValidValues
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidValues')]
     public function testValueIsValid(mixed $value): void
     {
         $constraint = new SanitizedLength(10, 'Text too short.');
@@ -27,9 +25,7 @@ class SanitizedLengthValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    /**
-     * @dataProvider provideInvalidValues
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidValues')]
     public function testSanitizedTextTooShort(string $value): void
     {
         $constraint = new SanitizedLength(10, 'Text too short.');

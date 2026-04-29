@@ -7,9 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class CommuneTest extends TestCase
 {
-    /**
-     * @dataProvider provideCommune
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideCommune')]
     public function testCommunes(string $nomFromDatabase, string $nomCleaned): void
     {
         $commune = (new Commune())->setNom($nomFromDatabase);

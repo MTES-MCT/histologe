@@ -36,9 +36,7 @@ class DossierMessageSCHSFactoryTest extends TestCase
         $this->assertStringContainsString('Rue du test', $dossierMessage->getAdresseSignalement());
     }
 
-    /**
-     * @dataProvider provideNbChildren
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideNbChildren')]
     public function testBuildNbEnfants(string $expectedResult, ?string $nbEnfantsM6 = null, ?string $nbEnfantsP6 = null): void
     {
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);

@@ -13,11 +13,7 @@ class TimezoneProviderTest extends KernelTestCase
 {
     use SessionHelper;
 
-    /**
-     * @throws \Exception
-     *
-     * @dataProvider provideTimezones
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideTimezones')]
     public function testGetTimezoneFrom(string $userEmail, string $timezone): void
     {
         static::bootKernel();

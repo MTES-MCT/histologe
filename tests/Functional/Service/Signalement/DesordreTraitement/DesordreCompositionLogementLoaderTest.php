@@ -33,7 +33,7 @@ class DesordreCompositionLogementLoaderTest extends KernelTestCase
         $desordrePrecisionRepository = $this->entityManager->getRepository(DesordrePrecision::class);
 
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-27']);
         $nbDesordrePrecision = $signalement->getDesordrePrecisions()->count();

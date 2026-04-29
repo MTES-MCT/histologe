@@ -18,8 +18,8 @@ class PartnerTest extends KernelTestCase
     public function testPartnerWithUserIsValid(): void
     {
         self::bootKernel();
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
-        $validator = self::getContainer()->get('validator');
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $validator = static::getContainer()->get('validator');
 
         $territory = $entityManager->getRepository(Territory::class)->find(1);
         $faker = Factory::create();
@@ -38,12 +38,10 @@ class PartnerTest extends KernelTestCase
         $this->assertEquals(0, $errors->count());
     }
 
-    /**
-     * @dataProvider provideDataForTestPartnerWithEmail
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataForTestPartnerWithEmail')]
     public function testCreatePartnerNoValidWithEmailExistInTerritory(int $zip, int $countErrors): void
     {
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         $territory = $entityManager->getRepository(Territory::class)->find($zip);
         $partner = (new Partner())
             ->setNom('Random partner')
@@ -52,7 +50,7 @@ class PartnerTest extends KernelTestCase
             ->setCompetence([Qualification::VISITES])
             ->setTerritory($territory);
 
-        $validator = self::getContainer()->get('validator');
+        $validator = static::getContainer()->get('validator');
         $errors = $validator->validate($partner);
         $this->assertEquals($countErrors, $errors->count());
     }

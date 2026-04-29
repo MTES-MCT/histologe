@@ -33,11 +33,7 @@ class FileFactoryTest extends TestCase
         $this->assertEquals(DocumentType::AUTRE, $file->getDocumentType());
     }
 
-    /**
-     * @dataProvider provideFileItem
-     *
-     * @param array<string> $dataItem
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideFileItem')]
     public function testCreateFromArray(
         array $dataItem,
         string $filename,

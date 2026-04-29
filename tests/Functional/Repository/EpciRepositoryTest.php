@@ -15,9 +15,7 @@ class EpciRepositoryTest extends KernelTestCase
         $this->epciRepository = static::getContainer()->get(EpciRepository::class);
     }
 
-    /**
-     * @dataProvider provideFindOneByCommuneInseeAndPostalCodeData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideFindOneByCommuneInseeAndPostalCodeData')]
     public function testFindOneByCommuneInseeAndPostalCode(
         string $codeInsee,
         string $postalCode,

@@ -19,7 +19,7 @@ class BackTerritoryControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $client->request('GET', $router->generate('back_territory_bailleurs', ['territory' => $user->getFirstTerritory()->getId()]));
         $this->assertResponseIsSuccessful();

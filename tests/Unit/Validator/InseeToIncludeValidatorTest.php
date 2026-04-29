@@ -19,9 +19,7 @@ class InseeToIncludeValidatorTest extends ConstraintValidatorTestCase
         return new InseeToIncludeValidator();
     }
 
-    /**
-     * @dataProvider provideValues
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValues')]
     public function testValues(?string $insee, bool $isValid, ?string $message = null): void
     {
         $constraint = new InseeToInclude();

@@ -27,7 +27,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_archived_users_index');
         $crawler = $client->request('GET', $route);
@@ -49,7 +49,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
@@ -76,7 +76,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $accountEmail = 'user-01-01@signal-logement.fr';
         /** @var User $account */
@@ -105,7 +105,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $accountEmail = 'user-01-09@signal-logement.fr';
         /** @var User $account */
@@ -150,7 +150,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
@@ -199,7 +199,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $accountEmail = 'admin-02@signal-logement.fr';
         /** @var User $account */
@@ -235,7 +235,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         /** @var User $account */
         $account = $userRepository->findAnonymizedUsers()[0];
@@ -257,7 +257,7 @@ class BackArchivedUsersControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = static::getContainer()->get(TerritoryRepository::class);

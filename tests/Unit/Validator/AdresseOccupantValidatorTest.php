@@ -27,9 +27,7 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
         return new AdresseOccupantValidator($this->zipcodeProvider, $this->territoryRepository);
     }
 
-    /**
-     * @dataProvider provideInvalidTerritoryCases
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidTerritoryCases')]
     public function testItAddsViolationWhenTerritoryIsInvalid(
         bool $isInactiveTerritory,
         bool $hasTerritoryFromInsee,

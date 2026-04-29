@@ -13,7 +13,7 @@ class GlobalBackAnalyticsProviderTest extends KernelTestCase
     {
         self::bootKernel();
         /** @var GlobalStatisticsQuery $globalStatisticsQuery */
-        $globalStatisticsQuery = self::getContainer()->get(GlobalStatisticsQuery::class);
+        $globalStatisticsQuery = static::getContainer()->get(GlobalStatisticsQuery::class);
         $data = (new GlobalBackAnalyticsProvider($globalStatisticsQuery))->getData(null, new ArrayCollection());
 
         $this->assertEquals(6, \count($data));

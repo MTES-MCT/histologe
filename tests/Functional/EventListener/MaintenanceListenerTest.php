@@ -26,11 +26,7 @@ class MaintenanceListenerTest extends WebTestCase
         $this->assertSame('Maintenance en cours', $response['message']);
     }
 
-    /**
-     * @dataProvider provideRoutes
-     *
-     * @param array<mixed> $parameters
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutes')]
     public function testMaintenanceRedirect(string $routeName, array $parameters = []): void
     {
         $client = static::createClient();

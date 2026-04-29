@@ -7,9 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class HtmlCleanerTest extends TestCase
 {
-    /**
-     * @dataProvider providePartnerType
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('providePartnerType')]
     public function testTextWithHtml(string $textToClean, string $textCleaned): void
     {
         $this->assertEquals(HtmlCleaner::clean($textToClean), $textCleaned);

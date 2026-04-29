@@ -11,12 +11,7 @@ class DataPropertyArrayFilterTest extends TestCase
 {
     use FixturesHelper;
 
-    /**
-     * @dataProvider provideData
-     *
-     * @param array<string> $prefixes
-     * @param array<string> $filteredDataExpected
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function testFilterByPrefix(array $prefixes, array $filteredDataExpected): void
     {
         $data = json_decode(

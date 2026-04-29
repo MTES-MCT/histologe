@@ -19,11 +19,7 @@ class InseeToExcludeValidatorTest extends ConstraintValidatorTestCase
         return new InseeToExcludeValidator();
     }
 
-    /**
-     * @dataProvider provideValues
-     *
-     * @param array<mixed> $insee
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideValues')]
     public function testValues(array $insee, bool $isValid, ?string $message = null): void
     {
         $constraint = new InseeToExclude();

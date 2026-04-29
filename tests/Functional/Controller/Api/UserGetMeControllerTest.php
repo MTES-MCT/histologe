@@ -9,13 +9,11 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class UserGetMeControllerTest extends WebTestCase
 {
-    /**
-     * @dataProvider provideUserEmailApi
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideUserEmailApi')]
     public function testUserGetMe(string $email, int $nbPartners): void
     {
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => $email,
         ]);
 

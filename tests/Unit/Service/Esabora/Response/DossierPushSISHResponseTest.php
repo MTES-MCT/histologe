@@ -7,9 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class DossierPushSISHResponseTest extends TestCase
 {
-    /**
-     * @dataProvider provideFilename
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideFilename')]
     public function testDossierResponseSuccessfullyCreated(string $filename): void
     {
         $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/sish/'.$filename;

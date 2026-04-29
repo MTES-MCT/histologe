@@ -23,15 +23,11 @@ class BackBailleurControllerTest extends WebTestCase
         $this->client->loginUser($user);
     }
 
-    /**
-     * @dataProvider provideParamsBailleurList
-     *
-     * @param array<mixed> $params
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsBailleurList')]
     public function testBailleurList(array $params, int $nb): void
     {
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_bailleur_index');
         $this->client->request('GET', $route, $params);
@@ -57,7 +53,7 @@ class BackBailleurControllerTest extends WebTestCase
         $bailleur = $bailleurRepository->findOneBy(['name' => '13 HABITAT']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_bailleur_edit', ['bailleur' => $bailleur->getId()]);
 
         $csrfToken = $this->generateCsrfToken($this->client, 'bailleur_type');
@@ -81,7 +77,7 @@ class BackBailleurControllerTest extends WebTestCase
         }
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_bailleur_edit', ['bailleur' => $bailleur->getId()]);
 
         $csrfToken = $this->generateCsrfToken($this->client, 'bailleur_type');
@@ -110,7 +106,7 @@ class BackBailleurControllerTest extends WebTestCase
         $bailleur = $bailleurRepository->findOneBy(['name' => '13 HABITAT']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_bailleur_delete', ['bailleur' => $bailleur->getId()]);
 
         $csrfToken = $this->generateCsrfToken($this->client, 'bailleur_delete');
@@ -134,7 +130,7 @@ class BackBailleurControllerTest extends WebTestCase
         $bailleur = $bailleurRepository->findOneBy(['name' => '3F SUD SA HLM']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_bailleur_delete', ['bailleur' => $bailleur->getId()]);
 
         $csrfToken = $this->generateCsrfToken($this->client, 'bailleur_delete');

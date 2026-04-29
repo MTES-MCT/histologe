@@ -22,21 +22,19 @@ class SuiviCreateControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
 
-        $this->router = self::getContainer()->get('router');
+        $this->router = static::getContainer()->get('router');
 
         $this->client->loginUser($user, 'api');
     }
 
-    /**
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function testCreateSuivi(string $signalementUuid, bool $notifyUsager): void
     {
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
         $firstFile = $signalement?->getFiles()?->first() ?? null;
         $lastFile = $signalement?->getFiles()?->last() ?? null;
 
@@ -83,12 +81,10 @@ class SuiviCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /**
-     * @dataProvider provideDataFailure403
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataFailure403')]
     public function testCreateSuiviWithErrors(string $signalementUuid, string $partnerName, string $errorMessage, bool $removeVisiteCompetence = false): void
     {
-        $partner = self::getContainer()->get(PartnerRepository::class)->findOneBy(['nom' => $partnerName]);
+        $partner = static::getContainer()->get(PartnerRepository::class)->findOneBy(['nom' => $partnerName]);
         $payload = [
             'description' => 'lorem ipsum dolor sit <em>amet</em>',
             'partenaireUuid' => $partner->getUuid(),

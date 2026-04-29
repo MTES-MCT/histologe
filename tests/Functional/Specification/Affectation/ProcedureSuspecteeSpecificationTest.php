@@ -12,12 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ProcedureSuspecteeSpecificationTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideRulesAndSignalement
-     *
-     * @param ?array<Qualification> $proceduresSuspectees
-     * @param array<string>         $qualificationsSignalement
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(?array $proceduresSuspectees, array $qualificationsSignalement, bool $isSatisfied): void
     {
         $partner = new Partner();

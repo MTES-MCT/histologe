@@ -65,26 +65,24 @@ class EsaboraManagerTest extends KernelTestCase
         $entityManager = $doctrine->getManager();
 
         $this->entityManager = $entityManager;
-        $this->affectationManager = self::getContainer()->get(AffectationManager::class);
-        $this->suiviManager = self::getContainer()->get(SuiviManager::class);
-        $this->interventionRepository = self::getContainer()->get(InterventionRepository::class);
-        $this->eventDispatcher = self::getContainer()->get(EventDispatcherInterface::class);
-        $this->userManager = self::getContainer()->get(UserManager::class);
-        $this->logger = self::getContainer()->get(LoggerInterface::class);
-        $this->zipHelper = self::getContainer()->get(ZipHelper::class);
-        $this->fileScanner = self::getContainer()->get(FileScanner::class);
-        $this->uploadHander = self::getContainer()->get(UploadHandlerService::class);
-        $this->imageManipulationHandler = self::getContainer()->get(ImageManipulationHandler::class);
-        $this->fileFactory = self::getContainer()->get(FileFactory::class);
-        $this->signalementQualificationUpdater = self::getContainer()->get(SignalementQualificationUpdater::class);
-        $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
-        $this->workflow = self::getContainer()->get('state_machine.intervention_planning');
-        $this->userSignalementSubscriptionManager = self::getContainer()->get(UserSignalementSubscriptionManager::class);
+        $this->affectationManager = static::getContainer()->get(AffectationManager::class);
+        $this->suiviManager = static::getContainer()->get(SuiviManager::class);
+        $this->interventionRepository = static::getContainer()->get(InterventionRepository::class);
+        $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);
+        $this->userManager = static::getContainer()->get(UserManager::class);
+        $this->logger = static::getContainer()->get(LoggerInterface::class);
+        $this->zipHelper = static::getContainer()->get(ZipHelper::class);
+        $this->fileScanner = static::getContainer()->get(FileScanner::class);
+        $this->uploadHander = static::getContainer()->get(UploadHandlerService::class);
+        $this->imageManipulationHandler = static::getContainer()->get(ImageManipulationHandler::class);
+        $this->fileFactory = static::getContainer()->get(FileFactory::class);
+        $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
+        $this->htmlSanitizerInterface = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->workflow = static::getContainer()->get('state_machine.intervention_planning');
+        $this->userSignalementSubscriptionManager = static::getContainer()->get(UserSignalementSubscriptionManager::class);
     }
 
-    /**
-     * @dataProvider provideDataForSynchronization
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataForSynchronization')]
     public function testAffectationSynchronizedWith(
         string $referenceSignalement,
         string $filename,

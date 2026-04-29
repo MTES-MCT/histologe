@@ -20,9 +20,7 @@ class NotificationControllerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    /**
-     * @dataProvider provideAllNotificationOptions
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAllNotificationOptions')]
     public function testAllNotifications(string $route, string $tokenName, string $tokenId, string $msgFlash): void
     {
         $client = static::createClient();
@@ -62,9 +60,7 @@ class NotificationControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideSelectedNotificationOptions
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideSelectedNotificationOptions')]
     public function testSelectedNotifications(string $route, string $tokenId, string $filter, string $msgFlash): void
     {
         $client = static::createClient();

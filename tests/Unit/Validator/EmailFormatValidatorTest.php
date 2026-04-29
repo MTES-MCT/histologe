@@ -7,9 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class EmailFormatValidatorTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideEmail
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideEmail')]
     public function testEmailsFormat(string $email, bool $isEmailValid): void
     {
         $this->assertEquals($isEmailValid, EmailFormatValidator::validate($email));

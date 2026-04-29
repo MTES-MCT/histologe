@@ -7,9 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class InterventionTypeTest extends TestCase
 {
-    /**
-     * @dataProvider provideInterventionType
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInterventionType')]
     public function testFromValidLabel(string $label, InterventionType $interventionType): void
     {
         $intervention = InterventionType::tryFromLabel($label);

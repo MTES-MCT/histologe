@@ -126,11 +126,7 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
-    /**
-     * @dataProvider provideEditSignalementRoutes
-     *
-     * @param array<string> $payload
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideEditSignalementRoutes')]
     public function testEditSignalementSuccess(string $routeName, array $payload, string $token): void
     {
         $addressResult = json_decode((string) file_get_contents(__DIR__.'/../../../files/datagouv/get_api_ban_item_response_13202.json'), true);
@@ -149,11 +145,7 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    /**
-     * @dataProvider provideEditSignalementRoutes
-     *
-     * @param array<string> $payload
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideEditSignalementRoutes')]
     public function testEditSignalementUnauthorization(string $routeName, array $payload, string $token): void
     {
         $route = $this->router->generate(
@@ -172,11 +164,7 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
-    /**
-     * @dataProvider provideEditSignalementRoutes
-     *
-     * @param array<string> $payload
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideEditSignalementRoutes')]
     public function testEditSignalementError(string $routeName, array $payload, string $token): void
     {
         $route = $this->router->generate(

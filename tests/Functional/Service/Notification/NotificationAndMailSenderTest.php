@@ -45,14 +45,14 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $entityManager = $doctrine->getManager();
 
         $this->entityManager = $entityManager;
-        $this->notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
-        $this->userRepository = self::getContainer()->get(UserRepository::class);
-        $this->notificationRepository = self::getContainer()->get(NotificationRepository::class);
-        $this->notificationFactory = self::getContainer()->get(NotificationFactory::class);
+        $this->notificationMailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
+        $this->userRepository = static::getContainer()->get(UserRepository::class);
+        $this->notificationRepository = static::getContainer()->get(NotificationRepository::class);
+        $this->notificationFactory = static::getContainer()->get(NotificationFactory::class);
         $this->security = static::getContainer()->get('security.helper');
-        $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
         /** @var CourrierBailleurGenerator $courrierBailleurGenerator */
-        $courrierBailleurGenerator = self::getContainer()->get(CourrierBailleurGenerator::class);
+        $courrierBailleurGenerator = static::getContainer()->get(CourrierBailleurGenerator::class);
         $this->notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,
             $this->userRepository,
@@ -219,7 +219,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $expectedAdress = [$signalement->getMailOccupant(), $signalement->getMailDeclarant()];
 
         /** @var CourrierBailleurGenerator $courrierBailleurGenerator */
-        $courrierBailleurGenerator = self::getContainer()->get(CourrierBailleurGenerator::class);
+        $courrierBailleurGenerator = static::getContainer()->get(CourrierBailleurGenerator::class);
 
         $notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,
@@ -270,7 +270,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->entityManager->persist($suivi);
 
         /** @var CourrierBailleurGenerator $courrierBailleurGenerator */
-        $courrierBailleurGenerator = self::getContainer()->get(CourrierBailleurGenerator::class);
+        $courrierBailleurGenerator = static::getContainer()->get(CourrierBailleurGenerator::class);
 
         $notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,
@@ -314,7 +314,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $expectedAdress = [$signalement->getMailOccupant(), $signalement->getMailDeclarant()];
 
         /** @var CourrierBailleurGenerator $courrierBailleurGenerator */
-        $courrierBailleurGenerator = self::getContainer()->get(CourrierBailleurGenerator::class);
+        $courrierBailleurGenerator = static::getContainer()->get(CourrierBailleurGenerator::class);
 
         $notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,
@@ -361,7 +361,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $expectedAdress = [$signalement->getMailOccupant()];
 
         /** @var CourrierBailleurGenerator $courrierBailleurGenerator */
-        $courrierBailleurGenerator = self::getContainer()->get(CourrierBailleurGenerator::class);
+        $courrierBailleurGenerator = static::getContainer()->get(CourrierBailleurGenerator::class);
 
         $notificationAndMailSender = new NotificationAndMailSender(
             $this->entityManager,

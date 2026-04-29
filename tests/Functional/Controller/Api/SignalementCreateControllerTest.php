@@ -25,15 +25,15 @@ class SignalementCreateControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->router = self::getContainer()->get('router');
+        $this->router = static::getContainer()->get('router');
         $this->client->disableReboot();
     }
 
     public function testCreateSignalementWithSuccessOnFullPayloadAndAutoAffectation(): void
     {
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
         $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
-        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $partner = static::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
         $this->client->loginUser($user, 'api');
 
         $payload = $this->getFullPayload();
@@ -48,7 +48,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $signalementUuid = json_decode((string) $this->client->getResponse()->getContent(), true)['uuid'];
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
         $this->assertNotNull($signalement);
         $this->assertEquals($signalement->getCreatedByPartner()->getId(), $partner->getId());
 
@@ -179,9 +179,9 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testCreateSignalementWithSuccessOnMinimalPayloadWithoutAutoAffectation(): void
     {
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-02@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-02@signal-logement.fr']);
         $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
-        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $partner = static::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
         $this->client->loginUser($user, 'api');
         $payload = $this->getMinimalPayload();
 
@@ -194,7 +194,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $signalementUuuid = json_decode((string) $this->client->getResponse()->getContent(), true)['uuid'];
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuuid]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuuid]);
         $this->assertNotNull($signalement);
         $this->assertEquals($signalement->getCreatedByPartner()->getId(), $partner->getId());
 
@@ -224,9 +224,9 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testCreateDuplicatedSignalement(): void
     {
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
         $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
-        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $partner = static::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
         $this->client->loginUser($user, 'api');
 
         $payload = $this->getFullPayload();
@@ -253,7 +253,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testCreateSignalementOnBadTerritory(): void
     {
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-02@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-02@signal-logement.fr']);
         $this->client->loginUser($user, 'api');
         $payload = $this->getFullPayload();
         unset($payload['partenaireUuid']);
@@ -274,7 +274,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testCreateSignalementOnUnexistingPartner(): void
     {
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
         $this->client->loginUser($user, 'api');
 
         $payload = $this->getFullPayload();
@@ -294,9 +294,9 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testCreateSignalementWithInvalidFields(): void
     {
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
         $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
-        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $partner = static::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
         $this->client->loginUser($user, 'api');
 
         $payload = $this->getFullPayload();
@@ -327,9 +327,9 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testCreateSignalementWithInvalidDesordres(): void
     {
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
         $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
-        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $partner = static::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
         $this->client->loginUser($user, 'api');
 
         $payload = $this->getFullPayload();
@@ -354,9 +354,9 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testCreateSignalementWithDuplicateDesordres(): void
     {
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
         $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
-        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $partner = static::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
         $this->client->loginUser($user, 'api');
 
         $payload = $this->getFullPayload();
@@ -381,9 +381,9 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testCreateSignalementWithDuplicatePrecisionsInDesordres(): void
     {
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
         $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
-        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $partner = static::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
         $this->client->loginUser($user, 'api');
 
         $payload = $this->getFullPayload();
@@ -408,9 +408,9 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testCreateSignalementWithInvalidUniquePrecisionsInDesordres(): void
     {
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
         $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
-        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $partner = static::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
         $this->client->loginUser($user, 'api');
 
         $payload = $this->getFullPayload();
@@ -442,9 +442,9 @@ class SignalementCreateControllerTest extends WebTestCase
 
     public function testCreateSignalementWithInvalidPrecisionLibres(): void
     {
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-34-01@signal-logement.fr']);
         $permissionParams = ['user' => $user, 'partnerType' => null, 'territory' => null];
-        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $partner = static::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
         $this->client->loginUser($user, 'api');
 
         $payload = $this->getFullPayload();

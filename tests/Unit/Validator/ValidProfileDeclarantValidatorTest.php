@@ -18,9 +18,7 @@ class ValidProfileDeclarantValidatorTest extends ConstraintValidatorTestCase
         return new ValidProfileDeclarantValidator();
     }
 
-    /**
-     * @dataProvider provideProfil
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideProfil')]
     public function testProfilsFormat(string $profil, bool $isProfilValid, ?string $message = null): void
     {
         $constraint = new ValidProfileDeclarant();

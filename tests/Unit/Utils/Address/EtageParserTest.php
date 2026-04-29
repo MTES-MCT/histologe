@@ -7,9 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class EtageParserTest extends TestCase
 {
-    /**
-     * @dataProvider provideEtage
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideEtage')]
     public function testEtageParser(?string $currentEtageValue, ?int $etageParsed): void
     {
         $this->assertEquals($etageParsed, EtageParser::parse($currentEtageValue));

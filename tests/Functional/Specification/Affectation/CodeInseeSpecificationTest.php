@@ -13,12 +13,7 @@ class CodeInseeSpecificationTest extends KernelTestCase
     private const string INSEE_STMARS = '44179';
     private const string INSEE_CELLIER = '44028';
 
-    /**
-     * @dataProvider provideRulesAndSignalement
-     *
-     * @param array<string>  $inseePartenaire
-     * @param ?array<string> $inseeToExcludeRule
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(
         ?string $inseeSignalement,
         array $inseePartenaire,

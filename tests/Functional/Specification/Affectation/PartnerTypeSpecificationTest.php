@@ -12,9 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class PartnerTypeSpecificationTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideRulesAndSignalement
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(PartnerType $type, PartnerType $typeRule, bool $isSatisfied): void
     {
         $partner = new Partner();
@@ -72,9 +70,7 @@ class PartnerTypeSpecificationTest extends KernelTestCase
         yield 'BAILLEUR_SOCIAL - EPCI' => [PartnerType::BAILLEUR_SOCIAL, PartnerType::EPCI, false];
     }
 
-    /**
-     * @dataProvider provideRulesAndSignalementWithBailleur
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalementWithBailleur')]
     public function testIsSatisfiedByWithBailleur(
         PartnerType $type,
         PartnerType $typeRule,

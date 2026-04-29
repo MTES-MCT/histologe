@@ -10,9 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class AllocataireSpecificationTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideRulesAndSignalement
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(?string $isAllocataire, string $allocataireRule, bool $isSatisfied): void
     {
         $partner = new Partner();

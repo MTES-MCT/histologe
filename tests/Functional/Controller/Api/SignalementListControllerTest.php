@@ -14,7 +14,7 @@ class SignalementListControllerTest extends WebTestCase
     public function testGetSignalementList(): void
     {
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
         $client->loginUser($user, 'api');
@@ -36,7 +36,7 @@ class SignalementListControllerTest extends WebTestCase
     public function testGetSignalementListUserApi02(): void
     {
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-02@signal-logement.fr',
         ]);
         $client->loginUser($user, 'api');
@@ -56,13 +56,11 @@ class SignalementListControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
-    /**
-     * @dataProvider provideGoodQueryParameters
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideGoodQueryParameters')]
     public function testGetSignalementListWithFilters(array $queryParameters, int $count): void
     {
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
 
@@ -88,13 +86,11 @@ class SignalementListControllerTest extends WebTestCase
         yield 'codeInsee=2b002' => [['codeInsee' => '2b002'], 0];
     }
 
-    /**
-     * @dataProvider provideDataSignalementByUuid
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataSignalementByUuid')]
     public function testGetSignalementByUuid(string $email, string $uuid, int $nbAffectations, int $nbDesordres): void
     {
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => $email,
         ]);
         $client->loginUser($user, 'api');
@@ -116,15 +112,11 @@ class SignalementListControllerTest extends WebTestCase
         yield 'api-01 user with old signalement 2022-03' => ['api-01@signal-logement.fr', '00000000-0000-0000-2022-000000000003', 1, 3];
     }
 
-    /**
-     * @dataProvider provideQueryParameters
-     *
-     * @param array<string> $queryParameters
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideQueryParameters')]
     public function testGetSignalementListWithErrorsFilter(array $queryParameters, int $countErrors): void
     {
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
         $client->loginUser($user, 'api');
@@ -168,7 +160,7 @@ class SignalementListControllerTest extends WebTestCase
     public function testGetUnAffectedSignalementByUuid(): void
     {
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
 
         $uuid = '00000000-0000-0000-2024-000000000006';
         $client->loginUser($user, 'api');
@@ -181,12 +173,12 @@ class SignalementListControllerTest extends WebTestCase
     public function testGetUnAffectedSignalementCreatedByMeByUuid(): void
     {
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
 
         $uuid = '00000000-0000-0000-2024-000000000006';
-        $signalement = self::getContainer()->get('doctrine')->getRepository(Signalement::class)->findOneBy(['uuid' => $uuid]);
+        $signalement = static::getContainer()->get('doctrine')->getRepository(Signalement::class)->findOneBy(['uuid' => $uuid]);
         $signalement->setCreatedBy($user);
-        self::getContainer()->get('doctrine')->getManager()->flush();
+        static::getContainer()->get('doctrine')->getManager()->flush();
 
         $client->loginUser($user, 'api');
         $client->request('GET', '/api/signalements/'.$uuid);

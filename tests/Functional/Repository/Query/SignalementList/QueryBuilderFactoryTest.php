@@ -6,22 +6,12 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
 use App\Repository\Query\SignalementList\QueryBuilderFactory;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\DBAL\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class QueryBuilderFactoryTest extends KernelTestCase
 {
-    /**
-     * @param array<string, mixed> $userConfig
-     * @param array<string, mixed> $options
-     * @param array<int, string>   $expectedDqlParts
-     * @param array<string, mixed> $expectedParams
-     *
-     * @dataProvider userOptionsProvider
-     *
-     * @throws Exception
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('userOptionsProvider')]
     public function testFindSignalementListQueryBuilder(
         array $userConfig,
         array $options,

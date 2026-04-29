@@ -14,10 +14,10 @@ class QuestionControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->router = self::getContainer()->get(RouterInterface::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
     }
 
-    /** @dataProvider provideProfil */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideProfil')]
     public function testGetQuestionProfil(string $profil): void
     {
         $route = $this->router->generate('public_api_question_profile');

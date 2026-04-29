@@ -12,11 +12,7 @@ class BackZoneControllerTest extends WebTestCase
 {
     use SessionHelper;
 
-    /**
-     * @dataProvider provideParamsZoneList
-     *
-     * @param array<mixed> $params
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsZoneList')]
     public function testZoneList(array $params, int $nb): void
     {
         $client = static::createClient();
@@ -26,7 +22,7 @@ class BackZoneControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_territory_management_zone_index');
         $client->request('GET', $route, $params);
@@ -54,7 +50,7 @@ class BackZoneControllerTest extends WebTestCase
         $zones = $zoneRepository->findAll();
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_territory_management_zone_show', ['zone' => $zones[0]->getId()]);
         $client->request('GET', $route);
 
@@ -76,7 +72,7 @@ class BackZoneControllerTest extends WebTestCase
         $zone = $zones[0];
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_territory_management_zone_edit', ['zone' => $zone->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'zone_type');

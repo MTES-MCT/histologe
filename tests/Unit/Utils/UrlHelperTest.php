@@ -7,11 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class UrlHelperTest extends TestCase
 {
-    /**
-     * @dataProvider provideDataToQueryString
-     *
-     * @param array<array<mixed>> $origin
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataToQueryString')]
     public function testArrayToQueryString(array $origin, string $result): void
     {
         $this->assertEquals(UrlHelper::arrayToQueryString($origin), $result);

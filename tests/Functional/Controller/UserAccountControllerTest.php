@@ -20,7 +20,7 @@ class UserAccountControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'user-01-02@signal-logement.fr']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
         $client->request('GET', $route);
@@ -73,7 +73,7 @@ class UserAccountControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'user-01-02@signal-logement.fr']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
         $client->request('GET', $route);
@@ -89,9 +89,7 @@ class UserAccountControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @dataProvider provideInvalidPassword
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidPassword')]
     public function testActivationUserFormSubmitWithInvalidPassword(string $expectedResult, string $password): void
     {
         $client = static::createClient();
@@ -101,7 +99,7 @@ class UserAccountControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'user-01-02@signal-logement.fr']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
         $client->request('GET', $route);

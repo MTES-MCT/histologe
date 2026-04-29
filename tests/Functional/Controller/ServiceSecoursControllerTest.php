@@ -23,7 +23,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         $this->assertCount(2, $routes);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         foreach ($routes as $route) {
             // OK
@@ -191,7 +191,7 @@ class ServiceSecoursControllerTest extends WebTestCase
     {
         $serviceSecoursRoute = $this->getServiceSecoursRoute();
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate('service_secours_index', [
             'slug' => $serviceSecoursRoute->getSlug(),
             'uuid' => $serviceSecoursRoute->getUuid(),

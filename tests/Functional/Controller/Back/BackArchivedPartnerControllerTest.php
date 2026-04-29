@@ -23,7 +23,7 @@ class BackArchivedPartnerControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_archived_partner_index');
         $client->request('GET', $route);
@@ -44,7 +44,7 @@ class BackArchivedPartnerControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = static::getContainer()->get(TerritoryRepository::class);

@@ -138,9 +138,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals(44, $signalements[1]->getTerritory()->getZip());
     }
 
-    /**
-     * @dataProvider provideCanEditSignalementData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideCanEditSignalementData')]
     public function testCanEditSignalement(string $userEmail, string $signalementUuid, int $expectedStatusCode): void
     {
         $user = $this->userRepository->findOneBy(['email' => $userEmail]);

@@ -13,11 +13,11 @@ class SettingsControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $client->request('GET', $router->generate('back_settings'));
 
         $this->assertEquals('200', $client->getResponse()->getStatusCode());
@@ -35,12 +35,12 @@ class SettingsControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $client->request('GET', $router->generate('back_settings', ['territoryId' => 13]));
 
         $this->assertEquals('200', $client->getResponse()->getStatusCode());
@@ -56,11 +56,11 @@ class SettingsControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-44-01@signal-logement.fr']);
         $client->loginUser($user);
 
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $client->request('GET', $router->generate('back_settings'));
 
         $this->assertEquals('200', $client->getResponse()->getStatusCode());

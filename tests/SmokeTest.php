@@ -9,9 +9,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 class SmokeTest extends WebTestCase
 {
-    /**
-     * @dataProvider provideRoutes
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutes')]
     public function testPageSuccessfullyRespondWithoutError500WithAnonymousUser(string $path, int $statusCode): void
     {
         self::ensureKernelShutdown();
@@ -25,9 +23,7 @@ class SmokeTest extends WebTestCase
         );
     }
 
-    /**
-     * @dataProvider provideRoutes
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutes')]
     public function testPageSuccessfullyRespondWithoutError500WithAdminTerritoire(string $path, int $statusCode): void
     {
         /** @var UserRepository $userRepository */
@@ -45,9 +41,7 @@ class SmokeTest extends WebTestCase
         );
     }
 
-    /**
-     * @dataProvider provideRoutes
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutes')]
     public function testPageSuccessfullyRespondWithoutError500WithUtilisateurPartenaire(string $path, int $statusCode): void
     {
         /** @var UserRepository $userRepository */
@@ -65,9 +59,7 @@ class SmokeTest extends WebTestCase
         );
     }
 
-    /**
-     * @dataProvider provideRoutes
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutes')]
     public function testPageSuccessfullyRespondWithoutError500WithSuperAdmin(string $path, int $statusCode): void
     {
         /** @var UserRepository $userRepository */
@@ -88,7 +80,7 @@ class SmokeTest extends WebTestCase
     public static function provideRoutes(): \Generator
     {
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $routes = $router->getRouteCollection();
 
         /** @var Route $route */

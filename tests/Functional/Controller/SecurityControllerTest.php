@@ -87,7 +87,7 @@ class SecurityControllerTest extends WebTestCase
         $this->assertStringStartsWith('sl__', $token->getUser()->getUser()->getEmail());
     }
 
-    /** @dataProvider provideJsonLogin  */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideJsonLogin')]
     public function testJsonLogin(?int $status = null, ?string $email = null, ?string $password = null): void
     {
         $client = static::createClient();

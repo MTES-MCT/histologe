@@ -14,25 +14,21 @@ class AffectationEsaboraPolicyTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
+        $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
     }
 
-    /**
-     * @dataProvider providePartnerIds
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('providePartnerIds')]
     public function testHasUrlConflict(array $partnerIds, bool $result): void
     {
         $affectationEsaboraPolicy = new AffectationEsaboraPolicy($this->partnerRepository, true);
         self::assertSame($result, $affectationEsaboraPolicy->hasUrlConflict($partnerIds));
     }
 
-    /**
-     * @dataProvider providePartnerName
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('providePartnerName')]
     public function testCanBeAffected(string $partnerName, bool $result): void
     {
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $signalement = $signalementRepository->findOneBy(['reference' => '2024-10']);
         $partner = $this->partnerRepository->findOneBy(['nom' => $partnerName]);
 

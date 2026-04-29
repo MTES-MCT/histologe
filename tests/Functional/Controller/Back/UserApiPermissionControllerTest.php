@@ -12,11 +12,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 {
     use SessionHelper;
 
-    /**
-     * @dataProvider provideParamsUserApiList
-     *
-     * @param array<mixed> $params
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsUserApiList')]
     public function testIndex(array $params, int $nb): void
     {
         $client = static::createClient();
@@ -26,7 +22,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_api_user_index');
         $client->request('GET', $route, $params);
@@ -53,7 +49,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_api_user_index');
         $client->request('GET', $route);
@@ -71,7 +67,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         $userApi = $userRepository->findOneBy(['email' => 'api-reunion-epci@signal-logement.fr']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_permission_create', ['id' => $userApi->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api_permission');
@@ -99,7 +95,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_permission_create', ['id' => $user->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api_permission');
@@ -129,7 +125,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         }
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_permission_create', ['id' => $userApi->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api_permission');
@@ -159,7 +155,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         }
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_permission_edit', ['id' => $permission->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api_permission');
@@ -190,7 +186,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         }
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_permission_delete', ['id' => $permission->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api_permission_delete');
@@ -221,7 +217,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_add');
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api');
@@ -245,7 +241,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_add');
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api');

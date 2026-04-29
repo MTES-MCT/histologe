@@ -30,12 +30,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
     }
 
-    /**
-     * @dataProvider provideSuccessfulAuthenticationCases
-     *
-     * @param array<string> $requestData
-     * @param array<string> $expectedUserData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideSuccessfulAuthenticationCases')]
     public function testAuthenticateSuccess(
         Signalement $signalement,
         array $requestData,

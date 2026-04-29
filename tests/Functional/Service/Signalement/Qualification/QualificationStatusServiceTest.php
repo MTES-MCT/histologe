@@ -30,9 +30,7 @@ class QualificationStatusServiceTest extends KernelTestCase
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
     }
 
-    /**
-     * @dataProvider provideNDERequestAndStatus
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideNDERequestAndStatus')]
     public function testUpdateNdeStatus(QualificationNDERequest $qualificationNDERequest, QualificationStatus $qualificationStatus): void
     {
         /** @var SignalementRepository $signalementRepository */

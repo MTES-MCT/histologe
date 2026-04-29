@@ -39,9 +39,7 @@ class BrevoWebhookControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-    /**
-     * @dataProvider provideWebhookTestData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideWebhookTestData')]
     public function testWebhookHandling(
         string $remoteAddr,
         string $payload,
@@ -125,11 +123,7 @@ class BrevoWebhookControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideWebhookEventTestData
-     *
-     * @param array<string, mixed>|null $expectedPayload
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideWebhookEventTestData')]
     public function testHandleWebhookWithEvent(string $event, string $email, bool $expectDeliveryIssue, ?array $expectedPayload): void
     {
         $client = static::createClient();

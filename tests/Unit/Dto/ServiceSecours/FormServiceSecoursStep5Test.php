@@ -7,9 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class FormServiceSecoursStep5Test extends TestCase
 {
-    /**
-     * @dataProvider provideHasDesordreAutreCases
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideHasDesordreAutreCases')]
     public function testHasDesordreAutre(array $slugs, bool $expected): void
     {
         $dto = new FormServiceSecoursStep5();

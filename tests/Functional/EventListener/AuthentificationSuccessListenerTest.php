@@ -29,7 +29,7 @@ class AuthentificationSuccessListenerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->urlGenerator = self::getContainer()->get(UrlGeneratorInterface::class);
+        $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
         $this->historyEntryRepository = static::getContainer()->get(HistoryEntryRepository::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->token = $this->createMock(TokenInterface::class);
@@ -59,11 +59,11 @@ class AuthentificationSuccessListenerTest extends WebTestCase
 
     public function testOnSchebTwoFactorAuthenticationSuccess(): void
     {
-        $historyEntryManager = self::getContainer()->get(HistoryEntryManager::class);
+        $historyEntryManager = static::getContainer()->get(HistoryEntryManager::class);
         /** @var UserManager $userManager */
-        $userManager = self::getContainer()->get(UserManager::class);
+        $userManager = static::getContainer()->get(UserManager::class);
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $authentificationSuccessListener = new AuthentificationSuccessListener(
             $historyEntryManager,
             $userManager,

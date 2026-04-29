@@ -15,7 +15,7 @@ class SignalementExportLoaderTest extends TestCase
 {
     use UserHelper;
 
-    /** @dataProvider provideFileFormat */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideFileFormat')]
     public function testLoad(string $formatExtension, string $formatCell): void
     {
         /** @var MockObject&SignalementManager */

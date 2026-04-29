@@ -8,11 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CspReportControllerTest extends WebTestCase
 {
-    /**
-     * @param array<string, mixed> $payload
-     *
-     * @dataProvider provideCspReports
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideCspReports')]
     public function testCspReportWithValidPayload(
         array $payload,
         bool $shouldReport = false,

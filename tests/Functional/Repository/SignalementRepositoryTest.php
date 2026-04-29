@@ -337,7 +337,7 @@ class SignalementRepositoryTest extends KernelTestCase
         $signalements = $signalementRepository->findInjonctionBeforeDateWithoutAnswer($beforeDate);
         $this->assertCount(0, $signalements);
 
-        $container = self::getContainer();
+        $container = static::getContainer();
         $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
         $container->set(ClockInterface::class, $mockClock);
 
@@ -355,7 +355,7 @@ class SignalementRepositoryTest extends KernelTestCase
         $signalements = $signalementRepository->findInjonctionToRemindAnswerBailleur($beforeDate);
         $this->assertCount(0, $signalements);
 
-        $container = self::getContainer();
+        $container = static::getContainer();
         $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
         $container->set(ClockInterface::class, $mockClock);
 
@@ -373,7 +373,7 @@ class SignalementRepositoryTest extends KernelTestCase
         $signalements = $signalementRepository->findInjonctionToRemind($beforeDate);
         $this->assertCount(0, $signalements);
 
-        $container = self::getContainer();
+        $container = static::getContainer();
         $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
         $container->set(ClockInterface::class, $mockClock);
 

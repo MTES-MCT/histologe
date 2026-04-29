@@ -19,7 +19,7 @@ class PopNotificationManagerTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->managerRegistry = self::getContainer()->get(ManagerRegistry::class);
+        $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->popNotificationManager = new PopNotificationManager(
             $this->managerRegistry,
             PopNotification::class,

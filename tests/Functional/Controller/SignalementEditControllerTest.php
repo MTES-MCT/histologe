@@ -49,15 +49,13 @@ class SignalementEditControllerTest extends WebTestCase
         yield 'SERVICE_SECOURS' => [ProfileDeclarant::SERVICE_SECOURS];
     }
 
-    /**
-     * @dataProvider provideStatusSignalement
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideStatusSignalement')]
     public function testDisplaySuiviSignalementCompleteByStatus(string $status): void
     {
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine');
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
             'statut' => $status,
@@ -67,7 +65,7 @@ class SignalementEditControllerTest extends WebTestCase
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate('front_suivi_signalement_complete_bailleur', [
             'code' => $signalement->getCodeSuivi(),
         ]);
@@ -87,15 +85,13 @@ class SignalementEditControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @dataProvider provideProfileDeclarant
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideProfileDeclarant')]
     public function testDisplaySuiviSignalementCompleteByProfile(ProfileDeclarant $profile): void
     {
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
             'profileDeclarant' => $profile,
@@ -114,7 +110,7 @@ class SignalementEditControllerTest extends WebTestCase
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate('front_suivi_signalement_complete_bailleur', [
             'code' => $signalement->getCodeSuivi(),
         ]);
@@ -132,7 +128,7 @@ class SignalementEditControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
             'statut' => SignalementStatus::ACTIVE,
@@ -141,7 +137,7 @@ class SignalementEditControllerTest extends WebTestCase
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate('front_suivi_signalement_complete_adresse_logement', [
             'code' => $signalement->getCodeSuivi(),
         ]);
@@ -192,7 +188,7 @@ class SignalementEditControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
             'statut' => SignalementStatus::ACTIVE,
@@ -201,7 +197,7 @@ class SignalementEditControllerTest extends WebTestCase
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate('front_suivi_signalement_complete_bailleur', [
             'code' => $signalement->getCodeSuivi(),
         ]);
@@ -247,14 +243,14 @@ class SignalementEditControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
         $signalementUser = $this->getSignalementUser($signalement, UserManager::DECLARANT);
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate('front_suivi_signalement_complete_occupant', ['code' => $signalement->getCodeSuivi()]);
 
         $crawler = $client->request('GET', $url);
@@ -302,7 +298,7 @@ class SignalementEditControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
             'statut' => SignalementStatus::ACTIVE,
@@ -311,7 +307,7 @@ class SignalementEditControllerTest extends WebTestCase
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate($urlName, [
             'code' => $signalement->getCodeSuivi(),
         ]);
@@ -356,14 +352,14 @@ class SignalementEditControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
         $signalementUser = $this->getSignalementUser($signalement, UserManager::DECLARANT);
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate('front_suivi_signalement_complete_situation_foyer', ['code' => $signalement->getCodeSuivi()]);
 
         $crawler = $client->request('GET', $url);
@@ -413,14 +409,14 @@ class SignalementEditControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
         $signalementUser = $this->getSignalementUser($signalement, UserManager::DECLARANT);
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate('front_suivi_signalement_complete_assurance', ['code' => $signalement->getCodeSuivi()]);
 
         $crawler = $client->request('GET', $url);
@@ -443,14 +439,14 @@ class SignalementEditControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
         $signalementUser = $this->getSignalementUser($signalement, UserManager::DECLARANT);
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate('front_suivi_signalement_complete_informations_generales', ['code' => $signalement->getCodeSuivi()]);
 
         $crawler = $client->request('GET', $url);
@@ -475,14 +471,14 @@ class SignalementEditControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2022-14']);
         $signalementUser = $this->getSignalementUser($signalement, UserManager::DECLARANT);
         $client->loginUser($signalementUser, 'code_suivi');
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate('front_suivi_signalement_complete_type_composition', ['code' => $signalement->getCodeSuivi()]);
 
         $crawler = $client->request('GET', $url);

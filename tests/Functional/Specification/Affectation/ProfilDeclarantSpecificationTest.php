@@ -12,9 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ProfilDeclarantSpecificationTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideRulesAndSignalement
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(ProfileDeclarant $profilSignalement, string $profilRule, bool $isSatisfied): void
     {
         $partner = new Partner();

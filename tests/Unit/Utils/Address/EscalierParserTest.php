@@ -7,9 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class EscalierParserTest extends TestCase
 {
-    /**
-     * @dataProvider provideEscalier
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideEscalier')]
     public function testEscalierParser(?string $currentEscalierValue, ?string $EscalierParsed): void
     {
         $this->assertEquals($EscalierParsed, EscalierParser::parse($currentEscalierValue));

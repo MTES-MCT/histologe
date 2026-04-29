@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class DateHelperTest extends TestCase
 {
-    /** @dataProvider provideDates */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDates')]
     public function testIsValidDate(?string $date, string $format, bool $expected): void
     {
         $result = DateHelper::isValidDate($date, $format);

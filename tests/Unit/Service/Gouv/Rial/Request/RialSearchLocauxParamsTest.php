@@ -7,9 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class RialSearchLocauxParamsTest extends TestCase
 {
-    /**
-     * @dataProvider provideDataParsed
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataParsed')]
     public function testParseBanIdSuccess(
         string $banId,
         string $codeDepartementInsee,
@@ -26,9 +24,7 @@ class RialSearchLocauxParamsTest extends TestCase
         $this->assertEquals($indiceRepetitionNumeroVoirie, $result['indiceRepetitionNumeroVoirie']);
     }
 
-    /**
-     * @dataProvider provideDataNull
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataNull')]
     public function testParseBanIdFail(string $banId): void
     {
         $result = RialSearchLocauxParams::getFromBanId($banId);

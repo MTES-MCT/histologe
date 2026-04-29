@@ -12,9 +12,7 @@ class AppExtensionTest extends WebTestCase
     private const string TWIG_DATE_FORMAT_DEFAULT = 'F j, Y H:i';
     private const string EUROPE_PARIS_TIMEZONE = 'Europe/Paris';
 
-    /**
-     * @dataProvider provideData
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
     public function testCustomDateFiler(\DateTimeInterface|string $inputDate, string $expectedOutputDate, ?string $format = 'F j, Y H:i', ?string $timezone = null): void
     {
         self::bootKernel();
@@ -93,9 +91,7 @@ class AppExtensionTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideDataPhone
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataPhone')]
     public function testFormatPhone(?string $inputPhone, ?string $expectedOutputPhone): void
     {
         self::bootKernel();
@@ -161,9 +157,7 @@ class AppExtensionTest extends WebTestCase
         $this->assertEqualsCanonicalizing($expectedFilters, $filterNames);
     }
 
-    /**
-     * @dataProvider provideBadgeClass
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideBadgeClass')]
     public function testGetBadgeClass(?int $days, string $expected): void
     {
         self::bootKernel();
@@ -184,9 +178,7 @@ class AppExtensionTest extends WebTestCase
         yield 'Less than 91 days' => [30, 'fr-badge--success'];
     }
 
-    /**
-     * @dataProvider provideRelanceBadgeClass
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideRelanceBadgeClass')]
     public function testGetRelanceBadgeClass(int $count, string $expected): void
     {
         self::bootKernel();
@@ -206,9 +198,7 @@ class AppExtensionTest extends WebTestCase
         yield 'Zero relance' => [0, 'fr-badge--new'];
     }
 
-    /**
-     * @dataProvider provideHosts
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideHosts')]
     public function testExtractRootDomain(string $host, string $expected): void
     {
         self::bootKernel();
@@ -229,9 +219,7 @@ class AppExtensionTest extends WebTestCase
         yield 'production service-secours' => ['services-secours.signal-logement.beta.gouv.fr', 'services-secours.signal-logement.beta.gouv.fr'];
     }
 
-    /**
-     * @dataProvider provideAnswer
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAnswer')]
     public function testFormatAnswer(string $answer, string $expected): void
     {
         self::bootKernel();

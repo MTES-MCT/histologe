@@ -5,7 +5,6 @@ namespace App\Tests\Unit\Service\Files;
 use App\Service\Files\ImageManipulationHandler;
 use App\Service\Files\ImageVariantProvider;
 use App\Service\Files\TmpFileWriter;
-use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -39,7 +38,7 @@ class ImageVariantProviderTest extends KernelTestCase
             });
 
         /** @var ParameterBagInterface $parameterBag */
-        $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
+        $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
 
         $this->bucketDir = $parameterBag->get('url_bucket');
         $this->tmpDir = $parameterBag->get('uploads_tmp_dir');
@@ -48,11 +47,7 @@ class ImageVariantProviderTest extends KernelTestCase
         $this->filesystem = new Filesystem();
     }
 
-    /**
-     * @dataProvider provideVariants
-     *
-     * @throws FilesystemException
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideVariants')]
     public function testGetFileVariantDownloadsFromBucketAndWritesToTmp(?string $variant, string $expectedSuffix): void
     {
         $original = '2026/01/mon-super-fichier.png';

@@ -10,11 +10,11 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DashboardTabPanelControllerTest extends WebTestCase
 {
-    /** @dataProvider provideAuthorizedTabBodyType */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAuthorizedTabBodyType')]
     public function testAccessGrantedForAuthorizedUsers(string $tabBodyType): void
     {
         $client = static::createClient();
-        $router = self::getContainer()->get('router');
+        $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
@@ -24,12 +24,12 @@ class DashboardTabPanelControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    /** @dataProvider provideUnauthorizedTabBodyType */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideUnauthorizedTabBodyType')]
     public function testAccessDeniedForUnauthorizedUsers(string $tabBodyType): void
     {
         $client = static::createClient();
-        $router = self::getContainer()->get('router');
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $router = static::getContainer()->get('router');
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'user-partenaire-30@signal-logement.fr']);
         $client->loginUser($user);
         $url = $router->generate('back_tab_panel_body', ['tabBodyType' => $tabBodyType]);

@@ -31,7 +31,7 @@ class PartnerControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
-        $this->router = self::getContainer()->get(RouterInterface::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
         $this->faker = Factory::create();
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
 
@@ -172,9 +172,7 @@ class PartnerControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @dataProvider provideAgentEmailToAddOnPartner
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAgentEmailToAddOnPartner')]
     public function testAddNewAgentToPartner(string $email, string $expected): void
     {
         /** @var Partner $partner */
@@ -227,9 +225,7 @@ class PartnerControllerTest extends WebTestCase
         yield 'Email ok to multi territories' => ['user-44-02@signal-logement.fr', 'Ce compte agent existe déjà dans :'];
     }
 
-    /**
-     * @dataProvider provideMultiTerAgentEmailToAddOnPartner
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideMultiTerAgentEmailToAddOnPartner')]
     public function testAddExistingAgentToPartner(string $email, string $expected): void
     {
         /** @var Partner $partner */
@@ -303,9 +299,7 @@ class PartnerControllerTest extends WebTestCase
         $this->assertContains('ROLE_ADMIN_TERRITORY', $partnerUser->getRoles());
     }
 
-    /**
-     * @dataProvider provideAgentEmailToEdit
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideAgentEmailToEdit')]
     public function testEditUserOfPartner(string $email, string $expected, int $nbEmailSent): void
     {
         /** @var User $partnerUser */

@@ -37,9 +37,7 @@ class PostalCodeInseeCoherenceValidatorTest extends ConstraintValidatorTestCase
         return new PostalCodeInseeCoherenceValidator($entityManager, $this->postalCodeHomeChecker);
     }
 
-    /**
-     * @dataProvider provideCoherenceCases
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideCoherenceCases')]
     public function testPostalCodeInseeCoherence(
         string $postalCode,
         string $rawInseeCode,

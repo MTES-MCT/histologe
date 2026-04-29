@@ -16,9 +16,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
 {
     use FixturesHelper;
 
-    /**
-     * @dataProvider provideVisiteIntervention
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideVisiteIntervention')]
     public function testVisiteDescriptionOnInterventionCreated(
         Intervention $intervention,
         string $label,

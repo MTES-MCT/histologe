@@ -23,23 +23,19 @@ class VisiteCreateControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
 
-        $this->router = self::getContainer()->get('router');
+        $this->router = static::getContainer()->get('router');
 
         $this->client->loginUser($user, 'api');
     }
 
-    /**
-     * @dataProvider provideDataForNotification
-     *
-     * @param array<mixed> $payload
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataForNotification')]
     public function testCreateVisiteWithNotification(string $type, array $payload, int $nbMailSent): void
     {
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::UUID_SIGNALEMENT]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::UUID_SIGNALEMENT]);
         $firstFile = $signalement->getFiles()->first();
         $lastFile = $signalement->getFiles()->last();
         if (!$firstFile) {
@@ -82,15 +78,11 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /**
-     * @dataProvider provideDataForPendingVisite
-     *
-     * @param array<mixed> $payload
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataForPendingVisite')]
     public function testCreateVisiteWithPendingVisiteWithErrors(array $payload): void
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
 
         $affectation = $signalement->getAffectations()->first();
         if (!$affectation) {
@@ -114,15 +106,11 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /**
-     * @dataProvider provideDataForPendingVisite
-     *
-     * @param array<mixed> $payload
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataForPendingVisite')]
     public function testCreateVisiteWithPendingVisite(array $payload): void
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
 
         $affectation = $signalement->getAffectations()->first();
         if (!$affectation) {
@@ -146,12 +134,7 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /**
-     * @dataProvider provideDataErrorPayload
-     *
-     * @param array<mixed>  $payload
-     * @param array<string> $fieldsErrors
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataErrorPayload')]
     public function testCreateVisiteWithPayloadErrors(array $payload, array $fieldsErrors, string $errorMessage): void
     {
         $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::UUID_SIGNALEMENT]);
@@ -177,12 +160,10 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /**
-     * @dataProvider provideDataFailure403
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataFailure403')]
     public function testCreateVisiteWithErrors(string $signalementUuid, string $partnerName, string $errorMessage): void
     {
-        $partner = self::getContainer()->get(PartnerRepository::class)->findOneBy(['nom' => $partnerName]);
+        $partner = static::getContainer()->get(PartnerRepository::class)->findOneBy(['nom' => $partnerName]);
         $payload = [
             'date' => '2052-03-11',
             'time' => '10:00',

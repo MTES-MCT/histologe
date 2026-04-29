@@ -52,15 +52,15 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $doctrine->getManager();
         $this->entityManager = $entityManager;
-        $this->affectationManager = self::getContainer()->get(AffectationManager::class);
-        $this->userManager = self::getContainer()->get(UserManager::class);
-        $this->signalementManager = self::getContainer()->get(SignalementManager::class);
-        $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
-        $this->referenceGenerator = self::getContainer()->get(ReferenceGenerator::class);
-        $this->engagementTravauxBailleurGenerator = self::getContainer()->get(EngagementTravauxBailleurGenerator::class);
-        $this->parameterBag = self::getContainer()->get(ParameterBagInterface::class);
-        $this->uploadHandlerService = self::getContainer()->get(UploadHandlerService::class);
-        $this->fileManager = self::getContainer()->get(FileManager::class);
+        $this->affectationManager = static::getContainer()->get(AffectationManager::class);
+        $this->userManager = static::getContainer()->get(UserManager::class);
+        $this->signalementManager = static::getContainer()->get(SignalementManager::class);
+        $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
+        $this->referenceGenerator = static::getContainer()->get(ReferenceGenerator::class);
+        $this->engagementTravauxBailleurGenerator = static::getContainer()->get(EngagementTravauxBailleurGenerator::class);
+        $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
+        $this->uploadHandlerService = static::getContainer()->get(UploadHandlerService::class);
+        $this->fileManager = static::getContainer()->get(FileManager::class);
 
         $this->service = new InjonctionBailleurService(
             $this->suiviManager,

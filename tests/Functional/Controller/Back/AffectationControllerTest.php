@@ -48,10 +48,10 @@ class AffectationControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->router = self::getContainer()->get(RouterInterface::class);
-        $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
-        $this->signalementManager = self::getContainer()->get(SignalementManager::class);
-        $this->suiviRepository = self::getContainer()->get(SuiviRepository::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
+        $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->signalementManager = static::getContainer()->get(SignalementManager::class);
+        $this->suiviRepository = static::getContainer()->get(SuiviRepository::class);
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
@@ -188,7 +188,7 @@ class AffectationControllerTest extends WebTestCase
             ->setTerritory($signalement->getTerritory());
 
         $signalement->addAffectation($affectation);
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $em = static::getContainer()->get('doctrine')->getManager();
         $em->persist($signalement);
         $em->persist($affectation);
         $em->flush();
@@ -268,7 +268,7 @@ class AffectationControllerTest extends WebTestCase
         $sub->setSignalement($signalement);
         $sub->setUser($user);
         $sub->setCreatedBy($user);
-        $em = self::getContainer()->get('doctrine')->getManager();
+        $em = static::getContainer()->get('doctrine')->getManager();
         $em->persist($sub);
         $em->flush();
 

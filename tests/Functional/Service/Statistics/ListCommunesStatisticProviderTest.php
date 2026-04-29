@@ -8,14 +8,12 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ListCommunesStatisticProviderTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideCommunesWithArrondissements
-     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideCommunesWithArrondissements')]
     public function testGetData(string $zip, string $commune): void
     {
         self::bootKernel();
         /** @var TerritoryRepository $territoryRepository */
-        $territoryRepository = self::getContainer()->get(TerritoryRepository::class);
+        $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
         $territory = $territoryRepository->findOneBy(['zip' => $zip]);
         $dataCommunes = (new ListCommunesStatisticProvider())->getData($territory);
 
