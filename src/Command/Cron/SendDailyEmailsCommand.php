@@ -8,6 +8,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Mailer\SummaryMailService;
+use App\Service\TimezoneProvider;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,6 +32,7 @@ class SendDailyEmailsCommand extends AbstractCronCommand
         private readonly ClubEventRepository $clubEventRepository,
         private readonly SummaryMailService $summaryMailService,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly TimezoneProvider $timezoneProvider,
         private readonly ParameterBagInterface $parameterBag,
     ) {
         parent::__construct($this->parameterBag);
@@ -98,8 +100,8 @@ class SendDailyEmailsCommand extends AbstractCronCommand
                         to: $user->getEmail(),
                         params: [
                             'name' => $club->getName(),
-                            'date' => $club->getDateEvent()->format('d/m/Y'),
-                            'hour' => $club->getDateEvent()->format('H:i'),
+                            'date' => $club->getDateEvent(),
+                            'timezone' => $this->timezoneProvider->getTimezone($user),
                             'url' => $club->getUrl(),
                         ],
                     )

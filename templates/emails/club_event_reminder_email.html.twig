@@ -3,7 +3,7 @@
 {% block body %}
     <p>Bonjour,</p>
     <p>
-        L'évènement <strong>{{name}}</strong> a lieu dans 2 jours, le <strong>{{date}}</strong> à <strong>{{hour}}</strong>.
+        L'évènement <strong>{{name}}</strong> a lieu dans 2 jours, le <strong>{{ date|format_datetime(locale='fr', timezone=timezone, pattern='dd/MM/yyyy à HH:mm') }}</strong>.
         <br>
         Si ce n'est pas déjà fait, cliquez sur le bouton ci-dessous pour vous inscrire à cet évènement.
     </p>

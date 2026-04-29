@@ -258,6 +258,12 @@ users:
     statut: "ARCHIVE"
     is_mailing_active: 1
   -
+    email: admin-territoire-974-01@signal-logement.fr
+    roles: "[\"ROLE_ADMIN_TERRITORY\"]"
+    partner: "Partenaire 974-01"
+    statut: "ACTIVE"
+    is_mailing_active: 1
+  -
     email: user-01-01@signal-logement.fr
     roles: "[\"ROLE_USER_PARTNER\"]"
     partner: "Partenaire 01-04"

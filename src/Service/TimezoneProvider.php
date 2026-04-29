@@ -13,10 +13,10 @@ readonly class TimezoneProvider
     {
     }
 
-    public function getTimezone(): string
+    public function getTimezone(?User $user = null): string
     {
         /** @var User $user */
-        $user = $this->security->getUser();
+        $user = $user ?? $this->security->getUser();
         if ($user && $user instanceof User && $user->getFirstTerritory()) {
             return $user->getFirstTerritory()->getTimezone();
         }
