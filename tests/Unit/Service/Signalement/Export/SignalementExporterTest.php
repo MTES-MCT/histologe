@@ -5,8 +5,8 @@ namespace App\Tests\Unit\Service\Signalement\Export;
 use App\Dto\SignalementExport;
 use App\Entity\User;
 use App\Manager\SignalementManager;
+use App\Service\Signalement\Export\SignalementExporter;
 use App\Service\Signalement\Export\SignalementExportHeader;
-use App\Service\Signalement\Export\SignalementExportLoader;
 use App\Tests\UserHelper;
 use OpenSpout\Reader\CSV\Options as CsvReaderOptions;
 use OpenSpout\Reader\CSV\Reader as CsvReader;
@@ -14,7 +14,7 @@ use OpenSpout\Reader\XLSX\Reader as XlsxReader;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class SignalementExportLoaderTest extends TestCase
+class SignalementExporterTest extends TestCase
 {
     use UserHelper;
 
@@ -39,8 +39,8 @@ class SignalementExportLoaderTest extends TestCase
 
         $tmpFile = sys_get_temp_dir().'/export_test_'.uniqid().'.'.$format;
 
-        $loader = new SignalementExportLoader($signalementManager);
-        $loader->load($user, $format, $tmpFile, $filters, $selectedColumns);
+        $loader = new SignalementExporter($signalementManager);
+        $loader->write($user, $format, $tmpFile, $filters, $selectedColumns);
 
         $rows = $this->readFile($tmpFile, $format);
         unlink($tmpFile);

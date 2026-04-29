@@ -13,7 +13,7 @@ use OpenSpout\Writer\CSV\Options as CsvOptions;
 use OpenSpout\Writer\CSV\Writer as CsvWriter;
 use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 
-readonly class SignalementExportLoader
+readonly class SignalementExporter
 {
     public const array DATE_COLUMNS = ['createdAt', 'dateVisite', 'modifiedAt', 'closedAt', 'infoProcedureBailDate'];
 
@@ -28,7 +28,7 @@ readonly class SignalementExportLoader
      *
      * @throws Exception
      */
-    public function load(User $user, string $format, string $outputFilePath, ?array $filters, ?array $selectedColumns = null): void
+    public function write(User $user, string $format, string $outputFilePath, ?array $filters, ?array $selectedColumns = null): void
     {
         if (ListExportMessage::FORMAT_CSV === $format) {
             $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: SignalementExportHeader::SEPARATOR));

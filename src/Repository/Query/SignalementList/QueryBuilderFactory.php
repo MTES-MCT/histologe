@@ -34,16 +34,13 @@ readonly class QueryBuilderFactory
      *
      * @throws Exception
      */
-    public function create(User $user, array $options = [], bool $withSelectedData = true): QueryBuilder
+    public function create(User $user, array $options = []): QueryBuilder
     {
         $qb = $this->em->createQueryBuilder()->from(Signalement::class, 's');
 
         $qb->select('s.id');
         $qb->leftJoin('s.affectations', 'a');
         $qb->groupBy('s.id');
-        if ($withSelectedData) {
-            $this->addDataSelect($qb);
-        }
         $qb->where('s.statut NOT IN (:statusList)');
 
         if ($user->isTerritoryAdmin()) {

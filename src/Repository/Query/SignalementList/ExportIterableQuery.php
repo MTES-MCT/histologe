@@ -38,7 +38,7 @@ class ExportIterableQuery
         $this->em->getConnection()->prepare('SET SESSION group_concat_max_len=32505856')->executeQuery();
 
         // PASSE 1 : récupération des IDs filtrés (requête légère)
-        $qbIds = $this->queryBuilderFactory->create($user, $options, false);
+        $qbIds = $this->queryBuilderFactory->create($user, $options);
         $signalementIds = array_column($qbIds->getQuery()->getArrayResult(), 'id');
 
         if (empty($signalementIds)) {

@@ -22,7 +22,7 @@ class MapGeoDataQuery
      */
     public function getData(User $user, array $options): array
     {
-        $qb = $this->queryBuilderFactory->create($user, $options, false);
+        $qb = $this->queryBuilderFactory->create($user, $options);
 
         $qb->addSelect('
             s.statut,

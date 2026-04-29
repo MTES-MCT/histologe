@@ -9,7 +9,7 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Signalement\Export\SignalementExportLoader;
+use App\Service\Signalement\Export\SignalementExporter;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
@@ -23,7 +23,7 @@ readonly class ListExportMessageHandler
     public function __construct(
         private NotificationMailerRegistry $notificationMailerRegistry,
         private LoggerInterface $logger,
-        private SignalementExportLoader $signalementExportLoader,
+        private SignalementExporter $signalementExporter,
         private UserRepository $userRepository,
         private ParameterBagInterface $parameterBag,
         private UploadHandlerService $uploadHandlerService,
@@ -45,7 +45,7 @@ readonly class ListExportMessageHandler
             $filename = 'export-histologe-'.$listExportMessage->getUserId().'-'.$datetimeStr.'-'.$uuid.'.'.$format;
             $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
 
-            $this->signalementExportLoader->load($user, $format, $tmpFilepath, $filters, $selectedColumns);
+            $this->signalementExporter->write($user, $format, $tmpFilepath, $filters, $selectedColumns);
 
             $filename = $this->uploadHandlerService->uploadFromFilename($filename);
             if ($filename) {

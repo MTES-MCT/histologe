@@ -909,7 +909,7 @@ class SignalementManager extends AbstractManager
         $maxListPagination = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
         $signalementAffectationList = [];
 
-        $total = $this->queryBuilderFactory->create($user, $options, false)->select('COUNT(DISTINCT s.id)')->resetDQLPart('groupBy')->getQuery()->getSingleScalarResult();
+        $total = $this->queryBuilderFactory->create($user, $options)->select('COUNT(DISTINCT s.id)')->resetDQLPart('groupBy')->getQuery()->getSingleScalarResult();
         if ($count) {
             return (int) $total;
         }
@@ -918,7 +918,7 @@ class SignalementManager extends AbstractManager
         $firstResult = (max($page, 1) - 1) * $maxResult;
 
         // Passe 1 : récupérer uniquement les IDs paginés (requête légère)
-        $signalementIds = $this->queryBuilderFactory->create($user, $options, false)->setFirstResult($firstResult)->setMaxResults($maxResult)->getQuery()->getSingleColumnResult();
+        $signalementIds = $this->queryBuilderFactory->create($user, $options)->setFirstResult($firstResult)->setMaxResults($maxResult)->getQuery()->getSingleColumnResult();
         $dataResultList = [];
         if (!empty($signalementIds)) {
             // Passe 2 : charger les données complètes uniquement pour ces 25 IDs
