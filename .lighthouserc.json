@@ -12,6 +12,10 @@
                 "categories:pwa": "off",
                 "categories:accessibility": ["error", { "minScore": 1 }]
             }
+        },
+        "upload": {
+            "target": "filesystem",
+            "outputDir": ".lighthouseci"
         }
     }
 }
