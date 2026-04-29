@@ -66,7 +66,7 @@ class SignalementServiceSecoursFileMessageHandlerTest extends TestCase
         $signalementFileAttacher
             ->expects($this->exactly(2))
             ->method('createAndAttach')
-            ->willReturnCallback(static function ($signalementArg, $uploadedFileArg) use ($signalement, $expectedFiles, &$callIndex) {
+            ->willReturnCallback(function ($signalementArg, $uploadedFileArg) use ($signalement, $expectedFiles, &$callIndex) {
                 $this->assertSame($signalement, $signalementArg);
                 $this->assertSame($expectedFiles[$callIndex], $uploadedFileArg);
                 ++$callIndex;

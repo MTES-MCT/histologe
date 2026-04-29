@@ -67,7 +67,7 @@ class PushEsaboraDossierCommandTest extends TestCase
         $this->esaboraBus
             ->expects($this->atMost(2))
             ->method('dispatch')
-            ->willReturnCallback(static function ($affectation) use ($expectedCalls, &$callIndex) {
+            ->willReturnCallback(function ($affectation) use ($expectedCalls, &$callIndex) {
                 $this->assertSame($expectedCalls[$callIndex], $affectation);
                 ++$callIndex;
             });
