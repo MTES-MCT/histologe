@@ -76,7 +76,7 @@
                         title: items.nextClubEvent.name,
                         description: 'Cliquez pour vous inscrire',
                         badge_class: 'fr-badge--purple-glycine',
-                        badge_label: items.nextClubEvent.dateEvent|date('d/m/Y H:i'),
+                        badge_label: items.nextClubEvent.dateEvent|format_datetime(locale='fr', timezone=territory_timezone, pattern='dd/MM/yyyy HH:mm'),
                         link: items.nextClubEvent.url,
                         blank: true
                     } %}
