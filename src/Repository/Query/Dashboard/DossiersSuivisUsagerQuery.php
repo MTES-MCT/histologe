@@ -44,11 +44,7 @@ class DossiersSuivisUsagerQuery
         }
 
         if ($onlyLastSuivi) {
-            $subQb = $this->entityManager->createQueryBuilder()
-                ->select('MAX(s2.createdAt)')
-                ->from(Suivi::class, 's2')
-                ->where('s2.signalement = signalement');
-            $qb->andWhere('s.createdAt = ('.$subQb->getDQL().')');
+            $qb->andWhere('s.createdAt = signalement.lastSuiviAt');
         }
 
         if ($params?->territoireId) {
@@ -150,7 +146,7 @@ class DossiersSuivisUsagerQuery
                 SELECT MAX(s4.createdAt)
                 FROM '.Suivi::class.' s4
                 WHERE s4.signalement = signalement
-                AND s4.createdAt < s.createdAt
+                AND s4.createdAt < signalement.lastSuiviAt
             )
         )')
         ->setParameter('askFeedbackCategory', SuiviCategory::ASK_FEEDBACK_SENT)
