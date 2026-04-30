@@ -141,32 +141,36 @@ jobs:
           echo "## Lighthouse Accessibility Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          echo "DEBUG: Listing .lighthouseci directory contents:"
-          ls -la .lighthouseci/ || echo "Directory does not exist"
-
           found_reports=false
           if [ -d ".lighthouseci" ]; then
-            # Chercher tous les fichiers JSON (y compris dans les sous-répertoires)
-            for report in $(find .lighthouseci -name "*.json" -type f); do
-              echo "DEBUG: Processing report: $report"
+            # Chercher uniquement les vrais rapports Lighthouse (ceux qui ont "report" dans le nom ou lhr-)
+            for report in $(find .lighthouseci -name "*report.json" -o -name "lhr-*.json" | grep -v "assertion-results"); do
               if [ -f "$report" ]; then
                 found_reports=true
-                url=$(jq -r '.requestedUrl // .finalUrl // "unknown"' "$report" 2>/dev/null)
-                score=$(jq -r '.categories.accessibility.score // "null"' "$report" 2>/dev/null)
 
-                echo "DEBUG: URL=$url, Score=$score"
+                # Vérifier que c'est bien un rapport Lighthouse avec categories
+                if jq -e '.categories.accessibility' "$report" > /dev/null 2>&1; then
+                  url=$(jq -r '.requestedUrl // .finalUrl // "unknown"' "$report")
+                  score=$(jq -r '.categories.accessibility.score' "$report")
 
-                if [ "$score" != "null" ] && [ "$score" != "N/A" ]; then
-                  score_percent=$(awk "BEGIN {printf \"%.0f\", $score * 100}")
+                  if [ "$score" != "null" ]; then
+                    score_percent=$(awk "BEGIN {printf \"%.0f\", $score * 100}")
 
-                  echo "### 🔍 $url" >> $GITHUB_STEP_SUMMARY
-                  echo "**Accessibility Score:** ${score_percent}%" >> $GITHUB_STEP_SUMMARY
-                  echo "" >> $GITHUB_STEP_SUMMARY
+                    echo "### 🔍 $url" >> $GITHUB_STEP_SUMMARY
+                    echo "**Accessibility Score:** ${score_percent}%" >> $GITHUB_STEP_SUMMARY
+                    echo "" >> $GITHUB_STEP_SUMMARY
 
-                  # Extract failing audits
-                  echo "**Issues:**" >> $GITHUB_STEP_SUMMARY
-                  jq -r '.audits | to_entries[] | select(.value.score != null and .value.score < 1 and .value.scoreDisplayMode == "binary") | "- ❌ \(.value.title): \(.value.description)"' "$report" 2>/dev/null >> $GITHUB_STEP_SUMMARY || echo "- Unable to parse issues" >> $GITHUB_STEP_SUMMARY
-                  echo "" >> $GITHUB_STEP_SUMMARY
+                    # Extract failing audits
+                    echo "**Issues:**" >> $GITHUB_STEP_SUMMARY
+                    issues=$(jq -r '.audits | to_entries[] | select(.value.score != null and .value.score < 1 and .value.scoreDisplayMode == "binary") | "- ❌ \(.value.title): \(.value.description)"' "$report" 2>/dev/null)
+
+                    if [ -n "$issues" ]; then
+                      echo "$issues" >> $GITHUB_STEP_SUMMARY
+                    else
+                      echo "- ✅ No accessibility issues found!" >> $GITHUB_STEP_SUMMARY
+                    fi
+                    echo "" >> $GITHUB_STEP_SUMMARY
+                  fi
                 fi
               fi
             done
