@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Repository\BailleurRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -24,7 +25,10 @@ class BackBailleurControllerTest extends WebTestCase
         $this->client->loginUser($user);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsBailleurList')]
+    /**
+     * @param array<mixed> $params
+     */
+    #[DataProvider('provideParamsBailleurList')]
     public function testBailleurList(array $params, int $nb): void
     {
         /** @var RouterInterface $router */

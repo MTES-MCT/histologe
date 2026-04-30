@@ -10,6 +10,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -24,7 +25,7 @@ class SignalementControllerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutes')]
+    #[DataProvider('provideRoutes')]
     public function testSignalementSuccessfullyDisplay(string $route, Signalement $signalement): void
     {
         self::ensureKernelShutdown();
@@ -70,7 +71,7 @@ class SignalementControllerTest extends WebTestCase
         }
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoleSignalementRoutes')]
+    #[DataProvider('provideRoleSignalementRoutes')]
     public function testButtonsDisplayedByRole(string $email, string $uuid, string $elementSelector = '', string $elementText = ''): void
     {
         self::ensureKernelShutdown();
@@ -177,7 +178,7 @@ class SignalementControllerTest extends WebTestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideSignalementSyncRoutes')]
+    #[DataProvider('provideSignalementSyncRoutes')]
     public function testSignalementSyncedWithWarningEsabora(
         string $email,
         string $uuid,

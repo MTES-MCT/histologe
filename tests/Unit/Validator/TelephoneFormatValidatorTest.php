@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Validator;
 
 use App\Validator\TelephoneFormat;
 use App\Validator\TelephoneFormatValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 /**
@@ -16,7 +17,7 @@ class TelephoneFormatValidatorTest extends ConstraintValidatorTestCase
         return new TelephoneFormatValidator();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidPhoneNumbers')]
+    #[DataProvider('provideValidPhoneNumbers')]
     public function testValidPhoneNumbers(mixed $phoneNumber): void
     {
         $constraint = new TelephoneFormat();
@@ -24,7 +25,7 @@ class TelephoneFormatValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidPhoneNumbers')]
+    #[DataProvider('provideInvalidPhoneNumbers')]
     public function testInvalidPhoneNumbers(string $phoneNumber): void
     {
         $constraint = new TelephoneFormat();

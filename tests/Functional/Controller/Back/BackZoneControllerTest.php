@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Repository\UserRepository;
 use App\Repository\ZoneRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -12,7 +13,10 @@ class BackZoneControllerTest extends WebTestCase
 {
     use SessionHelper;
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsZoneList')]
+    /**
+     * @param array<mixed> $params
+     */
+    #[DataProvider('provideParamsZoneList')]
     public function testZoneList(array $params, int $nb): void
     {
         self::ensureKernelShutdown();

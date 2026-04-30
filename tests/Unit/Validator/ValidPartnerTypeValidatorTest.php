@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Validator;
 use App\Entity\Enum\PartnerType;
 use App\Validator\ValidPartnerType;
 use App\Validator\ValidPartnerTypeValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -18,7 +19,7 @@ class ValidPartnerTypeValidatorTest extends ConstraintValidatorTestCase
         return new ValidPartnerTypeValidator();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('providePartnerType')]
+    #[DataProvider('providePartnerType')]
     public function testPartnerType(PartnerType|string $type, bool $isTypeValid, ?string $message = null): void
     {
         $constraint = new ValidPartnerType();

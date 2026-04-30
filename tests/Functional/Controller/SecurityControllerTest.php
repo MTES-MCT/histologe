@@ -9,6 +9,7 @@ use App\Security\User\SignalementUser;
 use App\Tests\ApiHelper;
 use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -91,7 +92,7 @@ class SecurityControllerTest extends WebTestCase
         $this->assertStringStartsWith('sl__', $token->getUser()->getUser()->getEmail());
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideJsonLogin')]
+    #[DataProvider('provideJsonLogin')]
     public function testJsonLogin(?int $status = null, ?string $email = null, ?string $password = null): void
     {
         self::ensureKernelShutdown();

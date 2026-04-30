@@ -13,6 +13,7 @@ use App\Repository\SignalementRepository;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class QualificationServiceTest extends KernelTestCase
@@ -36,7 +37,11 @@ class QualificationServiceTest extends KernelTestCase
         $this->signalementQualificationUpdater = $container->get(SignalementQualificationUpdater::class);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideScoreAndCriticite')]
+    /**
+     * @param array<string>        $listCriticites
+     * @param array<Qualification> $qualificationsToCheck
+     */
+    #[DataProvider('provideScoreAndCriticite')]
     public function testInitQualification(int $score, array $listCriticites, array $qualificationsToCheck): void
     {
         /** @var SignalementRepository $signalementRepository */
@@ -104,7 +109,12 @@ class QualificationServiceTest extends KernelTestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideScoreAndDesordresPrecisions')]
+    /**
+     * @param array<string>              $listDesordrePrecision
+     * @param array<Qualification>       $qualificationsToCheck
+     * @param array<QualificationStatus> $qualificationsStatusToCheck
+     */
+    #[DataProvider('provideScoreAndDesordresPrecisions')]
     public function testInitQualificationNewSignalements(
         int $score,
         array $listDesordrePrecision,

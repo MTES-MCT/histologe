@@ -9,6 +9,7 @@ use App\Repository\PartnerRepository;
 use App\Service\Security\PartnerAuthorizedResolver;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -128,7 +129,7 @@ class PartnerAuthorizedResolverTest extends KernelTestCase
         $this->assertFalse($this->partnerAuthorizedResolver->hasPermissionOnPartner($user, $partnerKO));
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideUsersWithApiRole')]
+    #[DataProvider('provideUsersWithApiRole')]
     public function testResolveBy(string $email, int $countExpectedPartner): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);

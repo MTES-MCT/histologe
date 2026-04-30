@@ -3,13 +3,14 @@
 namespace App\Tests;
 
 use App\Repository\UserRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouterInterface;
 
 class SmokeTest extends WebTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutes')]
+    #[DataProvider('provideRoutes')]
     public function testPageSuccessfullyRespondWithoutError500WithAnonymousUser(string $path, int $statusCode): void
     {
         self::ensureKernelShutdown();
@@ -23,7 +24,7 @@ class SmokeTest extends WebTestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutes')]
+    #[DataProvider('provideRoutes')]
     public function testPageSuccessfullyRespondWithoutError500WithAdminTerritoire(string $path, int $statusCode): void
     {
         /** @var UserRepository $userRepository */
@@ -41,7 +42,7 @@ class SmokeTest extends WebTestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutes')]
+    #[DataProvider('provideRoutes')]
     public function testPageSuccessfullyRespondWithoutError500WithUtilisateurPartenaire(string $path, int $statusCode): void
     {
         /** @var UserRepository $userRepository */
@@ -59,7 +60,7 @@ class SmokeTest extends WebTestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutes')]
+    #[DataProvider('provideRoutes')]
     public function testPageSuccessfullyRespondWithoutError500WithSuperAdmin(string $path, int $statusCode): void
     {
         /** @var UserRepository $userRepository */

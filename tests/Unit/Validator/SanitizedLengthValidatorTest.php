@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Validator;
 
 use App\Validator\SanitizedLength;
 use App\Validator\SanitizedLengthValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -17,7 +18,7 @@ class SanitizedLengthValidatorTest extends ConstraintValidatorTestCase
         return new SanitizedLengthValidator();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidValues')]
+    #[DataProvider('provideValidValues')]
     public function testValueIsValid(mixed $value): void
     {
         $constraint = new SanitizedLength(10, 'Text too short.');
@@ -25,7 +26,7 @@ class SanitizedLengthValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidValues')]
+    #[DataProvider('provideInvalidValues')]
     public function testSanitizedTextTooShort(string $value): void
     {
         $constraint = new SanitizedLength(10, 'Text too short.');

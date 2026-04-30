@@ -3,11 +3,12 @@
 namespace App\Tests\Unit\Utils\Address;
 
 use App\Utils\Address\EtageParser;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class EtageParserTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideEtage')]
+    #[DataProvider('provideEtage')]
     public function testEtageParser(?string $currentEtageValue, ?int $etageParsed): void
     {
         $this->assertEquals($etageParsed, EtageParser::parse($currentEtageValue));

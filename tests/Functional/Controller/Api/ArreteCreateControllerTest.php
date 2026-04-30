@@ -8,6 +8,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Tests\ApiHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +33,10 @@ class ArreteCreateControllerTest extends WebTestCase
         $this->client->loginUser($user, 'api');
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('providePayloadSuccess')]
+    /**
+     * @param array<mixed> $payload
+     */
+    #[DataProvider('providePayloadSuccess')]
     public function testCreateArreteSuccess(string $type, array $payload): void
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
@@ -75,7 +79,10 @@ class ArreteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('providePayloadFailure')]
+    /**
+     * @param array<mixed> $payload
+     */
+    #[DataProvider('providePayloadFailure')]
     public function testCreateArreteFailed(array $payload): void
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
@@ -99,7 +106,7 @@ class ArreteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataFailure403')]
+    #[DataProvider('provideDataFailure403')]
     public function testCreateArretesWithErrors(string $signalementUuid, string $partnerName, string $errorMessage, bool $removeVisiteCompetence = false): void
     {
         $partner = static::getContainer()->get(PartnerRepository::class)->findOneBy(['nom' => $partnerName]);

@@ -8,6 +8,7 @@ use App\Repository\SignalementRepository;
 use App\Service\Files\ImageManipulationHandler;
 use App\Service\UploadHandlerService;
 use App\Tests\ApiHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -132,7 +133,7 @@ class SignalementFileUploadControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideErrorInput')]
+    #[DataProvider('provideErrorInput')]
     public function testFileUploadWithBadRequest(string $uuid, int $codeHttpStatus): void
     {
         $this->postRequest($uuid, '', []);

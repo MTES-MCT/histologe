@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Utils;
 
 use App\Utils\DateHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class DateHelperTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDates')]
+    #[DataProvider('provideDates')]
     public function testIsValidDate(?string $date, string $format, bool $expected): void
     {
         $result = DateHelper::isValidDate($date, $format);

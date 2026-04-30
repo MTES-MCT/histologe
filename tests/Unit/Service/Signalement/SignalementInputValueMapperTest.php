@@ -3,11 +3,12 @@
 namespace App\Tests\Unit\Service\Signalement;
 
 use App\Service\Signalement\SignalementInputValueMapper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class SignalementInputValueMapperTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInputValue')]
+    #[DataProvider('provideInputValue')]
     public function testMap(?string $inputValue, bool|string|null $mappedInputValue): void
     {
         $this->assertEquals($mappedInputValue, SignalementInputValueMapper::map($inputValue));

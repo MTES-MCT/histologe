@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Service\TimezoneProvider;
 use App\Tests\SessionHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -13,7 +14,7 @@ class TimezoneProviderTest extends KernelTestCase
 {
     use SessionHelper;
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideTimezones')]
+    #[DataProvider('provideTimezones')]
     public function testGetTimezoneFrom(string $userEmail, string $timezone): void
     {
         static::bootKernel();

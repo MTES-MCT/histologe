@@ -20,6 +20,7 @@ use App\Repository\SuiviRepository;
 use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,7 +59,7 @@ class SignalementControllerTest extends WebTestCase
         yield 'SERVICE_SECOURS' => [ProfileDeclarant::SERVICE_SECOURS];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideStatusSignalement')]
+    #[DataProvider('provideStatusSignalement')]
     public function testDisplaySuiviSignalement(string $status): void
     {
         self::ensureKernelShutdown();
@@ -295,7 +296,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideStatusSignalement')]
+    #[DataProvider('provideStatusSignalement')]
     public function testPostUsagerResponse(string $status): void
     {
         self::ensureKernelShutdown();
@@ -528,7 +529,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertNotEmpty($response['uuid']);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideSignalementRequestPayload')]
+    #[DataProvider('provideSignalementRequestPayload')]
     public function testCompleteSignalementDraft(string $path, string $uuidSignalement, int $countEmailSent): void
     {
         self::ensureKernelShutdown();
@@ -634,7 +635,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideSignalementDraftUuid')]
+    #[DataProvider('provideSignalementDraftUuid')]
     public function testGetSignalementDraft(string $uuid, string $step): void
     {
         self::ensureKernelShutdown();

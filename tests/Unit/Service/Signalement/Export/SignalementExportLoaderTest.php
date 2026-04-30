@@ -8,6 +8,7 @@ use App\Manager\SignalementManager;
 use App\Service\Signalement\Export\SignalementExportLoader;
 use App\Tests\UserHelper;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -15,7 +16,7 @@ class SignalementExportLoaderTest extends TestCase
 {
     use UserHelper;
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideFileFormat')]
+    #[DataProvider('provideFileFormat')]
     public function testLoad(string $formatExtension, string $formatCell): void
     {
         /** @var MockObject&SignalementManager */

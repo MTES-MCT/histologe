@@ -13,6 +13,7 @@ use App\Service\Security\PartnerAuthorizedResolver;
 use App\Tests\SessionHelper;
 use Faker\Factory;
 use Faker\Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -173,7 +174,7 @@ class PartnerControllerTest extends WebTestCase
         }
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideAgentEmailToAddOnPartner')]
+    #[DataProvider('provideAgentEmailToAddOnPartner')]
     public function testAddNewAgentToPartner(string $email, string $expected): void
     {
         /** @var Partner $partner */
@@ -226,7 +227,7 @@ class PartnerControllerTest extends WebTestCase
         yield 'Email ok to multi territories' => ['user-44-02@signal-logement.fr', 'Ce compte agent existe déjà dans :'];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideMultiTerAgentEmailToAddOnPartner')]
+    #[DataProvider('provideMultiTerAgentEmailToAddOnPartner')]
     public function testAddExistingAgentToPartner(string $email, string $expected): void
     {
         /** @var Partner $partner */
@@ -300,7 +301,7 @@ class PartnerControllerTest extends WebTestCase
         $this->assertContains('ROLE_ADMIN_TERRITORY', $partnerUser->getRoles());
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideAgentEmailToEdit')]
+    #[DataProvider('provideAgentEmailToEdit')]
     public function testEditUserOfPartner(string $email, string $expected, int $nbEmailSent): void
     {
         /** @var User $partnerUser */

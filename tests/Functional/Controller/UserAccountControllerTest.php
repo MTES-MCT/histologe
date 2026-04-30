@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller;
 
 use App\Repository\UserRepository;
 use Faker\Factory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -93,7 +94,7 @@ class UserAccountControllerTest extends WebTestCase
         );
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidPassword')]
+    #[DataProvider('provideInvalidPassword')]
     public function testActivationUserFormSubmitWithInvalidPassword(string $expectedResult, string $password): void
     {
         self::ensureKernelShutdown();

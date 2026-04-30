@@ -3,11 +3,12 @@
 namespace App\Tests\Unit\Entity;
 
 use App\Entity\Commune;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class CommuneTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideCommune')]
+    #[DataProvider('provideCommune')]
     public function testCommunes(string $nomFromDatabase, string $nomCleaned): void
     {
         $commune = (new Commune())->setNom($nomFromDatabase);

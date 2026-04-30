@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Validator;
 
 use App\Validator\InseeToInclude;
 use App\Validator\InseeToIncludeValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -19,7 +20,7 @@ class InseeToIncludeValidatorTest extends ConstraintValidatorTestCase
         return new InseeToIncludeValidator();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideValues')]
+    #[DataProvider('provideValues')]
     public function testValues(?string $insee, bool $isValid, ?string $message = null): void
     {
         $constraint = new InseeToInclude();

@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Repository\UserApiPermissionRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -12,7 +13,10 @@ class UserApiPermissionControllerTest extends WebTestCase
 {
     use SessionHelper;
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsUserApiList')]
+    /**
+     * @param array<mixed> $params
+     */
+    #[DataProvider('provideParamsUserApiList')]
     public function testIndex(array $params, int $nb): void
     {
         self::ensureKernelShutdown();

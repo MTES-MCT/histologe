@@ -10,13 +10,14 @@ use App\Event\InterventionUpdatedByEsaboraEvent;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class InterventionDescriptionGeneratorTest extends TestCase
 {
     use FixturesHelper;
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideVisiteIntervention')]
+    #[DataProvider('provideVisiteIntervention')]
     public function testVisiteDescriptionOnInterventionCreated(
         Intervention $intervention,
         string $label,

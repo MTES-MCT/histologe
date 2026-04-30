@@ -12,6 +12,7 @@ use App\Repository\SuiviRepository;
 use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,7 +50,7 @@ class SignalementEditControllerTest extends WebTestCase
         yield 'SERVICE_SECOURS' => [ProfileDeclarant::SERVICE_SECOURS];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideStatusSignalement')]
+    #[DataProvider('provideStatusSignalement')]
     public function testDisplaySuiviSignalementCompleteByStatus(string $status): void
     {
         self::ensureKernelShutdown();
@@ -86,7 +87,7 @@ class SignalementEditControllerTest extends WebTestCase
         }
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideProfileDeclarant')]
+    #[DataProvider('provideProfileDeclarant')]
     public function testDisplaySuiviSignalementCompleteByProfile(ProfileDeclarant $profile): void
     {
         self::ensureKernelShutdown();

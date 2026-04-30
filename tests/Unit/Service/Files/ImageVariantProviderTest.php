@@ -6,6 +6,7 @@ use App\Service\Files\ImageManipulationHandler;
 use App\Service\Files\ImageVariantProvider;
 use App\Service\Files\TmpFileWriter;
 use League\Flysystem\FilesystemOperator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -47,7 +48,7 @@ class ImageVariantProviderTest extends KernelTestCase
         $this->filesystem = new Filesystem();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideVariants')]
+    #[DataProvider('provideVariants')]
     public function testGetFileVariantDownloadsFromBucketAndWritesToTmp(?string $variant, string $expectedSuffix): void
     {
         $original = '2026/01/mon-super-fichier.png';

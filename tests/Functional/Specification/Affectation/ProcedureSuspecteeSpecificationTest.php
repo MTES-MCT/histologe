@@ -8,11 +8,16 @@ use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Specification\Affectation\ProcedureSuspecteeSpecification;
 use App\Specification\Context\PartnerSignalementContext;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ProcedureSuspecteeSpecificationTest extends KernelTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalement')]
+    /**
+     * @param ?array<Qualification> $proceduresSuspectees
+     * @param array<string>         $qualificationsSignalement
+     */
+    #[DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(?array $proceduresSuspectees, array $qualificationsSignalement, bool $isSatisfied): void
     {
         $partner = new Partner();

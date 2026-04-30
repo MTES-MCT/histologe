@@ -3,11 +3,12 @@
 namespace App\Tests\Unit\Utils;
 
 use App\Utils\TrimHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class TrimHelperTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function testTrimHelper(mixed $dataIn, mixed $dataOut): void
     {
         $this->assertEquals($dataOut, TrimHelper::safeTrim($dataIn));

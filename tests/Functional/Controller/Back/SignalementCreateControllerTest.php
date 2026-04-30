@@ -11,6 +11,7 @@ use App\Repository\SignalementUsagerRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -139,7 +140,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals(44, $signalements[1]->getTerritory()->getZip());
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideCanEditSignalementData')]
+    #[DataProvider('provideCanEditSignalementData')]
     public function testCanEditSignalement(string $userEmail, string $signalementUuid, int $expectedStatusCode): void
     {
         $user = $this->userRepository->findOneBy(['email' => $userEmail]);
@@ -408,7 +409,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
-        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']); // @phpstan-ignore-line
+        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
 
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertCount(1, $signalement->getSuivis());
@@ -448,7 +449,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('becam@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
         $this->assertNull($signalementUsager->getDeclarant());
         $this->assertTrue($response['redirect']);
-        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']); // @phpstan-ignore-line
+        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
 
         $this->assertNull($signalement->getInseeOccupant());
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
@@ -478,7 +479,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
-        $this->assertStringEndsWith($this->router->generate('back_signalement_drafts'), $response['url']); // @phpstan-ignore-line
+        $this->assertStringEndsWith($this->router->generate('back_signalement_drafts'), $response['url']);
 
         $this->assertNull($signalement->getInseeOccupant());
         $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
@@ -509,7 +510,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
-        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']); // @phpstan-ignore-line
+        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
 
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertCount(1, $signalement->getSuivis());
@@ -540,7 +541,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
-        $this->assertStringEndsWith($this->router->generate('back_signalement_drafts'), $response['url']); // @phpstan-ignore-line
+        $this->assertStringEndsWith($this->router->generate('back_signalement_drafts'), $response['url']);
 
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertCount(1, $signalement->getSuivis());

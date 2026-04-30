@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\EventListener;
 
 use App\Repository\UserRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -27,7 +28,10 @@ class MaintenanceListenerTest extends WebTestCase
         $this->assertSame('Maintenance en cours', $response['message']);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutes')]
+    /**
+     * @param array<mixed> $parameters
+     */
+    #[DataProvider('provideRoutes')]
     public function testMaintenanceRedirect(string $routeName, array $parameters = []): void
     {
         self::ensureKernelShutdown();

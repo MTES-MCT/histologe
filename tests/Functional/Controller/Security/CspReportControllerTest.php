@@ -2,13 +2,17 @@
 
 namespace App\Tests\Functional\Controller\Security;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class CspReportControllerTest extends WebTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideCspReports')]
+    /**
+     * @param array<string, mixed> $payload
+     */
+    #[DataProvider('provideCspReports')]
     public function testCspReportWithValidPayload(
         array $payload,
         bool $shouldReport = false,

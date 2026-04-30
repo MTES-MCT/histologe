@@ -9,6 +9,7 @@ use App\Security\Authenticator\CodeSuiviLoginAuthenticator;
 use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +31,11 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideSuccessfulAuthenticationCases')]
+    /**
+     * @param array<string> $requestData
+     * @param array<string> $expectedUserData
+     */
+    #[DataProvider('provideSuccessfulAuthenticationCases')]
     public function testAuthenticateSuccess(
         Signalement $signalement,
         array $requestData,

@@ -4,12 +4,16 @@ namespace App\Tests\Functional\Controller\Back;
 
 use App\Repository\UserRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
 class InterconnexionControllerTest extends WebTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsInterconnexionList')]
+    /**
+     * @param array<mixed> $params
+     */
+    #[DataProvider('provideParamsInterconnexionList')]
     public function testInterconnexionList(array $params): void
     {
         self::ensureKernelShutdown();

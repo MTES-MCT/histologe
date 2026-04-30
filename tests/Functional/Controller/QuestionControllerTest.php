@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -18,7 +19,7 @@ class QuestionControllerTest extends WebTestCase
         $this->router = static::getContainer()->get(RouterInterface::class);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideProfil')]
+    #[DataProvider('provideProfil')]
     public function testGetQuestionProfil(string $profil): void
     {
         $route = $this->router->generate('public_api_question_profile');

@@ -6,11 +6,12 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Specification\Affectation\ParcSpecification;
 use App\Specification\Context\PartnerSignalementContext;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ParcSpecificationTest extends KernelTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalement')]
+    #[DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(?bool $isLogementSocial, string $parcRule, bool $isSatisfied): void
     {
         $partner = new Partner();

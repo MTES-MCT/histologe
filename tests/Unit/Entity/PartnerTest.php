@@ -8,6 +8,7 @@ use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Tests\FixturesHelper;
 use Faker\Factory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
 
@@ -38,7 +39,7 @@ class PartnerTest extends KernelTestCase
         $this->assertEquals(0, $errors->count());
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataForTestPartnerWithEmail')]
+    #[DataProvider('provideDataForTestPartnerWithEmail')]
     public function testCreatePartnerNoValidWithEmailExistInTerritory(int $zip, int $countErrors): void
     {
         $entityManager = static::getContainer()->get('doctrine')->getManager();

@@ -4,13 +4,14 @@ namespace App\Tests\Unit\Entity;
 
 use App\Entity\Enum\PartnerType;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AffectationTest extends TestCase
 {
     use FixturesHelper;
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('providePartnerType')]
+    #[DataProvider('providePartnerType')]
     public function testIsSynchronizeWithEsabora(PartnerType $partnerType, bool $isSynchronized): void
     {
         $affectation = $this->getAffectation($partnerType, $isSynchronized);

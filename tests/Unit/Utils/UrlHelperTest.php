@@ -3,11 +3,15 @@
 namespace App\Tests\Unit\Utils;
 
 use App\Utils\UrlHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class UrlHelperTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataToQueryString')]
+    /**
+     * @param array<array<mixed>> $origin
+     */
+    #[DataProvider('provideDataToQueryString')]
     public function testArrayToQueryString(array $origin, string $result): void
     {
         $this->assertEquals(UrlHelper::arrayToQueryString($origin), $result);

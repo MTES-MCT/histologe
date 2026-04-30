@@ -16,6 +16,7 @@ use App\Service\Gouv\Rnb\Response\RnbBuilding;
 use App\Service\Gouv\Rnb\RnbService;
 use App\Service\MessageHelper;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -381,7 +382,7 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideSignalementToSetRnbId')]
+    #[DataProvider('provideSignalementToSetRnbId')]
     public function testSetRnbId(string $uuid, bool $isGeolocUpdated): void
     {
         $buildingData = json_decode((string) file_get_contents(__DIR__.'/../../../files/betagouv/get_api_rnb_buildings_response.json'), true);

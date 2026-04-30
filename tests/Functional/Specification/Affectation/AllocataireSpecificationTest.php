@@ -6,11 +6,12 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Specification\Affectation\AllocataireSpecification;
 use App\Specification\Context\PartnerSignalementContext;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class AllocataireSpecificationTest extends KernelTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalement')]
+    #[DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(?string $isAllocataire, string $allocataireRule, bool $isSatisfied): void
     {
         $partner = new Partner();

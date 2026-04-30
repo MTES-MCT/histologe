@@ -11,6 +11,7 @@ use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Tests\ApiHelper;
 use Doctrine\Common\Collections\Collection;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,7 +41,10 @@ class AffectationUpdateControllerTest extends WebTestCase
         $this->client->loginUser($user, 'api');
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideValidTransitionData')]
+    /**
+     * @param array<mixed> $payload
+     */
+    #[DataProvider('provideValidTransitionData')]
     public function testValidWorkflow(string $signalementUuid, array $payload, string $statut, int $mailSent): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => $signalementUuid]);
@@ -65,7 +69,10 @@ class AffectationUpdateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideUnvalidData')]
+    /**
+     * @param array<mixed> $payload
+     */
+    #[DataProvider('provideUnvalidData')]
     public function testInvalidWorkflow(string $signalementUuid, array $payload, string $errorMessage, int $httpCodeStatus): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => $signalementUuid]);

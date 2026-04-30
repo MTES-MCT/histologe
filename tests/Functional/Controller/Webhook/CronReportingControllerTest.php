@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller\Webhook;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -9,7 +10,7 @@ class CronReportingControllerTest extends WebTestCase
 {
     private const string ENDPOINT = '/webhook/cron-report-mail';
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideCronPayloads')]
+    #[DataProvider('provideCronPayloads')]
     public function testHandleSendEmail(array $payload, int $expectedStatusCode, bool $useCorrectToken, int $expectedEmailCount): void
     {
         self::ensureKernelShutdown();

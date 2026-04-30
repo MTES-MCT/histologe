@@ -3,11 +3,12 @@
 namespace App\Tests\Unit\Utils\Address;
 
 use App\Utils\Address\EscalierParser;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class EscalierParserTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideEscalier')]
+    #[DataProvider('provideEscalier')]
     public function testEscalierParser(?string $currentEscalierValue, ?string $EscalierParsed): void
     {
         $this->assertEquals($EscalierParsed, EscalierParser::parse($currentEscalierValue));

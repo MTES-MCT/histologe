@@ -8,6 +8,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Service\ListFilters\SearchNotification;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -20,7 +21,7 @@ class NotificationControllerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideAllNotificationOptions')]
+    #[DataProvider('provideAllNotificationOptions')]
     public function testAllNotifications(string $route, string $tokenName, string $tokenId, string $msgFlash): void
     {
         self::ensureKernelShutdown();
@@ -61,7 +62,7 @@ class NotificationControllerTest extends WebTestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideSelectedNotificationOptions')]
+    #[DataProvider('provideSelectedNotificationOptions')]
     public function testSelectedNotifications(string $route, string $tokenId, string $filter, string $msgFlash): void
     {
         self::ensureKernelShutdown();

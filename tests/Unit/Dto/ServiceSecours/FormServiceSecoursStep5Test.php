@@ -3,11 +3,12 @@
 namespace App\Tests\Unit\Dto\ServiceSecours;
 
 use App\Dto\ServiceSecours\FormServiceSecoursStep5;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class FormServiceSecoursStep5Test extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideHasDesordreAutreCases')]
+    #[DataProvider('provideHasDesordreAutreCases')]
     public function testHasDesordreAutre(array $slugs, bool $expected): void
     {
         $dto = new FormServiceSecoursStep5();

@@ -8,6 +8,7 @@ use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -21,7 +22,10 @@ class SignalementListControllerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideNewFilterSearch')]
+    /**
+     * @param array<string> $filter
+     */
+    #[DataProvider('provideNewFilterSearch')]
     public function testFilterSignalements(array $filter, int $results, string $email = 'admin-01@signal-logement.fr'): void
     {
         self::ensureKernelShutdown();
@@ -109,7 +113,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Partner 13-01 & 13-06 for agent Partenaire 13-05' => [['partenaires' => ['2', '7'], 'isImported' => 'oui'], 2, 'user-13-05@signal-logement.fr'];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideUserEmail')]
+    #[DataProvider('provideUserEmail')]
     public function testListSignalementSuccessfullyOrRedirectWithoutError500(string $email): void
     {
         self::ensureKernelShutdown();
@@ -186,7 +190,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertEquals(2, $content['pagination']['total_items']);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideLinkFilter')]
+    #[DataProvider('provideLinkFilter')]
     public function testLinkFilter(string $emailUser, string $filter): void
     {
         self::ensureKernelShutdown();
@@ -225,7 +229,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'PARTNER - Tous les signalements' => [$partnerUser, '?territoire_id=13'];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideUserEmail')]
+    #[DataProvider('provideUserEmail')]
     public function testListSignalementAsJson(string $email): void
     {
         self::ensureKernelShutdown();
@@ -262,7 +266,10 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Status Fermé on Territory 13' => [['territoire' => '13', 'isImported' => 'oui', 'status' => 'ferme'], 2];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideFilterSearchMultiTerritorAdminPartner')]
+    /**
+     * @param array<string> $filter
+     */
+    #[DataProvider('provideFilterSearchMultiTerritorAdminPartner')]
     public function testFilterSignalementsMultiTerritorAdminPartner(array $filter, int $results): void
     {
         self::ensureKernelShutdown();
@@ -282,7 +289,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertEquals($results, $result['pagination']['total_items'], (string) json_encode($result['list']));
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideUserEmail')]
+    #[DataProvider('provideUserEmail')]
     public function testTotalFilterByUser(string $email): void
     {
         self::ensureKernelShutdown();

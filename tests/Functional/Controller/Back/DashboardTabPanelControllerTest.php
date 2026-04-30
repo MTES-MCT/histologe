@@ -6,11 +6,12 @@ namespace App\Tests\Functional\Controller\Back;
 
 use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\TabBodyType;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DashboardTabPanelControllerTest extends WebTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideAuthorizedTabBodyType')]
+    #[DataProvider('provideAuthorizedTabBodyType')]
     public function testAccessGrantedForAuthorizedUsers(string $tabBodyType): void
     {
         self::ensureKernelShutdown();
@@ -25,7 +26,7 @@ class DashboardTabPanelControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideUnauthorizedTabBodyType')]
+    #[DataProvider('provideUnauthorizedTabBodyType')]
     public function testAccessDeniedForUnauthorizedUsers(string $tabBodyType): void
     {
         self::ensureKernelShutdown();

@@ -5,13 +5,18 @@ namespace App\Tests\Unit\Utils;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Tests\FixturesHelper;
 use App\Utils\DataPropertyArrayFilter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class DataPropertyArrayFilterTest extends TestCase
 {
     use FixturesHelper;
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    /**
+     * @param array<string> $prefixes
+     * @param array<string> $filteredDataExpected
+     */
+    #[DataProvider('provideData')]
     public function testFilterByPrefix(array $prefixes, array $filteredDataExpected): void
     {
         $data = json_decode(

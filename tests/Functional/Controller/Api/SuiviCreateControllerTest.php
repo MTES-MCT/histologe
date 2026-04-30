@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Tests\ApiHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -32,7 +33,7 @@ class SuiviCreateControllerTest extends WebTestCase
         $this->client->loginUser($user, 'api');
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function testCreateSuivi(string $signalementUuid, bool $notifyUsager): void
     {
         $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
@@ -82,7 +83,7 @@ class SuiviCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataFailure403')]
+    #[DataProvider('provideDataFailure403')]
     public function testCreateSuiviWithErrors(string $signalementUuid, string $partnerName, string $errorMessage, bool $removeVisiteCompetence = false): void
     {
         $partner = static::getContainer()->get(PartnerRepository::class)->findOneBy(['nom' => $partnerName]);

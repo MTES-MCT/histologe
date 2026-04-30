@@ -9,6 +9,7 @@ use App\Repository\TerritoryRepository;
 use App\Service\Signalement\SignalementAddressUpdater;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -81,7 +82,10 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         $commandTester->assertCommandIsSuccessful();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideTestCases')]
+    /**
+     * @param array<string, mixed> $option
+     */
+    #[DataProvider('provideTestCases')]
     public function testExecuteCommandWith(string $providerMethod, array $option): void
     {
         $signalementRepository = $this->createMock(SignalementRepository::class);

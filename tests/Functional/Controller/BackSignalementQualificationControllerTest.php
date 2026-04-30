@@ -9,13 +9,17 @@ use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class BackSignalementQualificationControllerTest extends WebTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataNDE')]
+    /**
+     * @param array<mixed> $payload
+     */
+    #[DataProvider('provideDataNDE')]
     public function testSubmitQualificationNDE(
         array $payload,
         int $superficie,

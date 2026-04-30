@@ -4,11 +4,12 @@ namespace App\Tests\Functional\Service\Statistics;
 
 use App\Repository\TerritoryRepository;
 use App\Service\Statistics\ListCommunesStatisticProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ListCommunesStatisticProviderTest extends KernelTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideCommunesWithArrondissements')]
+    #[DataProvider('provideCommunesWithArrondissements')]
     public function testGetData(string $zip, string $commune): void
     {
         self::bootKernel();

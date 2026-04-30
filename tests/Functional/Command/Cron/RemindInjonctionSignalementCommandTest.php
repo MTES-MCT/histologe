@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Command\Cron;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Clock\ClockInterface;
@@ -10,7 +11,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class RemindInjonctionSignalementCommandTest extends KernelTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideReminderSentData')]
+    #[DataProvider('provideReminderSentData')]
     public function testReminderSent(string $dateModifier, string $outputSuivi, string $outputReminderBailleurs, int $expectedEmailCount): void
     {
         putenv('APP=test');

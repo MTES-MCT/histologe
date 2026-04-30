@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -22,7 +23,7 @@ class CartographieControllerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideUserEmail')]
+    #[DataProvider('provideUserEmail')]
     public function testCartographieSuccessfullyOrRedirectWithoutError500(string $email): void
     {
         self::ensureKernelShutdown();
@@ -58,7 +59,10 @@ class CartographieControllerTest extends WebTestCase
         }
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideFilterSearch')]
+    /**
+     * @param string|array<string> $terms
+     */
+    #[DataProvider('provideFilterSearch')]
     public function testCartographieWithFilter(string $email, string $filter, string|array $terms): void
     {
         self::ensureKernelShutdown();

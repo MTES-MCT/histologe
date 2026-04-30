@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\User;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class UserGetMeControllerTest extends WebTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideUserEmailApi')]
+    #[DataProvider('provideUserEmailApi')]
     public function testUserGetMe(string $email, int $nbPartners): void
     {
         self::ensureKernelShutdown();

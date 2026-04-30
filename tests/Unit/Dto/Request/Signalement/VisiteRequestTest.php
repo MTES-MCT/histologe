@@ -3,12 +3,13 @@
 namespace App\Tests\Unit\Dto\Request\Signalement;
 
 use App\Dto\Request\Signalement\VisiteRequest;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class VisiteRequestTest extends KernelTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('visiteRequestDataProvider')]
+    #[DataProvider('visiteRequestDataProvider')]
     public function testDatesVisiteRequestDTO(
         string $date,
         string $time,

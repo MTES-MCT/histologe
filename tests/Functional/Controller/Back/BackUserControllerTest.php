@@ -3,12 +3,16 @@
 namespace App\Tests\Functional\Controller\Back;
 
 use App\Repository\UserRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
 class BackUserControllerTest extends WebTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsUserList')]
+    /**
+     * @param array<mixed> $params
+     */
+    #[DataProvider('provideParamsUserList')]
     public function testUserList(array $params, int $nb): void
     {
         self::ensureKernelShutdown();
@@ -44,7 +48,10 @@ class BackUserControllerTest extends WebTestCase
         yield 'Search with territory 13 and partnerType Ars' => [['territory' => 13, 'partnerType' => 'ARS'], 1];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideParamsUserExport')]
+    /**
+     * @param array<mixed> $params
+     */
+    #[DataProvider('provideParamsUserExport')]
     public function testUserExport(array $params, int $nb): void
     {
         self::ensureKernelShutdown();

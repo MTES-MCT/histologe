@@ -27,6 +27,7 @@ use App\Service\Signalement\ZipcodeProvider;
 use App\Tests\FixturesHelper;
 use App\Tests\KernelServiceHelperTrait;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SignalementBuilderTest extends KernelTestCase
@@ -450,7 +451,7 @@ class SignalementBuilderTest extends KernelTestCase
         yield 'empty - empty' => ['', '', null];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideAllocataireCases')]
+    #[DataProvider('provideAllocataireCases')]
     public function testResolveIsAllocataire(
         ?string $logementSocialAllocation,
         ?string $logementSocialCaisse,

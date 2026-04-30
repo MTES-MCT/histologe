@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller;
 
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -23,7 +24,7 @@ class BackStatistiquesControllerTest extends WebTestCase
         yield 'Partner' => ['back_statistiques', self::USER_PARTNER];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutesHomepage')]
+    #[DataProvider('provideRoutesHomepage')]
     public function testStatistiquesHomepage(string $route, string $email): void
     {
         self::ensureKernelShutdown();
@@ -94,7 +95,11 @@ class BackStatistiquesControllerTest extends WebTestCase
         ]];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRoutesStatistiquesDatas')]
+    /**
+     * @param array<mixed> $params
+     * @param array<mixed> $expectedResponses
+     */
+    #[DataProvider('provideRoutesStatistiquesDatas')]
     public function testStatistiquesDatas(string $route, array $params, string $email, array $expectedResponses): void
     {
         self::ensureKernelShutdown();

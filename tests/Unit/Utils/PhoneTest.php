@@ -3,11 +3,12 @@
 namespace App\Tests\Unit\Utils;
 
 use App\Utils\Phone;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class PhoneTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('providePhone')]
+    #[DataProvider('providePhone')]
     public function testFormatPhone(?string $phoneNumber, ?string $phoneFormatted, ?string $phoneNationalFormatted): void
     {
         $this->assertEquals($phoneFormatted, Phone::format($phoneNumber));

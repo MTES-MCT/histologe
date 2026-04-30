@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Service\Esabora;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Interconnection\Esabora\AffectationEsaboraPolicy;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class AffectationEsaboraPolicyTest extends KernelTestCase
@@ -17,14 +18,14 @@ class AffectationEsaboraPolicyTest extends KernelTestCase
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('providePartnerIds')]
+    #[DataProvider('providePartnerIds')]
     public function testHasUrlConflict(array $partnerIds, bool $result): void
     {
         $affectationEsaboraPolicy = new AffectationEsaboraPolicy($this->partnerRepository, true);
         $this->assertSame($result, $affectationEsaboraPolicy->hasUrlConflict($partnerIds));
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('providePartnerName')]
+    #[DataProvider('providePartnerName')]
     public function testCanBeAffected(string $partnerName, bool $result): void
     {
         /** @var SignalementRepository $signalementRepository */

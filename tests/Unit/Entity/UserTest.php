@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Entity;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -21,7 +22,7 @@ class UserTest extends KernelTestCase
         $this->assertEquals('DOE John', $user->getNomComplet());
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidPassword')]
+    #[DataProvider('provideInvalidPassword')]
     public function testPasswordValidationError(string $expectedResult, string $password): void
     {
         /** @var ValidatorInterface $validator */

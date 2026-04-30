@@ -13,6 +13,7 @@ use App\Repository\UserRepository;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -32,7 +33,7 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
         $this->entityManager = $entityManager;
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideSignalement')]
+    #[DataProvider('provideSignalement')]
     public function testBuildVisiteUpdated(string $reference, int $countMail): void
     {
         $eventDispatcher = new EventDispatcher();

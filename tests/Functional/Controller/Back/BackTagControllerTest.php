@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Repository\TagRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -95,7 +96,7 @@ class BackTagControllerTest extends WebTestCase
         $this->assertEquals(6, $total);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideTagDataForCreateForm')]
+    #[DataProvider('provideTagDataForCreateForm')]
     public function testCreateNewTag(
         string $tagLabel,
         string $tagTerritory,
@@ -125,7 +126,7 @@ class BackTagControllerTest extends WebTestCase
         }
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideTagDataForEditForm')]
+    #[DataProvider('provideTagDataForEditForm')]
     public function testEditNewTag(
         string $tagId,
         string $tagLabel,

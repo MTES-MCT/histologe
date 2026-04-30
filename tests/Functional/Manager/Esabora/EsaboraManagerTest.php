@@ -28,6 +28,7 @@ use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -82,7 +83,7 @@ class EsaboraManagerTest extends KernelTestCase
         $this->userSignalementSubscriptionManager = static::getContainer()->get(UserSignalementSubscriptionManager::class);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataForSynchronization')]
+    #[DataProvider('provideDataForSynchronization')]
     public function testAffectationSynchronizedWith(
         string $referenceSignalement,
         string $filename,

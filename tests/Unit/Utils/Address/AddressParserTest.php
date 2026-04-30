@@ -4,11 +4,12 @@ namespace App\Tests\Unit\Utils\Address;
 
 use App\Utils\Address\AddressParser;
 use App\Utils\Enum\ExtensionAdresse;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AddressParserTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideAdresse')]
+    #[DataProvider('provideAdresse')]
     public function testAdressParser(string $address, ?string $number, ?string $suffix, ?string $street): void
     {
         $result = AddressParser::parse($address);

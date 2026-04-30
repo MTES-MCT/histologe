@@ -10,6 +10,7 @@ use App\Entity\SignalementDraft;
 use App\Entity\SignalementQualification;
 use App\Repository\SignalementRepository;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SignalementTest extends KernelTestCase
@@ -59,7 +60,7 @@ class SignalementTest extends KernelTestCase
         $this->assertEquals(ProfileDeclarant::LOCATAIRE, $signalement->getProfileDeclarant());
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideProfile')]
+    #[DataProvider('provideProfile')]
     public function testSetProfileDeclarantFromDraft(ProfileDeclarant $profileDeclarant): void
     {
         $signalement = new Signalement();

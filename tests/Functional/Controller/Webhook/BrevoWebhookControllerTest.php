@@ -6,6 +6,7 @@ use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\EmailDeliveryIssueRepository;
 use App\Utils\Sanitizer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,7 +40,7 @@ class BrevoWebhookControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideWebhookTestData')]
+    #[DataProvider('provideWebhookTestData')]
     public function testWebhookHandling(
         string $remoteAddr,
         string $payload,
@@ -124,7 +125,10 @@ class BrevoWebhookControllerTest extends WebTestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideWebhookEventTestData')]
+    /**
+     * @param array<string, mixed>|null $expectedPayload
+     */
+    #[DataProvider('provideWebhookEventTestData')]
     public function testHandleWebhookWithEvent(string $event, string $email, bool $expectDeliveryIssue, ?array $expectedPayload): void
     {
         self::ensureKernelShutdown();

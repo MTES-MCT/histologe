@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Twig;
 
 use App\Twig\AppExtension;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class AppExtensionTest extends WebTestCase
@@ -12,7 +13,7 @@ class AppExtensionTest extends WebTestCase
     private const string TWIG_DATE_FORMAT_DEFAULT = 'F j, Y H:i';
     private const string EUROPE_PARIS_TIMEZONE = 'Europe/Paris';
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideData')]
+    #[DataProvider('provideData')]
     public function testCustomDateFiler(\DateTimeInterface|string $inputDate, string $expectedOutputDate, ?string $format = 'F j, Y H:i', ?string $timezone = null): void
     {
         self::bootKernel();
@@ -91,7 +92,7 @@ class AppExtensionTest extends WebTestCase
         ];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataPhone')]
+    #[DataProvider('provideDataPhone')]
     public function testFormatPhone(?string $inputPhone, ?string $expectedOutputPhone): void
     {
         self::bootKernel();
@@ -157,7 +158,7 @@ class AppExtensionTest extends WebTestCase
         $this->assertEqualsCanonicalizing($expectedFilters, $filterNames);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideBadgeClass')]
+    #[DataProvider('provideBadgeClass')]
     public function testGetBadgeClass(?int $days, string $expected): void
     {
         self::bootKernel();
@@ -178,7 +179,7 @@ class AppExtensionTest extends WebTestCase
         yield 'Less than 91 days' => [30, 'fr-badge--success'];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRelanceBadgeClass')]
+    #[DataProvider('provideRelanceBadgeClass')]
     public function testGetRelanceBadgeClass(int $count, string $expected): void
     {
         self::bootKernel();
@@ -198,7 +199,7 @@ class AppExtensionTest extends WebTestCase
         yield 'Zero relance' => [0, 'fr-badge--new'];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideHosts')]
+    #[DataProvider('provideHosts')]
     public function testExtractRootDomain(string $host, string $expected): void
     {
         self::bootKernel();
@@ -219,7 +220,7 @@ class AppExtensionTest extends WebTestCase
         yield 'production service-secours' => ['services-secours.signal-logement.beta.gouv.fr', 'services-secours.signal-logement.beta.gouv.fr'];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideAnswer')]
+    #[DataProvider('provideAnswer')]
     public function testFormatAnswer(string $answer, string $expected): void
     {
         self::bootKernel();

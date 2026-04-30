@@ -6,11 +6,15 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Specification\Affectation\PartnerExcludeSpecification;
 use App\Specification\Context\PartnerSignalementContext;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class PartnerExcludeSpecificationTest extends KernelTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalement')]
+    /**
+     * @param ?array<int> $partnerExcluded
+     */
+    #[DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(?array $partnerExcluded, bool $isSatisfied): void
     {
         $partner = new Partner();

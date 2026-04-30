@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Api;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Tests\ApiHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class SignalementListControllerTest extends WebTestCase
@@ -58,7 +59,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideGoodQueryParameters')]
+    #[DataProvider('provideGoodQueryParameters')]
     public function testGetSignalementListWithFilters(array $queryParameters, int $count): void
     {
         self::ensureKernelShutdown();
@@ -89,7 +90,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'codeInsee=2b002' => [['codeInsee' => '2b002'], 0];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataSignalementByUuid')]
+    #[DataProvider('provideDataSignalementByUuid')]
     public function testGetSignalementByUuid(string $email, string $uuid, int $nbAffectations, int $nbDesordres): void
     {
         self::ensureKernelShutdown();
@@ -116,7 +117,10 @@ class SignalementListControllerTest extends WebTestCase
         yield 'api-01 user with old signalement 2022-03' => ['api-01@signal-logement.fr', '00000000-0000-0000-2022-000000000003', 1, 3];
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideQueryParameters')]
+    /**
+     * @param array<string> $queryParameters
+     */
+    #[DataProvider('provideQueryParameters')]
     public function testGetSignalementListWithErrorsFilter(array $queryParameters, int $countErrors): void
     {
         self::ensureKernelShutdown();

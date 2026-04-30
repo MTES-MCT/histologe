@@ -6,6 +6,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Specification\Affectation\CodeInseeSpecification;
 use App\Specification\Context\PartnerSignalementContext;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class CodeInseeSpecificationTest extends KernelTestCase
@@ -13,7 +14,11 @@ class CodeInseeSpecificationTest extends KernelTestCase
     private const string INSEE_STMARS = '44179';
     private const string INSEE_CELLIER = '44028';
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalement')]
+    /**
+     * @param array<string>  $inseePartenaire
+     * @param ?array<string> $inseeToExcludeRule
+     */
+    #[DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(
         ?string $inseeSignalement,
         array $inseePartenaire,

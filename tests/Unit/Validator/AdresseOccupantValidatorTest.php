@@ -8,6 +8,7 @@ use App\Repository\TerritoryRepository;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Validator\AdresseOccupant;
 use App\Validator\AdresseOccupantValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -27,7 +28,7 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
         return new AdresseOccupantValidator($this->zipcodeProvider, $this->territoryRepository);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideInvalidTerritoryCases')]
+    #[DataProvider('provideInvalidTerritoryCases')]
     public function testItAddsViolationWhenTerritoryIsInvalid(
         bool $isInactiveTerritory,
         bool $hasTerritoryFromInsee,

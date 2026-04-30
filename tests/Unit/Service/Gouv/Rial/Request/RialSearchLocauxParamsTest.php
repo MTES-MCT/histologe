@@ -3,11 +3,12 @@
 namespace App\Tests\Unit\Service\Gouv\Rial\Request;
 
 use App\Service\Gouv\Rial\Request\RialSearchLocauxParams;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class RialSearchLocauxParamsTest extends TestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataParsed')]
+    #[DataProvider('provideDataParsed')]
     public function testParseBanIdSuccess(
         string $banId,
         string $codeDepartementInsee,
@@ -24,7 +25,7 @@ class RialSearchLocauxParamsTest extends TestCase
         $this->assertEquals($indiceRepetitionNumeroVoirie, $result['indiceRepetitionNumeroVoirie']);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataNull')]
+    #[DataProvider('provideDataNull')]
     public function testParseBanIdFail(string $banId): void
     {
         $result = RialSearchLocauxParams::getFromBanId($banId);

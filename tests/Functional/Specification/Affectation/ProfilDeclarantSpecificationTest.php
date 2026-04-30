@@ -8,11 +8,12 @@ use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Specification\Affectation\ProfilDeclarantSpecification;
 use App\Specification\Context\PartnerSignalementContext;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ProfilDeclarantSpecificationTest extends KernelTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideRulesAndSignalement')]
+    #[DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(ProfileDeclarant $profilSignalement, string $profilRule, bool $isSatisfied): void
     {
         $partner = new Partner();

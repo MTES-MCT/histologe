@@ -3,11 +3,12 @@
 namespace App\Tests\Unit\Validator;
 
 use App\Validator\EmailFormatValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class EmailFormatValidatorTest extends KernelTestCase
 {
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideEmail')]
+    #[DataProvider('provideEmail')]
     public function testEmailsFormat(string $email, bool $isEmailValid): void
     {
         $this->assertEquals($isEmailValid, EmailFormatValidator::validate($email));

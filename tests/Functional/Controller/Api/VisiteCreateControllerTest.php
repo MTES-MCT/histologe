@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Tests\ApiHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -33,7 +34,10 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->client->loginUser($user, 'api');
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataForNotification')]
+    /**
+     * @param array<mixed> $payload
+     */
+    #[DataProvider('provideDataForNotification')]
     public function testCreateVisiteWithNotification(string $type, array $payload, int $nbMailSent): void
     {
         $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::UUID_SIGNALEMENT]);
@@ -79,7 +83,10 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataForPendingVisite')]
+    /**
+     * @param array<mixed> $payload
+     */
+    #[DataProvider('provideDataForPendingVisite')]
     public function testCreateVisiteWithPendingVisiteWithErrors(array $payload): void
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
@@ -107,7 +114,10 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataForPendingVisite')]
+    /**
+     * @param array<mixed> $payload
+     */
+    #[DataProvider('provideDataForPendingVisite')]
     public function testCreateVisiteWithPendingVisite(array $payload): void
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
@@ -135,7 +145,11 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataErrorPayload')]
+    /**
+     * @param array<mixed>  $payload
+     * @param array<string> $fieldsErrors
+     */
+    #[DataProvider('provideDataErrorPayload')]
     public function testCreateVisiteWithPayloadErrors(array $payload, array $fieldsErrors, string $errorMessage): void
     {
         $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::UUID_SIGNALEMENT]);
@@ -161,7 +175,7 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    #[\PHPUnit\Framework\Attributes\DataProvider('provideDataFailure403')]
+    #[DataProvider('provideDataFailure403')]
     public function testCreateVisiteWithErrors(string $signalementUuid, string $partnerName, string $errorMessage): void
     {
         $partner = static::getContainer()->get(PartnerRepository::class)->findOneBy(['nom' => $partnerName]);
