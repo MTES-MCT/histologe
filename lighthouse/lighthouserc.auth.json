@@ -6,8 +6,11 @@
                 "http://localhost:8080/bo"
             ],
             "puppeteerScript": "./lighthouse/auth.js",
+            "puppeteerLaunchOptions": {
+                "args": ["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"]
+            },
             "settings": {
-                "chromeFlags": "--no-sandbox --disable-dev-shm-usage --disable-gpu"
+                "output": ["html", "json"]
             }
         },
         "assert": {
