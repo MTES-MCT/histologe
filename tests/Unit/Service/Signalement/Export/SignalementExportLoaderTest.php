@@ -8,6 +8,7 @@ use App\Manager\SignalementManager;
 use App\Service\Signalement\Export\SignalementExportLoader;
 use App\Tests\UserHelper;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -15,7 +16,7 @@ class SignalementExportLoaderTest extends TestCase
 {
     use UserHelper;
 
-    /** @dataProvider provideFileFormat */
+    #[DataProvider('provideFileFormat')]
     public function testLoad(string $formatExtension, string $formatCell): void
     {
         /** @var MockObject&SignalementManager */
@@ -57,7 +58,7 @@ class SignalementExportLoaderTest extends TestCase
         }
     }
 
-    protected function provideFileFormat(): \Generator
+    public static function provideFileFormat(): \Generator
     {
         yield 'export with xlsx' => ['xlsx', NumberFormat::FORMAT_DATE_DDMMYYYY];
         yield 'export with csv' => ['csv', 'General'];

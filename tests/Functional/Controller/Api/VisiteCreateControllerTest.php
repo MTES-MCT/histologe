@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Tests\ApiHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -22,24 +23,24 @@ class VisiteCreateControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
 
-        $this->router = self::getContainer()->get('router');
+        $this->router = static::getContainer()->get('router');
 
         $this->client->loginUser($user, 'api');
     }
 
     /**
-     * @dataProvider provideDataForNotification
-     *
      * @param array<mixed> $payload
      */
+    #[DataProvider('provideDataForNotification')]
     public function testCreateVisiteWithNotification(string $type, array $payload, int $nbMailSent): void
     {
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::UUID_SIGNALEMENT]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::UUID_SIGNALEMENT]);
         $firstFile = $signalement->getFiles()->first();
         $lastFile = $signalement->getFiles()->last();
         if (!$firstFile) {
@@ -83,14 +84,13 @@ class VisiteCreateControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideDataForPendingVisite
-     *
      * @param array<mixed> $payload
      */
+    #[DataProvider('provideDataForPendingVisite')]
     public function testCreateVisiteWithPendingVisiteWithErrors(array $payload): void
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
 
         $affectation = $signalement->getAffectations()->first();
         if (!$affectation) {
@@ -115,14 +115,13 @@ class VisiteCreateControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideDataForPendingVisite
-     *
      * @param array<mixed> $payload
      */
+    #[DataProvider('provideDataForPendingVisite')]
     public function testCreateVisiteWithPendingVisite(array $payload): void
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
 
         $affectation = $signalement->getAffectations()->first();
         if (!$affectation) {
@@ -147,11 +146,10 @@ class VisiteCreateControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideDataErrorPayload
-     *
      * @param array<mixed>  $payload
      * @param array<string> $fieldsErrors
      */
+    #[DataProvider('provideDataErrorPayload')]
     public function testCreateVisiteWithPayloadErrors(array $payload, array $fieldsErrors, string $errorMessage): void
     {
         $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => self::UUID_SIGNALEMENT]);
@@ -177,12 +175,10 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /**
-     * @dataProvider provideDataFailure403
-     */
+    #[DataProvider('provideDataFailure403')]
     public function testCreateVisiteWithErrors(string $signalementUuid, string $partnerName, string $errorMessage): void
     {
-        $partner = self::getContainer()->get(PartnerRepository::class)->findOneBy(['nom' => $partnerName]);
+        $partner = static::getContainer()->get(PartnerRepository::class)->findOneBy(['nom' => $partnerName]);
         $payload = [
             'date' => '2052-03-11',
             'time' => '10:00',
@@ -203,7 +199,7 @@ class VisiteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    public function provideDataFailure403(): \Generator
+    public static function provideDataFailure403(): \Generator
     {
         yield 'test create visite with new affectation' => ['00000000-0000-0000-2022-000000000001', 'Partenaire 13-01', 'L\'affectation doit être au statut EN_COURS'];
         yield 'test create visite with closed signalement' => ['00000000-0000-0000-2022-000000000003', 'Partenaire 13-01', 'Le signalement n\'est pas actif.'];
@@ -211,7 +207,7 @@ class VisiteCreateControllerTest extends WebTestCase
         yield 'test create visite with partner with no competence visite' => ['00000000-0000-0000-2023-000000000026', 'Partenaire 13-03', 'Le partenaire n\'a pas la compétence visite.'];
     }
 
-    public function provideDataForNotification(): \Generator
+    public static function provideDataForNotification(): \Generator
     {
         yield 'test create visite confirmed with usager notification' => [
             'visite_confirmed',
@@ -259,7 +255,7 @@ class VisiteCreateControllerTest extends WebTestCase
         ];
     }
 
-    public function provideDataForPendingVisite(): \Generator
+    public static function provideDataForPendingVisite(): \Generator
     {
         yield 'test create visite planned' => [
             [
@@ -284,7 +280,7 @@ class VisiteCreateControllerTest extends WebTestCase
         ];
     }
 
-    public function provideDataErrorPayload(): \Generator
+    public static function provideDataErrorPayload(): \Generator
     {
         yield 'test create visite confirmed with missing data' => [
             [

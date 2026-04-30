@@ -56,7 +56,7 @@ class InterventionManagerTest extends KernelTestCase
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->logger = static::getContainer()->get(LoggerInterface::class);
-        $this->htmlSanitizer = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->htmlSanitizer = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
         $this->interventionManager = new InterventionManager(
             $this->managerRegistry,

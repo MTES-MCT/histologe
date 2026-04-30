@@ -25,8 +25,9 @@ class SignalementVisitesControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
-        $this->router = self::getContainer()->get(RouterInterface::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);

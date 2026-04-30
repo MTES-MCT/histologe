@@ -9,6 +9,7 @@ use App\Security\Authenticator\CodeSuiviLoginAuthenticator;
 use App\Security\Provider\SignalementUserProvider;
 use App\Security\User\SignalementUser;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,11 +32,10 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
     }
 
     /**
-     * @dataProvider provideSuccessfulAuthenticationCases
-     *
      * @param array<string> $requestData
      * @param array<string> $expectedUserData
      */
+    #[DataProvider('provideSuccessfulAuthenticationCases')]
     public function testAuthenticateSuccess(
         Signalement $signalement,
         array $requestData,
@@ -60,7 +60,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
     public static function provideSuccessfulAuthenticationCases(): \Generator
     {
         yield 'occupant' => [
-            (new self())->getMockSignalement(
+            self::createMockSignalement(
                 ProfileDeclarant::LOCATAIRE,
                 'Martin',
                 'Luc',
@@ -84,7 +84,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         ];
 
         yield 'declarant' => [
-            (new self())->getMockSignalement(
+            self::createMockSignalement(
                 ProfileDeclarant::TIERS_PARTICULIER,
                 'Durand',
                 'Nadia',
@@ -107,7 +107,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
             ],
         ];
         yield 'occupant accentué minuscule' => [
-            (new self())->getMockSignalement(
+            self::createMockSignalement(
                 ProfileDeclarant::LOCATAIRE,
                 'Morin',
                 'Édith',
@@ -130,7 +130,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
             ],
         ];
         yield 'occupant accentué majuscule' => [
-            (new self())->getMockSignalement(
+            self::createMockSignalement(
                 ProfileDeclarant::LOCATAIRE,
                 'Morin',
                 'Édith',
@@ -153,7 +153,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
             ],
         ];
         yield 'occupant accentué sans accentuation' => [
-            (new self())->getMockSignalement(
+            self::createMockSignalement(
                 ProfileDeclarant::LOCATAIRE,
                 'Morin',
                 'Édith',
@@ -247,7 +247,7 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         $authenticator->authenticate($request);
     }
 
-    private function getMockSignalement(
+    private static function createMockSignalement(
         ProfileDeclarant $profileDeclarant,
         string $nom,
         string $prenom,
@@ -255,13 +255,23 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
         string $codeSuivi,
         string $email,
     ): Signalement {
-        return $this->getSignalement(
-            profileDeclarant: $profileDeclarant,
-            nom: $nom,
-            prenom: $prenom,
-            codePostal: $codePostal,
-            codeSuivi: $codeSuivi,
-            email: $email,
-        );
+        $signalement = (new Signalement())
+           ->setNomOccupant($nom)
+           ->setPrenomOccupant($prenom)
+           ->setCpOccupant($codePostal)
+           ->setCodeSuivi($codeSuivi)
+           ->setMailOccupant($email)
+           ->setProfileDeclarant($profileDeclarant);
+
+        if (ProfileDeclarant::TIERS_PARTICULIER === $profileDeclarant
+                || ProfileDeclarant::TIERS_PRO === $profileDeclarant
+                || ProfileDeclarant::BAILLEUR === $profileDeclarant
+                || ProfileDeclarant::SERVICE_SECOURS === $profileDeclarant
+        ) {
+            $signalement->setNomDeclarant($nom);
+            $signalement->setPrenomDeclarant($prenom);
+        }
+
+        return $signalement;
     }
 }

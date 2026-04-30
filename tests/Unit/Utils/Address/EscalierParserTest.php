@@ -3,19 +3,18 @@
 namespace App\Tests\Unit\Utils\Address;
 
 use App\Utils\Address\EscalierParser;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class EscalierParserTest extends TestCase
 {
-    /**
-     * @dataProvider provideEscalier
-     */
+    #[DataProvider('provideEscalier')]
     public function testEscalierParser(?string $currentEscalierValue, ?string $EscalierParsed): void
     {
         $this->assertEquals($EscalierParsed, EscalierParser::parse($currentEscalierValue));
     }
 
-    public function provideEscalier(): \Generator
+    public static function provideEscalier(): \Generator
     {
         yield '-2' => ['-2', '-2'];
         yield '0' => ['0', '0'];

@@ -8,6 +8,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Tests\ApiHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,25 +22,25 @@ class ArreteCreateControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
 
-        $this->router = self::getContainer()->get('router');
+        $this->router = static::getContainer()->get('router');
 
         $this->client->loginUser($user, 'api');
     }
 
     /**
-     * @dataProvider providePayloadSuccess
-     *
      * @param array<mixed> $payload
      */
+    #[DataProvider('providePayloadSuccess')]
     public function testCreateArreteSuccess(string $type, array $payload): void
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
 
         $affectation = $signalement->getAffectations()->first();
         if (!$affectation) {
@@ -54,7 +55,7 @@ class ArreteCreateControllerTest extends WebTestCase
             server: ['CONTENT_TYPE' => 'application/json'],
             content: (string) json_encode($payload)
         );
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
 
         $suivi = $signalement->getSuivis()->last();
         if (!$suivi) {
@@ -68,7 +69,7 @@ class ArreteCreateControllerTest extends WebTestCase
             }
             $this->assertStringContainsString($value, $lastDescription);
         }
-        $notifs = self::getContainer()->get(NotificationRepository::class)->findBy([
+        $notifs = static::getContainer()->get(NotificationRepository::class)->findBy([
             'signalement' => $signalement,
             'type' => NotificationType::NOUVEAU_SUIVI,
         ]);
@@ -79,14 +80,13 @@ class ArreteCreateControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider providePayloadFailure
-     *
      * @param array<mixed> $payload
      */
+    #[DataProvider('providePayloadFailure')]
     public function testCreateArreteFailed(array $payload): void
     {
         $signalementUuid = '00000000-0000-0000-2022-000000000006';
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $signalementUuid]);
 
         $affectation = $signalement->getAffectations()->first();
         if (!$affectation) {
@@ -106,12 +106,10 @@ class ArreteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /**
-     * @dataProvider provideDataFailure403
-     */
+    #[DataProvider('provideDataFailure403')]
     public function testCreateArretesWithErrors(string $signalementUuid, string $partnerName, string $errorMessage, bool $removeVisiteCompetence = false): void
     {
-        $partner = self::getContainer()->get(PartnerRepository::class)->findOneBy(['nom' => $partnerName]);
+        $partner = static::getContainer()->get(PartnerRepository::class)->findOneBy(['nom' => $partnerName]);
         $payload = [
             'date' => '2002-03-11',
             'numero' => '2023/DD13/00664',
@@ -133,7 +131,7 @@ class ArreteCreateControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    public function provideDataFailure403(): \Generator
+    public static function provideDataFailure403(): \Generator
     {
         yield 'test create arrete with new affectation' => ['00000000-0000-0000-2022-000000000001', 'Partenaire 13-01', 'L\'affectation doit être au statut EN_COURS'];
         yield 'test create arrete with closed signalement' => ['00000000-0000-0000-2022-000000000003', 'Partenaire 13-01', 'Le signalement n\'est pas actif.'];
@@ -141,7 +139,7 @@ class ArreteCreateControllerTest extends WebTestCase
         yield 'test create arrete with partner with no competence visite' => ['00000000-0000-0000-2023-000000000026', 'Partenaire 13-03', 'Le partenaire n\'a pas la compétence visite.', true];
     }
 
-    public function providePayloadFailure(): \Generator
+    public static function providePayloadFailure(): \Generator
     {
         yield 'Wrong payload with future date' => [
             [
@@ -167,7 +165,7 @@ class ArreteCreateControllerTest extends WebTestCase
         ];
     }
 
-    public function providePayloadSuccess(): \Generator
+    public static function providePayloadSuccess(): \Generator
     {
         yield 'Payload arrêté' => [
             'arrete',

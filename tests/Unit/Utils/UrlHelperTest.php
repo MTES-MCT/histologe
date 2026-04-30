@@ -3,21 +3,21 @@
 namespace App\Tests\Unit\Utils;
 
 use App\Utils\UrlHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class UrlHelperTest extends TestCase
 {
     /**
-     * @dataProvider provideDataToQueryString
-     *
      * @param array<array<mixed>> $origin
      */
+    #[DataProvider('provideDataToQueryString')]
     public function testArrayToQueryString(array $origin, string $result): void
     {
         $this->assertEquals(UrlHelper::arrayToQueryString($origin), $result);
     }
 
-    public function provideDataToQueryString(): \Generator
+    public static function provideDataToQueryString(): \Generator
     {
         yield 'empty' => [[], ''];
         yield 'single' => [['searchTerms' => 'saint médard'], '?searchTerms=saint+m%C3%A9dard'];

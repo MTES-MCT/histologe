@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Utils;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Tests\FixturesHelper;
 use App\Utils\DataPropertyArrayFilter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class DataPropertyArrayFilterTest extends TestCase
@@ -12,11 +13,10 @@ class DataPropertyArrayFilterTest extends TestCase
     use FixturesHelper;
 
     /**
-     * @dataProvider provideData
-     *
      * @param array<string> $prefixes
      * @param array<string> $filteredDataExpected
      */
+    #[DataProvider('provideData')]
     public function testFilterByPrefix(array $prefixes, array $filteredDataExpected): void
     {
         $data = json_decode(
@@ -29,11 +29,15 @@ class DataPropertyArrayFilterTest extends TestCase
         $this->assertEquals($filteredDataExpected, $filteredData);
     }
 
-    public function provideData(): \Generator
+    public static function provideData(): \Generator
     {
+        $fixturesHelper = new class {
+            use FixturesHelper;
+        };
+
         yield 'Données Type composition' => [
             SignalementDraftRequest::PREFIX_PROPERTIES_TYPE_COMPOSITION,
-            $this->getLocataireTypeComposition(
+            $fixturesHelper->getLocataireTypeComposition(
                 withCompositionLogementNombrePersonnes: true,
                 withCompositionLogementSuperficie: true,
                 withDateEmmenagement: true
@@ -42,12 +46,12 @@ class DataPropertyArrayFilterTest extends TestCase
 
         yield 'Données Situation Foyer' => [
             SignalementDraftRequest::PREFIX_PROPERTIES_SITUATION_FOYER,
-            $this->getLocataireSituationFoyer(),
+            $fixturesHelper->getLocataireSituationFoyer(),
         ];
 
         yield 'Données Procedure' => [
             SignalementDraftRequest::PREFIX_PROPERTIES_INFORMATION_PROCEDURE,
-            $this->getLocataireInformationProcedure(
+            $fixturesHelper->getLocataireInformationProcedure(
                 withInfoProcedureBailleurPrevenu: true,
                 withInfoProcedureBailDate: true
             ),
@@ -55,7 +59,7 @@ class DataPropertyArrayFilterTest extends TestCase
 
         yield 'Données Information complémentaire' => [
             SignalementDraftRequest::PREFIX_PROPERTIES_INFORMATION_COMPLEMENTAIRE,
-            $this->getLocataireInformationComplementaire(withMontantLoyer: true),
+            $fixturesHelper->getLocataireInformationComplementaire(withMontantLoyer: true),
         ];
     }
 }

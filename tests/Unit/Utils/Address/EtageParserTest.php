@@ -3,19 +3,18 @@
 namespace App\Tests\Unit\Utils\Address;
 
 use App\Utils\Address\EtageParser;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class EtageParserTest extends TestCase
 {
-    /**
-     * @dataProvider provideEtage
-     */
+    #[DataProvider('provideEtage')]
     public function testEtageParser(?string $currentEtageValue, ?int $etageParsed): void
     {
         $this->assertEquals($etageParsed, EtageParser::parse($currentEtageValue));
     }
 
-    public function provideEtage(): \Generator
+    public static function provideEtage(): \Generator
     {
         yield '3 ème étage porte à droite' => ['3 ème étage porte à droite', 3];
 

@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Service\Esabora;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Interconnection\Esabora\AffectationEsaboraPolicy;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class AffectationEsaboraPolicyTest extends KernelTestCase
@@ -14,33 +15,29 @@ class AffectationEsaboraPolicyTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
+        $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
     }
 
-    /**
-     * @dataProvider providePartnerIds
-     */
+    #[DataProvider('providePartnerIds')]
     public function testHasUrlConflict(array $partnerIds, bool $result): void
     {
         $affectationEsaboraPolicy = new AffectationEsaboraPolicy($this->partnerRepository, true);
-        self::assertSame($result, $affectationEsaboraPolicy->hasUrlConflict($partnerIds));
+        $this->assertSame($result, $affectationEsaboraPolicy->hasUrlConflict($partnerIds));
     }
 
-    /**
-     * @dataProvider providePartnerName
-     */
+    #[DataProvider('providePartnerName')]
     public function testCanBeAffected(string $partnerName, bool $result): void
     {
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $signalement = $signalementRepository->findOneBy(['reference' => '2024-10']);
         $partner = $this->partnerRepository->findOneBy(['nom' => $partnerName]);
 
         $affectationEsaboraPolicy = new AffectationEsaboraPolicy($this->partnerRepository, true);
-        self::assertSame($result, $affectationEsaboraPolicy->canBeAffected($signalement, $partner));
+        $this->assertSame($result, $affectationEsaboraPolicy->canBeAffected($signalement, $partner));
     }
 
-    public function providePartnerIds(): \Generator
+    public static function providePartnerIds(): \Generator
     {
         yield 'Partners with same url' => [[7, 94], true];
         yield 'Partners with different url' => [[6, 7], false];
@@ -48,7 +45,7 @@ class AffectationEsaboraPolicyTest extends KernelTestCase
         yield 'Partners with empty array' => [[], false];
     }
 
-    public function providePartnerName(): \Generator
+    public static function providePartnerName(): \Generator
     {
         yield 'PARTENAIRE SCHS VIA SANTÉ HABITAT' => ['PARTENAIRE SCHS VIA SANTÉ HABITAT', false];
         yield 'PARTENAIRE 13-05 ESABORA SCHS' => ['PARTENAIRE 13-05 ESABORA SCHS', true];

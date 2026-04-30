@@ -13,7 +13,7 @@ class SignalementSearchQueryTest extends KernelTestCase
     public function testGetFilters(): void
     {
         /** @var ValidatorInterface $validator */
-        $validator = self::getContainer()->get('validator');
+        $validator = static::getContainer()->get('validator');
 
         $query = new SignalementSearchQuery(
             territoire: '13',

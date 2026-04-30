@@ -3,19 +3,18 @@
 namespace App\Tests\Unit\Validator;
 
 use App\Validator\EmailFormatValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class EmailFormatValidatorTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideEmail
-     */
+    #[DataProvider('provideEmail')]
     public function testEmailsFormat(string $email, bool $isEmailValid): void
     {
         $this->assertEquals($isEmailValid, EmailFormatValidator::validate($email));
     }
 
-    public function provideEmail(): \Generator
+    public static function provideEmail(): \Generator
     {
         yield 'joey.starr@supreme.fr' => ['joey.starr@supreme.fr', true];
         yield 'lino@ärsenik.fr' => ['lino@ärsenik.fr', true];

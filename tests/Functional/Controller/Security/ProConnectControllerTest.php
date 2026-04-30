@@ -23,6 +23,7 @@ class ProConnectControllerTest extends WebTestCase
      */
     public function testSuccessfulCallback(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = static::getContainer();
 
@@ -78,6 +79,7 @@ class ProConnectControllerTest extends WebTestCase
 
     public function testLoginWithProConnect(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = static::getContainer();
 
@@ -95,6 +97,7 @@ class ProConnectControllerTest extends WebTestCase
 
     public function testLoginWithProConnectFailsGracefully(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = static::getContainer();
 

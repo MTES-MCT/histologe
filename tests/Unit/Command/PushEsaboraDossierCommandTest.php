@@ -62,10 +62,15 @@ class PushEsaboraDossierCommandTest extends TestCase
             )
             ->willReturn($affectations);
 
+        $expectedCalls = [$affectation1, $affectation2];
+        $callIndex = 0;
         $this->esaboraBus
             ->expects($this->atMost(2))
             ->method('dispatch')
-            ->withConsecutive([$affectation1], [$affectation2]);
+            ->willReturnCallback(function ($affectation) use ($expectedCalls, &$callIndex) {
+                $this->assertSame($expectedCalls[$callIndex], $affectation);
+                ++$callIndex;
+            });
 
         $command = new PushEsaboraDossierCommand(
             $this->affectationRepository,

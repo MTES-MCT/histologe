@@ -8,6 +8,7 @@ use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -22,12 +23,12 @@ class SignalementListControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideNewFilterSearch
-     *
      * @param array<string> $filter
      */
+    #[DataProvider('provideNewFilterSearch')]
     public function testFilterSignalements(array $filter, int $results, string $email = 'admin-01@signal-logement.fr'): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -44,7 +45,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertEquals($results, $result['pagination']['total_items'], (string) json_encode($result['list']));
     }
 
-    public function provideNewFilterSearch(): \Generator
+    public static function provideNewFilterSearch(): \Generator
     {
         yield 'Search Terms with Reference' => [['searchTerms' => '2022-1', 'isImported' => 'oui'], 1];
         yield 'Search Terms with cp Occupant' => [['searchTerms' => '13003', 'isImported' => 'oui'], 12];
@@ -112,11 +113,10 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Partner 13-01 & 13-06 for agent Partenaire 13-05' => [['partenaires' => ['2', '7'], 'isImported' => 'oui'], 2, 'user-13-05@signal-logement.fr'];
     }
 
-    /**
-     * @dataProvider provideUserEmail
-     */
+    #[DataProvider('provideUserEmail')]
     public function testListSignalementSuccessfullyOrRedirectWithoutError500(string $email): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -134,7 +134,7 @@ class SignalementListControllerTest extends WebTestCase
         );
     }
 
-    public function provideUserEmail(): \Generator
+    public static function provideUserEmail(): \Generator
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -152,6 +152,7 @@ class SignalementListControllerTest extends WebTestCase
 
     public function testDisplaySignalementMDLRoleAdminTerritory(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -171,6 +172,7 @@ class SignalementListControllerTest extends WebTestCase
 
     public function testDisplaySignalementCORRoleAdminTerritory(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -188,11 +190,10 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertEquals(2, $content['pagination']['total_items']);
     }
 
-    /**
-     * @dataProvider provideLinkFilter
-     */
+    #[DataProvider('provideLinkFilter')]
     public function testLinkFilter(string $emailUser, string $filter): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -207,7 +208,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    public function provideLinkFilter(): \Generator
+    public static function provideLinkFilter(): \Generator
     {
         $adminUser = 'admin-01@signal-logement.fr';
         yield 'SUPER_ADMIN - Nouveaux signalements' => [$adminUser, '?statut='.SignalementStatus::NEED_VALIDATION->value];
@@ -228,11 +229,10 @@ class SignalementListControllerTest extends WebTestCase
         yield 'PARTNER - Tous les signalements' => [$partnerUser, '?territoire_id=13'];
     }
 
-    /**
-     * @dataProvider provideUserEmail
-     */
+    #[DataProvider('provideUserEmail')]
     public function testListSignalementAsJson(string $email): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -252,7 +252,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
     }
 
-    public function provideFilterSearchMultiTerritorAdminPartner(): \Generator
+    public static function provideFilterSearchMultiTerritorAdminPartner(): \Generator
     {
         yield 'Search All' => [['isImported' => 'oui'], 7];
         yield 'Search by Commune' => [['communes' => ['gex', 'marseille'], 'isImported' => 'oui'], 7];
@@ -267,12 +267,12 @@ class SignalementListControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideFilterSearchMultiTerritorAdminPartner
-     *
      * @param array<string> $filter
      */
+    #[DataProvider('provideFilterSearchMultiTerritorAdminPartner')]
     public function testFilterSignalementsMultiTerritorAdminPartner(array $filter, int $results): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -289,11 +289,10 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertEquals($results, $result['pagination']['total_items'], (string) json_encode($result['list']));
     }
 
-    /**
-     * @dataProvider provideUserEmail
-     */
+    #[DataProvider('provideUserEmail')]
     public function testTotalFilterByUser(string $email): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -316,6 +315,7 @@ class SignalementListControllerTest extends WebTestCase
 
     public function testListWhenAdminSubscribeToSignalement(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);

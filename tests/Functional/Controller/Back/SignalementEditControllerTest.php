@@ -9,6 +9,7 @@ use App\Service\Gouv\Ban\AddressService;
 use App\Service\Gouv\Ban\Response\Address;
 use App\Service\MessageHelper;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +28,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
@@ -127,10 +129,9 @@ class SignalementEditControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideEditSignalementRoutes
-     *
      * @param array<string> $payload
      */
+    #[DataProvider('provideEditSignalementRoutes')]
     public function testEditSignalementSuccess(string $routeName, array $payload, string $token): void
     {
         $addressResult = json_decode((string) file_get_contents(__DIR__.'/../../../files/datagouv/get_api_ban_item_response_13202.json'), true);
@@ -150,10 +151,9 @@ class SignalementEditControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideEditSignalementRoutes
-     *
      * @param array<string> $payload
      */
+    #[DataProvider('provideEditSignalementRoutes')]
     public function testEditSignalementUnauthorization(string $routeName, array $payload, string $token): void
     {
         $route = $this->router->generate(
@@ -173,10 +173,9 @@ class SignalementEditControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideEditSignalementRoutes
-     *
      * @param array<string> $payload
      */
+    #[DataProvider('provideEditSignalementRoutes')]
     public function testEditSignalementError(string $routeName, array $payload, string $token): void
     {
         $route = $this->router->generate(
@@ -242,7 +241,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadCoordonneesFoyer(): array
+    private static function getStaticPayloadCoordonneesFoyer(): array
     {
         return [
             'civilite' => 'mme',
@@ -257,7 +256,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadInformationLogement(): array
+    private static function getStaticPayloadInformationLogement(): array
     {
         return [
             'nombrePersonnes' => '4',
@@ -279,7 +278,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadCompositionLogement(): array
+    private static function getStaticPayloadCompositionLogement(): array
     {
         return [
             'type' => 'maison',
@@ -304,7 +303,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadSituationFoyer(): array
+    private static function getStaticPayloadSituationFoyer(): array
     {
         return [
             'isLogementSocial' => 'non',
@@ -324,7 +323,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadProcedureDemarches(): array
+    private static function getStaticPayloadProcedureDemarches(): array
     {
         return [
             'isProprioAverti' => '1',
@@ -341,7 +340,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadAddress(): array
+    private static function getStaticPayloadAddress(): array
     {
         return [
             'adresse' => '17 Boulevard saade - quai joliette',
@@ -362,7 +361,7 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
-    private function getPayloadCoordonneesTiers(): array
+    private static function getStaticPayloadCoordonneesTiers(): array
     {
         return [
             'nom' => 'Quatorze',
@@ -374,46 +373,46 @@ class SignalementEditControllerTest extends WebTestCase
         ];
     }
 
-    public function provideEditSignalementRoutes(): \Generator
+    public static function provideEditSignalementRoutes(): \Generator
     {
         yield 'Edition Adresse logement' => [
             'back_signalement_edit_address',
-            $this->getPayloadAddress(),
+            self::getStaticPayloadAddress(),
             'signalement_edit_address_',
         ];
 
         yield 'Edition Coordonnées du foyer' => [
             'back_signalement_edit_coordonnees_foyer',
-            $this->getPayloadCoordonneesFoyer(),
+            self::getStaticPayloadCoordonneesFoyer(),
             'signalement_edit_coordonnees_foyer_',
         ];
 
         yield 'Edition Coordonnées Tiers' => [
             'back_signalement_edit_coordonnees_tiers',
-            $this->getPayloadCoordonneesTiers(),
+            self::getStaticPayloadCoordonneesTiers(),
             'signalement_edit_coordonnees_tiers_',
         ];
 
         yield 'Edition Informations sur le logement' => [
             'back_signalement_edit_informations_logement',
-            $this->getPayloadInformationLogement(),
+            self::getStaticPayloadInformationLogement(),
             'signalement_edit_informations_logement_',
         ];
 
         yield 'Edition Description du logement' => [
             'back_signalement_edit_composition_logement',
-            $this->getPayloadCompositionLogement(),
+            self::getStaticPayloadCompositionLogement(),
             'signalement_edit_composition_logement_',
         ];
         yield 'Edition Situation du foyer' => [
             'back_signalement_edit_situation_foyer',
-            $this->getPayloadSituationFoyer(),
+            self::getStaticPayloadSituationFoyer(),
             'signalement_edit_situation_foyer_',
         ];
 
         yield 'Edition Procédure et démarches' => [
             'back_signalement_edit_procedure_demarches',
-            $this->getPayloadProcedureDemarches(),
+            self::getStaticPayloadProcedureDemarches(),
             'signalement_edit_procedure_demarches_',
         ];
     }

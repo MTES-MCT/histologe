@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Service\Files\FileReaderExif;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class FileFactoryTest extends TestCase
@@ -34,10 +35,9 @@ class FileFactoryTest extends TestCase
     }
 
     /**
-     * @dataProvider provideFileItem
-     *
      * @param array<string> $dataItem
      */
+    #[DataProvider('provideFileItem')]
     public function testCreateFromArray(
         array $dataItem,
         string $filename,
@@ -57,7 +57,7 @@ class FileFactoryTest extends TestCase
         }
     }
 
-    public function provideFileItem(): \Generator
+    public static function provideFileItem(): \Generator
     {
         yield 'DPE document' => [
             [

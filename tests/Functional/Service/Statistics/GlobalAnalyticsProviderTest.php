@@ -11,7 +11,7 @@ class GlobalAnalyticsProviderTest extends KernelTestCase
     {
         self::bootKernel();
         /** @var GlobalAnalyticsProvider $globalAnalyticsProvider */
-        $globalAnalyticsProvider = self::getContainer()->get(GlobalAnalyticsProvider::class);
+        $globalAnalyticsProvider = static::getContainer()->get(GlobalAnalyticsProvider::class);
         $data = $globalAnalyticsProvider->getData();
 
         $this->assertEquals(7, \count($data));

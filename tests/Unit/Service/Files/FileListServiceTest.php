@@ -22,12 +22,13 @@ class FileListServiceTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
-        $this->fileRepository = self::getContainer()->get(FileRepository::class);
-        $this->security = self::getContainer()->get(Security::class);
-        $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
-        $this->userRepository = self::getContainer()->get(UserRepository::class);
-        $this->fileVisibilityService = self::getContainer()->get(FileVisibilityService::class);
+        $this->fileRepository = static::getContainer()->get(FileRepository::class);
+        $this->security = static::getContainer()->get(Security::class);
+        $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->userRepository = static::getContainer()->get(UserRepository::class);
+        $this->fileVisibilityService = static::getContainer()->get(FileVisibilityService::class);
 
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);

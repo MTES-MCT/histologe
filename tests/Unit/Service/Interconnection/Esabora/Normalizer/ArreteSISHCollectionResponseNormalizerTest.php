@@ -21,16 +21,16 @@ class ArreteSISHCollectionResponseNormalizerTest extends TestCase
         $normalizer = new ArreteSISHCollectionResponseNormalizer();
         $normalizedResponse = $normalizer->normalize($response);
 
-        self::assertCount(2, $normalizedResponse->getCollection());
+        $this->assertCount(2, $normalizedResponse->getCollection());
 
         [$arreteOnly, $mainLevee] = $normalizedResponse->getCollection();
 
-        self::assertNotNull($arreteOnly->getArreteNumero());
-        self::assertNull($arreteOnly->getArreteMLNumero());
-        self::assertNull($arreteOnly->getArreteMLDate());
+        $this->assertNotNull($arreteOnly->getArreteNumero());
+        $this->assertNull($arreteOnly->getArreteMLNumero());
+        $this->assertNull($arreteOnly->getArreteMLDate());
 
-        self::assertNotNull($mainLevee->getArreteMLNumero());
-        self::assertNotNull($mainLevee->getArreteMLDate());
-        self::assertNotNull($mainLevee->getArreteNumero());
+        $this->assertNotNull($mainLevee->getArreteMLNumero());
+        $this->assertNotNull($mainLevee->getArreteMLDate());
+        $this->assertNotNull($mainLevee->getArreteNumero());
     }
 }

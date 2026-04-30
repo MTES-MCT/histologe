@@ -11,6 +11,7 @@ use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Tests\ApiHelper;
 use Doctrine\Common\Collections\Collection;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,22 +29,22 @@ class AffectationUpdateControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
-        $user = self::getContainer()->get(UserRepository::class)->findOneBy([
+        $user = static::getContainer()->get(UserRepository::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
-        $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
-        $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
-        $this->notificationRepository = self::getContainer()->get(NotificationRepository::class);
+        $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->notificationRepository = static::getContainer()->get(NotificationRepository::class);
 
         $this->client->loginUser($user, 'api');
     }
 
     /**
-     * @dataProvider provideValidTransitionData
-     *
      * @param array<mixed> $payload
      */
+    #[DataProvider('provideValidTransitionData')]
     public function testValidWorkflow(string $signalementUuid, array $payload, string $statut, int $mailSent): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => $signalementUuid]);
@@ -69,10 +70,9 @@ class AffectationUpdateControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideUnvalidData
-     *
      * @param array<mixed> $payload
      */
+    #[DataProvider('provideUnvalidData')]
     public function testInvalidWorkflow(string $signalementUuid, array $payload, string $errorMessage, int $httpCodeStatus): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => $signalementUuid]);
@@ -109,7 +109,7 @@ class AffectationUpdateControllerTest extends WebTestCase
         );
     }
 
-    public function provideValidTransitionData(): \Generator
+    public static function provideValidTransitionData(): \Generator
     {
         yield 'NOUVEAU ==> EN_COURS' => [
             '00000000-0000-0000-2022-000000000001',
@@ -151,7 +151,7 @@ class AffectationUpdateControllerTest extends WebTestCase
         ];
     }
 
-    public function provideUnvalidData(): \Generator
+    public static function provideUnvalidData(): \Generator
     {
         yield 'NOUVEAU ==> FERME' => [
             '00000000-0000-0000-2022-000000000001',

@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Service\TimezoneProvider;
 use App\Tests\SessionHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -13,11 +14,7 @@ class TimezoneProviderTest extends KernelTestCase
 {
     use SessionHelper;
 
-    /**
-     * @throws \Exception
-     *
-     * @dataProvider provideTimezones
-     */
+    #[DataProvider('provideTimezones')]
     public function testGetTimezoneFrom(string $userEmail, string $timezone): void
     {
         static::bootKernel();
@@ -36,7 +33,7 @@ class TimezoneProviderTest extends KernelTestCase
         $this->assertEquals(new \DateTimeZone($timezone), $timezoneProvider->getDateTimezone());
     }
 
-    public function provideTimezones(): \Generator
+    public static function provideTimezones(): \Generator
     {
         yield 'Fuseau horaire Martinique' => ['admin-territoire-972-01@signal-logement.fr', 'America/Martinique'];
         yield 'Fuseau horaire France' => ['user-62-01@signal-logement.fr', 'Europe/Paris'];

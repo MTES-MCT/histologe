@@ -12,7 +12,7 @@ class DesordresCategoriesStatisticProviderTest extends KernelTestCase
     {
         self::bootKernel();
         /** @var CountStatisticsQuery $countStatisticsQuery */
-        $countStatisticsQuery = self::getContainer()->get(CountStatisticsQuery::class);
+        $countStatisticsQuery = static::getContainer()->get(CountStatisticsQuery::class);
         $data = (new DesordresCategoriesStatisticProvider($countStatisticsQuery))->getData(null, null);
 
         $this->assertEquals(2, \count($data));

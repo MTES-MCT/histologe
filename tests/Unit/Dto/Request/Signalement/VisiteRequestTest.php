@@ -3,16 +3,13 @@
 namespace App\Tests\Unit\Dto\Request\Signalement;
 
 use App\Dto\Request\Signalement\VisiteRequest;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class VisiteRequestTest extends KernelTestCase
 {
-    /**
-     * @dataProvider visiteRequestDataProvider
-     *
-     * @throws \Exception
-     */
+    #[DataProvider('visiteRequestDataProvider')]
     public function testDatesVisiteRequestDTO(
         string $date,
         string $time,
@@ -24,7 +21,7 @@ class VisiteRequestTest extends KernelTestCase
         self::bootKernel();
 
         /** @var ValidatorInterface $validator */
-        $validator = self::getContainer()->get('validator');
+        $validator = static::getContainer()->get('validator');
 
         $visiteRequest = new VisiteRequest(
             date: $date,
@@ -40,7 +37,7 @@ class VisiteRequestTest extends KernelTestCase
         $this->assertEquals($expectedUTC, $visiteRequest->getDateTimeUTC());
     }
 
-    public function visiteRequestDataProvider(): \Generator
+    public static function visiteRequestDataProvider(): \Generator
     {
         yield 'France' => [
             'date' => '2024-08-13',

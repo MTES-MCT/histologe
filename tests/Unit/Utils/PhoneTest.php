@@ -3,20 +3,19 @@
 namespace App\Tests\Unit\Utils;
 
 use App\Utils\Phone;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class PhoneTest extends TestCase
 {
-    /**
-     * @dataProvider providePhone
-     */
+    #[DataProvider('providePhone')]
     public function testFormatPhone(?string $phoneNumber, ?string $phoneFormatted, ?string $phoneNationalFormatted): void
     {
         $this->assertEquals($phoneFormatted, Phone::format($phoneNumber));
         $this->assertEquals($phoneNationalFormatted, Phone::format($phoneNumber, true));
     }
 
-    public function providePhone(): \Generator
+    public static function providePhone(): \Generator
     {
         yield 'null' => [null, null, null];
 

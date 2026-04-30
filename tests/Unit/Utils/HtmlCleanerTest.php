@@ -3,19 +3,18 @@
 namespace App\Tests\Unit\Utils;
 
 use App\Utils\HtmlCleaner;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class HtmlCleanerTest extends TestCase
 {
-    /**
-     * @dataProvider providePartnerType
-     */
+    #[DataProvider('providePartnerType')]
     public function testTextWithHtml(string $textToClean, string $textCleaned): void
     {
         $this->assertEquals(HtmlCleaner::clean($textToClean), $textCleaned);
     }
 
-    public function providePartnerType(): \Generator
+    public static function providePartnerType(): \Generator
     {
         yield 'Bold' => ['<strong>Fat</strong> Joe', 'Fat Joe'];
         yield 'Accents' => ['&eacute;&egrave;&agrave;&ugrave;', 'éèàù'];

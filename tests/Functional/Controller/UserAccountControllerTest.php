@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller;
 
 use App\Repository\UserRepository;
 use Faker\Factory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -13,6 +14,7 @@ class UserAccountControllerTest extends WebTestCase
     {
         $faker = Factory::create();
 
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -20,7 +22,7 @@ class UserAccountControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'user-01-02@signal-logement.fr']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
         $client->request('GET', $route);
@@ -36,6 +38,7 @@ class UserAccountControllerTest extends WebTestCase
 
     public function testUserLogin(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         $client->request('GET', '/connexion');
@@ -50,6 +53,7 @@ class UserAccountControllerTest extends WebTestCase
 
     public function testUserApiLogin(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         $client->request('GET', '/connexion');
@@ -66,6 +70,7 @@ class UserAccountControllerTest extends WebTestCase
     {
         $faker = Factory::create();
 
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -73,7 +78,7 @@ class UserAccountControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'user-01-02@signal-logement.fr']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
         $client->request('GET', $route);
@@ -89,11 +94,10 @@ class UserAccountControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @dataProvider provideInvalidPassword
-     */
+    #[DataProvider('provideInvalidPassword')]
     public function testActivationUserFormSubmitWithInvalidPassword(string $expectedResult, string $password): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -101,7 +105,7 @@ class UserAccountControllerTest extends WebTestCase
         $user = $userRepository->findOneBy(['email' => 'user-01-02@signal-logement.fr']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => $user->getToken()]);
         $client->request('GET', $route);
@@ -117,7 +121,7 @@ class UserAccountControllerTest extends WebTestCase
         );
     }
 
-    public function provideInvalidPassword(): \Generator
+    public static function provideInvalidPassword(): \Generator
     {
         yield 'blank' => ['Cette valeur ne doit pas être vide', ''];
         yield 'short' => ['Le mot de passe doit contenir au moins 12 caractères', 'short'];

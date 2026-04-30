@@ -10,6 +10,7 @@ use App\Repository\SignalementRepository;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class QualificationStatusServiceTest extends KernelTestCase
@@ -30,9 +31,7 @@ class QualificationStatusServiceTest extends KernelTestCase
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
     }
 
-    /**
-     * @dataProvider provideNDERequestAndStatus
-     */
+    #[DataProvider('provideNDERequestAndStatus')]
     public function testUpdateNdeStatus(QualificationNDERequest $qualificationNDERequest, QualificationStatus $qualificationStatus): void
     {
         /** @var SignalementRepository $signalementRepository */
@@ -54,7 +53,7 @@ class QualificationStatusServiceTest extends KernelTestCase
         $this->assertEquals($qualificationStatus, $status);
     }
 
-    public function provideNDERequestAndStatus(): \Generator
+    public static function provideNDERequestAndStatus(): \Generator
     {
         $qualificationNDERequest = new QualificationNDERequest(
             dateEntree: null,

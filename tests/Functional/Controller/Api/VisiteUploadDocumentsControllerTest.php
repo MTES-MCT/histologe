@@ -22,12 +22,13 @@ class VisiteUploadDocumentsControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
 
-        $this->router = self::getContainer()->get('router');
+        $this->router = static::getContainer()->get('router');
 
         $this->client->loginUser($user, 'api');
     }
@@ -43,7 +44,7 @@ class VisiteUploadDocumentsControllerTest extends WebTestCase
         );
 
         $imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
-        self::getContainer()->set(ImageManipulationHandler::class, $imageManipulationHandler);
+        static::getContainer()->set(ImageManipulationHandler::class, $imageManipulationHandler);
 
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
         $uploadHandlerServiceMock
@@ -54,10 +55,10 @@ class VisiteUploadDocumentsControllerTest extends WebTestCase
             ->method('isFileSizeOk')
             ->willReturnOnConsecutiveCalls(true);
 
-        self::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
+        static::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
         $uuidSignalement = '00000000-0000-0000-2023-000000000020';
 
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy([
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy([
             'uuid' => $uuidSignalement,
         ]);
 

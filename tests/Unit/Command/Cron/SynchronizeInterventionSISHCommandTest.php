@@ -56,14 +56,14 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
             ->willReturn($affectations);
 
         /** @var ParameterBagInterface $parameterBag */
-        $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
-        $notificationMailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
+        $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
+        $notificationMailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
         /** @var MockObject&InterventionVisiteServiceHandler $visiteHandler */
         $visiteHandler = $this->createMock(InterventionVisiteServiceHandler::class);
         /** @var MockObject&InterventionArreteServiceHandler $arreteHandler */
         $arreteHandler = $this->createMock(InterventionArreteServiceHandler::class);
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         $command = $application->add(new SynchronizeInterventionSISHCommand(
             $esaboraManagerMock,
             $jobEventManagerMock,

@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Repository\UserApiPermissionRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -13,12 +14,12 @@ class UserApiPermissionControllerTest extends WebTestCase
     use SessionHelper;
 
     /**
-     * @dataProvider provideParamsUserApiList
-     *
      * @param array<mixed> $params
      */
+    #[DataProvider('provideParamsUserApiList')]
     public function testIndex(array $params, int $nb): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -26,7 +27,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_api_user_index');
         $client->request('GET', $route, $params);
@@ -37,7 +38,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         }
     }
 
-    public function provideParamsUserApiList(): \Generator
+    public static function provideParamsUserApiList(): \Generator
     {
         yield 'Search without params' => [[], 7];
         yield 'Search with queryUser api-0' => [['queryUser' => 'api-0'], 3];
@@ -46,6 +47,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testIndexAccess(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -53,7 +55,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_api_user_index');
         $client->request('GET', $route);
@@ -62,6 +64,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testPermissionCreate(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -71,7 +74,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         $userApi = $userRepository->findOneBy(['email' => 'api-reunion-epci@signal-logement.fr']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_permission_create', ['id' => $userApi->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api_permission');
@@ -92,6 +95,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testPermissionCreateOnBadUser(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -99,7 +103,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_permission_create', ['id' => $user->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api_permission');
@@ -116,6 +120,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testPermissionCreateDuplication(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -129,7 +134,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         }
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_permission_create', ['id' => $userApi->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api_permission');
@@ -146,6 +151,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testPermissionEdit(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -159,7 +165,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         }
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_permission_edit', ['id' => $permission->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api_permission');
@@ -177,6 +183,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testPermissionDelete(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -190,7 +197,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         }
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_permission_delete', ['id' => $permission->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api_permission_delete');
@@ -214,6 +221,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testAddUser(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -221,7 +229,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_add');
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api');
@@ -238,6 +246,7 @@ class UserApiPermissionControllerTest extends WebTestCase
 
     public function testAddExistingUser(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -245,7 +254,7 @@ class UserApiPermissionControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_api_user_add');
 
         $csrfToken = $this->generateCsrfToken($client, 'user_api');

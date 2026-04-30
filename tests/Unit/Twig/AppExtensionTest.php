@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Twig;
 
 use App\Twig\AppExtension;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class AppExtensionTest extends WebTestCase
@@ -12,9 +13,7 @@ class AppExtensionTest extends WebTestCase
     private const string TWIG_DATE_FORMAT_DEFAULT = 'F j, Y H:i';
     private const string EUROPE_PARIS_TIMEZONE = 'Europe/Paris';
 
-    /**
-     * @dataProvider provideData
-     */
+    #[DataProvider('provideData')]
     public function testCustomDateFiler(\DateTimeInterface|string $inputDate, string $expectedOutputDate, ?string $format = 'F j, Y H:i', ?string $timezone = null): void
     {
         self::bootKernel();
@@ -30,7 +29,7 @@ class AppExtensionTest extends WebTestCase
     /**
      * @throws \Exception
      */
-    public function provideData(): \Generator
+    public static function provideData(): \Generator
     {
         yield 'DateTimeImmutable, no timezone so Europe/Paris by default' => [
             new \DateTimeImmutable('2024-07-08 09:00:00'),
@@ -93,9 +92,7 @@ class AppExtensionTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideDataPhone
-     */
+    #[DataProvider('provideDataPhone')]
     public function testFormatPhone(?string $inputPhone, ?string $expectedOutputPhone): void
     {
         self::bootKernel();
@@ -111,7 +108,7 @@ class AppExtensionTest extends WebTestCase
     /**
      * @throws \Exception
      */
-    public function provideDataPhone(): \Generator
+    public static function provideDataPhone(): \Generator
     {
         yield 'No phone' => [
             null,
@@ -161,9 +158,7 @@ class AppExtensionTest extends WebTestCase
         $this->assertEqualsCanonicalizing($expectedFilters, $filterNames);
     }
 
-    /**
-     * @dataProvider provideBadgeClass
-     */
+    #[DataProvider('provideBadgeClass')]
     public function testGetBadgeClass(?int $days, string $expected): void
     {
         self::bootKernel();
@@ -174,7 +169,7 @@ class AppExtensionTest extends WebTestCase
         $this->assertSame($expected, $appExtension->getBadgeClass($days));
     }
 
-    public function provideBadgeClass(): \Generator
+    public static function provideBadgeClass(): \Generator
     {
         yield 'More than 365 days' => [366, 'fr-badge--error'];
         yield 'Exactly 365 days' => [365, 'fr-badge--warning'];
@@ -184,9 +179,7 @@ class AppExtensionTest extends WebTestCase
         yield 'Less than 91 days' => [30, 'fr-badge--success'];
     }
 
-    /**
-     * @dataProvider provideRelanceBadgeClass
-     */
+    #[DataProvider('provideRelanceBadgeClass')]
     public function testGetRelanceBadgeClass(int $count, string $expected): void
     {
         self::bootKernel();
@@ -197,7 +190,7 @@ class AppExtensionTest extends WebTestCase
         $this->assertSame($expected, $appExtension->getRelanceBadgeClass($count));
     }
 
-    public function provideRelanceBadgeClass(): \Generator
+    public static function provideRelanceBadgeClass(): \Generator
     {
         yield 'More than 10 relances' => [11, 'fr-badge--error'];
         yield 'Exactly 10 relances' => [10, 'fr-badge--warning'];
@@ -206,9 +199,7 @@ class AppExtensionTest extends WebTestCase
         yield 'Zero relance' => [0, 'fr-badge--new'];
     }
 
-    /**
-     * @dataProvider provideHosts
-     */
+    #[DataProvider('provideHosts')]
     public function testExtractRootDomain(string $host, string $expected): void
     {
         self::bootKernel();
@@ -219,7 +210,7 @@ class AppExtensionTest extends WebTestCase
         $this->assertSame($expected, $appExtension->extractRootDomain($host));
     }
 
-    public function provideHosts(): \Generator
+    public static function provideHosts(): \Generator
     {
         yield 'localhost' => ['localhost', 'localhost'];
         yield 'localhost service-secours' => ['services-secours.localhost', 'services-secours.localhost'];
@@ -229,9 +220,7 @@ class AppExtensionTest extends WebTestCase
         yield 'production service-secours' => ['services-secours.signal-logement.beta.gouv.fr', 'services-secours.signal-logement.beta.gouv.fr'];
     }
 
-    /**
-     * @dataProvider provideAnswer
-     */
+    #[DataProvider('provideAnswer')]
     public function testFormatAnswer(string $answer, string $expected): void
     {
         self::bootKernel();
@@ -242,7 +231,7 @@ class AppExtensionTest extends WebTestCase
         $this->assertSame($expected, $appExtension->formatAnswer($answer));
     }
 
-    public function provideAnswer(): \Generator
+    public static function provideAnswer(): \Generator
     {
         yield 'oui' => ['oui', 'Oui'];
         yield 'non' => ['non', 'Non'];

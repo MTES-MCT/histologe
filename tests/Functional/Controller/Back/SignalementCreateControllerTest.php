@@ -11,6 +11,7 @@ use App\Repository\SignalementUsagerRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -29,6 +30,7 @@ class SignalementCreateControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
@@ -138,9 +140,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals(44, $signalements[1]->getTerritory()->getZip());
     }
 
-    /**
-     * @dataProvider provideCanEditSignalementData
-     */
+    #[DataProvider('provideCanEditSignalementData')]
     public function testCanEditSignalement(string $userEmail, string $signalementUuid, int $expectedStatusCode): void
     {
         $user = $this->userRepository->findOneBy(['email' => $userEmail]);
@@ -150,7 +150,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame($expectedStatusCode);
     }
 
-    public function provideCanEditSignalementData(): \Generator
+    public static function provideCanEditSignalementData(): \Generator
     {
         yield 'edit NEED_VALIDATION signalement' => [
             'userEmail' => 'admin-01@signal-logement.fr',

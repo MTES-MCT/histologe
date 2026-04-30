@@ -107,8 +107,8 @@ class DossierMessageHandlerTest extends TestCase
         $dossierMessageSISH = $this->getDossierMessageSISH();
         $isSuccessful = $handler->handle($dossierMessageSISH);
 
-        self::assertFalse($isSuccessful);
-        self::assertTrue($handler->canFlagAsSynchronized());
-        self::assertTrue($handler->dossierAlreadyExists());
+        $this->assertFalse($isSuccessful);
+        $this->assertTrue($handler->canFlagAsSynchronized());
+        $this->assertTrue($handler->dossierAlreadyExists());
     }
 }

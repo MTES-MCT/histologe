@@ -10,6 +10,7 @@ class AutoAssignerSimulatorControllerTest extends WebTestCase
 {
     public function testTerritoryPageLoadsForAdmin(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -26,7 +27,7 @@ class AutoAssignerSimulatorControllerTest extends WebTestCase
 
         $client->request('GET', $url);
 
-        self::assertResponseIsSuccessful();
+        $this->assertResponseIsSuccessful();
 
         $this->assertSelectorTextContains('h1', '13 - Bouches-du-Rhône');
     }

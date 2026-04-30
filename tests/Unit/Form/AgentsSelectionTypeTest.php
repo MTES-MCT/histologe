@@ -21,6 +21,7 @@ class AgentsSelectionTypeTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->formFactory = static::getContainer()->get(FormFactoryInterface::class);
         $userRepository = static::getContainer()->get(UserRepository::class);

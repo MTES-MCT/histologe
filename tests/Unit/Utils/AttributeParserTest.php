@@ -6,13 +6,12 @@ use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Utils\AttributeParser;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class AttributeParserTest extends TestCase
 {
-    /**
-     * @dataProvider provideData
-     */
+    #[DataProvider('provideData')]
     public function testShowLabelAsFacultatif(
         string $dto,
         string $field,
@@ -25,7 +24,7 @@ class AttributeParserTest extends TestCase
         $this->assertEquals($result, $label);
     }
 
-    public function provideData(): \Generator
+    public static function provideData(): \Generator
     {
         yield 'New form - show label as facultatif' => [
             CoordonneesBailleurRequest::class,

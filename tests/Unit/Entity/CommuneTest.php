@@ -3,20 +3,19 @@
 namespace App\Tests\Unit\Entity;
 
 use App\Entity\Commune;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class CommuneTest extends TestCase
 {
-    /**
-     * @dataProvider provideCommune
-     */
+    #[DataProvider('provideCommune')]
     public function testCommunes(string $nomFromDatabase, string $nomCleaned): void
     {
         $commune = (new Commune())->setNom($nomFromDatabase);
         $this->assertEquals($nomCleaned, $commune->getNom());
     }
 
-    public function provideCommune(): \Generator
+    public static function provideCommune(): \Generator
     {
         yield 'Lyon 1er Arrondissement' => ['Lyon 1er Arrondissement', 'Lyon'];
         yield 'Marseille 1er Arrondissement' => ['Marseille 1er Arrondissement', 'Marseille'];

@@ -8,13 +8,12 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Specification\Affectation\PartnerTypeSpecification;
 use App\Specification\Context\PartnerSignalementContext;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class PartnerTypeSpecificationTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideRulesAndSignalement
-     */
+    #[DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(PartnerType $type, PartnerType $typeRule, bool $isSatisfied): void
     {
         $partner = new Partner();
@@ -31,7 +30,7 @@ class PartnerTypeSpecificationTest extends KernelTestCase
         }
     }
 
-    public function provideRulesAndSignalement(): \Generator
+    public static function provideRulesAndSignalement(): \Generator
     {
         yield 'ADIL - ADIL' => [PartnerType::ADIL, PartnerType::ADIL, true];
         yield 'ADIL - EPCI' => [PartnerType::ADIL, PartnerType::EPCI, false];
@@ -72,9 +71,7 @@ class PartnerTypeSpecificationTest extends KernelTestCase
         yield 'BAILLEUR_SOCIAL - EPCI' => [PartnerType::BAILLEUR_SOCIAL, PartnerType::EPCI, false];
     }
 
-    /**
-     * @dataProvider provideRulesAndSignalementWithBailleur
-     */
+    #[DataProvider('provideRulesAndSignalementWithBailleur')]
     public function testIsSatisfiedByWithBailleur(
         PartnerType $type,
         PartnerType $typeRule,
@@ -100,7 +97,7 @@ class PartnerTypeSpecificationTest extends KernelTestCase
         }
     }
 
-    public function provideRulesAndSignalementWithBailleur(): \Generator
+    public static function provideRulesAndSignalementWithBailleur(): \Generator
     {
         $bailleurHabitat = (new Bailleur())->setName('Habitat 44')->setRaisonSociale('1111');
         $bailleurOPH = (new Bailleur())->setName('OPH 44')->setRaisonSociale('2222');

@@ -9,6 +9,7 @@ use App\Repository\TerritoryRepository;
 use App\Service\Signalement\SignalementAddressUpdater;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -82,10 +83,9 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
     }
 
     /**
-     * @dataProvider provideTestCases
-     *
      * @param array<string, mixed> $option
      */
+    #[DataProvider('provideTestCases')]
     public function testExecuteCommandWith(string $providerMethod, array $option): void
     {
         $signalementRepository = $this->createMock(SignalementRepository::class);
@@ -116,7 +116,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         $commandTester->assertCommandIsSuccessful();
     }
 
-    public function provideTestCases(): \Generator
+    public static function provideTestCases(): \Generator
     {
         yield 'With date option' => ['findSignalementsBetweenDates', ['--from_created_at' => '2024-01-01']];
         yield 'With territory option' => ['findSignalementsByYear', ['--zip' => 1, '--year' => '2024']];
@@ -139,10 +139,10 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
                 ->with($option['--year'], $this->getTerritory(), false)
                 ->willReturn($countSignalements > 0 ? $this->getSignalements($countSignalements) : []);
         } else {
+            \assert(!empty($method));
             $signalementRepository
                 ->expects($this->once())
                 ->method($method)
-
                 ->willReturn($countSignalements > 0 ? $this->getSignalements($countSignalements) : []);
         }
 

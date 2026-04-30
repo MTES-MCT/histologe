@@ -36,17 +36,17 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
     {
         self::bootKernel();
 
-        $this->critereRepository = self::getContainer()->get(CritereRepository::class);
-        $this->territoryRepository = self::getContainer()->get(TerritoryRepository::class);
-        $this->communeRepository = self::getContainer()->get(CommuneRepository::class);
-        $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
-        $this->tagsRepository = self::getContainer()->get(TagRepository::class);
-        $this->signalementRepository = self::getContainer()->get(SignalementRepository::class);
-        $this->bailleurRepository = self::getContainer()->get(BailleurRepository::class);
-        $this->cache = self::getContainer()->get(TagAwareCacheInterface::class);
-        $this->qualificationStatusService = self::getContainer()->get(QualificationStatusService::class);
-        $this->zoneRepository = self::getContainer()->get(ZoneRepository::class);
-        $this->countStatisticsQuery = self::getContainer()->get(CountStatisticsQuery::class);
+        $this->critereRepository = static::getContainer()->get(CritereRepository::class);
+        $this->territoryRepository = static::getContainer()->get(TerritoryRepository::class);
+        $this->communeRepository = static::getContainer()->get(CommuneRepository::class);
+        $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
+        $this->tagsRepository = static::getContainer()->get(TagRepository::class);
+        $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
+        $this->cache = static::getContainer()->get(TagAwareCacheInterface::class);
+        $this->qualificationStatusService = static::getContainer()->get(QualificationStatusService::class);
+        $this->zoneRepository = static::getContainer()->get(ZoneRepository::class);
+        $this->countStatisticsQuery = static::getContainer()->get(CountStatisticsQuery::class);
 
         $this->searchFilterOptionDataProvider = new SearchFilterOptionDataProvider(
             $this->critereRepository,

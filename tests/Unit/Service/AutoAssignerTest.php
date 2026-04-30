@@ -45,14 +45,14 @@ class AutoAssignerTest extends KernelTestCase
         $entityManager = $doctrine->getManager();
 
         $this->entityManager = $entityManager;
-        $this->signalementManager = self::getContainer()->get(SignalementManager::class);
-        $this->affectationManager = self::getContainer()->get(AffectationManager::class);
-        $this->userManager = self::getContainer()->get(UserManager::class);
-        $this->userSignalementSubscriptionManager = self::getContainer()->get(UserSignalementSubscriptionManager::class);
+        $this->signalementManager = static::getContainer()->get(SignalementManager::class);
+        $this->affectationManager = static::getContainer()->get(AffectationManager::class);
+        $this->userManager = static::getContainer()->get(UserManager::class);
+        $this->userSignalementSubscriptionManager = static::getContainer()->get(UserSignalementSubscriptionManager::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
         $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $this->partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $this->notificationAndMailSender = self::getContainer()->get(NotificationAndMailSender::class);
+        $this->notificationAndMailSender = static::getContainer()->get(NotificationAndMailSender::class);
     }
 
     public function testAutoAssignmentSeineStDenis(): void

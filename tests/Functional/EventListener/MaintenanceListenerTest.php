@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\EventListener;
 
 use App\Repository\UserRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -15,6 +16,7 @@ class MaintenanceListenerTest extends WebTestCase
 
     public function testMaintenanceForApiRoutes(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '1';
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -27,12 +29,12 @@ class MaintenanceListenerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideRoutes
-     *
      * @param array<mixed> $parameters
      */
+    #[DataProvider('provideRoutes')]
     public function testMaintenanceRedirect(string $routeName, array $parameters = []): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '1';
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -41,7 +43,7 @@ class MaintenanceListenerTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isRedirect());
     }
 
-    public function provideRoutes(): \Generator
+    public static function provideRoutes(): \Generator
     {
         yield 'Contact' => ['front_contact'];
         yield 'Lock dépot signalement' => ['front_signalement'];
@@ -53,6 +55,7 @@ class MaintenanceListenerTest extends WebTestCase
 
     public function testNonMaintenanceRequest(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '0';
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -64,6 +67,7 @@ class MaintenanceListenerTest extends WebTestCase
 
     public function testMaintenanceNoRedirectForSuperAdmin(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '1';
         /** @var UrlGeneratorInterface $generatorUrl */
@@ -81,6 +85,7 @@ class MaintenanceListenerTest extends WebTestCase
 
     public function testMaintenanceRedirectForNoSuperAdmin(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $_ENV['MAINTENANCE_ENABLE'] = '1';
         /** @var UrlGeneratorInterface $generatorUrl */

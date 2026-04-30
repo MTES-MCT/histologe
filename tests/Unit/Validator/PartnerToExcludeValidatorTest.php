@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Validator;
 
 use App\Validator\PartnerToExclude;
 use App\Validator\PartnerToExcludeValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -20,10 +21,9 @@ class PartnerToExcludeValidatorTest extends ConstraintValidatorTestCase
     }
 
     /**
-     * @dataProvider provideValues
-     *
      * @param array<mixed> $insee
      */
+    #[DataProvider('provideValues')]
     public function testValues(array $insee, bool $isValid, ?string $message = null): void
     {
         $constraint = new PartnerToExclude();
@@ -37,7 +37,7 @@ class PartnerToExcludeValidatorTest extends ConstraintValidatorTestCase
         }
     }
 
-    public function provideValues(): \Generator
+    public static function provideValues(): \Generator
     {
         yield 'all' => [['all'], false, self::ERROR];
         yield '[2]' => [[2], true];

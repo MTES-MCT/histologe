@@ -4,6 +4,7 @@ namespace App\Tests;
 
 use Monolog\Handler\TestHandler;
 use Monolog\LogRecord;
+use PHPUnit\Framework\Assert;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,14 +21,14 @@ trait ApiHelper
         /** @var Response $response */
         $response = $client->getResponse();
         $requestId = $response->headers->get('X-Request-ID');
-        $this->assertNotEmpty($requestId);
+        Assert::assertNotEmpty($requestId);
     }
 
     private function hasOneApiRequestLog(): void
     {
         /** @var TestHandler $testHandler */
         $testHandler = static::getContainer()->get('monolog.handler.main');
-        $this->assertInstanceOf(TestHandler::class, $testHandler);
+        Assert::assertInstanceOf(TestHandler::class, $testHandler);
 
         $records = $testHandler->getRecords();
         $apiLogs = array_filter($records, static function (LogRecord $record) {
@@ -42,6 +43,6 @@ trait ApiHelper
 
             return str_starts_with($message, 'API Request');
         });
-        $this->assertCount(1, $apiLogs, 'Il devrait y avoir exactement un log API Request');
+        Assert::assertCount(1, $apiLogs, 'Il devrait y avoir exactement un log API Request');
     }
 }

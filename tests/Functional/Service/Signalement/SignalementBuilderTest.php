@@ -27,6 +27,7 @@ use App\Service\Signalement\ZipcodeProvider;
 use App\Tests\FixturesHelper;
 use App\Tests\KernelServiceHelperTrait;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SignalementBuilderTest extends KernelTestCase
@@ -416,7 +417,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->commit();
     }
 
-    public function provideAllocataireCases(): \Generator
+    public static function provideAllocataireCases(): \Generator
     {
         // certains cas ne sont pas sensés arriver
         yield 'oui - caf' => ['oui', 'caf', 'CAF'];
@@ -450,9 +451,7 @@ class SignalementBuilderTest extends KernelTestCase
         yield 'empty - empty' => ['', '', null];
     }
 
-    /**
-     * @dataProvider provideAllocataireCases
-     */
+    #[DataProvider('provideAllocataireCases')]
     public function testResolveIsAllocataire(
         ?string $logementSocialAllocation,
         ?string $logementSocialCaisse,

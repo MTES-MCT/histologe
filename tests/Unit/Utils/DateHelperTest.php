@@ -5,18 +5,19 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Utils;
 
 use App\Utils\DateHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class DateHelperTest extends TestCase
 {
-    /** @dataProvider provideDates */
+    #[DataProvider('provideDates')]
     public function testIsValidDate(?string $date, string $format, bool $expected): void
     {
         $result = DateHelper::isValidDate($date, $format);
         $this->assertSame($expected, $result);
     }
 
-    public function provideDates(): \Generator
+    public static function provideDates(): \Generator
     {
         yield 'valid date default format' => ['2023-10-05 12:34:56', 'Y-m-d H:i:s', true];
         yield 'invalid date default format' => ['2023-30-02 12:34:56', 'Y-m-d H:i:s', false];

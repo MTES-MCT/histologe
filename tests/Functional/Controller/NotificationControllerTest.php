@@ -8,6 +8,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Service\ListFilters\SearchNotification;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -20,11 +21,10 @@ class NotificationControllerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    /**
-     * @dataProvider provideAllNotificationOptions
-     */
+    #[DataProvider('provideAllNotificationOptions')]
     public function testAllNotifications(string $route, string $tokenName, string $tokenId, string $msgFlash): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -42,7 +42,7 @@ class NotificationControllerTest extends WebTestCase
         $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
     }
 
-    public function provideAllNotificationOptions(): \Generator
+    public static function provideAllNotificationOptions(): \Generator
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -62,11 +62,10 @@ class NotificationControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideSelectedNotificationOptions
-     */
+    #[DataProvider('provideSelectedNotificationOptions')]
     public function testSelectedNotifications(string $route, string $tokenId, string $filter, string $msgFlash): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -90,7 +89,7 @@ class NotificationControllerTest extends WebTestCase
         $this->assertEquals([], $response['flashMessages']);
     }
 
-    public function provideSelectedNotificationOptions(): \Generator
+    public static function provideSelectedNotificationOptions(): \Generator
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);

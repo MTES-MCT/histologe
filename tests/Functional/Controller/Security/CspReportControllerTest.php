@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller\Security;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,13 +11,13 @@ class CspReportControllerTest extends WebTestCase
 {
     /**
      * @param array<string, mixed> $payload
-     *
-     * @dataProvider provideCspReports
      */
+    #[DataProvider('provideCspReports')]
     public function testCspReportWithValidPayload(
         array $payload,
         bool $shouldReport = false,
     ): void {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         if ($shouldReport) {
@@ -110,6 +111,7 @@ class CspReportControllerTest extends WebTestCase
 
     public function testCspReportWithGetMethod(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         $client->request('GET', '/csp-report');

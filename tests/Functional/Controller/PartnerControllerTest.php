@@ -13,6 +13,7 @@ use App\Service\Security\PartnerAuthorizedResolver;
 use App\Tests\SessionHelper;
 use Faker\Factory;
 use Faker\Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -29,9 +30,10 @@ class PartnerControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
-        $this->router = self::getContainer()->get(RouterInterface::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
         $this->faker = Factory::create();
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
 
@@ -172,9 +174,7 @@ class PartnerControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @dataProvider provideAgentEmailToAddOnPartner
-     */
+    #[DataProvider('provideAgentEmailToAddOnPartner')]
     public function testAddNewAgentToPartner(string $email, string $expected): void
     {
         /** @var Partner $partner */
@@ -212,7 +212,7 @@ class PartnerControllerTest extends WebTestCase
         }
     }
 
-    public function provideAgentEmailToAddOnPartner(): \Generator
+    public static function provideAgentEmailToAddOnPartner(): \Generator
     {
         yield 'Invalid email' => ['nanana', 'L&#039;adresse e-mail est invalide.'];
         yield 'Partner email already exists' => ['partenaire-13-02@signal-logement.fr', 'Un partenaire existe déjà avec cette adresse e-mail.'];
@@ -227,9 +227,7 @@ class PartnerControllerTest extends WebTestCase
         yield 'Email ok to multi territories' => ['user-44-02@signal-logement.fr', 'Ce compte agent existe déjà dans :'];
     }
 
-    /**
-     * @dataProvider provideMultiTerAgentEmailToAddOnPartner
-     */
+    #[DataProvider('provideMultiTerAgentEmailToAddOnPartner')]
     public function testAddExistingAgentToPartner(string $email, string $expected): void
     {
         /** @var Partner $partner */
@@ -259,7 +257,7 @@ class PartnerControllerTest extends WebTestCase
         }
     }
 
-    public function provideMultiTerAgentEmailToAddOnPartner(): \Generator
+    public static function provideMultiTerAgentEmailToAddOnPartner(): \Generator
     {
         yield 'Invalid email' => ['nanana', 'L&#039;adresse e-mail est invalide.'];
         yield 'Partner email already exists' => ['partenaire-13-02@signal-logement.fr', 'Un partenaire existe déjà avec cette adresse e-mail.'];
@@ -303,9 +301,7 @@ class PartnerControllerTest extends WebTestCase
         $this->assertContains('ROLE_ADMIN_TERRITORY', $partnerUser->getRoles());
     }
 
-    /**
-     * @dataProvider provideAgentEmailToEdit
-     */
+    #[DataProvider('provideAgentEmailToEdit')]
     public function testEditUserOfPartner(string $email, string $expected, int $nbEmailSent): void
     {
         /** @var User $partnerUser */
@@ -351,7 +347,7 @@ class PartnerControllerTest extends WebTestCase
         }
     }
 
-    public function provideAgentEmailToEdit(): \Generator
+    public static function provideAgentEmailToEdit(): \Generator
     {
         yield 'Invalid email' => ['nanana', 'L&#039;adresse e-mail est invalide.', 0];
         yield 'Partner email already exists' => ['partenaire-13-02@signal-logement.fr', 'Un partenaire existe déjà avec cette adresse e-mail.', 0];

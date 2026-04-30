@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Validator;
 
 use App\Validator\TelephoneFormat;
 use App\Validator\TelephoneFormatValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 /**
@@ -16,9 +17,7 @@ class TelephoneFormatValidatorTest extends ConstraintValidatorTestCase
         return new TelephoneFormatValidator();
     }
 
-    /**
-     * @dataProvider provideValidPhoneNumbers
-     */
+    #[DataProvider('provideValidPhoneNumbers')]
     public function testValidPhoneNumbers(mixed $phoneNumber): void
     {
         $constraint = new TelephoneFormat();
@@ -26,9 +25,7 @@ class TelephoneFormatValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    /**
-     * @dataProvider provideInvalidPhoneNumbers
-     */
+    #[DataProvider('provideInvalidPhoneNumbers')]
     public function testInvalidPhoneNumbers(string $phoneNumber): void
     {
         $constraint = new TelephoneFormat();
@@ -38,7 +35,7 @@ class TelephoneFormatValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function provideValidPhoneNumbers(): \Generator
+    public static function provideValidPhoneNumbers(): \Generator
     {
         yield 'null value' => [null];
         yield 'empty value' => [''];
@@ -59,7 +56,7 @@ class TelephoneFormatValidatorTest extends ConstraintValidatorTestCase
         yield 'swiss phone number' => ['+41 22 345 67 89'];
     }
 
-    public function provideInvalidPhoneNumbers(): \Generator
+    public static function provideInvalidPhoneNumbers(): \Generator
     {
         yield 'phone with letter at end' => ['0808080808D'];
         yield 'phone with letters' => ['08ABCD0808'];

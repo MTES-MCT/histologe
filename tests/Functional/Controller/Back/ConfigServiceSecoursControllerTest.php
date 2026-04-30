@@ -14,6 +14,7 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
 
     public function testIndex(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -21,7 +22,7 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_config_service_secours_route_index');
         $client->request('GET', $route);
@@ -31,6 +32,7 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
 
     public function testIndexForUnauthorizedUser(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -38,7 +40,7 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_config_service_secours_route_index');
         $client->request('GET', $route);
@@ -52,6 +54,7 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
 
     public function testAdd(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -59,7 +62,7 @@ class ConfigServiceSecoursControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_config_service_secours_route_new');
 
         $csrfToken = $this->generateCsrfToken($client, 'service_secours_route');
