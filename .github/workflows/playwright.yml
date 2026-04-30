@@ -95,17 +95,31 @@ jobs:
           sed 's/APP_ENV=test/APP_ENV=prod/' .env.ci > .env.prod
           echo "APP_DEBUG=0" >> .env.prod
           cp .env.prod .env
+          docker compose restart signal_logement_phpfpm
+          sleep 5
           docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=prod --no-warmup
           docker compose exec -T signal_logement_phpfpm php bin/console cache:warmup --env=prod
 
+      - name: Wait for application in prod mode
+        run: |
+          until curl -f http://localhost:8080/connexion > /dev/null 2>&1; do
+            echo "Waiting for application to be ready in prod mode..."
+            sleep 5
+          done
+          echo "Application is ready in prod mode!"
+
       - name: Run Lighthouse CI (public pages)
         run: |
-          npx lhci autorun --config=lighthouse/lighthouserc.json
+          CHROME_PATH=$(npx playwright browsers path chromium)/chromium-*/chrome-linux/chrome
+          export CHROME_PATH=$(ls $CHROME_PATH 2>/dev/null | head -1)
+          npx lhci autorun --config=lighthouse/lighthouserc.json --chrome-flags="--no-sandbox --disable-dev-shm-usage"
         continue-on-error: true
 
       - name: Run Lighthouse CI (authenticated pages)
         run: |
-          npx lhci autorun --config=lighthouse/lighthouserc.auth.json
+          CHROME_PATH=$(npx playwright browsers path chromium)/chromium-*/chrome-linux/chrome
+          export CHROME_PATH=$(ls $CHROME_PATH 2>/dev/null | head -1)
+          npx lhci autorun --config=lighthouse/lighthouserc.auth.json --chrome-flags="--no-sandbox --disable-dev-shm-usage"
         continue-on-error: true
 
       - name: Upload Lighthouse results
@@ -114,4 +128,5 @@ jobs:
         with:
           name: lighthouse-results
           path: .lighthouseci/**/*.html
+          if-no-files-found: warn
 
