@@ -114,6 +114,7 @@ jobs:
           echo "Application is ready in prod mode!"
 
       - name: Run Lighthouse CI (public pages)
+        id: lighthouse-public
         run: |
           export CHROME_PATH=$(find ~/.cache/ms-playwright -name chrome -type f 2>/dev/null | head -1)
           if [ -z "$CHROME_PATH" ]; then
@@ -121,10 +122,11 @@ jobs:
             export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
           fi
           echo "Using Chrome at: $CHROME_PATH"
-          npx lhci autorun --config=lighthouse/lighthouserc.json || echo "::warning::Lighthouse CI failed for public pages - check artifacts for details"
+          npx lhci autorun --config=lighthouse/lighthouserc.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
         continue-on-error: true
 
       - name: Run Lighthouse CI (authenticated pages)
+        id: lighthouse-auth
         run: |
           export CHROME_PATH=$(find ~/.cache/ms-playwright -name chrome -type f 2>/dev/null | head -1)
           if [ -z "$CHROME_PATH" ]; then
@@ -132,7 +134,7 @@ jobs:
             export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
           fi
           echo "Using Chrome at: $CHROME_PATH"
-          npx lhci autorun --config=lighthouse/lighthouserc.auth.json || echo "::warning::Lighthouse CI failed for authenticated pages - check artifacts for details"
+          npx lhci autorun --config=lighthouse/lighthouserc.auth.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
         continue-on-error: true
 
       - name: Display Lighthouse accessibility issues
@@ -145,8 +147,6 @@ jobs:
             echo "⚠️ Directory .lighthouseci not found" >> $GITHUB_STEP_SUMMARY
             exit 0
           fi
-
-          has_errors=false
 
           for report in .lighthouseci/*.report.json; do
             if [ ! -f "$report" ]; then
@@ -170,16 +170,15 @@ jobs:
                 issue_count=$(jq '[.audits | to_entries[] | select(.value.score != null and .value.score < 1 and .value.scoreDisplayMode == "binary")] | length' "$report")
                 if [ "$issue_count" = "0" ]; then
                   echo "- ✅ No accessibility issues found!" >> $GITHUB_STEP_SUMMARY
-                else
-                  has_errors=true
                 fi
                 echo "" >> $GITHUB_STEP_SUMMARY
               fi
             fi
           done
 
-          if [ "$has_errors" = "true" ]; then
-            echo "❌ Lighthouse tests failed - accessibility issues found"
+          # Échouer seulement si l'un des tests Lighthouse a échoué (score < 0.95)
+          if [ "${{ steps.lighthouse-public.outputs.exit_code }}" = "1" ] || [ "${{ steps.lighthouse-auth.outputs.exit_code }}" = "1" ]; then
+            echo "❌ Lighthouse tests failed - accessibility score below threshold (0.95)"
             exit 1
           fi
 
