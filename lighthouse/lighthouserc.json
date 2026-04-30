@@ -4,7 +4,10 @@
             "numberOfRuns": 1,
             "url": [
                 "http://localhost:8080/connexion"
-            ]
+            ],
+            "settings": {
+                "chromeFlags": "--no-sandbox --disable-dev-shm-usage --disable-gpu"
+            }
         },
         "assert": {
             "assertions": {
