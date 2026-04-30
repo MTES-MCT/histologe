@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Entity\UserSearchFilter;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use App\Validator\UserSearchFilterParamsValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -86,7 +87,7 @@ class UserSearchFilterControllerTest extends WebTestCase
         $client->loginUser($user);
         $csrfToken = $this->generateCsrfToken($client, 'save_search');
 
-        for ($i = 0; $i < 5; ++$i) {
+        for ($i = 0; $i < UserSearchFilterParamsValidator::MAX_FILTERS_PER_USER; ++$i) {
             $search = new UserSearchFilter();
             $search->setUser($user);
             $search->setName("Test $i");

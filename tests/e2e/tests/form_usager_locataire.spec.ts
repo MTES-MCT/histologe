@@ -125,7 +125,7 @@ test('signalement form for locataire', async ({page}) => {
     await page.getByRole('textbox', { name: 'Quelle a été la réponse de' }).fill('Personne ne joue avec les mêmes cartes');
     await page.getByText('Oui, je veux rester dans mon').click();
     await page.getByRole('button', { name: 'Suivant' }).click();
-    await page.getByText('Je comprends que Signal Logement va prévenir le bailleur (propriétaire) de mon').click();
+    await page.getByText('Je comprends que Signal Logement, un ou des services désignés compétents sur le dossier pourront prévenir le bailleur (propriétaire) du logement.').click();
     await page.getByText('Je comprends qu\'une visite du').click();
     await page.getByText('Je comprends que Signal Logement ne permet pas de faire une demande de logement').click();
     await page.getByText('Je certifie ne pas avoir').click();

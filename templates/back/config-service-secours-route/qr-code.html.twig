@@ -1,0 +1,13 @@
+<style>
+    @page {margin: 1cm;}
+    div {box-sizing: border-box;}
+</style>
+<div style="text-align: center;font-family: Arial, sans-serif;">
+     <h1 style="text-transform: uppercase;">{{ platform.name }}</h1>
+     <h2>{{ serviceSecoursRoute.name }}</h2>
+     <img src="{{ qrCode }}" alt="QR Code pour la route {{ url }}">
+
+     <br>
+     <br>
+    <a href="{{ url }}" target="_blank" rel="noopener">{{ url }}</a>
+</div>

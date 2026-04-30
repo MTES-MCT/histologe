@@ -34,6 +34,14 @@
                         aria-label="Supprimer la route {{ serviceSecoursRoute.name }}"
                         title="Supprimer la route {{ serviceSecoursRoute.name }}"
                         ></button>
+                    <a href="{{ path('back_config_service_secours_route_qr_code', { id: serviceSecoursRoute.id }) }}" 
+                        class="fr-btn fr-icon-qr-code-line fr-btn--sm fr-mb-1v" 
+                        target="_blank" 
+                        rel="noopener"
+                        aria-label="Afficher le QR code (Ouvre une nouvelle fenêtre)" 
+                        title="Afficher le QR code (Ouvre une nouvelle fenêtre)"
+                        >
+                    </a>
                 </td>
             </tr>
         {% else %}
