@@ -133,6 +133,10 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
             $user->setCguVersionChecked($this->parameterBag->get('cgu_current_version'));
         }
 
+        if (isset($row['phone'])) {
+            $user->setPhone($row['phone']);
+        }
+
         $password = $this->hasher->hashPassword($user, self::APP_PLAIN_PASSWORD);
         $user->setPassword($password);
 

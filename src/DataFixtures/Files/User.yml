@@ -488,6 +488,7 @@ users:
       - "CAF 30"
     statut: "ACTIVE"
     is_mailing_active: 1
+    phone: "0639984040"
   -
     email: admin-territoire-44-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
