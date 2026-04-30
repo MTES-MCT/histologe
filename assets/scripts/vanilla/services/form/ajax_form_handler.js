@@ -27,11 +27,13 @@ function handleSubmitForm(containerElement) {
   containerElement.addEventListener('submit', (event) => {
     event.preventDefault();
     const formElement = event.target;
-    const submitElement = document.querySelector(
+    const submitElements = document.querySelectorAll(
       '.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]'
     );
-    submitElement.disabled = true;
-    submitElement.classList.add('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
+    submitElements.forEach((el) => {
+      el.disabled = true;
+      el.classList.add('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
+    });
     clearErrors();
     submitPayload(formElement);
   });
@@ -41,7 +43,7 @@ async function submitPayload(formElement) {
   let response;
   try {
     const formData = new FormData(formElement);
-    const submitElement = document.querySelector(
+    const submitElements = document.querySelectorAll(
       '.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]'
     );
 
@@ -77,7 +79,7 @@ async function submitPayload(formElement) {
     } else if (response.ok) {
       jsonResponseHandler(response);
       setTimeout(() => {
-        resetSubmitButton(submitElement);
+        resetSubmitButton(submitElements);
       }, 500);
     } else if (response.status === 400) {
       const responseData = await response.json();
@@ -147,7 +149,7 @@ async function submitPayload(formElement) {
           }
         }
       }
-      resetSubmitButton(submitElement);
+      resetSubmitButton(submitElements);
     } else if (response.status === 403) {
       addFlashMessage({
         type: 'alert',
@@ -179,14 +181,14 @@ export function attachAjaxFormHandlers() {
 }
 attachAjaxFormHandlers();
 
-function resetSubmitButton(submitElement) {
-  if (submitElement) {
-    submitElement.disabled = false;
-    submitElement.classList.remove('fr-btn--loading', 'fr-icon-refresh-line');
-    if (!submitElement.classList.contains('fr-icon-check-line')) {
-      submitElement.classList.remove('fr-btn--icon-left');
+function resetSubmitButton(submitElements) {
+  submitElements.forEach((el) => {
+    el.disabled = false;
+    el.classList.remove('fr-btn--loading', 'fr-icon-refresh-line');
+    if (!el.classList.contains('fr-icon-check-line')) {
+      el.classList.remove('fr-btn--icon-left');
     }
-  }
+  });
 }
 
 function replaceAffectation(affectationId) {
