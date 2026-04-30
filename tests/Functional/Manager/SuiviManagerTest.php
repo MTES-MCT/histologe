@@ -13,6 +13,7 @@ use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Utils\DictionaryProvider;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -34,6 +35,7 @@ class SuiviManagerTest extends KernelTestCase
     private SuiviManager $suiviManager;
     private UserManager $userManager;
     private DictionaryProvider $dictionaryProvider;
+    private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
@@ -47,9 +49,11 @@ class SuiviManagerTest extends KernelTestCase
         $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
         $this->userManager = static::getContainer()->get(UserManager::class);
         $this->dictionaryProvider = static::getContainer()->get(DictionaryProvider::class);
+        $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->suiviManager = new SuiviManager(
             $this->managerRegistry,
             $this->eventDispatcherInterface,
+            $this->entityManager,
             $this->security,
             $this->htmlSanitizerInterface,
             $this->userSignalementSubscriptionManager,

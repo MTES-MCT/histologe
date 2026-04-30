@@ -4,7 +4,6 @@ namespace App\Tests\Unit\Command\Cron;
 
 use App\Command\Cron\SynchronizeInterventionSISHCommand;
 use App\Entity\Enum\PartnerType;
-use App\Manager\JobEventManager;
 use App\Repository\AffectationRepository;
 use App\Repository\JobEventRepository;
 use App\Service\Interconnection\Esabora\EsaboraManager;
@@ -42,10 +41,6 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
             ->method('getReportEsaboraAction')
             ->willReturn(['success_count' => 4, 'failed_count' => 2]);
 
-        /** @var MockObject&JobEventManager $jobEventManagerMock */
-        $jobEventManagerMock = $this->createMock(JobEventManager::class);
-        $jobEventManagerMock->expects($this->once())->method('getRepository')->willReturn($jobEventRepositoryMock);
-
         $affectation = $this->getAffectation(PartnerType::ARS);
         $affectations = [
             ['affectation' => $affectation, 'signalement_uuid' => $affectation->getUuid()],
@@ -66,7 +61,7 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
         $entityManager = self::getContainer()->get('doctrine')->getManager();
         $command = $application->add(new SynchronizeInterventionSISHCommand(
             $esaboraManagerMock,
-            $jobEventManagerMock,
+            $jobEventRepositoryMock,
             $affectationRepositoryMock,
             $serializerMock,
             $notificationMailerRegistry,

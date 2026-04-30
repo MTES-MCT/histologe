@@ -16,6 +16,7 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -30,6 +31,7 @@ final class GenerateFileZipMessageHandler
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly FileManager $fileManager,
         private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -60,9 +62,9 @@ final class GenerateFileZipMessageHandler
                 filename: $zipName,
                 title: $zipName,
                 user: $user,
-                flush: true,
                 documentType: DocumentType::EXPORT
             );
+            $this->entityManager->flush();
 
             $this->notificationMailerRegistry->send(
                 new NotificationMail(

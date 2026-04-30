@@ -7,6 +7,8 @@ use App\Entity\Partner;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\Idoss\DossierMessage;
 use App\Repository\AffectationRepository;
+use App\Repository\PartnerRepository;
+use App\Repository\SignalementRepository;
 use App\Service\Files\ImageManipulationHandler;
 use App\Service\Interconnection\Idoss\IdossService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,12 +37,17 @@ class IdossServiceTest extends KernelTestCase
         $this->entityManager = $entityManager;
     }
 
-    protected function getIdossService(MockHttpClient $mockHttpClient): IdossService
+    protected function getIdossService(MockHttpClient $mockHttpClient, Partner $partner): IdossService
     {
         /** @var ContainerBagInterface&MockObject $containerBagInterface */
         $containerBagInterface = $this->createMock(ContainerBagInterface::class);
         /** @var JobEventManager&MockObject $jobEventManager */
         $jobEventManager = $this->createMock(JobEventManager::class);
+        /** @var PartnerRepository&MockObject $partnerRepository */
+        $partnerRepository = $this->createMock(PartnerRepository::class);
+        $partnerRepository->method('find')->willReturn($partner);
+        /** @var SignalementRepository&MockObject $signalementRepository */
+        $signalementRepository = $this->createMock(SignalementRepository::class);
         /** @var SerializerInterface&MockObject $serializerMock */
         $serializerMock = $this->createMock(SerializerInterface::class);
         /** @var ImageManipulationHandler&MockObject $imageManipulationHandlerMock */
@@ -53,6 +60,8 @@ class IdossServiceTest extends KernelTestCase
             $containerBagInterface,
             $this->entityManager,
             $jobEventManager,
+            $partnerRepository,
+            $signalementRepository,
             $serializerMock,
             $imageManipulationHandlerMock,
             $logger,
@@ -77,7 +86,7 @@ class IdossServiceTest extends KernelTestCase
         $idossMockResponse = new MockResponse($idossResponse);
 
         $mockHttpClient = new MockHttpClient([$tokenMockResponse, $idossMockResponse]);
-        $idossService = $this->getIdossService($mockHttpClient);
+        $idossService = $this->getIdossService($mockHttpClient, $partner);
 
         $idossService->pushDossier($dossierMessage);
 
@@ -101,7 +110,7 @@ class IdossServiceTest extends KernelTestCase
         $idossMockResponse = new MockResponse($idossResponse);
 
         $mockHttpClient = new MockHttpClient($idossMockResponse);
-        $idossService = $this->getIdossService($mockHttpClient);
+        $idossService = $this->getIdossService($mockHttpClient, $partner);
 
         $idossService->pushDossier($dossierMessage);
 
@@ -128,7 +137,7 @@ class IdossServiceTest extends KernelTestCase
         $idossMockResponse = new MockResponse($idossResponse);
 
         $mockHttpClient = new MockHttpClient([$tokenMockResponse, $idossMockResponse]);
-        $idossService = $this->getIdossService($mockHttpClient);
+        $idossService = $this->getIdossService($mockHttpClient, $partner);
 
         $idossService->pushDossier($dossierMessage);
 

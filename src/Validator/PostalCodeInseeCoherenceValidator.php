@@ -3,9 +3,8 @@
 namespace App\Validator;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
-use App\Entity\Commune;
+use App\Repository\CommuneRepository;
 use App\Service\Signalement\PostalCodeHomeChecker;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
@@ -13,8 +12,8 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 class PostalCodeInseeCoherenceValidator extends ConstraintValidator
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
         private readonly PostalCodeHomeChecker $postalCodeHomeChecker,
+        private readonly CommuneRepository $communeRepository,
     ) {
     }
 
@@ -35,7 +34,7 @@ class PostalCodeInseeCoherenceValidator extends ConstraintValidator
             return;
         }
 
-        $commune = $this->em->getRepository(Commune::class)->findOneBy([
+        $commune = $this->communeRepository->findOneBy([
             'codePostal' => $postalCode,
             'codeInsee' => $inseeCode,
         ]);

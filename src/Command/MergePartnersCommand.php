@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\Affectation;
 use App\Entity\Partner;
+use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -21,6 +22,7 @@ class MergePartnersCommand extends Command
 {
     public function __construct(
         private readonly PartnerRepository $partnerRepository,
+        private readonly AffectationRepository $affectationRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
@@ -126,11 +128,10 @@ class MergePartnersCommand extends Command
         foreach ($affectations as $affectation) {
             /** @var Affectation $affectation */
             // Check if destination partner already has an affectation for this signalement
-            $existingAffectation = $this->entityManager->getRepository(Affectation::class)
-                ->findOneBy([
-                    'signalement' => $affectation->getSignalement(),
-                    'partner' => $destinationPartner,
-                ]);
+            $existingAffectation = $this->affectationRepository->findOneBy([
+                'signalement' => $affectation->getSignalement(),
+                'partner' => $destinationPartner,
+            ]);
 
             if ($existingAffectation) {
                 $io->warning(sprintf(
@@ -197,11 +198,10 @@ class MergePartnersCommand extends Command
 
         foreach ($sourcePartner->getAffectations() as $affectation) {
             /** @var Affectation $affectation */
-            $existingAffectation = $this->entityManager->getRepository(Affectation::class)
-                ->findOneBy([
-                    'signalement' => $affectation->getSignalement(),
-                    'partner' => $destinationPartner,
-                ]);
+            $existingAffectation = $this->affectationRepository->findOneBy([
+                'signalement' => $affectation->getSignalement(),
+                'partner' => $destinationPartner,
+            ]);
 
             if ($existingAffectation) {
                 ++$duplicatesToRemove;

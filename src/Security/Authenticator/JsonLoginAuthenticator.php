@@ -6,6 +6,7 @@ use App\Entity\ApiUserToken;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Random\RandomException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +23,7 @@ class JsonLoginAuthenticator extends AbstractAuthenticator
 {
     public function __construct(
         private readonly UserRepository $userRepository,
+        private readonly EntityManagerInterface $entityManager,
         private readonly TranslatorInterface $translator,
     ) {
     }
@@ -82,7 +84,8 @@ class JsonLoginAuthenticator extends AbstractAuthenticator
         $apiUserToken = new ApiUserToken();
         $user->addApiUserToken($apiUserToken);
         $user->setLastLoginAt(new \DateTimeImmutable());
-        $this->userRepository->save($user, true);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
 
         return new JsonResponse([
             'token' => $apiUserToken->getToken(),

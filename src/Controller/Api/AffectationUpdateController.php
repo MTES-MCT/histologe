@@ -13,6 +13,7 @@ use App\EventListener\SecurityApiExceptionListener;
 use App\Manager\AffectationManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Security\Voter\Api\ApiAffectationVoter;
+use Doctrine\ORM\EntityManagerInterface;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,6 +30,7 @@ class AffectationUpdateController extends AbstractController
         private readonly AffectationManager $affectationManager,
         private readonly ValidatorInterface $validator,
         private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -220,7 +222,7 @@ class AffectationUpdateController extends AbstractController
         $this->affectationManager->updateAffectation($affectation, $user, $statut, $affectation->getPartner(), $motifRefus, $message);
         if (AffectationStatus::ACCEPTED === $statut) {
             $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
-            $this->userSignalementSubscriptionManager->flush();
+            $this->entityManager->flush();
         }
 
         return $affectation;

@@ -15,6 +15,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\UploadHandlerService;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -28,6 +29,7 @@ class GenerateFileZipMessageHandlerTest extends TestCase
     private MockObject&NotificationMailerRegistry $notificationMailerRegistry;
     private MockObject&FileManager $fileManager;
     private MockObject&LoggerInterface $logger;
+    private MockObject&EntityManagerInterface $entityManager;
     private GenerateFileZipMessageHandler $handler;
 
     protected function setUp(): void
@@ -39,6 +41,7 @@ class GenerateFileZipMessageHandlerTest extends TestCase
         $this->notificationMailerRegistry = $this->createMock(NotificationMailerRegistry::class);
         $this->fileManager = $this->createMock(FileManager::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->entityManager = $this->createMock(EntityManagerInterface::class);
 
         $this->handler = new GenerateFileZipMessageHandler(
             $this->userRepository,
@@ -47,7 +50,8 @@ class GenerateFileZipMessageHandlerTest extends TestCase
             $this->uploadHandlerService,
             $this->notificationMailerRegistry,
             $this->fileManager,
-            $this->logger
+            $this->logger,
+            $this->entityManager,
         );
     }
 

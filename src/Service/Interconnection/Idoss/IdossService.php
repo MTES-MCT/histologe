@@ -10,6 +10,8 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\Idoss\DossierMessage;
+use App\Repository\PartnerRepository;
+use App\Repository\SignalementRepository;
 use App\Service\Files\ImageManipulationHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
@@ -50,6 +52,8 @@ class IdossService
         private readonly ContainerBagInterface $params,
         private readonly EntityManagerInterface $entityManager,
         private readonly JobEventManager $jobEventManager,
+        private readonly PartnerRepository $partnerRepository,
+        private readonly SignalementRepository $signalementRepository,
         private readonly SerializerInterface $serializer,
         private readonly ImageManipulationHandler $imageManipulationHandler,
         private readonly LoggerInterface $logger,
@@ -61,7 +65,7 @@ class IdossService
      */
     public function pushDossier(DossierMessage $dossierMessage): JobEvent
     {
-        $partner = $this->entityManager->getRepository(Partner::class)->find($dossierMessage->getPartnerId());
+        $partner = $this->partnerRepository->find($dossierMessage->getPartnerId());
         $url = $partner->getIdossUrl().self::CREATE_DOSSIER_ENDPOINT;
         $payload = $this->getDossierPayload($dossierMessage);
         $jobAction = self::ACTION_PUSH_DOSSIER;
@@ -71,7 +75,7 @@ class IdossService
         $jobEvent = $this->processRequestAndSaveJobEvent($partner, $url, $jobAction, $jobMessage, $signalementId, $payload);
 
         if (JobEvent::STATUS_SUCCESS === $jobEvent->getStatus()) {
-            $signalement = $this->entityManager->getRepository(Signalement::class)->find($dossierMessage->getSignalementId());
+            $signalement = $this->signalementRepository->find($dossierMessage->getSignalementId());
             $jsonResponse = json_decode($jobEvent->getResponse(), true);
             $idossData = [
                 'id' => $jsonResponse['id'],
@@ -173,7 +177,7 @@ class IdossService
             $statusCode = 9999;
         }
 
-        return $this->jobEventManager->createJobEvent(
+        $jobEvent = $this->jobEventManager->createJobEvent(
             service: self::TYPE_SERVICE,
             action: $jobAction,
             message: $jobMessage,
@@ -184,6 +188,9 @@ class IdossService
             partnerId: $partner->getId(),
             partnerType: $partner->getType(),
         );
+        $this->entityManager->flush();
+
+        return $jobEvent;
     }
 
     /**

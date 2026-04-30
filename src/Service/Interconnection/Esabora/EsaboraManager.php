@@ -50,6 +50,7 @@ class EsaboraManager
     public function __construct(
         private readonly AffectationManager $affectationManager,
         private readonly SuiviManager $suiviManager,
+        private readonly SuiviRepository $suiviRepository,
         private readonly InterventionRepository $interventionRepository,
         private readonly InterventionFactory $interventionFactory,
         private readonly EventDispatcherInterface $eventDispatcher,
@@ -126,12 +127,10 @@ class EsaboraManager
                 if ($this->shouldBeAcceptedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::ACCEPTED, $affectation->getPartner());
                     $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
-                    $this->userSignalementSubscriptionManager->flush();
+                    $this->entityManager->flush();
 
-                    /** @var SuiviRepository $suiviRepository */
-                    $suiviRepository = $this->suiviManager->getRepository();
                     $description = 'accepté par '.$namePartner.' via '.$dossierResponse->getNameSI();
-                    $suivis = $suiviRepository->findSuiviByDescription(
+                    $suivis = $this->suiviRepository->findSuiviByDescription(
                         $signalement,
                         'Signalement <b>'.$description,
                         SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO
@@ -235,7 +234,8 @@ class EsaboraManager
                     providerId: $dossierVisiteSISH->getVisiteId(),
                     doneBy: $dossierVisiteSISH->getVisitePar(),
                 );
-                $this->interventionRepository->save($newIntervention, true);
+                $this->entityManager->persist($newIntervention);
+                $this->entityManager->flush();
 
                 if ($this->workflow->can($newIntervention, 'confirm')) {
                     $this->workflow->apply($newIntervention, 'confirm', [
@@ -292,7 +292,8 @@ class EsaboraManager
                 concludeProcedures: [ProcedureType::INSALUBRITE]
             );
 
-            $this->interventionRepository->save($intervention, true);
+            $this->entityManager->persist($intervention);
+            $this->entityManager->flush();
             $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList(
                 $signalement,
                 [ProcedureType::INSALUBRITE]
@@ -433,7 +434,7 @@ class EsaboraManager
         }
 
         if ($hasChanged) {
-            $this->interventionRepository->save($intervention, true);
+            $this->entityManager->flush();
         }
 
         return $hasChanged;
@@ -480,7 +481,7 @@ class EsaboraManager
         if ($hasChanged) {
             $newDetails = InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH);
             $intervention->setDetails($this->htmlSanitizer->sanitize($newDetails));
-            $this->interventionRepository->save($intervention, true);
+            $this->entityManager->flush();
         }
 
         return $hasChanged;

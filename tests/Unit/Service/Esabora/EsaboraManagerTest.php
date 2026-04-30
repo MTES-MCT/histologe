@@ -44,6 +44,7 @@ class EsaboraManagerTest extends KernelTestCase
 
     protected MockObject&AffectationManager $affectationManager;
     protected MockObject&SuiviManager $suiviManager;
+    protected MockObject&SuiviRepository $suiviRepository;
     protected MockObject&InterventionRepository $interventionRepository;
     protected MockObject&InterventionFactory $interventionFactory;
     protected EventDispatcher $eventDispatcher;
@@ -64,6 +65,7 @@ class EsaboraManagerTest extends KernelTestCase
     {
         $this->affectationManager = $this->createMock(AffectationManager::class);
         $this->suiviManager = $this->createMock(SuiviManager::class);
+        $this->suiviRepository = $this->createMock(SuiviRepository::class);
         $this->interventionRepository = $this->createMock(InterventionRepository::class);
         $this->interventionFactory = $this->createMock(InterventionFactory::class);
         $this->userManager = $this->createMock(UserManager::class);
@@ -108,10 +110,6 @@ class EsaboraManagerTest extends KernelTestCase
             ->expects($this->never())
             ->method('createInstanceFrom');
 
-        $this->interventionRepository
-            ->expects($this->never())
-            ->method('save');
-
         $this->logger
             ->expects($this->once())
             ->method('error');
@@ -124,6 +122,7 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
+            $this->suiviRepository,
             $this->interventionRepository,
             $this->interventionFactory,
             $this->eventDispatcher, // @phpstan-ignore-line
@@ -190,10 +189,6 @@ class EsaboraManagerTest extends KernelTestCase
                     Intervention::STATUS_DONE)
             );
 
-        $this->interventionRepository
-            ->expects($this->once())
-            ->method('save');
-
         if (self::CREATE_ACTION === $action) {
             $this->interventionFactory
                 ->expects($this->once())
@@ -208,6 +203,7 @@ class EsaboraManagerTest extends KernelTestCase
         return new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
+            $this->suiviRepository,
             $this->interventionRepository,
             $this->interventionFactory,
             $this->eventDispatcher, // @phpstan-ignore-line
@@ -250,11 +246,6 @@ class EsaboraManagerTest extends KernelTestCase
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionResponse()->getCollection();
         $dossierVisite = $dossierVisiteCollection[0];
 
-        $this->interventionRepository
-            ->expects($this->once())
-            ->method('save')
-            ->with($intervention, true);
-
         $this->userManager
         ->expects($this->once())
         ->method('getSystemUser')
@@ -262,6 +253,7 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
+            $this->suiviRepository,
             $this->interventionRepository,
             $this->interventionFactory,
             $this->eventDispatcher, // @phpstan-ignore-line
@@ -313,10 +305,6 @@ class EsaboraManagerTest extends KernelTestCase
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionResponse()->getCollection();
         $dossierVisite = $dossierVisiteCollection[0];
 
-        $this->interventionRepository
-            ->expects($this->never())
-            ->method('save');
-
         $this->userManager
         ->expects($this->once())
         ->method('getSystemUser')
@@ -324,6 +312,7 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
+            $this->suiviRepository,
             $this->interventionRepository,
             $this->interventionFactory,
             $this->eventDispatcher, // @phpstan-ignore-line
@@ -374,7 +363,6 @@ class EsaboraManagerTest extends KernelTestCase
         $dossierResponse->method('getDossNum')->willReturn('2023/SISH/0010');
 
         $suiviRepository = $this->createMock(SuiviRepository::class);
-        $this->suiviManager->method('getRepository')->willReturn($suiviRepository);
 
         $suiviRepository
             ->expects($this->once())
@@ -394,6 +382,7 @@ class EsaboraManagerTest extends KernelTestCase
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
+            $suiviRepository,
             $this->interventionRepository,
             $this->interventionFactory,
             $this->eventDispatcher,

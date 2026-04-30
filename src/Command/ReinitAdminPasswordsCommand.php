@@ -9,6 +9,7 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,6 +33,7 @@ class ReinitAdminPasswordsCommand extends Command
         private readonly ValidatorInterface $validator,
         private readonly UserRepository $userRepository,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
@@ -59,7 +61,7 @@ class ReinitAdminPasswordsCommand extends Command
                 return Command::FAILURE;
             }
 
-            $this->userManager->save($user);
+            $this->entityManager->persist($user);
 
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
@@ -69,6 +71,8 @@ class ReinitAdminPasswordsCommand extends Command
                 )
             );
         }
+
+        $this->entityManager->flush();
 
         $this->io->success(\sprintf(
             '%s admin users were successfully reinitialized',

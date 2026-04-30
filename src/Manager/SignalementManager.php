@@ -42,6 +42,7 @@ use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
 use App\Repository\Query\SignalementList\QueryBuilderFactory;
+use App\Repository\SignalementRepository;
 use App\Service\Gouv\Ban\Response\Address;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
@@ -52,16 +53,18 @@ use App\Service\Signalement\SignalementInputValueMapper;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
-class SignalementManager extends AbstractManager
+class SignalementManager extends Manager
 {
     public function __construct(
         protected ManagerRegistry $managerRegistry,
         private readonly Security $security,
+        private readonly EntityManagerInterface $entityManager,
         private readonly SignalementImportFactory $signalementImportFactory,
         private readonly QualificationStatusService $qualificationStatusService,
         private readonly SignalementAffectationListViewFactory $signalementAffectationListViewFactory,
@@ -75,6 +78,7 @@ class SignalementManager extends AbstractManager
         private readonly UserManager $userManager,
         private readonly BailleurRepository $bailleurRepository,
         private readonly PartnerRepository $partnerRepository,
+        private readonly SignalementRepository $signalementRepository,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly ExportIterableQuery $exportIterableQuery,
@@ -94,7 +98,7 @@ class SignalementManager extends AbstractManager
     public function createOrUpdateFromArrayForImport(Territory $territory, array $data): ?Signalement
     {
         /** @var Signalement|null $signalement */
-        $signalement = $this->getRepository()->findOneBy([
+        $signalement = $this->signalementRepository->findOneBy([
             'territory' => $territory,
             'reference' => $data['reference'],
         ]);
@@ -213,13 +217,11 @@ class SignalementManager extends AbstractManager
      */
     public function findAffectablePartners(Signalement $signalement, bool $filterInjonctionBailleur = false): array
     {
-        /** @var PartnerRepository $partnerRepository */
-        $partnerRepository = $this->managerRegistry->getRepository(Partner::class);
-        $partners['affected'] = $partnerRepository->findByLocalization(
+        $partners['affected'] = $this->partnerRepository->findByLocalization(
             signalement: $signalement,
             filterInjonctionBailleur: $filterInjonctionBailleur,
         );
-        $partners['not_affected'] = $partnerRepository->findByLocalization(
+        $partners['not_affected'] = $this->partnerRepository->findByLocalization(
             signalement: $signalement,
             affected: false,
             filterInjonctionBailleur: $filterInjonctionBailleur,
@@ -286,15 +288,15 @@ class SignalementManager extends AbstractManager
         ) {
             $signalement->setSuperficie($qualificationNDERequest->getSuperficie());
         }
-        $this->save($signalement);
+        $this->entityManager->persist($signalement);
 
         $signalementQualification->setDetails($qualificationNDERequest->getDetails());
-        $this->save($signalementQualification);
+        $this->entityManager->persist($signalementQualification);
 
         $signalementQualification->setStatus(
             $this->qualificationStatusService->getNDEStatus($signalementQualification)
         );
-        $this->save($signalementQualification);
+        $this->entityManager->persist($signalementQualification);
 
         $typeCompositionLogement = new TypeCompositionLogement();
         if (!empty($signalement->getTypeCompositionLogement())) {
@@ -312,7 +314,9 @@ class SignalementManager extends AbstractManager
                 break;
         }
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
-        $this->save($signalement);
+        $this->entityManager->persist($signalement);
+
+        $this->entityManager->flush();
     }
 
     public function updateFromAdresseOccupantRequest(
@@ -338,7 +342,8 @@ class SignalementManager extends AbstractManager
             $this->signalementAddressUpdater->updateAddressOccupantFromBanData(signalement: $signalement);
         }
 
-        $this->save($signalement);
+        $this->entityManager->persist($signalement);
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -378,7 +383,8 @@ class SignalementManager extends AbstractManager
             $signalement->setInformationComplementaire($informationComplementaire);
         }
 
-        $this->save($signalement);
+        $this->entityManager->persist($signalement);
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -398,7 +404,9 @@ class SignalementManager extends AbstractManager
 
         $this->userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
 
-        $this->save($signalement);
+        $this->entityManager->persist($signalement);
+
+        $this->entityManager->flush();
 
         $this->suiviManager->addAccepteInvitationSuivi($signalement);
     }
@@ -436,7 +444,8 @@ class SignalementManager extends AbstractManager
             );
         }
 
-        $this->save($signalement);
+        $this->entityManager->persist($signalement);
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -493,7 +502,8 @@ class SignalementManager extends AbstractManager
         }
         $signalement->setInformationComplementaire($informationComplementaire);
 
-        $this->save($signalement);
+        $this->entityManager->persist($signalement);
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -516,7 +526,8 @@ class SignalementManager extends AbstractManager
             ->setCodePostalAgence($coordonneesAgenceRequest->getCodePostal())
             ->setVilleAgence($coordonneesAgenceRequest->getVille());
 
-        $this->save($signalement);
+        $this->entityManager->persist($signalement);
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -535,7 +546,8 @@ class SignalementManager extends AbstractManager
             ->setTelSyndic($coordonneesSyndicRequest->getTelephone())
             ->setTelSyndicSecondaire($coordonneesSyndicRequest->getTelephoneBis());
 
-        $this->save($signalement);
+        $this->entityManager->persist($signalement);
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -597,12 +609,12 @@ class SignalementManager extends AbstractManager
                     break;
             }
             $signalementQualificationNDE->setDetails($qualificationDetails);
-            $this->save($signalementQualificationNDE);
+            $this->entityManager->persist($signalementQualificationNDE);
 
             $signalementQualificationNDE->setStatus(
                 $this->qualificationStatusService->getNDEStatus($signalementQualificationNDE)
             );
-            $this->save($signalementQualificationNDE);
+            $this->entityManager->persist($signalementQualificationNDE);
         }
 
         $informationComplementaire = new InformationComplementaire();
@@ -627,7 +639,8 @@ class SignalementManager extends AbstractManager
         $this->updateDesordresAndScoreWithSuroccupationChanges($signalement);
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
-        $this->save($signalement);
+        $this->entityManager->persist($signalement);
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -733,7 +746,9 @@ class SignalementManager extends AbstractManager
         $this->updateDesordresAndScoreWithSuroccupationChanges($signalement);
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
-        $this->save($signalement);
+        $this->entityManager->persist($signalement);
+
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -835,7 +850,9 @@ class SignalementManager extends AbstractManager
 
         $this->updateDesordresAndScoreWithSuroccupationChanges($signalement);
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
-        $this->save($signalement);
+        $this->entityManager->persist($signalement);
+
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -889,7 +906,8 @@ class SignalementManager extends AbstractManager
             $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         }
 
-        $this->save($signalement);
+        $this->entityManager->persist($signalement);
+        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -970,7 +988,7 @@ class SignalementManager extends AbstractManager
     {
         $signalement->setStatut(SignalementStatus::ACTIVE);
         $signalement->setValidatedAt(new \DateTimeImmutable());
-        $this->persist($signalement);
+        $this->entityManager->persist($signalement);
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: 'Signalement validé',
@@ -983,6 +1001,8 @@ class SignalementManager extends AbstractManager
             flush: false,
             createSubscription: $createSubscription,
         );
-        $this->persist($suivi);
+        $this->entityManager->persist($suivi);
+
+        $this->entityManager->flush();
     }
 }

@@ -8,6 +8,7 @@ use App\Messenger\MessageHandler\SignalementAddressUpdateAndAutoAssignMessageHan
 use App\Repository\AffectationRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -82,7 +83,9 @@ class SignalementAddressUpdateAndAutoAssignMessageHandlerTest extends WebTestCas
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $signalement = $signalementRepository->findOneBy(['reference' => '2025-05']);
         $signalement->setStatut(SignalementStatus::INJONCTION_BAILLEUR);
-        $signalementRepository->save($signalement, true);
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $entityManager->persist($signalement);
+        $entityManager->flush();
 
         $notificationRepository = static::getContainer()->get(NotificationRepository::class);
         $notifications = $notificationRepository->findBy(['signalement' => $signalement, 'type' => 'NOUVEAU_SIGNALEMENT']);

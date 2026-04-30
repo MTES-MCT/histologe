@@ -11,6 +11,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,6 +39,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         private readonly ParameterBagInterface $parameterBag,
         private readonly SuiviRepository $suiviRepository,
         private readonly SignalementRepository $signalementRepository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -238,14 +240,14 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
                 flush: false
             );
 
+            $this->entityManager->persist($suivi);
+
             if (0 === $totalRead % self::FLUSH_COUNT) {
-                $this->suiviManager->save($suivi);
-            } else {
-                $this->suiviManager->save($suivi, false);
+                $this->entityManager->flush();
             }
         }
 
-        $this->suiviManager->flush();
+        $this->entityManager->flush();
 
         return $nbSignalements;
     }

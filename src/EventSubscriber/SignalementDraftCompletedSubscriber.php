@@ -9,7 +9,6 @@ use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Event\SignalementDraftCompletedEvent;
-use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\NewSignalementCheckFileMessage;
 use App\Messenger\Message\SignalementDraftProcessMessage;
@@ -31,7 +30,6 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly SignalementBuilder $signalementBuilder,
-        private readonly SignalementManager $signalementManager,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly DocumentProvider $documentProvider,
         private readonly MessageBusInterface $messageBus,
@@ -68,7 +66,8 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 ->build();
 
             if (null !== $signalement) {
-                $this->signalementManager->save($signalement);
+                $this->entityManager->persist($signalement);
+                $this->entityManager->flush();
                 $this->logger->info(sprintf(
                     'Signalement saved with reference #%s in territory %s',
                     $signalement->getReference(),
@@ -79,6 +78,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 $this->dispatchDraftProcessing($signalementDraft, $signalement);
                 $this->dispatchCheckFiles($signalement);
                 $signalementDraft->setStatus(SignalementDraftStatus::EN_SIGNALEMENT);
+                $this->entityManager->flush();
                 $this->entityManager->commit();
             } else {
                 $this->entityManager->rollback();

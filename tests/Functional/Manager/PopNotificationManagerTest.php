@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Manager\PopNotificationManager;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -19,8 +20,11 @@ class PopNotificationManagerTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->managerRegistry = self::getContainer()->get(ManagerRegistry::class);
         $this->popNotificationManager = new PopNotificationManager(
+            $entityManager,
             $this->managerRegistry,
             PopNotification::class,
         );

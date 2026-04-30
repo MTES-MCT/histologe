@@ -6,7 +6,7 @@ use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\UserPartner;
 use App\Factory\UserFactory;
-use App\Manager\PartnerManager;
+use App\Repository\PartnerRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -14,13 +14,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserFactoryTest extends KernelTestCase
 {
     private ValidatorInterface $validator;
-    private PartnerManager $partnerManager;
+    private PartnerRepository $partnerRepository;
 
     protected function setUp(): void
     {
         self::bootKernel();
         $this->validator = static::getContainer()->get(ValidatorInterface::class);
-        $this->partnerManager = static::getContainer()->get(PartnerManager::class);
+        $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
     }
 
     public function testCreateUserInstance(): void
@@ -62,7 +62,7 @@ class UserFactoryTest extends KernelTestCase
     public function testCreateUserFromArray(): void
     {
         /** @var Partner $partner */
-        $partner = $this->partnerManager->findOneBy(['nom' => 'Partenaire 63-01']);
+        $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 63-01']);
         $data = [
             'roles' => 'ROLE_USER_PARTNER',
             'email' => 'john.doe-1@example.com',

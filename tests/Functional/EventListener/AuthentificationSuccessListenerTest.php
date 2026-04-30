@@ -4,10 +4,10 @@ namespace App\Tests\Functional\EventListener;
 
 use App\EventListener\AuthentificationSuccessListener;
 use App\Manager\HistoryEntryManager;
-use App\Manager\UserManager;
 use App\Repository\HistoryEntryRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
@@ -60,15 +60,15 @@ class AuthentificationSuccessListenerTest extends WebTestCase
     public function testOnSchebTwoFactorAuthenticationSuccess(): void
     {
         $historyEntryManager = self::getContainer()->get(HistoryEntryManager::class);
-        /** @var UserManager $userManager */
-        $userManager = self::getContainer()->get(UserManager::class);
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
         $authentificationSuccessListener = new AuthentificationSuccessListener(
             $historyEntryManager,
-            $userManager,
             $this->logger,
             $signalementRepository,
+            $entityManager,
             '1'
         );
 

@@ -7,6 +7,7 @@ use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
 use App\Messenger\Message\DossierMessageInterface;
 use App\Repository\PartnerRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
@@ -18,6 +19,7 @@ readonly class WorkerMessageEventSubscriber implements EventSubscriberInterface
         private JobEventManager $jobEventManager,
         private SerializerInterface $serializer,
         private PartnerRepository $partnerRepository,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -49,6 +51,7 @@ readonly class WorkerMessageEventSubscriber implements EventSubscriberInterface
                     partnerId: $partnerId,
                     partnerType: $partner?->getType()
                 );
+                $this->entityManager->flush();
             }
         }
     }

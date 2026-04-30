@@ -107,6 +107,7 @@ class SignalementFileController extends AbstractController
         EntityManagerInterface $entityManager,
         SuiviManager $suiviManager,
         UploadHandlerService $uploadHandlerService,
+        FileRepository $fileRepository,
     ): JsonResponse {
         if (!$this->isGranted(SignalementVoter::SIGN_EDIT_DRAFT, $signalement)
             && !$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement)
@@ -114,8 +115,6 @@ class SignalementFileController extends AbstractController
             && !$this->isGranted(SignalementVoter::SIGN_EDIT_INJONCTION, $signalement)) {
             throw $this->createAccessDeniedException();
         }
-        /** @var FileRepository $fileRepository */
-        $fileRepository = $entityManager->getRepository(File::class);
         /** @var User $user */
         $user = $this->getUser();
         $files = $fileRepository->findBy(['signalement' => $signalement, 'isWaitingSuivi' => true, 'uploadedBy' => $user]);

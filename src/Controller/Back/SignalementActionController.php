@@ -15,7 +15,6 @@ use App\Entity\User;
 use App\Form\AddSuiviType;
 use App\Form\AgentSelectionType;
 use App\Form\RefusSignalementType;
-use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
@@ -31,7 +30,6 @@ use App\Service\MessageHelper;
 use App\Service\RequestDataExtractor;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -60,6 +58,7 @@ class SignalementActionController extends AbstractController
         Request $request,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
         SuiviManager $suiviManager,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VALIDATE, $signalement);
         /** @var User $user */
@@ -94,8 +93,12 @@ class SignalementActionController extends AbstractController
             user : $user,
             isVisibleForUsager: true,
             context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
-            createSubscription: false
+            createSubscription: false,
+            flush: false,
         );
+
+        $entityManager->flush();
+
         $this->addFlash('success', ['title' => 'Signalement accepté', 'message' => 'Le signalement a bien été accepté.']);
 
         return $this->json(['redirect' => true, 'url' => $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()])]);
@@ -248,21 +251,21 @@ class SignalementActionController extends AbstractController
         Request $request,
         Signalement $signalement,
         SuiviRepository $suiviRepository,
-        ManagerRegistry $doctrine,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         $suivi = $suiviRepository->findOneBy(['id' => $request->query->get('suivi')]);
         $this->denyAccessUnlessGranted(SuiviVoter::SUIVI_DELETE, $suivi);
         if ($this->isCsrfTokenValid('signalement_delete_suivi_'.$signalement->getId(), (string) $request->request->get('_token'))) {
             $limit = new \DateTimeImmutable('-'.$this->delaySuiviEditableInMinutes.' minutes');
             if ($suivi->getCreatedAt() > $limit && $this->editionSuiviEnable) {
-                $doctrine->getManager()->remove($suivi);
+                $entityManager->remove($suivi);
             } else {
                 /** @var User $user */
                 $user = $this->getUser();
                 $suivi->setDeletedAt(new \DateTimeImmutable());
                 $suivi->setDeletedBy($user);
             }
-            $doctrine->getManager()->flush();
+            $entityManager->flush();
             $flashMessages[] = ['type' => 'success', 'title' => 'Suivi supprimé', 'message' => 'Le suivi a été supprimé.'];
             $htmlTargetContents = [['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])]];
             $functions = [['name' => 'applyFilter']];
@@ -377,8 +380,8 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         Request $request,
         RnbService $rnbService,
-        SignalementManager $signalementManager,
         HtmlTargetContentsService $htmlTargetContentsService,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_NEED_VALIDATION, $signalement)) {
             throw $this->createAccessDeniedException();
@@ -404,7 +407,7 @@ class SignalementActionController extends AbstractController
         }
         $signalement->setRnbIdOccupant($building->getRnbId());
         $signalement->setGeoloc(['lat' => $building->getLat(), 'lng' => $building->getLng()]);
-        $signalementManager->flush();
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Le bâtiment a bien été mis à jour.'];
         $htmlTargetContents = $htmlTargetContentsService->getHtmlTargetContentsForSignalementAddress($signalement);
 
@@ -451,6 +454,7 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         UserSignalementSubscriptionManager $signalementSubscriptionManager,
         Request $request,
+        EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_SUBSCRIBE, $signalement);
         $token = $request->query->get('_token');
@@ -464,7 +468,7 @@ class SignalementActionController extends AbstractController
         $user = $this->getUser();
 
         $signalementSubscriptionManager->createOrGet($user, $signalement, $user);
-        $signalementSubscriptionManager->flush();
+        $entityManager->flush();
 
         $msg = 'Vous avez rejoint le dossier, vous apparaissez maintenant dans la liste des agents abonnés au dossier.
         Le dossier apparaît dans vos dossiers sur votre tableau de bord et vous recevrez les mises à jour du dossier.';
@@ -480,6 +484,7 @@ class SignalementActionController extends AbstractController
         UserSignalementSubscriptionRepository $signalementSubscriptionRepository,
         AffectationRepository $affectationRepository,
         Request $request,
+        EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_SUBSCRIBE, $signalement);
         $successMsg = 'Vous avez quitté le dossier, vous n\'apparaissez plus dans la liste des agents abonnés au dossier et vous ne recevrez plus les mises à jour du dossier.';
@@ -532,11 +537,11 @@ class SignalementActionController extends AbstractController
                         return $this->json($response, $response['code']);
                     }
 
-                    $this->unsubscribeUser($user, $signalement, $signalementSubscriptionManager, $signalementSubscriptionRepository);
+                    $this->unsubscribeUser($user, $signalement, $entityManager, $signalementSubscriptionRepository);
                     foreach ($agentsSelection->getAgents() as $agent) {
                         $signalementSubscriptionManager->createOrGet($agent, $signalement, $user, $affectation);
-                        $signalementSubscriptionManager->flush();
                     }
+                    $entityManager->flush();
                     $this->addFlash('success', ['title' => $successMsgTitle, 'message' => $successMsg]);
 
                     $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -559,18 +564,19 @@ class SignalementActionController extends AbstractController
             return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
         }
 
-        $this->unsubscribeUser($user, $signalement, $signalementSubscriptionManager, $signalementSubscriptionRepository);
+        $this->unsubscribeUser($user, $signalement, $entityManager, $signalementSubscriptionRepository);
+        $entityManager->flush();
 
         $this->addFlash('success', ['title' => $successMsgTitle, 'message' => $successMsg]);
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
     }
 
-    private function unsubscribeUser(User $user, Signalement $signalement, UserSignalementSubscriptionManager $manager, UserSignalementSubscriptionRepository $repo): void
+    private function unsubscribeUser(User $user, Signalement $signalement, EntityManagerInterface $entityManager, UserSignalementSubscriptionRepository $repo): void
     {
         $subscription = $repo->findOneBy(['user' => $user, 'signalement' => $signalement]);
         if ($subscription) {
-            $manager->remove($subscription);
+            $entityManager->remove($subscription);
         }
     }
 }

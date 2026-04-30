@@ -6,6 +6,7 @@ use App\Command\Cron\ClearStorageOriginalFileCommand;
 use App\Repository\Behaviour\FileUpdater;
 use App\Repository\FileRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -27,7 +28,9 @@ class ClearStorageOriginalFileCommandTest extends KernelTestCase
         $this->fileRepository = self::getContainer()->get(FileRepository::class);
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
         $this->mailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
-        $this->fileUpdater = self::getContainer()->get(FileUpdater::class);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        $this->fileUpdater = new FileUpdater($entityManager);
     }
 
     public function testExecuteTwice(): void

@@ -6,9 +6,8 @@ use App\Entity\Territory;
 use App\Entity\User;
 use App\Factory\PartnerFactory;
 use App\Factory\UserFactory;
-use App\Manager\ManagerInterface;
-use App\Manager\PartnerManager;
-use App\Manager\UserManager;
+use App\Repository\PartnerRepository;
+use App\Repository\UserRepository;
 use App\Service\Import\GridAffectation\GridAffectationLoader;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Tests\FixturesHelper;
@@ -47,10 +46,9 @@ class GridAffectationLoaderTest extends KernelTestCase
         $this->entityManager = $em;
         $this->gridAffectationLoader = new GridAffectationLoader(
             self::getContainer()->get(PartnerFactory::class),
-            self::getContainer()->get(PartnerManager::class),
+            self::getContainer()->get(PartnerRepository::class),
             self::getContainer()->get(UserFactory::class),
-            self::getContainer()->get(UserManager::class),
-            self::getContainer()->get(ManagerInterface::class),
+            self::getContainer()->get(UserRepository::class),
             self::getContainer()->get(ValidatorInterface::class),
             self::getContainer()->get(LoggerInterface::class),
             self::getContainer()->get(NotificationMailerRegistry::class),

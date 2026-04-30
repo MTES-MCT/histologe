@@ -179,8 +179,8 @@ class HistoryEntryManagerTest extends WebTestCase
         $historyEntry = $this->historyEntryManager->create(HistoryEntryEvent::UPDATE, $affectations[0], $changes);
         $source = $this->historyEntryManager->getSource();
         $historyEntry->setSource($source);
-        $this->historyEntryManager->save($historyEntry);
         $this->entityManager->persist($historyEntry);
+        $this->entityManager->flush();
 
         $historyEntries = $this->historyEntryManager->getAffectationHistory($signalement);
 

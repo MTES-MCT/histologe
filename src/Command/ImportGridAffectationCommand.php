@@ -4,13 +4,14 @@ namespace App\Command;
 
 use App\Entity\Enum\PartnerType;
 use App\Entity\Territory;
-use App\Manager\TerritoryManager;
+use App\Repository\TerritoryRepository;
 use App\Service\Import\CsvParser;
 use App\Service\Import\GridAffectation\GridAffectationLoader;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -38,11 +39,12 @@ class ImportGridAffectationCommand extends Command
         private readonly FilesystemOperator $fileStorage,
         private readonly ParameterBagInterface $parameterBag,
         private readonly CsvParser $csvParser,
-        private readonly TerritoryManager $territoryManager,
+        private readonly TerritoryRepository $territoryRepository,
         private readonly GridAffectationLoader $gridAffectationLoader,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
@@ -83,7 +85,7 @@ class ImportGridAffectationCommand extends Command
         $fileVersion = $input->getOption(self::PARAM_FILE_VERSION);
 
         /** @var Territory $territory */
-        $territory = $this->territoryManager->findOneBy(['zip' => $territoryZip]);
+        $territory = $this->territoryRepository->findOneBy(['zip' => $territoryZip]);
 
         if ($fileVersion) {
             $fromFile = 'csv/grille_affectation_'.$territoryZip.'-'.$fileVersion.'.csv';
@@ -149,7 +151,8 @@ class ImportGridAffectationCommand extends Command
             $message = 'Bravo, le territoire %s est ouvert: %s partenaires, %s utilisateurs ont été crées';
             $ioSuccessMessage = $territory->getName().' has been activated';
             $territory->setIsActive(true);
-            $this->territoryManager->save($territory);
+            $this->entityManager->persist($territory);
+            $this->entityManager->flush();
         }
 
         $io->success($ioSuccessMessage);

@@ -6,11 +6,13 @@ use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\PopNotification;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 class PopNotificationManager extends Manager
 {
     public function __construct(
+        private readonly EntityManagerInterface $entityManager,
         protected ManagerRegistry $managerRegistry,
         string $entityName = PopNotification::class,
     ) {
@@ -32,7 +34,7 @@ class PopNotificationManager extends Manager
         if (!$popNotification) {
             $popNotification = new PopNotification();
             $user->addPopNotification($popNotification);
-            $this->persist($popNotification);
+            $this->entityManager->persist($popNotification);
             $popNotification->setUser($user);
         }
         switch ($type) {
@@ -44,7 +46,7 @@ class PopNotificationManager extends Manager
                 break;
         }
         if (empty($popNotification->getParams()['addedPartners']) && empty($popNotification->getParams()['removedPartners'])) {
-            $this->remove($popNotification, false);
+            $this->entityManager->remove($popNotification);
 
             return null;
         }

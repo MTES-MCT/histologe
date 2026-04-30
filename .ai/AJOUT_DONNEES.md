@@ -187,7 +187,7 @@ public function updateFromCoordonneesSyndicRequest(
         ->setTelSyndic($coordonneesSyndicRequest->getTelephone())
         ->setTelSyndicSecondaire($coordonneesSyndicRequest->getTelephoneBis());
 
-    $this->save($signalement);
+    $this->persist($signalement);
 
     return $this->suiviManager->addSuiviIfNeeded(
         signalement: $signalement,

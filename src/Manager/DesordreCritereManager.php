@@ -5,7 +5,7 @@ namespace App\Manager;
 use App\Entity\DesordreCritere;
 use Doctrine\Persistence\ManagerRegistry;
 
-class DesordreCritereManager extends AbstractManager
+class DesordreCritereManager extends Manager
 {
     public function __construct(protected ManagerRegistry $managerRegistry, string $entityName = DesordreCritere::class)
     {

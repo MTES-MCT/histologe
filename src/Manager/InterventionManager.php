@@ -19,6 +19,7 @@ use App\Factory\InterventionFactory;
 use App\Repository\InterventionRepository;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -26,7 +27,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class InterventionManager extends AbstractManager
+class InterventionManager extends Manager
 {
     public function __construct(
         protected ManagerRegistry $managerRegistry,
@@ -38,6 +39,7 @@ class InterventionManager extends AbstractManager
         private readonly FileFactory $fileFactory,
         private readonly Security $security,
         private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
         string $entityName = Intervention::class,
@@ -76,7 +78,8 @@ class InterventionManager extends AbstractManager
             ->setNotifyUsager($visiteRequest->isUsagerNotified())
             ->setStatus(Intervention::STATUS_PLANNED);
 
-        $this->save($intervention);
+        $this->entityManager->persist($intervention);
+        $this->entityManager->flush();
 
         if ($intervention->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d')) {
             $this->confirmVisiteFromRequest($visiteRequest, $createdByPartner, $intervention);
@@ -100,7 +103,8 @@ class InterventionManager extends AbstractManager
         try {
             $context['createdByPartner'] = $createdByPartner;
             $this->interventionPlanningStateMachine->apply($intervention, 'cancel', $context);
-            $this->save($intervention);
+            $this->entityManager->persist($intervention);
+            $this->entityManager->flush();
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
 
@@ -141,7 +145,8 @@ class InterventionManager extends AbstractManager
             ->setExternalOperator($visiteRequest->getExternalOperator())
             ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTimeUTC()))
             ->setCommentBeforeVisite($visiteRequest->getCommentBeforeVisite());
-        $this->save($intervention);
+        $this->entityManager->persist($intervention);
+        $this->entityManager->flush();
 
         if ($intervention->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d')) {
             $this->confirmVisiteFromRequest($visiteRequest, $createdByPartner, $intervention);
@@ -195,7 +200,8 @@ class InterventionManager extends AbstractManager
             $this->interventionPlanningStateMachine->apply($intervention, 'abort', $context);
         }
 
-        $this->save($intervention);
+        $this->entityManager->persist($intervention);
+        $this->entityManager->flush();
 
         return $intervention;
     }
@@ -230,7 +236,8 @@ class InterventionManager extends AbstractManager
             }
             $intervention->addFile($this->createFile($intervention, $document, $partner));
         }
-        $this->save($intervention);
+        $this->entityManager->persist($intervention);
+        $this->entityManager->flush();
 
         return $intervention;
     }
@@ -242,7 +249,7 @@ class InterventionManager extends AbstractManager
     {
         $description = InterventionDescriptionGenerator::buildDescriptionArreteCreatedFromRequest($arreteRequest);
         /** @var Intervention|null $intervention */
-        $intervention = $this->getRepository()->findOneBy([
+        $intervention = $this->interventionRepository->findOneBy([
             'signalement' => $affectation->getSignalement(),
             'type' => InterventionType::ARRETE_PREFECTORAL,
             'details' => $this->htmlSanitizer->sanitize($description),
@@ -266,7 +273,8 @@ class InterventionManager extends AbstractManager
                 concludeProcedures: [ProcedureType::INSALUBRITE]
             );
 
-            $this->save($intervention);
+            $this->entityManager->persist($intervention);
+            $this->entityManager->flush();
         }
 
         return $intervention;
@@ -283,7 +291,8 @@ class InterventionManager extends AbstractManager
             details: $conclusionVisite,
         );
 
-        $this->save($intervention);
+        $this->entityManager->persist($intervention);
+        $this->entityManager->flush();
 
         return $intervention;
     }

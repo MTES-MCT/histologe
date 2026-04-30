@@ -3,8 +3,8 @@
 namespace App\Service\History;
 
 use App\Entity\HistoryEntry;
-use App\Entity\Signalement;
-use App\Entity\User;
+use App\Repository\SignalementRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class HistoryEntryBuffer
@@ -16,6 +16,8 @@ class HistoryEntryBuffer
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly UserRepository $userRepository,
     ) {
     }
 
@@ -50,11 +52,11 @@ class HistoryEntryBuffer
                 $entry->setEntityId($entry->getEntity()->getId()); // @phpstan-ignore-line
             }
             if ($entry->getSignalement() && !$this->entityManager->contains($entry->getSignalement())) {
-                $signalement = $this->entityManager->getRepository(Signalement::class)->find($entry->getSignalement()->getId());
+                $signalement = $this->signalementRepository->find($entry->getSignalement()->getId());
                 $entry->setSignalement($signalement);
             }
             if ($entry->getUser() && !$this->entityManager->contains($entry->getUser())) {
-                $user = $this->entityManager->getRepository(User::class)->find($entry->getUser()->getId());
+                $user = $this->userRepository->find($entry->getUser()->getId());
                 $entry->setUser($user);
             }
 

@@ -4,109 +4,23 @@ namespace App\Tests\Functional\Service\Signalement;
 
 use App\Entity\Enum\DocumentType;
 use App\Entity\Signalement;
-use App\Factory\SignalementAffectationListViewFactory;
-use App\Factory\SignalementExportFactory;
-use App\Factory\SignalementImportFactory;
-use App\Manager\SignalementManager;
-use App\Manager\SuiviManager;
-use App\Manager\UserManager;
-use App\Repository\BailleurRepository;
-use App\Repository\DesordrePrecisionRepository;
-use App\Repository\PartnerRepository;
-use App\Repository\Query\SignalementList\ExportIterableQuery;
-use App\Repository\Query\SignalementList\QueryBuilderFactory;
-use App\Service\Signalement\CriticiteCalculator;
-use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
+use App\Repository\SignalementRepository;
 use App\Service\Signalement\PhotoHelper;
-use App\Service\Signalement\Qualification\QualificationStatusService;
-use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
-use App\Service\Signalement\SignalementAddressUpdater;
-use App\Service\Signalement\ZipcodeProvider;
-use App\Specification\Signalement\SuroccupationSpecification;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class PhotoHelperTest extends KernelTestCase
 {
-    private Security $security;
-    private ManagerRegistry $managerRegistry;
-    private SignalementImportFactory $signalementImportFactory;
-    private QualificationStatusService $qualificationStatusService;
-    private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
-    private SignalementExportFactory $signalementExportFactory;
-    private SignalementManager $signalementManager;
-    private SuroccupationSpecification $suroccupationSpecification;
-    private CriticiteCalculator $criticiteCalculator;
-    private SignalementQualificationUpdater $signalementQualificationUpdater;
-    private DesordrePrecisionRepository $desordrePrecisionRepository;
-    private DesordreCompositionLogementLoader $desordreCompositionLogementLoader;
-    private SuiviManager $suiviManager;
-    private UserManager $userManager;
-    private BailleurRepository $bailleurRepository;
-    private PartnerRepository $partnerRepository;
-    private SignalementAddressUpdater $signalementAddressUpdater;
-    private ZipcodeProvider $zipcodeProvider;
-    private HtmlSanitizerInterface $htmlSanitizerInterface;
-
-    private ExportIterableQuery $exportIterableQuery;
-    private QueryBuilderFactory $queryBuilderFactory;
+    private SignalementRepository $signalementRepository;
 
     protected function setUp(): void
     {
-        $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
-        $this->security = static::getContainer()->get('security.helper');
-        $this->signalementImportFactory = static::getContainer()->get(SignalementImportFactory::class);
-        $this->qualificationStatusService = static::getContainer()->get(QualificationStatusService::class);
-        $this->signalementAffectationListViewFactory = static::getContainer()->get(
-            SignalementAffectationListViewFactory::class
-        );
-        $this->signalementExportFactory = static::getContainer()->get(SignalementExportFactory::class);
-        $this->suroccupationSpecification = static::getContainer()->get(SuroccupationSpecification::class);
-        $this->criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
-        $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
-        $this->desordrePrecisionRepository = static::getContainer()->get(DesordrePrecisionRepository::class);
-        $this->desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
-        $this->suiviManager = static::getContainer()->get(SuiviManager::class);
-        $this->userManager = static::getContainer()->get(UserManager::class);
-        $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
-        $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
-        $this->signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
-        $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
-        $this->exportIterableQuery = static::getContainer()->get(ExportIterableQuery::class);
-        $this->queryBuilderFactory = static::getContainer()->get(QueryBuilderFactory::class);
-        $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
-
-        $this->signalementManager = new SignalementManager(
-            $this->managerRegistry,
-            $this->security,
-            $this->signalementImportFactory,
-            $this->qualificationStatusService,
-            $this->signalementAffectationListViewFactory,
-            $this->signalementExportFactory,
-            $this->suroccupationSpecification,
-            $this->criticiteCalculator,
-            $this->signalementQualificationUpdater,
-            $this->desordrePrecisionRepository,
-            $this->desordreCompositionLogementLoader,
-            $this->suiviManager,
-            $this->userManager,
-            $this->bailleurRepository,
-            $this->partnerRepository,
-            $this->signalementAddressUpdater,
-            $this->zipcodeProvider,
-            $this->exportIterableQuery,
-            $this->queryBuilderFactory,
-            $this->htmlSanitizerInterface,
-            true
-        );
+        $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
     }
 
     public function testGetPhotosBySlug(): void
     {
         /** @var Signalement $signalement */
-        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-27']);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-27']);
 
         $desordrePrecisionSlug = 'desordres_batiment_proprete_interieur';
         $photos = PhotoHelper::getPhotosBySlug($signalement, $desordrePrecisionSlug);
@@ -123,7 +37,7 @@ class PhotoHelperTest extends KernelTestCase
     public function testGetSortedPhotos(): void
     {
         /** @var Signalement $signalement */
-        $signalement = $this->signalementManager->findOneBy(['reference' => '2023-27']);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-27']);
 
         $photos = PhotoHelper::getSortedPhotos($signalement);
         $this->assertCount(3, $photos);

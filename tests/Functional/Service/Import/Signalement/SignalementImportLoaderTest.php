@@ -13,7 +13,10 @@ use App\Manager\TagManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\CritereRepository;
 use App\Repository\CriticiteRepository;
+use App\Repository\FileRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\SuiviRepository;
+use App\Repository\UserRepository;
 use App\Service\Import\Signalement\SignalementImportLoader;
 use App\Service\Import\Signalement\SignalementImportMapper;
 use App\Service\Signalement\CriticiteCalculator;
@@ -50,6 +53,9 @@ class SignalementImportLoaderTest extends KernelTestCase
     private CritereRepository $critereRepository;
     private CriticiteRepository $criticiteRepository;
     private PartnerRepository $partnerRepository;
+    private UserRepository $userRepository;
+    private FileRepository $fileRepository;
+    private SuiviRepository $suiviRepository;
 
     protected function setUp(): void
     {
@@ -69,6 +75,9 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->critereRepository = self::getContainer()->get(CritereRepository::class);
         $this->criticiteRepository = self::getContainer()->get(CriticiteRepository::class);
         $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
+        $this->userRepository = self::getContainer()->get(UserRepository::class);
+        $this->fileRepository = self::getContainer()->get(FileRepository::class);
+        $this->suiviRepository = self::getContainer()->get(SuiviRepository::class);
         /** @var ManagerRegistry $doctrine */
         $doctrine = $kernel->getContainer()->get('doctrine');
 
@@ -105,6 +114,9 @@ class SignalementImportLoaderTest extends KernelTestCase
             $this->critereRepository,
             $this->criticiteRepository,
             $this->partnerRepository,
+            $this->userRepository,
+            $this->fileRepository,
+            $this->suiviRepository,
         );
 
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '01']);

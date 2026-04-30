@@ -11,6 +11,7 @@ use App\Repository\SignalementUsagerRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Tests\SessionHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
@@ -22,6 +23,7 @@ class SignalementCreateControllerTest extends WebTestCase
     private ?KernelBrowser $client = null;
     private UserRepository $userRepository;
     private SignalementRepository $signalementRepository;
+    private EntityManagerInterface $entityManager;
     private PartnerRepository $partnerRepository;
     private SignalementUsagerRepository $signalementUsagerRepository;
     private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
@@ -32,6 +34,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->signalementUsagerRepository = static::getContainer()->get(SignalementUsagerRepository::class);
         $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
@@ -367,7 +370,8 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
         $signalement->setIsLogementSocial(true);
-        $this->signalementRepository->save($signalement, true);
+        $this->entityManager->persist($signalement);
+        $this->entityManager->flush();
 
         $form = $crawler->filter('#bo-form-signalement-coordonnees')->form();
         $form->setValues([

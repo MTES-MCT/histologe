@@ -4,8 +4,8 @@ namespace App\Controller\Back;
 
 use App\Entity\PopNotification;
 use App\Entity\User;
-use App\Manager\PopNotificationManager;
 use App\Repository\PartnerRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,14 +40,15 @@ class PopNotificationController extends AbstractController
 
     #[Route('/delete', name: 'pop_notification_delete')]
     public function delete(
-        PopNotificationManager $popNotificationManager,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var ?User $user */
         $user = $this->getUser();
         $popNotification = $user->getPopNotifications()->count() ? $user->getPopNotifications()->first() : null;
         if ($popNotification) {
-            $popNotificationManager->remove($popNotification);
+            $entityManager->remove($popNotification);
         }
+        $entityManager->flush();
 
         return new JsonResponse(['success' => true]);
     }

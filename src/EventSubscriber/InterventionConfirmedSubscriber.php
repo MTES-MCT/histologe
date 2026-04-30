@@ -8,10 +8,10 @@ use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
-use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Workflow\Event\TransitionEvent;
@@ -24,7 +24,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
         private readonly Security $security,
         private readonly VisiteNotifier $visiteNotifier,
         private readonly SuiviManager $suiviManager,
-        private readonly SignalementManager $signalementManager,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -92,6 +92,7 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
     private function setBailleurPrevenu(Signalement $signalement): void
     {
         $signalement->setIsProprioAverti(true);
-        $this->signalementManager->save($signalement);
+        $this->entityManager->persist($signalement);
+        $this->entityManager->flush();
     }
 }

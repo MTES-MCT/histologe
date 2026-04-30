@@ -5,7 +5,6 @@ namespace App\Command\Cron;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
-use App\Manager\InterventionManager;
 use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\InterventionRepository;
@@ -13,6 +12,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\VisiteNotifier;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,12 +28,12 @@ class NotifyVisitsCommand extends AbstractCronCommand
 {
     public function __construct(
         private readonly InterventionRepository $interventionRepository,
-        private readonly InterventionManager $interventionManager,
         private readonly AffectationRepository $affectationRepository,
         private readonly SuiviManager $suiviManager,
         private readonly VisiteNotifier $visiteNotifier,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -88,10 +88,12 @@ class NotifyVisitsCommand extends AbstractCronCommand
             );
 
             $intervention->setReminderBeforeSentAt(new \DateTimeImmutable());
-            $this->interventionManager->save($intervention);
+            $this->entityManager->persist($intervention);
 
             ++$countFutureVisits;
         }
+
+        $this->entityManager->flush();
 
         $listPastVisits = $this->interventionRepository->getPastVisits();
         foreach ($listPastVisits as $intervention) {
@@ -106,9 +108,11 @@ class NotifyVisitsCommand extends AbstractCronCommand
             );
 
             $intervention->setReminderConclusionSentAt(new \DateTimeImmutable());
-            $this->interventionManager->save($intervention);
+            $this->entityManager->persist($intervention);
             ++$countPastVisits;
         }
+
+        $this->entityManager->flush();
 
         // Notifs for visits that should be planned
         $listAffectations = $this->affectationRepository->findAcceptedAffectationsFromVisitesPartner();

@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Command\Cron;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
+use App\Repository\SignalementRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -19,7 +20,8 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
         /** @var EntityManagerInterface $em */
         $em = $kernel->getContainer()->get('doctrine')->getManager();
 
-        $signalements = $em->getRepository(Signalement::class)->findBy([
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $signalements = $signalementRepository->findBy([
             'statut' => SignalementStatus::ACTIVE,
             'profileDeclarant' => ProfileDeclarant::LOCATAIRE,
         ]);

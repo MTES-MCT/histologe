@@ -26,6 +26,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
 
     public function __construct(
         private readonly TerritoryRepository $territoryRepository,
+        private readonly SignalementRepository $signalementRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly HistoryEntryManager $historyEntryManager,
@@ -60,10 +61,8 @@ class UpdateSignalementGeolocalisationCommand extends Command
         $toCreatedAt = null;
         $signalements = null;
 
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
         if ($uuid) {
-            $signalements = $signalementRepository->findBy(['uuid' => $uuid]);
+            $signalements = $this->signalementRepository->findBy(['uuid' => $uuid]);
         } elseif (!empty($zip)) {
             $this->historyEntryManager->removeEntityListeners();
             $territory = $this->territoryRepository->findOneBy(['zip' => $zip]);
@@ -75,7 +74,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
                 return Command::FAILURE;
             }
 
-            $signalements = $signalementRepository->findSignalementsByYear(
+            $signalements = $this->signalementRepository->findSignalementsByYear(
                 $year,
                 $territory,
                 $emptyGeolocOnly
@@ -84,7 +83,7 @@ class UpdateSignalementGeolocalisationCommand extends Command
             $fromCreatedAt = \DateTimeImmutable::createFromFormat('Y-m-d', $fromCreatedAt);
             if (false !== $fromCreatedAt) {
                 $toCreatedAt = $fromCreatedAt->modify('+1 month');
-                $signalements = $signalementRepository->findSignalementsBetweenDates(
+                $signalements = $this->signalementRepository->findSignalementsBetweenDates(
                     $fromCreatedAt,
                     $toCreatedAt
                 );

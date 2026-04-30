@@ -8,6 +8,7 @@ use App\Service\Files\ImageManipulationHandler;
 use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use App\Tests\SessionHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -21,6 +22,7 @@ class ProfilControllerTest extends WebTestCase
 
     private ?KernelBrowser $client = null;
     private UserRepository $userRepository;
+    private EntityManagerInterface $entityManager;
     private RouterInterface $router;
     private User $user;
     private UploadHandlerService&MockObject $uploadHandlerServiceMock;
@@ -31,6 +33,7 @@ class ProfilControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
+        $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->router = self::getContainer()->get(RouterInterface::class);
 
         $this->uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
@@ -233,7 +236,8 @@ class ProfilControllerTest extends WebTestCase
     public function testDeleteAvatarSuccess(): void
     {
         $this->user->setAvatarFilename('path/to/avatar.jpg');
-        $this->userRepository->save($this->user, true);
+        $this->entityManager->persist($this->user);
+        $this->entityManager->flush();
 
         $this->uploadHandlerServiceMock->expects($this->once())
         ->method('deleteSingleFile')

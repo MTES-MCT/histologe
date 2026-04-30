@@ -4,12 +4,16 @@ namespace App\Manager;
 
 use App\Entity\Enum\PartnerType;
 use App\Entity\JobEvent;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
-class JobEventManager extends AbstractManager
+class JobEventManager extends Manager
 {
-    public function __construct(ManagerRegistry $managerRegistry, string $entityName = JobEvent::class)
-    {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        ManagerRegistry $managerRegistry,
+        string $entityName = JobEvent::class,
+    ) {
         parent::__construct($managerRegistry, $entityName);
     }
 
@@ -25,7 +29,6 @@ class JobEventManager extends AbstractManager
         ?PartnerType $partnerType,
         ?int $attachmentsCount = null,
         ?int $attachmentsSize = null,
-        ?bool $flush = true,
     ): JobEvent {
         $jobEvent = (new JobEvent())
             ->setSignalementId($signalementId)
@@ -40,7 +43,7 @@ class JobEventManager extends AbstractManager
             ->setAttachmentsSize($attachmentsSize)
             ->setCodeStatus($codeStatus);
 
-        $this->save($jobEvent, $flush);
+        $this->entityManager->persist($jobEvent);
 
         return $jobEvent;
     }
