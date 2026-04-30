@@ -15,18 +15,39 @@ histoNotificationsContainer?.addEventListener('change', (event) => {
   histoRefreshNotificationButtons();
 });
 
+histoRefreshNotificationButtons();
+
 function histoRefreshNotificationButtons() {
+  const deleteBtn = document.querySelector('#delete-notifications-btn');
   const countNotificationsSelected = histoNotificationSelected.length;
   if (countNotificationsSelected > 0) {
     document.querySelector('#notification-selected-buttons-count').textContent =
       countNotificationsSelected + ' sélectionnée(s) :';
     document.querySelector('#mark-as-read-notifications-btn').textContent = 'Marquer comme lue(s)';
-    document.querySelector('#delete-notifications-btn').textContent = 'Supprimer';
+    if (deleteBtn) {
+      deleteBtn.textContent = 'Supprimer';
+      // remove listeners to delete all notifications
+      const newDeleteBtn = deleteBtn.cloneNode(true);
+      deleteBtn.parentNode.replaceChild(newDeleteBtn, deleteBtn);
+    }
   } else {
     document.querySelector('#notification-selected-buttons-count').textContent = '';
     document.querySelector('#mark-as-read-notifications-btn').textContent =
       'Marquer comme lue(s) (tous)';
-    document.querySelector('#delete-notifications-btn').textContent = 'Vider';
+    if (deleteBtn) {
+      deleteBtn.textContent = 'Vider';
+      // add confirmation to delete all notifications
+      deleteBtn.addEventListener('click', (event) => {
+        if (histoNotificationSelected.length === 0) {
+          const confirmDeleteAll = confirm(
+            'Êtes-vous sûr de vouloir supprimer toutes les notifications ?'
+          );
+          if (!confirmDeleteAll) {
+            event.preventDefault();
+          }
+        }
+      });
+    }
   }
   document
     .querySelectorAll('#notification-selected-buttons input[name=selected_notifications]')
