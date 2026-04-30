@@ -12,10 +12,10 @@ module.exports = async (browser, context) => {
   await page.type('#login-email', 'admin-01@signal-logement.fr');
   await page.type('#login-password', 'signallogement');
 
-  // Soumettre le formulaire
+  // Soumettre le formulaire (le bouton avec le texte "Se connecter")
   await Promise.all([
     page.waitForNavigation({ waitUntil: 'networkidle2' }),
-    page.click('button[type="submit"]'),
+    page.click('button.fr-btn--primary'),
   ]);
 
   await page.close();
