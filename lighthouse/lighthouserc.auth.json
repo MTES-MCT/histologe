@@ -1,0 +1,28 @@
+{
+    "ci": {
+        "collect": {
+            "numberOfRuns": 1,
+            "url": [
+                "http://localhost:8080/bo"
+            ],
+            "puppeteerScript": "./lighthouse/auth.js",
+            "puppeteerLaunchOptions": {
+                "args": ["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"]
+            },
+            "settings": {
+                "output": ["html", "json"]
+            }
+        },
+        "assert": {
+            "assertions": {
+                "categories:performance": "off",
+                "categories:pwa": "off",
+                "categories:accessibility": ["error", { "minScore": 0.95 }]
+            }
+        },
+        "upload": {
+            "target": "filesystem",
+            "outputDir": ".lighthouseci"
+        }
+    }
+}

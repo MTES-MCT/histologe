@@ -90,3 +90,96 @@ jobs:
         working-directory: tests/e2e
         run: npx playwright test
 
+      - name: Switch to prod environment for Lighthouse
+        run: |
+          echo "APP_ENV=prod" > .env.local
+          echo "APP_DEBUG=0" >> .env.local
+          docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=prod --no-warmup
+          docker compose exec -T signal_logement_phpfpm php bin/console cache:warmup --env=prod
+
+      - name: Wait for application in prod mode
+        run: |
+          max_attempts=30
+          attempt=0
+          until curl -f http://localhost:8080/connexion > /dev/null 2>&1; do
+            attempt=$((attempt + 1))
+            if [ $attempt -ge $max_attempts ]; then
+              echo "Application failed to start in prod mode after $max_attempts attempts"
+              docker compose logs signal_logement_phpfpm --tail=50
+              exit 1
+            fi
+            echo "Waiting for application to be ready in prod mode... (attempt $attempt/$max_attempts)"
+            sleep 5
+          done
+          echo "Application is ready in prod mode!"
+
+      - name: Run Lighthouse CI (public pages)
+        run: |
+          export CHROME_PATH=$(find ~/.cache/ms-playwright -name chrome -type f 2>/dev/null | head -1)
+          if [ -z "$CHROME_PATH" ]; then
+            echo "Chrome not found in Playwright cache, using system Chrome"
+            export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
+          fi
+          echo "Using Chrome at: $CHROME_PATH"
+          npx lhci autorun --config=lighthouse/lighthouserc.json || echo "::warning::Lighthouse CI failed for public pages - check artifacts for details"
+        continue-on-error: true
+
+      - name: Run Lighthouse CI (authenticated pages)
+        run: |
+          export CHROME_PATH=$(find ~/.cache/ms-playwright -name chrome -type f 2>/dev/null | head -1)
+          if [ -z "$CHROME_PATH" ]; then
+            echo "Chrome not found in Playwright cache, using system Chrome"
+            export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
+          fi
+          echo "Using Chrome at: $CHROME_PATH"
+          npx lhci autorun --config=lighthouse/lighthouserc.auth.json || echo "::warning::Lighthouse CI failed for authenticated pages - check artifacts for details"
+        continue-on-error: true
+
+      - name: Display Lighthouse accessibility issues
+        if: always()
+        run: |
+          echo "## Lighthouse Accessibility Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ ! -d ".lighthouseci" ]; then
+            echo "⚠️ Directory .lighthouseci not found" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+
+          has_errors=false
+
+          for report in .lighthouseci/*.report.json; do
+            if [ ! -f "$report" ]; then
+              continue
+            fi
+
+            if jq -e '.categories.accessibility' "$report" > /dev/null 2>&1; then
+              url=$(jq -r '.requestedUrl // .finalUrl // "unknown"' "$report")
+              score=$(jq -r '.categories.accessibility.score' "$report")
+
+              echo "### 🔍 $url" >> $GITHUB_STEP_SUMMARY
+
+              if [ "$score" != "null" ]; then
+                score_percent=$(awk "BEGIN {printf \"%.0f\", $score * 100}")
+                echo "**Accessibility Score:** ${score_percent}%" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $GITHUB_STEP_SUMMARY
+
+                echo "**Issues:**" >> $GITHUB_STEP_SUMMARY
+                jq -r '.audits | to_entries[] | select(.value.score != null and .value.score < 1 and .value.scoreDisplayMode == "binary") | "- ❌ \(.value.title): \(.value.description)"' "$report" | tee -a $GITHUB_STEP_SUMMARY
+
+                issue_count=$(jq '[.audits | to_entries[] | select(.value.score != null and .value.score < 1 and .value.scoreDisplayMode == "binary")] | length' "$report")
+                if [ "$issue_count" = "0" ]; then
+                  echo "- ✅ No accessibility issues found!" >> $GITHUB_STEP_SUMMARY
+                else
+                  has_errors=true
+                fi
+                echo "" >> $GITHUB_STEP_SUMMARY
+              fi
+            fi
+          done
+
+          if [ "$has_errors" = "true" ]; then
+            echo "❌ Lighthouse tests failed - accessibility issues found"
+            exit 1
+          fi
+
