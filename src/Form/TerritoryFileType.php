@@ -63,7 +63,7 @@ class TerritoryFileType extends AbstractType
         ]);
 
         if ($this->security->isGranted('ROLE_ADMIN') && !$isEdit) {
-            $builder->add('territory', TerritoryChoiceType::class);
+            $builder->add('territory', TerritoryChoiceType::class, ['label' => 'Territoire (facultatif)']);
         }
 
         $builder->add('title', null, [
