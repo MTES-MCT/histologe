@@ -2,7 +2,7 @@
 services:
   signal_logement_mysql:
     image: 'mysql:8.4.8'
-    command: --max_allowed_packet=32505856
+    command: --max_allowed_packet=32505856 --innodb-buffer-pool-size=4G
     container_name: signal_logement_mysql
     restart: always
     environment:
