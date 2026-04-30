@@ -121,7 +121,7 @@ jobs:
             export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
           fi
           echo "Using Chrome at: $CHROME_PATH"
-          npx lhci autorun --config=lighthouse/lighthouserc.json
+          npx lhci autorun --config=lighthouse/lighthouserc.json || echo "::warning::Lighthouse CI failed for public pages - check artifacts for details"
         continue-on-error: true
 
       - name: Run Lighthouse CI (authenticated pages)
@@ -132,8 +132,34 @@ jobs:
             export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
           fi
           echo "Using Chrome at: $CHROME_PATH"
-          npx lhci autorun --config=lighthouse/lighthouserc.auth.json
+          npx lhci autorun --config=lighthouse/lighthouserc.auth.json || echo "::warning::Lighthouse CI failed for authenticated pages - check artifacts for details"
         continue-on-error: true
+
+      - name: Display Lighthouse accessibility issues
+        if: always()
+        run: |
+          echo "## Lighthouse Accessibility Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -d ".lighthouseci" ]; then
+            for report in .lighthouseci/*.json; do
+              if [ -f "$report" ]; then
+                url=$(jq -r '.requestedUrl' "$report" 2>/dev/null || echo "unknown")
+                score=$(jq -r '.categories.accessibility.score' "$report" 2>/dev/null || echo "N/A")
+
+                echo "### 🔍 $url" >> $GITHUB_STEP_SUMMARY
+                echo "**Accessibility Score:** $(echo "$score * 100" | bc)%" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $GITHUB_STEP_SUMMARY
+
+                # Extract failing audits
+                echo "**Issues:**" >> $GITHUB_STEP_SUMMARY
+                jq -r '.audits | to_entries[] | select(.value.score != null and .value.score < 1 and .value.scoreDisplayMode == "binary") | "- ❌ \(.value.title): \(.value.description)"' "$report" 2>/dev/null >> $GITHUB_STEP_SUMMARY || echo "- Unable to parse issues" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $GITHUB_STEP_SUMMARY
+              fi
+            done
+          else
+            echo "No Lighthouse reports found" >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Upload Lighthouse results
         if: always()

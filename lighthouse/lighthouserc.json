@@ -6,7 +6,8 @@
                 "http://localhost:8080/connexion"
             ],
             "settings": {
-                "chromeFlags": "--no-sandbox --disable-dev-shm-usage --disable-gpu"
+                "chromeFlags": "--no-sandbox --disable-dev-shm-usage --disable-gpu",
+                "output": ["html", "json"]
             }
         },
         "assert": {
