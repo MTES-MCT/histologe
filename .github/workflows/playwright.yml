@@ -115,15 +115,23 @@ jobs:
 
       - name: Run Lighthouse CI (public pages)
         run: |
-          CHROME_PATH=$(npx playwright browsers path chromium)/chromium-*/chrome-linux/chrome
-          export CHROME_PATH=$(ls $CHROME_PATH 2>/dev/null | head -1)
+          export CHROME_PATH=$(find ~/.cache/ms-playwright -name chrome -type f 2>/dev/null | head -1)
+          if [ -z "$CHROME_PATH" ]; then
+            echo "Chrome not found in Playwright cache, using system Chrome"
+            export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
+          fi
+          echo "Using Chrome at: $CHROME_PATH"
           npx lhci autorun --config=lighthouse/lighthouserc.json --chrome-flags="--no-sandbox --disable-dev-shm-usage"
         continue-on-error: true
 
       - name: Run Lighthouse CI (authenticated pages)
         run: |
-          CHROME_PATH=$(npx playwright browsers path chromium)/chromium-*/chrome-linux/chrome
-          export CHROME_PATH=$(ls $CHROME_PATH 2>/dev/null | head -1)
+          export CHROME_PATH=$(find ~/.cache/ms-playwright -name chrome -type f 2>/dev/null | head -1)
+          if [ -z "$CHROME_PATH" ]; then
+            echo "Chrome not found in Playwright cache, using system Chrome"
+            export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
+          fi
+          echo "Using Chrome at: $CHROME_PATH"
           npx lhci autorun --config=lighthouse/lighthouserc.auth.json --chrome-flags="--no-sandbox --disable-dev-shm-usage"
         continue-on-error: true
 
