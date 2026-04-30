@@ -141,13 +141,20 @@ jobs:
           echo "## Lighthouse Accessibility Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
+          echo "DEBUG: Listing .lighthouseci directory contents:"
+          ls -la .lighthouseci/ || echo "Directory does not exist"
+
           found_reports=false
           if [ -d ".lighthouseci" ]; then
-            for report in .lighthouseci/*.json; do
+            # Chercher tous les fichiers JSON (y compris dans les sous-répertoires)
+            for report in $(find .lighthouseci -name "*.json" -type f); do
+              echo "DEBUG: Processing report: $report"
               if [ -f "$report" ]; then
                 found_reports=true
-                url=$(jq -r '.requestedUrl' "$report" 2>/dev/null || echo "unknown")
-                score=$(jq -r '.categories.accessibility.score' "$report" 2>/dev/null || echo "null")
+                url=$(jq -r '.requestedUrl // .finalUrl // "unknown"' "$report" 2>/dev/null)
+                score=$(jq -r '.categories.accessibility.score // "null"' "$report" 2>/dev/null)
+
+                echo "DEBUG: URL=$url, Score=$score"
 
                 if [ "$score" != "null" ] && [ "$score" != "N/A" ]; then
                   score_percent=$(awk "BEGIN {printf \"%.0f\", $score * 100}")
@@ -166,8 +173,7 @@ jobs:
           fi
 
           if [ "$found_reports" = false ]; then
-            echo "⚠️ No Lighthouse reports found in .lighthouseci/" >> $GITHUB_STEP_SUMMARY
-            ls -la .lighthouseci/ 2>/dev/null >> $GITHUB_STEP_SUMMARY || echo "Directory does not exist" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ No Lighthouse JSON reports found in .lighthouseci/" >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: Upload Lighthouse results
@@ -175,8 +181,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-results
-          path: |
-            .lighthouseci/**/*.html
-            .lighthouseci/**/*.json
+          path: .lighthouseci/
           if-no-files-found: warn
 
