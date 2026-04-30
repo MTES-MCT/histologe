@@ -72,7 +72,7 @@
     "es-js-fix": "node_modules/.bin/eslint --config=eslint.vanilla.config.mjs --fix assets/scripts/vanilla/*",
     "es-js-check": "node_modules/.bin/eslint --config=eslint.vanilla.config.mjs --fix-dry-run assets/scripts/vanilla/*",
     "es-js-prettier-fix": "node_modules/.bin/prettier --write 'assets/scripts/vanilla/**/*.js'",
-    "lighthouse": "lhci autorun"
+    "lighthouse": "lhci autorun --config=lighthouse/lighthouserc.json"
   },
   "engines": {
     "node": "24"

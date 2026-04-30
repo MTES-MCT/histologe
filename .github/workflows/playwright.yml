@@ -98,9 +98,14 @@ jobs:
           docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=prod --no-warmup
           docker compose exec -T signal_logement_phpfpm php bin/console cache:warmup --env=prod
 
-      - name: Run Lighthouse CI
+      - name: Run Lighthouse CI (public pages)
         run: |
-          npm run lighthouse
+          npx lhci autorun --config=lighthouse/lighthouserc.json
+        continue-on-error: true
+
+      - name: Run Lighthouse CI (authenticated pages)
+        run: |
+          npx lhci autorun --config=lighthouse/lighthouserc.auth.json
         continue-on-error: true
 
       - name: Upload Lighthouse results
