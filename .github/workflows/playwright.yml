@@ -121,7 +121,7 @@ jobs:
             export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
           fi
           echo "Using Chrome at: $CHROME_PATH"
-          npx lhci autorun --config=lighthouse/lighthouserc.json --chrome-flags="--no-sandbox --disable-dev-shm-usage"
+          npx lhci autorun --config=lighthouse/lighthouserc.json
         continue-on-error: true
 
       - name: Run Lighthouse CI (authenticated pages)
@@ -132,7 +132,7 @@ jobs:
             export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
           fi
           echo "Using Chrome at: $CHROME_PATH"
-          npx lhci autorun --config=lighthouse/lighthouserc.auth.json --chrome-flags="--no-sandbox --disable-dev-shm-usage"
+          npx lhci autorun --config=lighthouse/lighthouserc.auth.json
         continue-on-error: true
 
       - name: Upload Lighthouse results

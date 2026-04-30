@@ -5,7 +5,10 @@
             "url": [
                 "http://localhost:8080/bo"
             ],
-            "puppeteerScript": "./lighthouse/auth.js"
+            "puppeteerScript": "./lighthouse/auth.js",
+            "settings": {
+                "chromeFlags": "--no-sandbox --disable-dev-shm-usage --disable-gpu"
+            }
         },
         "assert": {
             "assertions": {
