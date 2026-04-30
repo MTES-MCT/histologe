@@ -92,7 +92,9 @@ jobs:
 
       - name: Switch to prod environment for Lighthouse
         run: |
-          docker compose exec -T signal_logement_phpfpm bash -c 'echo "APP_ENV=prod" > .env.local && echo "APP_DEBUG=0" >> .env.local'
+          sed 's/APP_ENV=test/APP_ENV=prod/' .env.ci > .env.prod
+          echo "APP_DEBUG=0" >> .env.prod
+          cp .env.prod .env
           docker compose exec -T signal_logement_phpfpm php bin/console cache:clear --env=prod --no-warmup
           docker compose exec -T signal_logement_phpfpm php bin/console cache:warmup --env=prod
 
