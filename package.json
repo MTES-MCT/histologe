@@ -2,7 +2,6 @@
   "dependencies": {
     "@braintree/sanitize-url": "6.0.4",
     "@gouvfr/dsfr": "1.14.2",
-    "@lhci/cli": "^0.15.1",
     "@popperjs/core": "2.11.8",
     "@sentry/browser": "8.55.0",
     "@sentry/tracing": "7.120.4",
@@ -28,6 +27,7 @@
     "@eslint/eslintrc": "3.3.4",
     "@eslint/js": "10.0.0",
     "@hotwired/stimulus": "3.2.2",
+    "@lhci/cli": "^0.15.1",
     "@symfony/stimulus-bridge": "3.2.3",
     "@symfony/webpack-encore": "6.0.0",
     "@typescript-eslint/eslint-plugin": "8.56.0",
