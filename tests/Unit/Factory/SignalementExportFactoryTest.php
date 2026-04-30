@@ -113,8 +113,8 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->autresOccupantsDesordre);
         $this->assertEquals(SignalementExportFactory::NON_RENSEIGNE, $signalementExportFactory->superficie);
 
-        $this->assertEquals('-', $signalementExportFactory->photos);
-        $this->assertEquals('-', $signalementExportFactory->documents);
+        $this->assertEquals('Non', $signalementExportFactory->photos);
+        $this->assertEquals('Non', $signalementExportFactory->documents);
         $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->isProprioAverti);
         $this->assertEquals('03/2026', $signalementExportFactory->infoProcedureBailDate);
         $this->assertEquals(SignalementExportFactory::OUI, $signalementExportFactory->isAllocataire);

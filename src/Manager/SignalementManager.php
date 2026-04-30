@@ -41,7 +41,7 @@ use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
-use App\Repository\Query\SignalementList\ListPaginatorQuery;
+use App\Repository\Query\SignalementList\QueryBuilderFactory;
 use App\Service\Gouv\Ban\Response\Address;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
@@ -78,7 +78,7 @@ class SignalementManager extends AbstractManager
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly ExportIterableQuery $exportIterableQuery,
-        private readonly ListPaginatorQuery $listPaginatorQuery,
+        private readonly QueryBuilderFactory $queryBuilderFactory,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
         #[Autowire(env: 'FEATURE_SCHS_DISPATCH_SISH_ENABLE')]
@@ -909,12 +909,24 @@ class SignalementManager extends AbstractManager
         $maxListPagination = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
         $signalementAffectationList = [];
 
-        $paginator = $this->listPaginatorQuery->paginate($user, $options);
-        $total = $paginator->count();
+        $total = $this->queryBuilderFactory->create($user, $options)->select('COUNT(DISTINCT s.id)')->resetDQLPart('groupBy')->getQuery()->getSingleScalarResult();
         if ($count) {
-            return $total;
+            return (int) $total;
         }
-        $dataResultList = $paginator->getQuery()->getResult();
+        $maxResult = $options['maxItemsPerPage'] ?? SignalementAffectationListView::MAX_LIST_PAGINATION;
+        $page = isset($options['page']) ? (int) $options['page'] : 1;
+        $firstResult = (max($page, 1) - 1) * $maxResult;
+
+        // Passe 1 : récupérer uniquement les IDs paginés (requête légère)
+        $signalementIds = $this->queryBuilderFactory->create($user, $options)->setFirstResult($firstResult)->setMaxResults($maxResult)->getQuery()->getSingleColumnResult();
+        $dataResultList = [];
+        if (!empty($signalementIds)) {
+            // Passe 2 : charger les données complètes uniquement pour ces 25 IDs
+            $dataResultList = $this->queryBuilderFactory->createForIds($signalementIds, $options)->getQuery()->getResult();
+            // Réordonner selon l'ordre de la passe 1
+            $signalementListIndexedById = array_column($dataResultList, null, 'id');
+            $dataResultList = array_filter(array_map(static fn ($id) => $signalementListIndexedById[$id] ?? null, $signalementIds));
+        }
         /** @var User $user */
         $user = $this->security->getUser();
         foreach ($dataResultList as $dataResultItem) {
@@ -927,7 +939,7 @@ class SignalementManager extends AbstractManager
         return [
             'pagination' => [
                 'total_items' => $total,
-                'current_page' => \array_key_exists('page', $options) ? (int) $options['page'] : 1,
+                'current_page' => isset($options['page']) ? (int) $options['page'] : 1,
                 'total_pages' => (int) ceil($total / $maxListPagination),
                 'items_per_page' => $maxListPagination,
             ],
@@ -944,8 +956,9 @@ class SignalementManager extends AbstractManager
     public function findSignalementAffectationIterable(
         User $user,
         ?array $options = null,
+        array $selectedColumns = [],
     ): \Generator {
-        foreach ($this->exportIterableQuery->stream($user, $options) as $row) {
+        foreach ($this->exportIterableQuery->stream($user, $options ?? [], $selectedColumns) as $row) {
             yield $this->signalementExportFactory->createInstanceFrom(
                 $user,
                 $row,

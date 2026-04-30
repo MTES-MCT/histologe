@@ -16,9 +16,9 @@ class SignalementAffectationHelper
      */
     public static function getStatusLabelFrom(User $user, array $data): string
     {
-        $affectations = self::parseAffectations($data['rawAffectations']);
+        $affectations = self::parseAffectations($data['rawAffectations'] ?? '');
         if (empty($affectations) || ($user->isSuperAdmin() || $user->isTerritoryAdmin())) {
-            return $data['statut']->label();
+            return $data['statut'] ? $data['statut']->label() : '';
         }
         $statusAffectation = null;
         foreach ($user->getPartners() as $partner) {

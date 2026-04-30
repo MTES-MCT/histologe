@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Service\Files\ImageVariantProvider;
 use Psr\Log\LoggerInterface;
@@ -38,10 +39,11 @@ class FileController extends AbstractController
         try {
             $variant = $request->query->get('variant');
             $filename = $file->getFilename();
+            $disposition = DocumentType::EXPORT === $file->getDocumentType() ? ResponseHeaderBag::DISPOSITION_ATTACHMENT : ResponseHeaderBag::DISPOSITION_INLINE;
             $file = $imageVariantProvider->getFileVariant($filename, $variant);
 
             return (new BinaryFileResponse($file))->setContentDisposition(
-                ResponseHeaderBag::DISPOSITION_INLINE,
+                $disposition,
                 $file->getFilename()
             );
         } catch (\Throwable $exception) {

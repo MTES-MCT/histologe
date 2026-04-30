@@ -160,7 +160,11 @@ class SearchFilter
             }
         }
         if (!empty($filters['closed_affectation'])) {
-            $qb->having('affectationPartnerName IS NOT NULL');
+            $subQbHasAffectation = $this->entityManager->createQueryBuilder()
+                ->select('1')
+                ->from(Affectation::class, 'aHasAff')
+                ->where('aHasAff.signalement = s');
+            $qb->andWhere($qb->expr()->exists($subQbHasAffectation->getDQL()));
             if (\in_array('ALL_OPEN', $filters['closed_affectation'])) {
                 // les id de tous les signalements ayant au moins une affectation fermée :
                 $subquery = $this->entityManager->getRepository(Affectation::class)->createQueryBuilder('a')
@@ -305,8 +309,12 @@ class SearchFilter
                     return SignalementStatus::tryFrom($status)?->mapAffectationStatus();
                 }, $filters['statuses']);
                 $statuses = array_shift($statuses);
-                $qb->having('affectationStatus LIKE :status_affectation')
-                    ->setParameter('status_affectation', '%'.$statuses.'%');
+                $subQbStatus = $this->entityManager->createQueryBuilder()
+                    ->select('DISTINCT IDENTITY(aStatus.signalement)')
+                    ->from(Affectation::class, 'aStatus')
+                    ->where('aStatus.statut = :status_affectation');
+                $qb->andWhere('s.id IN ('.$subQbStatus->getDQL().')')
+                    ->setParameter('status_affectation', $statuses);
             }
         }
 
@@ -448,9 +456,7 @@ class SearchFilter
             $qb = $this->addFilterStatusAffectation($qb, $filters['statusAffectation']);
         }
 
-        if (!empty($filters['isImported'])) {
-            $qb = $this->addFilterImported($qb);
-        } else {
+        if (empty($filters['isImported'])) {
             $qb->andWhere('s.isImported = false');
         }
 
@@ -626,10 +632,14 @@ class SearchFilter
                 ->andWhere('affectationFiltrePartenaire.statut = :status_affectation')
                 ->setParameter('status_affectation', $status);
         } else {
-            // Sinon, on continue de filtrer sur affectationStatus.
+            // Sinon, on filtre via une sous-requête sur les affectations.
+            $subQbStatus = $this->entityManager->createQueryBuilder()
+                ->select('DISTINCT IDENTITY(aStatus.signalement)')
+                ->from(Affectation::class, 'aStatus')
+                ->where('aStatus.statut = :status_affectation');
             $qb
-                ->having('affectationStatus LIKE :status_affectation')
-                ->setParameter('status_affectation', '%'.$status.'%');
+                ->andWhere('s.id IN ('.$subQbStatus->getDQL().')')
+                ->setParameter('status_affectation', $status);
         }
 
         return $qb;
@@ -677,13 +687,6 @@ class SearchFilter
             $paramName = 'date_off_'.u($columnDbField)->snake();
             $qb->andWhere($columnDbField.' <= :'.$paramName)->setParameter($paramName, $endDate->format('Y-m-d'));
         }
-
-        return $qb;
-    }
-
-    private function addFilterImported(QueryBuilder $qb): QueryBuilder
-    {
-        $qb->andWhere('(s.isImported = true OR s.isImported = false)');
 
         return $qb;
     }

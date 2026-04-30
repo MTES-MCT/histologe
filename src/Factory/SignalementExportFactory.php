@@ -32,11 +32,33 @@ class SignalementExportFactory
      */
     public function createInstanceFrom(User $user, array $data): SignalementExport
     {
+        // on s'assure que les clés attendues sont présentes dans le tableau de données pour éviter les erreurs d'accès aux clés manquantes.
+        $data += array_fill_keys([
+            'createdAt', 'modifiedAt', 'closedAt', 'motifCloture', 'profileDeclarant',
+            'profileOccupant', 'statut', 'geoloc', 'interventionScheduledAt', 'interventionStatus',
+            'interventionOccupantPresent', 'typeCompositionLogement', 'nbEnfantsM6',
+            'nbEnfantsP6', 'proprioAvertiAt', 'informationProcedure', 'autresOccupantsDesordre',
+            'reference', 'details', 'nomOccupant', 'prenomOccupant', 'telOccupant',
+            'telOccupantBis', 'mailOccupant', 'adresseOccupant', 'cpOccupant',
+            'villeOccupant', 'inseeOccupant', 'epciNom', 'etageOccupant',
+            'escalierOccupant', 'numAppartOccupant', 'adresseAutreOccupant',
+            'listDesordreCategories', 'oldSituations', 'listDesordreCriteres', 'oldCriteres',
+            'score', 'debutDesordres', 'etiquettes', 'photosName', 'documentsName',
+            'nomProprio', 'prenomProprio', 'denominationProprio', 'adresseProprio',
+            'codePostalProprio', 'villeProprio', 'telProprio', 'telProprioSecondaire',
+            'mailProprio', 'isProprioAverti', 'nbOccupantsLogement', 'autreSituationVulnerabilite',
+            'isAllocataire', 'numAllocataire', 'natureLogement', 'superficie',
+            'isLogementSocial', 'isPreavisDepart', 'isRelogement', 'isNotOccupant',
+            'nomDeclarant', 'matriculeDeclarant', 'mailDeclarant', 'structureDeclarant',
+            'lienDeclarantOccupant', 'interventionNbVisites', 'interventionConcludeProcedure',
+            'interventionDetails', 'comCloture',
+        ], null);
+
         $createdAt = $data['createdAt'] instanceof \DateTimeImmutable
             ? $data['createdAt']->format(self::DATE_FORMAT)
             : null;
 
-        $modifiedAt = $data['modifiedAt'] instanceof \DateTimeImmutable
+        $modifiedAt = $data['modifiedAt'] && $data['modifiedAt'] instanceof \DateTimeImmutable
             ? $data['modifiedAt']->format(self::DATE_FORMAT)
             : null;
 
@@ -119,8 +141,8 @@ class SignalementExportFactory
             score: $data['score'],
             debutDesordres: $this->mapData($data, 'debutDesordres'),
             etiquettes: $data['etiquettes'] ?? null,
-            photos: '-',
-            documents: '-',
+            photos: $this->extractBasenames($data['photosName'] ?? null) ?? self::NON,
+            documents: $this->extractBasenames($data['documentsName'] ?? null) ?? self::NON,
             nomProprio: $data['nomProprio'] ?? '-',
             prenomProprio: $data['prenomProprio'] ?? '-',
             denominationProprio: $data['denominationProprio'] ?? '-',
@@ -199,6 +221,15 @@ class SignalementExportFactory
         }
 
         return $value;
+    }
+
+    private function extractBasenames(?string $filenames): ?string
+    {
+        if (null === $filenames) {
+            return null;
+        }
+
+        return implode(SignalementExport::SEPARATOR_GROUP_CONCAT, array_map('basename', explode(SignalementExport::SEPARATOR_GROUP_CONCAT, $filenames)));
     }
 
     private function mapInterventionStatus(?string $scheduledAt = null, ?string $status = null): string

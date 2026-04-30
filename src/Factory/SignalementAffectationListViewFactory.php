@@ -38,8 +38,6 @@ class SignalementAffectationListViewFactory
             referenceInjonction: $data['referenceInjonction'],
             createdAt: $data['createdAt'],
             statut: $status,
-            score: $data['score'],
-            isNotOccupant: $data['isNotOccupant'],
             nomOccupant: $data['nomOccupant'],
             prenomOccupant: $data['prenomOccupant'],
             adresseOccupant: $data['adresseOccupant'],

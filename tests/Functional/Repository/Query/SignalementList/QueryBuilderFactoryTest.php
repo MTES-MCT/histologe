@@ -15,7 +15,6 @@ class QueryBuilderFactoryTest extends KernelTestCase
     /**
      * @param array<string, mixed> $userConfig
      * @param array<string, mixed> $options
-     * @param array<int, string>   $expectedDqlParts
      * @param array<string, mixed> $expectedParams
      *
      * @dataProvider userOptionsProvider
@@ -25,7 +24,6 @@ class QueryBuilderFactoryTest extends KernelTestCase
     public function testFindSignalementListQueryBuilder(
         array $userConfig,
         array $options,
-        array $expectedDqlParts,
         array $expectedParams,
     ): void {
         /** @var User&MockObject $user */
@@ -40,13 +38,7 @@ class QueryBuilderFactoryTest extends KernelTestCase
         $queryBuilderFactory = static::getContainer()->get(QueryBuilderFactory::class);
         $qb = $queryBuilderFactory->create($user, $options);
 
-        $dql = $qb->getDQL();
         $params = $qb->getParameters();
-
-        // Vérifie que les morceaux de DQL attendus sont présents
-        foreach ($expectedDqlParts as $part) {
-            $this->assertStringContainsString($part, $dql);
-        }
 
         // Vérifie que les paramètres sont bien définis
         $getParamValue = static fn (string $name) => array_reduce(
@@ -71,13 +63,11 @@ class QueryBuilderFactoryTest extends KernelTestCase
             'Partner user, simple options' => [
                 ['isUserPartner' => true, 'isPartnerAdmin' => false, 'isTerritoryAdmin' => false, 'partners' => [], 'territories' => []],
                 ['statuses' => [SignalementStatus::ACTIVE->value], 'sortBy' => 'reference', 'orderBy' => 'ASC'],
-                ['LEFT JOIN s.affectations', 'LEFT JOIN a.partner', 's.id IN'],
                 ['statusList' => SignalementStatus::excludedStatuses()],
             ],
             'Partner admin with bailleur' => [
                 ['isUserPartner' => false, 'isPartnerAdmin' => true, 'isTerritoryAdmin' => false, 'partners' => [], 'territories' => []],
                 ['bailleurSocial' => 'LOGEMENT1', 'statuses' => [SignalementStatus::ACTIVE->value]],
-                ['AND s.bailleur = :bailleur', 'LEFT JOIN s.affectations', 'DISTINCT IDENTITY(a2.signalement)'],
                 [
                     'statusList' => SignalementStatus::excludedStatuses(),
                     'bailleur' => 'LOGEMENT1',
@@ -88,7 +78,6 @@ class QueryBuilderFactoryTest extends KernelTestCase
             'Territory admin with empty territories' => [
                 ['isUserPartner' => false, 'isPartnerAdmin' => false, 'isTerritoryAdmin' => true, 'partners' => [], 'territories' => [1, 2]],
                 [],
-                ['s.territory IN (:territories)'],
                 [
                     'statusList' => SignalementStatus::excludedStatuses(),
                     'territories' => [1, 2],

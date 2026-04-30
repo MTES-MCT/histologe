@@ -32,8 +32,6 @@ class SignalementAffectationListView
         private readonly ?string $referenceInjonction = null,
         private readonly ?\DateTimeImmutable $createdAt = null,
         private readonly ?SignalementStatus $statut = null,
-        private readonly ?string $score = null,
-        private readonly ?bool $isNotOccupant = null,
         private readonly ?string $nomOccupant = null,
         private readonly ?string $prenomOccupant = null,
         private readonly ?string $adresseOccupant = null,
@@ -85,16 +83,6 @@ class SignalementAffectationListView
     public function getStatut(): ?SignalementStatus
     {
         return $this->statut;
-    }
-
-    public function getScore(): ?string
-    {
-        return $this->score;
-    }
-
-    public function getIsNotOccupant(): ?bool
-    {
-        return $this->isNotOccupant;
     }
 
     public function getNomOccupant(): ?string

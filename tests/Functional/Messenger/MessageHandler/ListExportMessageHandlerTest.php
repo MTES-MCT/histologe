@@ -8,7 +8,7 @@ use App\Messenger\Message\ListExportMessage;
 use App\Messenger\MessageHandler\ListExportMessageHandler;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
-use App\Service\Signalement\Export\SignalementExportLoader;
+use App\Service\Signalement\Export\SignalementExporter;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
@@ -55,7 +55,7 @@ class ListExportMessageHandlerTest extends WebTestCase
         $handler = new ListExportMessageHandler(
             static::getContainer()->get(NotificationMailerRegistry::class),
             static::getContainer()->get(LoggerInterface::class),
-            static::getContainer()->get(SignalementExportLoader::class),
+            static::getContainer()->get(SignalementExporter::class),
             static::getContainer()->get(UserRepository::class),
             static::getContainer()->get(ParameterBagInterface::class),
             $uploadHandlerServiceMock,
@@ -94,7 +94,7 @@ class ListExportMessageHandlerTest extends WebTestCase
         $handler = new ListExportMessageHandler(
             static::getContainer()->get(NotificationMailerRegistry::class),
             static::getContainer()->get(LoggerInterface::class),
-            static::getContainer()->get(SignalementExportLoader::class),
+            static::getContainer()->get(SignalementExporter::class),
             static::getContainer()->get(UserRepository::class),
             static::getContainer()->get(ParameterBagInterface::class),
             $uploadHandlerServiceMock,

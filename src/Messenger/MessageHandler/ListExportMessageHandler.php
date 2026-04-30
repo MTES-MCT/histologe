@@ -9,11 +9,9 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Signalement\Export\SignalementExportLoader;
+use App\Service\Signalement\Export\SignalementExporter;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
-use PhpOffice\PhpSpreadsheet\Writer\Csv;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -25,7 +23,7 @@ readonly class ListExportMessageHandler
     public function __construct(
         private NotificationMailerRegistry $notificationMailerRegistry,
         private LoggerInterface $logger,
-        private SignalementExportLoader $signalementExportLoader,
+        private SignalementExporter $signalementExporter,
         private UserRepository $userRepository,
         private ParameterBagInterface $parameterBag,
         private UploadHandlerService $uploadHandlerService,
@@ -41,46 +39,38 @@ readonly class ListExportMessageHandler
             $selectedColumns = $listExportMessage->getSelectedColumns();
             $format = $listExportMessage->getFormat();
 
-            $spreadsheet = $this->signalementExportLoader->load($user, $format, $filters, $selectedColumns);
-            if (ListExportMessage::FORMAT_CSV === $format) {
-                $writer = new Csv($spreadsheet);
-            } elseif (ListExportMessage::FORMAT_XLSX === $format) {
-                $writer = new Xlsx($spreadsheet);
-            }
+            $timezone = $user->getFirstTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+            $datetimeStr = (new \DateTimeImmutable())->setTimezone(new \DateTimeZone($timezone))->format('Ymd-His');
+            $uuid = Uuid::v4();
+            $filename = 'export-histologe-'.$listExportMessage->getUserId().'-'.$datetimeStr.'-'.$uuid.'.'.$format;
+            $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
 
-            if (isset($writer)) {
-                $timezone = $user->getFirstTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
-                $datetimeStr = (new \DateTimeImmutable())->setTimezone(new \DateTimeZone($timezone))->format('Ymd-His');
-                $uuid = Uuid::v4();
-                $filename = 'export-histologe-'.$listExportMessage->getUserId().'-'.$datetimeStr.'-'.$uuid.'.'.$format;
-                $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
-                $writer->save($tmpFilepath);
+            $this->signalementExporter->write($user, $format, $tmpFilepath, $filters, $selectedColumns);
 
-                $filename = $this->uploadHandlerService->uploadFromFilename($filename);
-                if ($filename) {
-                    $file = $this->fileManager->createOrUpdate(
-                        filename: $filename,
-                        title: $filename,
-                        user: $user,
-                        flush: true,
-                        documentType: DocumentType::EXPORT
-                    );
+            $filename = $this->uploadHandlerService->uploadFromFilename($filename);
+            if ($filename) {
+                $file = $this->fileManager->createOrUpdate(
+                    filename: $filename,
+                    title: $filename,
+                    user: $user,
+                    flush: true,
+                    documentType: DocumentType::EXPORT
+                );
 
-                    $this->notificationMailerRegistry->send(
-                        new NotificationMail(
-                            type: NotificationMailerType::TYPE_DOWNLOAD_EXPORT,
-                            to: $user->getEmail(),
-                            params: [
-                                'filename' => $filename,
-                                'file_uuid' => $file->getUuid(),
-                                'message' => 'Un export de la liste des signalements est disponible.',
-                                'button_text' => 'Afficher l\'export',
-                            ]
-                        )
-                    );
-                } else {
-                    $this->logger->error('There was an issue generating your export');
-                }
+                $this->notificationMailerRegistry->send(
+                    new NotificationMail(
+                        type: NotificationMailerType::TYPE_DOWNLOAD_EXPORT,
+                        to: $user->getEmail(),
+                        params: [
+                            'filename' => $filename,
+                            'file_uuid' => $file->getUuid(),
+                            'message' => 'Un export de la liste des signalements est disponible.',
+                            'button_text' => 'Afficher l\'export',
+                        ]
+                    )
+                );
+            } else {
+                $this->logger->error('There was an issue generating your export');
             }
         } catch (\Throwable $exception) {
             $this->logger->error(

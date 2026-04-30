@@ -2,7 +2,6 @@
 
 namespace App\Repository\Query\SignalementList;
 
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\User;
 use Doctrine\DBAL\Exception;
 
@@ -25,11 +24,20 @@ class MapGeoDataQuery
     {
         $qb = $this->queryBuilderFactory->create($user, $options);
 
-        $qb->addSelect('s.geoloc, s.details, s.cpOccupant, s.inseeOccupant')
+        $qb->addSelect('
+            s.statut,
+            s.adresseOccupant,
+            s.cpOccupant,
+            s.villeOccupant,
+            s.reference,
+            s.score,
+            s.nomOccupant,
+            s.prenomOccupant,
+            s.uuid,
+            s.details, 
+            s.geoloc')
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lat') != ''")
             ->andWhere("JSON_EXTRACT(s.geoloc,'$.lng') != ''")
-            ->andWhere('s.statut NOT IN (:signalement_status_list)')
-            ->setParameter('signalement_status_list', SignalementStatus::excludedStatuses())
             ->setMaxResults(self::MARKERS_PAGE_SIZE);
 
         return $qb->getQuery()->getArrayResult();
