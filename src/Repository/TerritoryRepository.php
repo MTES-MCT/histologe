@@ -29,7 +29,7 @@ class TerritoryRepository extends ServiceEntityRepository
      *
      * @throws QueryException
      */
-    public function findAllList(bool $onlyActive = true): array
+    public function findAllList(bool $onlyActive = true, bool $indexById = true): array
     {
         $qb = $this->createQueryBuilder('t');
 
@@ -39,7 +39,11 @@ class TerritoryRepository extends ServiceEntityRepository
 
         $qb->orderBy('t.zip', 'ASC');
 
-        return $qb->indexBy('t', 't.id')
+        if ($indexById) {
+            $qb->indexBy('t', 't.id');
+        }
+
+        return $qb
             ->getQuery()
             ->getResult();
     }
