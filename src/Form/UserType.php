@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -99,9 +100,12 @@ class UserType extends AbstractType
                 'novalidate' => 'true',
             ],
             'constraints' => [
-                new Assert\Callback([$this, 'validateTerritory']),
-                new Assert\Callback([$this, 'validatePartner']),
+                new Assert\Callback(callback: [$this, 'validateTerritory'], groups: ['Default', 'user_partner']),
+                new Assert\Callback(callback: [$this, 'validatePartner'], groups: ['Default', 'user_partner']),
             ],
+            'validation_groups' => static function (Options $options): array {
+                return $options['can_edit_email'] ? ['Default'] : ['user_partner'];
+            },
         ]);
     }
 
