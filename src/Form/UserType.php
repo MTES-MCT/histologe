@@ -116,18 +116,28 @@ class UserType extends AbstractType
             && (\in_array('ROLE_USER_PARTNER', $user->getRoles())
             || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles())
             || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()))) {
-                $context->addViolation('Le territoire doit être renseigné');
+                $context->buildViolation('Le territoire doit être renseigné')
+                    ->atPath('territory')
+                    ->addViolation();
             }
         }
     }
 
     public function validatePartner(mixed $value, ExecutionContextInterface $context): void
     {
-        $form = $context->getRoot();
-        $tempPartner = $form->get('tempPartner')->getData();
+        if ($value instanceof User) {
+            $user = $value;
+            $form = $context->getRoot();
+            $tempPartner = $form->get('tempPartner')->getData();
 
-        if (null === $tempPartner) {
-            $context->addViolation('Le partenaire doit être renseigné');
+            if ((null === $tempPartner)
+            && (\in_array('ROLE_USER_PARTNER', $user->getRoles())
+            || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles())
+            || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()))) {
+                $context->buildViolation('Le partenaire doit être renseigné')
+                    ->atPath('tempPartner')
+                    ->addViolation();
+            }
         }
     }
 }
