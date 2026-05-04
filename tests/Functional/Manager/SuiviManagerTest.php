@@ -38,13 +38,13 @@ class SuiviManagerTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->managerRegistry = self::getContainer()->get(ManagerRegistry::class);
+        $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->eventDispatcherInterface = static::getContainer()->get(EventDispatcherInterface::class);
         $this->security = static::getContainer()->get(Security::class);
-        $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
-        $this->userSignalementSubscriptionManager = self::getContainer()->get(UserSignalementSubscriptionManager::class);
-        $this->userRepository = self::getContainer()->get(UserRepository::class);
-        $this->userSignalementSubscriptionRepository = self::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->htmlSanitizerInterface = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->userSignalementSubscriptionManager = static::getContainer()->get(UserSignalementSubscriptionManager::class);
+        $this->userRepository = static::getContainer()->get(UserRepository::class);
+        $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
         $this->userManager = static::getContainer()->get(UserManager::class);
         $this->dictionaryProvider = static::getContainer()->get(DictionaryProvider::class);
         $this->suiviManager = new SuiviManager(
@@ -55,7 +55,7 @@ class SuiviManagerTest extends KernelTestCase
             $this->userSignalementSubscriptionManager,
             $this->userManager,
             true,
-            self::getContainer()->get(ClockInterface::class),
+            static::getContainer()->get(ClockInterface::class),
             $this->dictionaryProvider,
             Suivi::class,
         );

@@ -13,6 +13,7 @@ use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchInterconnexion;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class JobEventRepositoryTest extends KernelTestCase
@@ -80,7 +81,7 @@ class JobEventRepositoryTest extends KernelTestCase
         $this->assertEquals(AbstractEsaboraService::ACTION_PUSH_DOSSIER, $jobEvents[0]['action']);
     }
 
-    /** @dataProvider provideDataForFailedJobEvents */
+    #[DataProvider('provideDataForFailedJobEvents')]
     public function testFindAffectationsWithFailedJobEvents(string $interfacageType, string $action, array $partnerTypes, int $expectedCount): void
     {
         $container = static::getContainer();
@@ -95,7 +96,7 @@ class JobEventRepositoryTest extends KernelTestCase
         $this->assertCount($expectedCount, $affectationsWithFailedJobEvents);
     }
 
-    public function provideDataForFailedJobEvents(): \Generator
+    public static function provideDataForFailedJobEvents(): \Generator
     {
         yield 'sish - push dossier adresse' => [
             InterfacageType::ESABORA->value,

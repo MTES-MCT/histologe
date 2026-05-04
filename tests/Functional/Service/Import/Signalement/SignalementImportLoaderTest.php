@@ -54,21 +54,21 @@ class SignalementImportLoaderTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->signalementImportMapper = self::getContainer()->get(SignalementImportMapper::class);
-        $this->signalementManager = self::getContainer()->get(SignalementManager::class);
-        $this->interventionManager = self::getContainer()->get(InterventionManager::class);
-        $this->tagManager = self::getContainer()->get(TagManager::class);
-        $this->affectationManager = self::getContainer()->get(AffectationManager::class);
-        $this->suiviManager = self::getContainer()->get(SuiviManager::class);
-        $this->parameterBag = self::getContainer()->get(ParameterBagInterface::class);
-        $this->logger = self::getContainer()->get(LoggerInterface::class);
-        $this->criticiteCalculator = self::getContainer()->get(CriticiteCalculator::class);
-        $this->signalementQualificationUpdater = self::getContainer()->get(SignalementQualificationUpdater::class);
-        $this->fileManager = self::getContainer()->get(FileManager::class);
+        $this->signalementImportMapper = static::getContainer()->get(SignalementImportMapper::class);
+        $this->signalementManager = static::getContainer()->get(SignalementManager::class);
+        $this->interventionManager = static::getContainer()->get(InterventionManager::class);
+        $this->tagManager = static::getContainer()->get(TagManager::class);
+        $this->affectationManager = static::getContainer()->get(AffectationManager::class);
+        $this->suiviManager = static::getContainer()->get(SuiviManager::class);
+        $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
+        $this->logger = static::getContainer()->get(LoggerInterface::class);
+        $this->criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
+        $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
+        $this->fileManager = static::getContainer()->get(FileManager::class);
         $this->filesystemOperator = $this->createMock(FilesystemOperator::class);
-        $this->critereRepository = self::getContainer()->get(CritereRepository::class);
-        $this->criticiteRepository = self::getContainer()->get(CriticiteRepository::class);
-        $this->partnerRepository = self::getContainer()->get(PartnerRepository::class);
+        $this->critereRepository = static::getContainer()->get(CritereRepository::class);
+        $this->criticiteRepository = static::getContainer()->get(CriticiteRepository::class);
+        $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         /** @var ManagerRegistry $doctrine */
         $doctrine = $kernel->getContainer()->get('doctrine');
 
@@ -76,8 +76,8 @@ class SignalementImportLoaderTest extends KernelTestCase
         $entityManager = $doctrine->getManager();
 
         $this->entityManager = $entityManager;
-        $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
-        $this->userSignalementSubscriptionManager = self::getContainer()->get(UserSignalementSubscriptionManager::class);
+        $this->htmlSanitizerInterface = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->userSignalementSubscriptionManager = static::getContainer()->get(UserSignalementSubscriptionManager::class);
     }
 
     /**

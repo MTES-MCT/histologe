@@ -19,6 +19,7 @@ class SignalementInvitationControllerTest extends WebTestCase
 
     public function testAccepterInvitation(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = $client->getContainer();
         $entityManager = $container->get('doctrine')->getManager();
@@ -67,6 +68,7 @@ class SignalementInvitationControllerTest extends WebTestCase
 
     public function testRefuserInvitation(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = $client->getContainer();
         $entityManager = $container->get('doctrine')->getManager();
@@ -111,6 +113,7 @@ class SignalementInvitationControllerTest extends WebTestCase
 
     public function testAccepterInvitationAlreadyRefused(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = $client->getContainer();
         $entityManager = $container->get('doctrine')->getManager();
@@ -148,6 +151,7 @@ class SignalementInvitationControllerTest extends WebTestCase
 
     public function testRefuserInvitationAlreadyAccepted(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = $client->getContainer();
         $entityManager = $container->get('doctrine')->getManager();
@@ -185,6 +189,7 @@ class SignalementInvitationControllerTest extends WebTestCase
 
     public function testRefuserInvitationAlreadyRefused(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = $client->getContainer();
         $entityManager = $container->get('doctrine')->getManager();

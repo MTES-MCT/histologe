@@ -10,15 +10,14 @@ use App\Event\InterventionUpdatedByEsaboraEvent;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class InterventionDescriptionGeneratorTest extends TestCase
 {
     use FixturesHelper;
 
-    /**
-     * @dataProvider provideVisiteIntervention
-     */
+    #[DataProvider('provideVisiteIntervention')]
     public function testVisiteDescriptionOnInterventionCreated(
         Intervention $intervention,
         string $label,
@@ -31,7 +30,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
             InterventionCreatedEvent::NAME
         );
 
-        $this->assertStringStartsWith($label, $description);
+        $this->assertStringStartsWith($label, $description); // @phpstan-ignore-line
         $this->assertStringContainsString($address, $description);
         $this->assertStringContainsString($scheduledAt, $description);
         $this->assertStringContainsString($partnerName, $description);
@@ -107,10 +106,14 @@ class InterventionDescriptionGeneratorTest extends TestCase
         ));
     }
 
-    public function provideVisiteIntervention(): \Generator
+    public static function provideVisiteIntervention(): \Generator
     {
+        $fixturesHelper = new class {
+            use FixturesHelper;
+        };
+
         yield 'Visite de contrôle dans le passé' => [
-            $this->getIntervention(
+            $fixturesHelper->getIntervention(
                 InterventionType::VISITE_CONTROLE,
                 new \DateTimeImmutable('2023-09-01'),
                 Intervention::STATUS_DONE
@@ -122,7 +125,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         ];
 
         yield 'Visite dans le passé' => [
-            $this->getIntervention(
+            $fixturesHelper->getIntervention(
                 InterventionType::VISITE,
                 new \DateTimeImmutable('2023-10-01'),
                 Intervention::STATUS_DONE
@@ -134,7 +137,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         ];
 
         yield 'Visite dans le passé mais au status planned' => [
-            $this->getIntervention(
+            $fixturesHelper->getIntervention(
                 InterventionType::VISITE,
                 new \DateTimeImmutable('2023-10-01'),
                 Intervention::STATUS_PLANNED
@@ -147,7 +150,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
 
         $dateInFutur = (new \DateTimeImmutable())->add(new \DateInterval('P10D'))->setTimezone(new \DateTimeZone('Europe/Paris'));
         yield 'Visite de contrôle dans le futur' => [
-            $this->getIntervention(
+            $fixturesHelper->getIntervention(
                 InterventionType::VISITE_CONTROLE,
                 $dateInFutur,
                 Intervention::STATUS_PLANNED
@@ -159,7 +162,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         ];
 
         yield 'Visite dans le futur à minuit' => [
-            $this->getIntervention(
+            $fixturesHelper->getIntervention(
                 InterventionType::VISITE,
                 $dateInFutur->setTime(0, 0, 0),
                 Intervention::STATUS_PLANNED
@@ -171,7 +174,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         ];
 
         yield 'Visite dans le futur avec heure' => [
-            $this->getIntervention(
+            $fixturesHelper->getIntervention(
                 InterventionType::VISITE,
                 $dateInFutur,
                 Intervention::STATUS_PLANNED

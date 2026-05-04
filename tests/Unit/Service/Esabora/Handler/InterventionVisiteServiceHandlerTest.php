@@ -68,7 +68,7 @@ class InterventionVisiteServiceHandlerTest extends TestCase
                     DossierVisiteSISH $dossierVisiteSISH,
                 ) use ($dossierVisiteSISHCollectionResponse, $matcher) {
                     $this->assertEquals($this->affectation, $affectation);
-                    match ($matcher->getInvocationCount()) {
+                    match ($matcher->numberOfInvocations()) {
                         1 => $this->assertEquals(
                             $dossierVisiteSISHCollectionResponse->getCollection()[0],
                             $dossierVisiteSISH

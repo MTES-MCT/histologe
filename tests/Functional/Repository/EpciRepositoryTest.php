@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Repository;
 
 use App\Entity\Epci;
 use App\Repository\EpciRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class EpciRepositoryTest extends KernelTestCase
@@ -15,9 +16,7 @@ class EpciRepositoryTest extends KernelTestCase
         $this->epciRepository = static::getContainer()->get(EpciRepository::class);
     }
 
-    /**
-     * @dataProvider provideFindOneByCommuneInseeAndPostalCodeData
-     */
+    #[DataProvider('provideFindOneByCommuneInseeAndPostalCodeData')]
     public function testFindOneByCommuneInseeAndPostalCode(
         string $codeInsee,
         string $postalCode,

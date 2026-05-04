@@ -38,7 +38,7 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        $nbSuiviFeedback = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::ASK_FEEDBACK_SENT]);
+        $nbSuiviFeedback = static::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::ASK_FEEDBACK_SENT]);
         $this->assertEquals(6, $nbSuiviFeedback);
 
         $command = $application->find('app:ask-feedback-usager');
@@ -78,7 +78,7 @@ class AskFeedbackUsagerCommandTest extends KernelTestCase
         $this->assertEmailHtmlBodyContains($lastEmail, '1 '.AskFeedbackUsagerCommand::THIRD_RELANCE_LOG_MESSAGE);
         $this->assertEmailHtmlBodyContains($lastEmail, '1 '.AskFeedbackUsagerCommand::LOOP_LOG_MESSAGE);
 
-        $nbSuiviFeedback = self::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::ASK_FEEDBACK_SENT]);
+        $nbSuiviFeedback = static::getContainer()->get(SuiviRepository::class)->count(['category' => SuiviCategory::ASK_FEEDBACK_SENT]);
         $this->assertEquals(15, $nbSuiviFeedback);
     }
 }

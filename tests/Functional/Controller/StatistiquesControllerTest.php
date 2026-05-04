@@ -9,10 +9,11 @@ class StatistiquesControllerTest extends WebTestCase
 {
     public function testFrontStatistiques(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $client->request(
             'GET',
             $router->generate(

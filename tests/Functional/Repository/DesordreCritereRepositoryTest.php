@@ -14,7 +14,7 @@ class DesordreCritereRepositoryTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->desordreCritereRepository = self::getContainer()->get(DesordreCritereRepository::class);
+        $this->desordreCritereRepository = static::getContainer()->get(DesordreCritereRepository::class);
     }
 
     public function testFindBySlugsWithPrecisions(): void

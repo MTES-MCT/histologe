@@ -9,6 +9,7 @@ class IframeControllerTest extends WebTestCase
 {
     public function testSubmitDemandeLienSignalement(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);

@@ -29,8 +29,9 @@ class SignalementFileControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
-        $this->router = self::getContainer()->get(RouterInterface::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->signalementFileProcessorMock = $this->createMock(SignalementFileProcessor::class);
@@ -61,7 +62,7 @@ class SignalementFileControllerTest extends WebTestCase
         $this->client->loginUser($this->user);
 
         $this->signalementFileProcessorMock->method('isValid')->willReturn(true);
-        self::getContainer()->set(SignalementFileProcessor::class, $this->signalementFileProcessorMock);
+        static::getContainer()->set(SignalementFileProcessor::class, $this->signalementFileProcessorMock);
 
         $route = $this->router->generate('back_signalement_add_file', ['uuid' => $this->signalement->getUuid()]);
         $this->client->request('POST', $route,

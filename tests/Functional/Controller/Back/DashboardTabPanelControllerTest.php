@@ -6,15 +6,17 @@ namespace App\Tests\Functional\Controller\Back;
 
 use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\TabBodyType;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class DashboardTabPanelControllerTest extends WebTestCase
 {
-    /** @dataProvider provideAuthorizedTabBodyType */
+    #[DataProvider('provideAuthorizedTabBodyType')]
     public function testAccessGrantedForAuthorizedUsers(string $tabBodyType): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $router = self::getContainer()->get('router');
+        $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
@@ -24,12 +26,13 @@ class DashboardTabPanelControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    /** @dataProvider provideUnauthorizedTabBodyType */
+    #[DataProvider('provideUnauthorizedTabBodyType')]
     public function testAccessDeniedForUnauthorizedUsers(string $tabBodyType): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $router = self::getContainer()->get('router');
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $router = static::getContainer()->get('router');
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'user-partenaire-30@signal-logement.fr']);
         $client->loginUser($user);
         $url = $router->generate('back_tab_panel_body', ['tabBodyType' => $tabBodyType]);
@@ -38,7 +41,7 @@ class DashboardTabPanelControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(403, sprintf('Accès interdit pour la section "%s".', $tabBodyType));
     }
 
-    public function provideAuthorizedTabBodyType(): \Generator
+    public static function provideAuthorizedTabBodyType(): \Generator
     {
         yield 'with derniers-dossiers' => [TabBodyType::TAB_DATA_TYPE_DERNIER_ACTION_DOSSIERS];
         yield 'with dossiers-form-pro' => [TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_PRO];
@@ -53,7 +56,7 @@ class DashboardTabPanelControllerTest extends WebTestCase
         yield 'with dossiers-sans-activite-partenaire' => [TabBodyType::TAB_DATA_TYPE_SANS_ACTIVITE_PARTENAIRE];
     }
 
-    public function provideUnauthorizedTabBodyType(): \Generator
+    public static function provideUnauthorizedTabBodyType(): \Generator
     {
         yield 'with dossiers-form-pro' => [TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_PRO];
         yield 'with dossiers-form-usager' => [TabBodyType::TAB_DATA_TYPE_DOSSIERS_FORM_USAGER];

@@ -5,8 +5,8 @@ namespace App\Tests\Unit\Service\Files;
 use App\Service\Files\ImageManipulationHandler;
 use App\Service\Files\ImageVariantProvider;
 use App\Service\Files\TmpFileWriter;
-use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -39,7 +39,7 @@ class ImageVariantProviderTest extends KernelTestCase
             });
 
         /** @var ParameterBagInterface $parameterBag */
-        $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
+        $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
 
         $this->bucketDir = $parameterBag->get('url_bucket');
         $this->tmpDir = $parameterBag->get('uploads_tmp_dir');
@@ -48,11 +48,7 @@ class ImageVariantProviderTest extends KernelTestCase
         $this->filesystem = new Filesystem();
     }
 
-    /**
-     * @dataProvider provideVariants
-     *
-     * @throws FilesystemException
-     */
+    #[DataProvider('provideVariants')]
     public function testGetFileVariantDownloadsFromBucketAndWritesToTmp(?string $variant, string $expectedSuffix): void
     {
         $original = '2026/01/mon-super-fichier.png';
@@ -76,7 +72,7 @@ class ImageVariantProviderTest extends KernelTestCase
         $this->assertSame('content-'.$expectedSuffix, file_get_contents($this->tmpDir.$expectedFilename));
     }
 
-    public function provideVariants(): \Generator
+    public static function provideVariants(): \Generator
     {
         yield 'thumb' => ['thumb', ImageManipulationHandler::SUFFIX_THUMB];
         yield 'resize' => ['resize', ImageManipulationHandler::SUFFIX_RESIZE];

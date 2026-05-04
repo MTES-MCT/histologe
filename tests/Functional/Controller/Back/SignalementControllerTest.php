@@ -10,6 +10,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -24,11 +25,10 @@ class SignalementControllerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    /**
-     * @dataProvider provideRoutes
-     */
+    #[DataProvider('provideRoutes')]
     public function testSignalementSuccessfullyDisplay(string $route, Signalement $signalement): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -55,7 +55,7 @@ class SignalementControllerTest extends WebTestCase
         }
     }
 
-    public function provideRoutes(): \Generator
+    public static function provideRoutes(): \Generator
     {
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
@@ -71,11 +71,10 @@ class SignalementControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @dataProvider provideRoleSignalementRoutes
-     */
+    #[DataProvider('provideRoleSignalementRoutes')]
     public function testButtonsDisplayedByRole(string $email, string $uuid, string $elementSelector = '', string $elementText = ''): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -93,7 +92,7 @@ class SignalementControllerTest extends WebTestCase
         );
     }
 
-    public function provideRoleSignalementRoutes(): \Generator
+    public static function provideRoleSignalementRoutes(): \Generator
     {
         yield 'SA - Nouveau' => [
             'admin-01@signal-logement.fr',
@@ -179,15 +178,14 @@ class SignalementControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideSignalementSyncRoutes
-     */
+    #[DataProvider('provideSignalementSyncRoutes')]
     public function testSignalementSyncedWithWarningEsabora(
         string $email,
         string $uuid,
         AffectationStatus $currentAffectationStatus,
         string $elementText,
     ): void {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -210,7 +208,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals($currentAffectationStatus, $affectation->getStatut());
     }
 
-    public function provideSignalementSyncRoutes(): \Generator
+    public static function provideSignalementSyncRoutes(): \Generator
     {
         yield 'Agent - ARS' => [
             'user-13-06@signal-logement.fr',
@@ -235,6 +233,7 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSignalementNDESuccessfullyDisplay(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -242,12 +241,12 @@ class SignalementControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
 
         $client->loginUser($user);
@@ -261,10 +260,11 @@ class SignalementControllerTest extends WebTestCase
 
     public function testAdminSubmitClotureSignalementWithEmailSentToPartners(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy([
             'reference' => '2022-8',
@@ -272,12 +272,12 @@ class SignalementControllerTest extends WebTestCase
         ]);
 
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
 
         $client->request('GET', $route);
@@ -307,10 +307,11 @@ class SignalementControllerTest extends WebTestCase
 
     public function testAdminTerritorySubmitClotureSignalementWithEmailSentToPartnersAndUsagers(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy([
             'reference' => '2022-1',
@@ -318,12 +319,12 @@ class SignalementControllerTest extends WebTestCase
         ]);
 
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
 
         $client->request('GET', $route);
@@ -353,10 +354,11 @@ class SignalementControllerTest extends WebTestCase
 
     public function testAdminPartnerSubmitClotureSignalementWithEmailSentToRT(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy([
             'reference' => '2023-26',
@@ -364,12 +366,12 @@ class SignalementControllerTest extends WebTestCase
         ]);
 
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-partenaire-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
 
         $client->request('GET', $route);
@@ -395,10 +397,11 @@ class SignalementControllerTest extends WebTestCase
 
     public function testUserPartnerSubmitClotureSignalementWithEmailSentToPartnersAndRT(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy([
             'reference' => '2022-10',
@@ -406,12 +409,12 @@ class SignalementControllerTest extends WebTestCase
         ]);
 
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
 
         $client->request('GET', $route);
@@ -440,10 +443,11 @@ class SignalementControllerTest extends WebTestCase
 
     public function testUserPartnerSubmitClotureSignalementWithoutMotifSuivi(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy([
             'reference' => '2022-10',
@@ -451,12 +455,12 @@ class SignalementControllerTest extends WebTestCase
         ]);
 
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
 
         $client->request('GET', $route);
@@ -475,15 +479,16 @@ class SignalementControllerTest extends WebTestCase
 
     public function testNewDeleteSignalement(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-13']);
 
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
         $uuid = $signalement->getUuid();
@@ -509,16 +514,17 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSaveNewTagSignalement(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var TagRepository $tagRepository */
-        $tagRepository = self::getContainer()->get(TagRepository::class);
+        $tagRepository = static::getContainer()->get(TagRepository::class);
         $tag = $tagRepository->findOneBy(['label' => 'Péril', 'territory' => 13]);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2023-12']);
@@ -531,7 +537,7 @@ class SignalementControllerTest extends WebTestCase
 
         $tagIds[] = $tag->getId();
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_signalement_save_tags', ['uuid' => $signalement->getUuid()]);
 
         $client->request(
@@ -559,15 +565,16 @@ class SignalementControllerTest extends WebTestCase
 
     public function testSendMailBailleur(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000011']);
 
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
         $uuid = $signalement->getUuid();

@@ -12,8 +12,9 @@ class DashboardControllerTest extends WebTestCase
 
     public function testIndexWithDashboard(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $router = self::getContainer()->get('router');
+        $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => self::USER_ADMIN]);
@@ -27,8 +28,9 @@ class DashboardControllerTest extends WebTestCase
 
     public function testPartnerUserIsRedirectedWithQueryParams(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $router = self::getContainer()->get('router');
+        $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
 
@@ -46,8 +48,9 @@ class DashboardControllerTest extends WebTestCase
 
     public function testIndexDisplaysSearchDashboardAverifierForm(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $router = self::getContainer()->get('router');
+        $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $adminUser = $userRepository->findOneBy(['email' => self::USER_ADMIN]);
@@ -63,8 +66,9 @@ class DashboardControllerTest extends WebTestCase
 
     public function testIndexWithInvalidTerritoryIdDoesNotFail(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $router = self::getContainer()->get('router');
+        $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $adminUser = $userRepository->findOneBy(['email' => self::USER_ADMIN]);
@@ -79,8 +83,9 @@ class DashboardControllerTest extends WebTestCase
 
     public function testIndexDisplaysTabAdmin(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $router = self::getContainer()->get('router');
+        $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $adminUser = $userRepository->findOneBy(['email' => self::USER_ADMIN]);
@@ -100,8 +105,9 @@ class DashboardControllerTest extends WebTestCase
 
     public function testIndexDisplaysTabPartner(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $router = self::getContainer()->get('router');
+        $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $adminUser = $userRepository->findOneBy(['email' => self::USER_PARTNER_TERRITORY_13]);
@@ -127,8 +133,9 @@ class DashboardControllerTest extends WebTestCase
 
     public function testIndexDisplayTabPartnerMultiTerritory(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $router = self::getContainer()->get('router');
+        $router = static::getContainer()->get('router');
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@signal-logement.fr']);

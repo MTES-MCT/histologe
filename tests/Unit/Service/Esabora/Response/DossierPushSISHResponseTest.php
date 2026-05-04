@@ -3,13 +3,12 @@
 namespace App\Tests\Unit\Service\Esabora\Response;
 
 use App\Service\Interconnection\Esabora\Response\DossierPushSISHResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class DossierPushSISHResponseTest extends TestCase
 {
-    /**
-     * @dataProvider provideFilename
-     */
+    #[DataProvider('provideFilename')]
     public function testDossierResponseSuccessfullyCreated(string $filename): void
     {
         $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/sish/'.$filename;
@@ -21,7 +20,7 @@ class DossierPushSISHResponseTest extends TestCase
         $this->assertNull($dossierResponse->getErrorReason());
     }
 
-    public function provideFilename(): \Generator
+    public static function provideFilename(): \Generator
     {
         yield 'Response Dossier Adresse' => ['ws_dossier_adresse.json'];
         yield 'Response Dossier' => ['ws_dossier.json'];

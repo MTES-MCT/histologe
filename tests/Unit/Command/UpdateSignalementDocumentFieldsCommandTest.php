@@ -53,23 +53,23 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             ->willReturn($this->territory);
 
         $signalementRepositoryMock = $this->createMock(SignalementRepository::class);
+        $expectedCalls = [
+            [$this->territory, '1000', (new Signalement())->setTerritory($this->territory)->setReference('2023-1000')],
+            [$this->territory, '1000', (new Signalement())->setTerritory($this->territory)->setReference('2023-1000')],
+            [$this->territory, '1001', (new Signalement())->setTerritory($this->territory)->setReference('2023-1001')],
+            [$this->territory, '1001', (new Signalement())->setTerritory($this->territory)->setReference('2023-1001')],
+            [$this->territory, '1001', (new Signalement())->setTerritory($this->territory)->setReference('2023-1001')],
+        ];
+        $callIndex = 0;
         $signalementRepositoryMock
             ->expects($this->atLeast(1))
             ->method('findByReferenceChunk')
-            ->withConsecutive(
-                [$this->territory, '1000'],
-                [$this->territory, '1000'],
-                [$this->territory, '1001'],
-                [$this->territory, '1001'],
-                [$this->territory, '1001'],
-            )
-            ->willReturn(
-                (new Signalement())->setTerritory($this->territory)->setReference('2023-1000'),
-                (new Signalement())->setTerritory($this->territory)->setReference('2023-1000'),
-                (new Signalement())->setTerritory($this->territory)->setReference('2023-1001'),
-                (new Signalement())->setTerritory($this->territory)->setReference('2023-1001'),
-                (new Signalement())->setTerritory($this->territory)->setReference('2023-1001'),
-            );
+            ->willReturnCallback(function ($territory, $reference) use ($expectedCalls, &$callIndex) {
+                $this->assertSame($expectedCalls[$callIndex][0], $territory);
+                $this->assertSame($expectedCalls[$callIndex][1], $reference);
+
+                return $expectedCalls[$callIndex++][2];
+            });
 
         $this->signalementManager
             ->expects($this->atLeast(1))

@@ -20,19 +20,20 @@ class SignalementFileUpdateControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
-        $this->user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $this->user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
 
         $this->client->loginUser($this->user, 'api');
-        $this->router = self::getContainer()->get('router');
+        $this->router = static::getContainer()->get('router');
     }
 
     public function testUpdateSignalementFile(): void
     {
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2023-26']);
-        $file = self::getContainer()->get(FileRepository::class)->findOneBy(['signalement' => $signalement, 'extension' => 'jpg']);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2023-26']);
+        $file = static::getContainer()->get(FileRepository::class)->findOneBy(['signalement' => $signalement, 'extension' => 'jpg']);
 
         $payload = [
             'documentType' => 'PHOTO_SITUATION',
@@ -53,8 +54,8 @@ class SignalementFileUpdateControllerTest extends WebTestCase
 
     public function testUpdateSignalementFileWithFileTypeUpdated(): void
     {
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2023-26']);
-        $file = self::getContainer()->get(FileRepository::class)->findOneBy(['signalement' => $signalement, 'extension' => 'pdf']);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2023-26']);
+        $file = static::getContainer()->get(FileRepository::class)->findOneBy(['signalement' => $signalement, 'extension' => 'pdf']);
 
         $payload = [
             'documentType' => 'PROCEDURE_ARRETE_PREFECTORAL',
@@ -92,8 +93,8 @@ class SignalementFileUpdateControllerTest extends WebTestCase
 
     public function testUpdateFileOnUnaffectedSignalement(): void
     {
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2022-1']);
-        $file = self::getContainer()->get(FileRepository::class)->findOneBy(['signalement' => $signalement, 'extension' => 'jpg']);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2022-1']);
+        $file = static::getContainer()->get(FileRepository::class)->findOneBy(['signalement' => $signalement, 'extension' => 'jpg']);
 
         $payload = [
             'documentType' => 'PHOTO_SITUATION',
@@ -112,10 +113,10 @@ class SignalementFileUpdateControllerTest extends WebTestCase
 
     public function testUpdateFileOnUnaffectedSignalementCreatedByMe(): void
     {
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2022-1']);
-        $file = self::getContainer()->get(FileRepository::class)->findOneBy(['signalement' => $signalement, 'extension' => 'jpg']);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['reference' => '2022-1']);
+        $file = static::getContainer()->get(FileRepository::class)->findOneBy(['signalement' => $signalement, 'extension' => 'jpg']);
         $signalement->setCreatedBy($this->user);
-        self::getContainer()->get('doctrine')->getManager()->flush();
+        static::getContainer()->get('doctrine')->getManager()->flush();
 
         $payload = [
             'documentType' => 'PHOTO_SITUATION',

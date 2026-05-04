@@ -4,18 +4,17 @@ namespace App\Tests\Functional\Service\Statistics;
 
 use App\Repository\TerritoryRepository;
 use App\Service\Statistics\ListCommunesStatisticProvider;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ListCommunesStatisticProviderTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideCommunesWithArrondissements
-     */
+    #[DataProvider('provideCommunesWithArrondissements')]
     public function testGetData(string $zip, string $commune): void
     {
         self::bootKernel();
         /** @var TerritoryRepository $territoryRepository */
-        $territoryRepository = self::getContainer()->get(TerritoryRepository::class);
+        $territoryRepository = static::getContainer()->get(TerritoryRepository::class);
         $territory = $territoryRepository->findOneBy(['zip' => $zip]);
         $dataCommunes = (new ListCommunesStatisticProvider())->getData($territory);
 
@@ -26,7 +25,7 @@ class ListCommunesStatisticProviderTest extends KernelTestCase
         }
     }
 
-    public function provideCommunesWithArrondissements(): \Generator
+    public static function provideCommunesWithArrondissements(): \Generator
     {
         yield 'Lyon' => ['69A', 'Lyon'];
         yield 'Marseille' => ['13', 'Marseille'];

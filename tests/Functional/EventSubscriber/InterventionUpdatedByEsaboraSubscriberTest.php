@@ -13,6 +13,7 @@ use App\Repository\UserRepository;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -32,9 +33,7 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * @dataProvider provideSignalement
-     */
+    #[DataProvider('provideSignalement')]
     public function testBuildVisiteUpdated(string $reference, int $countMail): void
     {
         $eventDispatcher = new EventDispatcher();
@@ -80,7 +79,7 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
         $this->assertStringContainsString('a été modifiée', $suivi->getDescription());
     }
 
-    public function provideSignalement(): \Generator
+    public static function provideSignalement(): \Generator
     {
         yield 'Do not notify on signalement tiers' => ['2022-1', 0];
         yield 'Notify on signalement occupant' => ['2023-9', 1];

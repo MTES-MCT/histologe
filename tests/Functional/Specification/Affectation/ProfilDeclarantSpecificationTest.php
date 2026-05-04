@@ -8,13 +8,12 @@ use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Specification\Affectation\ProfilDeclarantSpecification;
 use App\Specification\Context\PartnerSignalementContext;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ProfilDeclarantSpecificationTest extends KernelTestCase
 {
-    /**
-     * @dataProvider provideRulesAndSignalement
-     */
+    #[DataProvider('provideRulesAndSignalement')]
     public function testIsSatisfiedBy(ProfileDeclarant $profilSignalement, string $profilRule, bool $isSatisfied): void
     {
         $partner = new Partner();
@@ -33,7 +32,7 @@ class ProfilDeclarantSpecificationTest extends KernelTestCase
         }
     }
 
-    public function provideRulesAndSignalement(): \Generator
+    public static function provideRulesAndSignalement(): \Generator
     {
         yield 'all - LOCATAIRE' => [ProfileDeclarant::LOCATAIRE, 'all', true];
         yield 'all - BAILLEUR' => [ProfileDeclarant::BAILLEUR, 'all', true];

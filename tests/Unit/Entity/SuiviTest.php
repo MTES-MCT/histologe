@@ -15,14 +15,14 @@ class SuiviTest extends KernelTestCase
     public function testCreateSuiviUsager(): void
     {
         self::bootKernel();
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
-        $validator = self::getContainer()->get('validator');
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $validator = static::getContainer()->get('validator');
 
         $faker = Factory::create();
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->find(1);
-        $userManager = self::getContainer()->get(UserManager::class);
+        $userManager = static::getContainer()->get(UserManager::class);
 
         /** @var User $userOccupant */
         $userOccupant = $userManager->createUsagerFromSignalement($signalement, UserManager::OCCUPANT);

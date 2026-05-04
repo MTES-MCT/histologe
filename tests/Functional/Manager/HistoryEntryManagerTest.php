@@ -39,6 +39,7 @@ class HistoryEntryManagerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->historyEntryFactory = static::getContainer()->get(HistoryEntryFactory::class);

@@ -8,6 +8,7 @@ use App\Repository\SignalementRepository;
 use App\Service\Files\ImageManipulationHandler;
 use App\Service\UploadHandlerService;
 use App\Tests\ApiHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -23,12 +24,13 @@ class SignalementFileUploadControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
-        $this->user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $this->user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
 
-        $this->router = self::getContainer()->get('router');
+        $this->router = static::getContainer()->get('router');
 
         $this->client->loginUser($this->user, 'api');
     }
@@ -52,16 +54,16 @@ class SignalementFileUploadControllerTest extends WebTestCase
         );
 
         $imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
-        self::getContainer()->set(ImageManipulationHandler::class, $imageManipulationHandler);
+        static::getContainer()->set(ImageManipulationHandler::class, $imageManipulationHandler);
 
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
         $uploadHandlerServiceMock
             ->method('uploadFromFile')
             ->willReturnOnConsecutiveCalls('sample.jpg', '');
 
-        self::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
+        static::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
         $uuid = '00000000-0000-0000-2022-000000000006';
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $uuid]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $uuid]);
 
         $affectation = $signalement->getAffectations()->first();
         if (!$affectation) {
@@ -84,17 +86,17 @@ class SignalementFileUploadControllerTest extends WebTestCase
         );
 
         $imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
-        self::getContainer()->set(ImageManipulationHandler::class, $imageManipulationHandler);
+        static::getContainer()->set(ImageManipulationHandler::class, $imageManipulationHandler);
 
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
         $uploadHandlerServiceMock
             ->method('uploadFromFile')
             ->willReturn('sample.jpg');
 
-        self::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
+        static::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
         $uuid = '00000000-0000-0000-2024-000000000006';
         $permissionParams = ['user' => $this->user, 'partnerType' => null, 'territory' => null];
-        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $partner = static::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
         $this->postRequest($uuid, $partner->getUuid(), [$imageFile]);
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
@@ -111,29 +113,27 @@ class SignalementFileUploadControllerTest extends WebTestCase
         );
 
         $imageManipulationHandler = $this->createMock(ImageManipulationHandler::class);
-        self::getContainer()->set(ImageManipulationHandler::class, $imageManipulationHandler);
+        static::getContainer()->set(ImageManipulationHandler::class, $imageManipulationHandler);
 
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
         $uploadHandlerServiceMock
             ->method('uploadFromFile')
             ->willReturn('sample.jpg');
 
-        self::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
+        static::getContainer()->set(UploadHandlerService::class, $uploadHandlerServiceMock);
         $uuid = '00000000-0000-0000-2024-000000000006';
         $permissionParams = ['user' => $this->user, 'partnerType' => null, 'territory' => null];
-        $partner = self::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $uuid]);
+        $partner = static::getContainer()->get('doctrine')->getRepository(UserApiPermission::class)->findOneBy($permissionParams)->getPartner();
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $uuid]);
         $signalement->setCreatedBy($this->user);
         $signalement->setCreatedByPartner($partner);
-        self::getContainer()->get('doctrine')->getManager()->flush();
+        static::getContainer()->get('doctrine')->getManager()->flush();
         $this->postRequest($uuid, $partner->getUuid(), [$imageFile]);
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    /**
-     * @dataProvider provideErrorInput
-     */
+    #[DataProvider('provideErrorInput')]
     public function testFileUploadWithBadRequest(string $uuid, int $codeHttpStatus): void
     {
         $this->postRequest($uuid, '', []);
@@ -141,7 +141,7 @@ class SignalementFileUploadControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($this->client);
     }
 
-    public function provideErrorInput(): \Generator
+    public static function provideErrorInput(): \Generator
     {
         yield 'test upload with bad request' => ['00000000-0000-0000-2022-000000000006', Response::HTTP_FORBIDDEN];
         yield 'test upload with not found' => ['00000000-0000-0000-2022-000000000000', Response::HTTP_NOT_FOUND];

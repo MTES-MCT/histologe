@@ -56,11 +56,11 @@ class ResetInjonctionNoResponseCommandTest extends KernelTestCase
 
         // Remove suivi with category INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE to trigger auto-affectation
         $referenceInjonction = '2364';
-        $signalement = self::getContainer()->get(SignalementRepository::class)->findOneBy(['referenceInjonction' => $referenceInjonction]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['referenceInjonction' => $referenceInjonction]);
         $suivis = $signalement->getSuivis()->filter(static function ($suivi) {
             return 'INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE' === $suivi->getCategory()->value;
         });
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
         foreach ($suivis as $suivi) {
             $entityManager->remove($suivi);
         }

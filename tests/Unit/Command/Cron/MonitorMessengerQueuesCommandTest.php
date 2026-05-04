@@ -50,8 +50,8 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
         $exitCode = $tester->execute([]);
         $display = $tester->getDisplay();
 
-        self::assertSame(0, $exitCode, 'La commande doit retourner un code de succès.');
-        self::assertStringContainsString(
+        $this->assertSame(0, $exitCode, 'La commande doit retourner un code de succès.');
+        $this->assertStringContainsString(
             'OK, no old messages found.',
             $display,
             'Le message de sortie attendu doit être affiché.'
@@ -99,8 +99,8 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
         $exitCode = $tester->execute([]);
         $display = $tester->getDisplay();
 
-        self::assertSame(0, $exitCode);
-        self::assertStringContainsString('Messenger queue "default" stalled', $display);
-        self::assertStringContainsString('anonymous', $display);
+        $this->assertSame(0, $exitCode);
+        $this->assertStringContainsString('Messenger queue "default" stalled', $display);
+        $this->assertStringContainsString('anonymous', $display);
     }
 }

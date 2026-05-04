@@ -3,13 +3,12 @@
 namespace App\Tests\Unit\Entity\Enum;
 
 use App\Entity\Enum\InterventionType;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class InterventionTypeTest extends TestCase
 {
-    /**
-     * @dataProvider provideInterventionType
-     */
+    #[DataProvider('provideInterventionType')]
     public function testFromValidLabel(string $label, InterventionType $interventionType): void
     {
         $intervention = InterventionType::tryFromLabel($label);
@@ -23,7 +22,7 @@ class InterventionTypeTest extends TestCase
         $this->assertNull($intervention);
     }
 
-    public function provideInterventionType(): \Generator
+    public static function provideInterventionType(): \Generator
     {
         yield 'Visite contrôle' => ['Visite contrôle', InterventionType::VISITE_CONTROLE];
         yield 'Visite de contrôle' => ['Visite de contrôle', InterventionType::VISITE_CONTROLE];

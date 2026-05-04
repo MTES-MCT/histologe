@@ -19,7 +19,7 @@ class ClubEventServiceTest extends KernelTestCase
 
     public function testGetNextClubEventForUserRT(): void
     {
-        $container = self::getContainer();
+        $container = static::getContainer();
         $mockClock = new MockClock(new \DateTimeImmutable(date('01-01-2026')));
         $container->set(ClockInterface::class, $mockClock);
 
@@ -35,7 +35,7 @@ class ClubEventServiceTest extends KernelTestCase
 
     public function testGetNextClubEventForUserRTWithoutResult(): void
     {
-        $container = self::getContainer();
+        $container = static::getContainer();
         $mockClock = new MockClock(new \DateTimeImmutable(date('01-06-2026')));
         $container->set(ClockInterface::class, $mockClock);
 
@@ -51,7 +51,7 @@ class ClubEventServiceTest extends KernelTestCase
 
     public function testGetNextClubEventForAgentEligible(): void
     {
-        $container = self::getContainer();
+        $container = static::getContainer();
         $mockClock = new MockClock(new \DateTimeImmutable(date('01-01-2026')));
         $container->set(ClockInterface::class, $mockClock);
 
@@ -67,7 +67,7 @@ class ClubEventServiceTest extends KernelTestCase
 
     public function testGetNextClubEventForAgentNonEligible(): void
     {
-        $container = self::getContainer();
+        $container = static::getContainer();
         $mockClock = new MockClock(new \DateTimeImmutable(date('01-01-2026')));
         $container->set(ClockInterface::class, $mockClock);
 
@@ -83,7 +83,7 @@ class ClubEventServiceTest extends KernelTestCase
 
     public function testGetNextClubEventForUserAndFindUsersToNotifyForClubEventConsistency(): void
     {
-        $container = self::getContainer();
+        $container = static::getContainer();
         $clubEventRepository = $container->get(ClubEventRepository::class);
         $userRepository = $container->get(UserRepository::class);
         $service = new ClubEventService($clubEventRepository);

@@ -3,7 +3,7 @@
 {% block body %}
     <p>Bonjour,</p>
     <p>
-        Signal Logement vous invite à participer à l'évènement <strong>{{name}}</strong> qui aura lieu le <strong>{{date}}</strong> à <strong>{{hour}}</strong>.
+        Signal Logement vous invite à participer à l'évènement <strong>{{name}}</strong> qui aura lieu le <strong>{{ date|format_datetime(locale='fr', timezone=timezone, pattern='dd/MM/yyyy') }}</strong> à <strong>{{ date|format_datetime(locale='fr', timezone=territory_timezone, pattern='HH:mm') }}</strong>.
         <br>
         Pour vous inscrire à cet évènement, cliquez sur le bouton ci-dessous.
     </p>
