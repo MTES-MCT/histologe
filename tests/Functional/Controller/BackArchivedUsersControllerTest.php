@@ -222,8 +222,8 @@ class BackArchivedUsersControllerTest extends WebTestCase
         $form['user[prenom]'] = $faker->name();
         $form['user[nom]'] = $faker->lastName();
         $form['user[email]'] = (string) $account->getEmail();
-        $form['user[territory]'] = '';
-        $form['user[tempPartner]'] = '';
+        $form['user[territory]'] = '1';
+        $form['user[tempPartner]'] = '1';
         $client->submit($form);
 
         /** @var User $account */
