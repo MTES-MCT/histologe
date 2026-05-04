@@ -19,22 +19,20 @@ histoRefreshNotificationButtons();
 
 function histoRefreshNotificationButtons() {
   const deleteBtn = document.querySelector('#delete-notifications-btn');
-  const countNotificationsSelected = histoNotificationSelected.length;
-  if (countNotificationsSelected > 0) {
-    document.querySelector('#notification-selected-buttons-count').textContent =
-      countNotificationsSelected + ' sélectionnée(s) :';
-    document.querySelector('#mark-as-read-notifications-btn').textContent = 'Marquer comme lue(s)';
-    if (deleteBtn) {
+  if (deleteBtn) {
+    const countNotificationsSelected = histoNotificationSelected.length;
+    if (countNotificationsSelected > 0) {
+      document.querySelector('#notification-selected-buttons-count').textContent =
+        countNotificationsSelected + ' sélectionnée(s) :';
+      document.querySelector('#mark-as-read-notifications-btn').textContent = 'Marquer comme lue(s)';
       deleteBtn.textContent = 'Supprimer';
       // remove listeners to delete all notifications
       const newDeleteBtn = deleteBtn.cloneNode(true);
       deleteBtn.parentNode.replaceChild(newDeleteBtn, deleteBtn);
-    }
-  } else {
-    document.querySelector('#notification-selected-buttons-count').textContent = '';
-    document.querySelector('#mark-as-read-notifications-btn').textContent =
-      'Marquer comme lue(s) (tous)';
-    if (deleteBtn) {
+    } else {
+      document.querySelector('#notification-selected-buttons-count').textContent = '';
+      document.querySelector('#mark-as-read-notifications-btn').textContent =
+        'Marquer comme lue(s) (tous)';
       deleteBtn.textContent = 'Vider';
       // add confirmation to delete all notifications
       deleteBtn.addEventListener('click', (event) => {
@@ -48,10 +46,10 @@ function histoRefreshNotificationButtons() {
         }
       });
     }
+    document
+      .querySelectorAll('#notification-selected-buttons input[name=selected_notifications]')
+      ?.forEach((element) => {
+        element.value = histoNotificationSelected.join(',');
+      });
   }
-  document
-    .querySelectorAll('#notification-selected-buttons input[name=selected_notifications]')
-    ?.forEach((element) => {
-      element.value = histoNotificationSelected.join(',');
-    });
 }
