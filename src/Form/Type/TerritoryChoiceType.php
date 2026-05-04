@@ -10,6 +10,9 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<Territory>
+ */
 class TerritoryChoiceType extends AbstractType
 {
     public function __construct(
