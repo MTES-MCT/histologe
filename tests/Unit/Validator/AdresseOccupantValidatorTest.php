@@ -8,7 +8,6 @@ use App\Repository\TerritoryRepository;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Validator\AdresseOccupant;
 use App\Validator\AdresseOccupantValidator;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -36,12 +35,6 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
         $form = new FormServiceSecoursStep2();
         $form->adresseCompleteOccupant = '19 Quai de la Joliette, 13002 Marseille';
         $form->inseeOccupant = '13055';
-
-        $territoryFromInsee = null;
-        if ($hasTerritoryFromInsee) {
-            $territoryFromInsee = $this->createMock(Territory::class);
-            $territoryFromInsee->method('isIsActive')->willReturn(!$isInactiveTerritory);
-        }
 
         $this->zipcodeProvider
             ->expects($this->once())

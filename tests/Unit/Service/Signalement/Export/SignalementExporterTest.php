@@ -11,6 +11,7 @@ use App\Tests\UserHelper;
 use OpenSpout\Reader\CSV\Options as CsvReaderOptions;
 use OpenSpout\Reader\CSV\Reader as CsvReader;
 use OpenSpout\Reader\XLSX\Reader as XlsxReader;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -18,7 +19,7 @@ class SignalementExporterTest extends TestCase
 {
     use UserHelper;
 
-    /** @dataProvider provideFileFormat */
+    #[DataProvider('provideFileFormat')]
     public function testLoad(string $format): void
     {
         /** @var MockObject&SignalementManager */
@@ -54,6 +55,12 @@ class SignalementExporterTest extends TestCase
         } else {
             $this->assertEquals('31/03/2023', $rows[1][1]);
         }
+    }
+
+    public static function provideFileFormat(): \Generator
+    {
+        yield 'export with xlsx' => ['xlsx'];
+        yield 'export with csv' => ['csv'];
     }
 
     /**
@@ -93,11 +100,5 @@ class SignalementExporterTest extends TestCase
         foreach ($signalements as $signalement) {
             yield $signalement;
         }
-    }
-
-    protected function provideFileFormat(): \Generator
-    {
-        yield 'export with xlsx' => ['xlsx'];
-        yield 'export with csv' => ['csv'];
     }
 }
