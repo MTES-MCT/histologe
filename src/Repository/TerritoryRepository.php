@@ -37,6 +37,8 @@ class TerritoryRepository extends ServiceEntityRepository
             $qb->where('t.isActive = 1');
         }
 
+        $qb->orderBy('t.zip', 'ASC');
+
         return $qb->indexBy('t', 't.id')
             ->getQuery()
             ->getResult();
