@@ -83,6 +83,7 @@
                                     Ajouter une étiquette
                                 </h1>
                                 <p>Une fois créée, les agents pourront ajouter ou retirer l'étiquette aux signalements et l'utiliser pour filtrer la liste des signalements.</p>
+                                <p>Tous les champs sont obligatoires.</p>
                                 {{form(addForm, {'attr': {'id': 'form-add-tag'}} )}}
                             </div>
                             <div class="fr-modal__footer">
@@ -116,6 +117,7 @@
                                         Modifier l'étiquette : {{ tag.label }}
                                     </h1>
                                     <p>L'étiquette sera mise à jour sur tous les signalements dans lesquelles elle est utilisée.</p>
+                                    <p>Le champ est obligatoire.</p>
                                     <form method="POST" action="{{ path('back_tags_edit', {tag:tag.id}) }}" id="form-edit-tag-{{ tag.id }}" data-submit-type="formData">
                                         <div class="fr-input-group">
                                             <label class="fr-label" for="label-etiquette-{{ tag.id }}">Etiquette</label>
