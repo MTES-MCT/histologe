@@ -72,15 +72,9 @@ parameters:
 			identifier: assign.propertyType
 			path: src/*
 		-
-			identifier: variable.undefined
-			path: tests/*
-		-
 			identifier: argument.templateType
 		-
 			identifier: offsetAccess.invalidOffset
-		-
-			identifier: property.notFound
-			path: tests/*
 		-
 			identifier: property.notFound
 			path: src/*
