@@ -8,6 +8,7 @@ use App\Dto\CountPartner;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Signalement;
 use App\Entity\User;
 use App\Repository\JobEventRepository;
 use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
@@ -110,7 +111,7 @@ class TabDataManagerTest extends WebTestCase
             ],
         ];
 
-        /** @var MockObject&Paginator $paginator */
+        /** @var MockObject&Paginator<Signalement> $paginator */
         $paginator = $this->createMock(Paginator::class);
         $paginator->method('getIterator')->willReturn(new \ArrayIterator($rawData));
         $paginator->method('count')->willReturn(1);

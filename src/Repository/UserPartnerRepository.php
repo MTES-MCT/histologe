@@ -20,6 +20,9 @@ class UserPartnerRepository extends ServiceEntityRepository
         parent::__construct($registry, UserPartner::class);
     }
 
+    /**
+     * @return Paginator<UserPartner>
+     */
     public function findAnnuaireAgentPaginated(SearchAnnuaireAgent $search, int $maxResult): Paginator
     {
         $qb = $this->createAnnuaireAgentQueryBuilder($search);

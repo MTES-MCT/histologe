@@ -648,6 +648,8 @@ class SignalementRepository extends ServiceEntityRepository
 
     /**
      * @param Collection<int, Partner>|null $userPartners
+     *
+     * @return Paginator<Signalement>
      */
     public function findInjonctionFilteredPaginated(
         SearchSignalementInjonction $searchSignalementInjonction,

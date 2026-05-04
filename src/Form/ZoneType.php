@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Enum\ZoneType as EnumZoneType;
 use App\Entity\Partner;
+use App\Entity\Zone;
 use App\Form\Type\SearchCheckboxType;
 use App\Form\Type\TerritoryChoiceType;
 use App\Repository\PartnerRepository;
@@ -20,6 +21,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @extends AbstractType<Zone>
+ */
 class ZoneType extends AbstractType
 {
     private Package $package;
