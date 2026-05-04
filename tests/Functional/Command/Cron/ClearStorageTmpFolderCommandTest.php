@@ -29,11 +29,11 @@ class ClearStorageTmpFolderCommandTest extends KernelTestCase
     protected function setUp(): void
     {
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
-        $this->parameterBag = self::getContainer()->get(ParameterBagInterface::class);
-        $this->mailerRegistry = self::getContainer()->get(NotificationMailerRegistry::class);
+        $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
+        $this->mailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->fileRepository = self::getContainer()->get(FileRepository::class);
-        $this->uploadHandlerService = self::getContainer()->get(UploadHandlerService::class);
+        $this->fileRepository = static::getContainer()->get(FileRepository::class);
+        $this->uploadHandlerService = static::getContainer()->get(UploadHandlerService::class);
     }
 
     /**

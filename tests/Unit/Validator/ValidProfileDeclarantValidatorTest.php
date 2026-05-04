@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Validator;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Validator\ValidProfileDeclarant;
 use App\Validator\ValidProfileDeclarantValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -18,9 +19,7 @@ class ValidProfileDeclarantValidatorTest extends ConstraintValidatorTestCase
         return new ValidProfileDeclarantValidator();
     }
 
-    /**
-     * @dataProvider provideProfil
-     */
+    #[DataProvider('provideProfil')]
     public function testProfilsFormat(string $profil, bool $isProfilValid, ?string $message = null): void
     {
         $constraint = new ValidProfileDeclarant();
@@ -34,7 +33,7 @@ class ValidProfileDeclarantValidatorTest extends ConstraintValidatorTestCase
         }
     }
 
-    public function provideProfil(): \Generator
+    public static function provideProfil(): \Generator
     {
         yield 'all' => ['all', true];
         yield 'tiers' => ['tiers', true];

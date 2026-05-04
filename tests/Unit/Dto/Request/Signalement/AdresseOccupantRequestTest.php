@@ -13,7 +13,7 @@ class AdresseOccupantRequestTest extends KernelTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->validator = self::getContainer()->get('validator');
+        $this->validator = static::getContainer()->get('validator');
     }
 
     public function testValidateSuccess(): void

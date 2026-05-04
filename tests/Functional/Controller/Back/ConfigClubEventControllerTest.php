@@ -14,6 +14,7 @@ class ConfigClubEventControllerTest extends WebTestCase
 
     public function testIndex(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -21,7 +22,7 @@ class ConfigClubEventControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_config_club_event_index');
         $client->request('GET', $route);
@@ -31,6 +32,7 @@ class ConfigClubEventControllerTest extends WebTestCase
 
     public function testIndexForUnauthorizedUser(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -38,7 +40,7 @@ class ConfigClubEventControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_config_club_event_index');
         $client->request('GET', $route);
@@ -52,6 +54,7 @@ class ConfigClubEventControllerTest extends WebTestCase
 
     public function testEdit(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -64,7 +67,7 @@ class ConfigClubEventControllerTest extends WebTestCase
         $clubEvent = $clubEvents[0];
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_config_club_event_edit', ['id' => $clubEvent->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'club_event');

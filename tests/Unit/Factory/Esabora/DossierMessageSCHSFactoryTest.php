@@ -7,6 +7,7 @@ use App\Entity\Signalement;
 use App\Factory\Interconnection\Esabora\DossierMessageSCHSFactory;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class DossierMessageSCHSFactoryTest extends TestCase
@@ -36,9 +37,7 @@ class DossierMessageSCHSFactoryTest extends TestCase
         $this->assertStringContainsString('Rue du test', $dossierMessage->getAdresseSignalement());
     }
 
-    /**
-     * @dataProvider provideNbChildren
-     */
+    #[DataProvider('provideNbChildren')]
     public function testBuildNbEnfants(string $expectedResult, ?string $nbEnfantsM6 = null, ?string $nbEnfantsP6 = null): void
     {
         $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
@@ -58,7 +57,7 @@ class DossierMessageSCHSFactoryTest extends TestCase
         $this->assertStringContainsString($expectedResult, $actualResult);
     }
 
-    public function provideNbChildren(): \Generator
+    public static function provideNbChildren(): \Generator
     {
         yield 'No child' => ['0 Enfant(s)', null, null];
         yield '1 children M6, 0 children P6' => ['1 Enfant(s)', '1', null];

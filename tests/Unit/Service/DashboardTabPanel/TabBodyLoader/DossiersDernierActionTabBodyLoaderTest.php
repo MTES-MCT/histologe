@@ -22,7 +22,7 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
-        $this->clubEventService = self::getContainer()->get(ClubEventService::class);
+        $this->clubEventService = static::getContainer()->get(ClubEventService::class);
     }
 
     public function testLoadFillsTabBodyWithExpectedData(): void

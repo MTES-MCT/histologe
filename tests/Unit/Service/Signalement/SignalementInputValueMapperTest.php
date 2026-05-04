@@ -3,19 +3,18 @@
 namespace App\Tests\Unit\Service\Signalement;
 
 use App\Service\Signalement\SignalementInputValueMapper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class SignalementInputValueMapperTest extends TestCase
 {
-    /**
-     * @dataProvider provideInputValue
-     */
+    #[DataProvider('provideInputValue')]
     public function testMap(?string $inputValue, bool|string|null $mappedInputValue): void
     {
         $this->assertEquals($mappedInputValue, SignalementInputValueMapper::map($inputValue));
     }
 
-    public function provideInputValue(): \Generator
+    public static function provideInputValue(): \Generator
     {
         yield 'Input with Oui value' => ['oui', true];
         yield 'Input with Non value' => ['non', false];

@@ -24,12 +24,12 @@ class LoadEpciCommandTest extends KernelTestCase
         ];
         $mockHttpClient = new MockHttpClient($responses);
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
 
         $command = new LoadEpciCommand(
             $mockHttpClient,
-            self::getContainer()->get(CommuneRepository::class),
-            self::getContainer()->get(EpciRepository::class),
+            static::getContainer()->get(CommuneRepository::class),
+            static::getContainer()->get(EpciRepository::class),
             $entityManager
         );
 

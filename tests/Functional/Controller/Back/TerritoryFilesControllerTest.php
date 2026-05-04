@@ -16,6 +16,7 @@ class TerritoryFilesControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
     }
 
@@ -27,7 +28,7 @@ class TerritoryFilesControllerTest extends WebTestCase
         $this->client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_territory_files_index');
 
         $this->client->request('GET', $route);
@@ -46,7 +47,7 @@ class TerritoryFilesControllerTest extends WebTestCase
         $this->client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_territory_files_index');
 
         $this->client->request('GET', $route);

@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Repository\UserRepository;
 use App\Repository\ZoneRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -13,12 +14,12 @@ class BackZoneControllerTest extends WebTestCase
     use SessionHelper;
 
     /**
-     * @dataProvider provideParamsZoneList
-     *
      * @param array<mixed> $params
      */
+    #[DataProvider('provideParamsZoneList')]
     public function testZoneList(array $params, int $nb): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -26,7 +27,7 @@ class BackZoneControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_territory_management_zone_index');
         $client->request('GET', $route, $params);
@@ -34,7 +35,7 @@ class BackZoneControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h2#desc-table', $nb.' zone');
     }
 
-    public function provideParamsZoneList(): \Generator
+    public static function provideParamsZoneList(): \Generator
     {
         yield 'Search without params' => [[], 3];
         yield 'Search with queryName agde' => [['queryName' => 'agde'], 1];
@@ -43,6 +44,7 @@ class BackZoneControllerTest extends WebTestCase
 
     public function testZoneShow(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -54,7 +56,7 @@ class BackZoneControllerTest extends WebTestCase
         $zones = $zoneRepository->findAll();
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_territory_management_zone_show', ['zone' => $zones[0]->getId()]);
         $client->request('GET', $route);
 
@@ -64,6 +66,7 @@ class BackZoneControllerTest extends WebTestCase
 
     public function testZoneEdit(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -76,7 +79,7 @@ class BackZoneControllerTest extends WebTestCase
         $zone = $zones[0];
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_territory_management_zone_edit', ['zone' => $zone->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'zone_type');

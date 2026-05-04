@@ -22,9 +22,9 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->entityManager = self::getContainer()->get('doctrine');
-        $this->csrfTokenManager = self::getContainer()->get(CsrfTokenManagerInterface::class);
-        $this->security = self::getContainer()->get(Security::class);
+        $this->entityManager = static::getContainer()->get('doctrine');
+        $this->csrfTokenManager = static::getContainer()->get(CsrfTokenManagerInterface::class);
+        $this->security = static::getContainer()->get(Security::class);
     }
 
     public function testCreateFactory(): void

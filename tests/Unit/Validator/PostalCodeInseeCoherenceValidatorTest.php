@@ -9,6 +9,7 @@ use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Validator\PostalCodeInseeCoherence;
 use App\Validator\PostalCodeInseeCoherenceValidator;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidatorInterface;
@@ -37,9 +38,7 @@ class PostalCodeInseeCoherenceValidatorTest extends ConstraintValidatorTestCase
         return new PostalCodeInseeCoherenceValidator($entityManager, $this->postalCodeHomeChecker);
     }
 
-    /**
-     * @dataProvider provideCoherenceCases
-     */
+    #[DataProvider('provideCoherenceCases')]
     public function testPostalCodeInseeCoherence(
         string $postalCode,
         string $rawInseeCode,

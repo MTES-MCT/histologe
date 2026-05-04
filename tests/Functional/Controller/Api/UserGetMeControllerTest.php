@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace App\Tests\Functional\Controller\Api;
 
 use App\Entity\User;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class UserGetMeControllerTest extends WebTestCase
 {
-    /**
-     * @dataProvider provideUserEmailApi
-     */
+    #[DataProvider('provideUserEmailApi')]
     public function testUserGetMe(string $email, int $nbPartners): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => $email,
         ]);
 
@@ -32,7 +32,7 @@ class UserGetMeControllerTest extends WebTestCase
         $this->assertCount($nbPartners, $response['partenairesAutorises']);
     }
 
-    public function provideUserEmailApi(): \Generator
+    public static function provideUserEmailApi(): \Generator
     {
         yield 'Partenaire id 2' => ['api-01@signal-logement.fr', 3];
         yield 'Partenaire id 84' => ['api-02@signal-logement.fr', 1];

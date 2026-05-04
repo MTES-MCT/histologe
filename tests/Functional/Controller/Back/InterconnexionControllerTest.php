@@ -4,18 +4,19 @@ namespace App\Tests\Functional\Controller\Back;
 
 use App\Repository\UserRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
 class InterconnexionControllerTest extends WebTestCase
 {
     /**
-     * @dataProvider provideParamsInterconnexionList
-     *
      * @param array<mixed> $params
      */
+    #[DataProvider('provideParamsInterconnexionList')]
     public function testInterconnexionList(array $params): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -23,7 +24,7 @@ class InterconnexionControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_interconnexion_index');
         $client->request('GET', $route, $params);
@@ -33,7 +34,7 @@ class InterconnexionControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h2#desc-table', 'connexion'); // include singular and plural
     }
 
-    public function provideParamsInterconnexionList(): \Generator
+    public static function provideParamsInterconnexionList(): \Generator
     {
         yield 'Search without params' => [[]];
         yield 'Search with status warning' => [['status' => 'warning']];

@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -22,11 +23,10 @@ class CartographieControllerTest extends WebTestCase
         self::ensureKernelShutdown();
     }
 
-    /**
-     * @dataProvider provideUserEmail
-     */
+    #[DataProvider('provideUserEmail')]
     public function testCartographieSuccessfullyOrRedirectWithoutError500(string $email): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -46,7 +46,7 @@ class CartographieControllerTest extends WebTestCase
         );
     }
 
-    public function provideUserEmail(): \Generator
+    public static function provideUserEmail(): \Generator
     {
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -60,12 +60,12 @@ class CartographieControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideFilterSearch
-     *
      * @param string|array<string> $terms
      */
+    #[DataProvider('provideFilterSearch')]
     public function testCartographieWithFilter(string $email, string $filter, string|array $terms): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UrlGeneratorInterface $generatorUrl */
         $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
@@ -82,7 +82,7 @@ class CartographieControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    public function provideFilterSearch(): \Generator
+    public static function provideFilterSearch(): \Generator
     {
         yield 'Super Admin by statut Nouveau' => [self::SUPER_ADMIN, 'bo-filters-statuses', ['1']];
         yield 'Resp territoire by statut Nouveau' => [self::ADMIN_TERRITOIRE, 'bo-filters-statuses', ['1']];

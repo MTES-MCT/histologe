@@ -5,19 +5,18 @@ namespace App\Tests\Unit\Service\Signalement;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
 use App\Service\Signalement\SignalementProfileOccupantMapper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class SignalementProfileOccupantMapperTest extends TestCase
 {
-    /**
-     * @dataProvider provideInputValue
-     */
+    #[DataProvider('provideInputValue')]
     public function testMap(?string $profileOccupantInput, ?ProfileDeclarant $profileDeclarant, ?ProfileOccupant $profileOccupant): void
     {
         $this->assertEquals($profileOccupant, SignalementProfileOccupantMapper::map($profileOccupantInput, $profileDeclarant));
     }
 
-    public function provideInputValue(): \Generator
+    public static function provideInputValue(): \Generator
     {
         yield 'Occupant empty, Declarant locataire' => ['', ProfileDeclarant::LOCATAIRE, ProfileOccupant::LOCATAIRE];
         yield 'Occupant empty, Declarant bailleur' => ['', ProfileDeclarant::BAILLEUR, ProfileOccupant::LOCATAIRE];

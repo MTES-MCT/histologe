@@ -6,6 +6,7 @@ use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Repository\EmailDeliveryIssueRepository;
 use App\Utils\Sanitizer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,15 +40,14 @@ class BrevoWebhookControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-    /**
-     * @dataProvider provideWebhookTestData
-     */
+    #[DataProvider('provideWebhookTestData')]
     public function testWebhookHandling(
         string $remoteAddr,
         string $payload,
         int $expectedStatusCode,
         string $expectedContent,
     ): void {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         $client->request(
@@ -66,7 +66,7 @@ class BrevoWebhookControllerTest extends WebTestCase
         $this->assertEquals($expectedContent, (string) $client->getResponse()->getContent());
     }
 
-    public function provideWebhookTestData(): \Generator
+    public static function provideWebhookTestData(): \Generator
     {
         yield 'Valid IP and valid event' => [
             'remoteAddr' => '127.0.0.1',
@@ -126,12 +126,12 @@ class BrevoWebhookControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideWebhookEventTestData
-     *
      * @param array<string, mixed>|null $expectedPayload
      */
+    #[DataProvider('provideWebhookEventTestData')]
     public function testHandleWebhookWithEvent(string $event, string $email, bool $expectDeliveryIssue, ?array $expectedPayload): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = static::getContainer();
 
@@ -165,7 +165,7 @@ class BrevoWebhookControllerTest extends WebTestCase
         }
     }
 
-    public function provideWebhookEventTestData(): \Generator
+    public static function provideWebhookEventTestData(): \Generator
     {
         yield 'Soft bounce event' => [
             'event' => 'soft_bounce',
@@ -187,6 +187,7 @@ class BrevoWebhookControllerTest extends WebTestCase
 
     public function testArchivedUsersWithSameEmailPrefixCreatesDeliveryIssue(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         $container = static::getContainer();
         $em = $container->get('doctrine')->getManager();

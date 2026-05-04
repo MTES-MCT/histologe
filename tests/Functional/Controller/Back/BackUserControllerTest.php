@@ -3,18 +3,19 @@
 namespace App\Tests\Functional\Controller\Back;
 
 use App\Repository\UserRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
 class BackUserControllerTest extends WebTestCase
 {
     /**
-     * @dataProvider provideParamsUserList
-     *
      * @param array<mixed> $params
      */
+    #[DataProvider('provideParamsUserList')]
     public function testUserList(array $params, int $nb): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -22,7 +23,7 @@ class BackUserControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_user_index');
         $client->request('GET', $route, $params);
@@ -34,7 +35,7 @@ class BackUserControllerTest extends WebTestCase
         }
     }
 
-    public function provideParamsUserList(): \Generator
+    public static function provideParamsUserList(): \Generator
     {
         yield 'Search without params' => [[], 71];
         yield 'Search with queryUser admin' => [['queryUser' => 'admin'], 23];
@@ -48,12 +49,12 @@ class BackUserControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideParamsUserExport
-     *
      * @param array<mixed> $params
      */
+    #[DataProvider('provideParamsUserExport')]
     public function testUserExport(array $params, int $nb): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -61,7 +62,7 @@ class BackUserControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_user_export');
         $client->request('GET', $route, $params);
@@ -69,7 +70,7 @@ class BackUserControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h1', 'Exporter la liste des '.$nb.' utilisateurs');
     }
 
-    public function provideParamsUserExport(): \Generator
+    public static function provideParamsUserExport(): \Generator
     {
         yield 'Search without params' => [[], 18];
         yield 'Search with queryUser user' => [['queryUser' => 'user'], 13];
@@ -83,6 +84,7 @@ class BackUserControllerTest extends WebTestCase
 
     public function testUserExportSA(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -90,7 +92,7 @@ class BackUserControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_user_export');
         $client->request('GET', $route, ['territory' => 13]);
@@ -104,6 +106,7 @@ class BackUserControllerTest extends WebTestCase
 
     public function testInactiveAccounts(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -111,7 +114,7 @@ class BackUserControllerTest extends WebTestCase
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_user_inactive_accounts');
         $client->request('GET', $route);
 

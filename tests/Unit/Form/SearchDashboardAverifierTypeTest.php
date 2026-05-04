@@ -22,7 +22,7 @@ class SearchDashboardAverifierTypeTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->formFactory = self::getContainer()->get(FormFactoryInterface::class);
+        $this->formFactory = static::getContainer()->get(FormFactoryInterface::class);
     }
 
     public function testFormContainsExpectedFieldsForSimpleUser(): void
@@ -32,7 +32,7 @@ class SearchDashboardAverifierTypeTest extends KernelTestCase
         $user->setPassword('pass');
         $user->setRoles(['ROLE_ADMIN_PARTNER']);
         $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
-        self::getContainer()->get(TokenStorageInterface::class)->setToken($token);
+        static::getContainer()->get(TokenStorageInterface::class)->setToken($token);
         $form = $this->formFactory->create(SearchDashboardAverifierType::class, new SearchDashboardAverifier($user));
 
         $this->assertTrue($form->has('queryCommune'));
@@ -53,7 +53,7 @@ class SearchDashboardAverifierTypeTest extends KernelTestCase
         $user->setPassword('pass');
         $user->setRoles(['ROLE_ADMIN_TERRITORY']);
         $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
-        self::getContainer()->get(TokenStorageInterface::class)->setToken($token);
+        static::getContainer()->get(TokenStorageInterface::class)->setToken($token);
 
         // 2. Créer un Territory factice avec un id
         $territory = new Territory();

@@ -73,6 +73,7 @@ class SignalementManagerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get('doctrine.orm.entity_manager');
@@ -99,7 +100,7 @@ class SignalementManagerTest extends WebTestCase
         $this->zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
         $this->exportIterableQuery = static::getContainer()->get(ExportIterableQuery::class);
         $this->listPaginatorQuery = static::getContainer()->get(ListPaginatorQuery::class);
-        $this->htmlSanitizerInterface = self::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->htmlSanitizerInterface = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
         $this->signalementManager = new SignalementManager(
             $this->managerRegistry,

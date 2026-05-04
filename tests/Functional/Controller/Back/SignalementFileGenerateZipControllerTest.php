@@ -22,9 +22,9 @@ class SignalementFileGenerateZipControllerTest extends WebTestCase
     {
         self::ensureKernelShutdown();
         $this->client = static::createClient();
-        $this->router = self::getContainer()->get(RouterInterface::class);
-        $userRepository = self::getContainer()->get(UserRepository::class);
-        $signalementRepository = self::getContainer()->get(SignalementRepository::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
 
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->signalement = $signalementRepository->findOneBy(['reference' => '2023-1']);

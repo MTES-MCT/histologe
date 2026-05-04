@@ -13,7 +13,7 @@ class TabQueryParametersTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->validator = self::getContainer()->get(ValidatorInterface::class);
+        $this->validator = static::getContainer()->get(ValidatorInterface::class);
     }
 
     public function testValidTabQueryParameters(): void

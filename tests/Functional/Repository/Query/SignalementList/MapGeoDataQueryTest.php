@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Repository\Query\SignalementList;
 
 use App\Repository\Query\SignalementList\MapGeoDataQuery;
 use App\Repository\UserRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class MapGeoDataQueryTest extends KernelTestCase
@@ -13,10 +14,9 @@ class MapGeoDataQueryTest extends KernelTestCase
     private const string USER_AGENT_MULTI_34 = 'user-partenaire-multi-ter-34-30@signal-logement.fr';
 
     /**
-     * @dataProvider provideSearchWithGeoData
-     *
      * @param array<string, mixed> $options
      */
+    #[DataProvider('provideSearchWithGeoData')]
     public function testGetData(string $email, array $options, int $nbResult): void
     {
         /** @var UserRepository $userRepository */
@@ -28,7 +28,7 @@ class MapGeoDataQueryTest extends KernelTestCase
         $this->assertCount($nbResult, $signalements);
     }
 
-    public function provideSearchWithGeoData(): \Generator
+    public static function provideSearchWithGeoData(): \Generator
     {
         yield 'Search all for super admin' => [self::USER_ADMIN, [], 48];
         yield 'Search in Marseille for super admin' => [self::USER_ADMIN, ['cities' => ['Marseille']], 25];

@@ -50,18 +50,18 @@ class ProConnectAuthenticationTest extends KernelTestCase
         $jwtParser = $this->createMock(ProConnectJwtParser::class);
 
         $httpClient
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('requestToken')
             ->willReturn(new OAuth2TokenResponse(['access_token' => 'dummy', 'id_token' => 'dummy']));
 
         $jwksFile = (string) file_get_contents(__DIR__.'/../../../../../tools/wiremock/src/Resources/ProConnect/jwks.json');
         $httpClient
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getJWKS')
             ->willReturn(new JWKSResponse((string) $jwksFile));
 
         $jwtValidator
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('validate')
             ->willReturn(true);
 
@@ -71,12 +71,12 @@ class ProConnectAuthenticationTest extends KernelTestCase
             'email' => 'proconnect@signal-logement.fr',
         ];
         $httpClient
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getUserDataJwt')
             ->willReturn(json_encode($proConnectData));
 
         $jwtParser
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('parse')
             ->willReturn($proConnectData);
 
@@ -128,7 +128,7 @@ class ProConnectAuthenticationTest extends KernelTestCase
         /** @var ProConnectHttpClient&MockObject $httpClient */
         $httpClient = $this->createMock(ProConnectHttpClient::class);
         $httpClient
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('getLogoutUrl')
             ->with($this->callback(static function (LogoutRequest $request) {
                 return 'valid_id_token' === $request->idTokenHint

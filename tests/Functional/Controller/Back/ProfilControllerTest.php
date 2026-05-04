@@ -29,9 +29,10 @@ class ProfilControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
-        $this->router = self::getContainer()->get(RouterInterface::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
 
         $this->uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
         static::getContainer()->set('App\Service\UploadHandlerService', $this->uploadHandlerServiceMock);

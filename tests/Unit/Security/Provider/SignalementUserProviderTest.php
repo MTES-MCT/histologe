@@ -128,6 +128,6 @@ class SignalementUserProviderTest extends TestCase
     {
         $signalementUserProvider = new SignalementUserProvider($this->signalementRepository, $this->userRepository, $this->logger);
 
-        self::assertTrue($signalementUserProvider->supportsClass(SignalementUser::class));
+        $this->assertTrue($signalementUserProvider->supportsClass(SignalementUser::class));
     }
 }

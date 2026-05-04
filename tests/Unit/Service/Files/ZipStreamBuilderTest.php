@@ -44,11 +44,11 @@ final class ZipStreamBuilderTest extends TestCase
     public function testCreateInitializesZipAndCreatesTempFile(): void
     {
         $stream = fopen(self::PHP_TEMP_STREAM, 'w+');
-        self::assertIsResource($stream);
+        $this->assertIsResource($stream);
 
         $uploadHandler = $this->createMock(UploadHandlerService::class);
         $uploadHandler
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('openReadStream')
             ->with('foo.pdf')
             ->willReturn($stream);
@@ -71,9 +71,9 @@ final class ZipStreamBuilderTest extends TestCase
             ->add($file)
             ->close();
 
-        self::assertIsString($zipPath);
-        self::assertFileExists($zipPath);
-        self::assertGreaterThan(0, filesize($zipPath), 'Zip file should not be empty.');
+        $this->assertIsString($zipPath);
+        $this->assertFileExists($zipPath);
+        $this->assertGreaterThan(0, filesize($zipPath), 'Zip file should not be empty.');
     }
 
     public function testCreateTwiceThrowsLogicException(): void
@@ -134,11 +134,11 @@ final class ZipStreamBuilderTest extends TestCase
     public function testAddClosesReturnedStream(): void
     {
         $stream = fopen(self::PHP_TEMP_STREAM, 'w+');
-        self::assertIsResource($stream);
+        $this->assertIsResource($stream);
 
         $uploadHandler = $this->createMock(UploadHandlerService::class);
         $uploadHandler
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('openReadStream')
             ->with('foo.pdf')
             ->willReturn($stream);
@@ -160,10 +160,10 @@ final class ZipStreamBuilderTest extends TestCase
             ->create('signalement-123')
             ->add($file);
 
-        self::assertFalse(is_resource($stream), 'Stream should be closed after add().');
+        $this->assertFalse(is_resource($stream), 'Stream should be closed after add().');
 
         $zipPath = $builder->close();
-        self::assertFileExists($zipPath);
+        $this->assertFileExists($zipPath);
     }
 
     /**
@@ -173,12 +173,12 @@ final class ZipStreamBuilderTest extends TestCase
     {
         $stream1 = fopen(self::PHP_TEMP_STREAM, 'w+');
         $stream2 = fopen(self::PHP_TEMP_STREAM, 'w+');
-        self::assertIsResource($stream1);
-        self::assertIsResource($stream2);
+        $this->assertIsResource($stream1);
+        $this->assertIsResource($stream2);
 
         $uploadHandler = $this->createMock(UploadHandlerService::class);
         $uploadHandler
-            ->expects(self::exactly(2))
+            ->expects($this->exactly(2))
             ->method('openReadStream')
             ->willReturnCallback(static function (string $filename) use ($stream1, $stream2) {
                 return match ($filename) {
@@ -209,10 +209,10 @@ final class ZipStreamBuilderTest extends TestCase
             ->addMany([$fileA, $fileB])
             ->close();
 
-        self::assertFileExists($zipPath);
-        self::assertGreaterThan(0, filesize($zipPath));
-        self::assertFalse(is_resource($stream1));
-        self::assertFalse(is_resource($stream2));
+        $this->assertFileExists($zipPath);
+        $this->assertGreaterThan(0, filesize($zipPath));
+        $this->assertFalse(is_resource($stream1));
+        $this->assertFalse(is_resource($stream2));
     }
 
     /**
@@ -221,20 +221,20 @@ final class ZipStreamBuilderTest extends TestCase
     public function testCanCreateAgainAfterClose(): void
     {
         $stream1 = fopen(self::PHP_TEMP_STREAM, 'w+');
-        self::assertIsResource($stream1);
+        $this->assertIsResource($stream1);
 
         fwrite($stream1, 'content-1');
         rewind($stream1);
 
         $stream2 = fopen(self::PHP_TEMP_STREAM, 'w+');
-        self::assertIsResource($stream2);
+        $this->assertIsResource($stream2);
 
         fwrite($stream2, 'content-2');
         rewind($stream2);
 
         $uploadHandler = $this->createMock(UploadHandlerService::class);
         $uploadHandler
-            ->expects(self::exactly(2))
+            ->expects($this->exactly(2))
             ->method('openReadStream')
             ->with('foo.pdf')
             ->willReturnOnConsecutiveCalls($stream1, $stream2);
@@ -250,20 +250,20 @@ final class ZipStreamBuilderTest extends TestCase
         $builder = new ZipStreamBuilder($uploadHandler, $parameterBag, $logger);
 
         $fileOne = $this->createMock(File::class);
-        $fileOne->expects(self::once())->method('getFilename')->willReturn('foo.pdf');
+        $fileOne->expects($this->once())->method('getFilename')->willReturn('foo.pdf');
 
         $fileTwo = $this->createMock(File::class);
-        $fileTwo->expects(self::once())->method('getFilename')->willReturn('foo.pdf');
+        $fileTwo->expects($this->once())->method('getFilename')->willReturn('foo.pdf');
 
         $zip1 = $builder->create('one')->add($fileOne)->close();
-        self::assertFileExists($zip1);
+        $this->assertFileExists($zip1);
 
         $zip2 = $builder->create('two')->add($fileTwo)->close();
-        self::assertFileExists($zip2);
+        $this->assertFileExists($zip2);
 
-        self::assertNotSame($zip1, $zip2);
+        $this->assertNotSame($zip1, $zip2);
 
-        self::assertFalse(is_resource($stream1));
-        self::assertFalse(is_resource($stream2));
+        $this->assertFalse(is_resource($stream1));
+        $this->assertFalse(is_resource($stream2));
     }
 }

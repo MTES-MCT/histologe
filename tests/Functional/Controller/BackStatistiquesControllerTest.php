@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller;
 
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -16,26 +17,25 @@ class BackStatistiquesControllerTest extends WebTestCase
     private const USER_ADMIN_PARTNER_MULTI_TERRITORIES = 'admin-partenaire-multi-ter-13-01@signal-logement.fr';
     private const USER_USER_PARTNER_MULTI_TERRITORIES = 'user-partenaire-multi-ter-34-30@signal-logement.fr';
 
-    public function provideRoutesHomepage(): \Generator
+    public static function provideRoutesHomepage(): \Generator
     {
         yield 'Super Admin' => ['back_statistiques', self::USER_SUPER_ADMIN];
         yield 'Responsable Territoire' => ['back_statistiques', self::USER_ADMIN_TERRITOIRE];
         yield 'Partner' => ['back_statistiques', self::USER_PARTNER];
     }
 
-    /**
-     * @dataProvider provideRoutesHomepage
-     */
+    #[DataProvider('provideRoutesHomepage')]
     public function testStatistiquesHomepage(string $route, string $email): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => $email]);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $client->request(
             'GET',
             $router->generate(
@@ -47,7 +47,7 @@ class BackStatistiquesControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
     }
 
-    public function provideRoutesStatistiquesDatas(): \Generator
+    public static function provideRoutesStatistiquesDatas(): \Generator
     {
         yield 'Super Admin' => ['back_statistiques_filter', [], self::USER_SUPER_ADMIN, [
             ['result' => 52, 'label' => 'count_signalement'],
@@ -96,21 +96,21 @@ class BackStatistiquesControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideRoutesStatistiquesDatas
-     *
      * @param array<mixed> $params
      * @param array<mixed> $expectedResponses
      */
+    #[DataProvider('provideRoutesStatistiquesDatas')]
     public function testStatistiquesDatas(string $route, array $params, string $email, array $expectedResponses): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
         /** @var UserRepository $userRepository */
-        $userRepository = self::getContainer()->get(UserRepository::class);
+        $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => $email]);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $client->request(
             'POST',
             $router->generate(
@@ -129,10 +129,11 @@ class BackStatistiquesControllerTest extends WebTestCase
 
     public function testStatistiquesFilterRouteNotLogged(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $client->request(
             'GET',
             $router->generate(

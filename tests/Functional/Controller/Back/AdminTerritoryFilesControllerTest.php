@@ -20,13 +20,15 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
      */
     public function testAddAjaxFails(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
+
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $crawler = $client->request('GET', $router->generate('back_territory_management_document_add'));
         $this->assertResponseIsSuccessful();
         $form = $crawler->filter('form')->form();
@@ -52,7 +54,9 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
      */
     public function testEditAjaxModifiesTitle(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
+
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
@@ -63,7 +67,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
         $file = $fileRepository->findOneBy(['isStandalone' => true]);
         $this->assertNotNull($file, 'Aucun fichier disponible pour le test.');
 
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         // On récupère le formulaire d'édition pour obtenir les champs attendus
         $crawler = $client->request('GET', $router->generate('back_territory_management_document_edit', ['file' => $file->getId()]));
@@ -91,6 +95,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
      */
     public function testDeleteSuccess(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
 
         /** @var UserRepository $userRepository */
@@ -103,7 +108,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
         $file = $fileRepository->findOneBy(['filename' => '1_Demande_de_transmission_d_une_copie_d_un_DPE.docx']);
         $this->assertNotNull($file, 'Aucun fichier disponible pour le test.');
 
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_territory_management_document_delete_ajax', ['file' => $file->getId()]);
 
         $csrfToken = $this->generateCsrfToken($client, 'document_delete');
@@ -126,7 +131,9 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
      */
     public function testDeleteWithInvalidCsrf(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
+
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
         $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
@@ -136,7 +143,7 @@ class AdminTerritoryFilesControllerTest extends WebTestCase
         $fileRepository = static::getContainer()->get(FileRepository::class);
         $file = $fileRepository->findOneBy(['isStandalone' => true]);
 
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_territory_management_document_delete_ajax', ['file' => $file->getId()]);
         $client->request('POST', $route.'?_token=invalid');
 

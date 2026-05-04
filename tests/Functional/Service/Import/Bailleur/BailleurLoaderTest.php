@@ -17,9 +17,9 @@ class BailleurLoaderTest extends KernelTestCase
     public function testLoadValidBailleur(): void
     {
         $bailleurLoader = new BailleurLoader(
-            self::getContainer()->get(BailleurRepository::class),
-            self::getContainer()->get(TerritoryRepository::class),
-            self::getContainer()->get(EntityManagerInterface::class)
+            static::getContainer()->get(BailleurRepository::class),
+            static::getContainer()->get(TerritoryRepository::class),
+            static::getContainer()->get(EntityManagerInterface::class)
         );
 
         $bailleurLoader->load($this->getData());

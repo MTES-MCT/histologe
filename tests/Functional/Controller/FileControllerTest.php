@@ -19,8 +19,9 @@ class FileControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
-        $this->router = self::getContainer()->get(RouterInterface::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
         $this->fileRepository = static::getContainer()->get(FileRepository::class);
         $this->urlSigner = static::getContainer()->get(UrlSignerInterface::class);
     }

@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Repository\BailleurRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\RouterInterface;
@@ -16,6 +17,7 @@ class BackBailleurControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
@@ -24,14 +26,13 @@ class BackBailleurControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideParamsBailleurList
-     *
      * @param array<mixed> $params
      */
+    #[DataProvider('provideParamsBailleurList')]
     public function testBailleurList(array $params, int $nb): void
     {
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
 
         $route = $router->generate('back_bailleur_index');
         $this->client->request('GET', $route, $params);
@@ -43,7 +44,7 @@ class BackBailleurControllerTest extends WebTestCase
         }
     }
 
-    public function provideParamsBailleurList(): \Generator
+    public static function provideParamsBailleurList(): \Generator
     {
         yield 'Search without params' => [[], 67];
         yield 'Search with queryName Habitat' => [['queryName' => 'Habitat'], 28];
@@ -57,7 +58,7 @@ class BackBailleurControllerTest extends WebTestCase
         $bailleur = $bailleurRepository->findOneBy(['name' => '13 HABITAT']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_bailleur_edit', ['bailleur' => $bailleur->getId()]);
 
         $csrfToken = $this->generateCsrfToken($this->client, 'bailleur_type');
@@ -81,7 +82,7 @@ class BackBailleurControllerTest extends WebTestCase
         }
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_bailleur_edit', ['bailleur' => $bailleur->getId()]);
 
         $csrfToken = $this->generateCsrfToken($this->client, 'bailleur_type');
@@ -110,7 +111,7 @@ class BackBailleurControllerTest extends WebTestCase
         $bailleur = $bailleurRepository->findOneBy(['name' => '13 HABITAT']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_bailleur_delete', ['bailleur' => $bailleur->getId()]);
 
         $csrfToken = $this->generateCsrfToken($this->client, 'bailleur_delete');
@@ -134,7 +135,7 @@ class BackBailleurControllerTest extends WebTestCase
         $bailleur = $bailleurRepository->findOneBy(['name' => '3F SUD SA HLM']);
 
         /** @var RouterInterface $router */
-        $router = self::getContainer()->get(RouterInterface::class);
+        $router = static::getContainer()->get(RouterInterface::class);
         $route = $router->generate('back_bailleur_delete', ['bailleur' => $bailleur->getId()]);
 
         $csrfToken = $this->generateCsrfToken($this->client, 'bailleur_delete');

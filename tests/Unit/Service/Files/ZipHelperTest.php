@@ -15,9 +15,9 @@ class ZipHelperTest extends KernelTestCase
     protected function setUp(): void
     {
         /** @var ParameterBagInterface $parameterBag */
-        $parameterBag = self::getContainer()->get(ParameterBagInterface::class);
+        $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         /** @var SluggerInterface $slugger */
-        $slugger = self::getContainer()->get('slugger');
+        $slugger = static::getContainer()->get('slugger');
         $this->zipService = new ZipHelper($parameterBag, $slugger);
     }
 

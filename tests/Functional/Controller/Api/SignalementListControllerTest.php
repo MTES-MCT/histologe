@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Api;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Tests\ApiHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class SignalementListControllerTest extends WebTestCase
@@ -13,8 +14,9 @@ class SignalementListControllerTest extends WebTestCase
 
     public function testGetSignalementList(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
         $client->loginUser($user, 'api');
@@ -35,8 +37,9 @@ class SignalementListControllerTest extends WebTestCase
 
     public function testGetSignalementListUserApi02(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-02@signal-logement.fr',
         ]);
         $client->loginUser($user, 'api');
@@ -56,13 +59,12 @@ class SignalementListControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
-    /**
-     * @dataProvider provideGoodQueryParameters
-     */
+    #[DataProvider('provideGoodQueryParameters')]
     public function testGetSignalementListWithFilters(array $queryParameters, int $count): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
 
@@ -88,13 +90,12 @@ class SignalementListControllerTest extends WebTestCase
         yield 'codeInsee=2b002' => [['codeInsee' => '2b002'], 0];
     }
 
-    /**
-     * @dataProvider provideDataSignalementByUuid
-     */
+    #[DataProvider('provideDataSignalementByUuid')]
     public function testGetSignalementByUuid(string $email, string $uuid, int $nbAffectations, int $nbDesordres): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => $email,
         ]);
         $client->loginUser($user, 'api');
@@ -109,7 +110,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
-    public function provideDataSignalementByUuid(): \Generator
+    public static function provideDataSignalementByUuid(): \Generator
     {
         yield 'api-02 user with signalement 2024-12' => ['api-02@signal-logement.fr', '00000000-0000-0000-2024-000000000012', 1, 7];
         yield 'api-01 user with signalement 2023-26' => ['api-01@signal-logement.fr', '00000000-0000-0000-2023-000000000026', 3, 0];
@@ -117,14 +118,14 @@ class SignalementListControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider provideQueryParameters
-     *
      * @param array<string> $queryParameters
      */
+    #[DataProvider('provideQueryParameters')]
     public function testGetSignalementListWithErrorsFilter(array $queryParameters, int $countErrors): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
             'email' => 'api-01@signal-logement.fr',
         ]);
         $client->loginUser($user, 'api');
@@ -139,7 +140,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
-    public function provideQueryParameters(): \Generator
+    public static function provideQueryParameters(): \Generator
     {
         yield 'Out of range limit' => [['limit' => '115151'], 1];
         yield 'Wrong type limit' => [['limit' => 'hello'], 2];
@@ -167,8 +168,9 @@ class SignalementListControllerTest extends WebTestCase
 
     public function testGetUnAffectedSignalementByUuid(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
 
         $uuid = '00000000-0000-0000-2024-000000000006';
         $client->loginUser($user, 'api');
@@ -180,13 +182,14 @@ class SignalementListControllerTest extends WebTestCase
 
     public function testGetUnAffectedSignalementCreatedByMeByUuid(): void
     {
+        self::ensureKernelShutdown();
         $client = static::createClient();
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
+        $user = static::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy(['email' => 'api-01@signal-logement.fr']);
 
         $uuid = '00000000-0000-0000-2024-000000000006';
-        $signalement = self::getContainer()->get('doctrine')->getRepository(Signalement::class)->findOneBy(['uuid' => $uuid]);
+        $signalement = static::getContainer()->get('doctrine')->getRepository(Signalement::class)->findOneBy(['uuid' => $uuid]);
         $signalement->setCreatedBy($user);
-        self::getContainer()->get('doctrine')->getManager()->flush();
+        static::getContainer()->get('doctrine')->getManager()->flush();
 
         $client->loginUser($user, 'api');
         $client->request('GET', '/api/signalements/'.$uuid);

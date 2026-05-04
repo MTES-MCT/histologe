@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Repository\TagRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,9 +21,10 @@ class BackTagControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
-        $this->router = self::getContainer()->get(RouterInterface::class);
+        $this->router = static::getContainer()->get(RouterInterface::class);
 
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -41,7 +43,7 @@ class BackTagControllerTest extends WebTestCase
     public function testDeleteNewTagSuccess(): void
     {
         /** @var TagRepository $tagRepository */
-        $tagRepository = self::getContainer()->get(TagRepository::class);
+        $tagRepository = static::getContainer()->get(TagRepository::class);
         $tag = $tagRepository->findOneBy(['label' => 'Commission du 12/08', 'isArchive' => 0]);
         $route = $this->router->generate('back_tags_delete');
         $this->client->request(
@@ -71,7 +73,7 @@ class BackTagControllerTest extends WebTestCase
     public function testDeleteNewTagFailed(): void
     {
         /** @var TagRepository $tagRepository */
-        $tagRepository = self::getContainer()->get(TagRepository::class);
+        $tagRepository = static::getContainer()->get(TagRepository::class);
         $tag = $tagRepository->findOneBy(['label' => 'Commission du 12/08', 'isArchive' => 0]);
         $route = $this->router->generate('back_tags_delete');
         $this->client->request(
@@ -94,9 +96,7 @@ class BackTagControllerTest extends WebTestCase
         $this->assertEquals(6, $total);
     }
 
-    /**
-     * @dataProvider provideTagDataForCreateForm
-     */
+    #[DataProvider('provideTagDataForCreateForm')]
     public function testCreateNewTag(
         string $tagLabel,
         string $tagTerritory,
@@ -105,7 +105,7 @@ class BackTagControllerTest extends WebTestCase
         string $message,
     ): void {
         /** @var TagRepository $tagRepository */
-        $tagRepository = self::getContainer()->get(TagRepository::class);
+        $tagRepository = static::getContainer()->get(TagRepository::class);
         $route = $this->router->generate('back_tags_add');
         $this->client->request(
             'POST',
@@ -126,9 +126,7 @@ class BackTagControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @dataProvider provideTagDataForEditForm
-     */
+    #[DataProvider('provideTagDataForEditForm')]
     public function testEditNewTag(
         string $tagId,
         string $tagLabel,
@@ -137,7 +135,7 @@ class BackTagControllerTest extends WebTestCase
         string $message,
     ): void {
         /** @var TagRepository $tagRepository */
-        $tagRepository = self::getContainer()->get(TagRepository::class);
+        $tagRepository = static::getContainer()->get(TagRepository::class);
         $route = $this->router->generate('back_tags_edit', ['tag' => $tagId]);
         $this->client->request(
             'POST',
@@ -157,7 +155,7 @@ class BackTagControllerTest extends WebTestCase
         }
     }
 
-    public function provideTagDataForCreateForm(): \Generator
+    public static function provideTagDataForCreateForm(): \Generator
     {
         yield 'Success with all data' => [
             'Moisissure',
@@ -192,7 +190,7 @@ class BackTagControllerTest extends WebTestCase
         ];
     }
 
-    public function provideTagDataForEditForm(): \Generator
+    public static function provideTagDataForEditForm(): \Generator
     {
         yield 'Success with all data' => [
             '1',
