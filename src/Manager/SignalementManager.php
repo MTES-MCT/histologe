@@ -968,6 +968,7 @@ class SignalementManager extends Manager
 
     /**
      * @param array<string, mixed>|null $options
+     * @param array<string>             $selectedColumns
      *
      * @throws Exception
      */

@@ -31,6 +31,9 @@ enum CreationSource: string
         ];
     }
 
+    /**
+     * @return array<self>
+     */
     public static function getV1Sources(): array
     {
         return [
@@ -39,6 +42,9 @@ enum CreationSource: string
         ];
     }
 
+    /**
+     * @return array<self>
+     */
     public static function getFormUsagerValues(): array
     {
         return [
@@ -48,6 +54,9 @@ enum CreationSource: string
         ];
     }
 
+    /**
+     * @return array<self>
+     */
     public static function getFormProValues(): array
     {
         return [

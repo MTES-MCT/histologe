@@ -81,6 +81,9 @@ class PartnerController extends AbstractController
         return [$form, $searchPartner, $paginatedPartners];
     }
 
+    /**
+     * @return array<array{target: string, content: string}>
+     */
     private function getHtmlTargetContentsForPartnerAgentList(Partner $partner): array
     {
         return [

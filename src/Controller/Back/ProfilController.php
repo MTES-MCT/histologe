@@ -41,6 +41,9 @@ class ProfilController extends AbstractController
 {
     private const ERROR_MSG = 'Une erreur s\'est produite. Veuillez actualiser la page.';
 
+    /**
+     * @return array<array{target: string, content: string}>
+     */
     private function getHtmlTargetContentsForProfilMesInformations(User $user): array
     {
         $formProfilInfo = $this->createForm(UserProfilInfoType::class, $user, ['action' => $this->generateUrl('back_profil_edit_infos')]);

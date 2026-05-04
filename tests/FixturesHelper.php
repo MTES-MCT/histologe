@@ -421,6 +421,9 @@ trait FixturesHelper
         );
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getDossierArreteAndArreteMainLeveeSISHResponse(): array
     {
         $filepath = __DIR__.'/../tools/wiremock/src/Resources/Esabora/sish/ws_arretes_dossier_sas.json';

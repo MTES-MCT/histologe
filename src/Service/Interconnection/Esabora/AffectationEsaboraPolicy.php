@@ -16,6 +16,9 @@ class AffectationEsaboraPolicy
     ) {
     }
 
+    /**
+     * @param array<int> $partnerIds
+     */
     public function hasUrlConflict(array $partnerIds): bool
     {
         if (!$this->featureSchsDispatchSishEnable) {

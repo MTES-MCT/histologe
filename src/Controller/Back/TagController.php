@@ -54,6 +54,9 @@ class TagController extends AbstractController
         return [$form, $searchTag, $paginatedFiles];
     }
 
+    /**
+     * @return array<array{target: string, content: string}>
+     */
     private function getHtmlTargetContentsForTagsList(Request $request): array
     {
         [, $searchTag, $paginatedTags] = $this->handleSearch($request, true);

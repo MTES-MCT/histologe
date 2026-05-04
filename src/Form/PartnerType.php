@@ -36,6 +36,9 @@ class PartnerType extends AbstractType
     private bool $isAdmin = false;
     private bool $isAdminTerritory = false;
 
+    /**
+     * @param array<string, mixed> $competencePerType
+     */
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly TerritoryRepository $territoryRepository,

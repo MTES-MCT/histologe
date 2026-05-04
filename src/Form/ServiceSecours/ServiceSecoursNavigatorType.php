@@ -69,6 +69,9 @@ class ServiceSecoursNavigatorType extends AbstractType
             ));
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function createEditButtonOptions(string $step, string $label): array
     {
         return [

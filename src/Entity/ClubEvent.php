@@ -33,6 +33,9 @@ class ClubEvent implements EntityHistoryInterface
     #[Assert\Length(max: 255)]
     private ?string $url = null;
 
+    /**
+     * @var array<string>
+     */
     #[ORM\Column]
     private array $userRoles = [];
 
@@ -89,11 +92,17 @@ class ClubEvent implements EntityHistoryInterface
         return $this;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getUserRoles(): array
     {
         return $this->userRoles;
     }
 
+    /**
+     * @param array<string> $userRoles
+     */
     public function setUserRoles(array $userRoles): static
     {
         $this->userRoles = $userRoles;

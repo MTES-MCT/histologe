@@ -92,6 +92,9 @@ class UserSignalementSubscriptionRepository extends ServiceEntityRepository
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * @return array<UserSignalementSubscription>|int
+     */
     public function getSubscriptionsOnSignalementsWithoutInteractionsForUser(User $user, ?bool $count = false): array|int
     {
         $qb = $this->createQueryBuilder('sub');

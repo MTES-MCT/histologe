@@ -16,6 +16,9 @@ class DossiersAvecRelanceSansReponseQuery
     ) {
     }
 
+    /**
+     * @param array<int>|null $territoriesIds
+     */
     private function getBaseSql(?array $territoriesIds): string
     {
         $clauseTerritoriesSi2 = '';

@@ -30,6 +30,10 @@ class DashboardUrlGenerator
         );
     }
 
+    /**
+     * @param array<string, mixed> $params
+     * @param array<string, mixed> $queryParams
+     */
     public function generate(
         DashboardKey $dashboard,
         array $params = [],
@@ -65,6 +69,9 @@ class DashboardUrlGenerator
         return 3600;
     }
 
+    /**
+     * @param array<string, mixed> $queryParams
+     */
     private function buildUrl(array $queryParams, string $token): string
     {
         $baseUrl = sprintf('%s/embed/dashboard/%s', $this->siteUrl, $token);

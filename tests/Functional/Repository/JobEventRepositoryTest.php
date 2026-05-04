@@ -81,6 +81,9 @@ class JobEventRepositoryTest extends KernelTestCase
         $this->assertEquals(AbstractEsaboraService::ACTION_PUSH_DOSSIER, $jobEvents[0]['action']);
     }
 
+    /**
+     * @param array<string> $partnerTypes
+     */
     #[DataProvider('provideDataForFailedJobEvents')]
     public function testFindAffectationsWithFailedJobEvents(string $interfacageType, string $action, array $partnerTypes, int $expectedCount): void
     {

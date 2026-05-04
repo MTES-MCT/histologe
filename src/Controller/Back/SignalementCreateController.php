@@ -601,6 +601,9 @@ class SignalementCreateController extends AbstractController
         }
     }
 
+    /**
+     * @return array<string>
+     */
     private function getErrorMsgsOnValidation(Signalement $signalement): array
     {
         $errorMsgs = [];

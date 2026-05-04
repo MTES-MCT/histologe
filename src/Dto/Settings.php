@@ -66,13 +66,14 @@ class Settings
     private array $savedSearches = [];
 
     /**
-     * @param array<int, mixed> $territories
-     * @param array<int, mixed> $partners
-     * @param array<int, mixed> $communes
-     * @param array<int, mixed> $epcis
-     * @param array<int, mixed> $tags
-     * @param array<int, mixed> $zones
-     * @param array<int, mixed> $bailleursSociaux
+     * @param array<int, mixed>    $territories
+     * @param array<int, mixed>    $partners
+     * @param array<int, mixed>    $communes
+     * @param array<int, mixed>    $epcis
+     * @param array<int, mixed>    $tags
+     * @param array<int, mixed>    $zones
+     * @param array<int, mixed>    $bailleursSociaux
+     * @param array<string, mixed> $savedSearches
      */
     public function __construct(
         User $user,

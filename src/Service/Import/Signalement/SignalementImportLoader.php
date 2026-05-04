@@ -3,6 +3,7 @@
 namespace App\Service\Import\Signalement;
 
 use App\Entity\Affectation;
+use App\Entity\Critere;
 use App\Entity\Criticite;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
@@ -10,6 +11,7 @@ use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
@@ -72,8 +74,11 @@ class SignalementImportLoader
     ];
 
     private ?User $userSystem = null;
+    /** @var array<int, Critere> */
     private array $indexedCriteres = [];
+    /** @var array<int, Criticite> */
     private array $indexedCriticites = [];
+    /** @var array<int, Partner> */
     private array $indexedPartners = [];
 
     public function __construct(
@@ -331,7 +336,8 @@ class SignalementImportLoader
                         if (!array_key_exists($critereLabel, $this->indexedCriticites)) {
                             $this->indexedCriticites[$critereLabel] = $this->criticiteRepository->findByLabel($critereLabel);
                         }
-                        $criticite = !empty($this->indexedCriticites[$critereLabel]) ? $this->indexedCriticites[$critereLabel][0] : null;
+                        $criticites = $this->indexedCriticites[$critereLabel];
+                        $criticite = is_array($criticites) && !empty($criticites) ? $criticites[0] : null;
                     }
 
                     if (null !== $criticite) {

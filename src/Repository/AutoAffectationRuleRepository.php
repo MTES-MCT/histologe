@@ -90,6 +90,9 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<AutoAffectationRule>
+     */
     public function findWithInseeToInclude(string $insee): array
     {
         return $this->createQueryBuilder('aar')
@@ -99,6 +102,9 @@ class AutoAffectationRuleRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<AutoAffectationRule>
+     */
     public function findWithInseeToExclude(string $insee): array
     {
         return $this->createQueryBuilder('aar')

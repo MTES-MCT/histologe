@@ -10,9 +10,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<BailleurTerritory>
  *
  * @method BailleurTerritory|null find($id, $lockMode = null, $lockVersion = null)
- * @method BailleurTerritory|null findOneBy(array $criteria, array $orderBy = null)
+ * @method BailleurTerritory|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method BailleurTerritory[]    findAll()
- * @method BailleurTerritory[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method BailleurTerritory[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class BailleurTerritoryRepository extends ServiceEntityRepository
 {

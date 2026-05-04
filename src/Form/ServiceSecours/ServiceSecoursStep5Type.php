@@ -113,6 +113,9 @@ class ServiceSecoursStep5Type extends AbstractType
         ]);
     }
 
+    /**
+     * @return array{choices: array<string, string>, hints: array<string, string>}
+     */
     private function getDesordreChoicesAndHints(): array
     {
         $desordres = $this->desordreCritereRepository->findAllWithPrecisions(AppContext::SERVICE_SECOURS);

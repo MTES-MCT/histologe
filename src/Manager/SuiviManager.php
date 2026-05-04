@@ -404,7 +404,7 @@ class SuiviManager extends Manager
         /** @var User $user */
         $user = $signalementUser->getUser();
 
-        /** @var array{label:string, fieldChanges:array} $sectionChanges */
+        /** @var array{label:string, fieldChanges:array<mixed>} $sectionChanges */
         // Un seul formulaire est soumis à la fois,
         // donc un seul bloc de changements est attendu.
         $sectionChanges = current($changes);

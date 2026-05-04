@@ -49,6 +49,9 @@ class AffectationController extends AbstractController
     ) {
     }
 
+    /**
+     * @return array<array{target: string, content: string}>
+     */
     private function getHtmlTargetContentsForAffectationWithActionItems(Signalement $signalement): array
     {
         $filterInjonctionBailleur = (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut());

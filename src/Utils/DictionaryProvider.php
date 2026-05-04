@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class DictionaryProvider
 {
+    /** @var array<string, mixed>|null */
     private ?array $dictionary = null;
 
     public function __construct(

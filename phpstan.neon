@@ -22,8 +22,6 @@ parameters:
 			path: src/Entity/*
 		# Ignore PHPStan 2.0 strictness - to be fixed gradually
 		-
-			identifier: missingType.iterableValue
-		-
 			identifier: missingType.generics
 		-
 			identifier: doctrine.columnType

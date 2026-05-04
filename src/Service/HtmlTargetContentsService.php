@@ -19,6 +19,9 @@ class HtmlTargetContentsService
     ) {
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getHtmlTargetContentsForSignalementAddress(Signalement $signalement): array
     {
         $signalementsOnSameAddress = $this->signalementRepository->findOnSameAddress(signalement: $signalement, exclusiveStatus: [], excludedStatus: SignalementStatus::excludedStatuses());

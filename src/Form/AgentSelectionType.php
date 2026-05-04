@@ -101,6 +101,11 @@ class AgentSelectionType extends AbstractType
         return $html;
     }
 
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @return array<User>
+     */
     private function getChoicesAgents(Signalement $signalement, array $options): array
     {
         $choicesAgents = [];

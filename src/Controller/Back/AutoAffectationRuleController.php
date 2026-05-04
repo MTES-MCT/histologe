@@ -48,6 +48,9 @@ class AutoAffectationRuleController extends AbstractController
         return [$form, $searchAutoAffectationRule, $paginatedAutoAffectationRule];
     }
 
+    /**
+     * @return array<array{target: string, content: string}>
+     */
     private function getHtmlTargetContentsForAutoAffectationList(Request $request): array
     {
         [, $searchAutoAffectationRule, $paginatedAutoAffectationRule] = $this->handleSearch($request, true);

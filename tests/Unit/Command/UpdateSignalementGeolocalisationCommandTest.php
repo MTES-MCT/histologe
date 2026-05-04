@@ -118,6 +118,9 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         yield 'With territory option' => ['findSignalementsByYear', ['--zip' => 1, '--year' => '2024']];
     }
 
+    /**
+     * @param array<string, mixed> $option
+     */
     private function createMockSignalementRepository(
         MockObject&SignalementRepository $signalementRepository,
         int $countSignalements = 0,

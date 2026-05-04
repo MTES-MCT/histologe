@@ -18,9 +18,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<File>
  *
  * @method File|null find($id, $lockMode = null, $lockVersion = null)
- * @method File|null findOneBy(array $criteria, array $orderBy = null)
+ * @method File|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method File[]    findAll()
- * @method File[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method File[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class FileRepository extends ServiceEntityRepository
 {

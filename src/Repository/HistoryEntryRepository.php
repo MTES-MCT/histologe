@@ -10,9 +10,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<HistoryEntry>
  *
  * @method HistoryEntry|null find($id, $lockMode = null, $lockVersion = null)
- * @method HistoryEntry|null findOneBy(array $criteria, array $orderBy = null)
+ * @method HistoryEntry|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method HistoryEntry[]    findAll()
- * @method HistoryEntry[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method HistoryEntry[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class HistoryEntryRepository extends ServiceEntityRepository
 {

@@ -36,6 +36,9 @@ class UserSearchFilter implements EntityHistoryInterface
     #[Assert\Length(max: 50)]
     private ?string $name = null;
 
+    /**
+     * @var array<string, mixed>
+     */
     #[ORM\Column]
     private array $params = [];
 
@@ -68,11 +71,17 @@ class UserSearchFilter implements EntityHistoryInterface
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getParams(): array
     {
         return $this->params;
     }
 
+    /**
+     * @param array<string, mixed> $params
+     */
     public function setParams(array $params): static
     {
         $this->params = $params;

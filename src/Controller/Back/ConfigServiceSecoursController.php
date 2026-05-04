@@ -48,6 +48,9 @@ class ConfigServiceSecoursController extends AbstractController
         return [$form, $searchServiceSecoursRoute, $paginatedServiceSecoursRoute];
     }
 
+    /**
+     * @return array<array{target: string, content: string}>
+     */
     private function getHtmlTargetContentsForServiceSecoursRouteList(Request $request): array
     {
         [, $searchServiceSecoursRoute, $paginatedServiceSecoursRoute] = $this->handleSearch($request, true);
