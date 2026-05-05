@@ -34,6 +34,7 @@ class ClubEvent implements EntityHistoryInterface
     private ?string $url = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank()]
     private array $userRoles = [];
 
     /**
@@ -58,7 +59,7 @@ class ClubEvent implements EntityHistoryInterface
         return $this->dateEvent;
     }
 
-    public function setDateEvent(\DateTimeImmutable $dateEvent): static
+    public function setDateEvent(?\DateTimeImmutable $dateEvent): static
     {
         $this->dateEvent = $dateEvent;
 
@@ -70,7 +71,7 @@ class ClubEvent implements EntityHistoryInterface
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(?string $name): static
     {
         $this->name = $name;
 
@@ -82,7 +83,7 @@ class ClubEvent implements EntityHistoryInterface
         return $this->url;
     }
 
-    public function setUrl(string $url): static
+    public function setUrl(?string $url): static
     {
         $this->url = $url;
 

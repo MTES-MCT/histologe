@@ -46,6 +46,8 @@ class ClubEventType extends AbstractType
             },
             'setter' => static function (ClubEvent $clubEvent, ?\DateTimeInterface $date) use ($timezoneProvider): void {
                 if (null === $date) {
+                    $clubEvent->setDateEvent(null);
+
                     return;
                 }
                 $utcDate = new \DateTimeImmutable(
