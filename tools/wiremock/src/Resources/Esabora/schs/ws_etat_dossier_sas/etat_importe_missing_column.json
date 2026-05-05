@@ -1,0 +1,37 @@
+
+{
+  "searchId": 27155,
+  "nbResults": 1,
+  "columnList": [
+    "SAS_R\u00e9f\u00e9rence",
+    "SAS_Etat",
+    "Doss_Num\u00e9ro",
+    "Doss_Statut_Abr\u00e9g\u00e9",
+    "Doss_Statut",
+    "Doss_Etat",
+    "Doss_Cloture",
+    "Doss_Type",
+    "Doss_Probl\u00e9matique"
+  ],
+  "keyList": [
+    "i1.iaff_id"
+  ],
+  "rowList": [
+    {
+      "columnDataList": [
+        "78915bd0-fd28-418c-9e68-450212c9dd81",
+        "Import\u00e9",
+        "2026DSP-19349-HAB",
+        "A traiter",
+        "*A traiter",
+        "en cours",
+        null,
+        "Hygi\u00e8ne de l'habitat",
+        "Habitabilit\u00e9"
+      ],
+      "keyDataList": [
+        9
+      ]
+    }
+  ]
+}

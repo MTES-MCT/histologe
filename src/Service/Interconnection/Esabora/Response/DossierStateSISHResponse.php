@@ -6,6 +6,20 @@ use App\Service\Interconnection\Esabora\EsaboraSISHService;
 
 class DossierStateSISHResponse implements DossierResponseInterface
 {
+    public const string COL_REFERENCE_DOSSIER = 'Reference_Dossier';
+    public const string COL_SAS_ETAT = 'EsaboraStatusSAS_Etat';
+    public const string COL_SAS_DATE_DECISION = 'Sas_DateDecision';
+    public const string COL_SAS_CAUSE_REFUS = 'Sas_CauseRefus';
+    public const string COL_SISH_DOSS_ID = 'SISH_DossId';
+    public const string COL_SISH_DOSS_NUM = 'SISH_DossNum';
+    public const string COL_SISH_DOSS_OBJET = 'SISH_DossObjet';
+    public const string COL_SISH_DOSS_DATE_CLOTURE = 'SISH_DossDateCloture';
+    public const string COL_SISH_DOSS_STATUT_ABR = 'SISH_DossStatutAbr';
+    public const string COL_SISH_DOSS_STATUT = 'SISH_DossStatut';
+    public const string COL_SISH_DOSS_ETAT = 'SISH_DossEtat';
+    public const string COL_SISH_DOSS_TYPE_CODE = 'SISH_DossTypeCode';
+    public const string COL_SISH_DOSS_TYPE_LIB = 'SISH_DossTypeLib';
+
     private ?string $referenceDossier = null;
     private ?string $sasEtat = null;
     private ?string $sasDateDecision = null;
@@ -28,21 +42,28 @@ class DossierStateSISHResponse implements DossierResponseInterface
     public function __construct(array $response, ?int $statusCode)
     {
         if (!empty($response)) {
-            $data = $response['rowList'][0]['columnDataList'] ?? null;
-            if (null !== $data) {
-                $this->referenceDossier = $data[0] ?? null;
-                $this->sasEtat = $data[1] ?? null;
-                $this->sasDateDecision = $data[2] ?? null;
-                $this->sasCauseRefus = $data[3] ?? null;
-                $this->dossId = $data[4] ?? null;
-                $this->dossNum = $data[5] ?? null;
-                $this->dossObjet = $data[6] ?? null;
-                $this->dossDateCloture = $data[7] ?? null;
-                $this->dossStatutAbr = $data[8] ?? null;
-                $this->dossStatut = $data[9] ?? null;
-                $this->dossEtat = $data[10] ?? null;
-                $this->dossTypeCode = $data[11] ?? null;
-                $this->dossTypeLib = $data[12] ?? null;
+            $columnList = $response['columnList'] ?? null;
+            $rowList = $response['rowList'][0]['columnDataList'] ?? null;
+
+            if (null !== $columnList && null !== $rowList) {
+                if (\count($columnList) !== \count($rowList)) {
+                    $this->errorReason = 'Nombre de colonnes et de données incohérent';
+                } else {
+                    $data = array_combine($columnList, $rowList);
+                    $this->referenceDossier = $data[self::COL_REFERENCE_DOSSIER] ?? null;
+                    $this->sasEtat = $data[self::COL_SAS_ETAT] ?? null;
+                    $this->sasDateDecision = $data[self::COL_SAS_DATE_DECISION] ?? null;
+                    $this->sasCauseRefus = $data[self::COL_SAS_CAUSE_REFUS] ?? null;
+                    $this->dossId = $data[self::COL_SISH_DOSS_ID] ?? null;
+                    $this->dossNum = $data[self::COL_SISH_DOSS_NUM] ?? null;
+                    $this->dossObjet = $data[self::COL_SISH_DOSS_OBJET] ?? null;
+                    $this->dossDateCloture = $data[self::COL_SISH_DOSS_DATE_CLOTURE] ?? null;
+                    $this->dossStatutAbr = $data[self::COL_SISH_DOSS_STATUT_ABR] ?? null;
+                    $this->dossStatut = $data[self::COL_SISH_DOSS_STATUT] ?? null;
+                    $this->dossEtat = $data[self::COL_SISH_DOSS_ETAT] ?? null;
+                    $this->dossTypeCode = $data[self::COL_SISH_DOSS_TYPE_CODE] ?? null;
+                    $this->dossTypeLib = $data[self::COL_SISH_DOSS_TYPE_LIB] ?? null;
+                }
             } else {
                 $this->errorReason = (string) json_encode($response);
             }

@@ -42,4 +42,167 @@ class DossierStateSCHSResponseTest extends TestCase
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $dossierResponse->getStatusCode());
         $this->assertNotNull($dossierResponse->getErrorReason());
     }
+
+
+    public function testDossierResponseNominal(): void
+    {
+        $responseEsabora = [
+            'columnList' => [
+                'SAS_Référence',
+                'SAS_Etat',
+                'Doss_ID',
+                'Doss_Numéro',
+                'Doss_Statut_Abrégé',
+                'Doss_Statut',
+                'Doss_Etat',
+                'Doss_Cloture'
+            ],
+            'rowList' => [
+                [
+                    'columnDataList' => [
+                        'REF123',
+                        'Importé',
+                        '12345',
+                        'NUM123',
+                        'AT',
+                        'A traiter',
+                        'en cours',
+                        '2023-12-31'
+                    ]
+                ]
+            ]
+        ];
+
+        $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
+        $this->assertEquals('REF123', $dossierResponse->getSasReference());
+        $this->assertEquals('Importé', $dossierResponse->getSasEtat());
+        $this->assertEquals('12345', $dossierResponse->getId());
+        $this->assertEquals('NUM123', $dossierResponse->getNumero());
+        $this->assertEquals('AT', $dossierResponse->getStatutAbrege());
+        $this->assertEquals('A traiter', $dossierResponse->getStatut());
+        $this->assertEquals('en cours', $dossierResponse->getEtat());
+        $this->assertEquals('2023-12-31', $dossierResponse->getDateCloture());
+        $this->assertNull($dossierResponse->getErrorReason());
+    }
+
+    public function testDossierResponseWithoutDossID(): void
+    {
+        $responseEsabora = [
+            'columnList' => [
+                'SAS_Référence',
+                'SAS_Etat',
+                'Doss_Numéro',
+                'Doss_Statut_Abrégé',
+                'Doss_Statut',
+                'Doss_Etat',
+                'Doss_Cloture'
+            ],
+            'rowList' => [
+                [
+                    'columnDataList' => [
+                        'REF123',
+                        'Importé',
+                        'NUM123',
+                        'AT',
+                        'A traiter',
+                        'en cours',
+                        null
+                    ]
+                ]
+            ]
+        ];
+
+        $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
+        $this->assertEquals('REF123', $dossierResponse->getSasReference());
+        $this->assertEquals('Importé', $dossierResponse->getSasEtat());
+        $this->assertNull($dossierResponse->getId());
+        $this->assertEquals('NUM123', $dossierResponse->getNumero());
+        $this->assertEquals('AT', $dossierResponse->getStatutAbrege());
+        $this->assertEquals('A traiter', $dossierResponse->getStatut());
+        $this->assertEquals('en cours', $dossierResponse->getEtat());
+        $this->assertNull($dossierResponse->getDateCloture());
+        $this->assertNull($dossierResponse->getErrorReason());
+    }
+
+    public function testDossierResponseDifferentOrder(): void
+    {
+        $responseEsabora = [
+            'columnList' => [
+                'Doss_Statut',
+                'SAS_Référence',
+                'Doss_ID',
+                'SAS_Etat',
+            ],
+            'rowList' => [
+                [
+                    'columnDataList' => [
+                        'A traiter',
+                        'REF123',
+                        '12345',
+                        'Importé',
+                    ]
+                ]
+            ]
+        ];
+
+        $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
+        $this->assertEquals('REF123', $dossierResponse->getSasReference());
+        $this->assertEquals('Importé', $dossierResponse->getSasEtat());
+        $this->assertEquals('12345', $dossierResponse->getId());
+        $this->assertEquals('A traiter', $dossierResponse->getStatut());
+        $this->assertNull($dossierResponse->getErrorReason());
+    }
+
+    public function testDossierResponseWithAdditionalColumns(): void
+    {
+        $responseEsabora = [
+            'columnList' => [
+                'SAS_Référence',
+                'SAS_Etat',
+                'Doss_ID',
+                'Doss_Type',
+                'Doss_Problématique'
+            ],
+            'rowList' => [
+                [
+                    'columnDataList' => [
+                        'REF123',
+                        'Importé',
+                        '12345',
+                        "Hygiène de l'habitat",
+                        'Habitabilité'
+                    ]
+                ]
+            ]
+        ];
+
+        $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
+        $this->assertEquals('REF123', $dossierResponse->getSasReference());
+        $this->assertEquals('Importé', $dossierResponse->getSasEtat());
+        $this->assertEquals('12345', $dossierResponse->getId());
+        $this->assertNull($dossierResponse->getErrorReason());
+    }
+
+    public function testDossierResponseInvalidColumnCount(): void
+    {
+        $responseEsabora = [
+            'columnList' => [
+                'SAS_Référence',
+                'SAS_Etat',
+            ],
+            'rowList' => [
+                [
+                    'columnDataList' => [
+                        'REF123',
+                        'Importé',
+                        'Extra'
+                    ]
+                ]
+            ]
+        ];
+
+        $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
+        $this->assertNull($dossierResponse->getSasReference());
+        $this->assertEquals('Nombre de colonnes et de données incohérent', $dossierResponse->getErrorReason());
+    }
 }

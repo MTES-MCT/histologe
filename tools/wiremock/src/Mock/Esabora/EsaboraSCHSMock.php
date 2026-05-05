@@ -39,6 +39,12 @@ class EsaboraSCHSMock extends AbstractEsaboraMock
 
         self::createCustomStateDossierMock(
             $wiremock,
+            '00000000-0000-0000-2022-000000000001',
+            'etat_importe_missing_column.json'
+        );
+
+        self::createCustomStateDossierMock(
+            $wiremock,
             '00000000-0000-0000-2022-000000000002',
             'etat_non_importe.json'
         );
