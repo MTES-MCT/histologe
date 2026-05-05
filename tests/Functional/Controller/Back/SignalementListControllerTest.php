@@ -109,7 +109,7 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Status Refuse for agent 38' => [['status' => 'refuse', 'isImported' => 'oui'], 1, 'user-38-01@signal-logement.fr'];
         yield 'Search by all for agent CAF30' => [['isImported' => 'oui'], 3, 'user-partenaire-30@signal-logement.fr'];
         yield 'Search by Partner Ales agglo for agent CAF30' => [['partenaires' => ['86'], 'isImported' => 'oui'], 1, 'user-partenaire-30@signal-logement.fr'];
-        yield 'Search by all for agent Partenaire 13-05' => [['isImported' => 'oui'], 5, 'user-13-05@signal-logement.fr'];
+        yield 'Search by all for agent Partenaire 13-05' => [['isImported' => 'oui'], 6, 'user-13-05@signal-logement.fr'];
         yield 'Search by Partner 13-01 & 13-06 for agent Partenaire 13-05' => [['partenaires' => ['2', '7'], 'isImported' => 'oui'], 2, 'user-13-05@signal-logement.fr'];
     }
 
