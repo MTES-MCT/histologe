@@ -8,7 +8,6 @@ use App\Entity\UserPartner;
 use App\Form\SearchArchivedUserType;
 use App\Form\UserType;
 use App\Repository\PartnerRepository;
-use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\ListFilters\SearchArchivedUser;
 use App\Service\Mailer\NotificationMail;
@@ -53,7 +52,6 @@ class BackArchivedUsersController extends AbstractController
     public function reactiver(
         Request $request,
         User $user,
-        TerritoryRepository $territoryRepository,
         PartnerRepository $partnerRepository,
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
@@ -116,8 +114,6 @@ class BackArchivedUsersController extends AbstractController
 
         return $this->render('back/user_archived/edit.html.twig', [
             'user' => $user,
-            'territories' => $territoryRepository->findAllList(),
-            'partners' => $partnerRepository->findAllList(null),
             'form' => $form,
         ]);
     }

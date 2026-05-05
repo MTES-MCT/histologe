@@ -58,7 +58,7 @@ class SearchFilterOptionDataProvider
 
                 return [
                     'criteres' => $this->critereRepository->findAllList(),
-                    'territories' => $user->isSuperAdmin() ? $this->territoryRepository->findAllList() : $user->getPartnersTerritories(true),
+                    'territories' => $user->isSuperAdmin() ? $this->territoryRepository->findAllList(indexById: false) : $user->getPartnersTerritories(true),
                     'partners' => $this->partnerRepository->findAllList($territory, $user),
                     'epcis' => $this->communeRepository->findEpciByCommuneTerritory($territory, $user),
                     'tags' => $this->tagsRepository->findAllActive($territory, $user),
