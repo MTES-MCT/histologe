@@ -1,7 +1,9 @@
 .buildpacks
 .env.sample
+.env.ci
 .gitignore
 .php-cs-fixer.dist.php
+.git
 docker-compose.yml
 docker-compose.tools.yml
 grumphp.yml
@@ -12,6 +14,7 @@ phpunit.xml.dist
 scalingo.json
 scripts/upload-s3.sh
 
+.ai
 .docker
 .github
 assets

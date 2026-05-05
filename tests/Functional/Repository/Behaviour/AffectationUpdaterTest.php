@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Functional\Repository\Query\Statistics;
+namespace App\Tests\Functional\Repository\Behaviour;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
