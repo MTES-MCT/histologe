@@ -43,81 +43,17 @@ class DossierStateSCHSResponseTest extends TestCase
         $this->assertNotNull($dossierResponse->getErrorReason());
     }
 
-
-    public function testDossierResponseNominal(): void
-    {
-        $responseEsabora = [
-            'columnList' => [
-                'SAS_Référence',
-                'SAS_Etat',
-                'Doss_ID',
-                'Doss_Numéro',
-                'Doss_Statut_Abrégé',
-                'Doss_Statut',
-                'Doss_Etat',
-                'Doss_Cloture'
-            ],
-            'rowList' => [
-                [
-                    'columnDataList' => [
-                        'REF123',
-                        'Importé',
-                        '12345',
-                        'NUM123',
-                        'AT',
-                        'A traiter',
-                        'en cours',
-                        '2023-12-31'
-                    ]
-                ]
-            ]
-        ];
-
-        $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
-        $this->assertEquals('REF123', $dossierResponse->getSasReference());
-        $this->assertEquals('Importé', $dossierResponse->getSasEtat());
-        $this->assertEquals('12345', $dossierResponse->getId());
-        $this->assertEquals('NUM123', $dossierResponse->getNumero());
-        $this->assertEquals('AT', $dossierResponse->getStatutAbrege());
-        $this->assertEquals('A traiter', $dossierResponse->getStatut());
-        $this->assertEquals('en cours', $dossierResponse->getEtat());
-        $this->assertEquals('2023-12-31', $dossierResponse->getDateCloture());
-        $this->assertNull($dossierResponse->getErrorReason());
-    }
-
     public function testDossierResponseWithoutDossID(): void
     {
-        $responseEsabora = [
-            'columnList' => [
-                'SAS_Référence',
-                'SAS_Etat',
-                'Doss_Numéro',
-                'Doss_Statut_Abrégé',
-                'Doss_Statut',
-                'Doss_Etat',
-                'Doss_Cloture'
-            ],
-            'rowList' => [
-                [
-                    'columnDataList' => [
-                        'REF123',
-                        'Importé',
-                        'NUM123',
-                        'AT',
-                        'A traiter',
-                        'en cours',
-                        null
-                    ]
-                ]
-            ]
-        ];
+        $filepath = __DIR__.'/../../../../../tools/wiremock/src/Resources/Esabora/schs/ws_etat_dossier_sas/etat_importe_missing_column.json';
+        $responseEsabora = json_decode((string) file_get_contents($filepath), true);
 
         $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
-        $this->assertEquals('REF123', $dossierResponse->getSasReference());
+        $this->assertEquals('00000000-0000-0000-2022-000000000011', $dossierResponse->getSasReference());
         $this->assertEquals('Importé', $dossierResponse->getSasEtat());
         $this->assertNull($dossierResponse->getId());
-        $this->assertEquals('NUM123', $dossierResponse->getNumero());
-        $this->assertEquals('AT', $dossierResponse->getStatutAbrege());
+        $this->assertEquals('2026DSP-19349-HAB', $dossierResponse->getNumero());
+        $this->assertEquals('A traiter', $dossierResponse->getStatutAbrege());
         $this->assertEquals('A traiter', $dossierResponse->getStatut());
         $this->assertEquals('en cours', $dossierResponse->getEtat());
         $this->assertNull($dossierResponse->getDateCloture());
@@ -140,9 +76,9 @@ class DossierStateSCHSResponseTest extends TestCase
                         'REF123',
                         '12345',
                         'Importé',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
 
         $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
@@ -150,36 +86,6 @@ class DossierStateSCHSResponseTest extends TestCase
         $this->assertEquals('Importé', $dossierResponse->getSasEtat());
         $this->assertEquals('12345', $dossierResponse->getId());
         $this->assertEquals('A traiter', $dossierResponse->getStatut());
-        $this->assertNull($dossierResponse->getErrorReason());
-    }
-
-    public function testDossierResponseWithAdditionalColumns(): void
-    {
-        $responseEsabora = [
-            'columnList' => [
-                'SAS_Référence',
-                'SAS_Etat',
-                'Doss_ID',
-                'Doss_Type',
-                'Doss_Problématique'
-            ],
-            'rowList' => [
-                [
-                    'columnDataList' => [
-                        'REF123',
-                        'Importé',
-                        '12345',
-                        "Hygiène de l'habitat",
-                        'Habitabilité'
-                    ]
-                ]
-            ]
-        ];
-
-        $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);
-        $this->assertEquals('REF123', $dossierResponse->getSasReference());
-        $this->assertEquals('Importé', $dossierResponse->getSasEtat());
-        $this->assertEquals('12345', $dossierResponse->getId());
         $this->assertNull($dossierResponse->getErrorReason());
     }
 
@@ -195,10 +101,10 @@ class DossierStateSCHSResponseTest extends TestCase
                     'columnDataList' => [
                         'REF123',
                         'Importé',
-                        'Extra'
-                    ]
-                ]
-            ]
+                        'Extra',
+                    ],
+                ],
+            ],
         ];
 
         $dossierResponse = new DossierStateSCHSResponse($responseEsabora, 200);

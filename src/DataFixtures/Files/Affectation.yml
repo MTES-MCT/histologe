@@ -363,3 +363,5 @@ affectations:
     affected_by: "admin-territoire-13-01@signal-logement.fr"
     motif_cloture: ""
     territory: "Bouches-du-Rhône"
+    is_synchronized: true
+
