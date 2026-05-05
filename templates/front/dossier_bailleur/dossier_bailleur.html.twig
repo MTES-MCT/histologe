@@ -335,7 +335,7 @@
 
 						{% if suiviDemandeCloture is empty %}
 							<h3 class="title-blue-france fr-mt-5w" id="form_stop_procedure_bailleur_title">Demander l'arrêt de la procédure</h3>
-							<div class="fr-mt-3w">
+							<div class="fr-my-3w">
 								<a class="fr-btn  fr-btn--secondary" href="{{ path('front_dossier_bailleur_cloture') }}"
 									data-matomo-clickable-event-category="Espace bailleur"
 									data-matomo-clickable-event-action="clickButton"
@@ -386,5 +386,61 @@
 			{% endif %}
 		</div>
 	</div>
+
+	{% if is_granted('SIGN_BAILLEUR_HAS_RESPONSE_INJONCTION', signalement) %}
+		<hr>
+		<div class="fr-grid-row fr-grid-row--gutters">		
+			<div class="fr-col-12 fr-col-md-6">
+				<h2 class="title-blue-france">Envoyer un message</h2>
+				{% if is_granted('SIGN_BAILLEUR_ADD_SUIVI', signalement) %}
+					<div data-ajax-form>
+						<div class="single-ajax-form-container">
+							{{ form_start(formMessage, {'attr': {'id': 'form-message-usager'}}) }}
+							{{ form_errors(formMessage) }}
+							<p>
+								Nous vous rappelons que les échanges doivent se faire dans le respect mutuel. 
+								Nous invitons chaque partie à adopter une attitude courtoise et bienveillante.
+							</p>
+							{{ form_row(formMessage.description) }}
+							{{ form_row(formMessage.files) }}
+
+							{{ form_end(formMessage) }}
+							<ul class="fr-btns-group fr-btns-group--icon-left">
+								<li>
+									<button class="fr-btn fr-icon-check-line" type="submit" id="form_finish_submit" form="form-message-usager">
+										Envoyer le message
+									</button>
+								</li>
+							</ul>
+						</div>
+					</div>
+				{% else %}
+					<div class="fr-notice fr-notice--alert">
+                        <div class="fr-container">
+                            <div class="fr-notice__body">
+								<p>
+									<span class="fr-notice__title">Vous ne pouvez plus envoyer de messages suite à la fermeture du dossier.</span>
+								</p>
+                            </div>
+                        </div>
+                    </div>	
+				{% endif %}
+			</div>
+
+			<div class="fr-col-12 fr-col-md-6">
+				<h2 class="title-blue-france">Suivre vos échanges</h2>
+				{% for suivi in signalement.suivis|filter(s => s.isVisibleForBailleur)|reverse %}
+					{% set isUnreadMessage = false %}
+					{% set messageBoxClass = 'message-box--usager' %}
+					{% if suivi.category not in enum('App\\Entity\\Enum\\SuiviCategory').categoriesSubmittedByBailleur() %}
+						{% set messageBoxClass = 'message-box--partner message-box--unread' %}
+					{% endif %}
+					{% include 'front/_partials/_suivi_signalement_suivi.html.twig' with {'forBailleur': true} %}
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
+
+
 </main>
 {% endblock %}

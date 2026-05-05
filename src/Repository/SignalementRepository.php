@@ -522,7 +522,7 @@ class SignalementRepository extends ServiceEntityRepository
                     )
                 AND s.statut = :statusSignalement
                 AND s.territory_id = :territoryId
-                AND su.type = :suiviTypeUsager
+                AND su.type IN (:suiviTypeUsagers)
                 GROUP BY s.id
                 HAVING dernier_suivi_date > \''.self::DATE_FEEDBACK_USAGER_ONLINE.'\'
                 ORDER BY dernier_suivi_date DESC
@@ -534,7 +534,7 @@ class SignalementRepository extends ServiceEntityRepository
             'statusSignalement' => SignalementStatus::ACTIVE->value,
             'territoryId' => $territory->getId(),
             'suiviTypeTechnical' => Suivi::TYPE_TECHNICAL,
-            'suiviTypeUsager' => Suivi::TYPE_USAGER,
+            'suiviTypeUsagers' => SuiviCategory::categoriesSubmittedByUsager(),
         ])->fetchAllAssociative();
     }
 

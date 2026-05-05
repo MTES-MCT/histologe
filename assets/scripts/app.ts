@@ -11,6 +11,7 @@ import './vanilla/services/component/pick-localisation.js';
 import './vanilla/services/component/component_autocomplete_bailleur.js';
 import './vanilla/services/cookie/cookie_banner.js';
 import './vanilla/services/file/file_delete.js';
+import './vanilla/services/form/ajax_form_handler.js';
 import './vanilla/services/form/form_helper.js';
 import './vanilla/services/matomo/matomo_events_pusher.js';
 import './vanilla/services/ui/notice_helper.js';

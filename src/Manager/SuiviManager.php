@@ -130,6 +130,7 @@ class SuiviManager extends Manager
             SuiviCategory::AFFECTATION_IS_REFUSED,
             SuiviCategory::MESSAGE_USAGER,
             SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
+            SuiviCategory::MESSAGE_BAILLEUR,
             SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
             SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
             SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,

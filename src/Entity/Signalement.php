@@ -8,6 +8,7 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\DebutDesordres;
+use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
@@ -2548,6 +2549,17 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
             return true;
         });
+    }
+
+    public function hasFilesBailleur(): bool
+    {
+        foreach ($this->files as $file) {
+            if (DocumentType::MESSAGE_BAILLEUR === $file->getDocumentType()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function addFile(File $file): static

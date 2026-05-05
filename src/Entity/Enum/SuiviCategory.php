@@ -37,6 +37,7 @@ enum SuiviCategory: string
     case DOCUMENT_DELETED_BY_USAGER = 'DOCUMENT_DELETED_BY_USAGER';
     case DOCUMENT_DELETED_BY_PARTNER = 'DOCUMENT_DELETED_BY_PARTNER';
     case MESSAGE_USAGER = 'MESSAGE_USAGER';
+    case MESSAGE_BAILLEUR = 'MESSAGE_BAILLEUR';
     case MESSAGE_USAGER_POST_CLOTURE = 'MESSAGE_USAGER_POST_CLOTURE';
     case SIGNALEMENT_EDITED_FO = 'SIGNALEMENT_EDITED_FO';
     case DEMANDE_ABANDON_PROCEDURE = 'DEMANDE_ABANDON_PROCEDURE';
@@ -106,6 +107,7 @@ enum SuiviCategory: string
             'DOCUMENT_DELETED_BY_USAGER' => 'Document supprimé par l\'usager',
             'DOCUMENT_DELETED_BY_PARTNER' => 'Document supprimé par le partenaire',
             'MESSAGE_USAGER' => 'Message de l\'usager',
+            'MESSAGE_BAILLEUR' => 'Message du bailleur',
             'MESSAGE_USAGER_POST_CLOTURE' => 'Message de l\'usager après clôture',
             'SIGNALEMENT_EDITED_FO' => 'Édition du dossier par l\'usager',
             'DEMANDE_ABANDON_PROCEDURE' => 'Demande d\'abandon de procédure par l\'usager',
@@ -131,6 +133,7 @@ enum SuiviCategory: string
     public static function CategoriesSubmittedByBailleur(): array
     {
         return [
+            self::MESSAGE_BAILLEUR,
             self::INJONCTION_BAILLEUR_REPONSE_OUI,
             self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
             self::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES,

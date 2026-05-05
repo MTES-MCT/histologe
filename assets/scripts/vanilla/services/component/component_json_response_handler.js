@@ -21,11 +21,14 @@ export function jsonResponseProcess(response) {
     const currentUrl = new URL(window.location.href);
 
     if (currentUrl.pathname === targetUrl.pathname && currentUrl.search === targetUrl.search) {
-      if (response._fragment) {
-        window.location.hash = `#${response._fragment}`;
+      if (response.scrollToTop) {
+        window.location.href = targetUrl.href;
+      } else {
+        if (response._fragment) {
+          window.location.hash = `#${response._fragment}`;
+        }
+        window.location.reload();
       }
-
-      window.location.reload();
     } else {
       window.location.href = targetUrl.href;
     }

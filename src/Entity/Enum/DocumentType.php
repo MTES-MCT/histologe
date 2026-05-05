@@ -32,6 +32,7 @@ enum DocumentType: string
     case ANNUAIRE = 'ANNUAIRE';
     case AUTRE = 'AUTRE';
     case ENGAGEMENT_TRAVAUX_BAILLEUR = 'ENGAGEMENT_TRAVAUX_BAILLEUR';
+    case MESSAGE_BAILLEUR = 'MESSAGE_BAILLEUR';
 
     /** @return array<string, string> */
     public static function getLabelList(): array
@@ -61,6 +62,7 @@ enum DocumentType: string
             self::ANNUAIRE->name => 'Annuaire',
             self::AUTRE->name => 'Autre',
             self::ENGAGEMENT_TRAVAUX_BAILLEUR->name => 'Engagement travaux bailleur',
+            self::MESSAGE_BAILLEUR->name => 'Message bailleur',
         ];
     }
 

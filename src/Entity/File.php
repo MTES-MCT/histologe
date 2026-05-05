@@ -428,6 +428,16 @@ class File implements EntityHistoryInterface
         return $this->isTypeImage() && $this->isProcedure() && null === $this->intervention;
     }
 
+    public function isBailleurImage(): bool
+    {
+        return $this->isTypeImage() && DocumentType::MESSAGE_BAILLEUR === $this->documentType;
+    }
+
+    public function isBailleurDocument(): bool
+    {
+        return $this->isTypeDocument() && DocumentType::MESSAGE_BAILLEUR === $this->documentType;
+    }
+
     /**
      * @noinspection PhpUnused
      *

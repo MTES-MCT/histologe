@@ -59,7 +59,8 @@ class InjonctionBailleurService
                     description: $contenu,
                     type: Suivi::TYPE_AUTO,
                     category: $category,
-                    isVisibleForUsager: true
+                    isVisibleForUsager: true,
+                    isVisibleForBailleur: true
                 );
                 if (!empty($description)) {
                     $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
@@ -74,7 +75,8 @@ class InjonctionBailleurService
                     description: $contenu,
                     type: Suivi::TYPE_AUTO,
                     category: $category,
-                    isVisibleForUsager: true
+                    isVisibleForUsager: true,
+                    isVisibleForBailleur: true
                 );
                 $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
                 $this->saveEngagementTravauxBailleurPdf($signalement);
@@ -88,7 +90,8 @@ class InjonctionBailleurService
                     description: $contenu,
                     type: Suivi::TYPE_AUTO,
                     category: $category,
-                    isVisibleForUsager: true
+                    isVisibleForUsager: true,
+                    isVisibleForBailleur: true
                 );
                 $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
                 $this->saveEngagementTravauxBailleurPdf($signalement);
@@ -101,7 +104,8 @@ class InjonctionBailleurService
                     description: $contenu,
                     type: Suivi::TYPE_AUTO,
                     category: $category,
-                    isVisibleForUsager: true
+                    isVisibleForUsager: true,
+                    isVisibleForBailleur: true
                 );
                 $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
                 $this->switchFromInjonctionToProcedure($signalement);
@@ -131,6 +135,7 @@ class InjonctionBailleurService
             description: HtmlCleaner::cleanFrontEndEntry($description),
             type: Suivi::TYPE_AUTO,
             category: SuiviCategory::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
+            isVisibleForBailleur: true
         );
     }
 
@@ -168,7 +173,8 @@ class InjonctionBailleurService
                 description: 'Le bailleur souhaite arrêter la procédure d\'injonction, le signalement va être pris en charge par les partenaires compétents.',
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
-                isVisibleForUsager: true
+                isVisibleForUsager: true,
+                isVisibleForBailleur: true
             );
 
             $this->suiviManager->createSuivi(
@@ -176,6 +182,7 @@ class InjonctionBailleurService
                 description: HtmlCleaner::cleanFrontEndEntry($description),
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,
+                isVisibleForBailleur: true
             );
 
             $this->switchFromInjonctionToProcedure($signalement);
@@ -187,7 +194,8 @@ class InjonctionBailleurService
                 description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
-                isVisibleForUsager: true
+                isVisibleForUsager: true,
+                isVisibleForBailleur: true
             );
 
             $this->suiviManager->createSuivi(
@@ -195,6 +203,7 @@ class InjonctionBailleurService
                 description: HtmlCleaner::cleanFrontEndEntry($description),
                 type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,
+                isVisibleForBailleur: true
             );
             $this->entityManager->flush();
         }

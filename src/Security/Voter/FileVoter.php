@@ -90,6 +90,9 @@ class FileVoter extends Voter
         if ($file->getIntervention() && DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $file->getDocumentType()) {
             return false;
         }
+        if (DocumentType::MESSAGE_BAILLEUR === $file->getDocumentType()) {
+            return false;
+        }
 
         return $this->canCreate($file, $user) && ($this->isFileUploadedByUser($file, $user) || $this->isAdminOrRTonHisTerritory($file, $user));
     }
