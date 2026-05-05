@@ -19,6 +19,7 @@ use App\Service\Notification\NotificationCounter;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use App\Utils\AttributeParser;
+use App\Utils\UrlHelper;
 use App\Validator\EmailFormatValidator;
 use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
 use Twig\Extension\AbstractExtension;
@@ -245,14 +246,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
 
     public function extractRootDomain(string $host): string
     {
-        $backofficeSubdomains = ['bo', 'service-secours'];
-        $parts = explode('.', $host);
-
-        if (in_array(strtolower($parts[0]), $backofficeSubdomains, true)) {
-            return implode('.', array_slice($parts, 1));
-        }
-
-        return $host;
+        return UrlHelper::extractRootDomain($host);
     }
 
     public function getAcceptedMimeTypes(?string $type = null): string

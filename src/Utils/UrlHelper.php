@@ -22,4 +22,16 @@ class UrlHelper
 
         return preg_replace('/&/', '?', $query, 1);
     }
+
+    public static function extractRootDomain(string $host): string
+    {
+        $backofficeSubdomains = ['bo', 'service-secours'];
+        $parts = explode('.', $host);
+
+        if (in_array(strtolower($parts[0]), $backofficeSubdomains, true)) {
+            return implode('.', array_slice($parts, 1));
+        }
+
+        return $host;
+    }
 }

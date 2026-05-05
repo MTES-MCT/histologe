@@ -8,6 +8,7 @@ use App\Form\ServiceSecoursRouteType;
 use App\Repository\ServiceSecoursRouteRepository;
 use App\Service\ListFilters\SearchServiceSecoursRoute;
 use App\Service\MessageHelper;
+use App\Service\ServiceSecours\QrCodeGenerator;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -119,5 +120,19 @@ class ConfigServiceSecoursController extends AbstractController
             'form' => $form,
             'create' => true,
         ]);
+    }
+
+    #[Route('/{id}/qr-code', name: 'back_config_service_secours_route_qr_code', methods: ['GET'])]
+    public function qrCode(
+        ServiceSecoursRoute $serviceSecoursRoute,
+        QrCodeGenerator $qrCodeGenerator,
+    ): Response {
+        $pdfContent = $qrCodeGenerator->generate($serviceSecoursRoute);
+
+        $response = new Response($pdfContent);
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'inline; filename="qr-code-'.$serviceSecoursRoute->getSlug().'.pdf"');
+
+        return $response;
     }
 }

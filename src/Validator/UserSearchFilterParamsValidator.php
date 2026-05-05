@@ -9,6 +9,8 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class UserSearchFilterParamsValidator extends ConstraintValidator
 {
+    public const MAX_FILTERS_PER_USER = 10;
+
     public function __construct(private UserSearchFilterRepository $repo)
     {
     }
@@ -30,9 +32,9 @@ class UserSearchFilterParamsValidator extends ConstraintValidator
         }
 
         $count = $this->repo->countForUser($user);
-        if (!$entity->getId() && $count >= 5) {
+        if (!$entity->getId() && $count >= self::MAX_FILTERS_PER_USER) {
             $this->context
-                ->buildViolation('Vous avez atteint la limite de 5 recherches enregistrées.')
+                ->buildViolation('Vous avez atteint la limite de '.self::MAX_FILTERS_PER_USER.' recherches enregistrées.')
                 ->addViolation();
         }
 
