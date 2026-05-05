@@ -1,4 +1,5 @@
-const histoNotificationSelected = [];
+let histoNotificationSelected = [];
+let countNotificationsSelected = 0;
 const histoNotificationsContainer = document.querySelector('#table-list-results');
 histoNotificationsContainer?.addEventListener('change', (event) => {
   const element = event.target;
@@ -15,28 +16,33 @@ histoNotificationsContainer?.addEventListener('change', (event) => {
   histoRefreshNotificationButtons();
 });
 
-histoRefreshNotificationButtons();
-
-function histoRefreshNotificationButtons() {
+export function histoReinitNotification() {
+  console.log('histoReinitNotification called');
+  histoNotificationSelected = [];
+  countNotificationsSelected = 0;
+}
+export function histoRefreshNotificationButtons() {
   const deleteBtn = document.querySelector('#delete-notifications-btn');
+  const markAsReadBtn = document.querySelector('#mark-as-read-notifications-btn');
+  const nbSelectedLabel = document.querySelector('#notification-selected-buttons-count');
   if (deleteBtn) {
-    const countNotificationsSelected = histoNotificationSelected.length;
+    countNotificationsSelected = histoNotificationSelected.length;
     if (countNotificationsSelected > 0) {
-      document.querySelector('#notification-selected-buttons-count').textContent =
+      nbSelectedLabel.textContent =
         countNotificationsSelected + ' sélectionnée(s) :';
-      document.querySelector('#mark-as-read-notifications-btn').textContent = 'Marquer comme lue(s)';
+      markAsReadBtn.textContent = 'Marquer comme lue(s)';
       deleteBtn.textContent = 'Supprimer';
       // remove listeners to delete all notifications
       const newDeleteBtn = deleteBtn.cloneNode(true);
       deleteBtn.parentNode.replaceChild(newDeleteBtn, deleteBtn);
     } else {
-      document.querySelector('#notification-selected-buttons-count').textContent = '';
-      document.querySelector('#mark-as-read-notifications-btn').textContent =
+      nbSelectedLabel.textContent = '';
+      markAsReadBtn.textContent =
         'Marquer comme lue(s) (tous)';
       deleteBtn.textContent = 'Vider';
       // add confirmation to delete all notifications
       deleteBtn.addEventListener('click', (event) => {
-        if (histoNotificationSelected.length === 0) {
+        if (countNotificationsSelected === 0) {
           const confirmDeleteAll = confirm(
             'Êtes-vous sûr de vouloir supprimer toutes les notifications ?'
           );
@@ -53,3 +59,5 @@ function histoRefreshNotificationButtons() {
       });
   }
 }
+histoReinitNotification();
+histoRefreshNotificationButtons();

@@ -6,6 +6,7 @@ import { initializeVisitesUploadFilesModal } from '../../controllers/back_signal
 import { openPhotoAlbumAddEventListeners } from '../../controllers/back_signalement_view/back_view_signalement.js';
 import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_signalement_edit_file/back_signalement_edit_file.js';
 import { btnSignalementFileDeleteAddEventListeners } from '../file/file_delete.js';
+import { histoReinitNotification, histoRefreshNotificationButtons } from '../../controllers/form_notification.js';
 
 const flashMessagesContainer = document.getElementById('flash-messages-live-container');
 
@@ -81,6 +82,12 @@ export function jsonResponseProcess(response) {
             break;
           case 'btnSignalementFileDeleteAddEventListeners':
             btnSignalementFileDeleteAddEventListeners();
+            break;
+          case 'histoReinitNotification':
+            histoReinitNotification();
+            break;
+          case 'histoRefreshNotificationButtons':
+            histoRefreshNotificationButtons();
             break;
           default:
             console.warn(`Unknown function name: ${fn.name}`);
