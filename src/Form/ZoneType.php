@@ -79,6 +79,7 @@ class ZoneType extends AbstractType
             },
             'placeholder' => 'Sélectionner le type de zone',
             'label' => 'Type de zone',
+            'required' => false,
         ]);
         $fileConstraints = [
             new Assert\File(
@@ -91,7 +92,7 @@ class ZoneType extends AbstractType
             'label' => $zone->getId() ? 'Modifier depuis un fichier (en cas de modification des coordonnées de la zone uniquement)' : 'Importer depuis un fichier',
             'required' => false,
             'mapped' => false,
-            'help' => 'Le fichier doit être au format CSV séparé par des virgules et contenir une colonnne "WKT", <a href="'.$modeleUrl.'">voir le template</a>',
+            'help' => 'Le fichier doit être au format CSV séparé par des virgules et contenir une colonnne "WKT", <a href="'.$modeleUrl.'">voir le template (fichier CSV, 239 octets)</a>',
             'help_html' => true,
             'constraints' => $fileConstraints,
         ]);
