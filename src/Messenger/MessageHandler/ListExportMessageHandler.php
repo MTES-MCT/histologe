@@ -12,6 +12,7 @@ use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\Export\SignalementExporter;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -28,6 +29,7 @@ readonly class ListExportMessageHandler
         private ParameterBagInterface $parameterBag,
         private UploadHandlerService $uploadHandlerService,
         private FileManager $fileManager,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -53,9 +55,9 @@ readonly class ListExportMessageHandler
                     filename: $filename,
                     title: $filename,
                     user: $user,
-                    flush: true,
                     documentType: DocumentType::EXPORT
                 );
+                $this->entityManager->flush();
 
                 $this->notificationMailerRegistry->send(
                     new NotificationMail(

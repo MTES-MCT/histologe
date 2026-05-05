@@ -15,7 +15,10 @@ use App\Event\AffectationClosedEvent;
 use App\Event\AffectationCreatedEvent;
 use App\Messenger\InterconnectionBus;
 use App\Messenger\Message\DossierMessageInterface;
+use App\Repository\AffectationRepository;
+use App\Repository\PartnerRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -31,6 +34,9 @@ class AffectationManager extends Manager
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly InterconnectionBus $interconnectionBus,
         private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        private readonly PartnerRepository $partnerRepository,
+        private readonly AffectationRepository $affectationRepository,
+        private readonly EntityManagerInterface $entityManager,
         string $entityName = Affectation::class,
     ) {
         parent::__construct($this->managerRegistry, $entityName);
@@ -62,7 +68,9 @@ class AffectationManager extends Manager
             $affectation->clearMotifs();
         }
 
-        $this->save($affectation);
+        $this->entityManager->persist($affectation);
+        $this->entityManager->flush();
+
         if ($dispatchAffectationAnsweredEvent) {
             $this->eventDispatcher->dispatch(
                 new AffectationAnsweredEvent(
@@ -138,7 +146,8 @@ class AffectationManager extends Manager
             );
         }
 
-        $this->persist($affectation);
+        $this->entityManager->persist($affectation);
+        $this->entityManager->flush();
 
         if ($dispatchInterconnection) {
             $this->interconnectionBus->dispatch($affectation);
@@ -182,7 +191,8 @@ class AffectationManager extends Manager
         $this->removeSubscriptionsOfAffectation($affectation);
 
         if ($flush) {
-            $this->save($affectation);
+            $this->entityManager->persist($affectation);
+            $this->entityManager->flush();
             $this->eventDispatcher->dispatch(
                 new AffectationClosedEvent(affectation: $affectation, user: $user, partner: $partner, message: $message, files: $files),
                 AffectationClosedEvent::NAME
@@ -230,7 +240,7 @@ class AffectationManager extends Manager
             }
         } else {
             foreach ($partnersIdToRemove as $partnerIdToRemove) {
-                $partner = $this->managerRegistry->getRepository(Partner::class)->find($partnerIdToRemove);
+                $partner = $this->partnerRepository->find($partnerIdToRemove);
                 foreach ($signalement->getAffectations() as $affectation) {
                     if ($affectation->getPartner()->getId() === $partner->getId()) {
                         $this->removeAffectationAndSubscriptions($affectation);
@@ -253,27 +263,30 @@ class AffectationManager extends Manager
             \Sentry\captureMessage($message);
         }
         $this->removeSubscriptionsOfAffectation($affectation);
-        $this->remove($affectation);
+        $this->entityManager->remove($affectation);
+        $this->entityManager->flush();
     }
 
     public function removeSubscriptionsOfAffectation(Affectation $affectation): void
     {
         $subscriptions = $this->userSignalementSubscriptionRepository->findForAffectation(affectation: $affectation, excludeRT: true);
         foreach ($subscriptions as $subscription) {
-            $this->remove($subscription);
+            $this->entityManager->remove($subscription);
         }
+        $this->entityManager->flush();
     }
 
     public function flagAsSynchronized(DossierMessageInterface $dossierMessage): void
     {
         /** @var ?Affectation $affectation */
-        $affectation = $this->getRepository()->findOneBy([
+        $affectation = $this->affectationRepository->findOneBy([
             'partner' => $dossierMessage->getPartnerId(),
             'signalement' => $dossierMessage->getSignalementId(),
         ]);
         if (isset($affectation)) {
             $affectation->setIsSynchronized(true);
-            $this->save($affectation);
+            $this->entityManager->persist($affectation);
+            $this->entityManager->flush();
         }
     }
 }

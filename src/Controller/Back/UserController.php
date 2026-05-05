@@ -5,7 +5,6 @@ namespace App\Controller\Back;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Form\SearchUserType;
-use App\Manager\UserManager;
 use App\Messenger\Message\InactiveUserExportMessage;
 use App\Messenger\Message\UserExportMessage;
 use App\Repository\UserRepository;
@@ -13,6 +12,7 @@ use App\Security\Voter\UserVoter;
 use App\Service\EmailAlert\EmailAlertChecker;
 use App\Service\Export\UserExportLoader;
 use App\Service\ListFilters\SearchUser;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
@@ -133,8 +133,9 @@ class UserController extends AbstractController
     #[Route('/desactiver', name: 'back_user_disable', methods: ['POST'])]
     public function disableUser(
         Request $request,
-        UserManager $userManager,
+        UserRepository $userRepository,
         UserPasswordHasherInterface $passwordHasher,
+        EntityManagerInterface $entityManager,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
@@ -151,7 +152,7 @@ class UserController extends AbstractController
             return $this->redirectToRoute('back_user_index', $searchUser->getUrlParams(), Response::HTTP_SEE_OTHER);
         }
         /** @var User $user */
-        $user = $userManager->find($userId);
+        $user = $userRepository->find($userId);
         if (!$user) {
             $this->addFlash('error', 'Utilisateur introuvable.');
 
@@ -165,7 +166,8 @@ class UserController extends AbstractController
 
         $user->setStatut(UserStatus::INACTIVE);
         $user->setPassword($passwordHasher->hashPassword($user, bin2hex(random_bytes(32))));
-        $userManager->save($user);
+        $entityManager->persist($user);
+        $entityManager->flush();
         $this->addFlash('success', ['title' => 'Compte désactivé',
             'message' => 'L\'utilisateur '.$user->getNomComplet(true).' a bien été désactivé.',
         ]);

@@ -7,15 +7,17 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Factory\UserFactory;
+use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\TokenGeneratorInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
-class UserManager extends AbstractManager
+class UserManager extends Manager
 {
     public const OCCUPANT = 'occupant';
     public const DECLARANT = 'déclarant';
@@ -28,6 +30,8 @@ class UserManager extends AbstractManager
         protected ManagerRegistry $managerRegistry,
         private SignalementUsagerManager $signalementUsagerManager,
         private UserFactory $userFactory,
+        private UserRepository $userRepository,
+        private EntityManagerInterface $entityManager,
         string $entityName = User::class,
     ) {
         parent::__construct($managerRegistry, $entityName);
@@ -41,7 +45,8 @@ class UserManager extends AbstractManager
         foreach ($user->getUserPartners() as $userPartner) {
             if ($userPartner->getPartner() === $fromPartner) {
                 $userPartner->setPartner($toPartner);
-                $this->save($userPartner);
+                $this->entityManager->persist($userPartner);
+                $this->entityManager->flush();
                 break;
             }
         }
@@ -72,7 +77,7 @@ class UserManager extends AbstractManager
             ->setStatut(UserStatus::ACTIVE)
             ->setTokenExpiredAt(null);
 
-        $this->save($user);
+        $this->entityManager->flush();
         $password = null;
 
         return $user;
@@ -97,7 +102,10 @@ class UserManager extends AbstractManager
             ->setTokenExpiredAt(
                 (new \DateTimeImmutable())->modify($this->parameterBag->get('token_lifetime'))
             );
-        $this->save($user, $flush);
+        $this->entityManager->persist($user);
+        if ($flush) {
+            $this->entityManager->flush();
+        }
 
         return $user;
     }
@@ -128,7 +136,7 @@ class UserManager extends AbstractManager
         }
         if ($mail) {
             /** @var ?User $user */
-            $user = $this->findOneBy(['email' => $mail]);
+            $user = $this->userRepository->findOneBy(['email' => $mail]);
             if (null === $user) {
                 $user = $this->userFactory->createInstanceFrom(
                     roleLabel: User::ROLES['Usager'],
@@ -138,7 +146,8 @@ class UserManager extends AbstractManager
                 );
 
                 $user->setIsMailingActive(true);
-                $this->save($user);
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
             }
         }
 
@@ -153,12 +162,9 @@ class UserManager extends AbstractManager
 
     public function getSystemUser(): ?User
     {
-        /** @var User|null $user */
-        $user = $this->getRepository()->findOneBy([
+        return $this->userRepository->findOneBy([
             'email' => $this->parameterBag->get('user_system_email'),
         ]);
-
-        return $user;
     }
 
     public function sendAccountActivationNotification(User $user): void

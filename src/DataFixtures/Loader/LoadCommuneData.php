@@ -3,12 +3,12 @@
 namespace App\DataFixtures\Loader;
 
 use App\Factory\CommuneFactory;
-use App\Manager\CommuneManager;
 use App\Service\Import\CsvParser;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Utils\Address\ImportCommune;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -20,9 +20,9 @@ class LoadCommuneData extends Fixture implements OrderedFixtureInterface
     public function __construct(
         private readonly ParameterBagInterface $params,
         private readonly CommuneFactory $communeFactory,
-        private readonly CommuneManager $communeManager,
         private readonly CsvParser $csvParser,
         private readonly ZipcodeProvider $zipcodeProvider,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -63,16 +63,15 @@ class LoadCommuneData extends Fixture implements OrderedFixtureInterface
 
                 $existingCpAndInseeCode[$keyCommune] = 1;
 
+                $this->entityManager->persist($commune);
                 if (0 === $totalRead % self::FLUSH_COUNT) {
-                    $this->communeManager->save($commune);
-                } else {
-                    $this->communeManager->save($commune, false);
+                    $this->entityManager->flush();
                 }
             }
         }
 
         // Last flush for remaining communes
-        $this->communeManager->flush();
+        $this->entityManager->flush();
     }
 
     public function getOrder(): int

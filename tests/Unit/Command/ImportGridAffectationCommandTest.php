@@ -3,12 +3,13 @@
 namespace App\Tests\Unit\Command;
 
 use App\Command\ImportGridAffectationCommand;
-use App\Manager\TerritoryManager;
+use App\Repository\TerritoryRepository;
 use App\Service\Import\CsvParser;
 use App\Service\Import\GridAffectation\GridAffectationLoader;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -23,23 +24,25 @@ class ImportGridAffectationCommandTest extends KernelTestCase
 
     private MockObject&FilesystemOperator $fileStorage;
     private ParameterBagInterface $parameterBag;
-    private MockObject&TerritoryManager $territoryManager;
+    private MockObject&TerritoryRepository $territoryRepository;
     private MockObject&CsvParser $csvParser;
     private MockObject&GridAffectationLoader $gridAffectationLoader;
     private MockObject&UploadHandlerService $uploadHandlerServiceMock;
     private MockObject&NotificationMailerRegistry $notificationMailerRegistryMock;
     private MockObject&UrlGeneratorInterface $urlGeneratorMock;
+    private MockObject&EntityManagerInterface $entityManagerMock;
 
     protected function setUp(): void
     {
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        $this->territoryManager = $this->createMock(TerritoryManager::class);
+        $this->territoryRepository = $this->createMock(TerritoryRepository::class);
         $this->csvParser = $this->createMock(CsvParser::class);
         $this->gridAffectationLoader = $this->createMock(GridAffectationLoader::class);
         $this->uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
         $this->notificationMailerRegistryMock = $this->createMock(NotificationMailerRegistry::class);
         $this->urlGeneratorMock = $this->createMock(UrlGeneratorInterface::class);
+        $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
         $this->urlGeneratorMock
             ->expects($this->once())
             ->method('generate')
@@ -57,7 +60,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             ->with('csv/grille_affectation_01.csv')
             ->willReturn(true);
 
-        $this->territoryManager
+        $this->territoryRepository
             ->expects($this->once())
             ->method('findOneBy')
             ->willReturn($this->getTerritory(isActive: 0));
@@ -80,11 +83,12 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             $this->fileStorage,
             $this->parameterBag,
             $this->csvParser,
-            $this->territoryManager,
+            $this->territoryRepository,
             $this->gridAffectationLoader,
             $this->uploadHandlerServiceMock,
             $this->notificationMailerRegistryMock,
             $this->urlGeneratorMock,
+            $this->entityManagerMock
         ));
 
         $commandTester = new CommandTester($command);
@@ -110,7 +114,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             ->with('csv/grille_affectation_13-1.csv')
             ->willReturn(true);
 
-        $this->territoryManager
+        $this->territoryRepository
             ->expects($this->once())
             ->method('findOneBy')
             ->willReturn($this->getTerritory(name: 'Bouches-du-Rhône', zip: '13', isActive: 1));
@@ -124,11 +128,12 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             $this->fileStorage,
             $this->parameterBag,
             $this->csvParser,
-            $this->territoryManager,
+            $this->territoryRepository,
             $this->gridAffectationLoader,
             $this->uploadHandlerServiceMock,
             $this->notificationMailerRegistryMock,
             $this->urlGeneratorMock,
+            $this->entityManagerMock
         ));
 
         $commandTester = new CommandTester($command);

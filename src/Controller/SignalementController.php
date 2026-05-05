@@ -332,6 +332,7 @@ class SignalementController extends AbstractController
         Request $request,
         SignalementDraftRequestSerializer $serializer,
         SignalementDraftManager $signalementDraftManager,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
@@ -348,7 +349,8 @@ class SignalementController extends AbstractController
             $signalementDraft
         ) {
             $signalementDraft->setStatus(SignalementDraftStatus::ARCHIVE);
-            $signalementDraftManager->save($signalementDraft);
+            $entityManager->persist($signalementDraft);
+            $entityManager->flush();
 
             return $this->json(['success' => true]);
         }
@@ -513,6 +515,8 @@ class SignalementController extends AbstractController
     public function suiviSignalementTiersCguAccept(
         string $code,
         SignalementRepository $signalementRepository,
+        SignalementManager $signalementManager,
+        EntityManagerInterface $entityManager,
         Request $request,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
@@ -526,7 +530,8 @@ class SignalementController extends AbstractController
                 $this->addFlash('error', 'Vous devez accepter les CGU pour accéder au dossier.');
             } else {
                 $signalement->setIsCguTiersAccepted(true);
-                $signalementRepository->save($signalement, true);
+                $entityManager->persist($signalement);
+                $entityManager->flush();
 
                 return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
             }
@@ -755,6 +760,7 @@ class SignalementController extends AbstractController
         SignalementManager $signalementManager,
         SuiviManager $suiviManager,
         NotificationAndMailSender $notificationAndMailSender,
+        EntityManagerInterface $entityManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
@@ -809,7 +815,8 @@ class SignalementController extends AbstractController
                 isVisibleForUsager: true,
             );
 
-            $signalementManager->save($signalement);
+            $entityManager->persist($signalement);
+            $entityManager->flush();
             $this->addFlash('success', ['title' => 'Demande enregistrée', 'message' => 'Votre demande d\'arrêt de procédure a bien été prise en compte. Elle sera examinée par l\'administration.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
@@ -829,6 +836,7 @@ class SignalementController extends AbstractController
         SignalementManager $signalementManager,
         SuiviManager $suiviManager,
         SuiviRepository $suiviRepository,
+        EntityManagerInterface $entityManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
@@ -872,7 +880,8 @@ class SignalementController extends AbstractController
                 isVisibleForUsager: true,
             );
 
-            $signalementManager->save($signalement);
+            $entityManager->persist($signalement);
+            $entityManager->flush();
             $this->addFlash('success', ['title' => 'Demande enregistrée', 'message' => 'Votre demande de poursuivre la procédure a bien été prise en compte. Elle a été transmise à l\'administration.']);
 
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
@@ -927,7 +936,8 @@ class SignalementController extends AbstractController
                 );
 
                 $injonctionBailleurService->switchFromInjonctionToProcedure($signalement);
-                $signalementManager->save($signalement);
+                $entityManager->persist($signalement);
+                $entityManager->flush();
                 $entityManager->commit();
             } catch (\Exception $e) {
                 $entityManager->rollback();
@@ -1028,7 +1038,8 @@ class SignalementController extends AbstractController
                     $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
                     $signalement->setMotifCloture(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS);
                 }
-                $signalementManager->save($signalement);
+                $entityManager->persist($signalement);
+                $entityManager->flush();
                 $entityManager->commit();
             } catch (\Exception $e) {
                 $entityManager->rollback();
@@ -1059,6 +1070,7 @@ class SignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         SignalementManager $signalementManager,
         SuiviManager $suiviManager,
+        EntityManagerInterface $entityManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
@@ -1092,7 +1104,8 @@ class SignalementController extends AbstractController
             isVisibleForUsager: true,
         );
         $signalement->setIsProprioAverti(true);
-        $signalementManager->save($signalement);
+        $entityManager->persist($signalement);
+        $entityManager->flush();
 
         $this->addFlash('success', ['title' => 'Bailleur prévenu',
             'message' => 'Votre modification a bien été prise en compte.',

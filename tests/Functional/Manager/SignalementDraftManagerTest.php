@@ -49,6 +49,7 @@ class SignalementDraftManagerTest extends WebTestCase
         $this->userManager = static::getContainer()->get(UserManager::class);
 
         $this->signalementDraftManager = new SignalementDraftManager(
+            $this->entityManager,
             $this->signalementDraftFactory,
             $this->eventDispatcher,
             $this->managerRegistry,

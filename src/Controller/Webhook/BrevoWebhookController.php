@@ -4,9 +4,12 @@ namespace App\Controller\Webhook;
 
 use App\Entity\EmailDeliveryIssue;
 use App\Entity\Enum\BrevoEvent;
-use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Repository\EmailDeliveryIssueRepository;
+use App\Repository\PartnerRepository;
+use App\Repository\SignalementRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Sentry\Severity;
 use Sentry\State\Scope;
@@ -25,6 +28,9 @@ class BrevoWebhookController extends AbstractController
     private EntityManagerInterface $entityManager;
 
     public function __construct(
+        private readonly UserRepository $userRepository,
+        private readonly PartnerRepository $partnerRepository,
+        private readonly SignalementRepository $signalementRepository,
         EntityManagerInterface $entityManager,
         #[Autowire(env: 'BREVO_ALLOWED_IPS')] string $allowedIps,
     ) {
@@ -33,7 +39,7 @@ class BrevoWebhookController extends AbstractController
     }
 
     #[Route('/webhook/brevo', name: 'webhook_brevo', methods: ['POST'])]
-    public function handle(Request $request): Response
+    public function handle(EmailDeliveryIssueRepository $emailDeliveryIssueRepository, Request $request): Response
     {
         $clientIp = $request->getClientIp();
         if (!$this->isAllowedIp($clientIp)) {
@@ -49,7 +55,6 @@ class BrevoWebhookController extends AbstractController
 
         $isDeliveryFailure = BrevoEvent::isErrorEvent($event);
 
-        $emailDeliveryIssueRepository = $this->entityManager->getRepository(EmailDeliveryIssue::class);
         if (!$this->emailExistsInSystem($email)) {
             \Sentry\configureScope(static function (Scope $scope) use ($email, $payload): void {
                 $scope->setTag('email_recipient', $email);
@@ -91,17 +96,13 @@ class BrevoWebhookController extends AbstractController
 
     private function emailExistsInSystem(string $email): bool
     {
-        $userRepository = $this->entityManager->getRepository(User::class);
-        $partnerRepository = $this->entityManager->getRepository(Partner::class);
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-
         // Cherche l'email exact
-        $user = $userRepository->findOneBy(['email' => $email]);
+        $user = $this->userRepository->findOneBy(['email' => $email]);
         if ($user) {
             return true;
         }
 
-        $partner = $partnerRepository->findOneBy(['email' => $email]);
+        $partner = $this->partnerRepository->findOneBy(['email' => $email]);
         if ($partner) {
             return true;
         }
@@ -110,7 +111,7 @@ class BrevoWebhookController extends AbstractController
         $pattern = User::SUFFIXE_ARCHIVED;
         $emailPrefix = explode($pattern, $email)[0];
 
-        $countUser = (int) $userRepository->createQueryBuilder('u')
+        $countUser = (int) $this->userRepository->createQueryBuilder('u')
             ->select('COUNT(u.id)')
             ->where('u.email LIKE :emailPrefix')
             ->setParameter('emailPrefix', $emailPrefix.'%')
@@ -121,7 +122,7 @@ class BrevoWebhookController extends AbstractController
             return true;
         }
 
-        $countPartner = (int) $partnerRepository->createQueryBuilder('p')
+        $countPartner = (int) $this->partnerRepository->createQueryBuilder('p')
             ->select('COUNT(p.id)')
             ->where('p.email LIKE :emailPrefix')
             ->setParameter('emailPrefix', $emailPrefix.'%')
@@ -133,7 +134,7 @@ class BrevoWebhookController extends AbstractController
         }
 
         // Cherche parmi les mails du signalement
-        $qb = $signalementRepository->createQueryBuilder('s');
+        $qb = $this->signalementRepository->createQueryBuilder('s');
         $qb->select('1')
             ->where('s.mailOccupant = :email')
             ->orWhere('s.mailDeclarant = :email')

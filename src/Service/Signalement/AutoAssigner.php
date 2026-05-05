@@ -23,6 +23,7 @@ use App\Specification\Affectation\ProfilDeclarantSpecification;
 use App\Specification\AndSpecification;
 use App\Specification\Context\PartnerSignalementContext;
 use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
@@ -41,6 +42,7 @@ class AutoAssigner
         private readonly UserSignalementSubscriptionManager $subscriptionManager,
         private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -140,7 +142,7 @@ class AutoAssigner
             ++$this->countAffectations;
             $this->affectedPartnersNames[] = $partner->getNom();
         }
-        $this->affectationManager->flush();
+        $this->entityManager->flush();
     }
 
     private function subscribeTerritoryAdmins(Signalement $signalement, ?User $adminUser): void
@@ -157,7 +159,7 @@ class AutoAssigner
             );
         }
 
-        $this->subscriptionManager->flush();
+        $this->entityManager->flush();
     }
 
     public function getCountAffectations(): int

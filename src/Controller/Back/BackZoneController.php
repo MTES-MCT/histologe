@@ -161,7 +161,7 @@ class BackZoneController extends AbstractController
     }
 
     #[Route('/supprimer/{zone}', name: 'back_zone_delete', methods: ['POST'])]
-    public function delete(Zone $zone, Request $request, EntityManagerInterface $em): JsonResponse
+    public function delete(Zone $zone, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $this->denyAccessUnlessGranted(ZoneVoter::ZONE_MANAGE, $zone);
         if (!$this->isCsrfTokenValid('zone_delete', $request->query->get('_token'))) {
@@ -169,8 +169,8 @@ class BackZoneController extends AbstractController
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
         }
-        $em->remove($zone);
-        $em->flush();
+        $entityManager->remove($zone);
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Zone supprimée', 'message' => 'La zone a bien été supprimée.'];
 
         [, $searchZone, $paginatedZones] = $this->handleSearch($request, true);

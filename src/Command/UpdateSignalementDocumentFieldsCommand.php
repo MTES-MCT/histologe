@@ -4,12 +4,12 @@ namespace App\Command;
 
 use App\Entity\Territory;
 use App\Manager\FileManager;
-use App\Manager\SignalementManager;
-use App\Manager\TerritoryManager;
 use App\Repository\SignalementRepository;
+use App\Repository\TerritoryRepository;
 use App\Service\Import\CsvParser;
 use App\Service\Import\Signalement\SignalementImportImageHeader;
 use App\Service\UploadHandlerService;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
@@ -31,14 +31,15 @@ class UpdateSignalementDocumentFieldsCommand extends Command
     private const int BATCH_SIZE = 200;
 
     public function __construct(
-        private readonly TerritoryManager $territoryManager,
-        private readonly SignalementManager $signalementManager,
+        private readonly TerritoryRepository $territoryRepository,
+        private readonly SignalementRepository $signalementRepository,
         private readonly CsvParser $csvParser,
         private readonly ParameterBagInterface $parameterBag,
         private readonly FilesystemOperator $fileStorage,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly FileManager $fileManager,
         private readonly LoggerInterface $logger,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
@@ -56,7 +57,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $zip = $input->getArgument('zip');
         /** @var ?Territory $territory */
-        $territory = $this->territoryManager->findOneBy(['zip' => $zip]);
+        $territory = $this->territoryRepository->findOneBy(['zip' => $zip]);
         if (null === $territory) {
             $io->error('Territory does not exist');
 
@@ -75,8 +76,6 @@ class UpdateSignalementDocumentFieldsCommand extends Command
 
         $rows = $this->csvParser->parseAsDict($toFile);
 
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->signalementManager->getRepository();
         $currentReference = $rows[0][SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
         $countFile = 0;
         foreach ($rows as $key => $row) {
@@ -89,7 +88,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                 if (null !== $filename) {
                     $currentReference = $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT];
 
-                    $signalement = $signalementRepository->findByReferenceChunk($territory, $currentReference);
+                    $signalement = $this->signalementRepository->findByReferenceChunk($territory, $currentReference);
                     if (null !== $signalement) {
                         $file = $this->fileManager->createOrUpdate(
                             filename: $filename,
@@ -99,7 +98,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                         unset($file);
                         unset($signalement);
                         if (0 === $key % self::BATCH_SIZE) {
-                            $this->fileManager->flush();
+                            $this->entityManager->flush();
                         }
                         ++$countFile;
                     }
@@ -115,7 +114,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
             }
         }
 
-        $this->fileManager->flush();
+        $this->entityManager->flush();
         $io->success(\sprintf('%s files signalement(s) updated', $countFile));
 
         return Command::SUCCESS;

@@ -3,12 +3,12 @@
 namespace App\Command\Cron;
 
 use App\Entity\SignalementDraft;
-use App\Manager\SignalementDraftManager;
 use App\Repository\SignalementDraftRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\SignalementDraftHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,10 +24,10 @@ class RemindPendingDraftsCommand extends AbstractCronCommand
 {
     public function __construct(
         private readonly SignalementDraftRepository $signalementDraftRepository,
-        private readonly SignalementDraftManager $signalementDraftManager,
         private readonly SignalementDraftHelper $signalementDraftHelper,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -60,9 +60,11 @@ class RemindPendingDraftsCommand extends AbstractCronCommand
                     )
                 );
                 $signalementDraft->setPendingDraftRemindedAtValue();
-                $this->signalementDraftManager->save($signalementDraft);
+                $this->entityManager->persist($signalementDraft);
             }
         }
+
+        $this->entityManager->flush();
 
         $io->success(\sprintf('%s usagers have been notified', $count));
 

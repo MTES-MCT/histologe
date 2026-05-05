@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Territory;
-use App\Manager\TerritoryManager;
+use App\Repository\TerritoryRepository;
 use App\Service\Import\CsvParser;
 use App\Service\Import\CsvWriter;
 use App\Service\Import\Signalement\SignalementImportImageHeader;
@@ -52,7 +52,7 @@ class SlugifyDocumentSignalementCommand extends Command
         private LoggerInterface $logger,
         private FilesystemOperator $fileStorage,
         private UploadHandlerService $uploadHandlerService,
-        private TerritoryManager $territoryManager,
+        private TerritoryRepository $territoryRepository,
         private CsvParser $csvParser,
         private Filesystem $filesystem,
         private string $projectDir,
@@ -261,7 +261,7 @@ class SlugifyDocumentSignalementCommand extends Command
         $toFile = $this->parameterBag->get('uploads_tmp_dir').$this->filename.$zip.'.csv';
 
         /** @var ?Territory $territory */
-        $territory = $this->territoryManager->findOneBy(['zip' => $zip]);
+        $territory = $this->territoryRepository->findOneBy(['zip' => $zip]);
         if (null === $territory) {
             $this->errors[] = 'Territory does not exists';
         }

@@ -10,7 +10,7 @@ use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
 use App\Factory\Interconnection\Idoss\DossierMessageFactory;
 use App\Manager\SuiviManager;
-use App\Manager\UserManager;
+use App\Repository\UserRepository;
 use App\Specification\Signalement\FirstAffectationAcceptedSpecification;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,7 +23,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
         private SuiviManager $suiviManager,
         private FirstAffectationAcceptedSpecification $firstAcceptedAffectationSpecification,
         private ParameterBagInterface $parameterBag,
-        private UserManager $userManager,
+        private UserRepository $userRepository,
         private MessageBusInterface $bus,
         private DossierMessageFactory $dossierMessageFactory,
     ) {
@@ -86,7 +86,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
         if ($this->firstAcceptedAffectationSpecification->isSatisfiedBy($affectation)) {
             $adminEmail = $this->parameterBag->get('user_system_email');
             /** @var User $adminUser */
-            $adminUser = $this->userManager->findOneBy(['email' => $adminEmail]);
+            $adminUser = $this->userRepository->findOneBy(['email' => $adminEmail]);
             $this->suiviManager->createSuivi(
                 signalement: $affectation->getSignalement(),
                 description: $this->parameterBag->get('suivi_message')['first_accepted_affectation'],

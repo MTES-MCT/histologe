@@ -8,12 +8,15 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Repository\FileRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
-class FileManager extends AbstractManager
+class FileManager extends Manager
 {
     public function __construct(
         private readonly FileFactory $fileFactory,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly FileRepository $fileRepository,
         ManagerRegistry $managerRegistry,
         string $entityName = File::class,
     ) {
@@ -25,13 +28,10 @@ class FileManager extends AbstractManager
         ?string $title = null,
         ?Signalement $signalement = null,
         ?User $user = null,
-        bool $flush = false,
         ?DocumentType $documentType = null,
         ?string $description = null,
     ): File {
-        /** @var FileRepository $fileRepository */
-        $fileRepository = $this->getRepository();
-        $file = $fileRepository->findOneBy(['filename' => $filename]);
+        $file = $this->fileRepository->findOneBy(['filename' => $filename]);
         if (null === $file) {
             $file = $this->fileFactory->createInstanceFrom(
                 filename: $filename,
@@ -49,7 +49,7 @@ class FileManager extends AbstractManager
             ->setDocumentType($documentType ?? DocumentType::AUTRE)
             ->setDescription($description);
 
-        $this->save($file, $flush);
+        $this->entityManager->persist($file);
 
         return $file;
     }

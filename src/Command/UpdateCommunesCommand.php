@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\Commune;
 use App\Factory\CommuneFactory;
+use App\Repository\CommuneRepository;
 use App\Service\Import\CsvParser;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Utils\Address\ImportCommune;
@@ -33,6 +34,7 @@ class UpdateCommunesCommand extends Command
         private readonly CsvParser $csvParser,
         private readonly CommuneFactory $communeFactory,
         private readonly ZipcodeProvider $zipcodeProvider,
+        private readonly CommuneRepository $communeRepository,
         private array $communes = [],
         private array $csvData = [],
     ) {
@@ -42,7 +44,7 @@ class UpdateCommunesCommand extends Command
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->io = new SymfonyStyle($input, $output);
-        $list = $this->entityManager->getRepository(Commune::class)->findAll();
+        $list = $this->communeRepository->findAll();
         foreach ($list as $commune) {
             $this->communes[$commune->getCodePostal().'-'.$commune->getCodeInsee()] = $commune;
         }

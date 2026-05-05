@@ -19,6 +19,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
     use FixturesHelper;
 
     private MockObject&TerritoryRepository $territoryRepository;
+    private MockObject&SignalementRepository $signalementRepository;
     private MockObject&EntityManagerInterface $entityManager;
     private MockObject&SignalementAddressUpdater $signalementAddressUpdater;
     private MockObject&HistoryEntryManager $historyEntryManager;
@@ -26,6 +27,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
     protected function setUp(): void
     {
         $this->territoryRepository = $this->createMock(TerritoryRepository::class);
+        $this->signalementRepository = $this->createMock(SignalementRepository::class);
 
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
         $this->signalementAddressUpdater = $this->createMock(SignalementAddressUpdater::class);
@@ -36,6 +38,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
     {
         $command = new UpdateSignalementGeolocalisationCommand(
             $this->territoryRepository,
+            $this->signalementRepository,
             $this->entityManager,
             $this->signalementAddressUpdater,
             $this->historyEntryManager,
@@ -57,11 +60,6 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
             ->method('findBy')
             ->willReturn($this->getSignalements());
 
-        $this->entityManager
-            ->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($signalementRepository);
-
         $this->signalementAddressUpdater
             ->expects($this->once())
             ->method('updateAddressOccupantFromBanData');
@@ -72,6 +70,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
 
         $command = new UpdateSignalementGeolocalisationCommand(
             $this->territoryRepository,
+            $signalementRepository,
             $this->entityManager,
             $this->signalementAddressUpdater,
             $this->historyEntryManager,
@@ -91,10 +90,6 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
         $signalementRepository = $this->createMock(SignalementRepository::class);
 
         $this->createMockSignalementRepository($signalementRepository, 2, $providerMethod, $option);
-        $this->entityManager
-            ->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($signalementRepository);
 
         $this->signalementAddressUpdater
             ->expects($this->atMost(2))
@@ -106,6 +101,7 @@ class UpdateSignalementGeolocalisationCommandTest extends TestCase
 
         $command = new UpdateSignalementGeolocalisationCommand(
             $this->territoryRepository,
+            $signalementRepository,
             $this->entityManager,
             $this->signalementAddressUpdater,
             $this->historyEntryManager,
