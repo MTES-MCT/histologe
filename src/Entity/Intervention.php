@@ -117,7 +117,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
      *      'concludeProcedure' ⇒ ['old' ⇒ 'Autre', 'new' ⇒ 'Insalubrité'],
      *  ]
      */
-    private ?array $changesForMail = [];
+    private array $changesForMail = [];
 
     public function __construct()
     {

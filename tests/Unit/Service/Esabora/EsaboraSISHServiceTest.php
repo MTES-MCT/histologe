@@ -24,7 +24,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
     private MockObject&UploadHandlerService $uploadHandlerService;
     private MockObject&LoggerInterface $logger;
-    private ?string $tempFilepath;
+    private string $tempFilepath;
 
     protected function setUp(): void
     {

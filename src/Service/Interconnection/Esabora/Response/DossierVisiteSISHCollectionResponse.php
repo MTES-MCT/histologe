@@ -9,7 +9,6 @@ class DossierVisiteSISHCollectionResponse implements DossierCollectionResponseIn
 {
     private int $statusCode;
     private string $sasEtat;
-    private ?string $errorReason = null;
 
     /** @var DossierVisiteSISH[] */
     private array $collection = [];
@@ -42,7 +41,7 @@ class DossierVisiteSISHCollectionResponse implements DossierCollectionResponseIn
 
     public function getErrorReason(): ?string
     {
-        return $this->errorReason;
+        return null;
     }
 
     /**

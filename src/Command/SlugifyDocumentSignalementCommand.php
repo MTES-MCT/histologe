@@ -44,7 +44,7 @@ class SlugifyDocumentSignalementCommand extends Command
     private ?string $sourceFile = null;
     private ?string $destinationFile = null;
     /** @var array<string> */
-    private ?array $errors = [];
+    private array $errors = [];
 
     public function __construct(
         private ParameterBagInterface $parameterBag,

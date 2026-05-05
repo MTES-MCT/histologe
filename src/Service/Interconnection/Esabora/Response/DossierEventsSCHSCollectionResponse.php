@@ -9,7 +9,6 @@ class DossierEventsSCHSCollectionResponse
     private int $statusCode;
     private ?int $searchId;
     private ?string $documentTypeName = null;
-    private ?string $errorReason = null;
 
     /** @var DossierEventSCHS[] */
     private array $collection = [];
@@ -47,7 +46,7 @@ class DossierEventsSCHSCollectionResponse
 
     public function getErrorReason(): ?string
     {
-        return $this->errorReason;
+        return null;
     }
 
     public function getDocumentTypeName(): ?string

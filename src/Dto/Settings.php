@@ -51,9 +51,9 @@ class Settings
     #[Groups('settings:read')]
     private array $zones = [];
     #[Groups('settings:read')]
-    private ?bool $hasSignalementImported = false;
+    private bool $hasSignalementImported = false;
     #[Groups('settings:read')]
-    private ?bool $isMultiTerritoire = false;
+    private bool $isMultiTerritoire = false;
     /**
      * @var array<int, mixed>
      */
@@ -186,7 +186,7 @@ class Settings
         return $this->hasSignalementImported;
     }
 
-    public function getIsMultiTerritoire(): ?bool
+    public function getIsMultiTerritoire(): bool
     {
         return $this->isMultiTerritoire;
     }

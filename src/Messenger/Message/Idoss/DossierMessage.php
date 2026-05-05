@@ -27,7 +27,7 @@ final class DossierMessage implements DossierMessageInterface
      * @var array<string, mixed>
      */
     private array $occupant;
-    private ?string $adresse1;
+    private string $adresse1;
     private ?string $adresse2;
     /**
      * @var array<string, ?string>
@@ -41,7 +41,7 @@ final class DossierMessage implements DossierMessageInterface
     private ?float $montantLoyer;
     private string $construitAv1949 = 'ne sait pas';
     private ?int $nbrPieceLogement;
-    private ?int $nbrEtages;
+    private int $nbrEtages;
     /**
      * @var array<string, mixed>
      */
@@ -193,7 +193,7 @@ final class DossierMessage implements DossierMessageInterface
         return $this->occupant;
     }
 
-    public function getAdresse1(): ?string
+    public function getAdresse1(): string
     {
         return $this->adresse1;
     }
@@ -251,7 +251,7 @@ final class DossierMessage implements DossierMessageInterface
         return $this->nbrPieceLogement;
     }
 
-    public function getNbrEtages(): ?int
+    public function getNbrEtages(): int
     {
         return $this->nbrEtages;
     }
