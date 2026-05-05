@@ -18,18 +18,18 @@ class UserSignalementSubscription implements EntityHistoryInterface
 
     #[ORM\ManyToOne(inversedBy: 'userSignalementSubscriptions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private User $user;
 
     #[ORM\ManyToOne(inversedBy: 'userSignalementSubscriptions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Signalement $signalement = null;
+    private Signalement $signalement;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $createdBy = null;
+    private User $createdBy;
 
     #[ORM\Column]
     private ?bool $isLegacy = null;

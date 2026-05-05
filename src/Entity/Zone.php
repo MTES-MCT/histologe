@@ -39,7 +39,7 @@ class Zone implements EntityHistoryInterface
     #[ORM\ManyToOne(inversedBy: 'zones')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank(message: 'Merci de sélectionner un territoire.')]
-    private ?Territory $territory = null;
+    private Territory $territory;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
@@ -55,7 +55,7 @@ class Zone implements EntityHistoryInterface
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $createdBy = null;
+    private User $createdBy;
 
     /**
      * @var Collection<int, Partner>

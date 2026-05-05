@@ -47,7 +47,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
 
     #[ORM\ManyToOne(inversedBy: 'interventions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Signalement $signalement = null;
+    private Signalement $signalement;
 
     #[ORM\ManyToOne(inversedBy: 'interventions')]
     private ?Partner $partner = null;

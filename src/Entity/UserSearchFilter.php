@@ -30,7 +30,7 @@ class UserSearchFilter implements EntityHistoryInterface
 
     #[ORM\ManyToOne(inversedBy: 'userSearchFilters')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private User $user;
 
     #[ORM\Column(length: 50)]
     #[Assert\Length(max: 50)]

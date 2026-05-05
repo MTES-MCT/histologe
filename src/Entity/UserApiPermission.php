@@ -20,7 +20,7 @@ class UserApiPermission
 
     #[ORM\ManyToOne(inversedBy: 'userApiPermissions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private User $user;
 
     #[ORM\ManyToOne]
     private ?Territory $territory = null;

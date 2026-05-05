@@ -16,7 +16,7 @@ class SuiviFile
 
     #[ORM\ManyToOne(inversedBy: 'suiviFiles')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Suivi $suivi = null;
+    private Suivi $suivi;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]

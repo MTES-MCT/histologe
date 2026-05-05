@@ -21,7 +21,7 @@ class ApiUserToken implements EntityHistoryInterface
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'apiUserTokens')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $ownedBy = null;
+    private User $ownedBy;
 
     #[ORM\Column(length: 64, unique: true)]
     private ?string $token = null;

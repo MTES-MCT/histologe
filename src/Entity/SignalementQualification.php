@@ -17,7 +17,7 @@ class SignalementQualification
 
     #[ORM\ManyToOne(inversedBy: 'signalementQualifications')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Signalement $signalement = null;
+    private Signalement $signalement;
 
     #[ORM\Column(type: 'string', enumType: Qualification::class)]
     private ?Qualification $qualification = null;

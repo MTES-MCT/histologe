@@ -18,11 +18,11 @@ class UserPartner implements EntityHistoryInterface
 
     #[ORM\ManyToOne(inversedBy: 'userPartners')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private User $user;
 
     #[ORM\ManyToOne(inversedBy: 'userPartners')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Partner $partner = null;
+    private Partner $partner;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;

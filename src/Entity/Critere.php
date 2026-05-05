@@ -26,7 +26,7 @@ class Critere
 
     #[ORM\ManyToOne(targetEntity: Situation::class, inversedBy: 'criteres')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Situation $situation = null;
+    private Situation $situation;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private ?\DateTimeImmutable $createdAt = null;

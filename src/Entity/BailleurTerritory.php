@@ -16,11 +16,11 @@ class BailleurTerritory
 
     #[ORM\ManyToOne(inversedBy: 'bailleurTerritories')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Bailleur $bailleur = null;
+    private Bailleur $bailleur;
 
     #[ORM\ManyToOne(inversedBy: 'bailleurTerritories')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Territory $territory = null;
+    private Territory $territory;
 
     public function getId(): ?int
     {

@@ -75,7 +75,7 @@ class Suivi implements EntityHistoryInterface
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Signalement $signalement = null;
+    private Signalement $signalement;
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $context = null;

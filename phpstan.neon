@@ -23,8 +23,6 @@ parameters:
 		# Ignore PHPStan 2.0 strictness - to be fixed gradually
 		-
 			identifier: doctrine.columnType #116 errors remaining
-		-
-			identifier: doctrine.associationType #26 errors remaining
 		# PHPStan false positives with PHPUnit 13
 		-
 			message: '#Call to an undefined method PHPUnit\\Framework\\MockObject\\InvocationStubber::with\(\)#'

@@ -37,7 +37,7 @@ class DesordreCritere
 
     #[ORM\ManyToOne(inversedBy: 'desordreCriteres')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?DesordreCategorie $desordreCategorie = null;
+    private DesordreCategorie $desordreCategorie;
 
     /** @var Collection<int, DesordrePrecision> $desordrePrecisions */
     #[ORM\OneToMany(mappedBy: 'desordreCritere', targetEntity: DesordrePrecision::class, orphanRemoval: true)]

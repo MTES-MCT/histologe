@@ -41,7 +41,7 @@ class Tag implements EntityHistoryInterface
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'tags')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank()]
-    private ?Territory $territory = null;
+    private Territory $territory;
 
     public function __construct()
     {

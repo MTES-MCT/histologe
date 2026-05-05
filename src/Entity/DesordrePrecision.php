@@ -40,7 +40,7 @@ class DesordrePrecision
 
     #[ORM\ManyToOne(inversedBy: 'desordrePrecisions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?DesordreCritere $desordreCritere = null;
+    private DesordreCritere $desordreCritere;
 
     #[ORM\Column(length: 255)]
     private ?string $desordrePrecisionSlug = null;

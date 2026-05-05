@@ -30,7 +30,7 @@ class AutoAffectationRule implements EntityHistoryInterface
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'autoAffectationRules')]
     #[ORM\JoinColumn()]
     #[Assert\NotBlank(message: 'Merci de choisir un territoire.')]
-    private Territory $territory;
+    private ?Territory $territory;
 
     #[ORM\Column(type: 'string', options: ['comment' => 'Value possible ACTIVE or ARCHIVED'])]
     #[Assert\NotBlank(message: 'Merci de choisir un statut.')]
