@@ -122,7 +122,7 @@ jobs:
             export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
           fi
           echo "Using Chrome at: $CHROME_PATH"
-          npx lhci autorun --config=lighthouse/lighthouserc.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
+          npx lhci autorun --config=tests/lighthouse/lighthouserc.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
         continue-on-error: true
 
       - name: Run Lighthouse CI (authenticated pages)
@@ -134,7 +134,7 @@ jobs:
             export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
           fi
           echo "Using Chrome at: $CHROME_PATH"
-          npx lhci autorun --config=lighthouse/lighthouserc.auth.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
+          npx lhci autorun --config=tests/lighthouse/lighthouserc.auth.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
         continue-on-error: true
 
       - name: Display Lighthouse accessibility issues
