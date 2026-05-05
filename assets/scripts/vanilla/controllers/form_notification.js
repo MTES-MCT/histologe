@@ -17,7 +17,6 @@ histoNotificationsContainer?.addEventListener('change', (event) => {
 });
 
 export function histoReinitNotification() {
-  console.log('histoReinitNotification called');
   histoNotificationSelected = [];
   countNotificationsSelected = 0;
 }
@@ -28,8 +27,7 @@ export function histoRefreshNotificationButtons() {
   if (deleteBtn) {
     countNotificationsSelected = histoNotificationSelected.length;
     if (countNotificationsSelected > 0) {
-      nbSelectedLabel.textContent =
-        countNotificationsSelected + ' sélectionnée(s) :';
+      nbSelectedLabel.textContent = countNotificationsSelected + ' sélectionnée(s) :';
       markAsReadBtn.textContent = 'Marquer comme lue(s)';
       deleteBtn.textContent = 'Supprimer';
       // remove listeners to delete all notifications
@@ -37,8 +35,7 @@ export function histoRefreshNotificationButtons() {
       deleteBtn.parentNode.replaceChild(newDeleteBtn, deleteBtn);
     } else {
       nbSelectedLabel.textContent = '';
-      markAsReadBtn.textContent =
-        'Marquer comme lue(s) (tous)';
+      markAsReadBtn.textContent = 'Marquer comme lue(s) (tous)';
       deleteBtn.textContent = 'Vider';
       // add confirmation to delete all notifications
       deleteBtn.addEventListener('click', (event) => {
