@@ -104,10 +104,10 @@ class SignalementQualification
 
     public function hasDesordres(): bool
     {
-        if (null !== $this->getDesordrePrecisionIds() && \count($this->getDesordrePrecisionIds()) > 0) {
+        if ([] !== $this->getDesordrePrecisionIds() && \count($this->getDesordrePrecisionIds()) > 0) {
             return true;
         }
-        if (null !== $this->getCriticites() && \count($this->getCriticites()) > 0) {
+        if ([] !== $this->getCriticites() && \count($this->getCriticites()) > 0) {
             return true;
         }
 

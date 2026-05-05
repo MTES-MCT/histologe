@@ -20,7 +20,7 @@ class HtmlTargetContentsService
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<int, array<string, string>>
      */
     public function getHtmlTargetContentsForSignalementAddress(Signalement $signalement): array
     {

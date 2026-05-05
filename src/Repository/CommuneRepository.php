@@ -43,7 +43,7 @@ class CommuneRepository extends ServiceEntityRepository
     /**
      * @param array<string> $codesInsee
      *
-     * @return array<string>
+     * @return array<int, Commune>
      */
     public function findDistinctCommuneCodesInseeForCodeInseeList(array $codesInsee): array
     {

@@ -128,7 +128,7 @@ final class DossierMessage implements DossierMessageInterface
         ];
     }
 
-    public function getPartnerId(): ?int
+    public function getPartnerId(): int
     {
         return $this->partnerId;
     }
@@ -157,7 +157,7 @@ final class DossierMessage implements DossierMessageInterface
         return $this;
     }
 
-    public function getSignalementId(): ?int
+    public function getSignalementId(): int
     {
         return $this->signalementId;
     }

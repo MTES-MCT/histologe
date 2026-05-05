@@ -127,11 +127,11 @@ class SignalementImportMapper
      * @param array<int, string>   $columns
      * @param array<string, mixed> $data
      *
-     * @return array<string, mixed>
+     * @return array<int|string, mixed>
      */
     public function map(array $columns, array $data): array
     {
-        /** @var array<string, mixed> $dataMapped */
+        /** @var array<int|string, mixed> $dataMapped */
         $dataMapped = [];
         if (1 === \count($data) || empty($data['Ref signalement'])) {
             return $dataMapped;

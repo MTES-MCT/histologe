@@ -1712,7 +1712,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
                     $result[$affectation->getPartner()->getId()]['statuses'][] = $affectation->getStatut();
                 }
             }
-            $result[$affectation->getPartner()->getId()]['statut'] = max($result[$affectation->getPartner()->getId()]['statuses']);
+            if (isset($result[$affectation->getPartner()->getId()]['statuses'])) {
+                $result[$affectation->getPartner()->getId()]['statut'] = max($result[$affectation->getPartner()->getId()]['statuses']);
+            }
         }
 
         return $result;

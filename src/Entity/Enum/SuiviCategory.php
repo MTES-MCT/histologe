@@ -69,7 +69,7 @@ enum SuiviCategory: string
             self::INJONCTION_BAILLEUR_REPONSE_NON->name => 'Non',
         ];
 
-        return $reponseList[$this->name];
+        return $reponseList[$this->name] ?? '';
     }
 
     /** @return array<string, string> */

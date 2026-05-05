@@ -450,8 +450,8 @@ class SignalementRepository extends ServiceEntityRepository
      */
     public function findAllForApi(User $user, SignalementListQueryParams $signalementListQueryParams): array
     {
-        $page = (int) ($signalementListQueryParams->page ?? SignalementListQueryParams::DEFAULT_PAGE);
-        $limit = (int) ($signalementListQueryParams->limit ?? SignalementListQueryParams::DEFAULT_LIMIT);
+        $page = (int) $signalementListQueryParams->page;
+        $limit = (int) $signalementListQueryParams->limit;
 
         $offset = ($page - 1) * $limit;
         $qb = $this->findForAPIQueryBuilder($user);

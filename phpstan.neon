@@ -22,29 +22,19 @@ parameters:
 			path: src/Entity/*
 		# Ignore PHPStan 2.0 strictness - to be fixed gradually
 		-
-			identifier: doctrine.columnType
+			identifier: doctrine.columnType #116 errors remaining
 		-
-			identifier: doctrine.associationType
+			identifier: doctrine.associationType #26 errors remaining
 		-
-			identifier: property.unusedType
+			identifier: property.unusedType #16 errors remaining
 		-
-			identifier: varTag.nativeType
+			identifier: varTag.nativeType #10 errors remaining
 		-
-			identifier: nullsafe.neverNull
+			identifier: nullsafe.neverNull #8 errors remaining
 		-
-			identifier: parameterByRef.type
+			identifier: parameterByRef.type #6 errors remaining
 		-
-			identifier: notIdentical.alwaysTrue
-		-
-			identifier: return.unusedType
-		-
-			identifier: offsetAccess.notFound
-		-
-			identifier: nullCoalesce.property
-		-
-			identifier: argument.type
-		-
-			identifier: return.type
+			identifier: argument.type #13 errors remaining
 		# PHPStan false positives with PHPUnit 13
 		-
 			message: '#Call to an undefined method PHPUnit\\Framework\\MockObject\\InvocationStubber::with\(\)#'
