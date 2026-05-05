@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -99,9 +100,12 @@ class UserType extends AbstractType
                 'novalidate' => 'true',
             ],
             'constraints' => [
-                new Assert\Callback([$this, 'validateTerritory']),
-                new Assert\Callback([$this, 'validatePartner']),
+                new Assert\Callback(callback: [$this, 'validateTerritory'], groups: ['Default', 'user_partner']),
+                new Assert\Callback(callback: [$this, 'validatePartner'], groups: ['Default', 'user_partner']),
             ],
+            'validation_groups' => static function (Options $options): array {
+                return $options['can_edit_email'] ? ['Default'] : ['user_partner'];
+            },
         ]);
     }
 
@@ -116,18 +120,28 @@ class UserType extends AbstractType
             && (\in_array('ROLE_USER_PARTNER', $user->getRoles())
             || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles())
             || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()))) {
-                $context->addViolation('Le territoire doit être renseigné');
+                $context->buildViolation('Le territoire doit être renseigné')
+                    ->atPath('territory')
+                    ->addViolation();
             }
         }
     }
 
     public function validatePartner(mixed $value, ExecutionContextInterface $context): void
     {
-        $form = $context->getRoot();
-        $tempPartner = $form->get('tempPartner')->getData();
+        if ($value instanceof User) {
+            $user = $value;
+            $form = $context->getRoot();
+            $tempPartner = $form->get('tempPartner')->getData();
 
-        if (null === $tempPartner) {
-            $context->addViolation('Le partenaire doit être renseigné');
+            if ((null === $tempPartner)
+            && (\in_array('ROLE_USER_PARTNER', $user->getRoles())
+            || \in_array('ROLE_ADMIN_PARTNER', $user->getRoles())
+            || \in_array('ROLE_ADMIN_TERRITORY', $user->getRoles()))) {
+                $context->buildViolation('Le partenaire doit être renseigné')
+                    ->atPath('tempPartner')
+                    ->addViolation();
+            }
         }
     }
 }

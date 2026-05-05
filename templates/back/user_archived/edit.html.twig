@@ -1,6 +1,6 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% block title %}Réactivation du compte{% endblock %}
+{% block title %}Réactivation du compte de {{ user.getNomComplet(true) }}{% endblock %}
 
 {% block content %}
     <section class="fr-col-12 fr-pt-4v">
@@ -15,7 +15,7 @@
             'level4Link': '',
             'level4Label': '',
         } %}
-        <h1 class="fr-mb-0">Réactivation du compte {{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left')  }}</h2>
+        <h1 class="fr-mb-0">Réactivation du compte {{ user.email|clean_tagged_text(constant('App\\Entity\\User::SUFFIXE_ARCHIVED'), 'left')  }}</h1>
         <div class="fr-pt-4v">
             {{ include('back/user_archived/_form.html.twig') }}
         </div>
