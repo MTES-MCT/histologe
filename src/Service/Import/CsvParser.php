@@ -39,7 +39,7 @@ class CsvParser
                 (string) $this->options['escape']
             )) !== false) {
                 if ($i >= $this->options['first_line']) {
-                    $row = array_map('trim', $row);
+                    $row = array_map(static fn (?string $value) => trim((string) $value), $row);
                     $rows[] = $row;
                 }
                 ++$i;

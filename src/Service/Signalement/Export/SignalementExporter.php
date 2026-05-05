@@ -86,8 +86,11 @@ readonly class SignalementExporter
     }
 
     /**
-     * @param array<string> $headers
-     * @param array<int>    $keysToRemove
+     * @param array<string>     $headers
+     * @param array<int|string> $keysToRemove
+     *
+     * @param-out array<int|string> $keysToRemove
+     *
      * @param array<string> $selectedColumns
      *
      * @return array<string>

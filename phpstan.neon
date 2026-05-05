@@ -29,12 +29,6 @@ parameters:
 			identifier: property.unusedType #16 errors remaining
 		-
 			identifier: varTag.nativeType #10 errors remaining
-		-
-			identifier: nullsafe.neverNull #8 errors remaining
-		-
-			identifier: parameterByRef.type #6 errors remaining
-		-
-			identifier: argument.type #13 errors remaining
 		# PHPStan false positives with PHPUnit 13
 		-
 			message: '#Call to an undefined method PHPUnit\\Framework\\MockObject\\InvocationStubber::with\(\)#'

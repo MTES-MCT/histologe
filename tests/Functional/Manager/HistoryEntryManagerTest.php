@@ -193,7 +193,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $entry = $historyEntries[$affectations[0]->getPartner()->getNom()][0];
         $this->assertArrayHasKey('Date', $entry);
         $this->assertArrayHasKey('Action', $entry);
-        $this->assertStringContainsString('a réouvert l\'affectation pour le partenaire', $entry['Action']);
+        $this->assertStringContainsString('a réouvert l\'affectation pour le partenaire', (string) $entry['Action']);
         $this->assertArrayHasKey('Id', $entry);
         $this->assertEquals($affectations[0]->getId(), $entry['Id']);
     }

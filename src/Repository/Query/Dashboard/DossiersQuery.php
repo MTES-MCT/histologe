@@ -503,7 +503,7 @@ class DossiersQuery
             $qb->orderBy('MAX(su.createdAt)', 'ASC');
         }
 
-        $qb->setMaxResults($tabQueryParameters?->limit ?? TabDossier::MAX_ITEMS_LIST);
+        $qb->setMaxResults($tabQueryParameters->limit ?? TabDossier::MAX_ITEMS_LIST);
 
         $rows = $qb->getQuery()->getArrayResult();
 

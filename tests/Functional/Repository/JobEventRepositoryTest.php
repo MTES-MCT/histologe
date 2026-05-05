@@ -82,7 +82,7 @@ class JobEventRepositoryTest extends KernelTestCase
     }
 
     /**
-     * @param array<string> $partnerTypes
+     * @param array<int, PartnerType> $partnerTypes
      */
     #[DataProvider('provideDataForFailedJobEvents')]
     public function testFindAffectationsWithFailedJobEvents(string $interfacageType, string $action, array $partnerTypes, int $expectedCount): void

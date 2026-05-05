@@ -413,7 +413,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
-        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
+        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']); // @phpstan-ignore argument.type
 
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertCount(1, $signalement->getSuivis());
@@ -453,7 +453,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals('becam@yopmail.com', $signalementUsager->getOccupant()?->getEmail());
         $this->assertNull($signalementUsager->getDeclarant());
         $this->assertTrue($response['redirect']);
-        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
+        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']); // @phpstan-ignore argument.type
 
         $this->assertNull($signalement->getInseeOccupant());
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
@@ -483,7 +483,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
-        $this->assertStringEndsWith($this->router->generate('back_signalement_drafts'), $response['url']);
+        $this->assertStringEndsWith($this->router->generate('back_signalement_drafts'), $response['url']); // @phpstan-ignore argument.type
 
         $this->assertNull($signalement->getInseeOccupant());
         $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
@@ -514,7 +514,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
-        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']);
+        $this->assertStringEndsWith($this->router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]), $response['url']); // @phpstan-ignore argument.type
 
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertCount(1, $signalement->getSuivis());
@@ -545,7 +545,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
 
         $this->assertTrue($response['redirect']);
-        $this->assertStringEndsWith($this->router->generate('back_signalement_drafts'), $response['url']);
+        $this->assertStringEndsWith($this->router->generate('back_signalement_drafts'), $response['url']); // @phpstan-ignore argument.type
 
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertCount(1, $signalement->getSuivis());

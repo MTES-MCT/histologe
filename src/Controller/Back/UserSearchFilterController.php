@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/bo')]
@@ -150,7 +151,7 @@ class UserSearchFilterController extends AbstractController
     }
 
     /**
-     * @param iterable<ConstraintViolation> $errors
+     * @param iterable<ConstraintViolation>|ConstraintViolationListInterface $errors
      */
     private function jsonValidation(iterable $errors): JsonResponse
     {

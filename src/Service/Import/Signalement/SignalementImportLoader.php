@@ -229,7 +229,7 @@ class SignalementImportLoader
     }
 
     /**
-     * @param array<string, mixed> $dataMapped
+     * @param array<int|string, mixed> $dataMapped
      */
     private function loadTags(Signalement $signalement, Territory $territory, array $dataMapped): void
     {
@@ -240,7 +240,7 @@ class SignalementImportLoader
     }
 
     /**
-     * @param array<string, mixed> $dataMapped
+     * @param array<int|string, mixed> $dataMapped
      *
      * @return ArrayCollection<int, Affectation>
      */
@@ -312,7 +312,7 @@ class SignalementImportLoader
     }
 
     /**
-     * @param array<string, mixed> $dataMapped
+     * @param array<int|string, mixed> $dataMapped
      */
     private function loadSignalementSituation(
         array $dataMapped,
@@ -359,7 +359,7 @@ class SignalementImportLoader
     }
 
     /**
-     * @param array<string, mixed> $dataMapped
+     * @param array<int|string, mixed> $dataMapped
      *
      * @return ArrayCollection<int, Suivi>
      */

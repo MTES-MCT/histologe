@@ -174,7 +174,7 @@ class SignalementAffectationListView
                         && !str_contains($qualificationStatusName, 'NDE')
                         && str_contains($qualificationStatusName, 'CHECK')
                 ) {
-                    $this->qualificationsStatusesLabels[] = QualificationStatus::tryFrom($qualificationStatus)?->label();
+                    $this->qualificationsStatusesLabels[] = QualificationStatus::tryFrom($qualificationStatus)->label();
                 }
             }
         }

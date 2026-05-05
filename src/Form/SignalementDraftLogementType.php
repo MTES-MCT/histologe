@@ -58,16 +58,16 @@ class SignalementDraftLogementType extends AbstractType
         $nombrePieces = $signalement->getTypeCompositionLogement()?->getCompositionLogementNbPieces();
         $pieceAVivre9m = $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesPieceAVivre9m() ?? null;
 
-        $cuisine = $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesCuisine();
-        if ('non' === $cuisine && 'oui' === $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesCuisineCollective()) {
+        $cuisine = $signalement->getTypeCompositionLogement()->getTypeLogementCommoditesCuisine();
+        if ('non' === $cuisine && 'oui' === $signalement->getTypeCompositionLogement()->getTypeLogementCommoditesCuisineCollective()) {
             $cuisine = 'collective';
         }
-        $sdb = $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesSalleDeBain();
-        if ('non' === $sdb && 'oui' === $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesSalleDeBainCollective()) {
+        $sdb = $signalement->getTypeCompositionLogement()->getTypeLogementCommoditesSalleDeBain();
+        if ('non' === $sdb && 'oui' === $signalement->getTypeCompositionLogement()->getTypeLogementCommoditesSalleDeBainCollective()) {
             $sdb = 'collective';
         }
-        $toilettes = $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesWc();
-        if ('non' === $toilettes && 'oui' === $signalement->getTypeCompositionLogement()?->getTypeLogementCommoditesWcCollective()) {
+        $toilettes = $signalement->getTypeCompositionLogement()->getTypeLogementCommoditesWc();
+        if ('non' === $toilettes && 'oui' === $signalement->getTypeCompositionLogement()->getTypeLogementCommoditesWcCollective()) {
             $toilettes = 'collective';
         }
         $toilettesCuisineMemePiece = '';

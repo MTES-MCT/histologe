@@ -91,7 +91,7 @@ class TabDataManager
         $count = $this->dossiersActiviteRecenteQuery
                 ->countLastSignalementsWithUserSuivi($user, $territory);
 
-        $page = $tabQueryParameters?->page ?? 1;
+        $page = $tabQueryParameters->page ?? 1;
         $limit = TabDossier::MAX_ITEMS_DERNIERES_ACTIONS;
         $totalPages = max(1, (int) ceil($count / $limit));
         $page = max(1, min($page, $totalPages));
