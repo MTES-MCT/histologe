@@ -2100,9 +2100,9 @@
         {
           "type": "SignalementFormCheckbox",
           "slug": "utilisation_service_ok_prevenir_bailleur",
-          "label": "Je comprends que {{formStore.props.platformName}}, un ou des services désignés compétents sur le dossier pourront prévenir le bailleur (propriétaire) du logement.",
+          "label": "Je comprends que {{formStore.props.platformName}} ou un service compétent pourront prévenir le bailleur (propriétaire) du logement.",
           "validate": {
-            "message": "Veuillez confirmer que vous comprenez que la plateforme, un ou des services désignés compétents sur le dossier pourront prévenir le bailleur (propriétaire) du logement."
+            "message": "Veuillez confirmer que vous comprenez que la plateforme ou un service compétent pourront prévenir le bailleur (propriétaire) du logement."
           },
           "accessibility": {
             "focus": true
