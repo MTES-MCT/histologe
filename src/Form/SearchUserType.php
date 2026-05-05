@@ -23,6 +23,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class SearchUserType extends AbstractType
 {
     /** @var array<string, string> */
@@ -142,6 +145,9 @@ class SearchUserType extends AbstractType
         ]);
     }
 
+    /**
+     * @param FormInterface<mixed> $builder
+     */
     private function addPartnersField(FormInterface $builder, string|Territory|null $territory, mixed $partnerType): void
     {
         $builder->add('partners', SearchCheckboxType::class, [
@@ -166,6 +172,9 @@ class SearchUserType extends AbstractType
         ]);
     }
 
+    /**
+     * @param FormInterface<mixed> $builder
+     */
     private function desactivePartnerType(FormInterface $builder, mixed $partners): void
     {
         $options = [

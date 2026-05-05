@@ -64,7 +64,7 @@ class PartnerController extends AbstractController
     }
 
     /**
-     * @return array{FormInterface, SearchPartner, Paginator<Partner>}
+     * @return array{FormInterface<mixed>, SearchPartner, Paginator<Partner>}
      */
     private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {

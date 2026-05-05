@@ -36,7 +36,7 @@ class BackCommuneController extends AbstractController
     }
 
     /**
-     * @return array{FormInterface, SearchCommune, Paginator<Commune>}
+     * @return array{FormInterface<mixed>, SearchCommune, Paginator<Commune>}
      */
     private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {

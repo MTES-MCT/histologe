@@ -35,7 +35,7 @@ class TerritoryManagementController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             $territories = $user->getPartnersTerritories();
         }
-        /** @var Paginator $paginatedFiles */
+        /** @var Paginator<\App\Entity\File> $paginatedFiles */
         $paginatedFiles = $fileRepository->findFilteredPaginated($searchTerritoryFiles, $territories, $maxListPagination);
 
         return $this->render('back/territory-management/index.html.twig', [

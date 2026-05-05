@@ -31,6 +31,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class PartnerType extends AbstractType
 {
     private bool $isAdmin = false;
@@ -176,6 +179,9 @@ class PartnerType extends AbstractType
         $this->addBailleurSocialField($form, $territory?->getZip(), $data);
     }
 
+    /**
+     * @param FormBuilderInterface<mixed>|FormInterface<mixed> $builder
+     */
     private function addBailleurSocialField(FormBuilderInterface|FormInterface $builder, ?string $territoryZip = null, mixed $data = null): void
     {
         if (null === $territoryZip) {

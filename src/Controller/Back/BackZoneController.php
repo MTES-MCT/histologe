@@ -39,7 +39,7 @@ class BackZoneController extends AbstractController
     }
 
     /**
-     * @return array{FormInterface, SearchZone, Paginator<Zone>}
+     * @return array{FormInterface<mixed>, SearchZone, Paginator<Zone>}
      */
     private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {

@@ -32,7 +32,7 @@ class ConfigServiceSecoursController extends AbstractController
     }
 
     /**
-     * @return array{FormInterface, SearchServiceSecoursRoute, Paginator<ServiceSecoursRoute>}
+     * @return array{FormInterface<mixed>, SearchServiceSecoursRoute, Paginator<ServiceSecoursRoute>}
      */
     private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {

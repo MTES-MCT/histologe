@@ -26,7 +26,7 @@ class NotificationController extends AbstractController
     }
 
     /**
-     * @return array{FormInterface, SearchNotification, Paginator<Notification>}
+     * @return array{FormInterface<mixed>, SearchNotification, Paginator<Notification>}
      */
     private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {

@@ -32,7 +32,7 @@ class AutoAffectationRuleController extends AbstractController
     }
 
     /**
-     * @return array{FormInterface, SearchAutoAffectationRule, Paginator<AutoAffectationRule>}
+     * @return array{FormInterface<mixed>, SearchAutoAffectationRule, Paginator<AutoAffectationRule>}
      */
     private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {

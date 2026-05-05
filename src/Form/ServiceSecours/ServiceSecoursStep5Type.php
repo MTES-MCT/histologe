@@ -17,6 +17,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class ServiceSecoursStep5Type extends AbstractType
 {
     public function __construct(private readonly DesordreCritereRepository $desordreCritereRepository)
