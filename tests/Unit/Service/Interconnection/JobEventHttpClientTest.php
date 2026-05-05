@@ -53,7 +53,6 @@ class JobEventHttpClientTest extends TestCase
             ),
         ];
 
-        /** @var string $mockResponseBody */
         $mockResponseBody = json_encode([
             'rowList' => [
                 [
@@ -62,6 +61,7 @@ class JobEventHttpClientTest extends TestCase
                     'documentZipContent' => 'base64',
                 ]],
         ]);
+        $this->assertNotFalse($mockResponseBody);
         $mockResponse = new MockResponse($mockResponseBody, [
             'http_code' => Response::HTTP_OK,
         ]);
@@ -175,8 +175,8 @@ class JobEventHttpClientTest extends TestCase
             ),
         ];
 
-        /** @var string $mockResponseBody */
         $mockResponseBody = json_encode(['message' => 'hello wiremock']);
+        $this->assertNotFalse($mockResponseBody);
         $mockResponse = new MockResponse($mockResponseBody, [
             'http_code' => Response::HTTP_OK,
         ]);

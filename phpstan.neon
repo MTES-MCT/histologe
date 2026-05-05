@@ -27,8 +27,6 @@ parameters:
 			identifier: doctrine.associationType #26 errors remaining
 		-
 			identifier: property.unusedType #16 errors remaining
-		-
-			identifier: varTag.nativeType #10 errors remaining
 		# PHPStan false positives with PHPUnit 13
 		-
 			message: '#Call to an undefined method PHPUnit\\Framework\\MockObject\\InvocationStubber::with\(\)#'
