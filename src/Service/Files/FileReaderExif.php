@@ -25,7 +25,14 @@ class FileReaderExif
         $datePriseDeVue = isset($image) ? $image->exif('EXIF.DateTimeOriginal') : null;
         if ($datePriseDeVue) {
             try {
-                $file->setDatePriseDeVue(new \DateTimeImmutable($datePriseDeVue));
+                $date = new \DateTimeImmutable($datePriseDeVue);
+                $year = (int) $date->format('Y');
+                $nextYear = (int) date('Y');
+                ++$nextYear;
+                // ticket #5801 : prevent error type "Invalid datetime format value: '-0001-11-30 00:00:00'"
+                if ($year > 1970 && $year < $nextYear) {
+                    $file->setDatePriseDeVue($date);
+                }
             } catch (\Exception $e) {
                 $this->logger->error('Impossible de convertir la donnée EXIF DateTimeOriginal ("'.$datePriseDeVue.'") en DateTimeImmutable pour le fichier : '.$file->getFilename());
             }
