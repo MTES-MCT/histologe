@@ -64,7 +64,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private ?int $id = null;
 
     #[ORM\Column(type: Types::GUID, unique: true)]
-    private ?string $uuid = null;
+    private string $uuid;
 
     #[ORM\Column(length: 255, unique: true, nullable: true)]
     private ?string $proConnectUserId = null;
@@ -73,7 +73,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration', 'Default'])]
     #[Assert\NotBlank(message: 'Merci de saisir une adresse e-mail.')]
     #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
-    private ?string $email = null;
+    private string $email;
 
     /** @var array<mixed> $roles */
     #[ORM\Column(type: 'json')]
@@ -126,7 +126,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private ?string $prenom = null;
 
     #[ORM\Column(type: 'string', enumType: UserStatus::class)]
-    private ?UserStatus $statut = null;
+    private UserStatus $statut;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $lastLoginAt = null;
@@ -136,11 +136,11 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     #[ORM\Column(type: 'boolean')]
     #[Assert\NotNull(message: 'Merci de choisir une option de notification.')]
-    private ?bool $isMailingSummary;
+    private bool $isMailingSummary;
 
     #[ORM\Column(type: 'boolean')]
     #[Assert\NotNull(message: 'Merci de choisir une option de notification.', groups: ['notification_email'])]
-    private ?bool $isMailingClubEvent;
+    private bool $isMailingClubEvent;
 
     /** @var Collection<int, Notification> $notifications */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class)]
@@ -252,7 +252,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->proConnectUserId;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -575,7 +575,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return mb_strtoupper($this->nom ?? '').' '.ucfirst($this->prenom ?? '');
     }
 
-    public function getStatut(): ?UserStatus
+    public function getStatut(): UserStatus
     {
         return $this->statut;
     }
@@ -621,7 +621,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function getIsMailingSummary(): ?bool
+    public function getIsMailingSummary(): bool
     {
         return $this->isMailingSummary;
     }
@@ -633,7 +633,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function getIsMailingClubEvent(): ?bool
+    public function getIsMailingClubEvent(): bool
     {
         return $this->isMailingClubEvent;
     }
@@ -840,7 +840,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->signalementUsagerOccupants;
     }
 
-    public function getArchivingScheduledAt(): ?\DateTimeInterface
+    public function getArchivingScheduledAt(): ?\DateTimeImmutable
     {
         return $this->archivingScheduledAt;
     }

@@ -26,23 +26,23 @@ class SignalementDraft
     private ?int $id = null;
 
     #[ORM\Column(type: 'string')]
-    private ?string $uuid = null;
+    private string $uuid;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class)]
     private ?ProfileDeclarant $profileDeclarant = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $emailDeclarant = null;
+    private string $emailDeclarant;
 
     #[ORM\Column(length: 255)]
-    private ?string $addressComplete = null;
+    private string $addressComplete;
 
     /** @var array<mixed> $payload */
     #[ORM\Column(type: 'json')]
     private ?array $payload = [];
 
     #[ORM\Column(length: 128)]
-    private ?string $currentStep = null;
+    private string $currentStep;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: SignalementDraftStatus::class)]
     private ?SignalementDraftStatus $status = null;
@@ -74,7 +74,7 @@ class SignalementDraft
         return $this->id;
     }
 
-    public function getUuid(): ?string
+    public function getUuid(): string
     {
         return $this->uuid;
     }
@@ -98,7 +98,7 @@ class SignalementDraft
         return $this;
     }
 
-    public function getEmailDeclarant(): ?string
+    public function getEmailDeclarant(): string
     {
         return $this->emailDeclarant;
     }
@@ -111,7 +111,7 @@ class SignalementDraft
         return $this;
     }
 
-    public function getAddressComplete(): ?string
+    public function getAddressComplete(): string
     {
         return $this->addressComplete;
     }
@@ -138,7 +138,7 @@ class SignalementDraft
         return $this;
     }
 
-    public function getCurrentStep(): ?string
+    public function getCurrentStep(): string
     {
         return $this->currentStep;
     }

@@ -25,14 +25,14 @@ class UserSignalementSubscription implements EntityHistoryInterface
     private Signalement $signalement;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private User $createdBy;
 
     #[ORM\Column]
-    private ?bool $isLegacy = null;
+    private bool $isLegacy;
 
     public function __construct()
     {
@@ -74,7 +74,7 @@ class UserSignalementSubscription implements EntityHistoryInterface
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -98,7 +98,7 @@ class UserSignalementSubscription implements EntityHistoryInterface
         return $this;
     }
 
-    public function isLegacy(): ?bool
+    public function isLegacy(): bool
     {
         return $this->isLegacy;
     }

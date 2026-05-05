@@ -22,13 +22,13 @@ class Notification
     private User $user;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isSeen = null;
+    private bool $isSeen;
 
     #[ORM\Column(
         type: 'string',
         enumType: NotificationType::class,
         options: ['comment' => 'Value possible enum NotificationType'])]
-    private ?NotificationType $type = null;
+    private NotificationType $type;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class)]
     private ?Signalement $signalement = null;
@@ -38,23 +38,23 @@ class Notification
     private ?Suivi $suivi = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private ?\DateTimeImmutable $createdAt = null;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne(targetEntity: Affectation::class, inversedBy: 'notifications')]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Affectation $affectation = null;
 
     #[ORM\Column(type: 'text')]
-    private ?string $description = null;
+    private string $description;
 
     #[ORM\Column]
-    private ?bool $waitMailingSummary = null;
+    private bool $waitMailingSummary;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $mailingSummarySentAt = null;
 
     #[ORM\Column]
-    private ?bool $deleted = null;
+    private bool $deleted;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $seenAt = null;
@@ -88,7 +88,7 @@ class Notification
         return $this;
     }
 
-    public function getIsSeen(): ?bool
+    public function getIsSeen(): bool
     {
         return $this->isSeen;
     }
@@ -124,7 +124,7 @@ class Notification
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -160,7 +160,7 @@ class Notification
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }

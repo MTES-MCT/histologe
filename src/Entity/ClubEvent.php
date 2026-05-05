@@ -20,18 +20,18 @@ class ClubEvent implements EntityHistoryInterface
 
     #[ORM\Column]
     #[Assert\NotBlank()]
-    private ?\DateTimeImmutable $dateEvent = null;
+    private \DateTimeImmutable $dateEvent;
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank()]
     #[Assert\Length(max: 50)]
-    private ?string $name = null;
+    private string $name;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank()]
     #[Assert\Url()]
     #[Assert\Length(max: 255)]
-    private ?string $url = null;
+    private string $url;
 
     /**
      * @var array<string>
@@ -56,7 +56,7 @@ class ClubEvent implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function getDateEvent(): ?\DateTimeImmutable
+    public function getDateEvent(): \DateTimeImmutable
     {
         return $this->dateEvent;
     }
@@ -68,7 +68,7 @@ class ClubEvent implements EntityHistoryInterface
         return $this;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -80,7 +80,7 @@ class ClubEvent implements EntityHistoryInterface
         return $this;
     }
 
-    public function getUrl(): ?string
+    public function getUrl(): string
     {
         return $this->url;
     }

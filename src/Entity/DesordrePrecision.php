@@ -20,7 +20,7 @@ class DesordrePrecision
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?float $coef = null;
+    private float $coef;
 
     #[ORM\Column(nullable: true)]
     private ?bool $isDanger = null;
@@ -43,14 +43,14 @@ class DesordrePrecision
     private DesordreCritere $desordreCritere;
 
     #[ORM\Column(length: 255)]
-    private ?string $desordrePrecisionSlug = null;
+    private string $desordrePrecisionSlug;
 
     /** @var Collection<int, Signalement> $signalement */
     #[ORM\ManyToMany(targetEntity: Signalement::class, mappedBy: 'desordrePrecisions')]
     private Collection $signalement;
 
     #[ORM\Column]
-    private ?bool $configIsUnique = null;
+    private bool $configIsUnique;
 
     public function __construct()
     {
@@ -63,7 +63,7 @@ class DesordrePrecision
         return $this->id;
     }
 
-    public function getCoef(): ?float
+    public function getCoef(): float
     {
         return $this->coef;
     }
@@ -149,7 +149,7 @@ class DesordrePrecision
         return $this;
     }
 
-    public function getDesordrePrecisionSlug(): ?string
+    public function getDesordrePrecisionSlug(): string
     {
         return $this->desordrePrecisionSlug;
     }
@@ -169,7 +169,7 @@ class DesordrePrecision
         return $this->signalement;
     }
 
-    public function getConfigIsUnique(): ?bool
+    public function getConfigIsUnique(): bool
     {
         return $this->configIsUnique;
     }

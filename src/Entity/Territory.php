@@ -21,11 +21,11 @@ class Territory implements EntityHistoryInterface
 
     #[ORM\Column(type: 'string', length: 3)]
     #[Groups(['settings:read'])]
-    private ?string $zip = null;
+    private string $zip;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['settings:read'])]
-    private ?string $name = null;
+    private string $name;
 
     /** @var Collection<int, Partner> $partners */
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Partner::class)]
@@ -77,7 +77,7 @@ class Territory implements EntityHistoryInterface
     private ?string $grilleVisiteFilename = null;
 
     #[ORM\Column]
-    private ?bool $isGrilleVisiteDisabled = false;
+    private bool $isGrilleVisiteDisabled = false;
 
     public function __construct()
     {
@@ -96,7 +96,7 @@ class Territory implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function getZip(): ?string
+    public function getZip(): string
     {
         return $this->zip;
     }
@@ -108,7 +108,7 @@ class Territory implements EntityHistoryInterface
         return $this;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }

@@ -26,7 +26,7 @@ class FailedEmail
     private string $fromEmail;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $fromFullname;
+    private string $fromFullname;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $replyTo;
@@ -57,7 +57,7 @@ class FailedEmail
     private ?\DateTimeImmutable $lastAttemptAt;
 
     #[ORM\Column]
-    private ?bool $isRecipientVisible = null;
+    private bool $isRecipientVisible;
 
     public function __construct()
     {
@@ -114,7 +114,7 @@ class FailedEmail
         return $this;
     }
 
-    public function getFromFullname(): ?string
+    public function getFromFullname(): string
     {
         return $this->fromFullname;
     }
@@ -236,7 +236,7 @@ class FailedEmail
         return $this;
     }
 
-    public function isRecipientVisible(): ?bool
+    public function isRecipientVisible(): bool
     {
         return $this->isRecipientVisible;
     }

@@ -20,7 +20,7 @@ class SignalementQualification
     private Signalement $signalement;
 
     #[ORM\Column(type: 'string', enumType: Qualification::class)]
-    private ?Qualification $qualification = null;
+    private Qualification $qualification;
 
     /** @var array<Criticite> $criticites */
     #[ORM\Column(nullable: true)]
@@ -62,7 +62,7 @@ class SignalementQualification
         return $this;
     }
 
-    public function getQualification(): ?Qualification
+    public function getQualification(): Qualification
     {
         return $this->qualification;
     }

@@ -20,9 +20,6 @@ parameters:
 		-
 			message: '#Property .+::\$id is never written, only read.#'
 			path: src/Entity/*
-		# Ignore PHPStan 2.0 strictness - to be fixed gradually
-		-
-			identifier: doctrine.columnType #116 errors remaining
 		# PHPStan false positives with PHPUnit 13
 		-
 			message: '#Call to an undefined method PHPUnit\\Framework\\MockObject\\InvocationStubber::with\(\)#'

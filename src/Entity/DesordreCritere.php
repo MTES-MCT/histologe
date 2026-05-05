@@ -21,19 +21,19 @@ class DesordreCritere
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $slugCategorie = null;
+    private string $slugCategorie;
 
     #[ORM\Column(length: 255)]
-    private ?string $labelCategorie = null;
+    private string $labelCategorie;
 
     #[ORM\Column(type: 'string', enumType: DesordreCritereZone::class)]
-    private ?DesordreCritereZone $zoneCategorie = null;
+    private DesordreCritereZone $zoneCategorie;
 
     #[ORM\Column(length: 255)]
-    private ?string $slugCritere = null;
+    private string $slugCritere;
 
     #[ORM\Column(length: 255)]
-    private ?string $labelCritere = null;
+    private string $labelCritere;
 
     #[ORM\ManyToOne(inversedBy: 'desordreCriteres')]
     #[ORM\JoinColumn(nullable: false)]
@@ -59,7 +59,7 @@ class DesordreCritere
         return $this->id;
     }
 
-    public function getSlugCategorie(): ?string
+    public function getSlugCategorie(): string
     {
         return $this->slugCategorie;
     }
@@ -71,7 +71,7 @@ class DesordreCritere
         return $this;
     }
 
-    public function getLabelCategorie(): ?string
+    public function getLabelCategorie(): string
     {
         return $this->labelCategorie;
     }
@@ -83,7 +83,7 @@ class DesordreCritere
         return $this;
     }
 
-    public function getZoneCategorie(): ?DesordreCritereZone
+    public function getZoneCategorie(): DesordreCritereZone
     {
         return $this->zoneCategorie;
     }
@@ -95,7 +95,7 @@ class DesordreCritere
         return $this;
     }
 
-    public function getSlugCritere(): ?string
+    public function getSlugCritere(): string
     {
         return $this->slugCritere;
     }
@@ -107,7 +107,7 @@ class DesordreCritere
         return $this;
     }
 
-    public function getLabelCritere(): ?string
+    public function getLabelCritere(): string
     {
         return $this->labelCritere;
     }

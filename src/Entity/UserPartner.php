@@ -25,7 +25,7 @@ class UserPartner implements EntityHistoryInterface
     private Partner $partner;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private \DateTimeImmutable $createdAt;
 
     public function __construct()
     {
@@ -61,7 +61,7 @@ class UserPartner implements EntityHistoryInterface
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }

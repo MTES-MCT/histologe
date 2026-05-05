@@ -19,17 +19,17 @@ class Critere
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $label = null;
+    private string $label;
 
     #[ORM\Column(type: 'text')]
-    private ?string $description = null;
+    private string $description;
 
     #[ORM\ManyToOne(targetEntity: Situation::class, inversedBy: 'criteres')]
     #[ORM\JoinColumn(nullable: false)]
     private Situation $situation;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private ?\DateTimeImmutable $createdAt = null;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $modifiedAt = null;
@@ -41,19 +41,19 @@ class Critere
     private Collection $criticites;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isArchive = null;
+    private bool $isArchive;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isDanger = null;
+    private bool $isDanger;
 
     #[ORM\Column(type: 'integer')]
-    private ?int $coef = null;
+    private int $coef;
 
     #[ORM\Column(type: 'integer')]
-    private ?int $newCoef = null;
+    private int $newCoef;
 
     #[ORM\Column(type: 'integer')]
-    private ?int $type = null;
+    private int $type;
 
     public function __construct()
     {
@@ -66,7 +66,7 @@ class Critere
         return $this->id;
     }
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -78,7 +78,7 @@ class Critere
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -102,7 +102,7 @@ class Critere
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -156,7 +156,7 @@ class Critere
         return $this;
     }
 
-    public function getIsArchive(): ?bool
+    public function getIsArchive(): bool
     {
         return $this->isArchive;
     }
@@ -168,7 +168,7 @@ class Critere
         return $this;
     }
 
-    public function getIsDanger(): ?bool
+    public function getIsDanger(): bool
     {
         return $this->isDanger;
     }
@@ -180,7 +180,7 @@ class Critere
         return $this;
     }
 
-    public function getCoef(): ?int
+    public function getCoef(): int
     {
         return $this->coef;
     }
@@ -192,7 +192,7 @@ class Critere
         return $this;
     }
 
-    public function getNewCoef(): ?int
+    public function getNewCoef(): int
     {
         return $this->newCoef;
     }
@@ -204,7 +204,7 @@ class Critere
         return $this;
     }
 
-    public function getType(): ?int
+    public function getType(): int
     {
         return $this->type;
     }

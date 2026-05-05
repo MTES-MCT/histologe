@@ -36,7 +36,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
-    private ?string $uuid;
+    private string $uuid;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $scheduledAt = null;
@@ -53,10 +53,10 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     private ?Partner $partner = null;
 
     #[ORM\Column(type: 'string', enumType: InterventionType::class)]
-    private ?InterventionType $type = null;
+    private InterventionType $type;
 
     #[ORM\Column(type: 'string')]
-    private ?string $status = null;
+    private string $status;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $commentBeforeVisite = null;
@@ -64,7 +64,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $details = null;
 
-    /** @var array<ProcedureType> $concludeProcedure */
+    /** @var list<ProcedureType> $concludeProcedure */
     #[ORM\Column(type: Types::SIMPLE_ARRAY, length: 255, nullable: true, enumType: ProcedureType::class)]
     private array $concludeProcedure = [];
 
@@ -130,7 +130,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this->id;
     }
 
-    public function getUuid(): ?string
+    public function getUuid(): string
     {
         return $this->uuid;
     }
@@ -211,7 +211,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this;
     }
 
-    public function getType(): ?InterventionType
+    public function getType(): InterventionType
     {
         return $this->type;
     }
@@ -223,7 +223,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): string
     {
         return $this->status;
     }
@@ -259,7 +259,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this;
     }
 
-    /** @return array<ProcedureType> */
+    /** @return list<ProcedureType> */
     public function getConcludeProcedure(): ?array
     {
         return $this->concludeProcedure;

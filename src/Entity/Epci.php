@@ -20,11 +20,11 @@ class Epci
 
     #[ORM\Column(length: 255)]
     #[Groups(['settings:read'])]
-    private ?string $code = null;
+    private string $code;
 
     #[ORM\Column(length: 255)]
     #[Groups(['settings:read'])]
-    private ?string $nom = null;
+    private string $nom;
 
     /** @var Collection<int, Commune> $communes */
     #[ORM\OneToMany(mappedBy: 'epci', targetEntity: Commune::class)]
@@ -47,7 +47,7 @@ class Epci
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getNom(): string
     {
         return $this->nom;
     }
@@ -59,7 +59,7 @@ class Epci
         return $this;
     }
 
-    public function getCode(): ?string
+    public function getCode(): string
     {
         return $this->code;
     }

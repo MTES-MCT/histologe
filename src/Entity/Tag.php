@@ -33,7 +33,7 @@ class Tag implements EntityHistoryInterface
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['settings:read'])]
     #[Assert\NotBlank(message: 'Merci de saisir un nom pour l\'étiquette.')]
-    private ?string $label = null;
+    private string $label;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isArchive = false;
@@ -78,7 +78,7 @@ class Tag implements EntityHistoryInterface
         return $this;
     }
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return $this->label;
     }

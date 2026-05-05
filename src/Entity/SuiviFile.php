@@ -23,7 +23,7 @@ class SuiviFile
     private ?File $file = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    private string $title;
 
     public function getId(): ?int
     {
@@ -54,7 +54,7 @@ class SuiviFile
         return $this;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }

@@ -34,7 +34,7 @@ class UserSearchFilter implements EntityHistoryInterface
 
     #[ORM\Column(length: 50)]
     #[Assert\Length(max: 50)]
-    private ?string $name = null;
+    private string $name;
 
     /**
      * @var array<string, mixed>
@@ -59,7 +59,7 @@ class UserSearchFilter implements EntityHistoryInterface
         return $this;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }

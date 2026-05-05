@@ -22,7 +22,7 @@ class Bailleur
 
     #[ORM\Column(length: 255, unique: true)]
     #[Groups(['settings:read'])]
-    private ?string $name = null;
+    private string $name;
 
     /**
      * @var Collection<int, Signalement>
@@ -63,7 +63,7 @@ class Bailleur
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
