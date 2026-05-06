@@ -40,7 +40,7 @@ class AffectationRepositoryTest extends KernelTestCase
         }
 
         $affectationsSubscribedToEsabora = $affectationRepository->findAffectationSubscribedToEsabora(PartnerType::COMMUNE_SCHS);
-        $this->assertCount(1, $affectationsSubscribedToEsabora);
+        $this->assertCount(2, $affectationsSubscribedToEsabora);
         foreach ($affectationsSubscribedToEsabora as $row) {
             $affectationSubscribedToEsabora = $row['affectation'];
             $this->assertCount(2, $affectationSubscribedToEsabora->getPartner()->getEsaboraCredential());

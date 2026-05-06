@@ -8,7 +8,7 @@
     "Doss_Statut_Abrégé",
     "Doss_Statut",
     "Doss_Etat",
-    "DOss_Cloture"
+    "Doss_Cloture"
   ],
   "keyList": [
     "i1.iaff_id"
@@ -18,7 +18,6 @@
       "columnDataList": [
         "00000000-0000-0000-2022-000000000002",
         "Non importé",
-        null,
         null,
         null,
         null,

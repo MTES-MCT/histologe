@@ -4,6 +4,15 @@ namespace App\Service\Interconnection\Esabora\Response;
 
 class DossierStateSCHSResponse implements DossierResponseInterface
 {
+    public const string COL_SAS_REFERENCE = 'SAS_Référence';
+    public const string COL_SAS_ETAT = 'SAS_Etat';
+    public const string COL_DOSS_ID = 'Doss_ID';
+    public const string COL_DOSS_NUMERO = 'Doss_Numéro';
+    public const string COL_DOSS_STATUT_ABREGE = 'Doss_Statut_Abrégé';
+    public const string COL_DOSS_STATUT = 'Doss_Statut';
+    public const string COL_DOSS_ETAT = 'Doss_Etat';
+    public const string COL_DOSS_CLOTURE = 'Doss_Cloture';
+
     private ?string $sasReference = null;
     private ?string $sasEtat = null;
     private ?string $id = null;
@@ -21,16 +30,23 @@ class DossierStateSCHSResponse implements DossierResponseInterface
     public function __construct(array $response, ?int $statusCode)
     {
         if (!empty($response)) {
-            $data = $response['rowList'][0]['columnDataList'] ?? null;
-            if (null !== $data) {
-                $this->sasReference = $data[0] ?? null;
-                $this->sasEtat = $data[1] ?? null;
-                $this->id = $data[2] ?? null;
-                $this->numero = $data[3] ?? null;
-                $this->statutAbrege = $data[4] ?? null;
-                $this->statut = $data[5] ?? null;
-                $this->etat = $data[6] ?? null;
-                $this->dateCloture = $data[7] ?? null;
+            $columnList = $response['columnList'] ?? null;
+            $valueList = $response['rowList'][0]['columnDataList'] ?? null;
+
+            if (null !== $columnList && null !== $valueList) {
+                if (\count($columnList) !== \count($valueList)) {
+                    $this->errorReason = 'Nombre de colonnes et de données incohérent';
+                } else {
+                    $data = array_combine($columnList, $valueList);
+                    $this->sasReference = $data[self::COL_SAS_REFERENCE] ?? null;
+                    $this->sasEtat = $data[self::COL_SAS_ETAT] ?? null;
+                    $this->id = $data[self::COL_DOSS_ID] ?? null;
+                    $this->numero = $data[self::COL_DOSS_NUMERO] ?? null;
+                    $this->statutAbrege = $data[self::COL_DOSS_STATUT_ABREGE] ?? null;
+                    $this->statut = $data[self::COL_DOSS_STATUT] ?? null;
+                    $this->etat = $data[self::COL_DOSS_ETAT] ?? null;
+                    $this->dateCloture = $data[self::COL_DOSS_CLOTURE] ?? null;
+                }
             } else {
                 $this->errorReason = (string) json_encode($response);
             }
