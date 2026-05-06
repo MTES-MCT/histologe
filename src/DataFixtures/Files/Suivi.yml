@@ -154,6 +154,27 @@ suivis:
   type: 1
   category: "INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE"
 - 
+  created_by: viens@ramontafrez.com
+  description: "Tout a été fait, le locataire est extrêmement satisfait."
+  is_public: 0
+  signalement: "00000000-0000-0000-2025-000000000012"
+  type: 2
+  category: "MESSAGE_BAILLEUR"
+- 
+  created_by: fox.mulder@fbi.com
+  description: "Le bailleur est vraiment casse pied, Je n'en peux plus de lui !"
+  is_public: 1
+  signalement: "00000000-0000-0000-2025-000000000012"
+  type: 2
+  category: "MESSAGE_USAGER"
+- 
+  created_by: user-34-01@signal-logement.fr
+  description: "Suivi privé : le bailleur indique avoir fait les travaux mais le locataire dément."
+  is_public: 0
+  signalement: "00000000-0000-0000-2025-000000000012"
+  type: 3
+  category: "MESSAGE_PARTNER"
+- 
   created_by: admin-partenaire-13-01@signal-logement.fr
   description: "Un suivi pour abonner l'utilisateur."
   is_public: 0

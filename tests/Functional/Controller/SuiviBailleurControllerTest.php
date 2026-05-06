@@ -313,4 +313,62 @@ class SuiviBailleurControllerTest extends WebTestCase
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => self::SIGN_2025_11_UUID]);
         $this->assertEquals(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());
     }
+
+    public function testDossierBailleurCountMessage(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['referenceInjonction' => '2364']);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $urlDossierBailleur = $router->generate('front_dossier_bailleur');
+        $uuid = $signalement->getUuid();
+        if (empty($uuid)) {
+            throw new \RuntimeException('Le signalement n’a pas d’UUID');
+        }
+        $signalementUser = new SignalementBailleur(userIdentifier: $uuid);
+        $client->loginUser($signalementUser, 'login_bailleur');
+        $crawler = $client->request('GET', $urlDossierBailleur);
+        $this->assertCount(3, $crawler->filter('.message-box'));
+    }
+
+    public function testDossierBailleurSendMessage(): void
+    {
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['referenceInjonction' => '2364']);
+
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $urlDossierBailleur = $router->generate('front_dossier_bailleur');
+        $uuid = $signalement->getUuid();
+        if (empty($uuid)) {
+            throw new \RuntimeException('Le signalement n’a pas d’UUID');
+        }
+        $signalementUser = new SignalementBailleur(userIdentifier: $uuid);
+        $client->loginUser($signalementUser, 'login_bailleur');
+        $crawler = $client->request('GET', $urlDossierBailleur);
+        $this->assertCount(3, $crawler->filter('.message-box'));
+
+        $form = $crawler->filter('form[name="message_bailleur"]')->form();
+        $form['message_bailleur[description]'] = 'Un message du bailleur';
+        $client->submit($form);
+
+        $this->assertEmailCount(1);
+        $this->assertResponseIsSuccessful();
+        $responseData = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertTrue($responseData['redirect']);
+        $this->assertTrue($responseData['scrollToTop']);
+        $this->assertStringContainsString('/dossier-bailleur/', $responseData['url']);
+
+        $crawler = $client->request('GET', $urlDossierBailleur);
+        $this->assertCount(4, $crawler->filter('.message-box'));
+    }
 }

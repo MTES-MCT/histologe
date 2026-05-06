@@ -21,10 +21,10 @@ use App\Service\Security\PartnerAuthorizedResolver;
 use App\Utils\Address\CommuneHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -522,20 +522,22 @@ class SignalementRepository extends ServiceEntityRepository
                     )
                 AND s.statut = :statusSignalement
                 AND s.territory_id = :territoryId
-                AND su.type IN (:suiviTypeUsagers)
+                AND su.category IN (:suiviTypeUsagers)
                 GROUP BY s.id
                 HAVING dernier_suivi_date > \''.self::DATE_FEEDBACK_USAGER_ONLINE.'\'
                 ORDER BY dernier_suivi_date DESC
                 LIMIT '.$limit.';';
 
-        $statement = $connexion->prepare($sql);
-
-        return $statement->executeQuery([
-            'statusSignalement' => SignalementStatus::ACTIVE->value,
-            'territoryId' => $territory->getId(),
-            'suiviTypeTechnical' => Suivi::TYPE_TECHNICAL,
-            'suiviTypeUsagers' => SuiviCategory::categoriesSubmittedByUsager(),
-        ])->fetchAllAssociative();
+        return $connexion->executeQuery(
+            $sql,
+            [
+                'statusSignalement' => SignalementStatus::ACTIVE->value,
+                'territoryId' => $territory->getId(),
+                'suiviTypeTechnical' => Suivi::TYPE_TECHNICAL,
+                'suiviTypeUsagers' => array_map(static fn ($c) => $c->value, SuiviCategory::categoriesSubmittedByUsager()),
+            ],
+            ['suiviTypeUsagers' => ArrayParameterType::STRING]
+        )->fetchAllAssociative();
     }
 
     /**

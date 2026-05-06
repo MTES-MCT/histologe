@@ -296,6 +296,25 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_FORBIDDEN, $client->getResponse()->getStatusCode());
     }
 
+    public function testSuiviSignalementMessages(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = self::getContainer()->get('doctrine');
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['referenceInjonction' => '2364']);
+        /** @var RouterInterface $router */
+        $router = self::getContainer()->get(RouterInterface::class);
+        $urlSuiviSignalementUserResponse = $router->generate('front_suivi_signalement_messages', ['code' => $signalement->getCodeSuivi()]);
+
+        $signalementUser = $this->getSignalementUser($signalement);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        $crawler = $client->request('GET', $urlSuiviSignalementUserResponse);
+        $this->assertCount(2, $crawler->filter('.message-box'));
+    }
+
     #[DataProvider('provideStatusSignalement')]
     public function testPostUsagerResponse(string $status): void
     {
