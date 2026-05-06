@@ -34,7 +34,6 @@ class ClubEvent implements EntityHistoryInterface
     private ?string $url = null;
 
     #[ORM\Column]
-    #[Assert\NotBlank()]
     private array $userRoles = [];
 
     /**

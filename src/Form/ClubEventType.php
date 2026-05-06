@@ -59,7 +59,7 @@ class ClubEventType extends AbstractType
             },
         ]);
         $builder->add('userRoles', ChoiceType::class, [
-            'label' => 'Utilisateurs concernés',
+            'label' => 'Utilisateurs concernés (facultatif)',
             'required' => false,
             'multiple' => true,
             'expanded' => true,
