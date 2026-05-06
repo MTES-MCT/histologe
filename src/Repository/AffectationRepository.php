@@ -226,7 +226,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->andWhere('j.action LIKE :action')
         ;
 
-        $subQueryBuilder = $this->_em->createQueryBuilder()
+        $subQueryBuilder = $this->getEntityManager()->createQueryBuilder()
             ->select('1')
             ->from(JobEvent::class, 'j2')
             ->where('j2.signalementId = j.signalementId')
