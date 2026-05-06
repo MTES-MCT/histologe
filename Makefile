@@ -169,7 +169,7 @@ composer: ## Install composer dependencies
 require: ## Symfony require
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer require $(ARGS)
 
-update: ## Symfony require
+update: ## Symfony update
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer update $(ARGS)
 
 npm-ci: ## Install the dependencies in the local node_modules folder
@@ -261,6 +261,12 @@ es-js-fix: ## Fix vanilla js source code with es-lint --fix
 
 es-js-check: ## Fix vanilla js source code with es-lint --fix-dry-run
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm npm run es-js-check
+
+lighthouse-install: ## Install Lighthouse globally
+	@npm install -g lighthouse
+
+lighthouse-run: ## Run Lighthouse on URL: make lighthouse URL=http://localhost:8000
+	@lighthouse $(URL) --view
 
 ## Tools
 tools-build: ## [Tools] Install tools (Matomo, ...) local environement
