@@ -43,13 +43,13 @@ class DossierStateSISHResponse implements DossierResponseInterface
     {
         if (!empty($response)) {
             $columnList = $response['columnList'] ?? null;
-            $rowList = $response['rowList'][0]['columnDataList'] ?? null;
+            $valueList = $response['rowList'][0]['columnDataList'] ?? null;
 
-            if (null !== $columnList && null !== $rowList) {
-                if (\count($columnList) !== \count($rowList)) {
+            if (null !== $columnList && null !== $valueList) {
+                if (\count($columnList) !== \count($valueList)) {
                     $this->errorReason = 'Nombre de colonnes et de données incohérent';
                 } else {
-                    $data = array_combine($columnList, $rowList);
+                    $data = array_combine($columnList, $valueList);
                     $this->referenceDossier = $data[self::COL_REFERENCE_DOSSIER] ?? null;
                     $this->sasEtat = $data[self::COL_SAS_ETAT] ?? null;
                     $this->sasDateDecision = $data[self::COL_SAS_DATE_DECISION] ?? null;
