@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class UserApiType extends AbstractType
 {
@@ -20,6 +21,11 @@ class UserApiType extends AbstractType
             ->add('email', TextType::class, [
                 'label' => 'Adresse e-mail',
                 'required' => false,
+                'help' => 'Format attendu : exemple@domaine.com',
+                'constraints' => new Assert\NotBlank([
+                    'message' => 'Veuillez saisir une adresse e-mail.',
+                    'groups' => ['registration'],
+                ]),
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Enregistrer',
