@@ -96,15 +96,17 @@ class NotificationController extends AbstractController
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
 
+        $functions = [['name' => 'histoReinitNotification'], ['name' => 'histoRefreshNotificationButtons']];
         if ($request->request->get('selected_notifications')) {
             $notificationRepository->markUserNotificationsAsSeen($user, explode(',', (string) $request->request->get('selected_notifications')));
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les notifications sélectionnées ont bien été marquées comme lues.'];
         } else {
             $notificationRepository->markUserNotificationsAsSeen($user);
             $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Toutes les notifications ont bien été marquées comme lues.'];
         }
         $htmlTargetContents = $this->getHtmlTargetContentsForNotificationAction($request);
 
-        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'htmlTargetContents' => $htmlTargetContents]);
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
     }
 
     #[Route('/notifications/supprimer', name: 'back_notifications_list_delete')]
@@ -121,8 +123,10 @@ class NotificationController extends AbstractController
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
+        $functions = [['name' => 'histoReinitNotification'], ['name' => 'histoRefreshNotificationButtons']];
         if ($request->request->get('selected_notifications')) {
             $notificationRepository->deleteUserNotifications($user, explode(',', (string) $request->request->get('selected_notifications')));
+            $flashMessages[] = ['type' => 'success', 'title' => 'Notifications supprimées', 'message' => 'Les notifications sélectionnées ont bien été supprimées.'];
         } else {
             $notificationRepository->deleteUserNotifications($user);
             $flashMessages[] = ['type' => 'success', 'title' => 'Notifications supprimées', 'message' => 'Toutes les notifications ont bien été supprimées.'];
@@ -130,7 +134,7 @@ class NotificationController extends AbstractController
 
         $htmlTargetContents = $this->getHtmlTargetContentsForNotificationAction($request);
 
-        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'htmlTargetContents' => $htmlTargetContents]);
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
     }
 
     #[Route('/notifications/{id}/supprimer', name: 'back_notifications_delete_notification')]

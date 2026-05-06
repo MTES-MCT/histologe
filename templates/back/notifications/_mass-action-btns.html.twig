@@ -6,7 +6,7 @@
     <input type="hidden" name="csrf_token" value="{{ csrf_token('mark_as_read_'~app.user.id) }}">
     <input type="hidden" name="search_params" value="{{searchParams}}">
 </form>
-<form method="POST" action="{{ path('back_notifications_list_delete') }}" class="simple-ajax-form">
+<form method="POST" action="{{ path('back_notifications_list_delete') }}" class="simple-ajax-form fr-ml-2w">
     <button type="submit" class="fr-btn fr-fi-delete-line fr-btn--danger fr-btn--icon-left" id="delete-notifications-btn">Vider</button>
     <input type="hidden" name="selected_notifications" value="">
     <input type="hidden" name="csrf_token" value="{{ csrf_token('delete_notifications_'~app.user.id) }}">
