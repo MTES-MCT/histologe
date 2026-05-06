@@ -207,7 +207,7 @@ class SuiviBailleurController extends AbstractController
         return $response;
     }
 
-    #[Route('/envoie-message', name: 'front_dossier_bailleur_add_message', methods: ['POST'])]
+    #[Route('/envoi-message', name: 'front_dossier_bailleur_add_message', methods: ['POST'])]
     public function addMessage(
         Request $request,
         SignalementRepository $signalementRepository,
