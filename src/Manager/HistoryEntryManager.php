@@ -26,11 +26,10 @@ use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\TimezoneProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
-class HistoryEntryManager extends Manager
+class HistoryEntryManager
 {
     use DoctrineListenerRemoverTrait;
 
@@ -45,10 +44,8 @@ class HistoryEntryManager extends Manager
         private readonly PartnerRepository $partnerRepository,
         private readonly RequestStack $requestStack,
         private readonly CommandContext $commandContext,
-        ManagerRegistry $managerRegistry,
-        string $entityName = HistoryEntry::class,
+        private readonly EntityManagerInterface $entityManager,
     ) {
-        parent::__construct($managerRegistry, $entityName);
     }
 
     /**
@@ -125,9 +122,7 @@ class HistoryEntryManager extends Manager
 
     public function removeEntityListeners(): void
     {
-        /** @var EntityManagerInterface $objectManager */
-        $objectManager = $this->managerRegistry->getManager();
-        $eventManager = $objectManager->getEventManager();
+        $eventManager = $this->entityManager->getEventManager();
         $this->removeListeners(
             $eventManager,
             EntityHistoryListener::class,

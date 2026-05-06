@@ -10,7 +10,6 @@ use App\Manager\SignalementDraftManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
-use App\Serializer\SignalementDraftRequestSerializer;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -27,7 +26,6 @@ class SignalementDraftManagerTest extends WebTestCase
     private EventDispatcherInterface $eventDispatcher;
     private SignalementDraftManager $signalementDraftManager;
     private UrlGeneratorInterface $urlGenerator;
-    private SignalementDraftRequestSerializer $signalementDraftRequestSerializer;
     private SignalementDraftRepository $signalementDraftRepository;
     private SignalementRepository $signalementRepository;
     private UserManager $userManager;
@@ -43,7 +41,6 @@ class SignalementDraftManagerTest extends WebTestCase
         $this->signalementDraftFactory = static::getContainer()->get(SignalementDraftFactory::class);
         $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);
         $this->urlGenerator = static::getContainer()->get(UrlGeneratorInterface::class);
-        $this->signalementDraftRequestSerializer = static::getContainer()->get(SignalementDraftRequestSerializer::class);
         $this->signalementDraftRepository = static::getContainer()->get(SignalementDraftRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->userManager = static::getContainer()->get(UserManager::class);
@@ -54,7 +51,6 @@ class SignalementDraftManagerTest extends WebTestCase
             $this->eventDispatcher,
             $this->managerRegistry,
             $this->urlGenerator,
-            $this->signalementDraftRequestSerializer,
             $this->signalementDraftRepository,
             $this->signalementRepository,
             $this->userManager,

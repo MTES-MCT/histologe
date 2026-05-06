@@ -4,7 +4,6 @@ namespace App\Tests\Functional\Manager;
 
 use App\Entity\Partner;
 use App\Entity\Signalement;
-use App\Entity\SignalementUsager;
 use App\Entity\User;
 use App\Factory\UserFactory;
 use App\Manager\SignalementUsagerManager;
@@ -16,7 +15,6 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
@@ -32,22 +30,16 @@ class UserManagerTest extends KernelTestCase
     private UserFactory $userFactory;
     private UserManager $userManager;
 
-    protected ManagerRegistry $managerRegistry;
-
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
 
         $this->notificationMailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
-        $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->passwordHasherFactory = static::getContainer()->get(PasswordHasherFactoryInterface::class);
         $this->tokenGenerator = static::getContainer()->get(TokenGeneratorInterface::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        /** @var ManagerRegistry $doctrine */
-        $doctrine = $kernel->getContainer()->get('doctrine');
-
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = $doctrine->getManager();
+        $entityManager = $kernel->getContainer()->get('doctrine')->getManager();
 
         /** @var SignalementUsagerRepository $signalementUsagerRepository */
         $signalementUsagerRepository = self::getContainer()->get(SignalementUsagerRepository::class);
@@ -57,9 +49,7 @@ class UserManagerTest extends KernelTestCase
         $this->entityManager = $entityManager;
         $this->signalementUsagerManager = new SignalementUsagerManager(
             $this->entityManager,
-            $signalementUsagerRepository,
-            $this->managerRegistry,
-            SignalementUsager::class
+            $signalementUsagerRepository
         );
         $this->userFactory = static::getContainer()->get(UserFactory::class);
         $this->userManager = new UserManager(
@@ -67,12 +57,10 @@ class UserManagerTest extends KernelTestCase
             $this->passwordHasherFactory,
             $this->tokenGenerator,
             $this->parameterBag,
-            $this->managerRegistry,
             $this->signalementUsagerManager,
             $this->userFactory,
             $userRepository,
-            $this->entityManager,
-            User::class,
+            $this->entityManager
         );
     }
 

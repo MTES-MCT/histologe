@@ -117,10 +117,6 @@ services:
                   key: '%env(resolve:S3_KEY)%'
                   secret: '%env(resolve:S3_SECRET)%'
 
-    App\Manager\ManagerInterface:
-        alias: App\Manager\Manager
-        public: true
-
     App\Service\Token\TokenGeneratorInterface:
         alias: App\Service\Token\TokenGenerator
 

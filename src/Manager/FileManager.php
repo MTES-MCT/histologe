@@ -9,18 +9,14 @@ use App\Entity\User;
 use App\Factory\FileFactory;
 use App\Repository\FileRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 
-class FileManager extends Manager
+class FileManager
 {
     public function __construct(
         private readonly FileFactory $fileFactory,
         private readonly EntityManagerInterface $entityManager,
         private readonly FileRepository $fileRepository,
-        ManagerRegistry $managerRegistry,
-        string $entityName = File::class,
     ) {
-        parent::__construct($managerRegistry, $entityName);
     }
 
     public function createOrUpdate(

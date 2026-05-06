@@ -7,16 +7,12 @@ use App\Entity\Partner;
 use App\Entity\PopNotification;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 
-class PopNotificationManager extends Manager
+class PopNotificationManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        protected ManagerRegistry $managerRegistry,
-        string $entityName = PopNotification::class,
     ) {
-        parent::__construct($managerRegistry, $entityName);
     }
 
     public function createOrUpdatePopNotification(

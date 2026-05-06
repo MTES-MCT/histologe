@@ -5,17 +5,12 @@ namespace App\Manager;
 use App\Entity\FailedEmail;
 use App\Service\Mailer\NotificationMail;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 
-class FailedEmailManager extends Manager
+class FailedEmailManager
 {
-    public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        protected ManagerRegistry $managerRegistry,
-        string $entityName = FailedEmail::class,
-    ) {
-        parent::__construct($managerRegistry, $entityName);
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
     }
 
     public function create(

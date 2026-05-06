@@ -20,17 +20,15 @@ use App\Repository\InterventionRepository;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-class InterventionManager extends Manager
+class InterventionManager
 {
     public function __construct(
-        protected ManagerRegistry $managerRegistry,
         private readonly InterventionRepository $interventionRepository,
         private readonly InterventionFactory $interventionFactory,
         private readonly PartnerManager $partnerManager,
@@ -42,9 +40,7 @@ class InterventionManager extends Manager
         private readonly EntityManagerInterface $entityManager,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
-        string $entityName = Intervention::class,
     ) {
-        parent::__construct($managerRegistry, $entityName);
     }
 
     /**

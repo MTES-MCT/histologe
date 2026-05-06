@@ -14,7 +14,6 @@ use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Utils\DictionaryProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\ClockInterface;
@@ -25,7 +24,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class SuiviManagerTest extends KernelTestCase
 {
     private const string REF_SIGNALEMENT = '2022-8';
-    private ManagerRegistry $managerRegistry;
     private EventDispatcherInterface $eventDispatcherInterface;
     private Security $security;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
@@ -40,7 +38,6 @@ class SuiviManagerTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->eventDispatcherInterface = static::getContainer()->get(EventDispatcherInterface::class);
         $this->security = static::getContainer()->get(Security::class);
         $this->htmlSanitizerInterface = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
@@ -51,7 +48,6 @@ class SuiviManagerTest extends KernelTestCase
         $this->dictionaryProvider = static::getContainer()->get(DictionaryProvider::class);
         $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->suiviManager = new SuiviManager(
-            $this->managerRegistry,
             $this->eventDispatcherInterface,
             $this->entityManager,
             $this->security,
@@ -61,19 +57,18 @@ class SuiviManagerTest extends KernelTestCase
             true,
             static::getContainer()->get(ClockInterface::class),
             $this->dictionaryProvider,
-            Suivi::class,
         );
     }
 
     public function testCreateSuivi(): void
     {
         /** @var Signalement $signalement */
-        $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(
             ['reference' => self::REF_SIGNALEMENT]
         );
 
         /** @var UserRepository $userRepository */
-        $userRepository = $this->managerRegistry->getRepository(User::class);
+        $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'user-13-03@signal-logement.fr']);
 
         $countSuivisBeforeCreate = $signalement->getSuivis()->count();
@@ -107,7 +102,7 @@ class SuiviManagerTest extends KernelTestCase
     public function testCreateSuiviWithImageBase64(): void
     {
         /** @var Signalement $signalement */
-        $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(
             ['reference' => self::REF_SIGNALEMENT]
         );
 
@@ -126,7 +121,7 @@ class SuiviManagerTest extends KernelTestCase
 
     public function testCreateSuiviWithAutoSubscription(): void
     {
-        $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000008']);
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000008']);
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-34-02@signal-logement.fr']);
 
         $suivi = $this->suiviManager->createSuivi(
@@ -149,13 +144,13 @@ class SuiviManagerTest extends KernelTestCase
     public function testCreateSuiviLogementVacant(): void
     {
         /** @var Signalement $signalement */
-        $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(
             ['reference' => self::REF_SIGNALEMENT]
         );
         $signalement->setIsLogementVacant(true);
 
         /** @var UserRepository $userRepository */
-        $userRepository = $this->managerRegistry->getRepository(User::class);
+        $userRepository = $this->entityManager->getRepository(User::class);
         $user = $userRepository->findOneBy(['email' => 'user-13-03@signal-logement.fr']);
 
         $countSuivisBeforeCreate = $signalement->getSuivis()->count();

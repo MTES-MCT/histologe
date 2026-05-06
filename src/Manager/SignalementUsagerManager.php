@@ -7,17 +7,13 @@ use App\Entity\SignalementUsager;
 use App\Entity\User;
 use App\Repository\SignalementUsagerRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 
-class SignalementUsagerManager extends Manager
+class SignalementUsagerManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly SignalementUsagerRepository $signalementUsagerRepository,
-        protected ManagerRegistry $managerRegistry,
-        string $entityName = SignalementUsager::class,
     ) {
-        parent::__construct($managerRegistry, $entityName);
     }
 
     public function createOrUpdate(Signalement $signalement, ?User $userOccupant, ?User $userDeclarant): SignalementUsager

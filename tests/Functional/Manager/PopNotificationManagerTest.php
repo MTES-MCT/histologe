@@ -3,7 +3,6 @@
 namespace App\Tests\Functional\Manager;
 
 use App\Entity\Partner;
-use App\Entity\PopNotification;
 use App\Entity\User;
 use App\Manager\PopNotificationManager;
 use App\Repository\PartnerRepository;
@@ -23,11 +22,7 @@ class PopNotificationManagerTest extends KernelTestCase
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
-        $this->popNotificationManager = new PopNotificationManager(
-            $entityManager,
-            $this->managerRegistry,
-            PopNotification::class,
-        );
+        $this->popNotificationManager = new PopNotificationManager($entityManager);
     }
 
     public function testCreateOrUpdatePopNotification(): void
