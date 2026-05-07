@@ -16,7 +16,6 @@ use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -25,7 +24,6 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class InterventionManagerTest extends KernelTestCase
 {
-    protected ManagerRegistry $managerRegistry;
     private InterventionRepository $interventionRepository;
     private InterventionFactory $interventionFactory;
     private PartnerManager $partnerManager;
@@ -54,7 +52,6 @@ class InterventionManagerTest extends KernelTestCase
         $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
         $this->fileFactory = static::getContainer()->get(FileFactory::class);
         $this->security = static::getContainer()->get('security.helper');
-        $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->logger = static::getContainer()->get(LoggerInterface::class);
@@ -62,7 +59,6 @@ class InterventionManagerTest extends KernelTestCase
         $this->htmlSanitizer = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
         $this->interventionManager = new InterventionManager(
-            $this->managerRegistry,
             $this->interventionRepository,
             $this->interventionFactory,
             $this->partnerManager,

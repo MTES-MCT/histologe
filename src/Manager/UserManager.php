@@ -13,11 +13,10 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Token\TokenGeneratorInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactoryInterface;
 
-class UserManager extends Manager
+class UserManager
 {
     public const OCCUPANT = 'occupant';
     public const DECLARANT = 'déclarant';
@@ -27,14 +26,11 @@ class UserManager extends Manager
         private PasswordHasherFactoryInterface $passwordHasherFactory,
         private TokenGeneratorInterface $tokenGenerator,
         private ParameterBagInterface $parameterBag,
-        protected ManagerRegistry $managerRegistry,
         private SignalementUsagerManager $signalementUsagerManager,
         private UserFactory $userFactory,
         private UserRepository $userRepository,
         private EntityManagerInterface $entityManager,
-        string $entityName = User::class,
     ) {
-        parent::__construct($managerRegistry, $entityName);
     }
 
     public function transferUserToPartner(User $user, Partner $fromPartner, Partner $toPartner): void

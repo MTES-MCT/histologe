@@ -20,19 +20,17 @@ use App\Utils\DateHelper;
 use App\Utils\DictionaryProvider;
 use App\Utils\Sanitizer;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
-class SuiviManager extends Manager
+class SuiviManager
 {
     private const string DATE_FORMAT = 'd/m/Y';
 
     public function __construct(
-        protected ManagerRegistry $managerRegistry,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly EntityManagerInterface $entityManager,
         private readonly Security $security,
@@ -44,9 +42,7 @@ class SuiviManager extends Manager
         private readonly bool $editionSuiviEnable,
         private readonly ClockInterface $clock,
         private readonly DictionaryProvider $dictionaryProvider,
-        string $entityName = Suivi::class,
     ) {
-        parent::__construct($managerRegistry, $entityName);
     }
 
     /**

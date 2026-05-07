@@ -11,7 +11,6 @@ use App\Event\SignalementDraftCompletedEvent;
 use App\Factory\SignalementDraftFactory;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
-use App\Serializer\SignalementDraftRequestSerializer;
 use App\Service\Signalement\SignalementDraftHelper;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,7 +18,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SignalementDraftManager extends Manager
+class SignalementDraftManager
 {
     public const LAST_STEP = 'validation_signalement';
 
@@ -29,13 +28,10 @@ class SignalementDraftManager extends Manager
         protected EventDispatcherInterface $eventDispatcher,
         protected ManagerRegistry $managerRegistry,
         protected UrlGeneratorInterface $urlGenerator,
-        protected SignalementDraftRequestSerializer $signalementDraftRequestSerializer,
         protected SignalementDraftRepository $signalementDraftRepository,
         protected SignalementRepository $signalementRepository,
         protected UserManager $userManager,
-        protected string $entityName = SignalementDraft::class,
     ) {
-        parent::__construct($managerRegistry, $entityName);
     }
 
     /**

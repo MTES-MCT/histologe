@@ -54,15 +54,13 @@ use App\Service\Signalement\ZipcodeProvider;
 use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
-class SignalementManager extends Manager
+class SignalementManager
 {
     public function __construct(
-        protected ManagerRegistry $managerRegistry,
         private readonly Security $security,
         private readonly EntityManagerInterface $entityManager,
         private readonly SignalementImportFactory $signalementImportFactory,
@@ -87,9 +85,7 @@ class SignalementManager extends Manager
         private readonly HtmlSanitizerInterface $htmlSanitizer,
         #[Autowire(env: 'FEATURE_SCHS_DISPATCH_SISH_ENABLE')]
         private readonly bool $featureSchsDispatchSishEnable,
-        string $entityName = Signalement::class,
     ) {
-        parent::__construct($managerRegistry, $entityName);
     }
 
     /**

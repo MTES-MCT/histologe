@@ -2,16 +2,8 @@
 
 namespace App\Manager;
 
-use App\Entity\DesordreCritere;
-use Doctrine\Persistence\ManagerRegistry;
-
-class DesordreCritereManager extends Manager
+class DesordreCritereManager
 {
-    public function __construct(protected ManagerRegistry $managerRegistry, string $entityName = DesordreCritere::class)
-    {
-        parent::__construct($managerRegistry, $entityName);
-    }
-
     /**
      * @param array<string, mixed> $filteredDataOfDraft
      * @param array<int, mixed>    $availableCritereSlugs

@@ -6,7 +6,6 @@ use App\Entity\Enum\PartnerType;
 use App\Entity\JobEvent;
 use App\Manager\JobEventManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,10 +20,8 @@ class JobEventManagerTest extends KernelTestCase
     {
         /** @var EntityManagerInterface $entityManager */
         $entityManager = static::getContainer()->get(EntityManagerInterface::class);
-        /** @var ManagerRegistry $managerRegistry */
-        $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
 
-        $jobEventManager = new JobEventManager($entityManager, $managerRegistry, JobEvent::class);
+        $jobEventManager = new JobEventManager($entityManager);
         $jobEvent = $jobEventManager->createJobEvent(
             'esabora',
             'push_dossier',

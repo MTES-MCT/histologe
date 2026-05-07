@@ -8,8 +8,6 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Manager\AffectationManager;
-use App\Manager\HistoryEntryManager;
-use App\Manager\SuiviManager;
 use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
@@ -26,9 +24,7 @@ class AffectationManagerTest extends WebTestCase
     private const string REF_SIGNALEMENT = '2022-8';
     private KernelBrowser $client;
     private ManagerRegistry $managerRegistry;
-    private SuiviManager $suiviManager;
     private LoggerInterface $logger;
-    private HistoryEntryManager $historyEntryManager;
     private AffectationManager $affectationManager;
     private EventDispatcherInterface $eventDispatcher;
     private InterconnectionBus $interconnectionBus;
@@ -42,9 +38,7 @@ class AffectationManagerTest extends WebTestCase
         self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
-        $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->logger = static::getContainer()->get(LoggerInterface::class);
-        $this->historyEntryManager = static::getContainer()->get(HistoryEntryManager::class);
         $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);
         $this->interconnectionBus = static::getContainer()->get(InterconnectionBus::class);
         $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
@@ -52,17 +46,13 @@ class AffectationManagerTest extends WebTestCase
         $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
         $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->affectationManager = new AffectationManager(
-            $this->managerRegistry,
-            $this->suiviManager,
             $this->logger,
-            $this->historyEntryManager,
             $this->eventDispatcher,
             $this->interconnectionBus,
             $this->userSignalementSubscriptionRepository,
             $this->partnerRepository,
             $this->affectationRepository,
             $this->entityManager,
-            Affectation::class,
         );
     }
 

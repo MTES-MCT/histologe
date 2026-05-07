@@ -16,7 +16,6 @@ use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -35,13 +34,10 @@ class HistoryEntryManagerTest extends WebTestCase
     private UserRepository $userRepository;
     private PartnerRepository $partnerRepository;
 
-    protected ManagerRegistry $managerRegistry;
-
     protected function setUp(): void
     {
         self::ensureKernelShutdown();
         $this->client = static::createClient();
-        $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->historyEntryFactory = static::getContainer()->get(HistoryEntryFactory::class);
         $this->historyEntryRepository = static::getContainer()->get(HistoryEntryRepository::class);
         $this->affectationRepository = static::getContainer()->get(AffectationRepository::class);
@@ -62,8 +58,7 @@ class HistoryEntryManagerTest extends WebTestCase
             $this->partnerRepository,
             $this->requestStack,
             $this->commandContext,
-            $this->managerRegistry,
-            HistoryEntry::class,
+            $this->entityManager,
         );
     }
 
@@ -151,7 +146,7 @@ class HistoryEntryManagerTest extends WebTestCase
     public function testGetAffectationHistory(): void
     {
         /** @var Signalement $signalement */
-        $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(
             ['reference' => '2022-8']
         );
 
@@ -169,7 +164,7 @@ class HistoryEntryManagerTest extends WebTestCase
         $this->client->loginUser($user);
 
         /** @var Signalement $signalement */
-        $signalement = $this->managerRegistry->getRepository(Signalement::class)->findOneBy(
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(
             ['reference' => '2022-8']
         );
         $affectations = $signalement->getAffectations();

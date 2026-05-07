@@ -19,27 +19,21 @@ use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
-class AffectationManager extends Manager
+class AffectationManager
 {
     public function __construct(
-        protected ManagerRegistry $managerRegistry,
-        protected SuiviManager $suiviManager,
-        protected LoggerInterface $logger,
-        protected HistoryEntryManager $historyEntryManager,
+        private readonly LoggerInterface $logger,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly InterconnectionBus $interconnectionBus,
         private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly AffectationRepository $affectationRepository,
         private readonly EntityManagerInterface $entityManager,
-        string $entityName = Affectation::class,
     ) {
-        parent::__construct($this->managerRegistry, $entityName);
     }
 
     /**

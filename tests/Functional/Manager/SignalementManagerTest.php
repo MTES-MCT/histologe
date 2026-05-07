@@ -35,7 +35,6 @@ use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -49,7 +48,6 @@ class SignalementManagerTest extends WebTestCase
 
     private EntityManagerInterface $entityManager;
     private Security $security;
-    private ManagerRegistry $managerRegistry;
     private SignalementImportFactory $signalementImportFactory;
     private QualificationStatusService $qualificationStatusService;
     private SignalementAffectationListViewFactory $signalementAffectationListViewFactory;
@@ -79,7 +77,6 @@ class SignalementManagerTest extends WebTestCase
         /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get('doctrine.orm.entity_manager');
         $this->entityManager = $em;
-        $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->signalementImportFactory = static::getContainer()->get(SignalementImportFactory::class);
         $this->qualificationStatusService = static::getContainer()->get(QualificationStatusService::class);
@@ -105,7 +102,6 @@ class SignalementManagerTest extends WebTestCase
         $this->htmlSanitizerInterface = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
 
         $this->signalementManager = new SignalementManager(
-            $this->managerRegistry,
             $this->security,
             $this->entityManager,
             $this->signalementImportFactory,

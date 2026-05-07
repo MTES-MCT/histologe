@@ -24,7 +24,7 @@ class FileManagerTest extends KernelTestCase
         $fileRepository = static::getContainer()->get(FileRepository::class);
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
-        $fileManager = new FileManager($fileFactory, $entityManager, $fileRepository, $managerRegistry);
+        $fileManager = new FileManager($fileFactory, $entityManager, $fileRepository);
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $managerRegistry->getRepository(Signalement::class);
@@ -53,7 +53,7 @@ class FileManagerTest extends KernelTestCase
         $fileRepository = static::getContainer()->get(FileRepository::class);
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = static::getContainer()->get(ManagerRegistry::class);
-        $fileManager = new FileManager($fileFactory, $entityManager, $fileRepository, $managerRegistry);
+        $fileManager = new FileManager($fileFactory, $entityManager, $fileRepository);
 
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $managerRegistry->getRepository(Signalement::class);
