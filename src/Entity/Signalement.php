@@ -559,8 +559,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\ManyToOne]
     private ?Partner $createdByPartner = null;
 
-    #[ORM\Column(type: 'string', enumType: CreationSource::class)]
-    private CreationSource $creationSource;
+    #[ORM\Column(type: 'string', enumType: CreationSource::class, nullable: true)]
+    private ?CreationSource $creationSource = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $loginBailleur = null;
@@ -3068,7 +3068,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getCreationSource(): CreationSource
+    public function getCreationSource(): ?CreationSource
     {
         return $this->creationSource;
     }
