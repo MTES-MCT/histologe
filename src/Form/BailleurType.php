@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class BailleurType extends AbstractType
 {
@@ -30,11 +31,15 @@ class BailleurType extends AbstractType
         $builder
             ->add('name', null, [
                 'label' => 'Nom',
+                'required' => false,
+                'constraints' => [
+                    new Assert\NotBlank(message: 'Veuillez fournir le nom du bailleur.'),
+                ],
             ])
             ->add('bailleurTerritories', SearchCheckboxType::class, [
                 'class' => Territory::class,
                 'choice_label' => 'zipAndName',
-                'label' => 'Territoires associés',
+                'label' => 'Territoires associés (facultatif)',
                 'noselectionlabel' => 'Sélectionnez un ou plusieurs territoires à associer',
                 'nochoiceslabel' => 'Aucun territoire associable disponible',
                 'mapped' => false,

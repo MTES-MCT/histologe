@@ -47,10 +47,10 @@ class Commune implements EntityHistoryInterface
             return $this->nom;
         }
 
-        return ImportCommune::sanitizeCommuneWithArrondissement($this->nom);
+        return $this->nom ? ImportCommune::sanitizeCommuneWithArrondissement($this->nom) : null;
     }
 
-    public function setNom(string $nom): self
+    public function setNom(?string $nom): self
     {
         $this->nom = $nom;
 
@@ -74,7 +74,7 @@ class Commune implements EntityHistoryInterface
         return $this->codeInsee;
     }
 
-    public function setCodeInsee(string $codeInsee): self
+    public function setCodeInsee(?string $codeInsee): self
     {
         $this->codeInsee = $codeInsee;
 
