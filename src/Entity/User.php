@@ -162,7 +162,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private Collection $signalementUsagerOccupants;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    private ?\DateTimeInterface $archivingScheduledAt = null;
+    private ?\DateTimeImmutable $archivingScheduledAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $anonymizedAt = null;
@@ -280,7 +280,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
      */
     public function getUserIdentifier(): string
     {
-        if (null === $this->email || '' === $this->email) {
+        if ('' === $this->email) {
             throw new \LogicException('User email is not set');
         }
 
@@ -626,7 +626,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->isMailingSummary;
     }
 
-    public function setIsMailingSummary(?bool $isMailingSummary): static
+    public function setIsMailingSummary(bool $isMailingSummary): static
     {
         $this->isMailingSummary = $isMailingSummary;
 
@@ -845,7 +845,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->archivingScheduledAt;
     }
 
-    public function setArchivingScheduledAt(?\DateTimeInterface $archivingScheduledAt): static
+    public function setArchivingScheduledAt(?\DateTimeImmutable $archivingScheduledAt): static
     {
         $this->archivingScheduledAt = $archivingScheduledAt;
 

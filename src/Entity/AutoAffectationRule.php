@@ -234,7 +234,7 @@ class AutoAffectationRule implements EntityHistoryInterface
 
     public function getDescription(bool $isShort = true): string
     {
-        $description = 'Règle d\'auto-affectation pour les partenaires '.$this->getPartnerType()?->label();
+        $description = 'Règle d\'auto-affectation pour les partenaires '.$this->getPartnerType()->label();
         if (!$isShort && $this->getPartnerToExclude()) {
             $description .= ' (à l\'exclusion des partenaires '.implode(',', $this->getPartnerToExclude()).')';
         }

@@ -83,9 +83,9 @@ class Partner implements EntityHistoryInterface
     #[Assert\NotBlank(message: 'Merci de choisir le type de partenaire.')]
     private ?PartnerType $type = null;
 
-    /** @var list<Qualification> $competence */
+    /** @var array<Qualification> $competence */
     #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: Qualification::class)]
-    private array $competence = [];
+    private ?array $competence = [];
 
     #[ORM\Column(nullable: true)]
     private ?bool $isEsaboraActive = null;
@@ -105,7 +105,7 @@ class Partner implements EntityHistoryInterface
     private ?string $idossToken = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?\DateTimeInterface $idossTokenExpirationDate = null;
+    private ?\DateTimeImmutable $idossTokenExpirationDate = null;
 
     #[ORM\ManyToOne(targetEntity: Bailleur::class, inversedBy: 'partners')]
     #[ORM\JoinColumn(nullable: true)]
@@ -363,13 +363,13 @@ class Partner implements EntityHistoryInterface
         return PartnerType::COMMUNE_SCHS === $this->type;
     }
 
-    /** @return list<Qualification> */
+    /** @return array<Qualification> */
     public function getCompetence(): ?array
     {
         return $this->competence;
     }
 
-    /** @param list<Qualification> $competence */
+    /** @param array<Qualification> $competence */
     public function setCompetence(?array $competence): static
     {
         $this->competence = $competence;
@@ -474,7 +474,7 @@ class Partner implements EntityHistoryInterface
         return $this->idossTokenExpirationDate;
     }
 
-    public function setIdossTokenExpirationDate(?\DateTimeInterface $idossTokenExpirationDate): static
+    public function setIdossTokenExpirationDate(?\DateTimeImmutable $idossTokenExpirationDate): static
     {
         $this->idossTokenExpirationDate = $idossTokenExpirationDate;
 

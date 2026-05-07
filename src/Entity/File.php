@@ -251,10 +251,6 @@ class File implements EntityHistoryInterface
      */
     public function getDisplayFilename(): ?string
     {
-        if (null === $this->filename) {
-            return null;
-        }
-
         return basename($this->filename);
     }
 

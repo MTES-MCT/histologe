@@ -77,7 +77,7 @@ class ServiceSecoursRoute implements EntityHistoryInterface
         return $this;
     }
 
-    public function getUuid(): ?Uuid
+    public function getUuid(): string|Uuid
     {
         return $this->uuid;
     }

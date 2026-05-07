@@ -16,7 +16,7 @@ final class DossierMessage implements DossierMessageInterface
     private int $partnerId;
     private ?PartnerType $partnerType;
     private ?string $action;
-    private ?string $signalementUuid;
+    private string $signalementUuid;
     private string $reference;
     private string $dateDepotSignalement;
     /**
@@ -162,7 +162,7 @@ final class DossierMessage implements DossierMessageInterface
         return $this->signalementId;
     }
 
-    public function getSignalementUuid(): ?string
+    public function getSignalementUuid(): string
     {
         return $this->signalementUuid;
     }

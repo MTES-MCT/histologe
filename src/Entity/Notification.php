@@ -44,8 +44,8 @@ class Notification
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Affectation $affectation = null;
 
-    #[ORM\Column(type: 'text')]
-    private string $description;
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $description = null;
 
     #[ORM\Column]
     private bool $waitMailingSummary;
@@ -160,7 +160,7 @@ class Notification
         return $this;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }

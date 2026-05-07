@@ -66,7 +66,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
 
     /** @var list<ProcedureType> $concludeProcedure */
     #[ORM\Column(type: Types::SIMPLE_ARRAY, length: 255, nullable: true, enumType: ProcedureType::class)]
-    private array $concludeProcedure = [];
+    private ?array $concludeProcedure = [];
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $conclusionVisiteEditedAt = null;

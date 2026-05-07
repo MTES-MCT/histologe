@@ -106,7 +106,9 @@ class SignalementDraft
     public function setEmailDeclarant(string $emailDeclarant): static
     {
         $this->emailDeclarant = $emailDeclarant;
-        $this->setChecksum();
+        if (isset($this->addressComplete)) {
+            $this->setChecksum();
+        }
 
         return $this;
     }
@@ -119,7 +121,9 @@ class SignalementDraft
     public function setAddressComplete(?string $addressComplete): static
     {
         $this->addressComplete = $addressComplete;
-        $this->setChecksum();
+        if (isset($this->emailDeclarant)) {
+            $this->setChecksum();
+        }
 
         return $this;
     }

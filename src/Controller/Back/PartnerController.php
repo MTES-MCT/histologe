@@ -481,9 +481,6 @@ class PartnerController extends AbstractController
                 return $this->json(['content' => $content, 'title' => 'Compte existant sur un autre territoire', 'submitLabel' => 'Ajouter l\'utilisateur']);
             }
             $user->setRoles([$formUserPartner->get('role')->getData()]);
-            if (null === $user->getIsMailingSummary()) {
-                $user->setIsMailingSummary(true);
-            }
             if ($userExist instanceof User) {
                 $userExist->setNom($user->getNom());
                 $userExist->setPrenom($user->getPrenom());

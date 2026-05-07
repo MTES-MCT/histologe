@@ -206,7 +206,7 @@ class HistoryEntryManager extends Manager
                     'Id' => 'affectation' === $type ? $id : '-',
                 ];
                 $formattedHistory[$partnerName][] = $formattedEntry;
-                if (null !== $partnerTarget && null !== $partnerTarget->getNom() && $partnerTarget->getNom() !== $partnerName) {
+                if (null !== $partnerTarget && $partnerTarget->getNom() !== $partnerName) {
                     $formattedHistory[$partnerTarget->getNom()][] = $formattedEntry;
                 }
             }

@@ -295,8 +295,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'boolean')]
     private bool $isCguAccepted;
 
-    #[ORM\Column(type: 'boolean')]
-    private bool $isCguTiersAccepted; // null for no invitation, false invitation sent, true accepted
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $isCguTiersAccepted = null; // null for no invitation, false invitation sent, true accepted
 
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
@@ -1503,7 +1503,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getIsCguTiersAccepted(): bool
+    public function getIsCguTiersAccepted(): ?bool
     {
         return $this->isCguTiersAccepted;
     }
