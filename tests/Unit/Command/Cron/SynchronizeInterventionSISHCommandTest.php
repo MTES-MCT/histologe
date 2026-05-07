@@ -3,77 +3,40 @@
 namespace App\Tests\Unit\Command\Cron;
 
 use App\Command\Cron\SynchronizeInterventionSISHCommand;
-use App\Entity\Enum\PartnerType;
-use App\Repository\AffectationRepository;
-use App\Repository\JobEventRepository;
-use App\Service\Interconnection\Esabora\EsaboraManager;
-use App\Service\Interconnection\Esabora\Handler\InterventionArreteServiceHandler;
-use App\Service\Interconnection\Esabora\Handler\InterventionVisiteServiceHandler;
-use App\Service\Mailer\NotificationMailerRegistry;
-use App\Tests\FixturesHelper;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Scheduler\Message\SyncEsaboraSISHInterventionMessage;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class SynchronizeInterventionSISHCommandTest extends KernelTestCase
 {
-    use FixturesHelper;
-
     public function testSyncInterventionDossier(): void
     {
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
-        /** @var MockObject&EsaboraManager $esaboraManagerMock */
-        $esaboraManagerMock = $this->createMock(EsaboraManager::class);
-        /** @var MockObject&SerializerInterface $serializerMock */
-        $serializerMock = $this->createMock(SerializerInterface::class);
-        /** @var MockObject&AffectationRepository $affectationRepositoryMock */
-        $affectationRepositoryMock = $this->createMock(AffectationRepository::class);
-        /** @var MockObject&JobEventRepository $jobEventRepositoryMock */
-        $jobEventRepositoryMock = $this->createMock(JobEventRepository::class);
-        $jobEventRepositoryMock
-            ->expects($this->once())
-            ->method('getReportEsaboraAction')
-            ->willReturn(['success_count' => 4, 'failed_count' => 2]);
-
-        $affectation = $this->getAffectation(PartnerType::ARS);
-        $affectations = [
-            ['affectation' => $affectation, 'signalement_uuid' => $affectation->getUuid()],
-        ];
-        $affectationRepositoryMock
-            ->expects($this->atLeast(1))
-            ->method('findAffectationSubscribedToEsabora')
-            ->willReturn($affectations);
+        /** @var MessageBusInterface&MockObject $messageBusMock */
+        $messageBusMock = $this->createMock(MessageBusInterface::class);
+        $messageBusMock->expects($this->once())
+            ->method('dispatch')
+            ->with($this->isInstanceOf(SyncEsaboraSISHInterventionMessage::class))
+            ->willReturn(new Envelope(new SyncEsaboraSISHInterventionMessage()));
 
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
-        $notificationMailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
-        /** @var MockObject&InterventionVisiteServiceHandler $visiteHandler */
-        $visiteHandler = $this->createMock(InterventionVisiteServiceHandler::class);
-        /** @var MockObject&InterventionArreteServiceHandler $arreteHandler */
-        $arreteHandler = $this->createMock(InterventionArreteServiceHandler::class);
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = static::getContainer()->get('doctrine')->getManager();
+
         $command = $application->add(new SynchronizeInterventionSISHCommand(
-            $esaboraManagerMock,
-            $jobEventRepositoryMock,
-            $affectationRepositoryMock,
-            $serializerMock,
-            $notificationMailerRegistry,
+            $messageBusMock,
             $parameterBag,
-            $entityManager,
-            [$visiteHandler, $arreteHandler],
         ));
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
-        $commandTester->getDisplay();
-
+        $this->assertStringContainsString('SISH Intervention synchronization message dispatched.', $commandTester->getDisplay());
         $commandTester->assertCommandIsSuccessful();
     }
 }
