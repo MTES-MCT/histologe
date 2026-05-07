@@ -18,9 +18,9 @@ class ClubEvent implements EntityHistoryInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     #[Assert\NotBlank()]
-    private \DateTimeImmutable $dateEvent;
+    private ?\DateTimeImmutable $dateEvent = null;
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank()]
@@ -56,7 +56,7 @@ class ClubEvent implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function getDateEvent(): \DateTimeImmutable
+    public function getDateEvent(): ?\DateTimeImmutable
     {
         return $this->dateEvent;
     }

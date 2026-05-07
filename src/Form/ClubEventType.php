@@ -39,8 +39,12 @@ class ClubEventType extends AbstractType
             'label' => 'Date de l\'événement',
             'widget' => 'single_text',
             'required' => false,
-            'getter' => static function (ClubEvent $clubEvent) use ($timezoneProvider): \DateTimeInterface {
+            'getter' => static function (ClubEvent $clubEvent) use ($timezoneProvider): ?\DateTimeInterface {
                 $date = $clubEvent->getDateEvent();
+
+                if (null === $date) {
+                    return null;
+                }
 
                 return $date->setTimezone($timezoneProvider->getDateTimezone());
             },
