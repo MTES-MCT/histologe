@@ -27,24 +27,24 @@ class BailleurTerritory
         return $this->id;
     }
 
-    public function getBailleur(): ?Bailleur
+    public function getBailleur(): Bailleur
     {
         return $this->bailleur;
     }
 
-    public function setBailleur(?Bailleur $bailleur): static
+    public function setBailleur(Bailleur $bailleur): static
     {
         $this->bailleur = $bailleur;
 
         return $this;
     }
 
-    public function getTerritory(): ?Territory
+    public function getTerritory(): Territory
     {
         return $this->territory;
     }
 
-    public function setTerritory(?Territory $territory): static
+    public function setTerritory(Territory $territory): static
     {
         $this->territory = $territory;
 

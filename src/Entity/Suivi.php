@@ -446,12 +446,7 @@ class Suivi implements EntityHistoryInterface
 
     public function removeSuiviFile(SuiviFile $suiviFile): static
     {
-        if ($this->suiviFiles->removeElement($suiviFile)) {
-            // set the owning side to null (unless already changed)
-            if ($suiviFile->getSuivi() === $this) {
-                $suiviFile->setSuivi(null);
-            }
-        }
+        $this->suiviFiles->removeElement($suiviFile);
 
         return $this;
     }

@@ -85,19 +85,19 @@ class Zone implements EntityHistoryInterface
         return $this->area;
     }
 
-    public function setArea(?string $area): static
+    public function setArea(string $area): static
     {
         $this->area = $area;
 
         return $this;
     }
 
-    public function getTerritory(): ?Territory
+    public function getTerritory(): Territory
     {
         return $this->territory;
     }
 
-    public function setTerritory(?Territory $territory): static
+    public function setTerritory(Territory $territory): static
     {
         $this->territory = $territory;
 

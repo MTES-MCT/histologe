@@ -3051,12 +3051,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function removeUserSignalementSubscription(UserSignalementSubscription $userSignalementSubscription): static
     {
-        if ($this->userSignalementSubscriptions->removeElement($userSignalementSubscription)) {
-            // set the owning side to null (unless already changed)
-            if ($userSignalementSubscription->getSignalement() === $this) {
-                $userSignalementSubscription->setSignalement(null);
-            }
-        }
+        $this->userSignalementSubscriptions->removeElement($userSignalementSubscription);
 
         return $this;
     }

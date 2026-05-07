@@ -138,9 +138,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[Assert\NotNull(message: 'Merci de choisir une option de notification.')]
     private bool $isMailingSummary;
 
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     #[Assert\NotNull(message: 'Merci de choisir une option de notification.', groups: ['notification_email'])]
-    private bool $isMailingClubEvent;
+    private ?bool $isMailingClubEvent;
 
     /** @var Collection<int, Notification> $notifications */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class)]
@@ -633,7 +633,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function getIsMailingClubEvent(): bool
+    public function getIsMailingClubEvent(): ?bool
     {
         return $this->isMailingClubEvent;
     }
@@ -1035,12 +1035,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public function removeUserSignalementSubscription(UserSignalementSubscription $userSignalementSubscription): static
     {
-        if ($this->userSignalementSubscriptions->removeElement($userSignalementSubscription)) {
-            // set the owning side to null (unless already changed)
-            if ($userSignalementSubscription->getUser() === $this) {
-                $userSignalementSubscription->setUser(null);
-            }
-        }
+        $this->userSignalementSubscriptions->removeElement($userSignalementSubscription);
 
         return $this;
     }
@@ -1077,12 +1072,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public function removeUserApiPermission(UserApiPermission $userApiPermission): static
     {
-        if ($this->userApiPermissions->removeElement($userApiPermission)) {
-            // set the owning side to null (unless already changed)
-            if ($userApiPermission->getUser() === $this) {
-                $userApiPermission->setUser(null);
-            }
-        }
+        $this->userApiPermissions->removeElement($userApiPermission);
 
         return $this;
     }

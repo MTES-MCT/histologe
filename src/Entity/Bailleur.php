@@ -95,12 +95,7 @@ class Bailleur
 
     public function removeBailleurTerritory(BailleurTerritory $bailleurTerritory): self
     {
-        if ($this->bailleurTerritories->removeElement($bailleurTerritory)) {
-            // set the owning side to null (unless already changed)
-            if ($bailleurTerritory->getBailleur() === $this) {
-                $bailleurTerritory->setBailleur(null);
-            }
-        }
+        $this->bailleurTerritories->removeElement($bailleurTerritory);
 
         return $this;
     }

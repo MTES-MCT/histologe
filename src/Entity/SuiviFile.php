@@ -30,12 +30,12 @@ class SuiviFile
         return $this->id;
     }
 
-    public function getSuivi(): ?Suivi
+    public function getSuivi(): Suivi
     {
         return $this->suivi;
     }
 
-    public function setSuivi(?Suivi $suivi): static
+    public function setSuivi(Suivi $suivi): static
     {
         $this->suivi = $suivi;
 
