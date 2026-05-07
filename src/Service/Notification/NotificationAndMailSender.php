@@ -178,6 +178,13 @@ class NotificationAndMailSender
         $this->createInAppUsagersNotifications(suivi: $suivi);
     }
 
+    public function sendNewSuiviToBailleur(Suivi $suivi): void
+    {
+        $this->suivi = $suivi;
+        $this->signalement = $suivi->getSignalement();
+        $this->sendMailToBailleur();
+    }
+
     public function sendDemandeAbandonProcedureToUsager(Suivi $suivi): void
     {
         $this->suivi = $suivi;
@@ -337,6 +344,19 @@ class NotificationAndMailSender
                     )
                 );
             }
+        }
+    }
+
+    private function sendMailToBailleur(): void
+    {
+        if ($this->signalement->getMailProprio()) {
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_NEW_COMMENT_FOR_BAILLEUR,
+                    to: $this->signalement->getMailProprio(),
+                    signalement: $this->signalement
+                )
+            );
         }
     }
 

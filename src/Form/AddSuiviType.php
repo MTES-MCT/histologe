@@ -31,21 +31,29 @@ class AddSuiviType extends AbstractType
         $isLogementVacant = $signalement->getIsLogementVacant();
 
         $builder->add('isVisibleForUsager', CheckboxType::class, [
-            'label' => 'En cochant cette case, le suivi sera envoyé à l\'usager',
+            'label' => 'Usager (occupant, tiers déclarant)',
             'row_attr' => [
-                'class' => $isNotNotifiable ? 'fr-hidden' : 'fr-toggle',
-            ],
-            'label_attr' => [
-                'class' => 'fr-toggle__label',
-            ],
-            'attr' => [
-                'class' => 'fr-toggle__input',
+                'class' => $isNotNotifiable ? 'fr-hidden' : '',
             ],
             'required' => false,
             'disabled' => $isNotNotifiable || $isLogementVacant,
         ]);
+        if ($signalement->getReferenceInjonction()) {
+            $builder->add('isVisibleForBailleur', CheckboxType::class, [
+                'label' => 'Bailleur',
+                'required' => false,
+            ]);
+        }
+        $builder->add('isVisibleForPartners', CheckboxType::class, [
+            'label' => 'Partenaires affectés au dossier',
+            'required' => false,
+            'mapped' => false,
+            'disabled' => true,
+            'data' => true,
+        ]);
+
         $builder->add('description', null, [
-            'label' => false,
+            'label' => 'Votre message',
             'help' => 'Décrivez la ou les action(s) menée(s). 10 caractères minimum <span class="fr-text-default--error">*</span>',
             'help_html' => true,
             'attr' => [

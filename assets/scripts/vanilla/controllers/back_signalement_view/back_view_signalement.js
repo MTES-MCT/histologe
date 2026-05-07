@@ -278,18 +278,6 @@ signalementAffectationFormRow?.addEventListener('click', (e) => {
   });
 });
 
-const modalsElement = document?.querySelectorAll(
-  '#cloture-modal, #fr-modal-add-suivi, #refus-signalement-modal, #refus-affectation-modal'
-);
-modalsElement.forEach((modalElement) => {
-  modalElement.addEventListener('submit', () => {
-    const submitButton = modalElement.querySelector('.fr-modal--opened [type=submit]');
-    if (submitButton) {
-      submitButton.disabled = true;
-    }
-  });
-});
-
 document.querySelectorAll('button[data-cloture-type]').forEach((button) => {
   button.addEventListener('click', (e) => {
     const element = e.target;
@@ -299,24 +287,26 @@ document.querySelectorAll('button[data-cloture-type]').forEach((button) => {
   });
 });
 
-let modalAddSuiviHasBeenOpened = false;
-document?.getElementById('fr-modal-add-suivi')?.addEventListener('dsfr.disclose', () => {
-  if (modalAddSuiviHasBeenOpened) {
-    return;
+export function updateBtnAddSuiviForm() {
+  const isVisibleForUsagerChoice = document.getElementById('add_suivi_isVisibleForUsager');
+  const isVisibleForBailleurChoice = document.getElementById('add_suivi_isVisibleForBailleur');
+  if (isVisibleForUsagerChoice?.checked && isVisibleForBailleurChoice?.checked) {
+    document.getElementById('signalement-add-suivi-submit').textContent =
+      "Envoyer le suivi à l'usager et au bailleur";
+  } else if (isVisibleForUsagerChoice?.checked) {
+    document.getElementById('signalement-add-suivi-submit').textContent =
+      "Envoyer le suivi à l'usager";
+  } else if (isVisibleForBailleurChoice?.checked) {
+    document.getElementById('signalement-add-suivi-submit').textContent =
+      'Envoyer le suivi au bailleur';
+  } else {
+    document.getElementById('signalement-add-suivi-submit').textContent =
+      'Enregistrer le suivi interne';
   }
-  modalAddSuiviHasBeenOpened = true;
-  document.getElementById('add_suivi_isVisibleForUsager').checked = false;
-  document.getElementById('add_suivi_isVisibleForUsager').dispatchEvent(new Event('change'));
-  tinymce.get('add_suivi_description').setContent('');
-  document.querySelectorAll('input[name="add_suivi[files][]"]').forEach((checkbox) => {
-    checkbox.checked = false;
-  });
-});
+}
 
-document?.getElementById('add_suivi_isVisibleForUsager')?.addEventListeners('change', (e) => {
-  document.getElementById('signalement-add-suivi-submit').textContent = e.target.checked
-    ? "Envoyer le suivi à l'usager"
-    : 'Enregistrer le suivi interne';
+['add_suivi_isVisibleForUsager', 'add_suivi_isVisibleForBailleur'].forEach((id) => {
+  document?.getElementById(id)?.addEventListener('change', updateBtnAddSuiviForm);
 });
 
 document
@@ -454,22 +444,21 @@ document.addEventListener('click', (event) => {
     return;
   }
   const url = btn.dataset.url;
-  document.querySelector('#fr-modal-edit-suivi button[type="submit"]').disabled = true;
-  document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML =
-    'Chargement en cours...';
+  document.querySelector('#panel-edit-suivi button[type="submit"]').disabled = true;
+  document.querySelector('#panel-edit-suivi-form-container').innerHTML = 'Chargement en cours...';
   fetch(url).then((response) => {
     if (response.ok) {
       response.json().then((response) => {
-        document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML = response.content;
-        tinymce.remove('#add_suivi_description');
-        initTinyMCE('#add_suivi_description');
+        document.querySelector('#panel-edit-suivi-form-container').innerHTML = response.content;
+        tinymce.remove('#edit_suivi_description');
+        initTinyMCE('#edit_suivi_description');
         window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
-        document.querySelector('#fr-modal-edit-suivi button[type="submit"]').disabled = false;
+        document.querySelector('#panel-edit-suivi button[type="submit"]').disabled = false;
       });
     } else {
       const content =
         '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">Erreur</span><span class="fr-notice__desc">Une erreur s\'est produite. Veuillez actualiser la page.</span></p></div></div></div>';
-      document.querySelector('#fr-modal-edit-suivi-form-container').innerHTML = content;
+      document.querySelector('#panel-edit-suivi-form-container').innerHTML = content;
     }
   });
 });

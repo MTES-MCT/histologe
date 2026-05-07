@@ -17,7 +17,6 @@
                         {{ form_row(clotureForm.files) }}
                         {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                             {{ form_row(clotureForm.isVisibleForUsager) }} 
-                            {# TODO : à changer dans les prochains tickets #}
                         {% endif %}
                         {{ form_end(clotureForm) }}
                         
