@@ -46,6 +46,8 @@ class ClubEventType extends AbstractType
             },
             'setter' => static function (ClubEvent $clubEvent, ?\DateTimeInterface $date) use ($timezoneProvider): void {
                 if (null === $date) {
+                    $clubEvent->setDateEvent(null);
+
                     return;
                 }
                 $utcDate = new \DateTimeImmutable(
@@ -57,7 +59,7 @@ class ClubEventType extends AbstractType
             },
         ]);
         $builder->add('userRoles', ChoiceType::class, [
-            'label' => 'Utilisateurs concernés',
+            'label' => 'Utilisateurs concernés (facultatif)',
             'required' => false,
             'multiple' => true,
             'expanded' => true,
