@@ -55,8 +55,8 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     #[ORM\Column(type: 'string', enumType: InterventionType::class)]
     private InterventionType $type;
 
-    #[ORM\Column(type: 'string')]
-    private string $status;
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $status = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $commentBeforeVisite = null;
@@ -223,7 +223,7 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
         return $this;
     }
 
-    public function getStatus(): string
+    public function getStatus(): ?string
     {
         return $this->status;
     }
