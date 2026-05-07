@@ -307,8 +307,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', enumType: SignalementStatus::class)]
     private SignalementStatus $statut;
 
-    #[ORM\Column(type: 'string', length: 100)]
-    private string $reference;
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private ?string $reference = null;
 
     #[ORM\Column(type: 'integer', nullable: true, unique: true)]
     private ?int $referenceInjonction = null;
@@ -1575,7 +1575,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getReference(): string
+    public function getReference(): ?string
     {
         if (in_array($this->getStatut(), SignalementStatus::injonctionStatuses())) {
             return $this->getReferenceInjonction();
