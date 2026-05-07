@@ -230,7 +230,7 @@ class SuiviBailleurController extends AbstractController
             $files = $formMessage->get('files')->getData();
             $fileList = $signalementFileProcessor->process($files, DocumentType::MESSAGE_BAILLEUR);
             if (!$signalementFileProcessor->isValid()) {
-                $errors = ['files' => ['errors' => [$signalementFileProcessor->getErrorMessages().'TEST']]];
+                $errors = ['files' => ['errors' => [$signalementFileProcessor->getErrorMessages()]]];
                 $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => $errors];
 
                 return $this->json($response, $response['code']);
