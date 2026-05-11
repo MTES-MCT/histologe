@@ -4,9 +4,14 @@ namespace App\Service\Export;
 
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
+use App\Messenger\Message\ListExportMessage;
 use App\Repository\UserRepository;
 use App\Service\ListFilters\SearchUser;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use App\Service\Signalement\Export\SignalementExportHeader;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Writer\CSV\Options as CsvOptions;
+use OpenSpout\Writer\CSV\Writer as CsvWriter;
+use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 
 readonly class UserExportLoader
 {
@@ -31,57 +36,52 @@ readonly class UserExportLoader
     ) {
     }
 
-    public function load(SearchUser $searchUser): Spreadsheet
+    public function load(SearchUser $searchUser, string $format, string $outputFilePath): void
     {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $headers = array_map(static fn ($column) => $column['label'], self::getColumnForUser($searchUser->getUser()));
-        $sheetData = [$headers];
+        if (ListExportMessage::FORMAT_CSV === $format) {
+            $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: SignalementExportHeader::SEPARATOR));
+        } else {
+            $writer = new XlsxWriter();
+        }
+        $writer->openToFile($outputFilePath);
+
+        $columns = self::getColumnForUser($searchUser->getUser());
+        $headers = array_map(static fn ($column) => $column['label'], $columns);
+        $writer->addRow(Row::fromValues(array_values($headers)));
         /** @var array<int, User> $list */
         $list = $this->userRepository->findFiltered($searchUser);
         foreach ($list as $user) {
-            $rowArray = [];
-            foreach ($headers as $key => $unused) {
-                $territories = '';
-                foreach ($user->getPartnersTerritories() as $territory) {
-                    $territories .= $territory->getZipAndName().', ';
-                }
-                $territories = substr($territories, 0, -2);
-                $partners = '';
-                $partnerTypes = '';
-                foreach ($user->getPartners() as $partner) {
-                    $partners .= $partner->getNom().', ';
-                    if ($partner->getType()) {
-                        $partnerTypes .= $partner->getType()->label().', ';
-                    } else {
-                        $partnerTypes .= 'N/A, ';
-                    }
-                }
-                $partners = substr($partners, 0, -2);
-                $partnerTypes = substr($partnerTypes, 0, -2);
-                $rowArray[] = match ($key) {
-                    'id' => $user->getId(),
-                    'territory' => $territories,
-                    'email' => $user->getEmail(),
-                    'nom' => $user->getNom(),
-                    'prenom' => $user->getPrenom(),
-                    'fonction' => $user->getFonction(),
-                    'partner' => $partners,
-                    'partnerType' => $partnerTypes,
-                    'createdAt' => $user->getCreatedAt()->format('d/m/Y'),
-                    'statut' => UserStatus::ACTIVE === $user->getStatut() ? 'Activé' : 'Non activé',
-                    'lastLoginAt' => $user->getLastLoginAt() ? $user->getLastLoginAt()->format('d/m/Y') : '',
-                    'role' => $user->getRoleLabel(),
-                    'permissionAffectation' => $user->isSuperAdmin() || $user->isTerritoryAdmin() || $user->hasPermissionAffectation() ? 'oui' : 'non',
-                    default => '',
-                };
-            }
-            $sheetData[] = $rowArray;
+            $territories = implode(', ', array_map(
+                static fn ($t) => $t->getZipAndName(),
+                $user->getPartnersTerritories()
+            ));
+            $partners = implode(', ', array_map(
+                static fn ($p) => $p->getNom(),
+                $user->getPartners()->toArray()
+            ));
+            $partnerTypes = implode(', ', array_map(
+                static fn ($p) => $p->getType() ? $p->getType()->label() : 'N/A',
+                $user->getPartners()->toArray()
+            ));
+            $rowArray = array_map(static fn ($key) => match ($key) {
+                'id' => $user->getId(),
+                'territory' => $territories,
+                'email' => $user->getEmail(),
+                'nom' => $user->getNom(),
+                'prenom' => $user->getPrenom(),
+                'fonction' => $user->getFonction(),
+                'partner' => $partners,
+                'partnerType' => $partnerTypes,
+                'createdAt' => $user->getCreatedAt()->format('d/m/Y'),
+                'statut' => UserStatus::ACTIVE === $user->getStatut() ? 'Activé' : 'Non activé',
+                'lastLoginAt' => $user->getLastLoginAt() ? $user->getLastLoginAt()->format('d/m/Y') : '',
+                'role' => $user->getRoleLabel(),
+                'permissionAffectation' => $user->isSuperAdmin() || $user->isTerritoryAdmin() || $user->hasPermissionAffectation() ? 'oui' : 'non',
+                default => '',
+            }, array_keys($columns));
+            $writer->addRow(Row::fromValues($rowArray));
         }
-
-        $sheet->fromArray($sheetData);
-
-        return $spreadsheet;
+        $writer->close();
     }
 
     /**
