@@ -153,10 +153,7 @@ class HistoryEntryManager extends Manager
 
     /**
      * @param array<string, array<array<string, int|string|null>>> $formattedHistory
-     *
-     * @param-out array<string, array<array<string, int|string|null>>> $formattedHistory
-     *
-     * @param array<HistoryEntry> $entries
+     * @param array<HistoryEntry>                                  $entries
      */
     private function formatEntries(array &$formattedHistory, array $entries, string $type, ?Signalement $signalement = null): void
     {
