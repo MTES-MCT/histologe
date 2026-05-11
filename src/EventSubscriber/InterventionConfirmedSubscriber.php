@@ -59,7 +59,6 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
                 description: $description,
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INTERVENTION_HAS_CONCLUSION,
                 partner: $context['createdByPartner'],
                 user: $currentUser,

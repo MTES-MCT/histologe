@@ -376,7 +376,6 @@ class SignalementImportLoader
                     $suivi = $this->suiviManager->createSuivi(
                         signalement: $signalement,
                         description: $description,
-                        type: Suivi::TYPE_PARTNER,
                         category: SuiviCategory::MESSAGE_PARTNER,
                         user: $this->userSystem,
                     );

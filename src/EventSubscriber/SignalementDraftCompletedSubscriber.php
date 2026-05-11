@@ -7,7 +7,6 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
-use App\Entity\Suivi;
 use App\Event\SignalementDraftCompletedEvent;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\NewSignalementCheckFileMessage;
@@ -115,7 +114,6 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: 'Dossier déposé dans le cadre de la démarche accélérée',
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_IS_INJONCTION,
                 user: $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')])
             );

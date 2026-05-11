@@ -5,7 +5,6 @@ namespace App\Command\Cron;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
-use App\Entity\Suivi;
 use App\Entity\User;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
@@ -150,7 +149,6 @@ class SynchronizeIdossCommand extends AbstractCronCommand
                     $suivi = $this->suiviManager->createSuivi(
                         signalement: $signalement,
                         description: $description,
-                        type: Suivi::TYPE_TECHNICAL,
                         category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
                         partner: $affectation->getPartner(),
                         user: $this->adminUser,

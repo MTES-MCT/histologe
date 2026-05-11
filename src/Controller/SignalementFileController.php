@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
@@ -162,7 +161,6 @@ class SignalementFileController extends AbstractController
                 $suiviManager->createSuivi(
                     signalement: $signalement,
                     description: $description,
-                    type: Suivi::TYPE_AUTO,
                     category: SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
                     user: $signalementUser->getUser(),
                 );

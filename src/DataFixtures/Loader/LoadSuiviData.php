@@ -42,7 +42,6 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
@@ -94,7 +93,6 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: $row['description'],
-            type: $row['type'],
             category: $category,
             partner: $createdBy?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $createdBy,

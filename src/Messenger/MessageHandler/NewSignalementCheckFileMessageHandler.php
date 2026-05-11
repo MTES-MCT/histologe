@@ -227,7 +227,6 @@ class NewSignalementCheckFileMessageHandler
         return $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: $this->description,
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::ASK_DOCUMENT,
             user: $userAdmin,
             isVisibleForUsager: true,

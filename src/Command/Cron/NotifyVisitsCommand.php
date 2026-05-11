@@ -69,7 +69,6 @@ class NotifyVisitsCommand extends AbstractCronCommand
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $description,
-                type: Suivi::TYPE_TECHNICAL,
                 category: SuiviCategory::INTERVENTION_PLANNED_REMINDER,
                 isVisibleForUsager: true,
                 context: Suivi::CONTEXT_INTERVENTION,
@@ -123,7 +122,6 @@ class NotifyVisitsCommand extends AbstractCronCommand
                 $suivi = $this->suiviManager->createSuivi(
                     signalement: $affectation->getSignalement(),
                     description: $description,
-                    type: Suivi::TYPE_TECHNICAL,
                     category: SuiviCategory::INTERVENTION_IS_REQUIRED,
                     context: Suivi::CONTEXT_INTERVENTION,
                 );

@@ -68,7 +68,6 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                 $this->suiviManager->createSuivi(
                     signalement: $signalement,
                     description: $description,
-                    type: Suivi::TYPE_AUTO,
                     category: SuiviCategory::INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR,
                 );
             }
@@ -114,7 +113,6 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $description,
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER,
                 isVisibleForUsager: true
             );

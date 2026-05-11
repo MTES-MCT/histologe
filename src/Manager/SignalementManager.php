@@ -988,7 +988,6 @@ class SignalementManager
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: 'Signalement validé',
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             partner: $partner,
             user: $adminUser,

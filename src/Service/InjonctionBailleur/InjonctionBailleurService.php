@@ -10,7 +10,6 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
-use App\Entity\Suivi;
 use App\Manager\AffectationManager;
 use App\Manager\FileManager;
 use App\Manager\SignalementManager;
@@ -57,7 +56,6 @@ class InjonctionBailleurService
                 $this->suiviManager->createSuivi(
                     signalement: $signalement,
                     description: $contenu,
-                    type: Suivi::TYPE_AUTO,
                     category: $category,
                     isVisibleForUsager: true
                 );
@@ -72,7 +70,6 @@ class InjonctionBailleurService
                 $this->suiviManager->createSuivi(
                     signalement: $signalement,
                     description: $contenu,
-                    type: Suivi::TYPE_AUTO,
                     category: $category,
                     isVisibleForUsager: true
                 );
@@ -86,7 +83,6 @@ class InjonctionBailleurService
                 $this->suiviManager->createSuivi(
                     signalement: $signalement,
                     description: $contenu,
-                    type: Suivi::TYPE_AUTO,
                     category: $category,
                     isVisibleForUsager: true
                 );
@@ -99,7 +95,6 @@ class InjonctionBailleurService
                 $this->suiviManager->createSuivi(
                     signalement: $signalement,
                     description: $contenu,
-                    type: Suivi::TYPE_AUTO,
                     category: $category,
                     isVisibleForUsager: true
                 );
@@ -129,7 +124,6 @@ class InjonctionBailleurService
         $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: HtmlCleaner::cleanFrontEndEntry($description),
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
         );
     }
@@ -166,7 +160,6 @@ class InjonctionBailleurService
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: 'Le bailleur souhaite arrêter la procédure d\'injonction, le signalement va être pris en charge par les partenaires compétents.',
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
                 isVisibleForUsager: true
             );
@@ -174,7 +167,6 @@ class InjonctionBailleurService
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: HtmlCleaner::cleanFrontEndEntry($description),
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,
             );
 
@@ -185,7 +177,6 @@ class InjonctionBailleurService
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
                 isVisibleForUsager: true
             );
@@ -193,7 +184,6 @@ class InjonctionBailleurService
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: HtmlCleaner::cleanFrontEndEntry($description),
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,
             );
             $this->entityManager->flush();
