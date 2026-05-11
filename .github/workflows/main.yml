@@ -138,7 +138,7 @@ jobs:
           composer require symfony/orm-pack
           php bin/console --env=test doctrine:database:create --no-interaction
           php bin/console --env=test doctrine:migrations:migrate --no-interaction
-          php bin/console --env=test doctrine:fixtures:load --no-interaction
+          php bin/console --env=test doctrine:fixtures:load --no-interaction -vvv
         env:
           APP_SECRET: ${{ secrets.APP_SECRET }}
           DATABASE_URL: mysql://root:signallogement@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/signal_logement_db
