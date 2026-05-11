@@ -1,6 +1,12 @@
 {% extends 'back/base_bo.html.twig' %}
 
-{% block title %}Route service secours{% endblock %}
+{% block title %}
+    {% if create %}
+        Ajouter une route service secours
+    {% else %}
+        Modifier la route service secours {{ serviceSecoursRoute.name }}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
     <section class="fr-col-12 fr-pt-4v">

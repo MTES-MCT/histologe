@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class CommuneType extends AbstractType
 {
@@ -28,6 +29,10 @@ class CommuneType extends AbstractType
             ])
             ->add('nom', null, [
                 'label' => 'Nom',
+                'required' => false,
+                'constraints' => [
+                    new Assert\NotBlank(message: 'Veuillez fournir le nom de la commune.'),
+                ],
             ])
             ->add('epci', EntityType::class, [
                 'class' => Epci::class,
@@ -35,7 +40,7 @@ class CommuneType extends AbstractType
                     return $er->createQueryBuilder('e')->orderBy('e.nom', 'ASC');
                 },
                 'choice_label' => 'nom',
-                'label' => 'EPCI',
+                'label' => 'EPCI (facultatif)',
                 'required' => false,
             ])
             ->add('codePostal', null, [
@@ -44,6 +49,10 @@ class CommuneType extends AbstractType
             ])
             ->add('codeInsee', null, [
                 'label' => 'Code INSEE',
+                'required' => false,
+                'constraints' => [
+                    new Assert\NotBlank(message: 'Veuillez fournir le code INSEE de la commune.'),
+                ],
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Valider',
