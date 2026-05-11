@@ -75,6 +75,11 @@ jobs:
       - name: Copy CI environment file
         run: cp .env.ci .env
 
+      - name: Debug SIGNATURE_KEY
+        run: |
+          echo "SIGNATURE_KEY from .env:"
+          grep SIGNATURE_KEY .env | cut -d '=' -f2-
+
       # https://github.com/shivammathur/setup-php (community)
       - name: Setup PHP, extensions and composer with shivammathur/setup-php
         uses: shivammathur/setup-php@v2
