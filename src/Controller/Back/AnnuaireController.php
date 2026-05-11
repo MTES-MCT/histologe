@@ -4,16 +4,21 @@ namespace App\Controller\Back;
 
 use App\Entity\User;
 use App\Form\SearchAnnuaireAgentType;
+use App\Messenger\Message\ListExportMessage;
 use App\Repository\UserPartnerRepository;
 use App\Service\ListFilters\SearchAnnuaireAgent;
-use PhpOffice\PhpSpreadsheet\Cell\DataType;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Csv;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Service\Signalement\Export\SignalementExportHeader;
+use OpenSpout\Common\Entity\Cell;
+use OpenSpout\Common\Entity\Cell\StringCell;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Writer\CSV\Options as CsvOptions;
+use OpenSpout\Writer\CSV\Writer as CsvWriter;
+use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/bo/annuaire')]
@@ -57,61 +62,51 @@ class AnnuaireController extends AbstractController
         if ('POST' === $originalMethod) {
             /** @var string $format */
             $format = $request->request->get('file-format');
-            if (!in_array($format, ['csv', 'xlsx'])) {
+            if (!in_array($format, [ListExportMessage::FORMAT_CSV, ListExportMessage::FORMAT_XLSX])) {
                 $this->addFlash('error', 'Merci de sélectionner le format de l\'export.');
 
                 return $this->redirectToRoute('back_annuaire_export', $search->getUrlParams());
             }
-
-            $spreadsheet = new Spreadsheet();
-            $activeWorksheet = $spreadsheet->getActiveSheet();
-
-            $activeWorksheet->setCellValue('A1', 'Nom complet de l\'agent');
-            $activeWorksheet->setCellValue('B1', 'Nom du partenaire');
-            $activeWorksheet->setCellValue('C1', 'Email de l\'agent');
-            $activeWorksheet->setCellValue('D1', 'Téléphone de l\'agent');
-            $activeWorksheet->setCellValue('E1', 'Fonction de l\'agent');
-            if ($isMultiTerritory) {
-                $activeWorksheet->setCellValue('F1', 'Territoire');
-            }
-
-            $row = 2;
-            foreach ($userPartners as $userPartner) {
-                $partner = $userPartner->getPartner();
-                $user = $userPartner->getUser();
-                $activeWorksheet->setCellValue('A'.$row, $user->getNomComplet());
-                $activeWorksheet->setCellValue('B'.$row, $partner->getNom());
-                $activeWorksheet->setCellValue('C'.$row, $user->getEmail());
-                $activeWorksheet->setCellValueExplicit('D'.$row, $user->getPhoneDecoded(), DataType::TYPE_STRING);
-                $activeWorksheet->setCellValue('E'.$row, $user->getFonction());
-                if ($isMultiTerritory) {
-                    $territory = $partner->getTerritory();
-                    $territoryName = $territory ? $territory->getZipAndName() : '';
-                    $activeWorksheet->setCellValue('F'.$row, $territoryName);
-                }
-                ++$row;
-            }
-
-            if ('csv' === $format) {
-                $writer = new Csv($spreadsheet);
-            } elseif ('xlsx' === $format) {
-                $writer = new Xlsx($spreadsheet);
+            if (ListExportMessage::FORMAT_CSV === $format) {
+                $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: SignalementExportHeader::SEPARATOR));
+            } elseif (ListExportMessage::FORMAT_XLSX === $format) {
+                $writer = new XlsxWriter();
             } else {
                 throw new \Exception('Invalid format "'.$format.'"');
             }
+
             $filename = 'annuaire_'.date('Y-m-d_H-i-s').'.'.$format;
 
-            ob_start();
-            $writer->save('php://output');
-            $content = ob_get_clean();
+            $contentType = ListExportMessage::FORMAT_CSV === $format
+                ? 'text/csv'
+                : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-            if (!$content) {
-                throw new \RuntimeException('Erreur lors de la génération du contenu CSV.');
-            }
-            $response = new Response($content);
-            $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            $response = new StreamedResponse(static function () use ($writer, $isMultiTerritory, $userPartners) {
+                $writer->openToFile('php://output');
+                $writer->addRow(Row::fromValues([
+                    'Nom complet de l\'agent',
+                    'Nom du partenaire',
+                    'Email de l\'agent',
+                    'Téléphone de l\'agent',
+                    'Fonction de l\'agent',
+                    $isMultiTerritory ? 'Territoire' : null,
+                ]));
+                foreach ($userPartners as $userPartner) {
+                    $partner = $userPartner->getPartner();
+                    $user = $userPartner->getUser();
+                    $writer->addRow(new Row([
+                        Cell::fromValue($user->getNomComplet()),
+                        Cell::fromValue($partner->getNom()),
+                        Cell::fromValue($user->getEmail()),
+                        new StringCell($user->getPhoneDecoded() ?? '', null),
+                        Cell::fromValue($user->getFonction()),
+                        Cell::fromValue($isMultiTerritory ? ($partner->getTerritory()?->getZipAndName() ?? '') : null),
+                    ]));
+                }
+                $writer->close();
+            });
+            $response->headers->set('Content-Type', $contentType);
             $response->headers->set('Content-Disposition', 'attachment; filename="'.$filename.'"');
-            $response->headers->set('Content-Length', (string) strlen($content));
 
             return $response;
         }
