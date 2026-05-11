@@ -196,6 +196,48 @@
 							"name": "signalement-draft/check?locataire",
 							"event": [
 								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const streets = [",
+											"  \"La Canebière\",",
+											"  \"Rue Paradis\",",
+											"  \"Rue Saint-Ferréol\",",
+											"  \"Boulevard Longchamp\",",
+											"  \"Rue de Rome\"",
+											"];",
+											"",
+											"const streetName = streets[Math.floor(Math.random() * streets.length)];",
+											"const streetNumber = Math.floor(Math.random() * 200) + 1;",
+											"",
+											"const firstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");",
+											"const lastName = pm.variables.replaceIn(\"{{$randomLastName}}\");",
+											"const email = pm.variables.replaceIn(\"{{$randomEmail}}\").toLowerCase();;",
+											"const floor = pm.variables.replaceIn(\"{{$randomInt}}\");",
+											"",
+											"const city = \"Marseille\";",
+											"const zipCode = \"13001\";",
+											"const inseeCode = \"13201\";",
+											"",
+											"const streetAddress = `${streetNumber} ${streetName}`;",
+											"const fullAddress = `${streetAddress}, ${zipCode} ${city}`;",
+											"",
+											"pm.collectionVariables.set(\"locataire_full_address\", fullAddress);",
+											"pm.collectionVariables.set(\"locataire_street_address\", streetAddress);",
+											"pm.collectionVariables.set(\"locataire_zip\", zipCode);",
+											"pm.collectionVariables.set(\"locataire_city\", city);",
+											"pm.collectionVariables.set(\"locataire_insee\", inseeCode);",
+											"",
+											"pm.collectionVariables.set(\"locataire_nom\", lastName);",
+											"pm.collectionVariables.set(\"locataire_prenom\", firstName);",
+											"pm.collectionVariables.set(\"locataire_email\", email);",
+											"pm.collectionVariables.set(\"locataire_etage\", floor);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
 									"listen": "test",
 									"script": {
 										"exec": [
@@ -211,39 +253,6 @@
 										"type": "text/javascript",
 										"packages": {}
 									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"const cities = JSON.parse(pm.environment.get(\"cities\"));",
-											"let lastCityName = pm.environment.get(\"last_city\");",
-											"let currentIndex = cities.findIndex(city => city.city === lastCityName);",
-											"let nextIndex = (currentIndex + 1) % cities.length;",
-											"let selectedCity = cities[nextIndex];",
-											"pm.environment.set(\"last_city\", selectedCity.city);",
-											"",
-											"",
-											"const street = selectedCity.streets[Math.floor(Math.random() * selectedCity.streets.length)];",
-											"const number = Math.floor(Math.random() * 200) + 1;",
-											"pm.environment.set(\"locataire_fake_city\", selectedCity.city);",
-											"pm.environment.set(\"locataire_fake_zip\", selectedCity.zip);",
-											"pm.environment.set(\"locataire_fake_address\", `${number} ${street}`);",
-											"pm.environment.set(\"locataire_fake_full_address\", `${number} ${street}, ${selectedCity.zip} ${selectedCity.city}`);",
-											"pm.environment.set(\"locataire_latitude\", selectedCity.lat.toFixed(6));",
-											"pm.environment.set(\"locataire_longitude\", selectedCity.lng.toFixed(6));",
-											"pm.environment.set(\"locataire_insee\", selectedCity.insee);",
-											"const randomEmailUsager = \"{{$randomEmail}}\";",
-											"const randomPrenomUsager = \"{{$randomFirstName}}\"",
-											"const randomNomUsager = \"{{$randomLastName}}\" ",
-											"pm.environment.set(\"locataire_fake_email\", randomEmailUsager);",
-											"pm.environment.set(\"locataire_fake_prenom\", randomPrenomUsager);",
-											"pm.environment.set(\"locataire_fake_nom\", randomNomUsager);",
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
 								}
 							],
 							"request": {
@@ -251,7 +260,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"currentStep\": \"coordonnees_bailleur\",\n    \"adresse_logement_adresse_suggestion\": \"{{locataire_fake_address}}\",\n    \"adresse_logement_adresse\": \"{{locataire_fake_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{locataire_fake_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{locataire_fake_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{locataire_fake_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{locataire_insee}}\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": {{locataire_longitude}},\n    \"adresse_logement_adresse_detail_geoloc_lat\": {{locataire_latitude}},\n    \"adresse_logement_complement_adresse_etage\": \"{{$randomInt}}\",\n    \"adresse_logement_complement_adresse_escalier\": \"110\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"152\",\n    \"adresse_logement_complement_adresse_autre\": \"10\",\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"locataire\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"profil\": \"locataire\",\n    \"vos_coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_civilite\": \"mr\",\n    \"vos_coordonnees_occupant_nom\": \"{{locataire_fake_nom}}\",\n    \"vos_coordonnees_occupant_prenom\": \"{{locataire_fake_prenom}}\",\n    \"vos_coordonnees_occupant_email\": \"{{locataire_fake_email}}\",\n    \"vos_coordonnees_occupant_tel\": \"0611457845\"\n}",
+									"raw": "{\n    \"uuidSignalementDraft\": \"\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"signalementStatus\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"coordonnees_bailleur\",\n    \"adresse_logement_adresse_suggestion\": \"{{locataire_full_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": false,\n    \"adresse_logement_adresse\": \"{{locataire_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{locataire_street_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{locataire_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{locataire_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{locataire_insee}}\",\n    \"adresse_logement_complement_adresse_etage\": \"{{locataire_etage}}\",\n    \"adresse_logement_complement_adresse_escalier\": \"110\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"152\",\n    \"adresse_logement_complement_adresse_autre\": \"10\",\n    \"territoryCode\": \"13\",\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"locataire\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"profil\": \"locataire\",\n    \"vos_coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_civilite\": \"mr\",\n    \"vos_coordonnees_occupant_nom\": \"{{locataire_nom}}\",\n    \"vos_coordonnees_occupant_prenom\": \"{{locataire_prenom}}\",\n    \"vos_coordonnees_occupant_email\": \"{{locataire_email}}\",\n    \"vos_coordonnees_occupant_tel\": \"0611457845\",\n    \"vos_coordonnees_occupant_tel_secondaire\": \"617141334\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -275,6 +284,45 @@
 							"name": "signalement-draft/check?bailleur_occupant",
 							"event": [
 								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const streets = [",
+											"  \"La Canebière\",",
+											"  \"Rue Paradis\",",
+											"  \"Rue Saint-Ferréol\",",
+											"  \"Boulevard Longchamp\",",
+											"  \"Rue de Rome\"",
+											"];",
+											"",
+											"const streetName = streets[Math.floor(Math.random() * streets.length)];",
+											"const streetNumber = Math.floor(Math.random() * 200) + 1;",
+											"",
+											"const firstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");",
+											"const lastName = pm.variables.replaceIn(\"{{$randomLastName}}\");",
+											"const email = pm.variables.replaceIn(\"{{$randomEmail}}\").toLowerCase();",
+											"const city = \"Marseille\";",
+											"const zipCode = \"13001\";",
+											"const inseeCode = \"13201\";",
+											"",
+											"const streetAddress = `${streetNumber} ${streetName}`;",
+											"const fullAddress = `${streetAddress}, ${zipCode} ${city}`;",
+											"",
+											"pm.collectionVariables.set(\"bailleur_occupant_address\", streetAddress);",
+											"pm.collectionVariables.set(\"bailleur_occupant_full_address\", fullAddress);",
+											"pm.collectionVariables.set(\"bailleur_occupant_zip\", zipCode);",
+											"pm.collectionVariables.set(\"bailleur_occupant_city\", city);",
+											"pm.collectionVariables.set(\"bailleur_occupant_insee\", inseeCode);",
+											"",
+											"pm.collectionVariables.set(\"bailleur_occupant_nom\", lastName);",
+											"pm.collectionVariables.set(\"bailleur_occupant_prenom\", firstName);",
+											"pm.collectionVariables.set(\"bailleur_occupant_email\", email);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
 									"listen": "test",
 									"script": {
 										"exec": [
@@ -290,41 +338,6 @@
 										"type": "text/javascript",
 										"packages": {}
 									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"const cities = JSON.parse(pm.environment.get(\"cities\"));",
-											"console.log(cities.length);",
-											"let lastCityName = pm.environment.get(\"last_city\");",
-											"let currentIndex = cities.findIndex(city => city.city === lastCityName);",
-											"let nextIndex = (currentIndex + 1) % cities.length;",
-											"let selectedCity = cities[nextIndex];",
-											"pm.environment.set(\"last_city\", selectedCity.city);",
-											"",
-											"",
-											"",
-											"const street = selectedCity.streets[Math.floor(Math.random() * selectedCity.streets.length)];",
-											"const number = Math.floor(Math.random() * 200) + 1;",
-											"pm.environment.set(\"bailleur_occupant_fake_city\", selectedCity.city);",
-											"pm.environment.set(\"bailleur_occupant_fake_zip\", selectedCity.zip);",
-											"pm.environment.set(\"bailleur_occupant_fake_address\", `${number} ${street}`);",
-											"pm.environment.set(\"bailleur_occupant_fake_full_address\", `${number} ${street}, ${selectedCity.zip} ${selectedCity.city}`);",
-											"pm.environment.set(\"bailleur_occupant_latitude\", selectedCity.lat.toFixed(6));",
-											"pm.environment.set(\"bailleur_occupant_longitude\", selectedCity.lng.toFixed(6));",
-											"pm.environment.set(\"bailleur_occupant_insee\", selectedCity.insee);",
-											"const randomEmailUsager = \"{{$randomEmail}}\";",
-											"const randomPrenomUsager = \"{{$randomFirstName}}\"",
-											"const randomNomUsager = \"{{$randomLastName}}\" ",
-											"pm.environment.set(\"bailleur_occupant_fake_email\", randomEmailUsager);",
-											"pm.environment.set(\"bailleur_occupant_fake_prenom\", randomPrenomUsager);",
-											"pm.environment.set(\"bailleur_occupant_fake_nom\", randomNomUsager);",
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
 								}
 							],
 							"request": {
@@ -332,7 +345,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"vos_coordonnees_occupant\",\n    \"adresse_logement_adresse_suggestion\": \"{{bailleur_occupant_fake_address}}\",\n    \"adresse_logement_adresse\": \"{{bailleur_occupant_fake_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{bailleur_occupant_fake_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{bailleur_occupant_fake_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{bailleur_occupant_fake_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{bailleur_occupant_insee}}\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": {{bailleur_occupant_longitude}},\n    \"adresse_logement_adresse_detail_geoloc_lat\": {{bailleur_occupant_latitude}},\n    \"adresse_logement_complement_adresse_etage\": \"{{$randomInt}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": true,\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"adresse_logement_complement_adresse_escalier\": \"J1\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"114\",\n    \"adresse_logement_complement_adresse_autre\": \"Les essentielles\",\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"bailleur_occupant\",\n    \"signalement_concerne_profil_detail_bailleur_proprietaire\": \"particulier\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"non\",\n    \"profil\": \"bailleur_occupant\",\n    \"vos_coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_civilite\": \"mr\",\n    \"vos_coordonnees_occupant_nom\": \"{{bailleur_occupant_fake_nom}}\",\n    \"vos_coordonnees_occupant_prenom\": \"{{bailleur_occupant_fake_prenom}}\",\n    \"vos_coordonnees_occupant_email\": \"{{bailleur_occupant_fake_email}}\",\n    \"vos_coordonnees_occupant_tel\": \"611574845\"\n}",
+									"raw": "{\n    \"uuidSignalementDraft\": \"\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"signalementStatus\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"vos_coordonnees_occupant\",\n    \"adresse_logement_adresse_suggestion\": \"{{bailleur_occupant_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": false,\n    \"adresse_logement_adresse\": \"{{bailleur_occupant_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{bailleur_occupant_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{bailleur_occupant_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{bailleur_occupant_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{bailleur_occupant_insee}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"territoryCode\": \"13\",\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"bailleur_occupant\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"non\",\n    \"profil\": \"bailleur_occupant\",\n    \"vos_coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"signalement_concerne_profil_detail_bailleur_proprietaire\": \"particulier\",\n    \"vos_coordonnees_occupant_civilite\": \"mme\",\n    \"vos_coordonnees_occupant_nom\": \"{{bailleur_occupant_nom}}\",\n    \"vos_coordonnees_occupant_prenom\": \"{{bailleur_occupant_prenom}}\",\n    \"vos_coordonnees_occupant_email\": \"{{bailleur_occupant_email}}\",\n    \"vos_coordonnees_occupant_tel\": \"611585964\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -376,29 +389,45 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"const cities = JSON.parse(pm.environment.get(\"cities\"));",
-											"let lastCityName = pm.environment.get(\"last_city\");",
-											"let currentIndex = cities.findIndex(city => city.city === lastCityName);",
-											"let nextIndex = (currentIndex + 1) % cities.length;",
-											"let selectedCity = cities[nextIndex];",
-											"pm.environment.set(\"last_city\", selectedCity.city);",
+											"const streets = [",
+											"  \"Avenue de la Pastorale\",",
+											"  \"Rue des Lauriers\",",
+											"  \"Boulevard de Provence\",",
+											"  \"Chemin du Mas de Perrot\",",
+											"  \"Rue des Alpilles\"",
+											"];",
 											"",
-											"const street = selectedCity.streets[Math.floor(Math.random() * selectedCity.streets.length)];",
-											"const number = Math.floor(Math.random() * 200) + 1;",
-											"pm.environment.set(\"bailleur_fake_city\", selectedCity.city);",
-											"pm.environment.set(\"bailleur_fake_zip\", selectedCity.zip);",
-											"pm.environment.set(\"bailleur_fake_address\", `${number} ${street}`);",
-											"pm.environment.set(\"bailleur_fake_full_address\", `${number} ${street}, ${selectedCity.zip} ${selectedCity.city}`);",
-											"pm.environment.set(\"bailleur_latitude\", selectedCity.lat.toFixed(6));",
-											"pm.environment.set(\"bailleur_longitude\", selectedCity.lng.toFixed(6));",
-											"pm.environment.set(\"bailleur_insee\", selectedCity.insee);",
-											"const randomEmailUsager = \"{{$randomEmail}}\";",
-											"const randomPrenomUsager = \"{{$randomFirstName}}\"",
-											"const randomNomUsager = \"{{$randomLastName}}\" ",
-											"pm.environment.set(\"bailleur_fake_email\", randomEmailUsager);",
-											"pm.environment.set(\"bailleur_fake_prenom\", randomPrenomUsager);",
-											"pm.environment.set(\"bailleur_fake_nom\", randomNomUsager);",
-											""
+											"const streetName = streets[Math.floor(Math.random() * streets.length)];",
+											"const streetNumber = Math.floor(Math.random() * 200) + 1;",
+											"",
+											"const bailleurFirstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");",
+											"const bailleurLastName = pm.variables.replaceIn(\"{{$randomLastName}}\");",
+											"const bailleurEmail = pm.variables.replaceIn(\"{{$randomEmail}}\").toLowerCase();",
+											"",
+											"const occupantFirstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");",
+											"const occupantLastName = pm.variables.replaceIn(\"{{$randomLastName}}\");",
+											"const occupantEmail = pm.variables.replaceIn(\"{{$randomEmail}}\").toLowerCase();",
+											"",
+											"const city = \"Saint-Martin-de-Crau\";",
+											"const zipCode = \"13310\";",
+											"const inseeCode = \"13097\";",
+											"",
+											"const streetAddress = `${streetNumber} ${streetName}`;",
+											"const fullAddress = `${streetAddress} ${zipCode} ${city}`;",
+											"",
+											"pm.collectionVariables.set(\"bailleur_address\", streetAddress);",
+											"pm.collectionVariables.set(\"bailleur_full_address\", fullAddress);",
+											"pm.collectionVariables.set(\"bailleur_zip\", zipCode);",
+											"pm.collectionVariables.set(\"bailleur_city\", city);",
+											"pm.collectionVariables.set(\"bailleur_insee\", inseeCode);",
+											"",
+											"pm.collectionVariables.set(\"bailleur_nom\", bailleurLastName);",
+											"pm.collectionVariables.set(\"bailleur_prenom\", bailleurFirstName);",
+											"pm.collectionVariables.set(\"bailleur_email\", bailleurEmail);",
+											"",
+											"pm.collectionVariables.set(\"bailleur_occupant_nom\", occupantLastName);",
+											"pm.collectionVariables.set(\"bailleur_occupant_prenom\", occupantFirstName);",
+											"pm.collectionVariables.set(\"bailleur_occupant_email\", occupantEmail);"
 										],
 										"type": "text/javascript",
 										"packages": {}
@@ -410,7 +439,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"vos_coordonnees_tiers\",\n    \"adresse_logement_adresse_suggestion\": \"{{bailleur_fake_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": true,\n    \"adresse_logement_adresse\": \"{{bailleur_fake_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{bailleur_fake_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{bailleur_fake_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{bailleur_fake_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{bailleur_insee}}\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": {{bailleur_longitude}},\n    \"adresse_logement_adresse_detail_geoloc_lat\": {{bailleur_latitude}},\n    \"adresse_logement_complement_adresse_etage\": \"{{$randomInt}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"adresse_logement_complement_adresse_escalier\": \"12J\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"114\",\n    \"adresse_logement_complement_adresse_autre\": \"Les goudes\",\n    \"signalement_concerne_profil\": \"autre_logement\",\n    \"signalement_concerne_profil_detail_tiers\": \"bailleur\",\n    \"signalement_concerne_profil_detail_bailleur_bailleur\": \"organisme_societe\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"profil\": \"bailleur\",\n    \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_nom_organisme\": \"HABITAT\",\n    \"vos_coordonnees_tiers_nom\": \"{{bailleur_fake_nom}}\",\n    \"vos_coordonnees_tiers_prenom\": \"{{bailleur_fake_prenom}}\",\n    \"vos_coordonnees_tiers_email\": \"{{bailleur_fake_email}}\",\n    \"vos_coordonnees_tiers_tel\": \"611457845\"\n}",
+									"raw": "{\n  \"uuidSignalementDraft\": \"\",\n  \"signalementReference\": \"\",\n  \"lienSuivi\": \"\",\n  \"signalementStatus\": \"\",\n  \"errorMessage\": \"\",\n  \"currentStep\": \"coordonnees_occupant\",\n  \"adresse_logement_adresse_suggestion\": \"{{bailleur_full_address}}\",\n  \"adresse_logement_adresse_detail_need_refresh_insee\": false,\n  \"adresse_logement_adresse\": \"{{bailleur_full_address}}\",\n  \"adresse_logement_adresse_detail_numero\": \"{{bailleur_address}}\",\n  \"adresse_logement_adresse_detail_code_postal\": \"{{bailleur_zip}}\",\n  \"adresse_logement_adresse_detail_commune\": \"{{bailleur_city}}\",\n  \"adresse_logement_adresse_detail_insee\": \"{{bailleur_insee}}\",\n  \"adresse_logement_adresse_detail_manual\": 0,\n  \"territoryCode\": \"13\",\n  \"signalement_concerne_profil\": \"autre_logement\",\n  \"signalement_concerne_profil_detail_tiers\": \"bailleur\",\n  \"signalement_concerne_profil_detail_bailleur_bailleur\": \"particulier\",\n  \"signalement_concerne_logement_social_autre_tiers\": \"non\",\n  \"profil\": \"bailleur\",\n  \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n  \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n  \"vos_coordonnees_tiers_nom\": \"{{bailleur_nom}}\",\n  \"vos_coordonnees_tiers_prenom\": \"{{bailleur_prenom}}\",\n  \"vos_coordonnees_tiers_email\": \"{{bailleur_email}}\",\n  \"vos_coordonnees_tiers_tel\": \"611571331\",\n  \"coordonnees_occupant_tel_countrycode\": \"FR:33\",\n  \"coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n  \"coordonnees_occupant_nom\": \"{{bailleur_occupant_nom}}\",\n  \"coordonnees_occupant_prenom\": \"{{bailleur_occupant_prenom}}\",\n  \"coordonnees_occupant_email\": \"{{bailleur_occupant_email}}\",\n  \"coordonnees_occupant_tel\": \"611451245\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -454,30 +483,56 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"const cities = JSON.parse(pm.environment.get(\"cities\"));",
-											"let lastCityName = pm.environment.get(\"last_city\");",
-											"let currentIndex = cities.findIndex(city => city.city === lastCityName);",
-											"let nextIndex = (currentIndex + 1) % cities.length;",
-											"let selectedCity = cities[nextIndex];",
-											"pm.environment.set(\"last_city\", selectedCity.city);",
+											"const streets = [",
+											"  \"Square la Rouguière\",",
+											"  \"Avenue William Booth\",",
+											"  \"Boulevard de la Pomme\",",
+											"  \"Traverse de la Valbarelle\",",
+											"  \"Route des Camoins\"",
+											"];",
 											"",
+											"const organisations = [",
+											"  \"Mission locale\",",
+											"  \"Centre communal d'action sociale\",",
+											"  \"Association Habitat Solidaire\",",
+											"  \"Maison de la Solidarité\",",
+											"  \"Agence Sociale Marseille\"",
+											"];",
 											"",
-											"const street = selectedCity.streets[Math.floor(Math.random() * selectedCity.streets.length)];",
-											"const number = Math.floor(Math.random() * 200) + 1;",
-											"pm.environment.set(\"tiers_pro_fake_city\", selectedCity.city);",
-											"pm.environment.set(\"tiers_pro_fake_zip\", selectedCity.zip);",
-											"pm.environment.set(\"tiers_pro_fake_address\", `${number} ${street}`);",
-											"pm.environment.set(\"tiers_pro_fake_full_address\", `${number} ${street}, ${selectedCity.zip} ${selectedCity.city}`);",
-											"pm.environment.set(\"tiers_pro_latitude\", selectedCity.lat.toFixed(6));",
-											"pm.environment.set(\"tiers_pro_longitude\", selectedCity.lng.toFixed(6));",
-											"pm.environment.set(\"tiers_pro_insee\", selectedCity.insee);",
-											"const randomEmailUsager = \"{{$randomEmail}}\";",
-											"const randomPrenomUsager = \"{{$randomFirstName}}\"",
-											"const randomNomUsager = \"{{$randomLastName}}\" ",
-											"pm.environment.set(\"tiers_pro_fake_email\", randomEmailUsager);",
-											"pm.environment.set(\"tiers_pro_fake_prenom\", randomPrenomUsager);",
-											"pm.environment.set(\"tiers_pro_fake_nom\", randomNomUsager);",
-											""
+											"const streetName = streets[Math.floor(Math.random() * streets.length)];",
+											"const streetNumber = Math.floor(Math.random() * 200) + 1;",
+											"",
+											"const tiersProFirstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");",
+											"const tiersProLastName = pm.variables.replaceIn(\"{{$randomLastName}}\");",
+											"const tiersProEmail = pm.variables.replaceIn(\"{{$randomEmail}}\").toLowerCase();",
+											"",
+											"const occupantFirstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");",
+											"const occupantLastName = pm.variables.replaceIn(\"{{$randomLastName}}\");",
+											"const occupantEmail = pm.variables.replaceIn(\"{{$randomEmail}}\").toLowerCase();",
+											"",
+											"const organisation = organisations[Math.floor(Math.random() * organisations.length)];",
+											"",
+											"const city = \"Marseille\";",
+											"const zipCode = \"13011\";",
+											"const inseeCode = \"13211\";",
+											"",
+											"const streetAddress = `${streetNumber} ${streetName}`;",
+											"const fullAddress = `${streetAddress} ${zipCode} ${city}`;",
+											"",
+											"pm.collectionVariables.set(\"tiers_pro_address\", streetAddress);",
+											"pm.collectionVariables.set(\"tiers_pro_full_address\", fullAddress);",
+											"pm.collectionVariables.set(\"tiers_pro_zip\", zipCode);",
+											"pm.collectionVariables.set(\"tiers_pro_city\", city);",
+											"pm.collectionVariables.set(\"tiers_pro_insee\", inseeCode);",
+											"",
+											"pm.collectionVariables.set(\"tiers_pro_nom_organisme\", organisation);",
+											"pm.collectionVariables.set(\"tiers_pro_nom\", tiersProLastName);",
+											"pm.collectionVariables.set(\"tiers_pro_prenom\", tiersProFirstName);",
+											"pm.collectionVariables.set(\"tiers_pro_email\", tiersProEmail);",
+											"",
+											"pm.collectionVariables.set(\"tiers_pro_occupant_nom\", occupantLastName);",
+											"pm.collectionVariables.set(\"tiers_pro_occupant_prenom\", occupantFirstName);",
+											"pm.collectionVariables.set(\"tiers_pro_occupant_email\", occupantEmail);"
 										],
 										"type": "text/javascript",
 										"packages": {}
@@ -489,7 +544,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"vos_coordonnees_tiers\",\n    \"adresse_logement_adresse_suggestion\": \"{{tiers_pro_fake_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": true,\n    \"adresse_logement_adresse\": \"{{tiers_pro_fake_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{tiers_pro_fake_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{tiers_pro_fake_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{tiers_pro_fake_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{tiers_pro_insee}}\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": {{tiers_pro_longitude}},\n    \"adresse_logement_adresse_detail_geoloc_lat\": {{tiers_pro_latitude}},\n    \"adresse_logement_complement_adresse_etage\": \"{{$randomInt}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"signalement_concerne_profil\": \"autre_logement\",\n    \"signalement_concerne_profil_detail_tiers\": \"tiers_pro\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"non\",\n    \"profil\": \"tiers_pro\",\n    \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_nom_organisme\": \"SCI 123\",\n    \"vos_coordonnees_tiers_nom\": \"{{tiers_pro_fake_nom}}\",\n    \"vos_coordonnees_tiers_prenom\": \"{{tiers_pro_fake_prenom}}\",\n    \"vos_coordonnees_tiers_email\": \"{{tiers_pro_fake_email}}\",\n    \"vos_coordonnees_tiers_tel\": \"611121314\"\n}",
+									"raw": "{\n  \"uuidSignalementDraft\": \"\",\n  \"signalementReference\": \"\",\n  \"lienSuivi\": \"\",\n  \"signalementStatus\": \"\",\n  \"errorMessage\": \"\",\n  \"currentStep\": \"coordonnees_occupant\",\n  \"adresse_logement_adresse_suggestion\": \"{{tiers_pro_full_address}}\",\n  \"adresse_logement_adresse_detail_need_refresh_insee\": false,\n  \"adresse_logement_adresse\": \"{{tiers_pro_full_address}}\",\n  \"adresse_logement_adresse_detail_numero\": \"{{tiers_pro_address}}\",\n  \"adresse_logement_adresse_detail_code_postal\": \"{{tiers_pro_zip}}\",\n  \"adresse_logement_adresse_detail_commune\": \"{{tiers_pro_city}}\",\n  \"adresse_logement_adresse_detail_insee\": \"{{tiers_pro_insee}}\",\n  \"adresse_logement_adresse_detail_manual\": 0,\n  \"territoryCode\": \"13\",\n  \"signalement_concerne_profil\": \"autre_logement\",\n  \"signalement_concerne_profil_detail_tiers\": \"tiers_pro\",\n  \"signalement_concerne_profil_detail_profil_occupant\": \"locataire\",\n  \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n  \"profil\": \"tiers_pro\",\n  \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n  \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n  \"vos_coordonnees_tiers_nom_organisme\": \"{{tiers_pro_nom_organisme}}\",\n  \"vos_coordonnees_tiers_nom\": \"{{tiers_pro_nom}}\",\n  \"vos_coordonnees_tiers_prenom\": \"{{tiers_pro_prenom}}\",\n  \"vos_coordonnees_tiers_email\": \"{{tiers_pro_email}}\",\n  \"vos_coordonnees_tiers_tel\": \"611571631\",\n  \"coordonnees_occupant_tel_countrycode\": \"FR:33\",\n  \"coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n  \"coordonnees_occupant_nom\": \"{{tiers_pro_occupant_nom}}\",\n  \"coordonnees_occupant_prenom\": \"{{tiers_pro_occupant_prenom}}\",\n  \"coordonnees_occupant_email\": \"{{tiers_pro_occupant_email}}\",\n  \"coordonnees_occupant_tel\": \"611571631\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -533,31 +588,55 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"const cities = JSON.parse(pm.environment.get(\"cities\"));",
-											"let lastCityName = pm.environment.get(\"last_city\");",
-											"let currentIndex = cities.findIndex(city => city.city === lastCityName);",
-											"let nextIndex = (currentIndex + 1) % cities.length;",
-											"let selectedCity = cities[nextIndex];",
-											"pm.environment.set(\"last_city\", selectedCity.city);",
+											"const streets = [",
+											"  \"Boulevard Saade - Quai Joliette\",",
+											"  \"Rue de la République\",",
+											"  \"Rue Mazenod\",",
+											"  \"Boulevard des Dames\",",
+											"  \"Rue Forbin\"",
+											"];",
 											"",
+											"const liens = [",
+											"  \"proche\",",
+											"  \"famille\",",
+											"  \"voisin\",",
+											"  \"ami\"",
+											"];",
 											"",
+											"const streetName = streets[Math.floor(Math.random() * streets.length)];",
+											"const streetNumber = Math.floor(Math.random() * 200) + 1;",
 											"",
-											"const street = selectedCity.streets[Math.floor(Math.random() * selectedCity.streets.length)];",
-											"const number = Math.floor(Math.random() * 200) + 1;",
-											"pm.environment.set(\"tiers_part_fake_city\", selectedCity.city);",
-											"pm.environment.set(\"tiers_part_fake_zip\", selectedCity.zip);",
-											"pm.environment.set(\"tiers_part_fake_address\", `${number} ${street}`);",
-											"pm.environment.set(\"tiers_part_fake_full_address\", `${number} ${street}, ${selectedCity.zip} ${selectedCity.city}`);",
-											"pm.environment.set(\"tiers_part_latitude\", selectedCity.lat.toFixed(6));",
-											"pm.environment.set(\"tiers_part_longitude\", selectedCity.lng.toFixed(6));",
-											"pm.environment.set(\"tiers_part_insee\", selectedCity.insee);",
-											"const randomEmailUsager = \"{{$randomEmail}}\";",
-											"const randomPrenomUsager = \"{{$randomFirstName}}\"",
-											"const randomNomUsager = \"{{$randomLastName}}\" ",
-											"pm.environment.set(\"tiers_part_fake_email\", randomEmailUsager);",
-											"pm.environment.set(\"tiers_part_fake_prenom\", randomPrenomUsager);",
-											"pm.environment.set(\"tiers_part_fake_nom\", randomNomUsager);",
-											""
+											"const tiersFirstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");",
+											"const tiersLastName = pm.variables.replaceIn(\"{{$randomLastName}}\");",
+											"const tiersEmail = pm.variables.replaceIn(\"{{$randomEmail}}\").toLowerCase();",
+											"",
+											"const occupantFirstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");",
+											"const occupantLastName = pm.variables.replaceIn(\"{{$randomLastName}}\");",
+											"const occupantEmail = pm.variables.replaceIn(\"{{$randomEmail}}\").toLowerCase();",
+											"",
+											"const lien = liens[Math.floor(Math.random() * liens.length)];",
+											"",
+											"const city = \"Marseille\";",
+											"const zipCode = \"13002\";",
+											"const inseeCode = \"13202\";",
+											"",
+											"const streetAddress = `${streetNumber} ${streetName}`;",
+											"const fullAddress = `${streetAddress} ${zipCode} ${city}`;",
+											"",
+											"pm.collectionVariables.set(\"tiers_particulier_address\", streetAddress);",
+											"pm.collectionVariables.set(\"tiers_particulier_full_address\", fullAddress);",
+											"pm.collectionVariables.set(\"tiers_particulier_zip\", zipCode);",
+											"pm.collectionVariables.set(\"tiers_particulier_city\", city);",
+											"pm.collectionVariables.set(\"tiers_particulier_insee\", inseeCode);",
+											"",
+											"pm.collectionVariables.set(\"tiers_particulier_lien\", lien);",
+											"pm.collectionVariables.set(\"tiers_particulier_nom\", tiersLastName);",
+											"pm.collectionVariables.set(\"tiers_particulier_prenom\", tiersFirstName);",
+											"pm.collectionVariables.set(\"tiers_particulier_email\", tiersEmail);",
+											"",
+											"pm.collectionVariables.set(\"tiers_particulier_occupant_nom\", occupantLastName);",
+											"pm.collectionVariables.set(\"tiers_particulier_occupant_prenom\", occupantFirstName);",
+											"pm.collectionVariables.set(\"tiers_particulier_occupant_email\", occupantEmail);"
 										],
 										"type": "text/javascript",
 										"packages": {}
@@ -569,7 +648,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"vos_coordonnees_tiers\",\n    \"adresse_logement_complement_adresse_escalier\": \"1\",\n    \"adresse_logement_adresse_suggestion\": \"{{tiers_part_fake_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": true,\n    \"adresse_logement_adresse\": \"{{tiers_part_fake_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{tiers_part_fake_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{tiers_part_fake_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{tiers_part_fake_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{tiers_part_insee}}\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": {{tiers_part_longitude}},\n    \"adresse_logement_adresse_detail_geoloc_lat\": {{tiers_part_latitude}},\n    \"adresse_logement_complement_adresse_etage\": \"{{$randomInt}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"signalement_concerne_profil\": \"autre_logement\",\n    \"signalement_concerne_profil_detail_tiers\": \"tiers_particulier\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"profil\": \"tiers_particulier\",\n    \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_lien\": \"voisin\",\n    \"vos_coordonnees_tiers_nom\": \"{{tiers_part_fake_nom}}\",\n    \"vos_coordonnees_tiers_prenom\": \"{{tiers_part_fake_prenom}}\",\n    \"vos_coordonnees_tiers_email\": \"{{tiers_part_fake_email}}\",\n    \"vos_coordonnees_tiers_tel\": \"645128545\"\n}",
+									"raw": "{\n  \"uuidSignalementDraft\": \"\",\n  \"signalementReference\": \"\",\n  \"lienSuivi\": \"\",\n  \"signalementStatus\": \"\",\n  \"errorMessage\": \"\",\n  \"currentStep\": \"coordonnees_occupant\",\n  \"adresse_logement_adresse_suggestion\": \"{{tiers_particulier_full_address}}\",\n  \"adresse_logement_adresse_detail_need_refresh_insee\": false,\n  \"adresse_logement_adresse\": \"{{tiers_particulier_full_address}}\",\n  \"adresse_logement_adresse_detail_numero\": \"{{tiers_particulier_address}}\",\n  \"adresse_logement_adresse_detail_code_postal\": \"{{tiers_particulier_zip}}\",\n  \"adresse_logement_adresse_detail_commune\": \"{{tiers_particulier_city}}\",\n  \"adresse_logement_adresse_detail_insee\": \"{{tiers_particulier_insee}}\",\n  \"adresse_logement_adresse_detail_manual\": 0,\n  \"territoryCode\": \"13\",\n  \"signalement_concerne_profil\": \"autre_logement\",\n  \"signalement_concerne_profil_detail_tiers\": \"tiers_particulier\",\n  \"signalement_concerne_profil_detail_profil_occupant\": \"locataire\",\n  \"signalement_concerne_logement_social_autre_tiers\": \"non\",\n  \"profil\": \"tiers_particulier\",\n  \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n  \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n  \"vos_coordonnees_tiers_lien\": \"{{tiers_particulier_lien}}\",\n  \"vos_coordonnees_tiers_nom\": \"{{tiers_particulier_nom}}\",\n  \"vos_coordonnees_tiers_prenom\": \"{{tiers_particulier_prenom}}\",\n  \"vos_coordonnees_tiers_email\": \"{{tiers_particulier_email}}\",\n  \"vos_coordonnees_tiers_tel\": \"611571631\",\n  \"coordonnees_occupant_tel_countrycode\": \"FR:33\",\n  \"coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n  \"coordonnees_occupant_nom\": \"{{tiers_particulier_occupant_nom}}\",\n  \"coordonnees_occupant_prenom\": \"{{tiers_particulier_occupant_prenom}}\",\n  \"coordonnees_occupant_email\": \"{{tiers_particulier_occupant_email}}\",\n  \"coordonnees_occupant_tel\": \"611571631\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -613,30 +692,57 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"const cities = JSON.parse(pm.environment.get(\"cities\"));",
-											"let lastCityName = pm.environment.get(\"last_city\");",
-											"let currentIndex = cities.findIndex(city => city.city === lastCityName);",
-											"let nextIndex = (currentIndex + 1) % cities.length;",
-											"let selectedCity = cities[nextIndex];",
-											"pm.environment.set(\"last_city\", selectedCity.city);",
+											"const streets = [",
+											"  \"Rue des Phocéens\",",
+											"  \"Rue de la Joliette\",",
+											"  \"Boulevard de Dunkerque\",",
+											"  \"Rue Mazenod\",",
+											"  \"Rue Jean Trinquet\"",
+											"];",
 											"",
+											"const organismes = [",
+											"  \"SDIS 13\",",
+											"  \"BSPP\",",
+											"  \"Marins-Pompiers\",",
+											"  \"Protection Civile\",",
+											"  \"Croix Rouge\"",
+											"];",
 											"",
-											"const street = selectedCity.streets[Math.floor(Math.random() * selectedCity.streets.length)];",
-											"const number = Math.floor(Math.random() * 200) + 1;",
-											"pm.environment.set(\"service_secours_fake_city\", selectedCity.city);",
-											"pm.environment.set(\"service_secours_fake_zip\", selectedCity.zip);",
-											"pm.environment.set(\"service_secours_fake_address\", `${number} ${street}`);",
-											"pm.environment.set(\"service_secours_fake_full_address\", `${number} ${street}, ${selectedCity.zip} ${selectedCity.city}`);",
-											"pm.environment.set(\"service_secours_latitude\", selectedCity.lat.toFixed(6));",
-											"pm.environment.set(\"service_secours_longitude\", selectedCity.lng.toFixed(6));",
-											"pm.environment.set(\"service_secours_insee\", selectedCity.insee);",
-											"const randomEmailUsager = \"{{$randomEmail}}\";",
-											"const randomPrenomUsager = \"{{$randomFirstName}}\"",
-											"const randomNomUsager = \"{{$randomLastName}}\" ",
-											"pm.environment.set(\"service_secours_fake_email\", randomEmailUsager);",
-											"pm.environment.set(\"service_secours_fake_prenom\", randomPrenomUsager);",
-											"pm.environment.set(\"service_secours_fake_nom\", randomNomUsager);",
-											""
+											"const streetName = streets[Math.floor(Math.random() * streets.length)];",
+											"const streetNumber = Math.floor(Math.random() * 200) + 1;",
+											"",
+											"const tiersFirstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");",
+											"const tiersLastName = pm.variables.replaceIn(\"{{$randomLastName}}\");",
+											"const tiersEmail = pm.variables.replaceIn(\"{{$randomEmail}}\").toLowerCase();",
+											"",
+											"const occupantFirstName = pm.variables.replaceIn(\"{{$randomFirstName}}\");",
+											"const occupantLastName = pm.variables.replaceIn(\"{{$randomLastName}}\");",
+											"const occupantEmail = pm.variables.replaceIn(\"{{$randomEmail}}\").toLowerCase();",
+											"",
+											"const organisme = organismes[Math.floor(Math.random() * organismes.length)];",
+											"",
+											"const city = \"Marseille\";",
+											"const zipCode = \"13002\";",
+											"const inseeCode = \"13202\";",
+											"",
+											"const streetAddress = `${streetNumber} ${streetName}`;",
+											"const fullAddress = `${streetAddress} ${zipCode} ${city}`;",
+											"",
+											"pm.collectionVariables.set(\"service_secours_address\", streetAddress);",
+											"pm.collectionVariables.set(\"service_secours_full_address\", fullAddress);",
+											"pm.collectionVariables.set(\"service_secours_zip\", zipCode);",
+											"pm.collectionVariables.set(\"service_secours_city\", city);",
+											"pm.collectionVariables.set(\"service_secours_insee\", inseeCode);",
+											"",
+											"pm.collectionVariables.set(\"service_secours_organisme\", organisme);",
+											"",
+											"pm.collectionVariables.set(\"service_secours_nom\", tiersLastName);",
+											"pm.collectionVariables.set(\"service_secours_prenom\", tiersFirstName);",
+											"pm.collectionVariables.set(\"service_secours_email\", tiersEmail);",
+											"",
+											"pm.collectionVariables.set(\"service_secours_occupant_nom\", occupantLastName);",
+											"pm.collectionVariables.set(\"service_secours_occupant_prenom\", occupantFirstName);",
+											"pm.collectionVariables.set(\"service_secours_occupant_email\", occupantEmail);"
 										],
 										"type": "text/javascript",
 										"packages": {}
@@ -648,7 +754,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"vos_coordonnees_tiers\",\n    \"adresse_logement_adresse_suggestion\": \"{{service_secours_fake_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": true,\n    \"adresse_logement_adresse\": \"{{service_secours_fake_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{service_secours_fake_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{service_secours_fake_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{service_secours_fake_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{service_secours_insee}}\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": {{service_secours_longitude}},\n    \"adresse_logement_adresse_detail_geoloc_lat\": {{service_secours_latitude}},\n    \"adresse_logement_complement_adresse_etage\": \"{{$randomInt}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"signalement_concerne_profil\": \"autre_logement\",\n    \"signalement_concerne_profil_detail_tiers\": \"service_secours\",\n    \"signalement_concerne_logement_social_service_secours\": \"non\",\n    \"profil\": \"service_secours\",\n    \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_nom_organisme\": \"{{$randomCompanyName}}\",\n    \"vos_coordonnees_tiers_nom\": \"{{$randomLastName}}\",\n    \"vos_coordonnees_tiers_prenom\": \"{{$randomFirstName}}\",\n    \"vos_coordonnees_tiers_email\": \"{{$randomEmail}}\",\n    \"vos_coordonnees_tiers_tel\": \"611121341\"\n}",
+									"raw": "{\n  \"uuidSignalementDraft\": \"\",\n  \"signalementReference\": \"\",\n  \"lienSuivi\": \"\",\n  \"signalementStatus\": \"\",\n  \"errorMessage\": \"\",\n  \"currentStep\": \"coordonnees_occupant\",\n  \"adresse_logement_adresse_suggestion\": \"{{service_secours_full_address}}\",\n  \"adresse_logement_complement_adresse_etage\": \"\",\n  \"adresse_logement_complement_adresse_escalier\": \"\",\n  \"adresse_logement_complement_adresse_numero_appartement\": \"\",\n  \"adresse_logement_adresse_detail_need_refresh_insee\": false,\n  \"adresse_logement_adresse\": \"{{service_secours_full_address}}\",\n  \"adresse_logement_adresse_detail_numero\": \"{{service_secours_address}}\",\n  \"adresse_logement_adresse_detail_code_postal\": \"{{service_secours_zip}}\",\n  \"adresse_logement_adresse_detail_commune\": \"{{service_secours_city}}\",\n  \"adresse_logement_adresse_detail_insee\": \"{{service_secours_insee}}\",\n  \"adresse_logement_adresse_detail_manual\": 0,\n  \"territoryCode\": \"13\",\n  \"signalement_concerne_profil\": \"autre_logement\",\n  \"signalement_concerne_profil_detail_tiers\": \"service_secours\",\n  \"signalement_concerne_profil_detail_profil_occupant\": \"nsp\",\n  \"signalement_concerne_logement_social_service_secours\": \"non\",\n  \"profil\": \"service_secours\",\n  \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n  \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n  \"vos_coordonnees_tiers_nom_organisme\": \"{{service_secours_organisme}}\",\n  \"vos_coordonnees_tiers_nom\": \"{{service_secours_nom}}\",\n  \"vos_coordonnees_tiers_prenom\": \"{{service_secours_prenom}}\",\n  \"vos_coordonnees_tiers_email\": \"{{service_secours_email}}\",\n  \"vos_coordonnees_tiers_tel\": \"611571631\",\n  \"coordonnees_occupant_tel_countrycode\": \"FR:33\",\n  \"coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n  \"coordonnees_occupant_nom\": \"{{service_secours_occupant_nom}}\",\n  \"coordonnees_occupant_prenom\": \"{{service_secours_occupant_prenom}}\",\n  \"coordonnees_occupant_email\": \"{{service_secours_occupant_email}}\",\n  \"coordonnees_occupant_tel\": \"781594022\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -702,7 +808,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"{{signalement_draft_uuid_locataire}}\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_adresse_suggestion\": \"{{locataire_fake_address}}\",\n    \"adresse_logement_adresse\": \"{{locataire_fake_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{locataire_fake_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{locataire_fake_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{locataire_fake_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{locataire_insee}}\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": {{locataire_longitude}},\n    \"adresse_logement_adresse_detail_geoloc_lat\": {{locataire_latitude}},\n    \"adresse_logement_complement_adresse_etage\": \"{{$randomInt}}\",\n    \"adresse_logement_complement_adresse_escalier\": \"110\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"152\",\n    \"adresse_logement_complement_adresse_autre\": \"10\",\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"locataire\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"profil\": \"locataire\",\n    \"vos_coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_civilite\": \"mr\",\n    \"vos_coordonnees_occupant_nom\": \"{{locataire_fake_nom}}\",\n    \"vos_coordonnees_occupant_prenom\": \"{{locataire_fake_prenom}}\",\n    \"vos_coordonnees_occupant_email\": \"{{locataire_fake_email}}\",\n    \"vos_coordonnees_occupant_tel\": \"0611457845\",\n    \"coordonnees_bailleur_tel_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_nom_autocomplete_textfield\": \"13 HABITAT\",\n    \"coordonnees_bailleur_nom_autocomplete\": \"13 HABITAT\",\n    \"coordonnees_bailleur_nom\": \"13 HABITAT\",\n    \"coordonnees_bailleur_prenom\": \"V\\u00e9ronique\",\n    \"coordonnees_bailleur_email\": \"veronique@13habitat.com\",\n    \"coordonnees_bailleur_tel\": \"611121314\",\n    \"coordonnees_bailleur_tel_secondaire\": \"612131415\",\n    \"coordonnees_bailleur_adresse_suggestion\": \"80 Rue albe 13004 Marseille\",\n    \"coordonnees_bailleur_adresse_detail_need_refresh_insee\": true,\n    \"coordonnees_bailleur_adresse\": \"80 Rue albe 13004 Marseille\",\n    \"coordonnees_bailleur_adresse_detail_numero\": \"80 Rue albe\",\n    \"coordonnees_bailleur_adresse_detail_code_postal\": \"13004\",\n    \"coordonnees_bailleur_adresse_detail_commune\": \"Marseille\",\n    \"coordonnees_bailleur_adresse_detail_insee\": \"13204\",\n    \"coordonnees_bailleur_adresse_detail_manual\": 0,\n    \"info_procedure_bailleur_prevenu\": \"oui\",\n    \"info_procedure_bail_moyen\": \"telephone\",\n    \"info_procedure_bail_date\": \"01\\/2024\",\n    \"info_procedure_bail_reponse\": \"Qu'il restait \\u00e0 disposition\",\n    \"info_procedure_bail_numero\": \"12345678\",\n    \"zone_concernee_zone\": \"logement\",\n    \"zone_concernee_debut_desordres\": \"months_6_to_12\",\n    \"type_logement_nature\": \"appartement\",\n    \"type_logement_rdc\": \"non\",\n    \"type_logement_dernier_etage\": \"non\",\n    \"type_logement_sous_sol_sans_fenetre\": \"non\",\n    \"composition_logement_nb_pieces\": \"3\",\n    \"composition_logement_superficie\": \"75\",\n    \"composition_logement_piece_unique\": \"plusieurs_pieces\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_cuisine\": \"non\",\n    \"composition_logement_nombre_enfants\": \"4\",\n    \"composition_logement_nombre_personnes\": \"6\",\n    \"composition_logement_enfants\": \"oui\",\n    \"bail_dpe_date_emmenagement\": \"2020-05-01\",\n    \"bail_dpe_bail\": \"oui\",\n    \"bail_dpe_etat_des_lieux\": \"oui\",\n    \"bail_dpe_dpe\": \"oui\",\n    \"bail_dpe_classe_energetique\": \"D\",\n    \"desordres_logement_chauffage_details_dpe_annee\": \"post2023\",\n    \"logement_social_montant_allocation\": null,\n    \"logement_social_demande_relogement\": \"non\",\n    \"logement_social_allocation\": \"non\",\n    \"travailleur_social_quitte_logement\": \"non\",\n    \"travailleur_social_accompagnement\": \"non\",\n    \"categorieDisorders\": {\n        \"batiment\": [],\n        \"logement\": [\n            \"desordres_logement_lumiere\",\n            \"desordres_logement_humidite\",\n            \"desordres_logement_chauffage\",\n            \"desordres_logement_nuisibles\"\n        ]\n    },\n    \"desordres_logement_lumiere_pas_lumiere\": 1,\n    \"desordres_logement_lumiere_pas_lumiere_pieces_cuisine\": null,\n    \"desordres_logement_lumiere_pas_lumiere_pieces\": 1,\n    \"desordres_logement_lumiere_pas_lumiere_pieces_salle_de_bain\": null,\n    \"desordres_logement_lumiere_pas_lumiere_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_lumiere_pas_volets\": 1,\n    \"desordres_logement_lumiere_pas_volets_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_lumiere_pas_volets_pieces\": 1,\n    \"desordres_logement_lumiere_plafond_trop_bas\": 1,\n    \"desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre\": 1,\n    \"desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille\": \"190\",\n    \"desordres_logement_humidite_salle_de_bain\": 1,\n    \"desordres_logement_humidite_salle_de_bain_details_fuite\": \"non\",\n    \"desordres_logement_humidite_salle_de_bain_details_machine\": \"oui\",\n    \"desordres_logement_humidite_salle_de_bain_details_moisissure_apres_nettoyage\": \"oui\",\n    \"desordres_logement_chauffage_type\": \"electrique\",\n    \"desordres_logement_chauffage_details_fenetres_permeables\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces_salle_de_bain\": null,\n    \"desordres_logement_nuisibles_cafards\": 1,\n    \"desordres_logement_nuisibles_cafards_details_date\": \"before_movein\",\n    \"desordres_logement_nuisibles_punaises\": 1,\n    \"desordres_logement_nuisibles_punaises_details_date\": \"before_movein\",\n    \"message_administration\": \"Bonjour,\\nJe me permets de signaler une situation tr\\u00e8s difficile dans mon logement. Depuis plusieurs mois, je vis avec une infestation de blattes persistante, malgr\\u00e9 plusieurs tentatives de traitement. \\u00c0 cela s\\u2019ajoutent de graves probl\\u00e8mes d\\u2019humidit\\u00e9 : des taches de moisissure se forment sur les murs, notamment dans la chambre et la salle de bain, rendant l\\u2019air difficilement respirable. L\\u2019humidit\\u00e9 est telle que mes affaires personnelles commencent \\u00e0 s\\u2019ab\\u00eemer, et cela affecte aussi ma sant\\u00e9, avec des irritations et des probl\\u00e8mes respiratoires. Je suis tr\\u00e8s inquiet pour ma s\\u00e9curit\\u00e9 et mon bien-\\u00eatre dans ce logement.\",\n    \"info_procedure_assurance_contactee\": \"oui\",\n    \"info_procedure_reponse_assurance\": \"Va envoyer un expert\",\n    \"info_procedure_depart_apres_travaux\": \"oui\",\n    \"utilisation_service_ok_prevenir_bailleur\": 1,\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_demande_logement\": 1,\n    \"utilisation_service_ok_donnees_sante\": 1,\n    \"utilisation_service_ok_cgu\": 1,\n    \"informations_complementaires_logement_montant_loyer\": \"812\",\n    \"informations_complementaires_logement_nombre_etages\": \"5\",\n    \"informations_complementaires_situation_occupants_beneficiaire_rsa\": \"non\",\n    \"informations_complementaires_situation_occupants_beneficiaire_fsl\": \"non\",\n    \"informations_complementaires_situation_occupants_date_naissance\": \"1990-02-01\",\n    \"informations_complementaires_logement_annee_construction\": \"1960\"\n}",
+									"raw": "{\n    \"uuidSignalementDraft\": \"{{signalement_draft_uuid_locataire}}\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"signalementStatus\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_adresse_suggestion\": \"{{locataire_full_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": false,\n    \"adresse_logement_adresse\": \"{{locataire_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{locataire_street_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{locataire_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{locataire_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{locataire_insee}}\",\n    \"adresse_logement_complement_adresse_etage\": \"{{locataire_etage}}\",\n    \"adresse_logement_complement_adresse_escalier\": \"110\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"152\",\n    \"adresse_logement_complement_adresse_autre\": \"10\",\n    \"territoryCode\": \"13\",\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"locataire\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"profil\": \"locataire\",\n    \"vos_coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_civilite\": \"mr\",\n    \"vos_coordonnees_occupant_nom\": \"{{locataire_nom}}\",\n    \"vos_coordonnees_occupant_prenom\": \"{{locataire_prenom}}\",\n    \"vos_coordonnees_occupant_email\": \"{{locataire_email}}\",\n    \"vos_coordonnees_occupant_tel\": \"0611457845\",\n    \"vos_coordonnees_occupant_tel_secondaire\": \"617141334\",\n    \"coordonnees_bailleur_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_nom\": \"SCI Jean Bouin\",\n    \"coordonnees_bailleur_prenom\": \"Cindy\",\n    \"coordonnees_bailleur_email\": \"bouin@sci.com\",\n    \"coordonnees_bailleur_tel\": \"611451431\",\n    \"coordonnees_bailleur_tel_secondaire\": \"611345654\",\n    \"coordonnees_bailleur_adresse_suggestion\": \"173 Avenue de la Division Leclerc 92160 Antony\",\n    \"coordonnees_bailleur_adresse_detail_need_refresh_insee\": false,\n    \"coordonnees_bailleur_adresse\": \"173 Avenue de la Division Leclerc 92160 Antony\",\n    \"coordonnees_bailleur_adresse_detail_numero\": \"173 Avenue de la Division Leclerc\",\n    \"coordonnees_bailleur_adresse_detail_code_postal\": \"92160\",\n    \"coordonnees_bailleur_adresse_detail_commune\": \"Antony\",\n    \"coordonnees_bailleur_adresse_detail_insee\": \"92002\",\n    \"coordonnees_bailleur_adresse_detail_manual\": 0,\n    \"info_procedure_bailleur_prevenu\": \"oui\",\n    \"info_procedure_bail_moyen\": \"courrier\",\n    \"info_procedure_bail_date\": \"06\\/2022\",\n    \"info_procedure_bail_reponse\": \"Qu'il reviendrait vers moi d'ici quelques semaines. \\n\\u00c7a fait 4 ans que j'attends\",\n    \"injonction_bailleur_choice\": \"oui\",\n    \"zone_concernee_zone\": \"batiment_logement\",\n    \"zone_concernee_debut_desordres\": \"months_1_to_6\",\n    \"type_logement_nature\": \"appartement\",\n    \"type_logement_rdc\": \"non\",\n    \"type_logement_dernier_etage\": \"non\",\n    \"type_logement_sous_sol_sans_fenetre\": \"non\",\n    \"composition_logement_nb_pieces\": \"2\",\n    \"composition_logement_superficie\": \"113\",\n    \"composition_logement_piece_unique\": \"plusieurs_pieces\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_cuisine\": \"non\",\n    \"composition_logement_nombre_enfants\": \"77\",\n    \"composition_logement_nombre_personnes\": \"78\",\n    \"composition_logement_enfants\": \"oui\",\n    \"bail_dpe_date_emmenagement\": \"2020-04-01\",\n    \"bail_dpe_bail\": \"oui\",\n    \"bail_dpe_invariant\": \"1234567890\",\n    \"bail_dpe_etat_des_lieux\": \"oui\",\n    \"bail_dpe_etat_des_lieux_upload\": [\n        {\n            \"file\": \"2026\\/04\\/new-1-69cd88a4d8232.jpg\",\n            \"filePath\": \"tmp\\/2026\\/04\\/new-1-69cd88a4d8232.jpg\",\n            \"titre\": \"new-1.jpg\"\n        }\n    ],\n    \"bail_dpe_bail_upload\": [\n        {\n            \"file\": \"2026\\/04\\/10-pg-blank-69cd88931963a.pdf\",\n            \"filePath\": \"tmp\\/2026\\/04\\/10-pg-blank-69cd88931963a.pdf\",\n            \"titre\": \"10-pg-blank.pdf\"\n        }\n    ],\n    \"bail_dpe_dpe\": \"oui\",\n    \"bail_dpe_dpe_upload\": [\n        {\n            \"file\": \"2026\\/04\\/signalement-2026-2-69cd88ae1afa5.pdf\",\n            \"filePath\": \"tmp\\/2026\\/04\\/signalement-2026-2-69cd88ae1afa5.pdf\",\n            \"titre\": \"signalement-2026-2.pdf\"\n        }\n    ],\n    \"bail_dpe_classe_energetique\": \"D\",\n    \"desordres_logement_chauffage_details_dpe_annee\": \"post2023\",\n    \"logement_social_montant_allocation\": null,\n    \"logement_social_demande_relogement\": \"non\",\n    \"logement_social_allocation\": \"non\",\n    \"travailleur_social_quitte_logement\": \"non\",\n    \"travailleur_social_accompagnement\": \"non\",\n    \"categorieDisorders\": {\n        \"batiment\": [\n            \"desordres_batiment_nuisibles\"\n        ],\n        \"logement\": [\n            \"desordres_logement_electricite\",\n            \"desordres_logement_chauffage\",\n            \"desordres_logement_humidite\"\n        ]\n    },\n    \"desordres_batiment_nuisibles_cafards\": 1,\n    \"desordres_batiment_nuisibles_rongeurs\": 1,\n    \"desordres_batiment_nuisibles_punaises\": 1,\n    \"desordres_batiment_nuisibles_autres\": 1,\n    \"desordres_batiment_nuisibles_autres_details_type_nuisibles\": \"des dragons\",\n    \"desordres_batiment_nuisibles_photos_upload\": [\n        {\n            \"file\": \"2026\\/04\\/dragon-69cd8921ee405.jpg\",\n            \"filePath\": \"tmp\\/2026\\/04\\/dragon-69cd8921ee405.jpg\",\n            \"titre\": \"dragon.jpg\"\n        }\n    ],\n    \"desordres_logement_electricite_pas_compteur\": 1,\n    \"desordres_logement_electricite_pas_electricite\": 1,\n    \"desordres_logement_electricite_installation_dangereuse\": 1,\n    \"desordres_logement_electricite_manque_prises\": 1,\n    \"desordres_logement_electricite_manque_prises_details_multiprises\": \"oui\",\n    \"desordres_logement_chauffage_type\": \"electrique\",\n    \"desordres_logement_chauffage_details_fenetres_permeables\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces\": 1,\n    \"desordres_logement_chauffage_details_fenetres_permeables_pieces_cuisine\": 1,\n    \"desordres_logement_humidite_tout\": 1,\n    \"desordres_logement_humidite_tout_details_fuite\": \"oui\",\n    \"desordres_logement_humidite_tout_details_machine\": \"oui\",\n    \"desordres_logement_humidite_tout_details_moisissure_apres_nettoyage\": \"oui\",\n    \"desordres_logement_humidite_piece_a_vivre\": 1,\n    \"desordres_logement_humidite_piece_a_vivre_details_fuite\": \"oui\",\n    \"desordres_logement_humidite_piece_a_vivre_details_machine\": \"oui\",\n    \"desordres_logement_humidite_piece_a_vivre_details_moisissure_apres_nettoyage\": \"oui\",\n    \"message_administration\": \"Bonjour,\\n\\nJe me permets de vous contacter afin de signaler une situation pr\\u00e9occupante concernant mon logement, dans lequel je vis actuellement avec ma famille.\\n\\nDepuis plusieurs mois, nous faisons face \\u00e0 de graves probl\\u00e8mes d\\u2019humidit\\u00e9. Des moisissures apparaissent sur les murs de la chambre et du salon, malgr\\u00e9 un nettoyage r\\u00e9gulier. L\\u2019air est devenu tr\\u00e8s difficile \\u00e0 respirer, et cela a un impact direct sur notre sant\\u00e9, notamment avec des toux fr\\u00e9quentes et des irritations.\\n\\nPar ailleurs, le logement est mal isol\\u00e9 et tr\\u00e8s froid en hiver. Le syst\\u00e8me de chauffage ne permet pas d\\u2019atteindre une temp\\u00e9rature correcte, et certaines fen\\u00eatres laissent passer l\\u2019air. Nous constatons \\u00e9galement des infiltrations d\\u2019eau lors de fortes pluies.\\n\\nEn plus de ces probl\\u00e8mes, nous sommes confront\\u00e9s \\u00e0 la pr\\u00e9sence de nuisibles, notamment des cafards, ce qui rend la vie quotidienne particuli\\u00e8rement difficile.\\n\\nMalgr\\u00e9 plusieurs relances aupr\\u00e8s du bailleur, aucune intervention efficace n\\u2019a \\u00e9t\\u00e9 mise en place \\u00e0 ce jour. La situation perdure et se d\\u00e9grade progressivement.\\n\\nCompte tenu de ces \\u00e9l\\u00e9ments, je sollicite votre aide afin qu\\u2019une intervention puisse \\u00eatre r\\u00e9alis\\u00e9e et que les conditions de logement soient mises en conformit\\u00e9.\\n\\nJe vous remercie par avance pour l\\u2019attention port\\u00e9e \\u00e0 ce signalement.\\n\\nCordialement,\",\n    \"info_procedure_assurance_contactee\": \"oui\",\n    \"info_procedure_reponse_assurance\": \"Contacter le bailleur\",\n    \"info_procedure_depart_apres_travaux\": \"oui\",\n    \"utilisation_service_ok_prevenir_bailleur\": 1,\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_demande_logement\": 1,\n    \"utilisation_service_ok_donnees_sante\": 1,\n    \"utilisation_service_ok_cgu\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -730,7 +836,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"{{signalement_draft_uuid_bailleur_occupant}}\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": true,\n    \"adresse_logement_adresse_suggestion\": \"{{bailleur_occupant_fake_address}}\",\n    \"adresse_logement_adresse\": \"{{bailleur_occupant_fake_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{bailleur_occupant_fake_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{bailleur_occupant_fake_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{bailleur_occupant_fake_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{bailleur_occupant_insee}}\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": {{bailleur_occupant_longitude}},\n    \"adresse_logement_adresse_detail_geoloc_lat\": {{bailleur_occupant_latitude}},\n    \"adresse_logement_complement_adresse_etage\": \"{{$randomInt}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"adresse_logement_complement_adresse_escalier\": \"1B\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"114\",\n    \"adresse_logement_complement_adresse_autre\": \"Les essentielles\",\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"bailleur_occupant\",\n    \"signalement_concerne_profil_detail_bailleur_proprietaire\": \"particulier\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"profil\": \"bailleur_occupant\",\n    \"vos_coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_civilite\": \"mr\",\n    \"vos_coordonnees_occupant_nom\": \"{{bailleur_occupant_fake_nom}}\",\n    \"vos_coordonnees_occupant_prenom\": \"{{bailleur_occupant_fake_prenom}}\",\n    \"vos_coordonnees_occupant_email\": \"{{bailleur_occupant_fake_email}}\",\n    \"vos_coordonnees_occupant_tel\": \"611121314\",\n    \"zone_concernee_zone\": \"logement\",\n    \"zone_concernee_debut_desordres\": \"months_6_to_12\",\n    \"type_logement_nature\": \"maison\",\n    \"composition_logement_nb_pieces\": \"5\",\n    \"composition_logement_superficie\": \"50\",\n    \"composition_logement_piece_unique\": \"plusieurs_pieces\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_cuisine\": \"non\",\n    \"composition_logement_nombre_enfants\": \"2\",\n    \"composition_logement_nombre_personnes\": \"4\",\n    \"composition_logement_enfants\": \"oui\",\n    \"bail_dpe_date_emmenagement\": \"2020-12-11\",\n    \"bail_dpe_dpe\": \"oui\",\n    \"bail_dpe_invariant\": \"12345678\",\n    \"bail_dpe_classe_energetique\": \"D\",\n    \"desordres_logement_chauffage_details_dpe_annee\": \"post2023\",\n    \"logement_social_montant_allocation\": null,\n    \"logement_social_demande_relogement\": \"non\",\n    \"logement_social_allocation\": \"non\",\n    \"logement_social_allocation_caisse\": \"caf\",\n    \"travailleur_social_quitte_logement\": \"non\",\n    \"travailleur_social_accompagnement\": \"non\",\n    \"categorieDisorders\": {\n        \"batiment\": [],\n        \"logement\": [\n            \"desordres_logement_aeration\",\n            \"desordres_logement_securite\",\n            \"desordres_logement_eau\"\n        ]\n    },\n    \"desordres_logement_aeration_aucune_aeration\": 1,\n    \"desordres_logement_aeration_aucune_aeration_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_aeration_aucune_aeration_pieces\": 1,\n    \"desordres_logement_aeration_ventilation_defectueuse\": 1,\n    \"desordres_logement_aeration_ventilation_defectueuse_details_nettoyage\": \"oui\",\n    \"desordres_logement_aeration_ventilation_defectueuse_details_pieces_salle_de_bain\": 1,\n    \"desordres_logement_aeration_ventilation_defectueuse_details_pieces\": 1,\n    \"desordres_logement_aeration_ventilation_defectueuse_details_pieces_cuisine\": 1,\n    \"desordres_logement_aeration_ventilation_defectueuse_details_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_securite_sol_glissant\": 1,\n    \"desordres_logement_securite_sol_glissant_pieces_cuisine\": 1,\n    \"desordres_logement_securite_sol_glissant_pieces\": 1,\n    \"desordres_logement_securite_sol_dangereux\": 1,\n    \"desordres_logement_securite_sol_dangereux_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_securite_sol_dangereux_pieces\": 1,\n    \"desordres_logement_securite_balcons\": 1,\n    \"desordres_logement_securite_balcons_pieces_cuisine\": 1,\n    \"desordres_logement_securite_balcons_pieces\": 1,\n    \"desordres_logement_securite_gaz\": 1,\n    \"desordres_logement_securite_plomb\": 1,\n    \"desordres_logement_securite_plomb_pieces_cuisine\": 1,\n    \"desordres_logement_securite_plomb_pieces\": 1,\n    \"desordres_logement_securite_plomb_details_diagnostique\": \"non\",\n    \"desordres_logement_eau_eau_potable\": 1,\n    \"desordres_logement_eau_eau_chaude\": 1,\n    \"desordres_logement_eau_evacuation\": 1,\n    \"message_administration\": \"Mon logement pr\\u00e9sente plusieurs d\\u00e9sordres importants qui affectent mon quotidien :\\ndes probl\\u00e8mes d\\u2019a\\u00e9ration (mauvaises odeurs persistantes, air vici\\u00e9, humidit\\u00e9), des risques li\\u00e9s \\u00e0 la s\\u00e9curit\\u00e9 (installations \\u00e9lectriques ou \\u00e9quipements d\\u00e9fectueux, absence de dispositifs de s\\u00e9curit\\u00e9), ainsi que des dysfonctionnements au niveau de l\\u2019eau (fuites, absence d\\u2019eau chaude, pression insuffisante). Ces situations rendent les conditions de vie difficiles et n\\u00e9cessitent une intervention rapide.\",\n    \"info_procedure_assurance_contactee\": \"non\",\n    \"info_procedure_depart_apres_travaux\": \"oui\",\n    \"utilisation_service_ok_demande_logement\": 1,\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_donnees_sante\": 1,\n    \"utilisation_service_ok_cgu\": 1,\n    \"informations_complementaires_situation_occupants_revenu_fiscal\": \"123456\",\n    \"informations_complementaires_logement_nombre_etages\": \"10\",\n    \"informations_complementaires_situation_occupants_beneficiaire_rsa\": \"non\",\n    \"informations_complementaires_situation_occupants_beneficiaire_fsl\": \"non\",\n    \"informations_complementaires_logement_annee_construction\": \"1985\"\n}",
+									"raw": "{\n    \"uuidSignalementDraft\": \"{{signalement_draft_uuid_bailleur_occupant}}\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"signalementStatus\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_adresse_suggestion\": \"{{bailleur_occupant_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": false,\n    \"adresse_logement_adresse\": \"{{bailleur_occupant_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{bailleur_occupant_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{bailleur_occupant_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{bailleur_occupant_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{bailleur_occupant_insee}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"territoryCode\": \"13\",\n    \"signalement_concerne_profil\": \"logement_occupez\",\n    \"signalement_concerne_profil_detail_occupant\": \"bailleur_occupant\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"non\",\n    \"profil\": \"bailleur_occupant\",\n    \"vos_coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"signalement_concerne_profil_detail_bailleur_proprietaire\": \"particulier\",\n    \"vos_coordonnees_occupant_civilite\": \"mme\",\n    \"vos_coordonnees_occupant_nom\": \"{{bailleur_occupant_nom}}\",\n    \"vos_coordonnees_occupant_prenom\": \"{{bailleur_occupant_prenom}}\",\n    \"vos_coordonnees_occupant_email\": \"{{bailleur_occupant_email}}\",\n    \"vos_coordonnees_occupant_tel\": \"611585964\",\n    \"zone_concernee_zone\": \"batiment\",\n    \"zone_concernee_debut_desordres\": \"months_1_to_6\",\n    \"type_logement_nature\": \"appartement\",\n    \"type_logement_rdc\": \"non\",\n    \"type_logement_dernier_etage\": \"non\",\n    \"type_logement_sous_sol_sans_fenetre\": \"non\",\n    \"composition_logement_nb_pieces\": \"4\",\n    \"composition_logement_superficie\": \"75\",\n    \"composition_logement_piece_unique\": \"plusieurs_pieces\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_cuisine\": \"non\",\n    \"composition_logement_nombre_enfants\": \"4\",\n    \"composition_logement_nombre_personnes\": \"6\",\n    \"composition_logement_enfants\": \"oui\",\n    \"bail_dpe_date_emmenagement\": \"2020-12-10\",\n    \"bail_dpe_dpe\": \"oui\",\n    \"bail_dpe_classe_energetique\": \"C\",\n    \"desordres_logement_chauffage_details_dpe_annee\": \"post2023\",\n    \"logement_social_montant_allocation\": null,\n    \"logement_social_demande_relogement\": \"non\",\n    \"logement_social_allocation\": \"non\",\n    \"travailleur_social_quitte_logement\": \"non\",\n    \"travailleur_social_accompagnement\": \"non\",\n    \"categorieDisorders\": {\n        \"batiment\": [\n            \"desordres_batiment_proprete\",\n            \"desordres_batiment_nuisibles\"\n        ],\n        \"logement\": []\n    },\n    \"desordres_batiment_proprete_interieur\": 1,\n    \"desordres_batiment_proprete_facades\": 1,\n    \"desordres_batiment_proprete_parties_communes\": 1,\n    \"desordres_batiment_proprete_local_poubelles\": null,\n    \"desordres_batiment_nuisibles_cafards\": 1,\n    \"desordres_batiment_nuisibles_rongeurs\": 1,\n    \"desordres_batiment_nuisibles_punaises\": 1,\n    \"desordres_batiment_nuisibles_autres\": null,\n    \"message_administration\": \"Bonjour,\\n\\nJe me permets de vous contacter en tant que propri\\u00e9taire afin de signaler plusieurs d\\u00e9sordres constat\\u00e9s au sein de l\\u2019immeuble, notamment dans les parties communes.\\n\\nDepuis quelque temps, une pr\\u00e9sence importante de nuisibles (cafards \\/ rats \\/ souris selon le cas) a \\u00e9t\\u00e9 constat\\u00e9e dans les espaces communs du b\\u00e2timent, notamment dans les couloirs, caves et locaux poubelles. Cette situation entra\\u00eene des probl\\u00e8mes d\\u2019hygi\\u00e8ne et d\\u2019insalubrit\\u00e9 qui impactent l\\u2019ensemble des occupants de l\\u2019immeuble.\\n\\nPar ailleurs, plusieurs d\\u00e9gradations li\\u00e9es au b\\u00e2timent ont \\u00e9galement \\u00e9t\\u00e9 observ\\u00e9es, notamment un manque d\\u2019entretien des parties communes, des infiltrations et diverses d\\u00e9t\\u00e9riorations favorisant la prolif\\u00e9ration des nuisibles.\\n\\nDes premi\\u00e8res d\\u00e9marches ont d\\u00e9j\\u00e0 \\u00e9t\\u00e9 engag\\u00e9es afin de signaler la situation et envisager une intervention adapt\\u00e9e, mais les probl\\u00e8mes persistent \\u00e0 ce jour.\\n\\nJe souhaite donc qu\\u2019un constat puisse \\u00eatre r\\u00e9alis\\u00e9 et que les mesures n\\u00e9cessaires soient mises en \\u0153uvre afin de rem\\u00e9dier rapidement \\u00e0 cette situation.\\n\\nJe reste disponible pour transmettre tout compl\\u00e9ment d\\u2019information ou document utile \\u00e0 l\\u2019\\u00e9tude du dossier.\",\n    \"info_procedure_assurance_contactee\": \"oui\",\n    \"info_procedure_reponse_assurance\": \"Aucune r\\u00e9ponse encore\",\n    \"info_procedure_depart_apres_travaux\": \"oui\",\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_demande_logement\": 1,\n    \"utilisation_service_ok_donnees_sante\": 1,\n    \"utilisation_service_ok_cgu\": 1,\n    \"informations_complementaires_situation_occupants_revenu_fiscal\": \"40000\",\n    \"informations_complementaires_logement_nombre_etages\": \"6\",\n    \"informations_complementaires_situation_occupants_beneficiaire_rsa\": \"non\",\n    \"informations_complementaires_situation_occupants_beneficiaire_fsl\": \"non\",\n    \"informations_complementaires_logement_annee_construction\": \"1980\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -758,7 +864,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"f5c11c14-a653-451e-9e6e-8a779489f846\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": true,\n    \"adresse_logement_adresse_suggestion\": \"{{bailleur_fake_address}}\",\n    \"adresse_logement_adresse\": \"{{bailleur_fake_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{bailleur_fake_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{bailleur_fake_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{bailleur_fake_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{bailleur_insee}}\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": {{bailleur_longitude}},\n    \"adresse_logement_adresse_detail_geoloc_lat\": {{bailleur_latitude}},\n    \"adresse_logement_complement_adresse_etage\": \"{{$randomInt}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"adresse_logement_complement_adresse_escalier\": \"12J\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"114\",\n    \"adresse_logement_complement_adresse_autre\": \"Les goudes\",\n    \"signalement_concerne_profil\": \"autre_logement\",\n    \"signalement_concerne_profil_detail_tiers\": \"bailleur\",\n    \"signalement_concerne_profil_detail_bailleur_bailleur\": \"organisme_societe\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"profil\": \"bailleur\",\n    \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_nom_organisme\": \"HABITAT\",\n    \"vos_coordonnees_tiers_nom\": \"{{bailleur_fake_nom}}\",\n    \"vos_coordonnees_tiers_prenom\": \"{{bailleur_fake_prenom}}\",\n    \"vos_coordonnees_tiers_email\": \"{{bailleur_fake_email}}\",\n    \"vos_coordonnees_tiers_tel\": \"611457845\",\n    \"coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_nom\": \"{{$randomLastName}}\",\n    \"coordonnees_occupant_prenom\": \"{{$randomFirstName}}\",\n    \"coordonnees_occupant_email\": \"{{$randomEmail}}\",\n    \"coordonnees_occupant_tel\": \"611571631\",\n    \"zone_concernee_zone\": \"batiment_logement\",\n    \"zone_concernee_debut_desordres\": \"more_2_years\",\n    \"zone_concernee_constatation_desordres\": \"oui\",\n    \"type_logement_nature\": \"appartement\",\n    \"type_logement_rdc\": \"non\",\n    \"type_logement_dernier_etage\": \"non\",\n    \"type_logement_sous_sol_sans_fenetre\": \"non\",\n    \"composition_logement_nb_pieces\": \"2\",\n    \"composition_logement_superficie\": \"45\",\n    \"composition_logement_piece_unique\": \"plusieurs_pieces\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_cuisine\": \"non\",\n    \"composition_logement_nombre_enfants\": \"3\",\n    \"composition_logement_nombre_personnes\": \"5\",\n    \"composition_logement_enfants\": \"non\",\n    \"bail_dpe_bail\": \"oui\",\n    \"bail_dpe_etat_des_lieux\": \"oui\",\n    \"bail_dpe_dpe\": \"oui\",\n    \"bail_dpe_classe_energetique\": \"C\",\n    \"desordres_logement_chauffage_details_dpe_annee\": \"post2023\",\n    \"logement_social_montant_allocation\": \"125\",\n    \"logement_social_allocation\": \"oui\",\n    \"logement_social_allocation_caisse\": \"caf\",\n    \"logement_social_date_naissance\": \"1991-03-11\",\n    \"logement_social_numero_allocataire\": \"12345678\",\n    \"travailleur_social_quitte_logement\": \"oui\",\n    \"travailleur_social_preavis_depart\": \"oui\",\n    \"travailleur_social_accompagnement\": \"non\",\n    \"categorieDisorders\": {\n        \"batiment\": [\n            \"desordres_batiment_incendie\",\n            \"desordres_batiment_nuisibles\"\n        ],\n        \"logement\": [\n            \"desordres_logement_bruit\",\n            \"desordres_logement_electricite\",\n            \"desordres_logement_aeration\",\n            \"desordres_logement_lumiere\"\n        ]\n    },\n    \"desordres_batiment_incendie_odeur_gaz\": 1,\n    \"desordres_batiment_incendie_porte_coupe_feu\": 1,\n    \"desordres_batiment_nuisibles_cafards\": 1,\n    \"desordres_batiment_nuisibles_rongeurs\": 1,\n    \"desordres_batiment_nuisibles_punaises\": 1,\n    \"desordres_batiment_nuisibles_autres\": 1,\n    \"desordres_batiment_nuisibles_autres_details_type_nuisibles\": \"Tigres\",\n    \"desordres_logement_bruit_exterieur\": 1,\n    \"desordres_logement_bruit_voisins\": 1,\n    \"desordres_logement_electricite_pas_electricite\": 1,\n    \"desordres_logement_electricite_pas_compteur\": 1,\n    \"desordres_logement_electricite_installation_dangereuse\": 1,\n    \"desordres_logement_electricite_manque_prises\": 1,\n    \"desordres_logement_electricite_manque_prises_details_multiprises\": \"oui\",\n    \"desordres_logement_aeration_aucune_aeration\": 1,\n    \"desordres_logement_aeration_aucune_aeration_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_aeration_aucune_aeration_pieces\": 1,\n    \"desordres_logement_aeration_ventilation_defectueuse\": 1,\n    \"desordres_logement_aeration_aucune_aeration_pieces_cuisine\": 1,\n    \"desordres_logement_aeration_aucune_aeration_pieces_salle_de_bain\": 1,\n    \"desordres_logement_aeration_ventilation_defectueuse_details_nettoyage\": \"oui\",\n    \"desordres_logement_aeration_ventilation_defectueuse_details_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_aeration_ventilation_defectueuse_details_pieces\": 1,\n    \"desordres_logement_aeration_ventilation_defectueuse_details_pieces_cuisine\": 1,\n    \"desordres_logement_aeration_ventilation_defectueuse_details_pieces_salle_de_bain\": 1,\n    \"desordres_logement_lumiere_pas_lumiere\": 1,\n    \"desordres_logement_lumiere_pas_lumiere_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_lumiere_pas_lumiere_pieces\": 1,\n    \"desordres_logement_lumiere_pas_lumiere_pieces_cuisine\": 1,\n    \"desordres_logement_lumiere_pas_lumiere_pieces_salle_de_bain\": 1,\n    \"desordres_logement_lumiere_pas_volets\": 1,\n    \"desordres_logement_lumiere_pas_volets_pieces_cuisine\": 1,\n    \"desordres_logement_lumiere_pas_volets_pieces\": 1,\n    \"desordres_logement_lumiere_pas_volets_pieces_piece_a_vivre\": 1,\n    \"desordres_logement_lumiere_pas_volets_pieces_salle_de_bain\": 1,\n    \"desordres_logement_lumiere_plafond_trop_bas\": 1,\n    \"desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre\": 1,\n    \"desordres_logement_lumiere_plafond_trop_bas_piece_a_vivre_taille\": \"190\",\n    \"desordres_logement_lumiere_plafond_trop_bas_cuisine\": 1,\n    \"desordres_logement_lumiere_plafond_trop_bas_cuisine_taille\": \"190\",\n    \"desordres_logement_lumiere_plafond_trop_bas_salle_de_bain\": 1,\n    \"desordres_logement_lumiere_plafond_trop_bas_salle_de_bain_taille\": \"190\",\n    \"message_administration\": \"Mon logement pr\\u00e9sente de nombreux probl\\u00e8mes qui nuisent gravement \\u00e0 mes conditions de vie. L\\u2019a\\u00e9ration est insuffisante, avec une absence totale de ventilation dans les pi\\u00e8ces principales, la cuisine et la salle de bain, et un syst\\u00e8me de ventilation d\\u00e9fectueux. L\\u2019installation \\u00e9lectrique est dangereuse, avec un manque de prises, l'absence d'\\u00e9lectricit\\u00e9 dans certaines zones, et l'absence de compteur. La lumi\\u00e8re naturelle est tr\\u00e8s limit\\u00e9e : certaines pi\\u00e8ces n\\u2019ont pas de volets ni d\\u2019\\u00e9clairage, et les plafonds sont trop bas (1,90 m), ce qui accentue l\\u2019impression d\\u2019enfermement. Le bruit est \\u00e9galement un probl\\u00e8me important, qu\\u2019il vienne de l\\u2019ext\\u00e9rieur ou du voisinage. Enfin, le b\\u00e2timent est infest\\u00e9 de nuisibles (cafards, rongeurs, punaises, et m\\u00eame d'autres types comme des \\\"tigres\\\") et pr\\u00e9sente des risques d\\u2019incendie, notamment des odeurs de gaz et des probl\\u00e8mes li\\u00e9s aux portes coupe-feu.\\n\\n\",\n    \"info_procedure_assurance_contactee\": \"non\",\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_signalement_tiers\": 1,\n    \"utilisation_service_ok_donnees_sante\": 1,\n    \"utilisation_service_ok_cgu\": 1,\n    \"informations_complementaires_logement_montant_loyer\": \"650\",\n    \"informations_complementaires_logement_nombre_etages\": \"6\",\n    \"informations_complementaires_situation_bailleur_revenu_fiscal\": null,\n    \"informations_complementaires_situation_bailleur_date_effet_bail\": \"2021-12-11\",\n    \"informations_complementaires_situation_occupants_loyers_payes\": \"oui\",\n    \"informations_complementaires_logement_annee_construction\": \"1980\"\n}",
+									"raw": "{\n    \"uuidSignalementDraft\": \"{{signalement_draft_uuid_bailleur}}\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"signalementStatus\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_adresse_suggestion\": \"{{bailleur_full_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": false,\n    \"adresse_logement_adresse\": \"{{bailleur_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{bailleur_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{bailleur_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{bailleur_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{bailleur_insee}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"territoryCode\": \"13\",\n    \"signalement_concerne_profil\": \"autre_logement\",\n    \"signalement_concerne_profil_detail_tiers\": \"bailleur\",\n    \"signalement_concerne_profil_detail_bailleur_bailleur\": \"particulier\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"non\",\n    \"profil\": \"bailleur\",\n    \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_nom\": \"{{bailleur_nom}}\",\n    \"vos_coordonnees_tiers_prenom\": \"{{bailleur_prenom}}\",\n    \"vos_coordonnees_tiers_email\": \"{{bailleur_email}}\",\n    \"vos_coordonnees_tiers_tel\": \"611571331\",\n    \"coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_nom\": \"{{bailleur_occupant_nom}}\",\n    \"coordonnees_occupant_prenom\": \"{{bailleur_occupant_prenom}}\",\n    \"coordonnees_occupant_email\": \"{{bailleur_occupant_email}}\",\n    \"coordonnees_occupant_tel\": \"611451245\",\n    \"zone_concernee_zone\": \"logement\",\n    \"zone_concernee_debut_desordres\": \"months_6_to_12\",\n    \"zone_concernee_constatation_desordres\": \"oui\",\n    \"type_logement_nature\": \"maison\",\n    \"composition_logement_nb_pieces\": \"7\",\n    \"composition_logement_superficie\": \"100\",\n    \"composition_logement_piece_unique\": \"plusieurs_pieces\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_cuisine\": \"non\",\n    \"composition_logement_nombre_enfants\": \"8\",\n    \"composition_logement_nombre_personnes\": \"10\",\n    \"composition_logement_enfants\": \"oui\",\n    \"bail_dpe_bail\": \"oui\",\n    \"bail_dpe_etat_des_lieux\": \"oui\",\n    \"bail_dpe_dpe\": \"oui\",\n    \"bail_dpe_classe_energetique\": \"C\",\n    \"desordres_logement_chauffage_details_dpe_annee\": \"post2023\",\n    \"logement_social_montant_allocation\": null,\n    \"logement_social_allocation\": \"oui\",\n    \"logement_social_allocation_caisse\": \"caf\",\n    \"logement_social_date_naissance\": \"1990-12-11\",\n    \"travailleur_social_quitte_logement\": \"non\",\n    \"travailleur_social_accompagnement\": \"non\",\n    \"categorieDisorders\": {\n        \"batiment\": [],\n        \"logement\": [\n            \"desordres_logement_humidite\",\n            \"desordres_logement_aeration\",\n            \"desordres_logement_eau\"\n        ]\n    },\n    \"desordres_logement_humidite_tout\": null,\n    \"desordres_logement_humidite_piece_a_vivre\": 1,\n    \"desordres_logement_humidite_piece_a_vivre_details_fuite\": \"oui\",\n    \"desordres_logement_humidite_piece_a_vivre_details_machine\": \"oui\",\n    \"desordres_logement_humidite_cuisine\": 1,\n    \"desordres_logement_humidite_cuisine_details_fuite\": \"oui\",\n    \"desordres_logement_humidite_cuisine_details_machine\": \"oui\",\n    \"desordres_logement_aeration_aucune_aeration\": null,\n    \"desordres_logement_aeration_ventilation_defectueuse\": 1,\n    \"desordres_logement_aeration_ventilation_defectueuse_details_nettoyage\": \"non\",\n    \"desordres_logement_eau_eau_chaude\": 1,\n    \"desordres_logement_eau_evacuation\": 1,\n    \"message_administration\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\",\n    \"info_procedure_assurance_contactee\": \"oui\",\n    \"info_procedure_reponse_assurance\": \"En attente\",\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_signalement_tiers\": 1,\n    \"utilisation_service_ok_donnees_sante\": 1,\n    \"utilisation_service_ok_cgu\": 1,\n    \"informations_complementaires_logement_montant_loyer\": \"1200\",\n    \"informations_complementaires_logement_nombre_etages\": null,\n    \"informations_complementaires_situation_bailleur_revenu_fiscal\": null,\n    \"informations_complementaires_situation_occupants_loyers_payes\": \"non\",\n    \"informations_complementaires_situation_bailleur_beneficiaire_rsa\": \"non\",\n    \"informations_complementaires_situation_bailleur_beneficiaire_fsl\": \"non\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -786,7 +892,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"{{signalement_draft_uuid_tiers_pro}}\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"adresse_logement_adresse_suggestion\": \"{{tiers_pro_fake_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": true,\n    \"adresse_logement_adresse\": \"{{tiers_pro_fake_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{tiers_pro_fake_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{tiers_pro_fake_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{tiers_pro_fake_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{tiers_pro_insee}}\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": {{tiers_pro_longitude}},\n    \"adresse_logement_adresse_detail_geoloc_lat\": {{tiers_pro_latitude}},\n    \"adresse_logement_complement_adresse_etage\": \"{{$randomInt}}\",\n    \"signalement_concerne_profil\": \"autre_logement\",\n    \"signalement_concerne_profil_detail_tiers\": \"tiers_pro\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"non\",\n    \"profil\": \"tiers_pro\",\n    \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_nom_organisme\": \"SCI 123\",\n    \"vos_coordonnees_tiers_nom\": \"{{tiers_pro_fake_nom}}\",\n    \"vos_coordonnees_tiers_prenom\": \"{{tiers_pro_fake_prenom}}\",\n    \"vos_coordonnees_tiers_email\": \"{{tiers_pro_fake_email}}\",\n    \"vos_coordonnees_tiers_tel\": \"611121314\",\n    \"coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_nom\": \"{{$randomLastName}}\",\n    \"coordonnees_occupant_prenom\": \"{{$randomFirstName}}\",\n    \"coordonnees_occupant_email\": \"{{$randomEmail}}\",\n    \"coordonnees_occupant_tel\": \"611451245\",\n    \"coordonnees_bailleur_tel_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_nom\": \"{{$randomLastName}}\",\n    \"coordonnees_bailleur_prenom\": \"{{$randomFirstName}}\",\n    \"coordonnees_bailleur_email\": \"{{$randomEmail}}\",\n    \"coordonnees_bailleur_tel\": \"611451214\",\n    \"coordonnees_bailleur_adresse_suggestion\": \"13 Boulevard saade - quai joliette 13002 Marseille\",\n    \"coordonnees_bailleur_adresse_detail_need_refresh_insee\": false,\n    \"coordonnees_bailleur_adresse\": \"13 Boulevard saade - quai joliette 13002 Marseille\",\n    \"coordonnees_bailleur_adresse_detail_numero\": \"13 Boulevard saade - quai joliette\",\n    \"coordonnees_bailleur_adresse_detail_code_postal\": \"13002\",\n    \"coordonnees_bailleur_adresse_detail_commune\": \"Marseille\",\n    \"coordonnees_bailleur_adresse_detail_insee\": \"13202\",\n    \"coordonnees_bailleur_adresse_detail_manual\": 0,\n    \"info_procedure_bailleur_prevenu\": \"oui\",\n    \"info_procedure_bail_moyen\": \"sms\",\n    \"info_procedure_bail_date\": \"02\\/2024\",\n    \"info_procedure_bail_reponse\": \"Il revient vers moi\",\n    \"zone_concernee_zone\": \"logement\",\n    \"zone_concernee_debut_desordres\": \"nsp\",\n    \"zone_concernee_constatation_desordres\": \"oui\",\n    \"type_logement_nature\": \"appartement\",\n    \"type_logement_rdc\": \"non\",\n    \"type_logement_dernier_etage\": \"non\",\n    \"type_logement_sous_sol_sans_fenetre\": \"non\",\n    \"composition_logement_nb_pieces\": \"3\",\n    \"composition_logement_superficie\": \"60\",\n    \"composition_logement_piece_unique\": \"plusieurs_pieces\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_cuisine\": \"non\",\n    \"composition_logement_nombre_enfants\": \"3\",\n    \"composition_logement_nombre_personnes\": \"6\",\n    \"composition_logement_enfants\": \"oui\",\n    \"bail_dpe_bail\": \"oui\",\n    \"bail_dpe_etat_des_lieux\": \"oui\",\n    \"bail_dpe_dpe\": \"oui\",\n    \"desordres_logement_chauffage_details_dpe_annee\": \"post2023\",\n    \"bail_dpe_classe_energetique\": \"C\",\n    \"logement_social_montant_allocation\": null,\n    \"logement_social_allocation\": \"non\",\n    \"travailleur_social_quitte_logement\": \"non\",\n    \"travailleur_social_accompagnement\": \"non\",\n    \"categorieDisorders\": {\n        \"batiment\": [],\n        \"logement\": [\n            \"desordres_logement_electricite\"\n        ]\n    },\n    \"desordres_logement_electricite_pas_electricite\": 1,\n    \"desordres_logement_electricite_installation_dangereuse\": 1,\n    \"desordres_logement_electricite_pas_compteur\": 1,\n    \"desordres_logement_electricite_manque_prises\": 1,\n    \"desordres_logement_electricite_manque_prises_details_multiprises\": \"oui\",\n    \"message_administration\": \"L\\u2019installation \\u00e9lectrique de mon logement pr\\u00e9sente plusieurs d\\u00e9sordres majeurs. Certaines zones ne sont pas aliment\\u00e9es en \\u00e9lectricit\\u00e9 et le logement ne dispose pas de compteur. L\\u2019installation en place est dangereuse, avec des \\u00e9quipements potentiellement d\\u00e9fectueux. De plus, il y a un manque de prises \\u00e9lectriques, ce qui m\\u2019oblige \\u00e0 utiliser des multiprises, augmentant ainsi les risques d\\u2019incident.\",\n    \"info_procedure_assurance_contactee\": \"non\",\n    \"info_procedure_depart_apres_travaux\": \"oui\",\n    \"utilisation_service_ok_prevenir_bailleur\": 1,\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_signalement_tiers\": 1,\n    \"utilisation_service_ok_donnees_sante\": 1,\n    \"utilisation_service_ok_cgu\": 1,\n    \"informations_complementaires_logement_montant_loyer\": \"500\",\n    \"informations_complementaires_logement_nombre_etages\": \"10\",\n    \"informations_complementaires_situation_occupants_beneficiaire_rsa\": \"oui\",\n    \"informations_complementaires_situation_occupants_beneficiaire_fsl\": \"oui\",\n    \"informations_complementaires_situation_occupants_demande_relogement\": \"oui\",\n    \"informations_complementaires_situation_occupants_date_emmenagement\": \"2014-12-10\",\n    \"informations_complementaires_logement_annee_construction\": \"1986\"\n}\n\n",
+									"raw": "{\n    \"signalementReference\": \"{{signalement_draft_uuid_tiers_pro}}\",\n    \"lienSuivi\": \"\",\n    \"signalementStatus\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_adresse_suggestion\": \"{{tiers_pro_full_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": false,\n    \"adresse_logement_adresse\": \"{{tiers_pro_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{tiers_pro_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{tiers_pro_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{tiers_pro_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{tiers_pro_insee}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"territoryCode\": \"13\",\n    \"signalement_concerne_profil\": \"autre_logement\",\n    \"signalement_concerne_profil_detail_tiers\": \"tiers_pro\",\n    \"signalement_concerne_profil_detail_profil_occupant\": \"locataire\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"profil\": \"tiers_pro\",\n    \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_nom_organisme\": \"{{tiers_pro_nom_organisme}}\",\n    \"vos_coordonnees_tiers_nom\": \"{{tiers_pro_nom}}\",\n    \"vos_coordonnees_tiers_prenom\": \"{{tiers_pro_prenom}}\",\n    \"vos_coordonnees_tiers_email\": \"{{tiers_pro_email}}\",\n    \"vos_coordonnees_tiers_tel\": \"611571631\",\n    \"coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_nom\": \"{{tiers_pro_occupant_nom}}\",\n    \"coordonnees_occupant_prenom\": \"{{tiers_pro_occupant_prenom}}\",\n    \"coordonnees_occupant_email\": \"{{tiers_pro_occupant_email}}\",\n    \"coordonnees_occupant_tel\": \"611571631\",\n    \"coordonnees_bailleur_tel_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_nom_autocomplete_textfield\": \"13 HABITAT\",\n    \"coordonnees_bailleur_nom_autocomplete\": \"13 HABITAT\",\n    \"coordonnees_bailleur_nom\": \"13 HABITAT\",\n    \"coordonnees_bailleur_prenom\": \"Gisele\",\n    \"coordonnees_bailleur_email\": \"gisele@13habitat.com\",\n    \"info_procedure_bailleur_prevenu\": \"oui\",\n    \"info_procedure_bail_moyen\": \"email\",\n    \"info_procedure_bail_date\": \"02/2025\",\n    \"zone_concernee_zone\": \"batiment_logement\",\n    \"zone_concernee_debut_desordres\": \"years_1_to_2\",\n    \"zone_concernee_constatation_desordres\": \"oui\",\n    \"type_logement_nature\": \"appartement\",\n    \"type_logement_rdc\": \"non\",\n    \"type_logement_dernier_etage\": \"oui\",\n    \"type_logement_sous_comble_sans_fenetre\": \"non\",\n    \"composition_logement_nb_pieces\": \"3\",\n    \"composition_logement_superficie\": \"60\",\n    \"composition_logement_piece_unique\": \"plusieurs_pieces\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_collective\": \"non\",\n    \"type_logement_commodites_wc_cuisine\": \"non\",\n    \"composition_logement_nombre_enfants\": \"4\",\n    \"composition_logement_nombre_personnes\": \"6\",\n    \"composition_logement_enfants\": \"oui\",\n    \"bail_dpe_bail\": \"oui\",\n    \"bail_dpe_etat_des_lieux\": \"oui\",\n    \"bail_dpe_dpe\": \"oui\",\n    \"bail_dpe_classe_energetique\": \"D\",\n    \"desordres_logement_chauffage_details_dpe_annee\": \"post2023\",\n    \"logement_social_montant_allocation\": null,\n    \"logement_social_allocation\": \"non\",\n    \"travailleur_social_quitte_logement\": \"nsp\",\n    \"travailleur_social_accompagnement\": \"non\",\n    \"categorieDisorders\": {\n        \"batiment\": [\n            \"desordres_batiment_accessibilite\",\n            \"desordres_batiment_maintenance\",\n            \"desordres_batiment_proprete\"\n        ],\n        \"logement\": [\n            \"desordres_logement_electricite\",\n            \"desordres_logement_nuisibles\",\n            \"desordres_logement_humidite\"\n        ]\n    },\n    \"desordres_batiment_accessibilite_eclairage\": 1,\n    \"desordres_batiment_accessibilite_friche\": 1,\n    \"desordres_batiment_accessibilite_acces_batiment\": 1,\n    \"desordres_batiment_maintenance_ascenseur\": 1,\n    \"desordres_batiment_maintenance_petites_reparations\": 1,\n    \"desordres_batiment_proprete_interieur\": 1,\n    \"desordres_batiment_proprete_facades\": 1,\n    \"desordres_batiment_proprete_parties_communes\": 1,\n    \"desordres_batiment_proprete_local_poubelles\": 1,\n    \"desordres_logement_electricite_pas_electricite\": null,\n    \"desordres_logement_electricite_pas_compteur\": null,\n    \"desordres_logement_electricite_installation_dangereuse\": 1,\n    \"desordres_logement_electricite_manque_prises\": 1,\n    \"desordres_logement_electricite_manque_prises_details_multiprises\": \"oui\",\n    \"desordres_logement_nuisibles_cafards\": 1,\n    \"desordres_logement_nuisibles_punaises\": 1,\n    \"desordres_logement_nuisibles_punaises_details_date\": \"before_movein\",\n    \"desordres_logement_nuisibles_cafards_details_date\": \"before_movein\",\n    \"desordres_logement_humidite_tout\": 1,\n    \"desordres_logement_humidite_tout_details_fuite\": \"oui\",\n    \"desordres_logement_humidite_tout_details_machine\": \"oui\",\n    \"desordres_logement_humidite_piece_a_vivre\": 1,\n    \"desordres_logement_humidite_piece_a_vivre_details_fuite\": \"oui\",\n    \"desordres_logement_humidite_piece_a_vivre_details_machine\": \"oui\",\n    \"desordres_logement_humidite_cuisine\": null,\n    \"message_administration\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\",\n    \"info_procedure_assurance_contactee\": \"non\",\n    \"info_procedure_depart_apres_travaux\": \"oui\",\n    \"utilisation_service_ok_prevenir_bailleur\": 1,\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_signalement_tiers\": 1,\n    \"utilisation_service_ok_donnees_sante\": 1,\n    \"utilisation_service_ok_cgu\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -814,7 +920,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"{{signalement_draft_uuid_tiers_particulier}}\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_complement_adresse_escalier\": \"1\",\n    \"adresse_logement_adresse_suggestion\": \"{{tiers_part_fake_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": true,\n    \"adresse_logement_adresse\": \"{{tiers_part_fake_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{tiers_part_fake_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{tiers_part_fake_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{tiers_part_fake_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{tiers_part_insee}}\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": {{tiers_part_longitude}},\n    \"adresse_logement_adresse_detail_geoloc_lat\": {{tiers_part_latitude}},\n    \"adresse_logement_complement_adresse_etage\": \"{{$randomInt}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"signalement_concerne_profil\": \"autre_logement\",\n    \"signalement_concerne_profil_detail_tiers\": \"tiers_particulier\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"oui\",\n    \"profil\": \"tiers_particulier\",\n    \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_lien\": \"voisin\",\n    \"vos_coordonnees_tiers_nom\": \"{{tiers_part_fake_nom}}\",\n    \"vos_coordonnees_tiers_prenom\": \"{{tiers_part_fake_prenom}}\",\n    \"vos_coordonnees_tiers_email\": \"{{tiers_part_fake_email}}\",\n    \"vos_coordonnees_tiers_tel\": \"645128545\",\n    \"coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_nom\": \"{{$randomLastName}}\",\n    \"coordonnees_occupant_prenom\": \"{{$randomFirstName}}\",\n    \"coordonnees_occupant_email\": \"{{$randomEmail}}\",\n    \"coordonnees_occupant_tel\": \"611854512\",\n    \"coordonnees_bailleur_tel_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_nom_autocomplete_textfield\": \"UNICIL SA D'HLM\",\n    \"coordonnees_bailleur_nom_autocomplete\": \"UNICIL SA D'HLM\",\n    \"coordonnees_bailleur_nom\": \"UNICIL SA D'HLM\",\n    \"info_procedure_bailleur_prevenu\": \"oui\",\n    \"info_procedure_bail_moyen\": \"courrier\",\n    \"info_procedure_bail_date\": \"01\\/2025\",\n    \"info_procedure_bail_reponse\": \"Pas de r\\u00e9ponse\",\n    \"info_procedure_bail_numero\": \"123456789A\",\n    \"zone_concernee_zone\": \"logement\",\n    \"zone_concernee_debut_desordres\": \"more_2_years\",\n    \"zone_concernee_constatation_desordres\": \"oui\",\n    \"type_logement_nature\": \"appartement\",\n    \"type_logement_rdc\": \"oui\",\n    \"composition_logement_nb_pieces\": 1,\n    \"composition_logement_superficie\": \"30\",\n    \"composition_logement_piece_unique\": \"piece_unique\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_cuisine\": \"non\",\n    \"composition_logement_nombre_enfants\": \"1\",\n    \"composition_logement_nombre_personnes\": \"3\",\n    \"composition_logement_enfants\": \"oui\",\n    \"bail_dpe_bail\": \"oui\",\n    \"bail_dpe_etat_des_lieux\": \"oui\",\n    \"bail_dpe_dpe\": \"oui\",\n    \"bail_dpe_classe_energetique\": \"D\",\n    \"desordres_logement_chauffage_details_dpe_annee\": \"post2023\",\n    \"logement_social_montant_allocation\": \"250\",\n    \"logement_social_allocation\": \"oui\",\n    \"logement_social_allocation_caisse\": \"caf\",\n    \"logement_social_date_naissance\": \"2000-10-12\",\n    \"logement_social_numero_allocataire\": \"123456845\",\n    \"travailleur_social_quitte_logement\": \"oui\",\n    \"travailleur_social_preavis_depart\": \"non\",\n    \"travailleur_social_accompagnement\": \"non\",\n    \"categorieDisorders\": {\n        \"batiment\": [],\n        \"logement\": [\n            \"desordres_logement_chauffage\",\n            \"desordres_logement_electricite\",\n            \"desordres_logement_lumiere\"\n        ]\n    },\n    \"desordres_logement_chauffage_type\": \"electrique\",\n    \"desordres_logement_chauffage_details_fenetres_permeables\": 1,\n    \"desordres_logement_chauffage_details_difficultes_chauffage\": 1,\n    \"desordres_logement_chauffage_details_chauffage_KO\": 1,\n    \"desordres_logement_electricite_pas_electricite\": 1,\n    \"desordres_logement_electricite_pas_compteur\": 1,\n    \"desordres_logement_electricite_installation_dangereuse\": 1,\n    \"desordres_logement_electricite_manque_prises\": 1,\n    \"desordres_logement_electricite_manque_prises_details_multiprises\": \"oui\",\n    \"desordres_logement_lumiere_pas_lumiere\": 1,\n    \"desordres_logement_lumiere_pas_volets\": 1,\n    \"desordres_logement_lumiere_plafond_trop_bas\": 1,\n    \"message_administration\": \"Mon logement pr\\u00e9sente plusieurs d\\u00e9sordres affectant le confort et la s\\u00e9curit\\u00e9. Le chauffage \\u00e9lectrique ne fonctionne pas et il est difficile de chauffer le logement, d\\u2019autant plus que les fen\\u00eatres sont perm\\u00e9ables au froid. L\\u2019installation \\u00e9lectrique est d\\u00e9faillante : certaines zones ne sont pas aliment\\u00e9es en \\u00e9lectricit\\u00e9, il n\\u2019y a pas de compteur, l\\u2019installation est dangereuse et il manque des prises, ce qui m\\u2019oblige \\u00e0 recourir \\u00e0 des multiprises. La lumi\\u00e8re naturelle et artificielle est \\u00e9galement insuffisante : certaines pi\\u00e8ces sont mal \\u00e9clair\\u00e9es, il manque des volets, et les plafonds sont trop bas, ce qui accentue l\\u2019impression d\\u2019inconfort.\",\n    \"info_procedure_assurance_contactee\": \"non\",\n    \"info_procedure_depart_apres_travaux\": \"non\",\n    \"utilisation_service_ok_prevenir_bailleur\": 1,\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_signalement_tiers\": 1,\n    \"utilisation_service_ok_donnees_sante\": 1,\n    \"utilisation_service_ok_cgu\": 1,\n    \"informations_complementaires_logement_montant_loyer\": \"550\",\n    \"informations_complementaires_logement_nombre_etages\": null,\n    \"informations_complementaires_situation_occupants_beneficiaire_rsa\": \"non\",\n    \"informations_complementaires_situation_occupants_beneficiaire_fsl\": \"non\",\n    \"informations_complementaires_situation_occupants_demande_relogement\": \"oui\",\n    \"informations_complementaires_situation_occupants_date_emmenagement\": \"2024-01-01\",\n    \"informations_complementaires_logement_annee_construction\": \"1990\"\n}",
+									"raw": "{\n    \"uuidSignalementDraft\": \"{{signalement_draft_uuid_tiers_particulier}}\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"signalementStatus\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_adresse_suggestion\": \"{{tiers_particulier_full_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": false,\n    \"adresse_logement_adresse\": \"{{tiers_particulier_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{tiers_particulier_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{tiers_particulier_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{tiers_particulier_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{tiers_particulier_insee}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"territoryCode\": \"13\",\n    \"signalement_concerne_profil\": \"autre_logement\",\n    \"signalement_concerne_profil_detail_tiers\": \"tiers_particulier\",\n    \"signalement_concerne_profil_detail_profil_occupant\": \"locataire\",\n    \"signalement_concerne_logement_social_autre_tiers\": \"non\",\n    \"profil\": \"tiers_particulier\",\n    \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_lien\": \"{{tiers_particulier_lien}}\",\n    \"vos_coordonnees_tiers_nom\": \"{{tiers_particulier_nom}}\",\n    \"vos_coordonnees_tiers_prenom\": \"{{tiers_particulier_prenom}}\",\n    \"vos_coordonnees_tiers_email\": \"{{tiers_particulier_email}}\",\n    \"vos_coordonnees_tiers_tel\": \"611571631\",\n    \"coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_nom\": \"{{tiers_particulier_occupant_nom}}\",\n    \"coordonnees_occupant_prenom\": \"{{tiers_particulier_occupant_prenom}}\",\n    \"coordonnees_occupant_email\": \"{{tiers_particulier_occupant_email}}\",\n    \"coordonnees_occupant_tel\": \"611571631\",\n    \"coordonnees_bailleur_tel_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_nom\": \"SCI  Vélodrome\",\n    \"coordonnees_bailleur_prenom\": \"\",\n    \"coordonnees_bailleur_email\": \"\",\n    \"info_procedure_bailleur_prevenu\": \"oui\",\n    \"info_procedure_bail_moyen\": \"telephone\",\n    \"info_procedure_bail_date\": \"01/2024\",\n    \"zone_concernee_zone\": \"logement\",\n    \"zone_concernee_debut_desordres\": \"months_6_to_12\",\n    \"zone_concernee_constatation_desordres\": \"oui\",\n    \"type_logement_nature\": \"appartement\",\n    \"type_logement_rdc\": \"oui\",\n    \"composition_logement_nb_pieces\": 1,\n    \"composition_logement_superficie\": \"30\",\n    \"composition_logement_piece_unique\": \"piece_unique\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_cuisine\": \"non\",\n    \"composition_logement_nombre_enfants\": \"1\",\n    \"composition_logement_nombre_personnes\": \"3\",\n    \"composition_logement_enfants\": \"oui\",\n    \"bail_dpe_bail\": \"oui\",\n    \"bail_dpe_etat_des_lieux\": \"oui\",\n    \"bail_dpe_dpe\": \"oui\",\n    \"bail_dpe_classe_energetique\": \"E\",\n    \"desordres_logement_chauffage_details_dpe_annee\": \"post2023\",\n    \"logement_social_montant_allocation\": null,\n    \"logement_social_allocation\": \"oui\",\n    \"logement_social_allocation_caisse\": \"caf\",\n    \"logement_social_date_naissance\": \"1989-12-10\",\n    \"travailleur_social_quitte_logement\": \"oui\",\n    \"travailleur_social_preavis_depart\": \"non\",\n    \"travailleur_social_accompagnement\": \"non\",\n    \"categorieDisorders\": {\n        \"batiment\": [],\n        \"logement\": [\n            \"desordres_logement_securite\",\n            \"desordres_logement_electricite\",\n            \"desordres_logement_humidite\"\n        ]\n    },\n    \"desordres_logement_securite_sol_glissant\": 1,\n    \"desordres_logement_securite_sol_dangereux\": null,\n    \"desordres_logement_electricite_installation_dangereuse\": 1,\n    \"desordres_logement_electricite_manque_prises\": 1,\n    \"desordres_logement_electricite_manque_prises_details_multiprises\": \"oui\",\n    \"desordres_logement_humidite_tout\": 1,\n    \"desordres_logement_humidite_tout_details_fuite\": \"oui\",\n    \"desordres_logement_humidite_tout_details_machine\": \"non\",\n    \"message_administration\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\",\n    \"info_procedure_assurance_contactee\": \"non\",\n    \"info_procedure_depart_apres_travaux\": \"non\",\n    \"utilisation_service_ok_prevenir_bailleur\": 1,\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_signalement_tiers\": 1,\n    \"utilisation_service_ok_donnees_sante\": 1,\n    \"utilisation_service_ok_cgu\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -837,12 +943,24 @@
 						},
 						{
 							"name": "signalement-draft/{uuid}/envoi?service_secours",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "PUT",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"uuidSignalementDraft\": \"{{signalement_draft_uuid_service_secours}}\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_adresse_suggestion\": \"{{service_secours_fake_address}}\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": true,\n    \"adresse_logement_adresse\": \"{{service_secours_fake_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{service_secours_fake_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{service_secours_fake_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{service_secours_fake_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{service_secours_insee}}\",\n    \"adresse_logement_adresse_detail_geoloc_lng\": {{service_secours_longitude}},\n    \"adresse_logement_adresse_detail_geoloc_lat\": {{service_secours_latitude}},\n    \"adresse_logement_complement_adresse_etage\": \"{{$randomInt}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"signalement_concerne_profil\": \"autre_logement\",\n    \"signalement_concerne_profil_detail_tiers\": \"service_secours\",\n    \"signalement_concerne_logement_social_service_secours\": \"non\",\n    \"profil\": \"service_secours\",\n    \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_nom_organisme\": \"{{$randomCompanyName}}\",\n    \"vos_coordonnees_tiers_nom\": \"{{$randomLastName}}\",\n    \"vos_coordonnees_tiers_prenom\": \"{{$randomFirstName}}\",\n    \"vos_coordonnees_tiers_email\": \"{{$randomEmail}}\",\n    \"vos_coordonnees_tiers_tel\": \"611121341\",\n    \"coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_nom\": \"{{$randomLastName}}\",\n    \"coordonnees_occupant_prenom\": \"{{$randomFirstName}}\",\n    \"coordonnees_occupant_email\": \"{{$randomEmail}}\",\n    \"coordonnees_occupant_tel\": \"611451213\",\n    \"coordonnees_bailleur_tel_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_tel_secondaire_countrycode\": \"FR:33\",\n    \"info_procedure_bailleur_prevenu\": \"nsp\",\n    \"zone_concernee_zone\": \"batiment\",\n    \"zone_concernee_debut_desordres\": \"months_1_to_6\",\n    \"zone_concernee_constatation_desordres\": \"oui\",\n    \"type_logement_nature\": \"appartement\",\n    \"type_logement_rdc\": \"non\",\n    \"type_logement_dernier_etage\": \"non\",\n    \"type_logement_sous_sol_sans_fenetre\": \"non\",\n    \"composition_logement_nb_pieces\": \"3\",\n    \"composition_logement_superficie\": \"62\",\n    \"composition_logement_piece_unique\": \"plusieurs_pieces\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_cuisine\": \"non\",\n    \"composition_logement_nombre_enfants\": \"3\",\n    \"composition_logement_nombre_personnes\": \"6\",\n    \"bail_dpe_bail\": \"oui\",\n    \"bail_dpe_etat_des_lieux\": \"oui\",\n    \"bail_dpe_dpe\": \"oui\",\n    \"bail_dpe_classe_energetique\": \"D\",\n    \"desordres_logement_chauffage_details_dpe_annee\": \"post2023\",\n    \"categorieDisorders\": {\n        \"batiment\": [\n            \"desordres_batiment_securite\",\n            \"desordres_batiment_incendie\"\n        ],\n        \"logement\": []\n    },\n    \"desordres_batiment_securite_sol\": 1,\n    \"desordres_batiment_securite_sol_details_plancher_effondre\": \"oui\",\n    \"desordres_batiment_securite_elements_toit\": 1,\n    \"desordres_batiment_securite_toit\": 1,\n    \"desordres_batiment_securite_escalier\": 1,\n    \"desordres_batiment_securite_escalier_details_dangereux\": \"oui\",\n    \"desordres_batiment_securite_murs_fissures\": 1,\n    \"desordres_batiment_securite_murs_fissures_details_mur_porteur\": \"oui\",\n    \"desordres_batiment_securite_balcons\": 1,\n    \"desordres_batiment_incendie_odeur_gaz\": 1,\n    \"desordres_batiment_incendie_porte_coupe_feu\": 1,\n    \"message_administration\": \"Le b\\u00e2timent pr\\u00e9sente de graves probl\\u00e8mes de s\\u00e9curit\\u00e9. Le plancher est partiellement effondr\\u00e9, les escaliers sont dangereux, des \\u00e9l\\u00e9ments du toit sont instables, et les murs, y compris un mur porteur, pr\\u00e9sentent des fissures inqui\\u00e9tantes. Les balcons sont \\u00e9galement concern\\u00e9s par ces d\\u00e9sordres. \\u00c0 cela s\\u2019ajoutent des risques d\\u2019incendie, avec des odeurs de gaz persistantes et l\\u2019absence ou la d\\u00e9faillance de portes coupe-feu. Ces d\\u00e9sordres repr\\u00e9sentent un danger r\\u00e9el pour les occupants de l\\u2019immeuble.\",\n    \"info_procedure_assurance_contactee\": \"non\",\n    \"info_procedure_depart_apres_travaux\": \"non\",\n    \"utilisation_service_ok_prevenir_bailleur\": 1,\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_signalement_tiers\": 1,\n    \"utilisation_service_ok_donnees_sante\": 1,\n    \"utilisation_service_ok_cgu\": 1\n}",
+									"raw": "{\n    \"uuidSignalementDraft\": \"{{signalement_draft_uuid_service_secours}}\",\n    \"signalementReference\": \"\",\n    \"lienSuivi\": \"\",\n    \"signalementStatus\": \"\",\n    \"errorMessage\": \"\",\n    \"currentStep\": \"validation_signalement\",\n    \"adresse_logement_adresse_suggestion\": \"{{service_secours_full_address}}\",\n    \"adresse_logement_complement_adresse_etage\": \"\",\n    \"adresse_logement_complement_adresse_escalier\": \"\",\n    \"adresse_logement_complement_adresse_numero_appartement\": \"\",\n    \"adresse_logement_adresse_detail_need_refresh_insee\": false,\n    \"adresse_logement_adresse\": \"{{service_secours_full_address}}\",\n    \"adresse_logement_adresse_detail_numero\": \"{{service_secours_address}}\",\n    \"adresse_logement_adresse_detail_code_postal\": \"{{service_secours_zip}}\",\n    \"adresse_logement_adresse_detail_commune\": \"{{service_secours_city}}\",\n    \"adresse_logement_adresse_detail_insee\": \"{{service_secours_insee}}\",\n    \"adresse_logement_adresse_detail_manual\": 0,\n    \"territoryCode\": \"13\",\n    \"signalement_concerne_profil\": \"autre_logement\",\n    \"signalement_concerne_profil_detail_tiers\": \"service_secours\",\n    \"signalement_concerne_profil_detail_profil_occupant\": \"nsp\",\n    \"signalement_concerne_logement_social_service_secours\": \"non\",\n    \"profil\": \"service_secours\",\n    \"vos_coordonnees_tiers_tel_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_tel_secondaire_countrycode\": \"FR:33\",\n    \"vos_coordonnees_tiers_nom_organisme\": \"{{service_secours_organisme}}\",\n    \"vos_coordonnees_tiers_nom\": \"{{service_secours_nom}}\",\n    \"vos_coordonnees_tiers_prenom\": \"{{service_secours_prenom}}\",\n    \"vos_coordonnees_tiers_email\": \"{{service_secours_email}}\",\n    \"vos_coordonnees_tiers_tel\": \"611571631\",\n    \"coordonnees_occupant_tel_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_tel_secondaire_countrycode\": \"FR:33\",\n    \"coordonnees_occupant_nom\": \"{{service_secours_occupant_nom}}\",\n    \"coordonnees_occupant_prenom\": \"{{service_secours_occupant_prenom}}\",\n    \"coordonnees_occupant_email\": \"{{service_secours_occupant_email}}\",\n    \"coordonnees_occupant_tel\": \"781594022\",\n    \"coordonnees_bailleur_tel_countrycode\": \"FR:33\",\n    \"coordonnees_bailleur_tel_secondaire_countrycode\": \"FR:33\",\n    \"info_procedure_bailleur_prevenu\": \"nsp\",\n    \"zone_concernee_zone\": \"logement\",\n    \"zone_concernee_debut_desordres\": \"months_1_to_6\",\n    \"zone_concernee_constatation_desordres\": \"non\",\n    \"type_logement_nature\": \"appartement\",\n    \"type_logement_rdc\": \"oui\",\n    \"composition_logement_nb_pieces\": \"3\",\n    \"composition_logement_superficie\": \"50\",\n    \"composition_logement_piece_unique\": \"plusieurs_pieces\",\n    \"type_logement_commodites_piece_a_vivre_9m\": \"oui\",\n    \"type_logement_commodites_cuisine\": \"oui\",\n    \"type_logement_commodites_salle_de_bain\": \"oui\",\n    \"type_logement_commodites_wc\": \"oui\",\n    \"type_logement_commodites_wc_cuisine\": \"oui\",\n    \"composition_logement_nombre_enfants\": \"2\",\n    \"composition_logement_nombre_personnes\": \"4\",\n    \"bail_dpe_bail\": \"oui\",\n    \"bail_dpe_etat_des_lieux\": \"oui\",\n    \"bail_dpe_dpe\": \"nsp\",\n    \"categorieDisorders\": {\n        \"batiment\": [],\n        \"logement\": [\n            \"desordres_logement_humidite\",\n            \"desordres_logement_nuisibles\"\n        ]\n    },\n    \"desordres_logement_humidite_piece_a_vivre\": 1,\n    \"desordres_logement_humidite_tout\": 1,\n    \"desordres_logement_humidite_tout_details_fuite\": \"oui\",\n    \"desordres_logement_humidite_tout_details_machine\": \"oui\",\n    \"desordres_logement_humidite_piece_a_vivre_details_fuite\": \"oui\",\n    \"desordres_logement_humidite_piece_a_vivre_details_machine\": \"oui\",\n    \"desordres_logement_nuisibles_punaises\": 1,\n    \"desordres_logement_nuisibles_cafards\": 1,\n    \"desordres_logement_nuisibles_cafards_details_date\": \"before_movein\",\n    \"desordres_logement_nuisibles_punaises_details_date\": \"before_movein\",\n    \"message_administration\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\",\n    \"info_procedure_assurance_contactee\": \"nsp\",\n    \"info_procedure_depart_apres_travaux\": \"nsp\",\n    \"utilisation_service_ok_prevenir_bailleur\": 1,\n    \"utilisation_service_ok_visite\": 1,\n    \"utilisation_service_ok_signalement_tiers\": 1,\n    \"utilisation_service_ok_donnees_sante\": 1,\n    \"utilisation_service_ok_cgu\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -885,6 +1003,268 @@
 					"response": []
 				}
 			]
+		}
+	],
+	"variable": [
+		{
+			"key": "locataire_full_address",
+			"value": ""
+		},
+		{
+			"key": "locataire_street_address",
+			"value": ""
+		},
+		{
+			"key": "locataire_zip",
+			"value": ""
+		},
+		{
+			"key": "locataire_city",
+			"value": ""
+		},
+		{
+			"key": "locataire_insee",
+			"value": ""
+		},
+		{
+			"key": "locataire_lat",
+			"value": ""
+		},
+		{
+			"key": "locataire_lng",
+			"value": ""
+		},
+		{
+			"key": "locataire_nom",
+			"value": ""
+		},
+		{
+			"key": "locataire_prenom",
+			"value": ""
+		},
+		{
+			"key": "locataire_email",
+			"value": ""
+		},
+		{
+			"key": "locataire_etage",
+			"value": ""
+		},
+		{
+			"key": "bailleur_occupant_address",
+			"value": ""
+		},
+		{
+			"key": "bailleur_occupant_full_address",
+			"value": ""
+		},
+		{
+			"key": "bailleur_occupant_zip",
+			"value": ""
+		},
+		{
+			"key": "bailleur_occupant_city",
+			"value": ""
+		},
+		{
+			"key": "bailleur_occupant_insee",
+			"value": ""
+		},
+		{
+			"key": "bailleur_occupant_lat",
+			"value": ""
+		},
+		{
+			"key": "bailleur_occupant_lng",
+			"value": ""
+		},
+		{
+			"key": "bailleur_occupant_nom",
+			"value": ""
+		},
+		{
+			"key": "bailleur_occupant_prenom",
+			"value": ""
+		},
+		{
+			"key": "bailleur_occupant_email",
+			"value": ""
+		},
+		{
+			"key": "bailleur_address",
+			"value": ""
+		},
+		{
+			"key": "bailleur_full_address",
+			"value": ""
+		},
+		{
+			"key": "bailleur_zip",
+			"value": ""
+		},
+		{
+			"key": "bailleur_city",
+			"value": ""
+		},
+		{
+			"key": "bailleur_insee",
+			"value": ""
+		},
+		{
+			"key": "bailleur_nom",
+			"value": ""
+		},
+		{
+			"key": "bailleur_prenom",
+			"value": ""
+		},
+		{
+			"key": "bailleur_email",
+			"value": ""
+		},
+		{
+			"key": "tiers_pro_address",
+			"value": ""
+		},
+		{
+			"key": "tiers_pro_full_address",
+			"value": ""
+		},
+		{
+			"key": "tiers_pro_zip",
+			"value": ""
+		},
+		{
+			"key": "tiers_pro_city",
+			"value": ""
+		},
+		{
+			"key": "tiers_pro_insee",
+			"value": ""
+		},
+		{
+			"key": "tiers_pro_nom_organisme",
+			"value": ""
+		},
+		{
+			"key": "tiers_pro_nom",
+			"value": ""
+		},
+		{
+			"key": "tiers_pro_prenom",
+			"value": ""
+		},
+		{
+			"key": "tiers_pro_email",
+			"value": ""
+		},
+		{
+			"key": "tiers_pro_occupant_nom",
+			"value": ""
+		},
+		{
+			"key": "tiers_pro_occupant_prenom",
+			"value": ""
+		},
+		{
+			"key": "tiers_pro_occupant_email",
+			"value": ""
+		},
+		{
+			"key": "tiers_particulier_address",
+			"value": ""
+		},
+		{
+			"key": "tiers_particulier_full_address",
+			"value": ""
+		},
+		{
+			"key": "tiers_particulier_zip",
+			"value": ""
+		},
+		{
+			"key": "tiers_particulier_city",
+			"value": ""
+		},
+		{
+			"key": "tiers_particulier_insee",
+			"value": ""
+		},
+		{
+			"key": "tiers_particulier_lien",
+			"value": ""
+		},
+		{
+			"key": "tiers_particulier_nom",
+			"value": ""
+		},
+		{
+			"key": "tiers_particulier_prenom",
+			"value": ""
+		},
+		{
+			"key": "tiers_particulier_email",
+			"value": ""
+		},
+		{
+			"key": "tiers_particulier_occupant_nom",
+			"value": ""
+		},
+		{
+			"key": "tiers_particulier_occupant_prenom",
+			"value": ""
+		},
+		{
+			"key": "tiers_particulier_occupant_email",
+			"value": ""
+		},
+		{
+			"key": "service_secours_address",
+			"value": ""
+		},
+		{
+			"key": "service_secours_full_address",
+			"value": ""
+		},
+		{
+			"key": "service_secours_zip",
+			"value": ""
+		},
+		{
+			"key": "service_secours_city",
+			"value": ""
+		},
+		{
+			"key": "service_secours_insee",
+			"value": ""
+		},
+		{
+			"key": "service_secours_organisme",
+			"value": ""
+		},
+		{
+			"key": "service_secours_nom",
+			"value": ""
+		},
+		{
+			"key": "service_secours_prenom",
+			"value": ""
+		},
+		{
+			"key": "service_secours_email",
+			"value": ""
+		},
+		{
+			"key": "service_secours_occupant_nom",
+			"value": ""
+		},
+		{
+			"key": "service_secours_occupant_prenom",
+			"value": ""
+		},
+		{
+			"key": "service_secours_occupant_email",
+			"value": ""
 		}
 	]
 }
