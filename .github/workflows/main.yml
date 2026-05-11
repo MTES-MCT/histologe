@@ -67,9 +67,13 @@ jobs:
 
       - name: 'Ping clamd using the Unix socket'
         run: echo PING | nc -U $CLAMAV_SOCKET
+
       # https://github.com/actions/checkout (official)
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Copy CI environment file
+        run: cp .env.ci .env
 
       # https://github.com/shivammathur/setup-php (community)
       - name: Setup PHP, extensions and composer with shivammathur/setup-php
