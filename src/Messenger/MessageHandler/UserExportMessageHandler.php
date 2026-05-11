@@ -9,8 +9,6 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\TimezoneProvider;
-use PhpOffice\PhpSpreadsheet\Writer\Csv;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -32,19 +30,11 @@ class UserExportMessageHandler
         try {
             $user = $this->userRepository->find($listExportMessage->getSearchUser()->getUser()->getId());
             $format = $listExportMessage->getFormat();
-            $spreadsheet = $this->userExportLoader->load($listExportMessage->getSearchUser());
-            if ('csv' === $format) {
-                $writer = new Csv($spreadsheet);
-            } elseif ('xlsx' === $format) {
-                $writer = new Xlsx($spreadsheet);
-            } else {
-                throw new \Exception('Invalid format "'.$format.'"');
-            }
             $timezone = $user->getFirstTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
             $datetimeStr = (new \DateTimeImmutable())->setTimezone(new \DateTimeZone($timezone))->format('dmY-Hi');
             $filename = 'utilisateurs-histologe-'.$user->getId().'-'.$datetimeStr.'.'.$format;
             $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
-            $writer->save($tmpFilepath);
+            $this->userExportLoader->load($listExportMessage->getSearchUser(), $format, $tmpFilepath);
 
             $this->notificationMailerRegistry->send(
                 new NotificationMail(

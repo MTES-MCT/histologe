@@ -10,6 +10,7 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Signalement\Export\SignalementExporter;
 use App\Service\UploadHandlerService;
+use App\Utils\ExportFormat;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
@@ -39,7 +40,7 @@ class ListExportMessageHandlerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => $userEmail]);
         $message = (new ListExportMessage())
             ->setUserId($user->getId())
-            ->setFormat('csv')
+            ->setFormat(ExportFormat::FORMAT_CSV)
             ->setFilters([])
             ->setSelectedColumns([]);
 
@@ -79,7 +80,7 @@ class ListExportMessageHandlerTest extends WebTestCase
         $user = $this->userRepository->findOneBy(['email' => $userEmail]);
         $message = (new ListExportMessage())
             ->setUserId($user->getId())
-            ->setFormat('xlsx')
+            ->setFormat(ExportFormat::FORMAT_XLSX)
             ->setFilters([])
             ->setSelectedColumns(['INSEE']);
 

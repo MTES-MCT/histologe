@@ -7,6 +7,7 @@ use App\Messenger\Message\UserExportMessage;
 use App\Messenger\MessageHandler\UserExportMessageHandler;
 use App\Repository\UserRepository;
 use App\Service\ListFilters\SearchUser;
+use App\Utils\ExportFormat;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -24,7 +25,7 @@ class UserExportMessageHandlerTest extends WebTestCase
         /** @var User $user */
         $user = $userRepository->findOneBy(['email' => $userEmail]);
         $searchUser = new SearchUser($user);
-        $message = new UserExportMessage($searchUser, 'csv');
+        $message = new UserExportMessage($searchUser, ExportFormat::FORMAT_CSV);
         $messageBus->dispatch($message);
         $transport = $container->get('messenger.transport.async_priority_high');
         $envelopes = $transport->get();
@@ -52,7 +53,7 @@ class UserExportMessageHandlerTest extends WebTestCase
         /** @var User $user */
         $user = $userRepository->findOneBy(['email' => $userEmail]);
         $searchUser = new SearchUser($user);
-        $message = new UserExportMessage($searchUser, 'xlsx');
+        $message = new UserExportMessage($searchUser, ExportFormat::FORMAT_XLSX);
         $messageBus->dispatch($message);
         $transport = $container->get('messenger.transport.async_priority_high');
         $envelopes = $transport->get();

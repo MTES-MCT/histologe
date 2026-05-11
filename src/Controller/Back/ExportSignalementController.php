@@ -10,6 +10,7 @@ use App\Service\RequestDataExtractor;
 use App\Service\Signalement\Export\SignalementExportFiltersDisplay;
 use App\Service\Signalement\Export\SignalementExportSelectableColumns;
 use App\Service\Signalement\SearchFilter;
+use App\Utils\ExportFormat;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,7 +60,7 @@ class ExportSignalementController extends AbstractController
         $selectedColumns = RequestDataExtractor::getArray($requestData, 'cols');
         $request->getSession()->set('selectedCols', $selectedColumns);
 
-        if (!in_array($format, ['csv', 'xlsx'])) {
+        if (!in_array($format, [ExportFormat::FORMAT_CSV, ExportFormat::FORMAT_XLSX])) {
             $this->addFlash('error', "Veuillez sélectionner un format pour l'export.");
 
             return $this->redirectToRoute('back_signalement_list_export');

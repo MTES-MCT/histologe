@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Messenger\Message\InactiveUserExportMessage;
 use App\Messenger\MessageHandler\InactiveUserExportMessageHandler;
 use App\Repository\UserRepository;
+use App\Utils\ExportFormat;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -22,7 +23,7 @@ class InactiveUserExportMessageHandlerTest extends WebTestCase
         $userRepository = static::getContainer()->get(UserRepository::class);
         /** @var User $user */
         $user = $userRepository->findOneBy(['email' => $userEmail]);
-        $message = new InactiveUserExportMessage($user->getId(), 'xlsx');
+        $message = new InactiveUserExportMessage($user->getId(), ExportFormat::FORMAT_XLSX);
         $messageBus->dispatch($message);
         $transport = $container->get('messenger.transport.async_priority_high');
         $envelopes = $transport->get();

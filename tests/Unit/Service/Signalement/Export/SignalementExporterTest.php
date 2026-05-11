@@ -6,8 +6,8 @@ use App\Dto\SignalementExport;
 use App\Entity\User;
 use App\Manager\SignalementManager;
 use App\Service\Signalement\Export\SignalementExporter;
-use App\Service\Signalement\Export\SignalementExportHeader;
 use App\Tests\UserHelper;
+use App\Utils\ExportFormat;
 use OpenSpout\Reader\CSV\Options as CsvReaderOptions;
 use OpenSpout\Reader\CSV\Reader as CsvReader;
 use OpenSpout\Reader\XLSX\Reader as XlsxReader;
@@ -50,7 +50,7 @@ class SignalementExporterTest extends TestCase
         $this->assertEquals('Déposé le', $rows[0][1]);
         $this->assertEquals('2023-01', $rows[1][0]);
 
-        if ('xlsx' === $format) {
+        if (ExportFormat::FORMAT_XLSX === $format) {
             $this->assertInstanceOf(\DateTimeInterface::class, $rows[1][1]);
         } else {
             $this->assertEquals('31/03/2023', $rows[1][1]);
@@ -59,8 +59,8 @@ class SignalementExporterTest extends TestCase
 
     public static function provideFileFormat(): \Generator
     {
-        yield 'export with xlsx' => ['xlsx'];
-        yield 'export with csv' => ['csv'];
+        yield 'export with xlsx' => [ExportFormat::FORMAT_XLSX];
+        yield 'export with csv' => [ExportFormat::FORMAT_CSV];
     }
 
     /**
@@ -70,8 +70,8 @@ class SignalementExporterTest extends TestCase
     {
         $rows = [];
 
-        if ('csv' === $format) {
-            $reader = new CsvReader(new CsvReaderOptions(FIELD_DELIMITER: SignalementExportHeader::SEPARATOR));
+        if (ExportFormat::FORMAT_CSV === $format) {
+            $reader = new CsvReader(new CsvReaderOptions(FIELD_DELIMITER: ExportFormat::CSV_SEPARATOR));
         } else {
             $reader = new XlsxReader();
         }

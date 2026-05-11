@@ -9,9 +9,11 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Utils\ExportFormat;
 use App\Utils\HtmlCleaner;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Writer\CSV\Options as CsvOptions;
+use OpenSpout\Writer\CSV\Writer as CsvWriter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -39,13 +41,11 @@ class SuiviSummariesMessageHandler
     {
         try {
             $user = $this->userRepository->find($suiviSummariesMessage->getUserId());
-            $spreadsheet = $this->buildSpreadsheet($suiviSummariesMessage);
 
-            $writer = new Csv($spreadsheet);
             $datetimeStr = (new \DateTimeImmutable())->format('dmY-Hi');
             $filename = 'resumes-suivis-'.$user->getId().'-'.$datetimeStr.'.csv';
             $tmpFilepath = $this->parameterBag->get('uploads_tmp_dir').$filename;
-            $writer->save($tmpFilepath);
+            $this->buildSpreadsheet($suiviSummariesMessage, $tmpFilepath);
 
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
@@ -67,12 +67,12 @@ class SuiviSummariesMessageHandler
     /**
      * TODO : move to an export service.
      */
-    private function buildSpreadsheet(SuiviSummariesMessage $suiviSummariesMessage): Spreadsheet
+    private function buildSpreadsheet(SuiviSummariesMessage $suiviSummariesMessage, string $outputFilePath): void
     {
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+        $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: ExportFormat::CSV_SEPARATOR));
+        $writer->openToFile($outputFilePath);
         $headers = ['Référence du signalement', 'Lien vers le signalement', 'Date du dernier suivi', 'Auteur du dernier suivi', 'Résumé du dernier suivi', 'Contenu du dernier suivi'];
-        $sheetData = [$headers];
+        $writer->addRow(Row::fromValues($headers));
         $territory = $this->territoryRepository->find($suiviSummariesMessage->getTerritoryId());
         $list = [];
         switch ($suiviSummariesMessage->getQuerySignalement()) {
@@ -115,12 +115,10 @@ class SuiviSummariesMessageHandler
                 $this->getSummaryFromSignalement($cleanLastSuiviDescription, $suiviSummariesMessage),
                 $cleanLastSuiviDescription,
             ];
-            $sheetData[] = $rowArray;
+            $writer->addRow(Row::fromValues($rowArray));
         }
 
-        $sheet->fromArray($sheetData);
-
-        return $spreadsheet;
+        $writer->close();
     }
 
     /**
