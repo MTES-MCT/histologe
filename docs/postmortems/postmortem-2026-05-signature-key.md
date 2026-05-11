@@ -107,11 +107,11 @@ Les actions suivantes ont été réalisées :
 - Rapport YesWeHack
 ---
 
----
-
 ## 📌 Annexes
 
 - Lien de la PR : https://github.com/MTES-MCT/histologe/pull/5838
+
+---
 
 ## 🧪 REX / Leçons apprises
 
