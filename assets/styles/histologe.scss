@@ -900,6 +900,15 @@ ul + p {
 }
 #fr-modal-localisation-map, #fr-modal-pick-localisation-map {
     height: 50vh;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+#fr-modal-pick-localisation .fr-modal__footer {
+    position: relative;
+    z-index: 10;
+    background: white;
 }
 #zone_map, #info_zone_map {
     height: 70vh;
