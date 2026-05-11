@@ -32,9 +32,9 @@ Ce dossier centralise l’ensemble des documents liés à la **gestion des incid
 
 ## 🔥 Post-mortems
 
-| Date       | Nom du fichier                                                                             | Description                                                |
-|------------|--------------------------------------------------------------------------------------------|------------------------------------------------------------|
-| 2026-05-11 | [`postmortem-2026-05-signature-key.md`](./postmortems/postmortem-2026-05-signature-key.md) | Exposition d’une clé de signature URL dans le dépôt public |
+| Date       | Nom du fichier                                                                                  | Description                                                |
+|------------|-------------------------------------------------------------------------------------------------|------------------------------------------------------------|
+| 2026-05-11 | [`postmortem-2026-05-signature-key.md`](../postmortems/postmortem-2026-05-signature-key.md) | Exposition d’une clé de signature URL dans le dépôt public |
 
 > 🆕 **À compléter** : ajoutez ici les nouveaux documents dès leur création.
 
