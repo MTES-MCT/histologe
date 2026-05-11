@@ -134,7 +134,7 @@ class SignalementController extends AbstractController
         }
         $logger->error('Erreur de validation du formulaire FO '.(string) $errors);
 
-        return $this->json($errors);
+        return $this->json($errors, Response::HTTP_BAD_REQUEST);
     }
 
     #[Route('/signalement-draft/check', name: 'check_signalement_or_draft_already_exists', methods: 'POST')]
@@ -184,7 +184,7 @@ class SignalementController extends AbstractController
         }
         $logger->error('Erreur de validation du formulaire FO '.(string) $errors);
 
-        return $this->json($errors);
+        return $this->json($errors, Response::HTTP_BAD_REQUEST);
     }
 
     #[Route('/signalement-draft/{uuid:signalementDraft}/envoi', name: 'mise_a_jour_formulaire_signalement_draft', methods: 'PUT')]
@@ -221,7 +221,7 @@ class SignalementController extends AbstractController
         }
         $logger->error('Erreur de validation du formulaire FO '.(string) $errors);
 
-        return $this->json($errors);
+        return $this->json($errors, Response::HTTP_BAD_REQUEST);
     }
 
     #[Route('/signalement-draft/{uuid:signalementDraft}/informations', name: 'informations_signalement_draft', methods: 'GET')]
@@ -371,7 +371,7 @@ class SignalementController extends AbstractController
                 'success' => false,
                 'message' => 'Le paramètre "cp" est manquant',
                 'label' => 'Erreur',
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $inseeCode = $postalCodeHomeChecker->normalizeInseeCode($postalCode, $inseeCode);
@@ -434,7 +434,7 @@ class SignalementController extends AbstractController
                     /** @var UploadedFile $file */
                     // PDF files will be checked asynchronously and flagged as suspicious if necessary
                     if (!$fileScanner->isClean($file->getPathname()) && 'application/pdf' !== $file->getMimeType()) {
-                        return $this->json(['error' => 'Le fichier est infecté par un virus.'], 400);
+                        return $this->json(['error' => 'Le fichier est infecté par un virus.'], Response::HTTP_BAD_REQUEST);
                     }
                     $res = $uploadHandlerService->toTempFolder($file, $fileType);
                     if (isset($res['error'])) {
@@ -449,12 +449,12 @@ class SignalementController extends AbstractController
             } catch (\Throwable $exception) {
                 $logger->error($exception->getMessage());
 
-                return $this->json(['error' => $exception->getMessage()], 400);
+                return $this->json(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
             }
         }
         $logger->error('Un problème lors du téléversement est survenu');
 
-        return $this->json(['error' => 'Aucun fichier n\'a été téléversé'], 400);
+        return $this->json(['error' => 'Aucun fichier n\'a été téléversé'], Response::HTTP_BAD_REQUEST);
     }
 
     /**
