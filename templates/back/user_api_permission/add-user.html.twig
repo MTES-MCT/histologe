@@ -3,7 +3,7 @@
 {% block title %}Ajouter un utilisateur API{% endblock %}
 
 {% block content %}
-    <section class="fr-pt-4v">
+    <section class="fr-pt-4v fr-mb-4v">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils SA',
             'level2Link': '',
@@ -20,18 +20,35 @@
             <div class="fr-grid-row">
                 <div class="fr-col-12">
                     <h1 class="fr-mb-0">Ajouter un utilisateur API</h1>
+                    <br>
+                    <span>Le champ est obligatoire.</span>
                 </div>
             </div>
         </header>
 
     </section>
 
-<div class="fr-container--fluid">
-	<div class="fr-grid-row fr-grid-row--gutters">
-		<div class="fr-col-6">
-            {{ form(form) }}
+    <section class="fr-pt-4v fr-grid-row">
+        <div class="fr-col-12">
+            {{ form_start(form, {'attr': {'id': 'form-add-zone'}}) }}
+            {{ form_errors(form) }}
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12">
+                    {{ form_row(form.email) }}
+                </div>
+                <div class="fr-col-12">
+                    <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline fr-btns-group--icon-left">
+                        <li>
+                            {{ form_row(form.save) }}
+                        </li>
+                        <li>
+                            <a href="{{path('back_api_user_index')}}" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-close-line" type="button">Annuler</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {{ form_end(form) }}
         </div>
-    </div>
-</div>
+    </section>
 
 {% endblock %}

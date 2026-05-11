@@ -69,7 +69,7 @@ final class UserApiPermissionController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/permission/{id}/create', name: 'back_api_user_permission_create', methods: ['GET', 'POST'])]
+    #[Route(path: '/permission/{id}/creer', name: 'back_api_user_permission_create', methods: ['GET', 'POST'])]
     public function permissionCreate(User $user, Request $request, EntityManagerInterface $entityManager): Response
     {
         if (!$user->isApiUser()) {
@@ -95,7 +95,7 @@ final class UserApiPermissionController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/permission/{id}/edit', name: 'back_api_user_permission_edit', methods: ['GET', 'POST'])]
+    #[Route(path: '/permission/{id}/editer', name: 'back_api_user_permission_edit', methods: ['GET', 'POST'])]
     public function edit(UserApiPermission $userApiPermission, Request $request, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(UserApiPermissionType::class, $userApiPermission);
@@ -114,7 +114,7 @@ final class UserApiPermissionController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/permission/{id}/delete', name: 'back_api_user_permission_delete', methods: ['POST'])]
+    #[Route(path: '/permission/{id}/supprimer', name: 'back_api_user_permission_delete', methods: ['POST'])]
     public function delete(UserApiPermission $userApiPermission, Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         if ($this->isCsrfTokenValid('user_api_permission_delete', (string) $request->request->get('_token'))) {
@@ -145,7 +145,7 @@ final class UserApiPermissionController extends AbstractController
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
     }
 
-    #[Route(path: '/add', name: 'back_api_user_add', methods: ['GET', 'POST'])]
+    #[Route(path: '/ajouter', name: 'back_api_user_add', methods: ['GET', 'POST'])]
     public function add(
         Request $request,
         EntityManagerInterface $entityManager,
