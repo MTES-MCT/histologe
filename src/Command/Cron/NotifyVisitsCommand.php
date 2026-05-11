@@ -70,6 +70,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
                 signalement: $signalement,
                 description: $description,
                 category: SuiviCategory::INTERVENTION_PLANNED_REMINDER,
+                sendMail: false,
                 isVisibleForUsager: true,
                 context: Suivi::CONTEXT_INTERVENTION,
             );
@@ -123,6 +124,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
                     signalement: $affectation->getSignalement(),
                     description: $description,
                     category: SuiviCategory::INTERVENTION_IS_REQUIRED,
+                    sendMail: false,
                     context: Suivi::CONTEXT_INTERVENTION,
                 );
 

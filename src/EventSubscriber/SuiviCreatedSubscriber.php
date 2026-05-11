@@ -29,7 +29,7 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
     {
         $suivi = $event->getSuivi();
 
-        if (Suivi::TYPE_TECHNICAL === $suivi->getType() || !$suivi->getSendMail()) {
+        if (!$suivi->getSendMail()) {
             return;
         }
         if (Suivi::CONTEXT_INTERVENTION === $suivi->getContext()) {

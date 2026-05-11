@@ -94,6 +94,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             signalement: $signalement,
             description: $row['description'],
             category: $category,
+            sendMail: SuiviCategory::ASK_FEEDBACK_SENT !== $category,
             partner: $createdBy?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $createdBy,
             isVisibleForUsager: $row['is_public'],

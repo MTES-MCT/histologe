@@ -150,6 +150,7 @@ class SynchronizeIdossCommand extends AbstractCronCommand
                         signalement: $signalement,
                         description: $description,
                         category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
+                        sendMail: false,
                         partner: $affectation->getPartner(),
                         user: $this->adminUser,
                         flush: false
