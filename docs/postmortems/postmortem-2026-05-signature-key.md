@@ -76,7 +76,7 @@ Aucun impact identifié sur :
     - La variable d'environnement `SIGNATURE_KEY` est présente afin de fournir un modèle de configuration applicative. Une valeur réelle avait toutefois été renseignée à la place d'une valeur neutre.
 
 - Pourquoi cela n'a pas été détecté plus tôt ?
-    - Le point n'avait pas été identifié lors des précédentes revues de code
+    - Le point n'avait pas été identifié lors des précédentes revues de code et n'avait pas été signalé par GitGuardian lors de la [création de la pull request concernée](https://github.com/MTES-MCT/histologe/pull/3891/checks?check_run_id=40105374831).
 
 - Pourquoi les outils automatisés ne l'ont pas remonté ?
     - Le sujet est en cours d'investigation.
