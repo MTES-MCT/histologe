@@ -4,10 +4,9 @@ namespace App\Controller\Back;
 
 use App\Entity\User;
 use App\Form\SearchAnnuaireAgentType;
-use App\Messenger\Message\ListExportMessage;
 use App\Repository\UserPartnerRepository;
 use App\Service\ListFilters\SearchAnnuaireAgent;
-use App\Service\Signalement\Export\SignalementExportHeader;
+use App\Utils\ExportFormat;
 use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Cell\StringCell;
 use OpenSpout\Common\Entity\Row;
@@ -62,14 +61,14 @@ class AnnuaireController extends AbstractController
         if ('POST' === $originalMethod) {
             /** @var string $format */
             $format = $request->request->get('file-format');
-            if (!in_array($format, [ListExportMessage::FORMAT_CSV, ListExportMessage::FORMAT_XLSX])) {
+            if (!in_array($format, [ExportFormat::FORMAT_CSV, ExportFormat::FORMAT_XLSX])) {
                 $this->addFlash('error', 'Merci de sélectionner le format de l\'export.');
 
                 return $this->redirectToRoute('back_annuaire_export', $search->getUrlParams());
             }
-            if (ListExportMessage::FORMAT_CSV === $format) {
-                $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: SignalementExportHeader::SEPARATOR));
-            } elseif (ListExportMessage::FORMAT_XLSX === $format) {
+            if (ExportFormat::FORMAT_CSV === $format) {
+                $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: ExportFormat::CSV_SEPARATOR));
+            } elseif (ExportFormat::FORMAT_XLSX === $format) {
                 $writer = new XlsxWriter();
             } else {
                 throw new \Exception('Invalid format "'.$format.'"');
@@ -77,7 +76,7 @@ class AnnuaireController extends AbstractController
 
             $filename = 'annuaire_'.date('Y-m-d_H-i-s').'.'.$format;
 
-            $contentType = ListExportMessage::FORMAT_CSV === $format
+            $contentType = ExportFormat::FORMAT_CSV === $format
                 ? 'text/csv'
                 : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 

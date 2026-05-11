@@ -4,7 +4,7 @@ namespace App\Service\Signalement\Export;
 
 use App\Entity\User;
 use App\Manager\SignalementManager;
-use App\Messenger\Message\ListExportMessage;
+use App\Utils\ExportFormat;
 use Doctrine\DBAL\Exception;
 use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Row;
@@ -30,8 +30,8 @@ readonly class SignalementExporter
      */
     public function write(User $user, string $format, string $outputFilePath, ?array $filters, ?array $selectedColumns = null): void
     {
-        if (ListExportMessage::FORMAT_CSV === $format) {
-            $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: SignalementExportHeader::SEPARATOR));
+        if (ExportFormat::FORMAT_CSV === $format) {
+            $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: ExportFormat::CSV_SEPARATOR));
         } else {
             $writer = new XlsxWriter();
         }
@@ -59,7 +59,7 @@ readonly class SignalementExporter
 
             $cells = [];
             foreach ($rowArray as $key => $value) {
-                if (ListExportMessage::FORMAT_XLSX === $format && \in_array($key, self::DATE_COLUMNS, true) && !empty($value)) {
+                if (ExportFormat::FORMAT_XLSX === $format && \in_array($key, self::DATE_COLUMNS, true) && !empty($value)) {
                     $dateTime = \DateTimeImmutable::createFromFormat('d/m/Y', $value);
                     if ($dateTime) {
                         $cells[] = Cell::fromValue($dateTime, $dateStyle);

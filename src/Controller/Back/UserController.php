@@ -12,6 +12,7 @@ use App\Security\Voter\UserVoter;
 use App\Service\EmailAlert\EmailAlertChecker;
 use App\Service\Export\UserExportLoader;
 use App\Service\ListFilters\SearchUser;
+use App\Utils\ExportFormat;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -61,7 +62,7 @@ class UserController extends AbstractController
         if ('POST' === $originalMethod) {
             /** @var string $format */
             $format = $request->request->get('file-format');
-            if (!in_array($format, ['csv', 'xlsx'])) {
+            if (!in_array($format, [ExportFormat::FORMAT_CSV, ExportFormat::FORMAT_XLSX])) {
                 $this->addFlash('error', 'Veuillez sélectionner un format pour l\'export.');
 
                 return $this->redirectToRoute('back_user_export', $searchUser->getUrlParams());
@@ -109,7 +110,7 @@ class UserController extends AbstractController
         if ('POST' === $request->getMethod()) {
             /** @var string $format */
             $format = $request->request->get('file-format');
-            if (!in_array($format, ['csv', 'xlsx'])) {
+            if (!in_array($format, [ExportFormat::FORMAT_CSV, ExportFormat::FORMAT_XLSX])) {
                 $this->addFlash('error', 'Veuillez sélectionner un format pour l\'export.');
 
                 return $this->redirectToRoute('back_user_export_inactive_accounts');

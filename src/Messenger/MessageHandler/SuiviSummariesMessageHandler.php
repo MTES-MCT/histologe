@@ -9,7 +9,7 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Signalement\Export\SignalementExportHeader;
+use App\Utils\ExportFormat;
 use App\Utils\HtmlCleaner;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Writer\CSV\Options as CsvOptions;
@@ -69,7 +69,7 @@ class SuiviSummariesMessageHandler
      */
     private function buildSpreadsheet(SuiviSummariesMessage $suiviSummariesMessage, string $outputFilePath): void
     {
-        $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: SignalementExportHeader::SEPARATOR));
+        $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: ExportFormat::CSV_SEPARATOR));
         $writer->openToFile($outputFilePath);
         $headers = ['Référence du signalement', 'Lien vers le signalement', 'Date du dernier suivi', 'Auteur du dernier suivi', 'Résumé du dernier suivi', 'Contenu du dernier suivi'];
         $writer->addRow(Row::fromValues($headers));

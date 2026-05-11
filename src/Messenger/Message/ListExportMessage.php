@@ -4,9 +4,6 @@ namespace App\Messenger\Message;
 
 class ListExportMessage
 {
-    public const string FORMAT_CSV = 'csv';
-    public const string FORMAT_XLSX = 'xlsx';
-
     private int $userId;
     private string $format;
     /**

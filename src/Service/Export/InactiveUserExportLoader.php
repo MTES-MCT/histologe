@@ -3,9 +3,8 @@
 namespace App\Service\Export;
 
 use App\Entity\User;
-use App\Messenger\Message\ListExportMessage;
 use App\Repository\UserRepository;
-use App\Service\Signalement\Export\SignalementExportHeader;
+use App\Utils\ExportFormat;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Writer\CSV\Options as CsvOptions;
 use OpenSpout\Writer\CSV\Writer as CsvWriter;
@@ -20,8 +19,8 @@ readonly class InactiveUserExportLoader
 
     public function load(User $user, string $format, string $outputFilePath): void
     {
-        if (ListExportMessage::FORMAT_CSV === $format) {
-            $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: SignalementExportHeader::SEPARATOR));
+        if (ExportFormat::FORMAT_CSV === $format) {
+            $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: ExportFormat::CSV_SEPARATOR));
         } else {
             $writer = new XlsxWriter();
         }
