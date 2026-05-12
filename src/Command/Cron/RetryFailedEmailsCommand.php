@@ -38,6 +38,38 @@ class RetryFailedEmailsCommand extends AbstractCronCommand
         parent::__construct($this->parameterBag);
     }
 
+    /**
+     * Normalizes the context by converting serialized DateTime arrays back to DateTime objects.
+     *
+     * @param array<mixed> $context
+     *
+     * @return array<mixed>
+     */
+    private function normalizeContext(array $context): array
+    {
+        foreach ($context as $key => $value) {
+            if (\is_array($value)) {
+                // Check if this is a serialized DateTime
+                if (isset($value['date'], $value['timezone'])
+                    && \is_string($value['date'])
+                    && \is_string($value['timezone'])
+                ) {
+                    try {
+                        $context[$key] = new \DateTime($value['date'], new \DateTimeZone($value['timezone']));
+                    } catch (\Exception) {
+                        // If conversion fails, recurse into the array
+                        $context[$key] = $this->normalizeContext($value);
+                    }
+                } else {
+                    // Recurse into nested arrays
+                    $context[$key] = $this->normalizeContext($value);
+                }
+            }
+        }
+
+        return $context;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -48,9 +80,11 @@ class RetryFailedEmailsCommand extends AbstractCronCommand
         $failedEmails = $this->failedEmailRepository->findEmailToResend();
 
         foreach ($failedEmails as $failedEmail) {
+            $context = $this->normalizeContext($failedEmail->getContext());
+
             $emailMessage = (new TemplatedEmail())
                 ->htmlTemplate('emails/'.$failedEmail->getContext()['template'].'.html.twig')
-                ->context($failedEmail->getContext())
+                ->context($context)
                 ->replyTo($failedEmail->getReplyTo())
                 ->subject($failedEmail->getSubject())
                 ->from(
