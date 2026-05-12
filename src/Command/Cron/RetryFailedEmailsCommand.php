@@ -4,6 +4,7 @@ namespace App\Command\Cron;
 
 use App\Entity\FailedEmail;
 use App\Repository\FailedEmailRepository;
+use App\Service\Mailer\ContextDateTimeNormalizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -34,40 +35,9 @@ class RetryFailedEmailsCommand extends AbstractCronCommand
         private readonly FailedEmailRepository $failedEmailRepository,
         private readonly MailerInterface $mailer,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly ContextDateTimeNormalizer $contextDateTimeNormalizer,
     ) {
         parent::__construct($this->parameterBag);
-    }
-
-    /**
-     * Normalizes the context by converting serialized DateTime arrays back to DateTime objects.
-     *
-     * @param array<mixed> $context
-     *
-     * @return array<mixed>
-     */
-    private function normalizeContext(array $context): array
-    {
-        foreach ($context as $key => $value) {
-            if (\is_array($value)) {
-                // Check if this is a serialized DateTime
-                if (isset($value['date'], $value['timezone'])
-                    && \is_string($value['date'])
-                    && \is_string($value['timezone'])
-                ) {
-                    try {
-                        $context[$key] = new \DateTime($value['date'], new \DateTimeZone($value['timezone']));
-                    } catch (\Exception) {
-                        // If conversion fails, recurse into the array
-                        $context[$key] = $this->normalizeContext($value);
-                    }
-                } else {
-                    // Recurse into nested arrays
-                    $context[$key] = $this->normalizeContext($value);
-                }
-            }
-        }
-
-        return $context;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -80,7 +50,7 @@ class RetryFailedEmailsCommand extends AbstractCronCommand
         $failedEmails = $this->failedEmailRepository->findEmailToResend();
 
         foreach ($failedEmails as $failedEmail) {
-            $context = $this->normalizeContext($failedEmail->getContext());
+            $context = $this->contextDateTimeNormalizer->normalize($failedEmail->getContext());
 
             $emailMessage = (new TemplatedEmail())
                 ->htmlTemplate('emails/'.$failedEmail->getContext()['template'].'.html.twig')
