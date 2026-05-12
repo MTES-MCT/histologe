@@ -230,7 +230,7 @@ class SignalementBoManager
         $signalement->setMontantAllocation((int) $form->get('montantAllocation')->getData());
         $situationFoyer->setLogementSocialMontantAllocation($form->get('montantAllocation')->getData());
         $situationFoyer->setTravailleurSocialAccompagnement($form->get('accompagnementTravailleurSocial')->getData());
-        $situationFoyer->setTravailleurSocialAccompagnementNomStructure($form->get('accompagnementTravailleurSocialNomStructure')->getData());
+        $signalement->setStructureReferentSocial($form->get('accompagnementTravailleurSocialNomStructure')->getData());
         $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireRsa($form->get('beneficiaireRSA')->getData());
         $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireFsl($form->get('beneficiaireFSL')->getData());
         if (!empty($form->get('dateProprietaireAverti')->getData())) {

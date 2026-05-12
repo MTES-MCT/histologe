@@ -329,11 +329,11 @@ class SignalementEditController extends AbstractController
                 $signalement->setDateNaissanceOccupant(new \DateTimeImmutable($form->get('dateNaissanceAllocataire')->getData()->format('Y-m-d')));
             }
             $signalement->setMontantAllocation((int) $form->get('montantAllocation')->getData());
+            $signalement->setStructureReferentSocial($form->get('accompagnementTravailleurSocialNomStructure')->getData());
             $situationFoyer->setLogementSocialMontantAllocation($form->get('montantAllocation')->getData())
                 ->setTravailleurSocialQuitteLogement($form->get('souhaiteQuitterLogement')->getData())
                 ->setTravailleurSocialPreavisDepart($form->get('preavisDepartDepose')->getData())
-                ->setTravailleurSocialAccompagnement($form->get('accompagnementTravailleurSocial')->getData())
-                ->setTravailleurSocialAccompagnementNomStructure($form->get('accompagnementTravailleurSocialNomStructure')->getData());
+                ->setTravailleurSocialAccompagnement($form->get('accompagnementTravailleurSocial')->getData());
             $informationComplementaire->setInformationsComplementairesSituationOccupantsTypeAllocation($form->get('typeAllocation')->getData())
                 ->setInformationsComplementairesSituationOccupantsBeneficiaireRsa($form->get('beneficiaireRSA')->getData())
                 ->setInformationsComplementairesSituationOccupantsBeneficiaireFsl($form->get('beneficiaireFSL')->getData())

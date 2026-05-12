@@ -790,10 +790,8 @@ class SignalementManager
             ->setTravailleurSocialAccompagnement(
                 $situationFoyerRequest->getTravailleurSocialAccompagnement()
             )
-            ->setTravailleurSocialAccompagnementNomStructure(
-                $situationFoyerRequest->getTravailleurSocialAccompagnementNomStructure()
-            )
             ->setLogementSocialAllocationCaisse($situationFoyerRequest->getIsAllocataire());
+        $signalement->setStructureReferentSocial($situationFoyerRequest->getTravailleurSocialAccompagnementNomStructure());
 
         if ('non' === $situationFoyerRequest->getTravailleurSocialPreavisDepart()) {
             $signalement->setIsPreavisDepart(false);

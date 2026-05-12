@@ -55,7 +55,7 @@ class UsagerSituationFoyerType extends AbstractType
         $souhaiteQuitterLogement = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialQuitteLogement() : '';
         $preavisDepartDepose = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialPreavisDepart() : '';
         $accompagnementTravailleurSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnement() : '';
-        $accompagnementTravailleurSocialNomStructure = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementNomStructure() : '';
+        $accompagnementTravailleurSocialNomStructure = $signalement->getStructureReferentSocial();
 
         $beneficiaireRSA = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireRsa() : '';
         $beneficiaireFSL = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireFsl() : '';

@@ -45,7 +45,7 @@ class SignalementDraftSituationType extends AbstractType
         $typeAllocation = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsTypeAllocation() : '';
         $montantAllocation = $signalement->getMontantAllocation();
         $accompagnementTravailleurSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnement() : '';
-        $accompagnementTravailleurSocialNomStructure = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementNomStructure() : '';
+        $accompagnementTravailleurSocialNomStructure = $signalement->getStructureReferentSocial();
         $beneficiaireRSA = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireRsa() : '';
         $beneficiaireFSL = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireFsl() : '';
         $dateProprietaireAverti = $signalement->getProprioAvertiAt();

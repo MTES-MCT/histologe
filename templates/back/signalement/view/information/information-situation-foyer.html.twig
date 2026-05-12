@@ -105,7 +105,11 @@
     {% if structureAccompagnement %}
         <div class="fr-col-12 fr-col-md-6">
             <strong>Nom de la structure d'accompagnement :</strong>
-            {{ signalement.situationFoyer.travailleurSocialAccompagnementNomStructure }}
+            {{ signalement.structureReferentSocial }}
+        </div>
+        <div class="fr-col-12 fr-col-md-6">
+            <strong>Nom du ou de la travailleuse sociale :</strong>
+            {{ signalement.nomReferentSocial }}
         </div>
     {% endif %}
     <div class="fr-col-12 fr-col-md-6">

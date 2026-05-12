@@ -42,7 +42,6 @@ class SituationFoyerFactory
             travailleurSocialPreavisDepart: $data['travailleur_social_preavis_depart'] ?? null,
             travailleurSocialAccompagnement: $data['travailleur_social_accompagnement'] ?? null,
             travailleurSocialAccompagnementDeclarant: $data['travailleur_social_accompagnement_declarant'] ?? null,
-            travailleurSocialAccompagnementNomStructure: $data['travailleur_social_accompagnement_nom_structure'] ?? null,
         );
     }
 }
