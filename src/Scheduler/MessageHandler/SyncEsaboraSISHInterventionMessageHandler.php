@@ -82,6 +82,9 @@ final class SyncEsaboraSISHInterventionMessageHandler
         $this->notify($countSuccess, $countFailed, $errorMessages);
     }
 
+    /**
+     * @param string[] $errorMessages
+     */
     private function notify(int $countSuccess, int $countFailed, array $errorMessages): void
     {
         $this->notificationMailerRegistry->send(

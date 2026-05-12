@@ -2,6 +2,7 @@
 
 namespace App\Scheduler\MessageHandler;
 
+use App\Entity\Enum\PartnerType;
 use App\Repository\AffectationRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Esabora\EsaboraManager;
@@ -24,12 +25,14 @@ abstract class AbstractSyncEsaboraMessageHandler
     }
 
     /**
+     * @param PartnerType|PartnerType[] $partnerType
+     *
      * @throws \DateInvalidTimeZoneException
      * @throws \DateMalformedStringException
      */
     protected function synchronizeStatus(
         EsaboraServiceInterface $esaboraService,
-        array|string $partnerType,
+        PartnerType|array $partnerType,
         string $cronLabel,
         ?string $uuidSignalement = null,
     ): void {
