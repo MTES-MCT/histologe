@@ -7,17 +7,24 @@ use App\Dto\StopProcedure;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Suivi;
+use App\Form\MessageBailleurType;
 use App\Form\ReponseInjonctionBailleurType;
 use App\Form\SignalementeEditFO\CoordonneesBailleurType;
 use App\Form\StopProcedureType;
+use App\Manager\SuiviManager;
 use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Security\User\SignalementBailleur;
+use App\Security\Voter\SignalementBailleurVoter;
 use App\Service\Files\ImageVariantProvider;
 use App\Service\InjonctionBailleur\EngagementTravauxBailleurGenerator;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Signalement\SignalementDesordresProcessor;
+use App\Service\Signalement\SignalementFileProcessor;
+use App\Utils\FormHelper;
+use App\Utils\HtmlCleaner;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -51,6 +58,10 @@ class SuiviBailleurController extends AbstractController
         $suiviReponse = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::injonctionBailleurReponseCategories()]);
         $suiviBasculeProcedure = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR]);
         $suiviDemandeCloture = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR]);
+        $formMessage = null;
+        if ($this->isGranted(SignalementBailleurVoter::SIGN_BAILLEUR_ADD_SUIVI, $signalement)) {
+            $formMessage = $this->createForm(MessageBailleurType::class, null, ['action' => $this->generateUrl('front_dossier_bailleur_add_message')]);
+        }
 
         $engagementTravauxPdf = null;
         $form = null;
@@ -109,6 +120,7 @@ class SuiviBailleurController extends AbstractController
             'suiviDemandeCloture' => $suiviDemandeCloture,
             'dateLimit' => $dateLimit,
             'form' => $form,
+            'formMessage' => $formMessage,
             'engagementTravauxPdf' => $engagementTravauxPdf,
         ]);
     }
@@ -193,5 +205,54 @@ class SuiviBailleurController extends AbstractController
         $response->headers->set('Content-Disposition', 'inline; filename="engagement-travaux-'.$signalement->getReferenceInjonction().'.pdf"');
 
         return $response;
+    }
+
+    #[Route('/envoi-message', name: 'front_dossier_bailleur_add_message', methods: ['POST'])]
+    public function addMessage(
+        Request $request,
+        SignalementRepository $signalementRepository,
+        SignalementFileProcessor $signalementFileProcessor,
+        SuiviManager $suiviManager,
+    ): Response {
+        /**
+         * @var SignalementBailleur $user
+         */
+        $user = $this->getUser();
+        $signalement = $signalementRepository->findOneBy(['uuid' => $user->getUserIdentifier()]);
+
+        if (!$this->isGranted(SignalementBailleurVoter::SIGN_BAILLEUR_ADD_SUIVI, $signalement)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $formMessage = $this->createForm(MessageBailleurType::class, null, ['action' => $this->generateUrl('front_dossier_bailleur_add_message')]);
+        $formMessage->handleRequest($request);
+        if ($formMessage->isSubmitted() && $formMessage->isValid()) {
+            $files = $formMessage->get('files')->getData();
+            $fileList = $signalementFileProcessor->process($files, DocumentType::MESSAGE_BAILLEUR);
+            if (!$signalementFileProcessor->isValid()) {
+                $errors = ['files' => ['errors' => [$signalementFileProcessor->getErrorMessages()]]];
+                $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => $errors];
+
+                return $this->json($response, $response['code']);
+            }
+            $filesToAttach = $signalementFileProcessor->addFilesToSignalement(fileList: $fileList, signalement: $signalement);
+            $description = HtmlCleaner::cleanFrontEndEntry($formMessage->get('description')->getData());
+            $suiviManager->createSuivi(
+                signalement: $signalement,
+                description: $description,
+                type: Suivi::TYPE_USAGER,
+                category: SuiviCategory::MESSAGE_BAILLEUR,
+                isVisibleForBailleur: true,
+                files: $filesToAttach
+            );
+
+            $this->addFlash('success', ['title' => 'Message envoyé', 'message' => 'Votre message a été envoyé avec succès.']);
+
+            return $this->json(['redirect' => true, 'scrollToTop' => true, 'url' => $this->generateUrl('front_dossier_bailleur')]);
+        }
+
+        $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($formMessage)];
+
+        return $this->json($response, $response['code']);
     }
 }

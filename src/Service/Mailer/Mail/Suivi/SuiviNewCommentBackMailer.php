@@ -2,6 +2,7 @@
 
 namespace App\Service\Mailer\Mail\Suivi;
 
+use App\Entity\Enum\SuiviCategory;
 use App\Service\Mailer\Mail\AbstractNotificationMailer;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
@@ -40,6 +41,8 @@ class SuiviNewCommentBackMailer extends AbstractNotificationMailer
             if ($suivi->getPartner()) {
                 $suiviCreator .= ' ('.$suivi->getPartner()->getNom().')';
             }
+        } elseif (in_array($suivi->getCategory(), SuiviCategory::CategoriesSubmittedByBailleur())) {
+            $suiviCreator = $signalement->getDisplayedNomProprio().' (bailleur)';
         } elseif ($signalement->getPrenomDeclarant()) {
             $suiviCreator = $signalement->getPrenomDeclarant().' '.$signalement->getNomDeclarant();
         }

@@ -16,7 +16,8 @@ class MessageUsagerType extends AbstractType
     {
         $builder
             ->add('description', TextareaType::class, [
-                'label' => false,
+                'label' => 'Votre message',
+                'help' => 'Dix (10) caractères minimum.',
                 'attr' => [
                     'rows' => 5,
                 ],

@@ -202,7 +202,7 @@ class Suivi implements EntityHistoryInterface
         return $this->getCreatedBy()?->getNomComplet($firstNameFirst);
     }
 
-    public function getCreatedByLabel(string $separator = ' : '): ?string
+    public function getCreatedByLabel(string $separator = ' : ', bool $forBailleur = false): ?string
     {
         if (self::TYPE_TECHNICAL === $this->type) {
             return 'Suivi automatique';
@@ -226,7 +226,7 @@ class Suivi implements EntityHistoryInterface
             return $this->getCreatedBy()->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getTerritory())?->getNom().$separator.$this->getCreatedBy()->getNomComplet(true);
         }
         if (in_array($this->getCategory(), SuiviCategory::CategoriesSubmittedByBailleur())) {
-            return 'Bailleur';
+            return $forBailleur ? 'Vous (bailleur)' : 'Bailleur';
         }
         if ($this->getCreatedAt()->format('Y') >= 2024) {
             return 'Occupant ou déclarant';
