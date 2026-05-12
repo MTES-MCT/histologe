@@ -776,6 +776,9 @@ ul + p {
         padding-left: 1rem;
     }
 }
+.signalement-group-data-card.squared {
+    border-radius: 0;
+}
 
 .confetti {
     width :12px;
@@ -908,6 +911,9 @@ ul + p {
     position: relative;
     z-index: 10;
     background: white;
+}
+#map-same-address {
+    height: 95vh;
 }
 #zone_map, #info_zone_map {
     height: 70vh;

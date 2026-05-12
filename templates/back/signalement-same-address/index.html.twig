@@ -1,0 +1,178 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Liste des dossiers à la même adresse{% endblock %}
+
+{% block content %}
+    <section class="fr-pt-4v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Liste des dossiers à la même adresse',
+            'level2Link': '',
+            'level2Label': ''
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-8">
+                    <h1 class="fr-mb-0">Liste des dossiers à la même adresse</h1>
+                </div>
+                <div class="fr-col-4 fr-text--right">
+                    <a
+                        href="{% if nbSignalements > 0 %}{{path('back_signalement_same_address_export')}}{% else %}#{% endif %}"
+                        class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill {% if nbSignalements == 0 %}fr-label--disabled{% endif %} fr-btn--block fr-btn--md-inline"
+                        aria-label="Exporter les résultats des dossiers à la même adresse"
+                        title="Exporter les résultats"
+                    >Exporter les résultats</a>
+                </div>
+            </div>
+        </header>
+    </section>
+
+    <section class="fr-col-12">
+        <form id="search-same-address-form" class="fr-pt-4v">
+            <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-lg-3">
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="address">Adresse</label>
+                        <div class="fr-input-wrap fr-icon-search-line">
+                            <input type="text" placeholder="Taper l'adresse du logement" id="address" name="address" class="fr-input" list="address-suggestions">
+                            <datalist id="address-suggestions">
+                                {% for key, address in addressSuggestions %}
+                                    <option value="{{ key }}">{{ address }}</option>
+                                {% endfor %}
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-lg-3">       
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="commune">Commune ou code postal</label>
+                        <div class="fr-input-wrap fr-icon-map-pin-2-fill">
+                            <input type="text" id="commune" name="commune" class="fr-input" list="commune-suggestions">
+                            <datalist id="commune-suggestions">
+                                {% for key, commune in communeSuggestions %}
+                                    <option value="{{ key }}">{{ commune }}</option>
+                                {% endfor %}
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-lg-3">
+                    <div class="fr-input-group">
+                        <label class="fr-label" for="bailleur">Bailleur</label>
+                        <div class="fr-input-wrap fr-icon-user-search-fill">
+                            <input type="text" id="bailleur" name="bailleur" class="fr-input" list="bailleur-suggestions">
+                            <datalist id="bailleur-suggestions">
+                                {% for key, bailleur in bailleurSuggestions %}
+                                    <option value="{{ key }}">{{ bailleur }}</option>
+                                {% endfor %}
+                            </datalist>
+                        </div>
+                    </div>
+                </div>
+                {% if territories|length > 1 %}
+                    <div class="fr-col-12 fr-col-lg-3">
+                        <div class="fr-select-group">
+                            <label class="fr-label" for="territoryId">Territoire</label>
+                            <select id="territoryId" name="territoryId" class="fr-select">
+                                <option value="">Tous les territoires</option>
+                                {% for territory in territories %}
+                                    <option value="{{ territory.id }}">{{ territory.zipAndName }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="fr-col-12 fr-col-lg-4">
+                    <button type="reset" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</button>
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <section class="fr-col-12 fr-py-5v">
+        <h2 class="title-counters-same-address"></h2>
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-5">
+                {% for address in signalementsByAddress %}
+                    <div 
+                        class="same-address-item signalement-group-data-card squared fr-p-5v fr-hidden is-active-filters"
+                        data-lat="{{ address.lat }}"
+                        data-lng="{{ address.lng }}"
+                        data-territory-id="{{ address.territoryId }}"
+                        data-address="{{ address.addressNormalised }}"
+                        data-commune="{{ address.communeNormalised }}"
+                        data-bailleur="{{ address.bailleurNormalised }}"
+                        data-nb="{{ address.signalements|length }}"
+                        >
+                        <div class="fr-grid-row fr-grid-row--gutters">
+                            <div class="fr-col-12">
+                                <div class="fr-badge fr-badge--info fr-badge--no-icon">{{address.signalements|length}} dossiers</div>
+                                <div class="fr-mt-2w">
+                                    <strong>
+                                        <span class="fr-icon-map-pin-2-fill {% if address.lat and address.lng %}{% else %}fr-link--error{% endif %}" aria-hidden="true"></span>
+                                        {{ address.adresse }}, {{ address.cp }} {{ address.ville }}
+                                    </strong>
+                                </div>
+                            </div>
+                            <div class="fr-col-12">
+                                <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-btns-group--icon-left">
+                                    <li>
+                                        {% if address.lat and address.lng %}
+                                            <button type="button" class="fr-btn fr-icon-settings-5-line show-on-map" data-target="#same-address-details-{{ loop.index }}">Voir sur la carte</button>
+                                        {% else %}
+                                            <button type="button" class="fr-btn fr-icon-settings-5-line show-details" data-target="#same-address-details-{{ loop.index }}">Voir les détails</button>
+                                        {% endif %}
+                                    </li>
+                                    <li>
+                                        {% set routeForListOfSignalementOnAddress = path('back_signalements_index', { 'isImported': 'oui', 'searchTerms': address.adresse|trim, 'communes[]': address.cp }) %}
+                                        <a href="{{ routeForListOfSignalementOnAddress }}" class="fr-btn fr-icon-align-justify fr-btn--secondary">Liste des dossiers</a>
+                                    </li>
+                                </ul>
+                                <div class="fr-hidden" id="same-address-details-{{ loop.index }}">
+                                    <div class="title-blue-france">
+                                        Dossiers à l'adresse : 
+                                        <br>
+                                        {{ address.adresse }}, {{ address.cp }} {{ address.ville }}
+                                    </div>
+                                    <ul class="fr-list fr-list--none" >
+                                        {% for signalement in address.signalements %}
+                                            <li>
+                                                <a href="{{ path('back_signalement_view', {uuid: signalement.uuid}) }}" class="fr-link">#{{ signalement.reference }}</a> - 
+                                                {{signalement.nomOccupant|upper}} {{signalement.prenomOccupant|title}} - 
+                                                {% if signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
+                                                    <span class="fr-badge fr-badge--warning fr-badge--no-icon">Nouveau</span>
+                                                {% elseif signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}
+                                                    <span class="fr-badge fr-badge--success fr-badge--no-icon">En cours</span>
+                                                {% elseif signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
+                                                    <span class="fr-badge fr-badge--no-icon">Fermé</span>
+                                                {% else %}
+                                                    <span class="fr-badge fr-badge--error fr-badge--no-icon">{{ signalement.statut.name }}</span>
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="fr-col-12">
+                    <nav role="navigation" class="fr-pagination pagination-full-js" aria-label="Pagination"></nav>
+                </div>
+            </div>
+            <div class="fr-col-12 fr-col-md-7">
+                <div class="signalement-group-data-card squared" id="map-same-address"></div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('build/leaflet/leaflet.css')}}">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('build/leaflet/leaflet.js') }}"></script>
+    <script src="{{ asset('js/map-same-address.js') }}" ></script>
+{% endblock %}
