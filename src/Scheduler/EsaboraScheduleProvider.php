@@ -5,8 +5,10 @@ namespace App\Scheduler;
 use App\Scheduler\Message\SyncEsaboraSCHSMessage;
 use App\Scheduler\Message\SyncEsaboraSISHInterventionMessage;
 use App\Scheduler\Message\SyncEsaboraSISHMessage;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Messenger\Message\RedispatchMessage;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
@@ -24,12 +26,13 @@ final class EsaboraScheduleProvider implements ScheduleProviderInterface
         #[Autowire('%env(ESABORA_CRON_SCHEDULE_SYNC_SCHS)%')]
         private readonly string $syncSchsSchedule,
         private readonly LockFactory $lockFactory,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
     public function getSchedule(): Schedule
     {
-        return (new Schedule())
+        return new Schedule()
             ->lock($this->lockFactory->createLock('scheduler-esabora'))
             ->add(
                 ...$this->getMessages()
@@ -52,12 +55,20 @@ final class EsaboraScheduleProvider implements ScheduleProviderInterface
     private function addCronMessage(string $cron, object $message): iterable
     {
         if ('' === trim($cron) || 'false' === strtolower(trim($cron))) {
+            $this->logger->warning(sprintf(
+                '[scheduler] Message "%s" disabled',
+                $message::class,
+            ));
+
             return;
         }
 
         yield RecurringMessage::trigger(
             CronExpressionTrigger::fromSpec($cron),
-            $message,
+            new RedispatchMessage(
+                $message,
+                'async'
+            ),
         );
     }
 }

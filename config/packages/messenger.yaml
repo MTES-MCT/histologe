@@ -14,14 +14,10 @@ framework:
             failed_high_priority: 'doctrine://default?queue_name=failed_high_priority'
             failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
-            scheduler_esabora: 'sync://'
 
         routing:
             # Route your messages to the transports
             # Symfony\Component\Mailer\Messenger\SendEmailMessage: sync
-            App\Scheduler\Message\SyncEsaboraSISHMessage: async
-            App\Scheduler\Message\SyncEsaboraSCHSMessage: async
-            App\Scheduler\Message\SyncEsaboraSISHInterventionMessage: async
             App\Messenger\Message\Esabora\DossierMessageSCHS: async
             App\Messenger\Message\Esabora\DossierMessageSISH: async
             App\Messenger\Message\Idoss\DossierMessage: async
