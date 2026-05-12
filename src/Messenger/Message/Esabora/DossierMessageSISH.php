@@ -712,6 +712,13 @@ final class DossierMessageSISH implements DossierMessageInterface
         return $this->proprietaireAvertiMoyen;
     }
 
+    public function setProprietaireAvertiMoyen(?string $proprietaireAvertiMoyen): self
+    {
+        $this->proprietaireAvertiMoyen = $proprietaireAvertiMoyen;
+
+        return $this;
+    }
+
     public function getSignalementScore(): ?float
     {
         return $this->signalementScore;

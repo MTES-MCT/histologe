@@ -12,9 +12,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<Intervention>
  *
  * @method Intervention|null find($id, $lockMode = null, $lockVersion = null)
- * @method Intervention|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Intervention|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method Intervention[]    findAll()
- * @method Intervention[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Intervention[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class InterventionRepository extends ServiceEntityRepository
 {

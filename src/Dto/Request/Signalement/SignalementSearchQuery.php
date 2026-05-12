@@ -470,6 +470,9 @@ class SignalementSearchQuery
         return UrlHelper::arrayToQueryString($params);
     }
 
+    /**
+     * @param array<string, mixed> $params
+     */
     public static function fromParams(array $params): self
     {
         return new self(

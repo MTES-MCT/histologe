@@ -15,6 +15,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class SearchDashboardAverifierType extends AbstractType
 {
     public function __construct(
@@ -64,6 +67,9 @@ class SearchDashboardAverifierType extends AbstractType
         }
     }
 
+    /**
+     * @param FormInterface<mixed>|FormBuilderInterface<mixed> $builder
+     */
     private function addPartnersField(FormInterface|FormBuilderInterface $builder, string|Territory|null $territory): void
     {
         $builder->add('partners', SearchCheckboxType::class, [

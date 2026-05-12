@@ -10,6 +10,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class FormHelper
 {
     /**
+     * @param FormInterface<mixed> $form
+     *
      * @return array<string, array{errors: string[]}>
      */
     public static function getErrorsFromForm(FormInterface $form, bool $withPrefix = false, bool $recursive = false): array
@@ -35,6 +37,9 @@ class FormHelper
         return $errors;
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     private static function getFieldNameWithPrefix(FormInterface $form): string
     {
         $fieldName = $form->getName();
@@ -67,6 +72,9 @@ class FormHelper
         return $errors;
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     public static function handleFormSubmitFromRequestOrSearchParams(FormInterface $form, Request $request, bool $fromSearchParams): void
     {
         if ($fromSearchParams) {

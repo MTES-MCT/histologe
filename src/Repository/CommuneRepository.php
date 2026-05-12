@@ -40,6 +40,11 @@ class CommuneRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @param array<string> $codesInsee
+     *
+     * @return array<int, Commune>
+     */
     public function findDistinctCommuneCodesInseeForCodeInseeList(array $codesInsee): array
     {
         $cleanedCodesInsee = array_filter(array_map('trim', $codesInsee));

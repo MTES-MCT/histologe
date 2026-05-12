@@ -80,7 +80,7 @@ class HistoryEntryManager
     }
 
     /**
-     * @return array<string, array<array<string, string>>>
+     * @return array<string, array<array<string, int|string|null>>>
      */
     public function getAffectationHistory(Signalement $signalement): array
     {
@@ -114,7 +114,7 @@ class HistoryEntryManager
 
         ksort($formattedHistory);
         foreach ($formattedHistory as &$partnerEvents) {
-            usort($partnerEvents, static fn ($a, $b) => strcasecmp($b['Date'], $a['Date']));
+            usort($partnerEvents, static fn ($a, $b) => strcasecmp((string) $b['Date'], (string) $a['Date']));
         }
 
         return $formattedHistory;
@@ -147,8 +147,8 @@ class HistoryEntryManager
     }
 
     /**
-     * @param array<string, array<array<string, string>>> $formattedHistory
-     * @param array<HistoryEntry>                         $entries
+     * @param array<string, array<array<string, int|string|null>>> $formattedHistory
+     * @param array<HistoryEntry>                                  $entries
      */
     private function formatEntries(array &$formattedHistory, array $entries, string $type, ?Signalement $signalement = null): void
     {
@@ -198,7 +198,7 @@ class HistoryEntryManager
                     'Id' => 'affectation' === $type ? $id : '-',
                 ];
                 $formattedHistory[$partnerName][] = $formattedEntry;
-                if (null !== $partnerTarget && null !== $partnerTarget->getNom() && $partnerTarget->getNom() !== $partnerName) {
+                if (null !== $partnerTarget && $partnerTarget->getNom() !== $partnerName) {
                     $formattedHistory[$partnerTarget->getNom()][] = $formattedEntry;
                 }
             }

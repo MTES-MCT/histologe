@@ -105,13 +105,13 @@ class File implements EntityHistoryInterface
     private ?Signalement $signalement = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $filename = null;
+    private string $filename;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    private string $title;
 
     #[ORM\Column(length: 255)]
-    private ?string $extension = null;
+    private string $extension;
 
     #[ORM\ManyToOne(inversedBy: 'files')]
     #[ORM\JoinColumn(nullable: true)]
@@ -127,7 +127,7 @@ class File implements EntityHistoryInterface
     private ?string $desordreSlug = null;
 
     #[ORM\Column]
-    private ?bool $isVariantsGenerated = null;
+    private bool $isVariantsGenerated;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(max: 255, maxMessage: 'La description ne doit pas dépasser {{ limit }} caractères')]
@@ -137,10 +137,10 @@ class File implements EntityHistoryInterface
     private ?\DateTimeImmutable $datePriseDeVue = null;
 
     #[ORM\Column]
-    private ?bool $isWaitingSuivi = null;
+    private bool $isWaitingSuivi;
 
     #[ORM\Column]
-    private ?bool $isTemp = null;
+    private bool $isTemp;
 
     /** @var array<mixed> $synchroData */
     #[ORM\Column(nullable: true)]
@@ -150,16 +150,16 @@ class File implements EntityHistoryInterface
     private ?\DateTimeImmutable $scannedAt = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    private ?string $uuid = null;
+    private string $uuid;
 
     #[ORM\Column]
-    private ?bool $isOriginalDeleted = null;
+    private bool $isOriginalDeleted;
 
     #[ORM\Column(nullable: true)]
     private ?bool $isSuspicious = null;
 
     #[ORM\Column()]
-    private ?bool $isStandalone = null;
+    private bool $isStandalone;
 
     #[ORM\ManyToOne(targetEntity: Territory::class)]
     #[ORM\JoinColumn(nullable: true)]
@@ -251,10 +251,6 @@ class File implements EntityHistoryInterface
      */
     public function getDisplayFilename(): ?string
     {
-        if (null === $this->filename) {
-            return null;
-        }
-
         return basename($this->filename);
     }
 
@@ -277,7 +273,7 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -289,7 +285,7 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
-    public function getExtension(): ?string
+    public function getExtension(): string
     {
         return $this->extension;
     }
@@ -349,7 +345,7 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
-    public function isIsVariantsGenerated(): ?bool
+    public function isIsVariantsGenerated(): bool
     {
         return $this->isVariantsGenerated;
     }
@@ -386,7 +382,7 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
-    public function isIsWaitingSuivi(): ?bool
+    public function isIsWaitingSuivi(): bool
     {
         return $this->isWaitingSuivi;
     }
@@ -458,7 +454,7 @@ class File implements EntityHistoryInterface
         return in_array($this->getExtension(), self::IMAGE_EXTENSION);
     }
 
-    public function isTemp(): ?bool
+    public function isTemp(): bool
     {
         return $this->isTemp;
     }
@@ -500,7 +496,7 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
-    public function getUuid(): ?string
+    public function getUuid(): string
     {
         return $this->uuid;
     }
@@ -512,7 +508,7 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
-    public function getIsOriginalDeleted(): ?bool
+    public function getIsOriginalDeleted(): bool
     {
         return $this->isOriginalDeleted;
     }
@@ -536,7 +532,7 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
-    public function getIsStandalone(): ?bool
+    public function getIsStandalone(): bool
     {
         return $this->isStandalone;
     }

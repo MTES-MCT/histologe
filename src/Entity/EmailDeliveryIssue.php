@@ -22,10 +22,10 @@ class EmailDeliveryIssue
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $email = null;
+    private string $email;
 
     #[ORM\Column(enumType: BrevoEvent::class)]
-    private ?BrevoEvent $event = null;
+    private BrevoEvent $event;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $reason;
@@ -39,7 +39,7 @@ class EmailDeliveryIssue
         return $this->id;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -51,7 +51,7 @@ class EmailDeliveryIssue
         return $this;
     }
 
-    public function getEvent(): ?BrevoEvent
+    public function getEvent(): BrevoEvent
     {
         return $this->event;
     }

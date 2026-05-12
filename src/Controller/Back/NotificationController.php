@@ -26,7 +26,7 @@ class NotificationController extends AbstractController
     }
 
     /**
-     * @return array{FormInterface, SearchNotification, Paginator<Notification>}
+     * @return array{FormInterface<mixed>, SearchNotification, Paginator<Notification>}
      */
     private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {
@@ -43,6 +43,9 @@ class NotificationController extends AbstractController
         return [$form, $searchNotification, $paginatedNotifications];
     }
 
+    /**
+     * @return array<array{target: string, content: string}>
+     */
     private function getHtmlTargetContentsForNotificationAction(Request $request): array
     {
         [, $searchNotification, $paginatedNotifications] = $this->handleSearch($request, true);

@@ -89,7 +89,7 @@ class SignalementManager
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array<int|string, mixed> $data
      */
     public function createOrUpdateFromArrayForImport(Territory $territory, array $data): ?Signalement
     {
@@ -107,7 +107,7 @@ class SignalementManager
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array<int|string, mixed> $data
      */
     public function update(Signalement $signalement, array $data): Signalement
     {
@@ -964,6 +964,7 @@ class SignalementManager
 
     /**
      * @param array<string, mixed>|null $options
+     * @param array<string>             $selectedColumns
      *
      * @throws Exception
      */

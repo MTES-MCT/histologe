@@ -20,35 +20,6 @@ parameters:
 		-
 			message: '#Property .+::\$id is never written, only read.#'
 			path: src/Entity/*
-		# Ignore PHPStan 2.0 strictness - to be fixed gradually
-		-
-			identifier: missingType.iterableValue
-		-
-			identifier: missingType.generics
-		-
-			identifier: doctrine.columnType
-		-
-			identifier: doctrine.associationType
-		-
-			identifier: property.unusedType
-		-
-			identifier: varTag.nativeType
-		-
-			identifier: nullsafe.neverNull
-		-
-			identifier: parameterByRef.type
-		-
-			identifier: notIdentical.alwaysTrue
-		-
-			identifier: return.unusedType
-		-
-			identifier: offsetAccess.notFound
-		-
-			identifier: nullCoalesce.property
-		-
-			identifier: argument.type
-		-
-			identifier: return.type
 		# PHPStan false positives with PHPUnit 13
 		-
 			message: '#Call to an undefined method PHPUnit\\Framework\\MockObject\\InvocationStubber::with\(\)#'

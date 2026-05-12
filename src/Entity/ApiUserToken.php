@@ -21,13 +21,13 @@ class ApiUserToken implements EntityHistoryInterface
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'apiUserTokens')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $ownedBy = null;
+    private User $ownedBy;
 
     #[ORM\Column(length: 64, unique: true)]
-    private ?string $token = null;
+    private string $token;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $expiresAt = null;
+    private \DateTimeImmutable $expiresAt;
 
     /**
      * @throws RandomException
@@ -54,7 +54,7 @@ class ApiUserToken implements EntityHistoryInterface
         return $this;
     }
 
-    public function getToken(): ?string
+    public function getToken(): string
     {
         return $this->token;
     }
@@ -66,7 +66,7 @@ class ApiUserToken implements EntityHistoryInterface
         return $this;
     }
 
-    public function getExpiresAt(): ?\DateTimeImmutable
+    public function getExpiresAt(): \DateTimeImmutable
     {
         return $this->expiresAt;
     }

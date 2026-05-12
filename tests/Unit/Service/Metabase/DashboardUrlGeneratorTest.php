@@ -63,7 +63,6 @@ class DashboardUrlGeneratorTest extends TestCase
         );
 
         $this->assertNotEmpty($tokenString, 'Token string should not be empty');
-        /** @var non-empty-string $tokenString */
         $token = $jwtConfig->parser()->parse($tokenString);
 
         /** @var UnencryptedToken $token */

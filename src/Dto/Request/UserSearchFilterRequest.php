@@ -13,6 +13,9 @@ class UserSearchFilterRequest
     )]
     public ?string $name = null;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     #[Assert\Type('array', message: 'Les paramètres doivent être un tableau.')]
     public ?array $params = null;
 

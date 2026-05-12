@@ -55,27 +55,27 @@ class Suivi implements EntityHistoryInterface
     private ?int $id = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private ?\DateTimeImmutable $createdAt = null;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: true)]
     private ?User $createdBy = null;
 
     #[ORM\Column(type: 'text')]
-    private ?string $description = null;
+    private string $description;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isVisibleForUsager = null;
+    private bool $isVisibleForUsager;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isVisibleForBailleur = null;
+    private bool $isVisibleForBailleur;
 
     #[ORM\Column(type: 'integer')]
-    private ?int $type = null;
+    private int $type;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Signalement $signalement = null;
+    private Signalement $signalement;
 
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $context = null;
@@ -94,7 +94,7 @@ class Suivi implements EntityHistoryInterface
     private ?array $originalData = null;
 
     #[ORM\Column]
-    private ?bool $isSanitized = null;
+    private bool $isSanitized;
 
     #[ORM\Column(
         type: 'string',
@@ -116,7 +116,7 @@ class Suivi implements EntityHistoryInterface
     private ?Partner $partner = null;
 
     #[ORM\Column]
-    private ?bool $waitingNotification = null;
+    private bool $waitingNotification;
 
     public function __construct()
     {
@@ -143,7 +143,7 @@ class Suivi implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -238,7 +238,7 @@ class Suivi implements EntityHistoryInterface
         return 'OCCUPANT'.$separator.strtoupper($this->getSignalement()->getNomOccupant()).' '.ucfirst($this->getSignalement()->getPrenomOccupant());
     }
 
-    public function getDescription(bool $transformHtml = true): ?string
+    public function getDescription(bool $transformHtml = true): string
     {
         if (null !== $this->deletedAt) {
             return self::DESCRIPTION_DELETED.' '.$this->deletedAt->format('d/m/Y');
@@ -264,7 +264,7 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
-    public function getIsVisibleForUsager(): ?bool
+    public function getIsVisibleForUsager(): bool
     {
         return $this->isVisibleForUsager;
     }
@@ -276,7 +276,7 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
-    public function getIsVisibleForBailleur(): ?bool
+    public function getIsVisibleForBailleur(): bool
     {
         return $this->isVisibleForBailleur;
     }
@@ -300,7 +300,7 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
-    public function getType(): ?int
+    public function getType(): int
     {
         return $this->type;
     }
@@ -380,7 +380,7 @@ class Suivi implements EntityHistoryInterface
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 
-    public function getIsSanitized(): ?bool
+    public function getIsSanitized(): bool
     {
         return $this->isSanitized;
     }
@@ -446,12 +446,7 @@ class Suivi implements EntityHistoryInterface
 
     public function removeSuiviFile(SuiviFile $suiviFile): static
     {
-        if ($this->suiviFiles->removeElement($suiviFile)) {
-            // set the owning side to null (unless already changed)
-            if ($suiviFile->getSuivi() === $this) {
-                $suiviFile->setSuivi(null);
-            }
-        }
+        $this->suiviFiles->removeElement($suiviFile);
 
         return $this;
     }
@@ -468,7 +463,7 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
-    public function isWaitingNotification(): ?bool
+    public function isWaitingNotification(): bool
     {
         return $this->waitingNotification;
     }

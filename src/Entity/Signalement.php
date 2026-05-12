@@ -62,7 +62,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $uuid = null;
+    private string $uuid;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class)]
     private ?ProfileDeclarant $profileDeclarant = null;
@@ -293,9 +293,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $telSyndicSecondaire = null;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isCguAccepted = null;
+    private bool $isCguAccepted;
 
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isCguTiersAccepted = null; // null for no invitation, false invitation sent, true accepted
 
     #[ORM\Column(type: 'datetime_immutable')]
@@ -305,9 +305,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?\DateTimeImmutable $modifiedAt = null;
 
     #[ORM\Column(type: 'string', enumType: SignalementStatus::class)]
-    private ?SignalementStatus $statut = null;
+    private SignalementStatus $statut;
 
-    #[ORM\Column(type: 'string', length: 100)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $reference = null;
 
     #[ORM\Column(type: 'integer', nullable: true, unique: true)]
@@ -482,13 +482,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private Collection $signalementQualifications;
 
     #[ORM\Column]
-    private ?float $score = null;
+    private float $score;
 
     #[ORM\Column]
-    private ?float $scoreLogement = null;
+    private float $scoreLogement;
 
     #[ORM\Column]
-    private ?float $scoreBatiment = null;
+    private float $scoreBatiment;
 
     /** @var Collection<int, Intervention> $interventions */
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Intervention::class, orphanRemoval: true)]
@@ -559,7 +559,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\ManyToOne]
     private ?Partner $createdByPartner = null;
 
-    #[ORM\Column(type: 'string', enumType: CreationSource::class)]
+    #[ORM\Column(type: 'string', enumType: CreationSource::class, nullable: true)]
     private ?CreationSource $creationSource = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -1491,7 +1491,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getIsCguAccepted(): ?bool
+    public function getIsCguAccepted(): bool
     {
         return $this->isCguAccepted;
     }
@@ -1563,7 +1563,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getStatut(): ?SignalementStatus
+    public function getStatut(): SignalementStatus
     {
         return $this->statut;
     }
@@ -1635,7 +1635,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getUuid(): ?string
+    public function getUuid(): string
     {
         return $this->uuid;
     }
@@ -1712,7 +1712,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
                     $result[$affectation->getPartner()->getId()]['statuses'][] = $affectation->getStatut();
                 }
             }
-            $result[$affectation->getPartner()->getId()]['statut'] = max($result[$affectation->getPartner()->getId()]['statuses']);
+            if (isset($result[$affectation->getPartner()->getId()]['statuses'])) {
+                $result[$affectation->getPartner()->getId()]['statut'] = max($result[$affectation->getPartner()->getId()]['statuses']);
+            }
         }
 
         return $result;
@@ -2416,7 +2418,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getScore(): ?float
+    public function getScore(): float|int
     {
         return $this->score;
     }
@@ -2428,7 +2430,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getScoreLogement(): ?float
+    public function getScoreLogement(): float|int
     {
         return $this->scoreLogement;
     }
@@ -2440,7 +2442,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getScoreBatiment(): ?float
+    public function getScoreBatiment(): float|int
     {
         return $this->scoreBatiment;
     }
@@ -3049,12 +3051,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function removeUserSignalementSubscription(UserSignalementSubscription $userSignalementSubscription): static
     {
-        if ($this->userSignalementSubscriptions->removeElement($userSignalementSubscription)) {
-            // set the owning side to null (unless already changed)
-            if ($userSignalementSubscription->getSignalement() === $this) {
-                $userSignalementSubscription->setSignalement(null);
-            }
-        }
+        $this->userSignalementSubscriptions->removeElement($userSignalementSubscription);
 
         return $this;
     }

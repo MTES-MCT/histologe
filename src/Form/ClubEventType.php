@@ -12,6 +12,9 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class ClubEventType extends AbstractType
 {
     public function __construct(private readonly TimezoneProvider $timezoneProvider)
@@ -38,6 +41,7 @@ class ClubEventType extends AbstractType
             'required' => false,
             'getter' => static function (ClubEvent $clubEvent) use ($timezoneProvider): ?\DateTimeInterface {
                 $date = $clubEvent->getDateEvent();
+
                 if (null === $date) {
                     return null;
                 }

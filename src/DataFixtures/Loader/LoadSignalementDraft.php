@@ -45,8 +45,8 @@ class LoadSignalementDraft extends Fixture implements OrderedFixtureInterface
         $signalementDraft = (new SignalementDraft())
             ->setUuid($row['uuid'])
             ->setPayload($payload)
-            ->setAddressComplete($payload['adresse_logement_adresse'])
             ->setEmailDeclarant($row['email_declarant'])
+            ->setAddressComplete($payload['adresse_logement_adresse'])
             ->setCurrentStep($payload['currentStep'])
             ->setProfileDeclarant(ProfileDeclarant::from($row['profile_declarant']));
         if (isset($row['status'])) {

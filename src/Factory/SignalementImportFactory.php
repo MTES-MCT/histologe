@@ -11,7 +11,7 @@ use App\Entity\Territory;
 class SignalementImportFactory
 {
     /**
-     * @param array<string, mixed> $data
+     * @param array<int|string, mixed> $data
      */
     public function create(Territory $territory, array $data): Signalement
     {

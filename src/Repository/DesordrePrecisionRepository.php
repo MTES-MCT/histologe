@@ -11,9 +11,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<DesordrePrecision>
  *
  * @method DesordrePrecision|null find($id, $lockMode = null, $lockVersion = null)
- * @method DesordrePrecision|null findOneBy(array $criteria, array $orderBy = null)
+ * @method DesordrePrecision|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method DesordrePrecision[]    findAll()
- * @method DesordrePrecision[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method DesordrePrecision[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class DesordrePrecisionRepository extends ServiceEntityRepository
 {

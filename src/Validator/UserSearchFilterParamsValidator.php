@@ -64,6 +64,11 @@ class UserSearchFilterParamsValidator extends ConstraintValidator
         }
     }
 
+    /**
+     * @param array<string, mixed> $params
+     *
+     * @return array<string, mixed>
+     */
     private function normalizeParams(array $params): array
     {
         ksort($params);

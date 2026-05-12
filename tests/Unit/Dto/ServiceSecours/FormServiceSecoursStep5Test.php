@@ -8,6 +8,9 @@ use PHPUnit\Framework\TestCase;
 
 class FormServiceSecoursStep5Test extends TestCase
 {
+    /**
+     * @param array<string> $slugs
+     */
     #[DataProvider('provideHasDesordreAutreCases')]
     public function testHasDesordreAutre(array $slugs, bool $expected): void
     {
@@ -17,6 +20,9 @@ class FormServiceSecoursStep5Test extends TestCase
         $this->assertSame($expected, $dto->hasDesordreAutre());
     }
 
+    /**
+     * @return array<string, array{array<string>, bool}>
+     */
     public static function provideHasDesordreAutreCases(): array
     {
         return [

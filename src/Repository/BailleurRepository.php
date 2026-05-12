@@ -15,9 +15,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<Bailleur>
  *
  * @method Bailleur|null find($id, $lockMode = null, $lockVersion = null)
- * @method Bailleur|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Bailleur|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method Bailleur[]    findAll()
- * @method Bailleur[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Bailleur[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class BailleurRepository extends ServiceEntityRepository
 {

@@ -10,6 +10,9 @@ class CronReportingControllerTest extends WebTestCase
 {
     private const string ENDPOINT = '/webhook/cron-report-mail';
 
+    /**
+     * @param array<string, mixed> $payload
+     */
     #[DataProvider('provideCronPayloads')]
     public function testHandleSendEmail(array $payload, int $expectedStatusCode, bool $useCorrectToken, int $expectedEmailCount): void
     {

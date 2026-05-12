@@ -37,13 +37,13 @@ class JobEvent
     private ?int $partnerId = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $service = null;
+    private string $service;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: PartnerType::class)]
     private ?PartnerType $partnerType = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $action = null;
+    private string $action;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $message = null;
@@ -58,7 +58,7 @@ class JobEvent
     private ?int $attachmentsSize = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $status = null;
+    private string $status;
 
     #[ORM\Column(nullable: true)]
     private ?int $codeStatus = null;
@@ -68,7 +68,7 @@ class JobEvent
         return $this->id;
     }
 
-    public function getAction(): ?string
+    public function getAction(): string
     {
         return $this->action;
     }
@@ -80,7 +80,7 @@ class JobEvent
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): string
     {
         return $this->status;
     }
@@ -128,7 +128,7 @@ class JobEvent
         return $this;
     }
 
-    public function getService(): ?string
+    public function getService(): string
     {
         return $this->service;
     }

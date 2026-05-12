@@ -113,7 +113,8 @@ readonly class QueryBuilderFactory
     }
 
     /**
-     * @param array<int> $ids
+     * @param array<int>           $ids
+     * @param array<string, mixed> $options
      */
     public function createForIds(array $ids, array $options = []): QueryBuilder
     {

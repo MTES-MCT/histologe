@@ -15,7 +15,7 @@ class SignalementUsager
 
     #[ORM\OneToOne(inversedBy: 'signalementUsager', targetEntity: Signalement::class, cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Signalement $signalement = null;
+    private Signalement $signalement;
 
     #[ORM\ManyToOne(inversedBy: 'signalementUsagerDeclarants')]
     private ?User $declarant = null;

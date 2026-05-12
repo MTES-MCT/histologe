@@ -35,9 +35,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<Signalement>
  *
  * @method Signalement|null find($id, $lockMode = null, $lockVersion = null)
- * @method Signalement|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Signalement|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method Signalement[]    findAll()
- * @method Signalement[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Signalement[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class SignalementRepository extends ServiceEntityRepository
 {
@@ -450,8 +450,8 @@ class SignalementRepository extends ServiceEntityRepository
      */
     public function findAllForApi(User $user, SignalementListQueryParams $signalementListQueryParams): array
     {
-        $page = (int) ($signalementListQueryParams->page ?? SignalementListQueryParams::DEFAULT_PAGE);
-        $limit = (int) ($signalementListQueryParams->limit ?? SignalementListQueryParams::DEFAULT_LIMIT);
+        $page = (int) $signalementListQueryParams->page;
+        $limit = (int) $signalementListQueryParams->limit;
 
         $offset = ($page - 1) * $limit;
         $qb = $this->findForAPIQueryBuilder($user);
@@ -648,6 +648,8 @@ class SignalementRepository extends ServiceEntityRepository
 
     /**
      * @param Collection<int, Partner>|null $userPartners
+     *
+     * @return Paginator<Signalement>
      */
     public function findInjonctionFilteredPaginated(
         SearchSignalementInjonction $searchSignalementInjonction,
@@ -759,6 +761,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<Signalement>
+     */
     public function findInjonctionToRemindAnswerBailleur(\DateTimeImmutable $beforeDate): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -846,6 +851,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<Signalement>|int
+     */
     public function getActiveSignalementsForUser(User $user, ?bool $count = false): array|int
     {
         $qb = $this->createQueryBuilder('s');
@@ -875,6 +883,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<Signalement>|int
+     */
     public function getActiveSignalementsWithInteractionsForUser(User $user, ?bool $count = false): array|int
     {
         $qb = $this->createQueryBuilder('s');
@@ -909,6 +920,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<Signalement>
+     */
     public function findWithInconsistentCommuneName(Commune $commune): array
     {
         $qb = $this->createQueryBuilder('s');

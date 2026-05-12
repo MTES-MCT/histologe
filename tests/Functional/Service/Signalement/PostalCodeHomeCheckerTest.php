@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class PostalCodeHomeCheckerTest extends KernelTestCase
 {
-    private ?PostalCodeHomeChecker $postalCodeHomeChecker;
+    private PostalCodeHomeChecker $postalCodeHomeChecker;
 
     protected function setUp(): void
     {

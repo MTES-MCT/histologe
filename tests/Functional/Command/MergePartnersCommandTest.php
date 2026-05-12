@@ -18,11 +18,11 @@ use Symfony\Component\Console\Tester\CommandTester;
 class MergePartnersCommandTest extends KernelTestCase
 {
     private ?EntityManagerInterface $entityManager;
-    private ?PartnerRepository $partnerRepository;
-    private ?UserRepository $userRepository;
-    private ?AffectationRepository $affectationRepository;
-    private ?UserSignalementSubscriptionRepository $subscriptionRepository;
-    private ?CommandTester $commandTester;
+    private PartnerRepository $partnerRepository;
+    private UserRepository $userRepository;
+    private AffectationRepository $affectationRepository;
+    private UserSignalementSubscriptionRepository $subscriptionRepository;
+    private CommandTester $commandTester;
 
     protected function setUp(): void
     {

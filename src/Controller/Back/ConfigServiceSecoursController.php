@@ -33,7 +33,7 @@ class ConfigServiceSecoursController extends AbstractController
     }
 
     /**
-     * @return array{FormInterface, SearchServiceSecoursRoute, Paginator<ServiceSecoursRoute>}
+     * @return array{FormInterface<mixed>, SearchServiceSecoursRoute, Paginator<ServiceSecoursRoute>}
      */
     private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {
@@ -49,6 +49,9 @@ class ConfigServiceSecoursController extends AbstractController
         return [$form, $searchServiceSecoursRoute, $paginatedServiceSecoursRoute];
     }
 
+    /**
+     * @return array<array{target: string, content: string}>
+     */
     private function getHtmlTargetContentsForServiceSecoursRouteList(Request $request): array
     {
         [, $searchServiceSecoursRoute, $paginatedServiceSecoursRoute] = $this->handleSearch($request, true);

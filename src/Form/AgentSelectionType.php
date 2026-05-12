@@ -16,6 +16,9 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class AgentSelectionType extends AbstractType
 {
     private User $currentUser;
@@ -101,6 +104,11 @@ class AgentSelectionType extends AbstractType
         return $html;
     }
 
+    /**
+     * @param array<string, mixed> $options
+     *
+     * @return array<User>
+     */
     private function getChoicesAgents(Signalement $signalement, array $options): array
     {
         $choicesAgents = [];

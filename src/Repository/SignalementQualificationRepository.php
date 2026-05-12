@@ -13,9 +13,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<SignalementQualification>
  *
  * @method SignalementQualification|null find($id, $lockMode = null, $lockVersion = null)
- * @method SignalementQualification|null findOneBy(array $criteria, array $orderBy = null)
+ * @method SignalementQualification|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method SignalementQualification[]    findAll()
- * @method SignalementQualification[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method SignalementQualification[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class SignalementQualificationRepository extends ServiceEntityRepository
 {

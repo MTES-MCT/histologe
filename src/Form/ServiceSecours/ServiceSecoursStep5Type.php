@@ -17,6 +17,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class ServiceSecoursStep5Type extends AbstractType
 {
     public function __construct(private readonly DesordreCritereRepository $desordreCritereRepository)
@@ -53,7 +56,9 @@ class ServiceSecoursStep5Type extends AbstractType
         $isAutreChecked = $data instanceof FormServiceSecoursStep5
             && \in_array('desordres_service_secours_autre', $data->desordres, true);
 
-        [$choices, $hints] = $this->getDesordreChoicesAndHints();
+        $desordreData = $this->getDesordreChoicesAndHints();
+        $choices = $desordreData['choices'];
+        $hints = $desordreData['hints'];
 
         $builder->add('desordres', ChoiceType::class, [
             'choices' => $choices,
@@ -113,10 +118,15 @@ class ServiceSecoursStep5Type extends AbstractType
         ]);
     }
 
+    /**
+     * @return array{choices: array<string, string>, hints: array<string, string>}
+     */
     private function getDesordreChoicesAndHints(): array
     {
         $desordres = $this->desordreCritereRepository->findAllWithPrecisions(AppContext::SERVICE_SECOURS);
+        /** @var array<string, string> $choices */
         $choices = [];
+        /** @var array<string, string> $hints */
         $hints = [];
         foreach ($desordres as $desordre) {
             $slug = $desordre->getSlugCritere();
@@ -126,7 +136,7 @@ class ServiceSecoursStep5Type extends AbstractType
             $hints[$slug] = $precision ? $precision->getLabel() : '';
         }
 
-        return [$choices, $hints];
+        return ['choices' => $choices, 'hints' => $hints];
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -11,9 +11,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<Critere>
  *
  * @method Critere|null find($id, $lockMode = null, $lockVersion = null)
- * @method Critere|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Critere|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method Critere[]    findAll()
- * @method Critere[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Critere[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class CritereRepository extends ServiceEntityRepository
 {

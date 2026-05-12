@@ -22,9 +22,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<Partner>
  *
  * @method Partner|null find($id, $lockMode = null, $lockVersion = null)
- * @method Partner|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Partner|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method Partner[]    findAll()
- * @method Partner[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Partner[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class PartnerRepository extends ServiceEntityRepository
 {
@@ -356,6 +356,9 @@ class PartnerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<string, Partner>
+     */
     public function findWithInsee(string $insee, ?Territory $territory = null): array
     {
         $qb = $this->createQueryBuilder('p');

@@ -21,11 +21,11 @@ class Territory implements EntityHistoryInterface
 
     #[ORM\Column(type: 'string', length: 3)]
     #[Groups(['settings:read'])]
-    private ?string $zip = null;
+    private string $zip;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['settings:read'])]
-    private ?string $name = null;
+    private string $name;
 
     /** @var Collection<int, Partner> $partners */
     #[ORM\OneToMany(mappedBy: 'territory', targetEntity: Partner::class)]
@@ -77,7 +77,7 @@ class Territory implements EntityHistoryInterface
     private ?string $grilleVisiteFilename = null;
 
     #[ORM\Column]
-    private ?bool $isGrilleVisiteDisabled = false;
+    private bool $isGrilleVisiteDisabled = false;
 
     public function __construct()
     {
@@ -96,24 +96,24 @@ class Territory implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function getZip(): ?string
+    public function getZip(): string
     {
         return $this->zip;
     }
 
-    public function setZip(?string $zip): static
+    public function setZip(string $zip): static
     {
         $this->zip = $zip;
 
         return $this;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(?string $name): static
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -264,12 +264,7 @@ class Territory implements EntityHistoryInterface
 
     public function removeTag(Tag $tag): static
     {
-        if ($this->tags->removeElement($tag)) {
-            // set the owning side to null (unless already changed)
-            if ($tag->getTerritory() === $this) {
-                $tag->setTerritory(null);
-            }
-        }
+        $this->tags->removeElement($tag);
 
         return $this;
     }
@@ -313,12 +308,7 @@ class Territory implements EntityHistoryInterface
 
     public function removeBailleurTerritory(BailleurTerritory $bailleurTerritory): static
     {
-        if ($this->bailleurTerritories->removeElement($bailleurTerritory)) {
-            // set the owning side to null (unless already changed)
-            if ($bailleurTerritory->getTerritory() === $this) {
-                $bailleurTerritory->setTerritory(null);
-            }
-        }
+        $this->bailleurTerritories->removeElement($bailleurTerritory);
 
         return $this;
     }
@@ -343,12 +333,7 @@ class Territory implements EntityHistoryInterface
 
     public function removeAutoAffectationRule(AutoAffectationRule $autoAffectationRule): static
     {
-        if ($this->autoAffectationRules->removeElement($autoAffectationRule)) {
-            // set the owning side to null (unless already changed)
-            if ($autoAffectationRule->getTerritory() === $this) {
-                $autoAffectationRule->setTerritory(null);
-            }
-        }
+        $this->autoAffectationRules->removeElement($autoAffectationRule);
 
         return $this;
     }
@@ -391,12 +376,7 @@ class Territory implements EntityHistoryInterface
 
     public function removeZone(Zone $zone): static
     {
-        if ($this->zones->removeElement($zone)) {
-            // set the owning side to null (unless already changed)
-            if ($zone->getTerritory() === $this) {
-                $zone->setTerritory(null);
-            }
-        }
+        $this->zones->removeElement($zone);
 
         return $this;
     }

@@ -36,6 +36,7 @@ class FormServiceSecoursStep5
 
     public ?string $autresOccupantsDesordre = null;
 
+    /** @var array<mixed> */
     public array $uploadedFiles = [];
 
     public function hasDesordreAutre(): bool

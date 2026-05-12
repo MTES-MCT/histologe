@@ -30,7 +30,7 @@ class AutoAffectationRule implements EntityHistoryInterface
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'autoAffectationRules')]
     #[ORM\JoinColumn()]
     #[Assert\NotBlank(message: 'Merci de choisir un territoire.')]
-    private Territory $territory;
+    private ?Territory $territory;
 
     #[ORM\Column(type: 'string', options: ['comment' => 'Value possible ACTIVE or ARCHIVED'])]
     #[Assert\NotBlank(message: 'Merci de choisir un statut.')]
@@ -45,7 +45,7 @@ class AutoAffectationRule implements EntityHistoryInterface
         options: ['comment' => 'Value possible enum PartnerType'])]
     #[Assert\NotBlank(message: 'Merci de choisir un type de partenaire.')]
     #[AppAssert\ValidPartnerType]
-    private ?PartnerType $partnerType = null;
+    private PartnerType $partnerType;
 
     #[ORM\Column(
         type: 'string',
@@ -54,7 +54,7 @@ class AutoAffectationRule implements EntityHistoryInterface
     #[Assert\NotBlank(message: 'Merci de choisir un profil déclarant.')]
     #[Assert\Length(max: 255)]
     #[AppAssert\ValidProfileDeclarant()]
-    private ?string $profileDeclarant = null;
+    private string $profileDeclarant;
 
     #[ORM\Column(length: 500, options: ['comment' => 'Value possible empty or an array of code insee'])]
     #[Assert\Length(max: 500)]
@@ -85,9 +85,9 @@ class AutoAffectationRule implements EntityHistoryInterface
         message: 'Choisissez une option valide: all, non, oui, caf, msa ou nsp')]
     private string $allocataire;
 
-    /** @var array<Qualification> $proceduresSuspectees */
+    /** @var list<Qualification> $proceduresSuspectees */
     #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: Qualification::class)]
-    private array $proceduresSuspectees = [];
+    private ?array $proceduresSuspectees = [];
 
     public function getId(): ?int
     {
@@ -125,24 +125,24 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this;
     }
 
-    public function getPartnerType(): ?PartnerType
+    public function getPartnerType(): PartnerType
     {
         return $this->partnerType;
     }
 
-    public function setPartnerType(?PartnerType $partnerType): static
+    public function setPartnerType(PartnerType $partnerType): static
     {
         $this->partnerType = $partnerType;
 
         return $this;
     }
 
-    public function getProfileDeclarant(): ?string
+    public function getProfileDeclarant(): string
     {
         return $this->profileDeclarant;
     }
 
-    public function setProfileDeclarant(?string $profileDeclarant): static
+    public function setProfileDeclarant(string $profileDeclarant): static
     {
         $this->profileDeclarant = $profileDeclarant;
 
@@ -213,13 +213,13 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this;
     }
 
-    /** @return array<Qualification> */
+    /** @return list<Qualification> */
     public function getProceduresSuspectees(): ?array
     {
         return $this->proceduresSuspectees;
     }
 
-    /** @param array<Qualification> $proceduresSuspectees */
+    /** @param list<Qualification> $proceduresSuspectees */
     public function setProceduresSuspectees(?array $proceduresSuspectees): static
     {
         $this->proceduresSuspectees = $proceduresSuspectees;
@@ -234,7 +234,7 @@ class AutoAffectationRule implements EntityHistoryInterface
 
     public function getDescription(bool $isShort = true): string
     {
-        $description = 'Règle d\'auto-affectation pour les partenaires '.$this->getPartnerType()?->label();
+        $description = 'Règle d\'auto-affectation pour les partenaires '.$this->getPartnerType()->label();
         if (!$isShort && $this->getPartnerToExclude()) {
             $description .= ' (à l\'exclusion des partenaires '.implode(',', $this->getPartnerToExclude()).')';
         }

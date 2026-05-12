@@ -4,10 +4,15 @@ namespace App\Service\Gouv\Ban\Response;
 
 class Poi
 {
+    /** @var array<string> */
     private array $names = [];
+    /** @var array<string> */
     private array $categories = [];
+    /** @var array<string> */
     private array $postCodes = [];
+    /** @var array<string> */
     private array $cityCodes = [];
+    /** @var array<string, mixed> */
     private array $extrafields = [];
 
     /**
@@ -25,26 +30,41 @@ class Poi
         }
     }
 
+    /**
+     * @return array<string>
+     */
     public function getNames(): array
     {
         return $this->names;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getCategories(): array
     {
         return $this->categories;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getPostCodes(): array
     {
         return $this->postCodes;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getCityCodes(): array
     {
         return $this->cityCodes;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getExtrafields(): array
     {
         return $this->extrafields;

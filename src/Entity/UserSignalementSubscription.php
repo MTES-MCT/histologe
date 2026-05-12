@@ -18,21 +18,21 @@ class UserSignalementSubscription implements EntityHistoryInterface
 
     #[ORM\ManyToOne(inversedBy: 'userSignalementSubscriptions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private User $user;
 
     #[ORM\ManyToOne(inversedBy: 'userSignalementSubscriptions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Signalement $signalement = null;
+    private Signalement $signalement;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $createdBy = null;
+    private User $createdBy;
 
     #[ORM\Column]
-    private ?bool $isLegacy = null;
+    private bool $isLegacy;
 
     public function __construct()
     {
@@ -50,31 +50,31 @@ class UserSignalementSubscription implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(User $user): static
     {
         $this->user = $user;
 
         return $this;
     }
 
-    public function getSignalement(): ?Signalement
+    public function getSignalement(): Signalement
     {
         return $this->signalement;
     }
 
-    public function setSignalement(?Signalement $signalement): static
+    public function setSignalement(Signalement $signalement): static
     {
         $this->signalement = $signalement;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -86,19 +86,19 @@ class UserSignalementSubscription implements EntityHistoryInterface
         return $this;
     }
 
-    public function getCreatedBy(): ?User
+    public function getCreatedBy(): User
     {
         return $this->createdBy;
     }
 
-    public function setCreatedBy(?User $createdBy): static
+    public function setCreatedBy(User $createdBy): static
     {
         $this->createdBy = $createdBy;
 
         return $this;
     }
 
-    public function isLegacy(): ?bool
+    public function isLegacy(): bool
     {
         return $this->isLegacy;
     }

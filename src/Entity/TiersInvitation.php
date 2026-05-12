@@ -38,18 +38,18 @@ class TiersInvitation implements EntityHistoryInterface
     #[ORM\Column(length: 50)]
     #[Assert\Length(max: 50)]
     #[Assert\NotBlank(message: 'Veuillez saisir un nom de famille.')]
-    private ?string $lastname = null;
+    private string $lastname;
 
     #[ORM\Column(length: 50)]
     #[Assert\Length(max: 50)]
     #[Assert\NotBlank(message: 'Veuillez saisir un prénom.')]
-    private ?string $firstname = null;
+    private string $firstname;
 
     #[ORM\Column(length: 255)]
     #[Assert\Length(max: 255)]
     #[Assert\NotBlank(message: 'Veuillez saisir une adresse e-mail.')]
     #[Email(mode: Email::VALIDATION_MODE_STRICT, message: 'L\'adresse e-mail n\'est pas valide.')]
-    private ?string $email = null;
+    private string $email;
 
     #[ORM\Column(length: 20, nullable: true)]
     #[AppAssert\TelephoneFormat]
@@ -84,7 +84,7 @@ class TiersInvitation implements EntityHistoryInterface
         return $this;
     }
 
-    public function getLastname(): ?string
+    public function getLastname(): string
     {
         return $this->lastname;
     }
@@ -96,7 +96,7 @@ class TiersInvitation implements EntityHistoryInterface
         return $this;
     }
 
-    public function getFirstname(): ?string
+    public function getFirstname(): string
     {
         return $this->firstname;
     }
@@ -108,7 +108,7 @@ class TiersInvitation implements EntityHistoryInterface
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }

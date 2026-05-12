@@ -94,6 +94,11 @@ final class GenerateFileZipMessageHandler
         return (new \DateTimeImmutable())->setTimezone(new \DateTimeZone($timezone))->format('Ymd-His');
     }
 
+    /**
+     * @param array<int> $fileIds
+     *
+     * @return array<File>
+     */
     private function getFiles(Signalement $signalement, array $fileIds): array
     {
         $files = $signalement->getFiles()->filter(static function (File $file) use ($fileIds) {

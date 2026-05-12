@@ -20,6 +20,7 @@ use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -238,7 +239,7 @@ class AutoAssignerTest extends KernelTestCase
             $signalement->removeAffectation($affectation);
         }
 
-        /** @var LoggerInterface $logger */
+        /** @var LoggerInterface&MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
         $autoAssigner = new AutoAssigner(
             $this->signalementManager,

@@ -21,7 +21,7 @@ class PopNotification implements EntityHistoryInterface
 
     #[ORM\ManyToOne(inversedBy: 'popNotifications')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private User $user;
 
     /** @var array<mixed> $params */
     #[ORM\Column]

@@ -16,6 +16,9 @@ class AffectationEsaboraPolicy
     ) {
     }
 
+    /**
+     * @param array<int> $partnerIds
+     */
     public function hasUrlConflict(array $partnerIds): bool
     {
         if (!$this->featureSchsDispatchSishEnable) {
@@ -26,7 +29,7 @@ class AffectationEsaboraPolicy
             return false;
         }
 
-        $partners = $this->partnerRepository->findByIds($partnerIds);
+        $partners = $this->partnerRepository->findByIds(array_values($partnerIds));
         $countByUrl = [];
 
         foreach ($partners as $partner) {

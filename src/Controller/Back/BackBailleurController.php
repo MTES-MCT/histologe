@@ -32,7 +32,7 @@ class BackBailleurController extends AbstractController
     }
 
     /**
-     * @return array{FormInterface, SearchBailleur, Paginator<Bailleur>}
+     * @return array{FormInterface<mixed>, SearchBailleur, Paginator<Bailleur>}
      */
     private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {

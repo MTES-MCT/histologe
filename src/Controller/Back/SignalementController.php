@@ -198,7 +198,7 @@ class SignalementController extends AbstractController
         );
 
         $listQualificationStatusesLabelsCheck = [];
-        if (null !== $signalement->getSignalementQualifications()) {
+        if (!$signalement->getSignalementQualifications()->isEmpty()) {
             foreach ($signalement->getSignalementQualifications() as $qualification) {
                 if (!$qualification->isPostVisite()) {
                     $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
@@ -207,7 +207,7 @@ class SignalementController extends AbstractController
         }
 
         $listConcludeProcedures = [];
-        if (null !== $signalement->getInterventions()) {
+        if (!$signalement->getInterventions()->isEmpty()) {
             foreach ($signalement->getInterventions() as $intervention) {
                 if (Intervention::STATUS_DONE == $intervention->getStatus()) {
                     $listConcludeProcedures = array_merge(

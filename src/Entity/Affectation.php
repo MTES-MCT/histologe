@@ -25,15 +25,15 @@ class Affectation implements EntityHistoryInterface
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255, unique: true)]
-    private ?string $uuid;
+    private string $uuid;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'affectations')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Signalement $signalement = null;
 
     #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'affectations')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Partner $partner = null;
+    private Partner $partner;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $answeredAt = null;
@@ -42,7 +42,7 @@ class Affectation implements EntityHistoryInterface
     private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'string', enumType: AffectationStatus::class)]
-    private ?AffectationStatus $statut = null;
+    private AffectationStatus $statut;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isSynchronized = false;
@@ -88,7 +88,7 @@ class Affectation implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function getUuid(): ?string
+    public function getUuid(): string
     {
         return $this->uuid;
     }
@@ -141,7 +141,7 @@ class Affectation implements EntityHistoryInterface
         return $this;
     }
 
-    public function getStatut(): ?AffectationStatus
+    public function getStatut(): AffectationStatus
     {
         return $this->statut;
     }

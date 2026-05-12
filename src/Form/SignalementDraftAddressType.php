@@ -22,6 +22,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class SignalementDraftAddressType extends AbstractType
 {
     public function __construct(
@@ -149,7 +152,7 @@ class SignalementDraftAddressType extends AbstractType
                 'required' => false,
                 'placeholder' => false,
                 'mapped' => false,
-                'data' => $signalement->getProfileDeclarant()?->value ?? '',
+                'data' => $signalement->getProfileDeclarant()->value ?? '',
                 'constraints' => [
                     new Assert\NotBlank(
                         message: 'Veuillez renseigner le profil du déclarant.',
@@ -183,7 +186,7 @@ class SignalementDraftAddressType extends AbstractType
                 'required' => false,
                 'placeholder' => false,
                 'mapped' => false,
-                'data' => $signalement->getIsLogementVacant() ? 'vacant' : $signalement->getProfileOccupant()?->value ?? null,
+                'data' => $signalement->getIsLogementVacant() ? 'vacant' : $signalement->getProfileOccupant()->value ?? null,
             ])
             ->add('isLogementSocial', ChoiceType::class, [
                 'label' => 'Logement social <span class="text-required">*</span>',
