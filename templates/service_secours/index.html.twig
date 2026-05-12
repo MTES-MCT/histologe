@@ -147,7 +147,12 @@
                 {% elseif current_step == 'step3' %}
                     <h2 class="fr-h5">Coordonnées de l'occupant</h2>
                     {{ form_row(form.step3.profilOccupant, {display_mode: 'block'}) }}
+
+                    <div class="fr-alert fr-alert--info fr-alert--sm fr-mb-2w">
+                        <p>Bien qu'il soit facultatif, le nom de l'occupant permet de faciliter le traitement du dossier par la suite.</p>
+                    </div>
                     {{ form_row(form.step3.nomOccupant) }}
+
                     {{ form_row(form.step3.prenomOccupant) }}
                     {{ form_row(form.step3.mailOccupant) }}
                     {{ form_row(form.step3.telOccupant) }}

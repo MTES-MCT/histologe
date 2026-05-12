@@ -70,7 +70,7 @@
 				{% elseif signalement.statut.name == 'ARCHIVED' %}
 					{% set errorMessage = 'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.' %}
 				{% elseif signalement.isLogementVacant %}
-					{% set errorMessage = 'Votre logement a été marqué comme vacant, vous ne pouvez plus envoyer de messages.' %}
+					{% set errorMessage = 'Les services en charge du dossier ont indiqué que vous avez quitté votre logement. Par conséquent, vous ne pouvez plus envoyer de messages.' %}
 				{% else %}
 					{% set errorMessage = 'Vous ne pouvez plus envoyer de messages.' %}
 				{% endif %}
