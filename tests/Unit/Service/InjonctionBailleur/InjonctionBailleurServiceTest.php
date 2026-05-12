@@ -96,13 +96,11 @@ class InjonctionBailleurServiceTest extends KernelTestCase
                 if (0 === $callIndex) {
                     $this->assertInstanceOf(Signalement::class, $args[0]);
                     $this->assertStringContainsString('arrêter la procédure d\'injonction', $args[1]);
-                    $this->assertSame(Suivi::TYPE_AUTO, $args[2]);
-                    $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR, $args[3]);
+                    $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR, $args[2]);
                 } elseif (1 === $callIndex) {
                     $this->assertInstanceOf(Signalement::class, $args[0]);
                     $this->assertSame('Le bailleur souhaite repasser en procédure classique.', $args[1]);
-                    $this->assertSame(Suivi::TYPE_AUTO, $args[2]);
-                    $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE, $args[3]);
+                    $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE, $args[2]);
                 }
                 ++$callIndex;
 
@@ -138,13 +136,11 @@ class InjonctionBailleurServiceTest extends KernelTestCase
                 if (0 === $callIndex) {
                     $this->assertInstanceOf(Signalement::class, $args[0]);
                     $this->assertStringContainsString('Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés', $args[1]);
-                    $this->assertSame(Suivi::TYPE_AUTO, $args[2]);
-                    $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR, $args[3]);
+                    $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR, $args[2]);
                 } elseif (1 === $callIndex) {
                     $this->assertInstanceOf(Signalement::class, $args[0]);
                     $this->assertSame('Travaux faits.', $args[1]);
-                    $this->assertSame(Suivi::TYPE_AUTO, $args[2]);
-                    $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE, $args[3]);
+                    $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE, $args[2]);
                 }
                 ++$callIndex;
 
