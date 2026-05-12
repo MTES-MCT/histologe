@@ -5,10 +5,10 @@
       <h3 class="fr-h4">Récapitulatif</h3>
 
       <!-- ADRESSE DU LOGEMENT -->
-      <div>
+      <div class="signalement-group-data-card">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-12 fr-col-md-8">
-            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Adresse du logement</h4>
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v title-blue-france">Adresse du logement</h4>
           </div>
           <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button
@@ -23,10 +23,10 @@
       </div>
 
       <!-- VOS COORDONNES SI OCCUPANT -->
-      <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">
+      <div v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'" class="signalement-group-data-card">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-12 fr-col-md-8">
-            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Vos coordonnées</h4>
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v title-blue-france">Vos coordonnées</h4>
           </div>
           <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button
@@ -40,10 +40,10 @@
       </div>
 
       <!-- VOS COORDONNEES SI TIERS -->
-      <div v-else>
+      <div v-else class="signalement-group-data-card">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-12 fr-col-md-8">
-            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Vos coordonnées</h4>
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v title-blue-france">Vos coordonnées</h4>
           </div>
           <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button
@@ -57,10 +57,10 @@
       </div>
 
       <!-- LES COORDONNEES DU BAILLEUR -->
-      <div v-if="formStore.shouldDisplaySignalementInfoBailleur()">
+      <div v-if="formStore.shouldDisplaySignalementInfoBailleur()" class="signalement-group-data-card">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-12 fr-col-md-8">
-            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Les coordonnées du bailleur</h4>
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v title-blue-france">Les coordonnées du bailleur</h4>
           </div>
           <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button
@@ -74,10 +74,10 @@
       </div>
 
       <!-- LES COORDONNEES DU FOYER -->
-      <div v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire'">
+      <div v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire'" class="signalement-group-data-card">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-12 fr-col-md-8">
-            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Les coordonnées du foyer</h4>
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v title-blue-france">Les coordonnées du foyer</h4>
           </div>
           <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button
@@ -90,10 +90,10 @@
       </div>
 
       <!-- TYPE ET COMPOSITION DU LOGEMENT -->
-      <div>
+      <div class="signalement-group-data-card">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-12 fr-col-md-8">
-            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Type et composition du logement</h4>
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v title-blue-france">Type et composition du logement</h4>
           </div>
           <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button
@@ -118,11 +118,11 @@
       </div>
 
       <!-- SITUATION OCCUPANT -->
-      <div v-if="formStore.data.profil !== 'service_secours'">
+      <div v-if="formStore.data.profil !== 'service_secours'" class="signalement-group-data-card">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-12 fr-col-md-8">
-            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v" v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">Votre situation</h4>
-            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v" v-else>La situation du foyer</h4>
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v title-blue-france" v-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire'">Votre situation</h4>
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v title-blue-france" v-else>La situation du foyer</h4>
           </div>
           <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button
@@ -147,10 +147,10 @@
       </div>
 
       <!-- LES DESORDRES -->
-      <div>
+      <div class="signalement-group-data-card">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-12 fr-col-md-8">
-            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">Les désordres</h4>
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v title-blue-france">Les désordres</h4>
           </div>
           <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button
@@ -173,10 +173,10 @@
       </div>
 
       <!-- LA PROCEDURE  -->
-      <div>
+      <div class="signalement-group-data-card">
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
           <div class="fr-col-12 fr-col-md-8">
-            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v">La procédure</h4>
+            <h4 class="fr-h6 fr-mb-0 fr-mb-md-8v title-blue-france">La procédure</h4>
           </div>
           <div class="fr-col-12 fr-col-md-4 fr-text--right">
             <button
@@ -196,11 +196,11 @@
       </div>
 
       <!-- INFORMATIONS COMPLEMENTAIRES  -->
-      <div v-if="formStore.data.profil !== 'service_secours'">
+      <div v-if="formStore.data.profil !== 'service_secours'" class="signalement-group-data-card">
         <div v-if="hasInformationsComplementaires()">
           <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
             <div class="fr-col-12 fr-col-md-8">
-              <h3 class="fr-h6 fr-mb-0 fr-mb-md-8v">Informations complémentaires</h3>
+              <h3 class="fr-h6 fr-mb-0 fr-mb-md-8v title-blue-france">Informations complémentaires</h3>
             </div>
             <div class="fr-col-12 fr-col-md-4 fr-text--right">
               <button
@@ -213,7 +213,7 @@
           <p v-html="getFormDataInformationsComplementaires()"></p>
         </div>
         <div v-else>
-          <h3 class="fr-h4">Informations complémentaires</h3>
+          <h3 class="fr-h4 title-blue-france">Informations complémentaires</h3>
           <p>
             Plus nous avons d'informations sur la situation,
             mieux nous pouvons vous accompagner.

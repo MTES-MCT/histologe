@@ -91,7 +91,7 @@
 				</div>	
 			</div>
 
-			<div class="fr-mb-4w">
+			<div class="fr-mb-4w signalement-group-data-card">
 				<h2 class="title-blue-france fr-mb-1w">Déclaration</h2>
 				{% if signalement.debutDesordres is not null %}
 					<ul>
@@ -118,7 +118,7 @@
 				{% endif %}
 			</div>
 
-			<div class="fr-mb-4w">
+			<div class="fr-mb-4w signalement-group-data-card">
 				<h2 class="title-blue-france fr-mb-1w">Les photos et documents du dossier</h2>
 				{% set photos = signalement.files|filter(photo => photo.documentType == enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION and photo.isTypeImage) %}
 				{% set docs = signalement.files|filter(photo => photo.documentType == enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION and photo.isTypeDocument and not photo.isSuspicious) %}
@@ -173,11 +173,8 @@
 		</div>
 
 		<div class="fr-col-12 fr-col-md-6">
-			<div class="fr-mb-4w">
-				<h2 class="title-blue-france fr-mb-1w">Coordonnées</h2>
-				<div class="fr-mb-1w">
-					<strong>Vos Coordonnées (bailleur)</strong>
-				</div>
+			<div class="fr-mb-4w signalement-group-data-card">
+				<h2 class="title-blue-france fr-mb-1w">Vos coordonnées</h2>
 				{{signalement.nomProprio}}
 				{% if signalement.prenomProprio %}
 					{{ signalement.prenomProprio }}
