@@ -796,6 +796,8 @@ function initBoFormSignalementSituation() {
   ]);
   initRefreshFromRadio('situation', 'signalement_draft_situation_accompagnementTravailleurSocial', [
     '#signalement_draft_situation_accompagnementTravailleurSocialNomStructure',
+    '#signalement_draft_situation_accompagnementTravailleurSocialNomReferent',
+    '#signalement_draft_situation_accompagnementTravailleurSocialPrenomReferent',
   ]);
   window.dispatchEvent(new Event('refreshUploadButtonEvent'));
 
