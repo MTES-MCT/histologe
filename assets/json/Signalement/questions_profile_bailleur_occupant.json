@@ -1342,15 +1342,36 @@
           }
         },
         {
+          "type": "SignalementFormOnlyChoice",
+          "slug": "travailleur_social_accompagnement_inviter_referent_comme_tiers",
+          "label": "Est-ce que vous souhaitez inviter ce référent pour le suivi du dossier ?",
+          "description": "Ce référent recevra une invitation par e-mail pour suivre le dossier. Si elle accepte, cette personne recevra les mêmes informations que vous et pourra envoyer des informations aux services compétents.",
+          "conditional": {
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
+          },
+          "values": [
+            {
+              "label": "Oui",
+              "value": "oui"
+            },
+            {
+              "label": "Non",
+              "value": "non"
+            }
+          ],
+          "validate": {
+            "message": "Veuillez indiquer si vous souhaitez inviter ce référent pour le suivi du dossier."
+          }
+        },
+        {
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_nom_referent",
           "label": "Nom de famille du référent qui vous accompagne (facultatif)",
           "conditional": {
-            "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'non'"
           },
           "validate": {
-            "required": false,
-            "message": "Veuillez indiquer le nom de famille du référent qui vous accompagne."
+            "required": false
           }
         },
         {
@@ -1358,11 +1379,44 @@
           "slug": "travailleur_social_accompagnement_prenom_referent",
           "label": "Prénom du référent qui vous accompagne (facultatif)",
           "conditional": {
-            "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'non'"
           },
           "validate": {
-            "required": false,
+            "required": false
+          }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "slug": "travailleur_social_accompagnement_inviter_referent_comme_tiers_nom",
+          "label": "Nom de famille du référent qui vous accompagne",
+          "conditional": {
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'oui'"
+          },
+          "validate": {
+            "message": "Veuillez indiquer le nom de famille du référent qui vous accompagne."
+          }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "slug": "travailleur_social_accompagnement_inviter_referent_comme_tiers_prenom",
+          "label": "Prénom du référent qui vous accompagne",
+          "conditional": {
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'oui'"
+          },
+          "validate": {
             "message": "Veuillez indiquer le prénom du référent qui vous accompagne."
+          }
+        },
+        {
+          "type": "SignalementFormEmailfield",
+          "slug": "travailleur_social_accompagnement_inviter_referent_comme_tiers_email",
+          "label": "Adresse e-mail du référent à inviter",
+          "description": "Format attendu : nom@domaine.fr",
+          "validate": {
+            "patternMessage": "Veuillez renseigner une adresse e-mail valide."
+          },
+          "conditional": {
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'oui'"
           }
         }
       ],
