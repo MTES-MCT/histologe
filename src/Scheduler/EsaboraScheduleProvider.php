@@ -32,11 +32,18 @@ final class EsaboraScheduleProvider implements ScheduleProviderInterface
 
     public function getSchedule(): Schedule
     {
-        return new Schedule()
-            ->lock($this->lockFactory->createLock('scheduler-esabora'))
-            ->add(
-                ...$this->getMessages()
-            );
+        $messages = [...$this->getMessages()];
+
+        $schedule = new Schedule()
+            ->lock($this->lockFactory->createLock('scheduler-esabora'));
+
+        if ([] === $messages) {
+            $this->logger->warning('[scheduler] No Esabora messages scheduled');
+
+            return $schedule;
+        }
+
+        return $schedule->add(...$messages);
     }
 
     /**
