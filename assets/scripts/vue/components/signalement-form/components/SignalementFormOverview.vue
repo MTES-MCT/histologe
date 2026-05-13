@@ -403,6 +403,12 @@ export default defineComponent({
       if (this.formStore.data.travailleur_social_accompagnement === 'oui') {
         result += this.addLineIfNeeded('travailleur_social_accompagnement_nom_structure', 'Nom de la structure : ')
       }
+      if (this.formStore.data.travailleur_social_accompagnement === 'oui') {
+        result += this.addLineIfNeeded('travailleur_social_accompagnement_nom_referent', 'Nom du référent : ')
+      }
+      if (this.formStore.data.travailleur_social_accompagnement === 'oui') {
+        result += this.addLineIfNeeded('travailleur_social_accompagnement_prenom_referent', 'Prénom du référent : ')
+      }
       return result
     },
     getFormDataInfosDesordres (): string {

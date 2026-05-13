@@ -1903,6 +1903,30 @@
             "required": false,
             "message": "Veuillez indiquer le nom de la structure qui accompagne le foyer."
           }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "slug": "travailleur_social_accompagnement_nom_referent",
+          "label": "Nom de famille du référent qui accompagne le foyer (facultatif)",
+          "conditional": {
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
+          },
+          "validate": {
+            "required": false,
+            "message": "Veuillez indiquer le nom de famille du référent qui accompagne le foyer."
+          }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "slug": "travailleur_social_accompagnement_prenom_referent",
+          "label": "Prénom du référent qui accompagne le foyer (facultatif)",
+          "conditional": {
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
+          },
+          "validate": {
+            "required": false,
+            "message": "Veuillez indiquer le prénom du référent qui accompagne le foyer."
+          }
         }
       ],
       "footer": [
