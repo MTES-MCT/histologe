@@ -116,8 +116,8 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals($signalement->getMontantAllocation(), $payload['montantAllocation']);
         $this->assertEquals($situationFoyer->getTravailleurSocialAccompagnement(), 'oui');
         $this->assertEquals($situationFoyer->getTravailleurSocialAccompagnementNomStructure(), $payload['accompagnementTravailleurSocialNomStructure']);
-        $this->assertEquals($situationFoyer->getTravailleurSocialAccompagnementNomReferent(), $payload['accompagnementTravailleurSocialNom']);
-        $this->assertEquals($situationFoyer->getTravailleurSocialAccompagnementPrenomReferent(), $payload['accompagnementTravailleurSocialPrenom']);
+        $this->assertEquals($situationFoyer->getTravailleurSocialAccompagnementNomReferent(), $payload['accompagnementTravailleurSocialNomReferent']);
+        $this->assertEquals($situationFoyer->getTravailleurSocialAccompagnementPrenomReferent(), $payload['accompagnementTravailleurSocialPrenomReferent']);
         $this->assertEquals($informationComplementaire->getInformationsComplementairesSituationOccupantsBeneficiaireRsa(), 'non');
         $this->assertEquals($informationComplementaire->getInformationsComplementairesSituationOccupantsBeneficiaireFsl(), 'non');
         $this->assertEquals($signalement->getIsProprioAverti(), $payload['isBailleurAverti']);
