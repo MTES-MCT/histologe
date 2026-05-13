@@ -793,11 +793,11 @@ class SignalementManager
                 $situationFoyerRequest->getTravailleurSocialAccompagnementNomStructure()
             )
              ->setTravailleurSocialAccompagnementNomReferent(
-                $situationFoyerRequest->getTravailleurSocialAccompagnementNomReferent()
-            )
+                 $situationFoyerRequest->getTravailleurSocialAccompagnementNomReferent()
+             )
              ->setTravailleurSocialAccompagnementPrenomReferent(
-                $situationFoyerRequest->getTravailleurSocialAccompagnementPrenomReferent()
-            );
+                 $situationFoyerRequest->getTravailleurSocialAccompagnementPrenomReferent()
+             );
 
         if ('non' === $situationFoyerRequest->getTravailleurSocialPreavisDepart()) {
             $signalement->setIsPreavisDepart(false);
