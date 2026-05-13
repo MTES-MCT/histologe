@@ -4,6 +4,7 @@ namespace App\Command\Cron;
 
 use App\Entity\FailedEmail;
 use App\Repository\FailedEmailRepository;
+use App\Service\Mailer\ContextDateTimeNormalizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -34,6 +35,7 @@ class RetryFailedEmailsCommand extends AbstractCronCommand
         private readonly FailedEmailRepository $failedEmailRepository,
         private readonly MailerInterface $mailer,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly ContextDateTimeNormalizer $contextDateTimeNormalizer,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -48,9 +50,11 @@ class RetryFailedEmailsCommand extends AbstractCronCommand
         $failedEmails = $this->failedEmailRepository->findEmailToResend();
 
         foreach ($failedEmails as $failedEmail) {
+            $context = $this->contextDateTimeNormalizer->normalize($failedEmail->getContext());
+
             $emailMessage = (new TemplatedEmail())
                 ->htmlTemplate('emails/'.$failedEmail->getContext()['template'].'.html.twig')
-                ->context($failedEmail->getContext())
+                ->context($context)
                 ->replyTo($failedEmail->getReplyTo())
                 ->subject($failedEmail->getSubject())
                 ->from(
