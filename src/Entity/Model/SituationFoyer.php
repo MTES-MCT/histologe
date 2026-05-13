@@ -15,6 +15,9 @@ class SituationFoyer
         private ?string $travailleurSocialPreavisDepart = null,
         private ?string $travailleurSocialAccompagnement = null,
         private ?string $travailleurSocialAccompagnementDeclarant = null,
+        private ?string $travailleurSocialAccompagnementNomStructure = null,
+        private ?string $travailleurSocialAccompagnementNomReferent = null,
+        private ?string $travailleurSocialAccompagnementPrenomReferent = null,
     ) {
     }
 
@@ -146,6 +149,42 @@ class SituationFoyer
         return $this;
     }
 
+    public function getTravailleurSocialAccompagnementNomStructure(): ?string
+    {
+        return $this->travailleurSocialAccompagnementNomStructure;
+    }
+
+    public function setTravailleurSocialAccompagnementNomStructure(?string $travailleurSocialAccompagnementNomStructure): self
+    {
+        $this->travailleurSocialAccompagnementNomStructure = $travailleurSocialAccompagnementNomStructure;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementNomReferent(): ?string
+    {
+        return $this->travailleurSocialAccompagnementNomReferent;
+    }
+
+    public function setTravailleurSocialAccompagnementNomReferent(?string $travailleurSocialAccompagnementNomReferent): self
+    {
+        $this->travailleurSocialAccompagnementNomReferent = $travailleurSocialAccompagnementNomReferent;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementPrenomReferent(): ?string
+    {
+        return $this->travailleurSocialAccompagnementPrenomReferent;
+    }
+
+    public function setTravailleurSocialAccompagnementPrenomReferent(?string $travailleurSocialAccompagnementPrenomReferent): self
+    {
+        $this->travailleurSocialAccompagnementPrenomReferent = $travailleurSocialAccompagnementPrenomReferent;
+
+        return $this;
+    }
+
     /** @return array<string, mixed> */
     public function toArray(): array
     {
@@ -160,6 +199,9 @@ class SituationFoyer
             'travailleur_social_preavis_depart' => $this->travailleurSocialPreavisDepart,
             'travailleur_social_accompagnement' => $this->travailleurSocialAccompagnement,
             'travailleur_social_accompagnement_declarant' => $this->travailleurSocialAccompagnementDeclarant,
+            'travailleur_social_accompagnement_nom_structure' => $this->travailleurSocialAccompagnementNomStructure,
+            'travailleur_social_accompagnement_nom_referent' => $this->travailleurSocialAccompagnementNomReferent,
+            'travailleur_social_accompagnement_prenom_referent' => $this->travailleurSocialAccompagnementPrenomReferent,
         ];
     }
 }

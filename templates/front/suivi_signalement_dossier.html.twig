@@ -806,9 +806,12 @@
 								{{signalement.situationFoyer.travailleurSocialAccompagnement(false)|capitalize}}
 							</li>
 						{% endif %}
-						{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) is same as 'oui' and signalement.structureReferentSocial %}
+						{% if signalement.situationFoyer.travailleurSocialAccompagnement(false) is same as 'oui' %}
 							<li>Nom de la structure d'accompagnement :
-								{{ signalement.structureReferentSocial }}
+								{{ signalement.situationFoyer.travailleurSocialAccompagnementNomStructure }}
+							</li>
+							<li>Prénom et nom du ou de la travailleuse sociale :
+								{{ signalement.situationFoyer.travailleurSocialAccompagnementPrenomReferent }} {{ signalement.situationFoyer.travailleurSocialAccompagnementNomReferent }}
 							</li>
 						{% endif %}
 					{% endif %}

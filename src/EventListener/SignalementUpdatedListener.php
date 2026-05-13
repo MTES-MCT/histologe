@@ -113,6 +113,8 @@ class SignalementUpdatedListener
                 'situationFoyer.travailleur_social_preavis_depart' => 'Préavis de départ déposé',
                 'situationFoyer.travailleur_social_accompagnement' => 'Accompagnement travailleur social',
                 'situationFoyer.travailleur_social_accompagnement_nom_structure' => 'Nom de la structure d\'accompagnement',
+                'situationFoyer.travailleur_social_accompagnement_nom_referent' => 'Nom du référent de la structure d\'accompagnement',
+                'situationFoyer.travailleur_social_accompagnement_prenom_referent' => 'Prénom du référent de la structure d\'accompagnement',
                 'informationComplementaire.informations_complementaires_situation_occupants_beneficiaire_rsa' => 'Bénéficiaire du RSA',
                 'informationComplementaire.informations_complementaires_situation_occupants_beneficiaire_fsl' => 'Bénéficiaire du FSL',
                 'informationComplementaire.informations_complementaires_situation_occupants_revenu_fiscal' => 'Revenu fiscal de référence',

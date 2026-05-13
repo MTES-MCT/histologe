@@ -134,7 +134,17 @@
 
                             <div class="fr-input-group">
                                 <label class="fr-label" for="situationFoyerTravailleurSocialAccompagnementNomStructure">Nom de la structure d'accompagnement</label>
-                                <input class="fr-input" type="text" id="situationFoyerTravailleurSocialAccompagnementNomStructure" name="travailleurSocialAccompagnementNomStructure" value="{{ signalement.structureReferentSocial }}">
+                                <input class="fr-input" type="text" id="situationFoyerTravailleurSocialAccompagnementNomStructure" name="travailleurSocialAccompagnementNomStructure" value="{{ signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnementNomStructure : '' }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="situationFoyerTravailleurSocialAccompagnementNom">Nom de famille du travailleur social</label>
+                                <input class="fr-input" type="text" id="situationFoyerTravailleurSocialAccompagnementNom" name="travailleurSocialAccompagnementNomReferentSocial" value="{{ signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnementNomReferent : '' }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="situationFoyerTravailleurSocialAccompagnementPrenom">Prénom du travailleur social</label>
+                                <input class="fr-input" type="text" id="situationFoyerTravailleurSocialAccompagnementPrenom" name="travailleurSocialAccompagnementPrenomReferentSocial" value="{{ signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnementPrenomReferent : '' }}">
                             </div>
 
                             <div class="fr-select-group">

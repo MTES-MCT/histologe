@@ -180,8 +180,6 @@ class SignalementManager
             ->setIsConstructionAvant1949((bool) $data['isConstructionAvant1949'])
             ->setIsRisqueSurOccupation((bool) $data['isRisqueSurOccupation'])
             ->setProprioAvertiAt($data['prorioAvertiAt'])
-            ->setNomReferentSocial($data['nomReferentSocial'])
-            ->setStructureReferentSocial($data['StructureReferentSocial'])
             ->setNumeroInvariant($data['numeroInvariant'])
             ->setNbPiecesLogement((int) $data['nbPiecesLogement'])
             ->setNbChambresLogement((int) $data['nbChambresLogement'])
@@ -790,8 +788,16 @@ class SignalementManager
             ->setTravailleurSocialAccompagnement(
                 $situationFoyerRequest->getTravailleurSocialAccompagnement()
             )
-            ->setLogementSocialAllocationCaisse($situationFoyerRequest->getIsAllocataire());
-        $signalement->setStructureReferentSocial($situationFoyerRequest->getTravailleurSocialAccompagnementNomStructure());
+            ->setLogementSocialAllocationCaisse($situationFoyerRequest->getIsAllocataire())
+            ->setTravailleurSocialAccompagnementNomStructure(
+                $situationFoyerRequest->getTravailleurSocialAccompagnementNomStructure()
+            )
+             ->setTravailleurSocialAccompagnementNomReferent(
+                $situationFoyerRequest->getTravailleurSocialAccompagnementNomReferent()
+            )
+             ->setTravailleurSocialAccompagnementPrenomReferent(
+                $situationFoyerRequest->getTravailleurSocialAccompagnementPrenomReferent()
+            );
 
         if ('non' === $situationFoyerRequest->getTravailleurSocialPreavisDepart()) {
             $signalement->setIsPreavisDepart(false);

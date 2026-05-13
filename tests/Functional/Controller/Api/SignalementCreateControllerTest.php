@@ -115,7 +115,9 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals($informationComplementaire->getInformationsComplementairesSituationOccupantsTypeAllocation(), mb_strtolower($payload['typeAllocation']));
         $this->assertEquals($signalement->getMontantAllocation(), $payload['montantAllocation']);
         $this->assertEquals($situationFoyer->getTravailleurSocialAccompagnement(), 'oui');
-        $this->assertEquals($signalement->getStructureReferentSocial(), $payload['accompagnementTravailleurSocialNomStructure']);
+        $this->assertEquals($situationFoyer->getTravailleurSocialAccompagnementNomStructure(), $payload['accompagnementTravailleurSocialNomStructure']);
+        $this->assertEquals($situationFoyer->getTravailleurSocialAccompagnementNomReferent(), $payload['accompagnementTravailleurSocialNom']);
+        $this->assertEquals($situationFoyer->getTravailleurSocialAccompagnementPrenomReferent(), $payload['accompagnementTravailleurSocialPrenom']);
         $this->assertEquals($informationComplementaire->getInformationsComplementairesSituationOccupantsBeneficiaireRsa(), 'non');
         $this->assertEquals($informationComplementaire->getInformationsComplementairesSituationOccupantsBeneficiaireFsl(), 'non');
         $this->assertEquals($signalement->getIsProprioAverti(), $payload['isBailleurAverti']);
@@ -544,6 +546,8 @@ class SignalementCreateControllerTest extends WebTestCase
             "montantAllocation": 250.75,
             "isAccompagnementTravailleurSocial": true,
             "accompagnementTravailleurSocialNomStructure": "CCAS de Montpellier",
+            "accompagnementTravailleurSocialPrenomReferent": "Marie",
+            "accompagnementTravailleurSocialNomReferent": "Dubois",
             "isBeneficiaireRsa": false,
             "isBeneficiaireFsl": false,
             "isBailleurAverti": true,
