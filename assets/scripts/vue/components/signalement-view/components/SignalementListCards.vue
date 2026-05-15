@@ -276,20 +276,15 @@ export default defineComponent({
     },
     saveScrollPosition (item: SignalementItem) {
       sessionStorage.setItem('signalement_list_clicked_uuid', item.uuid)
-      sessionStorage.setItem('signalement_list_scroll_y', window.scrollY.toString()) // fallback
     },
     restoreScrollPosition () {
       const uuid = sessionStorage.getItem('signalement_list_clicked_uuid')
-      const scrollY = sessionStorage.getItem('signalement_list_scroll_y')
       if (uuid) {
         this.$nextTick(() => {
           const element = document.querySelector(`[data-signalement-uuid="${uuid}"]`)
           if (element) {
             element.scrollIntoView({ block: 'center' })
-          } else if (scrollY) { // fallback
-            window.scrollTo(0, Number(scrollY))
           }
-          sessionStorage.removeItem('signalement_list_scroll_y')
           sessionStorage.removeItem('signalement_list_clicked_uuid')
         })
       }
