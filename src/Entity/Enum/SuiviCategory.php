@@ -240,6 +240,7 @@ enum SuiviCategory: string
                 return Suivi::TYPE_TECHNICAL;
             case self::SIGNALEMENT_EDITED_FO:
             case self::MESSAGE_USAGER:
+            case self::MESSAGE_BAILLEUR:
             case self::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER:
             case self::DEMANDE_ABANDON_PROCEDURE:
             case self::DEMANDE_POURSUITE_PROCEDURE:
