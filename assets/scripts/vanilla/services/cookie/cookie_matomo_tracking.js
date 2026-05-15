@@ -16,6 +16,8 @@
 /* global _paq */
 
 export function enableMatomoTracking() {
+  _paq.push(['setConsentGiven']);
+  _paq.push(['HeatmapSessionRecording::enable']);
   _paq.push(['rememberConsentGiven']);
 }
 
