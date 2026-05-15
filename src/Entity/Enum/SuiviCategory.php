@@ -3,6 +3,7 @@
 namespace App\Entity\Enum;
 
 use App\Entity\Behaviour\EnumTrait;
+use App\Entity\Suivi;
 
 enum SuiviCategory: string
 {
@@ -191,5 +192,68 @@ enum SuiviCategory: string
             self::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES,
             self::INJONCTION_BAILLEUR_REPONSE_NON,
         ];
+    }
+
+    public static function getSuiviTypeForSuiviCategory(SuiviCategory $category): int
+    {
+        switch ($category) {
+            case self::INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR:
+            case self::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER:
+            case self::INJONCTION_BAILLEUR_EXPIREE:
+            case self::DOCUMENT_DELETED_BY_USAGER:
+            case self::SIGNALEMENT_IS_ACTIVE:
+            case self::SIGNALEMENT_IS_REFUSED:
+            case self::SIGNALEMENT_IS_REOPENED:
+            case self::SIGNALEMENT_EDITED_BO:
+            case self::NEW_DOCUMENT:
+            case self::DOCUMENT_DELETED_BY_PARTNER:
+            case self::AFFECTATION_IS_REFUSED:
+            case self::AFFECTATION_IS_ACCEPTED:
+            case self::INTERVENTION_IS_ABORTED:
+            case self::INTERVENTION_IS_CANCELED:
+            case self::INTERVENTION_HAS_CONCLUSION:
+            case self::INTERVENTION_IS_DONE:
+            case self::INTERVENTION_IS_CREATED:
+            case self::INTERVENTION_CONTROLE_IS_DONE:
+            case self::INTERVENTION_CONTROLE_IS_CREATED:
+            case self::INTERVENTION_ARRETE_IS_CREATED:
+            case self::INTERVENTION_HAS_CONCLUSION_EDITED:
+            case self::INTERVENTION_IS_RESCHEDULED:
+            case self::INTERVENTION_CONTROLE_IS_RESCHEDULED:
+            case self::INTERVENTION_ARRETE_IS_RESCHEDULED:
+            case self::SIGNALEMENT_IS_INJONCTION:
+            case self::INJONCTION_BAILLEUR_REPONSE_OUI:
+            case self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE:
+            case self::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES:
+            case self::INJONCTION_BAILLEUR_REPONSE_NON:
+            case self::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE:
+            case self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR:
+            case self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE:
+            case self::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR:
+            case self::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE:
+            case self::ASK_DOCUMENT:
+                return Suivi::TYPE_AUTO;
+            case self::ASK_FEEDBACK_SENT:
+            case self::INTERVENTION_PLANNED_REMINDER:
+            case self::INTERVENTION_IS_REQUIRED:
+            case self::SIGNALEMENT_STATUS_IS_SYNCHRO:
+                return Suivi::TYPE_TECHNICAL;
+            case self::SIGNALEMENT_EDITED_FO:
+            case self::MESSAGE_USAGER:
+            case self::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER:
+            case self::DEMANDE_ABANDON_PROCEDURE:
+            case self::DEMANDE_POURSUITE_PROCEDURE:
+            case self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER:
+                return Suivi::TYPE_USAGER;
+            case self::MESSAGE_USAGER_POST_CLOTURE:
+                return Suivi::TYPE_USAGER_POST_CLOTURE;
+            case self::MESSAGE_PARTNER:
+            case self::AFFECTATION_IS_CLOSED:
+            case self::SIGNALEMENT_IS_CLOSED:
+            case self::MESSAGE_ESABORA_SCHS:
+                return Suivi::TYPE_PARTNER;
+            default:
+                throw new \LogicException(sprintf('La catégorie de suivi %s n\'a pas de type de suivi défini.', $category->name));
+        }
     }
 }

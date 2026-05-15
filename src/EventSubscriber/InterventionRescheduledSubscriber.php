@@ -48,7 +48,6 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
                 description: $description,
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INTERVENTION_IS_RESCHEDULED,
                 partner: $event->getPartner(),
                 user: $event->getUser(),

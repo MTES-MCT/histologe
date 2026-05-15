@@ -46,7 +46,6 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
                 description: $description,
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INTERVENTION_IS_ABORTED,
                 partner: $context['createdByPartner'],
                 user: $currentUser,

@@ -42,7 +42,6 @@ readonly class SignalementClosedSubscriber implements EventSubscriberInterface
                     'motif_suivi' => $signalementAffectationClose->getDescription(),
                 ]
             ),
-            type: Suivi::TYPE_PARTNER,
             category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
             partner: $event->getPartner(),
             user: $user,

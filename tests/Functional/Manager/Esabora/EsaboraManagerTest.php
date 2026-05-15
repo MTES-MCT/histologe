@@ -176,7 +176,7 @@ class EsaboraManagerTest extends KernelTestCase
             'etat_importe.json',
             'accepté par Partenaire 13-01 via Esabora',
             AffectationStatus::ACCEPTED,
-            Suivi::TYPE_AUTO,
+            Suivi::TYPE_TECHNICAL,
             true, // suivi mail sent
             SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
         ];
@@ -186,7 +186,7 @@ class EsaboraManagerTest extends KernelTestCase
             'etat_termine.json',
             'clôturé par Partenaire 13-02 via Esabora',
             AffectationStatus::CLOSED,
-            Suivi::TYPE_AUTO,
+            Suivi::TYPE_TECHNICAL,
             true, // suivi mail sent
             SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
         ];
@@ -196,7 +196,7 @@ class EsaboraManagerTest extends KernelTestCase
             'etat_non_importe.json',
             'refusé par Partenaire 01-01 via Esabora',
             AffectationStatus::REFUSED,
-            Suivi::TYPE_AUTO,
+            Suivi::TYPE_TECHNICAL,
             false, // suivi mail not sent cause signalement closed
             SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
         ];
@@ -206,7 +206,7 @@ class EsaboraManagerTest extends KernelTestCase
             '../../sish/ws_etat_dossier_sas/etat_rejete.json',
             'refusé via '.EsaboraSISHService::NAME_SI.' pour motif suivant :',
             AffectationStatus::REFUSED,
-            Suivi::TYPE_AUTO,
+            Suivi::TYPE_TECHNICAL,
             false, // suivi mail not sent cause signalement closed
             SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
         ];
@@ -216,7 +216,7 @@ class EsaboraManagerTest extends KernelTestCase
             '../../sish/ws_etat_dossier_sas/etat_importe.json',
             'accepté par Partenaire 01-01 via '.EsaboraSISHService::NAME_SI.' (Dossier 2023/SISH/0010)',
             AffectationStatus::ACCEPTED,
-            Suivi::TYPE_AUTO,
+            Suivi::TYPE_TECHNICAL,
             false, // suivi mail not sent cause signalement closed
             SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
         ];
@@ -228,7 +228,7 @@ class EsaboraManagerTest extends KernelTestCase
         $filename = '../../sish/ws_etat_dossier_sas/etat_importe.json';
         $suiviDescription = 'accepté par Partenaire 01-01 via '.EsaboraSISHService::NAME_SI.' (Dossier 2023/SISH/0010)';
         $expectedAffectationStatus = AffectationStatus::ACCEPTED;
-        $suiviStatus = Suivi::TYPE_AUTO;
+        $suiviStatus = Suivi::TYPE_TECHNICAL;
         /** @var Signalement $signalement */
         $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
             'reference' => $referenceSignalement,

@@ -3,7 +3,6 @@
 namespace App\Command\Cron;
 
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
@@ -62,7 +61,6 @@ class ResetInjonctionNoResponseCommand extends AbstractCronCommand
                 $this->suiviManager->createSuivi(
                     signalement: $signalement,
                     description: 'La procédure d’injonction a expiré pour le bailleur. Le signalement est désormais en attente de validation.',
-                    type: Suivi::TYPE_AUTO,
                     category: SuiviCategory::INJONCTION_BAILLEUR_EXPIREE,
                     user: $this->userManager->getSystemUser(),
                     isVisibleForUsager: true

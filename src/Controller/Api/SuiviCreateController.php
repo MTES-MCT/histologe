@@ -7,7 +7,6 @@ use App\Dto\Api\Response\SuiviResponse;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Signalement;
-use App\Entity\Suivi;
 use App\Entity\User;
 use App\Manager\SuiviManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
@@ -154,7 +153,6 @@ class SuiviCreateController extends AbstractController
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: Sanitizer::sanitize($suiviRequest->getDescription()),
-            type: Suivi::TYPE_PARTNER,
             category: SuiviCategory::MESSAGE_PARTNER,
             partner: $partner,
             user: $user,

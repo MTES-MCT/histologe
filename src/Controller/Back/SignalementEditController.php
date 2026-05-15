@@ -16,7 +16,6 @@ use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Signalement;
-use App\Entity\Suivi;
 use App\Entity\User;
 use App\Factory\TiersInvitationFactory;
 use App\Manager\SignalementManager;
@@ -706,7 +705,6 @@ class SignalementEditController extends AbstractController
                 $suiviManager->createSuivi(
                     signalement: $signalement,
                     description: $description,
-                    type: Suivi::TYPE_AUTO,
                     category: SuiviCategory::SIGNALEMENT_EDITED_BO,
                     partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                     user: $user,

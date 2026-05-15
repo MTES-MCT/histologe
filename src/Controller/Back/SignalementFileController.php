@@ -7,7 +7,6 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Signalement;
-use App\Entity\Suivi;
 use App\Entity\User;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
@@ -208,7 +207,6 @@ class SignalementFileController extends AbstractController
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $description,
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::DOCUMENT_DELETED_BY_PARTNER,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,

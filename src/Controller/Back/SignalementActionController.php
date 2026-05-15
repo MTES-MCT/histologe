@@ -87,7 +87,6 @@ class SignalementActionController extends AbstractController
         $suiviManager->createSuivi(
             signalement: $signalement,
             description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
-            type : Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             partner: $partner,
             user : $user,
@@ -127,7 +126,6 @@ class SignalementActionController extends AbstractController
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
-                type : Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 partner: $partner,
                 user : $user,
@@ -175,7 +173,6 @@ class SignalementActionController extends AbstractController
         $suiviManager->createSuivi(
             signalement: $signalement,
             description: $description,
-            type : Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_IS_REFUSED,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user : $user,
@@ -221,7 +218,6 @@ class SignalementActionController extends AbstractController
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $suivi->getDescription(),
-                type: Suivi::TYPE_PARTNER,
                 category: SuiviCategory::MESSAGE_PARTNER,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
@@ -357,7 +353,6 @@ class SignalementActionController extends AbstractController
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: 'Signalement rouvert pour '.$reopenFor,
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,

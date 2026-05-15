@@ -843,7 +843,6 @@ class SignalementControllerTest extends WebTestCase
         $suivi = $suiviManager->createSuivi(
             signalement: $signalement,
             description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
             isVisibleForUsager: true,
             flush: true
@@ -920,7 +919,6 @@ class SignalementControllerTest extends WebTestCase
         $suivi = $suiviManager->createSuivi(
             signalement: $signalement,
             description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
             isVisibleForUsager: true,
             flush: true
@@ -988,7 +986,6 @@ class SignalementControllerTest extends WebTestCase
         $suivi = $suiviManager->createSuivi(
             signalement: $signalement,
             description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
             isVisibleForUsager: true,
             flush: true

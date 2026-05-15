@@ -51,7 +51,6 @@ class SuiviManager
     public function createSuivi(
         Signalement $signalement,
         string $description,
-        int $type,
         SuiviCategory $category,
         ?Partner $partner = null,
         ?User $user = null,
@@ -74,7 +73,7 @@ class SuiviManager
             ->setPartner($partner)
             ->setSignalement($signalement)
             ->setDescription($this->htmlSanitizer->sanitize($description))
-            ->setType($type)
+            ->setType(SuiviCategory::getSuiviTypeForSuiviCategory($category))
             ->setIsVisibleForUsager($isVisibleForUsager)
             ->setIsVisibleForBailleur($isVisibleForBailleur)
             ->setContext($context)
@@ -153,7 +152,6 @@ class SuiviManager
             $this->createSuivi(
                 signalement: $signalement,
                 description: $description.$user->getNomComplet(),
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_EDITED_BO,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
@@ -182,7 +180,6 @@ class SuiviManager
         $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $user,
@@ -206,7 +203,6 @@ class SuiviManager
         $this->createSuivi(
             signalement: $tiersInvitation->getSignalement(),
             description: $description,
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $this->userManager->getSystemUser(),
         );
@@ -225,7 +221,6 @@ class SuiviManager
         $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $this->userManager->getSystemUser(),
             isVisibleForUsager: true,
@@ -245,7 +240,6 @@ class SuiviManager
         $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $this->userManager->getSystemUser(),
             isVisibleForUsager: true,
@@ -344,7 +338,6 @@ class SuiviManager
         return $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::NEW_DOCUMENT,
             partner: $partner,
             user: $user,
@@ -432,7 +425,6 @@ class SuiviManager
         $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            type: Suivi::TYPE_USAGER,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $user,
             isVisibleForUsager: true,

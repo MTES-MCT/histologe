@@ -60,7 +60,6 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
         $suivi = $this->suiviManager->createSuivi(
             signalement: $intervention->getSignalement(),
             description: $description,
-            type: Suivi::TYPE_AUTO,
             category : $suiviCategory,
             partner: $event->getPartner(),
             user: $event->getUser(),

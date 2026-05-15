@@ -619,14 +619,12 @@ class SignalementController extends AbstractController
                 }
             }
 
-            $suiviType = SignalementStatus::CLOSED === $signalement->getStatut() ? Suivi::TYPE_USAGER_POST_CLOTURE : Suivi::TYPE_USAGER;
             $suiviCategory = SignalementStatus::CLOSED === $signalement->getStatut() ?
                 SuiviCategory::MESSAGE_USAGER_POST_CLOTURE :
                 SuiviCategory::MESSAGE_USAGER;
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $description,
-                type: $suiviType,
                 category: $suiviCategory,
                 user: $signalementUser->getUser(),
                 isVisibleForUsager: true,
@@ -705,7 +703,6 @@ class SignalementController extends AbstractController
                         $suiviManager->createSuivi(
                             signalement: $signalement,
                             description: UserManager::OCCUPANT === $signalementUser->getType() ? 'L\'occupant a ajouté '.$descriptionDetails : 'Le déclarant a ajouté '.$descriptionDetails,
-                            type: Suivi::TYPE_USAGER,
                             category: SuiviCategory::MESSAGE_USAGER,
                             user: $signalementUser->getUser(),
                             isVisibleForUsager: true,
@@ -809,7 +806,6 @@ class SignalementController extends AbstractController
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: HtmlCleaner::cleanFrontEndEntry($description),
-                type: Suivi::TYPE_USAGER,
                 category: $category,
                 user: $user,
                 isVisibleForUsager: true,
@@ -874,7 +870,6 @@ class SignalementController extends AbstractController
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: HtmlCleaner::cleanFrontEndEntry($description),
-                type: Suivi::TYPE_USAGER,
                 category: SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
                 user: $user,
                 isVisibleForUsager: true,
@@ -929,7 +924,6 @@ class SignalementController extends AbstractController
                 $suiviManager->createSuivi(
                     signalement: $signalement,
                     description: HtmlCleaner::cleanFrontEndEntry($description),
-                    type: Suivi::TYPE_USAGER,
                     category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
                     user: $user,
                     isVisibleForUsager: true,
@@ -1026,7 +1020,6 @@ class SignalementController extends AbstractController
                 $suiviManager->createSuivi(
                     signalement: $signalement,
                     description: $description,
-                    type: Suivi::TYPE_USAGER,
                     category: $category,
                     user: $user,
                     isVisibleForUsager: true,
@@ -1098,7 +1091,6 @@ class SignalementController extends AbstractController
         $suiviManager->createSuivi(
             signalement: $signalement,
             description: $description,
-            type: Suivi::TYPE_USAGER,
             category: SuiviCategory::MESSAGE_USAGER,
             user: $user,
             isVisibleForUsager: true,
