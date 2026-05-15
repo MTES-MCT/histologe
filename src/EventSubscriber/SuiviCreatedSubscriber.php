@@ -100,7 +100,7 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
 
     private function sendToBailleur(Suivi $suivi): void
     {
-        if ($suivi->getSendMail() && $suivi->getIsVisibleForBailleur()) {
+        if ($suivi->getSendMail() && $suivi->getIsVisibleForBailleur() && !in_array($suivi->getCategory(), SuiviCategory::CategoriesSubmittedByBailleur())) {
             $this->notificationAndMailSender->sendNewSuiviToBailleur($suivi);
         }
     }
