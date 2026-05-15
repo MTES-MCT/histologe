@@ -27,21 +27,26 @@ class AddSuiviType extends AbstractType
     {
         $suivi = $builder->getData();
         $signalement = $suivi->getSignalement();
-        $isNotNotifiable = EmailFormatValidator::isInvalidEmail($signalement->getMailDeclarant()) && EmailFormatValidator::isInvalidEmail($signalement->getMailOccupant());
+        $isUsagersNotNotifiable = EmailFormatValidator::isInvalidEmail($signalement->getMailDeclarant()) && EmailFormatValidator::isInvalidEmail($signalement->getMailOccupant());
         $isLogementVacant = $signalement->getIsLogementVacant();
+        $isBailleurNotNotifiable = EmailFormatValidator::isInvalidEmail($signalement->getMailProprio());
 
         $builder->add('isVisibleForUsager', CheckboxType::class, [
             'label' => 'Usager (occupant, tiers déclarant)',
             'row_attr' => [
-                'class' => $isNotNotifiable ? 'fr-hidden' : '',
+                'class' => $isUsagersNotNotifiable ? 'fr-hidden' : '',
             ],
             'required' => false,
-            'disabled' => $isNotNotifiable || $isLogementVacant,
+            'disabled' => $isUsagersNotNotifiable || $isLogementVacant,
         ]);
         if ($signalement->getReferenceInjonction()) {
             $builder->add('isVisibleForBailleur', CheckboxType::class, [
                 'label' => 'Bailleur',
+                'row_attr' => [
+                    'class' => $isBailleurNotNotifiable ? 'fr-hidden' : '',
+                ],
                 'required' => false,
+                'disabled' => $isBailleurNotNotifiable,
             ]);
         }
         $builder->add('isVisibleForPartners', CheckboxType::class, [
@@ -63,8 +68,8 @@ class AddSuiviType extends AbstractType
             'constraints' => [
                 new Assert\NotBlank(),
                 new Assert\Length([
-                    'min' => 10,
-                    'minMessage' => 'Le contenu du suivi doit contenir au moins {{ limit }} caractères.',
+                    'min' => 16, // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
+                    'minMessage' => 'Le contenu du suivi doit contenir au moins 10 caractères.',
                 ]),
             ],
         ]);

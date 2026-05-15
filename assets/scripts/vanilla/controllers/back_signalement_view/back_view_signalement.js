@@ -290,18 +290,15 @@ document.querySelectorAll('button[data-cloture-type]').forEach((button) => {
 export function updateBtnAddSuiviForm() {
   const isVisibleForUsagerChoice = document.getElementById('add_suivi_isVisibleForUsager');
   const isVisibleForBailleurChoice = document.getElementById('add_suivi_isVisibleForBailleur');
+  const signalementAddSuiviSubmitBtn = document.getElementById('signalement-add-suivi-submit');
   if (isVisibleForUsagerChoice?.checked && isVisibleForBailleurChoice?.checked) {
-    document.getElementById('signalement-add-suivi-submit').textContent =
-      "Envoyer le suivi à l'usager et au bailleur";
+    signalementAddSuiviSubmitBtn.textContent = "Envoyer le suivi à l'usager et au bailleur";
   } else if (isVisibleForUsagerChoice?.checked) {
-    document.getElementById('signalement-add-suivi-submit').textContent =
-      "Envoyer le suivi à l'usager";
+    signalementAddSuiviSubmitBtn.textContent = "Envoyer le suivi à l'usager";
   } else if (isVisibleForBailleurChoice?.checked) {
-    document.getElementById('signalement-add-suivi-submit').textContent =
-      'Envoyer le suivi au bailleur';
+    signalementAddSuiviSubmitBtn.textContent = 'Envoyer le suivi au bailleur';
   } else {
-    document.getElementById('signalement-add-suivi-submit').textContent =
-      'Enregistrer le suivi interne';
+    signalementAddSuiviSubmitBtn.textContent = 'Enregistrer le suivi interne';
   }
 }
 

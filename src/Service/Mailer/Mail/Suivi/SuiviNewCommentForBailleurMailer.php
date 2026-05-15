@@ -15,7 +15,7 @@ class SuiviNewCommentForBailleurMailer extends AbstractNotificationMailer
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_NEW_COMMENT_FOR_BAILLEUR;
     protected ?string $mailerSubject = 'Nouveau message concernant votre dossier';
     protected ?string $mailerTemplate = 'new_comment_for_bailleur_email';
-    protected ?string $tagHeader = 'Suivi pour le bailleur';
+    protected ?string $tagHeader = 'Bailleur Nouveau Suivi Visible Bailleur';
 
     public function __construct(
         protected MailerInterface $mailer,

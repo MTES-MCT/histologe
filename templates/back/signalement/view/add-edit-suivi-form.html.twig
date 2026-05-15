@@ -3,17 +3,24 @@
         <span class="no-field-errors"></span>
     </div>
     {{ form_errors(form) }}
-    {% if show_email_alert(signalement.mailDeclarant) and show_email_alert(signalement.mailOccupant) %}
-        <p class="fr-badge fr-badge--error">L'adresse e-mail de l'usager n'est pas valide. Vous ne pouvez pas lui envoyer le suivi.</p>
-    {% endif %}
-    <div class="fr-mb-3w">
-        <div class="fr-label fr-mb-2v">Destinataires du message</div>
-        {{ form_row(form.isVisibleForUsager) }}
-        {% if form.isVisibleForBailleur is defined %}
-            {{ form_row(form.isVisibleForBailleur) }}
-        {% endif %}
-        {{ form_row(form.isVisibleForPartners) }}
-    </div>
+    <fieldset class="fr-fieldset fr-mb-0" aria-labelledby="checkboxes-destinataires-legend">
+        <legend class="fr-fieldset__legend--regular fr-fieldset__legend" id="checkboxes-destinataires-legend">
+            Destinataires du message
+        </legend>
+        <div class="fr-fieldset__element">
+            {% if show_email_alert(signalement.mailDeclarant) and show_email_alert(signalement.mailOccupant) %}
+                <p class="fr-badge fr-badge--error fr-mb-3w">L'adresse e-mail de l'usager n'est pas valide. Vous ne pouvez pas lui envoyer le suivi.</p>
+            {% endif %}
+            {{ form_row(form.isVisibleForUsager) }}
+            {% if form.isVisibleForBailleur is defined %}
+                {% if show_email_alert(signalement.mailProprio) %}
+                    <p class="fr-badge fr-badge--error fr-mb-3w">L'adresse e-mail du bailleur n'est pas renseignée ou invalide. Vous ne pouvez pas lui envoyer le suivi.</p>
+                {% endif %}
+                {{ form_row(form.isVisibleForBailleur) }}
+            {% endif %}
+            {{ form_row(form.isVisibleForPartners) }}
+        </div>
+    </fieldset>
     <div class="fr-mb-3w">
         {{ form_row(form.description) }}
     </div>
