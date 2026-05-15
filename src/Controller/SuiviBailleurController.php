@@ -7,7 +7,6 @@ use App\Dto\StopProcedure;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Suivi;
 use App\Form\MessageBailleurType;
 use App\Form\ReponseInjonctionBailleurType;
 use App\Form\SignalementeEditFO\CoordonneesBailleurType;
@@ -240,7 +239,6 @@ class SuiviBailleurController extends AbstractController
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $description,
-                type: Suivi::TYPE_USAGER,
                 category: SuiviCategory::MESSAGE_BAILLEUR,
                 isVisibleForBailleur: true,
                 files: $filesToAttach

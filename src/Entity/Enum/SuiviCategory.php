@@ -244,6 +244,7 @@ enum SuiviCategory: string
             case self::DEMANDE_ABANDON_PROCEDURE:
             case self::DEMANDE_POURSUITE_PROCEDURE:
             case self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER:
+            case self::MESSAGE_BAILLEUR:
                 return Suivi::TYPE_USAGER;
             case self::MESSAGE_USAGER_POST_CLOTURE:
                 return Suivi::TYPE_USAGER_POST_CLOTURE;
