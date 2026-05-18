@@ -17,7 +17,11 @@ final class Version20250729071740 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->skipIf(!in_array($_ENV['APP_ENV'], ['test', 'dev']), 'This migration should only run in test or dev environments');
-        $this->addSql('CREATE UNIQUE INDEX unique_affectation_signalement_partner ON affectation (signalement_id, partner_id)');
+        $table = $schema->getTable('affectation');
+
+        if (!$table->hasIndex('unique_affectation_signalement_partner')) {
+            $this->addSql('CREATE UNIQUE INDEX unique_affectation_signalement_partner ON affectation (signalement_id, partner_id)');
+        }
     }
 
     public function down(Schema $schema): void
