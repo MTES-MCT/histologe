@@ -1215,7 +1215,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->mailOccupantTemp;
     }
 
-    public function setMailOccupantTemp(?string $mailOccupantTemp): ?string
+    public function setMailOccupantTemp(?string $mailOccupantTemp): static
     {
         $this->mailOccupantTemp = TrimHelper::safeTrim($mailOccupantTemp);
 

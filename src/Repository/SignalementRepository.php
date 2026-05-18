@@ -935,4 +935,16 @@ class SignalementRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findExpiredSignalements(\DateTimeImmutable $expirationDate): array
+    {
+        // Signalements considérés comme expirés : ceux qui sont CLOSED depuis plus de 5 ans sur la colonne closed_at, ou ceux qui sont ARCHIVED depuis plus de 5 ans sur la colonne created_at
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('(s.statut = :closedStatus AND s.closedAt <= :expirationDate) OR (s.statut = :archivedStatus AND s.createdAt <= :expirationDate)')
+            ->setParameter('closedStatus', SignalementStatus::CLOSED)
+            ->setParameter('archivedStatus', SignalementStatus::ARCHIVED)
+            ->setParameter('expirationDate', $expirationDate);
+
+        return $qb->getQuery()->getResult();
+    }
 }
