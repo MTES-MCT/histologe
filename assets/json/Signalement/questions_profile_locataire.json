@@ -2023,6 +2023,9 @@
           },
           "validate": {
             "required": false
+          },
+          "accessibility": {
+            "name": "lastName"
           }
         },
         {
@@ -2034,28 +2037,41 @@
           },
           "validate": {
             "required": false
+          },
+          "accessibility": {
+            "name": "firstName"
           }
         },
         {
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_inviter_referent_comme_tiers_nom",
           "label": "Nom de famille du référent qui vous accompagne",
+          "description": "Format attendu : 255 caractères maximum",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'oui'"
           },
           "validate": {
             "message": "Veuillez indiquer le nom de famille du référent qui vous accompagne."
+          },
+          "maxlength": 255,
+          "accessibility": {
+            "name": "lastName"
           }
         },
         {
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_inviter_referent_comme_tiers_prenom",
           "label": "Prénom du référent qui vous accompagne",
+          "description": "Format attendu : 255 caractères maximum",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'oui'"
           },
           "validate": {
             "message": "Veuillez indiquer le prénom du référent qui vous accompagne."
+          },
+          "maxlength": 255,
+          "accessibility": {
+            "name": "firstName"
           }
         },
         {
@@ -2068,6 +2084,9 @@
           },
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'oui'"
+          },
+          "accessibility": {
+            "name": "mail"
           }
         }
       ],
