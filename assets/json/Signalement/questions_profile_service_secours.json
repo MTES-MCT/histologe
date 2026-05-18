@@ -518,7 +518,7 @@
       "body": [
         {
           "type": "SignalementFormInfo",
-          "label": "Il est fortement recommandé de laisser au bailleur un délai de 2 mois avant de déposer un signalement pour qu’il puisse apporter une réponse à votre demande.<br><br>Cliquez sur le bouton Fermer et nous vous contacterons par e-mail à l’issue du délai de 2 mois pour vous inviter à finaliser votre signalement si vous le jugez toujours nécessaire.<br><br>Si vous souhaitez, au regard de l’urgence de la situation et d’éventuels risques encourus déposer un signalement sans attendre, cliquez sur le bouton Continuer.",
+          "label": "Il est fortement recommandé de laisser au bailleur un délai de 2 mois avant de déposer un signalement pour qu’il puisse apporter une réponse à la demande du locataire.<br><br>Cliquez sur le bouton Fermer et nous vous contacterons par e-mail à l’issue du délai de 2 mois pour vous inviter à finaliser votre signalement si vous le jugez toujours nécessaire.<br><br>Si vous souhaitez, au regard de l’urgence de la situation et d’éventuels risques encourus déposer un signalement sans attendre, cliquez sur le bouton Continuer.",
           "slug": "prevenir_bailleur_info_oui_text",
           "conditional": {
             "show": "formStore.data.info_procedure_bailleur_prevenu === 'oui'"
@@ -526,7 +526,7 @@
         },
         {
           "type": "SignalementFormInfo",
-          "label": "il est fortement recommandé de contacter le bailleur avant de déposer un signalement et de lui laisser un délai de 2 mois pour qu’il puisse apporter une réponse à votre demande.<br><br>Cliquez sur le bouton Fermer et nous vous contacterons par e-mail à l’issue du délai de 2 mois pour vous inviter à finaliser votre signalement si vous le jugez toujours nécessaire.<br><br>Si vous souhaitez, au regard de l’urgence de la situation et d’éventuels risques encourus déposer un signalement sans attendre, cliquez sur le bouton Continuer.",
+          "label": "Il est fortement recommandé de contacter le bailleur avant de déposer un signalement et de lui laisser un délai de 2 mois pour qu’il puisse apporter une réponse à la demande du locataire.<br><br>Cliquez sur le bouton Fermer et revenez déposer votre signalement 2 mois après avoir contacté le bailleur si vous le jugez toujours nécessaire.<br><br>Si vous souhaitez, au regard de l’urgence de la situation et d’éventuels risques encourus déposer un signalement sans attendre, cliquez sur le bouton Continuer.",
           "slug": "prevenir_bailleur_info_non_text",
           "conditional": {
             "show": "formStore.data.info_procedure_bailleur_prevenu === 'non'"
