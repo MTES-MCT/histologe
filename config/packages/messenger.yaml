@@ -42,3 +42,4 @@ when@test:
                 # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
                 async: 'in-memory://'
                 async_priority_high: 'in-memory://'
+                scheduler_esabora: 'in-memory://'

@@ -40,11 +40,11 @@ class MessageBailleurType extends AbstractType
                 'multiple' => true,
                 'constraints' => [
                     new Assert\All([
-                        new Assert\File([
-                            'maxSize' => '10M',
-                            'mimeTypes' => File::DOCUMENT_MIME_TYPES,
-                            'mimeTypesMessage' => 'Veuillez télécharger un fichier au format '.UploadHandlerService::getAcceptedExtensions().', et ne dépassant pas 10 Mo.',
-                        ]),
+                        new Assert\File(
+                            maxSize: '10M',
+                            mimeTypes: File::DOCUMENT_MIME_TYPES,
+                            mimeTypesMessage: 'Veuillez télécharger un fichier au format '.UploadHandlerService::getAcceptedExtensions().', et ne dépassant pas 10 Mo.'
+                        ),
                     ]),
                 ],
             ])

@@ -1,44 +1,45 @@
 <?php
 
-namespace App\Tests\Functional\Command\Cron;
+declare(strict_types=1);
+
+namespace App\Tests\Functional\Scheduler\MessageHandler;
 
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
-use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
+use App\Scheduler\Message\SyncEsaboraSISHInterventionMessage;
+use App\Scheduler\MessageHandler\SyncEsaboraSISHInterventionMessageHandler;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Console\Tester\CommandTester;
 
-class SynchronizeInterventionSISHCommandTest extends KernelTestCase
+class SyncEsaboraSISHInterventionMessageHandlerTest extends KernelTestCase
 {
     public function testSendMail(): void
     {
-        $kernel = self::bootKernel();
+        self::bootKernel();
 
         /** @var EntityManagerInterface $em */
-        $em = $kernel->getContainer()->get('doctrine')->getManager();
+        $em = static::getContainer()->get(EntityManagerInterface::class);
 
+        /** @var SignalementRepository $signalementRepository */
         $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+
         $signalements = $signalementRepository->findBy([
             'statut' => SignalementStatus::ACTIVE,
             'profileDeclarant' => ProfileDeclarant::LOCATAIRE,
         ]);
 
-        // Force signalements used by the esabora mocks to have a TIERS_PRO profileDeclarant value
         foreach ($signalements as $signalement) {
-            /* @var Signalement $signalement */
             $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PRO);
         }
+
         $em->flush();
 
-        $application = new Application($kernel);
+        /** @var SyncEsaboraSISHInterventionMessageHandler $handler */
+        $handler = static::getContainer()->get(SyncEsaboraSISHInterventionMessageHandler::class);
 
-        $command = $application->find('app:sync-esabora-sish-intervention');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([]);
-        $commandTester->assertCommandIsSuccessful();
+        $handler(new SyncEsaboraSISHInterventionMessage());
+
         $this->assertEmailCount(1);
     }
 }
