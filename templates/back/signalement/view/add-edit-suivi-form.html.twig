@@ -14,7 +14,7 @@
             {{ form_row(form.isVisibleForUsager) }}
             {% if form.isVisibleForBailleur is defined %}
                 {% if show_email_alert(signalement.mailProprio) %}
-                    <p class="fr-badge fr-badge--error fr-mb-3w">L'adresse e-mail du bailleur n'est pas renseignée ou invalide. Vous ne pouvez pas lui envoyer le suivi.</p>
+                    <p class="fr-badge fr-badge--error fr-mb-3w">L'adresse e-mail du bailleur n'est pas renseignée ou invalide. Il ne sera pas notifié par e-mail.</p>
                 {% endif %}
                 {{ form_row(form.isVisibleForBailleur) }}
             {% endif %}

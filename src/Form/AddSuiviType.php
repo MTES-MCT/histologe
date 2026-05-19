@@ -29,7 +29,6 @@ class AddSuiviType extends AbstractType
         $signalement = $suivi->getSignalement();
         $isUsagersNotNotifiable = EmailFormatValidator::isInvalidEmail($signalement->getMailDeclarant()) && EmailFormatValidator::isInvalidEmail($signalement->getMailOccupant());
         $isLogementVacant = $signalement->getIsLogementVacant();
-        $isBailleurNotNotifiable = EmailFormatValidator::isInvalidEmail($signalement->getMailProprio());
 
         $builder->add('isVisibleForUsager', CheckboxType::class, [
             'label' => 'Usager (occupant, tiers déclarant)',
@@ -42,11 +41,7 @@ class AddSuiviType extends AbstractType
         if ($signalement->getReferenceInjonction()) {
             $builder->add('isVisibleForBailleur', CheckboxType::class, [
                 'label' => 'Bailleur',
-                'row_attr' => [
-                    'class' => $isBailleurNotNotifiable ? 'fr-hidden' : '',
-                ],
                 'required' => false,
-                'disabled' => $isBailleurNotNotifiable,
             ]);
         }
         $builder->add('isVisibleForPartners', CheckboxType::class, [
