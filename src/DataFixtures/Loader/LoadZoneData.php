@@ -4,6 +4,7 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\Enum\ZoneType;
 use App\Entity\Zone;
+use App\Manager\ZoneManager;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
@@ -18,6 +19,7 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
         private TerritoryRepository $territoryRepository,
         private UserRepository $userRepository,
         private PartnerRepository $partnerRepository,
+        private ZoneManager $zoneManager,
     ) {
     }
 
@@ -25,23 +27,27 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
     {
         $zoneRows = Yaml::parseFile(__DIR__.'/../Files/Zone.yml');
         foreach ($zoneRows['zone'] as $row) {
-            $this->loadZone($manager, $row);
+            $this->loadZone($row);
         }
-
-        $manager->flush();
     }
 
     /**
      * @param array<string, mixed> $row
      */
-    private function loadZone(ObjectManager $manager, array $row): void
+    private function loadZone(array $row): void
     {
         $zone = new Zone();
-        $zone->setArea($row['area'])
-            ->setName($row['name'])
+        $wktArea = $row['area'];
+
+        $zone->setName($row['name'])
             ->setType(ZoneType::AUTRE)
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
+
+        // Persist zone with WKT area using ZoneManager (handles GEOMETRY conversion)
+        $zone = $this->zoneManager->persistZone($zone, $wktArea);
+
+        // Add partners after zone is persisted
         foreach ($row['partners'] as $partner) {
             $zone->addPartner($this->partnerRepository->findOneBy(['email' => $partner]));
         }
@@ -50,7 +56,6 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
                 $zone->addExcludedPartner($this->partnerRepository->findOneBy(['email' => $partner]));
             }
         }
-        $manager->persist($zone);
     }
 
     public function getOrder(): int

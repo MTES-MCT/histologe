@@ -18,8 +18,12 @@ class ZoneManager
      * Persists a new Zone with WKT area converted to GEOMETRY.
      * Uses raw SQL because Doctrine doesn't natively handle GEOMETRY type.
      */
-    public function persistZone(Zone $zone): Zone
+    public function persistZone(Zone $zone, ?string $wktArea = null): Zone
     {
+        if (empty($wktArea)) {
+            $wktArea = $zone->getArea();
+        }
+
         $conn = $this->entityManager->getConnection();
 
         $conn->executeStatement(
@@ -30,7 +34,7 @@ class ZoneManager
                 'name' => $zone->getName(),
                 'type' => $zone->getType()->value,
                 'created_by_id' => $zone->getCreatedBy()->getId(),
-                'area' => $zone->getArea(),
+                'area' => $wktArea,
             ]
         );
 
