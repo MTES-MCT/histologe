@@ -3,7 +3,7 @@
   "nbResults": 1,
   "columnList": [
     "Reference_Dossier",
-    "EsaboraStatusSAS_Etat",
+    "Sas_Etat",
     "Sas_DateDecision",
     "Sas_CauseRefus",
     "SISH_DossId",
