@@ -46,7 +46,6 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
                 isVisibleForUsager: true,
-                context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
                 flush: false,
             );
             $createdAtUpdated = $signalement->getCreatedAt()->modify('+'.$second.' second');
@@ -81,10 +80,6 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
         } elseif (SuiviCategory::MESSAGE_USAGER_POST_CLOTURE->value === $row['category']) {
             $createdAt = $signalement->getClosedAt()->modify('+3 days');
         }
-        $context = null;
-        if (isset($row['context'])) {
-            $context = $row['context'];
-        }
         $category = null;
         if (isset($row['category'])) {
             $category = SuiviCategory::from($row['category']);
@@ -100,7 +95,6 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             isVisibleForUsager: $row['is_public'],
             isVisibleForBailleur: in_array($category, SuiviCategory::CategoriesSubmittedByBailleur()),
             createdAt: $createdAt,
-            context: $context,
             flush: false,
         );
         if (isset($row['force_notifications']) && $row['force_notifications']) {

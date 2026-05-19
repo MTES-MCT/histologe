@@ -131,6 +131,15 @@ enum SuiviCategory: string
     }
 
     /** @return array<SuiviCategory> */
+    public static function CategoriesNotifyUsagerOnly(): array
+    {
+        return [
+            self::ASK_DOCUMENT,
+            self::AFFECTATION_IS_ACCEPTED,
+        ];
+    }
+
+    /** @return array<SuiviCategory> */
     public static function CategoriesSubmittedByBailleur(): array
     {
         return [

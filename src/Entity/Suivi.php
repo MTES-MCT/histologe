@@ -15,7 +15,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['type'], name: 'idx_suivi_type')]
 #[ORM\Index(columns: ['created_at'], name: 'idx_suivi_created_at')]
 #[ORM\Index(columns: ['signalement_id', 'type', 'created_at'], name: 'idx_suivi_signalement_type_created_at')]
-#[ORM\Index(columns: ['context'], name: 'idx_suivi_context')]
 #[ORM\Index(columns: ['category', 'signalement_id', 'created_at'], name: 'idx_suivi_category_signalement_created_at')]
 #[ORM\Index(columns: ['is_visible_for_usager', 'signalement_id', 'created_at'], name: 'idx_suivi_is_visible_for_usager_signalement_created_at')]
 #[ORM\Index(columns: ['signalement_id', 'created_at'], name: 'idx_suivi_signalement_created_at')]
@@ -32,12 +31,6 @@ class Suivi implements EntityHistoryInterface
     public const int TYPE_PARTNER = 3;
     public const int TYPE_TECHNICAL = 4;
     public const int TYPE_USAGER_POST_CLOTURE = 5;
-    public const string CONTEXT_NOTIFY_USAGER_ONLY = 'notifyUsagerOnly';
-    public const string CONTEXT_INTERVENTION = 'intervention';
-    public const string CONTEXT_SCHS = 'schs';
-    public const string CONTEXT_SIGNALEMENT_ACCEPTED = 'signalementAccepted';
-    public const string CONTEXT_SIGNALEMENT_REFUSED = 'signalementRefused';
-    public const string CONTEXT_SIGNALEMENT_CLOSED = 'signalementClosed';
 
     public const int DEFAULT_PERIOD_INACTIVITY = 30;
     public const int DEFAULT_PERIOD_RELANCE = 45;
@@ -76,9 +69,6 @@ class Suivi implements EntityHistoryInterface
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: false)]
     private Signalement $signalement;
-
-    #[ORM\Column(length: 100, nullable: true)]
-    private ?string $context = null;
 
     private bool $sendMail = true;
 
@@ -308,18 +298,6 @@ class Suivi implements EntityHistoryInterface
     public function setType(int $type): self
     {
         $this->type = $type;
-
-        return $this;
-    }
-
-    public function getContext(): ?string
-    {
-        return $this->context;
-    }
-
-    public function setContext(?string $context): self
-    {
-        $this->context = $context;
 
         return $this;
     }

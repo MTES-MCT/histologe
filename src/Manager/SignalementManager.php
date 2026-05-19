@@ -29,7 +29,6 @@ use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
-use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\TiersInvitation;
 use App\Entity\User;
@@ -993,7 +992,6 @@ class SignalementManager
             partner: $partner,
             user: $adminUser,
             isVisibleForUsager: true,
-            context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             flush: false,
             createSubscription: $createSubscription,
         );

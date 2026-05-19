@@ -57,7 +57,6 @@ class SuiviManager
         bool $isVisibleForUsager = false,
         bool $isVisibleForBailleur = false,
         ?\DateTimeImmutable $createdAt = null,
-        ?string $context = null,
         bool $sendMail = true,
         iterable $files = [],
         bool $flush = true,
@@ -76,7 +75,6 @@ class SuiviManager
             ->setType(SuiviCategory::getSuiviTypeForSuiviCategory($category))
             ->setIsVisibleForUsager($isVisibleForUsager)
             ->setIsVisibleForBailleur($isVisibleForBailleur)
-            ->setContext($context)
             ->setSendMail($sendMail)
             ->setCategory($category);
         if (!empty($createdAt)) {

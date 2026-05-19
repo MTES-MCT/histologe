@@ -26,7 +26,7 @@ suivis:
   category: "ASK_FEEDBACK_SENT"
 -
   created_by: admin-territoire-13-01@signal-logement.fr
-  description: "Le signalement a été refusé avec le motif suivant: <br>Ne me concerne pas, voir avec la DDT."
+  description: "Le signalement a été refusé avec le motif suivant: <br>Ne me concerne pas, voir avec la DDT. Plus précisément :<br />bla bla bla"
   is_public: 1
   signalement: "2022-3"
   category: "SIGNALEMENT_IS_REFUSED"
@@ -83,7 +83,7 @@ suivis:
   category: "ASK_FEEDBACK_SENT"
 -
   created_by: admin-territoire-13-01@signal-logement.fr
-  description: "Signalement Refusé"
+  description: "Signalement Refusé.Plus précisément :<br />bla bla bla"
   is_public: 1
   signalement: "2023-21"
   category: "SIGNALEMENT_IS_REFUSED"
@@ -112,7 +112,6 @@ suivis:
   description: "Le signalement a été clôturé pour tous les partenaires avec le motif suivant <br /><strong>Refus de visite</strong><br /><strong>Desc. : </strong>bla bla bla<br />"
   is_public: 1
   signalement: "2025-07"
-  context: signalementClosed
   category: "SIGNALEMENT_IS_CLOSED"
 - 
   created_by: user-13-05@signal-logement.fr

@@ -92,7 +92,6 @@ class SignalementActionController extends AbstractController
             partner: $partner,
             user : $user,
             isVisibleForUsager: true,
-            context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             createSubscription: false,
             flush: false,
         );
@@ -131,7 +130,6 @@ class SignalementActionController extends AbstractController
                 partner: $partner,
                 user : $user,
                 isVisibleForUsager: true,
-                context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
                 subscriptionCreated: $subscriptionCreated,
             );
             $this->addFlash('success', ['title' => 'Signalement accepté', 'message' => 'Le signalement a bien été accepté.']);
@@ -178,7 +176,6 @@ class SignalementActionController extends AbstractController
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user : $user,
             isVisibleForUsager: true,
-            context: Suivi::CONTEXT_SIGNALEMENT_REFUSED,
             files: $refusSignalement->getFiles(),
             subscriptionCreated: $subscriptionCreated,
         );

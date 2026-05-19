@@ -3,6 +3,7 @@
 namespace App\DataFixtures\Loader;
 
 use App\Entity\Enum\NotificationType;
+use App\Entity\Enum\SuiviCategory;
 use App\Factory\NotificationFactory;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
@@ -50,7 +51,7 @@ class LoadNotification extends Fixture implements OrderedFixtureInterface
             $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $partner]);
         }
         if ('CLOTURE_SIGNALEMENT' === $row['type']) {
-            $suivi = $this->suiviRepository->findOneBy(['signalement' => $signalement, 'context' => 'signalementClosed']);
+            $suivi = $this->suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::SIGNALEMENT_IS_CLOSED->name]);
         }
         if (!empty($row['suivi'])) {
             $suivi = $this->suiviRepository->findOneBy(['signalement' => $signalement, 'description' => $row['suivi']]);

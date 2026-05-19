@@ -5,7 +5,6 @@ namespace App\EventSubscriber;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Intervention;
-use App\Entity\Suivi;
 use App\Event\InterventionCreatedEvent;
 use App\Manager\SuiviManager;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
@@ -64,7 +63,7 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             partner: $event->getPartner(),
             user: $event->getUser(),
             isVisibleForUsager: $isVisibleForUsager,
-            context: Suivi::CONTEXT_INTERVENTION,
+            sendMail: false,
         );
         $event->setSuivi($suivi);
         if (InterventionType::VISITE === $intervention->getType()
