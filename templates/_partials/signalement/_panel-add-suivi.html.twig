@@ -1,0 +1,31 @@
+<dialog aria-labelledby="panel-add-suivi-title" id="panel-add-suivi" class="side-panel">
+    <div class="side-panel__inner">
+        <div class="side-panel__header">
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-add-suivi" aria-controls="panel-add-suivi" aria-expanded="false">Fermer</button>
+        </div>
+        <div class="side-panel__content fr-mx-3w">
+            <h1 id="panel-add-suivi-title" class="fr-modal__title title-blue-france">Ajouter un suivi</h1>
+            <p>
+                Par défaut, votre message sera visible de tous les partenaires affectés au dossier.
+                <br>
+                Vous pouvez choisir de le partager aussi à l'usager 
+                {% if signalement.referenceInjonction %}et / ou au bailleur en cochant les cases correspondantes{% else %}en cochant la case correspondante{% endif %}.
+            </p>
+            {% include "back/signalement/view/add-edit-suivi-form.html.twig" with {'form': addSuiviForm, 'formId': 'signalement-add-suivi-form'} %}
+        </div>
+        <div class="side-panel__footer">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                <li>
+                    <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line" form="signalement-add-suivi-form" id="signalement-add-suivi-submit">
+                        Enregistrer le suivi interne
+                    </button>
+                </li>
+                <li>
+                    <button class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel" data-panel="panel-add-suivi" aria-controls="panel-add-suivi" aria-expanded="false" type="button">
+                        Annuler
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</dialog>

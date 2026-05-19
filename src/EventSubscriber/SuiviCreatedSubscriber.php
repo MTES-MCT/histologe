@@ -44,6 +44,7 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         }
         $this->sendToAdminAndPartners($suivi);
         $this->sendToUsagers($suivi);
+        $this->sendToBailleur($suivi);
     }
 
     private function sendToAdminAndPartners(Suivi $suivi): void
@@ -94,6 +95,13 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
                     }
                     break;
             }
+        }
+    }
+
+    private function sendToBailleur(Suivi $suivi): void
+    {
+        if ($suivi->getSendMail() && $suivi->getIsVisibleForBailleur() && !in_array($suivi->getCategory(), SuiviCategory::CategoriesSubmittedByBailleur())) {
+            $this->notificationAndMailSender->sendNewSuiviToBailleur($suivi);
         }
     }
 }

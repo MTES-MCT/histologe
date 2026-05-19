@@ -68,8 +68,9 @@
                 {% if is_granted('SUIVI_EDIT', suivi) %}
                     <button title="Modifier le suivi" 
                         class="fr-btn fr-btn--sm fr-btn--secondary fr-fi-edit-line btn-edit-suivi"
-                        data-fr-opened="false"
-                        aria-controls="fr-modal-edit-suivi"
+                        data-panel-open="panel-edit-suivi"
+                        aria-controls="panel-edit-suivi" 
+                        aria-expanded="false"
                         data-url="{{ path('back_signalement_edit_suivi',{suivi:suivi.id}) }}"
                         >
                     </button>
