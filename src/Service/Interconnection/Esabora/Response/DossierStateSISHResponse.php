@@ -7,7 +7,7 @@ use App\Service\Interconnection\Esabora\EsaboraSISHService;
 class DossierStateSISHResponse implements DossierResponseInterface
 {
     public const string COL_REFERENCE_DOSSIER = 'Reference_Dossier';
-    public const string COL_SAS_ETAT = 'EsaboraStatusSAS_Etat';
+    public const string COL_SAS_ETAT = 'Sas_Etat';
     public const string COL_SAS_DATE_DECISION = 'Sas_DateDecision';
     public const string COL_SAS_CAUSE_REFUS = 'Sas_CauseRefus';
     public const string COL_SISH_DOSS_ID = 'SISH_DossId';
