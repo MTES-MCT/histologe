@@ -127,4 +127,16 @@ class ZoneRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * Gets the raw GEOMETRY binary value for a zone's area field.
+     * This bypasses the postLoad listener that converts GEOMETRY to WKT.
+     */
+    public function getRawAreaGeometry(Zone $zone): mixed
+    {
+        return $this->getEntityManager()->getConnection()->executeQuery(
+            'SELECT area FROM zone WHERE id = :id',
+            ['id' => $zone->getId()]
+        )->fetchOne();
+    }
 }

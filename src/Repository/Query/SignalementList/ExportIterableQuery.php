@@ -346,10 +346,10 @@ class ExportIterableQuery
     }
 
     /**
-    * @param array<int> $signalementIds
-    *
-    * @return array<int, array<string, mixed>>
-    */
+     * @param array<int> $signalementIds
+     *
+     * @return array<int, array<string, mixed>>
+     */
     private function fetchZonesData(array $signalementIds): array
     {
         // On récupère le nom des zones dans lesquelles se trouvent les signalements

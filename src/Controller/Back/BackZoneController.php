@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Entity\Zone;
 use App\Form\SearchZoneType;
 use App\Form\ZoneType;
+use App\Manager\ZoneManager;
 use App\Repository\ZoneRepository;
 use App\Security\Voter\ZoneVoter;
 use App\Service\Import\CsvParser;
@@ -79,7 +80,7 @@ class BackZoneController extends AbstractController
     }
 
     #[Route('/ajouter', name: 'back_territory_management_zone_add', methods: 'POST')]
-    public function add(Request $request, EntityManagerInterface $em, CsvParser $csvParser): JsonResponse|RedirectResponse
+    public function add(Request $request, EntityManagerInterface $em, CsvParser $csvParser, ZoneManager $zoneManager): JsonResponse|RedirectResponse
     {
         $zone = new Zone();
         /** @var User $user */
@@ -107,8 +108,9 @@ class BackZoneController extends AbstractController
                 return $this->json($response, $response['code']);
             }
             $zone->setCreatedBy($user);
-            $em->persist($zone);
-            $em->flush();
+
+            // Persist zone with WKT area converted to GEOMETRY
+            $zone = $zoneManager->persistZone($zone);
 
             $this->addFlash('success', ['title' => 'Zone ajoutée', 'message' => 'La zone a bien été ajoutée.']);
             $url = $this->generateUrl('back_territory_management_zone_show', ['zone' => $zone->getId()]);
@@ -120,7 +122,7 @@ class BackZoneController extends AbstractController
     }
 
     #[Route('/editer/{zone}', name: 'back_territory_management_zone_edit', methods: ['GET', 'POST'])]
-    public function edit(Zone $zone, Request $request, EntityManagerInterface $em, CsvParser $csvParser): Response
+    public function edit(Zone $zone, Request $request, EntityManagerInterface $em, CsvParser $csvParser, ZoneManager $zoneManager): Response
     {
         $this->denyAccessUnlessGranted(ZoneVoter::ZONE_MANAGE, $zone);
 
@@ -134,7 +136,9 @@ class BackZoneController extends AbstractController
             }
             $this->validateArea($zone, $form, $em);
             if ($form->isValid()) {
-                $em->flush();
+                // Update zone with WKT area converted to GEOMETRY
+                $zoneManager->updateZone($zone);
+
                 $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'La zone a bien été modifiée.']);
 
                 return $this->redirectToRoute('back_territory_management_zone_show', ['zone' => $zone->getId()]);
