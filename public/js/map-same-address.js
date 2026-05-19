@@ -54,10 +54,10 @@ function initMarkers() {
     }
 }
 
-initMap();
-
 document.querySelectorAll('.show-on-map').forEach(function (btn) {
     btn.addEventListener('click', function () {
+        toggle.checked = true;
+        applyMapToggle();
         var marker = markersByTarget.get(btn.dataset.target);
         if (marker) {
             map.setView(marker.getLatLng());
@@ -92,6 +92,7 @@ searchForm.addEventListener('change', function () {
     initMap();
     showPage(1);
 });
+
 // Déclenchement immédiat lors de la sélection d'une suggestion dans un datalist
 searchForm.querySelectorAll('input[list]').forEach(function (input) {
     input.addEventListener('input', function () {
@@ -233,3 +234,32 @@ showPage(1);
 
 // Appliquer les filtres au chargement (au cas où le navigateur pré-remplit les champs)
 searchForm.dispatchEvent(new Event('change'));
+
+// Gestion du toggle
+var toggle = document.getElementById('toggle-map');
+var listContainer = document.querySelector('.container-same-address-list');
+var mapContainer = document.querySelector('.container-same-address-map');
+
+function applyMapToggle() {
+    if (toggle.checked) {
+        listContainer.classList.remove('fr-col-12');
+        listContainer.classList.add('fr-col-md-5');
+        mapContainer.classList.remove('fr-hidden');
+        if (map) {
+            map.invalidateSize();
+            if (markersByTarget.size > 0) {
+                var group = L.featureGroup(Array.from(markersByTarget.values()));
+                map.fitBounds(group.getBounds().pad(0.01));
+            }
+        } else {
+            initMap();
+        }
+    } else {
+        listContainer.classList.remove('fr-col-md-5');
+        listContainer.classList.add('fr-col-12');
+        mapContainer.classList.add('fr-hidden');
+    }
+}
+
+toggle.addEventListener('change', applyMapToggle);
+applyMapToggle();

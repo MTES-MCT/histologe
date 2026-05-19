@@ -16,19 +16,18 @@
                     <h1 class="fr-mb-0">Liste des dossiers à la même adresse</h1>
                 </div>
                 <div class="fr-col-4 fr-text--right">
-                    <a
-                        href="{% if nbSignalements > 0 %}{{path('back_signalement_same_address_export')}}{% else %}#{% endif %}"
-                        class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill {% if nbSignalements == 0 %}fr-label--disabled{% endif %} fr-btn--block fr-btn--md-inline"
+                    <button type="submit" form="search-same-address-form"
+                        class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill fr-btn--block fr-btn--md-inline"
                         aria-label="Exporter les résultats des dossiers à la même adresse"
                         title="Exporter les résultats"
-                    >Exporter les résultats</a>
+                    >Exporter les résultats</button>
                 </div>
             </div>
         </header>
     </section>
 
     <section class="fr-col-12">
-        <form id="search-same-address-form" class="fr-pt-4v">
+        <form id="search-same-address-form" action="{{path('back_signalement_same_address_export')}}" method="post" target="_blank" class="fr-pt-4v">
             <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
                 <div class="fr-col-12 fr-col-lg-3">
                     <div class="fr-input-group">
@@ -90,9 +89,19 @@
     </section>
 
     <section class="fr-col-12 fr-py-5v">
-        <h2 class="title-counters-same-address"></h2>
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+            <div class="fr-col-9">
+                <h2 class="title-counters-same-address"></h2>
+            </div>
+            <div class="fr-col-3">
+                <div class="fr-toggle">
+                    <input type="checkbox" class="fr-toggle__input" id="toggle-map" checked>
+                    <label class="fr-toggle__label" for="toggle-map">Afficher la carte</label>
+                </div>
+            </div>
+        </div>
         <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-md-5">
+            <div class="fr-col-12 fr-col-md-5 container-same-address-list">
                 {% for address in signalementsByAddress %}
                     <div 
                         class="same-address-item signalement-group-data-card squared fr-p-5v fr-hidden is-active-filters"
@@ -156,11 +165,9 @@
                         </div>
                     </div>
                 {% endfor %}
-                <div class="fr-col-12">
-                    <nav role="navigation" class="fr-pagination pagination-full-js" aria-label="Pagination"></nav>
-                </div>
+                <nav role="navigation" class="fr-pagination pagination-full-js" aria-label="Pagination"></nav>
             </div>
-            <div class="fr-col-12 fr-col-md-7">
+            <div class="fr-col-12 fr-col-md-7 container-same-address-map">
                 <div class="signalement-group-data-card squared" id="map-same-address"></div>
             </div>
         </div>

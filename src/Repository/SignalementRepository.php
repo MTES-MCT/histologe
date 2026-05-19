@@ -639,6 +639,7 @@ class SignalementRepository extends ServiceEntityRepository
                 's.id',
                 's.uuid',
                 's.createdAt',
+                's.closedAt',
                 's.reference',
                 's.statut',
                 's.adresseOccupant',
@@ -670,6 +671,7 @@ class SignalementRepository extends ServiceEntityRepository
         } elseif ($user->isTerritoryAdmin()) {
             $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
         } else {
+            // inutilisé pour l'instant car la route est limité au RT, mais fonctionnel pour les autres profils.
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')
                 ->andWhere('partner IN (:partners)')
