@@ -644,4 +644,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $whereClause;
     }
+
+    public function findWithTerritoryRelations(int $id): ?User
+    {
+        return $this->createQueryBuilder('u')
+            ->select('u', 'up', 'p', 't')
+            ->leftJoin('u.userPartners', 'up')
+            ->leftJoin('up.partner', 'p')
+            ->leftJoin('p.territory', 't')
+            ->where('u.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

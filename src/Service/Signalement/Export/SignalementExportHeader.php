@@ -83,6 +83,7 @@ class SignalementExportHeader
             'Commentaire de clôture',
             'Longitude',
             'Latitude',
+            'Zones',
         ];
     }
 }

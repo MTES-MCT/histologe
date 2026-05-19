@@ -318,7 +318,7 @@ class PartnerRepository extends ServiceEntityRepository
                     )
                     OR (
                         z.id IS NOT NULL
-                        AND ST_Contains(ST_GeomFromText(z.area), Point(:lng, :lat))
+                        AND ST_Contains(z.area, Point(:lng, :lat))
                     )
                     OR (
                         (p.insee IS NULL OR p.insee LIKE \'[]\' OR p.insee LIKE \'[""]\' )
@@ -327,7 +327,7 @@ class PartnerRepository extends ServiceEntityRepository
                     )
                     OR (c.code_insee = :insee)
                 )
-                AND (ez.id IS NULL OR NOT ST_Contains(ST_GeomFromText(ez.area), Point(:lng, :lat)))
+                AND (ez.id IS NULL OR NOT ST_Contains(ez.area, Point(:lng, :lat)))
                 '.$clauseSubquery.'
                 '.$whereCompetenceInjonctionBailleur.'
                 ORDER BY p.nom ASC';

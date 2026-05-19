@@ -36,12 +36,14 @@ readonly class ListExportMessageHandler
     public function __invoke(ListExportMessage $listExportMessage): void
     {
         try {
-            $user = $this->userRepository->find($listExportMessage->getUserId());
+            // avoids exception when super admin user
+            $user = $this->userRepository->findWithTerritoryRelations($listExportMessage->getUserId());
             $filters = $listExportMessage->getFilters();
             $selectedColumns = $listExportMessage->getSelectedColumns();
             $format = $listExportMessage->getFormat();
 
-            $timezone = $user->getFirstTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+            $firstTerritory = $user->getFirstTerritory();
+            $timezone = $firstTerritory?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
             $datetimeStr = (new \DateTimeImmutable())->setTimezone(new \DateTimeZone($timezone))->format('Ymd-His');
             $uuid = Uuid::v4();
             $filename = 'export-histologe-'.$listExportMessage->getUserId().'-'.$datetimeStr.'-'.$uuid.'.'.$format;

@@ -74,7 +74,7 @@ class ZoneRepository extends ServiceEntityRepository
         $sql = '
             SELECT s.uuid, s.reference, s.geoloc, s.adresse_occupant, s.cp_occupant, s.ville_occupant
             FROM signalement s
-            JOIN zone z ON ST_Contains(ST_GeomFromText(z.area),
+            JOIN zone z ON ST_Contains(z.area,
             Point(JSON_EXTRACT(s.geoloc, "$.lng"), JSON_EXTRACT(s.geoloc, "$.lat")))
             WHERE z.id = :zone AND s.territory_id = z.territory_id
             AND s.statut NOT IN (:statut_list)
@@ -99,7 +99,7 @@ class ZoneRepository extends ServiceEntityRepository
         $sql = '
             SELECT z.name
             FROM signalement s
-            JOIN zone z ON ST_Contains(ST_GeomFromText(z.area),
+            JOIN zone z ON ST_Contains(z.area,
             Point(JSON_EXTRACT(s.geoloc, "$.lng"), JSON_EXTRACT(s.geoloc, "$.lat")))
             WHERE s.id = :signalement AND z.territory_id = z.territory_id
             ORDER BY z.name ASC
@@ -114,7 +114,9 @@ class ZoneRepository extends ServiceEntityRepository
      */
     public function findForUserAndTerritory(User $user, ?Territory $territory): array
     {
-        $qb = $this->createQueryBuilder('z');
+        $qb = $this->createQueryBuilder('z')
+            ->select('partial z.{id, name, type, createdAt, updatedAt}'); // Exclude area column (GEOMETRY is heavy)
+
         if (!$user->isSuperAdmin()) {
             $qb->andWhere('z.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
         }

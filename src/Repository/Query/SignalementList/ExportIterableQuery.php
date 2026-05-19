@@ -10,6 +10,8 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Entity\View\ViewLatestIntervention;
 use App\Service\Signalement\Export\SignalementExportSelectableColumns;
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 
@@ -90,6 +92,11 @@ class ExportIterableQuery
             $visiteData = $this->fetchVisiteData($signalementIds, $selectedColumns);
         }
 
+        $zonesData = [];
+        if (\in_array('ZONES', $selectedColumns, true)) {
+            $zonesData = $this->fetchZonesData($signalementIds);
+        }
+
         foreach ($mainRows as $row) {
             $id = $row['id'];
             yield array_merge(
@@ -99,6 +106,7 @@ class ExportIterableQuery
                 $photosData[$id] ?? [],
                 $documentsData[$id] ?? [],
                 $visiteData[$id] ?? [],
+                $zonesData[$id] ?? [],
             );
         }
     }
@@ -332,6 +340,41 @@ class ExportIterableQuery
             $id = $row['signalementId'];
             unset($row['signalementId']);
             $indexed[$id] = $row;
+        }
+
+        return $indexed;
+    }
+
+    /**
+    * @param array<int> $signalementIds
+    *
+    * @return array<int, array<string, mixed>>
+    */
+    private function fetchZonesData(array $signalementIds): array
+    {
+        // On récupère le nom des zones dans lesquelles se trouvent les signalements
+        // On adapte ZoneRepository::findZonesBySignalement pour faire une requête en batch sur les signalements filtrés
+        $result = $this->em->getConnection()->executeQuery(
+            '
+            SELECT s.id as signalementId, GROUP_CONCAT(z.name SEPARATOR :sep) as zones
+            FROM signalement s
+            LEFT JOIN zone z ON ST_Contains(z.area, Point(JSON_EXTRACT(s.geoloc, "$.lng"), JSON_EXTRACT(s.geoloc, "$.lat")))
+            WHERE s.id IN (:signalementIds) AND s.geoloc IS NOT NULL
+            GROUP BY s.id
+            ',
+            [
+                'signalementIds' => $signalementIds,
+                'sep' => SignalementExport::SEPARATOR_GROUP_CONCAT,
+            ],
+            [
+                'signalementIds' => ArrayParameterType::INTEGER,
+                'sep' => ParameterType::STRING,
+            ]
+        )->fetchAllAssociative();
+
+        $indexed = [];
+        foreach ($result as $row) {
+            $indexed[$row['signalementId']] = ['zones' => $row['zones']];
         }
 
         return $indexed;

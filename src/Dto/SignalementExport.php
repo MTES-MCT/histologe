@@ -76,6 +76,7 @@ class SignalementExport
         public ?string $comCloture = null,
         public ?string $longitude = null,
         public ?string $latitude = null,
+        public ?string $zones = null,
     ) {
     }
 }

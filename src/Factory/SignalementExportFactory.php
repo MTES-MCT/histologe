@@ -51,7 +51,7 @@ class SignalementExportFactory
             'isLogementSocial', 'isPreavisDepart', 'isRelogement', 'isNotOccupant',
             'nomDeclarant', 'matriculeDeclarant', 'mailDeclarant', 'structureDeclarant',
             'lienDeclarantOccupant', 'interventionNbVisites', 'interventionConcludeProcedure',
-            'interventionDetails', 'comCloture',
+            'interventionDetails', 'comCloture', 'zones',
         ], null);
 
         $createdAt = $data['createdAt'] instanceof \DateTimeImmutable
@@ -185,6 +185,7 @@ class SignalementExportFactory
             comCloture: $data['comCloture'] ? HtmlCleaner::clean($data['comCloture']) : '',
             longitude: is_array($geoloc) ? $geoloc['lng'] ?? '' : '',
             latitude: is_array($geoloc) ? $geoloc['lat'] ?? '' : '',
+            zones: $data['zones'] ?? null,
         );
     }
 
