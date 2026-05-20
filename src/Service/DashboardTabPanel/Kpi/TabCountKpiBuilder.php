@@ -3,15 +3,7 @@
 namespace App\Service\DashboardTabPanel\Kpi;
 
 use App\Entity\User;
-use App\Repository\Query\Dashboard\DossiersQuery;
-use App\Repository\Query\Dashboard\DossiersSansSuivisPartenaireQuery;
-use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
-use App\Repository\Query\Dashboard\DossiersUndeliverableEmailQuery;
-use App\Repository\Query\Dashboard\NouveauxDossiersKpiQuery;
-use App\Repository\Query\Dashboard\SignalementsSansAffectationAccepteeQuery;
 use App\Service\DashboardTabPanel\TabQueryParameters;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class TabCountKpiBuilder
@@ -29,14 +21,8 @@ class TabCountKpiBuilder
     private array $partners = [];
 
     public function __construct(
-        private readonly NouveauxDossiersKpiQuery $nouveauxDossiersKpiQuery,
+        private readonly TabCountKpiCalculatorInterface $tabCountKpiCalculator,
         private readonly Security $security,
-        private readonly TabCountKpiCacheHelper $tabCountKpiCacheHelper,
-        private readonly SignalementsSansAffectationAccepteeQuery $signalementsSansAffectationAccepteeQuery,
-        private readonly DossiersSuivisUsagerQuery $dossiersSuivisUsagerQuery,
-        private readonly DossiersQuery $dossiersQuery,
-        private readonly DossiersSansSuivisPartenaireQuery $dossiersSansSuivisPartenaireQuery,
-        private readonly DossiersUndeliverableEmailQuery $dossiersUndeliverableEmailQuery,
     ) {
     }
 
@@ -71,55 +57,23 @@ class TabCountKpiBuilder
         return $this;
     }
 
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
     public function withTabCountKpi(): static
     {
         $params = new TabQueryParameters(
             territoireId: $this->territoryId,
+            partners: $this->partners,
             mesDossiersMessagesUsagers: $this->mesDossiersMessagesUsagers,
             mesDossiersAverifier: $this->mesDossiersAverifier,
             mesDossiersActiviteRecente: $this->mesDossiersActiviteRecente,
-            queryCommune: $this->queryCommune,
-            partners: $this->partners
+            queryCommune: $this->queryCommune
         );
         /** @var User $user */
         $user = $this->security->getUser();
-        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $countNouveauxDossiers = $this->tabCountKpiCacheHelper->getOrSet(
-                TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS,
-                $user,
-                $params,
-                fn () => $this->nouveauxDossiersKpiQuery->countNouveauxDossiersKpi($this->territories)
-            );
-        } else {
-            $countNouveauxDossiers = $this->tabCountKpiCacheHelper->getOrSet(
-                TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS,
-                $user,
-                $params,
-                fn () => $this->nouveauxDossiersKpiQuery->countNouveauxDossiersKpi($this->territories, $user)
-            );
-        }
-        $countDossiersAFermer = $this->tabCountKpiCacheHelper->getOrSet(
-            TabCountKpiCacheHelper::DOSSIERS_A_FERMER,
-            $user,
-            $params,
-            fn () => $this->dossiersQuery->countAllDossiersAferme($user, $params)
-        );
-        $countDossiersMessagesUsagers = $this->tabCountKpiCacheHelper->getOrSet(
-            TabCountKpiCacheHelper::DOSSIERS_MESSAGES_USAGERS,
-            $user,
-            $params,
-            fn () => $this->dossiersSuivisUsagerQuery->countAllMessagesUsagers($user, $params)
-        );
-        $countDossiersAVerifier = $this->tabCountKpiCacheHelper->getOrSet(
-            TabCountKpiCacheHelper::DOSSIERS_A_VERIFIER,
-            $user,
-            $params,
-            fn () => $this->countAllDossiersAVerifier($user, $params)
-        );
+
+        $countNouveauxDossiers = $this->tabCountKpiCalculator->countNouveauxDossiers($this->territories, $user);
+        $countDossiersAFermer = $this->tabCountKpiCalculator->countDossiersAFermer($user, $params);
+        $countDossiersMessagesUsagers = $this->tabCountKpiCalculator->countDossiersMessagesUsagers($user, $params);
+        $countDossiersAVerifier = $this->tabCountKpiCalculator->countDossiersAVerifier($user, $params);
 
         $this->tabCountKpi = new TabCountKpi(
             countNouveauxDossiers: $countNouveauxDossiers->total(),
@@ -134,14 +88,5 @@ class TabCountKpiBuilder
     public function build(): TabCountKpi
     {
         return $this->tabCountKpi;
-    }
-
-    private function countAllDossiersAVerifier(User $user, ?TabQueryParameters $params): CountDossiersAVerifier
-    {
-        return new CountDossiersAVerifier(
-            countSignalementsSansAffectationAcceptee: $this->signalementsSansAffectationAccepteeQuery->countSignalements($user, $params),
-            countSignalementsSansSuiviPartenaireDepuis60Jours: $this->dossiersSansSuivisPartenaireQuery->countSignalements($user, $params),
-            countAdresseEmailAVerifier: $this->dossiersUndeliverableEmailQuery->count($user, $params)
-        );
     }
 }

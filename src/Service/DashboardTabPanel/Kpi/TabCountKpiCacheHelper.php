@@ -4,6 +4,7 @@ namespace App\Service\DashboardTabPanel\Kpi;
 
 use App\Entity\User;
 use App\Service\DashboardTabPanel\TabQueryParameters;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
@@ -21,17 +22,24 @@ class TabCountKpiCacheHelper
     {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function getOrSet(string $kpiName, User $user, ?TabQueryParameters $params, callable $callback): mixed
     {
         $key = $this->generateKey($kpiName, $user, $params);
 
-        return $this->cache->get($key, function (ItemInterface $item) use ($callback) {
+        return $this->cache->get($key, function (ItemInterface $item) use ($callback, $user, $kpiName, $params) {
             $item->expiresAfter($this->parameterBag->get('tab_data_kpi_cache_expired_after'));
+            $item->tag($this->getTags($user, $kpiName, $params));
 
             return $callback();
         });
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function delete(string $kpiName, User $user, ?TabQueryParameters $params): bool
     {
         $key = $this->generateKey($kpiName, $user, $params);
@@ -47,10 +55,8 @@ class TabCountKpiCacheHelper
         $otherParamsKey = '';
         if ($params) {
             switch ($kpiName) {
-                case self::NOUVEAUX_DOSSIERS:
-                    $otherParams = null;
-                    break;
                 case self::DOSSIERS_A_FERMER:
+                case self::NOUVEAUX_DOSSIERS:
                     $otherParams = null;
                     break;
                 case self::DOSSIERS_MESSAGES_USAGERS:
@@ -122,5 +128,25 @@ class TabCountKpiCacheHelper
         asort($partners);
 
         return implode('-', $partners);
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function getTags(User $user, string $kpiName, ?TabQueryParameters $params): array
+    {
+        $tags = [];
+
+        if ($params?->territoireId) {
+            $tags[] = 'territory_'.$kpiName.'_'.$params->territoireId;
+        } elseif (!$user->isSuperAdmin()) {
+            foreach ($user->getPartnersTerritories() as $territory) {
+                $tags[] = 'territory_'.$kpiName.'_'.$territory->getId();
+            }
+        } else {
+            $tags[] = 'territory_'.$kpiName.'_all';
+        }
+
+        return $tags;
     }
 }
