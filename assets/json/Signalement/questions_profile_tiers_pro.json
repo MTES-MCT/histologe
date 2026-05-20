@@ -368,10 +368,10 @@
         },
         {
           "type": "SignalementFormInfo",
-          "label": "Avant de déposer un signalement, il est obligatoire pour les locataires du parc social de prévenir le bailleur. Ils peuvent le faire grâce au modèle de courrier que vous pourrez télécharger à la page suivante ou en le sollicitant par les canaux de communication habituels.",
+          "label": "Avant de déposer un signalement, il est fortement recommandé de prévenir le bailleur.",
           "slug": "info_procedure_bailleur_prevenu_info",
           "conditional": {
-            "show": "formStore.data.info_procedure_bailleur_prevenu === 'non' && formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui'"
+            "show": "formStore.data.info_procedure_bailleur_prevenu === 'non'"
           }
         },
         {
