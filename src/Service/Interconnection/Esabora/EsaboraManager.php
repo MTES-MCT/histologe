@@ -340,7 +340,6 @@ class EsaboraManager
             category: SuiviCategory::MESSAGE_ESABORA_SCHS,
             partner: $affectation->getPartner(),
             user: $this->adminUser,
-            context: Suivi::CONTEXT_SCHS,
             flush: false,
         );
 

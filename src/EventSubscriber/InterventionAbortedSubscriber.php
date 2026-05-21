@@ -5,7 +5,6 @@ namespace App\EventSubscriber;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Intervention;
-use App\Entity\Suivi;
 use App\Entity\User;
 use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
@@ -50,7 +49,7 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
                 partner: $context['createdByPartner'],
                 user: $currentUser,
                 isVisibleForUsager: true,
-                context: Suivi::CONTEXT_INTERVENTION,
+                sendMail: false,
             );
 
             $this->visiteNotifier->notifyUsagers(

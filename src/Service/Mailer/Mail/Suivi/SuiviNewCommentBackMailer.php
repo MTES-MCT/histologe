@@ -41,7 +41,7 @@ class SuiviNewCommentBackMailer extends AbstractNotificationMailer
             if ($suivi->getPartner()) {
                 $suiviCreator .= ' ('.$suivi->getPartner()->getNom().')';
             }
-        } elseif (in_array($suivi->getCategory(), SuiviCategory::CategoriesSubmittedByBailleur())) {
+        } elseif (in_array($suivi->getCategory(), SuiviCategory::categoriesSubmittedByBailleur())) {
             $suiviCreator = $signalement->getDisplayedNomProprio().' (bailleur)';
         } elseif ($signalement->getPrenomDeclarant()) {
             $suiviCreator = $signalement->getPrenomDeclarant().' '.$signalement->getNomDeclarant();

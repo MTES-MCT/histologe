@@ -17,14 +17,14 @@ final class Version20260504151832 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        foreach (SuiviCategory::CategoriesSubmittedByBailleur() as $category) {
+        foreach (SuiviCategory::categoriesSubmittedByBailleur() as $category) {
             $this->addSql('UPDATE suivi SET is_visible_for_bailleur = 1 WHERE category = :category', ['category' => $category->value]);
         }
     }
 
     public function down(Schema $schema): void
     {
-        foreach (SuiviCategory::CategoriesSubmittedByBailleur() as $category) {
+        foreach (SuiviCategory::categoriesSubmittedByBailleur() as $category) {
             $this->addSql('UPDATE suivi SET is_visible_for_bailleur = 0 WHERE category = :category', ['category' => $category->value]);
         }
     }

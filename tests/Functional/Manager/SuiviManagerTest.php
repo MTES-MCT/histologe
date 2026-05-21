@@ -77,6 +77,8 @@ class SuiviManagerTest extends KernelTestCase
             'motif_cloture' => MotifCloture::tryFrom('NON_DECENCE'),
             'subject' => 'test',
         ];
+        $signalement->setMotifCloture($params['motif_cloture']);
+        $signalement->setClosedBy($user);
         $suivi = $this->suiviManager->createSuivi(
             signalement : $signalement,
             description : SuiviManager::buildDescriptionClotureSignalement($params),
@@ -156,6 +158,8 @@ class SuiviManagerTest extends KernelTestCase
             'motif_cloture' => MotifCloture::tryFrom('NON_DECENCE'),
             'subject' => 'test',
         ];
+        $signalement->setMotifCloture($params['motif_cloture']);
+        $signalement->setClosedBy($user);
         $suivi = $this->suiviManager->createSuivi(
             signalement : $signalement,
             description : SuiviManager::buildDescriptionClotureSignalement($params),

@@ -323,8 +323,8 @@ class SuiviRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s')
             ->where('s.originalData IS NOT NULL')
-            ->andWhere('s.context = :context')
-            ->setParameter('context', Suivi::CONTEXT_SCHS);
+            ->andWhere('s.category = :category')
+            ->setParameter('category', SuiviCategory::MESSAGE_ESABORA_SCHS);
 
         $list = $qb->getQuery()->getResult();
         $indexed = [];

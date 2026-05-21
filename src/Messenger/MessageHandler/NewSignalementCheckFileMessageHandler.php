@@ -230,7 +230,6 @@ class NewSignalementCheckFileMessageHandler
             category: SuiviCategory::ASK_DOCUMENT,
             user: $userAdmin,
             isVisibleForUsager: true,
-            context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
         );
     }
 }
