@@ -277,8 +277,20 @@
         },
         {
           "type": "SignalementFormInfo",
-          "label": "Avant de déposer un signalement, il est recommandé de prévenir votre bailleur. Vous pourrez le faire grâce au modèle de courrier que nous vous enverrons par e-mail dès la fin de votre signalement.",
+          "label": "Avant de déposer un signalement, il est recommandé de prévenir votre bailleur. Vous pourrez le faire grâce au modèle de courrier que nous vous enverrons par e-mail dès la fin de votre signalement ou que vous pouvez télécharger en cliquant sur le bouton ci-dessous.",
           "slug": "info_procedure_bailleur_prevenu_info_non",
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu === 'non'"
+          }
+        },
+        {
+          "type": "SignalementFormLink",
+          "label": "Télécharger le courrier",
+          "description": "Télécharger le modèle de courrier à envoyer au bailleur",
+          "customCss": "fr-btn",
+          "link": "/build/files/Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf",
+          "linktarget": "_blank",
+          "slug": "info_procedure_bailleur_prevenu_info_link",
           "conditional": {
             "show": "formStore.data.info_procedure_bailleur_prevenu === 'non'"
           }
