@@ -70,7 +70,7 @@ class ZoneManager
      * Retrieves the raw GEOMETRY binary value and sets it back to prevent Doctrine
      * from attempting to persist WKT text as GEOMETRY.
      */
-    private function flushWithAreaProtection(Zone $zone): void
+    public function flushWithAreaProtection(Zone $zone): void
     {
         // Get original GEOMETRY binary value to prevent Doctrine from trying to update it
         $originalArea = $this->zoneRepository->getRawAreaGeometry($zone);
