@@ -47,15 +47,25 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
         // Persist zone with WKT area using ZoneManager (handles GEOMETRY conversion)
         $zone = $this->zoneManager->persistZone($zone, $wktArea);
 
-        // Add partners after zone is persisted
-        foreach ($row['partners'] as $partner) {
-            $zone->addPartner($this->partnerRepository->findOneBy(['email' => $partner]));
-        }
-        if (isset($row['excluded_partners'])) {
-            foreach ($row['excluded_partners'] as $partner) {
-                $zone->addExcludedPartner($this->partnerRepository->findOneBy(['email' => $partner]));
+        // Add partners using entity methods for consistency with back_territory_management_zone_edit
+        foreach ($row['partners'] as $partnerEmail) {
+            $partnerEntity = $this->partnerRepository->findOneBy(['email' => $partnerEmail]);
+            if ($partnerEntity) {
+                $zone->addPartner($partnerEntity);
             }
         }
+
+        if (isset($row['excluded_partners'])) {
+            foreach ($row['excluded_partners'] as $partnerEmail) {
+                $partnerEntity = $this->partnerRepository->findOneBy(['email' => $partnerEmail]);
+                if ($partnerEntity) {
+                    $zone->addExcludedPartner($partnerEntity);
+                }
+            }
+        }
+
+        // Synchronize partner relationships via ZoneManager
+        $this->zoneManager->flushWithAreaProtection($zone);
     }
 
     public function getOrder(): int

@@ -50,14 +50,33 @@ class ZoneManager
     {
         $wktArea = $zone->getArea();
 
+        $this->flushWithAreaProtection($zone);
+
+        // Update area with new WKT converted to GEOMETRY
+        $this->updateZoneArea($zone, $wktArea);
+    }
+
+    /**
+     * Synchronizes the zone's partners relationships with the provided collections.
+     * This method ensures proper bidirectional relationship management using Doctrine.
+     */
+    public function syncPartners(Zone $zone): void
+    {
+        $this->flushWithAreaProtection($zone);
+    }
+
+    /**
+     * Flushes the entity manager while protecting the area GEOMETRY field.
+     * Retrieves the raw GEOMETRY binary value and sets it back to prevent Doctrine
+     * from attempting to persist WKT text as GEOMETRY.
+     */
+    private function flushWithAreaProtection(Zone $zone): void
+    {
         // Get original GEOMETRY binary value to prevent Doctrine from trying to update it
         $originalArea = $this->zoneRepository->getRawAreaGeometry($zone);
         $zone->setArea($originalArea);
 
         $this->entityManager->flush();
-
-        // Update area with new WKT converted to GEOMETRY
-        $this->updateZoneArea($zone, $wktArea);
     }
 
     /**
