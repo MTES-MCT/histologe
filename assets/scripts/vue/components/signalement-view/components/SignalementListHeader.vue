@@ -6,33 +6,38 @@
   </div>
   <div class="fr-grid-row fr-mb-1w">
     <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4">
-      <label for="order-type" class="fr-mr-1w">Trier par :</label>
       <HistoSelect
           id="order-type"
           v-model="sharedState.input.order"
           @update:modelValue="onChange(false)"
           :option-items=orderList
-      />
+      >
+        <template #label>Trier par :</template>
+      </HistoSelect>
     </div>
-    <div v-if="sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-text--right">
+    <div v-if="sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-mt-2w fr-text--right">
       <a :href="canExport ? `${sharedProps.ajaxurlExportCsv}` : undefined"
          :class="[
               'fr-btn',
               'fr-btn--secondary',
               'fr-btn--icon-left',
               'fr-icon-download-fill',
+              'fr-btn--block',
+              'fr-btn--md-inline',
               { 'fr-label--disabled': !canExport }]"
       >
         Exporter les résultats
       </a>
     </div>
-    <div v-if="!sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-text--right">
+    <div v-if="!sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-mt-21w fr-text--right">
       <a :href="(total > 0) ? `${sharedProps.ajaxurlExportCsv}` : undefined"
          :class="[
               'fr-btn',
               'fr-btn--secondary',
               'fr-btn--icon-left',
               'fr-icon-download-fill',
+              'fr-btn--block',
+              'fr-btn--md-inline',
               { 'fr-label--disabled': (total == 0) }]"
       >
         Exporter les résultats
@@ -104,8 +109,4 @@ export default defineComponent({
 })
 </script>
 <style>
-  #order-type {
-    width: max-content;
-    display: inline-block;
-  }
 </style>

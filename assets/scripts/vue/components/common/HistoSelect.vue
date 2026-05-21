@@ -8,6 +8,7 @@
       :id="id"
       :name="id"
       :value="modelValue"
+      :aria-label="ariaLabel || undefined"
       @change="onSelectedEvent"
       >
       <option v-if="placeholder" value="" selected disabled hidden>{{ placeholder }}</option>
@@ -27,6 +28,7 @@ export default defineComponent({
     modelValue: { type: String, default: '' },
     onSelect: { type: Function },
     innerLabel: { type: String, default: '' },
+    ariaLabel: { type: String, default: '' },
     optionItems: {
       type: Array as () => Array<HistoInterfaceSelectOption>,
       default: () => []
