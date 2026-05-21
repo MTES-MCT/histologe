@@ -131,7 +131,7 @@ enum SuiviCategory: string
     }
 
     /** @return array<SuiviCategory> */
-    public static function CategoriesNotifyUsagerOnly(): array
+    public static function categoriesNotifyUsagerOnly(): array
     {
         return [
             self::ASK_DOCUMENT,
@@ -140,7 +140,7 @@ enum SuiviCategory: string
     }
 
     /** @return array<SuiviCategory> */
-    public static function CategoriesSubmittedByBailleur(): array
+    public static function categoriesSubmittedByBailleur(): array
     {
         return [
             self::MESSAGE_BAILLEUR,

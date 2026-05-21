@@ -46,7 +46,7 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
 
     private function sendToAdminAndPartners(Suivi $suivi): void
     {
-        if (in_array($suivi->getCategory(), SuiviCategory::CategoriesNotifyUsagerOnly()) || in_array($suivi->getCategory(), SuiviCategory::injonctionBailleurCategories())) {
+        if (in_array($suivi->getCategory(), SuiviCategory::categoriesNotifyUsagerOnly()) || in_array($suivi->getCategory(), SuiviCategory::injonctionBailleurCategories())) {
             return;
         }
         if (SuiviCategory::SIGNALEMENT_IS_CLOSED === $suivi->getCategory()) {
@@ -94,7 +94,7 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
 
     private function sendToBailleur(Suivi $suivi): void
     {
-        if ($suivi->getIsVisibleForBailleur() && !in_array($suivi->getCategory(), SuiviCategory::CategoriesSubmittedByBailleur())) {
+        if ($suivi->getIsVisibleForBailleur() && !in_array($suivi->getCategory(), SuiviCategory::categoriesSubmittedByBailleur())) {
             $this->notificationAndMailSender->sendNewSuiviToBailleur($suivi);
         }
     }

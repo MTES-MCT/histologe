@@ -215,7 +215,7 @@ class Suivi implements EntityHistoryInterface
 
             return $this->getCreatedBy()->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getTerritory())?->getNom().$separator.$this->getCreatedBy()->getNomComplet(true);
         }
-        if (in_array($this->getCategory(), SuiviCategory::CategoriesSubmittedByBailleur())) {
+        if (in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByBailleur())) {
             return $forBailleur ? 'Vous (bailleur)' : 'Bailleur';
         }
         if ($this->getCreatedAt()->format('Y') >= 2024) {
@@ -388,7 +388,7 @@ class Suivi implements EntityHistoryInterface
             return false;
         }
 
-        return in_array($this->category, SuiviCategory::CategoriesSubmittedByBailleur(), true);
+        return in_array($this->category, SuiviCategory::categoriesSubmittedByBailleur(), true);
     }
 
     public function setSeenByUsager(bool $seen): void

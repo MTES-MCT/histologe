@@ -93,7 +93,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             partner: $createdBy?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $createdBy,
             isVisibleForUsager: $row['is_public'],
-            isVisibleForBailleur: in_array($category, SuiviCategory::CategoriesSubmittedByBailleur()),
+            isVisibleForBailleur: in_array($category, SuiviCategory::categoriesSubmittedByBailleur()),
             createdAt: $createdAt,
             flush: false,
         );
