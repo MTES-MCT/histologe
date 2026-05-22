@@ -18,6 +18,7 @@ class CachedTabCountKpiCalculator implements TabCountKpiCalculatorInterface
 
     /**
      * @param array<int, mixed> $territories
+     *
      * @throws InvalidArgumentException
      */
     public function countNouveauxDossiers(array $territories, User $user): CountNouveauxDossiers
