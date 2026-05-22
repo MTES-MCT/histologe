@@ -90,7 +90,10 @@ final readonly class DashboardKpiCacheInvalidationListener
                 );
             }
 
-            if (SuiviCategory::MESSAGE_PARTNER == $entity->getCategory()) {
+            if (in_array($entity->getCategory(), [
+                SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
+                SuiviCategory::MESSAGE_USAGER,
+            ], true)) {
                 // DOSSIERS_MESSAGES_PARTNERS - Nouveaux messages
                 // DOSSIERS_MESSAGES_PARTNERS - Messages après fermeture
                 // DOSSIERS_MESSAGES_PARTNERS - Messages usagers n'ayant pas eu de réponse
@@ -144,6 +147,11 @@ final readonly class DashboardKpiCacheInvalidationListener
                 // DOSSIERS_A_FERMER - Dossiers fermés par tous les partenaires
                 $this->invalidateTerritoryKpiTags(
                     TabCountKpiCacheHelper::DOSSIERS_A_FERMER,
+                    $territoryId
+                );
+                // DOSSIERS_MESSAGES_PARTNERS - Nouveaux messages
+                $this->invalidateTerritoryKpiTags(
+                    TabCountKpiCacheHelper::DOSSIERS_MESSAGES_USAGERS,
                     $territoryId
                 );
             }
