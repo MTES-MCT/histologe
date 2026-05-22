@@ -3,7 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Entity\User;
-use App\Repository\SignalementRepository;
+use App\Repository\Query\SignalementList\SameAddressQuery;
 use App\Repository\TerritoryRepository;
 use App\Utils\ExportFormat;
 use OpenSpout\Common\Entity\Row;
@@ -17,11 +17,11 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements-meme-adresse')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_ADMIN_TERRITORY')]
 class SignalementSameAddressController extends AbstractController
 {
     #[Route('/', name: 'back_signalement_same_address_index')]
-    public function index(SignalementRepository $signalementRepository, TerritoryRepository $territoryRepository): Response
+    public function index(SameAddressQuery $sameAddressQuery, TerritoryRepository $territoryRepository): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -30,7 +30,7 @@ class SignalementSameAddressController extends AbstractController
             $territories = $territoryRepository->findAllList();
         }
 
-        $signalements = $signalementRepository->findSameAddressFiltered($user);
+        $signalements = $sameAddressQuery->findSameAddressFiltered($user);
         $signalementsByAddress = [];
         $addressSuggestions = [];
         $communeSuggestions = [];
@@ -74,7 +74,7 @@ class SignalementSameAddressController extends AbstractController
     }
 
     #[Route('/export', name: 'back_signalement_same_address_export', methods: ['POST'])]
-    public function export(Request $request, SignalementRepository $signalementRepository, TerritoryRepository $territoryRepository): Response
+    public function export(Request $request, SameAddressQuery $sameAddressQuery, TerritoryRepository $territoryRepository): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -84,7 +84,7 @@ class SignalementSameAddressController extends AbstractController
             $isMultiTerritory = true;
             $territories = $territoryRepository->findAllList();
         }
-        $signalements = $signalementRepository->findSameAddressFiltered($user);
+        $signalements = $sameAddressQuery->findSameAddressFiltered($user);
         $signalementsFiltered = [];
         $searchTerritoryId = $request->request->get('territoryId');
         $searchAddress = $request->request->get('address');
