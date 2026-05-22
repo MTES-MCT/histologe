@@ -33,7 +33,7 @@ class Zone implements EntityHistoryInterface
     #[Groups(['settings:read'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, insertable: false, updatable: false)]
     private string $area;
 
     #[ORM\ManyToOne(inversedBy: 'zones')]

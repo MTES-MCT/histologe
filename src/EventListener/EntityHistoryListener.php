@@ -29,6 +29,7 @@ class EntityHistoryListener
         'lastSuiviAt',
         'lastSuiviBy',
         'lastSuiviIsVisibleForUsager',
+        'area', // Zone.area: GEOMETRY field converted by ZoneGeometryPersistListener, not useful to track
     ];
 
     public function __construct(

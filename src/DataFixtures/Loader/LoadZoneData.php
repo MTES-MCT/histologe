@@ -4,7 +4,6 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\Enum\ZoneType;
 use App\Entity\Zone;
-use App\Manager\ZoneManager;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
@@ -19,7 +18,6 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
         private TerritoryRepository $territoryRepository,
         private UserRepository $userRepository,
         private PartnerRepository $partnerRepository,
-        private ZoneManager $zoneManager,
     ) {
     }
 
@@ -27,14 +25,14 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
     {
         $zoneRows = Yaml::parseFile(__DIR__.'/../Files/Zone.yml');
         foreach ($zoneRows['zone'] as $row) {
-            $this->loadZone($row);
+            $this->loadZone($manager, $row);
         }
     }
 
     /**
      * @param array<string, mixed> $row
      */
-    private function loadZone(array $row): void
+    private function loadZone(ObjectManager $manager, array $row): void
     {
         $zone = new Zone();
 
@@ -44,10 +42,7 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
 
-        // Persist zone with WKT area using ZoneManager (handles GEOMETRY conversion)
-        $zone = $this->zoneManager->persistZone($zone);
-
-        // Add partners using entity methods for consistency with back_territory_management_zone_edit
+        // Add partners to the zone
         foreach ($row['partners'] as $partnerEmail) {
             $partnerEntity = $this->partnerRepository->findOneBy(['email' => $partnerEmail]);
             if ($partnerEntity) {
@@ -64,8 +59,9 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
             }
         }
 
-        // Synchronize partner relationships via ZoneManager
-        $this->zoneManager->flushWithAreaProtection($zone);
+        // Persist zone - ZoneGeometryPersistListener automatically handles WKT to GEOMETRY conversion
+        $manager->persist($zone);
+        $manager->flush();
     }
 
     public function getOrder(): int

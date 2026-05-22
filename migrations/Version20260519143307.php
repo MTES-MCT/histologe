@@ -25,8 +25,10 @@ final class Version20260519143307 extends AbstractMigration
         // Drop old TEXT column
         $this->addSql('ALTER TABLE zone DROP COLUMN area');
 
-        // Rename geometry column to original name
-        $this->addSql('ALTER TABLE zone CHANGE COLUMN area_geom area GEOMETRY NOT NULL');
+        // Rename geometry column to original name with NOT NULL and default POINT(0 0)
+        // Default value allows Doctrine to insert without area (insertable=false)
+        // ZoneGeometryPersistListener will UPDATE with correct GEOMETRY value immediately after
+        $this->addSql("ALTER TABLE zone CHANGE COLUMN area_geom area GEOMETRY NOT NULL DEFAULT (ST_GeomFromText('POINT(0 0)'))");
 
         // Add spatial index for ST_Contains performance
         $this->addSql('ALTER TABLE zone ADD SPATIAL INDEX idx_area_spatial (area)');
