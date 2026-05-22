@@ -1921,7 +1921,7 @@
         {
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_prenom_referent",
-          "description": "Format attendu : 255 caractères maximum",
+          "label": "Prénom du référent qui accompagne le foyer (facultatif)",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
           },
