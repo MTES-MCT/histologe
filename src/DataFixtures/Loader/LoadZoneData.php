@@ -27,6 +27,8 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
         foreach ($zoneRows['zone'] as $row) {
             $this->loadZone($manager, $row);
         }
+
+        $manager->flush();
     }
 
     /**
@@ -36,8 +38,8 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
     {
         $zone = new Zone();
 
-        $zone->setName($row['name'])
-            ->setArea($row['area'])
+        $zone->setArea($row['area'])
+            ->setName($row['name'])
             ->setType(ZoneType::AUTRE)
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
@@ -61,7 +63,6 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
 
         // Persist zone - ZoneGeometryPersistListener automatically handles WKT to GEOMETRY conversion
         $manager->persist($zone);
-        $manager->flush();
     }
 
     public function getOrder(): int
