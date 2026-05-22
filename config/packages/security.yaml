@@ -27,6 +27,9 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        show_file:
+            pattern: ^/show/
+            security: false
         api:
             pattern: ^/api
             stateless: true
