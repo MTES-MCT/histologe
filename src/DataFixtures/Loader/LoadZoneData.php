@@ -37,15 +37,15 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
     private function loadZone(array $row): void
     {
         $zone = new Zone();
-        $wktArea = $row['area'];
 
         $zone->setName($row['name'])
+            ->setArea($row['area'])
             ->setType(ZoneType::AUTRE)
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
 
         // Persist zone with WKT area using ZoneManager (handles GEOMETRY conversion)
-        $zone = $this->zoneManager->persistZone($zone, $wktArea);
+        $zone = $this->zoneManager->persistZone($zone);
 
         // Add partners using entity methods for consistency with back_territory_management_zone_edit
         foreach ($row['partners'] as $partnerEmail) {

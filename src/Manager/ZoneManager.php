@@ -18,14 +18,13 @@ class ZoneManager
      * Persists a new Zone with WKT area converted to GEOMETRY.
      * Uses raw SQL because Doctrine doesn't natively handle GEOMETRY type.
      */
-    public function persistZone(Zone $zone, ?string $wktArea = null): Zone
+    public function persistZone(Zone $zone): Zone
     {
-        if (empty($wktArea)) {
-            $wktArea = $zone->getArea();
-        }
+        $wktArea = $zone->getArea();
 
         $conn = $this->entityManager->getConnection();
 
+        // NB: We use direct mysql, so we don't save the history entry for the entity
         $conn->executeStatement(
             'INSERT INTO zone (territory_id, name, type, created_by_id, created_at, updated_at, area)
              VALUES (:territory_id, :name, :type, :created_by_id, NOW(), NOW(), ST_GeomFromText(:area))',
@@ -57,15 +56,6 @@ class ZoneManager
     }
 
     /**
-     * Synchronizes the zone's partners relationships with the provided collections.
-     * This method ensures proper bidirectional relationship management using Doctrine.
-     */
-    public function syncPartners(Zone $zone): void
-    {
-        $this->flushWithAreaProtection($zone);
-    }
-
-    /**
      * Flushes the entity manager while protecting the area GEOMETRY field.
      * Retrieves the raw GEOMETRY binary value and sets it back to prevent Doctrine
      * from attempting to persist WKT text as GEOMETRY.
@@ -86,6 +76,7 @@ class ZoneManager
     {
         $conn = $this->entityManager->getConnection();
 
+        // NB: We use direct mysql, so we don't save the history entry for the entity
         $conn->executeStatement(
             'UPDATE zone SET area = ST_GeomFromText(:wkt) WHERE id = :id',
             ['wkt' => $wktArea, 'id' => $zone->getId()]
