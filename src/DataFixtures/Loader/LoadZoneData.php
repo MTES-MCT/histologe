@@ -7,6 +7,7 @@ use App\Entity\Zone;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Service\Geometry\GeometryFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -18,6 +19,7 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
         private TerritoryRepository $territoryRepository,
         private UserRepository $userRepository,
         private PartnerRepository $partnerRepository,
+        private GeometryFactory $geometryFactory,
     ) {
     }
 
@@ -38,30 +40,23 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
     {
         $zone = new Zone();
 
-        $zone->setArea($row['area'])
+        $geometry = $this->geometryFactory->createFromWkt($row['area']);
+        $zone->setArea($geometry)
             ->setName($row['name'])
             ->setType(ZoneType::AUTRE)
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
 
-        // Add partners to the zone
-        foreach ($row['partners'] as $partnerEmail) {
-            $partnerEntity = $this->partnerRepository->findOneBy(['email' => $partnerEmail]);
-            if ($partnerEntity) {
-                $zone->addPartner($partnerEntity);
-            }
+        foreach ($row['partners'] as $partner) {
+            $zone->addPartner($this->partnerRepository->findOneBy(['email' => $partner]));
         }
 
         if (isset($row['excluded_partners'])) {
-            foreach ($row['excluded_partners'] as $partnerEmail) {
-                $partnerEntity = $this->partnerRepository->findOneBy(['email' => $partnerEmail]);
-                if ($partnerEntity) {
-                    $zone->addExcludedPartner($partnerEntity);
-                }
+            foreach ($row['excluded_partners'] as $partner) {
+                $zone->addExcludedPartner($this->partnerRepository->findOneBy(['email' => $partner]));
             }
         }
 
-        // Persist zone - ZoneGeometryPersistListener automatically handles WKT to GEOMETRY conversion
         $manager->persist($zone);
     }
 

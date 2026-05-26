@@ -6,6 +6,7 @@ use App\Dto\Request\Signalement\SignalementSearchQuery;
 use App\Entity\User;
 use App\Repository\Query\SignalementList\MapGeoDataQuery;
 use App\Repository\ZoneRepository;
+use App\Service\Geometry\GeometryFactory;
 use App\Service\Signalement\SearchFilter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,6 +29,7 @@ class CartographieController extends AbstractController
         MapGeoDataQuery $mapGeoDataQuery,
         ZoneRepository $zoneRepository,
         SearchFilter $searchFilter,
+        GeometryFactory $geometryFactory,
         Request $request,
         #[MapQueryString] ?SignalementSearchQuery $signalementSearchQuery = null,
     ): JsonResponse {
@@ -50,7 +52,7 @@ class CartographieController extends AbstractController
             }
             $zones = $zoneRepository->findBy($criteria);
             foreach ($zones as $zone) {
-                $zoneAreas[] = $zone->getArea();
+                $zoneAreas[] = $geometryFactory->toWkt($zone->getArea());
             }
         } elseif (!empty($filters['isZonesDisplayed'])) {
             $criteria = [];
@@ -61,7 +63,7 @@ class CartographieController extends AbstractController
             }
             $zones = $zoneRepository->findBy($criteria);
             foreach ($zones as $zone) {
-                $zoneAreas[] = $zone->getArea();
+                $zoneAreas[] = $geometryFactory->toWkt($zone->getArea());
             }
         }
 

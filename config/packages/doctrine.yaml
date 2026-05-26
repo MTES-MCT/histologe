@@ -20,6 +20,10 @@ doctrine:
             situation_foyer: App\Entity\DoctrineType\Signalement\SituationFoyerType
             information_procedure: App\Entity\DoctrineType\Signalement\InformationProcedureType
             information_complementaire: App\Entity\DoctrineType\Signalement\InformationComplementaireType
+            geometry: LongitudeOne\Spatial\DBAL\Types\GeometryType
+            point: LongitudeOne\Spatial\DBAL\Types\Geometry\PointType
+            polygon: LongitudeOne\Spatial\DBAL\Types\Geometry\PolygonType
+            linestring: LongitudeOne\Spatial\DBAL\Types\Geometry\LineStringType
     orm:
         controller_resolver:
             auto_mapping: false

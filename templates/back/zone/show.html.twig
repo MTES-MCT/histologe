@@ -55,7 +55,7 @@
             <div id="zone_map"></div>
         </div>
         <div class="fr-col-12 fr-col-lg-4">
-            <div id="info_zone_map" data-zone="{{zone.area}}">
+            <div id="info_zone_map" data-zone="{{zone.area.type|upper}}({{zone.area}})">
                 <h2 class="fr-pl-1w">{{signalements|length}} signalement{% if signalements|length > 1%}s{% endif %} dans la zone</h2>
                 <ul>
                     {% for signalement in signalements %}
