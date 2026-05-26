@@ -133,9 +133,18 @@
                             </div>
 
                             <div class="fr-input-group">
-                                {% set travailleurSocialAccompagnementNomStructure = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnementNomStructure : null %}
                                 <label class="fr-label" for="situationFoyerTravailleurSocialAccompagnementNomStructure">Nom de la structure d'accompagnement</label>
-                                <input class="fr-input" type="text" id="situationFoyerTravailleurSocialAccompagnementNomStructure" name="travailleurSocialAccompagnementNomStructure" value="{{ travailleurSocialAccompagnementNomStructure }}">
+                                <input class="fr-input" type="text" id="situationFoyerTravailleurSocialAccompagnementNomStructure" name="travailleurSocialAccompagnementNomStructure" value="{{ signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnementNomStructure : '' }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="situationFoyerTravailleurSocialAccompagnementNomReferent">Nom de famille du travailleur social</label>
+                                <input class="fr-input" type="text" id="situationFoyerTravailleurSocialAccompagnementNomReferent" name="travailleurSocialAccompagnementNomReferent" value="{{ signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnementNomReferent : '' }}">
+                            </div>
+
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="situationFoyerTravailleurSocialAccompagnementPrenomReferent">Prénom du travailleur social</label>
+                                <input class="fr-input" type="text" id="situationFoyerTravailleurSocialAccompagnementPrenomReferent" name="travailleurSocialAccompagnementPrenomReferent" value="{{ signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnementPrenomReferent : '' }}">
                             </div>
 
                             <div class="fr-select-group">

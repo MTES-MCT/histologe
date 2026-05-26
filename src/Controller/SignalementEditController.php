@@ -333,7 +333,9 @@ class SignalementEditController extends AbstractController
                 ->setTravailleurSocialQuitteLogement($form->get('souhaiteQuitterLogement')->getData())
                 ->setTravailleurSocialPreavisDepart($form->get('preavisDepartDepose')->getData())
                 ->setTravailleurSocialAccompagnement($form->get('accompagnementTravailleurSocial')->getData())
-                ->setTravailleurSocialAccompagnementNomStructure($form->get('accompagnementTravailleurSocialNomStructure')->getData());
+                ->setTravailleurSocialAccompagnementNomStructure($form->get('accompagnementTravailleurSocialNomStructure')->getData())
+                ->setTravailleurSocialAccompagnementNomReferent($form->get('accompagnementTravailleurSocialNomReferent')->getData())
+                ->setTravailleurSocialAccompagnementPrenomReferent($form->get('accompagnementTravailleurSocialPrenomReferent')->getData());
             $informationComplementaire->setInformationsComplementairesSituationOccupantsTypeAllocation($form->get('typeAllocation')->getData())
                 ->setInformationsComplementairesSituationOccupantsBeneficiaireRsa($form->get('beneficiaireRSA')->getData())
                 ->setInformationsComplementairesSituationOccupantsBeneficiaireFsl($form->get('beneficiaireFSL')->getData())

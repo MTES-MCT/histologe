@@ -1901,6 +1901,34 @@
             "required": false,
             "message": "Veuillez indiquer le nom de la structure qui accompagne le foyer."
           }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "slug": "travailleur_social_accompagnement_nom_referent",
+          "label": "Nom de famille du référent qui accompagne le foyer (facultatif)",
+          "conditional": {
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_declarant !== 1"
+          },
+          "validate": {
+            "required": false
+          },
+          "accessibility": {
+            "name": "lastName"
+          }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "slug": "travailleur_social_accompagnement_prenom_referent",
+          "description": "Format attendu : 255 caractères maximum",
+          "conditional": {
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_declarant !== 1"
+          },
+          "validate": {
+            "required": false
+          },
+          "accessibility": {
+            "name": "firstName"
+          }
         }
       ],
       "footer": [

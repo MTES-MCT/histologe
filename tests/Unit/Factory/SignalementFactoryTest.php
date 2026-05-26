@@ -180,8 +180,6 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['codeProcedure'], $signalement->getCodeProcedure());
         $this->assertEquals($data['raisonRefusIntervention'], $signalement->getRaisonRefusIntervention());
 
-        $this->assertEquals($data['nomReferentSocial'], $signalement->getNomReferentSocial());
-        $this->assertEquals($data['StructureReferentSocial'], $signalement->getStructureReferentSocial());
         $this->assertEquals([$data['mailOccupant'], $data['mailDeclarant']], $signalement->getMailUsagers());
         $this->assertTrue($signalement->getIsImported());
 

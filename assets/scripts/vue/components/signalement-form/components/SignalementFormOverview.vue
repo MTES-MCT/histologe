@@ -402,6 +402,15 @@ export default defineComponent({
       result += this.addLineIfNeeded('travailleur_social_accompagnement', 'Accompagnement par un ou une travailleuse sociale ? ')
       if (this.formStore.data.travailleur_social_accompagnement === 'oui') {
         result += this.addLineIfNeeded('travailleur_social_accompagnement_nom_structure', 'Nom de la structure : ')
+        result += this.addLineIfNeeded('travailleur_social_accompagnement_inviter_referent_comme_tiers', 'Inviter un référent à suivre le dossier : ')
+        if (this.formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'oui') {
+          result += this.addLineIfNeeded('travailleur_social_accompagnement_inviter_referent_comme_tiers_nom', 'Nom du référent : ')
+          result += this.addLineIfNeeded('travailleur_social_accompagnement_inviter_referent_comme_tiers_prenom', 'Prénom du référent : ')
+          result += this.addLineIfNeeded('travailleur_social_accompagnement_inviter_referent_comme_tiers_email', 'E-mail du référent : ')
+        } else {
+          result += this.addLineIfNeeded('travailleur_social_accompagnement_nom_referent', 'Nom du référent : ')
+          result += this.addLineIfNeeded('travailleur_social_accompagnement_prenom_referent', 'Prénom du référent : ')
+        }
       }
       return result
     },

@@ -77,6 +77,8 @@ readonly class SituationFoyerRequest implements RequestInterface
         #[Assert\Length(max: 50)]
         private ?string $travailleurSocialAccompagnementDeclarant = null,
         private ?string $travailleurSocialAccompagnementNomStructure = null,
+        private ?string $travailleurSocialAccompagnementNomReferent = null,
+        private ?string $travailleurSocialAccompagnementPrenomReferent = null,
         #[Assert\Choice(
             choices: ['oui', 'non'],
             message: 'Le champ "Bénéficiaire du RSA" est incorrect.',
@@ -151,6 +153,16 @@ readonly class SituationFoyerRequest implements RequestInterface
     public function getTravailleurSocialAccompagnementNomStructure(): ?string
     {
         return $this->travailleurSocialAccompagnementNomStructure;
+    }
+
+    public function getTravailleurSocialAccompagnementNomReferent(): ?string
+    {
+        return $this->travailleurSocialAccompagnementNomReferent;
+    }
+
+    public function getTravailleurSocialAccompagnementPrenomReferent(): ?string
+    {
+        return $this->travailleurSocialAccompagnementPrenomReferent;
     }
 
     public function getBeneficiaireRsa(): ?string

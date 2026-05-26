@@ -419,12 +419,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?\DateTimeImmutable $proprioAvertiAt = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $nomReferentSocial = null;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $structureReferentSocial = null;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 12, maxMessage: 'L\'invariant fiscal ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $numeroInvariant = null;
 
@@ -2050,30 +2044,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setProprioAvertiAt(?\DateTimeImmutable $proprioAvertiAt): static
     {
         $this->proprioAvertiAt = $proprioAvertiAt;
-
-        return $this;
-    }
-
-    public function getNomReferentSocial(): ?string
-    {
-        return $this->nomReferentSocial;
-    }
-
-    public function setNomReferentSocial(?string $nomReferentSocial): static
-    {
-        $this->nomReferentSocial = $nomReferentSocial;
-
-        return $this;
-    }
-
-    public function getStructureReferentSocial(): ?string
-    {
-        return $this->structureReferentSocial;
-    }
-
-    public function setStructureReferentSocial(?string $structureReferentSocial): static
-    {
-        $this->structureReferentSocial = $structureReferentSocial;
 
         return $this;
     }

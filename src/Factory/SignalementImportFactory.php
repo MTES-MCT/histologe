@@ -88,8 +88,6 @@ class SignalementImportFactory
             ->setIsConstructionAvant1949((bool) $data['isConstructionAvant1949'])
             ->setIsRisqueSurOccupation((bool) $data['isRisqueSurOccupation'])
             ->setProprioAvertiAt($data['prorioAvertiAt'])
-            ->setNomReferentSocial($data['nomReferentSocial'])
-            ->setStructureReferentSocial($data['StructureReferentSocial'])
             ->setNumeroInvariant($data['numeroInvariant'])
             ->setNbPiecesLogement((int) $data['nbPiecesLogement'])
             ->setNbChambresLogement((int) $data['nbChambresLogement'])

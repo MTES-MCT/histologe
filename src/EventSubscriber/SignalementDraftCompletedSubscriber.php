@@ -8,6 +8,7 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Event\SignalementDraftCompletedEvent;
+use App\Factory\TiersInvitationFactory;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\NewSignalementCheckFileMessage;
 use App\Messenger\Message\SignalementDraftProcessMessage;
@@ -37,6 +38,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
         private readonly ParameterBagInterface $parameterBag,
         private readonly SuiviManager $suiviManager,
         private readonly UserRepository $userRepository,
+        private readonly TiersInvitationFactory $tiersInvitationFactory,
     ) {
     }
 
@@ -73,6 +75,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                     $signalement->getTerritory()->getName()
                 ));
                 $this->sendNotifications($signalement);
+                $this->sendTiersInvitation($signalementDraft, $signalement);
                 $this->createFirstSuivi($signalement);
                 $this->dispatchDraftProcessing($signalementDraft, $signalement);
                 $this->dispatchCheckFiles($signalement);
@@ -106,6 +109,38 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 )
             );
         }
+    }
+
+    private function sendTiersInvitation(SignalementDraft $signalementDraft, Signalement $signalement): void
+    {
+        $payload = $signalementDraft->getPayload();
+
+        $referentEmail = $payload['travailleur_social_accompagnement_inviter_referent_comme_tiers_email'] ?? null;
+        $referentNom = $payload['travailleur_social_accompagnement_inviter_referent_comme_tiers_nom'] ?? null;
+        $referentPrenom = $payload['travailleur_social_accompagnement_inviter_referent_comme_tiers_prenom'] ?? null;
+
+        if (null === $referentEmail || null === $referentNom || null === $referentPrenom) {
+            return;
+        }
+
+        $invitation = $this->tiersInvitationFactory->createInstanceFrom(
+            $signalement,
+            $referentNom,
+            $referentPrenom,
+            $referentEmail,
+        );
+
+        $this->entityManager->persist($invitation);
+        $this->entityManager->flush();
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_INVITE_TIERS,
+                to: $referentEmail,
+                signalement: $signalement,
+                tiersInvitation: $invitation,
+            )
+        );
     }
 
     private function createFirstSuivi(Signalement $signalement): void

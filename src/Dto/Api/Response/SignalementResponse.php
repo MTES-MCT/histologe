@@ -446,6 +446,20 @@ class SignalementResponse
     public ?string $nomStructureAccompagnement;
 
     #[OA\Property(
+        description: 'Nom du référent social accompagnant l\'occupant.',
+        example: 'Dupont',
+        nullable: true
+    )]
+    public ?string $nomReferentSocial;
+
+    #[OA\Property(
+        description: 'Prénom du référent social accompagnant l\'occupant.',
+        example: 'Dominique',
+        nullable: true
+    )]
+    public ?string $prenomReferentSocial;
+
+    #[OA\Property(
         description: "Indique si le propriétaire a été averti d'une situation concernant le logement.",
         type: 'boolean',
         example: true,
