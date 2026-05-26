@@ -70,7 +70,7 @@ class TabCountKpiBuilder
         /** @var User $user */
         $user = $this->security->getUser();
 
-        $countNouveauxDossiers = $this->tabCountKpiCalculator->countNouveauxDossiers($this->territories, $user);
+        $countNouveauxDossiers = $this->tabCountKpiCalculator->countNouveauxDossiers($this->territories, $user, $params);
         $countDossiersAFermer = $this->tabCountKpiCalculator->countDossiersAFermer($user, $params);
         $countDossiersMessagesUsagers = $this->tabCountKpiCalculator->countDossiersMessagesUsagers($user, $params);
         $countDossiersAVerifier = $this->tabCountKpiCalculator->countDossiersAVerifier($user, $params);

@@ -30,7 +30,7 @@ class TabCountKpiCalculator implements TabCountKpiCalculatorInterface
     /**
      * @param array<int, mixed> $territories
      */
-    public function countNouveauxDossiers(array $territories, User $user): CountNouveauxDossiers
+    public function countNouveauxDossiers(array $territories, User $user, TabQueryParameters $params): CountNouveauxDossiers
     {
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
             return $this->nouveauxDossiersKpiQuery->countNouveauxDossiersKpi($territories);

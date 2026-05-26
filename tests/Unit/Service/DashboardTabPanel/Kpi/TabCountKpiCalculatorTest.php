@@ -53,6 +53,7 @@ class TabCountKpiCalculatorTest extends TestCase
     public function testCountNouveauxDossiersForAdminTerritory(): void
     {
         $user = new User();
+        $params = new TabQueryParameters();
         $territories = [1, 2];
         $count = new CountNouveauxDossiers(1, 2, 3, 4, 5);
 
@@ -62,13 +63,14 @@ class TabCountKpiCalculatorTest extends TestCase
             ->with($territories)
             ->willReturn($count);
 
-        $result = $this->calculator->countNouveauxDossiers($territories, $user);
+        $result = $this->calculator->countNouveauxDossiers($territories, $user, $params);
         $this->assertSame($count, $result);
     }
 
     public function testCountNouveauxDossiersForNonAdmin(): void
     {
         $user = new User();
+        $params = new TabQueryParameters();
         $territories = [1, 2];
         $count = new CountNouveauxDossiers(1, 2, 3, 4, 5);
 
@@ -78,7 +80,7 @@ class TabCountKpiCalculatorTest extends TestCase
             ->with($territories, $user)
             ->willReturn($count);
 
-        $result = $this->calculator->countNouveauxDossiers($territories, $user);
+        $result = $this->calculator->countNouveauxDossiers($territories, $user, $params);
         $this->assertSame($count, $result);
     }
 

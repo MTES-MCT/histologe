@@ -10,7 +10,7 @@ interface TabCountKpiCalculatorInterface
     /**
      * @param array<int, mixed> $territories
      */
-    public function countNouveauxDossiers(array $territories, User $user): CountNouveauxDossiers;
+    public function countNouveauxDossiers(array $territories, User $user, TabQueryParameters $params): CountNouveauxDossiers;
 
     public function countDossiersAFermer(User $user, TabQueryParameters $params): CountAfermer;
 

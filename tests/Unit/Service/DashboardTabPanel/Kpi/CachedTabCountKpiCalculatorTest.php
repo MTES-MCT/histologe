@@ -30,20 +30,21 @@ class CachedTabCountKpiCalculatorTest extends TestCase
     public function testCountNouveauxDossiers(): void
     {
         $user = new User();
+        $params = new TabQueryParameters();
         $territories = [1, 2];
         $count = new CountNouveauxDossiers(1, 2, 3, 4);
 
         $this->cacheHelper->expects($this->once())
             ->method('getOrSet')
-            ->with(TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS, $user, null, $this->callback(static fn ($callback) => is_callable($callback)))
+            ->with(TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS, $user, $params, $this->callback(static fn ($callback) => is_callable($callback)))
             ->willReturnCallback(static fn ($name, $u, $p, $callback) => $callback());
 
         $this->calculator->expects($this->once())
             ->method('countNouveauxDossiers')
-            ->with($territories, $user)
+            ->with($territories, $user, $params)
             ->willReturn($count);
 
-        $result = $this->cachedCalculator->countNouveauxDossiers($territories, $user);
+        $result = $this->cachedCalculator->countNouveauxDossiers($territories, $user, $params);
         $this->assertSame($count, $result);
     }
 

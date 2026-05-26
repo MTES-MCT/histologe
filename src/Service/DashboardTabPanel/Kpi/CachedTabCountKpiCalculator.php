@@ -21,13 +21,13 @@ class CachedTabCountKpiCalculator implements TabCountKpiCalculatorInterface
      *
      * @throws InvalidArgumentException
      */
-    public function countNouveauxDossiers(array $territories, User $user): CountNouveauxDossiers
+    public function countNouveauxDossiers(array $territories, User $user, TabQueryParameters $params): CountNouveauxDossiers
     {
         return $this->cacheHelper->getOrSet(
             TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS,
             $user,
-            null,
-            fn () => $this->calculator->countNouveauxDossiers($territories, $user)
+            $params,
+            fn () => $this->calculator->countNouveauxDossiers($territories, $user, $params)
         );
     }
 

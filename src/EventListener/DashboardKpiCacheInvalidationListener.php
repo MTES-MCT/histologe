@@ -13,6 +13,7 @@ use App\Entity\UserSignalementSubscription;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpiCacheHelper;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
+use Doctrine\ORM\Event\PostRemoveEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Psr\Cache\InvalidArgumentException;
@@ -20,6 +21,7 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[AsDoctrineListener(event: Events::postPersist)]
 #[AsDoctrineListener(event: Events::postUpdate)]
+#[AsDoctrineListener(event: Events::postRemove)]
 final readonly class DashboardKpiCacheInvalidationListener
 {
     public function __construct(
@@ -63,26 +65,7 @@ final readonly class DashboardKpiCacheInvalidationListener
         if ($entity instanceof Suivi) {
             $territoryId = $entity->getSignalement()->getTerritory()->getId();
 
-            if (in_array($entity->getCategory(), [
-                SuiviCategory::MESSAGE_PARTNER,
-                SuiviCategory::SIGNALEMENT_EDITED_BO,
-                SuiviCategory::SIGNALEMENT_IS_ACTIVE,
-                SuiviCategory::SIGNALEMENT_IS_REOPENED,
-                SuiviCategory::INTERVENTION_IS_CREATED,
-                SuiviCategory::INTERVENTION_IS_CANCELED,
-                SuiviCategory::INTERVENTION_IS_ABORTED,
-                SuiviCategory::INTERVENTION_HAS_CONCLUSION,
-                SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED,
-                SuiviCategory::INTERVENTION_IS_RESCHEDULED,
-                SuiviCategory::INTERVENTION_IS_DONE,
-                SuiviCategory::INTERVENTION_CONTROLE_IS_CREATED,
-                SuiviCategory::INTERVENTION_CONTROLE_IS_RESCHEDULED,
-                SuiviCategory::INTERVENTION_CONTROLE_IS_DONE,
-                SuiviCategory::INTERVENTION_ARRETE_IS_CREATED,
-                SuiviCategory::INTERVENTION_ARRETE_IS_RESCHEDULED,
-                SuiviCategory::NEW_DOCUMENT,
-                SuiviCategory::AFFECTATION_IS_CLOSED,
-            ], true)) {
+            if (in_array($entity->getCategory(), SuiviCategory::getSuiviTypeActivitePartenaire(), true)) {
                 // DOSSIERS_A_VERIFIER - Dossier sans activité partenaire
                 $this->invalidateTerritoryKpiTags(
                     TabCountKpiCacheHelper::DOSSIERS_A_VERIFIER,
@@ -90,10 +73,7 @@ final readonly class DashboardKpiCacheInvalidationListener
                 );
             }
 
-            if (in_array($entity->getCategory(), [
-                SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
-                SuiviCategory::MESSAGE_USAGER,
-            ], true)) {
+            if (in_array($entity->getCategory(), SuiviCategory::getSuiviTypeActiviteUsager(), true)) {
                 // DOSSIERS_MESSAGES_PARTNERS - Nouveaux messages
                 // DOSSIERS_MESSAGES_PARTNERS - Messages après fermeture
                 // DOSSIERS_MESSAGES_PARTNERS - Messages usagers n'ayant pas eu de réponse
@@ -189,6 +169,30 @@ final readonly class DashboardKpiCacheInvalidationListener
                     $territoryId
                 );
             }
+        }
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function postRemove(PostRemoveEventArgs $args): void
+    {
+        $entity = $args->getObject();
+
+        if ($entity instanceof Affectation) {
+            $territoryId = $entity->getTerritory()->getId();
+
+            // NOUVEAUX_DOSSIERS - Dossiers non affectés aux partenaires
+            $this->invalidateTerritoryKpiTags(
+                TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS,
+                $territoryId
+            );
+
+            // DOSSIERS_A_FERMER - Dossiers fermés par tous les partenaires
+            $this->invalidateTerritoryKpiTags(
+                TabCountKpiCacheHelper::DOSSIERS_A_FERMER,
+                $territoryId
+            );
         }
     }
 

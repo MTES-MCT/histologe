@@ -266,4 +266,38 @@ enum SuiviCategory: string
                 throw new \LogicException(sprintf('La catégorie de suivi %s n\'a pas de type de suivi défini.', $category->name));
         }
     }
+
+    /** @return array<SuiviCategory> */
+    public static function getSuiviTypeActivitePartenaire(): array
+    {
+        return [
+            SuiviCategory::MESSAGE_PARTNER,
+            SuiviCategory::SIGNALEMENT_EDITED_BO,
+            SuiviCategory::SIGNALEMENT_IS_ACTIVE,
+            SuiviCategory::SIGNALEMENT_IS_REOPENED,
+            SuiviCategory::INTERVENTION_IS_CREATED,
+            SuiviCategory::INTERVENTION_IS_CANCELED,
+            SuiviCategory::INTERVENTION_IS_ABORTED,
+            SuiviCategory::INTERVENTION_HAS_CONCLUSION,
+            SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED,
+            SuiviCategory::INTERVENTION_IS_RESCHEDULED,
+            SuiviCategory::INTERVENTION_IS_DONE,
+            SuiviCategory::INTERVENTION_CONTROLE_IS_CREATED,
+            SuiviCategory::INTERVENTION_CONTROLE_IS_RESCHEDULED,
+            SuiviCategory::INTERVENTION_CONTROLE_IS_DONE,
+            SuiviCategory::INTERVENTION_ARRETE_IS_CREATED,
+            SuiviCategory::INTERVENTION_ARRETE_IS_RESCHEDULED,
+            SuiviCategory::NEW_DOCUMENT,
+            SuiviCategory::AFFECTATION_IS_CLOSED,
+        ];
+    }
+
+    /** @return array<SuiviCategory> */
+    public static function getSuiviTypeActiviteUsager(): array
+    {
+        return [
+            SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
+            SuiviCategory::MESSAGE_USAGER,
+        ];
+    }
 }

@@ -55,10 +55,6 @@ class TabCountKpiCacheHelper
         $otherParamsKey = '';
         if ($params) {
             switch ($kpiName) {
-                case self::DOSSIERS_A_FERMER:
-                case self::NOUVEAUX_DOSSIERS:
-                    $otherParams = null;
-                    break;
                 case self::DOSSIERS_MESSAGES_USAGERS:
                     $otherParams = [
                         'mesDossiersMessagesUsagers' => '1' === $params->mesDossiersMessagesUsagers ? $user->getId() : 'null',
@@ -70,7 +66,7 @@ class TabCountKpiCacheHelper
                         'mesDossiersAverifier' => '1' === $params->mesDossiersAverifier ? $user->getId() : 'null',
                     ];
                     break;
-                default:
+                default: // DOSSIERS_A_FERMER, NOUVEAUX_DOSSIERS
                     $otherParams = null;
             }
             if ($otherParams) {
