@@ -46,17 +46,14 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
             ->setType(ZoneType::AUTRE)
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreatedBy($this->userRepository->findOneBy(['email' => $row['created_by']]));
-
         foreach ($row['partners'] as $partner) {
             $zone->addPartner($this->partnerRepository->findOneBy(['email' => $partner]));
         }
-
         if (isset($row['excluded_partners'])) {
             foreach ($row['excluded_partners'] as $partner) {
                 $zone->addExcludedPartner($this->partnerRepository->findOneBy(['email' => $partner]));
             }
         }
-
         $manager->persist($zone);
     }
 

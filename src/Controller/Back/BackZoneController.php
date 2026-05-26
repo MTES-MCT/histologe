@@ -109,7 +109,6 @@ class BackZoneController extends AbstractController
                 return $this->json($response, $response['code']);
             }
             $zone->setCreatedBy($user);
-
             $em->persist($zone);
             $em->flush();
 
@@ -138,7 +137,6 @@ class BackZoneController extends AbstractController
             $this->validateArea($zone, $form, $em);
             if ($form->isValid()) {
                 $em->flush();
-
                 $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'La zone a bien été modifiée.']);
 
                 return $this->redirectToRoute('back_territory_management_zone_show', ['zone' => $zone->getId()]);

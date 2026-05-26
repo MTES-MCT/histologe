@@ -8,8 +8,6 @@ use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
 /**
- * Transforms between Geometry objects (Polygon/MultiPolygon) and WKT strings for form handling.
- *
  * @implements DataTransformerInterface<GeometryInterface, string>
  */
 class PolygonToWktTransformer implements DataTransformerInterface
@@ -36,7 +34,7 @@ class PolygonToWktTransformer implements DataTransformerInterface
     }
 
     /**
-     * Transforms a WKT string to a Geometry object (Polygon/MultiPolygon, etc.) (when form is submitted).
+     * Transforms a WKT string to a Geometry object (Polygon/MultiPolygon, etc.).
      */
     public function reverseTransform(mixed $value): ?GeometryInterface
     {

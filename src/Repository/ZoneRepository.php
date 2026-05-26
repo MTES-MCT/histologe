@@ -115,7 +115,7 @@ class ZoneRepository extends ServiceEntityRepository
     public function findForUserAndTerritory(User $user, ?Territory $territory): array
     {
         $qb = $this->createQueryBuilder('z')
-            ->select('partial z.{id, name, type, createdAt, updatedAt}'); // Exclude area column (GEOMETRY is heavy)
+            ->select('partial z.{id, name, type}'); // Exclusion des colonnes inutiles (notamment area qui pèse sur le game)
 
         if (!$user->isSuperAdmin()) {
             $qb->andWhere('z.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
