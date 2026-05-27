@@ -29,7 +29,7 @@
         Exporter les résultats
       </a>
     </div>
-    <div v-if="!sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-mt-21w fr-text--right">
+    <div v-if="!sharedState.user.isAdmin" class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-mt-2w fr-text--right">
       <a :href="(total > 0) ? `${sharedProps.ajaxurlExportCsv}` : undefined"
          :class="[
               'fr-btn',
