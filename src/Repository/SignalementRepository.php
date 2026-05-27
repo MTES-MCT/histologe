@@ -21,10 +21,10 @@ use App\Service\Security\PartnerAuthorizedResolver;
 use App\Utils\Address\CommuneHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -35,9 +35,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<Signalement>
  *
  * @method Signalement|null find($id, $lockMode = null, $lockVersion = null)
- * @method Signalement|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Signalement|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method Signalement[]    findAll()
- * @method Signalement[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Signalement[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class SignalementRepository extends ServiceEntityRepository
 {
@@ -450,8 +450,8 @@ class SignalementRepository extends ServiceEntityRepository
      */
     public function findAllForApi(User $user, SignalementListQueryParams $signalementListQueryParams): array
     {
-        $page = (int) ($signalementListQueryParams->page ?? SignalementListQueryParams::DEFAULT_PAGE);
-        $limit = (int) ($signalementListQueryParams->limit ?? SignalementListQueryParams::DEFAULT_LIMIT);
+        $page = (int) $signalementListQueryParams->page;
+        $limit = (int) $signalementListQueryParams->limit;
 
         $offset = ($page - 1) * $limit;
         $qb = $this->findForAPIQueryBuilder($user);
@@ -522,20 +522,22 @@ class SignalementRepository extends ServiceEntityRepository
                     )
                 AND s.statut = :statusSignalement
                 AND s.territory_id = :territoryId
-                AND su.type = :suiviTypeUsager
+                AND su.category IN (:suiviTypeUsagers)
                 GROUP BY s.id
                 HAVING dernier_suivi_date > \''.self::DATE_FEEDBACK_USAGER_ONLINE.'\'
                 ORDER BY dernier_suivi_date DESC
                 LIMIT '.$limit.';';
 
-        $statement = $connexion->prepare($sql);
-
-        return $statement->executeQuery([
-            'statusSignalement' => SignalementStatus::ACTIVE->value,
-            'territoryId' => $territory->getId(),
-            'suiviTypeTechnical' => Suivi::TYPE_TECHNICAL,
-            'suiviTypeUsager' => Suivi::TYPE_USAGER,
-        ])->fetchAllAssociative();
+        return $connexion->executeQuery(
+            $sql,
+            [
+                'statusSignalement' => SignalementStatus::ACTIVE->value,
+                'territoryId' => $territory->getId(),
+                'suiviTypeTechnical' => Suivi::TYPE_TECHNICAL,
+                'suiviTypeUsagers' => array_map(static fn ($c) => $c->value, SuiviCategory::categoriesSubmittedByUsager()),
+            ],
+            ['suiviTypeUsagers' => ArrayParameterType::STRING]
+        )->fetchAllAssociative();
     }
 
     /**
@@ -648,6 +650,8 @@ class SignalementRepository extends ServiceEntityRepository
 
     /**
      * @param Collection<int, Partner>|null $userPartners
+     *
+     * @return Paginator<Signalement>
      */
     public function findInjonctionFilteredPaginated(
         SearchSignalementInjonction $searchSignalementInjonction,
@@ -759,6 +763,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<Signalement>
+     */
     public function findInjonctionToRemindAnswerBailleur(\DateTimeImmutable $beforeDate): array
     {
         $qb = $this->createQueryBuilder('s');
@@ -846,6 +853,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<Signalement>|int
+     */
     public function getActiveSignalementsForUser(User $user, ?bool $count = false): array|int
     {
         $qb = $this->createQueryBuilder('s');
@@ -875,6 +885,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<Signalement>|int
+     */
     public function getActiveSignalementsWithInteractionsForUser(User $user, ?bool $count = false): array|int
     {
         $qb = $this->createQueryBuilder('s');
@@ -909,6 +922,9 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return array<Signalement>
+     */
     public function findWithInconsistentCommuneName(Commune $commune): array
     {
         $qb = $this->createQueryBuilder('s');

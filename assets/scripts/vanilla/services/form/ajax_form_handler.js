@@ -11,6 +11,9 @@ modalElements.forEach((modalElement) => {
     event.preventDefault();
     clearErrors();
   });
+  modalElement.addEventListener('close', () => {
+    clearErrors();
+  });
 });
 
 function clearErrors() {
@@ -27,9 +30,7 @@ function handleSubmitForm(containerElement) {
   containerElement.addEventListener('submit', (event) => {
     event.preventDefault();
     const formElement = event.target;
-    const submitElements = document.querySelectorAll(
-      '.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]'
-    );
+    const submitElements = containerElement.querySelectorAll('[type="submit"]');
     submitElements.forEach((el) => {
       el.disabled = true;
       el.classList.add('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
@@ -43,9 +44,8 @@ async function submitPayload(formElement) {
   let response;
   try {
     const formData = new FormData(formElement);
-    const submitElements = document.querySelectorAll(
-      '.fr-modal--opened [type="submit"], .single-ajax-form-container [type="submit"]'
-    );
+    const container = formElement.closest('dialog, .single-ajax-form-container');
+    const submitElements = container?.querySelectorAll('[type="submit"]') || [];
 
     if (
       formElement.enctype === 'multipart/form-data' ||
@@ -86,9 +86,7 @@ async function submitPayload(formElement) {
       const errors = responseData.errors;
       let firstErrorElement = true;
       for (const property in errors) {
-        const labelTargetErrors = document.querySelectorAll(
-          '.fr-modal--opened [data-error-target="1"], .single-ajax-form-container [data-error-target="1"]'
-        );
+        const labelTargetErrors = container.querySelectorAll('[data-error-target="1"]');
 
         if (labelTargetErrors.length > 0) {
           const labelElement = labelTargetErrors[0];
@@ -106,8 +104,8 @@ async function submitPayload(formElement) {
 
           labelElement.after(pElement);
         } else {
-          const inputElements = document.querySelectorAll(
-            `.fr-modal--opened [name="${property}"], .single-ajax-form-container [name="${formElement.name}[${property}]"]`
+          const inputElements = container.querySelectorAll(
+            `[name="${property}"], [name="${formElement.name}[${property}]"]`
           );
           let inputElement;
           let parentElement;
@@ -116,13 +114,11 @@ async function submitPayload(formElement) {
             parentElement = inputElement.closest('.fr-fieldset');
           } else {
             inputElement =
-              document.querySelector(
-                `.fr-modal--opened [name="${property}"], .single-ajax-form-container [name="${formElement.name}[${property}]"] `
+              container.querySelector(
+                `[name="${property}"], [name="${formElement.name}[${property}]"] `
               ) ||
-              document.querySelector(
-                '.fr-modal--opened .no-field-errors, .single-ajax-form-container .no-field-errors'
-              ) ||
-              document.querySelector('.fr-modal--opened input, .single-ajax-form-container input');
+              container.querySelector('.no-field-errors') ||
+              container.querySelector('input');
             parentElement = inputElement.parentElement;
           }
 

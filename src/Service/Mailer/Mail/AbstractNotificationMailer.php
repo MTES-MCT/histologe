@@ -89,7 +89,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
         $territoryName = \Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC')
             ->transliterate(
-                (!empty($territory) && null !== $territory->getName())
+                (!empty($territory))
                     ? $territory->getName()
                     : 'ALERTE'
             );
@@ -242,7 +242,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             ->subject(
                 mb_strtoupper($this->getPlatformName())
                 .' '
-                .mb_strtoupper((!empty($territory) && null !== $territory->getName()) ? $territory->getName() : 'ALERTE')
+                .mb_strtoupper(!empty($territory) ? $territory->getName() : 'ALERTE')
                 .' - '.
                 str_replace('%param.platform_name%', $this->getPlatformName(), $this->mailerSubject)
             );

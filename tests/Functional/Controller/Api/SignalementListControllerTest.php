@@ -59,6 +59,9 @@ class SignalementListControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
+    /**
+     * @param array<string, mixed> $queryParameters
+     */
     #[DataProvider('provideGoodQueryParameters')]
     public function testGetSignalementListWithFilters(array $queryParameters, int $count): void
     {
@@ -78,6 +81,9 @@ class SignalementListControllerTest extends WebTestCase
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 
+    /**
+     * @return iterable<string, array{array<string, mixed>, int}>
+     */
     public static function provideGoodQueryParameters(): iterable
     {
         yield 'limit=2' => [['limit' => 2], 2];

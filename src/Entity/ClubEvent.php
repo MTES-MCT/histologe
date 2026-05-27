@@ -18,21 +18,24 @@ class ClubEvent implements EntityHistoryInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     #[Assert\NotBlank()]
     private ?\DateTimeImmutable $dateEvent = null;
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank()]
     #[Assert\Length(max: 50)]
-    private ?string $name = null;
+    private string $name;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank()]
     #[Assert\Url()]
     #[Assert\Length(max: 255)]
-    private ?string $url = null;
+    private string $url;
 
+    /**
+     * @var array<string>
+     */
     #[ORM\Column]
     private array $userRoles = [];
 
@@ -65,7 +68,7 @@ class ClubEvent implements EntityHistoryInterface
         return $this;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -77,7 +80,7 @@ class ClubEvent implements EntityHistoryInterface
         return $this;
     }
 
-    public function getUrl(): ?string
+    public function getUrl(): string
     {
         return $this->url;
     }
@@ -89,11 +92,17 @@ class ClubEvent implements EntityHistoryInterface
         return $this;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getUserRoles(): array
     {
         return $this->userRoles;
     }
 
+    /**
+     * @param array<string> $userRoles
+     */
     public function setUserRoles(array $userRoles): static
     {
         $this->userRoles = $userRoles;

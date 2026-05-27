@@ -37,7 +37,7 @@ final class UserApiPermissionController extends AbstractController
     }
 
     /**
-     * @return array{FormInterface, SearchUser, Paginator<User>}
+     * @return array{FormInterface<mixed>, SearchUser, Paginator<User>}
      */
     private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {

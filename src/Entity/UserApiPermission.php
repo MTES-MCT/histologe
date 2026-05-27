@@ -20,7 +20,7 @@ class UserApiPermission
 
     #[ORM\ManyToOne(inversedBy: 'userApiPermissions')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private User $user;
 
     #[ORM\ManyToOne]
     private ?Territory $territory = null;
@@ -65,12 +65,12 @@ class UserApiPermission
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(User $user): static
     {
         $this->user = $user;
 

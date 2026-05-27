@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
-use App\Entity\Suivi;
 use App\Manager\SuiviManager;
 use App\Security\Voter\SignalementFoVoter;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -30,7 +29,6 @@ class SignalementConfirmEditController extends AbstractController
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $this->renderView('suivi/front_signalement_confirm_edit_email_occupant.html.twig', ['old' => $old, 'new' => $signalement->getMailOccupant()]),
-                type: Suivi::TYPE_USAGER,
                 category: SuiviCategory::SIGNALEMENT_EDITED_FO,
                 isVisibleForUsager: true,
             );

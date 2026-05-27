@@ -11,7 +11,7 @@ class ViewLatestIntervention
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
-    private ?int $signalementId = null;
+    private int $signalementId;
 
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $concludeProcedure = null;
@@ -26,10 +26,10 @@ class ViewLatestIntervention
     private ?\DateTimeImmutable $scheduledAt = null;
 
     #[ORM\Column(type: 'string')]
-    private ?string $status = null;
+    private string $status;
 
     #[ORM\Column(type: 'integer')]
-    private ?int $nbVisites = null;
+    private int $nbVisites;
 
     public function getSignalementId(): int
     {
@@ -56,12 +56,12 @@ class ViewLatestIntervention
         return $this->scheduledAt;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): string
     {
         return $this->status;
     }
 
-    public function getNbVisites(): ?int
+    public function getNbVisites(): int
     {
         return $this->nbVisites;
     }

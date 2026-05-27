@@ -16,6 +16,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class ClotureType extends AbstractType
 {
     public function __construct(
@@ -58,7 +61,7 @@ class ClotureType extends AbstractType
                 'choices' => $this->fileListService->getFileChoicesForSignalement($signalement),
             ]);
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $builder->add('isVisibleForUsager', ChoiceType::class, [// TODO : à changer dans les prochains tickets
+            $builder->add('isVisibleForUsager', ChoiceType::class, [
                 'label' => 'Notifier l\'usager par e-mail de la clôture du signalement.',
                 'expanded' => true,
                 'choices' => [

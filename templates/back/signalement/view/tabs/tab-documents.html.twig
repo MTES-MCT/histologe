@@ -4,6 +4,8 @@
 
 {% include 'back/signalement/view/photos-documents.html.twig' with {'zonetitle': "Photos et documents concernant la procédure",'filesFilter': 'procédure','context': 'documents-procedure'} %}
 
+{% include 'back/signalement/view/photos-documents.html.twig' with {'zonetitle': "Photos et documents transmis par le bailleur",'filesFilter': 'bailleur','context': 'documents-bailleur'} %}
+
 {% for intervention in signalement.interventions | filter(intervention => intervention.type != enum('App\\Entity\\Enum\\InterventionType').ARRETE_PREFECTORAL) %}
     <div class="fr-mt-5v"></div>
     {% include 'back/signalement/view/photos-documents.html.twig' with {

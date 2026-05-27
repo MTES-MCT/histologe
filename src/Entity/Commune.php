@@ -22,16 +22,16 @@ class Commune implements EntityHistoryInterface
     private ?Territory $territory = null;
 
     #[ORM\Column(type: 'string', length: 255)]
-    private ?string $nom = null;
+    private string $nom;
 
     #[ORM\Column(type: 'string', length: 10)]
-    private ?string $codePostal = null;
+    private string $codePostal;
 
     #[ORM\Column(type: 'string', length: 10)]
-    private ?string $codeInsee = null;
+    private string $codeInsee;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isZonePermisLouer = null;
+    private bool $isZonePermisLouer;
 
     #[ORM\ManyToOne(inversedBy: 'communes', cascade: ['persist'])]
     private ?Epci $epci = null;
@@ -41,7 +41,7 @@ class Commune implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function getNom(bool $withArrondissement = false): ?string
+    public function getNom(bool $withArrondissement = false): string
     {
         if ($withArrondissement) {
             return $this->nom;
@@ -57,7 +57,7 @@ class Commune implements EntityHistoryInterface
         return $this;
     }
 
-    public function getCodePostal(): ?string
+    public function getCodePostal(): string
     {
         return $this->codePostal;
     }
@@ -69,7 +69,7 @@ class Commune implements EntityHistoryInterface
         return $this;
     }
 
-    public function getCodeInsee(): ?string
+    public function getCodeInsee(): string
     {
         return $this->codeInsee;
     }
@@ -110,12 +110,12 @@ class Commune implements EntityHistoryInterface
         return $this->nom;
     }
 
-    public function getIsZonePermisLouer(): ?bool
+    public function getIsZonePermisLouer(): bool
     {
         return $this->isZonePermisLouer;
     }
 
-    public function setIsZonePermisLouer(?bool $isZonePermisLouer): self
+    public function setIsZonePermisLouer(bool $isZonePermisLouer): self
     {
         $this->isZonePermisLouer = $isZonePermisLouer;
 

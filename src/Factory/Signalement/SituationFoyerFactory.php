@@ -43,6 +43,8 @@ class SituationFoyerFactory
             travailleurSocialAccompagnement: $data['travailleur_social_accompagnement'] ?? null,
             travailleurSocialAccompagnementDeclarant: $data['travailleur_social_accompagnement_declarant'] ?? null,
             travailleurSocialAccompagnementNomStructure: $data['travailleur_social_accompagnement_nom_structure'] ?? null,
+            travailleurSocialAccompagnementNomReferent: $data['travailleur_social_accompagnement_nom_referent'] ?? $data['travailleur_social_accompagnement_inviter_referent_comme_tiers_nom'] ?? null,
+            travailleurSocialAccompagnementPrenomReferent: $data['travailleur_social_accompagnement_prenom_referent'] ?? $data['travailleur_social_accompagnement_inviter_referent_comme_tiers_prenom'] ?? null,
         );
     }
 }

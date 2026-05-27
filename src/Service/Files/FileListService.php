@@ -2,6 +2,7 @@
 
 namespace App\Service\Files;
 
+use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -43,8 +44,19 @@ class FileListService
             });
             $choices['Documents liés à la procédure'] = $procedureFilesSorted;
         }
+        // 3. Documents bailleur
+        $bailleurFiles = $signalement->getFiles()->filter(static function (File $file) {
+            return !$file->getIsSuspicious() && DocumentType::MESSAGE_BAILLEUR === $file->getDocumentType();
+        });
+        if (!$bailleurFiles->isEmpty()) {
+            $bailleurFilesSorted = $bailleurFiles->toArray();
+            usort($bailleurFilesSorted, static function (File $a, File $b) {
+                return strcmp($a->getTitle(), $b->getTitle());
+            });
+            $choices['Documents du bailleur'] = $bailleurFilesSorted;
+        }
 
-        // 3. Documents types (fichiers standalone)
+        // 4. Documents types (fichiers standalone)
         $standaloneFiles = $this->fileRepository->createQueryBuilder('f')
             ->where('f.isStandalone = :isStandalone')
             ->andWhere('f.territory = :territory OR f.territory IS NULL')

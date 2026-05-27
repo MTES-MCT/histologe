@@ -1,5 +1,5 @@
 <template>
-  <div class="fr-grid-row fr-my-2w" v-for=" (item, index) in list" :key="index">
+  <div class="fr-grid-row fr-my-2w" v-for=" (item, index) in list" :key="index" :data-signalement-uuid="item.uuid">
     <div class="fr-col-12">
       <div class="fr-card" :class="{ 'card-signalement--new': item.statut === 'NEED_VALIDATION' }">
         <div class="fr-card__body">
@@ -79,10 +79,19 @@
                   <button v-if="item.canDeleteSignalement" data-fr-opened="false" 
                           aria-controls="modal-delete-signalement" 
                           @click="selectItem(item)"
-                          class="fr-btn fr-btn--icon-left fr-btn--secondary fr-mx-1w fr-icon-delete-line">
+                          class="fr-btn fr-btn--icon-left fr-btn--secondary fr-mx-1w fr-icon-delete-line"
+                          :aria-label="`Supprimer le signalement ${item.reference}`"
+                          :title="`Supprimer le signalement ${item.reference}`"
+                    >
                     Supprimer le signalement
                   </button>
-                  <a :href="`/bo/signalements/${item.uuid}`" class="fr-btn fr-btn--icon-right fr-icon-arrow-right-line fr-mx-1w">
+                  <a
+                    :href="`/bo/signalements/${item.uuid}`"
+                    @click="saveScrollPosition(item)"
+                    class="fr-btn fr-btn--icon-right fr-icon-arrow-right-line fr-mx-1w"
+                    :aria-label="`Accéder au dossier ${item.reference}`"
+                    :title="`Accéder au dossier ${item.reference}`"
+                  >
                     Accéder au dossier
                   </a>
                 </div>
@@ -156,6 +165,9 @@ export default defineComponent({
       sharedProps: store.props,
       selectedItem: null as SignalementItem | null
     }
+  },
+  mounted () {
+    this.restoreScrollPosition()
   },
   methods: {
     formatDate (dateString: string | null): string {
@@ -270,6 +282,21 @@ export default defineComponent({
     },
     emitDeleteSignalementItem(item: SignalementItem|null) {
       this.$emit('deleteSignalementItem', item);
+    },
+    saveScrollPosition (item: SignalementItem) {
+      sessionStorage.setItem('signalement_list_clicked_uuid', item.uuid)
+    },
+    restoreScrollPosition () {
+      const uuid = sessionStorage.getItem('signalement_list_clicked_uuid')
+      if (uuid) {
+        this.$nextTick(() => {
+          const element = document.querySelector(`[data-signalement-uuid="${uuid}"]`)
+          if (element) {
+            element.scrollIntoView({ block: 'center' })
+          }
+          sessionStorage.removeItem('signalement_list_clicked_uuid')
+        })
+      }
     }
   }
 })

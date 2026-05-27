@@ -16,26 +16,26 @@ class SuiviFile
 
     #[ORM\ManyToOne(inversedBy: 'suiviFiles')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Suivi $suivi = null;
+    private Suivi $suivi;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?File $file = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    private string $title;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getSuivi(): ?Suivi
+    public function getSuivi(): Suivi
     {
         return $this->suivi;
     }
 
-    public function setSuivi(?Suivi $suivi): static
+    public function setSuivi(Suivi $suivi): static
     {
         $this->suivi = $suivi;
 
@@ -54,7 +54,7 @@ class SuiviFile
         return $this;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }

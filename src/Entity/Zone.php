@@ -34,17 +34,17 @@ class Zone implements EntityHistoryInterface
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $area = null;
+    private string $area;
 
     #[ORM\ManyToOne(inversedBy: 'zones')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank(message: 'Merci de sélectionner un territoire.')]
-    private ?Territory $territory = null;
+    private Territory $territory;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
     #[Groups(['settings:read'])]
-    private ?string $name = null;
+    private string $name;
 
     #[ORM\Column(
         type: 'string',
@@ -55,7 +55,7 @@ class Zone implements EntityHistoryInterface
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $createdBy = null;
+    private User $createdBy;
 
     /**
      * @var Collection<int, Partner>
@@ -80,31 +80,31 @@ class Zone implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function getArea(): ?string
+    public function getArea(): string
     {
         return $this->area;
     }
 
-    public function setArea(?string $area): static
+    public function setArea(string $area): static
     {
         $this->area = $area;
 
         return $this;
     }
 
-    public function getTerritory(): ?Territory
+    public function getTerritory(): Territory
     {
         return $this->territory;
     }
 
-    public function setTerritory(?Territory $territory): static
+    public function setTerritory(Territory $territory): static
     {
         $this->territory = $territory;
 
         return $this;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }

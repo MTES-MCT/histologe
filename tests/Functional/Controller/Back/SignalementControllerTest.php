@@ -286,7 +286,7 @@ class SignalementControllerTest extends WebTestCase
             [
                 'cloture[motifCloture]' => 'INSALUBRITE',
                 'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                'cloture[isVisibleForUsager]' => '0', // TODO : à changer dans les prochains tickets
+                'cloture[isVisibleForUsager]' => '0',
                 'cloture[type]' => 'all',
             ]
         );
@@ -333,7 +333,7 @@ class SignalementControllerTest extends WebTestCase
             [
                 'cloture[motifCloture]' => 'INSALUBRITE',
                 'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                'cloture[isVisibleForUsager]' => '1', // TODO : à changer dans les prochains tickets
+                'cloture[isVisibleForUsager]' => '1',
                 'cloture[type]' => 'all',
             ]
         );

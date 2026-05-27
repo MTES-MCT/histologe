@@ -35,7 +35,7 @@ class TagController extends AbstractController
     }
 
     /**
-     * @return array{FormInterface, SearchTag, Paginator<Tag>}
+     * @return array{FormInterface<mixed>, SearchTag, Paginator<Tag>}
      */
     private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {
@@ -48,12 +48,15 @@ class TagController extends AbstractController
             $searchTag = new SearchTag($user);
         }
 
-        /** @var Paginator $paginatedFiles */
+        /** @var Paginator<Tag> $paginatedFiles */
         $paginatedFiles = $this->tagRepository->findFilteredPaginated($searchTag, $this->maxListPagination);
 
         return [$form, $searchTag, $paginatedFiles];
     }
 
+    /**
+     * @return array<array{target: string, content: string}>
+     */
     private function getHtmlTargetContentsForTagsList(Request $request): array
     {
         [, $searchTag, $paginatedTags] = $this->handleSearch($request, true);

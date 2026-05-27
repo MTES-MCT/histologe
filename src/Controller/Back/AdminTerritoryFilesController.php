@@ -46,7 +46,7 @@ class AdminTerritoryFilesController extends AbstractController
     }
 
     /**
-     * @return array{FormInterface, SearchTerritoryFiles, Paginator<File>}
+     * @return array{FormInterface<mixed>, SearchTerritoryFiles, Paginator<File>}
      */
     private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {
@@ -63,7 +63,7 @@ class AdminTerritoryFilesController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             $territories = $user->getPartnersTerritories();
         }
-        /** @var Paginator $paginatedFiles */
+        /** @var Paginator<File> $paginatedFiles */
         $paginatedFiles = $this->fileRepository->findFilteredPaginated($searchTerritoryFiles, $territories, $this->maxListPagination);
 
         return [$form, $searchTerritoryFiles, $paginatedFiles];

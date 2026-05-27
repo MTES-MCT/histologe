@@ -3,7 +3,10 @@ import { reloadTinyMCE } from '../form/form_helper';
 import { attachAjaxFormHandlers } from '../form/ajax_form_handler.js';
 import { initSearchCheckboxWidgets } from '../component/component_search_checkbox.js';
 import { initializeVisitesUploadFilesModal } from '../../controllers/back_signalement_view/form_upload_documents.js';
-import { openPhotoAlbumAddEventListeners } from '../../controllers/back_signalement_view/back_view_signalement.js';
+import {
+  openPhotoAlbumAddEventListeners,
+  updateBtnAddSuiviForm,
+} from '../../controllers/back_signalement_view/back_view_signalement.js';
 import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_signalement_edit_file/back_signalement_edit_file.js';
 import { btnSignalementFileDeleteAddEventListeners } from '../file/file_delete.js';
 import {
@@ -25,11 +28,14 @@ export function jsonResponseProcess(response) {
     const currentUrl = new URL(window.location.href);
 
     if (currentUrl.pathname === targetUrl.pathname && currentUrl.search === targetUrl.search) {
-      if (response._fragment) {
-        window.location.hash = `#${response._fragment}`;
+      if (response.scrollToTop) {
+        window.location.href = targetUrl.href;
+      } else {
+        if (response._fragment) {
+          window.location.hash = `#${response._fragment}`;
+        }
+        window.location.reload();
       }
-
-      window.location.reload();
     } else {
       window.location.href = targetUrl.href;
     }
@@ -49,14 +55,14 @@ export function jsonResponseProcess(response) {
     }
     if (response.closeModal) {
       const openModalElement = document.querySelector('.fr-modal--opened');
+      const openDialogElement = document.querySelector('dialog[open]');
       if (openModalElement) {
         dsfr(openModalElement).modal.conceal();
-        if (response.resetForm) {
-          const formElement = openModalElement.querySelector('form');
-          if (formElement) {
-            formElement.reset();
-          }
-        }
+      } else if (openDialogElement) {
+        openDialogElement.close();
+      }
+      if (response.resetForm) {
+        openDialogElement?.querySelector('form')?.reset();
       }
     }
     if (response.functions) {
@@ -64,6 +70,9 @@ export function jsonResponseProcess(response) {
         switch (fn.name) {
           case 'applyFilter':
             applyFilter();
+            break;
+          case 'updateBtnAddSuiviForm':
+            updateBtnAddSuiviForm();
             break;
           case 'reloadTinyMCE':
             reloadTinyMCE(fn.args[0]);

@@ -9,6 +9,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class BailleurClotureProcedureType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

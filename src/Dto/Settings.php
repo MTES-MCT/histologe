@@ -51,9 +51,9 @@ class Settings
     #[Groups('settings:read')]
     private array $zones = [];
     #[Groups('settings:read')]
-    private ?bool $hasSignalementImported = false;
+    private bool $hasSignalementImported = false;
     #[Groups('settings:read')]
-    private ?bool $isMultiTerritoire = false;
+    private bool $isMultiTerritoire = false;
     /**
      * @var array<int, mixed>
      */
@@ -66,13 +66,14 @@ class Settings
     private array $savedSearches = [];
 
     /**
-     * @param array<int, mixed> $territories
-     * @param array<int, mixed> $partners
-     * @param array<int, mixed> $communes
-     * @param array<int, mixed> $epcis
-     * @param array<int, mixed> $tags
-     * @param array<int, mixed> $zones
-     * @param array<int, mixed> $bailleursSociaux
+     * @param array<int, mixed>    $territories
+     * @param array<int, mixed>    $partners
+     * @param array<int, mixed>    $communes
+     * @param array<int, mixed>    $epcis
+     * @param array<int, mixed>    $tags
+     * @param array<int, mixed>    $zones
+     * @param array<int, mixed>    $bailleursSociaux
+     * @param array<string, mixed> $savedSearches
      */
     public function __construct(
         User $user,
@@ -185,7 +186,7 @@ class Settings
         return $this->hasSignalementImported;
     }
 
-    public function getIsMultiTerritoire(): ?bool
+    public function getIsMultiTerritoire(): bool
     {
         return $this->isMultiTerritoire;
     }

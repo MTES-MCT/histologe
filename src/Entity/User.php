@@ -64,12 +64,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private ?int $id = null;
 
     #[ORM\Column(type: Types::GUID, unique: true)]
-    private ?string $uuid = null;
+    private string $uuid;
 
     #[ORM\Column(length: 255, unique: true, nullable: true)]
     private ?string $proConnectUserId = null;
 
-    #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)]
     #[Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration', 'Default'])]
     #[Assert\NotBlank(message: 'Merci de saisir une adresse e-mail.')]
     #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
@@ -126,7 +126,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private ?string $prenom = null;
 
     #[ORM\Column(type: 'string', enumType: UserStatus::class)]
-    private ?UserStatus $statut = null;
+    private UserStatus $statut;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $lastLoginAt = null;
@@ -136,9 +136,9 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     #[ORM\Column(type: 'boolean')]
     #[Assert\NotNull(message: 'Merci de choisir une option de notification.')]
-    private ?bool $isMailingSummary;
+    private bool $isMailingSummary;
 
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(type: 'boolean', nullable: true)]
     #[Assert\NotNull(message: 'Merci de choisir une option de notification.', groups: ['notification_email'])]
     private ?bool $isMailingClubEvent;
 
@@ -162,7 +162,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private Collection $signalementUsagerOccupants;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
-    private ?\DateTimeInterface $archivingScheduledAt = null;
+    private ?\DateTimeImmutable $archivingScheduledAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $anonymizedAt = null;
@@ -280,7 +280,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
      */
     public function getUserIdentifier(): string
     {
-        if (null === $this->email || '' === $this->email) {
+        if ('' === $this->email) {
             throw new \LogicException('User email is not set');
         }
 
@@ -575,7 +575,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return mb_strtoupper($this->nom ?? '').' '.ucfirst($this->prenom ?? '');
     }
 
-    public function getStatut(): ?UserStatus
+    public function getStatut(): UserStatus
     {
         return $this->statut;
     }
@@ -621,12 +621,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
-    public function getIsMailingSummary(): ?bool
+    public function getIsMailingSummary(): bool
     {
         return $this->isMailingSummary;
     }
 
-    public function setIsMailingSummary(?bool $isMailingSummary): static
+    public function setIsMailingSummary(bool $isMailingSummary): static
     {
         $this->isMailingSummary = $isMailingSummary;
 
@@ -840,12 +840,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->signalementUsagerOccupants;
     }
 
-    public function getArchivingScheduledAt(): ?\DateTimeInterface
+    public function getArchivingScheduledAt(): ?\DateTimeImmutable
     {
         return $this->archivingScheduledAt;
     }
 
-    public function setArchivingScheduledAt(?\DateTimeInterface $archivingScheduledAt): static
+    public function setArchivingScheduledAt(?\DateTimeImmutable $archivingScheduledAt): static
     {
         $this->archivingScheduledAt = $archivingScheduledAt;
 
@@ -1035,12 +1035,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public function removeUserSignalementSubscription(UserSignalementSubscription $userSignalementSubscription): static
     {
-        if ($this->userSignalementSubscriptions->removeElement($userSignalementSubscription)) {
-            // set the owning side to null (unless already changed)
-            if ($userSignalementSubscription->getUser() === $this) {
-                $userSignalementSubscription->setUser(null);
-            }
-        }
+        $this->userSignalementSubscriptions->removeElement($userSignalementSubscription);
 
         return $this;
     }
@@ -1077,12 +1072,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public function removeUserApiPermission(UserApiPermission $userApiPermission): static
     {
-        if ($this->userApiPermissions->removeElement($userApiPermission)) {
-            // set the owning side to null (unless already changed)
-            if ($userApiPermission->getUser() === $this) {
-                $userApiPermission->setUser(null);
-            }
-        }
+        $this->userApiPermissions->removeElement($userApiPermission);
 
         return $this;
     }

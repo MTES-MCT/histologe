@@ -10,11 +10,10 @@
     </div>
     {% if is_granted('SIGN_CREATE_SUIVI', signalement) %}
         <div data-ajax-form>
-            {% include '_partials/signalement/add_suivi.html.twig' %}
+            {% include '_partials/signalement/_panel-add-suivi.html.twig' %}
         </div>
         <div class="fr-col-3 fr-col-md-6 fr-text--right">
-            <button class="fr-btn fr-btn--icon-left fr-icon-quote-line" data-fr-opened="false"
-                    aria-controls="fr-modal-add-suivi">
+            <button class="fr-btn fr-btn--icon-left fr-icon-quote-line" data-panel-open="panel-add-suivi" aria-controls="panel-add-suivi" aria-expanded="false">
                 Ajouter un suivi
             </button>
         </div>

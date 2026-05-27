@@ -4,7 +4,6 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Suivi;
 use App\Event\InterventionUpdatedByEsaboraEvent;
 use App\Manager\SuiviManager;
 use App\Service\Intervention\InterventionDescriptionGenerator;
@@ -50,12 +49,11 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
         $suivi = $this->suiviManager->createSuivi(
             signalement: $intervention->getSignalement(),
             description: $description,
-            type: Suivi::TYPE_AUTO,
             category: $suiviCategory,
             partner: $event->getPartner(),
             user: $event->getUser(),
             isVisibleForUsager: !$signalement->isTiersDeclarant(),
-            context: Suivi::CONTEXT_INTERVENTION,
+            sendMail: false,
         );
         $event->setSuivi($suivi);
         if (InterventionType::VISITE === $intervention->getType()

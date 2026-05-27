@@ -25,6 +25,10 @@ class ExportIterableQuery
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $options
+     * @param array<string>        $selectedColumns
+     */
     public function stream(User $user, array $options = [], array $selectedColumns = []): \Generator
     {
         $columns = SignalementExportSelectableColumns::getColumns();
@@ -51,6 +55,10 @@ class ExportIterableQuery
         }
     }
 
+    /**
+     * @param array<int>    $signalementIds
+     * @param array<string> $selectedColumns
+     */
     private function streamBatch(array $signalementIds, array $selectedColumns): \Generator
     {
         // Requête principale : champs scalaires + STATUT + EPCI (pas de produit cartésien)
@@ -95,6 +103,12 @@ class ExportIterableQuery
         }
     }
 
+    /**
+     * @param array<int>    $signalementIds
+     * @param array<string> $selectedColumns
+     *
+     * @return array<array<string, mixed>>
+     */
     private function fetchMainData(array $signalementIds, array $selectedColumns): array
     {
         $columns = SignalementExportSelectableColumns::getColumns();
@@ -150,6 +164,12 @@ class ExportIterableQuery
         return array_values(array_filter(array_map(static fn (int $id) => $indexed[$id] ?? null, $signalementIds)));
     }
 
+    /**
+     * @param array<int>    $signalementIds
+     * @param array<string> $selectedColumns
+     *
+     * @return array<int, array<string, mixed>>
+     */
     private function fetchDesordresData(array $signalementIds, array $selectedColumns): array
     {
         $qb = $this->em->createQueryBuilder()
@@ -188,6 +208,11 @@ class ExportIterableQuery
         return $indexed;
     }
 
+    /**
+     * @param array<int> $signalementIds
+     *
+     * @return array<int, array<string, mixed>>
+     */
     private function fetchEtiquettesData(array $signalementIds): array
     {
         $result = $this->em->createQueryBuilder()
@@ -210,6 +235,11 @@ class ExportIterableQuery
         return $indexed;
     }
 
+    /**
+     * @param array<int> $signalementIds
+     *
+     * @return array<int, array<string, mixed>>
+     */
     private function fetchPhotosData(array $signalementIds): array
     {
         $result = $this->em->createQueryBuilder()
@@ -233,6 +263,11 @@ class ExportIterableQuery
         return $indexed;
     }
 
+    /**
+     * @param array<int> $signalementIds
+     *
+     * @return array<int, array<string, mixed>>
+     */
     private function fetchDocumentsData(array $signalementIds): array
     {
         $result = $this->em->createQueryBuilder()
@@ -256,6 +291,12 @@ class ExportIterableQuery
         return $indexed;
     }
 
+    /**
+     * @param array<int>    $signalementIds
+     * @param array<string> $selectedColumns
+     *
+     * @return array<int, array<string, mixed>>
+     */
     private function fetchVisiteData(array $signalementIds, array $selectedColumns): array
     {
         $qb = $this->em->createQueryBuilder()

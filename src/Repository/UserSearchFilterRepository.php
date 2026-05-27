@@ -27,6 +27,9 @@ class UserSearchFilterRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    /**
+     * @return array<array<string, mixed>>
+     */
     public function findAllForUserArray(User $user): array
     {
         $qb = $this->createQueryBuilder('uss')

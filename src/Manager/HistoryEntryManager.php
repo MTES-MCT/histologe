@@ -14,6 +14,7 @@ use App\Entity\HistoryEntry;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Entity\UserPartner;
 use App\Entity\UserSignalementSubscription;
 use App\EventListener\Behaviour\DoctrineListenerRemoverTrait;
 use App\EventListener\EntityHistoryListener;
@@ -80,7 +81,7 @@ class HistoryEntryManager
     }
 
     /**
-     * @return array<string, array<array<string, string>>>
+     * @return array<string, array<array<string, int|string|null>>>
      */
     public function getAffectationHistory(Signalement $signalement): array
     {
@@ -114,7 +115,7 @@ class HistoryEntryManager
 
         ksort($formattedHistory);
         foreach ($formattedHistory as &$partnerEvents) {
-            usort($partnerEvents, static fn ($a, $b) => strcasecmp($b['Date'], $a['Date']));
+            usort($partnerEvents, static fn ($a, $b) => strcasecmp((string) $b['Date'], (string) $a['Date']));
         }
 
         return $formattedHistory;
@@ -147,16 +148,18 @@ class HistoryEntryManager
     }
 
     /**
-     * @param array<string, array<array<string, string>>> $formattedHistory
-     * @param array<HistoryEntry>                         $entries
+     * @param array<string, array<array<string, int|string|null>>> $formattedHistory
+     * @param array<HistoryEntry>                                  $entries
      */
     private function formatEntries(array &$formattedHistory, array $entries, string $type, ?Signalement $signalement = null): void
     {
         /** @var HistoryEntry $entry */
         foreach ($entries as $entry) {
             $userName = $entry->getUser() ? $entry->getUser()->getNomComplet(true) : 'Système (automatique)';
-            if ('affectation' === $type || 'subscription' === $type) {
-                $partner = $entry->getUser()?->getPartnerInTerritoryOrFirstOne($entry->getSignalement()->getTerritory());
+            if ('subscription' === $type || ('affectation' === $type && HistoryEntryEvent::UPDATE !== $entry->getEvent())) {
+                $partner = $this->getPartnerByEntryUser($entry);
+            } elseif ('affectation' === $type) {
+                $partner = $this->getPartnerByAffectationId($entry->getEntityId()) ?? $this->getPartnerByDeleteHistoryEntry($entry->getEntityId());
             } else {
                 $partner = $entry->getUser()?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
             }
@@ -172,13 +175,12 @@ class HistoryEntryManager
             }
 
             if ('affectation' === $type) {
-                $partnerTarget = $this->getPartnerByEntityId($entry->getEntityId()) ?? $this->getPartnerByDeleteHistoryEntry($entry->getEntityId());
+                $partnerTarget = $this->getPartnerByAffectationId($entry->getEntityId()) ?? $this->getPartnerByDeleteHistoryEntry($entry->getEntityId());
             } else {
                 $partnerTarget = null;
             }
 
             $id = $entry->getEntityId();
-
             switch ($type) {
                 case 'affectation':
                     $action = $this->getAffectationActionSummary($entry, $userName, $partnerTarget?->getNom() ?? 'N/A');
@@ -198,7 +200,7 @@ class HistoryEntryManager
                     'Id' => 'affectation' === $type ? $id : '-',
                 ];
                 $formattedHistory[$partnerName][] = $formattedEntry;
-                if (null !== $partnerTarget && null !== $partnerTarget->getNom() && $partnerTarget->getNom() !== $partnerName) {
+                if (null !== $partnerTarget && $partnerTarget->getNom() !== $partnerName) {
                     $formattedHistory[$partnerTarget->getNom()][] = $formattedEntry;
                 }
             }
@@ -302,16 +304,16 @@ class HistoryEntryManager
                     switch ($changes['statut']['new']) {
                         case AffectationStatus::ACCEPTED->value:
                             if (AffectationStatus::WAIT->value === $changes['statut']['old']) {
-                                $description .= ' a accepté l\'affectation pour le partenaire ';
+                                $description .= ' a accepté l\'affectation pour le partenaire '.$partnerName;
                             } else {
-                                $description .= ' a réouvert l\'affectation pour le partenaire ';
+                                $description .= ' a réouvert l\'affectation pour le partenaire '.$partnerName;
                             }
                             break;
                         case AffectationStatus::REFUSED->value:
-                            $description .= ' a refusé l\'affectation pour le partenaire ';
+                            $description .= ' a refusé l\'affectation pour le partenaire '.$partnerName;
                             break;
                         case AffectationStatus::CLOSED->value:
-                            $description .= ' a clôturé l\'affectation pour le partenaire ';
+                            $description .= ' a clôturé l\'affectation pour le partenaire '.$partnerName;
                             break;
                         case AffectationStatus::WAIT->value:
                             $description .= ' a remis en attente l\'affectation pour le partenaire ';
@@ -370,7 +372,7 @@ class HistoryEntryManager
         return $this->userRepository->find($entry->getChanges()['user']);
     }
 
-    private function getPartnerByEntityId(int $affectationId): ?Partner
+    private function getPartnerByAffectationId(int $affectationId): ?Partner
     {
         $affectation = $this->affectationRepository->find($affectationId);
 
@@ -395,5 +397,50 @@ class HistoryEntryManager
         }
 
         return null;
+    }
+
+    private function getPartnerByEntryUser(HistoryEntry $entry): ?Partner
+    {
+        $user = $entry->getUser();
+        if (null === $user) {
+            return null;
+        }
+
+        $territory = $entry->getSignalement()->getTerritory();
+        $currentPartner = $user->getPartnerInTerritoryOrFirstOne($territory);
+
+        if (null === $currentPartner) {
+            return null;
+        }
+
+        $userPartner = null;
+        foreach ($user->getUserPartners() as $up) {
+            if ($up->getPartner()->getId() === $currentPartner->getId()) {
+                $userPartner = $up;
+                break;
+            }
+        }
+
+        if (null === $userPartner) {
+            return $currentPartner;
+        }
+
+        $userPartnerEntityName = str_replace($this->historyEntryFactory::ENTITY_PROXY_PREFIX, '', UserPartner::class);
+        $laterUpdate = $this->historyEntryRepository->findFirstEntityUpdateAfter(
+            $userPartner->getId(),
+            $userPartnerEntityName,
+            $entry->getCreatedAt()
+        );
+
+        if (null === $laterUpdate) {
+            return $currentPartner;
+        }
+
+        $oldPartnerId = $laterUpdate->getChanges()['partner']['old'] ?? null;
+        if (null === $oldPartnerId) {
+            return $currentPartner;
+        }
+
+        return $this->partnerRepository->find($oldPartnerId) ?? $currentPartner;
     }
 }

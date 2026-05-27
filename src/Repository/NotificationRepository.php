@@ -18,9 +18,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @extends ServiceEntityRepository<Notification>
  *
  * @method Notification|null find($id, $lockMode = null, $lockVersion = null)
- * @method Notification|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Notification|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method Notification[]    findAll()
- * @method Notification[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Notification[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class NotificationRepository extends ServiceEntityRepository implements EntityCleanerRepositoryInterface
 {

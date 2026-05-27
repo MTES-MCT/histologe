@@ -25,6 +25,9 @@ class GenerateFileZipMessage
         return $this->signalementId;
     }
 
+    /**
+     * @return array<int>
+     */
     public function getFileIds(): array
     {
         return $this->fileIds;

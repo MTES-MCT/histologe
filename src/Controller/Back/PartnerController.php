@@ -64,7 +64,7 @@ class PartnerController extends AbstractController
     }
 
     /**
-     * @return array{FormInterface, SearchPartner, Paginator<Partner>}
+     * @return array{FormInterface<mixed>, SearchPartner, Paginator<Partner>}
      */
     private function handleSearch(Request $request, bool $fromSearchParams = false): array
     {
@@ -81,6 +81,9 @@ class PartnerController extends AbstractController
         return [$form, $searchPartner, $paginatedPartners];
     }
 
+    /**
+     * @return array<array{target: string, content: string}>
+     */
     private function getHtmlTargetContentsForPartnerAgentList(Partner $partner): array
     {
         return [
@@ -478,9 +481,6 @@ class PartnerController extends AbstractController
                 return $this->json(['content' => $content, 'title' => 'Compte existant sur un autre territoire', 'submitLabel' => 'Ajouter l\'utilisateur']);
             }
             $user->setRoles([$formUserPartner->get('role')->getData()]);
-            if (null === $user->getIsMailingSummary()) {
-                $user->setIsMailingSummary(true);
-            }
             if ($userExist instanceof User) {
                 $userExist->setNom($user->getNom());
                 $userExist->setPrenom($user->getPrenom());

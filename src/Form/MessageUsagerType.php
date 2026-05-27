@@ -7,13 +7,17 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class MessageUsagerType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('description', TextareaType::class, [
-                'label' => false,
+                'label' => 'Votre message',
+                'help' => 'Dix (10) caractères minimum.',
                 'attr' => [
                     'rows' => 5,
                 ],

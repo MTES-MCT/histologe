@@ -3,7 +3,7 @@ import dictionaryStore from '../dictionary-store'
 
 export const variablesReplacer = {
   replace (textToReplace: string | undefined): string {
-    if (textToReplace === undefined) {
+    if (textToReplace === undefined || textToReplace === null) {
       return ''
     }
     const descriptionWithValues = textToReplace.replace(/\{\{([\w.:]+)\}\}/g, (match, expression) => {

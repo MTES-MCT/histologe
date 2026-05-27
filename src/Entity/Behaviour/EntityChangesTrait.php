@@ -24,6 +24,9 @@ trait EntityChangesTrait
         return $this->updateOccurred;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getChanges(): array
     {
         return $this->changes;
@@ -39,6 +42,8 @@ trait EntityChangesTrait
 
     /**
      * Enregistre les changements détectés de manière temporaire.
+     *
+     * @param array<mixed> $changes
      */
     public function registerChanges(array $changes = []): void
     {

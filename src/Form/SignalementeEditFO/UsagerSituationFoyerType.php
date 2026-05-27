@@ -12,6 +12,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class UsagerSituationFoyerType extends AbstractType
 {
     /**
@@ -52,7 +55,9 @@ class UsagerSituationFoyerType extends AbstractType
         $souhaiteQuitterLogement = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialQuitteLogement() : '';
         $preavisDepartDepose = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialPreavisDepart() : '';
         $accompagnementTravailleurSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnement() : '';
-        $accompagnementTravailleurSocialNomStructure = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementNomStructure() : '';
+        $structureReferentSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementNomStructure() : '';
+        $nomReferentSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementNomReferent() : '';
+        $prenomReferentSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementPrenomReferent() : '';
 
         $beneficiaireRSA = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireRsa() : '';
         $beneficiaireFSL = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireFsl() : '';
@@ -211,11 +216,37 @@ class UsagerSituationFoyerType extends AbstractType
                 'help' => 'Format attendu : 255 caractères maximum',
                 'required' => false,
                 'mapped' => false,
-                'data' => $accompagnementTravailleurSocialNomStructure,
+                'data' => $structureReferentSocial,
                 'constraints' => [
                     new Assert\Length(
                         max: 255,
                         maxMessage: 'Le nom de la structure d\'accompagnement doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
+            ])
+            ->add('accompagnementTravailleurSocialNomReferent', TextType::class, [
+                'label' => 'Nom du référent social (facultatif)',
+                'help' => 'Format attendu : 255 caractères maximum',
+                'required' => false,
+                'mapped' => false,
+                'data' => $nomReferentSocial,
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le nom du référent social doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
+            ])
+            ->add('accompagnementTravailleurSocialPrenomReferent', TextType::class, [
+                'label' => 'Prénom du référent social (facultatif)',
+                'help' => 'Format attendu : 255 caractères maximum',
+                'required' => false,
+                'mapped' => false,
+                'data' => $prenomReferentSocial,
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le prénom du référent social doit comporter au maximum {{ limit }} caractères.',
                     ),
                 ],
             ])

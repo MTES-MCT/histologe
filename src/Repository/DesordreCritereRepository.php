@@ -13,9 +13,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<DesordreCritere>
  *
  * @method DesordreCritere|null find($id, $lockMode = null, $lockVersion = null)
- * @method DesordreCritere|null findOneBy(array $criteria, array $orderBy = null)
+ * @method DesordreCritere|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method DesordreCritere[]    findAll()
- * @method DesordreCritere[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method DesordreCritere[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class DesordreCritereRepository extends ServiceEntityRepository
 {
@@ -88,6 +88,11 @@ class DesordreCritereRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @param array<string> $slugs
+     *
+     * @return array<DesordreCritere>
+     */
     public function findBySlugsWithPrecisions(array $slugs): array
     {
         return $this->createQueryBuilder('dc')

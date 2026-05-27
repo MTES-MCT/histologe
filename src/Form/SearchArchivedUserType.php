@@ -17,6 +17,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class SearchArchivedUserType extends AbstractType
 {
     public function __construct(
@@ -69,6 +72,9 @@ class SearchArchivedUserType extends AbstractType
         $builder->add('page', HiddenType::class);
     }
 
+    /**
+     * @param FormInterface<mixed> $builder
+     */
     private function addPartnersField(FormInterface $builder, ?Territory $territory): void
     {
         $partners = $territory ? $this->partnerRepository->findBy(['territory' => $territory]) : $this->partnerRepository->findAll();

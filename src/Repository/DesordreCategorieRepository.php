@@ -10,9 +10,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<DesordreCategorie>
  *
  * @method DesordreCategorie|null find($id, $lockMode = null, $lockVersion = null)
- * @method DesordreCategorie|null findOneBy(array $criteria, array $orderBy = null)
+ * @method DesordreCategorie|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method DesordreCategorie[]    findAll()
- * @method DesordreCategorie[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method DesordreCategorie[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class DesordreCategorieRepository extends ServiceEntityRepository
 {

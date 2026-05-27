@@ -13,6 +13,9 @@ use Symfony\Component\Form\Flow\Type\ResetFlowType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class ServiceSecoursNavigatorType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -69,6 +72,9 @@ class ServiceSecoursNavigatorType extends AbstractType
             ));
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function createEditButtonOptions(string $step, string $label): array
     {
         return [

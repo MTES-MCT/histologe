@@ -2,6 +2,7 @@
 
 namespace App\Repository\Query\Dashboard;
 
+use App\Entity\Suivi;
 use App\Entity\User;
 use App\Service\DashboardTabPanel\TabDossier;
 use App\Service\DashboardTabPanel\TabQueryParameters;
@@ -16,6 +17,9 @@ class DossiersAvecRelanceSansReponseQuery
     ) {
     }
 
+    /**
+     * @param array<int>|null $territoriesIds
+     */
     private function getBaseSql(?array $territoriesIds): string
     {
         $clauseTerritoriesSi2 = '';
@@ -26,6 +30,7 @@ class DossiersAvecRelanceSansReponseQuery
             $clauseTerritoriesSi3 = ' AND si3.territory_id IN (:territories_ids) ';
             $clauseTerritoriesSi = ' AND si.territory_id IN (:territories_ids) ';
         }
+        $suiviTypeUsager = Suivi::TYPE_USAGER;
 
         return <<<SQL
             FROM (
@@ -66,7 +71,7 @@ class DossiersAvecRelanceSansReponseQuery
                     SELECT 1
                     FROM suivi s2
                     WHERE s2.signalement_id = relances_usager.signalement_id
-                      AND s2.type = 2
+                      AND s2.type = $suiviTypeUsager 
                       AND s2.created_at > relances_usager.first_relance_at
                 )
                 $clauseTerritoriesSi

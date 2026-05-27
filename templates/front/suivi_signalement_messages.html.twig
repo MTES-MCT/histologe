@@ -29,7 +29,6 @@
 				{{ form_start(formMessage, {'attr': {'id': 'form-message-usager'}}) }}
 				{{ form_errors(formMessage) }}
 				<p>Nous vous rappelons que les échanges entre les agents en charge de votre dossier et vous doivent se faire dans le respect mutuel. Nous invitons chaque partie à adopter une attitude courtoise et bienveillante.</p>
-				<p class="fr-hint-text fr-my-2v">Dix (10) caractères minimum</p>
 				<div class="fr-notice fr-notice--info fr-mb-3w">
 					<div class="fr-container">
 						<div class="fr-notice__body">
@@ -71,7 +70,7 @@
 				{% elseif signalement.statut.name == 'ARCHIVED' %}
 					{% set errorMessage = 'Votre signalement a été archivé, vous ne pouvez plus envoyer de messages.' %}
 				{% elseif signalement.isLogementVacant %}
-					{% set errorMessage = 'Votre logement a été marqué comme vacant, vous ne pouvez plus envoyer de messages.' %}
+					{% set errorMessage = 'Les services en charge du dossier ont indiqué que vous avez quitté votre logement. Par conséquent, vous ne pouvez plus envoyer de messages.' %}
 				{% else %}
 					{% set errorMessage = 'Vous ne pouvez plus envoyer de messages.' %}
 				{% endif %}
@@ -100,41 +99,16 @@
 			<div>Votre dossier a bien été enregistré le {{ signalement.createdAt|date('d/m/Y') }}.</div>
 			{% for suivi in signalement.suivis|reverse %}
 				{% set isUnreadMessage = false %}
-			    {% if suivi.category not in enum('App\\Entity\\Enum\\SuiviCategory').categoriesSubmittedByUsager() %}
+				{% set messageBoxClass = 'message-box--usager' %}
+				{% if suivi.category not in enum('App\\Entity\\Enum\\SuiviCategory').categoriesSubmittedByUsager() %}
 					{% if suivi.isSeenByUsager %}
 						{% set messageBoxClass = 'message-box--partner' %}
 					{% else %}
 						{% set messageBoxClass = 'message-box--partner message-box--unread' %}
 						{% set isUnreadMessage = true %}
 					{% endif %}
-				{% else %}
-					{% set messageBoxClass = 'message-box--usager' %}
 				{% endif %}
-				<div id="suivi_{{ suivi.id }}" class="message-box {{ messageBoxClass }}">
-					<div>
-						<strong>
-							{% if suivi.type is same as constant('App\\Entity\\Suivi::TYPE_TECHNICAL') %}
-								Suivi automatique
-							{% elseif suivi.partner %}
-								{{ suivi.partner.isArchive ? 'Partenaire supprimé' : suivi.partner.nom }}
-							{% elseif suivi.createdBy is not null and suivi.category in enum('App\\Entity\\Enum\\SuiviCategory').categoriesSubmittedByUsager() %}
-								{{ suivi.createdBy is same as signalement.getSignalementUsager.getOccupant ? 'OCCUPANT' : 'DECLARANT' }}
-							{% elseif suivi.createdBy is not null %}
-								{{ suivi.createdBy.getPartnerInTerritoryOrFirstOne(suivi.signalement.territory) ? suivi.createdBy.getPartnerInTerritoryOrFirstOne(suivi.signalement.territory).nom : '' }}
-							{% else %}
-								{{ suivi.getCreatedByLabel() }}
-							{% endif %}
-							-
-							{{ suivi.createdAt|date('d/m/Y') }}
-						</strong>
-					</div>
-					{% if isUnreadMessage %}
-						<span class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--warning fr-mb-1w">Nouveau message</span>
-					{% endif %}
-					<div class="message-box-message">
-						{{ suivi.description|replace({'___TOKEN___':csrf_token('suivi_signalement_ext_file_view')})|raw }}
-					</div>
-				</div>
+				{% include 'front/_partials/_suivi_signalement_suivi.html.twig' with {'forBailleur': false} %}
 			{% endfor %}
 		</div>
 	</div>

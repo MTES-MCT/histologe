@@ -39,7 +39,7 @@ class UserAvatarTest extends WebTestCase
         $outputSpan = $userAvatar->userAvatarOrPlaceHolder($user);
         $this->assertEquals('<span aria-hidden="true" class="avatar-histologe avatar-placeholder avatar-74">44</span>', $outputSpan);
 
-        /** @var ParameterBagInterface $parameterBag */
+        /** @var ParameterBagInterface&MockObject $parameterBag */
         $parameterBag = $this->createMock(ParameterBagInterface::class);
         /** @var FilesystemOperator&MockObject $fileStorage */
         $fileStorage = $this->createMock(FilesystemOperator::class);

@@ -29,20 +29,20 @@ class ServiceSecoursRoute implements EntityHistoryInterface
     private ?Territory $territory = null;
 
     #[ORM\Column(type: 'uuid', unique: true)]
-    private ?Uuid $uuid = null;
+    private string|Uuid $uuid;
 
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
-    private ?string $name = null;
+    private string $name;
 
     #[ORM\Column(length: 255)]
-    private ?string $slug = null;
+    private string $slug;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Length(max: 255)]
-    private ?string $email = null;
+    private string $email;
 
     #[ORM\Column(length: 20, nullable: true)]
     #[AppAssert\TelephoneFormat]
@@ -77,7 +77,7 @@ class ServiceSecoursRoute implements EntityHistoryInterface
         return $this;
     }
 
-    public function getUuid(): ?Uuid
+    public function getUuid(): string|Uuid
     {
         return $this->uuid;
     }
@@ -89,7 +89,7 @@ class ServiceSecoursRoute implements EntityHistoryInterface
         return $this;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -103,12 +103,12 @@ class ServiceSecoursRoute implements EntityHistoryInterface
         return $this;
     }
 
-    public function getSlug(): ?string
+    public function getSlug(): string
     {
         return $this->slug;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }

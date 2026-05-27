@@ -21,7 +21,7 @@ class DesordreCategorie
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $label = null;
+    private string $label;
 
     #[ORM\Column(type: 'string', length: 32, nullable: true, enumType: AppContext::class)]
     private ?AppContext $appContext = null;
@@ -40,7 +40,7 @@ class DesordreCategorie
         return $this->id;
     }
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return $this->label;
     }

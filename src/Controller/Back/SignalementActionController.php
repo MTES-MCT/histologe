@@ -33,6 +33,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -87,12 +88,10 @@ class SignalementActionController extends AbstractController
         $suiviManager->createSuivi(
             signalement: $signalement,
             description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
-            type : Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             partner: $partner,
             user : $user,
             isVisibleForUsager: true,
-            context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             createSubscription: false,
             flush: false,
         );
@@ -127,12 +126,10 @@ class SignalementActionController extends AbstractController
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
-                type : Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 partner: $partner,
                 user : $user,
                 isVisibleForUsager: true,
-                context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
                 subscriptionCreated: $subscriptionCreated,
             );
             $this->addFlash('success', ['title' => 'Signalement accepté', 'message' => 'Le signalement a bien été accepté.']);
@@ -175,12 +172,10 @@ class SignalementActionController extends AbstractController
         $suiviManager->createSuivi(
             signalement: $signalement,
             description: $description,
-            type : Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_IS_REFUSED,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user : $user,
             isVisibleForUsager: true,
-            context: Suivi::CONTEXT_SIGNALEMENT_REFUSED,
             files: $refusSignalement->getFiles(),
             subscriptionCreated: $subscriptionCreated,
         );
@@ -201,6 +196,7 @@ class SignalementActionController extends AbstractController
         Request $request,
         SuiviManager $suiviManager,
         LoggerInterface $logger,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         $suivi = (new Suivi())->setSignalement($signalement);
         $addSuiviRoute = $this->generateUrl('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
@@ -218,17 +214,18 @@ class SignalementActionController extends AbstractController
             /** @var User $user */
             $user = $this->getUser();
             $subscriptionCreated = false;
-            $suiviManager->createSuivi(
+            $suivi = $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $suivi->getDescription(),
-                type: Suivi::TYPE_PARTNER,
                 category: SuiviCategory::MESSAGE_PARTNER,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
                 isVisibleForUsager: $suivi->getIsVisibleForUsager(),
+                isVisibleForBailleur: $suivi->getIsVisibleForBailleur(),
                 files: $form->get('files')->getData(),
                 subscriptionCreated: $subscriptionCreated,
             );
+            $entityManager->refresh($suivi); // on rafraichit afin d'avoir le SuiviTransformerService et que les potentiels documents liés s'affiche sur le suivi
         } catch (\Throwable $exception) {
             $logger->error($exception->getMessage());
             $errors = ['main' => ['errors' => ['Une erreur est survenue lors de la publication, veuillez réessayer.']]];
@@ -241,7 +238,7 @@ class SignalementActionController extends AbstractController
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
         }
         $htmlTargetContents = [['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])]];
-        $functions = [['name' => 'applyFilter']];
+        $functions = [['name' => 'applyFilter'], ['name' => 'updateBtnAddSuiviForm']];
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions, 'resetForm' => true]);
     }
@@ -282,10 +279,14 @@ class SignalementActionController extends AbstractController
         Request $request,
         Suivi $suivi,
         EntityManagerInterface $entityManager,
+        FormFactoryInterface $formFactory,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(SuiviVoter::SUIVI_EDIT, $suivi);
-        $suivi->setSuiviTransformerService(null);
-        $form = $this->createForm(AddSuiviType::class, $suivi, ['action' => $this->generateUrl('back_signalement_edit_suivi', ['suivi' => $suivi->getId()])]);
+        $suivi->setSuiviTransformerService(null); // bloque la génération du html des suivi liées dans la description du suivi a editer (textarea)
+        $form = $formFactory->createNamed('edit_suivi', AddSuiviType::class, $suivi, [
+            'action' => $this->generateUrl('back_signalement_edit_suivi', ['suivi' => $suivi->getId()]),
+        ]
+        );
 
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
@@ -306,6 +307,7 @@ class SignalementActionController extends AbstractController
 
             $response = ['code' => Response::HTTP_OK];
             $flashMessages[] = ['type' => 'success', 'title' => 'Suivi modifié', 'message' => 'Le suivi a été modifié avec succès !'];
+            $entityManager->refresh($suivi); // on rafraichit afin d'avoir le SuiviTransformerService et que les potentiels documents liés s'affiche sur le suivi
             $htmlTargetContents = [['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $suivi->getSignalement()])]];
             $functions = [['name' => 'applyFilter']];
 
@@ -314,7 +316,7 @@ class SignalementActionController extends AbstractController
 
         $html = $this->renderView('back/signalement/view/add-edit-suivi-form.html.twig', [
             'form' => $form,
-            'formId' => 'fr-modal-edit-suivi-form',
+            'formId' => 'panel-edit-suivi-form',
             'signalement' => $suivi->getSignalement(),
         ]);
 
@@ -357,7 +359,6 @@ class SignalementActionController extends AbstractController
             $suiviManager->createSuivi(
                 signalement: $signalement,
                 description: 'Signalement rouvert pour '.$reopenFor,
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,

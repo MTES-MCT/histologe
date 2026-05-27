@@ -15,7 +15,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(columns: ['type'], name: 'idx_suivi_type')]
 #[ORM\Index(columns: ['created_at'], name: 'idx_suivi_created_at')]
 #[ORM\Index(columns: ['signalement_id', 'type', 'created_at'], name: 'idx_suivi_signalement_type_created_at')]
-#[ORM\Index(columns: ['context'], name: 'idx_suivi_context')]
 #[ORM\Index(columns: ['category', 'signalement_id', 'created_at'], name: 'idx_suivi_category_signalement_created_at')]
 #[ORM\Index(columns: ['is_visible_for_usager', 'signalement_id', 'created_at'], name: 'idx_suivi_is_visible_for_usager_signalement_created_at')]
 #[ORM\Index(columns: ['signalement_id', 'created_at'], name: 'idx_suivi_signalement_created_at')]
@@ -32,12 +31,6 @@ class Suivi implements EntityHistoryInterface
     public const int TYPE_PARTNER = 3;
     public const int TYPE_TECHNICAL = 4;
     public const int TYPE_USAGER_POST_CLOTURE = 5;
-    public const string CONTEXT_NOTIFY_USAGER_ONLY = 'notifyUsagerOnly';
-    public const string CONTEXT_INTERVENTION = 'intervention';
-    public const string CONTEXT_SCHS = 'schs';
-    public const string CONTEXT_SIGNALEMENT_ACCEPTED = 'signalementAccepted';
-    public const string CONTEXT_SIGNALEMENT_REFUSED = 'signalementRefused';
-    public const string CONTEXT_SIGNALEMENT_CLOSED = 'signalementClosed';
 
     public const int DEFAULT_PERIOD_INACTIVITY = 30;
     public const int DEFAULT_PERIOD_RELANCE = 45;
@@ -55,30 +48,27 @@ class Suivi implements EntityHistoryInterface
     private ?int $id = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private ?\DateTimeImmutable $createdAt = null;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: true)]
     private ?User $createdBy = null;
 
     #[ORM\Column(type: 'text')]
-    private ?string $description = null;
+    private string $description;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isVisibleForUsager = null;
+    private bool $isVisibleForUsager;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $isVisibleForBailleur = null;
+    private bool $isVisibleForBailleur;
 
     #[ORM\Column(type: 'integer')]
-    private ?int $type = null;
+    private int $type;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'suivis')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Signalement $signalement = null;
-
-    #[ORM\Column(length: 100, nullable: true)]
-    private ?string $context = null;
+    private Signalement $signalement;
 
     private bool $sendMail = true;
 
@@ -94,7 +84,7 @@ class Suivi implements EntityHistoryInterface
     private ?array $originalData = null;
 
     #[ORM\Column]
-    private ?bool $isSanitized = null;
+    private bool $isSanitized;
 
     #[ORM\Column(
         type: 'string',
@@ -116,7 +106,7 @@ class Suivi implements EntityHistoryInterface
     private ?Partner $partner = null;
 
     #[ORM\Column]
-    private ?bool $waitingNotification = null;
+    private bool $waitingNotification;
 
     public function __construct()
     {
@@ -143,7 +133,7 @@ class Suivi implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -202,7 +192,7 @@ class Suivi implements EntityHistoryInterface
         return $this->getCreatedBy()?->getNomComplet($firstNameFirst);
     }
 
-    public function getCreatedByLabel(string $separator = ' : '): ?string
+    public function getCreatedByLabel(string $separator = ' : ', bool $forBailleur = false): ?string
     {
         if (self::TYPE_TECHNICAL === $this->type) {
             return 'Suivi automatique';
@@ -225,8 +215,8 @@ class Suivi implements EntityHistoryInterface
 
             return $this->getCreatedBy()->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getTerritory())?->getNom().$separator.$this->getCreatedBy()->getNomComplet(true);
         }
-        if (in_array($this->getCategory(), SuiviCategory::CategoriesSubmittedByBailleur())) {
-            return 'Bailleur';
+        if (in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByBailleur())) {
+            return $forBailleur ? 'Vous (bailleur)' : 'Bailleur';
         }
         if ($this->getCreatedAt()->format('Y') >= 2024) {
             return 'Occupant ou déclarant';
@@ -238,7 +228,7 @@ class Suivi implements EntityHistoryInterface
         return 'OCCUPANT'.$separator.strtoupper($this->getSignalement()->getNomOccupant()).' '.ucfirst($this->getSignalement()->getPrenomOccupant());
     }
 
-    public function getDescription(bool $transformHtml = true): ?string
+    public function getDescription(bool $transformHtml = true): string
     {
         if (null !== $this->deletedAt) {
             return self::DESCRIPTION_DELETED.' '.$this->deletedAt->format('d/m/Y');
@@ -264,7 +254,7 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
-    public function getIsVisibleForUsager(): ?bool
+    public function getIsVisibleForUsager(): bool
     {
         return $this->isVisibleForUsager;
     }
@@ -276,7 +266,7 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
-    public function getIsVisibleForBailleur(): ?bool
+    public function getIsVisibleForBailleur(): bool
     {
         return $this->isVisibleForBailleur;
     }
@@ -300,7 +290,7 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
-    public function getType(): ?int
+    public function getType(): int
     {
         return $this->type;
     }
@@ -308,18 +298,6 @@ class Suivi implements EntityHistoryInterface
     public function setType(int $type): self
     {
         $this->type = $type;
-
-        return $this;
-    }
-
-    public function getContext(): ?string
-    {
-        return $this->context;
-    }
-
-    public function setContext(?string $context): self
-    {
-        $this->context = $context;
 
         return $this;
     }
@@ -380,7 +358,7 @@ class Suivi implements EntityHistoryInterface
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 
-    public function getIsSanitized(): ?bool
+    public function getIsSanitized(): bool
     {
         return $this->isSanitized;
     }
@@ -410,7 +388,7 @@ class Suivi implements EntityHistoryInterface
             return false;
         }
 
-        return in_array($this->category, SuiviCategory::CategoriesSubmittedByBailleur(), true);
+        return in_array($this->category, SuiviCategory::categoriesSubmittedByBailleur(), true);
     }
 
     public function setSeenByUsager(bool $seen): void
@@ -446,12 +424,7 @@ class Suivi implements EntityHistoryInterface
 
     public function removeSuiviFile(SuiviFile $suiviFile): static
     {
-        if ($this->suiviFiles->removeElement($suiviFile)) {
-            // set the owning side to null (unless already changed)
-            if ($suiviFile->getSuivi() === $this) {
-                $suiviFile->setSuivi(null);
-            }
-        }
+        $this->suiviFiles->removeElement($suiviFile);
 
         return $this;
     }
@@ -468,7 +441,7 @@ class Suivi implements EntityHistoryInterface
         return $this;
     }
 
-    public function isWaitingNotification(): ?bool
+    public function isWaitingNotification(): bool
     {
         return $this->waitingNotification;
     }

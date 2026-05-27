@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\File;
 use App\Entity\User;
 use App\Repository\FileRepository;
 use App\Repository\TagRepository;
@@ -35,7 +36,7 @@ class TerritoryManagementController extends AbstractController
         if (!$this->isGranted('ROLE_ADMIN')) {
             $territories = $user->getPartnersTerritories();
         }
-        /** @var Paginator $paginatedFiles */
+        /** @var Paginator<File> $paginatedFiles */
         $paginatedFiles = $fileRepository->findFilteredPaginated($searchTerritoryFiles, $territories, $maxListPagination);
 
         return $this->render('back/territory-management/index.html.twig', [

@@ -5,7 +5,6 @@ namespace App\EventSubscriber;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Suivi;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
 use App\Factory\Interconnection\Idoss\DossierMessageFactory;
@@ -55,7 +54,6 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: SuiviManager::buildDescriptionAnswerAffectation($params),
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::AFFECTATION_IS_REFUSED,
                 partner: $event->getPartner(),
                 user: $user,
@@ -67,7 +65,6 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: 'Signalement rouvert pour '.mb_strtoupper($partner->getNom()),
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
                 partner: $event->getPartner(),
                 user: $user,
@@ -90,11 +87,9 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
             $this->suiviManager->createSuivi(
                 signalement: $affectation->getSignalement(),
                 description: $this->parameterBag->get('suivi_message')['first_accepted_affectation'],
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::AFFECTATION_IS_ACCEPTED,
                 user: $adminUser,
                 isVisibleForUsager: true,
-                context: Suivi::CONTEXT_NOTIFY_USAGER_ONLY,
             );
         }
     }

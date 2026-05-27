@@ -18,9 +18,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<JobEvent>
  *
  * @method JobEvent|null find($id, $lockMode = null, $lockVersion = null)
- * @method JobEvent|null findOneBy(array $criteria, array $orderBy = null)
+ * @method JobEvent|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method JobEvent[]    findAll()
- * @method JobEvent[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method JobEvent[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class JobEventRepository extends ServiceEntityRepository implements EntityCleanerRepositoryInterface
 {

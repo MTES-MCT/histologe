@@ -91,7 +91,7 @@ class TabDataManager
         $count = $this->dossiersActiviteRecenteQuery
                 ->countLastSignalementsWithUserSuivi($user, $territory);
 
-        $page = $tabQueryParameters?->page ?? 1;
+        $page = $tabQueryParameters->page ?? 1;
         $limit = TabDossier::MAX_ITEMS_DERNIERES_ACTIONS;
         $totalPages = max(1, (int) ceil($count / $limit));
         $page = max(1, min($page, $totalPages));
@@ -100,10 +100,6 @@ class TabDataManager
             ->findPaginatedLastSignalementsWithUserSuivi($user, $territory, $page, $limit);
         $tabDossiers = [];
         foreach ($paginator as $signalement) {
-            $derniereAction = (SuiviCategory::MESSAGE_PARTNER === $signalement['suiviCategory'])
-                // TODO : à faire évoluer pour les suivis visibles aux bailleurs
-                ? ($signalement['suiviIsVisibleForUsager'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
-                : $signalement['suiviCategory']->label();
             $tabDossiers[] = new TabDossier(
                 uuid: $signalement['uuid'],
                 nomOccupant: $signalement['nomOccupant'],
@@ -111,7 +107,7 @@ class TabDataManager
                 reference: '#'.$signalement['reference'],
                 adresse: $signalement['adresseOccupant'],
                 statut: $signalement['statut']->label(),
-                derniereAction: $derniereAction,
+                derniereAction: $this->getLabelForSuiviCategory($signalement['suiviCategory'], $signalement['suiviIsVisibleForUsager'], $signalement['suiviIsVisibleForBailleur']),
                 derniereActionAt: $signalement['suiviCreatedAt'],
                 actionDepuis: $signalement['hasNewerSuivi'] ? 'OUI' : 'NON',
             );
@@ -122,6 +118,23 @@ class TabDataManager
             'total' => $count,
             'page' => $page,
         ];
+    }
+
+    private function getLabelForSuiviCategory(SuiviCategory $suiviCategory, bool $isVisibleForUsager, bool $isVisibleForBailleur): string
+    {
+        if (SuiviCategory::MESSAGE_PARTNER === $suiviCategory) {
+            if ($isVisibleForUsager && $isVisibleForBailleur) {
+                return 'Suivi visible par l\'usager et le bailleur';
+            } elseif ($isVisibleForUsager) {
+                return 'Suivi visible par l\'usager';
+            } elseif ($isVisibleForBailleur) {
+                return 'Suivi visible par le bailleur';
+            }
+
+            return 'Suivi interne';
+        }
+
+        return $suiviCategory->label();
     }
 
     public function countInjonctions(?TabQueryParameters $tabQueryParameters = null): int
@@ -612,10 +625,6 @@ class TabDataManager
         $displayedSignalements = \array_slice($signalements, 0, 10);
 
         foreach ($displayedSignalements as $signalement) {
-            $derniereAction = (SuiviCategory::MESSAGE_PARTNER === $signalement['suiviCategory'])
-                // TODO : à faire évoluer pour les suivis visibles aux bailleurs
-                ? ($signalement['suiviIsVisibleForUsager'] ? 'Suivi visible par l\'usager' : 'Suivi interne')
-                : $signalement['suiviCategory']->label();
             $tabDossiers[] = new TabDossier(
                 uuid: $signalement['uuid'],
                 nomOccupant: $signalement['nomOccupant'],
@@ -623,7 +632,7 @@ class TabDataManager
                 reference: '#'.$signalement['reference'],
                 adresse: $signalement['adresseOccupant'],
                 statut: $signalement['statut']->label(),
-                derniereAction: $derniereAction,
+                derniereAction: $this->getLabelForSuiviCategory($signalement['suiviCategory'], $signalement['suiviIsVisibleForUsager'], $signalement['suiviIsVisibleForBailleur']),
                 derniereActionAt: $signalement['suiviCreatedAt'],
                 derniereActionPartenaireNom: $signalement['derniereActionPartenaireNom'] ?? 'N/A',
                 derniereActionPartenaireNomAgent: $signalement['derniereActionPartenaireNomAgent'] ?? 'N/A',

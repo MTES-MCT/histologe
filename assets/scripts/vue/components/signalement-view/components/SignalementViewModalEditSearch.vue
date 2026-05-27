@@ -49,6 +49,8 @@
                       <button
                         class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-edit-line"
                         @click="toggleEdit(search)"
+                        :aria-label="`Modifier la recherche ${search.Text}`"
+                        :title="`Modifier la recherche ${search.Text}`"
                       >
                         {{ search.IsEditing ? 'Valider' : 'Modifier le nom' }}
                       </button>
@@ -65,7 +67,9 @@
                   </div>
 
                   <button class="fr-btn fr-btn--icon-left fr-btn--tertiary fr-icon-delete-line fr-mb-5v"
-                          @click="deleteSavedSearch(search.Id)">
+                          @click="deleteSavedSearch(search.Id)"
+                          :aria-label="`Supprimer la recherche ${search.Text}`"
+                          :title="`Supprimer la recherche ${search.Text}`">
                     Supprimer la recherche
                   </button>
                   <hr v-if="index < sharedState.savedSearches.length - 1">

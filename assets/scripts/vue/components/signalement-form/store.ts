@@ -242,6 +242,32 @@ const formStore: FormStore = reactive({
     
     return dateToday.getMonth() - dateBailleurPrevenu.getMonth() + (12 * (dateToday.getFullYear() - dateBailleurPrevenu.getFullYear()))
   },
+  shouldDisplayPrevenirBailleurInfo (): boolean {
+    if (formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'bailleur') {
+      return false
+    }
+    if ((formStore.data.profil === 'tiers_pro' || formStore.data.profil === 'tiers_particulier') && formStore.data.signalement_concerne_logement_social_autre_tiers !== 'oui') {
+      return false
+    }
+    if (formStore.data.profil === 'service_secours' && formStore.data.signalement_concerne_logement_social_service_secours !== 'oui') {
+      return false
+    }
+    if (formStore.data.profil === 'locataire') {
+      if (this.shouldInjonctionBailleurSuggested() || formStore.data.signalement_concerne_logement_social_autre_tiers !== 'oui') {
+        return false
+      }
+    }
+    if (formStore.data.info_procedure_bailleur_prevenu === 'nsp') {
+        return false
+    }
+    if (formStore.data.info_procedure_bailleur_prevenu === 'oui') {
+      const monthsSinceBailleurPrevenu = this.countMonthsSinceBailleurPrevenu()
+      if (monthsSinceBailleurPrevenu === undefined || monthsSinceBailleurPrevenu >= 2) {
+        return false
+      }
+    }
+    return true;
+  },
   shouldInjonctionBailleurSuggested(): boolean {
       if (!this.props.featureInjonctionBailleur) {
         return false

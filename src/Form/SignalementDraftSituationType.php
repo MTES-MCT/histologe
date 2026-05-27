@@ -14,6 +14,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class SignalementDraftSituationType extends AbstractType
 {
     /**
@@ -43,6 +46,8 @@ class SignalementDraftSituationType extends AbstractType
         $montantAllocation = $signalement->getMontantAllocation();
         $accompagnementTravailleurSocial = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnement() : '';
         $accompagnementTravailleurSocialNomStructure = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementNomStructure() : '';
+        $accompagnementTravailleurSocialNom = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementNomReferent() : '';
+        $accompagnementTravailleurSocialPrenom = $signalement->getSituationFoyer() ? $signalement->getSituationFoyer()->getTravailleurSocialAccompagnementPrenomReferent() : '';
         $beneficiaireRSA = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireRsa() : '';
         $beneficiaireFSL = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsBeneficiaireFsl() : '';
         $dateProprietaireAverti = $signalement->getProprioAvertiAt();
@@ -243,6 +248,18 @@ class SignalementDraftSituationType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $accompagnementTravailleurSocialNomStructure,
+            ])
+            ->add('accompagnementTravailleurSocialNomReferent', TextType::class, [
+                'label' => 'Nom du référent social',
+                'required' => false,
+                'mapped' => false,
+                'data' => $accompagnementTravailleurSocialNom,
+            ])
+            ->add('accompagnementTravailleurSocialPrenomReferent', TextType::class, [
+                'label' => 'Prénom du référent social',
+                'required' => false,
+                'mapped' => false,
+                'data' => $accompagnementTravailleurSocialPrenom,
             ])
             ->add('beneficiaireRSA', ChoiceType::class, [
                 'label' => 'Bénéficiaire RSA',

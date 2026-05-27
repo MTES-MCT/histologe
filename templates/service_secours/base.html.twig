@@ -34,6 +34,10 @@
             {% endif %}
             _paq.push(['trackPageView']);
             _paq.push(['enableLinkTracking']);
+            if (document.cookie.split(';').some((item) => item.trim().startsWith('cookieConsent=true'))) {
+                _paq.push(['setConsentGiven']);
+                _paq.push(['HeatmapSessionRecording::enable']);
+            }
             (function() {
                 var u="{{ matomo.url }}";
                 _paq.push(['setTrackerUrl', u+'matomo.php']);

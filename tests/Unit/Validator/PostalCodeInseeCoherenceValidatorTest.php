@@ -78,6 +78,9 @@ class PostalCodeInseeCoherenceValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
+    /**
+     * @return iterable<string, array{postalCode: string, rawInseeCode: string, normalizedInseeCode: string, communeExists: bool, expectedViolationMessage: string|null}>
+     */
     public static function provideCoherenceCases(): iterable
     {
         yield 'ajoute une violation si aucune commune correspond' => [

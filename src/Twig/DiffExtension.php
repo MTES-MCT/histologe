@@ -96,7 +96,7 @@ class DiffExtension extends AbstractExtension
             } elseif ($j > 0 && (0 === $i || $lcs[$i][$j - 1] >= $lcs[$i - 1][$j])) {
                 array_unshift($diff, ['type' => 'added', 'value' => $new[$j - 1]]);
                 --$j;
-            } elseif ($i > 0 && (0 === $j || $lcs[$i][$j - 1] < $lcs[$i - 1][$j])) {
+            } else {
                 array_unshift($diff, ['type' => 'removed', 'value' => $old[$i - 1]]);
                 --$i;
             }

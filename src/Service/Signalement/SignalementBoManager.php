@@ -36,6 +36,9 @@ class SignalementBoManager
         $this->user = $user;
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     public function formAddressManager(FormInterface $form, Signalement $signalement): bool
     {
         $profileDeclarant = ProfileDeclarant::tryFrom($form->get('profileDeclarant')->getData());
@@ -122,6 +125,9 @@ class SignalementBoManager
         return true;
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     public function formLogementManager(FormInterface $form, Signalement $signalement): bool
     {
         $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
@@ -198,6 +204,9 @@ class SignalementBoManager
         return true;
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     public function formSituationManager(FormInterface $form, Signalement $signalement): bool
     {
         $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
@@ -222,6 +231,8 @@ class SignalementBoManager
         $situationFoyer->setLogementSocialMontantAllocation($form->get('montantAllocation')->getData());
         $situationFoyer->setTravailleurSocialAccompagnement($form->get('accompagnementTravailleurSocial')->getData());
         $situationFoyer->setTravailleurSocialAccompagnementNomStructure($form->get('accompagnementTravailleurSocialNomStructure')->getData());
+        $situationFoyer->setTravailleurSocialAccompagnementNomReferent($form->get('accompagnementTravailleurSocialNomReferent')->getData());
+        $situationFoyer->setTravailleurSocialAccompagnementPrenomReferent($form->get('accompagnementTravailleurSocialPrenomReferent')->getData());
         $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireRsa($form->get('beneficiaireRSA')->getData());
         $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireFsl($form->get('beneficiaireFSL')->getData());
         if (!empty($form->get('dateProprietaireAverti')->getData())) {
@@ -250,6 +261,9 @@ class SignalementBoManager
         return true;
     }
 
+    /**
+     * @param FormInterface<mixed> $form
+     */
     public function formDesordresManager(FormInterface $form, Signalement $signalement): bool
     {
         $signalement->setDetails($form->get('details')->getData());

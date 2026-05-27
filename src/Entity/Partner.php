@@ -41,13 +41,13 @@ class Partner implements EntityHistoryInterface
     private ?int $id = null;
 
     #[ORM\Column(type: Types::GUID, unique: true)]
-    private ?string $uuid = null;
+    private string $uuid;
 
     #[ORM\Column(type: 'string', length: 255)]
     #[Assert\NotBlank(message: 'Merci de saisir un nom.')]
     #[Assert\Length(max: 255)]
     #[Groups(['settings:read'])]
-    private ?string $nom = null;
+    private string $nom;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isArchive = false;
@@ -66,7 +66,7 @@ class Partner implements EntityHistoryInterface
     private ?string $email = null;
 
     #[ORM\Column]
-    private ?bool $emailNotifiable = null;
+    private bool $emailNotifiable;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Url]
@@ -85,7 +85,7 @@ class Partner implements EntityHistoryInterface
 
     /** @var array<Qualification> $competence */
     #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: Qualification::class)]
-    private array $competence = [];
+    private ?array $competence = [];
 
     #[ORM\Column(nullable: true)]
     private ?bool $isEsaboraActive = null;
@@ -95,7 +95,7 @@ class Partner implements EntityHistoryInterface
     private Collection $interventions;
 
     #[ORM\Column]
-    private ?bool $isIdossActive = null;
+    private bool $isIdossActive;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Url]
@@ -105,7 +105,7 @@ class Partner implements EntityHistoryInterface
     private ?string $idossToken = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
-    private ?\DateTimeInterface $idossTokenExpirationDate = null;
+    private ?\DateTimeImmutable $idossTokenExpirationDate = null;
 
     #[ORM\ManyToOne(targetEntity: Bailleur::class, inversedBy: 'partners')]
     #[ORM\JoinColumn(nullable: true)]
@@ -162,7 +162,7 @@ class Partner implements EntityHistoryInterface
         return $this;
     }
 
-    public function getNom(): ?string
+    public function getNom(): string
     {
         return $this->nom;
     }
@@ -272,7 +272,7 @@ class Partner implements EntityHistoryInterface
         return $this;
     }
 
-    public function isEmailNotifiable(): ?bool
+    public function isEmailNotifiable(): bool
     {
         return $this->emailNotifiable;
     }
@@ -429,7 +429,7 @@ class Partner implements EntityHistoryInterface
         return $this->isIdossActive && $this->idossUrl;
     }
 
-    public function isIdossActive(): ?bool
+    public function isIdossActive(): bool
     {
         return $this->isIdossActive;
     }
@@ -469,12 +469,12 @@ class Partner implements EntityHistoryInterface
         return $this;
     }
 
-    public function getIdossTokenExpirationDate(): ?\DateTimeInterface
+    public function getIdossTokenExpirationDate(): ?\DateTimeImmutable
     {
         return $this->idossTokenExpirationDate;
     }
 
-    public function setIdossTokenExpirationDate(?\DateTimeInterface $idossTokenExpirationDate): static
+    public function setIdossTokenExpirationDate(?\DateTimeImmutable $idossTokenExpirationDate): static
     {
         $this->idossTokenExpirationDate = $idossTokenExpirationDate;
 

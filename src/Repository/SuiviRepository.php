@@ -20,9 +20,9 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * @extends ServiceEntityRepository<Suivi>
  *
  * @method Suivi|null find($id, $lockMode = null, $lockVersion = null)
- * @method Suivi|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Suivi|null findOneBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null)
  * @method Suivi[]    findAll()
- * @method Suivi[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Suivi[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
 class SuiviRepository extends ServiceEntityRepository
 {
@@ -323,8 +323,8 @@ class SuiviRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('s')
             ->where('s.originalData IS NOT NULL')
-            ->andWhere('s.context = :context')
-            ->setParameter('context', Suivi::CONTEXT_SCHS);
+            ->andWhere('s.category = :category')
+            ->setParameter('category', SuiviCategory::MESSAGE_ESABORA_SCHS);
 
         $list = $qb->getQuery()->getResult();
         $indexed = [];

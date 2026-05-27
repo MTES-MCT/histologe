@@ -4,7 +4,6 @@ namespace App\EventSubscriber;
 
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Suivi;
 use App\Event\InterventionEditedEvent;
 use App\Manager\SuiviManager;
 use App\Service\Mailer\NotificationMailerType;
@@ -60,12 +59,11 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $intervention->getSignalement(),
                 description: $description,
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED,
                 partner: $event->getPartner(),
                 user: $currentUser,
                 isVisibleForUsager: $event->isUsagerNotified(),
-                context: Suivi::CONTEXT_INTERVENTION,
+                sendMail: false,
                 files: $intervention->getFiles(),
             );
 

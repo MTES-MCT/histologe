@@ -114,6 +114,8 @@ class SignalementCreateController extends AbstractController
                             'montantAllocation' => 250.75,
                             'isAccompagnementTravailleurSocial' => true,
                             'accompagnementTravailleurSocialNomStructure' => 'CCAS de Montpellier',
+                            'accompagnementTravailleurSocialPrenomReferent' => 'Marie',
+                            'accompagnementTravailleurSocialNomReferent' => 'Dubois',
                             'isBeneficiaireRsa' => false,
                             'isBeneficiaireFsl' => false,
                             'isBailleurAverti' => true,

@@ -29,7 +29,6 @@ use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
-use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\TiersInvitation;
 use App\Entity\User;
@@ -89,7 +88,7 @@ class SignalementManager
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array<int|string, mixed> $data
      */
     public function createOrUpdateFromArrayForImport(Territory $territory, array $data): ?Signalement
     {
@@ -107,7 +106,7 @@ class SignalementManager
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array<int|string, mixed> $data
      */
     public function update(Signalement $signalement, array $data): Signalement
     {
@@ -181,8 +180,6 @@ class SignalementManager
             ->setIsConstructionAvant1949((bool) $data['isConstructionAvant1949'])
             ->setIsRisqueSurOccupation((bool) $data['isRisqueSurOccupation'])
             ->setProprioAvertiAt($data['prorioAvertiAt'])
-            ->setNomReferentSocial($data['nomReferentSocial'])
-            ->setStructureReferentSocial($data['StructureReferentSocial'])
             ->setNumeroInvariant($data['numeroInvariant'])
             ->setNbPiecesLogement((int) $data['nbPiecesLogement'])
             ->setNbChambresLogement((int) $data['nbChambresLogement'])
@@ -791,10 +788,16 @@ class SignalementManager
             ->setTravailleurSocialAccompagnement(
                 $situationFoyerRequest->getTravailleurSocialAccompagnement()
             )
+            ->setLogementSocialAllocationCaisse($situationFoyerRequest->getIsAllocataire())
             ->setTravailleurSocialAccompagnementNomStructure(
                 $situationFoyerRequest->getTravailleurSocialAccompagnementNomStructure()
             )
-            ->setLogementSocialAllocationCaisse($situationFoyerRequest->getIsAllocataire());
+             ->setTravailleurSocialAccompagnementNomReferent(
+                 $situationFoyerRequest->getTravailleurSocialAccompagnementNomReferent()
+             )
+             ->setTravailleurSocialAccompagnementPrenomReferent(
+                 $situationFoyerRequest->getTravailleurSocialAccompagnementPrenomReferent()
+             );
 
         if ('non' === $situationFoyerRequest->getTravailleurSocialPreavisDepart()) {
             $signalement->setIsPreavisDepart(false);
@@ -964,6 +967,7 @@ class SignalementManager
 
     /**
      * @param array<string, mixed>|null $options
+     * @param array<string>             $selectedColumns
      *
      * @throws Exception
      */
@@ -988,12 +992,10 @@ class SignalementManager
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: 'Signalement validé',
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             partner: $partner,
             user: $adminUser,
             isVisibleForUsager: true,
-            context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
             flush: false,
             createSubscription: $createSubscription,
         );

@@ -22,7 +22,7 @@ class HistoryEntry
     private ?int $entityId = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $entityName = null;
+    private string $entityName;
 
     /** @var array<mixed> $changes */
     #[ORM\Column(nullable: true)]
@@ -36,7 +36,7 @@ class HistoryEntry
     private ?Signalement $signalement = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: true)]
@@ -85,7 +85,7 @@ class HistoryEntry
         return $this;
     }
 
-    public function getEntityName(): ?string
+    public function getEntityName(): string
     {
         return $this->entityName;
     }
@@ -97,7 +97,7 @@ class HistoryEntry
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }

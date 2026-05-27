@@ -33,7 +33,7 @@ class Tag implements EntityHistoryInterface
     #[ORM\Column(type: 'string', length: 255)]
     #[Groups(['settings:read'])]
     #[Assert\NotBlank(message: 'Merci de saisir un nom pour l\'étiquette.')]
-    private ?string $label = null;
+    private string $label;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isArchive = false;
@@ -41,7 +41,7 @@ class Tag implements EntityHistoryInterface
     #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'tags')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank()]
-    private ?Territory $territory = null;
+    private Territory $territory;
 
     public function __construct()
     {
@@ -78,7 +78,7 @@ class Tag implements EntityHistoryInterface
         return $this;
     }
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -102,12 +102,12 @@ class Tag implements EntityHistoryInterface
         return $this;
     }
 
-    public function getTerritory(): ?Territory
+    public function getTerritory(): Territory
     {
         return $this->territory;
     }
 
-    public function setTerritory(?Territory $territory): self
+    public function setTerritory(Territory $territory): self
     {
         $this->territory = $territory;
 

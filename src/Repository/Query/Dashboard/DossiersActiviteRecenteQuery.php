@@ -109,6 +109,7 @@ class DossiersActiviteRecenteQuery
             suivi.createdAt AS suiviCreatedAt,
             suivi.category AS suiviCategory,
             suivi.isVisibleForUsager AS suiviIsVisibleForUsager,
+            suivi.isVisibleForBailleur AS suiviIsVisibleForBailleur,
             MAX(p.nom) AS derniereActionPartenaireNom,
             u.nom AS derniereActionPartenaireNomAgent,
             u.prenom AS derniereActionPartenairePrenomAgent
@@ -181,6 +182,7 @@ class DossiersActiviteRecenteQuery
             suivi.createdAt AS suiviCreatedAt,
             suivi.category AS suiviCategory,
             suivi.isVisibleForUsager AS suiviIsVisibleForUsager,
+            suivi.isVisibleForBailleur AS suiviIsVisibleForBailleur,
             (
                 SELECT CASE WHEN MAX(s2.createdAt) > suivi.createdAt THEN 1 ELSE 0 END
                 FROM '.Suivi::class.' s2

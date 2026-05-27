@@ -17,6 +17,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class SearchAnnuaireAgentType extends AbstractType
 {
     /**
@@ -51,6 +54,9 @@ class SearchAnnuaireAgentType extends AbstractType
         ]);
     }
 
+    /**
+     * @param FormInterface<mixed> $builder
+     */
     private function addPartnersField(FormInterface $builder, string|Territory|null $territory): void
     {
         $builder->add('partners', SearchCheckboxType::class, [

@@ -18,6 +18,9 @@ class AffectationEsaboraPolicyTest extends KernelTestCase
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
     }
 
+    /**
+     * @param array<int> $partnerIds
+     */
     #[DataProvider('providePartnerIds')]
     public function testHasUrlConflict(array $partnerIds, bool $result): void
     {

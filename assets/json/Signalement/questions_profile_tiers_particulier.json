@@ -383,10 +383,22 @@
         },
         {
           "type": "SignalementFormInfo",
-          "label": "Avant de déposer un signalement, il est obligatoire pour les locataires du parc social de prévenir le bailleur. Ils peuvent le faire grâce au modèle de courrier que vous pourrez télécharger à la page suivante ou en le sollicitant par les canaux de communication habituels.",
+          "label": "Avant de déposer un signalement, il est fortement recommandé de prévenir le bailleur. Vous pouvez télécharger un modèle de courrier à remplir en cliquant sur le bouton ci-dessous.",
           "slug": "info_procedure_bailleur_prevenu_info",
           "conditional": {
-            "show": "formStore.data.info_procedure_bailleur_prevenu === 'non' && formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui'"
+            "show": "formStore.data.info_procedure_bailleur_prevenu === 'non'"
+          }
+        },
+        {
+          "type": "SignalementFormLink",
+          "label": "Télécharger le courrier",
+          "description": "Télécharger le modèle de courrier à envoyer au bailleur",
+          "customCss": "fr-btn",
+          "link": "/build/files/Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf",
+          "linktarget": "_blank",
+          "slug": "info_procedure_bailleur_prevenu_info_link",
+          "conditional": {
+            "show": "formStore.data.info_procedure_bailleur_prevenu === 'non'"
           }
         },
         {
@@ -485,7 +497,7 @@
                 "action": "goto.save:zone_concernee",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
-                  "show": "formStore.data.signalement_concerne_logement_social_autre_tiers !== 'oui' || formStore.data.info_procedure_bailleur_prevenu === 'nsp' || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() !== undefined && formStore.countMonthsSinceBailleurPrevenu() >= 2)"
+                  "show": "!formStore.shouldDisplayPrevenirBailleurInfo()"
                 }
               },
               {
@@ -495,7 +507,7 @@
                 "action": "goto.save:prevenir_bailleur_info",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
-                  "show": "formStore.data.signalement_concerne_logement_social_autre_tiers === 'oui' && (formStore.data.info_procedure_bailleur_prevenu === 'non' || (formStore.data.info_procedure_bailleur_prevenu === 'oui' && formStore.countMonthsSinceBailleurPrevenu() !== undefined && formStore.countMonthsSinceBailleurPrevenu() < 2))"
+                  "show": "formStore.shouldDisplayPrevenirBailleurInfo()"
                 }
               },
               {
@@ -520,76 +532,56 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "Votre signalement ne peut pas être déposé",
+    "label": "Votre signalement peut être déposé, mais...",
     "description": "",
     "slug": "prevenir_bailleur_info",
     "screenCategory": "Adresse et coordonnées",
     "components": {
       "body": [
         {
-          "type": "SignalementFormWarning",
-          "label": "Si le problème représente un danger pour la sécurité de l'occupant, contactez les services de secours (pompiers, police, gendarmerie) !",
-          "slug": "prevenir_bailleur_info_warning"
-        },
-        {
-          "type": "SignalementFormParagraph",
-          "label": "Avant de déposer un signalement sur {{formStore.props.platformName}} le locataire doit prévenir son bailleur et lui laisser un délai de 2 mois pour lui répondre.</p><p><strong>Le service {{formStore.props.platformName}} ne peut pour le moment donner suite à votre démarche.</strong>",
-          "slug": "prevenir_bailleur_intro"
-        },
-        {
           "type": "SignalementFormInfo",
-          "label": "Vous devez d'abord prévenir le bailleur. Il a ensuite 2 mois pour répondre. Si vous n'avez pas de réponse de sa part au bout de 2 mois : vous pouvez signaler votre problème sur {{formStore.props.platformName}}.",
-          "slug": "prevenir_bailleur_info_warning_pas_contacte",
-          "conditional": {
-            "show": "formStore.data.info_procedure_bailleur_prevenu === 'non'"
-          }
-        },
-        {
-          "type": "SignalementFormParagraph",
-          "label": "Prenez contact avec lui directement via les canaux de communications mis à votre disposition dans le cadre de sa gestion locative (ou en téléchargeant le modèle de courrier ci-dessous). Il est fort probable que celui-ci intervienne pour résoudre les problèmes dans les meilleurs délais.",
-          "slug": "prevenir_bailleur_info_paragraph_bailleur_pas_contacte",
-          "conditional": {
-            "show": "formStore.data.info_procedure_bailleur_prevenu === 'non'"
-          }
-        },
-        {
-          "type": "SignalementFormInfo",
-          "label": "Le bailleur a été prévenu il y a moins de 2 mois. Le bailleur dispose de 2 mois pour répondre <strong>à partir du moment où il est prévenu</strong>. Une fois le délai passé, nous vous enverrons automatiquement un e-mail pour terminer votre signalement.",
-          "slug": "prevenir_bailleur_info_warning_contacte",
+          "label": "Il est fortement recommandé de laisser au bailleur un délai de 2 mois avant de déposer un signalement pour qu’il puisse apporter une réponse à la demande du locataire.<br><br>Cliquez sur le bouton Fermer et nous vous contacterons par e-mail à l’issue du délai de 2 mois pour vous inviter à finaliser votre signalement si vous le jugez toujours nécessaire.<br><br>Si vous souhaitez, au regard de l’urgence de la situation et d’éventuels risques encourus déposer un signalement sans attendre, cliquez sur le bouton Continuer.",
+          "slug": "prevenir_bailleur_info_oui_text",
           "conditional": {
             "show": "formStore.data.info_procedure_bailleur_prevenu === 'oui'"
           }
         },
         {
-          "type": "SignalementFormParagraph",
-          "label": "Si le bailleur ne vous répond pas, n'hésitez pas à lui envoyer un courrier recommandé. Vous pouvez télécharger un modèle de courrier à remplir en cliquant sur le bouton ci-dessous.",
-          "slug": "prevenir_bailleur_info_paragraph_bailleur_contacte",
+          "type": "SignalementFormInfo",
+          "label": "Il est fortement recommandé de contacter le bailleur avant de déposer un signalement et de lui laisser un délai de 2 mois pour qu’il puisse apporter une réponse à la demande du locataire.<br><br>Cliquez sur le bouton Fermer et revenez déposer votre signalement 2 mois après avoir contacté le bailleur si vous le jugez toujours nécessaire.<br><br>Si vous souhaitez, au regard de l’urgence de la situation et d’éventuels risques encourus déposer un signalement sans attendre, cliquez sur le bouton Continuer.",
+          "slug": "prevenir_bailleur_info_non_text",
           "conditional": {
-            "show": "formStore.data.info_procedure_bailleur_prevenu === 'oui'"
+            "show": "formStore.data.info_procedure_bailleur_prevenu === 'non'"
           }
-        },
-        {
-          "type": "SignalementFormLink",
-          "label": "Télécharger le courrier",
-          "description": "Télécharger le modèle de courrier à envoyer au bailleur",
-          "customCss": "fr-btn",
-          "link": "/build/files/Lettre-information-proprietaire-bailleur_A-COMPLETER.pdf",
-          "linktarget": "_blank",
-          "slug": "prevenir_bailleur_info_link"
         }
       ],
       "footer": [
         {
           "type": "SignalementFormSubscreen",
           "slug": "prevenir_bailleur_info_footer",
+          "customCss": "button-group-footer",
           "components": {
             "body": [
+              {
+                "type": "SignalementFormButton",
+                "label": "Continuer",
+                "slug": "prevenir_bailleur_info_next",
+                "action": "goto.save:zone_concernee",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+              },
               {
                 "type": "SignalementFormLink",
                 "link": "/",
                 "label": "Fermer",
                 "slug": "prevenir_bailleur_info_close",
-                "customCss": "fr-btn--icon-left fr-icon-close-line"
+                "customCss": "fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left fr-icon-close-line"
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "prevenir_bailleur_info_previous",
+                "action": "goto:info_procedure_bail",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
               }
             ]
           }
@@ -721,11 +713,21 @@
               {
                 "type": "SignalementFormButton",
                 "label": "Précédent",
+                "slug": "zone_concernee_zone_previous_prevenir_bailleur_info",
+                "action": "goto:prevenir_bailleur_info",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
+                "conditional": {
+                  "show": "formStore.shouldDisplayPrevenirBailleurInfo()"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
                 "slug": "zone_concernee_zone_previous_info_procedure_bail",
                 "action": "goto:info_procedure_bail",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
                 "conditional": {
-                  "show": "formStore.data.signalement_concerne_profil_detail_profil_occupant !== 'bailleur_occupant'"
+                  "show": "!formStore.shouldDisplayPrevenirBailleurInfo() && formStore.data.signalement_concerne_profil_detail_profil_occupant !== 'bailleur_occupant'"
                 }
               },
               {
@@ -735,7 +737,7 @@
                 "action": "goto:coordonnees_occupant",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
                 "conditional": {
-                  "show": "formStore.data.signalement_concerne_profil_detail_profil_occupant === 'bailleur_occupant'"
+                  "show": "!formStore.shouldDisplayPrevenirBailleurInfo() && formStore.data.signalement_concerne_profil_detail_profil_occupant === 'bailleur_occupant'"
                 }
               }
             ]
@@ -1902,6 +1904,34 @@
           "validate": {
             "required": false,
             "message": "Veuillez indiquer le nom de la structure qui accompagne le foyer."
+          }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "slug": "travailleur_social_accompagnement_nom_referent",
+          "label": "Nom de famille du référent qui accompagne le foyer (facultatif)",
+          "conditional": {
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
+          },
+          "validate": {
+            "required": false
+          },
+          "accessibility": {
+            "name": "lastName"
+          }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "slug": "travailleur_social_accompagnement_prenom_referent",
+          "label": "Prénom du référent qui accompagne le foyer (facultatif)",
+          "conditional": {
+            "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
+          },
+          "validate": {
+            "required": false
+          },
+          "accessibility": {
+            "name": "firstName"
           }
         }
       ],

@@ -17,6 +17,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @extends AbstractType<mixed>
+ */
 class ServiceSecoursStep4Type extends AbstractType
 {
     public function __construct(private readonly UrlGeneratorInterface $urlGenerator)

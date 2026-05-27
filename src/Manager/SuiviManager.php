@@ -51,14 +51,12 @@ class SuiviManager
     public function createSuivi(
         Signalement $signalement,
         string $description,
-        int $type,
         SuiviCategory $category,
         ?Partner $partner = null,
         ?User $user = null,
         bool $isVisibleForUsager = false,
         bool $isVisibleForBailleur = false,
         ?\DateTimeImmutable $createdAt = null,
-        ?string $context = null,
         bool $sendMail = true,
         iterable $files = [],
         bool $flush = true,
@@ -74,10 +72,9 @@ class SuiviManager
             ->setPartner($partner)
             ->setSignalement($signalement)
             ->setDescription($this->htmlSanitizer->sanitize($description))
-            ->setType($type)
+            ->setType(SuiviCategory::getSuiviTypeForSuiviCategory($category))
             ->setIsVisibleForUsager($isVisibleForUsager)
             ->setIsVisibleForBailleur($isVisibleForBailleur)
-            ->setContext($context)
             ->setSendMail($sendMail)
             ->setCategory($category);
         if (!empty($createdAt)) {
@@ -126,6 +123,7 @@ class SuiviManager
             SuiviCategory::AFFECTATION_IS_REFUSED,
             SuiviCategory::MESSAGE_USAGER,
             SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
+            SuiviCategory::MESSAGE_BAILLEUR,
             SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
             SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
             SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
@@ -152,7 +150,6 @@ class SuiviManager
             $this->createSuivi(
                 signalement: $signalement,
                 description: $description.$user->getNomComplet(),
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_EDITED_BO,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
@@ -181,7 +178,6 @@ class SuiviManager
         $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $user,
@@ -205,7 +201,6 @@ class SuiviManager
         $this->createSuivi(
             signalement: $tiersInvitation->getSignalement(),
             description: $description,
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $this->userManager->getSystemUser(),
         );
@@ -224,7 +219,6 @@ class SuiviManager
         $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $this->userManager->getSystemUser(),
             isVisibleForUsager: true,
@@ -244,7 +238,6 @@ class SuiviManager
         $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $this->userManager->getSystemUser(),
             isVisibleForUsager: true,
@@ -343,7 +336,6 @@ class SuiviManager
         return $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            type: Suivi::TYPE_AUTO,
             category: SuiviCategory::NEW_DOCUMENT,
             partner: $partner,
             user: $user,
@@ -400,7 +392,7 @@ class SuiviManager
         /** @var User $user */
         $user = $signalementUser->getUser();
 
-        /** @var array{label:string, fieldChanges:array} $sectionChanges */
+        /** @var array{label:string, fieldChanges:array<mixed>} $sectionChanges */
         // Un seul formulaire est soumis à la fois,
         // donc un seul bloc de changements est attendu.
         $sectionChanges = current($changes);
@@ -431,7 +423,6 @@ class SuiviManager
         $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            type: Suivi::TYPE_USAGER,
             category: SuiviCategory::SIGNALEMENT_EDITED_FO,
             user: $user,
             isVisibleForUsager: true,

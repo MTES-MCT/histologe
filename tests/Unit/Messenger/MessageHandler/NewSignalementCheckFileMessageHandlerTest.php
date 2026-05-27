@@ -16,6 +16,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -111,13 +112,13 @@ class NewSignalementCheckFileMessageHandlerTest extends KernelTestCase
         $userRepository = $this->entityManager->getRepository(User::class);
         /** @var DesordreCritereRepository $desordreCritereRepository */
         $desordreCritereRepository = $this->entityManager->getRepository(DesordreCritere::class);
-        /** @var LoggerInterface $loggerMock */
+        /** @var LoggerInterface&MockObject $loggerMock */
         $loggerMock = $this->createMock(LoggerInterface::class);
-        /** @var SuiviManager $suiviManager */
+        /** @var SuiviManager&MockObject $suiviManager */
         $suiviManager = $this->createMock(SuiviManager::class);
-        /** @var Security $security */
+        /** @var Security&MockObject $security */
         $security = $this->createMock(Security::class);
-        /** @var ParameterBagInterface $parameterBag */
+        /** @var ParameterBagInterface&MockObject $parameterBag */
         $parameterBag = $this->createMock(ParameterBagInterface::class);
         $handler = new NewSignalementCheckFileMessageHandler(
             $signalementRepository,

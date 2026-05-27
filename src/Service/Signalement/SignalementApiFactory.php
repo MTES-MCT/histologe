@@ -156,6 +156,8 @@ class SignalementApiFactory
 
         $situationFoyer->setTravailleurSocialAccompagnement(self::convertBoolToString($request->isAccompagnementTravailleurSocial));
         $situationFoyer->setTravailleurSocialAccompagnementNomStructure($request->accompagnementTravailleurSocialNomStructure);
+        $situationFoyer->setTravailleurSocialAccompagnementNomReferent($request->accompagnementTravailleurSocialNomReferent);
+        $situationFoyer->setTravailleurSocialAccompagnementPrenomReferent($request->accompagnementTravailleurSocialPrenomReferent);
         $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireRsa(self::convertBoolToString($request->isBeneficiaireRsa));
         $informationComplementaire->setInformationsComplementairesSituationOccupantsBeneficiaireFsl(self::convertBoolToString($request->isBeneficiaireFsl));
 

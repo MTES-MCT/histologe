@@ -451,6 +451,20 @@ class SignalementRequest implements RequestInterface
     public ?string $accompagnementTravailleurSocialNomStructure = null;
 
     #[OA\Property(
+        description: 'Nom de famille du travailleur social accompagnant.
+                     <br>⚠️Pris en compte uniquement dans le cas où isAccompagnementTravailleurSocial = true.',
+        example: 'Dupont',
+    )]
+    public ?string $accompagnementTravailleurSocialNomReferent = null;
+
+    #[OA\Property(
+        description: 'Prénom du travailleur social accompagnant.
+                     <br>⚠️Pris en compte uniquement dans le cas où isAccompagnementTravailleurSocial = true.',
+        example: 'Dominique',
+    )]
+    public ?string $accompagnementTravailleurSocialPrenomReferent = null;
+
+    #[OA\Property(
         description: 'L\'occupant est-il bénéficiaire du RSA ?',
         example: false,
     )]

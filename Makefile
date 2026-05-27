@@ -91,6 +91,14 @@ worker-consume: ## Consume local queue for debug
 	@echo -e '\e[1;32mConsume queue\032'
 	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_phpworker php bin/console messenger:consume async_priority_high async -vvv'
 
+scheduler-consume: ## Consume scheduler for debug
+	@echo -e '\e[1;32mConsume scheduler\033[0m'
+	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_phpworker php bin/console messenger:consume scheduler_esabora -vvv'
+
+scheduler-debug: ## List cron to schedule
+	@echo -e '\e[1;32mList cron\033[0m'
+	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_phpworker php bin/console debug:scheduler'
+
 mock-start: ## Start Mock server
 	@${DOCKER_COMP} start signal_logement_wiremock && sleep 5
 	@${DOCKER_COMP} exec -it signal_logement_phpfpm sh -c "cd tools/wiremock/src/Mock && php AppMock.php"

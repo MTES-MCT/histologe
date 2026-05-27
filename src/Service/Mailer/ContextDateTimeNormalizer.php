@@ -46,6 +46,8 @@ class ContextDateTimeNormalizer
 
     /**
      * Checks if an array represents a serialized DateTime object.
+     *
+     * @param array<mixed> $value
      */
     private function isSerializedDateTime(array $value): bool
     {

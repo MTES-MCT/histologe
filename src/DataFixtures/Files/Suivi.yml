@@ -5,49 +5,42 @@ suivis:
   created_at: "2022-06-08 17:06:33"
   is_public: 1
   signalement: "2022-8"
-  type: 3
   category: "MESSAGE_PARTNER"
 -
   description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation."
   created_at: "2023-04-18 17:06:33"
   is_public: 0
   signalement: "2022-8"
-  type: 4
   category: "ASK_FEEDBACK_SENT"
 -
   description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation."
   created_at: "2023-05-18 17:06:33"
   is_public: 0
   signalement: "2022-8"
-  type: 4
   category: "ASK_FEEDBACK_SENT"
 -
   description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation."
   created_at: "2023-06-18 17:06:33"
   is_public: 0
   signalement: "2022-8"
-  type: 4
   category: "ASK_FEEDBACK_SENT"
 -
   created_by: admin-territoire-13-01@signal-logement.fr
-  description: "Le signalement a été refusé avec le motif suivant: <br>Ne me concerne pas, voir avec la DDT."
+  description: "Le signalement a été refusé avec le motif suivant: <br>Ne me concerne pas, voir avec la DDT. Plus précisément :<br />bla bla bla"
   is_public: 1
   signalement: "2022-3"
-  type: 1
   category: "SIGNALEMENT_IS_REFUSED"
 -
   created_by: null
   description: "Bonjour, j'ai toujours le problème, quand vais-je avoir une visite ?"
   is_public: 1
   signalement: "2022-4"
-  type: 2
   category: "MESSAGE_USAGER"
 -
   created_by: admin-01@signal-logement.fr
   description: "Un petit message de rappel afin d'y revenir plus tard"
   is_public: 0
   signalement: "2023-6"
-  type: 1
   category: "MESSAGE_PARTNER"
 -
   created_by: admin-territoire-13-01@signal-logement.fr
@@ -55,14 +48,12 @@ suivis:
   created_at: "2023-04-01 17:06:33"
   is_public: 1
   signalement: "2023-13"
-  type: 3
   category: "MESSAGE_PARTNER"
 -
   description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation."
   created_at: "2023-04-18 17:06:33"
   is_public: 0
   signalement: "2023-14"
-  type: 4
   category: "ASK_FEEDBACK_SENT"
 -
   created_by: admin-territoire-13-01@signal-logement.fr
@@ -70,7 +61,6 @@ suivis:
   created_at: "2023-01-10 17:06:33"
   is_public: 1
   signalement: "2023-15"
-  type: 3
   category: "MESSAGE_PARTNER"
 -
   created_by: admin-territoire-13-01@signal-logement.fr
@@ -78,42 +68,36 @@ suivis:
   created_at: "2023-02-10 17:06:33"
   is_public: 1
   signalement: "2023-15"
-  type: 3
   category: "MESSAGE_PARTNER"
 -
   description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation."
   created_at: "2023-03-18 17:06:33"
   is_public: 0
   signalement: "2023-15"
-  type: 4
   category: "ASK_FEEDBACK_SENT"
 -
   description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation."
   created_at: "2023-04-18 17:06:33"
   is_public: 0
   signalement: "2023-15"
-  type: 4
   category: "ASK_FEEDBACK_SENT"
 -
   created_by: admin-territoire-13-01@signal-logement.fr
-  description: "Signalement Refusé"
+  description: "Signalement Refusé.Plus précisément :<br />bla bla bla"
   is_public: 1
   signalement: "2023-21"
-  type: 1
   category: "SIGNALEMENT_IS_REFUSED"
 -
   created_by: null
   description: "Je ne comprends pas pourquoi mon signalement a été cloturé, j'ai toujours des soucis ! (suivi de type 5 post-cloture)"
   is_public: 1
   signalement: "2022-2"
-  type: 5
   category: "MESSAGE_USAGER_POST_CLOTURE"
 - 
   created_by: api-02@signal-logement.fr
   description: "Nous vous confirmons la prise en charge de votre signalement."
   is_public: 1
   signalement: "2024-12"
-  type: 3
   category: "MESSAGE_PARTNER"
   force_notifications: 1
 - 
@@ -121,7 +105,6 @@ suivis:
   description: "On avance sur le dossier, est-ce que d'autres action sont en cours ?"
   is_public: 0
   signalement: "2024-12"
-  type: 3
   category: "MESSAGE_PARTNER"
   force_notifications: 1
 - 
@@ -129,34 +112,49 @@ suivis:
   description: "Le signalement a été clôturé pour tous les partenaires avec le motif suivant <br /><strong>Refus de visite</strong><br /><strong>Desc. : </strong>bla bla bla<br />"
   is_public: 1
   signalement: "2025-07"
-  type: 3
-  context: signalementClosed
   category: "SIGNALEMENT_IS_CLOSED"
 - 
   created_by: user-13-05@signal-logement.fr
   description: "Un message sur le 2023-15 qui m'abonne avec participation"
   is_public: 0
   signalement: "2023-13"
-  type: 3
   category: "MESSAGE_PARTNER"
 - 
   created_by: null
   description: "Le bailleur s'engage à résoudre les désordres signalés."
   is_public: 1
   signalement: "00000000-0000-0000-2025-000000000012"
-  type: 1
   category: "INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE"
 - 
   created_by: viens@ramontafrez.com
   description: "Je veux faire les travaux, mais je ne sais pas comment m'y prendre."
   is_public: 0
   signalement: "00000000-0000-0000-2025-000000000012"
-  type: 1
   category: "INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE"
+- 
+  created_by: viens@ramontafrez.com
+  description: "Tout a été fait, le locataire est extrêmement satisfait."
+  is_public: 0
+  signalement: "00000000-0000-0000-2025-000000000012"
+  type: 2
+  category: "MESSAGE_BAILLEUR"
+- 
+  created_by: fox.mulder@fbi.com
+  description: "Le bailleur est vraiment casse pied, Je n'en peux plus de lui !"
+  is_public: 1
+  signalement: "00000000-0000-0000-2025-000000000012"
+  type: 2
+  category: "MESSAGE_USAGER"
+- 
+  created_by: user-34-01@signal-logement.fr
+  description: "Suivi privé : le bailleur indique avoir fait les travaux mais le locataire dément."
+  is_public: 0
+  signalement: "00000000-0000-0000-2025-000000000012"
+  type: 3
+  category: "MESSAGE_PARTNER"
 - 
   created_by: admin-partenaire-13-01@signal-logement.fr
   description: "Un suivi pour abonner l'utilisateur."
   is_public: 0
   signalement: "00000000-0000-0000-2023-000000000026"
-  type: 1
   category: "INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE"

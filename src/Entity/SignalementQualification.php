@@ -17,10 +17,10 @@ class SignalementQualification
 
     #[ORM\ManyToOne(inversedBy: 'signalementQualifications')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Signalement $signalement = null;
+    private Signalement $signalement;
 
     #[ORM\Column(type: 'string', enumType: Qualification::class)]
-    private ?Qualification $qualification = null;
+    private Qualification $qualification;
 
     /** @var array<Criticite> $criticites */
     #[ORM\Column(nullable: true)]
@@ -62,7 +62,7 @@ class SignalementQualification
         return $this;
     }
 
-    public function getQualification(): ?Qualification
+    public function getQualification(): Qualification
     {
         return $this->qualification;
     }
@@ -104,10 +104,10 @@ class SignalementQualification
 
     public function hasDesordres(): bool
     {
-        if (null !== $this->getDesordrePrecisionIds() && \count($this->getDesordrePrecisionIds()) > 0) {
+        if ([] !== $this->getDesordrePrecisionIds() && \count($this->getDesordrePrecisionIds()) > 0) {
             return true;
         }
-        if (null !== $this->getCriticites() && \count($this->getCriticites()) > 0) {
+        if ([] !== $this->getCriticites() && \count($this->getCriticites()) > 0) {
             return true;
         }
 

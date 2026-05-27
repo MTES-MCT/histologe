@@ -1,0 +1,28 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>
+        Un nouveau message est disponible concernant le logement situé <strong>{{ addressCompleteOccupant }}</strong>
+        sur votre dossier <strong>{{ referenceInjonction }}</strong>.
+        <br><br>
+        Vous pouvez consulter votre dossier et nous envoyer un message en cliquant sur le bouton ci-dessous :</p>
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary"
+           style="text-align: center">
+        <tbody>
+        <tr>
+            <td align="left">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr style="text-align: center;width: 100%">
+                        <td>
+                            <a href="{{ url('app_login_bailleur') }}" target="_blank" rel="noopener">Consulter mon dossier</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p>Si le bouton ne fonctionne pas <a href="{{ url('app_login_bailleur') }}" target="_blank" rel="noopener">cliquez ici</a></p>
+{% endblock %}

@@ -42,12 +42,10 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
-                type: Suivi::TYPE_AUTO,
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
                 isVisibleForUsager: true,
-                context: Suivi::CONTEXT_SIGNALEMENT_ACCEPTED,
                 flush: false,
             );
             $createdAtUpdated = $signalement->getCreatedAt()->modify('+'.$second.' second');
@@ -82,10 +80,6 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
         } elseif (SuiviCategory::MESSAGE_USAGER_POST_CLOTURE->value === $row['category']) {
             $createdAt = $signalement->getClosedAt()->modify('+3 days');
         }
-        $context = null;
-        if (isset($row['context'])) {
-            $context = $row['context'];
-        }
         $category = null;
         if (isset($row['category'])) {
             $category = SuiviCategory::from($row['category']);
@@ -94,13 +88,13 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: $row['description'],
-            type: $row['type'],
             category: $category,
+            sendMail: SuiviCategory::ASK_FEEDBACK_SENT !== $category,
             partner: $createdBy?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user: $createdBy,
             isVisibleForUsager: $row['is_public'],
+            isVisibleForBailleur: in_array($category, SuiviCategory::categoriesSubmittedByBailleur()),
             createdAt: $createdAt,
-            context: $context,
             flush: false,
         );
         if (isset($row['force_notifications']) && $row['force_notifications']) {
