@@ -79,10 +79,19 @@
                   <button v-if="item.canDeleteSignalement" data-fr-opened="false" 
                           aria-controls="modal-delete-signalement" 
                           @click="selectItem(item)"
-                          class="fr-btn fr-btn--icon-left fr-btn--secondary fr-mx-1w fr-icon-delete-line">
+                          class="fr-btn fr-btn--icon-left fr-btn--secondary fr-mx-1w fr-icon-delete-line"
+                          :aria-label="`Supprimer le signalement ${item.reference}`"
+                          :title="`Supprimer le signalement ${item.reference}`"
+                    >
                     Supprimer le signalement
                   </button>
-                  <a :href="`/bo/signalements/${item.uuid}`" @click="saveScrollPosition(item)" class="fr-btn fr-btn--icon-right fr-icon-arrow-right-line fr-mx-1w">
+                  <a
+                    :href="`/bo/signalements/${item.uuid}`"
+                    @click="saveScrollPosition(item)"
+                    class="fr-btn fr-btn--icon-right fr-icon-arrow-right-line fr-mx-1w"
+                    :aria-label="`Accéder au dossier ${item.reference}`"
+                    :title="`Accéder au dossier ${item.reference}`"
+                  >
                     Accéder au dossier
                   </a>
                 </div>

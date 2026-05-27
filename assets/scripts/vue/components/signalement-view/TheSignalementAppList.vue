@@ -29,6 +29,8 @@
                   aria-controls="modal-edit-search"
                   class="fr-btn fr-btn--secondary fr-icon-settings-5-line fr-mr-1w"
                   :disabled="sharedState.savedSearches.length === 0"
+                  aria-label="Gérer mes recherches sauvegardées"
+                  title="Gérer mes recherches sauvegardées"
                 ></button>
               </div>
               <div class="fr-col">
@@ -37,10 +39,10 @@
                   id="filter-save-search"
                   v-model="sharedState.selectedSavedSearchId"
                   @update:modelValue="applySavedSearch"
-                  title="Mes recherches sauvegardées"
+                  aria-label="Mes recherches sauvegardées"
                   :option-items="sharedState.savedSearches"
-                  :placeholder="sharedState.savedSearches.length > 0 
-                    ? 'Mes recherches sauvegardées' 
+                  :placeholder="sharedState.savedSearches.length > 0
+                    ? 'Mes recherches sauvegardées'
                     : 'Aucune recherche sauvegardée'"
                   ref="savedSearchSelect"
                 />
@@ -48,6 +50,9 @@
             </div>
           </div>
           <div class="fr-container--fluid" role="search">
+            <div class="fr-skiplinks">
+              <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#list-signalements" aria-label="Passer directement à la liste des signalements">Passer directement à la liste des signalements</a>
+            </div>
             <SignalementViewFilters
                 :shared-props="sharedProps"
                 @change="handleFilters"
@@ -67,15 +72,22 @@
     </section>
     <section v-else-if="sharedState.signalements.pagination.total_items > 0" class="fr-col-12 fr-background-alt--blue-france fr-mt-0">
         <div :class="['fr-p-3w', 'fr-container-sml']">
-          <SignalementListHeader
-              :total="sharedState.signalements.pagination.total_items"
-              @change="handleOrderChange"/>
+          <div id="list-signalements">
+            <SignalementListHeader
+                :total="sharedState.signalements.pagination.total_items"
+                @change="handleOrderChange"/>
+            <div class="fr-skiplinks">
+              <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination">Accéder à la pagination</a>
+            </div>
+          </div>
           <SignalementListCards
               :list="sharedState.signalements.list"
               @deleteSignalementItem="deleteItem" />
-          <SignalementListPagination
-              :pagination="sharedState.signalements.pagination"
-              @changePage="handlePageChange"/>
+          <div id="pagination">
+            <SignalementListPagination
+                :pagination="sharedState.signalements.pagination"
+                @changePage="handlePageChange"/>
+          </div>
         </div>
     </section>
     <section v-else class="fr-col-12 fr-background-alt--blue-france fr-mt-0">
