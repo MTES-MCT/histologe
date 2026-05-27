@@ -48,6 +48,7 @@ parameters:
     feature_injonction_bailleur: '%env(bool:FEATURE_INJONCTION_BAILLEUR)%'
     feature_injonction_bailleur_depts: '%env(resolve:FEATURE_INJONCTION_BAILLEUR_DEPTS)%'
     feature_imprim_fip: '%env(bool:FEATURE_IMPRIM_FIP)%'
+    new_communes_csv_url: '%env(resolve:NEW_COMMUNES_CSV_URL)%'
     tab_data_kpi_cache_expired_after: '%env(int:TAB_DATA_KPI_CACHE_EXPIRED_AFTER)%'
     rial_enable: '%env(bool:RIAL_ENABLE)%'
 

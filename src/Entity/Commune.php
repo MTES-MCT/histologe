@@ -33,6 +33,9 @@ class Commune implements EntityHistoryInterface
     #[ORM\Column(type: 'boolean')]
     private bool $isZonePermisLouer;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isDeprecated = false;
+
     #[ORM\ManyToOne(inversedBy: 'communes', cascade: ['persist'])]
     private ?Epci $epci = null;
 
@@ -118,6 +121,18 @@ class Commune implements EntityHistoryInterface
     public function setIsZonePermisLouer(bool $isZonePermisLouer): self
     {
         $this->isZonePermisLouer = $isZonePermisLouer;
+
+        return $this;
+    }
+
+    public function getIsDeprecated(): bool
+    {
+        return $this->isDeprecated;
+    }
+
+    public function setIsDeprecated(bool $isDeprecated): self
+    {
+        $this->isDeprecated = $isDeprecated;
 
         return $this;
     }
