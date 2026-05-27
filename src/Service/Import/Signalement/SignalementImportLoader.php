@@ -167,6 +167,9 @@ class SignalementImportLoader
                     $signalement->setProfileDeclarant(ProfileDeclarant::TIERS_PARTICULIER);
                 }
             }
+            if (null === $signalement->getIsLogementVacant() && !empty($signalement->getNomOccupant())) {
+                $signalement->setIsLogementVacant(false);
+            }
             $this->entityManager->persist($signalement);
 
             $this->loadTags($signalement, $territory, $dataMapped);

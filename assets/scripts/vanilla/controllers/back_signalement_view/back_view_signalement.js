@@ -459,3 +459,33 @@ document.addEventListener('click', (event) => {
     }
   });
 });
+
+const logementVacantModal = document.querySelector('#fr-modal-edit-logement-vacant');
+
+logementVacantModal?.addEventListener('change', (event) => {
+  const radio = event.target.closest('input[name="logementVacant"]');
+  if (!radio) return;
+
+  const isVacant = radio.value === '1';
+  document.getElementById('logement-vacant-warning')?.classList.toggle('fr-hidden', !isVacant);
+  document
+    .getElementById('logement-vacant-bailleur-warning')
+    ?.classList.toggle('fr-hidden', !isVacant);
+
+  // Reset DSFR error state when user makes a selection
+  const fieldset = document.getElementById('logement-vacant-fieldset');
+  fieldset?.classList.remove('fr-fieldset--error');
+  document.getElementById('logement-vacant-fieldset-error')?.classList.add('fr-hidden');
+});
+
+logementVacantModal?.querySelector('form')?.addEventListener('submit', (event) => {
+  const fieldset = document.getElementById('logement-vacant-fieldset');
+  if (!fieldset) return;
+
+  const isChecked = fieldset.querySelector('input[name="logementVacant"]:checked');
+  if (!isChecked) {
+    event.preventDefault();
+    fieldset.classList.add('fr-fieldset--error');
+    document.getElementById('logement-vacant-fieldset-error')?.classList.remove('fr-hidden');
+  }
+});

@@ -187,6 +187,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertEquals(45, $signalement->getSuperficie());
         $this->assertEquals(5, $signalement->getNbNiveauxLogement());
         $this->assertFalse($signalement->getIsConstructionAvant1949());
+        $this->assertFalse($signalement->getIsLogementVacant());
 
         $this->assertEquals(new \DateTimeImmutable('1970-10-01'), $signalement->getDateNaissanceOccupant());
         $this->assertEquals(new \DateTimeImmutable('2020-10-01'), $signalement->getDateEntree());
@@ -417,6 +418,89 @@ class SignalementBuilderTest extends KernelTestCase
         $this->entityManager->commit();
     }
 
+    public static function provideIsLogementVacantCases(): \Generator
+    {
+        yield 'locataire avec nom occupant' => [
+            'locataire.json',
+            ProfileDeclarant::LOCATAIRE,
+            'vos_coordonnees_occupant_email',
+            false,
+        ];
+        yield 'bailleur avec nom occupant' => [
+            'bailleur.json',
+            ProfileDeclarant::BAILLEUR,
+            'vos_coordonnees_tiers_email',
+            false,
+        ];
+        yield 'tiers_particulier avec nom occupant' => [
+            'tiers_particulier.json',
+            ProfileDeclarant::TIERS_PARTICULIER,
+            'vos_coordonnees_tiers_email',
+            false,
+        ];
+        yield 'service_secours avec nom occupant' => [
+            'service_secours.json',
+            ProfileDeclarant::SERVICE_SECOURS,
+            'vos_coordonnees_tiers_email',
+            false,
+        ];
+    }
+
+    #[DataProvider('provideIsLogementVacantCases')]
+    public function testBuildSignalementIsLogementVacantFalseWhenNomOccupant(
+        string $payloadFile,
+        ProfileDeclarant $profileDeclarant,
+        string $emailKey,
+        bool $expected,
+    ): void {
+        $payload = json_decode(
+            (string) file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/'.$payloadFile),
+            true
+        );
+
+        $signalementDraft = (new SignalementDraft())
+            ->setPayload($payload)
+            ->setProfileDeclarant($profileDeclarant)
+            ->setStatus(SignalementDraftStatus::EN_COURS)
+            ->setCurrentStep('informations_complementaires')
+            ->setEmailDeclarant($payload[$emailKey] ?? null);
+
+        // isLogementVacant est défini dans setOccupantProfileData(), appelé par withAdressesCoordonnees().
+        // Certains profils (bailleur, service_secours) n'ont pas de désordres dans leur fixture,
+        // ce qui ferait retourner null à build(). On accède directement au signalement via réflexion.
+        $builder = $this->signalementBuilder
+            ->createSignalementBuilderFrom($signalementDraft)
+            ->withAdressesCoordonnees();
+
+        $signalement = (new \ReflectionProperty(SignalementBuilder::class, 'signalement'))->getValue($builder);
+
+        $this->assertEquals($expected, $signalement->getIsLogementVacant());
+    }
+
+    public function testBuildSignalementIsLogementVacantNullWhenNomOccupantAbsent(): void
+    {
+        $payload = json_decode(
+            (string) file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
+            true
+        );
+        $payload['vos_coordonnees_occupant_nom'] = null;
+
+        $signalementDraft = (new SignalementDraft())
+            ->setPayload($payload)
+            ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
+            ->setStatus(SignalementDraftStatus::EN_COURS)
+            ->setCurrentStep('informations_complementaires')
+            ->setEmailDeclarant($payload['vos_coordonnees_occupant_email']);
+
+        $builder = $this->signalementBuilder
+            ->createSignalementBuilderFrom($signalementDraft)
+            ->withAdressesCoordonnees();
+
+        $signalement = (new \ReflectionProperty(SignalementBuilder::class, 'signalement'))->getValue($builder);
+
+        $this->assertNull($signalement->getIsLogementVacant());
+    }
+
     public static function provideAllocataireCases(): \Generator
     {
         // certains cas ne sont pas sensés arriver
@@ -457,7 +541,7 @@ class SignalementBuilderTest extends KernelTestCase
         ?string $logementSocialCaisse,
         string|bool|null $expectedResult,
     ): void {
-        $signalementDraftRequestMock = $this->createMock(SignalementDraftRequest::class);
+        $signalementDraftRequestMock = $this->createStub(SignalementDraftRequest::class);
 
         $signalementDraftRequestMock->method('getLogementSocialAllocation')
             ->willReturn($logementSocialAllocation);

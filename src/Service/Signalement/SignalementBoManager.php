@@ -48,10 +48,7 @@ class SignalementBoManager
             $signalement->setIsLogementVacant(true);
             $signalement->setProfileOccupant(null);
         } else {
-            if (!empty($form->get('profileOccupant')->getData())) {
-                $signalement->setIsLogementVacant(false);
-            }
-
+            $signalement->setIsLogementVacant(false);
             $signalement->setProfileOccupant(SignalementProfileOccupantMapper::map($form->get('profileOccupant')->getData(), $profileDeclarant));
         }
 
