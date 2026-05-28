@@ -8,7 +8,6 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Repository\JobEventRepository;
 use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
 use App\Repository\Query\Dashboard\DossiersAvecRelanceSansReponseQuery;
 use App\Repository\Query\Dashboard\DossiersQuery;
@@ -17,6 +16,7 @@ use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
 use App\Repository\Query\Dashboard\DossiersUndeliverableEmailQuery;
 use App\Repository\Query\Dashboard\KpiQuery;
 use App\Repository\Query\Dashboard\SignalementsSansAffectationAccepteeQuery;
+use App\Repository\Query\Interconnection\JobEventQuery;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpi;
@@ -33,7 +33,7 @@ class TabDataManager
 
     public function __construct(
         private readonly Security $security,
-        private readonly JobEventRepository $jobEventRepository,
+        private readonly JobEventQuery $jobEventQuery,
         private readonly TerritoryRepository $territoryRepository,
         private readonly UserRepository $userRepository,
         private readonly TabCountKpiBuilder $tabCountKpiBuilder,
@@ -213,7 +213,7 @@ class TabDataManager
         }
         $searchInterconnexion->setTerritory($territory);
 
-        $lastConnection = $this->jobEventRepository->findLastJobEventByTerritory(
+        $lastConnection = $this->jobEventQuery->findLastByTerritory(
             self::DAY_PERIOD,
             $searchInterconnexion,
             1,
@@ -227,7 +227,7 @@ class TabDataManager
 
         $searchInterconnexion->setStatus('failed');
 
-        $errorConnectionLastDay = $this->jobEventRepository->findLastJobEventByTerritory(
+        $errorConnectionLastDay = $this->jobEventQuery->findLastByTerritory(
             1,
             $searchInterconnexion,
             1,

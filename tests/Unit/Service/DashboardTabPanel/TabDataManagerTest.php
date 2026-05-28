@@ -10,7 +10,6 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Repository\JobEventRepository;
 use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
 use App\Repository\Query\Dashboard\DossiersAvecRelanceSansReponseQuery;
 use App\Repository\Query\Dashboard\DossiersQuery;
@@ -19,6 +18,7 @@ use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
 use App\Repository\Query\Dashboard\DossiersUndeliverableEmailQuery;
 use App\Repository\Query\Dashboard\KpiQuery;
 use App\Repository\Query\Dashboard\SignalementsSansAffectationAccepteeQuery;
+use App\Repository\Query\Interconnection\JobEventQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
@@ -36,7 +36,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 class TabDataManagerTest extends WebTestCase
 {
     protected MockObject&Security $security;
-    protected MockObject&JobEventRepository $jobEventRepository;
+    protected MockObject&JobEventQuery $jobEventQuery;
     protected MockObject&TerritoryRepository $territoryRepository;
     protected MockObject&UserRepository $userRepository;
     protected MockObject&SignalementRepository $signalementRepository;
@@ -53,7 +53,7 @@ class TabDataManagerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->security = $this->createMock(Security::class);
-        $this->jobEventRepository = $this->createMock(JobEventRepository::class);
+        $this->jobEventQuery = $this->createMock(JobEventQuery::class);
         $this->territoryRepository = $this->createMock(TerritoryRepository::class);
         $this->userRepository = $this->createMock(UserRepository::class);
         $this->signalementRepository = $this->createMock(SignalementRepository::class);
@@ -72,7 +72,7 @@ class TabDataManagerTest extends WebTestCase
     {
         return new TabDataManager(
             $this->security,
-            $this->jobEventRepository,
+            $this->jobEventQuery,
             $this->territoryRepository,
             $this->userRepository,
             $this->tabCountKpiBuilder,
@@ -201,7 +201,7 @@ class TabDataManagerTest extends WebTestCase
     {
         $lastSynchro = [['createdAt' => new \DateTimeImmutable('2024-06-10 10:00:00')]];
         $lastError = [['createdAt' => new \DateTimeImmutable('2024-06-11 11:00:00')]];
-        $this->jobEventRepository->method('findLastJobEventByTerritory')
+        $this->jobEventQuery->method('findLastByTerritory')
             ->willReturnOnConsecutiveCalls($lastSynchro, $lastError);
 
         $tabDataManager = $this->getTabDataManager();

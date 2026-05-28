@@ -4,7 +4,7 @@ namespace App\Scheduler\MessageHandler;
 
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\AffectationRepository;
-use App\Repository\JobEventRepository;
+use App\Repository\Query\Interconnection\JobEventQuery;
 use App\Scheduler\Message\SyncEsaboraSISHInterventionMessage;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Esabora\Handler\InterventionSISHHandlerInterface;
@@ -25,7 +25,7 @@ final class SyncEsaboraSISHInterventionMessageHandler
 
     /** @param iterable<InterventionSISHHandlerInterface> $interventionHandlers */
     public function __construct(
-        private readonly JobEventRepository $jobEventRepository,
+        private readonly JobEventQuery $jobEventQuery,
         private readonly AffectationRepository $affectationRepository,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
@@ -74,7 +74,7 @@ final class SyncEsaboraSISHInterventionMessageHandler
         $this->entityManager->flush();
 
         ['success_count' => $countSuccess, 'failed_count' => $countFailed] =
-             $this->jobEventRepository->getReportEsaboraAction(
+             $this->jobEventQuery->getReportEsaboraAction(
                  AbstractEsaboraService::ACTION_SYNC_DOSSIER_ARRETE,
                  AbstractEsaboraService::ACTION_SYNC_DOSSIER_VISITE
              );
