@@ -3,7 +3,7 @@
 namespace App\Controller\Back;
 
 use App\Form\SearchInterconnexionType;
-use App\Repository\JobEventRepository;
+use App\Repository\Query\Interconnection\JobEventQuery;
 use App\Service\ListFilters\SearchInterconnexion;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -28,7 +28,7 @@ class InterconnexionController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function index(
         Request $request,
-        JobEventRepository $jobEventRepository,
+        JobEventQuery $jobEventQuery,
         #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         $searchInterconnexion = new SearchInterconnexion();
@@ -43,14 +43,14 @@ class InterconnexionController extends AbstractController
         $limit = $maxListPagination;
         $offset = ($page - 1) * $limit;
 
-        $connections = $jobEventRepository->findLastJobEventByTerritory(
+        $connections = $jobEventQuery->findLastByTerritory(
             self::DAY_PERIOD,
             $searchInterconnexion,
             $limit,
             $offset
         );
 
-        $total = $jobEventRepository->countLastJobEventByTerritory(
+        $total = $jobEventQuery->countByTerritory(
             self::DAY_PERIOD,
             $searchInterconnexion
         );

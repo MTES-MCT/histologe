@@ -21,8 +21,8 @@ use App\Manager\PopNotificationManager;
 use App\Manager\UserManager;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Repository\AutoAffectationRuleRepository;
-use App\Repository\JobEventRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\Query\Interconnection\JobEventQuery;
 use App\Repository\UserRepository;
 use App\Security\Voter\PartnerVoter;
 use App\Security\Voter\UserVoter;
@@ -144,7 +144,7 @@ class PartnerController extends AbstractController
     public function view(
         Partner $partner,
         PartnerRepository $partnerRepository,
-        JobEventRepository $jobEventRepository,
+        JobEventQuery $jobEventQuery,
         AutoAffectationRuleRepository $autoAffectationRuleRepository,
         EmailAlertChecker $emailAlertChecker,
     ): Response {
@@ -158,7 +158,7 @@ class PartnerController extends AbstractController
             ]));
         }
 
-        $lastJobEvent = $jobEventRepository->findLastEsaboraJobByPartner($partner);
+        $lastJobEvent = $jobEventQuery->findLastEsaboraByPartner($partner);
         $lastJobEventDate = $lastJobEvent && !empty($lastJobEvent['last_event']) ? new \DateTimeImmutable($lastJobEvent['last_event']) : null;
 
         $partnerAutoAffectationRules = null;

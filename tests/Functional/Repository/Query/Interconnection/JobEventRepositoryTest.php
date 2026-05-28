@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Functional\Repository;
+namespace App\Tests\Functional\Repository\Interconnection;
 
 use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Signalement;
 use App\Repository\AffectationRepository;
-use App\Repository\JobEventRepository;
+use App\Repository\Query\Interconnection\JobEventQuery;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchInterconnexion;
@@ -26,10 +26,10 @@ class JobEventRepositoryTest extends KernelTestCase
     public function testGetReportEsaboraIntervention(): void
     {
         $container = static::getContainer();
-        $jobEventRepository = $container->get(JobEventRepository::class);
+        $jobEventQuery = $container->get(JobEventQuery::class);
 
         ['success_count' => $successCount, 'failed_count' => $failedCount] =
-            $jobEventRepository->getReportEsaboraAction(
+            $jobEventQuery->getReportEsaboraAction(
                 AbstractEsaboraService::ACTION_PUSH_DOSSIER,
                 AbstractEsaboraService::ACTION_SYNC_DOSSIER);
 
@@ -40,8 +40,8 @@ class JobEventRepositoryTest extends KernelTestCase
     public function testFindLastJobEventByTerritoryWithReference(): void
     {
         $container = static::getContainer();
-        /** @var JobEventRepository $jobEventRepository */
-        $jobEventRepository = $container->get(JobEventRepository::class);
+        /** @var JobEventQuery $jobEventQuery */
+        $jobEventQuery = $container->get(JobEventQuery::class);
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $container->get(EntityManagerInterface::class);
 
@@ -50,7 +50,7 @@ class JobEventRepositoryTest extends KernelTestCase
         $searchInterconnexion = new SearchInterconnexion();
         $searchInterconnexion->setReference($signalement->getReference());
 
-        $jobEvents = $jobEventRepository->findLastJobEventByTerritory(
+        $jobEvents = $jobEventQuery->findLastByTerritory(
             365,
             $searchInterconnexion,
             10,
@@ -64,13 +64,13 @@ class JobEventRepositoryTest extends KernelTestCase
     public function testFindLastJobEventByTerritoryWithAction(): void
     {
         $container = static::getContainer();
-        /** @var JobEventRepository $jobEventRepository */
-        $jobEventRepository = $container->get(JobEventRepository::class);
+        /** @var JobEventQuery $jobEventQuery */
+        $jobEventQuery = $container->get(JobEventQuery::class);
 
         $searchInterconnexion = new SearchInterconnexion();
         $searchInterconnexion->setAction(AbstractEsaboraService::ACTION_PUSH_DOSSIER);
 
-        $jobEvents = $jobEventRepository->findLastJobEventByTerritory(
+        $jobEvents = $jobEventQuery->findLastByTerritory(
             365,
             $searchInterconnexion,
             10,
