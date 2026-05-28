@@ -58,8 +58,10 @@ class UpdateMergedCommunesCommandTest extends TestCase
     {
         $oldCommune = $this->createMock(Commune::class);
         $oldCommune->method('getNom')->willReturn('Les Touches');
-        $oldCommune->method('getIsDeprecated')->willReturn(false);
-        $oldCommune->expects($this->once())->method('setIsDeprecated')->with(true);
+        $oldCommune->method('getCommuneMergedInto')->willReturn(null);
+        $newCommune = $this->createMock(Commune::class);
+        $newCommune->method('getNom')->willReturn('Nort-sur-Erdre');
+        $oldCommune->expects($this->once())->method('setCommuneMergedInto')->with($newCommune);
 
         $this->communeRepository
             ->method('findBy')
@@ -67,6 +69,8 @@ class UpdateMergedCommunesCommandTest extends TestCase
                 [$oldCommune], // Pour l'ancien code Insee
                 []             // Pour le nouveau code Insee
             );
+
+        $this->communeRepository->method('findOneBy')->willReturn($newCommune);
 
         $this->entityManager
             ->expects($this->once())
@@ -77,7 +81,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
         $reflectionProperty = new \ReflectionProperty($this->command, 'io');
         $reflectionProperty->setValue($this->command, $this->createMock(SymfonyStyle::class));
 
-        $result = $this->command->processCsvRow([null, '44205', 'Patate Ville', '44999']);
+        $result = $this->command->processCsvRow([null, '44110', 'Nort-sur-Erdre', '44205']);
         $this->assertEquals(['deprecated' => 1, 'renamed' => 0], $result);
     }
 
@@ -85,8 +89,8 @@ class UpdateMergedCommunesCommandTest extends TestCase
     {
         $oldCommune = $this->createMock(Commune::class);
         $oldCommune->method('getNom')->willReturn('Les Touches');
-        $oldCommune->method('getIsDeprecated')->willReturn(true);
-        $oldCommune->expects($this->never())->method('setIsDeprecated');
+        $oldCommune->method('getCommuneMergedInto')->willReturn($this->createMock(Commune::class));
+        $oldCommune->expects($this->never())->method('setCommuneMergedInto');
 
         $this->communeRepository
             ->expects($this->exactly(2))
@@ -103,7 +107,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
         $reflectionProperty = new \ReflectionProperty($this->command, 'io');
         $reflectionProperty->setValue($this->command, $this->createMock(SymfonyStyle::class));
 
-        $result = $this->command->processCsvRow([null, '44205', 'Patate Ville', '44999']);
+        $result = $this->command->processCsvRow([null, '44205', 'Nort-sur-Erdre', '44110']);
         $this->assertEquals(['deprecated' => 0, 'renamed' => 0], $result);
     }
 
@@ -111,7 +115,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
     {
         $oldCommune = $this->createMock(Commune::class);
         $oldCommune->method('getNom')->willReturn('Les Touches');
-        $oldCommune->expects($this->never())->method('setIsDeprecated');
+        $oldCommune->expects($this->never())->method('setCommuneMergedInto');
 
         $this->communeRepository
             ->expects($this->exactly(2))
@@ -128,15 +132,15 @@ class UpdateMergedCommunesCommandTest extends TestCase
         $reflectionProperty = new \ReflectionProperty($this->command, 'io');
         $reflectionProperty->setValue($this->command, $this->createMock(SymfonyStyle::class));
 
-        $result = $this->command->processCsvRow([null, '44205', 'Les Touches', '44999']);
+        $result = $this->command->processCsvRow([null, '44110', 'Nort-sur-Erdre', '44205']);
         $this->assertEquals(['deprecated' => 0, 'renamed' => 0], $result);
     }
 
     public function testProcessCsvRowRenamesNewCommune(): void
     {
         $newCommune = $this->createMock(Commune::class);
-        $newCommune->method('getNom')->willReturn('Les Touches');
-        $newCommune->expects($this->once())->method('setNom')->with('Les longues Touches');
+        $newCommune->method('getNom')->willReturn('Nort-sur-Erdre');
+        $newCommune->expects($this->once())->method('setNom')->with('Nort-sur-Erdros');
 
         $this->communeRepository
             ->expects($this->exactly(2))
@@ -154,14 +158,14 @@ class UpdateMergedCommunesCommandTest extends TestCase
         $reflectionProperty = new \ReflectionProperty($this->command, 'io');
         $reflectionProperty->setValue($this->command, $this->createMock(SymfonyStyle::class));
 
-        $result = $this->command->processCsvRow([null, '44205', 'Les longues Touches', '44999']);
+        $result = $this->command->processCsvRow([null, '44110', 'Nort-sur-Erdros', '44205']);
         $this->assertEquals(['deprecated' => 0, 'renamed' => 1], $result);
     }
 
     public function testProcessCsvRowDoesNotRenameIfSameName(): void
     {
         $newCommune = $this->createMock(Commune::class);
-        $newCommune->method('getNom')->willReturn('Les Touches');
+        $newCommune->method('getNom')->willReturn('Nort-sur-Erdre');
         $newCommune->expects($this->never())->method('setNom');
 
         $this->communeRepository
@@ -179,7 +183,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
         $reflectionProperty = new \ReflectionProperty($this->command, 'io');
         $reflectionProperty->setValue($this->command, $this->createMock(SymfonyStyle::class));
 
-        $result = $this->command->processCsvRow([null, '44205', 'Les Touches', '44999']);
+        $result = $this->command->processCsvRow([null, '44110', 'Nort-sur-Erdre', '44205']);
         $this->assertEquals(['deprecated' => 0, 'renamed' => 0], $result);
     }
 
@@ -238,13 +242,17 @@ class UpdateMergedCommunesCommandTest extends TestCase
     {
         $oldCommune1 = $this->createMock(Commune::class);
         $oldCommune1->method('getNom')->willReturn('Ancienne 1');
-        $oldCommune1->method('getIsDeprecated')->willReturn(false);
-        $oldCommune1->expects($this->once())->method('setIsDeprecated')->with(true);
+        $oldCommune1->method('getCommuneMergedInto')->willReturn(null);
+        $newCommune1 = $this->createMock(Commune::class);
+        $newCommune1->method('getNom')->willReturn('Nouveau Nom');
+        $oldCommune1->expects($this->once())->method('setCommuneMergedInto')->with($newCommune1);
 
         $oldCommune2 = $this->createMock(Commune::class);
         $oldCommune2->method('getNom')->willReturn('Ancienne 2');
-        $oldCommune2->method('getIsDeprecated')->willReturn(false);
-        $oldCommune2->expects($this->once())->method('setIsDeprecated')->with(true);
+        $oldCommune2->method('getCommuneMergedInto')->willReturn(null);
+        $newCommune2 = $this->createMock(Commune::class);
+        $newCommune2->method('getNom')->willReturn('Nouveau Nom');
+        $oldCommune2->expects($this->once())->method('setCommuneMergedInto')->with($newCommune2);
 
         $newCommune1 = $this->createMock(Commune::class);
         $newCommune1->method('getNom')->willReturn('Ancien Nom 1');
@@ -260,6 +268,13 @@ class UpdateMergedCommunesCommandTest extends TestCase
             ->willReturnOnConsecutiveCalls(
                 [$oldCommune1, $oldCommune2], // Pour l'ancien code Insee
                 [$newCommune1, $newCommune2]  // Pour le nouveau code Insee
+            );
+
+        $this->communeRepository
+            ->method('findOneBy')
+            ->willReturnOnConsecutiveCalls(
+                $newCommune1,
+                $newCommune2,
             );
 
         $this->entityManager

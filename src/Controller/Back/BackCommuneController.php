@@ -74,6 +74,7 @@ class BackCommuneController extends AbstractController
         AutoAffectationRuleRepository $autoAffectationRuleRepository,
         PartnerRepository $partnerRepository,
         TerritoryRepository $territoryRepository,
+        CommuneRepository $communeRepository,
         EntityManagerInterface $em,
         AddressService $addressService,
     ): Response {
@@ -83,6 +84,7 @@ class BackCommuneController extends AbstractController
         $form = $this->createForm(CommuneType::class, $commune);
         $originalNom = $commune->getNom();
         $originalInsee = $commune->getCodeInsee();
+        $newCommune = $commune->getCommuneMergedInto();
         $signalementsWithInsee = $signalementRepository->findBy(['inseeOccupant' => $originalInsee]);
         $countSignalementsWithInsee = \count($signalementsWithInsee);
         $autoAffectationRulesWithInseeToInclude = $autoAffectationRuleRepository->findWithInseeToInclude($originalInsee);
@@ -190,6 +192,7 @@ class BackCommuneController extends AbstractController
             'countWithPartenairesWithInsee' => $countWithPartenairesWithInsee,
             'countWithTerritoriesWithInsee' => $countWithTerritoriesWithInsee,
             'poiCommune' => $poiCommune,
+            'newCommune' => $newCommune,
         ]);
     }
 }

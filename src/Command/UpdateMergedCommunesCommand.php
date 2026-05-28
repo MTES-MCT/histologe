@@ -26,6 +26,7 @@ class UpdateMergedCommunesCommand extends Command
 
     /**
      * @param array<mixed> $csvData
+     * @param array<mixed> $renamedCommunes
      */
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
@@ -33,6 +34,7 @@ class UpdateMergedCommunesCommand extends Command
         private readonly CsvParser $csvParser,
         private readonly CommuneRepository $communeRepository,
         private array $csvData = [],
+        private array $renamedCommunes = [],
     ) {
         parent::__construct();
     }
@@ -97,10 +99,18 @@ class UpdateMergedCommunesCommand extends Command
         // On recherche les items de commune qui correspondent au code Insee de l'ancienne commune (il peut y en avoir plusieurs car une commune a un code Insee mais potentiellement plusieurs codes postaux)
         $communesWithOldInsee = $this->communeRepository->findBy(['codeInsee' => $oldCommuneInsee]);
         foreach ($communesWithOldInsee as $commune) {
-            // Si le nom de l'ancienne commune est différent du nom de la nouvelle commune, on marque l'ancienne commune comme dépréciée
-            if ($commune->getNom() !== $newCommuneName && !$commune->getIsDeprecated()) {
-                $this->io->info(\sprintf('Deprecates commune %s', $commune->getNom()));
-                $commune->setIsDeprecated(true);
+            // Si le nom de l'ancienne commune est différent du nom de la nouvelle commune, on lie l'ancienne à la nouvelle commune
+            if ($commune->getNom() !== $newCommuneName && !$commune->getCommuneMergedInto()) {
+                // On cherche d'abord dans les communes renommées (cache), puis en base
+                $newCommune = $this->renamedCommunes[$newCommuneInsee] ?? $this->communeRepository->findOneBy(['codeInsee' => $newCommuneInsee, 'nom' => $newCommuneName]);
+
+                if (!$newCommune) {
+                    $this->io->warning(\sprintf('No commune found with code Insee %s and name %s, skipping deprecation of commune %d', $newCommuneInsee, $newCommuneName, $commune->getId()));
+                    continue;
+                }
+
+                $this->io->info(\sprintf('Deprecates commune %d : %s, merged in %s', $commune->getId(), $commune->getNom(), $newCommuneName));
+                $commune->setCommuneMergedInto($newCommune);
                 $this->entityManager->persist($commune);
                 ++$nbDeprecated;
             }
@@ -111,8 +121,9 @@ class UpdateMergedCommunesCommand extends Command
         $communesWithNewInsee = $this->communeRepository->findBy(['codeInsee' => $newCommuneInsee]);
         foreach ($communesWithNewInsee as $commune) {
             if ($commune->getNom() !== $newCommuneName) {
-                $this->io->info(\sprintf('Renames commune %s', $commune->getNom()));
+                $this->io->info(\sprintf('Renames commune %d : %s to %s', $commune->getId(), $commune->getNom(), $newCommuneName));
                 $commune->setNom($newCommuneName);
+                $this->renamedCommunes[$commune->getCodeInsee()] = $commune;
                 $this->entityManager->persist($commune);
                 ++$nbRenamed;
             }
