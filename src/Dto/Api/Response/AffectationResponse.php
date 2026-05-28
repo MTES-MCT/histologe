@@ -11,6 +11,7 @@ class AffectationResponse extends Affectation
         $this->uuid = $affectation->getUuid();
         $this->partenaireUuid = $affectation->getPartner()->getUuid();
         $this->partenaireNom = $affectation->getPartner()->getNom();
+        $this->partenaireType = $affectation->getPartner()->getType();
         $this->statut = $affectation->getStatut();
         $this->dateAffectation = $affectation->getCreatedAt()->format(\DATE_ATOM);
         $this->dateAcceptation = $affectation->getAnsweredAt()->format(\DATE_ATOM);
