@@ -5,6 +5,7 @@ namespace App\Dto\Api\Model;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
+use App\Entity\Enum\PartnerType;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
@@ -31,6 +32,12 @@ class Affectation
         example: 'Ville de Marseille'
     )]
     public ?string $partenaireNom;
+
+    #[OA\Property(
+        description: 'Le type du partenaire.',
+        example: 'ADIL'
+    )]
+    public PartnerType $partenaireType;
 
     #[OA\Property(
         description: 'Le statut d\'affectation',

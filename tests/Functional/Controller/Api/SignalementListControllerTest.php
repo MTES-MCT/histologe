@@ -113,6 +113,7 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertArrayHasKey('affectations', $response);
         $this->assertCount($nbDesordres, $response['desordres']);
         $this->assertCount($nbAffectations, $response['affectations']);
+        $this->assertArrayHasKey('partenaireType', $response['affectations'][0]);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 

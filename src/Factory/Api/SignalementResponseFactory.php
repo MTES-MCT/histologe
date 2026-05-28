@@ -76,6 +76,7 @@ readonly class SignalementResponseFactory
             $affectationModel->uuid = $affectation->getUuid();
             $affectationModel->partenaireUuid = $affectation->getPartner()->getUuid();
             $affectationModel->partenaireNom = $affectation->getPartner()->getNom();
+            $affectationModel->partenaireType = $affectation->getPartner()->getType();
             $affectationModel->statut = $affectation->getStatut();
             $affectationModel->dateAffectation = $affectation->getCreatedAt()->format(\DATE_ATOM);
             $affectationModel->dateAcceptation = $affectation->getAnsweredAt()?->format(\DATE_ATOM);
