@@ -14,6 +14,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Debug disk space
+        run: df -h && docker images --format "table {{.Repository}}\t{{.Size}}"
+
+      - name: Install Node.js for Playwright
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ hashFiles('tests/e2e/package-lock.json') }}
+
+      - name: Install Playwright dependencies
+        working-directory: tests/e2e
+        run: |
+          npm ci
+          npx playwright install chromium --with-deps
+
       - name: Install Docker Compose
         run: |
           sudo apt-get update
@@ -74,17 +95,6 @@ jobs:
             sleep 5
           done
           echo "Application is ready!"
-
-      - name: Install Node.js for Playwright
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
-      - name: Install Playwright dependencies
-        working-directory: tests/e2e
-        run: |
-          npm ci
-          npx playwright install chromium --with-deps
 
       - name: Run Playwright tests
         working-directory: tests/e2e
