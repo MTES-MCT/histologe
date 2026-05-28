@@ -22,7 +22,8 @@ final class Version20260527082841 extends AbstractMigration
              WHERE is_logement_vacant IS NULL
                AND creation_source <> 'FORM_SERVICE_SECOURS'
                AND nom_occupant IS NOT NULL
-               AND nom_occupant != ''"
+               AND nom_occupant != ''
+               AND nom_occupant != 'inconnu'"
         );
     }
 
