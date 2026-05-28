@@ -531,7 +531,12 @@ class SignalementBuilder
             profileDeclarant: $this->signalement->getProfileDeclarant()
         ));
 
-        if (!empty($this->signalement->getNomOccupant())) {
+        if (
+            !empty($this->signalement->getNomOccupant()) || 
+            !empty($this->signalement->getPrenomOccupant()) || 
+            !empty($this->signalement->getMailOccupant()) || 
+            !empty($this->signalement->getTelOccupant())
+        ) {
             $this->signalement->setIsLogementVacant(false);
         }
     }
