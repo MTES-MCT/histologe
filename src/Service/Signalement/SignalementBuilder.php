@@ -532,10 +532,10 @@ class SignalementBuilder
         ));
 
         if (
-            !empty($this->signalement->getNomOccupant()) || 
-            !empty($this->signalement->getPrenomOccupant()) || 
-            !empty($this->signalement->getMailOccupant()) || 
-            !empty($this->signalement->getTelOccupant())
+            !empty($this->signalement->getNomOccupant())
+            || !empty($this->signalement->getPrenomOccupant())
+            || !empty($this->signalement->getMailOccupant())
+            || !empty($this->signalement->getTelOccupant())
         ) {
             $this->signalement->setIsLogementVacant(false);
         }
