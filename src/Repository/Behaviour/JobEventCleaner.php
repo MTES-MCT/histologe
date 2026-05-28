@@ -24,6 +24,7 @@ class JobEventCleaner implements EntityCleanerRepositoryInterface
         $periodDefault = JobEvent::EXPIRATION_PERIOD_DEFAULT;
         $queryBuilder = $this->entityManager->createQueryBuilder();
         $queryBuilder->delete()
+            ->from(JobEvent::class, 'j')
             ->andWhere('(DATE(j.createdAt) <= :created_at AND j.status = :status_failed) OR (DATE(j.createdAt) <= :created_at_default AND j.status != :status_failed)')
             ->setParameter('created_at', (new \DateTimeImmutable($periodFailed))->format('Y-m-d'))
             ->setParameter('created_at_default', (new \DateTimeImmutable($periodDefault))->format('Y-m-d'))

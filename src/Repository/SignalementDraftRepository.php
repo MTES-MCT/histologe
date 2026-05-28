@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\SignalementDraft;
-use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Clock\ClockAwareTrait;
@@ -17,7 +16,7 @@ use Symfony\Component\Clock\ClockAwareTrait;
  * @method SignalementDraft[]    findAll()
  * @method SignalementDraft[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
-class SignalementDraftRepository extends ServiceEntityRepository implements EntityCleanerRepositoryInterface
+class SignalementDraftRepository extends ServiceEntityRepository
 {
     use ClockAwareTrait;
 
@@ -26,21 +25,6 @@ class SignalementDraftRepository extends ServiceEntityRepository implements Enti
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, SignalementDraft::class);
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function cleanOlderThan(string $period = SignalementDraft::EXPIRATION_PERIOD): int
-    {
-        $queryBuilder = $this->createQueryBuilder('s');
-        $queryBuilder->delete()
-            ->andWhere('s.status IN (:statuses)')
-            ->andWhere('DATE(s.createdAt) <= :created_at')
-            ->setParameter('statuses', [SignalementDraftStatus::EN_COURS, SignalementDraftStatus::ARCHIVE])
-            ->setParameter('created_at', (new \DateTimeImmutable($period))->format('Y-m-d'));
-
-        return $queryBuilder->getQuery()->execute();
     }
 
     /**
