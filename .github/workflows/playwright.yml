@@ -14,9 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Debug disk space
-        run: df -h && docker images --format "table {{.Repository}}\t{{.Size}}"
-
       - name: Install Node.js for Playwright
         uses: actions/setup-node@v4
         with:
