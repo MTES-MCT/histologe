@@ -7,7 +7,6 @@ use App\Manager\SuiviManager;
 use App\Repository\SuiviDelayedRepository;
 use App\Repository\SuiviRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -27,7 +26,7 @@ class SendSuiviWaitingNotificationCommand extends AbstractCronCommand
         private readonly SuiviManager $suiviManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly ParameterBagInterface $parameterBag,
-        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly SuiviManager $suiviManager,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -45,7 +44,7 @@ class SendSuiviWaitingNotificationCommand extends AbstractCronCommand
         $suivis = $this->suiviRepository->findWithWaitingNotificationAndExpiredDelay();
         foreach ($suivis as $suivi) {
             $suivi->setWaitingNotification(false);
-            $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME); // @phpstan-ignore-line
+            $this->suiviManager->onSuiviCreated($suivi);
         }
         $this->entityManager->flush();
         $io->success('Les notifications de '.count($suivis).' suivis ont été envoyées avec succès.');
