@@ -134,7 +134,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
             );
         }
         try {
-            $this->mailer->send($message);
+            $this->mailer->send($message); // TODO : Symfony 8.0 crash sur le LoadAffectationData
 
             return true;
         } catch (\Throwable $exception) {
