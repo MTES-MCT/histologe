@@ -101,7 +101,7 @@ class SuiviManager
         }
         $this->entityManager->persist($suivi);
         if ($flush) {
-            $this->entityManager->flush();
+            //$this->entityManager->flush();  TODO : Symfony 8.0 (gerer l'impact) 
         }
         $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME);
 

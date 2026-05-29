@@ -89,8 +89,8 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
                 ->setAnsweredAt($createdAt);
         }
 
-        $this->manager->persist($affectation);
         $this->eventDispatcher->dispatch(new AffectationCreatedEvent($affectation), AffectationCreatedEvent::NAME);
+        $this->manager->persist($affectation);
 
         if (AffectationStatus::ACCEPTED === $affectation->getStatut()) {
             foreach ($partner->getUsers() as $user) {

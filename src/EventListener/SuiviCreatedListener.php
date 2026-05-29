@@ -14,11 +14,11 @@ class SuiviCreatedListener
 {
     public function onFlush(OnFlushEventArgs $eventArgs): void
     {
-        $entityManager = $eventArgs->getObjectManager();
+        /*$entityManager = $eventArgs->getObjectManager();
         $unitOfWork = $entityManager->getUnitOfWork();
 
         /** @var Suivi $entity */
-        foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
+        /*foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
             if ($this->supports($entity)) {
                 $signalement = $entity->getSignalement();
                 $signalement->setLastSuiviAt($entity->getCreatedAt());
@@ -29,7 +29,7 @@ class SuiviCreatedListener
                 //  used to recompute the changes of a specific signalement entity
                 $unitOfWork->recomputeSingleEntityChangeSet($metaData, $signalement);
             }
-        }
+        }*/
     }
 
     public function supports(object $entity): bool

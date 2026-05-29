@@ -42,6 +42,7 @@ class HistoryEntryBuffer
 
     public function flushPendingHistoryEntries(): void
     {
+        return ;
         if (empty($this->pendingHistoryEntries)/* || !$this->entityManager->isOpen() */) {
             return;
         }

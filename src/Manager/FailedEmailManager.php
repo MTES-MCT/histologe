@@ -33,7 +33,7 @@ class FailedEmailManager
             ->setErrorMessage($exception->getMessage());
 
         $this->entityManager->persist($failedEmail);
-        $this->entityManager->flush();
+        //$this->entityManager->flush(); TODO : Symfony 8.0 (gerer l'impact) 
 
         return $failedEmail;
     }

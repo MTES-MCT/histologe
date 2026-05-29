@@ -150,8 +150,8 @@ class Intervention implements EntityHistoryInterface, EntitySanitizerInterface
     public function getScheduledAtFormated(): string
     {
         if ($this->getScheduledAt()->format('His') > 0) {
-            $timezone = $this->getPartner()?->getTerritory()?->getTimezone()
-                ?? $this->getSignalement()->getTimezone()
+            $timezone = //$this->getPartner()?->getTerritory()?->getTimezone()
+                /*??*/ $this->getSignalement()->getTimezone()
                 ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
 
             return $this->getScheduledAt()

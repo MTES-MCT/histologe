@@ -11,6 +11,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
@@ -26,6 +27,7 @@ use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
+use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\CritereRepository;
 use App\Repository\DesordreCategorieRepository;
@@ -44,12 +46,14 @@ use App\Repository\ZoneRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\EmailAlert\EmailAlertChecker;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\MessageHelper;
 use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementQualificationNde;
 use App\Service\Signalement\Suivi\SuiviSeenMarker;
+use App\Service\Signalement\VisiteNotifier;
 use App\Utils\FormHelper;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -67,6 +71,53 @@ class SignalementController extends AbstractController
 {
     public function __construct(private EmailAlertChecker $emailAlertBuilder)
     {
+    }
+
+    #[Route('/{uuid:signalement}/debug', name: 'back_signalement_debug')]
+    public function debugSignalement(
+        Signalement $signalement, 
+        EntityManagerInterface $entityManager, 
+        InterventionRepository $interventionRepository,
+        SuiviManager $suiviManager,
+        VisiteNotifier $visiteNotifier,
+        ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        /*$territory = $signalement->getTerritory();
+        $user->getPartnerInTerritory($territory);*/
+
+        $intervention = $interventionRepository->find(1);
+        //$intervention->setDetails('test details'.uniqid());
+
+        $description = 'Annulation de visite :';
+        $description .= ' la visite du logement prévue le '.$intervention->getScheduledAt()->format('d/m/Y');
+        $description .= ' a été annulée pour le motif suivant : <br>';
+        $description .= $intervention->getDetails();
+        $suivi = $suiviManager->createSuivi(
+            signalement: $intervention->getSignalement(),
+            description: $description,
+            category: SuiviCategory::INTERVENTION_IS_CANCELED,
+            //partner: $context['createdByPartner'],
+            user: $user,
+            isVisibleForUsager: true,
+            sendMail: false,
+        );
+
+        $visiteNotifier->notifyUsagers(
+            intervention: $intervention,
+            notificationMailerType: NotificationMailerType::TYPE_VISITE_CANCELED_TO_USAGER,
+            suivi: $suivi
+        );
+
+        /*$visiteNotifier->notifyInAppSubscribers(
+            intervention: $intervention,
+            suivi: $suivi,
+            currentUser: $user,
+        );*/
+        
+        $entityManager->flush();
+
+        return new Response('<html><body>DEBUG</body></html>');
     }
 
     /**

@@ -35,6 +35,7 @@ class SuiviVisiteCanceledMailer extends AbstractNotificationMailer
         $signalement = $notificationMail->getSignalement();
         $intervention = $notificationMail->getIntervention();
         $interventionScheduledAt = $intervention->getScheduledAtFormated();
+                        return [];
 
         return [
             'intervention_scheduledAt' => $interventionScheduledAt,

@@ -270,6 +270,7 @@ class SignalementVisitesController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
         FileRepository $fileRepository,
         UrlGeneratorInterface $urlGenerator,
+        EntityManagerInterface $entityManager,
     ): Response {
         $requestData = $request->request->all();
         $requestCancelData = RequestDataExtractor::getArray($requestData, 'visite-cancel');
@@ -310,12 +311,17 @@ class SignalementVisitesController extends AbstractController
         );
         /** @var User $user */
         $user = $this->getUser();
-        if ($interventionManager->cancelVisiteFromRequest($visiteRequest, $user->getPartnerInTerritory($signalement->getTerritory()))) {
+        // In Doctrine ORM 3.x, ManyToOne associations are lazy ghost objects with all properties uninitialized.
+        // flush() reads properties via reflection (bypassing __get), treating uninitialized props as null
+        // and generating "UPDATE territory SET zip = NULL, name = NULL, ..." — initializeObject() prevents this.
+        $territory = $signalement->getTerritory();
+        //$entityManager->initializeObject($territory);
+        if ($interventionManager->cancelVisiteFromRequest($visiteRequest, $user->getPartnerInTerritory($territory))) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Visite annulée', 'message' => 'La visite a bien été annulée.'];
         } else {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de l\'annulation de la visite.'];
         }
-
+        $entityManager->flush();
         return $this->buildVisitesAjaxResponse(
             intervention: $intervention,
             interventionRepository: $interventionRepository,

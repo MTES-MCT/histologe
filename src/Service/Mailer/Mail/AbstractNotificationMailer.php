@@ -47,8 +47,10 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
         }
         $territory = $notificationMail->getTerritory();
         $this->mailerParams = $this->getMailerParamsFromNotification($notificationMail);
+        return true;
         $this->updateMailerSubjectFromNotification($notificationMail);
         $this->updateButtonTextFromNotification($notificationMail);
+
 
         if ($notificationMail->isReminder()) {
             $this->mailerSubject = 'RAPPEL : '.$this->mailerSubject;
@@ -64,6 +66,7 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
         $params = array_merge($params, $notificationMail->getParams(), $this->mailerParams);
         $message = $this->renderMailContentWithParams($params, $territory ?? null);
+        //$message = new NotificationEmail();
 
         if (null !== $this->tagHeader) {
             $message->getHeaders()->add(new TagHeader($this->tagHeader));

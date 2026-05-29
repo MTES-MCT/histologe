@@ -289,7 +289,7 @@ class NotificationAndMailSender
                 description: $description
             );
         }
-        $this->entityManager->flush();
+        //$this->entityManager->flush(); TODO : Symfony 8.0 (gerer l'impact)
     }
 
     private function createInAppNotification(
