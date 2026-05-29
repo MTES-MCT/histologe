@@ -19,6 +19,8 @@ OVH_SCW_SYNC_DOCKERFILE=.docker/rclone-job/Dockerfile
 OVH_SCW_SYNC_IMAGE_NAME=rclone-sync-ovh-scaleway
 SCW_REGISTRY   = rg.fr-par.scw.cloud
 SCW_NAMESPACE  = signal-logement
+VERBOSE       ?=
+PHPUNIT_EXTRA = $(if $(VERBOSE),--display-notices --display-phpunit-notices --display-deprecations)
 
 help:
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
@@ -227,8 +229,8 @@ clean-tasks: ## Clean & Reset task
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh ./scripts/clean.sh
 
 ## Quality
-test: ## Run all tests
-	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "$(PHPUNIT) $(FILE) --stop-on-failure --testdox -d memory_limit=-1"
+test: ## Run all tests — use VERBOSE=1 to display notices and deprecations
+	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "$(PHPUNIT) $(FILE) --stop-on-failure --testdox -d memory_limit=-1 $(PHPUNIT_EXTRA)"
 
 test-all: ## Run all tests
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "$(PHPUNIT) $(FILE) --testdox -d memory_limit=-1"

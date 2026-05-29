@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Service\Import\Signalement;
 
+use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\EventListener\SuiviCreatedListener;
 use App\Manager\AffectationManager;
@@ -27,7 +28,6 @@ use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Factory;
 use League\Flysystem\FilesystemOperator;
-use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -47,7 +47,7 @@ class SignalementImportLoaderTest extends KernelTestCase
     private CriticiteCalculator $criticiteCalculator;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private FileManager $fileManager;
-    private MockObject&FilesystemOperator $filesystemOperator;
+    private FilesystemOperator $filesystemOperator;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
     private UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
     private CritereRepository $critereRepository;
@@ -71,7 +71,7 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->criticiteCalculator = static::getContainer()->get(CriticiteCalculator::class);
         $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
         $this->fileManager = static::getContainer()->get(FileManager::class);
-        $this->filesystemOperator = $this->createMock(FilesystemOperator::class);
+        $this->filesystemOperator = $this->createStub(FilesystemOperator::class);
         $this->critereRepository = static::getContainer()->get(CritereRepository::class);
         $this->criticiteRepository = static::getContainer()->get(CriticiteRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
@@ -125,6 +125,72 @@ class SignalementImportLoaderTest extends KernelTestCase
 
         $this->assertArrayHasKey('count_signalement', $signalementImportLoader->getMetadata());
         $this->assertEquals(10, $signalementImportLoader->getMetadata()['count_signalement']);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function testLoadSignalementImportIsLogementVacant(): void
+    {
+        $this->entityManager->getEventManager()->removeEventListener([Events::onFlush], new SuiviCreatedListener());
+        $this->entityManager->beginTransaction();
+
+        $signalementImportLoader = new SignalementImportLoader(
+            $this->signalementImportMapper,
+            $this->signalementManager,
+            $this->interventionManager,
+            $this->tagManager,
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->entityManager,
+            $this->parameterBag,
+            $this->logger,
+            $this->criticiteCalculator,
+            $this->signalementQualificationUpdater,
+            $this->fileManager,
+            $this->filesystemOperator,
+            $this->htmlSanitizerInterface,
+            $this->userSignalementSubscriptionManager,
+            $this->critereRepository,
+            $this->criticiteRepository,
+            $this->partnerRepository,
+            $this->userRepository,
+            $this->fileRepository,
+            $this->suiviRepository,
+        );
+
+        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '01']);
+
+        $dataWithOccupant = $this->getDataWithNomOccupant('Dupont');
+        $headers = array_map('strval', array_keys($dataWithOccupant[0]));
+        $signalementImportLoader->load($territory, $dataWithOccupant, $headers);
+
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([], ['id' => 'DESC']);
+        $this->assertNotNull($signalement);
+        $this->assertFalse($signalement->getIsLogementVacant());
+
+        $dataWithoutOccupant = $this->getDataWithNomOccupant(null);
+        $signalementImportLoader->load($territory, $dataWithoutOccupant, $headers);
+
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([], ['id' => 'DESC']);
+        $this->assertNotNull($signalement);
+        $this->assertNull($signalement->getIsLogementVacant());
+
+        $this->entityManager->rollback();
+        $this->entityManager->clear();
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    private function getDataWithNomOccupant(?string $nomOccupant): array
+    {
+        $data = $this->getData();
+        $data[0]['nom occupant'] = $nomOccupant;
+        $data[0]['Déclarant est l occupant?'] = false;
+        $data[0]['nom du declarant'] = null === $nomOccupant ? 'Dupont' : 'Tiers';
+
+        return [$data[0]];
     }
 
     /**

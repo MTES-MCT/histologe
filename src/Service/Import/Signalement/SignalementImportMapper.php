@@ -142,7 +142,7 @@ class SignalementImportMapper
         foreach ($this->getMapping() as $fileColumn => $fieldColumn) {
             if (\in_array($fileColumn, $columns)) {
                 $fieldValue = 'NSP' !== $data[$fileColumn] ? $data[$fileColumn] : '';
-                $fieldValue = trim($fieldValue, '"');
+                $fieldValue = trim($fieldValue ?? '', '"');
                 switch ($fieldColumn) {
                     case 'reference':
                         // TODO que fait-on si on n'a pas de date de création du signalement ?

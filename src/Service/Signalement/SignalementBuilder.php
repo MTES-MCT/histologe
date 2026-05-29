@@ -527,9 +527,18 @@ class SignalementBuilder
     private function setOccupantProfileData(): void
     {
         $this->signalement->setProfileOccupant(SignalementProfileOccupantMapper::map(
-            profileOccupant: strtoupper($this->signalementDraftRequest->getSignalementConcerneProfilDetailProfilOccupant()),
+            profileOccupant: strtoupper($this->signalementDraftRequest->getSignalementConcerneProfilDetailProfilOccupant() ?? ''),
             profileDeclarant: $this->signalement->getProfileDeclarant()
         ));
+
+        if (
+            !empty($this->signalement->getNomOccupant())
+            || !empty($this->signalement->getPrenomOccupant())
+            || !empty($this->signalement->getMailOccupant())
+            || !empty($this->signalement->getTelOccupant())
+        ) {
+            $this->signalement->setIsLogementVacant(false);
+        }
     }
 
     private function isOccupant(): bool

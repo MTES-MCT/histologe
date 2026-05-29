@@ -12,16 +12,16 @@
                                 <h1 class="fr-modal__title">Sortir du statut de logement vacant</h1>
                                 <div class="fr-alert fr-alert--warning fr-my-2v">
                                     <p>
-                                        Si vous sortez le logement du statut de vacant, les usagers (occupant et tiers déclarant) recevront à nouveau des mises à jour sur le dossier, 
+                                        Si vous sortez le logement du statut de vacant, les usagers (occupant et tiers déclarant) recevront à nouveau des mises à jour sur le dossier,
                                         et vous pourrez à nouveau partager des suivis aux usagers.
                                     </p>
                                 </div>
                                 <input type="hidden" name="logementVacant" value="0">
-                            {% else %}
+                            {% elseif signalement.isLogementVacant is same as false %}
                                 <h1 class="fr-modal__title">Enregistrer comme logement vacant</h1>
                                 <div class="fr-alert fr-alert--warning fr-my-2v">
                                     <p>
-                                        Si vous indiquez que le logement est vacant, les usagers (occupant et tiers déclarant) ne recevront plus de mises à jour sur le dossier, 
+                                        Si vous indiquez que le logement est vacant, les usagers (occupant et tiers déclarant) ne recevront plus de mises à jour sur le dossier,
                                         et vous ne pourrez plus partager de suivis aux usagers. Vous pourrez toujours effectuer des actions sur le dossier.
                                         <br>
                                         Les usagers pourront continuer à accéder au dossier mais ne pourront plus interagir.
@@ -35,6 +35,45 @@
                                     </div>
                                 {% endif %}
                                 <input type="hidden" name="logementVacant" value="1">
+                            {% else %}
+                                <h1 class="fr-modal__title">Enregistrer l'occupation du logement</h1>
+                                <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-2v" id="logement-vacant-fieldset" aria-labelledby="logement-vacant-fieldset-legend logement-vacant-fieldset-error">
+                                    <legend class="fr-fieldset__legend fr-text--regular" id="logement-vacant-fieldset-legend">
+                                        Le logement est-il actuellement occupé ou vacant ?
+                                    </legend>
+                                    <div class="fr-fieldset__element fr-fieldset__element--inline">
+                                        <div class="fr-radio-group">
+                                            <input type="radio" id="logement-occupe" name="logementVacant" value="0">
+                                            <label for="logement-occupe">Logement occupé</label>
+                                        </div>
+                                    </div>
+                                    <div class="fr-fieldset__element fr-fieldset__element--inline">
+                                        <div class="fr-radio-group">
+                                            <input type="radio" id="logement-vacant-radio" name="logementVacant" value="1">
+                                            <label for="logement-vacant-radio">Logement vacant</label>
+                                        </div>
+                                    </div>
+                                    <div class="fr-fieldset__element">
+                                        <p id="logement-vacant-fieldset-error" class="fr-error-text fr-hidden">
+                                            Veuillez préciser si le logement est occupé ou vacant.
+                                        </p>
+                                    </div>
+                                </fieldset>
+                                <div id="logement-vacant-warning" class="fr-alert fr-alert--warning fr-my-2v fr-hidden">
+                                    <p>
+                                        Si vous indiquez que le logement est vacant, les usagers (occupant et tiers déclarant) ne recevront plus de mises à jour sur le dossier,
+                                        et vous ne pourrez plus partager de suivis aux usagers. Vous pourrez toujours effectuer des actions sur le dossier.
+                                        <br>
+                                        Les usagers pourront continuer à accéder au dossier mais ne pourront plus interagir.
+                                    </p>
+                                </div>
+                                {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
+                                    <div id="logement-vacant-bailleur-warning" class="fr-alert fr-alert--error fr-my-2v fr-hidden">
+                                        <p>
+                                            Le déclarant tiers bailleur ne recevra plus de mise à jour sur le dossier et ne pourra plus interagir avec le dossier.
+                                        </p>
+                                    </div>
+                                {% endif %}
                             {% endif %}
                             <input type="hidden" name="_token" value="{{ csrf_token('signalement_switch_logement_vacant') }}">
                         </div>
@@ -44,8 +83,10 @@
                                     <button class="fr-btn fr-icon-check-line" type="submit">
                                         {% if signalement.isLogementVacant %}
                                             Enregistrer comme logement occupé
-                                        {% else %}
+                                        {% elseif signalement.isLogementVacant is same as false %}
                                             Enregistrer comme logement vacant
+                                        {% else %}
+                                            Enregistrer
                                         {% endif %}
                                     </button>
                                 </li>

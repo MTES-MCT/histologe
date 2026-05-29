@@ -697,7 +697,7 @@ class SignalementEditController extends AbstractController
         $token = is_scalar($request->request->get('_token')) ? (string) $request->request->get('_token') : '';
         $logementVacant = (bool) $request->request->get('logementVacant');
         if ($this->isCsrfTokenValid('signalement_switch_logement_vacant', $token)) {
-            if ($logementVacant != $signalement->getIsLogementVacant()) {
+            if ($logementVacant !== $signalement->getIsLogementVacant()) {
                 $signalement->setIsLogementVacant($logementVacant);
                 /** @var User $user */
                 $user = $this->getUser();
