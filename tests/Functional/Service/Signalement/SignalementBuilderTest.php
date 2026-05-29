@@ -483,14 +483,18 @@ class SignalementBuilderTest extends KernelTestCase
             (string) file_get_contents(__DIR__.'../../../../../src/DataFixtures/Files/signalement_draft_payload/locataire.json'),
             true
         );
+        $email = $payload['vos_coordonnees_occupant_email'];
         $payload['vos_coordonnees_occupant_nom'] = null;
+        $payload['vos_coordonnees_occupant_prenom'] = null;
+        $payload['vos_coordonnees_occupant_tel'] = null;
+        $payload['vos_coordonnees_occupant_email'] = null;
 
         $signalementDraft = (new SignalementDraft())
             ->setPayload($payload)
             ->setProfileDeclarant(ProfileDeclarant::LOCATAIRE)
             ->setStatus(SignalementDraftStatus::EN_COURS)
             ->setCurrentStep('informations_complementaires')
-            ->setEmailDeclarant($payload['vos_coordonnees_occupant_email']);
+            ->setEmailDeclarant($email);
 
         $builder = $this->signalementBuilder
             ->createSignalementBuilderFrom($signalementDraft)
