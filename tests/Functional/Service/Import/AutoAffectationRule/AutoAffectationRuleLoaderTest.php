@@ -143,7 +143,7 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
         // This exact combination exists in AutoAffectationRule.yml fixtures
         $data = [
             $this->buildRow(
-                territory: self::HERAULT_ZIP . ' - ' . self::HERAULT_NAME,
+                territory: self::HERAULT_ZIP.' - '.self::HERAULT_NAME,
                 partnerType: 'CAF / MSA',
                 profileDeclarant: 'all',
                 parc: 'prive',
@@ -264,7 +264,7 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
      * @return array<string, string>
      */
     private function buildRow(
-        string $territory = self::HERAULT_ZIP . ' - ' . self::HERAULT_NAME,
+        string $territory = self::HERAULT_ZIP.' - '.self::HERAULT_NAME,
         string $status = 'ACTIVE',
         string $partnerType = 'CAF / MSA',
         string $profileDeclarant = 'all',

@@ -176,10 +176,10 @@ class AutoAffectationRuleLoader
     private function buildRowErrors(array $parsed): string
     {
         return $this->validateCoreFields($parsed)
-            . $this->validateInseeToInclude($parsed['inseeToInclude'])
-            . $this->validateInseeToExclude($parsed['inseeToExclude'])
-            . $this->validatePartnersToExclude($parsed['partnerToExclude'], $parsed['territory'], $parsed['partnerType'])
-            . $this->validateProceduresSuspectees($parsed['rawProcedures']);
+            .$this->validateInseeToInclude($parsed['inseeToInclude'])
+            .$this->validateInseeToExclude($parsed['inseeToExclude'])
+            .$this->validatePartnersToExclude($parsed['partnerToExclude'], $parsed['territory'], $parsed['partnerType'])
+            .$this->validateProceduresSuspectees($parsed['rawProcedures']);
     }
 
     /**
