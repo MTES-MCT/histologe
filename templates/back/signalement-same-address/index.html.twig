@@ -33,12 +33,9 @@
                     <div class="fr-input-group">
                         <label class="fr-label" for="address">Adresse</label>
                         <div class="fr-input-wrap fr-icon-search-line">
-                            <input type="text" placeholder="Taper l'adresse du logement" id="address" name="address" class="fr-input" list="address-suggestions">
-                            <datalist id="address-suggestions">
-                                {% for key, address in addressSuggestions %}
-                                    <option value="{{ key }}">{{ address }}</option>
-                                {% endfor %}
-                            </datalist>
+                            <input type="text" placeholder="Taper l'adresse du logement" id="address" name="address" class="fr-input" autocomplete="off">
+                            <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list fr-autocomplete-absolute">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -46,12 +43,9 @@
                     <div class="fr-input-group">
                         <label class="fr-label" for="commune">Commune ou code postal</label>
                         <div class="fr-input-wrap fr-icon-map-pin-2-fill">
-                            <input type="text" id="commune" name="commune" class="fr-input" list="commune-suggestions">
-                            <datalist id="commune-suggestions">
-                                {% for key, commune in communeSuggestions %}
-                                    <option value="{{ key }}">{{ commune }}</option>
-                                {% endfor %}
-                            </datalist>
+                            <input type="text" id="commune" name="commune" class="fr-input" autocomplete="off">
+                            <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list fr-autocomplete-absolute">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -59,12 +53,9 @@
                     <div class="fr-input-group">
                         <label class="fr-label" for="bailleur">Bailleur</label>
                         <div class="fr-input-wrap fr-icon-user-search-fill">
-                            <input type="text" id="bailleur" name="bailleur" class="fr-input" list="bailleur-suggestions">
-                            <datalist id="bailleur-suggestions">
-                                {% for key, bailleur in bailleurSuggestions %}
-                                    <option value="{{ key }}">{{ bailleur }}</option>
-                                {% endfor %}
-                            </datalist>
+                            <input type="text" id="bailleur" name="bailleur" class="fr-input" autocomplete="off">
+                            <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list fr-autocomplete-absolute">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,9 +99,9 @@
                         data-lat="{{ address.lat }}"
                         data-lng="{{ address.lng }}"
                         data-territory-id="{{ address.territoryId }}"
-                        data-address="{{ address.addressNormalised }}"
-                        data-commune="{{ address.communeNormalised }}"
-                        data-bailleur="{{ address.bailleurNormalised }}"
+                        data-address="{{ address.addressForHuman }}"
+                        data-commune="{{ address.communeForHuman }}"
+                        data-bailleur="{{ address.bailleurForHuman }}"
                         data-nb="{{ address.signalements|length }}"
                         >
                         <div class="fr-grid-row fr-grid-row--gutters">
@@ -173,13 +164,4 @@
         </div>
     </section>
 
-{% endblock %}
-
-{% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('build/leaflet/leaflet.css')}}">
-{% endblock %}
-
-{% block javascripts %}
-    <script src="{{ asset('build/leaflet/leaflet.js') }}"></script>
-    <script src="{{ asset('js/map-same-address.js') }}" ></script>
 {% endblock %}

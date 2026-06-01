@@ -689,6 +689,12 @@ ul.fr-autocomplete-list {
         width: 100%;
     }
 }
+.fr-autocomplete-absolute {
+    position: absolute;
+    width: 100%;
+    z-index: 9999;
+}
+
 .iframed .fr-address-group {
     max-height: 145px;
     overflow: auto;
@@ -1486,4 +1492,17 @@ dialog.side-panel {
 @keyframes side-panel-in {
   from { transform: translateX(100%); }
   to   { transform: translateX(0); }
+}
+
+.marker-cluster-custom {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #a9bfff;
+    border: 2px solid #0063cb;
+    color: #0063cb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
 }

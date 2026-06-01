@@ -32,22 +32,17 @@ class SignalementSameAddressController extends AbstractController
 
         $signalements = $sameAddressQuery->findSameAddressFiltered($user);
         $signalementsByAddress = [];
-        $addressSuggestions = [];
-        $communeSuggestions = [];
-        $bailleurSuggestions = [];
         foreach ($signalements as $signalement) {
             $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant']));
-            $communeNormalized = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['villeOccupant'].' '.$signalement['cpOccupant']));
-            $bailleurNormalized = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', (string) $signalement['nomProprio']));
             if (!isset($signalementsByAddress[$addressKey])) {
                 $signalementsByAddress[$addressKey] = [
                     'adresse' => $signalement['adresseOccupant'],
                     'cp' => $signalement['cpOccupant'],
                     'ville' => $signalement['villeOccupant'],
                     'territoryId' => $signalement['territoryId'],
-                    'addressNormalised' => $addressKey,
-                    'communeNormalised' => $communeNormalized,
-                    'bailleurNormalised' => $bailleurNormalized,
+                    'addressForHuman' => $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant'],
+                    'communeForHuman' => $signalement['villeOccupant'].' '.$signalement['cpOccupant'],
+                    'bailleurForHuman' => $signalement['nomProprio'],
                     'lat' => null,
                     'lng' => null,
                     'signalements' => [],
@@ -58,17 +53,11 @@ class SignalementSameAddressController extends AbstractController
                 $signalementsByAddress[$addressKey]['lat'] = $signalement['geoloc']['lat'];
                 $signalementsByAddress[$addressKey]['lng'] = $signalement['geoloc']['lng'];
             }
-            $addressSuggestions[$addressKey] = $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant'];
-            $communeSuggestions[$communeNormalized] = $signalement['villeOccupant'].' '.$signalement['cpOccupant'];
-            $bailleurSuggestions[$bailleurNormalized] = $signalement['nomProprio'];
         }
 
         return $this->render('back/signalement-same-address/index.html.twig', [
             'nbSignalements' => count($signalements),
             'signalementsByAddress' => $signalementsByAddress,
-            'addressSuggestions' => $addressSuggestions,
-            'communeSuggestions' => $communeSuggestions,
-            'bailleurSuggestions' => $bailleurSuggestions,
             'territories' => $territories,
         ]);
     }
