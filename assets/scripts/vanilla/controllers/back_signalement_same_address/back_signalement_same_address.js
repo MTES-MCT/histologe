@@ -36,20 +36,20 @@ if (document.getElementById('map-same-address')) {
     markersByTarget.clear();
     markersCluster.clearLayers();
 
-    var allItems = Array.from(document.querySelectorAll('.same-address-item'));
+    const allItems = Array.from(document.querySelectorAll('.same-address-item'));
 
     document.querySelectorAll('.same-address-item.is-active-filters').forEach(function (item) {
-      var lat = parseFloat(item.dataset.lat);
-      var lng = parseFloat(item.dataset.lng);
+      const lat = Number.parseFloat(item.dataset.lat);
+      const lng = Number.parseFloat(item.dataset.lng);
 
       if (isNaN(lat) || isNaN(lng)) {
         return;
       }
 
-      var index = allItems.indexOf(item);
-      var targetId = '#same-address-details-' + (index + 1);
+      const index = allItems.indexOf(item);
+      const targetId = '#same-address-details-' + (index + 1);
 
-      var marker = L.circleMarker([lat, lng], {
+      const marker = L.circleMarker([lat, lng], {
         renderer: renderer,
         radius: 10,
         fillColor: '#FFF',
@@ -58,7 +58,7 @@ if (document.getElementById('map-same-address')) {
         opacity: 1,
         fillOpacity: 0.8,
       }).bindPopup(function () {
-        var detailsEl = document.getElementById('same-address-details-' + (index + 1));
+        const detailsEl = document.getElementById('same-address-details-' + (index + 1));
         return detailsEl ? detailsEl.innerHTML : '';
       });
 
@@ -74,12 +74,12 @@ if (document.getElementById('map-same-address')) {
   }
 
   function initCounters() {
-    var nbAddresses = 0;
-    var nbDossiers = document.querySelectorAll('.same-address-item.is-active-filters').length;
+    let nbAddresses = 0;
+    const nbDossiers = document.querySelectorAll('.same-address-item.is-active-filters').length;
     document.querySelectorAll('.same-address-item.is-active-filters').forEach(function (item) {
-      nbAddresses += parseInt(item.dataset.nb);
+      nbAddresses += Number.parseInt(item.dataset.nb);
     });
-    var counterEl = document.querySelector('.title-counters-same-address');
+    const counterEl = document.querySelector('.title-counters-same-address');
     counterEl.textContent =
       nbAddresses > 0
         ? nbAddresses +
@@ -99,12 +99,12 @@ if (document.getElementById('map-same-address')) {
   }
 
   function getSuggestions(field, query) {
-    var seen = new Set();
-    var results = [];
-    var normalizedQuery = normalizeStr(query);
-    var items = document.querySelectorAll('.same-address-item.is-active-filters');
-    for (var item of items) {
-      var value = item.dataset[field];
+    const seen = new Set();
+    const results = [];
+    const normalizedQuery = normalizeStr(query);
+    const items = document.querySelectorAll('.same-address-item.is-active-filters');
+    for (const item of items) {
+      const value = item.dataset[field];
       if (value && normalizeStr(value).includes(normalizedQuery) && !seen.has(value)) {
         seen.add(value);
         results.push(value);
@@ -115,11 +115,11 @@ if (document.getElementById('map-same-address')) {
   }
 
   function showSuggestions(field, query) {
-    var listEl = searchForm.querySelector('[name="' + field + '"] + .fr-autocomplete-list');
+    const listEl = searchForm.querySelector('[name="' + field + '"] + .fr-autocomplete-list');
     listEl.innerHTML = '';
     if (!query) return;
     getSuggestions(field, query).forEach(function (suggestion) {
-      var suggestionEl = document.createElement('div');
+      const suggestionEl = document.createElement('div');
       suggestionEl.classList.add(
         'fr-col-12',
         'fr-p-3v',
@@ -167,19 +167,18 @@ if (document.getElementById('map-same-address')) {
         item.classList.add('fr-hidden');
       }
     });
-    var allItems = Array.from(document.querySelectorAll('.same-address-item.is-active-filters'));
-    var totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
-    var currentPage = 1;
-    currentPage = page;
+    const allItems = Array.from(document.querySelectorAll('.same-address-item.is-active-filters'));
+    const totalPages = Math.ceil(allItems.length / ITEMS_PER_PAGE);
+    const currentPage = page;
     allItems.forEach(function (item, i) {
-      var onCurrentPage = i >= (page - 1) * ITEMS_PER_PAGE && i < page * ITEMS_PER_PAGE;
+      const onCurrentPage = i >= (page - 1) * ITEMS_PER_PAGE && i < page * ITEMS_PER_PAGE;
       item.classList.toggle('fr-hidden', !onCurrentPage);
     });
     renderPagination(totalPages, currentPage);
   }
 
   function renderPagination(totalPages, currentPage) {
-    var nav = document.querySelector('.pagination-full-js');
+    const nav = document.querySelector('.pagination-full-js');
 
     if (totalPages <= 1) {
       nav.innerHTML = '';
@@ -208,7 +207,7 @@ if (document.getElementById('map-same-address')) {
       );
     }
 
-    var html = '<ul class="fr-pagination__list">';
+    let html = '<ul class="fr-pagination__list">';
 
     html +=
       currentPage > 1
@@ -229,9 +228,9 @@ if (document.getElementById('map-same-address')) {
       html += '<li><a class="fr-pagination__link" title="placeholder">...</a></li>';
     }
 
-    var start = Math.max(1, currentPage - 1);
-    var end = Math.min(totalPages, currentPage + 1);
-    for (var i = start; i <= end; i++) {
+    const start = Math.max(1, currentPage - 1);
+    const end = Math.min(totalPages, currentPage + 1);
+    for (let i = start; i <= end; i++) {
       html +=
         '<li><a class="fr-pagination__link" href="#" data-page="' +
         i +
@@ -269,7 +268,7 @@ if (document.getElementById('map-same-address')) {
     nav.querySelectorAll('[data-page]').forEach(function (link) {
       link.addEventListener('click', function (e) {
         e.preventDefault();
-        showPage(parseInt(link.dataset.page));
+        showPage(Number.parseInt(link.dataset.page));
       });
     });
   }
@@ -298,7 +297,7 @@ if (document.getElementById('map-same-address')) {
     btn.addEventListener('click', function () {
       toggleMap.checked = true;
       applyToggleMap();
-      var marker = markersByTarget.get(btn.dataset.target);
+      const marker = markersByTarget.get(btn.dataset.target);
       if (marker) {
         markersCluster.zoomToShowLayer(marker, function () {
           marker.openPopup();
@@ -309,7 +308,7 @@ if (document.getElementById('map-same-address')) {
 
   document.querySelectorAll('.show-details').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      var target = document.querySelector(btn.dataset.target);
+      const target = document.querySelector(btn.dataset.target);
       if (target) {
         target.classList.toggle('fr-hidden');
       }
@@ -332,7 +331,7 @@ if (document.getElementById('map-same-address')) {
   });
 
   ['address', 'commune', 'bailleur'].forEach(function (field) {
-    var inputEl = searchForm.querySelector('[name="' + field + '"]');
+    const inputEl = searchForm.querySelector('[name="' + field + '"]');
     inputEl.addEventListener('focus', function () {
       showSuggestions(field, inputEl.value);
     });
