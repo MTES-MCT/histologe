@@ -16,6 +16,8 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
     private AutoAffectationRuleLoader $loader;
     private EntityManagerInterface $entityManager;
     private TerritoryRepository $territoryRepository;
+    private const HERAULT_ZIP = '34';
+    private const HERAULT_NAME = 'Hérault';
 
     protected function setUp(): void
     {
@@ -141,7 +143,7 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
         // This exact combination exists in AutoAffectationRule.yml fixtures
         $data = [
             $this->buildRow(
-                territory: '34 - Hérault',
+                territory: self::HERAULT_ZIP . ' - ' . self::HERAULT_NAME,
                 partnerType: 'CAF / MSA',
                 profileDeclarant: 'all',
                 parc: 'prive',
@@ -174,7 +176,7 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
 
     public function testLoadPersistsRulesInDatabase(): void
     {
-        $territory = $this->territoryRepository->findOneBy(['zip' => '34', 'name' => 'Hérault']);
+        $territory = $this->territoryRepository->findOneBy(['zip' => self::HERAULT_ZIP, 'name' => self::HERAULT_NAME]);
         $this->assertNotNull($territory);
         $countBefore = $this->entityManager->getRepository(AutoAffectationRule::class)->count(['territory' => $territory]);
 
@@ -193,7 +195,7 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
 
     public function testLoadTracksImportedTerritoryId(): void
     {
-        $territory = $this->territoryRepository->findOneBy(['zip' => '34', 'name' => 'Hérault']);
+        $territory = $this->territoryRepository->findOneBy(['zip' => self::HERAULT_ZIP, 'name' => self::HERAULT_NAME]);
         $this->assertNotNull($territory);
 
         $this->loader->load($this->provideValidData());
@@ -232,7 +234,7 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
 
         $this->loader->load([$row]);
 
-        $territory = $this->territoryRepository->findOneBy(['zip' => '34', 'name' => 'Hérault']);
+        $territory = $this->territoryRepository->findOneBy(['zip' => self::HERAULT_ZIP, 'name' => self::HERAULT_NAME]);
         $rule = $this->entityManager->getRepository(AutoAffectationRule::class)->findOneBy([
             'territory' => $territory,
             'parc' => 'public',
@@ -262,7 +264,7 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
      * @return array<string, string>
      */
     private function buildRow(
-        string $territory = '34 - Hérault',
+        string $territory = self::HERAULT_ZIP . ' - ' . self::HERAULT_NAME,
         string $status = 'ACTIVE',
         string $partnerType = 'CAF / MSA',
         string $profileDeclarant = 'all',

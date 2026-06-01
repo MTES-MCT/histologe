@@ -6,6 +6,7 @@ use App\Entity\AutoAffectationRule;
 use App\Form\AutoAffectationRuleType;
 use App\Form\SearchAutoAffectationRuleType;
 use App\Repository\AutoAffectationRuleRepository;
+use App\Service\Import\AutoAffectationRule\AutoAffectationRuleHeader;
 use App\Service\Import\AutoAffectationRule\AutoAffectationRuleLoader;
 use App\Service\Import\CsvParser;
 use App\Service\ListFilters\SearchAutoAffectationRule;
@@ -184,48 +185,74 @@ class AutoAffectationRuleController extends AbstractController
         Request $request,
         AutoAffectationRuleLoader $loader,
     ): Response {
-        $errors = [];
-
-        if ($request->isMethod('POST')) {
-            if (!$this->isCsrfTokenValid('auto_affectation_rule_import', (string) $request->request->get('_token'))) {
-                $errors[] = MessageHelper::ERROR_MESSAGE_CSRF;
-            } else {
-                $file = $request->files->get('csv_file');
-                if (null === $file) {
-                    $errors[] = 'Veuillez sélectionner un fichier CSV.';
-                } else {
-                    $csvParser = new CsvParser(['first_line' => 1, 'delimiter' => ';', 'enclosure' => '"', 'escape' => '\\']);
-                    $headers = $csvParser->getHeaders($file->getPathname());
-                    $rows = $csvParser->parse($file->getPathname());
-                    $data = array_map(
-                        static fn (array $row) => array_combine($headers, $row),
-                        array_filter($rows, static fn (array $row) => \count($row) === \count($headers)),
-                    );
-
-                    if (empty($data)) {
-                        $errors[] = 'Le fichier CSV est vide ou ne contient pas de données.';
-                    } else {
-                        $errors = $loader->validate($data);
-                        if (empty($errors)) {
-                            $loader->load($data);
-                            $metadata = $loader->getMetadata();
-                            $this->addFlash('success', [
-                                'title' => 'Import réussi',
-                                'message' => sprintf('%d règle(s) d\'auto-affectation importée(s) avec succès.', $metadata['nb_rules_created']),
-                            ]);
-
-                            $territoryIds = $metadata['imported_territory_ids'];
-                            $redirectParams = 1 === \count($territoryIds) ? ['territory' => $territoryIds[0]] : [];
-
-                            return $this->redirectToRoute('back_auto_affectation_rule_index', $redirectParams, Response::HTTP_SEE_OTHER);
-                        }
-                    }
-                }
-            }
+        if (!$request->isMethod('POST')) {
+            return $this->renderImport([]);
         }
 
-        return $this->render('back/auto-affectation-rule/import.html.twig', [
-            'errors' => $errors,
+        if (!$this->isCsrfTokenValid('auto_affectation_rule_import', (string) $request->request->get('_token'))) {
+            return $this->renderImport([MessageHelper::ERROR_MESSAGE_CSRF]);
+        }
+
+        [$parseErrors, $data] = $this->parseCsvFile($request);
+        if (!empty($parseErrors)) {
+            return $this->renderImport($parseErrors);
+        }
+
+        $errors = $loader->validate($data);
+        if (!empty($errors)) {
+            return $this->renderImport($errors);
+        }
+
+        $loader->load($data);
+        $metadata = $loader->getMetadata();
+        $this->addFlash('success', [
+            'title' => 'Import réussi',
+            'message' => sprintf('%d règle(s) d\'auto-affectation importée(s) avec succès.', $metadata['nb_rules_created']),
         ]);
+
+        $territoryIds = $metadata['imported_territory_ids'];
+        $redirectParams = 1 === \count($territoryIds) ? ['territory' => $territoryIds[0]] : [];
+
+        return $this->redirectToRoute('back_auto_affectation_rule_index', $redirectParams, Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * @return array{0: string[], 1: array<int, array<string, string>>}
+     */
+    private function parseCsvFile(Request $request): array
+    {
+        $file = $request->files->get('csv_file');
+        if (null === $file) {
+            return [['Veuillez sélectionner un fichier CSV.'], []];
+        }
+
+        $csvParser = new CsvParser(['first_line' => 1, 'delimiter' => ';', 'enclosure' => '"', 'escape' => '\\']);
+        $headers = $csvParser->getHeaders($file->getPathname());
+        $missingHeaders = array_diff(AutoAffectationRuleHeader::REQUIRED_HEADERS, $headers);
+        if (!empty($missingHeaders)) {
+            return [[sprintf('Le fichier CSV ne contient pas les colonnes attendues. Colonnes manquantes : "%s".', implode('", "', $missingHeaders))], []];
+        }
+
+        $rows = $csvParser->parse($file->getPathname());
+        $data = array_filter(
+            array_map(
+                static fn (array $row) => \count($row) === \count($headers) ? array_combine($headers, $row) : null,
+                $rows,
+            ),
+        );
+
+        if (empty($data)) {
+            return [['Le fichier CSV est vide ou ne contient pas de données.'], []];
+        }
+
+        return [[], $data];
+    }
+
+    /**
+     * @param string[] $errors
+     */
+    private function renderImport(array $errors): Response
+    {
+        return $this->render('back/auto-affectation-rule/import.html.twig', ['errors' => $errors]);
     }
 }

@@ -16,6 +16,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
 
     private const string ADMIN_EMAIL = 'admin-01@signal-logement.fr';
     private const string CSV_HEADERS = "Territoire;Statut;Type de partenaire;Profil déclarant;Parc;Allocataire;Code insee inclus;Code insee exclus;Id partenaires exclus;Procédures suspectées;Actions\n";
+    private const cssSelectorError = '.fr-alert--error';
 
     private ?KernelBrowser $client = null;
     private RouterInterface $router;
@@ -58,7 +59,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
         $this->client->request('POST', $url, ['_token' => $csrfToken], []);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('.fr-alert--error', 'Veuillez sélectionner un fichier CSV');
+        $this->assertSelectorTextContains(self::cssSelectorError, 'Veuillez sélectionner un fichier CSV');
     }
 
     public function testImportWithInvalidCsvShowsErrors(): void
@@ -74,9 +75,9 @@ class AutoAffectationRuleControllerTest extends WebTestCase
         $this->client->request('POST', $url, ['_token' => $csrfToken], ['csv_file' => $uploadedFile]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('.fr-alert--error');
-        $this->assertSelectorTextContains('.fr-alert--error', 'Ligne 2');
-        $this->assertSelectorTextContains('.fr-alert--error', 'Ligne 3');
+        $this->assertSelectorExists(self::cssSelectorError);
+        $this->assertSelectorTextContains(self::cssSelectorError, 'Ligne 2');
+        $this->assertSelectorTextContains(self::cssSelectorError, 'Ligne 3');
     }
 
     public function testImportWithValidSingleTerritoryRedirectsToFilteredList(): void
@@ -133,8 +134,8 @@ class AutoAffectationRuleControllerTest extends WebTestCase
         $this->client->request('POST', $url, ['_token' => $csrfToken], ['csv_file' => $uploadedFile]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('.fr-alert--error');
-        $this->assertSelectorTextContains('.fr-alert--error', 'règle identique existe déjà');
+        $this->assertSelectorExists(self::cssSelectorError);
+        $this->assertSelectorTextContains(self::cssSelectorError, 'règle identique existe déjà');
     }
 
     public function testImportWithInvalidCsrfTokenShowsError(): void
@@ -146,7 +147,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
         $this->client->request('POST', $url, ['_token' => 'invalid_token'], ['csv_file' => $uploadedFile]);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('.fr-alert--error');
+        $this->assertSelectorExists(self::cssSelectorError);
     }
 
     private function createUploadedCsv(string $content): UploadedFile

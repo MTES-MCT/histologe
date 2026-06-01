@@ -48,180 +48,29 @@ class AutoAffectationRuleLoader
 
         foreach ($data as $index => $row) {
             $lineNumber = $index + 2;
-            $rowErrors = '';
-
-            $territoryValue = trim($row[AutoAffectationRuleHeader::TERRITORY] ?? '');
-            $territory = $this->findTerritory($territoryValue);
-            if (null === $territory) {
-                $rowErrors .= sprintf('<li>Territoire "%s" introuvable </li>', $territoryValue);
-            }
-
-            $status = trim($row[AutoAffectationRuleHeader::STATUS] ?? '');
-            if (!\in_array($status, [AutoAffectationRule::STATUS_ACTIVE, AutoAffectationRule::STATUS_ARCHIVED])) {
-                $rowErrors .= sprintf(
-                    '<li>Statut "%s" invalide (valeurs acceptées : ACTIVE, ARCHIVED) </li>',
-                    $status,
-                );
-            }
-
-            $partnerTypeLabel = trim($row[AutoAffectationRuleHeader::PARTNER_TYPE] ?? '');
-            $partnerType = PartnerType::tryFromLabel($partnerTypeLabel);
-            if (null === $partnerType) {
-                // $rowErrors[] = sprintf(
-                $rowErrors .= sprintf(
-                    '<li>Type de partenaire "%s" invalide (valeurs acceptées : %s) </li>',
-                    $partnerTypeLabel,
-                    implode(', ', PartnerType::names()),
-                );
-            }
-
-            $profileDeclarant = trim($row[AutoAffectationRuleHeader::PROFILE_DECLARANT] ?? '');
-            if (!$this->isValidProfileDeclarant($profileDeclarant)) {
-                $rowErrors .= sprintf(
-                    '<li>Profil déclarant "%s" invalide (valeurs acceptées : all, tiers, occupant, %s) </li>',
-                    $profileDeclarant,
-                    implode(', ', ProfileDeclarant::names()),
-                );
-            }
-
-            $parc = trim($row[AutoAffectationRuleHeader::PARC] ?? '');
-            if (!\in_array($parc, self::VALID_PARC)) {
-                $rowErrors .= sprintf(
-                    '<li>Parc "%s" invalide (valeurs acceptées : %s) </li>',
-                    $parc,
-                    implode(', ', self::VALID_PARC),
-                );
-            }
-
-            $allocataire = trim($row[AutoAffectationRuleHeader::ALLOCATAIRE] ?? '');
-            if (!\in_array($allocataire, self::VALID_ALLOCATAIRE)) {
-                $rowErrors .= sprintf(
-                    '<li>Allocataire "%s" invalide (valeurs acceptées : %s) </li>',
-                    $allocataire,
-                    implode(', ', self::VALID_ALLOCATAIRE),
-                );
-            }
-
-            $inseeToInclude = $this->parseInseeToInclude($row[AutoAffectationRuleHeader::INSEE_TO_INCLUDE] ?? '');
-            $inseeToExclude = $this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_EXCLUDE] ?? '');
-            $partnerToExclude = $this->parseArrayField($row[AutoAffectationRuleHeader::PARTNER_TO_EXCLUDE] ?? '');
-            $rawProcedures = $row[AutoAffectationRuleHeader::PROCEDURES_SUSPECTEES] ?? '';
-            $proceduresSuspectees = $this->parseProceduresSuspectees($rawProcedures);
-
-            if ('' !== $inseeToInclude) {
-                $invalidCodes = array_filter(
-                    array_map('trim', explode(',', $inseeToInclude)),
-                    static fn (string $code) => !preg_match('/^\d{5}$/', $code),
-                );
-                if (!empty($invalidCodes)) {
-                    $rowErrors .= sprintf(
-                        '<li>Codes INSEE à inclure invalides : "%s" (format attendu :  liste de codes insee à 5 chiffres séparés par des virgules)</li>',
-                        implode('", "', $invalidCodes),
-                    );
-                }
-            }
-
-            if (null !== $inseeToExclude) {
-                $invalidCodes = array_filter(
-                    $inseeToExclude,
-                    static fn (string $code) => !preg_match('/^\d{5}$/', $code),
-                );
-                if (!empty($invalidCodes)) {
-                    $rowErrors .= sprintf(
-                        '<li>Codes INSEE à exclure invalides : "%s" (format attendu :  liste de codes insee à 5 chiffres séparés par des virgules)</li>',
-                        implode('", "', $invalidCodes),
-                    );
-                }
-            }
-
-            if (null !== $partnerToExclude) {
-                $invalidIds = array_filter(
-                    $partnerToExclude,
-                    static fn (string $id) => !preg_match('/^\d+$/', $id),
-                );
-                if (!empty($invalidIds)) {
-                    $rowErrors .= sprintf(
-                        '<li>IDs partenaires à exclure invalides : "%s" (entiers séparés par des virgules attendus)</li>',
-                        implode('", "', $invalidIds),
-                    );
-                } elseif (null !== $territory && null !== $partnerType) {
-                    foreach ($partnerToExclude as $partnerId) {
-                        // $partner = $this->partnerRepository->findOneBy([
-                        //     'id' => (int) $partnerId,
-                        //     'territory' => $territory,
-                        //     'type' => $partnerType,
-                        //     'isArchive' => false,
-                        // ]);
-                        // if (null === $partner) {
-                        //     $rowErrors .= sprintf(
-                        //         '<li>Partenaire à exclure ID %s introuvable, archivé, ou n\'appartenant pas au territoire "%s" avec le type "%s"</li>',
-                        //         $partnerId,
-                        //         $territory->getZipAndName(),
-                        //         $partnerType->label(),
-                        //     );
-                        // }
-                        $partner = $this->partnerRepository->findOneBy([
-                            'id' => (int) $partnerId,
-                        ]);
-                        if (null === $partner) {
-                            $rowErrors .= sprintf(
-                                '<li>Partenaire à exclure ID %s introuvable</li>',
-                                $partnerId,
-                            );
-                        } elseif ($partner->getIsArchive()) {
-                            $rowErrors .= sprintf(
-                                '<li>Partenaire à exclure ID %s est archivé</li>',
-                                $partnerId,
-                            );
-                        } elseif ($partner->getTerritory()->getId() !== $territory->getId()) {
-                            $rowErrors .= sprintf(
-                                '<li>Partenaire à exclure ID %s n\'appartient pas au territoire "%s" </li>',
-                                $partnerId,
-                                $territory->getZipAndName(),
-                            );
-                        } elseif ($partner->getType() !== $partnerType) {
-                            $rowErrors .= sprintf(
-                                '<li>Partenaire à exclure ID %s n\'a pas le type "%s"</li>',
-                                $partnerId,
-                                $partnerType->label(),
-                            );
-                        }
-                    }
-                }
-            }
-
-            $rawProcedures = trim($rawProcedures);
-            if ('' !== $rawProcedures && self::EMPTY_FIELD_MARKER !== $rawProcedures) {
-                $validProcedures = Qualification::getProcedureSuspecteeList();
-                foreach (explode(',', $rawProcedures) as $label) {
-                    $label = trim($label);
-                    $qualification = Qualification::tryFromLabel($label);
-                    if (null === $qualification || !\in_array($qualification, $validProcedures)) {
-                        $rowErrors .= sprintf(
-                            '<li>Procédure suspectée "%s" invalide (valeurs acceptées : %s séparées par des virgules)</li>',
-                            $label,
-                            implode(', ', array_map(static fn (Qualification $q) => $q->label(), $validProcedures)),
-                        );
-                    }
-                }
-            }
+            $parsed = $this->parseRow($row);
+            $rowErrors = $this->buildRowErrors($parsed);
 
             if (!empty($rowErrors)) {
-                $errors[] = sprintf('Ligne %d : <ul>%s</ul>', $lineNumber, rtrim($rowErrors, ' / '));
+                $errors[] = sprintf('Ligne %d : <ul>%s</ul>', $lineNumber, $rowErrors);
                 continue;
             }
 
             /** @var Territory $territory */
+            $territory = $parsed['territory'];
+            /** @var PartnerType $partnerType */
+            $partnerType = $parsed['partnerType'];
+
             $ruleKey = $this->buildRuleKey(
                 $territory,
                 $partnerType,
-                $profileDeclarant,
-                $parc,
-                $allocataire,
-                $inseeToInclude,
-                $inseeToExclude,
-                $partnerToExclude,
-                $proceduresSuspectees,
+                $parsed['profileDeclarant'],
+                $parsed['parc'],
+                $parsed['allocataire'],
+                $parsed['inseeToInclude'],
+                $parsed['inseeToExclude'],
+                $parsed['partnerToExclude'],
+                $parsed['proceduresSuspectees'],
             );
 
             if (\in_array($ruleKey, $seenRuleKeys)) {
@@ -230,15 +79,15 @@ class AutoAffectationRuleLoader
             }
             $seenRuleKeys[] = $ruleKey;
 
-            if ($this->ruleExistsInDatabase($territory, $partnerType, $profileDeclarant, $parc, $allocataire, $inseeToInclude, $inseeToExclude, $partnerToExclude, $proceduresSuspectees)) {
+            if ($this->ruleExistsInDatabase($territory, $partnerType, $parsed['profileDeclarant'], $parsed['parc'], $parsed['allocataire'], $parsed['inseeToInclude'], $parsed['inseeToExclude'], $parsed['partnerToExclude'], $parsed['proceduresSuspectees'])) {
                 $errors[] = sprintf(
                     'Ligne %d : Une règle identique existe déjà pour le territoire "%s" (type : %s, profil : %s, parc : %s, allocataire : %s).',
                     $lineNumber,
                     $territory->getZipAndName(),
                     $partnerType->label(),
-                    $profileDeclarant,
-                    $parc,
-                    $allocataire,
+                    $parsed['profileDeclarant'],
+                    $parsed['parc'],
+                    $parsed['allocataire'],
                 );
             }
         }
@@ -291,6 +140,187 @@ class AutoAffectationRuleLoader
     public function getMetadata(): array
     {
         return $this->metadata;
+    }
+
+    /**
+     * @param array<string, string> $row
+     *
+     * @return array{territoryValue: string, territory: ?Territory, status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string, inseeToInclude: string, inseeToExclude: ?array<string>, partnerToExclude: ?array<string>, rawProcedures: string, proceduresSuspectees: ?list<Qualification>}
+     */
+    private function parseRow(array $row): array
+    {
+        $territoryValue = trim($row[AutoAffectationRuleHeader::TERRITORY] ?? '');
+        $partnerTypeLabel = trim($row[AutoAffectationRuleHeader::PARTNER_TYPE] ?? '');
+        $rawProcedures = trim($row[AutoAffectationRuleHeader::PROCEDURES_SUSPECTEES] ?? '');
+
+        return [
+            'territoryValue' => $territoryValue,
+            'territory' => $this->findTerritory($territoryValue),
+            'status' => trim($row[AutoAffectationRuleHeader::STATUS] ?? ''),
+            'partnerTypeLabel' => $partnerTypeLabel,
+            'partnerType' => PartnerType::tryFromLabel($partnerTypeLabel),
+            'profileDeclarant' => trim($row[AutoAffectationRuleHeader::PROFILE_DECLARANT] ?? ''),
+            'parc' => trim($row[AutoAffectationRuleHeader::PARC] ?? ''),
+            'allocataire' => trim($row[AutoAffectationRuleHeader::ALLOCATAIRE] ?? ''),
+            'inseeToInclude' => $this->parseInseeToInclude($row[AutoAffectationRuleHeader::INSEE_TO_INCLUDE] ?? ''),
+            'inseeToExclude' => $this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_EXCLUDE] ?? ''),
+            'partnerToExclude' => $this->parseArrayField($row[AutoAffectationRuleHeader::PARTNER_TO_EXCLUDE] ?? ''),
+            'rawProcedures' => $rawProcedures,
+            'proceduresSuspectees' => $this->parseProceduresSuspectees($rawProcedures),
+        ];
+    }
+
+    /**
+     * @param array{territoryValue: string, territory: ?Territory, status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string, inseeToInclude: string, inseeToExclude: ?array<string>, partnerToExclude: ?array<string>, rawProcedures: string, proceduresSuspectees: ?list<Qualification>} $parsed
+     */
+    private function buildRowErrors(array $parsed): string
+    {
+        return $this->validateCoreFields($parsed)
+            . $this->validateInseeToInclude($parsed['inseeToInclude'])
+            . $this->validateInseeToExclude($parsed['inseeToExclude'])
+            . $this->validatePartnersToExclude($parsed['partnerToExclude'], $parsed['territory'], $parsed['partnerType'])
+            . $this->validateProceduresSuspectees($parsed['rawProcedures']);
+    }
+
+    /**
+     * @param array{territoryValue: string, territory: ?Territory, status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string} $parsed
+     */
+    private function validateCoreFields(array $parsed): string
+    {
+        $errors = '';
+
+        if (null === $parsed['territory']) {
+            $errors .= sprintf('<li>Territoire "%s" introuvable</li>', $parsed['territoryValue']);
+        }
+        if (!\in_array($parsed['status'], [AutoAffectationRule::STATUS_ACTIVE, AutoAffectationRule::STATUS_ARCHIVED])) {
+            $errors .= sprintf('<li>Statut "%s" invalide (valeurs acceptées : ACTIVE, ARCHIVED)</li>', $parsed['status']);
+        }
+        if (null === $parsed['partnerType']) {
+            $errors .= sprintf('<li>Type de partenaire "%s" invalide (valeurs acceptées : %s)</li>', $parsed['partnerTypeLabel'], implode(', ', PartnerType::names()));
+        }
+        if (!$this->isValidProfileDeclarant($parsed['profileDeclarant'])) {
+            $errors .= sprintf('<li>Profil déclarant "%s" invalide (valeurs acceptées : all, tiers, occupant, %s)</li>', $parsed['profileDeclarant'], implode(', ', ProfileDeclarant::names()));
+        }
+        if (!\in_array($parsed['parc'], self::VALID_PARC)) {
+            $errors .= sprintf('<li>Parc "%s" invalide (valeurs acceptées : %s)</li>', $parsed['parc'], implode(', ', self::VALID_PARC));
+        }
+        if (!\in_array($parsed['allocataire'], self::VALID_ALLOCATAIRE)) {
+            $errors .= sprintf('<li>Allocataire "%s" invalide (valeurs acceptées : %s)</li>', $parsed['allocataire'], implode(', ', self::VALID_ALLOCATAIRE));
+        }
+
+        return $errors;
+    }
+
+    private function validateInseeToInclude(string $inseeToInclude): string
+    {
+        if ('' === $inseeToInclude) {
+            return '';
+        }
+
+        $invalidCodes = array_filter(
+            array_map('trim', explode(',', $inseeToInclude)),
+            static fn (string $code) => !preg_match('/^\d{5}$/', $code),
+        );
+
+        if (empty($invalidCodes)) {
+            return '';
+        }
+
+        return sprintf(
+            '<li>Codes INSEE à inclure invalides : "%s" (format attendu : liste de codes à 5 chiffres séparés par des virgules)</li>',
+            implode('", "', $invalidCodes),
+        );
+    }
+
+    /**
+     * @param array<string>|null $inseeToExclude
+     */
+    private function validateInseeToExclude(?array $inseeToExclude): string
+    {
+        if (null === $inseeToExclude) {
+            return '';
+        }
+
+        $invalidCodes = array_filter(
+            $inseeToExclude,
+            static fn (string $code) => !preg_match('/^\d{5}$/', $code),
+        );
+
+        if (empty($invalidCodes)) {
+            return '';
+        }
+
+        return sprintf(
+            '<li>Codes INSEE à exclure invalides : "%s" (format attendu : liste de codes à 5 chiffres séparés par des virgules)</li>',
+            implode('", "', $invalidCodes),
+        );
+    }
+
+    /**
+     * @param array<string>|null $partnerToExclude
+     */
+    private function validatePartnersToExclude(?array $partnerToExclude, ?Territory $territory, ?PartnerType $partnerType): string
+    {
+        if (null === $partnerToExclude) {
+            return '';
+        }
+
+        $invalidIds = array_filter($partnerToExclude, static fn (string $id) => !preg_match('/^\d+$/', $id));
+        if (!empty($invalidIds)) {
+            return sprintf('<li>IDs partenaires à exclure invalides : "%s" (entiers séparés par des virgules attendus)</li>', implode('", "', $invalidIds));
+        }
+
+        if (null === $territory || null === $partnerType) {
+            return '';
+        }
+
+        $errors = '';
+        foreach ($partnerToExclude as $partnerId) {
+            $errors .= $this->validatePartnerToExclude($partnerId, $territory, $partnerType);
+        }
+
+        return $errors;
+    }
+
+    private function validatePartnerToExclude(string $partnerId, Territory $territory, PartnerType $partnerType): string
+    {
+        $partner = $this->partnerRepository->findOneBy(['id' => (int) $partnerId]);
+
+        if (null === $partner) {
+            return sprintf('<li>Partenaire à exclure ID %s introuvable</li>', $partnerId);
+        }
+        if ($partner->getIsArchive()) {
+            return sprintf('<li>Partenaire à exclure ID %s est archivé</li>', $partnerId);
+        }
+        if ($partner->getTerritory()->getId() !== $territory->getId()) {
+            return sprintf('<li>Partenaire à exclure ID %s n\'appartient pas au territoire "%s"</li>', $partnerId, $territory->getZipAndName());
+        }
+        if ($partner->getType() !== $partnerType) {
+            return sprintf('<li>Partenaire à exclure ID %s n\'a pas le type "%s"</li>', $partnerId, $partnerType->label());
+        }
+
+        return '';
+    }
+
+    private function validateProceduresSuspectees(string $rawProcedures): string
+    {
+        if ('' === $rawProcedures || self::EMPTY_FIELD_MARKER === $rawProcedures) {
+            return '';
+        }
+
+        $validProcedures = Qualification::getProcedureSuspecteeList();
+        $validLabels = implode(', ', array_map(static fn (Qualification $q) => $q->label(), $validProcedures));
+        $errors = '';
+
+        foreach (explode(',', $rawProcedures) as $label) {
+            $label = trim($label);
+            $qualification = Qualification::tryFromLabel($label);
+            if (null === $qualification || !\in_array($qualification, $validProcedures)) {
+                $errors .= sprintf('<li>Procédure suspectée "%s" invalide (valeurs acceptées : %s)</li>', $label, $validLabels);
+            }
+        }
+
+        return $errors;
     }
 
     private function findTerritory(string $value): ?Territory
@@ -432,17 +462,7 @@ class AutoAffectationRuleLoader
             'inseeToInclude' => $inseeToInclude,
         ]);
 
-        $newKey = $this->buildRuleKey(
-            $territory,
-            $partnerType,
-            $profileDeclarant,
-            $parc,
-            $allocataire,
-            $inseeToInclude,
-            $inseeToExclude,
-            $partnerToExclude,
-            $proceduresSuspectees,
-        );
+        $newKey = $this->buildRuleKey($territory, $partnerType, $profileDeclarant, $parc, $allocataire, $inseeToInclude, $inseeToExclude, $partnerToExclude, $proceduresSuspectees);
 
         foreach ($existingRules as $existingRule) {
             $existingKey = $this->buildRuleKey(
