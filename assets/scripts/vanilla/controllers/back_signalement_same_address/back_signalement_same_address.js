@@ -42,7 +42,7 @@ if (document.getElementById('map-same-address')) {
       const lat = Number.parseFloat(item.dataset.lat);
       const lng = Number.parseFloat(item.dataset.lng);
 
-      if (isNaN(lat) || isNaN(lng)) {
+      if (Number.isNaN(lat) || Number.isNaN(lng)) {
         return;
       }
 
@@ -93,8 +93,8 @@ if (document.getElementById('map-same-address')) {
   function normalizeStr(str) {
     return (str || '')
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/-/g, ' ')
+      .replaceAll(/[\u0300-\u036f]/gu, '')
+      .replaceAll('-', ' ')
       .toLowerCase();
   }
 
@@ -177,34 +177,34 @@ if (document.getElementById('map-same-address')) {
     renderPagination(totalPages, currentPage);
   }
 
+  function pageLink(page, label, extraClass) {
+    return (
+      '<li><a class="fr-pagination__link' +
+      (extraClass ? ' ' + extraClass : '') +
+      '" href="#" data-page="' +
+      page +
+      '">' +
+      label +
+      '</a></li>'
+    );
+  }
+
+  function disabledLink(label, extraClass) {
+    return (
+      '<li><a class="fr-pagination__link' +
+      (extraClass ? ' ' + extraClass : '') +
+      '" aria-disabled="true">' +
+      label +
+      '</a></li>'
+    );
+  }
+
   function renderPagination(totalPages, currentPage) {
     const nav = document.querySelector('.pagination-full-js');
 
     if (totalPages <= 1) {
       nav.innerHTML = '';
       return;
-    }
-
-    function pageLink(page, label, extraClass) {
-      return (
-        '<li><a class="fr-pagination__link' +
-        (extraClass ? ' ' + extraClass : '') +
-        '" href="#" data-page="' +
-        page +
-        '">' +
-        label +
-        '</a></li>'
-      );
-    }
-
-    function disabledLink(label, extraClass) {
-      return (
-        '<li><a class="fr-pagination__link' +
-        (extraClass ? ' ' + extraClass : '') +
-        '" aria-disabled="true">' +
-        label +
-        '</a></li>'
-      );
     }
 
     let html = '<ul class="fr-pagination__list">';
