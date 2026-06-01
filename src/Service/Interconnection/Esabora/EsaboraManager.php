@@ -45,8 +45,6 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class EsaboraManager
 {
-    private User $adminUser;
-
     public function __construct(
         private readonly AffectationManager $affectationManager,
         private readonly SuiviManager $suiviManager,
@@ -71,7 +69,6 @@ class EsaboraManager
         #[Autowire(env: 'FEATURE_SISH_REPUSH_MESSAGE')]
         private readonly bool $featureSishRepushMessage,
     ) {
-        $this->adminUser = $this->userManager->getSystemUser();
     }
 
     /**
@@ -83,7 +80,8 @@ class EsaboraManager
         Affectation $affectation,
     ): void {
         $signalement = $affectation->getSignalement();
-        $description = $this->updateStatusAndBuildDescription($affectation, $this->adminUser, $dossierResponse);
+        $adminUser = $this->userManager->getSystemUser();
+        $description = $this->updateStatusAndBuildDescription($affectation, $adminUser, $dossierResponse);
         if (!empty($description)) {
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
@@ -91,7 +89,7 @@ class EsaboraManager
                 sendMail: EsaboraStatus::ESABORA_WAIT->value === $dossierResponse->getSasEtat() ? false : true,
                 category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
                 partner: $affectation->getPartner(),
-                user: $this->adminUser,
+                user: $adminUser,
             );
         }
     }
@@ -205,7 +203,7 @@ class EsaboraManager
             $isVisiteUpdated = $this->updateFromDossierVisite($intervention, $dossierVisiteSISH, $affectation);
             if ($isVisiteUpdated) {
                 $this->eventDispatcher->dispatch(
-                    new InterventionUpdatedByEsaboraEvent($intervention, $this->adminUser, $affectation->getPartner()),
+                    new InterventionUpdatedByEsaboraEvent($intervention, $this->userManager->getSystemUser(), $affectation->getPartner()),
                     InterventionUpdatedByEsaboraEvent::NAME
                 );
             }
@@ -246,7 +244,7 @@ class EsaboraManager
                 $this->eventDispatcher->dispatch(
                     new InterventionCreatedEvent(
                         $newIntervention,
-                        $this->adminUser,
+                        $this->userManager->getSystemUser(),
                         $affectation->getPartner(),
                         EsaboraSISHService::NAME_SI
                     ),
@@ -274,7 +272,7 @@ class EsaboraManager
             $isArreteUpdated = $this->updateFromDossierArrete($intervention, $dossierArreteSISH, $additionalInformation);
             if ($isArreteUpdated) {
                 $this->eventDispatcher->dispatch(
-                    new InterventionUpdatedByEsaboraEvent($intervention, $this->adminUser, $affectation->getPartner()),
+                    new InterventionUpdatedByEsaboraEvent($intervention, $this->userManager->getSystemUser(), $affectation->getPartner()),
                     InterventionUpdatedByEsaboraEvent::NAME
                 );
             }
@@ -301,7 +299,7 @@ class EsaboraManager
             $this->eventDispatcher->dispatch(
                 new InterventionCreatedEvent(
                     $intervention,
-                    $this->adminUser,
+                    $this->userManager->getSystemUser(),
                     $affectation->getPartner(),
                     EsaboraSISHService::NAME_SI
                 ),
@@ -339,7 +337,7 @@ class EsaboraManager
             description: $description,
             category: SuiviCategory::MESSAGE_ESABORA_SCHS,
             partner: $affectation->getPartner(),
-            user: $this->adminUser,
+            user: $this->userManager->getSystemUser(),
             flush: false,
         );
 
