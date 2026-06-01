@@ -277,7 +277,7 @@ if (document.getElementById('map-same-address')) {
   function applyToggleMap() {
     if (toggleMap.checked) {
       listContainer.classList.remove('fr-col-12');
-      listContainer.classList.add('fr-col-md-5');
+      listContainer.classList.add('fr-col-sm-5');
       mapContainer.classList.remove('fr-hidden');
       if (map) {
         map.invalidateSize();
@@ -288,7 +288,7 @@ if (document.getElementById('map-same-address')) {
         initMap();
       }
     } else {
-      listContainer.classList.remove('fr-col-md-5');
+      listContainer.classList.remove('fr-col-sm-5');
       listContainer.classList.add('fr-col-12');
       mapContainer.classList.add('fr-hidden');
     }

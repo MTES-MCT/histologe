@@ -84,14 +84,17 @@ class SignalementSameAddressController extends AbstractController
                 continue;
             }
             $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant']));
+            $addressKey = str_replace('-', ' ', $addressKey);
             if ($searchAddress && $addressKey != $searchAddress) {
                 continue;
             }
             $communeNormalized = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['villeOccupant'].' '.$signalement['cpOccupant']));
+            $communeNormalized = str_replace('-', ' ', $communeNormalized);
             if ($searchCommune && $communeNormalized != $searchCommune) {
                 continue;
             }
             $bailleurNormalized = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', (string) $signalement['nomProprio']));
+            $bailleurNormalized = str_replace('-', ' ', $bailleurNormalized);
             if ($searchBailleur && $bailleurNormalized != $searchBailleur) {
                 continue;
             }
