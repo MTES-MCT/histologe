@@ -22,6 +22,8 @@ formBtn?.addEventListener('click', () => {
     document.querySelector('#signalement-edit-nde-dpe-error').classList.add('fr-hidden');
   }
 
+  document.querySelector('#signalement-edit-nde-superficie-error').classList.add('fr-hidden');
+
   // Post form
   if (postForm) {
     const form = document.querySelector('form#signalement-edit-nde-form');
@@ -82,9 +84,14 @@ formBtn?.addEventListener('click', () => {
     };
 
     fetch(url, options)
-      .then((response) => {
+      .then(async (response) => {
         if (response.ok) {
           jsonResponseHandler(response);
+        } else if (response.status === 400) {
+          const data = await response.json();
+          if (data.errors?.superficie) {
+            document.querySelector('#signalement-edit-nde-superficie-error').classList.remove('fr-hidden');
+          }
         }
       })
       .catch((error) => {

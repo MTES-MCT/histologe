@@ -578,8 +578,8 @@
           "validate": {
             "pattern": "^[0-9]+$",
             "patternMessage": "Veuillez renseigner une superficie valide.",
-            "expression": "parseInt(formStore.data.composition_logement_superficie) > 0",
-            "expressionMessage": "Merci de saisir une information numérique et supérieure à 0 dans le champs superficie.",
+            "expression": "parseInt(formStore.data.composition_logement_superficie) > 0 && parseInt(formStore.data.composition_logement_superficie) < 10000",
+            "expressionMessage": "Merci de saisir une information numérique comprise entre 0 et 10000 dans le champs superficie.",
             "required": false
           }
         },
@@ -595,7 +595,9 @@
           "validate": {
             "message": "Veuillez renseigner le nombre de pièces à vivre.",
             "pattern": "^[0-9]*$",
-            "patternMessage": "Veuillez renseigner un nombre de pièces valide."
+            "patternMessage": "Veuillez renseigner un nombre de pièces valide.",
+            "expression": "parseInt(formStore.data.composition_logement_nb_pieces) > 0 && parseInt(formStore.data.composition_logement_nb_pieces) < 1000",
+            "expressionMessage": "Merci de saisir une information numérique comprise entre 0 et 1000 dans le champs nombre de pièces."
           }
         }
       ],

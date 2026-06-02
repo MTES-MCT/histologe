@@ -241,7 +241,7 @@ class SignalementRequest implements RequestInterface
         example: 4,
     )]
     #[Assert\GreaterThan(value: 0)]
-    #[Assert\LessThan(value: 100)]
+    #[Assert\LessThan(value: 1000)]
     public ?int $nombrePieces = null;
     #[OA\Property(
         description: 'Superficie du logement en m².',

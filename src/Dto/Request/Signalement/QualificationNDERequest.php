@@ -2,7 +2,9 @@
 
 namespace App\Dto\Request\Signalement;
 
-class QualificationNDERequest
+use Symfony\Component\Validator\Constraints as Assert;
+
+class QualificationNDERequest implements RequestInterface
 {
     public const string RADIO_VALUE_BEFORE_2023 = '1970-01-01';
     public const string RADIO_VALUE_AFTER_2023 = '2023-01-02';
@@ -10,6 +12,7 @@ class QualificationNDERequest
     public function __construct(
         private ?string $dateEntree = null,
         private ?string $dateDernierDPE = null,
+        #[Assert\LessThan(value: 10000, message: 'La superficie ne doit pas dépasser 9999 m².')]
         private ?float $superficie = null,
         private ?int $consommationEnergie = null,
         private ?bool $dpe = null,

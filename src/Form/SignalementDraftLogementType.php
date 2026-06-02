@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @extends AbstractType<mixed>
@@ -152,11 +153,35 @@ class SignalementDraftLogementType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $nombrePieces,
+                'constraints' => [
+                    new Assert\GreaterThan(
+                        value: 0,
+                        message: 'Veuillez saisir un nombre de pièces supérieur à 0.',
+                        groups: ['bo_step_logement'],
+                    ),
+                    new Assert\LessThan(
+                        value: 1000,
+                        message: 'Veuillez saisir un nombre de pièces inférieur à 1000.',
+                        groups: ['bo_step_logement'],
+                    ),
+                ],
             ])
             ->add('superficie', NumberType::class, [
                 'label' => 'Superficie du logement (en m²)',
                 'help' => 'La superficie permet de calculer le risque de suroccupation du logement. Format attendu : Saisir un nombre entier',
                 'required' => false,
+                'constraints' => [
+                    new Assert\GreaterThan(
+                        value: 0,
+                        message: 'Veuillez saisir une superficie supérieure à 0.',
+                        groups: ['bo_step_logement'],
+                    ),
+                    new Assert\LessThan(
+                        value: 10000,
+                        message: 'Veuillez saisir une superficie inférieure à 10000.',
+                        groups: ['bo_step_logement'],
+                    ),
+                ],
             ])
             ->add('pieceAVivre9m', ChoiceType::class, [
                 'label' => 'Au moins une pièce à vivre supérieure ou égale à 9m²',
