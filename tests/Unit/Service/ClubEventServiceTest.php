@@ -20,7 +20,7 @@ class ClubEventServiceTest extends KernelTestCase
     public function testGetNextClubEventForUserRT(): void
     {
         $container = static::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable(date('01-01-2026')));
+        $mockClock = new MockClock(new \DateTimeImmutable('2026-01-01'));
         $container->set(ClockInterface::class, $mockClock);
 
         $clubEventRepository = $container->get(ClubEventRepository::class);
@@ -36,7 +36,7 @@ class ClubEventServiceTest extends KernelTestCase
     public function testGetNextClubEventForUserRTWithoutResult(): void
     {
         $container = static::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable(date('01-06-2026')));
+        $mockClock = new MockClock((new \DateTimeImmutable())->modify('+3 days'));
         $container->set(ClockInterface::class, $mockClock);
 
         $clubEventRepository = $container->get(ClubEventRepository::class);
@@ -52,7 +52,7 @@ class ClubEventServiceTest extends KernelTestCase
     public function testGetNextClubEventForAgentEligible(): void
     {
         $container = static::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable(date('01-01-2026')));
+        $mockClock = new MockClock(new \DateTimeImmutable('2026-01-01'));
         $container->set(ClockInterface::class, $mockClock);
 
         $clubEventRepository = $container->get(ClubEventRepository::class);
@@ -68,7 +68,7 @@ class ClubEventServiceTest extends KernelTestCase
     public function testGetNextClubEventForAgentNonEligible(): void
     {
         $container = static::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable(date('01-01-2026')));
+        $mockClock = new MockClock(new \DateTimeImmutable('2026-01-01'));
         $container->set(ClockInterface::class, $mockClock);
 
         $clubEventRepository = $container->get(ClubEventRepository::class);
