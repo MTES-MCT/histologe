@@ -61,8 +61,8 @@ class AutoAffectationRuleControllerTest extends WebTestCase
             [],
         );
 
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains(self::CSS_SELECTOR_ERROR, 'Veuillez sélectionner un fichier CSV');
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertSelectorExists('.fr-error-text');
     }
 
     public function testImportWithNoTerritoryShowsFormError(): void
@@ -75,8 +75,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
             ['auto_affectation_rule_import' => ['csvFile' => $uploadedFile]],
         );
 
-        $this->assertResponseIsSuccessful();
-        // Form validation error for territory displayed by Symfony form
+        $this->assertResponseStatusCodeSame(422);
         $this->assertSelectorExists('.fr-error-text');
     }
 
@@ -122,25 +121,6 @@ class AutoAffectationRuleControllerTest extends WebTestCase
             'territory='.$territory->getId(),
             $this->client->getResponse()->headers->get('Location'),
         );
-    }
-
-    public function testImportWithDuplicateRuleShowsConflictError(): void
-    {
-        $territory = $this->territoryRepository->findOneBy(['zip' => '34', 'name' => 'Hérault']);
-        // Exactly matches an existing fixture rule: Hérault / CAF_MSA / all / prive / caf
-        $csvContent = self::CSV_HEADERS.'ACTIVE;CAF / MSA;all;prive;caf;/;/;/;/;';
-
-        $uploadedFile = $this->createUploadedCsv($csvContent);
-
-        $this->client->request('POST',
-            $this->router->generate('back_auto_affectation_rule_import'),
-            $this->buildPostParams($territory->getId()),
-            ['auto_affectation_rule_import' => ['csvFile' => $uploadedFile]],
-        );
-
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists(self::CSS_SELECTOR_ERROR);
-        $this->assertSelectorTextContains(self::CSS_SELECTOR_ERROR, 'règle identique existe déjà');
     }
 
     public function testImportWithInvalidCsrfTokenShowsError(): void

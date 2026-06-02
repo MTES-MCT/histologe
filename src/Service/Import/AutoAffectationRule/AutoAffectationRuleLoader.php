@@ -19,12 +19,11 @@ class AutoAffectationRuleLoader
     private const array VALID_ALLOCATAIRE = ['all', 'oui', 'non', 'caf', 'msa', 'nsp'];
 
     /**
-     * @var array{nb_rules_created: int, nb_rules_archived: int, errors: string[]}
+     * @var array{nb_rules_created: int, nb_rules_archived: int}
      */
     private array $metadata = [
         'nb_rules_created' => 0,
         'nb_rules_archived' => 0,
-        'errors' => [],
     ];
 
     public function __construct(
@@ -46,8 +45,8 @@ class AutoAffectationRuleLoader
 
         foreach ($data as $index => $row) {
             $lineNumber = $index + 2;
-            $parsed = $this->parseRow($row, $territory);
-            $rowErrors = $this->buildRowErrors($parsed);
+            $parsed = $this->parseRow($row);
+            $rowErrors = $this->buildRowErrors($parsed, $territory);
 
             if (!empty($rowErrors)) {
                 $errors[] = sprintf('Ligne %d : <ul>%s</ul>', $lineNumber, $rowErrors);
@@ -99,7 +98,7 @@ class AutoAffectationRuleLoader
             $rule->setProfileDeclarant(trim($row[AutoAffectationRuleHeader::PROFILE_DECLARANT]));
             $rule->setParc(trim($row[AutoAffectationRuleHeader::PARC]));
             $rule->setAllocataire(trim($row[AutoAffectationRuleHeader::ALLOCATAIRE]));
-            $rule->setInseeToInclude($this->parseInseeToInclude($row[AutoAffectationRuleHeader::INSEE_TO_INCLUDE]));
+            $rule->setInseeToInclude(implode(',', $this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_INCLUDE]) ?? []));
             $rule->setInseeToExclude($this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_EXCLUDE]));
             $rule->setPartnerToExclude($this->parseArrayField($row[AutoAffectationRuleHeader::PARTNER_TO_EXCLUDE]));
             $rule->setProceduresSuspectees($this->parseProceduresSuspectees($row[AutoAffectationRuleHeader::PROCEDURES_SUSPECTEES]));
@@ -109,6 +108,14 @@ class AutoAffectationRuleLoader
         }
 
         $this->entityManager->flush();
+    }
+
+    /**
+     * @return array{nb_rules_created: int, nb_rules_archived: int}
+     */
+    public function getMetadata(): array
+    {
+        return $this->metadata;
     }
 
     private function archiveExistingRules(Territory $territory): void
@@ -125,32 +132,23 @@ class AutoAffectationRuleLoader
     }
 
     /**
-     * @return array{nb_rules_created: int, nb_rules_archived: int, errors: string[]}
-     */
-    public function getMetadata(): array
-    {
-        return $this->metadata;
-    }
-
-    /**
      * @param array<string, string> $row
      *
-     * @return array{territory: Territory, status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string, inseeToInclude: string, inseeToExclude: ?array<string>, partnerToExclude: ?array<string>, rawProcedures: string, proceduresSuspectees: ?list<Qualification>}
+     * @return array{status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string, inseeToInclude: ?array<string>, inseeToExclude: ?array<string>, partnerToExclude: ?array<string>, rawProcedures: string, proceduresSuspectees: ?list<Qualification>}
      */
-    private function parseRow(array $row, Territory $territory): array
+    private function parseRow(array $row): array
     {
         $partnerTypeLabel = trim($row[AutoAffectationRuleHeader::PARTNER_TYPE] ?? '');
         $rawProcedures = trim($row[AutoAffectationRuleHeader::PROCEDURES_SUSPECTEES] ?? '');
 
         return [
-            'territory' => $territory,
             'status' => trim($row[AutoAffectationRuleHeader::STATUS] ?? ''),
             'partnerTypeLabel' => $partnerTypeLabel,
             'partnerType' => PartnerType::tryFromLabel($partnerTypeLabel),
             'profileDeclarant' => trim($row[AutoAffectationRuleHeader::PROFILE_DECLARANT] ?? ''),
             'parc' => trim($row[AutoAffectationRuleHeader::PARC] ?? ''),
             'allocataire' => trim($row[AutoAffectationRuleHeader::ALLOCATAIRE] ?? ''),
-            'inseeToInclude' => $this->parseInseeToInclude($row[AutoAffectationRuleHeader::INSEE_TO_INCLUDE] ?? ''),
+            'inseeToInclude' => $this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_INCLUDE] ?? ''),
             'inseeToExclude' => $this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_EXCLUDE] ?? ''),
             'partnerToExclude' => $this->parseArrayField($row[AutoAffectationRuleHeader::PARTNER_TO_EXCLUDE] ?? ''),
             'rawProcedures' => $rawProcedures,
@@ -159,19 +157,19 @@ class AutoAffectationRuleLoader
     }
 
     /**
-     * @param array{territory: ?Territory, status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string, inseeToInclude: string, inseeToExclude: ?array<string>, partnerToExclude: ?array<string>, rawProcedures: string, proceduresSuspectees: ?list<Qualification>} $parsed
+     * @param array<string, mixed> $parsed
      */
-    private function buildRowErrors(array $parsed): string
+    private function buildRowErrors(array $parsed, Territory $territory): string
     {
         return $this->validateCoreFields($parsed)
-            .$this->validateInseeToInclude($parsed['inseeToInclude'])
-            .$this->validateInseeToExclude($parsed['inseeToExclude'])
-            .$this->validatePartnersToExclude($parsed['partnerToExclude'], $parsed['territory'], $parsed['partnerType'])
+            .$this->validateInseeCodes($parsed['inseeToInclude'] ?? [], 'inclure')
+            .$this->validateInseeCodes($parsed['inseeToExclude'] ?? [], 'exclure')
+            .$this->validatePartnersToExclude($parsed['partnerToExclude'], $territory, $parsed['partnerType'])
             .$this->validateProceduresSuspectees($parsed['rawProcedures']);
     }
 
     /**
-     * @param array{territory: Territory, status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string} $parsed
+     * @param array<string, mixed> $parsed
      */
     private function validateCoreFields(array $parsed): string
     {
@@ -196,47 +194,20 @@ class AutoAffectationRuleLoader
         return $errors;
     }
 
-    private function validateInseeToInclude(string $inseeToInclude): string
-    {
-        if ('' === $inseeToInclude) {
-            return '';
-        }
-
-        $invalidCodes = array_filter(
-            array_map('trim', explode(',', $inseeToInclude)),
-            static fn (string $code) => !preg_match('/^\d{5}$/', $code),
-        );
-
-        if (empty($invalidCodes)) {
-            return '';
-        }
-
-        return sprintf(
-            '<li>Codes INSEE à inclure invalides : "%s" (format attendu : liste de codes à 5 chiffres séparés par des virgules)</li>',
-            implode('", "', $invalidCodes),
-        );
-    }
-
     /**
-     * @param array<string>|null $inseeToExclude
+     * @param array<string> $codes
      */
-    private function validateInseeToExclude(?array $inseeToExclude): string
+    private function validateInseeCodes(array $codes, string $direction): string
     {
-        if (null === $inseeToExclude) {
-            return '';
-        }
-
-        $invalidCodes = array_filter(
-            $inseeToExclude,
-            static fn (string $code) => !preg_match('/^\d{5}$/', $code),
-        );
+        $invalidCodes = array_filter($codes, static fn (string $code) => !preg_match('/^\d{5}$/', $code));
 
         if (empty($invalidCodes)) {
             return '';
         }
 
         return sprintf(
-            '<li>Codes INSEE à exclure invalides : "%s" (format attendu : liste de codes à 5 chiffres séparés par des virgules)</li>',
+            '<li>Codes INSEE à %s invalides : "%s" (format attendu : liste de codes à 5 chiffres séparés par des virgules)</li>',
+            $direction,
             implode('", "', $invalidCodes),
         );
     }
@@ -244,7 +215,7 @@ class AutoAffectationRuleLoader
     /**
      * @param array<string>|null $partnerToExclude
      */
-    private function validatePartnersToExclude(?array $partnerToExclude, ?Territory $territory, ?PartnerType $partnerType): string
+    private function validatePartnersToExclude(?array $partnerToExclude, Territory $territory, ?PartnerType $partnerType): string
     {
         if (null === $partnerToExclude) {
             return '';
@@ -255,7 +226,7 @@ class AutoAffectationRuleLoader
             return sprintf('<li>IDs partenaires à exclure invalides : "%s" (entiers séparés par des virgules attendus)</li>', implode('", "', $invalidIds));
         }
 
-        if (null === $territory || null === $partnerType) {
+        if (null === $partnerType) {
             return '';
         }
 
@@ -310,25 +281,9 @@ class AutoAffectationRuleLoader
 
     private function isValidProfileDeclarant(string $value): bool
     {
-        if (\in_array($value, ['all', 'tiers', 'occupant'])) {
-            return true;
-        }
-
-        if (null !== ProfileDeclarant::tryFrom($value)) {
-            return true;
-        }
-
-        return null !== ProfileDeclarant::tryFromLabel($value);
-    }
-
-    private function parseInseeToInclude(string $value): string
-    {
-        $value = trim($value);
-        if ('' === $value || self::EMPTY_FIELD_MARKER === $value) {
-            return '';
-        }
-
-        return $value;
+        return \in_array($value, ['all', 'tiers', 'occupant'])
+            || null !== ProfileDeclarant::tryFrom($value)
+            || null !== ProfileDeclarant::tryFromLabel($value);
     }
 
     /**
@@ -365,10 +320,11 @@ class AutoAffectationRuleLoader
             }
         }
 
-        return empty($result) ? null : $result;
+        return $result ?: null;
     }
 
     /**
+     * @param array<string>|null       $inseeToInclude
      * @param array<string>|null       $inseeToExclude
      * @param array<string>|null       $partnerToExclude
      * @param list<Qualification>|null $proceduresSuspectees
@@ -379,21 +335,21 @@ class AutoAffectationRuleLoader
         string $profileDeclarant,
         string $parc,
         string $allocataire,
-        string $inseeToInclude,
+        ?array $inseeToInclude,
         ?array $inseeToExclude,
         ?array $partnerToExclude,
         ?array $proceduresSuspectees,
     ): string {
+        $sortedInseeInclude = $inseeToInclude ?? [];
+        sort($sortedInseeInclude);
+
         $sortedInseeExclude = $inseeToExclude ?? [];
         sort($sortedInseeExclude);
 
         $sortedPartnerExclude = $partnerToExclude ?? [];
         sort($sortedPartnerExclude);
 
-        $sortedProcedures = array_map(
-            static fn (Qualification $q) => $q->value,
-            $proceduresSuspectees ?? [],
-        );
+        $sortedProcedures = array_map(static fn (Qualification $q) => $q->value, $proceduresSuspectees ?? []);
         sort($sortedProcedures);
 
         return implode('|', [
@@ -402,7 +358,7 @@ class AutoAffectationRuleLoader
             $profileDeclarant,
             $parc,
             $allocataire,
-            $inseeToInclude,
+            implode(',', $sortedInseeInclude),
             implode(',', $sortedInseeExclude),
             implode(',', $sortedPartnerExclude),
             implode(',', $sortedProcedures),
