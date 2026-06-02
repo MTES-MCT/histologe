@@ -114,11 +114,6 @@ class EsaboraManagerTest extends KernelTestCase
             ->expects($this->once())
             ->method('error');
 
-        $this->userManager
-            ->expects($this->once())
-            ->method('getSystemUser')
-            ->willReturn($this->getUser([User::ROLE_ADMIN]));
-
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
@@ -246,10 +241,6 @@ class EsaboraManagerTest extends KernelTestCase
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionResponse()->getCollection();
         $dossierVisite = $dossierVisiteCollection[0];
 
-        $this->userManager
-        ->expects($this->once())
-        ->method('getSystemUser')
-        ->willReturn($this->getUser([User::ROLE_ADMIN]));
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
@@ -305,10 +296,6 @@ class EsaboraManagerTest extends KernelTestCase
         $dossierVisiteCollection = $this->getDossierVisiteSISHCollectionResponse()->getCollection();
         $dossierVisite = $dossierVisiteCollection[0];
 
-        $this->userManager
-        ->expects($this->once())
-        ->method('getSystemUser')
-        ->willReturn($this->getUser([User::ROLE_ADMIN]));
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
             $this->suiviManager,
@@ -373,11 +360,6 @@ class EsaboraManagerTest extends KernelTestCase
                 SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO
             )
             ->willReturn([new Suivi()]);
-
-        $this->userManager
-            ->expects($this->once())
-            ->method('getSystemUser')
-            ->willReturn($user);
 
         $esaboraManager = new EsaboraManager(
             $this->affectationManager,
