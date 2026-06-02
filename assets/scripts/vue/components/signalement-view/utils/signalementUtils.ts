@@ -94,7 +94,7 @@ export function handleSettings (context: any, requestResponse: any): any {
   optionNoneItem.Text = 'Aucun'
   context.sharedState.partenaires.push(optionNoneItem)
   const partnersArray = Object.values(requestResponse.partners)
-  partnersArray.sort((a: any, b: any) => (a.nom > b.nom) ? 1 : ((b.nom > a.nom) ? -1 : 0))
+  partnersArray.sort((a: any, b: any) => (a.nom.toLowerCase() > b.nom.toLowerCase()) ? 1 : ((b.nom.toLowerCase() > a.nom.toLowerCase()) ? -1 : 0))
   partnersArray.forEach((partner: any) => {
     const optionItem = new HistoInterfaceSelectOption()
     optionItem.Id = partner.id.toString()
@@ -107,7 +107,7 @@ export function handleSettings (context: any, requestResponse: any): any {
   optionNoneItem.Text = ''
   context.sharedState.etiquettes.push(optionNoneItem)
   const tagsArray = Object.values(requestResponse.tags)
-  tagsArray.sort((a: any, b: any) => (a.label > b.label) ? 1 : ((b.label > a.label) ? -1 : 0))
+  tagsArray.sort((a: any, b: any) => (a.label.toLowerCase() > b.label.toLowerCase()) ? 1 : ((b.label.toLowerCase() > a.label.toLowerCase()) ? -1 : 0))
   tagsArray.forEach((tag: any) => {
     const optionItem = new HistoInterfaceSelectOption()
     optionItem.Id = tag.id.toString()
