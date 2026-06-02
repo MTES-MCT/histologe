@@ -48,7 +48,9 @@ abstract class AbstractSyncEsaboraMessageHandler
             $affectation = $row['affectation'];
             $dossierResponse = $esaboraService->getStateDossier($affectation, $row['signalement_uuid']);
             if (AbstractEsaboraService::hasSuccess($dossierResponse)) {
-                $this->esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
+                if (null !== $dossierResponse->getSasEtat()) {
+                    $this->esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
+                }
                 ++$countSyncSuccess;
             } else {
                 ++$countSyncFailed;
