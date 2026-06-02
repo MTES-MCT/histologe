@@ -198,13 +198,15 @@ class AutoAffectationRuleController extends AbstractController
         if (!$this->isCsrfTokenValid('auto_affectation_rule_import', (string) $request->request->get('_token'))) {
             return $this->renderImport($form, [MessageHelper::ERROR_MESSAGE_CSRF]);
         }
-
         if (!$form->isValid()) {
             return $this->renderImport($form, []);
         }
 
         /** @var Territory $territory */
         $territory = $form->get('territory')->getData();
+        if (empty($territory)) {
+            return $this->renderImport($form, ['Veuillez sélectionner un territoire.']);
+        }
         /** @var UploadedFile|null $csvFile */
         $csvFile = $form->get('csvFile')->getData();
 

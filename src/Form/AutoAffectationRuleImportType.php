@@ -20,7 +20,7 @@ class AutoAffectationRuleImportType extends AbstractType
     {
         $builder
             ->add('territory', TerritoryChoiceType::class, [
-                'required' => true,
+                'required' => false,
                 'label' => 'Territoire',
                 'placeholder' => 'Sélectionnez un territoire',
             ])
