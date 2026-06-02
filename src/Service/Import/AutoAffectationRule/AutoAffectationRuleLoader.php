@@ -9,7 +9,6 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Territory;
 use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\PartnerRepository;
-use App\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class AutoAffectationRuleLoader
@@ -20,16 +19,15 @@ class AutoAffectationRuleLoader
     private const array VALID_ALLOCATAIRE = ['all', 'oui', 'non', 'caf', 'msa', 'nsp'];
 
     /**
-     * @var array{nb_rules_created: int, imported_territory_ids: int[], errors: string[]}
+     * @var array{nb_rules_created: int, nb_rules_archived: int, errors: string[]}
      */
     private array $metadata = [
         'nb_rules_created' => 0,
-        'imported_territory_ids' => [],
+        'nb_rules_archived' => 0,
         'errors' => [],
     ];
 
     public function __construct(
-        private readonly TerritoryRepository $territoryRepository,
         private readonly AutoAffectationRuleRepository $autoAffectationRuleRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly EntityManagerInterface $entityManager,
@@ -41,14 +39,14 @@ class AutoAffectationRuleLoader
      *
      * @return string[]
      */
-    public function validate(array $data): array
+    public function validate(array $data, Territory $territory): array
     {
         $errors = [];
         $seenRuleKeys = [];
 
         foreach ($data as $index => $row) {
             $lineNumber = $index + 2;
-            $parsed = $this->parseRow($row);
+            $parsed = $this->parseRow($row, $territory);
             $rowErrors = $this->buildRowErrors($parsed);
 
             if (!empty($rowErrors)) {
@@ -56,8 +54,6 @@ class AutoAffectationRuleLoader
                 continue;
             }
 
-            /** @var Territory $territory */
-            $territory = $parsed['territory'];
             /** @var PartnerType $partnerType */
             $partnerType = $parsed['partnerType'];
 
@@ -78,18 +74,6 @@ class AutoAffectationRuleLoader
                 continue;
             }
             $seenRuleKeys[] = $ruleKey;
-
-            if ($this->ruleExistsInDatabase($territory, $partnerType, $parsed['profileDeclarant'], $parsed['parc'], $parsed['allocataire'], $parsed['inseeToInclude'], $parsed['inseeToExclude'], $parsed['partnerToExclude'], $parsed['proceduresSuspectees'])) {
-                $errors[] = sprintf(
-                    'Ligne %d : Une règle identique existe déjà pour le territoire "%s" (type : %s, profil : %s, parc : %s, allocataire : %s).',
-                    $lineNumber,
-                    $territory->getZipAndName(),
-                    $partnerType->label(),
-                    $parsed['profileDeclarant'],
-                    $parsed['parc'],
-                    $parsed['allocataire'],
-                );
-            }
         }
 
         return $errors;
@@ -98,14 +82,11 @@ class AutoAffectationRuleLoader
     /**
      * @param array<int, array<string, string>> $data
      */
-    public function load(array $data): void
+    public function load(array $data, Territory $territory): void
     {
-        foreach ($data as $row) {
-            $territory = $this->findTerritory(trim($row[AutoAffectationRuleHeader::TERRITORY]));
-            if (null === $territory) {
-                continue;
-            }
+        $this->archiveExistingRules($territory);
 
+        foreach ($data as $row) {
             $partnerType = PartnerType::tryFromLabel(trim($row[AutoAffectationRuleHeader::PARTNER_TYPE]));
             if (null === $partnerType) {
                 continue;
@@ -125,17 +106,26 @@ class AutoAffectationRuleLoader
 
             $this->entityManager->persist($rule);
             ++$this->metadata['nb_rules_created'];
-            $territoryId = $territory->getId();
-            if (!\in_array($territoryId, $this->metadata['imported_territory_ids'])) {
-                $this->metadata['imported_territory_ids'][] = $territoryId;
-            }
         }
 
         $this->entityManager->flush();
     }
 
+    private function archiveExistingRules(Territory $territory): void
+    {
+        $existingRules = $this->autoAffectationRuleRepository->findBy([
+            'territory' => $territory,
+            'status' => AutoAffectationRule::STATUS_ACTIVE,
+        ]);
+
+        foreach ($existingRules as $rule) {
+            $rule->setStatus(AutoAffectationRule::STATUS_ARCHIVED);
+            ++$this->metadata['nb_rules_archived'];
+        }
+    }
+
     /**
-     * @return array{nb_rules_created: int, imported_territory_ids: int[], errors: string[]}
+     * @return array{nb_rules_created: int, nb_rules_archived: int, errors: string[]}
      */
     public function getMetadata(): array
     {
@@ -145,17 +135,15 @@ class AutoAffectationRuleLoader
     /**
      * @param array<string, string> $row
      *
-     * @return array{territoryValue: string, territory: ?Territory, status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string, inseeToInclude: string, inseeToExclude: ?array<string>, partnerToExclude: ?array<string>, rawProcedures: string, proceduresSuspectees: ?list<Qualification>}
+     * @return array{territory: Territory, status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string, inseeToInclude: string, inseeToExclude: ?array<string>, partnerToExclude: ?array<string>, rawProcedures: string, proceduresSuspectees: ?list<Qualification>}
      */
-    private function parseRow(array $row): array
+    private function parseRow(array $row, Territory $territory): array
     {
-        $territoryValue = trim($row[AutoAffectationRuleHeader::TERRITORY] ?? '');
         $partnerTypeLabel = trim($row[AutoAffectationRuleHeader::PARTNER_TYPE] ?? '');
         $rawProcedures = trim($row[AutoAffectationRuleHeader::PROCEDURES_SUSPECTEES] ?? '');
 
         return [
-            'territoryValue' => $territoryValue,
-            'territory' => $this->findTerritory($territoryValue),
+            'territory' => $territory,
             'status' => trim($row[AutoAffectationRuleHeader::STATUS] ?? ''),
             'partnerTypeLabel' => $partnerTypeLabel,
             'partnerType' => PartnerType::tryFromLabel($partnerTypeLabel),
@@ -171,7 +159,7 @@ class AutoAffectationRuleLoader
     }
 
     /**
-     * @param array{territoryValue: string, territory: ?Territory, status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string, inseeToInclude: string, inseeToExclude: ?array<string>, partnerToExclude: ?array<string>, rawProcedures: string, proceduresSuspectees: ?list<Qualification>} $parsed
+     * @param array{territory: ?Territory, status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string, inseeToInclude: string, inseeToExclude: ?array<string>, partnerToExclude: ?array<string>, rawProcedures: string, proceduresSuspectees: ?list<Qualification>} $parsed
      */
     private function buildRowErrors(array $parsed): string
     {
@@ -183,20 +171,17 @@ class AutoAffectationRuleLoader
     }
 
     /**
-     * @param array{territoryValue: string, territory: ?Territory, status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string} $parsed
+     * @param array{territory: Territory, status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string} $parsed
      */
     private function validateCoreFields(array $parsed): string
     {
         $errors = '';
 
-        if (null === $parsed['territory']) {
-            $errors .= sprintf('<li>Territoire "%s" introuvable</li>', $parsed['territoryValue']);
-        }
         if (!\in_array($parsed['status'], [AutoAffectationRule::STATUS_ACTIVE, AutoAffectationRule::STATUS_ARCHIVED])) {
             $errors .= sprintf('<li>Statut "%s" invalide (valeurs acceptées : ACTIVE, ARCHIVED)</li>', $parsed['status']);
         }
         if (null === $parsed['partnerType']) {
-            $errors .= sprintf('<li>Type de partenaire "%s" invalide (valeurs acceptées : %s)</li>', $parsed['partnerTypeLabel'], implode(', ', PartnerType::names()));
+            $errors .= sprintf('<li>Type de partenaire "%s" invalide (valeurs acceptées : %s)</li>', $parsed['partnerTypeLabel'], implode(', ', PartnerType::getLabelList()));
         }
         if (!$this->isValidProfileDeclarant($parsed['profileDeclarant'])) {
             $errors .= sprintf('<li>Profil déclarant "%s" invalide (valeurs acceptées : all, tiers, occupant, %s)</li>', $parsed['profileDeclarant'], implode(', ', ProfileDeclarant::names()));
@@ -323,19 +308,6 @@ class AutoAffectationRuleLoader
         return $errors;
     }
 
-    private function findTerritory(string $value): ?Territory
-    {
-        $parts = explode(' - ', $value, 2);
-        if (2 !== \count($parts)) {
-            return null;
-        }
-
-        return $this->territoryRepository->findOneBy([
-            'zip' => trim($parts[0]),
-            'name' => trim($parts[1]),
-        ]);
-    }
-
     private function isValidProfileDeclarant(string $value): bool
     {
         if (\in_array($value, ['all', 'tiers', 'occupant'])) {
@@ -435,53 +407,5 @@ class AutoAffectationRuleLoader
             implode(',', $sortedPartnerExclude),
             implode(',', $sortedProcedures),
         ]);
-    }
-
-    /**
-     * @param array<string>|null       $inseeToExclude
-     * @param array<string>|null       $partnerToExclude
-     * @param list<Qualification>|null $proceduresSuspectees
-     */
-    private function ruleExistsInDatabase(
-        Territory $territory,
-        PartnerType $partnerType,
-        string $profileDeclarant,
-        string $parc,
-        string $allocataire,
-        string $inseeToInclude,
-        ?array $inseeToExclude,
-        ?array $partnerToExclude,
-        ?array $proceduresSuspectees,
-    ): bool {
-        $existingRules = $this->autoAffectationRuleRepository->findBy([
-            'territory' => $territory,
-            'partnerType' => $partnerType,
-            'profileDeclarant' => $profileDeclarant,
-            'parc' => $parc,
-            'allocataire' => $allocataire,
-            'inseeToInclude' => $inseeToInclude,
-        ]);
-
-        $newKey = $this->buildRuleKey($territory, $partnerType, $profileDeclarant, $parc, $allocataire, $inseeToInclude, $inseeToExclude, $partnerToExclude, $proceduresSuspectees);
-
-        foreach ($existingRules as $existingRule) {
-            $existingKey = $this->buildRuleKey(
-                $existingRule->getTerritory(),
-                $existingRule->getPartnerType(),
-                $existingRule->getProfileDeclarant(),
-                $existingRule->getParc(),
-                $existingRule->getAllocataire(),
-                $existingRule->getInseeToInclude(),
-                $existingRule->getInseeToExclude(),
-                $existingRule->getPartnerToExclude(),
-                $existingRule->getProceduresSuspectees(),
-            );
-
-            if ($existingKey === $newKey) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

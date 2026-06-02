@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Service\Import\AutoAffectationRule;
 
 use App\Entity\AutoAffectationRule;
+use App\Entity\Territory;
 use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
@@ -15,18 +16,20 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
 {
     private AutoAffectationRuleLoader $loader;
     private EntityManagerInterface $entityManager;
-    private TerritoryRepository $territoryRepository;
-    private const HERAULT_ZIP = '34';
-    private const HERAULT_NAME = 'Hérault';
+    private Territory $herault;
+    private const string HERAULT_ZIP = '34';
+    private const string HERAULT_NAME = 'Hérault';
 
     protected function setUp(): void
     {
         /** @var EntityManagerInterface $em */
         $em = static::getContainer()->get('doctrine.orm.entity_manager');
         $this->entityManager = $em;
-        $this->territoryRepository = static::getContainer()->get(TerritoryRepository::class);
+        /** @var Territory $herault */
+        $herault = static::getContainer()->get(TerritoryRepository::class)
+            ->findOneBy(['zip' => self::HERAULT_ZIP, 'name' => self::HERAULT_NAME]);
+        $this->herault = $herault;
         $this->loader = new AutoAffectationRuleLoader(
-            $this->territoryRepository,
             static::getContainer()->get(AutoAffectationRuleRepository::class),
             static::getContainer()->get(PartnerRepository::class),
             $this->entityManager,
@@ -35,30 +38,14 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
 
     public function testValidateReturnsNoErrorsForValidData(): void
     {
-        $errors = $this->loader->validate($this->provideValidData());
+        $errors = $this->loader->validate($this->provideValidData(), $this->herault);
 
         $this->assertEmpty($errors);
     }
 
-    public function testValidateReturnsErrorForUnknownTerritory(): void
-    {
-        $data = [
-            $this->buildRow(territory: 'XX - Territoire Inexistant'),
-        ];
-
-        $errors = $this->loader->validate($data);
-
-        $this->assertCount(1, $errors);
-        $this->assertStringContainsString('Territoire "XX - Territoire Inexistant" introuvable', $errors[0]);
-    }
-
     public function testValidateReturnsErrorForInvalidStatus(): void
     {
-        $data = [
-            $this->buildRow(status: 'INVALIDE'),
-        ];
-
-        $errors = $this->loader->validate($data);
+        $errors = $this->loader->validate([$this->buildRow(status: 'INVALIDE')], $this->herault);
 
         $this->assertCount(1, $errors);
         $this->assertStringContainsString('Statut "INVALIDE" invalide', $errors[0]);
@@ -66,11 +53,7 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
 
     public function testValidateReturnsErrorForInvalidPartnerType(): void
     {
-        $data = [
-            $this->buildRow(partnerType: 'Type Inconnu'),
-        ];
-
-        $errors = $this->loader->validate($data);
+        $errors = $this->loader->validate([$this->buildRow(partnerType: 'Type Inconnu')], $this->herault);
 
         $this->assertCount(1, $errors);
         $this->assertStringContainsString('Type de partenaire "Type Inconnu" invalide', $errors[0]);
@@ -78,11 +61,7 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
 
     public function testValidateReturnsErrorForInvalidProfileDeclarant(): void
     {
-        $data = [
-            $this->buildRow(profileDeclarant: 'profil_inconnu'),
-        ];
-
-        $errors = $this->loader->validate($data);
+        $errors = $this->loader->validate([$this->buildRow(profileDeclarant: 'profil_inconnu')], $this->herault);
 
         $this->assertCount(1, $errors);
         $this->assertStringContainsString('Profil déclarant "profil_inconnu" invalide', $errors[0]);
@@ -90,11 +69,7 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
 
     public function testValidateReturnsErrorForInvalidParc(): void
     {
-        $data = [
-            $this->buildRow(parc: 'inconnu'),
-        ];
-
-        $errors = $this->loader->validate($data);
+        $errors = $this->loader->validate([$this->buildRow(parc: 'inconnu')], $this->herault);
 
         $this->assertCount(1, $errors);
         $this->assertStringContainsString('Parc "inconnu" invalide', $errors[0]);
@@ -102,11 +77,7 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
 
     public function testValidateReturnsErrorForInvalidAllocataire(): void
     {
-        $data = [
-            $this->buildRow(allocataire: 'inconnu'),
-        ];
-
-        $errors = $this->loader->validate($data);
+        $errors = $this->loader->validate([$this->buildRow(allocataire: 'inconnu')], $this->herault);
 
         $this->assertCount(1, $errors);
         $this->assertStringContainsString('Allocataire "inconnu" invalide', $errors[0]);
@@ -114,11 +85,10 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
 
     public function testValidateAccumulatesMultipleErrorsOnSameLine(): void
     {
-        $data = [
-            $this->buildRow(status: 'INVALIDE', parc: 'inconnu', allocataire: 'inconnu'),
-        ];
-
-        $errors = $this->loader->validate($data);
+        $errors = $this->loader->validate(
+            [$this->buildRow(status: 'INVALIDE', parc: 'inconnu', allocataire: 'inconnu')],
+            $this->herault,
+        );
 
         $this->assertCount(1, $errors);
         $this->assertStringContainsString('Ligne 2', $errors[0]);
@@ -130,45 +100,18 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
     public function testValidateDetectsDuplicateWithinBatch(): void
     {
         $row = $this->buildRow(allocataire: 'nsp');
-        $data = [$row, $row];
-
-        $errors = $this->loader->validate($data);
+        $errors = $this->loader->validate([$row, $row], $this->herault);
 
         $this->assertCount(1, $errors);
         $this->assertStringContainsString('doublon dans le fichier CSV', $errors[0]);
     }
 
-    public function testValidateDetectsDuplicateWithExistingDatabaseRule(): void
-    {
-        // This exact combination exists in AutoAffectationRule.yml fixtures
-        $data = [
-            $this->buildRow(
-                territory: self::HERAULT_ZIP.' - '.self::HERAULT_NAME,
-                partnerType: 'CAF / MSA',
-                profileDeclarant: 'all',
-                parc: 'prive',
-                allocataire: 'caf',
-                inseeToInclude: '/',
-                inseeToExclude: '/',
-                partnerToExclude: '/',
-            ),
-        ];
-
-        $errors = $this->loader->validate($data);
-
-        $this->assertCount(1, $errors);
-        $this->assertStringContainsString('règle identique existe déjà', $errors[0]);
-        $this->assertStringContainsString('Hérault', $errors[0]);
-    }
-
     public function testValidateErrorLineNumberStartsAtTwo(): void
     {
-        $data = [
-            $this->buildRow(status: 'INVALIDE'),
-            $this->buildRow(parc: 'inconnu'),
-        ];
-
-        $errors = $this->loader->validate($data);
+        $errors = $this->loader->validate(
+            [$this->buildRow(status: 'INVALIDE'), $this->buildRow(parc: 'inconnu')],
+            $this->herault,
+        );
 
         $this->assertStringContainsString('Ligne 2', $errors[0]);
         $this->assertStringContainsString('Ligne 3', $errors[1]);
@@ -176,48 +119,45 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
 
     public function testLoadPersistsRulesInDatabase(): void
     {
-        $territory = $this->territoryRepository->findOneBy(['zip' => self::HERAULT_ZIP, 'name' => self::HERAULT_NAME]);
-        $this->assertNotNull($territory);
-        $countBefore = $this->entityManager->getRepository(AutoAffectationRule::class)->count(['territory' => $territory]);
+        $countBefore = $this->entityManager->getRepository(AutoAffectationRule::class)
+            ->count(['territory' => $this->herault]);
 
-        $this->loader->load($this->provideValidData());
+        $this->loader->load($this->provideValidData(), $this->herault);
 
-        $countAfter = $this->entityManager->getRepository(AutoAffectationRule::class)->count(['territory' => $territory]);
+        $countAfter = $this->entityManager->getRepository(AutoAffectationRule::class)
+            ->count(['territory' => $this->herault]);
         $this->assertSame($countBefore + 2, $countAfter);
     }
 
     public function testLoadUpdatesNbRulesCreatedMetadata(): void
     {
-        $this->loader->load($this->provideValidData());
+        $this->loader->load($this->provideValidData(), $this->herault);
 
         $this->assertSame(2, $this->loader->getMetadata()['nb_rules_created']);
     }
 
-    public function testLoadTracksImportedTerritoryId(): void
+    public function testLoadArchivesExistingActiveRules(): void
     {
-        $territory = $this->territoryRepository->findOneBy(['zip' => self::HERAULT_ZIP, 'name' => self::HERAULT_NAME]);
-        $this->assertNotNull($territory);
+        $ruleRepo = $this->entityManager->getRepository(AutoAffectationRule::class);
+        $countActiveBefore = $ruleRepo->count(['territory' => $this->herault, 'status' => AutoAffectationRule::STATUS_ACTIVE]);
+        $this->assertGreaterThan(0, $countActiveBefore);
 
-        $this->loader->load($this->provideValidData());
+        $this->loader->load($this->provideValidData(), $this->herault);
 
-        $importedIds = $this->loader->getMetadata()['imported_territory_ids'];
-        $this->assertCount(1, $importedIds);
-        $this->assertContains($territory->getId(), $importedIds);
+        // All previous active rules are archived; only the 2 newly created ones remain active
+        $this->assertSame(2, $ruleRepo->count(['territory' => $this->herault, 'status' => AutoAffectationRule::STATUS_ACTIVE]));
+        $this->assertSame($countActiveBefore, $this->loader->getMetadata()['nb_rules_archived']);
     }
 
-    public function testLoadTracksMultipleTerritoriesWhenPresent(): void
+    public function testLoadMetadataHasZeroArchivedWhenNoExistingRules(): void
     {
-        $data = array_merge($this->provideValidData(), [
-            $this->buildRow(
-                territory: '13 - Bouches-du-Rhône',
-                partnerType: 'DDT/M',
-                allocataire: 'nsp',
-            ),
-        ]);
+        /** @var Territory $ain */
+        $ain = static::getContainer()->get(TerritoryRepository::class)->findOneBy(['zip' => '01', 'name' => 'Ain']);
+        $this->assertNotNull($ain);
 
-        $this->loader->load($data);
+        $this->loader->load([$this->buildRow()], $ain);
 
-        $this->assertCount(2, $this->loader->getMetadata()['imported_territory_ids']);
+        $this->assertSame(0, $this->loader->getMetadata()['nb_rules_archived']);
     }
 
     public function testLoadSetsAllRuleFieldsCorrectly(): void
@@ -232,11 +172,10 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
             partnerToExclude: '999',
         );
 
-        $this->loader->load([$row]);
+        $this->loader->load([$row], $this->herault);
 
-        $territory = $this->territoryRepository->findOneBy(['zip' => self::HERAULT_ZIP, 'name' => self::HERAULT_NAME]);
         $rule = $this->entityManager->getRepository(AutoAffectationRule::class)->findOneBy([
-            'territory' => $territory,
+            'territory' => $this->herault,
             'parc' => 'public',
             'allocataire' => 'oui',
         ]);
@@ -264,7 +203,6 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
      * @return array<string, string>
      */
     private function buildRow(
-        string $territory = self::HERAULT_ZIP.' - '.self::HERAULT_NAME,
         string $status = 'ACTIVE',
         string $partnerType = 'CAF / MSA',
         string $profileDeclarant = 'all',
@@ -276,7 +214,6 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
         string $proceduresSuspectees = '/',
     ): array {
         return [
-            AutoAffectationRuleHeader::TERRITORY => $territory,
             AutoAffectationRuleHeader::STATUS => $status,
             AutoAffectationRuleHeader::PARTNER_TYPE => $partnerType,
             AutoAffectationRuleHeader::PROFILE_DECLARANT => $profileDeclarant,

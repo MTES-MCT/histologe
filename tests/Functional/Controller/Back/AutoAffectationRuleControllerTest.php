@@ -15,8 +15,9 @@ class AutoAffectationRuleControllerTest extends WebTestCase
     use SessionHelper;
 
     private const string ADMIN_EMAIL = 'admin-01@signal-logement.fr';
-    private const string CSV_HEADERS = "Territoire;Statut;Type de partenaire;Profil déclarant;Parc;Allocataire;Code insee inclus;Code insee exclus;Id partenaires exclus;Procédures suspectées;Actions\n";
-    private const cssSelectorError = '.fr-alert--error';
+    private const string CSV_HEADERS = "Statut;Type de partenaire;Profil déclarant;Parc;Allocataire;Code insee inclus;Code insee exclus;Id partenaires exclus;Procédures suspectées;Actions\n";
+    private const string CSS_SELECTOR_ERROR = '.fr-alert--error';
+    private const string CSRF_TOKEN_ID = 'auto_affectation_rule_import';
 
     private ?KernelBrowser $client = null;
     private RouterInterface $router;
@@ -29,8 +30,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
         $this->router = static::getContainer()->get(RouterInterface::class);
         $this->territoryRepository = static::getContainer()->get(TerritoryRepository::class);
 
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => self::ADMIN_EMAIL]);
+        $user = static::getContainer()->get(UserRepository::class)->findOneBy(['email' => self::ADMIN_EMAIL]);
         $this->client->loginUser($user);
     }
 
@@ -44,110 +44,129 @@ class AutoAffectationRuleControllerTest extends WebTestCase
 
     public function testImportPageLoadsForAdmin(): void
     {
-        $url = $this->router->generate('back_auto_affectation_rule_import');
-        $this->client->request('GET', $url);
+        $this->client->request('GET', $this->router->generate('back_auto_affectation_rule_import'));
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Importer des règles d\'auto-affectation');
+        $this->assertSelectorExists('select[name="auto_affectation_rule_import[territory]"]');
     }
 
     public function testImportWithNoFileShowsError(): void
     {
-        $url = $this->router->generate('back_auto_affectation_rule_import');
-        $csrfToken = $this->generateCsrfToken($this->client, 'auto_affectation_rule_import');
+        $territory = $this->territoryRepository->findOneBy(['zip' => '34', 'name' => 'Hérault']);
 
-        $this->client->request('POST', $url, ['_token' => $csrfToken], []);
+        $this->client->request('POST',
+            $this->router->generate('back_auto_affectation_rule_import'),
+            $this->buildPostParams($territory->getId()),
+            [],
+        );
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains(self::cssSelectorError, 'Veuillez sélectionner un fichier CSV');
+        $this->assertSelectorTextContains(self::CSS_SELECTOR_ERROR, 'Veuillez sélectionner un fichier CSV');
+    }
+
+    public function testImportWithNoTerritoryShowsFormError(): void
+    {
+        $uploadedFile = $this->createUploadedCsv(self::CSV_HEADERS.'ACTIVE;CAF / MSA;all;prive;nsp;/;/;/;/;');
+
+        $this->client->request('POST',
+            $this->router->generate('back_auto_affectation_rule_import'),
+            $this->buildPostParams(null),
+            ['auto_affectation_rule_import' => ['csvFile' => $uploadedFile]],
+        );
+
+        $this->assertResponseIsSuccessful();
+        // Form validation error for territory displayed by Symfony form
+        $this->assertSelectorExists('.fr-error-text');
     }
 
     public function testImportWithInvalidCsvShowsErrors(): void
     {
+        $territory = $this->territoryRepository->findOneBy(['zip' => '34', 'name' => 'Hérault']);
         $csvContent = self::CSV_HEADERS
-            ."TERRITOIRE_INEXISTANT;ACTIVE;CAF / MSA;all;prive;caf;/;/;/;/;\n"
-            ."34 - Hérault;STATUT_INVALIDE;CAF / MSA;all;prive;caf;/;/;/;/;\n";
+            ."STATUT_INVALIDE;CAF / MSA;all;prive;caf;/;/;/;/;\n"
+            ."ACTIVE;TYPE INVALIDE;all;prive;caf;/;/;/;/;\n";
 
         $uploadedFile = $this->createUploadedCsv($csvContent);
-        $url = $this->router->generate('back_auto_affectation_rule_import');
-        $csrfToken = $this->generateCsrfToken($this->client, 'auto_affectation_rule_import');
 
-        $this->client->request('POST', $url, ['_token' => $csrfToken], ['csv_file' => $uploadedFile]);
+        $this->client->request('POST',
+            $this->router->generate('back_auto_affectation_rule_import'),
+            $this->buildPostParams($territory->getId()),
+            ['auto_affectation_rule_import' => ['csvFile' => $uploadedFile]],
+        );
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists(self::cssSelectorError);
-        $this->assertSelectorTextContains(self::cssSelectorError, 'Ligne 2');
-        $this->assertSelectorTextContains(self::cssSelectorError, 'Ligne 3');
+        $this->assertSelectorExists(self::CSS_SELECTOR_ERROR);
+        $this->assertSelectorTextContains(self::CSS_SELECTOR_ERROR, 'Ligne 2');
+        $this->assertSelectorTextContains(self::CSS_SELECTOR_ERROR, 'Ligne 3');
     }
 
-    public function testImportWithValidSingleTerritoryRedirectsToFilteredList(): void
+    public function testImportWithValidCsvRedirectsToTerritoryFilteredList(): void
     {
         $territory = $this->territoryRepository->findOneBy(['zip' => '34', 'name' => 'Hérault']);
-        $this->assertNotNull($territory);
-
         // These rules do not exist in fixtures
         $csvContent = self::CSV_HEADERS
-            ."34 - Hérault;ACTIVE;CAF / MSA;all;prive;nsp;/;/;/;/;\n"
-            ."34 - Hérault;ACTIVE;CCAS;all;all;all;/;/;/;/;\n";
+            ."ACTIVE;CAF / MSA;all;prive;nsp;/;/;/;/;\n"
+            ."ACTIVE;CCAS;all;all;all;/;/;/;/;\n";
 
         $uploadedFile = $this->createUploadedCsv($csvContent);
-        $url = $this->router->generate('back_auto_affectation_rule_import');
-        $csrfToken = $this->generateCsrfToken($this->client, 'auto_affectation_rule_import');
 
-        $this->client->request('POST', $url, ['_token' => $csrfToken], ['csv_file' => $uploadedFile]);
-
-        $this->assertResponseRedirects();
-        $redirectUrl = $this->client->getResponse()->headers->get('Location');
-        $this->assertStringContainsString('territory='.$territory->getId(), $redirectUrl);
-    }
-
-    public function testImportWithMultipleTerritoriesRedirectsToUnfilteredList(): void
-    {
-        // Rules for two different territories
-        $csvContent = self::CSV_HEADERS
-            ."34 - Hérault;ACTIVE;CAF / MSA;all;prive;nsp;/;/;/;/;\n"
-            ."13 - Bouches-du-Rhône;ACTIVE;DDT/M;all;all;all;/;/;/;/;\n";
-
-        $uploadedFile = $this->createUploadedCsv($csvContent);
-        $url = $this->router->generate('back_auto_affectation_rule_import');
-        $csrfToken = $this->generateCsrfToken($this->client, 'auto_affectation_rule_import');
-
-        $this->client->request('POST', $url, ['_token' => $csrfToken], ['csv_file' => $uploadedFile]);
+        $this->client->request('POST',
+            $this->router->generate('back_auto_affectation_rule_import'),
+            $this->buildPostParams($territory->getId()),
+            ['auto_affectation_rule_import' => ['csvFile' => $uploadedFile]],
+        );
 
         $this->assertResponseRedirects();
-        $redirectUrl = $this->client->getResponse()->headers->get('Location');
-        $listUrl = $this->router->generate('back_auto_affectation_rule_index');
-        $this->assertStringNotContainsString('territory=', $redirectUrl);
-        $this->assertStringContainsString($listUrl, $redirectUrl);
+        $this->assertStringContainsString(
+            'territory='.$territory->getId(),
+            $this->client->getResponse()->headers->get('Location'),
+        );
     }
 
     public function testImportWithDuplicateRuleShowsConflictError(): void
     {
+        $territory = $this->territoryRepository->findOneBy(['zip' => '34', 'name' => 'Hérault']);
         // Exactly matches an existing fixture rule: Hérault / CAF_MSA / all / prive / caf
-        $csvContent = self::CSV_HEADERS
-            ."34 - Hérault;ACTIVE;CAF / MSA;all;prive;caf;/;/;/;/;\n";
+        $csvContent = self::CSV_HEADERS.'ACTIVE;CAF / MSA;all;prive;caf;/;/;/;/;';
 
         $uploadedFile = $this->createUploadedCsv($csvContent);
-        $url = $this->router->generate('back_auto_affectation_rule_import');
-        $csrfToken = $this->generateCsrfToken($this->client, 'auto_affectation_rule_import');
 
-        $this->client->request('POST', $url, ['_token' => $csrfToken], ['csv_file' => $uploadedFile]);
+        $this->client->request('POST',
+            $this->router->generate('back_auto_affectation_rule_import'),
+            $this->buildPostParams($territory->getId()),
+            ['auto_affectation_rule_import' => ['csvFile' => $uploadedFile]],
+        );
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists(self::cssSelectorError);
-        $this->assertSelectorTextContains(self::cssSelectorError, 'règle identique existe déjà');
+        $this->assertSelectorExists(self::CSS_SELECTOR_ERROR);
+        $this->assertSelectorTextContains(self::CSS_SELECTOR_ERROR, 'règle identique existe déjà');
     }
 
     public function testImportWithInvalidCsrfTokenShowsError(): void
     {
-        $csvContent = self::CSV_HEADERS.'34 - Hérault;ACTIVE;CCAS;all;all;nsp;/;/;/;/;';
-        $uploadedFile = $this->createUploadedCsv($csvContent);
-        $url = $this->router->generate('back_auto_affectation_rule_import');
+        $territory = $this->territoryRepository->findOneBy(['zip' => '34', 'name' => 'Hérault']);
+        $uploadedFile = $this->createUploadedCsv(self::CSV_HEADERS.'ACTIVE;CCAS;all;all;nsp;/;/;/;/;');
 
-        $this->client->request('POST', $url, ['_token' => 'invalid_token'], ['csv_file' => $uploadedFile]);
+        $this->client->request('POST',
+            $this->router->generate('back_auto_affectation_rule_import'),
+            ['_token' => 'invalid_token', 'auto_affectation_rule_import' => ['territory' => $territory->getId()]],
+            ['auto_affectation_rule_import' => ['csvFile' => $uploadedFile]],
+        );
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists(self::cssSelectorError);
+        $this->assertSelectorExists(self::CSS_SELECTOR_ERROR);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildPostParams(?int $territoryId): array
+    {
+        return [
+            '_token' => $this->generateCsrfToken($this->client, self::CSRF_TOKEN_ID),
+            'auto_affectation_rule_import' => ['territory' => $territoryId],
+        ];
     }
 
     private function createUploadedCsv(string $content): UploadedFile

@@ -16,7 +16,6 @@ class AutoAffectationRuleHeader
     public const string PROCEDURES_SUSPECTEES = 'Procédures suspectées';
 
     public const array REQUIRED_HEADERS = [
-        self::TERRITORY,
         self::STATUS,
         self::PARTNER_TYPE,
         self::PROFILE_DECLARANT,

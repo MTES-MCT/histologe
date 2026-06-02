@@ -54,16 +54,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>Territoire</td><td>Code département - Nom (ex : 34 - Hérault)</td><td>34 - Hérault</td></tr>
+                        {% set PartnerType = enum('\\App\\Entity\\Enum\\PartnerType') %}
+                        {% set ProfileDeclarant = enum('\\App\\Entity\\Enum\\ProfileDeclarant') %}
+                        {% set Qualification = enum('\\App\\Entity\\Enum\\Qualification') %}
                         <tr><td>Statut</td><td>ACTIVE ou ARCHIVED</td><td>ACTIVE</td></tr>
-                        <tr><td>Type de partenaire</td><td>Label du type (ex : CAF / MSA, CCAS, EPCI…)</td><td>CAF / MSA</td></tr>
-                        <tr><td>Profil déclarant</td><td>all, tiers, occupant ou nom de profil (LOCATAIRE, BAILLEUR…)</td><td>all</td></tr>
+                        <tr><td>Type de partenaire</td><td>Label du type ({{ PartnerType.getLabelList()|join(', ') }})</td><td>Dispositif rénovation habitat</td></tr>
+                        <tr><td>Profil déclarant</td><td>all, tiers, occupant, {{ ProfileDeclarant.names()|join(', ') }}</td><td>all</td></tr>
                         <tr><td>Parc</td><td>all, prive, public ou non_renseigne</td><td>prive</td></tr>
                         <tr><td>Allocataire</td><td>all, oui, non, caf, msa ou nsp</td><td>caf</td></tr>
                         <tr><td>Code insee inclus</td><td>Codes INSEE séparés par des virgules, ou / si vide</td><td>/</td></tr>
                         <tr><td>Code insee exclus</td><td>Codes INSEE séparés par des virgules, ou / si vide</td><td>34172</td></tr>
-                        <tr><td>Id partenaires exclus</td><td>IDs partenaires séparés par des virgules, ou / si vide</td><td>1060</td></tr>
-                        <tr><td>Procédures suspectées</td><td>Labels séparés par des virgules, ou / si vide</td><td>/</td></tr>
+                        <tr><td>Id partenaires exclus</td><td>IDs partenaires séparés par des virgules, ou / si vide</td><td>1045,1060</td></tr>
+                        <tr><td>Procédures suspectées</td><td>Labels séparés par des virgules, ou / si vide ({{ Qualification.getProcedureSuspecteeList()|map(e => e.label())|join(', ') }})</td><td>/</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -71,42 +73,46 @@
     </section>
 
     <section class="fr-col-12 fr-mt-4v">
-        <form method="POST" action="{{ path('back_auto_affectation_rule_import') }}" enctype="multipart/form-data">
-            <input type="hidden" name="_token" value="{{ csrf_token('auto_affectation_rule_import') }}">
-            <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12 fr-col-md-6">
-                    <div class="fr-upload-group">
-                        <label class="fr-label" for="csv_file">
-                            Fichier CSV
-                            <span class="fr-hint-text">Format accepté : .csv — Séparateur : point-virgule (;)</span>
-                        </label>
-                        <input
-                            class="fr-upload"
-                            type="file"
-                            id="csv_file"
-                            name="csv_file"
-                            accept=".csv,text/csv"
-                        >
-                    </div>
+        <div class="fr-notice fr-notice--warning">
+            <div class="fr-container">
+                <div class="fr-notice__body">
+                    <p>
+                        <span class="fr-notice__title">Attention</span>
+                        <span class="fr-notice__desc">Si des règles d'auto-affectation actives existent déjà sur le territoire sélectionné, elles seront archivées avant la création des nouvelles règles.</span>
+                    </p>
                 </div>
             </div>
-            <div class="fr-grid-row fr-mt-4w">
-                <div class="fr-col-12">
-                    <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline fr-btns-group--icon-left">
-                        <li>
-                            <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-upload-line">
-                                Importer les règles
-                            </button>
-                        </li>
-                        <li>
-                            <a href="{{ path('back_auto_affectation_rule_index') }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-close-line">
-                                Annuler
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+        </div>
+    </section>
+
+    <section class="fr-col-12 fr-mt-4v">
+        {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+        <input type="hidden" name="_token" value="{{ csrf_token('auto_affectation_rule_import') }}">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-6">
+                {{ form_row(form.territory) }}
             </div>
-        </form>
+            <div class="fr-col-12 fr-col-md-6">
+                {{ form_row(form.csvFile) }}
+            </div>
+        </div>
+        <div class="fr-grid-row fr-mt-4w">
+            <div class="fr-col-12">
+                <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline fr-btns-group--icon-left">
+                    <li>
+                        <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-upload-line">
+                            Importer les règles
+                        </button>
+                    </li>
+                    <li>
+                        <a href="{{ path('back_auto_affectation_rule_index') }}" class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-close-line">
+                            Annuler
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        {{ form_end(form) }}
     </section>
 {% endblock %}
 

@@ -3,6 +3,8 @@
 namespace App\Controller\Back;
 
 use App\Entity\AutoAffectationRule;
+use App\Entity\Territory;
+use App\Form\AutoAffectationRuleImportType;
 use App\Form\AutoAffectationRuleType;
 use App\Form\SearchAutoAffectationRuleType;
 use App\Repository\AutoAffectationRuleRepository;
@@ -17,6 +19,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -185,43 +188,58 @@ class AutoAffectationRuleController extends AbstractController
         Request $request,
         AutoAffectationRuleLoader $loader,
     ): Response {
-        if (!$request->isMethod('POST')) {
-            return $this->renderImport([]);
+        $form = $this->createForm(AutoAffectationRuleImportType::class);
+        $form->handleRequest($request);
+
+        if (!$form->isSubmitted()) {
+            return $this->renderImport($form, []);
         }
 
         if (!$this->isCsrfTokenValid('auto_affectation_rule_import', (string) $request->request->get('_token'))) {
-            return $this->renderImport([MessageHelper::ERROR_MESSAGE_CSRF]);
+            return $this->renderImport($form, [MessageHelper::ERROR_MESSAGE_CSRF]);
         }
 
-        [$parseErrors, $data] = $this->parseCsvFile($request);
+        if (!$form->isValid()) {
+            return $this->renderImport($form, []);
+        }
+
+        /** @var Territory $territory */
+        $territory = $form->get('territory')->getData();
+        /** @var UploadedFile|null $csvFile */
+        $csvFile = $form->get('csvFile')->getData();
+
+        [$parseErrors, $data] = $this->parseCsvFile($csvFile);
         if (!empty($parseErrors)) {
-            return $this->renderImport($parseErrors);
+            return $this->renderImport($form, $parseErrors);
         }
 
-        $errors = $loader->validate($data);
+        $errors = $loader->validate($data, $territory);
         if (!empty($errors)) {
-            return $this->renderImport($errors);
+            return $this->renderImport($form, $errors);
         }
 
-        $loader->load($data);
+        $loader->load($data, $territory);
         $metadata = $loader->getMetadata();
         $this->addFlash('success', [
             'title' => 'Import réussi',
-            'message' => sprintf('%d règle(s) d\'auto-affectation importée(s) avec succès.', $metadata['nb_rules_created']),
+            'message' => sprintf(
+                '%d règle(s) créée(s) sur le territoire %s. %s',
+                $metadata['nb_rules_created'],
+                $territory->getZipAndName(),
+                $metadata['nb_rules_archived'] > 0
+                    ? sprintf('%d règle(s) existante(s) archivée(s).', $metadata['nb_rules_archived'])
+                    : '',
+            ),
         ]);
 
-        $territoryIds = $metadata['imported_territory_ids'];
-        $redirectParams = 1 === \count($territoryIds) ? ['territory' => $territoryIds[0]] : [];
-
-        return $this->redirectToRoute('back_auto_affectation_rule_index', $redirectParams, Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('back_auto_affectation_rule_index', ['territory' => $territory->getId()], Response::HTTP_SEE_OTHER);
     }
 
     /**
      * @return array{0: string[], 1: array<int, array<string, string>>}
      */
-    private function parseCsvFile(Request $request): array
+    private function parseCsvFile(?UploadedFile $file): array
     {
-        $file = $request->files->get('csv_file');
         if (null === $file) {
             return [['Veuillez sélectionner un fichier CSV.'], []];
         }
@@ -249,10 +267,11 @@ class AutoAffectationRuleController extends AbstractController
     }
 
     /**
-     * @param string[] $errors
+     * @param FormInterface<mixed> $form
+     * @param string[]             $errors
      */
-    private function renderImport(array $errors): Response
+    private function renderImport(FormInterface $form, array $errors): Response
     {
-        return $this->render('back/auto-affectation-rule/import.html.twig', ['errors' => $errors]);
+        return $this->render('back/auto-affectation-rule/import.html.twig', ['form' => $form, 'errors' => $errors]);
     }
 }
