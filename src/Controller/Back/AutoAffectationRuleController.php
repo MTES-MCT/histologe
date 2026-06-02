@@ -18,6 +18,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -198,17 +199,19 @@ class AutoAffectationRuleController extends AbstractController
         if (!$this->isCsrfTokenValid('auto_affectation_rule_import', (string) $request->request->get('_token'))) {
             return $this->renderImport($form, [MessageHelper::ERROR_MESSAGE_CSRF]);
         }
+
+        /** @var UploadedFile|null $csvFile */
+        $csvFile = $form->get('csvFile')->getData();
+        if (null === $csvFile) {
+            $form->get('csvFile')->addError(new FormError('Veuillez sélectionner un fichier CSV.'));
+        }
+
         if (!$form->isValid()) {
             return $this->renderImport($form, []);
         }
 
         /** @var Territory $territory */
         $territory = $form->get('territory')->getData();
-        if (empty($territory)) {
-            return $this->renderImport($form, ['Veuillez sélectionner un territoire.']);
-        }
-        /** @var UploadedFile|null $csvFile */
-        $csvFile = $form->get('csvFile')->getData();
 
         [$parseErrors, $data] = $this->parseCsvFile($csvFile);
         if (!empty($parseErrors)) {

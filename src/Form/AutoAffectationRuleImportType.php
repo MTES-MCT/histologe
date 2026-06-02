@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
  * @extends AbstractType<mixed>
@@ -23,6 +24,7 @@ class AutoAffectationRuleImportType extends AbstractType
                 'required' => false,
                 'label' => 'Territoire',
                 'placeholder' => 'Sélectionnez un territoire',
+                'constraints' => [new NotNull(message: 'Veuillez sélectionner un territoire.')],
             ])
             ->add('csvFile', FileType::class, [
                 'label' => 'Fichier CSV',
