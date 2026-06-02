@@ -193,6 +193,11 @@ class JobEventQuery
             ->setParameter('status_success', JobEvent::STATUS_SUCCESS)
             ->setParameter('status_failed', JobEvent::STATUS_FAILED);
 
-        return $qb->getQuery()->getSingleResult();
+        $result = $qb->getQuery()->getSingleResult();
+
+        return [
+            'success_count' => (int) ($result['success_count'] ?? 0),
+            'failed_count' => (int) ($result['failed_count'] ?? 0),
+        ];
     }
 }

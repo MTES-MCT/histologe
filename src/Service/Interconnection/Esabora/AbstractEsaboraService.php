@@ -98,7 +98,6 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
         DossierResponseInterface|DossierCollectionResponseInterface $dossierResponse,
     ): bool {
         return Response::HTTP_OK === $dossierResponse->getStatusCode()
-            && null !== $dossierResponse->getSasEtat()
             && null === $dossierResponse->getErrorReason();
     }
 
