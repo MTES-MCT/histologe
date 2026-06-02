@@ -86,10 +86,10 @@ class EsaboraManager
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: 'Signalement <b>'.$description.'</b>',
-                sendMail: EsaboraStatus::ESABORA_WAIT->value === $dossierResponse->getSasEtat() ? false : true,
                 category: SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
                 partner: $affectation->getPartner(),
                 user: $adminUser,
+                sendMail: EsaboraStatus::ESABORA_WAIT->value === $dossierResponse->getSasEtat() ? false : true,
             );
         }
     }
