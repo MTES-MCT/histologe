@@ -44,7 +44,7 @@ class EntityHistoryListener
 
     public function onFlush(OnFlushEventArgs $eventArgs): void
     {
-        if (!$this->historyTrackingEnable) {
+        /*if (!$this->historyTrackingEnable) {
             return;
         }
         $this->uow = $eventArgs->getObjectManager()->getUnitOfWork();
@@ -80,7 +80,7 @@ class EntityHistoryListener
             } catch (\Throwable $exception) {
                 $this->logger->error($exception->getMessage());
             }
-        }
+        }*/
     }
 
     /**

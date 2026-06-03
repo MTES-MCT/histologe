@@ -20,11 +20,11 @@ class UserCreatedListener
 
     public function postPersist(PostPersistEventArgs $args): void
     {
-        $entity = $args->getObject();
+        /*$entity = $args->getObject();
 
         if ($entity instanceof User && $entity->isActivateAccountNotificationEnabled()) {
             $this->sendNotification($entity);
-        }
+        }*/
     }
 
     private function sendNotification(User $user): void

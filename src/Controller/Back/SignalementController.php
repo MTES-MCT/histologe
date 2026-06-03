@@ -38,6 +38,7 @@ use App\Repository\InterventionRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
+use App\Repository\SuiviRepository;
 use App\Repository\TagRepository;
 use App\Repository\TiersInvitationRepository;
 use App\Repository\UserRepository;
@@ -71,6 +72,36 @@ class SignalementController extends AbstractController
 {
     public function __construct(private EmailAlertChecker $emailAlertBuilder)
     {
+    }
+
+    #[Route('/{uuid:signalement}/debug2', name: 'back_signalement_debug2')]
+    public function debug2Signalement(
+        Signalement $signalement, 
+        InterventionRepository $interventionRepository,
+        EntityManagerInterface $entityManager,
+        SuiviManager $suiviManager,
+        VisiteNotifier $visiteNotifier,
+    ) : Response {
+        $intervention = $interventionRepository->find(1);
+        $intervention->setDetails('test description'.uniqid());
+
+        $suivi = $suiviManager->createSuivi(
+            signalement: $intervention->getSignalement(),
+            description: 'bla bla bla',
+            category: SuiviCategory::INTERVENTION_IS_CANCELED,
+            isVisibleForUsager: true,
+            sendMail: false,
+        );
+
+        $visiteNotifier->notifyUsagers(
+            intervention: $intervention,
+            notificationMailerType: NotificationMailerType::TYPE_VISITE_CANCELED_TO_USAGER,
+            suivi: $suivi
+        );
+        
+        $entityManager->flush();
+
+        return new Response('<html><body>DEBUG</body></html>');
     }
 
     #[Route('/{uuid:signalement}/debug', name: 'back_signalement_debug')]

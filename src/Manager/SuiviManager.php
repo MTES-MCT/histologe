@@ -14,8 +14,8 @@ use App\Entity\Suivi;
 use App\Entity\SuiviFile;
 use App\Entity\TiersInvitation;
 use App\Entity\User;
-use App\Event\SuiviCreatedEvent;
 use App\Security\User\SignalementUser;
+use App\Service\Notification\NotificationAndMailSender;
 use App\Utils\DateHelper;
 use App\Utils\DictionaryProvider;
 use App\Utils\Sanitizer;
@@ -29,6 +29,7 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 class SuiviManager
 {
     private const string DATE_FORMAT = 'd/m/Y';
+    private const string SEPARATOR_MOTIF_REFUS = 'Plus précisément :<br />';
 
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
@@ -42,6 +43,7 @@ class SuiviManager
         private readonly bool $editionSuiviEnable,
         private readonly ClockInterface $clock,
         private readonly DictionaryProvider $dictionaryProvider,
+        private readonly NotificationAndMailSender $notificationAndMailSender
     ) {
     }
 
@@ -103,10 +105,83 @@ class SuiviManager
         if ($flush) {
             //$this->entityManager->flush();  TODO : Symfony 8.0 (gerer l'impact) 
         }
-        $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME);
+        $this->onSuiviCreated($suivi);
 
         return $suivi;
     }
+
+    public function onSuiviCreated(Suivi $suivi): void
+    {
+        if (!$suivi->getSendMail()) {
+            return;
+        }
+        $signalementStatus = $suivi->getSignalement()->getStatut();
+        if (in_array($signalementStatus, SignalementStatus::excludedStatuses(includeInjonctionBailleur: false))) {
+            return;
+        }
+        if ($suivi->isWaitingNotification()) {
+            return;
+        }
+        $this->sendToAdminAndPartners($suivi);
+        $this->sendToUsagers($suivi);
+        $this->sendToBailleur($suivi);
+    }
+
+    private function sendToAdminAndPartners(Suivi $suivi): void
+    {
+        if (in_array($suivi->getCategory(), SuiviCategory::categoriesNotifyUsagerOnly()) || in_array($suivi->getCategory(), SuiviCategory::injonctionBailleurCategories())) {
+            return;
+        }
+        if (SuiviCategory::SIGNALEMENT_IS_CLOSED === $suivi->getCategory()) {
+            $this->notificationAndMailSender->sendSignalementIsClosedToPartners($suivi);
+        } elseif (SuiviCategory::DEMANDE_ABANDON_PROCEDURE === $suivi->getCategory()) {
+            $this->notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);
+
+            return;
+        } else {
+            $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners(
+                suivi: $suivi,
+                sendEmail: (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut())
+            );
+        }
+    }
+
+    private function sendToUsagers(Suivi $suivi): void
+    {
+        if ($suivi->getIsVisibleForUsager()) {
+            if (SuiviCategory::DEMANDE_ABANDON_PROCEDURE === $suivi->getCategory()) {
+                $this->notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
+
+                return;
+            }
+            switch ($suivi->getCategory()) {
+                case SuiviCategory::SIGNALEMENT_IS_CLOSED:
+                    $this->notificationAndMailSender->sendSignalementIsClosedToUsager($suivi);
+                    break;
+                case SuiviCategory::SIGNALEMENT_IS_REFUSED:
+                    $motifDescription = \explode(self::SEPARATOR_MOTIF_REFUS, $suivi->getDescription())[1];
+                    $this->notificationAndMailSender->sendSignalementIsRefusedToUsager($suivi, $motifDescription);
+                    break;
+                case SuiviCategory::SIGNALEMENT_IS_ACTIVE:
+                    $this->notificationAndMailSender->sendSignalementIsAcceptedToUsager($suivi);
+                    break;
+                default:
+                    if (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut()
+                            && SignalementStatus::REFUSED !== $suivi->getSignalement()->getStatut()) {
+                        $this->notificationAndMailSender->sendNewSuiviToUsagers($suivi);
+                    }
+                    break;
+            }
+        }
+    }
+
+    private function sendToBailleur(Suivi $suivi): void
+    {
+        if ($suivi->getIsVisibleForBailleur() && !in_array($suivi->getCategory(), SuiviCategory::categoriesSubmittedByBailleur())) {
+            $this->notificationAndMailSender->sendNewSuiviToBailleur($suivi);
+        }
+    }
+
 
     private function doesUserNeedSubscription(
         ?User $user,
