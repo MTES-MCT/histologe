@@ -3,6 +3,11 @@ nelmio_api_doc:
         info:
             title: '%platform_name%'
             description:  |
+             ## CHANGELOG 1.3.4 - 2026-06
+             Cette version ajoute une nouvelle donnée pour les affectations.
+             ### AJOUTS
+             - Ajout de la propriété `partnerType` dans l'objet `affectation` retourné par l'endpoint `api/signalements`.
+     
              ## CHANGELOG 1.3.3 - 2026-05
              Cette version introduit deux nouvelles données pour les signalements.
              ### AJOUTS
@@ -245,7 +250,7 @@ nelmio_api_doc:
                 | 404  | Not Found             | La ressource est introuvable                                                         |
                 | 500  | Internal Server Error | Une erreur serveur s'est produite (l'équipe technique est notifiée automatiquement)  |
 
-            version: 1.3.2
+            version: 1.3.4
         components:
             securitySchemes:
                 Bearer:
