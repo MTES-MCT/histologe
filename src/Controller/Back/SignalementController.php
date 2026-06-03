@@ -14,9 +14,11 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Intervention;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\Entity\UserSignalementSubscription;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
 use App\Factory\SignalementSearchQueryFactory;
@@ -38,7 +40,6 @@ use App\Repository\InterventionRepository;
 use App\Repository\NotificationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
-use App\Repository\SuiviRepository;
 use App\Repository\TagRepository;
 use App\Repository\TiersInvitationRepository;
 use App\Repository\UserRepository;
@@ -74,31 +75,45 @@ class SignalementController extends AbstractController
     {
     }
 
-    #[Route('/{uuid:signalement}/debug2', name: 'back_signalement_debug2')]
+    #[Route('/debug2', name: 'back_signalement_debug2')]
     public function debug2Signalement(
-        Signalement $signalement, 
-        InterventionRepository $interventionRepository,
         EntityManagerInterface $entityManager,
-        SuiviManager $suiviManager,
-        VisiteNotifier $visiteNotifier,
-    ) : Response {
-        $intervention = $interventionRepository->find(1);
-        $intervention->setDetails('test description'.uniqid());
+        NotificationAndMailSender $notificationAndMailSender,
+    ): Response {
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['statut' => SignalementStatus::INJONCTION_BAILLEUR]);
+        $partner = $entityManager->getRepository(Partner::class)->findOneBy(['territory' => $signalement->getTerritory()]);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $affectation = (new Affectation())
+            ->setSignalement($signalement)
+            ->setPartner($partner)
+            ->setStatut(AffectationStatus::ACCEPTED)
+            ->setTerritory($signalement->getTerritory())
+            ->setCreatedAt(new \DateTimeImmutable())
+            ->setAffectedBy($user)
+            ->setAnsweredBy($user)
+            ->setAnsweredAt(new \DateTimeImmutable())
+            ->setIsSynchronized(false);
 
-        $suivi = $suiviManager->createSuivi(
-            signalement: $intervention->getSignalement(),
-            description: 'bla bla bla',
-            category: SuiviCategory::INTERVENTION_IS_CANCELED,
-            isVisibleForUsager: true,
-            sendMail: false,
-        );
+        $notificationAndMailSender->sendNewAffectation($affectation);
+        $entityManager->persist($affectation);
 
-        $visiteNotifier->notifyUsagers(
-            intervention: $intervention,
-            notificationMailerType: NotificationMailerType::TYPE_VISITE_CANCELED_TO_USAGER,
-            suivi: $suivi
-        );
-        
+        foreach ($partner->getUsers() as $user) {
+            $subscription = $entityManager->getRepository(UserSignalementSubscription::class)->findOneBy(['user' => $user, 'signalement' => $affectation->getSignalement()]);
+            if ($subscription) {
+                continue;
+            }
+            $subscription = new UserSignalementSubscription();
+            $subscription
+                ->setUser($user)
+                ->setSignalement($affectation->getSignalement())
+                ->setCreatedBy($user)
+                ->setIsLegacy(true);
+            $entityManager->persist($subscription);
+        }
+
+        $entityManager->flush();
+
+        $entityManager->remove($affectation);
         $entityManager->flush();
 
         return new Response('<html><body>DEBUG</body></html>');
@@ -106,12 +121,12 @@ class SignalementController extends AbstractController
 
     #[Route('/{uuid:signalement}/debug', name: 'back_signalement_debug')]
     public function debugSignalement(
-        Signalement $signalement, 
-        EntityManagerInterface $entityManager, 
+        Signalement $signalement,
+        EntityManagerInterface $entityManager,
         InterventionRepository $interventionRepository,
         SuiviManager $suiviManager,
         VisiteNotifier $visiteNotifier,
-        ): Response {
+    ): Response {
         /** @var User $user */
         $user = $this->getUser();
         $territory = $signalement->getTerritory();
@@ -128,7 +143,7 @@ class SignalementController extends AbstractController
             signalement: $intervention->getSignalement(),
             description: $description,
             category: SuiviCategory::INTERVENTION_IS_CANCELED,
-            //partner: $context['createdByPartner'],
+            // partner: $context['createdByPartner'],
             user: $user,
             isVisibleForUsager: true,
             sendMail: false,
@@ -145,7 +160,7 @@ class SignalementController extends AbstractController
             suivi: $suivi,
             currentUser: $user,
         );
-        
+
         $entityManager->flush();
 
         return new Response('<html><body>DEBUG</body></html>');

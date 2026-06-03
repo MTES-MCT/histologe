@@ -2698,7 +2698,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     public function getTimezone(): ?string
-    {   
+    {
         if (null === $this->getTerritory()->getId()) {
             return TimezoneProvider::TIMEZONE_EUROPE_PARIS;
         }

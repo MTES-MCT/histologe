@@ -101,7 +101,7 @@ class InterventionManager
             $this->interventionPlanningStateMachine->apply($intervention, 'cancel', $context);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
-        
+
             return null;
         }
 

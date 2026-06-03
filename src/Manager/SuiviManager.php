@@ -43,7 +43,7 @@ class SuiviManager
         private readonly bool $editionSuiviEnable,
         private readonly ClockInterface $clock,
         private readonly DictionaryProvider $dictionaryProvider,
-        private readonly NotificationAndMailSender $notificationAndMailSender
+        private readonly NotificationAndMailSender $notificationAndMailSender,
     ) {
     }
 
@@ -103,7 +103,7 @@ class SuiviManager
         }
         $this->entityManager->persist($suivi);
         if ($flush) {
-            //$this->entityManager->flush();  //TODO : sortir de la méthode pour rationaliser les flush
+            $this->entityManager->flush();  // TODO : sortir de la méthode pour rationaliser les flush
         }
         $this->onSuiviCreated($suivi);
 
@@ -181,7 +181,6 @@ class SuiviManager
             $this->notificationAndMailSender->sendNewSuiviToBailleur($suivi);
         }
     }
-
 
     private function doesUserNeedSubscription(
         ?User $user,

@@ -317,6 +317,7 @@ class SignalementVisitesController extends AbstractController
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de l\'annulation de la visite.'];
         }
         $entityManager->flush();
+
         return $this->buildVisitesAjaxResponse(
             intervention: $intervention,
             interventionRepository: $interventionRepository,
