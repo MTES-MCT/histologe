@@ -47,7 +47,20 @@ class SignalementResponse
     #[OA\Property(
         description: 'Liste des affectations.',
         type: 'array',
-        items: new OA\Items(ref: new Model(type: Affectation::class))
+        items: new OA\Items(ref: new Model(type: Affectation::class)),
+        example: [
+            [
+                'uuid' => 'e96325bf-139e-4793-a7b4-a4c713a0fbd9',
+                'partenaireUuid' => '85401893-8d92-11f0-8aa8-f6901f1203f4',
+                'partenaireNom' => 'Ville de Marseille',
+                'partenaireType' => 'COMMUNE_SCHS',
+                'statut' => 'FERME',
+                'dateAffectation' => '2025-01-05T14:30:15+00:00',
+                'dateAcceptation' => '2025-01-05T14:30:15+00:00',
+                'motifCloture' => 'LOGEMENT_DECENT',
+                'motifRefus' => 'HORS_COMPETENCE',
+            ],
+        ]
     )]
     public array $affectations = [];
 
