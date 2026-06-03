@@ -22,10 +22,10 @@ class SuiviTransformerListener
      */
     public function postLoad(LifecycleEventArgs $args): void
     {
-        /*$entity = $args->getObject();
+        $entity = $args->getObject();
 
         if ($entity instanceof Suivi) {
             $entity->setSuiviTransformerService($this->suiviTransformerService);
-        }*/
+        }
     }
 }

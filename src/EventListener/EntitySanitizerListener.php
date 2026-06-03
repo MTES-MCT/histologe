@@ -25,10 +25,10 @@ readonly class EntitySanitizerListener
      */
     public function prePersist(LifecycleEventArgs $eventArgs): void
     {
-        /*$entity = $eventArgs->getObject();
+        $entity = $eventArgs->getObject();
         if ($entity instanceof EntitySanitizerInterface) {
             $entity->sanitize($this->htmlSanitizer);
-        }*/
+        }
     }
 
     /**
@@ -36,9 +36,9 @@ readonly class EntitySanitizerListener
      */
     public function preUpdate(LifecycleEventArgs $eventArgs): void
     {
-        /*$entity = $eventArgs->getObject();
+        $entity = $eventArgs->getObject();
         if ($entity instanceof EntitySanitizerInterface) {
             $entity->sanitize($this->htmlSanitizer);
-        }*/
+        }
     }
 }

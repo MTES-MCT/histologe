@@ -2699,13 +2699,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getTimezone(): ?string
     {   
-        //return TimezoneProvider::TIMEZONE_EUROPE_PARIS; <- fix the issue
-        //dump($this->getTerritory());
-        //dump($this->getTerritory()->getId());
-        dump($this->getTerritory()->getTimezone()); //timezone ok
-        dump($this->getTerritory()); //object territory non initialisé !!!
-        dump($this->getTerritory()->getId());
-        dump($this->getTerritory());
         if (null === $this->getTerritory()->getId()) {
             return TimezoneProvider::TIMEZONE_EUROPE_PARIS;
         }

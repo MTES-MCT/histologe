@@ -103,7 +103,7 @@ class SuiviManager
         }
         $this->entityManager->persist($suivi);
         if ($flush) {
-            //$this->entityManager->flush();  TODO : Symfony 8.0 (gerer l'impact) 
+            //$this->entityManager->flush();  //TODO : sortir de la méthode pour rationaliser les flush
         }
         $this->onSuiviCreated($suivi);
 

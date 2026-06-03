@@ -114,11 +114,11 @@ class SignalementController extends AbstractController
         ): Response {
         /** @var User $user */
         $user = $this->getUser();
-        /*$territory = $signalement->getTerritory();
-        $user->getPartnerInTerritory($territory);*/
+        $territory = $signalement->getTerritory();
+        $user->getPartnerInTerritory($territory);
 
         $intervention = $interventionRepository->find(1);
-        //$intervention->setDetails('test details'.uniqid());
+        $intervention->setDetails('test details'.uniqid());
 
         $description = 'Annulation de visite :';
         $description .= ' la visite du logement prévue le '.$intervention->getScheduledAt()->format('d/m/Y');
@@ -140,11 +140,11 @@ class SignalementController extends AbstractController
             suivi: $suivi
         );
 
-        /*$visiteNotifier->notifyInAppSubscribers(
+        $visiteNotifier->notifyInAppSubscribers(
             intervention: $intervention,
             suivi: $suivi,
             currentUser: $user,
-        );*/
+        );
         
         $entityManager->flush();
 

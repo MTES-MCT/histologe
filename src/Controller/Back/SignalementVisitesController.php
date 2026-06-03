@@ -311,12 +311,7 @@ class SignalementVisitesController extends AbstractController
         );
         /** @var User $user */
         $user = $this->getUser();
-        // In Doctrine ORM 3.x, ManyToOne associations are lazy ghost objects with all properties uninitialized.
-        // flush() reads properties via reflection (bypassing __get), treating uninitialized props as null
-        // and generating "UPDATE territory SET zip = NULL, name = NULL, ..." — initializeObject() prevents this.
-        $territory = $signalement->getTerritory();
-        //$entityManager->initializeObject($territory);
-        if ($interventionManager->cancelVisiteFromRequest($visiteRequest, $user->getPartnerInTerritory($territory))) {
+        if ($interventionManager->cancelVisiteFromRequest($visiteRequest, $user->getPartnerInTerritory($signalement->getTerritory()))) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Visite annulée', 'message' => 'La visite a bien été annulée.'];
         } else {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de l\'annulation de la visite.'];

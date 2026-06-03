@@ -39,7 +39,7 @@ class VisiteNotifier
             return;
         }
         $toRecipients = $intervention->getSignalement()->getMailUsagers();
-        //$this->notificationAndMailSender->createInAppUsagersNotifications($suivi);
+        $this->notificationAndMailSender->createInAppUsagersNotifications($suivi);
         foreach ($toRecipients as $toRecipient) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(

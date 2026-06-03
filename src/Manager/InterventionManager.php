@@ -96,14 +96,14 @@ class InterventionManager
         }
 
         $intervention->setDetails($visiteRequest->getDetails());
-        //try {
+        try {
             $context['createdByPartner'] = $createdByPartner;
             $this->interventionPlanningStateMachine->apply($intervention, 'cancel', $context);
-        //} catch (\Exception $e) {
-        //    $this->logger->error($e->getMessage());
-        //
-        //    return null;
-        //}
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
+        
+            return null;
+        }
 
         return $intervention;
     }
