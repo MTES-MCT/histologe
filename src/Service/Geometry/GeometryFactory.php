@@ -41,7 +41,12 @@ class GeometryFactory
                 if (empty($parsed['value'])) {
                     throw new \InvalidArgumentException('Empty GEOMETRYCOLLECTION');
                 }
-                $parsed = $parsed['value'][0];
+                $firstGeometry = $parsed['value'][0];
+                if (!\is_array($firstGeometry) || !isset($firstGeometry['type'])) {
+                    throw new \InvalidArgumentException('Invalid GEOMETRYCOLLECTION structure');
+                }
+                /** @var array{type: string, value: mixed, srid?: int|null, dimension?: string|null} $parsed */
+                $parsed = $firstGeometry;
                 $parsed['srid'] ??= null;
             }
 
