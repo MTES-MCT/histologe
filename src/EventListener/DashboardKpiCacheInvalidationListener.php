@@ -57,6 +57,7 @@ final readonly class DashboardKpiCacheInvalidationListener
             );
 
             // DOSSIERS_A_FERMER - Dossiers fermés par tous les partenaires
+            // DOSSIERS_A_FERMER - Dossiers fermés par les communes
             $this->invalidateTerritoryKpiTags(
                 TabCountKpiCacheHelper::DOSSIERS_A_FERMER,
                 $territoryId
