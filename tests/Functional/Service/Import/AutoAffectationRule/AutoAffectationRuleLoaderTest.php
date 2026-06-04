@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Service\Import\AutoAffectationRule;
 use App\Entity\AutoAffectationRule;
 use App\Entity\Territory;
 use App\Repository\AutoAffectationRuleRepository;
+use App\Repository\CommuneRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Import\AutoAffectationRule\AutoAffectationRuleHeader;
@@ -32,6 +33,7 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
         $this->loader = new AutoAffectationRuleLoader(
             static::getContainer()->get(AutoAffectationRuleRepository::class),
             static::getContainer()->get(PartnerRepository::class),
+            static::getContainer()->get(CommuneRepository::class),
             $this->entityManager,
         );
     }
@@ -81,6 +83,15 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
 
         $this->assertCount(1, $errors);
         $this->assertStringContainsString('Allocataire "inconnu" invalide', $errors[0]);
+    }
+
+    public function testValidateReturnsErrorForInseeCodesOutsideTerritory(): void
+    {
+        $errors = $this->loader->validate([$this->buildRow(inseeToInclude: '75056')], $this->herault);
+
+        $this->assertCount(1, $errors);
+        $this->assertStringContainsString('Codes INSEE à inclure hors du territoire', $errors[0]);
+        $this->assertStringContainsString('75056', $errors[0]);
     }
 
     public function testValidateAccumulatesMultipleErrorsOnSameLine(): void

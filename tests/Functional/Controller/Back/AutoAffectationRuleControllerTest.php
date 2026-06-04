@@ -130,12 +130,11 @@ class AutoAffectationRuleControllerTest extends WebTestCase
 
         $this->client->request('POST',
             $this->router->generate('back_auto_affectation_rule_import'),
-            ['_token' => 'invalid_token', 'auto_affectation_rule_import' => ['territory' => $territory->getId()]],
+            ['auto_affectation_rule_import' => ['territory' => $territory->getId(), '_token' => 'invalid_token']],
             ['auto_affectation_rule_import' => ['csvFile' => $uploadedFile]],
         );
 
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists(self::CSS_SELECTOR_ERROR);
+        $this->assertResponseStatusCodeSame(422);
     }
 
     /**
@@ -144,8 +143,10 @@ class AutoAffectationRuleControllerTest extends WebTestCase
     private function buildPostParams(?int $territoryId): array
     {
         return [
-            '_token' => $this->generateCsrfToken($this->client, self::CSRF_TOKEN_ID),
-            'auto_affectation_rule_import' => ['territory' => $territoryId],
+            'auto_affectation_rule_import' => [
+                'territory' => $territoryId,
+                '_token' => $this->generateCsrfToken($this->client, self::CSRF_TOKEN_ID),
+            ],
         ];
     }
 

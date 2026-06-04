@@ -62,10 +62,10 @@
                         <tr><td>Profil déclarant</td><td>all, tiers, occupant, {{ ProfileDeclarant.names()|join(', ') }}</td><td>all</td></tr>
                         <tr><td>Parc</td><td>all, prive, public ou non_renseigne</td><td>prive</td></tr>
                         <tr><td>Allocataire</td><td>all, oui, non, caf, msa ou nsp</td><td>caf</td></tr>
-                        <tr><td>Code insee inclus</td><td>Codes INSEE séparés par des virgules, ou / si vide</td><td>/</td></tr>
-                        <tr><td>Code insee exclus</td><td>Codes INSEE séparés par des virgules, ou / si vide</td><td>34172</td></tr>
-                        <tr><td>Id partenaires exclus</td><td>IDs partenaires séparés par des virgules, ou / si vide</td><td>1045,1060</td></tr>
-                        <tr><td>Procédures suspectées</td><td>Labels séparés par des virgules, ou / si vide ({{ Qualification.getProcedureSuspecteeList()|map(e => e.label())|join(', ') }})</td><td>/</td></tr>
+                        <tr><td>Code insee inclus</td><td>Codes INSEE séparés par des virgules, laisser vide si non applicable</td><td>34172,34173</td></tr>
+                        <tr><td>Code insee exclus</td><td>Codes INSEE séparés par des virgules, laisser vide si non applicable</td><td>34001</td></tr>
+                        <tr><td>Id partenaires exclus</td><td>IDs partenaires séparés par des virgules, laisser vide si non applicable</td><td>1045,1060</td></tr>
+                        <tr><td>Procédures suspectées</td><td>Labels séparés par des virgules, laisser vide si non applicable</td><td>Insalubrité, Danger</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -87,7 +87,6 @@
 
     <section class="fr-col-12 fr-mt-4v">
         {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
-        <input type="hidden" name="_token" value="{{ csrf_token('auto_affectation_rule_import') }}">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-md-6">
                 {{ form_row(form.territory) }}

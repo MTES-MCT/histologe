@@ -3,11 +3,13 @@
 namespace App\Service\Import\AutoAffectationRule;
 
 use App\Entity\AutoAffectationRule;
+use App\Entity\Commune;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\Qualification;
 use App\Entity\Territory;
 use App\Repository\AutoAffectationRuleRepository;
+use App\Repository\CommuneRepository;
 use App\Repository\PartnerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -29,6 +31,7 @@ class AutoAffectationRuleLoader
     public function __construct(
         private readonly AutoAffectationRuleRepository $autoAffectationRuleRepository,
         private readonly PartnerRepository $partnerRepository,
+        private readonly CommuneRepository $communeRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -161,11 +164,24 @@ class AutoAffectationRuleLoader
      */
     private function buildRowErrors(array $parsed, Territory $territory): string
     {
+        $territoryInseeCodes = $this->getTerritoryInseeCodes($territory);
+
         return $this->validateCoreFields($parsed)
-            .$this->validateInseeCodes($parsed['inseeToInclude'] ?? [], 'inclure')
-            .$this->validateInseeCodes($parsed['inseeToExclude'] ?? [], 'exclure')
+            .$this->validateInseeCodes($parsed['inseeToInclude'] ?? [], 'inclure', $territory, $territoryInseeCodes)
+            .$this->validateInseeCodes($parsed['inseeToExclude'] ?? [], 'exclure', $territory, $territoryInseeCodes)
             .$this->validatePartnersToExclude($parsed['partnerToExclude'], $territory, $parsed['partnerType'])
             .$this->validateProceduresSuspectees($parsed['rawProcedures']);
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getTerritoryInseeCodes(Territory $territory): array
+    {
+        return array_values(array_unique(array_map(
+            static fn (Commune $commune): string => $commune->getCodeInsee(),
+            $this->communeRepository->findBy(['territory' => $territory]),
+        )));
     }
 
     /**
@@ -196,20 +212,34 @@ class AutoAffectationRuleLoader
 
     /**
      * @param array<string> $codes
+     * @param string[]      $territoryInseeCodes
      */
-    private function validateInseeCodes(array $codes, string $direction): string
+    private function validateInseeCodes(array $codes, string $direction, Territory $territory, array $territoryInseeCodes): string
     {
-        $invalidCodes = array_filter($codes, static fn (string $code) => !preg_match('/^\d{5}$/', $code));
+        $invalidCodes = array_filter($codes, static fn (string $code) => !(bool) preg_match('/^\d{5}$/', $code));
+        $errors = '';
 
-        if (empty($invalidCodes)) {
-            return '';
+        if (!empty($invalidCodes)) {
+            $errors .= sprintf(
+                '<li>Codes INSEE %s invalides : "%s" (format attendu : liste de codes à 5 chiffres séparés par des virgules)</li>',
+                $direction,
+                implode('", "', $invalidCodes),
+            );
         }
 
-        return sprintf(
-            '<li>Codes INSEE à %s invalides : "%s" (format attendu : liste de codes à 5 chiffres séparés par des virgules)</li>',
-            $direction,
-            implode('", "', $invalidCodes),
-        );
+        $validCodes = array_filter($codes, static fn (string $code) => (bool) preg_match('/^\d{5}$/', $code));
+        $unknownCodes = array_filter($validCodes, static fn (string $code) => !\in_array($code, $territoryInseeCodes, true));
+
+        if (!empty($unknownCodes)) {
+            $errors .= sprintf(
+                '<li>Codes INSEE à %s hors du territoire %s : "%s"</li>',
+                $direction,
+                $territory->getZipAndName(),
+                implode('", "', $unknownCodes),
+            );
+        }
+
+        return $errors;
     }
 
     /**

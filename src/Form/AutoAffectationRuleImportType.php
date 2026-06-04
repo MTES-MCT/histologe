@@ -31,6 +31,7 @@ class AutoAffectationRuleImportType extends AbstractType
                 'help' => 'Format accepté : .csv — Séparateur : point-virgule (;)',
                 'mapped' => false,
                 'required' => false,
+                'constraints' => [new NotNull(message: 'Veuillez sélectionner un fichier CSV.')],
             ]);
     }
 
@@ -38,7 +39,7 @@ class AutoAffectationRuleImportType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => null,
-            'csrf_protection' => false,
+            'csrf_token_id' => 'auto_affectation_rule_import',
         ]);
     }
 }

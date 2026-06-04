@@ -18,7 +18,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -192,26 +191,14 @@ class AutoAffectationRuleController extends AbstractController
         $form = $this->createForm(AutoAffectationRuleImportType::class);
         $form->handleRequest($request);
 
-        if (!$form->isSubmitted()) {
-            return $this->renderImport($form, []);
-        }
-
-        if (!$this->isCsrfTokenValid('auto_affectation_rule_import', (string) $request->request->get('_token'))) {
-            return $this->renderImport($form, [MessageHelper::ERROR_MESSAGE_CSRF]);
-        }
-
-        /** @var UploadedFile|null $csvFile */
-        $csvFile = $form->get('csvFile')->getData();
-        if (null === $csvFile) {
-            $form->get('csvFile')->addError(new FormError('Veuillez sélectionner un fichier CSV.'));
-        }
-
-        if (!$form->isValid()) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->renderImport($form, []);
         }
 
         /** @var Territory $territory */
         $territory = $form->get('territory')->getData();
+        /** @var UploadedFile $csvFile */
+        $csvFile = $form->get('csvFile')->getData();
 
         [$parseErrors, $data] = $this->parseCsvFile($csvFile);
         if (!empty($parseErrors)) {
@@ -243,12 +230,8 @@ class AutoAffectationRuleController extends AbstractController
     /**
      * @return array{0: string[], 1: array<int, array<string, string>>}
      */
-    private function parseCsvFile(?UploadedFile $file): array
+    private function parseCsvFile(UploadedFile $file): array
     {
-        if (null === $file) {
-            return [['Veuillez sélectionner un fichier CSV.'], []];
-        }
-
         $csvParser = new CsvParser(['first_line' => 1, 'delimiter' => ';', 'enclosure' => '"', 'escape' => '\\']);
         $headers = $csvParser->getHeaders($file->getPathname());
         $missingHeaders = array_diff(AutoAffectationRuleHeader::REQUIRED_HEADERS, $headers);
@@ -256,14 +239,7 @@ class AutoAffectationRuleController extends AbstractController
             return [[sprintf('Le fichier CSV ne contient pas les colonnes attendues. Colonnes manquantes : "%s".', implode('", "', $missingHeaders))], []];
         }
 
-        $rows = $csvParser->parse($file->getPathname());
-        $data = array_filter(
-            array_map(
-                static fn (array $row) => \count($row) === \count($headers) ? array_combine($headers, $row) : null,
-                $rows,
-            ),
-        );
-
+        $data = $csvParser->parseAsDict($file->getPathname());
         if (empty($data)) {
             return [['Le fichier CSV est vide ou ne contient pas de données.'], []];
         }
