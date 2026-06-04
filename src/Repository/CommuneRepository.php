@@ -57,7 +57,7 @@ class CommuneRepository extends ServiceEntityRepository
             ->andWhere('c.id IN (
                 SELECT MIN(c2.id) FROM '.Commune::class.' c2
                 WHERE c2.codeInsee IN (:codesInsee)
-                GROUP BY c2.nom
+                GROUP BY c2.codeInsee
             )')
             ->setParameter('codesInsee', $cleanedCodesInsee)
             ->orderBy('c.nom', 'ASC')
