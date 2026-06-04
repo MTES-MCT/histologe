@@ -33,58 +33,24 @@ class GeometryFactory
      */
     public function createFromWkt(string $wkt): GeometryInterface
     {
-        $wkt = $this->normalizeWkt($wkt);
-
         try {
-            $parser = new Parser($wkt);
+            $parser = new Parser(trim($wkt));
             $parsed = $parser->parse();
 
+            if ('GEOMETRYCOLLECTION' === $parsed['type']) {
+                if (empty($parsed['value'])) {
+                    throw new \InvalidArgumentException('Empty GEOMETRYCOLLECTION');
+                }
+                $parsed = $parsed['value'][0];
+                $parsed['srid'] ??= null;
+            }
+
             return $this->createFromParsedData($parsed);
+        } catch (\InvalidArgumentException $e) {
+            throw $e;
         } catch (\Exception $e) {
             throw new \InvalidArgumentException(sprintf('Failed to parse WKT string: %s', $e->getMessage()), 0, $e);
         }
-    }
-
-    /**
-     * Normalizes WKT string by extracting first element from GEOMETRYCOLLECTION if needed.
-     *
-     * GEOMETRYCOLLECTION is not supported by longitude-one/doctrine-spatial library,
-     * so we extract the first geometry element from the collection.
-     *
-     * @param string $wkt The WKT string to normalize
-     *
-     * @return string The normalized WKT string
-     */
-    private function normalizeWkt(string $wkt): string
-    {
-        $wkt = trim($wkt);
-
-        // Si c'est un GEOMETRYCOLLECTION, extraire le premier élément
-        if (preg_match('/^GEOMETRYCOLLECTION\s*\(/is', $wkt)) {
-            // Retirer le préfixe GEOMETRYCOLLECTION( et le ) final
-            $wkt = preg_replace('/^GEOMETRYCOLLECTION\s*\(\s*/is', '', $wkt);
-            $wkt = preg_replace('/\s*\)\s*$/s', '', $wkt);
-
-            // Extraire le premier élément géométrique en comptant les parenthèses
-            $depth = 0;
-            $firstElementEnd = 0;
-            for ($i = 0; $i < strlen($wkt); ++$i) {
-                if ('(' === $wkt[$i]) {
-                    ++$depth;
-                } elseif (')' === $wkt[$i]) {
-                    --$depth;
-                    if (0 === $depth) {
-                        $firstElementEnd = $i + 1;
-                        break;
-                    }
-                }
-            }
-            if ($firstElementEnd > 0) {
-                $wkt = trim(substr($wkt, 0, $firstElementEnd));
-            }
-        }
-
-        return $wkt;
     }
 
     /**
