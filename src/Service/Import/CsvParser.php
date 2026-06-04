@@ -57,9 +57,19 @@ class CsvParser
     {
         $content = $this->getContent($filepath);
         $dataList = [];
+        $nbColonnes = \count($content['headers']);
         foreach ($content['rows'] as $row) {
             $dataItem = [];
-            foreach (str_getcsv($row) as $key => $field) {
+            $fields = str_getcsv(
+                $row,
+                (string) $this->options['delimiter'],
+                (string) $this->options['enclosure'],
+                (string) $this->options['escape'],
+            );
+            if (\count($fields) !== $nbColonnes) {
+                continue;
+            }
+            foreach ($fields as $key => $field) {
                 $dataItem[$content['headers'][$key]] = $field;
             }
             $dataList[] = $dataItem;

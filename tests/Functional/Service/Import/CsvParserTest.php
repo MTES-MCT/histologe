@@ -44,17 +44,34 @@ class CsvParserTest extends KernelTestCase
 
     public function testParseAsDict(): void
     {
-        $options = ['first_line' => 0, 'delimiter' => ',', 'enclosure' => '"', 'escape' => '\\'];
-        $csvParser = new CsvParser($options);
+        $csvParser = new CsvParser();
         $dataList = $csvParser->parseAsDict($this->projectDir.self::FILEPATH);
 
+        $this->assertCount(10, $dataList);
         foreach ($dataList as $dataItem) {
-            if (\count($dataItem) > 1) {
-                $this->assertArrayHasKey('Lastname', $dataItem);
-                $this->assertArrayHasKey('Firstname', $dataItem);
-                $this->assertArrayHasKey('Email', $dataItem);
-            }
+            $this->assertArrayHasKey('Lastname', $dataItem);
+            $this->assertArrayHasKey('Firstname', $dataItem);
+            $this->assertArrayHasKey('Email', $dataItem);
         }
+    }
+
+    public function testParseAsDictWithSemicolonDelimiter(): void
+    {
+        $filepath = $this->projectDir.'/tmp/data_semicolon.csv';
+        $this->createRandomCSV($filepath, 5, ';');
+
+        $csvParser = new CsvParser(['first_line' => 1, 'delimiter' => ';', 'enclosure' => '"', 'escape' => '\\']);
+        $dataList = $csvParser->parseAsDict($filepath);
+
+        $this->assertCount(5, $dataList);
+        foreach ($dataList as $dataItem) {
+            $this->assertArrayHasKey('Lastname', $dataItem);
+            $this->assertArrayHasKey('Firstname', $dataItem);
+            $this->assertArrayHasKey('Email', $dataItem);
+            $this->assertCount(3, $dataItem);
+        }
+
+        unlink($filepath);
     }
 
     public function testGetHeaders(): void
@@ -81,7 +98,7 @@ class CsvParserTest extends KernelTestCase
         unlink($this->projectDir.self::FILEPATH);
     }
 
-    public function createRandomCSV(string $filepath, int $line = 10): void
+    public function createRandomCSV(string $filepath, int $line = 10, string $delimiter = ','): void
     {
         $faker = Factory::create();
         $list = [
@@ -89,8 +106,7 @@ class CsvParserTest extends KernelTestCase
         ];
 
         for ($i = 0; $i < $line; ++$i) {
-            $row = [$faker->lastName(), $faker->firstName(), $faker->email()];
-            $list[] = $row;
+            $list[] = [$faker->lastName(), $faker->firstName(), $faker->email()];
         }
 
         $fileresource = fopen($filepath, 'w');
@@ -99,7 +115,7 @@ class CsvParserTest extends KernelTestCase
             throw new \RuntimeException("Impossible d'ouvrir le fichier $filepath en écriture.");
         }
         foreach ($list as $row) {
-            fputcsv($fileresource, $row);
+            fputcsv($fileresource, $row, $delimiter, '"', '\\');
         }
 
         fclose($fileresource);

@@ -3,9 +3,14 @@
 namespace App\Controller\Back;
 
 use App\Entity\AutoAffectationRule;
+use App\Entity\Territory;
+use App\Form\AutoAffectationRuleImportType;
 use App\Form\AutoAffectationRuleType;
 use App\Form\SearchAutoAffectationRuleType;
 use App\Repository\AutoAffectationRuleRepository;
+use App\Service\Import\AutoAffectationRule\AutoAffectationRuleHeader;
+use App\Service\Import\AutoAffectationRule\AutoAffectationRuleLoader;
+use App\Service\Import\CsvParser;
 use App\Service\ListFilters\SearchAutoAffectationRule;
 use App\Service\MessageHelper;
 use App\Utils\FormHelper;
@@ -14,6 +19,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -175,5 +181,78 @@ class AutoAffectationRuleController extends AbstractController
             'form' => $form,
             'create' => true,
         ]);
+    }
+
+    #[Route('/importer', name: 'back_auto_affectation_rule_import', methods: ['GET', 'POST'])]
+    public function import(
+        Request $request,
+        AutoAffectationRuleLoader $loader,
+    ): Response {
+        $form = $this->createForm(AutoAffectationRuleImportType::class);
+        $form->handleRequest($request);
+
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return $this->renderImport($form, []);
+        }
+
+        /** @var Territory $territory */
+        $territory = $form->get('territory')->getData();
+        /** @var UploadedFile $csvFile */
+        $csvFile = $form->get('csvFile')->getData();
+
+        [$parseErrors, $data] = $this->parseCsvFile($csvFile);
+        if (!empty($parseErrors)) {
+            return $this->renderImport($form, $parseErrors);
+        }
+
+        $errors = $loader->validate($data, $territory);
+        if (!empty($errors)) {
+            return $this->renderImport($form, $errors);
+        }
+
+        $loader->load($data, $territory);
+        $metadata = $loader->getMetadata();
+        $this->addFlash('success', [
+            'title' => 'Import réussi',
+            'message' => sprintf(
+                '%d règle(s) créée(s) sur le territoire %s. %s',
+                $metadata['nb_rules_created'],
+                $territory->getZipAndName(),
+                $metadata['nb_rules_archived'] > 0
+                    ? sprintf('%d règle(s) existante(s) archivée(s).', $metadata['nb_rules_archived'])
+                    : '',
+            ),
+        ]);
+
+        return $this->redirectToRoute('back_auto_affectation_rule_index', ['territory' => $territory->getId()], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * @return array{0: string[], 1: array<int, array<string, string>>}
+     */
+    private function parseCsvFile(UploadedFile $file): array
+    {
+        $csvParser = new CsvParser(['first_line' => 1, 'delimiter' => ';', 'enclosure' => '"', 'escape' => '\\']);
+        $headers = $csvParser->getHeaders($file->getPathname());
+        $missingHeaders = array_diff(AutoAffectationRuleHeader::REQUIRED_HEADERS, $headers);
+        if (!empty($missingHeaders)) {
+            return [[sprintf('Le fichier CSV ne contient pas les colonnes attendues. Colonnes manquantes : "%s".', implode('", "', $missingHeaders))], []];
+        }
+
+        $data = $csvParser->parseAsDict($file->getPathname());
+        if (empty($data)) {
+            return [['Le fichier CSV est vide ou ne contient pas de données.'], []];
+        }
+
+        return [[], $data];
+    }
+
+    /**
+     * @param FormInterface<mixed> $form
+     * @param string[]             $errors
+     */
+    private function renderImport(FormInterface $form, array $errors): Response
+    {
+        return $this->render('back/auto-affectation-rule/import.html.twig', ['form' => $form, 'errors' => $errors]);
     }
 }
