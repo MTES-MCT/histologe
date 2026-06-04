@@ -74,7 +74,7 @@ final class EsaboraScheduleProvider implements ScheduleProviderInterface
             CronExpressionTrigger::fromSpec($cron),
             new RedispatchMessage(
                 $message,
-                'async'
+                'async_esabora'
             ),
         );
     }

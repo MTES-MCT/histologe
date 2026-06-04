@@ -6,6 +6,10 @@ framework:
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             async: '%env(MESSENGER_TRANSPORT_DSN)%'
+            async_esabora:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: esabora
             async_priority_high:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 failure_transport: failed_high_priority
@@ -41,5 +45,6 @@ when@test:
                 # replace with your transport name here (e.g., my_transport: 'in-memory://')
                 # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
                 async: 'in-memory://'
+                async_esabora: 'in-memory://'
                 async_priority_high: 'in-memory://'
                 scheduler_esabora: 'in-memory://'
