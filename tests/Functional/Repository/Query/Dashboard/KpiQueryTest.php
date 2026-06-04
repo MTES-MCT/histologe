@@ -5,13 +5,13 @@ namespace App\Tests\Functional\Repository\Query\Dashboard;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\Query\Dashboard\KpiQuery;
+use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 class KpiQueryTest extends KernelTestCase
 {
@@ -37,10 +37,9 @@ class KpiQueryTest extends KernelTestCase
      */
     public function testCountInjonctions(): void
     {
-        $user = new User();
-        $user->setRoles(['ROLE_ADMIN']);
-        $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
-        static::getContainer()->get('security.token_storage')->setToken($token);
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 
         $tabQueryParameter = new TabQueryParameters(
             sortBy: 'createdAt',
@@ -53,6 +52,30 @@ class KpiQueryTest extends KernelTestCase
         );
 
         $this->assertEquals(2, $countInjonctions);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function testCountInjonctionsNouveauxMessages(): void
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+
+        $tabQueryParameter = new TabQueryParameters(
+            sortBy: 'createdAt',
+            orderBy: 'DESC',
+        );
+
+        $countInjonctions = $this->kpiQuery->countInjonctionsNouveauxMessages(
+            user: $user,
+            params: $tabQueryParameter,
+            messageType: 'usager',
+        );
+
+        $this->assertEquals(1, $countInjonctions);
     }
 
     public function testCountPartnerNonNotifiables(): void

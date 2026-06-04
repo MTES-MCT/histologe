@@ -4,7 +4,9 @@ namespace App\Repository\Query\Dashboard;
 
 use App\Dto\CountPartner;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\UserStatus;
+use App\Entity\Notification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
@@ -43,6 +45,51 @@ class KpiQuery
                 ->andWhere('s.territory IN (:territories)')
                 ->setParameter('territories', $user->getPartnersTerritories());
         }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function countInjonctionsNouveauxMessages(
+        User $user,
+        ?TabQueryParameters $params,
+        string $messageType,
+    ): int {
+        $qb = $this->entityManager->createQueryBuilder()
+            ->from(Signalement::class, 's')
+            ->where('s.statut IN (:statut)')
+            ->setParameter('statut', [SignalementStatus::INJONCTION_BAILLEUR, SignalementStatus::INJONCTION_CLOSED]);
+
+        $qb->select('COUNT(s.id)');
+
+        if ($params?->territoireId) {
+            $qb
+                ->andWhere('s.territory = :territoireId')
+                ->setParameter('territoireId', $params->territoireId);
+        } elseif (!$user->isSuperAdmin()) {
+            $qb
+                ->andWhere('s.territory IN (:territories)')
+                ->setParameter('territories', $user->getPartnersTerritories());
+        }
+
+        $categories = 'usager' === $messageType
+            ? SuiviCategory::categoriesSubmittedByUsager()
+            : SuiviCategory::categoriesSubmittedByBailleur();
+
+        $notificationQueryBuilder = $this->entityManager->createQueryBuilder()
+                ->select('1')
+                ->from(Notification::class, 'n')
+                ->join('n.suivi', 'n_suivi')
+                ->where('n.signalement = s')
+                ->andWhere('n.user = :currentUser')
+                ->andWhere('n.isSeen = false')
+                ->andWhere('n.deleted = false')
+                ->andWhere('n_suivi.category IN (:messageCategories)');
+
+        $qb->andWhere(
+            $qb->expr()->exists($notificationQueryBuilder->getDQL())
+        )
+        ->setParameter('currentUser', $user)
+        ->setParameter('messageCategories', $categories);
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }

@@ -44,17 +44,22 @@
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">        
             {% if is_granted('ROLE_ADMIN') %}
-                <div class="fr-col-12 fr-col-lg-4">
+                <div class="fr-col-12 fr-col-lg-3">
                     {{ form_row(form.territoire) }}
                 </div>
             {% endif %}
-            <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-col-12 fr-col-lg-3">
                 {{ form_row(form.reponseBailleur) }}
             </div>
-            <div class="fr-col-12 fr-col-lg-4">
+            <div class="fr-col-12 fr-col-lg-3">
                 {{ form_row(form.statutSignalement) }}
-            </div>
-            <div class="fr-col-12 fr-col-lg-4">
+            </div>     
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="fr-col-12 fr-col-lg-3">
+                    {{ form_row(form.messages) }}
+                </div>
+            {% endif %}
+            <div class="fr-col-12 fr-col-lg-3">
                 <a href="{{ path('back_injonction_signalement_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
             </div>
         </div>

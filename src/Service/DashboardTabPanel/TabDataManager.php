@@ -147,6 +147,16 @@ class TabDataManager
         return $injonctions;
     }
 
+    public function countInjonctionsNouveauxMessages(?TabQueryParameters $tabQueryParameters = null, string $messageType = 'usager'): int
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $injonctions = $this->kpiQuery->countInjonctionsNouveauxMessages($user, $tabQueryParameters, $messageType);
+
+        return $injonctions;
+    }
+
     public function countUsersPendingToArchive(?TabQueryParameters $tabQueryParameters = null): int
     {
         /** @var User $user */

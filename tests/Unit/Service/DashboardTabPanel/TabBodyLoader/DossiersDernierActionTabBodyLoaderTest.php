@@ -46,6 +46,8 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
             'partenaires_non_notifiables' => 2,
             'partenaires_interfaces' => 1,
             'injonctions' => 2,
+            'injonctions_nouveaux_messages_usager' => 0,
+            'injonctions_nouveaux_messages_bailleur' => 0,
         ];
         $expectedInterconnexion = ['hasErrorsLastDay' => false];
 
@@ -57,6 +59,13 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
             ->method('countInjonctions')
             ->with($tabQueryParameters)
             ->willReturn($expectedKpi['injonctions']);
+        $tabDataManager->expects($this->exactly(2))
+            ->method('countInjonctionsNouveauxMessages')
+            ->willReturnCallback(static fn ($_params, string $type) => match ($type) {
+                'usager' => $expectedKpi['injonctions_nouveaux_messages_usager'],
+                'bailleur' => $expectedKpi['injonctions_nouveaux_messages_bailleur'],
+                default => '',
+            });
         $tabDataManager->expects($this->once())
             ->method('countUsersPendingToArchive')
             ->with($tabQueryParameters)
@@ -114,6 +123,9 @@ class DossiersDernierActionTabBodyLoaderTest extends KernelTestCase
             ->method('getDernierActionDossiers')
             ->with($tabQueryParameters)
             ->willReturn($expectedData);
+
+        $tabDataManager->expects($this->never())
+            ->method('countInjonctionsNouveauxMessages');
 
         $loader = new DossiersDernierActionTabBodyLoader($security, $tabDataManager, $this->clubEventService);
         $tabBody = new TabBody(

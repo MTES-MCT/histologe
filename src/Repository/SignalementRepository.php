@@ -7,6 +7,7 @@ use App\Entity\Commune;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Notification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -714,6 +715,28 @@ class SignalementRepository extends ServiceEntityRepository
         if (!empty($searchSignalementInjonction->getStatutSignalement())) {
             $queryBuilder->andWhere('s.statut = :statutSignalement')
                 ->setParameter('statutSignalement', $searchSignalementInjonction->getStatutSignalement());
+        }
+
+        if (!empty($searchSignalementInjonction->getMessages())) {
+            $categories = 'usager' === $searchSignalementInjonction->getMessages()
+                ? SuiviCategory::categoriesSubmittedByUsager()
+                : SuiviCategory::categoriesSubmittedByBailleur();
+
+            $notificationQueryBuilder = $this->getEntityManager()->createQueryBuilder()
+                    ->select('1')
+                    ->from(Notification::class, 'n')
+                    ->join('n.suivi', 'n_suivi')
+                    ->where('n.signalement = s')
+                    ->andWhere('n.user = :currentUser')
+                    ->andWhere('n.isSeen = false')
+                    ->andWhere('n.deleted = false')
+                    ->andWhere('n_suivi.category IN (:messageCategories)');
+
+            $queryBuilder->andWhere(
+                $queryBuilder->expr()->exists($notificationQueryBuilder->getDQL())
+            )
+            ->setParameter('currentUser', $searchSignalementInjonction->getUser())
+            ->setParameter('messageCategories', $categories);
         }
 
         if (!empty($searchSignalementInjonction->getOrderType())) {

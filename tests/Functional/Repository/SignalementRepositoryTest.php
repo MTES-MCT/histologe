@@ -479,4 +479,23 @@ class SignalementRepositoryTest extends KernelTestCase
         );
         $this->assertEquals(1, $paginator->count());
     }
+
+    public function testFindInjonctionFilteredPaginatedWithMessageUsager(): void
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        /** @var SignalementRepository $repository */
+        $repository = $this->entityManager->getRepository(Signalement::class);
+
+        $search = new SearchSignalementInjonction($user);
+        $search->setMessages('usager');
+
+        $paginator = $repository->findInjonctionFilteredPaginated(
+            $search,
+            10,
+            null
+        );
+        $this->assertEquals(1, $paginator->count());
+    }
 }
