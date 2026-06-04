@@ -4,9 +4,11 @@ namespace App\Form;
 
 use App\Entity\Partner;
 use App\Entity\Territory;
+use App\Entity\User;
 use App\Form\Type\SearchCheckboxType;
 use App\Form\Type\TerritoryChoiceType;
 use App\Repository\PartnerRepository;
+use App\Service\ListFilters\SearchAnnuaireAgent;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -35,10 +37,14 @@ class SearchAnnuaireAgentType extends AbstractType
         $builder->add('page', HiddenType::class);
         $builder->add('territory', TerritoryChoiceType::class);
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
-            $this->addPartnersField($event->getForm(), $builder->getData()->getTerritory());
+            /** @var SearchAnnuaireAgent $data */
+            $data = $builder->getData();
+            $this->addPartnersField($event->getForm(), $data->getTerritory(), $data->getUser());
         });
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            $this->addPartnersField($event->getForm(), isset($event->getData()['territory']) ? $event->getData()['territory'] : null);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($builder) {
+            /** @var SearchAnnuaireAgent $data */
+            $data = $builder->getData();
+            $this->addPartnersField($event->getForm(), isset($event->getData()['territory']) ? $event->getData()['territory'] : null, $data->getUser());
         });
         $builder->add('orderType', ChoiceType::class, [
             'choices' => [
@@ -57,15 +63,22 @@ class SearchAnnuaireAgentType extends AbstractType
     /**
      * @param FormInterface<mixed> $builder
      */
-    private function addPartnersField(FormInterface $builder, string|Territory|null $territory): void
+    private function addPartnersField(FormInterface $builder, string|Territory|null $territory, User $user): void
     {
         $builder->add('partners', SearchCheckboxType::class, [
             'class' => Partner::class,
-            'query_builder' => static function (PartnerRepository $partnerRepository) use ($territory) {
-                $query = $partnerRepository->createQueryBuilder('p')
-                    ->where('p.territory = :territory')
-                    ->setParameter('territory', $territory);
-                $query->orderBy('p.nom', 'ASC');
+            'query_builder' => static function (PartnerRepository $partnerRepository) use ($territory, $user) {
+                $query = $partnerRepository->createQueryBuilder('p');
+
+                if (!$user->isSuperAdmin()) {
+                    $query->where('p.territory IN (:userTerritories)')
+                        ->setParameter('userTerritories', $user->getPartnersTerritories());
+                } else {
+                    $query->where('p.territory = :territory')
+                        ->setParameter('territory', $territory);
+                }
+
+                $query->orderBy('LOWER(p.nom)', 'ASC');
 
                 return $query;
             },
