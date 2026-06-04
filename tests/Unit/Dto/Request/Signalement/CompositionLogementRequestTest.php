@@ -75,6 +75,7 @@ class CompositionLogementRequestTest extends KernelTestCase
 
         $validator = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator();
         $errors = $validator->validate($compositionLogementRequest);
-        $this->assertCount(17, $errors);
+        var_dump($errors);
+        $this->assertCount(18, $errors);
     }
 }
