@@ -10,7 +10,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 #[AsCommand(
     name: 'app:update-merged-communes',
@@ -29,12 +29,15 @@ class UpdateMergedCommunesCommand extends Command
      * @param array<mixed> $renamedCommunes
      */
     public function __construct(
-        private readonly ParameterBagInterface $parameterBag,
         private readonly EntityManagerInterface $entityManager,
         private readonly CsvParser $csvParser,
         private readonly CommuneRepository $communeRepository,
+        #[Autowire(env: 'NEW_COMMUNES_CSV_URL')]
+        private string $newCommunesCsvUrl,
         private array $csvData = [],
         private array $renamedCommunes = [],
+        private int $nbDeprecated = 0,
+        private int $nbRenamed = 0,
     ) {
         parent::__construct();
     }
@@ -43,49 +46,40 @@ class UpdateMergedCommunesCommand extends Command
     {
         $this->io = new SymfonyStyle($input, $output);
 
-        $csvUrl = $this->parameterBag->get('new_communes_csv_url');
-        if (empty($csvUrl)) {
-            throw new \RuntimeException('The parameter "new_communes_csv_url" is not defined or is empty.');
+        if (empty($this->newCommunesCsvUrl)) {
+            throw new \RuntimeException('The parameter "NEW_COMMUNES_CSV_URL" is not defined or is empty.');
         }
 
-        $this->csvData = $this->csvParser->parse($csvUrl);
+        $this->csvData = $this->csvParser->parse($this->newCommunesCsvUrl);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $nbDeprecated = 0;
-        $nbRenamed = 0;
+        $this->nbDeprecated = 0;
+        $this->nbRenamed = 0;
 
-        // Ajout d'une barre de progression
         $progressBar = $this->io->createProgressBar(count($this->csvData));
         $progressBar->start();
 
         foreach ($this->csvData as $rowData) {
             $progressBar->advance();
-            $result = $this->processCsvRow($rowData);
-            $nbDeprecated += $result['deprecated'];
-            $nbRenamed += $result['renamed'];
+            $this->processCsvRow($rowData);
         }
 
         $progressBar->finish();
         $this->entityManager->flush();
 
-        $this->io->success(\sprintf('Deprecated %d communes', $nbDeprecated));
-        $this->io->success(\sprintf('Renamed %d communes', $nbRenamed));
+        $this->io->success(\sprintf('Deprecated %d communes', $this->nbDeprecated));
+        $this->io->success(\sprintf('Renamed %d communes', $this->nbRenamed));
 
         return Command::SUCCESS;
     }
 
     /**
      * @param array<mixed> $rowData
-     *
-     * @return array{deprecated: int, renamed: int}
      */
-    public function processCsvRow(array $rowData): array
+    public function processCsvRow(array $rowData): void
     {
-        $nbDeprecated = 0;
-        $nbRenamed = 0;
-
         // NB : On n'a pas les codes postaux dans le csv, donc on va garder par défaut les données des anciennes communes
         $newCommuneInsee = $this->cleanInseeCode($rowData[self::INDEX_CSV_NEW_COMMUNE_INSEE]);
         $newCommuneName = $this->cleanCommuneName($rowData[self::INDEX_CSV_NEW_COMMUNE_NAME]);
@@ -93,16 +87,35 @@ class UpdateMergedCommunesCommand extends Command
 
         // Si un des champs n'est pas rempli, on passe à la suite
         if (!$newCommuneInsee || !$newCommuneName || !$oldCommuneInsee) {
-            return ['deprecated' => $nbDeprecated, 'renamed' => $nbRenamed];
+            return;
         }
 
-        // On recherche les items de commune qui correspondent au code Insee de l'ancienne commune (il peut y en avoir plusieurs car une commune a un code Insee mais potentiellement plusieurs codes postaux)
-        $communesWithOldInsee = $this->communeRepository->findBy(['codeInsee' => $oldCommuneInsee]);
-        foreach ($communesWithOldInsee as $commune) {
-            // Si le nom de l'ancienne commune est différent du nom de la nouvelle commune, on lie l'ancienne à la nouvelle commune
-            if ($commune->getNom() !== $newCommuneName && !$commune->getCommuneMergedInto()) {
+        // Si le code Insee de l'ancienne commune est le même que le code Insee de la nouvelle commune, on considère que c'est une simple modification du nom de la commune, et on renomme les communes existantes avec ce code Insee
+        // Il y a une contrainte d'unicité sur le couple code postal / code insee, donc on est obligé de renommer, et pas marquer comme déprécié
+        if ($oldCommuneInsee === $newCommuneInsee) {
+            $communesWithNewInsee = $this->communeRepository->findBy(['codeInsee' => $newCommuneInsee]);
+            foreach ($communesWithNewInsee as $commune) {
+                if ($commune->getNom() !== $newCommuneName) {
+                    $this->io->info(\sprintf('Renames commune %d : %s to %s', $commune->getId(), $commune->getNom(), $newCommuneName));
+                    $commune->setNom($newCommuneName);
+                    $this->renamedCommunes[$commune->getCodeInsee()] = $commune;
+                    $this->entityManager->persist($commune);
+                    ++$this->nbRenamed;
+                }
+            }
+
+        // Si le code Insee de l'ancienne commune est différent du code Insee de la nouvelle commune, on considère que c'est une fusion de communes, et on marque comme déprécié les communes existantes avec le code Insee de l'ancienne commune, en les liant à la nouvelle commune
+        } else {
+            // On recherche les items de commune qui correspondent au code Insee de l'ancienne commune (il peut y en avoir plusieurs car une commune a un code Insee mais potentiellement plusieurs codes postaux)
+            $communesWithOldInsee = $this->communeRepository->findBy(['codeInsee' => $oldCommuneInsee]);
+            foreach ($communesWithOldInsee as $commune) {
+                // Pas besoin de marquer comme mergée si c'est déjà fait
+                if ($commune->getCommuneMergedInto()) {
+                    continue;
+                }
+
                 // On cherche d'abord dans les communes renommées (cache), puis en base
-                $newCommune = $this->renamedCommunes[$newCommuneInsee] ?? $this->communeRepository->findOneBy(['codeInsee' => $newCommuneInsee, 'nom' => $newCommuneName]);
+                $newCommune = $this->renamedCommunes[$newCommuneInsee] ?? $this->communeRepository->findOneBy(['codeInsee' => $newCommuneInsee]);
 
                 if (!$newCommune) {
                     $this->io->warning(\sprintf('No commune found with code Insee %s and name %s, skipping deprecation of commune %d', $newCommuneInsee, $newCommuneName, $commune->getId()));
@@ -112,26 +125,11 @@ class UpdateMergedCommunesCommand extends Command
                 $this->io->info(\sprintf('Deprecates commune %d : %s, merged in %s', $commune->getId(), $commune->getNom(), $newCommuneName));
                 $commune->setCommuneMergedInto($newCommune);
                 $this->entityManager->persist($commune);
-                ++$nbDeprecated;
-            }
-        }
-
-        // On recherche les items de communes qui existent déjà avec le nouveau code insee mais qui n'ont pas le même nom
-        // il y a une contrainte d'unicité sur le couple code postal / code insee, donc on est obligé de renommer, et pas marquer comme déprécié
-        $communesWithNewInsee = $this->communeRepository->findBy(['codeInsee' => $newCommuneInsee]);
-        foreach ($communesWithNewInsee as $commune) {
-            if ($commune->getNom() !== $newCommuneName) {
-                $this->io->info(\sprintf('Renames commune %d : %s to %s', $commune->getId(), $commune->getNom(), $newCommuneName));
-                $commune->setNom($newCommuneName);
-                $this->renamedCommunes[$commune->getCodeInsee()] = $commune;
-                $this->entityManager->persist($commune);
-                ++$nbRenamed;
+                ++$this->nbDeprecated;
             }
         }
 
         // On ne peut pas insérer si on n'a pas trouvé d'équivalent avec le nouveau code Insee, car on n'aura pas de code postal à mettre en correspondance
-
-        return ['deprecated' => $nbDeprecated, 'renamed' => $nbRenamed];
     }
 
     private function cleanInseeCode(string $codeInsee): string
