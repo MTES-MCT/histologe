@@ -70,12 +70,12 @@ class SearchAnnuaireAgentType extends AbstractType
             'query_builder' => static function (PartnerRepository $partnerRepository) use ($territory, $user) {
                 $query = $partnerRepository->createQueryBuilder('p');
 
-                if ($territory) {
-                    $query->where('p.territory = :territory')
-                        ->setParameter('territory', $territory);
-                } elseif (!$user->isSuperAdmin()) {
+                if (!$user->isSuperAdmin()) {
                     $query->where('p.territory IN (:userTerritories)')
                         ->setParameter('userTerritories', $user->getPartnersTerritories());
+                } else {
+                    $query->where('p.territory = :territory')
+                        ->setParameter('territory', $territory);
                 }
 
                 $query->orderBy('LOWER(p.nom)', 'ASC');
