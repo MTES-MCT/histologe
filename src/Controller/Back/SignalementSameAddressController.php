@@ -81,15 +81,15 @@ class SignalementSameAddressController extends AbstractController
         if ($searchTerritoryId) {
             $filtersText['Territoire'] = $territories[$searchTerritoryId]->getZipAndName();
         }
-        $searchAddress = $this->normalizeStr($request->query->get('address'));
+        $searchAddress = $this->normalizeStr($request->query->get('address', ''));
         if ($searchAddress) {
             $filtersText['Adresse'] = $request->query->get('address');
         }
-        $searchCommune = $this->normalizeStr($request->query->get('commune'));
+        $searchCommune = $this->normalizeStr($request->query->get('commune', ''));
         if ($searchCommune) {
             $filtersText['Commune'] = $request->query->get('commune');
         }
-        $searchBailleur = $this->normalizeStr($request->query->get('bailleur'));
+        $searchBailleur = $this->normalizeStr($request->query->get('bailleur', ''));
         if ($searchBailleur) {
             $filtersText['Bailleur'] = $request->query->get('bailleur');
         }
