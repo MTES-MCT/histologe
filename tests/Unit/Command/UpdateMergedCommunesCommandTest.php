@@ -137,7 +137,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
             );
 
         $this->entityManager
-            ->expects($this->never())
+            ->expects($this->once())
             ->method('persist');
 
         $ioProperty = new \ReflectionProperty($this->command, 'io');
@@ -148,7 +148,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
         $nbDeprecatedProperty = new \ReflectionProperty($this->command, 'nbDeprecated');
         $nbRenamedProperty = new \ReflectionProperty($this->command, 'nbRenamed');
         $this->assertEquals(0, $nbDeprecatedProperty->getValue($this->command));
-        $this->assertEquals(0, $nbRenamedProperty->getValue($this->command));
+        $this->assertEquals(1, $nbRenamedProperty->getValue($this->command));
     }
 
     public function testProcessCsvRowRenamesNewCommune(): void
@@ -264,12 +264,12 @@ class UpdateMergedCommunesCommandTest extends TestCase
         $oldCommune1 = $this->createMock(Commune::class);
         $oldCommune1->method('getNom')->willReturn('Ancienne Commune 1');
         $oldCommune1->method('getCommuneMergedInto')->willReturn(null);
-        $oldCommune1->expects($this->once())->method('setCommuneMergedInto')->with($newCommune);
+        $oldCommune1->expects($this->never())->method('setCommuneMergedInto');
 
         $oldCommune2 = $this->createMock(Commune::class);
         $oldCommune2->method('getNom')->willReturn('Ancienne Commune 2');
         $oldCommune2->method('getCommuneMergedInto')->willReturn(null);
-        $oldCommune2->expects($this->once())->method('setCommuneMergedInto')->with($newCommune);
+        $oldCommune2->expects($this->never())->method('setCommuneMergedInto');
 
         $this->communeRepository
             ->expects($this->once())
@@ -277,14 +277,8 @@ class UpdateMergedCommunesCommandTest extends TestCase
             ->with(['codeInsee' => '44999'])
             ->willReturn([$oldCommune1, $oldCommune2]);
 
-        $this->communeRepository
-            ->expects($this->exactly(2))
-            ->method('findOneBy')
-            ->with(['codeInsee' => '44205'])
-            ->willReturn($newCommune);
-
         $this->entityManager
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('persist');
 
         $ioProperty = new \ReflectionProperty($this->command, 'io');
@@ -294,7 +288,7 @@ class UpdateMergedCommunesCommandTest extends TestCase
 
         $nbDeprecatedProperty = new \ReflectionProperty($this->command, 'nbDeprecated');
         $nbRenamedProperty = new \ReflectionProperty($this->command, 'nbRenamed');
-        $this->assertEquals(2, $nbDeprecatedProperty->getValue($this->command));
-        $this->assertEquals(0, $nbRenamedProperty->getValue($this->command));
+        $this->assertEquals(0, $nbDeprecatedProperty->getValue($this->command));
+        $this->assertEquals(1, $nbRenamedProperty->getValue($this->command));
     }
 }
