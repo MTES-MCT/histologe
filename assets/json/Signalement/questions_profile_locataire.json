@@ -1032,7 +1032,7 @@
             "pattern": "^[0-9]+$",
             "patternMessage": "Veuillez renseigner une superficie valide.",
             "expression": "parseInt(formStore.data.composition_logement_superficie) > 0 && parseInt(formStore.data.composition_logement_superficie) < 10000",
-            "expressionMessage": "Merci de saisir une information numérique comprise entre 0 et 10000 dans le champs superficie."
+            "expressionMessage": "Merci de saisir une information numérique comprise entre 0 et 9999 dans le champs superficie."
           }
         },
         {
@@ -1049,7 +1049,7 @@
             "pattern": "^[0-9]*$",
             "patternMessage": "Veuillez renseigner un nombre de pièces valide.",
             "expression": "parseInt(formStore.data.composition_logement_nb_pieces) > 0 && parseInt(formStore.data.composition_logement_nb_pieces) < 1000",
-            "expressionMessage": "Merci de saisir une information numérique comprise entre 0 et 1000 dans le champs nombre de pièces."
+            "expressionMessage": "Merci de saisir une information numérique comprise entre 0 et 999 dans le champs nombre de pièces."
           }
         }
       ],
