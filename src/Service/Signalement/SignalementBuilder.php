@@ -314,11 +314,6 @@ class SignalementBuilder
             ->setProprioAvertiAt(SignalementDraftHelper::computeBailleurPrevenuAtFromRequest($this->signalementDraftRequest))
             ->setLoyer($loyer)
             ->setNbNiveauxLogement($nbEtages)
-            ->setIsFondSolidariteLogement(
-                $this->evalBoolean(
-                    $this->signalementDraftRequest->getInformationsComplementairesSituationOccupantsBeneficiaireFsl()
-                )
-            )
             ->setIsRsa(
                 $this->evalBoolean(
                     $this->signalementDraftRequest->getInformationsComplementairesSituationOccupantsBeneficiaireRsa()

@@ -57,34 +57,20 @@ class SignalementFactoryTest extends KernelTestCase
             'numAppartOccupant' => $faker->randomDigit(),
             'isRsa' => false,
             'isConstructionAvant1949' => false,
-            'isFondSolidariteLogement' => false,
-            'isRisqueSurOccupation' => false,
             'numeroInvariant' => null,
             'natureLogement' => 'maison',
             'loyer' => $faker->numberBetween(300, 1000),
             'isBailEnCours' => true,
             'dateEntree' => new \DateTimeImmutable(),
-            'isRefusIntervention' => false,
-            'raisonRefusIntervention' => null,
             'isCguAccepted' => true,
             'modifiedAt' => null,
             'statut' => SignalementStatus::ACTIVE,
             'geoloc' => ['lat' => 43.312827, 'lng' => 5.386161],
             'montantAllocation' => null,
-            'codeProcedure' => null,
             'adresseAutreOccupant' => null,
-            'isConsentementTiers' => true,
             'anneeConstruction' => '1995',
-            'typeEnergieLogement' => null,
-            'origineSignalement' => null,
-            'situationOccupant' => null,
-            'situationProOccupant' => null,
             'naissanceOccupants' => null,
-            'isLogementCollectif' => false,
-            'nomReferentSocial' => null,
-            'StructureReferentSocial' => null,
             'nbPiecesLogement' => $faker->randomDigit(),
-            'nbChambresLogement' => $faker->randomDigit(),
             'nbNiveauxLogement' => $faker->randomDigit(),
         ];
 
@@ -116,8 +102,6 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['numAppartOccupant'], $signalement->getNumAppartOccupant());
         $this->assertEquals($data['adresseOccupant'], $signalement->getAdresseOccupant());
         $this->assertEquals($data['naissanceOccupants'], $signalement->getNaissanceOccupants());
-        $this->assertEquals($data['situationProOccupant'], $signalement->getSituationProOccupant());
-        $this->assertEquals($data['situationOccupant'], $signalement->getSituationOccupant());
         $this->assertEquals($data['adresseAutreOccupant'], $signalement->getAdresseAutreOccupant());
 
         $this->assertEquals($data['nomProprio'], $signalement->getNomProprio());
@@ -137,7 +121,6 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['nbOccupantsLogement'], $signalement->getNbOccupantsLogement());
 
         $this->assertEquals($data['nbPiecesLogement'], $signalement->getNbPiecesLogement());
-        $this->assertEquals($data['nbChambresLogement'], $signalement->getNbChambresLogement());
         $this->assertEquals($data['nbNiveauxLogement'], $signalement->getNbNiveauxLogement());
 
         $this->assertEquals($data['loyer'], $signalement->getLoyer());
@@ -151,17 +134,12 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['isLogementSocial'], $signalement->getIsLogementSocial());
         $this->assertEquals($data['isRelogement'], $signalement->getIsRelogement());
 
-        $this->assertEquals($data['isLogementCollectif'], $signalement->getIsLogementCollectif());
         $this->assertEquals($data['isPreavisDepart'], $signalement->getIsPreavisDepart());
         $this->assertEquals($data['isNotOccupant'], $signalement->getIsNotOccupant());
         $this->assertEquals($data['isRsa'], $signalement->getIsRsa());
         $this->assertEquals($data['isConstructionAvant1949'], $signalement->getIsConstructionAvant1949());
-        $this->assertEquals($data['isFondSolidariteLogement'], $signalement->getIsFondSolidariteLogement());
-        $this->assertEquals($data['isRisqueSurOccupation'], $signalement->getIsRisqueSurOccupation());
         $this->assertEquals($data['isBailEnCours'], $signalement->getIsBailEnCours());
-        $this->assertEquals($data['isRefusIntervention'], $signalement->getIsRefusIntervention());
         $this->assertEquals($data['isCguAccepted'], $signalement->getIsCguAccepted());
-        $this->assertEquals($data['isConsentementTiers'], $signalement->getIsConsentementTiers());
 
         $this->assertEquals($data['createdAt'], $signalement->getCreatedAt());
         $this->assertEquals(
@@ -174,18 +152,13 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['numeroInvariant'], $signalement->getNumeroInvariant());
         $this->assertEquals($data['dateEntree'], $signalement->getDateEntree());
         // $this->assertEquals($data['dateVisite'], $signalement->getDateVisite()); TODO : dateVisite
-        $this->assertEquals($data['origineSignalement'], $signalement->getOrigineSignalement());
-        $this->assertEquals($data['typeEnergieLogement'], $signalement->getTypeEnergieLogement());
         $this->assertEquals($data['anneeConstruction'], $signalement->getAnneeConstruction());
-        $this->assertEquals($data['codeProcedure'], $signalement->getCodeProcedure());
-        $this->assertEquals($data['raisonRefusIntervention'], $signalement->getRaisonRefusIntervention());
 
         $this->assertEquals([$data['mailOccupant'], $data['mailDeclarant']], $signalement->getMailUsagers());
         $this->assertTrue($signalement->getIsImported());
 
         $this->assertEmpty($signalement->getFiles());
         $this->assertEmpty($signalement->getTelOccupantBis());
-        $this->assertEmpty($signalement->getIsDiagSocioTechnique());
         $this->assertEmpty($signalement->getJsonContent());
         $this->assertEmpty($signalement->getModifiedBy());
         $this->assertEmpty($signalement->getAffectationStatusByPartner());
