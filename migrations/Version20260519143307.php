@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
+use App\Service\Geometry\GeometryFactory;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -18,6 +19,32 @@ final class Version20260519143307 extends AbstractMigration
     {
         // Add temporary column for geometry data
         $this->addSql('ALTER TABLE zone ADD COLUMN area_geom GEOMETRY NULL');
+
+        // Convert GEOMETRYCOLLECTION to MULTIPOLYGON in text format before converting to GEOMETRY
+        $zones = $this->connection->fetchAllAssociative('SELECT id, area FROM zone');
+        $geometryFactory = new GeometryFactory();
+
+        foreach ($zones as $zone) {
+            $wkt = $zone['area'];
+
+            // Check if it's a GEOMETRYCOLLECTION
+            if (str_starts_with(trim($wkt), 'GEOMETRYCOLLECTION')) {
+                try {
+                    // Use GeometryFactory to parse and simplify GEOMETRYCOLLECTION
+                    $geometry = $geometryFactory->createFromWkt($wkt);
+                    $newWkt = $geometryFactory->toWkt($geometry);
+
+                    // Update the text column first
+                    $this->addSql(
+                        'UPDATE zone SET area = :wkt WHERE id = :id',
+                        ['wkt' => $newWkt, 'id' => $zone['id']]
+                    );
+                } catch (\Exception $e) {
+                    // Log or skip invalid geometries
+                    $this->write(sprintf('Warning: Could not convert zone %d: %s', $zone['id'], $e->getMessage()));
+                }
+            }
+        }
 
         // Convert WKT text to GEOMETRY
         $this->addSql('UPDATE zone SET area_geom = ST_GeomFromText(area)');

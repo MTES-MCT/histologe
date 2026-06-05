@@ -41,13 +41,26 @@ class GeometryFactory
                 if (empty($parsed['value'])) {
                     throw new \InvalidArgumentException('Empty GEOMETRYCOLLECTION');
                 }
-                $firstGeometry = $parsed['value'][0];
-                if (!\is_array($firstGeometry) || !isset($firstGeometry['type'])) {
-                    throw new \InvalidArgumentException('Invalid GEOMETRYCOLLECTION structure');
+
+                $geometries = [];
+                foreach ($parsed['value'] as $geometryData) {
+                    if (!\is_array($geometryData) || !isset($geometryData['type']) || !isset($geometryData['value'])) {
+                        throw new \InvalidArgumentException('Invalid GEOMETRYCOLLECTION structure');
+                    }
+                    // Build properly typed array for PHPStan
+                    /** @var array{type: string, value: mixed, srid?: int|null, dimension?: string|null} $typedGeometryData */
+                    $typedGeometryData = [
+                        'type' => $geometryData['type'],
+                        'value' => $geometryData['value'],
+                        'srid' => $geometryData['srid'] ?? null,
+                        'dimension' => $geometryData['dimension'] ?? null,
+                    ];
+                    $geometries[] = $this->createFromParsedData($typedGeometryData);
                 }
-                /** @var array{type: string, value: mixed, srid?: int|null, dimension?: string|null} $parsed */
-                $parsed = $firstGeometry;
-                $parsed['srid'] ??= null;
+
+                $collection = new GeometryCollection($geometries, $parsed['srid'] ?? null);
+
+                return $collection->simplify();
             }
 
             return $this->createFromParsedData($parsed);
