@@ -27,6 +27,7 @@ class UpdateMergedCommunesCommand extends Command
     /**
      * @param array<mixed> $csvData
      * @param array<mixed> $renamedCommunes
+     * @param array<mixed> $resetInseeWithCP
      */
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -36,6 +37,7 @@ class UpdateMergedCommunesCommand extends Command
         private string $newCommunesCsvUrl,
         private array $csvData = [],
         private array $renamedCommunes = [],
+        private array $resetInseeWithCP = [],
         private int $nbDeprecated = 0,
         private int $nbRenamed = 0,
     ) {
@@ -114,6 +116,21 @@ class UpdateMergedCommunesCommand extends Command
                     continue;
                 }
 
+                // Si le couple nouvel insee + code postal de l'ancienne commune n'existe pas, on choisit de renommer la commune existante avec le nouveau nom et le nouveau code Insee
+                // Cas sûrement rare, mais permet d'éviter les erreurs lors du checkTerritory
+                $existingCommuneWithNewInseeAndPostalCode = $this->communeRepository->findOneBy(['codeInsee' => $newCommuneInsee, 'codePostal' => $commune->getCodePostal()]);
+                if (!$existingCommuneWithNewInseeAndPostalCode && !isset($this->resetInseeWithCP[$newCommuneInsee.'-'.$commune->getCodePostal()])) {
+                    $this->io->info(\sprintf('Renames commune %d : %s to %s and change Insee code to %s', $commune->getId(), $commune->getNom(), $newCommuneName, $newCommuneInsee));
+                    $commune->setNom($newCommuneName);
+                    $commune->setCodeInsee($newCommuneInsee);
+                    $this->renamedCommunes[$commune->getCodeInsee()] = $commune;
+                    $this->resetInseeWithCP[$newCommuneInsee.'-'.$commune->getCodePostal()] = $commune;
+                    $this->entityManager->persist($commune);
+                    ++$this->nbRenamed;
+                    continue;
+                }
+
+                // Sinon, on déprécie l'ancienne commune en la liant à la nouvelle commune
                 // On cherche d'abord dans les communes renommées (cache), puis en base
                 $newCommune = $this->renamedCommunes[$newCommuneInsee] ?? $this->communeRepository->findOneBy(['codeInsee' => $newCommuneInsee]);
 
