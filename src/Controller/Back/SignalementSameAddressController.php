@@ -7,8 +7,9 @@ use App\Repository\Query\SignalementList\SameAddressQuery;
 use App\Repository\TerritoryRepository;
 use App\Utils\ExportFormat;
 use OpenSpout\Common\Entity\Row;
-use OpenSpout\Writer\CSV\Options;
-use OpenSpout\Writer\CSV\Writer;
+use OpenSpout\Writer\CSV\Options as CsvOptions;
+use OpenSpout\Writer\CSV\Writer as CsvWriter;
+use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,7 +63,7 @@ class SignalementSameAddressController extends AbstractController
         ]);
     }
 
-    #[Route('/export', name: 'back_signalement_same_address_export', methods: ['POST'])]
+    #[Route('/export', name: 'back_signalement_same_address_export')]
     public function export(Request $request, SameAddressQuery $sameAddressQuery, TerritoryRepository $territoryRepository): Response
     {
         /** @var User $user */
@@ -75,33 +76,59 @@ class SignalementSameAddressController extends AbstractController
         }
         $signalements = $sameAddressQuery->findSameAddressFiltered($user);
         $signalementsFiltered = [];
-        $searchTerritoryId = $request->request->get('territoryId');
-        $searchAddress = $request->request->get('address');
-        $searchCommune = $request->request->get('commune');
-        $searchBailleur = $request->request->get('bailleur');
+        $filtersText = [];
+        $searchTerritoryId = $request->query->get('territoryId');
+        if ($searchTerritoryId) {
+            $filtersText['Territoire'] = $territories[$searchTerritoryId]->getZipAndName();
+        }
+        $searchAddress = $this->normalizeStr($request->query->get('address'));
+        if ($searchAddress) {
+            $filtersText['Adresse'] = $request->query->get('address');
+        }
+        $searchCommune = $this->normalizeStr($request->query->get('commune'));
+        if ($searchCommune) {
+            $filtersText['Commune'] = $request->query->get('commune');
+        }
+        $searchBailleur = $this->normalizeStr($request->query->get('bailleur'));
+        if ($searchBailleur) {
+            $filtersText['Bailleur'] = $request->query->get('bailleur');
+        }
+        $format = $request->request->get('file-format');
         foreach ($signalements as $signalement) {
             if ($searchTerritoryId && $signalement['territoryId'] != $searchTerritoryId) {
                 continue;
             }
-            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant']));
-            $addressKey = str_replace('-', ' ', $addressKey);
+            $addressKey = $this->normalizeStr($signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant']);
             if ($searchAddress && $addressKey != $searchAddress) {
                 continue;
             }
-            $communeNormalized = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['villeOccupant'].' '.$signalement['cpOccupant']));
-            $communeNormalized = str_replace('-', ' ', $communeNormalized);
+            $communeNormalized = $this->normalizeStr($signalement['villeOccupant'].' '.$signalement['cpOccupant']);
             if ($searchCommune && $communeNormalized != $searchCommune) {
                 continue;
             }
-            $bailleurNormalized = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', (string) $signalement['nomProprio']));
-            $bailleurNormalized = str_replace('-', ' ', $bailleurNormalized);
+            $bailleurNormalized = $this->normalizeStr((string) $signalement['nomProprio']);
             if ($searchBailleur && $bailleurNormalized != $searchBailleur) {
                 continue;
             }
             $signalementsFiltered[] = $signalement;
         }
-        $writer = new Writer(new Options(FIELD_DELIMITER: ExportFormat::CSV_SEPARATOR));
-        $filename = 'dossier_meme_adresse_'.date('Y-m-d_H-i-s').'.'.ExportFormat::FORMAT_CSV;
+        if (!in_array($format, [ExportFormat::FORMAT_CSV, ExportFormat::FORMAT_XLSX])) {
+            if ('POST' === $request->getMethod()) {
+                $this->addFlash('error', 'Merci de sélectionner le format de l\'export.');
+            }
+
+            return $this->render('back/signalement-same-address/export-same-address.html.twig', [
+                'nbResults' => \count($signalementsFiltered),
+                'filtersText' => $filtersText,
+                'isMultiTerritory' => $isMultiTerritory,
+            ]);
+        }
+        if (ExportFormat::FORMAT_XLSX === $format) {
+            $writer = new XlsxWriter();
+        } else {
+            $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: ExportFormat::CSV_SEPARATOR));
+        }
+        $filename = 'dossier_meme_adresse_'.date('Y-m-d_H-i-s').'.'.$format;
         $contentType = 'text/csv';
         $response = new StreamedResponse(static function () use ($signalementsFiltered, $territories, $writer, $isMultiTerritory) {
             $writer->openToFile('php://output');
@@ -135,5 +162,14 @@ class SignalementSameAddressController extends AbstractController
         $response->headers->set('Content-Disposition', 'attachment; filename="'.$filename.'"');
 
         return $response;
+    }
+
+    private function normalizeStr(string $str): string
+    {
+        // Attention toute modification de cette fonction doit être répercutée dans le back_signalement_same_address.js (voir fonction "normalizeStr")
+        $normalized = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str));
+        $normalized = str_replace('-', ' ', $normalized);
+
+        return $normalized;
     }
 }

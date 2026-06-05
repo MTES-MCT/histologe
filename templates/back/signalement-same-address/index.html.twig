@@ -18,16 +18,16 @@
                 <div class="fr-col-12 fr-col-sm-4 fr-text--right">
                     <button type="submit" form="search-same-address-form"
                         class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill fr-btn--block fr-btn--md-inline"
-                        aria-label="Exporter les résultats des dossiers à la même adresse (format CSV)"
-                        title="Exporter les résultats en CSV"
-                    >Exporter les résultats en CSV</button>
+                        aria-label="Exporter les résultats des dossiers à la même adresse"
+                        title="Exporter les résultats"
+                    >Exporter les résultats</button>
                 </div>
             </div>
         </header>
     </section>
 
     <section class="fr-col-12">
-        <form id="search-same-address-form" action="{{path('back_signalement_same_address_export')}}" method="post" target="_blank" class="fr-pt-4v">
+        <form id="search-same-address-form" action="{{path('back_signalement_same_address_export')}}" method="get" class="fr-pt-4v">
             <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
                 <div class="fr-col-12 fr-col-lg-3">
                     <div class="fr-input-group">

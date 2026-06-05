@@ -91,6 +91,7 @@ if (document.getElementById('map-same-address')) {
   }
 
   function normalizeStr(str) {
+    //Attention toute modification de cette fonction doit être répercutée dans le SignalementSameAddressController.php (voir fonction "normalizeStr")
     return (str || '')
       .normalize('NFD')
       .replaceAll(/[\u0300-\u036f]/gu, '')
@@ -159,6 +160,22 @@ if (document.getElementById('map-same-address')) {
     initCounters();
     map ? initMarkers() : initMap();
     showPage(1);
+  }
+
+  function initFiltersFromQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+
+    ['territoryId', 'address', 'commune', 'bailleur'].forEach(function (field) {
+      const inputEl = searchForm.querySelector('[name="' + field + '"]');
+      if (!inputEl) {
+        return;
+      }
+
+      const value = params.get(field);
+      if (value !== null) {
+        inputEl.value = value;
+      }
+    });
   }
 
   function showPage(page) {
@@ -351,6 +368,7 @@ if (document.getElementById('map-same-address')) {
     }
   });
 
+  initFiltersFromQueryParams();
   applyFilters();
   toggleMap.addEventListener('change', applyToggleMap);
   applyToggleMap();
