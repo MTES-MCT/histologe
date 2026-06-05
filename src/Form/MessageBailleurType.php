@@ -34,7 +34,7 @@ class MessageBailleurType extends AbstractType
                 ],
             ])
             ->add('files', FileType::class, [
-                'label' => false,
+                'label' => 'Ajouter des documents (facultatif)',
                 'help' => 'Taille maximale par document : 10 Mo, Formats supportés : '.UploadHandlerService::getAcceptedExtensions(),
                 'required' => false,
                 'multiple' => true,

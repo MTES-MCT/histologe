@@ -399,7 +399,7 @@
 								Nous invitons chaque partie à adopter une attitude courtoise et bienveillante.
 							</p>
 							{{ form_row(formMessage.description) }}
-
+							{{form_label(formMessage.files, 'Ajouter des documents (facultatif)')}}
 							<div class="component-upload-container fr-mb-4w">
 								<div class="component-upload-drop-section">
 									<span class="fr-icon-upload-2-line fr-icon--lg fr-text-label--blue-france"></span>
@@ -408,8 +408,8 @@
 									</div>
 								</div>
 								<p class="fr-mb-1w">ou</p>
-								<button type="button" class="component-upload-files-selector fr-btn fr-icon-search-line fr-btn--icon-left fr-btn--secondary">Parcourir les fichiers de l'appareil</button>
-								{{ form_row(formMessage.files, {'attr': {'class': 'component-upload-files-selector-input'}}) }}
+								<button type="button" class="component-upload-files-selector fr-btn fr-icon-search-line fr-btn--icon-left fr-btn--secondary fr-mb-2v">Parcourir les fichiers de l'appareil</button>
+								{{ form_widget(formMessage.files, {'attr': {'class': 'component-upload-files-selector-input'}}) }}
 								<div class="component-upload-list-errors"></div>
 								<div class="component-upload-list"></div>
 							</div>
