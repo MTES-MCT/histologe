@@ -476,9 +476,10 @@ desordre_precision:
     coef: 2
     is_danger: 0
     label: ""
-    qualification: ['NON_DECENCE', 'RSD']
+    qualification: ['NON_DECENCE', 'RSD', 'INSALUBRITE']
     desordre_precision_slug: "desordres_logement_eau_eau_chaude"
     is_suroccupation: 0
+    is_insalubrite: 1
   -
     desordre_critere_slug: "desordres_logement_aeration_aucune_aeration" 
     coef: 6
