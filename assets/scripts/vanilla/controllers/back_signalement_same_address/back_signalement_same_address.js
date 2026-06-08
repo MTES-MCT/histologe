@@ -109,10 +109,12 @@ if (document.getElementById('map-same-address')) {
       if (value && normalizeStr(value).includes(normalizedQuery) && !seen.has(value)) {
         seen.add(value);
         results.push(value);
-        if (results.length === 10) break;
       }
     }
-    return results;
+    results.sort(function (a, b) {
+      return normalizeStr(a).localeCompare(normalizeStr(b));
+    });
+    return results.slice(0, 10);
   }
 
   function showSuggestions(field, query) {

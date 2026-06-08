@@ -42,7 +42,7 @@
     <section class="fr-pt-4v">
         <form action="" method="POST" id="export-same-address">
             <h2>Format</h2>
-            {% include 'form/form-choice-export-format.html.twig' %}
+            {% include 'form/form-choice-export-format.html.twig' with { 'directDownload': true } %}
         </form>
 
         <h2 class="fr-mt-5v">Informations du fichier</h2>
