@@ -55,8 +55,8 @@ class CommuneRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('c')
             ->where('c.codeInsee IN (:codesInsee)')
             ->andWhere('c.id IN (
-                SELECT MIN(c2.id) FROM '.Commune::class.' c2 
-                WHERE c2.codeInsee IN (:codesInsee) 
+                SELECT MIN(c2.id) FROM '.Commune::class.' c2
+                WHERE c2.codeInsee IN (:codesInsee)
                 GROUP BY c2.codeInsee
             )')
             ->setParameter('codesInsee', $cleanedCodesInsee)

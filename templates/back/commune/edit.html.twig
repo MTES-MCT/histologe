@@ -50,6 +50,15 @@
             {{ form_end(form) }}
         </div>
         <div class="fr-col-12 fr-col-md-6">
+            {% if commune.communeMergedInto %}
+                <div class="fr-alert fr-alert--warning">
+                    <p>
+                        Cette commune est marquée comme dépréciée, suite à une mise à jour automatique.
+                        <br>
+                        La nouvelle commune est : <a href="{{path('back_commune_edit', {commune: commune.communeMergedInto.id})}}">{{ commune.communeMergedInto.nom }}</a>.
+                    </p>
+                </div>
+            {% endif %}
             {% if poiCommune and poiCommune.names|length > 0 %}
                 <div class="fr-alert {% if poiCommune.names|length == 1 and poiCommune.names[0] == commune.nom %}fr-alert--success{% else %}fr-alert--error{% endif %}">
                     <p>

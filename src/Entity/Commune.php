@@ -33,6 +33,10 @@ class Commune implements EntityHistoryInterface
     #[ORM\Column(type: 'boolean')]
     private bool $isZonePermisLouer;
 
+    #[ORM\ManyToOne(targetEntity: self::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Commune $communeMergedInto = null;
+
     #[ORM\ManyToOne(inversedBy: 'communes', cascade: ['persist'])]
     private ?Epci $epci = null;
 
@@ -118,6 +122,18 @@ class Commune implements EntityHistoryInterface
     public function setIsZonePermisLouer(bool $isZonePermisLouer): self
     {
         $this->isZonePermisLouer = $isZonePermisLouer;
+
+        return $this;
+    }
+
+    public function getCommuneMergedInto(): ?self
+    {
+        return $this->communeMergedInto;
+    }
+
+    public function setCommuneMergedInto(?self $communeMergedInto): self
+    {
+        $this->communeMergedInto = $communeMergedInto;
 
         return $this;
     }
