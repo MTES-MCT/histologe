@@ -37,9 +37,9 @@ class CompositionLogementRequest implements RequestInterface
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs de superficie.')]
         #[Assert\Type(type: 'numeric', message: 'La superficie doit être un nombre.')]
-        #[Assert\Length(
-            max: 10,
-            maxMessage: 'La superficie ne doit pas dépasser {{ limit }} caractères.',
+        #[Assert\LessThan(
+            value: 10000,
+            message: 'Merci de saisir une superficie inférieure à 10000.',
         )]
         private readonly ?string $superficie = null,
         #[Assert\NotBlank(
@@ -53,9 +53,9 @@ class CompositionLogementRequest implements RequestInterface
         )]
         #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs nombre de pièces à vivre.')]
         #[Assert\Type(type: 'numeric', message: 'Le nombre de pièces à vivre doit être un nombre.')]
-        #[Assert\Length(
-            max: 10,
-            maxMessage: 'Le nombre de pièces à vivre ne doit pas dépasser {{ limit }} caractères.',
+        #[Assert\LessThan(
+            value: 1000,
+            message: 'Merci de saisir un nombre de pièces inférieur à 1000.',
         )]
         private readonly ?string $compositionLogementNbPieces = null,
         #[Assert\Type(type: 'numeric', message: 'Le nombre d\'étages doit être un nombre.')]

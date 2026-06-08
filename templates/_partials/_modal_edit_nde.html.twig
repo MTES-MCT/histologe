@@ -130,7 +130,8 @@
                                         <label class="fr-label" for="signalement-edit-nde-superficie">
                                             Superficie du logement
                                         </label>
-                                        <input class="fr-input fr-col-10 fr-display-inline" pattern="[0-9]*" type="number" id="signalement-edit-nde-superficie" name="superficie" value="{{signalement.superficie}}"> m²
+                                        <input class="fr-input fr-col-10 fr-display-inline" pattern="[0-9]*" type="number" id="signalement-edit-nde-superficie" name="superficie" value="{{signalement.superficie}}" max="9999"> m²
+                                        <p id="signalement-edit-nde-superficie-error" class="fr-error-text fr-hidden">La superficie ne doit pas dépasser 9999 m².</p>
                                     </div>
                                 </div>
                             </div>                            

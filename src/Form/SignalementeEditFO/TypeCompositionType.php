@@ -124,6 +124,10 @@ class TypeCompositionType extends AbstractType
                         value: 0,
                         message: 'Veuillez saisir une superficie supérieure à 0.',
                     ),
+                    new Assert\LessThan(
+                        value: 10000,
+                        message: 'Veuillez saisir une superficie inférieure à 10000.',
+                    ),
                 ],
             ])
             ->add('pieceUnique', ChoiceType::class, [
@@ -156,6 +160,14 @@ class TypeCompositionType extends AbstractType
                     new Assert\Regex(
                         pattern: '/^\d+$/',
                         message: 'Veuillez saisir un nombre entier.',
+                    ),
+                    new Assert\GreaterThan(
+                        value: 0,
+                        message: 'Veuillez saisir un nombre de pièces supérieur à 0.',
+                    ),
+                    new Assert\LessThan(
+                        value: 1000,
+                        message: 'Veuillez saisir un nombre de pièces inférieur à 1000.',
                     ),
                     // Si le logement n'est pas une pièce unique (pieceUnique = 'plusieurs_pieces'), alors le nombre de pièces à vivre doit être supérieur ou égal à 2
                     new Assert\Callback(
