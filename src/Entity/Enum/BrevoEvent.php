@@ -10,17 +10,21 @@ enum BrevoEvent: string
 {
     use EnumTrait;
 
-    case BLOCKED = 'blocked';
-    case HARD_BOUNCE = 'hard_bounce';
+    case SENT = 'sent';
+    case CLICKED = 'clicked';
+    case DEFERRED = 'deferred';
+    case DELIVERED = 'delivered';
     case SOFT_BOUNCE = 'soft_bounce';
     case SPAM = 'spam';
-    case INVALID_EMAIL = 'invalid_email';
-    case ERROR = 'error';
-    case DELIVERED = 'delivered';
-    case OPENED = 'opened';
-    case CLICKED = 'clicked';
     case FIRST_OPENED = 'unique_opened';
-    case SENT = 'sent';
+    case HARD_BOUNCE = 'hard_bounce';
+    case OPENED = 'opened';
+    case INVALID_EMAIL = 'invalid_email';
+    case BLOCKED = 'blocked';
+    case ERROR = 'error';
+    case UNSUBSCRIBED = 'unsubscribed';
+    case PROXY_OPEN = 'proxy_open';
+    case UNIQUE_PROXY_OPEN = 'unique_proxy_open';
 
     /**
      * @return string[]
@@ -32,6 +36,8 @@ enum BrevoEvent: string
             self::OPENED->value,
             self::CLICKED->value,
             self::FIRST_OPENED->value,
+            self::PROXY_OPEN->value,
+            self::UNIQUE_PROXY_OPEN->value,
         ];
     }
 
@@ -47,6 +53,7 @@ enum BrevoEvent: string
             self::SPAM->value,
             self::INVALID_EMAIL->value,
             self::ERROR->value,
+            self::UNSUBSCRIBED->value,
         ];
     }
 
