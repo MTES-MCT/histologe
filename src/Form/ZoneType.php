@@ -5,9 +5,11 @@ namespace App\Form;
 use App\Entity\Enum\ZoneType as EnumZoneType;
 use App\Entity\Partner;
 use App\Entity\Zone;
+use App\Form\DataTransformer\PolygonToWktTransformer;
 use App\Form\Type\SearchCheckboxType;
 use App\Form\Type\TerritoryChoiceType;
 use App\Repository\PartnerRepository;
+use App\Service\Geometry\GeometryFactory;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Asset\Package;
 use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
@@ -15,6 +17,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -30,6 +33,7 @@ class ZoneType extends AbstractType
 
     public function __construct(
         private readonly Security $security,
+        private readonly GeometryFactory $geometryFactory,
     ) {
         $this->package = new Package(new EmptyVersionStrategy());
     }
@@ -100,13 +104,14 @@ class ZoneType extends AbstractType
             'help_html' => true,
             'constraints' => $fileConstraints,
         ]);
-        $builder->add('area', null, [
+        $builder->add('area', TextareaType::class, [
             'label' => $zone->getId() ? 'Copier / coller le texte au format WKT' : 'Ou copier / coller le texte au format WKT',
             'required' => false,
             'help' => 'Vous pouvez générer une zone au bon format avec l\'outil <a rel="noreferrer noopener" title="wktmap.com - ouvre une nouvelle fenêtre" target="_blank" href="https://wktmap.com/">wktmap.com</a>',
             'help_html' => true,
             'attr' => ['rows' => 5],
         ]);
+        $builder->get('area')->addModelTransformer(new PolygonToWktTransformer($this->geometryFactory));
         if ($zone->getId()) {
             $builder->add('save', SubmitType::class, [
                 'label' => 'Valider',

@@ -126,5 +126,7 @@ class SignalementExportFactoryTest extends TestCase
         $this->assertEquals('RSD,INSALUBRITE', $signalementExportFactory->interventionConcludeProcedure);
         $this->assertEquals('Entre 1 et 2 ans', $signalementExportFactory->debutDesordres);
         $this->assertEquals('dossier envoyé à ARS pour une suspicion d\'insalubrité', $signalementExportFactory->interventionDetails);
+
+        $this->assertEquals('', $signalementExportFactory->zones);
     }
 }

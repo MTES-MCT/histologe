@@ -29,6 +29,7 @@ class EntityHistoryListener
         'lastSuiviAt',
         'lastSuiviBy',
         'lastSuiviIsVisibleForUsager',
+        'area',
     ];
 
     public function __construct(

@@ -78,6 +78,7 @@ class SignalementExportSelectableColumns
         'MOTIF_CLOTURE' => ['name' => 'Motif de clôture', 'description' => 'Le motif de clôture du signalement', 'export' => 's.motifCloture', 'preselected' => false],
         'COM_CLOTURE' => ['name' => 'Commentaire de clôture', 'description' => 'Le commentaire de clôture du signalement', 'export' => 's.comCloture', 'preselected' => false],
         'GEOLOCALISATION' => ['name' => 'Géolocalisation', 'description' => 'Les coordonnées GPS du logement', 'export' => 's.geoloc', 'preselected' => false],
+        'ZONES' => ['name' => 'Zones', 'description' => 'Les zones dans lesquelles se trouve le signalement', 'export' => 'zones', 'preselected' => false, 'specificSelect' => true],
     ];
 
     /**

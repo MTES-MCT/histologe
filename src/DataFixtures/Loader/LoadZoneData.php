@@ -7,6 +7,7 @@ use App\Entity\Zone;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Service\Geometry\GeometryFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -18,6 +19,7 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
         private TerritoryRepository $territoryRepository,
         private UserRepository $userRepository,
         private PartnerRepository $partnerRepository,
+        private GeometryFactory $geometryFactory,
     ) {
     }
 
@@ -37,7 +39,9 @@ class LoadZoneData extends Fixture implements OrderedFixtureInterface
     private function loadZone(ObjectManager $manager, array $row): void
     {
         $zone = new Zone();
-        $zone->setArea($row['area'])
+
+        $geometry = $this->geometryFactory->createFromWkt($row['area']);
+        $zone->setArea($geometry)
             ->setName($row['name'])
             ->setType(ZoneType::AUTRE)
             ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))

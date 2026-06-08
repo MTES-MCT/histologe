@@ -6,8 +6,10 @@ use App\Entity\User;
 use App\Entity\Zone;
 use App\Form\SearchZoneType;
 use App\Form\ZoneType;
+use App\Repository\Query\Zone\ZonePaginatorQuery;
 use App\Repository\ZoneRepository;
 use App\Security\Voter\ZoneVoter;
+use App\Service\Geometry\GeometryFactory;
 use App\Service\Import\CsvParser;
 use App\Service\ListFilters\SearchZone;
 use App\Service\MessageHelper;
@@ -34,7 +36,8 @@ class BackZoneController extends AbstractController
     public function __construct(
         #[Autowire(param: 'standard_max_list_pagination')]
         private readonly int $maxListPagination,
-        private readonly ZoneRepository $zoneRepository,
+        private readonly ZonePaginatorQuery $zonePaginatorQuery,
+        private readonly GeometryFactory $geometryFactory,
     ) {
     }
 
@@ -51,7 +54,7 @@ class BackZoneController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchZone = new SearchZone($user);
         }
-        $paginatedZones = $this->zoneRepository->findFilteredPaginated($searchZone, $this->maxListPagination);
+        $paginatedZones = $this->zonePaginatorQuery->findFilteredPaginated($searchZone, $this->maxListPagination);
 
         return [$form, $searchZone, $paginatedZones];
     }
@@ -200,15 +203,21 @@ class BackZoneController extends AbstractController
             $form->get('file')->addError(new FormError('La colonne "WKT" ne doit pas être vide'));
         }
         if ($form->isValid()) {
-            $zone->setArea($csvLine['WKT']);
+            try {
+                $geometry = $this->geometryFactory->createFromWkt($csvLine['WKT']);
+                $zone->setArea($geometry);
+            } catch (\InvalidArgumentException $e) {
+                $form->get('file')->addError(new FormError('Le format WKT n\'est pas valide.'));
+            }
         }
     }
 
     private function validateArea(Zone $zone, Form $form, EntityManagerInterface $em): void
     {
         try {
+            $wkt = $this->geometryFactory->toWkt($zone->getArea());
             $testSQL = 'SELECT ST_GeomFromText(:area)';
-            $em->getConnection()->executeQuery($testSQL, ['area' => $zone->getArea()]);
+            $em->getConnection()->executeQuery($testSQL, ['area' => $wkt]);
         } catch (\Exception $e) {
             if ($form->get('file')->getData()) {
                 $form->get('file')->addError(new FormError('Le format de la zone n\'est pas valide.'));

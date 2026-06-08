@@ -9,8 +9,8 @@ use App\Entity\Enum\ZoneType;
 use App\Repository\ZoneRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use LongitudeOne\Spatial\PHP\Types\Geometry\GeometryInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -33,8 +33,8 @@ class Zone implements EntityHistoryInterface
     #[Groups(['settings:read'])]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private string $area;
+    #[ORM\Column(type: 'geometry', nullable: false)]
+    private GeometryInterface $area;
 
     #[ORM\ManyToOne(inversedBy: 'zones')]
     #[ORM\JoinColumn(nullable: false)]
@@ -80,12 +80,12 @@ class Zone implements EntityHistoryInterface
         return $this->id;
     }
 
-    public function getArea(): string
+    public function getArea(): GeometryInterface
     {
         return $this->area;
     }
 
-    public function setArea(string $area): static
+    public function setArea(GeometryInterface $area): static
     {
         $this->area = $area;
 

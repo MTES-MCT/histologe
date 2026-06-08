@@ -7,10 +7,8 @@ use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\Zone;
-use App\Service\ListFilters\SearchZone;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,43 +19,6 @@ class ZoneRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Zone::class);
-    }
-
-    /**
-     * @return Paginator<Zone>
-     */
-    public function findFilteredPaginated(SearchZone $searchZone, int $maxResult): Paginator
-    {
-        $qb = $this->createQueryBuilder('z');
-        $qb->select('z', 'p', 'ep', 't')
-            ->leftJoin('z.partners', 'p')
-            ->leftJoin('z.excludedPartners', 'ep')
-            ->leftJoin('z.territory', 't');
-
-        if (!empty($searchZone->getOrderType())) {
-            [$orderField, $orderDirection] = explode('-', $searchZone->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
-        } else {
-            $qb->orderBy('z.name', 'ASC');
-        }
-
-        if ($searchZone->getQueryName()) {
-            $qb->andWhere('LOWER(z.name) LIKE :queryName');
-            $qb->setParameter('queryName', '%'.strtolower($searchZone->getQueryName()).'%');
-        }
-        if ($searchZone->getTerritory()) {
-            $qb->andWhere('z.territory = :territory')->setParameter('territory', $searchZone->getTerritory());
-        } elseif (!$searchZone->getUser()->isSuperAdmin()) {
-            $qb->andWhere('z.territory IN (:territories)')->setParameter('territories', $searchZone->getUser()->getPartnersTerritories());
-        }
-        if ($searchZone->getType()) {
-            $qb->andWhere('z.type = :type')->setParameter('type', $searchZone->getType()->value);
-        }
-
-        $firstResult = ($searchZone->getPage() - 1) * $maxResult;
-        $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
-
-        return new Paginator($qb->getQuery());
     }
 
     /**
@@ -74,7 +35,7 @@ class ZoneRepository extends ServiceEntityRepository
         $sql = '
             SELECT s.uuid, s.reference, s.geoloc, s.adresse_occupant, s.cp_occupant, s.ville_occupant
             FROM signalement s
-            JOIN zone z ON ST_Contains(ST_GeomFromText(z.area),
+            JOIN zone z ON ST_Contains(z.area,
             Point(JSON_EXTRACT(s.geoloc, "$.lng"), JSON_EXTRACT(s.geoloc, "$.lat")))
             WHERE z.id = :zone AND s.territory_id = z.territory_id
             AND s.statut NOT IN (:statut_list)
@@ -99,7 +60,7 @@ class ZoneRepository extends ServiceEntityRepository
         $sql = '
             SELECT z.name
             FROM signalement s
-            JOIN zone z ON ST_Contains(ST_GeomFromText(z.area),
+            JOIN zone z ON ST_Contains(z.area,
             Point(JSON_EXTRACT(s.geoloc, "$.lng"), JSON_EXTRACT(s.geoloc, "$.lat")))
             WHERE s.id = :signalement AND z.territory_id = z.territory_id
             ORDER BY z.name ASC
@@ -114,7 +75,9 @@ class ZoneRepository extends ServiceEntityRepository
      */
     public function findForUserAndTerritory(User $user, ?Territory $territory): array
     {
-        $qb = $this->createQueryBuilder('z');
+        $qb = $this->createQueryBuilder('z')
+            ->select('partial z.{id, name, type}'); // Exclusion des colonnes inutiles (notamment area qui pèse sur le game)
+
         if (!$user->isSuperAdmin()) {
             $qb->andWhere('z.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
         }

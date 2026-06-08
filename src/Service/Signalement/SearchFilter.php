@@ -280,7 +280,7 @@ class SearchFilter
                 JOIN zone z ON z.id IN ('.implode(',', $zonesParams).')
                 WHERE z.territory_id = s2.territory_id
                 AND ST_Contains(
-                    ST_GeomFromText(z.area),
+                    z.area,
                     Point(
                         JSON_EXTRACT(s2.geoloc, \'$.lng\'),
                         JSON_EXTRACT(s2.geoloc, \'$.lat\')
@@ -288,8 +288,11 @@ class SearchFilter
                 ) = 1
             ';
             $stmt = $connection->prepare($sql);
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key, $value);
+            }
 
-            $zonesSignalements = $stmt->executeQuery($params)->fetchAllAssociative();
+            $zonesSignalements = $stmt->executeQuery()->fetchAllAssociative();
 
             if (!empty($zonesSignalements)) {
                 $qb->andWhere('s.id IN (:zonesSignalements)')
