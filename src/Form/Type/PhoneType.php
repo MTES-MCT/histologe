@@ -31,7 +31,7 @@ class PhoneType extends AbstractType
             'multiple' => true,
             'attr' => ['class' => 'phone-input'],
             'label' => 'Téléphone',
-            'help' => 'Format attendu : Veuillez sélectionner le pays pour obtenir l\'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l\'indicatif). Exemple pour la France : 0702030405.',
+            'help' => 'Format attendu : Veuillez sélectionner le pays pour obtenir l\'indicatif téléphonique, puis saisir le numéro de téléphone au format national (sans l\'indicatif). Exemple pour la France : 702030405.',
             'countryCodes' => $countryCallingCodes,
         ]);
     }

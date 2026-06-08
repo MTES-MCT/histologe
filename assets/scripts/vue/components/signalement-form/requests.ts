@@ -32,7 +32,7 @@ export const requests = {
       .catch(error => {
         console.error(error)
         Sentry.captureException(new Error(error))
-        functionReturn(error)
+        functionReturn(error.response?.data ?? error)
       })
   },
   doRequestPostUpload (ajaxUrl: string, data: any, functionReturn: Function, config: any) {
@@ -48,7 +48,7 @@ export const requests = {
       .catch(error => {
         console.error(error)
         Sentry.captureException(new Error('Something wrong happened with the upload.'))
-        functionReturn(error)
+        functionReturn(error.response?.data ?? error)
       })
   },
   doRequestPut (ajaxUrl: string, data: any, functionReturn: Function) {

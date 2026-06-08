@@ -49,6 +49,11 @@ class TelephoneFormatValidatorTest extends ConstraintValidatorTestCase
         yield 'french format with +330 (formulaire front)' => ['+330808080808'];
         yield 'french format with + and spaces' => ['+33 8 08 08 08 08'];
 
+        // Format Ile de la Réunion
+        yield 'La Réunion with national format' => ['0692345678'];
+        yield 'La Réunion with international format' => ['+262692345678'];
+        yield 'La Réunion with country code and national format' => ['+2620692345678'];
+
         // Formats étrangers
         yield 'italian phone number' => ['+39 6 8888 1111'];
         yield 'italian phone number without spaces' => ['+3968888111'];
