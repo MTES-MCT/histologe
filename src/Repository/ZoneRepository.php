@@ -7,10 +7,8 @@ use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\Zone;
-use App\Service\ListFilters\SearchZone;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,43 +19,6 @@ class ZoneRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Zone::class);
-    }
-
-    /**
-     * @return Paginator<Zone>
-     */
-    public function findFilteredPaginated(SearchZone $searchZone, int $maxResult): Paginator
-    {
-        $qb = $this->createQueryBuilder('z');
-        $qb->select('z', 'p', 'ep', 't')
-            ->leftJoin('z.partners', 'p')
-            ->leftJoin('z.excludedPartners', 'ep')
-            ->leftJoin('z.territory', 't');
-
-        if (!empty($searchZone->getOrderType())) {
-            [$orderField, $orderDirection] = explode('-', $searchZone->getOrderType());
-            $qb->orderBy($orderField, $orderDirection);
-        } else {
-            $qb->orderBy('z.name', 'ASC');
-        }
-
-        if ($searchZone->getQueryName()) {
-            $qb->andWhere('LOWER(z.name) LIKE :queryName');
-            $qb->setParameter('queryName', '%'.strtolower($searchZone->getQueryName()).'%');
-        }
-        if ($searchZone->getTerritory()) {
-            $qb->andWhere('z.territory = :territory')->setParameter('territory', $searchZone->getTerritory());
-        } elseif (!$searchZone->getUser()->isSuperAdmin()) {
-            $qb->andWhere('z.territory IN (:territories)')->setParameter('territories', $searchZone->getUser()->getPartnersTerritories());
-        }
-        if ($searchZone->getType()) {
-            $qb->andWhere('z.type = :type')->setParameter('type', $searchZone->getType()->value);
-        }
-
-        $firstResult = ($searchZone->getPage() - 1) * $maxResult;
-        $qb->setFirstResult($firstResult)->setMaxResults($maxResult);
-
-        return new Paginator($qb->getQuery());
     }
 
     /**

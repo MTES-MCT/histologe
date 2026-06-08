@@ -4,6 +4,8 @@ namespace App\Service\Geometry;
 
 use LongitudeOne\Spatial\PHP\Types\AbstractGeometry;
 use LongitudeOne\Spatial\PHP\Types\Geometry\GeometryInterface;
+use LongitudeOne\Spatial\PHP\Types\Geometry\MultiPolygon;
+use LongitudeOne\Spatial\PHP\Types\Geometry\Polygon;
 
 /**
  * GeometryCollection object for the GEOMETRYCOLLECTION geometry type.
@@ -101,7 +103,7 @@ class GeometryCollection extends AbstractGeometry implements GeometryInterface
         // Extract all polygons from the collection
         $polygons = [];
         foreach ($this->geometries as $geometry) {
-            if ('Polygon' === $geometry->getType()) {
+            if ($geometry instanceof Polygon) {
                 $polygons[] = $geometry;
             }
         }
@@ -114,10 +116,7 @@ class GeometryCollection extends AbstractGeometry implements GeometryInterface
             }
 
             // Multiple polygons, create MultiPolygon
-            /** @var \LongitudeOne\Spatial\PHP\Types\Geometry\Polygon[] $polygons */
-            $multiPolygonClass = 'LongitudeOne\\Spatial\\PHP\\Types\\Geometry\\MultiPolygon';
-
-            return new $multiPolygonClass($polygons, $this->srid);
+            return new MultiPolygon($polygons, $this->srid);
         }
 
         // No polygons found, return the first geometry as fallback

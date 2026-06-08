@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Entity\Zone;
 use App\Form\SearchZoneType;
 use App\Form\ZoneType;
+use App\Repository\Query\Zone\ZonePaginatorQuery;
 use App\Repository\ZoneRepository;
 use App\Security\Voter\ZoneVoter;
 use App\Service\Geometry\GeometryFactory;
@@ -35,7 +36,7 @@ class BackZoneController extends AbstractController
     public function __construct(
         #[Autowire(param: 'standard_max_list_pagination')]
         private readonly int $maxListPagination,
-        private readonly ZoneRepository $zoneRepository,
+        private readonly ZonePaginatorQuery $zonePaginatorQuery,
         private readonly GeometryFactory $geometryFactory,
     ) {
     }
@@ -53,7 +54,7 @@ class BackZoneController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchZone = new SearchZone($user);
         }
-        $paginatedZones = $this->zoneRepository->findFilteredPaginated($searchZone, $this->maxListPagination);
+        $paginatedZones = $this->zonePaginatorQuery->findFilteredPaginated($searchZone, $this->maxListPagination);
 
         return [$form, $searchZone, $paginatedZones];
     }
