@@ -29,6 +29,19 @@
     <section class="fr-col-12">
         <form id="search-same-address-form" action="{{path('back_signalement_same_address_export')}}" method="get" class="fr-pt-4v">
             <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+                {% if territories|length > 1 %}
+                    <div class="fr-col-12 fr-col-lg-3">
+                        <div class="fr-select-group">
+                            <label class="fr-label" for="territoryId">Territoire</label>
+                            <select id="territoryId" name="territoryId" class="fr-select">
+                                <option value="">Tous les territoires</option>
+                                {% for territory in territories %}
+                                    <option value="{{ territory.id }}">{{ territory.zipAndName }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                {% endif %}
                 <div class="fr-col-12 fr-col-lg-3">
                     <div class="fr-input-group">
                         <label class="fr-label" for="address">Adresse du logement</label>
@@ -59,19 +72,6 @@
                         </div>
                     </div>
                 </div>
-                {% if territories|length > 1 %}
-                    <div class="fr-col-12 fr-col-lg-3">
-                        <div class="fr-select-group">
-                            <label class="fr-label" for="territoryId">Territoire</label>
-                            <select id="territoryId" name="territoryId" class="fr-select">
-                                <option value="">Tous les territoires</option>
-                                {% for territory in territories %}
-                                    <option value="{{ territory.id }}">{{ territory.zipAndName }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                {% endif %}
                 <div class="fr-col-12 fr-col-lg-4">
                     <button type="reset" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</button>
                 </div>
@@ -80,7 +80,7 @@
     </section>
 
     <section class="fr-col-12 fr-py-5v">
-        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
             <div class="fr-col-12 fr-col-sm-9">
                 <h2 class="title-counters-same-address"></h2>
             </div>

@@ -103,8 +103,27 @@ if (document.getElementById('map-same-address')) {
     const seen = new Set();
     const results = [];
     const normalizedQuery = normalizeStr(query);
-    const items = document.querySelectorAll('.same-address-item.is-active-filters');
+
+    const territoryId = searchForm.querySelector('[name="territoryId"]')?.value;
+    const otherFilters = {
+      address: searchForm.querySelector('[name="address"]').value,
+      commune: searchForm.querySelector('[name="commune"]').value,
+      bailleur: searchForm.querySelector('[name="bailleur"]').value,
+    };
+
+    const items = document.querySelectorAll('.same-address-item');
     for (const item of items) {
+      if (territoryId && item.dataset.territoryId !== territoryId) continue;
+      let excluded = false;
+      for (const [filterField, filterValue] of Object.entries(otherFilters)) {
+        if (filterField === field) continue; // ne pas appliquer le filtre du champ courant
+        if (filterValue && normalizeStr(item.dataset[filterField]) !== normalizeStr(filterValue)) {
+          excluded = true;
+          break;
+        }
+      }
+      if (excluded) continue;
+
       const value = item.dataset[field];
       if (value && normalizeStr(value).includes(normalizedQuery) && !seen.has(value)) {
         seen.add(value);
@@ -351,6 +370,11 @@ if (document.getElementById('map-same-address')) {
 
   ['address', 'commune', 'bailleur'].forEach(function (field) {
     const inputEl = searchForm.querySelector('[name="' + field + '"]');
+    inputEl.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+      }
+    });
     inputEl.addEventListener('focus', function () {
       showSuggestions(field, inputEl.value);
     });
