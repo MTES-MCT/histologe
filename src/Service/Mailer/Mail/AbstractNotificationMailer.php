@@ -8,7 +8,6 @@ use App\Manager\FailedEmailManager;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerType;
 use Psr\Log\LoggerInterface;
-use Sentry\Severity;
 use Sentry\State\Scope;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -139,26 +138,10 @@ abstract class AbstractNotificationMailer implements NotificationMailerInterface
 
             return true;
         } catch (\Throwable $exception) {
-            if ($this->isBrevoTemplateDisabledError($exception)) {
-                \Sentry\withScope(function (Scope $scope) use ($exception): void {
-                    $scope->setLevel(Severity::fatal());
-                    $scope->setTag('brevo_error', 'template_disabled');
-                    $scope->setTag('brevo_template_id', (string) $this->brevoTemplateId);
-                    $scope->setTag('mailer_type', $this->mailerType->name);
-                    \Sentry\captureException($exception);
-                });
-            }
             $this->logAndSaveFailedEmail($message, $notificationMail, $exception, $params);
         }
 
         return false;
-    }
-
-    private function isBrevoTemplateDisabledError(\Throwable $exception): bool
-    {
-        $message = strtolower($exception->getMessage());
-
-        return str_contains($message, 'template') && str_contains($message, 'disabled');
     }
 
     /**

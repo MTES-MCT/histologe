@@ -11,9 +11,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
-use Sentry\SentrySdk;
-use Sentry\State\HubInterface;
-use Sentry\State\Scope;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -24,11 +21,9 @@ class AbstractNotificationMailerTest extends TestCase
     private MailerInterface&MockObject $mailerInterface;
     private ParameterBagInterface&MockObject $parameterBag;
     private FailedEmailManager&MockObject $failedEmailManager;
-    private HubInterface $originalSentryHub;
 
     protected function setUp(): void
     {
-        $this->originalSentryHub = SentrySdk::getCurrentHub();
         $this->mailerInterface = $this->createMock(MailerInterface::class);
         $this->parameterBag = $this->createMock(ParameterBagInterface::class);
         $this->failedEmailManager = $this->createMock(FailedEmailManager::class);
@@ -42,12 +37,6 @@ class AbstractNotificationMailerTest extends TestCase
         ]);
     }
 
-    protected function tearDown(): void
-    {
-        SentrySdk::setCurrentHub($this->originalSentryHub);
-        parent::tearDown();
-    }
-
     public function testSendReturnsTrueOnSuccess(): void
     {
         $this->mailerInterface->expects($this->once())->method('send');
@@ -58,28 +47,9 @@ class AbstractNotificationMailerTest extends TestCase
         $this->assertTrue($result);
     }
 
-    #[DataProvider('provideTemplateDisabledMessages')]
-    public function testSendCapturesFatalSentryEventOnTemplateDisabledError(string $exceptionMessage): void
+    #[DataProvider('provideErrorMessages')]
+    public function testSendReturnsFalseAndSavesFailedEmailOnError(string $exceptionMessage): void
     {
-        $mockHub = $this->buildSentryHubMock();
-        $mockHub->expects($this->once())->method('captureException');
-        SentrySdk::setCurrentHub($mockHub);
-
-        $this->mailerInterface->expects($this->once())->method('send')->willThrowException(new \RuntimeException($exceptionMessage));
-        $this->failedEmailManager->expects($this->once())->method('create');
-
-        $result = $this->buildMailer()->send($this->buildNotificationMail());
-
-        $this->assertFalse($result);
-    }
-
-    #[DataProvider('provideOtherErrorMessages')]
-    public function testSendCapturesOnError(string $exceptionMessage): void
-    {
-        $mockHub = $this->buildSentryHubMock();
-        $mockHub->expects($this->never())->method('captureException');
-        SentrySdk::setCurrentHub($mockHub);
-
         $this->mailerInterface->expects($this->once())->method('send')->willThrowException(new \RuntimeException($exceptionMessage));
         $this->failedEmailManager->expects($this->once())->method('create');
 
@@ -99,16 +69,9 @@ class AbstractNotificationMailerTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public static function provideTemplateDisabledMessages(): \Generator
+    public static function provideErrorMessages(): \Generator
     {
-        yield 'Brevo API format' => ['Unable to send an email: This template is disabled (code 400).'];
-        yield 'Uppercase' => ['TEMPLATE IS DISABLED'];
-        yield 'Lowercase' => ['template is disabled'];
-        yield 'Words in different order' => ['Error: template 42 is disabled'];
-    }
-
-    public static function provideOtherErrorMessages(): \Generator
-    {
+        yield 'template is disabled' => ['Unable to send an email: This template is disabled (code 400).'];
         yield 'Invalid Request' => ['Unable to send an email: Invalid Request (code 500).'];
         yield 'email is not valid' => ['Unable to send an email: email is not valid in to (code 400).'];
         yield 'upstream connect error or disconnect/reset before headers' => ['Unable to send an email: upstream connect error or disconnect/reset before headers. reset reason: connection timeout (code 503).'];
@@ -149,20 +112,5 @@ class AbstractNotificationMailerTest extends TestCase
     private function buildNotificationMail(NotificationMailerType $type = NotificationMailerType::TYPE_CRON): NotificationMail
     {
         return new NotificationMail(type: $type, to: 'test@example.com');
-    }
-
-    private function buildSentryHubMock(): HubInterface&MockObject
-    {
-        $mockHub = $this->createMock(HubInterface::class);
-        // withScope executes the callback so captureException inside it reaches the mock
-        $mockHub->method('withScope')->willReturnCallback(static function (callable $callback): void {
-            $callback(new Scope());
-        });
-        // configureScope is called in logAndSaveFailedEmail, execute silently
-        $mockHub->method('configureScope')->willReturnCallback(static function (callable $callback): void {
-            $callback(new Scope());
-        });
-
-        return $mockHub;
     }
 }
