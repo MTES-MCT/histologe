@@ -55,7 +55,7 @@ class AnnuaireController extends AbstractController
         }
 
         $originalMethod = $request->getMethod();
-        $request->setMethod('GET'); // to prevent Symfony ignoring GET data while handlning the form
+        $request->setMethod('GET'); // to prevent Symfony ignoring GET data while handling the form
         [$form, $search, $userPartners] = $this->handleSearch($request, false);
 
         if ('POST' === $originalMethod) {
