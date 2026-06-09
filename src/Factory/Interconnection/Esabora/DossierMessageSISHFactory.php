@@ -133,6 +133,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setLogementType($signalement->getNatureLogement() ?? 'Autre')
             ->setLogementSocial(!empty($signalement->getIsLogementSocial()) ? (int) $signalement->getIsLogementSocial() : null)
             ->setLogementAnneeConstruction($signalement->getAnneeConstruction())
+            ->setLogementCollectif(0)
             ->setLogementAvant1949((int) $signalement->getIsConstructionAvant1949())
             ->setLogementDiagST(0)
             ->setLogementInvariant($numeroInvariant)
