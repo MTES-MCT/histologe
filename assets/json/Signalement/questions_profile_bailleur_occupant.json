@@ -91,7 +91,7 @@
           "validate": {
             "message": "Veuillez renseigner votre numéro de téléphone.",
             "expression": "!formStore.data.vos_coordonnees_occupant_tel || !/[\\s\\+\\-\\.]/.test(formStore.data.vos_coordonnees_occupant_tel)",
-            "expressionMessage": "Le numéro de téléphone ne doit pas contenir d'espaces, de tirets, de points ou d'indicatif international. Format attendu : 0702030405"
+            "expressionMessage": "Le numéro de téléphone ne doit pas contenir d'espaces, de tirets, de points ou d'indicatif international. Format attendu : 0702030405 ou 702030405"
           },
           "accessibility": {
             "name": "telephone",
