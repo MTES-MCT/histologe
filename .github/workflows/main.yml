@@ -85,6 +85,9 @@ jobs:
       - name: Check PHP Version
         run: php -v
 
+      - name: Copy CI environment file
+        run: cp .env.ci .env
+
       - name: NPM install
         uses: actions/setup-node@v2
         with:
