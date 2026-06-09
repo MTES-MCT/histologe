@@ -370,15 +370,64 @@ if (document.getElementById('map-same-address')) {
 
   ['address', 'commune', 'bailleur'].forEach(function (field) {
     const inputEl = searchForm.querySelector('[name="' + field + '"]');
+    let selectedSuggestionIndex = -1;
+
+    function getListEl() {
+      return searchForm.querySelector('[name="' + field + '"] + .fr-autocomplete-list');
+    }
+
+    function updateSelectedSuggestion() {
+      const listEl = getListEl();
+      listEl
+        .querySelector('.fr-autocomplete-suggestion-highlighted')
+        ?.classList.remove('fr-autocomplete-suggestion-highlighted');
+      const suggestions = listEl.querySelectorAll('.fr-autocomplete-suggestion');
+      suggestions[selectedSuggestionIndex]?.classList.add('fr-autocomplete-suggestion-highlighted');
+    }
+
+    function handleDown() {
+      const suggestions = getListEl().querySelectorAll('.fr-autocomplete-suggestion');
+      if (selectedSuggestionIndex < suggestions.length - 1) {
+        selectedSuggestionIndex++;
+        updateSelectedSuggestion();
+      }
+    }
+
+    function handleUp() {
+      if (selectedSuggestionIndex > 0) {
+        selectedSuggestionIndex--;
+        updateSelectedSuggestion();
+      }
+    }
+
+    function handleEnter() {
+      const suggestions = getListEl().querySelectorAll('.fr-autocomplete-suggestion');
+      if (selectedSuggestionIndex !== -1 && suggestions[selectedSuggestionIndex]) {
+        inputEl.value = suggestions[selectedSuggestionIndex].textContent;
+        getListEl().innerHTML = '';
+        selectedSuggestionIndex = -1;
+        applyFilters();
+      }
+    }
+
     inputEl.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
         e.preventDefault();
+        handleEnter();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        handleDown();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        handleUp();
       }
     });
     inputEl.addEventListener('focus', function () {
+      selectedSuggestionIndex = -1;
       showSuggestions(field, inputEl.value);
     });
     inputEl.addEventListener('input', function () {
+      selectedSuggestionIndex = -1;
       showSuggestions(field, inputEl.value);
       if (!inputEl.value) {
         applyFilters();
