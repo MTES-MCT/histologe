@@ -78,7 +78,6 @@ worker-status:## Get status worker
 
 worker-start: ## Start worker
 	@echo -e '\e[1;32mStart worker\032'
-	@bash -l -c '$(DOCKER_COMP) up -d signal_logement_phpworker'
 	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_phpworker supervisorctl start all'
 
 worker-stop: ## Stop worker
@@ -96,6 +95,11 @@ worker-consume: ## Consume local queue for debug
 scheduler-consume: ## Consume scheduler for debug
 	@echo -e '\e[1;32mConsume scheduler\033[0m'
 	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_phpworker php bin/console messenger:consume scheduler_esabora -vvv'
+
+esabora-consume: ## Consume scheduler for debug
+	@echo -e '\e[1;32mConsume scheduler\033[0m'
+	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_phpworker php bin/console messenger:consume async_esabora -vvv'
+
 
 scheduler-debug: ## List cron to schedule
 	@echo -e '\e[1;32mList cron\033[0m'
