@@ -56,8 +56,8 @@ class KpiQuery
     ): int {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
-            ->where('s.statut IN (:statut)')
-            ->setParameter('statut', [SignalementStatus::INJONCTION_BAILLEUR, SignalementStatus::INJONCTION_CLOSED]);
+            ->where('s.statut IN (:signalementStatusList)')
+            ->setParameter('signalementStatusList', SignalementStatus::injonctionStatuses());
 
         $qb->select('COUNT(s.id)');
 
@@ -75,6 +75,7 @@ class KpiQuery
             ? SuiviCategory::categoriesSubmittedByUsager()
             : SuiviCategory::categoriesSubmittedByBailleur();
 
+        // ne renvoie les messages non lus que pour les 30 derniers jours, car les notifications sont supprimées automatiquement au-delà de 30 jours
         $notificationQueryBuilder = $this->entityManager->createQueryBuilder()
                 ->select('1')
                 ->from(Notification::class, 'n')

@@ -66,8 +66,8 @@ class SearchSignalementInjonctionType extends AbstractType
                     'du bailleur' => 'bailleur',
                 ],
                 'required' => false,
-                'placeholder' => 'Aucun',
-                'label' => 'Nouveau message',
+                'placeholder' => 'Tous',
+                'label' => 'Nouveau message (sur les 30 derniers jours)',
             ]);
         }
 
