@@ -17,6 +17,7 @@ class SearchSignalementInjonction
     private ?string $orderType = null;
     private ?string $reponseBailleur = null;
     private ?string $statutSignalement = null;
+    private ?string $messages = null;
 
     public function __construct(User $user)
     {
@@ -59,6 +60,16 @@ class SearchSignalementInjonction
     public function setStatutSignalement(?string $statutSignalement): void
     {
         $this->statutSignalement = $statutSignalement;
+    }
+
+    public function getMessages(): ?string
+    {
+        return $this->messages;
+    }
+
+    public function setMessages(?string $messages): void
+    {
+        $this->messages = $messages;
     }
 
     public function getOrderType(): ?string

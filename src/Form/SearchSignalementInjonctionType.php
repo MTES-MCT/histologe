@@ -59,6 +59,18 @@ class SearchSignalementInjonctionType extends AbstractType
             'label' => 'Statut de la démarche',
         ]);
 
+        if ($this->isAdmin) {
+            $builder->add('messages', ChoiceType::class, [
+                'choices' => [
+                    'de l\'usager' => 'usager',
+                    'du bailleur' => 'bailleur',
+                ],
+                'required' => false,
+                'placeholder' => 'Tous',
+                'label' => 'Nouveau message (sur les 30 derniers jours)',
+            ]);
+        }
+
         $builder->add('orderType', ChoiceType::class, [
             'choices' => [
                 'Ordre croissant' => 's.id-ASC',

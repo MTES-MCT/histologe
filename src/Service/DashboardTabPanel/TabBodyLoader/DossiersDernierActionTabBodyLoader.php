@@ -44,6 +44,10 @@ class DossiersDernierActionTabBodyLoader extends AbstractTabBodyLoader
             if ($this->security->isGranted(InjonctionBailleurVoter::INJONCTION_BAILLEUR_SEE)) {
                 $data['data_kpi']['injonctions'] = $this->tabDataManager->countInjonctions($this->tabQueryParameters);
             }
+            if ($user->isSuperAdmin()) {
+                $data['data_kpi']['injonctions_nouveaux_messages_usager'] = $this->tabDataManager->countInjonctionsNouveauxMessages($this->tabQueryParameters, 'usager');
+                $data['data_kpi']['injonctions_nouveaux_messages_bailleur'] = $this->tabDataManager->countInjonctionsNouveauxMessages($this->tabQueryParameters, 'bailleur');
+            }
         }
         if ($user->isSuperAdmin()) {
             $data['data_interconnexion'] = $this->tabDataManager->getInterconnexions($this->tabQueryParameters);

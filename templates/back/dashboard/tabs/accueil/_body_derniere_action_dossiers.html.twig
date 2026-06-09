@@ -70,6 +70,24 @@
                         } %}
                     {% endif %}
                 {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    {% include 'back/dashboard/components/_tuile.html.twig' with {
+                        icon_path: 'img/picto-dsfr/mail-send.svg',
+                        title: 'Démarches accélérées : nouveaux messages usager',
+                        badge_class: 'fr-badge--green-tilleul-verveine',
+                        badge_label: singular_or_plural(items.data_kpi.injonctions_nouveaux_messages_usager, ' nouveau message usager', 'nouveaux messages usager'),
+                        link: path('back_injonction_signalement_index',  {territoire: items.territory_id, messages: 'usager' })
+                    } %}
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    {% include 'back/dashboard/components/_tuile.html.twig' with {
+                        icon_path: 'img/picto-dsfr/mail-send.svg',
+                        title: 'Démarches accélérées : nouveaux messages bailleur',
+                        badge_class: 'fr-badge--green-tilleul-verveine',
+                        badge_label: singular_or_plural(items.data_kpi.injonctions_nouveaux_messages_bailleur, ' nouveau message bailleur', 'nouveaux messages bailleur'),
+                        link: path('back_injonction_signalement_index',  {territoire: items.territory_id, messages: 'bailleur' })
+                    } %}
+                {% endif %}
                 {% if items.nextClubEvent %}
                     {% include 'back/dashboard/components/_tuile.html.twig' with {
                         icon_path: 'img/picto-dsfr/calendar.svg',

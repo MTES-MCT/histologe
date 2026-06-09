@@ -54,3 +54,8 @@ notifications:
   type: "SUIVI_USAGER"
   signalement: "2023-15"
   suivi: 'Ceci est le dernier suivi de partenaire 13-01'
+-
+  user: "admin-01@signal-logement.fr"
+  type: "NOUVEAU_SUIVI"
+  signalement: "2023-12"
+  suivi: "Le bailleur est vraiment casse pied, Je n'en peux plus de lui !"

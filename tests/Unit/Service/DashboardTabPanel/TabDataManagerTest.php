@@ -162,6 +162,19 @@ class TabDataManagerTest extends WebTestCase
         $this->assertSame(5, $result);
     }
 
+    public function testCountInjonctionsNouveauxMessages(): void
+    {
+        /** @var MockObject&User $user */
+        $user = $this->createMock(User::class);
+        $this->security->method('getUser')->willReturn($user);
+        $this->kpiQuery->method('countInjonctionsNouveauxMessages')->willReturn(5);
+
+        $tabDataManager = $this->getTabDataManager();
+
+        $result = $tabDataManager->countInjonctionsNouveauxMessages();
+        $this->assertSame(5, $result);
+    }
+
     public function testCountUsersPendingToArchiveReturnsCount(): void
     {
         /** @var MockObject&User $user */
