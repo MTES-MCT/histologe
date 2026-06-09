@@ -53,8 +53,6 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
             $this->notificationAndMailSender->sendSignalementIsClosedToPartners($suivi);
         } elseif (SuiviCategory::DEMANDE_ABANDON_PROCEDURE === $suivi->getCategory()) {
             $this->notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);
-
-            return;
         } else {
             $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners(
                 suivi: $suivi,
