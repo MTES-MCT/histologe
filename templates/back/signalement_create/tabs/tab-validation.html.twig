@@ -175,8 +175,8 @@
     {% endif %}
 
     <div class="fr-grid-row fr-grid-row--right">
-        <div class="fr-ml-2w">
-            <button type="submit" class="fr-btn fr-icon-check-line fr-btn--icon-left fr-btn">
+        <div class="fr-ml-2w btn-form-pro-container">
+            <button type="submit" class="fr-btn fr-icon-check-line fr-btn--icon-left fr-btn btn-form-pro">
                 {% if is_granted('ROLE_ADMIN_TERRITORY') or assignablePartners|length %}
                     Valider et affecter
                 {% else %}

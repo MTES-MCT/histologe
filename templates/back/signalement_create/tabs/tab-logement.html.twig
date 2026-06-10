@@ -68,19 +68,19 @@
             </div>
         </fieldset>
     </div>
-
-    <div class="fr-col-6">
+</div>
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-6">
         <div class="fr-grid-row fr-grid-row--left">
             {{ form_row(formLogement.previous) }}
         </div>
     </div>
-    <div class="fr-col-6">
-        <div class="fr-grid-row fr-grid-row--right">
+    <div class="fr-col-12 fr-col-md-6">
+        <div class="fr-grid-row fr-grid-row--right flex-direction-column-reverse-sm">
             {{ form_row(formLogement.forceSave) }}
             {{ form_row(formLogement.draft) }}
             {{ form_row(formLogement.save) }}
         </div>
     </div>
-
 </div>
 {{ form_end(formLogement) }}

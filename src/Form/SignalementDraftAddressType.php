@@ -289,12 +289,13 @@ class SignalementDraftAddressType extends AbstractType
             ])
             ->add('draft', SubmitType::class, [
                 'label' => 'Finir plus tard',
-                'attr' => ['class' => 'fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline'],
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline btn-form-pro'],
+                'row_attr' => ['class' => 'btn-form-pro-container'],
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Suivant',
-                'attr' => ['class' => 'fr-btn fr-icon-arrow-right-line fr-btn--icon-right', 'data-target' => 'logement'],
-                'row_attr' => ['class' => 'fr-ml-2w'],
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-right-line fr-btn--icon-right btn-form-pro', 'data-target' => 'logement'],
+                'row_attr' => ['class' => 'fr-ml-2w btn-form-pro-container'],
             ])
         ;
     }
