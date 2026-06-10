@@ -33,7 +33,7 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
 
     public function testDisplaysOkMessageWhenNoOldMessagesFound(): void
     {
-        $threshold = '6 HOUR';
+        $threshold = '1 HOUR';
 
         $this->connection
             ->method('fetchAllAssociative')
