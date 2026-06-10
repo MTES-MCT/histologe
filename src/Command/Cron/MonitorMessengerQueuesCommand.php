@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[AsCommand(name: 'app:monitor-messenger-queues', description: 'Alerte si des messages restent trop longtemps en file d\'attente')]
 class MonitorMessengerQueuesCommand extends Command
 {
-    public const array IGNORED_QUEUES = ['failed', 'failed_high_priority', 'esabora'];
+    public const array IGNORED_QUEUES = ['failed', 'esabora'];
 
     public function __construct(
         private readonly Connection $connection,
