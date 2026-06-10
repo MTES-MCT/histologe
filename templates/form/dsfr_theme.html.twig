@@ -26,20 +26,18 @@
         {% endif %}
     {% endif %}
 
-    {% if 'choice' in block_prefixes and expanded %}
-        {{form_widget(form, widget_attr)}}
-    {% else %}
-        <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
-            {% if 'checkbox' in block_prefixes %}
-                {{form_widget(form, widget_attr)}}
-                {{form_label(form)}}
-            {% else %}
-                {{form_label(form)}}
-                {{form_widget(form, widget_attr)}}
-            {% endif %}
-            {{form_errors(form)}}
-        </div>
-    {% endif %}
+    <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+        {% if 'choice' in block_prefixes and expanded %}
+            {{ form_widget(form, widget_attr) }}
+        {% elseif 'checkbox' in block_prefixes %}
+            {{form_widget(form, widget_attr)}}
+            {{form_label(form)}}
+        {% else %}
+            {{form_label(form)}}
+            {{form_widget(form, widget_attr)}}
+        {% endif %}
+        {{form_errors(form)}}
+    </div>
 {% endblock form_row %}
 
 {% block form_errors %}
