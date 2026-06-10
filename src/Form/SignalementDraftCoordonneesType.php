@@ -78,10 +78,10 @@ class SignalementDraftCoordonneesType extends AbstractType
             ->add('telOccupant', PhoneType::class, [
                 'required' => false,
                 'constraints' => [
-                    new TelephoneFormat([
-                        'message' => 'Le numéro de téléphone n\'est pas valide.',
-                        'groups' => ['bo_step_coordonnees'],
-                    ]),
+                    new TelephoneFormat(
+                        message: 'Le numéro de téléphone n\'est pas valide.',
+                        groups: ['bo_step_coordonnees'],
+                    ),
                 ],
             ])
 
@@ -121,10 +121,10 @@ class SignalementDraftCoordonneesType extends AbstractType
             ->add('telProprio', PhoneType::class, [
                 'required' => false,
                 'constraints' => [
-                    new TelephoneFormat([
-                        'message' => 'Le numéro de téléphone n\'est pas valide.',
-                        'groups' => ['bo_step_coordonnees'],
-                    ]),
+                    new TelephoneFormat(
+                        message: 'Le numéro de téléphone n\'est pas valide.',
+                        groups: ['bo_step_coordonnees'],
+                    ),
                 ],
             ])
             ->add('adresseCompleteProprio', null, [
@@ -219,10 +219,10 @@ class SignalementDraftCoordonneesType extends AbstractType
             ->add('telDeclarant', PhoneType::class, [
                 'required' => false,
                 'constraints' => [
-                    new TelephoneFormat([
-                        'message' => 'Le numéro de téléphone n\'est pas valide.',
-                        'groups' => ['bo_step_coordonnees'],
-                    ]),
+                    new TelephoneFormat(
+                        message: 'Le numéro de téléphone n\'est pas valide.',
+                        groups: ['bo_step_coordonnees'],
+                    ),
                 ],
             ])
 
@@ -248,10 +248,10 @@ class SignalementDraftCoordonneesType extends AbstractType
             ->add('telAgence', PhoneType::class, [
                 'required' => false,
                 'constraints' => [
-                    new TelephoneFormat([
-                        'message' => 'Le numéro de téléphone n\'est pas valide.',
-                        'groups' => ['bo_step_coordonnees'],
-                    ]),
+                    new TelephoneFormat(
+                        message: 'Le numéro de téléphone n\'est pas valide.',
+                        groups: ['bo_step_coordonnees'],
+                    ),
                 ],
             ])
             ->add('adresseCompleteAgence', null, [
@@ -310,20 +310,20 @@ class SignalementDraftCoordonneesType extends AbstractType
             ->add('telSyndic', PhoneType::class, [
                 'required' => false,
                 'constraints' => [
-                    new TelephoneFormat([
-                        'message' => 'Le numéro de téléphone n\'est pas valide.',
-                        'groups' => ['bo_step_coordonnees'],
-                    ]),
+                    new TelephoneFormat(
+                        message: 'Le numéro de téléphone n\'est pas valide.',
+                        groups: ['bo_step_coordonnees'],
+                    ),
                 ],
             ])
             ->add('telSyndicSecondaire', PhoneType::class, [
                 'label' => 'Numéro de téléphone secondaire',
                 'required' => false,
                 'constraints' => [
-                    new TelephoneFormat([
-                        'message' => 'Le numéro de téléphone n\'est pas valide.',
-                        'groups' => ['bo_step_coordonnees'],
-                    ]),
+                    new TelephoneFormat(
+                        message: 'Le numéro de téléphone n\'est pas valide.',
+                        groups: ['bo_step_coordonnees'],
+                    ),
                 ],
             ])
 

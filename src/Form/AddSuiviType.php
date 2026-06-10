@@ -62,10 +62,10 @@ class AddSuiviType extends AbstractType
             'required' => false,
             'constraints' => [
                 new Assert\NotBlank(),
-                new Assert\Length([
-                    'min' => 16, // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
-                    'minMessage' => 'Le contenu du suivi doit contenir au moins 10 caractères.',
-                ]),
+                new Assert\Length(
+                    min: 16, // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
+                    minMessage: 'Le contenu du suivi doit contenir au moins 10 caractères.',
+                ),
             ],
         ]);
         $builder->add('files', SearchCheckboxType::class, [

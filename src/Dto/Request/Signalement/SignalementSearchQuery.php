@@ -21,7 +21,7 @@ class SignalementSearchQuery
     public function __construct(
         private readonly ?string $territoire = null,
         private readonly ?string $searchTerms = null,
-        #[Assert\Choice(['nouveau', 'en_cours', 'ferme', 'refuse'], message: 'Statut de signalement invalide')]
+        #[Assert\Choice(choices: ['nouveau', 'en_cours', 'ferme', 'refuse'], message: 'Statut de signalement invalide')]
         private readonly ?string $status = null,
         private readonly ?array $communes = null,
         private readonly ?array $epcis = null,
@@ -33,17 +33,17 @@ class SignalementSearchQuery
         private readonly ?string $dateDepotFin = null,
         private readonly ?array $partenaires = null,
         private readonly ?string $bailleurSocial = null,
-        #[Assert\Choice(['Non planifiée', 'Planifiée', 'Conclusion à renseigner', 'Terminée'], message: 'Statut de visite invalide')]
+        #[Assert\Choice(choices: ['Non planifiée', 'Planifiée', 'Conclusion à renseigner', 'Terminée'], message: 'Statut de visite invalide')]
         private readonly ?string $visiteStatus = null,
-        #[Assert\Choice(['partenaire', 'usager', 'automatique'])]
+        #[Assert\Choice(choices: ['partenaire', 'usager', 'automatique'])]
         private readonly ?string $typeDernierSuivi = null,
         #[Assert\Date(message: 'La date de début n\'est pas une date valide')]
         private readonly ?string $dateDernierSuiviDebut = null,
         #[Assert\Date(message: 'La date de fin n\'est pas une date valide')]
         private readonly ?string $dateDernierSuiviFin = null,
-        #[Assert\Choice(['accepte', 'en_attente', 'refuse', 'aucune_affectation_acceptee', 'cloture_un_partenaire', 'cloture_tous_partenaire', 'cloture_commune'], message: 'Statut d\'affectation invalide')]
+        #[Assert\Choice(choices: ['accepte', 'en_attente', 'refuse', 'aucune_affectation_acceptee', 'cloture_un_partenaire', 'cloture_tous_partenaire', 'cloture_commune'], message: 'Statut d\'affectation invalide')]
         private readonly ?string $statusAffectation = null,
-        #[Assert\Choice([
+        #[Assert\Choice(choices: [
             'locataire',
             'bailleur_occupant',
             'tiers_particulier',
@@ -51,18 +51,18 @@ class SignalementSearchQuery
             'service_secours',
             'bailleur', ])]
         private readonly ?string $typeDeclarant = null,
-        #[Assert\Choice(['privee', 'public', 'non_renseigne'], message: 'Nature du parc invalide')]
+        #[Assert\Choice(choices: ['privee', 'public', 'non_renseigne'], message: 'Nature du parc invalide')]
         private readonly ?string $natureParc = null,
-        #[Assert\Choice(['caf', 'msa', 'oui', 'non', 'non_renseigne'], message: 'Allocataire invalide')]
+        #[Assert\Choice(choices: ['caf', 'msa', 'oui', 'non', 'non_renseigne'], message: 'Allocataire invalide')]
         private readonly ?string $allocataire = null,
-        #[Assert\Choice(['oui', 'non', 'non_renseigne'], message: 'Enfants de moins de 6 ans invalide')]
+        #[Assert\Choice(choices: ['oui', 'non', 'non_renseigne'], message: 'Enfants de moins de 6 ans invalide')]
         private readonly ?string $enfantsM6 = null,
-        #[Assert\Choice(['attente_relogement', 'bail_en_cours', 'preavis_de_depart'], message: 'Situation invalide')]
+        #[Assert\Choice(choices: ['attente_relogement', 'bail_en_cours', 'preavis_de_depart'], message: 'Situation invalide')]
         private readonly ?string $situation = null,
-        #[Assert\Choice(['logement_vacant', 'logement_occupe', 'logement_occupe_bailleur_occupant', 'logement_occupe_locataire', 'non_renseigne'], message: 'Occupation du logement invalide')]
+        #[Assert\Choice(choices: ['logement_vacant', 'logement_occupe', 'logement_occupe_bailleur_occupant', 'logement_occupe_locataire', 'non_renseigne'], message: 'Occupation du logement invalide')]
         private readonly ?string $occupationLogement = null,
 
-        #[Assert\Choice([
+        #[Assert\Choice(choices: [
             'non_decence_energetique',
             'non_decence',
             'rsd',
@@ -74,7 +74,7 @@ class SignalementSearchQuery
             'salete', ],
             message: 'Procédure suspectée invalide')]
         private readonly ?string $procedure = null,
-        #[Assert\Choice([
+        #[Assert\Choice(choices: [
             'non_decence',
             'rsd',
             'insalubrite',
@@ -87,16 +87,16 @@ class SignalementSearchQuery
             message: 'Procédure constatée invalide')]
         private readonly ?string $procedureConstatee = null,
         private readonly ?int $page = 1,
-        #[Assert\Choice(['oui'], message: 'La valeur pour l\'affichage des signalements importés est invalide')]
+        #[Assert\Choice(choices: ['oui'], message: 'La valeur pour l\'affichage des signalements importés est invalide')]
         private readonly ?string $isImported = null,
-        #[Assert\Choice(['oui'], message: 'La valeur pour l\'affichage des zones est invalide')]
+        #[Assert\Choice(choices: ['oui'], message: 'La valeur pour l\'affichage des zones est invalide')]
         private readonly ?string $isZonesDisplayed = null,
         private readonly ?bool $usagerAbandonProcedure = false,
-        #[Assert\Choice(['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant', 'createdAt'], message: 'Champ de tri invalide')]
+        #[Assert\Choice(choices: ['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant', 'createdAt'], message: 'Champ de tri invalide')]
         private readonly string $sortBy = 'reference',
-        #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'], message: 'Direction de tri invalide')]
+        #[Assert\Choice(choices: ['ASC', 'DESC', 'asc', 'desc'], message: 'Direction de tri invalide')]
         private readonly string $direction = 'DESC',
-        #[Assert\Choice([
+        #[Assert\Choice(choices: [
             'abandon_de_procedure_absence_de_reponse',
             'depart_occupant',
             'insalubrite',
@@ -114,7 +114,7 @@ class SignalementSearchQuery
             'autre',
         ], message: 'Motif de clôture invalide')]
         private readonly ?string $motifCloture = null,
-        #[Assert\Choice([
+        #[Assert\Choice(choices: [
             CreationSource::CREATED_FROM_FORMULAIRE_USAGER,
             CreationSource::CREATED_FROM_FORMULAIRE_PRO,
             CreationSource::FORM_USAGER_V1->value,
@@ -125,23 +125,23 @@ class SignalementSearchQuery
             CreationSource::IMPORT->value,
         ], message: 'Source de création invalide')]
         private readonly ?string $createdFrom = null,
-        #[Assert\Choice(['oui'], message: 'La valeur pour mes abonnements est invalide')]
+        #[Assert\Choice(choices: ['oui'], message: 'La valeur pour mes abonnements est invalide')]
         private readonly ?string $showMySignalementsOnly = null,
-        #[Assert\Choice(['oui'], message: 'La valeur pour les relances usagers sans réponse est invalide')]
+        #[Assert\Choice(choices: ['oui'], message: 'La valeur pour les relances usagers sans réponse est invalide')]
         private readonly ?string $relanceUsagerSansReponse = null,
-        #[Assert\Choice(['oui'], message: 'La valeur pour les messages post-cloture est invalide')]
+        #[Assert\Choice(choices: ['oui'], message: 'La valeur pour les messages post-cloture est invalide')]
         private readonly ?string $isMessagePostCloture = null,
-        #[Assert\Choice(['oui'], message: 'La valeur pour les nouveaux messages est invalide')]
+        #[Assert\Choice(choices: ['oui'], message: 'La valeur pour les nouveaux messages est invalide')]
         private readonly ?string $isNouveauMessage = null,
-        #[Assert\Choice(['oui'], message: 'La valeur pour les messages sans réponse est invalide')]
+        #[Assert\Choice(choices: ['oui'], message: 'La valeur pour les messages sans réponse est invalide')]
         private readonly ?string $isMessageWithoutResponse = null,
-        #[Assert\Choice(['oui'], message: 'La valeur pour les dossiers sans activité est invalide')]
+        #[Assert\Choice(choices: ['oui'], message: 'La valeur pour les dossiers sans activité est invalide')]
         private readonly ?string $isDossiersSansActivite = null,
-        #[Assert\Choice(['oui'], message: 'La valeur pour les adresses e-mail à vérifier est invalide')]
+        #[Assert\Choice(choices: ['oui'], message: 'La valeur pour les adresses e-mail à vérifier est invalide')]
         private readonly ?string $isEmailAVerifier = null,
-        #[Assert\Choice(['oui'], message: 'La valeur pour les dossiers sans abonnements est invalide')]
+        #[Assert\Choice(choices: ['oui'], message: 'La valeur pour les dossiers sans abonnements est invalide')]
         private readonly ?string $isDossiersSansAgent = null,
-        #[Assert\Choice(['oui'], message: 'La valeur pour activité récente est invalide')]
+        #[Assert\Choice(choices: ['oui'], message: 'La valeur pour activité récente est invalide')]
         private readonly ?string $isActiviteRecente = null,
     ) {
     }

@@ -44,7 +44,7 @@ class UserQueryService
             ->innerJoin(
                 EmailDeliveryIssue::class,
                 'edi',
-                'WITH', $qb->expr()->eq('edi.email', $mailField)
+                'ON', $qb->expr()->eq('edi.email', $mailField)
             )
             ->where($qb->expr()->eq($mailField, ':email'))
             ->setParameter('email', $email);

@@ -44,19 +44,19 @@ class CoordonneesOccupantType extends AbstractType
                 'required' => false,
             ]);
         $constraintsMailOccupant = [
-            new Assert\Email([
-                'mode' => Assert\Email::VALIDATION_MODE_STRICT,
-                'message' => 'L\'adresse e-mail de l\'occupant n\'est pas valide.',
-                'groups' => ['fo_coordonnees_occupant'],
-            ]),
+            new Assert\Email(
+                mode: Assert\Email::VALIDATION_MODE_STRICT,
+                message: 'L\'adresse e-mail de l\'occupant n\'est pas valide.',
+                groups: ['fo_coordonnees_occupant'],
+            ),
         ];
         $labelMailOccupant = 'Adresse e-mail';
         // mail obligatoire si occupant déclarant
         if (!$signalement->isTiersDeclarant()) {
-            $constraintsMailOccupant[] = new Assert\NotBlank([
-                'message' => 'L\'adresse e-mail est obligatoire.',
-                'groups' => ['fo_coordonnees_occupant'],
-            ]);
+            $constraintsMailOccupant[] = new Assert\NotBlank(
+                message: 'L\'adresse e-mail est obligatoire.',
+                groups: ['fo_coordonnees_occupant'],
+            );
             $labelMailOccupant .= ' <span class="text-required">*</span>';
         }
         $builder->add('mailOccupantTemp', TextType::class, [

@@ -37,7 +37,7 @@ class RemindPendingDraftsCommandTest extends KernelTestCase
             WHERE uuid LIKE :uuid
         ';
 
-        $connection->prepare($sql)->executeQuery([
+        $connection->executeStatement($sql, [
             'created_at' => $dateTest->format('Y-m-d H:i:s'),
             'updated_at' => $dateTest->format('Y-m-d H:i:s'),
             'bail_date' => $dateTest->format('m/Y'), // "11/2024"

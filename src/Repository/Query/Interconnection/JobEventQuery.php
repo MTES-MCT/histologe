@@ -46,7 +46,7 @@ class JobEventQuery
                 ? 'innerJoin'
                 : 'leftJoin';
 
-            $qb->{$joinType}(Partner::class, 'p', 'WITH', 'p.id = j.partnerId');
+            $qb->{$joinType}(Partner::class, 'p', 'ON', 'p.id = j.partnerId');
         }
 
         if ($needsSignalementJoin) {
@@ -54,7 +54,7 @@ class JobEventQuery
                 ? 'innerJoin'
                 : 'leftJoin';
 
-            $qb->{$joinType}(Signalement::class, 's', 'WITH', 's.id = j.signalementId');
+            $qb->{$joinType}(Signalement::class, 's', 'ON', 's.id = j.signalementId');
         }
 
         if ($searchInterconnexion->getTerritory()) {
@@ -167,7 +167,7 @@ class JobEventQuery
         return $this->entityManager->createQueryBuilder()
             ->from(JobEvent::class, 'j')
             ->select('MAX(j.createdAt) AS last_event')
-            ->innerJoin(Partner::class, 'p', 'WITH', 'p.id = j.partnerId')
+            ->innerJoin(Partner::class, 'p', 'ON', 'p.id = j.partnerId')
             ->where('p.id = :partner')->setParameter('partner', $partner->getId())
             ->andWhere('j.service = :service')
             ->setParameter('service', InterfacageType::ESABORA->value)

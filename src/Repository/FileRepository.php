@@ -52,17 +52,17 @@ class FileRepository extends ServiceEntityRepository
     /**
      * @return array<int, File>
      */
-    public function findWithOriginalAndVariants(\DateTimeInterface $limit, int $max): array
+    public function findWithOriginalAndVariants(\DateTimeImmutable $limit, int $max): array
     {
         return $this->initQueryWithOriginalAndVariants($limit)->select('f')->setMaxResults($max)->getQuery()->getResult();
     }
 
-    public function countWithOriginalAndVariants(\DateTimeInterface $limit): int
+    public function countWithOriginalAndVariants(\DateTimeImmutable $limit): int
     {
         return (int) $this->initQueryWithOriginalAndVariants($limit)->select('count(f)')->getQuery()->getSingleScalarResult();
     }
 
-    private function initQueryWithOriginalAndVariants(\DateTimeInterface $limit): QueryBuilder
+    private function initQueryWithOriginalAndVariants(\DateTimeImmutable $limit): QueryBuilder
     {
         return $this->createQueryBuilder('f')
             ->andWhere('f.isVariantsGenerated = true')
@@ -74,7 +74,7 @@ class FileRepository extends ServiceEntityRepository
     /**
      * @return array<int, File>
      */
-    public function findExportsOlderThan(\DateTimeInterface $limit): array
+    public function findExportsOlderThan(\DateTimeImmutable $limit): array
     {
         return $this->createQueryBuilder('f')
             ->andWhere('f.documentType = :documentType')

@@ -25,10 +25,10 @@ class AdresseLogementType extends AbstractType
                 'label' => 'Étage',
                 'help' => 'Format attendu : 5 caractères maximum',
                 'constraints' => [
-                    new Assert\Length([
-                        'max' => 5,
-                        'maxMessage' => 'L\'étage doit contenir au maximum {{ limit }} caractères.',
-                    ]),
+                    new Assert\Length(
+                        max: 5,
+                        maxMessage: 'L\'étage doit contenir au maximum {{ limit }} caractères.',
+                    ),
                 ],
                 'required' => false,
             ])
@@ -36,10 +36,10 @@ class AdresseLogementType extends AbstractType
                 'label' => 'Escalier',
                 'help' => 'Format attendu : 3 caractères maximum',
                 'constraints' => [
-                    new Assert\Length([
-                        'max' => 3,
-                        'maxMessage' => 'L\'escalier doit contenir au maximum {{ limit }} caractères.',
-                    ]),
+                    new Assert\Length(
+                        max: 3,
+                        maxMessage: 'L\'escalier doit contenir au maximum {{ limit }} caractères.',
+                    ),
                 ],
                 'required' => false,
             ])
@@ -47,10 +47,10 @@ class AdresseLogementType extends AbstractType
                 'label' => 'Numéro d\'appartement',
                 'help' => 'Format attendu : 5 caractères maximum',
                 'constraints' => [
-                    new Assert\Length([
-                        'max' => 5,
-                        'maxMessage' => 'Le numéro d\'appartement doit contenir au maximum {{ limit }} caractères.',
-                    ]),
+                    new Assert\Length(
+                        max: 5,
+                        maxMessage: 'Le numéro d\'appartement doit contenir au maximum {{ limit }} caractères.',
+                    ),
                 ],
                 'required' => false,
             ])
@@ -58,10 +58,10 @@ class AdresseLogementType extends AbstractType
                 'label' => 'Autre',
                 'help' => 'Format attendu : 255 caractères maximum',
                 'constraints' => [
-                    new Assert\Length([
-                        'max' => 255,
-                        'maxMessage' => 'Les autres informations sur l\'adresse doivent contenir au maximum {{ limit }} caractères.',
-                    ]),
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Les autres informations sur l\'adresse doivent contenir au maximum {{ limit }} caractères.',
+                    ),
                 ],
                 'required' => false,
             ]);

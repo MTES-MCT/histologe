@@ -218,7 +218,7 @@ class AffectationRepository extends ServiceEntityRepository
             ->innerJoin(
                 JobEvent::class,
                 'j',
-                'WITH',
+                'ON',
                 'a.signalement = j.signalementId AND a.partner = j.partnerId'
             )
             ->andWhere('j.codeStatus > 399')

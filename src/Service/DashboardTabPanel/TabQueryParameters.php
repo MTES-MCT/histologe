@@ -10,7 +10,7 @@ class TabQueryParameters
     public function __construct(
         public ?int $territoireId = null,
         public ?string $communeCodePostal = null,
-        #[Assert\Choice([
+        #[Assert\Choice(choices: [
             CreationSource::CREATED_FROM_FORMULAIRE_USAGER,
             CreationSource::CREATED_FROM_FORMULAIRE_PRO,
         ])]
@@ -19,9 +19,9 @@ class TabQueryParameters
         public ?array $partenairesId = null,
         /** @var array<int|string> */
         public ?array $partners = null,
-        #[Assert\Choice(['createdAt', 'closedAt', 'nbRelanceFeedbackUsager', 'nbDay', 'nomOccupant', 'demandeFermetureUsagerAt', 'affectedAt'])]
+        #[Assert\Choice(choices: ['createdAt', 'closedAt', 'nbRelanceFeedbackUsager', 'nbDay', 'nomOccupant', 'demandeFermetureUsagerAt', 'affectedAt'])]
         public ?string $sortBy = null,
-        #[Assert\Choice(['ASC', 'DESC', 'asc', 'desc'])]
+        #[Assert\Choice(choices: ['ASC', 'DESC', 'asc', 'desc'])]
         public ?string $orderBy = null,
         public ?string $mesDossiersMessagesUsagers = null,
         public ?string $mesDossiersAverifier = null,

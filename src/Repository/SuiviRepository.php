@@ -80,9 +80,7 @@ class SuiviRepository extends ServiceEntityRepository
         AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
         LIMIT '.$this->limitDailyRelancesByRequest;
 
-        $statement = $connection->prepare($sql);
-
-        return $statement->executeQuery($parameters)->fetchFirstColumn();
+        return $connection->executeQuery($sql, $parameters)->fetchFirstColumn();
     }
 
     /**
@@ -136,9 +134,7 @@ class SuiviRepository extends ServiceEntityRepository
                 AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
                 LIMIT '.$this->limitDailyRelancesByRequest;
 
-        $statement = $connection->prepare($sql);
-
-        return $statement->executeQuery($parameters)->fetchFirstColumn();
+        return $connection->executeQuery($sql, $parameters)->fetchFirstColumn();
     }
 
     /**
@@ -167,9 +163,8 @@ class SuiviRepository extends ServiceEntityRepository
         );
 
         $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
-        $statement = $connection->prepare($sql);
 
-        return $statement->executeQuery($parameters)->fetchFirstColumn();
+        return $connection->executeQuery($sql, $parameters)->fetchFirstColumn();
     }
 
     /**
@@ -199,9 +194,7 @@ class SuiviRepository extends ServiceEntityRepository
 
         $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
 
-        $statement = $connection->prepare($sql);
-
-        return $statement->executeQuery($parameters)->fetchFirstColumn();
+        return $connection->executeQuery($sql, $parameters)->fetchFirstColumn();
     }
 
     /**

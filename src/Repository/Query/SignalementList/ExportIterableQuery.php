@@ -41,7 +41,7 @@ class ExportIterableQuery
         }
 
         // Augmentation temporaire de la limite GROUP_CONCAT
-        $this->em->getConnection()->prepare('SET SESSION group_concat_max_len=32505856')->executeQuery();
+        $this->em->getConnection()->executeStatement('SET SESSION group_concat_max_len=32505856');
 
         // PASSE 1 : récupération des IDs filtrés (requête légère)
         $qbIds = $this->queryBuilderFactory->create($user, $options);
@@ -151,7 +151,7 @@ class ExportIterableQuery
         }
 
         if (\in_array('EPCI_NOM', $selectedColumns, true)) {
-            $qb->leftJoin(Commune::class, 'c', Join::WITH, 'c.codePostal = s.cpOccupant AND c.codeInsee = s.inseeOccupant');
+            $qb->leftJoin(Commune::class, 'c', Join::ON, 'c.codePostal = s.cpOccupant AND c.codeInsee = s.inseeOccupant');
             $qb->leftJoin('c.epci', 'e');
             $qb->addSelect('e.nom as epciNom');
         }
@@ -253,7 +253,7 @@ class ExportIterableQuery
         $result = $this->em->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('s.id')
-            ->leftJoin('s.files', 'photos', Join::WITH, 'photos.extension IN (:photo_extensions)')
+            ->leftJoin('s.files', 'photos', Join::ON, 'photos.extension IN (:photo_extensions)')
             ->where('s.id IN (:signalementIds)')
             ->setParameter('signalementIds', $signalementIds)
             ->setParameter('photo_extensions', File::RESIZABLE_EXTENSION)
@@ -281,7 +281,7 @@ class ExportIterableQuery
         $result = $this->em->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('s.id')
-            ->leftJoin('s.files', 'documents', Join::WITH, 'documents.extension NOT IN (:photo_extensions)')
+            ->leftJoin('s.files', 'documents', Join::ON, 'documents.extension NOT IN (:photo_extensions)')
             ->where('s.id IN (:signalementIds)')
             ->setParameter('signalementIds', $signalementIds)
             ->setParameter('photo_extensions', File::RESIZABLE_EXTENSION)
