@@ -25,16 +25,21 @@
             {% set row_attr = row_attr|merge({'class': (row_attr.class ~ ' fr-input-group--error')|trim}) %}
         {% endif %}
     {% endif %}
-    <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
-        {% if 'checkbox' in block_prefixes %}
-            {{form_widget(form, widget_attr)}}
-            {{form_label(form)}}
-        {% else %}
-            {{form_label(form)}}
-            {{form_widget(form, widget_attr)}}
-        {% endif %}
-        {{form_errors(form)}}
-    </div>
+
+    {% if 'choice' in block_prefixes and expanded %}
+        {{form_widget(form, widget_attr)}}
+    {% else %}
+        <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+            {% if 'checkbox' in block_prefixes %}
+                {{form_widget(form, widget_attr)}}
+                {{form_label(form)}}
+            {% else %}
+                {{form_label(form)}}
+                {{form_widget(form, widget_attr)}}
+            {% endif %}
+            {{form_errors(form)}}
+        </div>
+    {% endif %}
 {% endblock form_row %}
 
 {% block form_errors %}
@@ -114,7 +119,10 @@
 
 {% block choice_widget_expanded %}
     {% set display_mode = display_mode|default('inline') %}
-    <div {{ block('widget_container_attributes') }} class="fr-fieldset fr-mt-1w fr-mb-0">
+    <fieldset {{ block('widget_container_attributes') }} class="fr-fieldset fr-mt-1w fr-mb-0" aria-labelledby="{{ id }}_legend">
+    {% if label is not same as(false) %}
+        <legend id="{{ id }}_legend" class="fr-fieldset__legend fr-fieldset__legend--regular">{{ block('form_label_content') }}</legend>
+    {% endif %}
     {% for child in form %}
         {% set rich_label = child.vars.attr['data-dsfr-label'] ?? null %}
         {% set rich_hint  = child.vars.attr['data-dsfr-hint'] ?? null %}
@@ -133,7 +141,7 @@
             </div>
         </div>
     {% endfor %}
-    </div>
+    </fieldset>
 {% endblock choice_widget_expanded %}
 
 {% block choice_enum_widget_expanded %}
