@@ -100,7 +100,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         $this->submitStep2($client, $crawler, 'oui', EtageType::RDC->value);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('label', 'Profil de l\'occupant');
+        $this->assertSelectorTextContains('legend', 'Profil de l\'occupant');
     }
 
     public function testSubmitToStep4(): void
@@ -113,7 +113,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         $this->submitStep3($client, $crawler);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('label', 'Bailleur averti');
+        $this->assertSelectorTextContains('legend', 'Bailleur averti');
     }
 
     public function testSubmitToStep5(): void
@@ -128,7 +128,7 @@ class ServiceSecoursControllerTest extends WebTestCase
         $this->submitStep4($client, $crawler);
 
         $this->assertResponseIsSuccessful();
-        $this->assertSelectorTextContains('label', 'Désordres');
+        $this->assertSelectorTextContains('legend', 'Désordres');
         $this->assertSelectorTextContains('button[data-upload-photos-trigger]', 'Ajouter des photos');
     }
 
