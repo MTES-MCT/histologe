@@ -100,7 +100,6 @@ class SuiviManager
         }
         $this->entityManager->persist($suivi);
         $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME);
-        // $this->entityManager->flush(); //TODO IMPACT !
 
         return $suivi;
     }

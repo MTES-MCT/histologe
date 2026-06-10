@@ -191,6 +191,7 @@ class AffectationUpdateController extends AbstractController
         $this->applyUsagerNotification($affectationRequest, $affectation);
 
         $affectation = $this->update($affectationRequest, $affectation);
+        $this->entityManager->flush();
 
         return new JsonResponse(new AffectationResponse($affectation), Response::HTTP_OK);
     }
@@ -223,7 +224,6 @@ class AffectationUpdateController extends AbstractController
         if (AffectationStatus::ACCEPTED === $statut) {
             $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
         }
-        $this->entityManager->flush();
 
         return $affectation;
     }
