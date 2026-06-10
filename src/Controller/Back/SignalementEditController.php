@@ -52,6 +52,7 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
         HtmlTargetContentsService $htmlTargetContentsService,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
@@ -76,6 +77,7 @@ class SignalementEditController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $subscriptionCreated = $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'L\'adresse du logement a bien été modifiée.'];
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
@@ -96,6 +98,7 @@ class SignalementEditController extends AbstractController
         TiersInvitationRepository $tiersInvitationRepository,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         // On bloque si ça a été crééé par un occupant et qu'aucun mail n'a encore été renseigné (via invitation)
         if ($signalement->isV2() && !$signalement->getIsNotOccupant() && empty($signalement->getMailDeclarant())) {
@@ -125,6 +128,7 @@ class SignalementEditController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $subscriptionCreated = $signalementManager->updateFromCoordonneesTiersRequest($signalement, $coordonneesTiersRequest);
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les coordonnées du tiers déclarant ont bien été modifiées.'];
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
@@ -205,7 +209,6 @@ class SignalementEditController extends AbstractController
         );
 
         $em->persist($invitation);
-        $em->flush();
 
         $notificationMailerRegistry->send(
             new NotificationMail(
@@ -216,6 +219,7 @@ class SignalementEditController extends AbstractController
             )
         );
         $subscriptionCreated = $suiviManager->addInviteSuiviFromBo($signalement, $inviteTiersRequest);
+        $em->flush();
 
         $flashMessages[] = ['type' => 'success', 'title' => 'Invitation sur le dossier', 'message' => 'Le tiers aidant a bien été invité.'];
         if ($subscriptionCreated) {
@@ -243,6 +247,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
@@ -272,6 +277,7 @@ class SignalementEditController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $subscriptionCreated = $signalementManager->updateFromCoordonneesFoyerRequest($signalement, $coordonneesFoyerRequest);
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les coordonnées du foyer ont bien été modifiées.'];
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
@@ -308,6 +314,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
@@ -340,6 +347,7 @@ class SignalementEditController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $subscriptionCreated = $signalementManager->updateFromCoordonneesBailleurRequest($signalement, $coordonneesBailleurRequest);
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les coordonnées du bailleur ont bien été modifiées.'];
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
@@ -364,6 +372,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
@@ -397,6 +406,7 @@ class SignalementEditController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $subscriptionCreated = $signalementManager->updateFromCoordonneesAgenceRequest($signalement, $coordonneesAgenceRequest);
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les coordonnées de l\'agence ont bien été modifiées.'];
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
@@ -421,6 +431,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
@@ -454,6 +465,7 @@ class SignalementEditController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $subscriptionCreated = $signalementManager->updateFromCoordonneesSyndicRequest($signalement, $coordonneesSyndicRequest);
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les coordonnées du syndic ont bien été modifiées.'];
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
@@ -478,6 +490,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
@@ -509,6 +522,7 @@ class SignalementEditController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $subscriptionCreated = $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les informations du logement ont bien été modifiées.'];
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
@@ -533,6 +547,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SignalementDraftRequestSerializer $serializer,
         ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
@@ -564,6 +579,7 @@ class SignalementEditController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $subscriptionCreated = $signalementManager->updateFromCompositionLogementRequest($signalement, $compositionLogementRequest);
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'La description du logement a bien été modifiée.'];
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
@@ -591,6 +607,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
@@ -619,6 +636,7 @@ class SignalementEditController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $subscriptionCreated = $signalementManager->updateFromSituationFoyerRequest($signalement, $situationFoyerRequest);
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'La situation du foyer a bien été modifiée.'];
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
@@ -643,6 +661,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
@@ -670,6 +689,7 @@ class SignalementEditController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $subscriptionCreated = $signalementManager->updateFromProcedureDemarchesRequest($signalement, $procedureDemarchesRequest);
+        $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les procédures et démarches ont bien été modifiées.'];
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];

@@ -134,6 +134,8 @@ class NotifyVisitsCommand extends AbstractCronCommand
             }
         }
 
+        $this->entityManager->flush();
+
         $description = 'notifications ont été envoyées pour des visites à venir';
         $description .= ' --- '.$countPastVisits.' notifications ont été envoyées pour des visites passées';
         $description .= ' --- '.$countVisitsToPlan.' notifications ont été envoyées pour des visites non planifiées';

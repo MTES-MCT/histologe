@@ -8,10 +8,12 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Manager\AffectationManager;
+use App\Manager\SuiviManager;
 use App\Messenger\InterconnectionBus;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
+use App\Service\Notification\NotificationAndMailSender;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -53,6 +55,8 @@ class AffectationManagerTest extends WebTestCase
             $this->partnerRepository,
             $this->affectationRepository,
             $this->entityManager,
+            static::getContainer()->get(SuiviManager::class),
+            static::getContainer()->get(NotificationAndMailSender::class)
         );
     }
 
@@ -117,7 +121,7 @@ class AffectationManagerTest extends WebTestCase
             motif: MotifCloture::tryFrom('NON_DECENCE'),
             partner: $partner,
             message: null,
-            flush: true
+            createSuiviAndNotifications: true
         );
 
         $this->assertEquals(AffectationStatus::CLOSED, $affectationClosed->getStatut());

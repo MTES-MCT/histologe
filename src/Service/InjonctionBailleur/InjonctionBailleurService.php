@@ -104,7 +104,6 @@ class InjonctionBailleurService
                 );
                 $this->createInjonctionBailleurCommentaireSuivi($signalement, $description);
                 $this->switchFromInjonctionToProcedure($signalement);
-                $this->entityManager->flush();
                 $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
                 break;
         }
@@ -120,7 +119,6 @@ class InjonctionBailleurService
         $filename = $this->uploadHandlerService->uploadFromFilename($filename);
 
         $this->fileManager->createOrUpdate(filename: $filename, title: 'Engagement travaux', signalement: $signalement, documentType: DocumentType::ENGAGEMENT_TRAVAUX_BAILLEUR);
-        $this->entityManager->flush();
     }
 
     private function createInjonctionBailleurCommentaireSuivi(Signalement $signalement, string $description): void
@@ -178,7 +176,6 @@ class InjonctionBailleurService
             );
 
             $this->switchFromInjonctionToProcedure($signalement);
-            $this->entityManager->flush();
             $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
         } elseif (MotifCloture::TRAVAUX_FAITS_OU_EN_COURS === $reason) {
             $this->suiviManager->createSuivi(
@@ -195,7 +192,6 @@ class InjonctionBailleurService
                 category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,
                 isVisibleForBailleur: true
             );
-            $this->entityManager->flush();
         }
     }
 

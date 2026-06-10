@@ -91,6 +91,8 @@ class SignalementClosedSubscriberTest extends KernelTestCase
         $dispatcher->addSubscriber($signalementClosedSubscriber);
         $event = $dispatcher->dispatch($signalementClosedEvent, SignalementClosedEvent::NAME);
 
+        $this->entityManager->flush();
+
         $this->assertInstanceOf(Signalement::class, $event->getSignalementAffectationClose()->getSignalement());
         $this->assertEmailCount(2);
         /** @var NotificationEmail $clotureMail */

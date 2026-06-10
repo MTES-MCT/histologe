@@ -74,6 +74,7 @@ class ResetInjonctionNoResponseCommand extends AbstractCronCommand
             }
 
             $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
+            $this->entityManager->flush();
 
             $output->writeln(sprintf('#%s updated', $signalement->getUuid()));
         }

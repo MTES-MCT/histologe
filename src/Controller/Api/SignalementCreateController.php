@@ -264,6 +264,7 @@ class SignalementCreateController extends AbstractController
         $this->entityManager->commit();
         $this->userManager->createUsagersFromSignalement($signalement);
         $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
+        $this->entityManager->flush();
 
         $resource = $this->signalementResponseFactory->createFromSignalement($signalement);
 

@@ -210,7 +210,7 @@ class AffectationUpdateController extends AbstractController
                 partner: $affectation->getPartner(),
                 motif: $motifCloture,
                 message: $affectationRequest->message,
-                flush: true
+                createSuiviAndNotifications: true
             );
         }
         $motifRefus = $message = null;
@@ -222,8 +222,8 @@ class AffectationUpdateController extends AbstractController
         $this->affectationManager->updateAffectation($affectation, $user, $statut, $affectation->getPartner(), $motifRefus, $message);
         if (AffectationStatus::ACCEPTED === $statut) {
             $this->userSignalementSubscriptionManager->createDefaultSubscriptionsForAffectation($affectation);
-            $this->entityManager->flush();
         }
+        $this->entityManager->flush();
 
         return $affectation;
     }

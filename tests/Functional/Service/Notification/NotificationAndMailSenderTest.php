@@ -69,6 +69,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         /** @var Signalement $signalement */
         $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-18']);
         $this->notificationAndMailSender->sendNewSignalement($signalement);
+        $this->entityManager->flush();
 
         $this->assertEmailCount(1);
         /** @var NotificationEmail $mail */
@@ -121,6 +122,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $affectation = $signalement->getAffectations()->first();
 
         $this->notificationAndMailSender->sendNewAffectation($affectation);
+        $this->entityManager->flush();
         $this->assertEmailCount(1);
         /** @var NotificationEmail $mail */
         $mail = $this->getMailerMessages()[0];
@@ -152,6 +154,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->entityManager->persist($suivi);
 
         $this->notificationAndMailSender->sendSignalementIsClosedToPartners($suivi);
+        $this->entityManager->flush();
         $this->assertEmailCount(1);
         /** @var NotificationEmail $mail */
         $mail = $this->getMailerMessages()[0];
@@ -188,6 +191,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->entityManager->persist($suivi);
         $existingNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
         $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true);
+        $this->entityManager->flush();
 
         $this->assertEmailCount(1);
         $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
@@ -232,6 +236,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
+        $this->entityManager->flush();
 
         $this->assertEmailCount(2);
         $i = 0;

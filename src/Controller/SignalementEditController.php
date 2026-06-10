@@ -553,6 +553,7 @@ class SignalementEditController extends AbstractController
                 $signalement,
                 $signalementUser,
             );
+            $this->entityManager->flush();
         });
     }
 }
