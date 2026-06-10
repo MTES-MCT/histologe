@@ -142,7 +142,7 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
     }
     if (e.key === 'Enter') {
       e.preventDefault(); // avoids form submit
-      if (selectionIndex > -1) {
+      if (selectionIndex > -1 && selectionIndex < addressGroup.children.length) {
         addressGroup.children[selectionIndex].click();
       }
       addressGroup.innerHTML = '';
@@ -152,7 +152,7 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
     document.querySelectorAll('.fr-adresse-suggestion').forEach((element) => {
       element.classList.remove('fr-autocomplete-suggestion-highlighted');
     });
-    if (selectionIndex > -1) {
+    if (selectionIndex > -1 && selectionIndex < addressGroup.children.length) {
       addressGroup.children[selectionIndex].classList.add('fr-autocomplete-suggestion-highlighted');
     }
   });
