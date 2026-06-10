@@ -137,8 +137,6 @@ class SignalementManager
             ->setIsLogementSocial((bool) $data['isLogementSocial'])
             ->setIsPreavisDepart((bool) $data['isPreavisDepart'])
             ->setIsRelogement((bool) $data['isRelogement'])
-            ->setIsRefusIntervention($data['isRefusIntervention'])
-            ->setRaisonRefusIntervention($data['raisonRefusIntervention'])
             ->setIsNotOccupant((bool) $data['isNotOccupant'])
             ->setNomDeclarant($data['nomDeclarant'])
             ->setPrenomDeclarant($data['prenomDeclarant'])
@@ -161,28 +159,19 @@ class SignalementManager
             )
             ->setReference($data['reference'])
             ->setMontantAllocation((float) $data['montantAllocation'])
-            ->setCodeProcedure($data['codeProcedure'])
             ->setEtageOccupant($data['etageOccupant'])
             ->setEscalierOccupant($data['escalierOccupant'])
             ->setNumAppartOccupant($data['numAppartOccupant'])
             ->setAdresseAutreOccupant($data['adresseAutreOccupant'])
             ->setInseeOccupant($data['inseeOccupant'])
             ->setLienDeclarantOccupant($data['lienDeclarantOccupant'])
-            ->setIsConsentementTiers((bool) $data['isConsentementTiers'])
             ->setIsRsa((bool) $data['isRsa'])
             ->setAnneeConstruction($data['anneeConstruction'])
-            ->setTypeEnergieLogement($data['typeEnergieLogement'])
-            ->setOrigineSignalement($data['origineSignalement'])
-            ->setSituationOccupant($data['situationOccupant'])
-            ->setSituationProOccupant($data['situationProOccupant'])
             ->setNaissanceOccupants($data['naissanceOccupants'])
-            ->setIsLogementCollectif((bool) $data['isLogementCollectif'])
             ->setIsConstructionAvant1949((bool) $data['isConstructionAvant1949'])
-            ->setIsRisqueSurOccupation((bool) $data['isRisqueSurOccupation'])
             ->setProprioAvertiAt($data['prorioAvertiAt'])
             ->setNumeroInvariant($data['numeroInvariant'])
             ->setNbPiecesLogement((int) $data['nbPiecesLogement'])
-            ->setNbChambresLogement((int) $data['nbChambresLogement'])
             ->setNbNiveauxLogement((int) $data['nbNiveauxLogement'])
             ->setNbOccupantsLogement((int) $data['nbOccupantsLogement'])
             ->setMotifCloture(
@@ -190,8 +179,7 @@ class SignalementManager
                     ? MotifCloture::tryFrom($data['motifCloture'])
                     : null
             )
-            ->setClosedAt($data['closedAt'])
-            ->setIsFondSolidariteLogement((bool) $data['isFondSolidariteLogement']);
+            ->setClosedAt($data['closedAt']);
     }
 
     public function updateAddressOccupantFromAddress(Signalement $signalement, Address $address): void

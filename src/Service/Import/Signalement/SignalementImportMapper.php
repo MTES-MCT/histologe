@@ -70,34 +70,20 @@ class SignalementImportMapper
             'numéro appartement  occupant' => 'numAppartOccupant',
             'RSA' => 'isRsa',
             'Logement < 1948' => 'isConstructionAvant1949',
-            'Fond solidarite logement' => 'isFondSolidariteLogement',
-            'Risque de suroccupation' => 'isRisqueSurOccupation',
             'numero invariant' => 'numeroInvariant',
             'Nature du logement' => 'natureLogement',
             'loyer' => 'loyer',
             'Bail en cours' => 'isBailEnCours',
             'date entree bail' => 'dateEntree',
-            'Occupant Accepte visite/travaux ?' => 'isRefusIntervention',
-            'Occupant refuse visite/ Motif' => 'raisonRefusIntervention',
             'CGU acceptees' => 'isCguAccepted',
             'Date modification / maj' => 'modifiedAt',
             'statut' => 'statut',
             'geoloc' => 'geoloc',
             'montant allocation' => 'montantAllocation',
-            'code procedure en cours' => 'codeProcedure',
             'adresse_autre_occupant' => 'adresseAutreOccupant',
-            'Accord occupant declaration par tiers' => 'isConsentementTiers',
             'annee construction immeuble' => 'anneeConstruction',
-            'type energie logement' => 'typeEnergieLogement',
-            'origine signalement' => 'origineSignalement',
-            'situation occupant' => 'situationOccupant',
-            'situation pro occupant' => 'situationProOccupant',
             'naissance occupant' => 'naissanceOccupants',
-            'logement collectif' => 'isLogementCollectif',
-            'nom du referent social' => 'nomReferentSocial',
-            'structure referent social' => 'StructureReferentSocial',
             'nb de pieces du logement' => 'nbPiecesLogement',
-            'nb chambres logement' => 'nbChambresLogement',
             'nb niveaux logement' => 'nbNiveauxLogement',
             'qualification' => 'tags',
             'Partenaires à affecter' => 'partners',
@@ -173,17 +159,12 @@ class SignalementImportMapper
                         break;
                     case 'isProprioAverti':
                     case 'isAllocataire':
-                    case 'isRisqueSurOccupation':
                     case 'isConstructionAvant1949':
-                    case 'isLogementCollectif':
-                    case 'isConsentementTiers':
                     case 'isOccupantPresentVisite':
                     case 'isLogementSocial':
                     case 'isPreavisDepart':
                     case 'isRelogement':
-                    case 'isFondSolidariteLogement':
                     case 'isBailEnCours':
-                    case 'isRefusIntervention':
                     case 'isCguAccepted':
                         $fieldValue = 'NSP' !== $data[$fileColumn] ? 'O' === $fieldValue : null;
                         break;
@@ -216,7 +197,6 @@ class SignalementImportMapper
                     case 'nbEnfantsP6':
                     case 'nbOccupantsLogement':
                     case 'nbPiecesLogement':
-                    case 'nbChambresLogement':
                     case 'nbNiveauxLogement':
                         preg_match('!\d+!', $fieldValue, $matches);
                         $fieldValue = array_shift($matches);

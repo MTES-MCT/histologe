@@ -173,7 +173,6 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertTrue($signalement->getIsLogementSocial());
         $this->assertTrue($signalement->getIsBailEnCours());
         $this->assertTrue($signalement->getIsProprioAverti());
-        $this->assertFalse($signalement->getIsFondSolidariteLogement());
         $this->assertFalse($signalement->getIsRsa());
         $this->assertTrue($signalement->getIsCguAccepted());
         $this->assertTrue(\in_array($signalement->getIsAllocataire(), ['CAF', 'MSA', '0']));

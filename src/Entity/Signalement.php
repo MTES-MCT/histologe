@@ -62,13 +62,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'string', length: 50, unique: true)]
     private string $uuid;
 
-    #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class)]
+    #[ORM\Column(type: 'string', nullable: true, enumType: ProfileDeclarant::class, length: 50)]
     private ?ProfileDeclarant $profileDeclarant = null;
 
-    #[ORM\Column(type: 'string', nullable: true, enumType: ProfileOccupant::class)]
+    #[ORM\Column(type: 'string', nullable: true, enumType: ProfileOccupant::class, length: 50)]
     private ?ProfileOccupant $profileOccupant = null;
 
     /** @var Collection<int, Criticite> $criticites */
@@ -81,13 +81,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isProprioAverti = null;
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true, length: 3)]
     private ?string $nbAdultes = null;
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true, length: 3)]
     private ?string $nbEnfantsM6 = null;
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true, length: 3)]
     private ?string $nbEnfantsP6 = null;
 
     #[ORM\Column(type: 'string', length: 3, nullable: true)]
@@ -115,7 +115,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'date', nullable: true)]
     private ?\DateTimeInterface $dateEntree = null;
 
-    #[ORM\Column(type: 'string', nullable: true, enumType: ProprioType::class)]
+    #[ORM\Column(type: 'string', nullable: true, enumType: ProprioType::class, length: 50)]
     private ?ProprioType $typeProprio = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -137,7 +137,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal être composé de 5 chiffres.')]
     private ?string $codePostalProprio = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private ?string $villeProprio = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
@@ -160,12 +160,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isRelogement = null;
-
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isRefusIntervention = null;
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $raisonRefusIntervention = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isNotOccupant = null;
@@ -305,10 +299,10 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $modifiedAt = null;
 
-    #[ORM\Column(type: 'string', enumType: SignalementStatus::class)]
+    #[ORM\Column(type: 'string', enumType: SignalementStatus::class, length: 50)]
     private SignalementStatus $statut;
 
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
     private ?string $reference = null;
 
     #[ORM\Column(type: 'integer', nullable: true, unique: true)]
@@ -343,9 +337,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $lastSuiviBy = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $codeProcedure = null;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 5, groups: ['bo_step_address'])]
     private ?string $etageOccupant = null;
 
@@ -361,20 +352,17 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[Assert\Length(max: 255, groups: ['bo_step_address'])]
     private ?string $adresseAutreOccupant = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 10, nullable: true)]
     private ?string $inseeOccupant = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $manualAddressOccupant = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
     private ?string $codeSuivi = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private ?string $lienDeclarantOccupant = null;
-
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isConsentementTiers = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $validatedAt = null;
@@ -382,38 +370,14 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isRsa = null;
 
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
     private ?string $anneeConstruction = null;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $typeEnergieLogement = null;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $origineSignalement = null;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $situationOccupant = null;
-
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    private ?string $situationProOccupant = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $naissanceOccupants = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isLogementCollectif = null;
-
-    #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isConstructionAvant1949 = null;
-
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isDiagSocioTechnique = null;
-
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isFondSolidariteLogement = null;
-
-    #[ORM\Column(type: 'boolean', nullable: true)]
-    private ?bool $isRisqueSurOccupation = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $proprioAvertiAt = null;
@@ -422,14 +386,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[Assert\Length(max: 12, maxMessage: 'L\'invariant fiscal ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $numeroInvariant = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
     private ?string $numeroInvariantRial = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $nbPiecesLogement = null;
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $nbChambresLogement = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $nbNiveauxLogement = null;
@@ -441,13 +402,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\OneToMany(mappedBy: 'signalement', targetEntity: Affectation::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $affectations;
 
-    #[ORM\Column(type: 'string', enumType: MotifCloture::class, nullable: true)]
+    #[ORM\Column(type: 'string', enumType: MotifCloture::class, nullable: true, length: 50)]
     private ?MotifCloture $motifCloture = null;
 
-    #[ORM\Column(type: 'string', enumType: MotifClotureUsager::class, nullable: true)]
+    #[ORM\Column(type: 'string', enumType: MotifClotureUsager::class, nullable: true, length: 50)]
     private ?MotifClotureUsager $motifClotureUsager = null;
 
-    #[ORM\Column(type: 'string', enumType: MotifRefus::class, nullable: true)]
+    #[ORM\Column(type: 'string', enumType: MotifRefus::class, nullable: true, length: 50)]
     private ?MotifRefus $motifRefus = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
@@ -530,7 +491,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(nullable: true)]
     private ?array $synchroData = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 20, nullable: true)]
     private ?string $rnbIdOccupant = null;
 
     #[ORM\Column(type: 'string', length: 15, nullable: true, enumType: DebutDesordres::class)]
@@ -554,10 +515,10 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\ManyToOne]
     private ?Partner $createdByPartner = null;
 
-    #[ORM\Column(type: 'string', enumType: CreationSource::class, nullable: true)]
+    #[ORM\Column(type: 'string', enumType: CreationSource::class, nullable: true, length: 50)]
     private ?CreationSource $creationSource = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 50, nullable: true)]
     private ?string $loginBailleur = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
@@ -1003,38 +964,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setIsRelogement(?bool $isRelogement): static
     {
         $this->isRelogement = $isRelogement;
-
-        return $this;
-    }
-
-    public function getIsRefusIntervention(): ?bool
-    {
-        return $this->isRefusIntervention;
-    }
-
-    public function setIsRefusIntervention(?bool $isRefusIntervention): static
-    {
-        $this->isRefusIntervention = $isRefusIntervention;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Sera supprimé à la prochaine version
-     */
-    public function getRaisonRefusIntervention(): ?string
-    {
-        return $this->raisonRefusIntervention;
-    }
-
-    /**
-     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Sera supprimé à la prochaine version
-     */
-    public function setRaisonRefusIntervention(?string $raisonRefusIntervention): static
-    {
-        $this->raisonRefusIntervention = $raisonRefusIntervention;
 
         return $this;
     }
@@ -1684,18 +1613,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getCodeProcedure(): ?string
-    {
-        return $this->codeProcedure;
-    }
-
-    public function setCodeProcedure(?string $codeProcedure): static
-    {
-        $this->codeProcedure = $codeProcedure;
-
-        return $this;
-    }
-
     /** @return array<mixed> */
     public function getAffectationStatusByPartner(): array
     {
@@ -1845,18 +1762,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getIsConsentementTiers(): ?bool
-    {
-        return $this->isConsentementTiers;
-    }
-
-    public function setIsConsentementTiers(?bool $isConsentementTiers): static
-    {
-        $this->isConsentementTiers = $isConsentementTiers;
-
-        return $this;
-    }
-
     public function getValidatedAt(): ?\DateTimeImmutable
     {
         return $this->validatedAt;
@@ -1893,62 +1798,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getTypeEnergieLogement(): ?string
-    {
-        return $this->typeEnergieLogement;
-    }
-
-    public function setTypeEnergieLogement(?string $typeEnergieLogement): static
-    {
-        $this->typeEnergieLogement = $typeEnergieLogement;
-
-        return $this;
-    }
-
-    public function getOrigineSignalement(): ?string
-    {
-        return $this->origineSignalement;
-    }
-
-    public function setOrigineSignalement(?string $origineSignalement): static
-    {
-        $this->origineSignalement = $origineSignalement;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez @see getProfileDeclarant() afin de connaitre la situation de l'occupant (LOCATAIRE, BAILLEUR_OCCUPANT)
-     */
-    public function getSituationOccupant(): ?string
-    {
-        return $this->situationOccupant;
-    }
-
-    /**
-     * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez @see setProfileDeclarant() afin d'affecter la situation de l'occupant (LOCATAIRE, BAILLEUR_OCCUPANT)
-     */
-    public function setSituationOccupant(?string $situationOccupant): static
-    {
-        $this->situationOccupant = $situationOccupant;
-
-        return $this;
-    }
-
-    public function getSituationProOccupant(): ?string
-    {
-        return $this->situationProOccupant;
-    }
-
-    public function setSituationProOccupant(?string $situationProOccupant): static
-    {
-        $this->situationProOccupant = $situationProOccupant;
-
-        return $this;
-    }
-
     /**
      * @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
      * Il n'est pas utile de connaitre les différentes naissances des occupants
@@ -1976,18 +1825,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getIsLogementCollectif(): ?bool
-    {
-        return $this->isLogementCollectif;
-    }
-
-    public function setIsLogementCollectif(?bool $isLogementCollectif): static
-    {
-        $this->isLogementCollectif = $isLogementCollectif;
-
-        return $this;
-    }
-
     public function getIsConstructionAvant1949(): ?bool
     {
         return $this->isConstructionAvant1949;
@@ -1996,42 +1833,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setIsConstructionAvant1949(?bool $isConstructionAvant1949): static
     {
         $this->isConstructionAvant1949 = $isConstructionAvant1949;
-
-        return $this;
-    }
-
-    public function getIsDiagSocioTechnique(): ?bool
-    {
-        return $this->isDiagSocioTechnique;
-    }
-
-    public function setIsDiagSocioTechnique(?bool $isDiagSocioTechnique): static
-    {
-        $this->isDiagSocioTechnique = $isDiagSocioTechnique;
-
-        return $this;
-    }
-
-    public function getIsFondSolidariteLogement(): ?bool
-    {
-        return $this->isFondSolidariteLogement;
-    }
-
-    public function setIsFondSolidariteLogement(?bool $isFondSolidariteLogement): static
-    {
-        $this->isFondSolidariteLogement = $isFondSolidariteLogement;
-
-        return $this;
-    }
-
-    public function getIsRisqueSurOccupation(): ?bool
-    {
-        return $this->isRisqueSurOccupation;
-    }
-
-    public function setIsRisqueSurOccupation(?bool $isRisqueSurOccupation): static
-    {
-        $this->isRisqueSurOccupation = $isRisqueSurOccupation;
 
         return $this;
     }
@@ -2080,24 +1881,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setNbPiecesLogement(?int $nbPiecesLogement): static
     {
         $this->nbPiecesLogement = $nbPiecesLogement;
-
-        return $this;
-    }
-
-    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode @see getTypeCompositionLogement() afin de savoir le nombre de pièces dans le logement
-     */
-    public function getNbChambresLogement(): ?int
-    {
-        return $this->nbChambresLogement;
-    }
-
-    /** @deprecated  Cette méthode est obsolete et ne doit plus être utilisé dans le cadre du nouveau formulaire
-     * Utilisez la méthode getTypeComposition() afin de savoir le nombre de pièces dans le logement
-     */
-    public function setNbChambresLogement(?int $nbChambresLogement): static
-    {
-        $this->nbChambresLogement = $nbChambresLogement;
 
         return $this;
     }

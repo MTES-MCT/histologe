@@ -81,9 +81,6 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         } elseif (!empty($signalement->getNumeroInvariant())) {
             $numeroInvariant = substr($signalement->getNumeroInvariant(), 0, 12);
         }
-        $typeEnergieLogement = $signalement->getTypeEnergieLogement()
-            ? substr($signalement->getTypeEnergieLogement(), 0, 30)
-            : null;
 
         $codeInsee = $signalement->getInseeOccupant()
             ? substr($signalement->getInseeOccupant(), 0, 5)
@@ -136,13 +133,11 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setLogementType($signalement->getNatureLogement() ?? 'Autre')
             ->setLogementSocial(!empty($signalement->getIsLogementSocial()) ? (int) $signalement->getIsLogementSocial() : null)
             ->setLogementAnneeConstruction($signalement->getAnneeConstruction())
-            ->setLogementTypeEnergie($typeEnergieLogement)
-            ->setLogementCollectif((int) $signalement->getIsLogementCollectif())
+            ->setLogementCollectif(0)
             ->setLogementAvant1949((int) $signalement->getIsConstructionAvant1949())
-            ->setLogementDiagST((int) $signalement->getIsDiagSocioTechnique())
+            ->setLogementDiagST(0)
             ->setLogementInvariant($numeroInvariant)
             ->setLogementNbPieces($signalement->getNbPiecesLogement())
-            ->setLogementNbChambres($signalement->getNbChambresLogement())
             ->setLogementNbNiveaux($signalement->getNbNiveauxLogement())
             ->setProprietaireAverti((int) $signalement->getIsProprioAverti())
             ->setProprietaireAvertiDate($signalement->getProprioAvertiAt()?->format($formatDate))
