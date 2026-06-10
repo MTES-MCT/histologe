@@ -364,8 +364,10 @@ function initializeUploadModal(modalSelector, isModalUploadVisite) {
     modal.dataset.interventionId = interventionId;
     if (fileFilter === 'procédure') {
       modal.querySelector('.filter-procedure').classList.remove('fr-hidden');
+      modal.setAttribute('aria-labelledby', modal.querySelector('.filter-procedure h1').id);
     } else if (fileFilter === 'situation') {
       modal.querySelector('.filter-situation').classList.remove('fr-hidden');
+      modal.setAttribute('aria-labelledby', modal.querySelector('.filter-situation h1').id);
     }
   });
 
