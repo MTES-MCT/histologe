@@ -90,7 +90,9 @@ formBtn?.addEventListener('click', () => {
         } else if (response.status === 400) {
           const data = await response.json();
           if (data.errors?.superficie) {
-            document.querySelector('#signalement-edit-nde-superficie-error').classList.remove('fr-hidden');
+            document
+              .querySelector('#signalement-edit-nde-superficie-error')
+              .classList.remove('fr-hidden');
           }
         }
       })

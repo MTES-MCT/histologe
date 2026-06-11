@@ -99,12 +99,14 @@ if (modalPickLocalisation) {
     }
 
     // Récupérer les conteneurs de boutons
-    const defaultButtonsContainer = document.querySelector('#fr-modal-pick-localisation .fr-modal__footer .fr-btns-group');
-    
+    const defaultButtonsContainer = document.querySelector(
+      '#fr-modal-pick-localisation .fr-modal__footer .fr-btns-group'
+    );
+
     // Réinitialiser l'affichage des boutons (afficher tous les boutons par défaut)
     if (defaultButtonsContainer) {
       const allButtons = defaultButtonsContainer.querySelectorAll('li');
-      allButtons.forEach(btn => btn.classList.remove('fr-hidden'));
+      allButtons.forEach((btn) => btn.classList.remove('fr-hidden'));
     }
 
     // Attendre que le DOM soit complètement rendu avant d'initialiser la carte
@@ -135,7 +137,7 @@ if (modalPickLocalisation) {
               // Masquer les boutons Valider et Annuler du footer
               if (defaultButtonsContainer) {
                 const allButtons = defaultButtonsContainer.querySelectorAll('li');
-                allButtons.forEach(btn => btn.classList.add('fr-hidden'));
+                allButtons.forEach((btn) => btn.classList.add('fr-hidden'));
               }
 
               return;

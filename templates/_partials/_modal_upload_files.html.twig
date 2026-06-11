@@ -1,5 +1,5 @@
 <dialog 
-    aria-labelledby="fr-modal-upload-files-title" 
+    aria-labelledby="fr-modal-upload-files-title-procedure" 
     id="fr-modal-upload-files" 
     class="fr-modal" 
     data-has-changes="false"
@@ -21,7 +21,7 @@
                     </div>
                     <div class="fr-modal__content">
                         <div class="filter-conditional filter-procedure">
-                            <h1 id="fr-modal-upload-files-title" class="fr-modal__title">
+                            <h1 id="fr-modal-upload-files-title-procedure" class="fr-modal__title">
                                 Ajouter des documents liés à la procédure
                             </h1>
                             <div>
@@ -32,7 +32,7 @@
                             </div>
                         </div>
                         <div class="filter-conditional filter-situation">
-                            <h1  id="fr-modal-upload-files-title" class="fr-modal__title">
+                            <h1 id="fr-modal-upload-files-title-situation" class="fr-modal__title">
                                 Ajouter des documents liés à la situation
                             </h1>
                             <div>
@@ -43,7 +43,7 @@
                                     <p>Pour ajouter des documents concernant la procédure ou le bailleur, rendez-vous dans l'onglet "Documents et photos".</p>
                                 </div>
                             {% endif %}
-                            {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}   
+                            {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
                                 <div class="fr-alert fr-alert--warning fr-alert--sm fr-mt-1w ">
                                     <p>Ces documents seront visibles sur la fiche de suivi usager.</p>
                                 </div>
