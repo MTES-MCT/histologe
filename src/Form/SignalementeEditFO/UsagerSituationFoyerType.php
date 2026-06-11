@@ -302,7 +302,7 @@ class UsagerSituationFoyerType extends AbstractType
                 'data' => $departApresTravaux,
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Envoyer',
+                'label' => 'Enregistrer',
                 'attr' => [
                     'class' => 'fr-btn--primary',
                 ],

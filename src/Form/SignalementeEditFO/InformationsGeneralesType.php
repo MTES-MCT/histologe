@@ -218,7 +218,7 @@ class InformationsGeneralesType extends AbstractType
             ]);
         }
         $builder->add('save', SubmitType::class, [
-            'label' => 'Envoyer',
+            'label' => 'Enregistrer',
             'attr' => [
                 'class' => 'fr-btn--primary',
             ],

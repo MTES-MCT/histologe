@@ -45,7 +45,7 @@ class CoordonneesSyndicType extends AbstractType
                 'required' => false,
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Envoyer',
+                'label' => 'Enregistrer',
                 'attr' => [
                     'class' => 'fr-btn--primary',
                 ],

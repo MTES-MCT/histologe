@@ -88,7 +88,7 @@ class CoordonneesAgenceType extends AbstractType
                 ],
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Envoyer',
+                'label' => 'Enregistrer',
                 'attr' => [
                     'class' => 'fr-btn--primary',
                 ],
