@@ -142,7 +142,7 @@
                     Ajouter des documents
                 </button>
             </p>
-            <div id="bo-create-file-list" class="fr-mt-1v">
+            <div id="bo-create-file-list" class="fr-mt-1v fr-mb-5w">
             {% for index, document in signalement.files(true) %}
                 <div class="fr-grid-row">
                     <div class="fr-col-8">
@@ -166,19 +166,19 @@
             </div>
         </div>
     </div>
-
-    <div class="fr-col-6">
+</div>
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-6">
         <div class="fr-grid-row fr-grid-row--left">
             {{ form_row(formSituation.previous) }}
         </div>
     </div>
-    <div class="fr-col-6">
-        <div class="fr-grid-row fr-grid-row--right">
+    <div class="fr-col-12 fr-col-md-6">
+        <div class="fr-grid-row fr-grid-row--right flex-direction-column-reverse-sm">
             {{ form_row(formSituation.forceSave) }}
             {{ form_row(formSituation.draft) }}
             {{ form_row(formSituation.save) }}
         </div>
     </div>
-
 </div>
 {{ form_end(formSituation) }}

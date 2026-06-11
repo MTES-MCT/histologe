@@ -60,6 +60,7 @@ function saveCurrentTab(event) {
     return;
   }
   currentTab.classList.add('fr-tabs__panel--saving');
+  document.getElementById('form-pro-container').scrollIntoView({ behavior: 'smooth' });
 
   let formData = null;
   let formAction = null;
@@ -560,6 +561,7 @@ function initBoFormValidation() {
     boFormSignalementValidation.addEventListener('submit', (event) => {
       event.preventDefault();
       boFormValidationTab.classList.add('fr-tabs__panel--saving');
+      document.getElementById('form-pro-container').scrollIntoView({ behavior: 'smooth' });
       const formData = new FormData(boFormSignalementValidation);
       const formAction = boFormSignalementValidation.action;
       fetch(formAction, { method: 'POST', body: formData }).then((response) => {

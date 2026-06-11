@@ -102,6 +102,24 @@ pre {
             order: 3;
         }
     }
+
+    .btn-block-sm, .btn-form-pro {
+        display: flex;
+        width: 100%;
+        margin-bottom: 0.75rem;
+    }
+    .btn-form-pro {
+        justify-content: center;
+    }
+    .btn-form-pro-container {
+        display: flex;
+        width: 100%;
+        margin: 0 !important;
+    }
+    .flex-direction-column-reverse-sm {
+        flex-direction: column-reverse;
+    }
+
 }
 
 @media (min-width: 48em) {

@@ -332,17 +332,18 @@ class SignalementDraftCoordonneesType extends AbstractType
             ])
             ->add('previous', SubmitType::class, [
                 'label' => 'Précédent',
-                'attr' => ['class' => 'fr-btn fr-icon-arrow-left-line fr-btn--icon-left fr-btn--secondary', 'data-target' => 'situation'],
-                'row_attr' => ['class' => 'fr-ml-2w'],
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-left-line fr-btn--icon-left fr-btn--secondary btn-form-pro', 'data-target' => 'situation'],
+                'row_attr' => ['class' => 'fr-ml-2w btn-form-pro-container'],
             ])
             ->add('draft', SubmitType::class, [
                 'label' => 'Finir plus tard',
-                'attr' => ['class' => 'fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline'],
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline btn-form-pro'],
+                'row_attr' => ['class' => 'btn-form-pro-container'],
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Suivant',
-                'attr' => ['class' => 'fr-btn fr-icon-arrow-right-line fr-btn--icon-right', 'data-target' => 'desordres'],
-                'row_attr' => ['class' => 'fr-ml-2w'],
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-right-line fr-btn--icon-right btn-form-pro', 'data-target' => 'desordres'],
+                'row_attr' => ['class' => 'fr-ml-2w btn-form-pro-container'],
             ])
         ;
     }

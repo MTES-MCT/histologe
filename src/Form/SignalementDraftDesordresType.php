@@ -171,17 +171,18 @@ class SignalementDraftDesordresType extends AbstractType
             ->add('forceSave', HiddenType::class, ['mapped' => false])
             ->add('previous', SubmitType::class, [
                 'label' => 'Précédent',
-                'attr' => ['class' => 'fr-btn fr-icon-arrow-left-line fr-btn--icon-left fr-btn--secondary', 'data-target' => 'coordonnees', 'value' => 'previous'],
-                'row_attr' => ['class' => 'fr-ml-2w'],
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-left-line fr-btn--icon-left fr-btn--secondary btn-form-pro', 'data-target' => 'coordonnees', 'value' => 'previous'],
+                'row_attr' => ['class' => 'fr-ml-2w btn-form-pro-container'],
             ])
             ->add('draft', SubmitType::class, [
                 'label' => 'Finir plus tard',
-                'attr' => ['class' => 'fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline', 'value' => 'later'],
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-go-forward-line fr-btn--icon-left fr-btn--tertiary-no-outline btn-form-pro', 'value' => 'later'],
+                'row_attr' => ['class' => 'btn-form-pro-container'],
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Suivant',
-                'attr' => ['class' => 'fr-btn fr-icon-arrow-right-line fr-btn--icon-right', 'data-target' => 'validation', 'value' => 'next'],
-                'row_attr' => ['class' => 'fr-ml-2w'],
+                'attr' => ['class' => 'fr-btn fr-icon-arrow-right-line fr-btn--icon-right btn-form-pro', 'data-target' => 'validation', 'value' => 'next'],
+                'row_attr' => ['class' => 'fr-ml-2w btn-form-pro-container'],
             ]);
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event) {

@@ -33,7 +33,7 @@
             </div>
         </header>
     </section>
-    <section class="fr-container--fluid">
+    <section class="fr-container--fluid" id="form-pro-container">
 
         {% if signalement.id is not null %}
         <form method="POST" id="form-delete-file" enctype="application/json" action="{{ path('back_signalement_delete_file',{uuid:signalement.uuid}) }}">

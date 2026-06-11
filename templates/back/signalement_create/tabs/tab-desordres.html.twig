@@ -17,11 +17,11 @@
         </fieldset>
     </div>
 
-    <div class="fr-col-6">
+    <div class="fr-col-12 fr-col-md-6">
         <h3 class="fr-h5">Logement</h3>
         <span>Désordres déclarés dans le logement</span>
         <span class="fr-hint-text">Sélectionnez au moins 1 désordre dans la liste</span>
-        <button class="fr-btn fr-btn--icon-left fr-icon-add-line"
+        <button class="fr-btn fr-btn--icon-left fr-icon-add-line fr-mt-2v btn-block-sm"
             title="Sélectionner les désordres" type="button"
             data-fr-opened="false" aria-controls="fr-modal-desordres-logement-add"
             >
@@ -29,11 +29,11 @@
         </button>
         {{ _self.display_criteres('LOGEMENT', criteresByZone['LOGEMENT']) }}
     </div>
-    <div class="fr-col-6">
+    <div class="fr-col-12 fr-col-md-6">
         <h3 class="fr-h5">Bâtiment</h3>
         <span>Désordres déclarés dans le bâtiment</span>
         <span class="fr-hint-text">Sélectionnez au moins 1 désordre dans la liste</span>
-        <button class="fr-btn fr-btn--icon-left fr-icon-add-line"
+        <button class="fr-btn fr-btn--icon-left fr-icon-add-line fr-mt-2v fr-mb-5w btn-block-sm"
             title="Sélectionner les désordres" type="button"
             data-fr-opened="false" aria-controls="fr-modal-desordres-batiment-add"
             >
@@ -41,20 +41,20 @@
         </button>
         {{ _self.display_criteres('BATIMENT', criteresByZone['BATIMENT']) }}
     </div>
-
-    <div class="fr-col-6">
+</div>
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-6">
         <div class="fr-grid-row fr-grid-row--left">
             {{ form_row(formDesordres.previous) }}
         </div>
     </div>
-    <div class="fr-col-6">
-        <div class="fr-grid-row fr-grid-row--right">
+    <div class="fr-col-12 fr-col-md-6">
+        <div class="fr-grid-row fr-grid-row--right flex-direction-column-reverse-sm">
             {{ form_row(formDesordres.forceSave) }}
             {{ form_row(formDesordres.draft) }}
             {{ form_row(formDesordres.save) }}
         </div>
     </div>
-
 </div>
 
 {% set desordres_logement = [] %}
