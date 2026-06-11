@@ -626,11 +626,6 @@ class SignalementRepository extends ServiceEntityRepository
 
     /**
      * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-
-    /**
-     * @throws NonUniqueResultException
      */
     public function findOneForLoginBailleur(string $referenceInjonction, string $loginBailleur): ?Signalement
     {

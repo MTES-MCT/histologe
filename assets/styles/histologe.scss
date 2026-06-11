@@ -692,6 +692,12 @@ ul.fr-autocomplete-list {
         width: 100%;
     }
 }
+.fr-autocomplete-absolute {
+    position: absolute;
+    width: 100%;
+    z-index: 9999;
+}
+
 .iframed .fr-address-group {
     max-height: 145px;
     overflow: auto;
@@ -778,6 +784,9 @@ ul + p {
         margin-left: 0.25rem;
         padding-left: 1rem;
     }
+}
+.signalement-group-data-card.squared {
+    border-radius: 0;
 }
 
 .confetti {
@@ -912,6 +921,9 @@ ul + p {
     z-index: 10;
     background: white;
 }
+#map-same-address {
+    height: 95vh;
+}
 #zone_map, #info_zone_map {
     height: 70vh;
 }
@@ -928,6 +940,20 @@ ul + p {
         }
     }
 }
+.marker-cluster-custom {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #a9bfff;
+    border: 2px solid #0063cb;
+    color: #0063cb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+}
+
+
 .pick-location-success {
   color: var(--background-flat-success);
   font-weight: 500;

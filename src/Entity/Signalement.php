@@ -53,6 +53,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Index(columns: ['statut', 'id'], name: 'idx_signalement_statut_id')]
 #[ORM\Index(columns: ['mail_occupant'], name: 'idx_signalement_mail_occupant')]
 #[ORM\Index(columns: ['mail_declarant'], name: 'idx_signalement_mail_declarant')]
+#[ORM\Index(columns: ['adresse_occupant', 'cp_occupant', 'ville_occupant'], name: 'idx_signalement_same_address')]
 class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInterface
 {
     use EntityChangesTrait;
