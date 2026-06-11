@@ -21,7 +21,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:force-esabora-dossier-cloture',
-    description: 'Add a short description for your command',
+    description: 'A la demande des ARS, force la clôture d\'un dossier Esabora SISH pour une affectation ARS.'
 )]
 class ForceEsaboraDossierClotureCommand extends Command
 {
@@ -50,7 +50,6 @@ class ForceEsaboraDossierClotureCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $uuid = $input->getArgument('uuid_signalement');
 
-        /** @var Affectation[] $affectations */
         $affectations = $this->affectationRepository->findAffectationSubscribedToEsabora(
             partnerType: PartnerType::ARS,
             uuidSignalement: $uuid
@@ -61,6 +60,7 @@ class ForceEsaboraDossierClotureCommand extends Command
 
             return Command::INVALID;
         }
+        /** @var Affectation $affectation */
         $affectation = $affectations[0]['affectation'];
 
         if (AffectationStatus::WAIT !== $affectation->getStatut()) {
