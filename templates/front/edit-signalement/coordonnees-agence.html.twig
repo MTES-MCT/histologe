@@ -18,7 +18,7 @@
 	{{ form_start(form, {'attr': {'id': 'form-usager-complete-dossier'}}) }}
 	<div class="fr-grid-row fr-mt-3w">
 		<div class="fr-col-12">
-			<h1 class="title-blue-france">Compléter les informations</h1>
+			<h1 class="title-blue-france">Compléter les informations de l'agence</h1>
 			<div class="fr-mb-3w">
 				Complétez votre dossier en remplissant les champs ci-dessous. Un signalement complet permet une meilleure prise en charge du dossier !
 				<br>
@@ -27,7 +27,7 @@
 			{{ form_errors(form) }}				
 			<fieldset class="fr-fieldset">
 				<legend class="fr-fieldset__legend">
-					<h3 class="fr-h5">Coordonnées de l'agence</h3>
+					<h2 class="fr-h5">Coordonnées de l'agence</h2>
 				</legend>
 				<div class="fr-fieldset__element">
 					{{ form_row(form.denominationAgence) }}
@@ -50,7 +50,7 @@
 			</fieldset>
 			<fieldset class="fr-fieldset">
 				<legend class="fr-fieldset__legend">
-					<h4 class="fr-h6">Adresse postale</h4>
+					<h3 class="fr-h6">Adresse postale</h3>
 				</legend>
 				<div class="fr-fieldset__element">
 					{{ form_row(form.adresseCompleteAgence) }}
