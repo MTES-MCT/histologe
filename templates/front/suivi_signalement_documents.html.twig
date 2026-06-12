@@ -10,7 +10,7 @@
 {% endif %}
 
 <main class="fr-container fr-pb-5w" id="content">
-	<nav role="navigation" class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
+	<nav class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
 		<button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
 		<div class="fr-collapse" id="breadcrumb-1">
 			<ol class="fr-breadcrumb__list">
@@ -38,7 +38,8 @@
 						</button>
 					</li>
 				</ul>
-				{{ form(form, { 'attr': {'id': 'uploaded-file-form', 'class': 'fr-hidden', } } ) }}
+				{{ form_start(form, { 'attr': {'id': 'uploaded-file-form', 'class': 'fr-hidden'} }) }}
+				{{ form_end(form) }}
 			{% else %}
 				<div role="alert" class="fr-alert fr-alert--error fr-alert--sm">
 					<p>Vous ne pouvez plus envoyer de documents.</p>
