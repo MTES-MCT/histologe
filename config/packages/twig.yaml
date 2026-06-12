@@ -18,8 +18,7 @@ twig:
         display_staging_notice: '%env(DISPLAY_STAGING_NOTICE)%'
         mise_en_berne: '%env(MISE_EN_BERNE_ENABLE)%'
         sites_faciles_url: '%env(resolve:SITES_FACILES_URL)%'
-        feature_injonction_bailleur: '%env(bool:FEATURE_INJONCTION_BAILLEUR)%'
-        feature_injonction_bailleur_depts: '%env(resolve:FEATURE_INJONCTION_BAILLEUR_DEPTS)%'
+        injonction_bailleur_depts: '%env(resolve:INJONCTION_BAILLEUR_DEPTS)%'
         feature_imprim_fip: '%env(bool:FEATURE_IMPRIM_FIP)%'
         MAX_ITEMS_LIST: !php/const App\Service\DashboardTabPanel\TabDossier::MAX_ITEMS_LIST
         rial_enable: '%env(bool:RIAL_ENABLE)%'

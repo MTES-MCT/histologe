@@ -93,8 +93,7 @@ const formStore: FormStore = reactive({
     ajaxurlSendMailGetLienSuivi: '',
     ajaxurlArchiveDraft: '',
     initProfile: '',
-    featureInjonctionBailleur: '',
-    featureInjonctionBailleurDepts: ''
+    injonctionBailleurDepts: ''
   },
   screenData: [],
   currentScreen: null,
@@ -269,10 +268,7 @@ const formStore: FormStore = reactive({
     return true;
   },
   shouldInjonctionBailleurSuggested(): boolean {
-      if (!this.props.featureInjonctionBailleur) {
-        return false
-      }
-      if (!this.props.featureInjonctionBailleurDepts.includes(formStore.data.territoryCode)) {
+      if (!this.props.injonctionBailleurDepts.includes(formStore.data.territoryCode)) {
         return false
       }
       if (formStore.data.profil !== 'locataire') {

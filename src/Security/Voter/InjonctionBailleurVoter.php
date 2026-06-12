@@ -18,10 +18,8 @@ class InjonctionBailleurVoter extends Voter
     public const string INJONCTION_BAILLEUR_SEE = 'INJONCTION_BAILLEUR_SEE';
 
     public function __construct(
-        #[Autowire(env: 'FEATURE_INJONCTION_BAILLEUR')]
-        private readonly bool $featureInjonctionBailleur,
-        #[Autowire(env: 'FEATURE_INJONCTION_BAILLEUR_DEPTS')]
-        private readonly string $featureInjonctionBailleurDepts,
+        #[Autowire(env: 'INJONCTION_BAILLEUR_DEPTS')]
+        private readonly string $injonctionBailleurDepts,
     ) {
     }
 
@@ -43,10 +41,7 @@ class InjonctionBailleurVoter extends Voter
 
     private function canSeeInjonctionBailleur(User $user): bool
     {
-        if (!$this->featureInjonctionBailleur) {
-            return false;
-        }
-        $arrayDepts = json_decode($this->featureInjonctionBailleurDepts, true);
+        $arrayDepts = json_decode($this->injonctionBailleurDepts, true);
 
         return $user->isSuperAdmin()
             || ($user->isTerritoryAdmin() && in_array($user->getFirstTerritory()->getZip(), $arrayDepts))
