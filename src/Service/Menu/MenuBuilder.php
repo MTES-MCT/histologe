@@ -13,6 +13,8 @@ readonly class MenuBuilder
         private readonly Security $currentRoute,
         #[Autowire(env: 'FEATURE_METABASE_STATS_ENABLE')]
         private readonly bool $featureMetabaseStats,
+        #[Autowire(env: 'FEATURE_HISTO_ADDRESS')]
+        private readonly bool $featureHistoAddress,
     ) {
     }
 
@@ -31,7 +33,11 @@ readonly class MenuBuilder
         if ($this->currentRoute->isGranted(InjonctionBailleurVoter::INJONCTION_BAILLEUR_SEE)) {
             $signalementsSubMenu->addChild(new MenuItem(label: 'Signalements en démarche accélérée', route: 'back_injonction_signalement_index', roleGranted: User::ROLE_USER));
         }
-        $signalementsSubMenu->addChild(new MenuItem(label: 'Dossiers à la même adresse', route: 'back_signalement_same_address_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+        if ($this->featureHistoAddress) {
+            $signalementsSubMenu->addChild(new MenuItem(label: 'Historique des adresses', route: 'back_histo_address_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+        } else {
+            $signalementsSubMenu->addChild(new MenuItem(label: 'Dossiers à la même adresse', route: 'back_signalement_same_address_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+        }
         $signalementsSubMenu
             ->addChild(new MenuItem(label: 'Mes brouillons', route: 'back_signalement_drafts', roleGranted: User::ROLE_USER))
             ->addChild(new MenuItem(label: 'Créer un signalement', route: 'back_signalement_create', roleGranted: User::ROLE_USER))
