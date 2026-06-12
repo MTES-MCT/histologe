@@ -26,7 +26,7 @@ class CoordonneesOccupantType extends AbstractType
         $mailOccupant = $signalement->getMailOccupant();
         $builder
             ->add('civiliteOccupant', ChoiceType::class, [
-                'label' => 'Civilité',
+                'label' => 'Civilité (facultatif)',
                 'choices' => [
                     'M' => 'mr',
                     'Mme' => 'mme',
@@ -62,17 +62,20 @@ class CoordonneesOccupantType extends AbstractType
         $builder->add('mailOccupantTemp', TextType::class, [
             'label' => $labelMailOccupant,
             'label_html' => true,
+            'help' => 'Format attendu : nom@domaine.fr',
             'required' => false,
             'mapped' => false,
             'data' => $mailOccupant,
             'constraints' => $constraintsMailOccupant,
         ])
         ->add('telOccupant', null, [
-            'label' => 'Numéro de téléphone',
+            'label' => 'Numéro de téléphone (facultatif)',
+            'help' => 'Format attendu : 0639987654',
             'required' => false,
         ])
         ->add('telOccupantBis', null, [
-            'label' => 'Numéro de téléphone secondaire',
+            'label' => 'Numéro de téléphone secondaire (facultatif)',
+            'help' => 'Format attendu : 0639987654',
             'required' => false,
         ])
         ->add('save', SubmitType::class, [
