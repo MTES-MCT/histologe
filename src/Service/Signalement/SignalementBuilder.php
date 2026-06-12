@@ -63,10 +63,8 @@ class SignalementBuilder
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         private readonly DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private readonly ZipcodeProvider $zipcodeProvider,
-        #[Autowire(env: 'FEATURE_INJONCTION_BAILLEUR')]
-        private bool $featureInjonctionBailleurEnabled = false,
-        #[Autowire(env: 'FEATURE_INJONCTION_BAILLEUR_DEPTS')]
-        private string $featureInjonctionBailleurDepts = '',
+        #[Autowire(env: 'INJONCTION_BAILLEUR_DEPTS')]
+        private string $injonctionBailleurDepts = '',
     ) {
     }
 
@@ -362,7 +360,7 @@ class SignalementBuilder
 
     private function isEligibleForInjonctionBailleur(): bool
     {
-        if (!$this->featureInjonctionBailleurEnabled || empty($this->featureInjonctionBailleurDepts)) {
+        if (empty($this->injonctionBailleurDepts)) {
             return false;
         }
 
@@ -376,7 +374,7 @@ class SignalementBuilder
             }
         }
 
-        $arrayDepts = json_decode($this->featureInjonctionBailleurDepts, true);
+        $arrayDepts = json_decode($this->injonctionBailleurDepts, true);
 
         // Pour entrer dans le statut injonction bailleur il faut :
         // - que le signalement n'ait pas de qualification danger ni insalubrité (au-dessus)
