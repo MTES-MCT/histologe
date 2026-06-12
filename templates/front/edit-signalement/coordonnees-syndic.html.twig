@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Compléter les informations du syndic #{{ signalement.reference }}{% endblock %}
+{% block title %}Compléter les informations du syndic (dossier #{{ signalement.reference }}){% endblock %}
 
 {% block body %}
 
@@ -18,7 +18,7 @@
 	{{ form_start(form, {'attr': {'id': 'form-usager-complete-dossier'}}) }}
 	<div class="fr-grid-row fr-mt-3w">
 		<div class="fr-col-12">
-			<h1 class="title-blue-france">Compléter les informations du syndic</h1>
+			<h1 class="title-blue-france">Compléter les coordonnées du syndic</h1>
 			<div class="fr-mb-3w">
 				Complétez votre dossier en remplissant les champs ci-dessous. Un signalement complet permet une meilleure prise en charge du dossier !
 				<br>
@@ -26,9 +26,6 @@
 			</div>
 			{{ form_errors(form) }}
 			<fieldset class="fr-fieldset">
-				<legend class="fr-fieldset__legend">
-					<h2 class="fr-h5">Coordonnées du syndic</h2>
-				</legend>
 				<div class="fr-fieldset__element">
 					{{ form_row(form.denominationSyndic) }}
 				</div>

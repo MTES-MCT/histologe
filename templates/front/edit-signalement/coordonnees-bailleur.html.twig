@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Compléter les informations bailleur #{{ signalement.reference }}{% endblock %}
+{% block title %}Compléter les informations bailleur (dossier #{{ signalement.reference }}){% endblock %}
 
 {% block body %}
 
@@ -75,7 +75,7 @@
 			</fieldset>
 			<fieldset class="fr-fieldset">
 				<legend class="fr-fieldset__legend">
-					<h3 class="fr-h6">Procédures</h3>
+					<h2 class="fr-h5">Procédures</h2>
 				</legend>
 				<div class="fr-fieldset__element">
 					{{ form_row(formCoordonneesBailleur.isProprioAverti) }}
