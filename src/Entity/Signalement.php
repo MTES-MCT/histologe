@@ -2367,12 +2367,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function removeSignalementQualification(SignalementQualification $signalementQualification): static
     {
-        if ($this->signalementQualifications->removeElement($signalementQualification)) {
-            // set the owning side to null (unless already changed)
-            if ($signalementQualification->getSignalement() === $this) {
-                $signalementQualification->setSignalement(null);
-            }
-        }
+        $this->signalementQualifications->removeElement($signalementQualification);
 
         return $this;
     }
