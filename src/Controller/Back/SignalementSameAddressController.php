@@ -17,6 +17,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+// TODO à la suppression de FEATURE_HISTO_ADDRESS :
+// - supprimer ce controller et SignalementSameAddressControllerTest
+// - supprimer les vues associées (back/signalement-same-address/*)
+// - supprimer back_signalement_same_address.js et ses références
+// - supprimer #map-same-address et .marker-cluster-custom dans le css
 #[Route('/bo/signalements-meme-adresse')]
 #[IsGranted('ROLE_ADMIN')]
 class SignalementSameAddressController extends AbstractController
