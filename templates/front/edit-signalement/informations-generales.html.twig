@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Compléter les informations générales sur le logement #{{ signalement.reference }}{% endblock %}
+{% block title %}Compléter les informations générales sur le logement (dossier #{{ signalement.reference }}){% endblock %}
 
 {% block body %}
 
@@ -18,7 +18,7 @@
 	{{ form_start(form, {'attr': {'id': 'form-usager-complete-dossier'}}) }}
 	<div class="fr-grid-row fr-mt-3w">
 		<div class="fr-col-12">
-			<h1 class="title-blue-france">Compléter les informations</h1>
+			<h1 class="title-blue-france">Compléter les informations générales sur le logement</h1>
 			<div class="fr-mb-3w">
 				Complétez votre dossier en remplissant les champs ci-dessous.
 				<br>
@@ -27,7 +27,6 @@
 				Les autres champs sont facultatifs, mais peuvent aider à une meilleure prise en charge du dossier.
 			</div>
 			{{ form_errors(form) }}
-			<h2>Informations générales sur le logement</h2>
 			<fieldset class="fr-fieldset">
 				<div class="fr-fieldset__element">
 					{{ form_row(form.dateEntree) }}

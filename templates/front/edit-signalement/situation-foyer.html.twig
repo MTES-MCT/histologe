@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Compléter la situation du foyer #{{ signalement.reference }}{% endblock %}
+{% block title %}Compléter la situation du foyer (dossier #{{ signalement.reference }}){% endblock %}
 
 {% block body %}
 
@@ -18,7 +18,7 @@
 	{{ form_start(form, {'attr': {'id': 'form-usager-complete-dossier'}}) }}
 	<div class="fr-grid-row fr-mt-3w">
 		<div class="fr-col-12">
-			<h1 class="title-blue-france">Compléter les informations</h1>
+			<h1 class="title-blue-france">Compléter la situation du foyer</h1>
 			<div class="fr-mb-3w">
 				Complétez votre dossier en remplissant les champs ci-dessous.
 				<br>
@@ -27,10 +27,9 @@
 				Les autres champs sont facultatifs, mais peuvent aider à une meilleure prise en charge du dossier.
 			</div>
 			{{ form_errors(form) }}
-			<h2>Situation du foyer</h2>
 			<fieldset class="fr-fieldset">
 				<legend class="fr-fieldset__legend">
-					<h3>Allocations</h3>
+					<h2>Allocations</h2>
 				</legend>
 				<div class="fr-fieldset__element fr-mb-0">
 					{{ form_row(form.isLogementSocial) }}
@@ -65,7 +64,7 @@
 			</fieldset>
 			<fieldset class="fr-fieldset">
 				<legend class="fr-fieldset__legend">
-					<h3>Accompagnement</h3>
+					<h2>Accompagnement</h2>
 				</legend>
 				<div class="fr-fieldset__element fr-mb-0">
 					{{ form_row(form.isRelogement) }}
