@@ -20,7 +20,10 @@
 			{{ form_errors(form) }}
 				<h1 class="title-blue-france">Demander l'arrêt de la procédure</h1>
 				<div class="fr-my-3w">
-					Expliquez pourquoi vous souhaitez arrêter la procédure puis envoyez votre demande à l'administration.
+					<div class="fr-mb-2w">
+						Expliquez pourquoi vous souhaitez arrêter la procédure puis envoyez votre demande à l'administration.<br>
+						Tous les champs sont obligatoires.
+					</div>
 					
 					{{ form_widget(form.reason, {display_mode: 'block-borders'}) }}
 					

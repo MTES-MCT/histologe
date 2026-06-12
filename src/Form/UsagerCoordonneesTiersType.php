@@ -20,17 +20,20 @@ class UsagerCoordonneesTiersType extends AbstractType
     {
         $builder
             ->add('lastname', TextType::class, [
-                'label' => 'Nom de famille',
+                'label' => 'Nom de famille <span class="text-required">*</span>',
+                'label_html' => true,
                 'required' => false,
                 'attr' => ['maxlength' => 50],
             ])
             ->add('firstname', TextType::class, [
-                'label' => 'Prénom',
+                'label' => 'Prénom <span class="text-required">*</span>',
+                'label_html' => true,
                 'required' => false,
                 'attr' => ['maxlength' => 50],
             ])
             ->add('email', TextType::class, [
-                'label' => 'Adresse e-mail',
+                'label' => 'Adresse e-mail <span class="text-required">*</span>',
+                'label_html' => true,
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
             ])

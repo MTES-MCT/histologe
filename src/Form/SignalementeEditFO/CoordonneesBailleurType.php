@@ -54,7 +54,7 @@ class CoordonneesBailleurType extends AbstractType
                     'required' => false,
                 ])
                 ->add('prenomProprio', TextType::class, [
-                    'label' => 'Prénom',
+                    'label' => 'Prénom (facultatif)',
                     'required' => false,
                 ])
                 ->add('adresseCompleteProprio', null, [
@@ -93,15 +93,17 @@ class CoordonneesBailleurType extends AbstractType
                     ],
                 ])
                 ->add('telProprio', TextType::class, [
-                    'label' => 'Téléphone principal',
+                    'label' => 'Téléphone principal (facultatif)',
+                    'help' => 'Format attendu : 0639987654',
                     'required' => false,
                 ])
                 ->add('telProprioSecondaire', TextType::class, [
-                    'label' => 'Téléphone secondaire',
+                    'label' => 'Téléphone secondaire (facultatif)',
+                    'help' => 'Format attendu : 0639987654',
                     'required' => false,
                 ])
                 ->add('mailProprio', TextType::class, [
-                    'label' => 'Adresse e-mail',
+                    'label' => 'Adresse e-mail (facultatif)',
                     'required' => false,
                     'help' => 'Format attendu : nom@domaine.fr',
                 ])
@@ -122,7 +124,7 @@ class CoordonneesBailleurType extends AbstractType
                     ],
                 ])
                 ->add('infoProcedureBailMoyen', EnumType::class, [
-                    'label' => 'Moyen de contact utilisé pour avertir le propriétaire',
+                    'label' => 'Moyen de contact utilisé pour avertir le propriétaire (facultatif)',
                     'class' => MoyenContact::class,
                     'choice_label' => static function ($choice) {
                         return $choice->label();
@@ -133,7 +135,7 @@ class CoordonneesBailleurType extends AbstractType
                     'data' => MoyenContact::tryFromString($signalement->getInformationProcedure()?->getInfoProcedureBailMoyen()),
                 ])
                 ->add('proprioAvertiAt', DateType::class, [
-                    'label' => 'Date d\'avertissement du propriétaire',
+                    'label' => 'Date d\'avertissement du propriétaire (facultatif)',
                     'help' => 'Format attendu : MM/AAAA',
                     'required' => false,
                     'html5' => false,
@@ -141,7 +143,7 @@ class CoordonneesBailleurType extends AbstractType
                     'format' => 'MM/yyyy',
                 ])
                 ->add('infoProcedureBailReponse', TextareaType::class, [
-                    'label' => 'Réponse du propriétaire',
+                    'label' => 'Réponse du propriétaire (facultatif)',
                     'help' => 'Format attendu : 255 caractères maximum',
                     'required' => false,
                     'mapped' => false,
@@ -158,7 +160,7 @@ class CoordonneesBailleurType extends AbstractType
             if ($signalement->getIsLogementSocial()) {
                 $builder
                     ->add('infoProcedureBailNumero', TextType::class, [
-                        'label' => 'Numéro de réclamation fourni par le bailleur',
+                        'label' => 'Numéro de réclamation fourni par le bailleur (facultatif)',
                         'help' => 'Format attendu : 30 caractères maximum',
                         'required' => false,
                         'mapped' => false,
@@ -174,7 +176,9 @@ class CoordonneesBailleurType extends AbstractType
         } else {
             $builder
                 ->add('mailProprio', TextType::class, [
-                    'label' => 'Afin de fluidifier les échanges, merci de renseigner votre adresse e-mail.',
+                    'label' => 'Afin de fluidifier les échanges, merci de renseigner votre adresse e-mail. <span class="text-required">*</span>',
+                    'label_html' => true,
+                    'help' => 'Format attendu : nom@domaine.fr',
                     'constraints' => [
                         new Assert\NotBlank(),
                     ],
