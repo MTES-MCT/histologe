@@ -4,7 +4,8 @@ export function initSearchAndSelectBadges() {
       element.addEventListener('click', () => {
         element.classList?.add('fr-hidden', 'disabled');
 
-        const badge = document.createElement('span');
+        const badge = document.createElement('button');
+        badge.type = 'button';
         badge.classList.add(
           'fr-badge',
           'fr-badge--blue-ecume',
