@@ -102,4 +102,17 @@ class SignalementTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-2']);
         $this->assertTrue($signalement->hasSuiviUsagerPostCloture());
     }
+
+    public function testRemoveSignalementQualificationDoesNotThrowTypeError(): void
+    {
+        $signalement = $this->getSignalement($this->getTerritory('Pas-de-calais', '62'));
+        $qualification = (new SignalementQualification())->setQualification(Qualification::SUROCCUPATION);
+        $signalement->addSignalementQualification($qualification);
+
+        $this->assertCount(1, $signalement->getSignalementQualifications());
+
+        $signalement->removeSignalementQualification($qualification);
+
+        $this->assertCount(0, $signalement->getSignalementQualifications());
+    }
 }
