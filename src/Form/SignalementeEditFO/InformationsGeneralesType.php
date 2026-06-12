@@ -153,7 +153,6 @@ class InformationsGeneralesType extends AbstractType
             ->add('classeEnergetique', ChoiceType::class, [
                 'label' => 'Classe énergétique du logement (facultatif)',
                 'choices' => [
-                    '' => '',
                     'A' => 'A',
                     'B' => 'B',
                     'C' => 'C',
@@ -166,7 +165,7 @@ class InformationsGeneralesType extends AbstractType
                 'expanded' => false,
                 'multiple' => false,
                 'required' => false,
-                'placeholder' => false,
+                'placeholder' => 'Sélectionnez la classe énergétique',
                 'mapped' => false,
                 'data' => $classeEnergetique,
             ])
