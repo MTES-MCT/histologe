@@ -93,7 +93,6 @@ class SignalementBuilderTest extends KernelTestCase
             $signalementQualificationUpdater,
             $desordreCompositionLogementLoader,
             $zipcodeProvider,
-            true,
             '["30","34","13"]',
         );
     }
