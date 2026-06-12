@@ -33,7 +33,7 @@ class PartnerQueryService
             ->innerJoin(
                 EmailDeliveryIssue::class,
                 'edi',
-                'WITH',
+                'ON',
                 'edi.email = p.email'
             )
             ->where('p.email = :email')
@@ -61,7 +61,7 @@ class PartnerQueryService
             ->setParameter('pid', $partner->getId());
 
         if ($withEmailIssue) {
-            $qb->innerJoin(EmailDeliveryIssue::class, 'edi', 'WITH', 'edi.email = u.email');
+            $qb->innerJoin(EmailDeliveryIssue::class, 'edi', 'ON', 'edi.email = u.email');
         }
 
         return (int) $qb->getQuery()->getSingleScalarResult();

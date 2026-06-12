@@ -566,9 +566,7 @@ class SignalementRepository extends ServiceEntityRepository
                 ORDER BY dernier_suivi_date DESC
                 LIMIT '.$limit.';';
 
-        $statement = $connexion->prepare($sql);
-
-        return $statement->executeQuery([
+        return $connexion->executeQuery($sql, [
             'statusSignalement' => SignalementStatus::ACTIVE->value,
             'territoryId' => $territory->getId(),
             'suiviTypePartner' => Suivi::TYPE_PARTNER,

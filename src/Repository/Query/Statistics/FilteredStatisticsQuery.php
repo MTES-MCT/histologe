@@ -156,7 +156,7 @@ class FilteredStatisticsQuery
                 ->innerJoin(
                     Commune::class,
                     'c2',
-                    'WITH',
+                    'ON',
                     's2.cpOccupant = c2.codePostal AND s2.inseeOccupant = c2.codeInsee AND c2.epci IN (:epcis)'
                 );
             $qb->andWhere('s.id IN ('.$subQuery->getDQL().')')->setParameter('epcis', $filters->getEpcis());

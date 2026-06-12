@@ -38,9 +38,9 @@ class UsagerCoordonneesTiersType extends AbstractType
                 'label' => 'Numéro de téléphone (facultatif)',
                 'required' => false,
                 'constraints' => [
-                    new TelephoneFormat([
-                        'message' => 'Le numéro de téléphone n\'est pas valide.',
-                    ]),
+                    new TelephoneFormat(
+                        message: 'Le numéro de téléphone n\'est pas valide.',
+                    ),
                 ],
             ]);
 

@@ -43,9 +43,9 @@ class ServiceSecoursStep3Type extends AbstractType
         $builder->add('telOccupant', PhoneType::class, [
             'label' => 'Téléphone',
             'constraints' => [
-                new TelephoneFormat([
-                    'message' => 'Le numéro de téléphone n\'est pas valide.',
-                ]),
+                new TelephoneFormat(
+                    message: 'Le numéro de téléphone n\'est pas valide.',
+                ),
             ],
         ]);
         $builder->add('nbAdultesDansLogement', TextType::class, [

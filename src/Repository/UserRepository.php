@@ -207,9 +207,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 GROUP BY u.email, u.created_at
                 ORDER BY nb_signalements desc';
 
-        $statement = $connection->prepare($sql);
-
-        $pendingUsers = $statement->executeQuery()->fetchAllAssociative();
+        $pendingUsers = $connection->executeQuery($sql)->fetchAllAssociative();
 
         return array_map(static function ($pendingUser) {
             return [

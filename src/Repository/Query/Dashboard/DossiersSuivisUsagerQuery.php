@@ -196,7 +196,7 @@ class DossiersSuivisUsagerQuery
         $qb->innerJoin(
             Notification::class,
             'n',
-            'WITH',
+            'ON',
             'n.suivi = s AND n.user = :currentUser'
         )
             ->andWhere('n.seenAt IS NULL')

@@ -47,10 +47,10 @@ class ServiceSecoursStep4Type extends AbstractType
                             'Indéterminé' => 'indetermine',
                         ],
                         'constraints' => [
-                            new Assert\NotBlank([
-                                'message' => 'Veuillez indiquer si le bailleur a été averti.',
-                                'groups' => ['step4'],
-                            ]),
+                            new Assert\NotBlank(
+                                message: 'Veuillez indiquer si le bailleur a été averti.',
+                                groups: ['step4'],
+                            ),
                         ],
                     ]);
 
@@ -75,9 +75,9 @@ class ServiceSecoursStep4Type extends AbstractType
                     $form->add('telProprio', PhoneType::class, [
                         'label' => 'Téléphone',
                         'constraints' => [
-                            new TelephoneFormat([
-                                'message' => 'Le numéro de téléphone n\'est pas valide.',
-                            ]),
+                            new TelephoneFormat(
+                                message: 'Le numéro de téléphone n\'est pas valide.',
+                            ),
                         ],
                     ]);
                 }
@@ -94,18 +94,18 @@ class ServiceSecoursStep4Type extends AbstractType
         $builder->add('telSyndic', PhoneType::class, [
             'label' => 'Téléphone',
             'constraints' => [
-                new TelephoneFormat([
-                    'message' => 'Le numéro de téléphone n\'est pas valide.',
-                ]),
+                new TelephoneFormat(
+                    message: 'Le numéro de téléphone n\'est pas valide.',
+                ),
             ],
         ]);
         $builder->add('telSyndicSecondaire', PhoneType::class, [
             'label' => 'Téléphone secondaire',
             'required' => false,
             'constraints' => [
-                new TelephoneFormat([
-                    'message' => 'Le numéro de téléphone n\'est pas valide.',
-                ]),
+                new TelephoneFormat(
+                    message: 'Le numéro de téléphone n\'est pas valide.',
+                ),
             ],
         ]);
     }

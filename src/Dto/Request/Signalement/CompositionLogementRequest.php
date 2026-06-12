@@ -80,11 +80,11 @@ class CompositionLogementRequest implements RequestInterface
         private readonly ?string $etage = null,
         #[Assert\When(
             expression: 'this.getType() == "appartement"',
-            groups: [
-                'LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS',
-            ],
             constraints: [
                 new Assert\NotBlank(message: 'Merci de préciser si le logement a des fenêtres.'),
+            ],
+            groups: [
+                'LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS',
             ],
         )]
         #[Assert\Choice(

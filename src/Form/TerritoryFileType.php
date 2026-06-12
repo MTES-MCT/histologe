@@ -39,16 +39,16 @@ class TerritoryFileType extends AbstractType
         }
 
         $fileConstraints = [
-            new Assert\NotBlank([
-                'message' => 'Veuillez sélectionner un fichier à télécharger.',
-            ]),
+            new Assert\NotBlank(
+                message: 'Veuillez sélectionner un fichier à télécharger.',
+            ),
             new Assert\Valid(),
-            new Assert\File([
-                'maxSize' => '10M',
-                'mimeTypes' => File::DOCUMENT_MIME_TYPES,
-                'maxSizeMessage' => 'Le fichier ne doit pas dépasser 10 Mo.',
-                'mimeTypesMessage' => 'Seuls les fichiers {{ types }} sont autorisés.',
-            ]),
+            new Assert\File(
+                maxSize: '10M',
+                mimeTypes: File::DOCUMENT_MIME_TYPES,
+                maxSizeMessage: 'Le fichier ne doit pas dépasser 10 Mo.',
+                mimeTypesMessage: 'Seuls les fichiers {{ types }} sont autorisés.',
+            ),
         ];
         if ($isEdit) {
             // En édition, le fichier n'est pas obligatoire
@@ -76,12 +76,12 @@ class TerritoryFileType extends AbstractType
             'required' => false,
             'constraints' => [
                 new Assert\NotBlank(),
-                new Assert\Length([
-                    'min' => 3,
-                    'minMessage' => 'Le nom du document doit contenir au moins {{ limit }} caractères.',
-                    'max' => 100,
-                    'maxMessage' => 'Le nom du document doit contenir au maximum {{ limit }} caractères.',
-                ]),
+                new Assert\Length(
+                    min: 3,
+                    minMessage: 'Le nom du document doit contenir au moins {{ limit }} caractères.',
+                    max: 100,
+                    maxMessage: 'Le nom du document doit contenir au maximum {{ limit }} caractères.',
+                ),
             ],
         ]);
 
@@ -105,9 +105,9 @@ class TerritoryFileType extends AbstractType
                 return $choice->label();
             },
             'constraints' => [
-                new Assert\NotBlank([
-                    'message' => 'Veuillez sélectionner un type de document.',
-                ]),
+                new Assert\NotBlank(
+                    message: 'Veuillez sélectionner un type de document.',
+                ),
             ],
         ]);
 
@@ -116,10 +116,10 @@ class TerritoryFileType extends AbstractType
             'help' => 'Expliquez à vos partenaires, en quelques mots, l\'objet et l\'utilisation du document.',
             'required' => false,
             'constraints' => [
-                new Assert\Length([
-                    'min' => 10,
-                    'minMessage' => 'La description du document doit contenir au moins {{ limit }} caractères.',
-                ]),
+                new Assert\Length(
+                    min: 10,
+                    minMessage: 'La description du document doit contenir au moins {{ limit }} caractères.',
+                ),
             ],
         ]);
         $builder->add('partnerType', SearchCheckboxEnumType::class, [

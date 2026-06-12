@@ -113,8 +113,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isLogementVacant = null;
 
-    #[ORM\Column(type: 'date', nullable: true)]
-    private ?\DateTimeInterface $dateEntree = null;
+    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    private ?\DateTimeImmutable $dateEntree = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: ProprioType::class, length: 50)]
     private ?ProprioType $typeProprio = null;
@@ -824,12 +824,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getDateEntree(): ?\DateTimeInterface
+    public function getDateEntree(): ?\DateTimeImmutable
     {
         return $this->dateEntree;
     }
 
-    public function setDateEntree(?\DateTimeInterface $dateEntree): static
+    public function setDateEntree(?\DateTimeImmutable $dateEntree): static
     {
         $this->dateEntree = $dateEntree;
 

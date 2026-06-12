@@ -29,7 +29,7 @@ class DossiersUndeliverableEmailQuery
             ->innerJoin(
                 EmailDeliveryIssue::class,
                 'edi',
-                'WITH',
+                'ON',
                 $qb->expr()->orX(
                     $qb->expr()->eq('s.mailOccupant', 'edi.email'),
                     $qb->expr()->eq('s.mailDeclarant', 'edi.email')

@@ -147,10 +147,10 @@ class CoordonneesBailleurType extends AbstractType
                     'mapped' => false,
                     'data' => $signalement->getInformationProcedure()?->getInfoProcedureBailReponse(),
                     'constraints' => [
-                        new Assert\Length([
-                            'max' => 255,
-                            'maxMessage' => 'La réponse du propriétaire ne peut pas dépasser {{ limit }} caractères.',
-                        ]),
+                        new Assert\Length(
+                            max: 255,
+                            maxMessage: 'La réponse du propriétaire ne peut pas dépasser {{ limit }} caractères.',
+                        ),
                     ],
                 ])
             ;
@@ -164,10 +164,10 @@ class CoordonneesBailleurType extends AbstractType
                         'mapped' => false,
                         'data' => $signalement->getInformationProcedure()?->getInfoProcedureBailNumero(),
                         'constraints' => [
-                            new Assert\Length([
-                                'max' => 30,
-                                'maxMessage' => 'Le numéro de réclamation ne peut pas dépasser {{ limit }} caractères.',
-                            ]),
+                            new Assert\Length(
+                                max: 30,
+                                maxMessage: 'Le numéro de réclamation ne peut pas dépasser {{ limit }} caractères.',
+                            ),
                         ],
                     ]);
             }

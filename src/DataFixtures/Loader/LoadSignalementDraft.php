@@ -31,7 +31,7 @@ class LoadSignalementDraft extends Fixture implements OrderedFixtureInterface
 
         $connection = $this->entityManager->getConnection();
         $sql = 'UPDATE signalement_draft SET created_at = DATE(created_at) - INTERVAL 7 MONTH WHERE status LIKE :status';
-        $connection->prepare($sql)->executeQuery(['status' => SignalementDraftStatus::EN_COURS->value]);
+        $connection->executeStatement($sql, ['status' => SignalementDraftStatus::EN_COURS->value]);
     }
 
     /**

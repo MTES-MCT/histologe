@@ -55,7 +55,7 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
 
         $connection = $this->entityManager->getConnection();
         $sql = 'UPDATE user SET created_at = DATE(created_at) - INTERVAL 15 DAY';
-        $connection->prepare($sql)->executeQuery();
+        $connection->executeStatement($sql);
     }
 
     /**
