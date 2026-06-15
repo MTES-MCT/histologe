@@ -53,4 +53,23 @@ class AffectationRepositoryTest extends KernelTestCase
         $this->assertInstanceOf(Affectation::class, $affectationsSubscribedToEsabora[0]['affectation']);
         $this->assertEquals('00000000-0000-0000-2023-000000000012', $affectationsSubscribedToEsabora[0]['signalement_uuid']);
     }
+
+    public function testFindAffectationSubscribedToEsaboraWithNbDaysBeforeDesync(): void
+    {
+        /** @var AffectationRepository $affectationRepository */
+        $affectationRepository = $this->entityManager->getRepository(Affectation::class);
+        $affectationsSubscribedToEsabora = $affectationRepository->findAffectationSubscribedToEsabora(
+            partnerType: PartnerType::ARS,
+            nbDaysBeforeDesync: 365
+        );
+
+        $this->assertCount(0, $affectationsSubscribedToEsabora);
+
+        $affectationsSubscribedToEsabora = $affectationRepository->findAffectationSubscribedToEsabora(
+            partnerType: PartnerType::ARS,
+            nbDaysBeforeDesync: 0
+        );
+
+        $this->assertCount(5, $affectationsSubscribedToEsabora);
+    }
 }

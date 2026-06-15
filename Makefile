@@ -50,11 +50,11 @@ down: ## Shutdown containers
 
 sh: ## Log to phpfpm container
 	@echo -e '\e[1;32mLog to phpfpm container\032'
-	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_phpfpm sh'
+	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_phpfpm bash'
 
 worker: ## Log to php-worker container
 	@echo -e '\e[1;32mLog to phpworker container\032'
-	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_phpworker sh'
+	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_phpworker bash'
 
 mysql: ## Log to mysql container
 	@echo -e '\e[1;32mLog to mysql container\032[0m'
@@ -62,7 +62,7 @@ mysql: ## Log to mysql container
 
 redis: ## Log to redis container
 	@echo -e '\e[1;32mLog to redis container\032[0m'
-	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_redis sh'
+	@bash -l -c '$(DOCKER_COMP) exec -it signal_logement_redis bash'
 
 redis-cli: ## Log to redis-cli
 	@echo -e '\e[1;32mLog to redis-cli\032[0m'

@@ -6,3 +6,5 @@ echo "Retry failed push to schs"
 php bin/console app:retry-failed-push schs
 echo "Retry failed push to idoss"
 php bin/console app:retry-failed-push idoss
+echo "Desync si-sh refused"
+php bin/console app:desync-esabora-sish
