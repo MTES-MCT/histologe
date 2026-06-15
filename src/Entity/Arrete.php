@@ -1,0 +1,113 @@
+<?php
+
+namespace App\Entity;
+
+use App\Entity\Enum\TypeArrete;
+use App\Repository\ArreteRepository;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity(repositoryClass: ArreteRepository::class)]
+class Arrete
+{
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    private \DateTimeImmutable $dateArrete;
+
+    #[ORM\Column(enumType: TypeArrete::class)]
+    private TypeArrete $typeArrete;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $syndic = null;
+
+    #[ORM\Column]
+    private bool $mainLevee;
+
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $dateMainLevee = null;
+
+    #[ORM\ManyToOne(inversedBy: 'arretes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private Address $address;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getDateArrete(): \DateTimeImmutable
+    {
+        return $this->dateArrete;
+    }
+
+    public function setDateArrete(\DateTimeImmutable $dateArrete): static
+    {
+        $this->dateArrete = $dateArrete;
+
+        return $this;
+    }
+
+    public function getTypeArrete(): TypeArrete
+    {
+        return $this->typeArrete;
+    }
+
+    public function setTypeArrete(TypeArrete $typeArrete): static
+    {
+        $this->typeArrete = $typeArrete;
+
+        return $this;
+    }
+
+    public function getSyndic(): ?string
+    {
+        return $this->syndic;
+    }
+
+    public function setSyndic(?string $syndic): static
+    {
+        $this->syndic = $syndic;
+
+        return $this;
+    }
+
+    public function isMainLevee(): bool
+    {
+        return $this->mainLevee;
+    }
+
+    public function setMainLevee(bool $mainLevee): static
+    {
+        $this->mainLevee = $mainLevee;
+
+        return $this;
+    }
+
+    public function getDateMainLevee(): ?\DateTimeImmutable
+    {
+        return $this->dateMainLevee;
+    }
+
+    public function setDateMainLevee(?\DateTimeImmutable $dateMainLevee): static
+    {
+        $this->dateMainLevee = $dateMainLevee;
+
+        return $this;
+    }
+
+    public function getAddress(): Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(Address $address): static
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+}
