@@ -217,7 +217,7 @@ class SignalementDraftSituationType extends AbstractType
                 'expanded' => false,
                 'multiple' => false,
                 'required' => false,
-                'placeholder' => 'Sélectionnez',
+                'placeholder' => 'Sélectionnez le type d\'allocation',
                 'mapped' => false,
                 'data' => $typeAllocation,
             ])
@@ -317,7 +317,7 @@ class SignalementDraftSituationType extends AbstractType
                 'expanded' => false,
                 'multiple' => false,
                 'required' => false,
-                'placeholder' => 'Sélectionnez',
+                'placeholder' => 'Sélectionnez le moyen d\'information',
                 'mapped' => false,
                 'data' => $moyenInformationProprietaire,
             ])

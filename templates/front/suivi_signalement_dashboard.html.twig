@@ -197,7 +197,13 @@
 		</div>
 		<div class="fr-col-12 fr-col-md-6">
 			{% include 'front/_partials/_suivi_signalement_prevenir_bailleur.html.twig' with {'cssDiv': 'fr-icon-information-line'} %}
-			{% include 'front/_partials/_suivi_signalement_inviter_tiers.html.twig' with {'cssDiv': 'fr-icon-information-line'} %}
+			{#
+				On n'affiche qu'une seule alerte pour ne pas surcharger,
+				donc on ne l'affiche que si on n'affiche pas celle sur le fait de prévenir le bailleur
+			#}
+			{% if signalement.isProprioAverti is same as true %}
+				{% include 'front/_partials/_suivi_signalement_inviter_tiers.html.twig' with {'cssDiv': 'fr-icon-information-line', 'heading': 2} %}
+			{% endif %}
 			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED
 				and signalement.motifRefus 
 				and signalement.motifRefus is same as enum('App\\Entity\\Enum\\MotifRefus').DOUBLON %}
