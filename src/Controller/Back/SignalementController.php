@@ -333,7 +333,6 @@ class SignalementController extends AbstractController
             $eventDispatcher->dispatch(new SignalementClosedEvent($signalementAffectationClose, $partner), SignalementClosedEvent::NAME);
             // on cloture les affectation et supprime les abonnnement des agent aprés le dispatch de l'event pour qu'ils soient notifiés de l'action
             $affectationManager->closeBySignalement($signalement, $signalementAffectationClose->getMotifCloture(), $user, $partner);
-            $entityManager->flush();
         /* @var Affectation $affectation */
         } elseif ($affectation) {
             $entity = $affectationManager->closeAffectation(
@@ -343,10 +342,11 @@ class SignalementController extends AbstractController
                 partner: $partner,
                 message: $signalementAffectationClose->getDescription(),
                 files: $signalementAffectationClose->getFiles(),
-                flush: true
+                createSuiviAndNotifications: true
             );
             $reference = $entity->getSignalement()->getReference();
         }
+        $entityManager->flush();
 
         if (!empty($entity)) {
             $this->addFlash('success', ['title' => 'Dossier fermé', 'message' => sprintf('Le dossier #%s a bien été fermé.', $reference)]);

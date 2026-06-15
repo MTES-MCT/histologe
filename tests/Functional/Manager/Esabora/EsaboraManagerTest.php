@@ -135,6 +135,7 @@ class EsaboraManagerTest extends KernelTestCase
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
+        $this->entityManager->flush();
 
         /** @var Signalement $signalement */
         $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
@@ -268,6 +269,7 @@ class EsaboraManagerTest extends KernelTestCase
         );
 
         $esaboraManager->synchronizeAffectationFrom($dossierResponse, $affectation);
+        $this->entityManager->flush();
         $this->entityManager->refresh($signalement);
 
         $suivis = $signalement->getSuivis();

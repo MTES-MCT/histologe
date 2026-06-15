@@ -275,6 +275,7 @@ class EsaboraManager
                     new InterventionUpdatedByEsaboraEvent($intervention, $this->userManager->getSystemUser(), $affectation->getPartner()),
                     InterventionUpdatedByEsaboraEvent::NAME
                 );
+                $this->entityManager->flush();
             }
         } else {
             $intervention = $this->interventionFactory->createInstanceFrom(
@@ -338,11 +339,9 @@ class EsaboraManager
             category: SuiviCategory::MESSAGE_ESABORA_SCHS,
             partner: $affectation->getPartner(),
             user: $this->userManager->getSystemUser(),
-            flush: false,
         );
 
         $suivi->setOriginalData($event->getOriginalData());
-        $this->entityManager->persist($suivi);
 
         return $suivi;
     }

@@ -68,6 +68,7 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
             ),
             InterventionUpdatedByEsaboraEvent::NAME
         );
+        $this->entityManager->flush();
 
         $this->assertEmailCount($countMail);
         $this->assertEquals(2, $intervention->getSignalement()->getSuivis()->count());

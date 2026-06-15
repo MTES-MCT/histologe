@@ -13,6 +13,7 @@ use App\Messenger\Message\NewSignalementCheckFileMessage;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -57,6 +58,7 @@ class NewSignalementCheckFileMessageHandler
         private readonly LoggerInterface $logger,
         private readonly SuiviManager $suiviManager,
         private readonly ParameterBagInterface $parameterBag,
+        private readonly EntityManagerInterface $entityManager,
         protected Security $security,
     ) {
     }
@@ -92,6 +94,7 @@ class NewSignalementCheckFileMessageHandler
         $this->suivi = null;
         if (!empty($documents) || !empty($desordres) || !$hasCoordonneesBailleur) {
             $this->suivi = $this->createSuivi($signalement, $documents, $desordres, $hasCoordonneesBailleur);
+            $this->entityManager->flush();
         }
 
         $this->logger->info('NewSignalementCheckFileMessage handled successfully', [

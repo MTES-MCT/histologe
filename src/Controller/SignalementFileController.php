@@ -140,6 +140,7 @@ class SignalementFileController extends AbstractController
         UploadHandlerService $uploadHandlerService,
         SuiviManager $suiviManager,
         SignalementRepository $signalementRepository,
+        EntityManagerInterface $entityManager,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
@@ -164,6 +165,7 @@ class SignalementFileController extends AbstractController
                     category: SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
                     user: $signalementUser->getUser(),
                 );
+                $entityManager->flush();
                 $title = $file->isTypeDocument() ? 'Document supprimé' : 'Photo supprimée';
                 $message = $file->isTypeDocument() ? 'Le document a bien été supprimé.' : 'La photo a bien été supprimée.';
                 $this->addFlash('success', ['title' => $title, 'message' => $message]);

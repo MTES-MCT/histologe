@@ -6,6 +6,7 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Manager\SuiviManager;
 use App\Security\Voter\SignalementFoVoter;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +20,7 @@ class SignalementConfirmEditController extends AbstractController
         #[MapEntity(expr: 'repository.findOneByCodeForPublic(code)')]
         Signalement $signalement,
         SuiviManager $suiviManager,
+        EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT_OFFLINE, $signalement);
         if ($signalement->getMailOccupantTemp()) {
@@ -32,6 +34,7 @@ class SignalementConfirmEditController extends AbstractController
                 category: SuiviCategory::SIGNALEMENT_EDITED_FO,
                 isVisibleForUsager: true,
             );
+            $entityManager->flush();
             $this->addFlash('success', 'L\'adresse e-mail de l\'occupant a été mise à jour avec succès.');
         }
 

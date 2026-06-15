@@ -94,6 +94,7 @@ class SuiviBailleurController extends AbstractController
                     $entityManager->beginTransaction();
                     try {
                         $injonctionBailleurService->handleResponse($reponseInjonctionBailleur);
+                        $entityManager->flush();
                         $entityManager->commit();
                         $this->addFlash('success', ['title' => 'Réponse enregistrée',
                             'message' => 'Votre réponse a été enregistrée avec succès.',
@@ -156,6 +157,7 @@ class SuiviBailleurController extends AbstractController
             $entityManager->beginTransaction();
             try {
                 $injonctionBailleurService->handleStopProcedure($stopProcedure);
+                $entityManager->flush();
                 $entityManager->commit();
                 $this->addFlash('success', ['title' => 'Réponse enregistrée',
                     'message' => 'Votre réponse a été enregistrée avec succès.',
@@ -212,6 +214,7 @@ class SuiviBailleurController extends AbstractController
         SignalementRepository $signalementRepository,
         SignalementFileProcessor $signalementFileProcessor,
         SuiviManager $suiviManager,
+        EntityManagerInterface $entityManager,
     ): Response {
         /**
          * @var SignalementBailleur $user
@@ -243,6 +246,7 @@ class SuiviBailleurController extends AbstractController
                 isVisibleForBailleur: true,
                 files: $filesToAttach
             );
+            $entityManager->flush();
 
             $this->addFlash('success', ['title' => 'Message envoyé', 'message' => 'Votre message a été envoyé avec succès.']);
 

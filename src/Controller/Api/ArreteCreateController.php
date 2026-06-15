@@ -13,6 +13,7 @@ use App\Manager\InterventionManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
+use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,6 +34,7 @@ class ArreteCreateController extends AbstractController
         private readonly InterventionManager $interventionManager,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -202,6 +204,7 @@ class ArreteCreateController extends AbstractController
             InterventionCreatedEvent::NAME
         );
         $suivi = $interventionCreatedEvent->getSuivi();
+        $this->entityManager->flush();
 
         return $this->json(new ArreteResponse($intervention, $suivi), Response::HTTP_CREATED);
     }

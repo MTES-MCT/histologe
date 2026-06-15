@@ -127,14 +127,13 @@ class SignalementFileController extends AbstractController
         }
         $subscriptionCreated = false;
         if (SignalementStatus::CLOSED !== $signalement->getStatut()) {
-            $suivi = $suiviManager->createInstanceForFilesSignalement(
+            $suiviManager->createInstanceForFilesSignalement(
                 user: $user,
                 signalement: $signalement,
                 files: $files,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 subscriptionCreated: $subscriptionCreated
             );
-            $entityManager->persist($suivi);
         }
 
         $update = $entityManager->createQueryBuilder()
@@ -170,6 +169,7 @@ class SignalementFileController extends AbstractController
         FileRepository $fileRepository,
         UploadHandlerService $uploadHandlerService,
         SuiviManager $suiviManager,
+        EntityManagerInterface $entityManager,
     ): Response {
         $fileId = $request->request->get('file_id');
         $file = $fileRepository->findOneBy(['id' => $fileId, 'signalement' => $signalement]);
@@ -212,6 +212,7 @@ class SignalementFileController extends AbstractController
                 user: $user,
                 subscriptionCreated: $subscriptionCreated,
             );
+            $entityManager->flush();
         }
         if ('1' === $request->request->get('is_draft')) {
             return $this->json(['success' => true]);

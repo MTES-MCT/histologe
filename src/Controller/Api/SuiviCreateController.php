@@ -12,6 +12,7 @@ use App\Manager\SuiviManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Utils\Sanitizer;
+use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,6 +30,7 @@ class SuiviCreateController extends AbstractController
         private readonly SuiviManager $suiviManager,
         private readonly ValidatorInterface $validator,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -159,6 +161,7 @@ class SuiviCreateController extends AbstractController
             isVisibleForUsager: $suiviRequest->notifyUsager,
             files: $fileToAttach,
         );
+        $this->entityManager->flush();
 
         return $this->json(new SuiviResponse($suivi), Response::HTTP_CREATED);
     }

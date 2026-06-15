@@ -59,7 +59,6 @@ class SuiviManager
         ?\DateTimeImmutable $createdAt = null,
         bool $sendMail = true,
         iterable $files = [],
-        bool $flush = true,
         bool $createSubscription = true,
         bool &$subscriptionCreated = false,
     ): Suivi {
@@ -100,9 +99,6 @@ class SuiviManager
             );
         }
         $this->entityManager->persist($suivi);
-        if ($flush) {
-            $this->entityManager->flush();
-        }
         $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME);
 
         return $suivi;
@@ -342,7 +338,6 @@ class SuiviManager
             isVisibleForUsager: $isVisibleForUsager,
             isVisibleForBailleur: false,
             files: $files,
-            flush: false,
             subscriptionCreated: $subscriptionCreated
         );
     }

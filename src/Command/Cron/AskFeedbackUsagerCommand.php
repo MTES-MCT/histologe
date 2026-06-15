@@ -237,7 +237,6 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
                 description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation.",
                 category: SuiviCategory::ASK_FEEDBACK_SENT,
                 sendMail: false,
-                flush: false
             );
 
             $this->entityManager->persist($suivi);
