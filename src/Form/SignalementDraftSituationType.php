@@ -102,7 +102,6 @@ class SignalementDraftSituationType extends AbstractType
             ->add('classeEnergetique', ChoiceType::class, [
                 'label' => 'Classe énergétique du logement',
                 'choices' => [
-                    '' => '',
                     'A' => 'A',
                     'B' => 'B',
                     'C' => 'C',
@@ -114,7 +113,7 @@ class SignalementDraftSituationType extends AbstractType
                 'expanded' => false,
                 'multiple' => false,
                 'required' => false,
-                'placeholder' => false,
+                'placeholder' => 'Sélectionnez la classe énergétique',
                 'mapped' => false,
                 'data' => $classeEnergetique,
             ])
@@ -211,7 +210,6 @@ class SignalementDraftSituationType extends AbstractType
             ->add('typeAllocation', ChoiceType::class, [
                 'label' => 'Type d\'allocation',
                 'choices' => [
-                    '' => '',
                     'ALS' => 'als',
                     'ALF' => 'alf',
                     'APL' => 'apl',
@@ -219,7 +217,7 @@ class SignalementDraftSituationType extends AbstractType
                 'expanded' => false,
                 'multiple' => false,
                 'required' => false,
-                'placeholder' => false,
+                'placeholder' => 'Sélectionnez le type d\'allocation',
                 'mapped' => false,
                 'data' => $typeAllocation,
             ])
@@ -309,7 +307,6 @@ class SignalementDraftSituationType extends AbstractType
             ->add('moyenInformationProprietaire', ChoiceType::class, [
                 'label' => 'Moyen d\'information du propriétaire / bailleur',
                 'choices' => [
-                    '' => '',
                     'Courrier' => 'courrier',
                     'E-mail' => 'email',
                     'Téléphone' => 'telephone',
@@ -320,7 +317,7 @@ class SignalementDraftSituationType extends AbstractType
                 'expanded' => false,
                 'multiple' => false,
                 'required' => false,
-                'placeholder' => false,
+                'placeholder' => 'Sélectionnez le moyen d\'information',
                 'mapped' => false,
                 'data' => $moyenInformationProprietaire,
             ])

@@ -13,7 +13,7 @@
 	data-matomo-timer-event-category="Suivre mon signalement"
 	data-matomo-timer-event-action="timer"
 	data-matomo-timer-event-name="40">
-	<nav role="navigation" class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
+	<nav class="fr-breadcrumb fr-mb-1w fr-mt-2w" aria-label="Voir le fil d'Ariane">
 		<button class="fr-breadcrumb__button" aria-expanded="false" aria-controls="breadcrumb-1">Voir le fil d'Ariane</button>
 		<div class="fr-collapse" id="breadcrumb-1">
 			<ol class="fr-breadcrumb__list">
@@ -129,7 +129,7 @@
 				{% if suiviCategory %}
 					<div class="fr-tile__header">        
 						<div class="fr-tile__pictogram">
-        					<img src="{{ asset('img/picto-dsfr/' ~ suiviCategory.icon) }}" aria-hidden="true" class="fr-artwork">
+        					<img src="{{ asset('img/picto-dsfr/' ~ suiviCategory.icon) }}" aria-hidden="true" class="fr-artwork" alt="">
 						</div>
 					</div>
 				{% endif %}
@@ -154,7 +154,7 @@
 					</div>
 					<div class="fr-tile__header">
 						<div class="fr-tile__pictogram">
-							<img src="{{ asset('img/picto-dsfr/conclusion.svg') }}" aria-hidden="true" class="fr-artwork">
+							<img src="{{ asset('img/picto-dsfr/conclusion.svg') }}" aria-hidden="true" class="fr-artwork" alt="">
 						</div>
 					</div>
 				</div>
@@ -197,7 +197,13 @@
 		</div>
 		<div class="fr-col-12 fr-col-md-6">
 			{% include 'front/_partials/_suivi_signalement_prevenir_bailleur.html.twig' with {'cssDiv': 'fr-icon-information-line'} %}
-			{% include 'front/_partials/_suivi_signalement_inviter_tiers.html.twig' with {'cssDiv': 'fr-icon-information-line'} %}
+			{#
+				On n'affiche qu'une seule alerte pour ne pas surcharger,
+				donc on ne l'affiche que si on n'affiche pas celle sur le fait de prévenir le bailleur
+			#}
+			{% if signalement.isProprioAverti is same as true %}
+				{% include 'front/_partials/_suivi_signalement_inviter_tiers.html.twig' with {'cssDiv': 'fr-icon-information-line', 'heading': 2} %}
+			{% endif %}
 			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').REFUSED
 				and signalement.motifRefus 
 				and signalement.motifRefus is same as enum('App\\Entity\\Enum\\MotifRefus').DOUBLON %}
