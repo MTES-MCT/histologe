@@ -944,6 +944,25 @@ ul + p {
 #map-same-address {
     height: 95vh;
 }
+#map-histo-address {
+    height: 70vh;
+}
+#search-histo-address-form.on-map {
+    position: absolute;
+    z-index: 100;
+    background: white;
+    padding: 2rem;
+    max-width: 400px;
+    margin: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    .fr-col-12{
+        flex: 0 0 100%;
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
 #zone_map, #info_zone_map {
     height: 70vh;
 }

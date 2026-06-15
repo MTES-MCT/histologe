@@ -37,6 +37,7 @@ parameters:
       - "https://koumoul.com"
       - "https://sentry.incubateur.net"
       - "https://rnb-api.beta.gouv.fr"
+      - "https://openmaptiles.geo.data.gouv.fr"
     font-src:
       - "'self'"
       - "https://fonts.gstatic.com"
@@ -60,6 +61,8 @@ parameters:
       - "https://histologe-demo-sites-faciles.osc-fr1.scalingo.io/"
     media-src:
       - "'self'"
+    child-src:
+      - "blob:"
     worker-src:
       - "'self'"
       - "blob:"
