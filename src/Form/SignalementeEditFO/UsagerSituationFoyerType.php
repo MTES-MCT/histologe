@@ -147,7 +147,6 @@ class UsagerSituationFoyerType extends AbstractType
             ->add('typeAllocation', ChoiceType::class, [
                 'label' => 'Type d\'allocation (facultatif)',
                 'choices' => [
-                    '' => '',
                     'ALS' => 'als',
                     'ALF' => 'alf',
                     'APL' => 'apl',
@@ -155,7 +154,7 @@ class UsagerSituationFoyerType extends AbstractType
                 'expanded' => false,
                 'multiple' => false,
                 'required' => false,
-                'placeholder' => false,
+                'placeholder' => 'Sélectionnez un type d\'allocation',
                 'mapped' => false,
                 'data' => $typeAllocation,
             ])

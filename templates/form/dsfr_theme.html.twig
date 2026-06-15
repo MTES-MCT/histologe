@@ -61,14 +61,23 @@
     </div>
 {%- endblock search_widget %}
 
+{# HTML5: void elements must not use trailing slash (W3C validation) #}
 {% block form_widget_simple %}
     {% if type is defined and type == 'file' %}
         {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-upload')|trim}) %}
     {% else %}
         {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-input')|trim}) %}
     {% endif %}
-    {{parent()}}
+    <input type="{{ type|default('text') }}" {{ block('widget_attributes') }}{% if value is not empty %} value="{{ value }}"{% endif %}>
 {% endblock form_widget_simple %}
+
+{% block checkbox_widget %}
+    <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %}>
+{% endblock checkbox_widget %}
+
+{% block radio_widget %}
+    <input type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %}>
+{% endblock radio_widget %}
 
 {% block choice_widget_collapsed %}
     {% set attr = attr|merge({'class': (attr.class|default('') ~ ' fr-select')|trim}) %}
