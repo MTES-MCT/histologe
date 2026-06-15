@@ -129,10 +129,10 @@
                 </div>
                 <div class="fr-my-3v">
                     {% for item in partners %}
-                        <span
+                        <button type="button"
                             class="fr-badge fr-m-1v search-and-select-badge-add search-and-select-badge-add-{{ item.id }}"
                             data-badge-id="{{ item.id }}" data-badge-label="{{ item.name }}"
-                            >{{ item.name }} <span class="fr-icon-add-line" aria-hidden="true"></span></span>
+                            >{{ item.name }} <span class="fr-icon-add-line" aria-hidden="true"></span></button>
                     {% endfor %}
                 </div>
             </div>
