@@ -79,7 +79,7 @@ class SignalementEditControllerTest extends WebTestCase
         } elseif (in_array($status, [SignalementStatus::ACTIVE->value, SignalementStatus::NEED_VALIDATION->value, SignalementStatus::INJONCTION_BAILLEUR->value])) {
             $this->assertResponseIsSuccessful();
             $this->assertSelectorExists('form#form-usager-complete-dossier');
-            $this->assertSelectorTextContains('button[type=submit]', 'Envoyer');
+            $this->assertSelectorTextContains('button[type=submit]', 'Enregistrer');
             $this->assertSelectorExists('h1');
             $this->assertSelectorTextContains('h1', 'Compléter les informations');
         } else {
@@ -121,7 +121,7 @@ class SignalementEditControllerTest extends WebTestCase
         $client->request('GET', $url);
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('form#form-usager-complete-dossier');
-        $this->assertSelectorTextContains('button[type=submit]', 'Envoyer');
+        $this->assertSelectorTextContains('button[type=submit]', 'Enregistrer');
         $this->assertSelectorExists('h1');
         $this->assertSelectorTextContains('h1', 'Compléter les informations');
     }
@@ -149,7 +149,7 @@ class SignalementEditControllerTest extends WebTestCase
         $crawler = $client->request('GET', $url);
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->selectButton('Envoyer')->form([
+        $form = $crawler->selectButton('Enregistrer')->form([
             'adresse_logement[etageOccupant]' => 'AAAAAA',
         ]);
 
@@ -159,7 +159,7 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertSelectorExists('.fr-error-text');
         $this->assertSelectorTextContains('.fr-error-text', 'L\'étage doit contenir au maximum 5 caractères.');
 
-        $form = $crawler->selectButton('Envoyer')->form([
+        $form = $crawler->selectButton('Enregistrer')->form([
             'adresse_logement[etageOccupant]' => '1',
             'adresse_logement[escalierOccupant]' => 'A',
             'adresse_logement[numAppartOccupant]' => '42',
@@ -210,7 +210,7 @@ class SignalementEditControllerTest extends WebTestCase
         $crawler = $client->request('GET', $url);
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->selectButton('Envoyer')->form([
+        $form = $crawler->selectButton('Enregistrer')->form([
             'coordonnees_bailleur[mailProprio]' => 'nouvel.email@example.org',
             'coordonnees_bailleur[adresseProprio]' => '12 rue du Test',
             'coordonnees_bailleur[codePostalProprio]' => '75000',
@@ -262,7 +262,7 @@ class SignalementEditControllerTest extends WebTestCase
         $crawler = $client->request('GET', $url);
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->selectButton('Envoyer')->form([
+        $form = $crawler->selectButton('Enregistrer')->form([
             'coordonnees_occupant[civiliteOccupant]' => 'mr',
             'coordonnees_occupant[nomOccupant]' => 'NomOccupant',
             'coordonnees_occupant[prenomOccupant]' => 'PrenomOccupant',
@@ -322,7 +322,7 @@ class SignalementEditControllerTest extends WebTestCase
         $crawler = $client->request('GET', $url);
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->selectButton('Envoyer')->form([
+        $form = $crawler->selectButton('Enregistrer')->form([
             $fieldName => 'AAAAAA',
         ]);
 
@@ -332,7 +332,7 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertSelectorExists('.fr-error-text');
         $this->assertSelectorTextContains('.fr-error-text', "n'est pas valide.");
 
-        $form = $crawler->selectButton('Envoyer')->form([
+        $form = $crawler->selectButton('Enregistrer')->form([
             $fieldName => $fieldValue,
         ]);
 
@@ -373,7 +373,7 @@ class SignalementEditControllerTest extends WebTestCase
         $crawler = $client->request('GET', $url);
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->selectButton('Envoyer')->form([
+        $form = $crawler->selectButton('Enregistrer')->form([
             'usager_situation_foyer[isLogementSocial]' => '1',
             'usager_situation_foyer[isRelogement]' => '1',
             'usager_situation_foyer[numAllocataire]' => 'More than 25 characters for num allocataire',
@@ -384,7 +384,7 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertSelectorExists('.fr-error-text');
         $this->assertSelectorTextContains('.fr-error-text', 'doit comporter au maximum 25 caractères.');
 
-        $form = $crawler->selectButton('Envoyer')->form([
+        $form = $crawler->selectButton('Enregistrer')->form([
             'usager_situation_foyer[isLogementSocial]' => '1',
             'usager_situation_foyer[isRelogement]' => '1',
             'usager_situation_foyer[numAllocataire]' => '11223344',
@@ -431,7 +431,7 @@ class SignalementEditControllerTest extends WebTestCase
         $crawler = $client->request('GET', $url);
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->selectButton('Envoyer')->form([
+        $form = $crawler->selectButton('Enregistrer')->form([
             'procedure_assurance[infoProcedureAssuranceContactee]' => 'oui',
         ]);
 
@@ -462,7 +462,7 @@ class SignalementEditControllerTest extends WebTestCase
         $crawler = $client->request('GET', $url);
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->selectButton('Envoyer')->form([
+        $form = $crawler->selectButton('Enregistrer')->form([
             'informations_generales[nbOccupantsLogement]' => '12',
             'informations_generales[dpe]' => 'oui',
         ]);
@@ -495,7 +495,7 @@ class SignalementEditControllerTest extends WebTestCase
         $crawler = $client->request('GET', $url);
         $this->assertResponseIsSuccessful();
 
-        $form = $crawler->selectButton('Envoyer')->form([
+        $form = $crawler->selectButton('Enregistrer')->form([
             'type_composition[natureLogement]' => 'maison',
             'type_composition[superficie]' => '123',
             'type_composition[pieceUnique]' => 'piece_unique',
