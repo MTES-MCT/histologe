@@ -115,9 +115,6 @@
     "fig/link-util": {
         "version": "1.2.0"
     },
-    "friendsofphp/proxy-manager-lts": {
-        "version": "v1.0.5"
-    },
     "guzzlehttp/guzzle": {
         "version": "7.4.1"
     },
@@ -144,9 +141,6 @@
         "files": [
             "./config/packages/knp_snappy.yaml"
         ]
-    },
-    "laminas/laminas-code": {
-        "version": "4.5.1"
     },
     "league/flysystem": {
         "version": "3.2.1"
@@ -644,9 +638,6 @@
         "version": "v6.0.2"
     },
     "symfony/property-info": {
-        "version": "v6.0.2"
-    },
-    "symfony/proxy-manager-bridge": {
         "version": "v6.0.2"
     },
     "symfony/psr-http-message-bridge": {

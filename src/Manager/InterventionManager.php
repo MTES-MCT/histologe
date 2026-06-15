@@ -99,8 +99,6 @@ class InterventionManager
         try {
             $context['createdByPartner'] = $createdByPartner;
             $this->interventionPlanningStateMachine->apply($intervention, 'cancel', $context);
-            $this->entityManager->persist($intervention);
-            $this->entityManager->flush();
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
 

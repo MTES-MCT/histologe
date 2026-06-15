@@ -113,7 +113,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isLogementVacant = null;
 
-    #[ORM\Column(type: 'date_immutable', nullable: true)]
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dateEntree = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: ProprioType::class, length: 50)]
@@ -2699,7 +2699,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function getTimezone(): ?string
     {
-        if (null === $this->getTerritory()) {
+        if (null === $this->getTerritory()->getId()) {
             return TimezoneProvider::TIMEZONE_EUROPE_PARIS;
         }
 

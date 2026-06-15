@@ -270,6 +270,7 @@ class SignalementVisitesController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
         FileRepository $fileRepository,
         UrlGeneratorInterface $urlGenerator,
+        EntityManagerInterface $entityManager,
     ): Response {
         $requestData = $request->request->all();
         $requestCancelData = RequestDataExtractor::getArray($requestData, 'visite-cancel');
@@ -315,6 +316,7 @@ class SignalementVisitesController extends AbstractController
         } else {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de l\'annulation de la visite.'];
         }
+        $entityManager->flush();
 
         return $this->buildVisitesAjaxResponse(
             intervention: $intervention,

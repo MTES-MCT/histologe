@@ -104,7 +104,7 @@ class NotificationAndMailSender
         $this->affectation = $affectation;
         $this->signalement = $affectation->getSignalement();
         $recipients = $this->getRecipientsPartner($affectation->getPartner());
-        $this->sendMail($recipients, $mailerType);
+        $this->sendMail($recipients, $mailerType); // TODO : debug loadAffectationData
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVELLE_AFFECTATION, affectation: $affectation);
     }
 
@@ -289,7 +289,7 @@ class NotificationAndMailSender
                 description: $description
             );
         }
-        $this->entityManager->flush();
+        $this->entityManager->flush(); // TODO : sortir de la méthode pour rationaliser les flush
     }
 
     private function createInAppNotification(
