@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class CguController extends AbstractController
 {
     private const CGU_VERSIONS = [
+        '02-09-2025' => 'archive_2025-09-02.html.twig',
         '24-07-2024' => 'archive_2024-07-24.html.twig',
         '20-01-2023' => 'archive_2023-01-20.html.twig',
         '12-08-2022' => 'archive_2022-08-12.html.twig',
