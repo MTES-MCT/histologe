@@ -19,7 +19,8 @@ class UsagerCancelProcedureType extends AbstractType
         $builder
             ->add('reason', EnumType::class, [
                 'class' => MotifClotureUsager::class,
-                'label' => 'Pour quelle raison voulez-vous arrêter la procédure ?',
+                'label' => 'Pour quelle raison voulez-vous arrêter la procédure ? <span class="text-required">*</span>',
+                'label_html' => true,
                 'expanded' => true,
                 'multiple' => false,
                 'required' => false,
@@ -32,7 +33,8 @@ class UsagerCancelProcedureType extends AbstractType
                 ],
             ])
             ->add('details', TextareaType::class, [
-                'label' => 'Veuillez détailler la raison pour laquelle vous souhaitez arrêter la procédure',
+                'label' => 'Veuillez détailler la raison pour laquelle vous souhaitez arrêter la procédure. <span class="text-required">*</span>',
+                'label_html' => true,
                 'help' => 'Dix (10) caractères minimum',
                 'required' => false,
                 'constraints' => [

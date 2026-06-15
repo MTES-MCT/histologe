@@ -28,7 +28,9 @@
 			{% if (is_granted('SIGN_USAGER_ADD_SUIVI', signalement)) %}
 				{{ form_start(formMessage, {'attr': {'id': 'form-message-usager'}}) }}
 				{{ form_errors(formMessage) }}
-				<p>Nous vous rappelons que les échanges entre les agents en charge de votre dossier et vous doivent se faire dans le respect mutuel. Nous invitons chaque partie à adopter une attitude courtoise et bienveillante.</p>
+				<p>Nous vous rappelons que les échanges entre les agents en charge de votre dossier et vous doivent se faire dans le respect mutuel. Nous invitons chaque partie à adopter une attitude courtoise et bienveillante.
+				<br>
+				Le champ "Votre message <span class="text-required">*</span>" est obligatoire.</p>
 				<div class="fr-notice fr-notice--info fr-mb-3w">
 					<div class="fr-container">
 						<div class="fr-notice__body">
