@@ -167,17 +167,25 @@
         </div>
     </div>
 </div>
-<div class="fr-grid-row">
+<div class="fr-grid-row form-nav-row-reverse">
     <div class="fr-col-12 fr-col-md-6">
-        <div class="fr-grid-row fr-grid-row--left">
-            {{ form_row(formSituation.previous) }}
+        <div class="fr-grid-row fr-grid-row--right">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                <li>
+                    {{ form_row(formSituation.save) }}
+                </li>
+                <li>
+                    {{ form_row(formSituation.draft) }}
+                </li>
+                <li>
+                    {{ form_row(formSituation.forceSave) }}
+                </li>
+            </ul>
         </div>
     </div>
     <div class="fr-col-12 fr-col-md-6">
-        <div class="fr-grid-row fr-grid-row--right flex-direction-column-reverse-sm">
-            {{ form_row(formSituation.forceSave) }}
-            {{ form_row(formSituation.draft) }}
-            {{ form_row(formSituation.save) }}
+        <div class="fr-grid-row fr-grid-row--left">
+            {{ form_row(formSituation.previous) }}
         </div>
     </div>
 </div>
