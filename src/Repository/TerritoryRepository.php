@@ -50,6 +50,8 @@ class TerritoryRepository extends ServiceEntityRepository
 
     /**
      * @return array<string, Territory>
+     *
+     * @throws QueryException
      */
     public function findAllIndexedByZip(): array
     {

@@ -7,10 +7,10 @@ use WireMock\Client\WireMock;
 
 class EsaboraSCHSMock extends AbstractEsaboraMock
 {
-    protected const BASE_PATH = '/ws/rest';
-    protected const RESOURCES_DIR = 'Esabora/schs/';
-    protected const WS_ETAT_DOSSIER_SAS = 'WS_ETAT_DOSSIER_SAS';
-    protected const WS_EVT_DOSSIER_SAS = 'WS_EVT_DOSSIER_SAS';
+    protected const string BASE_PATH = '/ws/rest';
+    protected const string RESOURCES_DIR = 'Esabora/schs/';
+    protected const string WS_ETAT_DOSSIER_SAS = 'WS_ETAT_DOSSIER_SAS';
+    protected const string WS_EVT_DOSSIER_SAS = 'WS_EVT_DOSSIER_SAS';
 
     public static function prepareMockForEsabora(WireMock $wiremock): void
     {
