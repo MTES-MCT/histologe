@@ -1,0 +1,90 @@
+arretes:
+-
+  dateArrete: "2024-06-01"
+  typeArrete: "mise en sécurité"
+  syndic: "Syndic A"
+  address: "25 Rue desiree clary 13002 Marseille"
+  mainLevee: true
+  dateMainLevee: "2025-01-15"
+-
+  dateArrete: "2026-01-01"
+  typeArrete: "Arrêté L.511-11 - Impropre"
+  syndic: "Syndic A"
+  address: "25 Rue desiree clary 13002 Marseille"
+-
+  dateArrete: "2026-02-01"
+  typeArrete: "Arrêté L.511-11 - Ordinaire remédiable"
+  syndic: "Syndic A"
+  address: "25 Rue desiree clary 13002 Marseille"
+-
+  dateArrete: "2025-01-10"
+  typeArrete: "mise en sécurité procédure urgente"
+  address: "25 Rue desiree clary 13002 Marseille"
+-
+  dateArrete: "2025-02-10"
+  typeArrete: "mise en sécurité procédure urgente"
+  address: "2 Impasse de la peupleraie 44850 Saint-Mars-du-Désert"
+-
+  dateArrete: "2025-03-10"
+  typeArrete: "mise en sécurité modificatif"
+  address: "2 Impasse de la peupleraie 44850 Saint-Mars-du-Désert"
+  mainLevee: true
+  dateMainLevee: "2025-09-15"
+-
+  dateArrete: "2025-04-13"
+  typeArrete: "Arrêté L.511-11 - Usage non approprié"
+  address: "5 Rue basse 30360 Vézénobres"
+-
+  dateArrete: "2025-05-13"
+  typeArrete: "Arrêté L.1311-4"
+  address: "Route des Funeries 44850 Le Cellier"
+  mainLevee: true
+  dateMainLevee: "2025-10-13"
+-
+  dateArrete: "2025-06-15"
+  typeArrete: "mise en sécurité"
+  address: "15 Chemin de la route 30360 Vézénobres"
+-
+  dateArrete: "2025-07-15"
+  typeArrete: "mise en sécurité"
+  address: "15 Chemin de la route 30360 Vézénobres"
+  mainLevee: true
+  dateMainLevee: "2025-08-15"
+-
+  dateArrete: "2025-07-02"
+  typeArrete: "Arrêté L1331-26"
+  address: "1 D507 32100 Larressingle"
+-
+  dateArrete: "2025-08-02"
+  typeArrete: "Arrêté L.511-11 - Suroccupation"
+  address: "18 Bd du 8 Mai 1945 30110 La Grand-Combe"
+-
+  dateArrete: "2025-08-02"
+  typeArrete: "mise en sécurité"
+  syndic: "Syndic B"
+  address: "18 Bd du 8 Mai 1945 30110 La Grand-Combe"
+-
+  dateArrete: "2025-08-02"
+  typeArrete: "Arrêté L.511-11 - Impropre"
+  syndic: "Syndic B"
+  address: "18 Bd du 8 Mai 1945 30110 La Grand-Combe"
+-
+  dateArrete: "2025-09-02"
+  typeArrete: "Arrêté L.511-19 - Insalubrité & Saturnisme"
+  address: "4 Rue Notre Dame 34170 Castelnau-le-Lez"
+  mainLevee: true
+  dateMainLevee: "2026-01-02"
+-
+  dateArrete: "2025-09-02"
+  typeArrete: "Arrêté L.511-19 - Insalubrité & Saturnisme"
+  address: "93 Rue Pierre Launay 34170 Castelnau-le-Lez"
+-
+  dateArrete: "2025-10-03"
+  typeArrete: "Arrêté L.1311-4"
+  syndic: "Syndic C"
+  address: "6 Rue Arnavielle 30900 Nîmes"
+-
+  dateArrete: "2025-12-03"
+  typeArrete: "mise en sécurité procédure urgente"
+  syndic: "Syndic C"
+  address: "6 Rue Arnavielle 30900 Nîmes"
