@@ -1,9 +1,11 @@
-import { mapStyles } from 'carte-facile';
-import maplibregl from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
-import 'carte-facile/carte-facile.css';
+async function initHistoAddress() {
+  const [{ mapStyles }, { default: maplibregl }] = await Promise.all([
+    import('carte-facile'),
+    import('maplibre-gl'),
+    import('maplibre-gl/dist/maplibre-gl.css'),
+    import('carte-facile/carte-facile.css'),
+  ]);
 
-if (document.getElementById('map-histo-address')) {
   const ITEMS_PER_PAGE = 5;
   const searchForm = document.getElementById('search-histo-address-form');
   const toggleMap = document.getElementById('toggle-map');
@@ -515,4 +517,8 @@ if (document.getElementById('map-histo-address')) {
   applyFilters();
   toggleMap.addEventListener('change', applyToggleMap);
   applyToggleMap();
+}
+
+if (document.getElementById('map-histo-address')) {
+  initHistoAddress();
 }
