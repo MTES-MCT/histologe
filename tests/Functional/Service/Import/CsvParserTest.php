@@ -74,6 +74,30 @@ class CsvParserTest extends KernelTestCase
         unlink($filepath);
     }
 
+    public function testParseAsDictWithMultiline(): void
+    {
+        $csvFile = $this->projectDir.'/tmp/multiline.csv';
+        if (!is_dir(dirname($csvFile))) {
+            mkdir(dirname($csvFile), 0777, true);
+        }
+
+        $content = "Header1,Header2,Header3\n";
+        $content .= "Value1,\"Value 2\nwith, newline\",Value3\n";
+        $content .= "Value4,\"Value 5\nwith\nmultiple\nnewlines\",Value6";
+
+        file_put_contents($csvFile, $content);
+
+        $csvParser = new CsvParser(['first_line' => 0, 'delimiter' => ',', 'enclosure' => '"', 'escape' => '\\']);
+        $data = $csvParser->parseAsDict($csvFile);
+
+        $this->assertCount(2, $data);
+        $this->assertArrayHasKey('Header2', $data[0]);
+        $this->assertEquals("Value 2\nwith, newline", $data[0]['Header2']);
+        $this->assertEquals("Value 5\nwith\nmultiple\nnewlines", $data[1]['Header2']);
+
+        unlink($csvFile);
+    }
+
     public function testGetHeaders(): void
     {
         $options = ['first_line' => 0, 'delimiter' => ',', 'enclosure' => '"', 'escape' => '\\'];

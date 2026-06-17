@@ -60,17 +60,13 @@ class CsvParser
         $nbColonnes = \count($content['headers']);
         foreach ($content['rows'] as $row) {
             $dataItem = [];
-            $fields = str_getcsv(
-                $row,
-                (string) $this->options['delimiter'],
-                (string) $this->options['enclosure'],
-                (string) $this->options['escape'],
-            );
-            if (\count($fields) !== $nbColonnes) {
+            if (\count($row) !== $nbColonnes) {
                 continue;
             }
-            foreach ($fields as $key => $field) {
-                $dataItem[$content['headers'][$key]] = $field;
+            foreach ($row as $key => $field) {
+                if (isset($content['headers'][$key])) {
+                    $dataItem[$content['headers'][$key]] = $field;
+                }
             }
             $dataList[] = $dataItem;
         }
@@ -83,45 +79,40 @@ class CsvParser
      */
     public function getHeaders(string $filepath): array
     {
-        $content = file_get_contents($filepath);
-        if (false === $content) {
-            throw new \RuntimeException("Impossible de lire le fichier $filepath");
-        }
+        $content = $this->getContent($filepath);
 
-        $rows = explode("\n", $content);
-
-        $headers = str_getcsv(
-            array_shift($rows),
-            (string) $this->options['delimiter'],
-            (string) $this->options['enclosure'],
-            (string) $this->options['escape']
-        );
-
-        return array_map(static fn ($h) => trim((string) $h), $headers);
+        return $content['headers'];
     }
 
     /**
-     * @return array{headers: array<int, string>, rows: array<int, string>}
+     * @return array{headers: array<int, string>, rows: array<int, array<int, string>>}
      */
     public function getContent(string $filepath): array
     {
-        $content = file_get_contents($filepath);
-        if (false === $content) {
-            throw new \RuntimeException("Impossible de lire le fichier $filepath");
+        $headers = [];
+        $rows = [];
+        if (($fileResource = fopen($filepath, 'r')) !== false) {
+            $i = 0;
+            while (($row = fgetcsv(
+                $fileResource,
+                0,
+                (string) $this->options['delimiter'],
+                (string) $this->options['enclosure'],
+                (string) $this->options['escape']
+            )) !== false) {
+                if (0 === $i) {
+                    $headers = array_map(static fn ($header) => trim((string) $header), $row);
+                } else {
+                    $rows[] = $row;
+                }
+                ++$i;
+            }
+            fclose($fileResource);
         }
 
-        $rows = explode("\n", $content);
-
-        $headers = str_getcsv(
-            array_shift($rows),
-            (string) $this->options['delimiter'],
-            (string) $this->options['enclosure'],
-            (string) $this->options['escape']
-        );
-
         return [
-            'headers' => array_map(static fn ($h) => trim((string) $h), $headers),
-            'rows' => array_map(static fn ($row) => (string) $row, $rows),
+            'headers' => $headers,
+            'rows' => $rows,
         ];
     }
 
