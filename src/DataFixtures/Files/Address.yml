@@ -5,6 +5,7 @@ addresses:
   postCode: "30900"
   city: "Nîmes"
   cityCode: "30189"
+  territory: "Gard"
   latitude: 43.824055258862785
   longitude: 4.351045421881567
 - 
@@ -13,12 +14,14 @@ addresses:
   postCode: "34170"
   city: "Castelnau-le-Lez"
   cityCode: "34057"
+  territory: "Hérault"
 - 
   housenumber: "4"
   street: "Rue Notre Dame"
   postCode: "34170"
   city: "Castelnau-le-Lez"
   cityCode: "34057"
+  territory: "Hérault"
   latitude: 43.635067
   longitude: 3.919457
 - 
@@ -27,12 +30,14 @@ addresses:
   postCode: "30110"
   city: "La Grand-Combe"
   cityCode: "30132"
+  territory: "Gard"
 - 
   housenumber: "1"
   street: "D507"
   postCode: "32100"
   city: "Larressingle"
   cityCode: "32194"
+  territory: "Gers"
   latitude: 43.9438516
   longitude: 0.3110056
 - 
@@ -41,12 +46,14 @@ addresses:
   postCode: "30360"
   city: "Vézénobres"
   cityCode: "30348"
+  territory: "Gard"
 - 
   housenumber: ""
   street: "Route des Funeries"
   postCode: "44850"
   city: "Le Cellier"
   cityCode: "44028"
+  territory: "Loire-Atlantique"
   latitude: 47.338819
   longitude: -1.361458
 - 
@@ -55,12 +62,14 @@ addresses:
   postCode: "30360"
   city: "Vézénobres"
   cityCode: "30348"
+  territory: "Gard"
 - 
   housenumber: "2"
   street: "Impasse de la peupleraie"
   postCode: "44850"
   city: "Saint-Mars-du-Désert"
   cityCode: "44028"
+  territory: "Loire-Atlantique"
   latitude: 47.3688054
   longitude: -1.4203543
 - 
@@ -69,6 +78,7 @@ addresses:
   postCode: "44850"
   city: "Le Cellier"
   cityCode: "44028"
+  territory: "Loire-Atlantique"
   latitude: 47.3408013
   longitude: -1.3496451
 - 
@@ -77,5 +87,6 @@ addresses:
   postCode: "13002"
   city: "Marseille"
   cityCode: "13202"
+  territory: "Bouches-du-Rhône"
   latitude: 43.3085624
   longitude: 5.3705315

@@ -43,6 +43,9 @@ class Address
     #[ORM\OneToMany(targetEntity: Arrete::class, mappedBy: 'address')]
     private Collection $arretes;
 
+    #[ORM\ManyToOne(inversedBy: 'addresses')]
+    private Territory $territory;
+
     public function __construct()
     {
         $this->arretes = new ArrayCollection();
@@ -158,6 +161,18 @@ class Address
     public function removeArrete(Arrete $arrete): static
     {
         $this->arretes->removeElement($arrete);
+
+        return $this;
+    }
+
+    public function getTerritory(): Territory
+    {
+        return $this->territory;
+    }
+
+    public function setTerritory(Territory $territory): static
+    {
+        $this->territory = $territory;
 
         return $this;
     }

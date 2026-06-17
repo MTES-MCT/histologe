@@ -65,6 +65,14 @@ if (filterForms.length > 0) {
         filterForm.submit();
       });
     });
+    filterForm.querySelectorAll('[data-fr-adresse-autocomplete]').forEach((input) => {
+      input.addEventListener('autocompleteAddressSelected', function () {
+        if (elementPage) {
+          elementPage.value = 1;
+        }
+        filterForm.submit();
+      });
+    });
     filterForm.addEventListener('submit', function () {
       if (elementPage) {
         elementPage.value = 1;

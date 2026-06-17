@@ -34,6 +34,16 @@ class Arrete
     #[ORM\JoinColumn(nullable: false)]
     private Address $address;
 
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $importedAt = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $createdBy = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $identifiantParcellaire = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -107,6 +117,42 @@ class Arrete
     public function setAddress(Address $address): static
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    public function getImportedAt(): ?\DateTimeImmutable
+    {
+        return $this->importedAt;
+    }
+
+    public function setImportedAt(?\DateTimeImmutable $importedAt): static
+    {
+        $this->importedAt = $importedAt;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): static
+    {
+        $this->createdBy = $createdBy;
+
+        return $this;
+    }
+
+    public function getIdentifiantParcellaire(): ?string
+    {
+        return $this->identifiantParcellaire;
+    }
+
+    public function setIdentifiantParcellaire(?string $identifiantParcellaire): static
+    {
+        $this->identifiantParcellaire = $identifiantParcellaire;
 
         return $this;
     }

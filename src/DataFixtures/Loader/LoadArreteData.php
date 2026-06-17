@@ -47,12 +47,13 @@ class LoadArreteData extends Fixture implements OrderedFixtureInterface
             ->setAddress($this->addresses[$row['address']])
             ->setMainLevee(isset($row['mainLevee']) ? $row['mainLevee'] : false)
             ->setDateMainLevee(isset($row['dateMainLevee']) ? new \DateTimeImmutable($row['dateMainLevee']) : null)
+            ->setImportedAt(new \DateTimeImmutable())
         ;
         $manager->persist($arrete);
     }
 
     public function getOrder(): int
     {
-        return 2;
+        return 3;
     }
 }
