@@ -1,0 +1,81 @@
+addresses:
+-
+  housenumber: "6"
+  street: "Rue Arnavielle"
+  postCode: "30900"
+  city: "Nîmes"
+  cityCode: "30189"
+  latitude: 43.824055258862785
+  longitude: 4.351045421881567
+- 
+  housenumber: "93"
+  street: "Rue Pierre Launay"
+  postCode: "34170"
+  city: "Castelnau-le-Lez"
+  cityCode: "34057"
+- 
+  housenumber: "4"
+  street: "Rue Notre Dame"
+  postCode: "34170"
+  city: "Castelnau-le-Lez"
+  cityCode: "34057"
+  latitude: 43.635067
+  longitude: 3.919457
+- 
+  housenumber: "18"
+  street: "Bd du 8 Mai 1945"
+  postCode: "30110"
+  city: "La Grand-Combe"
+  cityCode: "30132"
+- 
+  housenumber: "1"
+  street: "D507"
+  postCode: "32100"
+  city: "Larressingle"
+  cityCode: "32194"
+  latitude: 43.9438516
+  longitude: 0.3110056
+- 
+  housenumber: "15"
+  street: "Chemin de la route"
+  postCode: "30360"
+  city: "Vézénobres"
+  cityCode: "30348"
+- 
+  housenumber: ""
+  street: "Route des Funeries"
+  postCode: "44850"
+  city: "Le Cellier"
+  cityCode: "44028"
+  latitude: 47.338819
+  longitude: -1.361458
+- 
+  housenumber: "5"
+  street: "Rue basse"
+  postCode: "30360"
+  city: "Vézénobres"
+  cityCode: "30348"
+- 
+  housenumber: "2"
+  street: "Impasse de la peupleraie"
+  postCode: "44850"
+  city: "Saint-Mars-du-Désert"
+  cityCode: "44028"
+  latitude: 47.3688054
+  longitude: -1.4203543
+- 
+  housenumber: "2"
+  street: "Beau Soleil"
+  postCode: "44850"
+  city: "Le Cellier"
+  cityCode: "44028"
+  latitude: 47.3408013
+  longitude: -1.3496451
+- 
+  housenumber: "25"
+  street: "Rue desiree clary"
+  postCode: "13002"
+  city: "Marseille"
+  cityCode: "13202"
+  latitude: 43.3085624
+  longitude: 5.3705315
