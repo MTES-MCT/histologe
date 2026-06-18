@@ -73,7 +73,6 @@ if (modalPickLocalisation) {
       map.remove();
       map = null;
       vectorTileLayer = null;
-      previousId = undefined;
     }
 
     // Réinitialiser la sélection du bâtiment
@@ -240,6 +239,13 @@ if (modalPickLocalisation) {
           }
         );
         vectorTileLayer.addTo(map);
+
+        // Restaurer la sélection précédente si l'utilisateur rouvre la modale
+        if (previousId) {
+          rnbIdField.value = previousId;
+          submitButton.disabled = false;
+          vectorTileLayer.setFeatureStyle(previousId, clickedStyle);
+        }
 
         vectorTileLayer.on('click', async function (e) {
           var properties = e.layer.properties;
