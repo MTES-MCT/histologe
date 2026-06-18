@@ -18,7 +18,7 @@ class SignalementSameAddressControllerTest extends WebTestCase
         $client = static::createClient();
         /** @var UserRepository $userRepository */
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $client->loginUser($user);
 
         /** @var RouterInterface $router */
@@ -27,7 +27,7 @@ class SignalementSameAddressControllerTest extends WebTestCase
         $route = $router->generate('back_signalement_same_address_index');
         $client->request('GET', $route);
 
-        $this->assertCount(4, $client->getCrawler()->filter('.same-address-item'));
+        $this->assertCount(5, $client->getCrawler()->filter('.same-address-item'));
     }
 
     public function testExport(): void
