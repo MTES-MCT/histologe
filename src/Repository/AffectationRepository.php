@@ -46,6 +46,7 @@ class AffectationRepository extends ServiceEntityRepository
         ?string $uuidSignalement = null,
         ?Territory $territory = null,
         ?AffectationStatus $affectationStatus = null,
+        ?int $nbDaysBeforeDesync = null,
     ): array {
         $qb = $this->createQueryBuilder('a');
         $qb->select('a AS affectation', 's.uuid AS signalement_uuid');
@@ -95,6 +96,12 @@ class AffectationRepository extends ServiceEntityRepository
             $qb
                 ->andWhere('a.statut = :status')
                 ->setParameter('status', $affectationStatus);
+        }
+
+        if (null !== $nbDaysBeforeDesync) {
+            $qb
+                ->andWhere('DATEDIFF(CURRENT_DATE(), a.answeredAt) >= :nb_days_before_desync')
+                ->setParameter('nb_days_before_desync', $nbDaysBeforeDesync);
         }
 
         return $qb->getQuery()->getResult();
