@@ -192,7 +192,6 @@ class PartnerControllerTest extends WebTestCase
                     'nom' => 'Doe',
                     'fonction' => 'Contremaitre',
                     'isMailingActive' => 0,
-                    'isMailingSummary' => 0,
                     '_token' => $this->generateCsrfToken($this->client, 'user_partner'),
                 ],
             ]
