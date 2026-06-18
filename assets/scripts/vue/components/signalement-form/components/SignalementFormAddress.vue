@@ -77,8 +77,10 @@
       </div>
       <div ref="pickLocationMessage" class="fr-hidden fr-mb-2v">Chargement en cours</div>
       <div :key="mapKey" ref="pickLocationMapContainer" :id="idPickLocationMap" class="pick-location-map"></div>
+      <div ref="pickLocationAnnouncement" aria-live="polite" aria-atomic="true" class="fr-sr-only"></div>
       <div class="pick-location-footer fr-mt-3v">
         <button
+          ref="pickLocationSubmit"
           class="fr-btn fr-icon-check-line"
           :id="id + '_pick_location_submit'"
           :disabled="!selectedRnbId"
@@ -111,6 +113,7 @@ import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
 import L from 'leaflet'
 import 'leaflet.vectorgrid'
+import { buildingStyles, createRnbMapController } from '../../../../vanilla/services/component/rnb-map-controller.js'
 
 // Import des fichiers CSS nécessaires pour Leaflet
 import 'leaflet/dist/leaflet.css'
@@ -168,6 +171,7 @@ export default defineComponent({
       vectorTileLayer: null as any,
       previousRnbId: undefined as string | undefined,
       selectedRnbId: null as string | null,
+      rnbMapController: null as any,
       mapKey: 0
     }
   },
@@ -221,6 +225,9 @@ export default defineComponent({
     )
   },
   beforeUnmount () {
+    if (this.rnbMapController) {
+      this.rnbMapController.destroy()
+    }
     if (this.map) {
       this.map.remove()
     }
@@ -340,9 +347,8 @@ export default defineComponent({
       this.showPickLocation = !this.showPickLocation
 
       if (this.showPickLocation) {
-        // Réinitialiser la sélection à chaque ouverture
-        this.selectedRnbId = null
-        this.previousRnbId = undefined
+        // Conserver previousRnbId pour restaurer la sélection à la réouverture
+        this.selectedRnbId = this.previousRnbId || null
         delete this.formStore.data[this.id + '_detail_rnb_id']
 
         // Incrémenter la clé pour forcer Vue à recréer l'élément
@@ -354,17 +360,20 @@ export default defineComponent({
       }
     },
     closePickLocation () {
+      if (this.rnbMapController) {
+        this.rnbMapController.destroy()
+        this.rnbMapController = null
+      }
       this.showPickLocation = false
     },
     initMap () {
-      // Détruire la carte existante si elle existe
       if (this.map) {
         this.map.remove()
         this.map = null
         this.vectorTileLayer = null
       }
 
-      // Géocoder l'adresse d'abord pour obtenir les coordonnées
+      // Géocoder l'adresse pour centrer la carte
       const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
       const address = this.formStore.data[this.id + '_detail_numero'] + ' ' + this.formStore.data[this.id + '_detail_commune']
       const postCode = this.formStore.data[this.id + '_detail_code_postal']
@@ -372,159 +381,86 @@ export default defineComponent({
       fetch(apiAdresse + address + '&postcode=' + postCode)
         .then((response) => response.json())
         .then((json) => {
-          let center: [number, number] = [48.8566, 2.3522] // Paris par défaut
-          let zoom = 13
-
           if (json.features && json.features.length > 0) {
-            center = [json.features[0].geometry.coordinates[1], json.features[0].geometry.coordinates[0]]
-            zoom = 18
+            this.setupMap([json.features[0].geometry.coordinates[1], json.features[0].geometry.coordinates[0]], 18)
+          } else {
+            this.setupMap([48.8566, 2.3522], 13)
           }
-
-          this.$nextTick(() => {
-            const container = this.$refs.pickLocationMapContainer as HTMLElement
-            if (!container) {
-              return
-            }
-
-            // Supprimer l'attribut _leaflet_id du conteneur si présent
-            if ((container as any)._leaflet_id) {
-              delete (container as any)._leaflet_id
-            }
-
-            // Initialiser la carte
-            this.map = L.map(container, {
-              center: center,
-              zoom: zoom,
-              scrollWheelZoom: true,
-              zoomControl: true
-            })
-
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              maxZoom: 19,
-              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-              referrerPolicy: "origin"
-            }).addTo(this.map)
-
-            // Initialiser la couche vectorielle RNB
-            this.map.whenReady(() => {
-              this.initVectorTileLayer()
-            })
-          })
         })
-        .catch((error) => {
-          console.error('Geocoding error:', error)
-          // Initialiser avec Paris en cas d'erreur
-          this.$nextTick(() => {
-            const container = this.$refs.pickLocationMapContainer as HTMLElement
-            if (!container) {
-              return
-            }
-
-            // Supprimer l'attribut _leaflet_id du conteneur si présent
-            if ((container as any)._leaflet_id) {
-              delete (container as any)._leaflet_id
-            }
-
-            this.map = L.map(container, {
-              center: [48.8566, 2.3522],
-              zoom: 13,
-              scrollWheelZoom: true,
-              zoomControl: true
-            })
-
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              maxZoom: 19,
-              attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-              referrerPolicy: "origin"
-            }).addTo(this.map)
-          })
+        .catch(() => {
+          this.setupMap([48.8566, 2.3522], 13)
         })
     },
-    initVectorTileLayer () {
-      // Patch pour rendre les couches vectorielles interactives
-      // @ts-ignore - Extension Leaflet pour VectorGrid
-      if ((L as any).Canvas && (L as any).Canvas.Tile) {
-        (L as any).Canvas.Tile.include({
-          _onClick: function (e: any) {
-            const point = this._map.mouseEventToLayerPoint(e).subtract(this.getOffset())
-            let layer: any = null
-            let clickedLayer: any = null
+    setupMap (center: [number, number], zoom: number) {
+      this.$nextTick(() => {
+        const container = this.$refs.pickLocationMapContainer as HTMLElement
+        if (!container) return
 
-            for (const id in this._layers) {
-              layer = this._layers[id]
-              if (
-                layer.options.interactive &&
-                layer._containsPoint(point) &&
-                !this._map._draggableMoved(layer)
-              ) {
-                clickedLayer = layer
-              }
-            }
-            if (clickedLayer) {
-              if (typeof clickedLayer === 'object' && clickedLayer !== null) {
-                clickedLayer.fireEvent(e.type, undefined, true)
-              }
-            }
-          }
+        // Supprimer l'attribut _leaflet_id du conteneur si présent
+        if ((container as any)._leaflet_id) {
+          delete (container as any)._leaflet_id
+        }
+
+        // keyboard: false désactive la navigation clavier native de Leaflet
+        // pour laisser le contrôleur gérer la navigation entre bâtiments
+        this.map = L.map(container, {
+          center,
+          zoom,
+          scrollWheelZoom: true,
+          zoomControl: true,
+          keyboard: false,
         })
-      }
 
-      const vectorTileOptions = {
-        // @ts-ignore - Propriété spécifique à VectorGrid
-        rendererFactory: (L.canvas as any).tile,
-        vectorTileLayerStyles: {
-          default: this.getInitialBuildingStyle()
-        },
-        interactive: true,
-        getFeatureId: function (f: any) {
-          return f.properties.rnb_id
-        }
-      }
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+          referrerPolicy: 'origin',
+        }).addTo(this.map)
 
-      // @ts-ignore - Extension Leaflet.VectorGrid
-      this.vectorTileLayer = (L as any).vectorGrid.protobuf(
-        'https://rnb-api.beta.gouv.fr/api/alpha/tiles/{x}/{y}/{z}.pbf',
-        vectorTileOptions
-      )
+        // @ts-ignore - Extension Leaflet.VectorGrid
+        this.vectorTileLayer = (L as any).vectorGrid.protobuf(
+          'https://rnb-api.beta.gouv.fr/api/alpha/tiles/{x}/{y}/{z}.pbf',
+          {
+            // @ts-ignore - Propriété spécifique à VectorGrid
+            rendererFactory: (L.canvas as any).tile,
+            vectorTileLayerStyles: { default: buildingStyles.initial },
+            interactive: true,
+            getFeatureId: (f: any) => f.properties.rnb_id,
+          }
+        )
+        this.vectorTileLayer.addTo(this.map)
 
-      this.vectorTileLayer.addTo(this.map)
+        // Forcer la carte à recalculer ses dimensions, puis initialiser le contrôleur
+        setTimeout(() => {
+          this.map.invalidateSize()
 
-      // Gérer les clics sur les bâtiments
-      this.vectorTileLayer.on('click', (e: any) => {
-        const properties = e.layer.properties
-        const rnbId = properties.rnb_id
+          const mapContainer = this.$refs.pickLocationMapContainer as HTMLElement
+          const announcement = this.$refs.pickLocationAnnouncement as HTMLElement
 
-        if (this.previousRnbId !== undefined) {
-          this.vectorTileLayer.setFeatureStyle(this.previousRnbId, this.getInitialBuildingStyle())
-        }
+          // Restaurer la sélection précédente si elle existe
+          if (this.previousRnbId) {
+            this.selectedRnbId = this.previousRnbId
+          }
 
-        this.vectorTileLayer.setFeatureStyle(rnbId, this.getClickedBuildingStyle())
-        this.previousRnbId = rnbId
-
-        this.selectedRnbId = rnbId
+          this.rnbMapController = createRnbMapController({
+            mapContainer,
+            map: this.map,
+            vectorTileLayer: this.vectorTileLayer,
+            previousRnbId: this.previousRnbId,
+            onSelect: (rnbId: string) => {
+              this.selectedRnbId = rnbId
+              this.previousRnbId = rnbId
+            },
+            onAnnounce: (text: string) => {
+              if (announcement) announcement.textContent = text
+            },
+            onFocusSubmit: () => {
+              const btn = this.$refs.pickLocationSubmit as HTMLElement
+              if (btn) btn.focus()
+            },
+          })
+        }, 100)
       })
-    },
-    getInitialBuildingStyle () {
-      return {
-        radius: 5,
-        fillColor: '#1452e3',
-        color: '#ffffff',
-        weight: 3,
-        fill: true,
-        fillOpacity: 1,
-        opacity: 1
-      }
-    },
-    getClickedBuildingStyle () {
-      return {
-        radius: 5,
-        fillColor: '#31e060',
-        color: '#ffffff',
-        weight: 3,
-        fill: true,
-        fillOpacity: 1,
-        opacity: 1
-      }
     },
     handleSubmitPickLocation () {
       if (this.selectedRnbId) {
