@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements-meme-adresse')]
-#[IsGranted('ROLE_ADMIN_TERRITORY')]
+#[IsGranted('ROLE_ADMIN')]
 class SignalementSameAddressController extends AbstractController
 {
     #[Route('/', name: 'back_signalement_same_address_index')]
