@@ -55,7 +55,7 @@
     "typescript": "5.9.3",
     "vue-eslint-parser": "10.4.0",
     "webpack": "5.105.1",
-    "webpack-dev-server": "5.2.4",
+    "webpack-dev-server": "5.2.5",
     "webpack-notifier": "1.15.0"
   },
   "scripts": {
