@@ -71,7 +71,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
             new InterventionCreatedEvent($intervention, $user, $partner),
             InterventionCreatedEvent::NAME
         );
-
+        $this->entityManager->flush();
         $this->assertEmailCount(1);
         $this->assertEquals(2, $intervention->getSignalement()->getSuivis()->count());
 
@@ -123,6 +123,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
             new InterventionCreatedEvent($intervention, $user, $partner),
             InterventionCreatedEvent::NAME
         );
+        $this->entityManager->flush();
 
         $suivi = $intervention->getSignalement()->getSuivis()->last();
         if (!$suivi) {

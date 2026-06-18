@@ -46,11 +46,9 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,
                 isVisibleForUsager: true,
-                flush: false,
             );
             $createdAtUpdated = $signalement->getCreatedAt()->modify('+'.$second.' second');
             $suivi->setCreatedAt($createdAtUpdated);
-            $manager->persist($suivi);
             ++$second;
         }
         $manager->flush();
@@ -95,14 +93,11 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             isVisibleForUsager: $row['is_public'],
             isVisibleForBailleur: in_array($category, SuiviCategory::categoriesSubmittedByBailleur()),
             createdAt: $createdAt,
-            flush: false,
         );
         if (isset($row['force_notifications']) && $row['force_notifications']) {
             $suivi->setWaitingNotification(false);
             $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME); // @phpstan-ignore-line
         }
-
-        $manager->persist($suivi);
     }
 
     public function getOrder(): int

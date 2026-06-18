@@ -226,7 +226,6 @@ class VisiteUploadDocumentsController extends AbstractController
         );
 
         $this->entityManager->persist($signalement);
-        $this->entityManager->flush();
 
         if ($this->isRapportVisite($typeDocumentVisite)) {
             $this->eventDispatcher->dispatch(
@@ -239,6 +238,7 @@ class VisiteUploadDocumentsController extends AbstractController
                 FileUploadedEvent::NAME
             );
         }
+        $this->entityManager->flush();
 
         return $this->json($this->interventionFactory->createInstance($intervention), Response::HTTP_OK);
     }

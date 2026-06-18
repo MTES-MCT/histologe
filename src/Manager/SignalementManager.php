@@ -324,7 +324,6 @@ class SignalementManager
         }
 
         $this->entityManager->persist($signalement);
-        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -365,7 +364,6 @@ class SignalementManager
         }
 
         $this->entityManager->persist($signalement);
-        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -384,12 +382,9 @@ class SignalementManager
             ->setIsCguTiersAccepted(false);
 
         $this->userManager->createUsagerFromSignalement($signalement, UserManager::DECLARANT);
-
         $this->entityManager->persist($signalement);
-
-        $this->entityManager->flush();
-
         $this->suiviManager->addAccepteInvitationSuivi($signalement);
+        $this->entityManager->flush();
     }
 
     public function updateFromCoordonneesFoyerRequest(
@@ -426,7 +421,6 @@ class SignalementManager
         }
 
         $this->entityManager->persist($signalement);
-        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -484,7 +478,6 @@ class SignalementManager
         $signalement->setInformationComplementaire($informationComplementaire);
 
         $this->entityManager->persist($signalement);
-        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -508,7 +501,6 @@ class SignalementManager
             ->setVilleAgence($coordonneesAgenceRequest->getVille());
 
         $this->entityManager->persist($signalement);
-        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -528,7 +520,6 @@ class SignalementManager
             ->setTelSyndicSecondaire($coordonneesSyndicRequest->getTelephoneBis());
 
         $this->entityManager->persist($signalement);
-        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -621,7 +612,6 @@ class SignalementManager
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
         $this->entityManager->persist($signalement);
-        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -728,8 +718,6 @@ class SignalementManager
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
 
         $this->entityManager->persist($signalement);
-
-        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -839,8 +827,6 @@ class SignalementManager
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $this->entityManager->persist($signalement);
 
-        $this->entityManager->flush();
-
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
             description: 'La situation du foyer a été modifiée par ',
@@ -894,7 +880,6 @@ class SignalementManager
         }
 
         $this->entityManager->persist($signalement);
-        $this->entityManager->flush();
 
         return $this->suiviManager->addSuiviIfNeeded(
             signalement: $signalement,
@@ -977,17 +962,15 @@ class SignalementManager
         $signalement->setStatut(SignalementStatus::ACTIVE);
         $signalement->setValidatedAt(new \DateTimeImmutable());
         $this->entityManager->persist($signalement);
-        $suivi = $this->suiviManager->createSuivi(
+        $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: 'Signalement validé',
             category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             partner: $partner,
             user: $adminUser,
             isVisibleForUsager: true,
-            flush: false,
             createSubscription: $createSubscription,
         );
-        $this->entityManager->persist($suivi);
 
         $this->entityManager->flush();
     }

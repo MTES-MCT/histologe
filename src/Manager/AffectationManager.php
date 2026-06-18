@@ -6,18 +6,18 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Event\AffectationAnsweredEvent;
-use App\Event\AffectationClosedEvent;
-use App\Event\AffectationCreatedEvent;
 use App\Messenger\InterconnectionBus;
 use App\Messenger\Message\DossierMessageInterface;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
+use App\Service\Notification\NotificationAndMailSender;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -33,6 +33,8 @@ class AffectationManager
         private readonly PartnerRepository $partnerRepository,
         private readonly AffectationRepository $affectationRepository,
         private readonly EntityManagerInterface $entityManager,
+        private readonly SuiviManager $suiviManager,
+        private readonly NotificationAndMailSender $notificationAndMailSender,
     ) {
     }
 
@@ -63,7 +65,6 @@ class AffectationManager
         }
 
         $this->entityManager->persist($affectation);
-        $this->entityManager->flush();
 
         if ($dispatchAffectationAnsweredEvent) {
             $this->eventDispatcher->dispatch(
@@ -79,6 +80,7 @@ class AffectationManager
                 AffectationAnsweredEvent::NAME
             );
         }
+        $this->entityManager->flush();
 
         return $affectation;
     }
@@ -134,10 +136,7 @@ class AffectationManager
             ->setTerritory($signalement->getTerritory());
 
         if ($dispatchEvent) {
-            $this->eventDispatcher->dispatch(
-                new AffectationCreatedEvent($affectation),
-                AffectationCreatedEvent::NAME
-            );
+            $this->notificationAndMailSender->sendNewAffectation($affectation);
         }
 
         $this->entityManager->persist($affectation);
@@ -174,7 +173,7 @@ class AffectationManager
         ?Partner $partner,
         ?string $message = null,
         iterable $files = [],
-        bool $flush = false): Affectation
+        bool $createSuiviAndNotifications = false): Affectation
     {
         $affectation
             ->setStatut(AffectationStatus::CLOSED)
@@ -184,16 +183,34 @@ class AffectationManager
 
         $this->removeSubscriptionsOfAffectation($affectation);
 
-        if ($flush) {
-            $this->entityManager->persist($affectation);
-            $this->entityManager->flush();
-            $this->eventDispatcher->dispatch(
-                new AffectationClosedEvent(affectation: $affectation, user: $user, partner: $partner, message: $message, files: $files),
-                AffectationClosedEvent::NAME
-            );
+        if ($createSuiviAndNotifications) {
+            $this->onAffectationClosed($affectation, $partner, $message, $files);
         }
 
         return $affectation;
+    }
+
+    /**
+     * @param iterable<File> $files
+     */
+    public function onAffectationClosed(Affectation $affectation, ?Partner $partner, ?string $message, iterable $files): void
+    {
+        $user = $affectation->getAnsweredBy();
+        $signalement = $affectation->getSignalement();
+        $params['subject'] = $affectation->getPartner()->getNom();
+        $params['motif_cloture'] = $affectation->getMotifCloture();
+        $params['motif_suivi'] = $message;
+        $suivi = $this->suiviManager->createSuivi(
+            signalement: $signalement,
+            description: SuiviManager::buildDescriptionClotureSignalement($params),
+            category: SuiviCategory::AFFECTATION_IS_CLOSED,
+            partner: $partner,
+            user: $user,
+            files: $files,
+        );
+
+        $signalement->addSuivi($suivi);
+        $this->notificationAndMailSender->sendAffectationClosed($affectation);
     }
 
     public function removeAffectationsBySignalement(Signalement $signalement, AffectationStatus $status): void
@@ -267,7 +284,6 @@ class AffectationManager
         foreach ($subscriptions as $subscription) {
             $this->entityManager->remove($subscription);
         }
-        $this->entityManager->flush();
     }
 
     public function flagAsSynchronized(DossierMessageInterface $dossierMessage): void

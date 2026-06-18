@@ -9,17 +9,16 @@ use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\UserStatus;
 use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
-use App\Event\AffectationCreatedEvent;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
+use App\Service\Notification\NotificationAndMailSender;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadAffectationData extends Fixture implements OrderedFixtureInterface
@@ -32,8 +31,8 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
         private readonly PartnerRepository $partnerRepository,
         private readonly TerritoryRepository $territoryRepository,
         private readonly UserRepository $userRepository,
-        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        private readonly NotificationAndMailSender $notificationAndMailSender,
         #[Autowire(env: 'USER_SYSTEM_EMAIL')]
         private readonly string $userSystemEmail,
     ) {
@@ -90,7 +89,7 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
         }
 
         $this->manager->persist($affectation);
-        $this->eventDispatcher->dispatch(new AffectationCreatedEvent($affectation), AffectationCreatedEvent::NAME);
+        $this->notificationAndMailSender->sendNewAffectation($affectation);
 
         if (AffectationStatus::ACCEPTED === $affectation->getStatut()) {
             foreach ($partner->getUsers() as $user) {

@@ -78,6 +78,7 @@ class ServiceSecoursController extends AbstractController
             $entityManager->commit();
             $userManager->createUsagersFromSignalement($signalement);
             $autoAssigner->assignOrSendNewSignalementNotification($signalement);
+            $entityManager->flush();
             $pdfContent = $serviceSecoursPdfGenerator->generate($signalement);
             $notificationMailerRegistry->send(
                 new NotificationMail(

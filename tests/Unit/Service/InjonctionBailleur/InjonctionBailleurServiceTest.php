@@ -110,6 +110,7 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         $this->autoAssigner->expects($this->once())->method('assignOrSendNewSignalementNotification')->with($signalement);
         $this->entityManager->beginTransaction();
         $this->service->handleStopProcedure($stopProcedure);
+        $this->entityManager->flush();
         $this->entityManager->commit();
 
         $this->assertSame(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
@@ -150,6 +151,7 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         $this->autoAssigner->expects($this->never())->method('assignOrSendNewSignalementNotification')->with($signalement);
         $this->entityManager->beginTransaction();
         $this->service->handleStopProcedure($stopProcedure);
+        $this->entityManager->flush();
         $this->entityManager->commit();
 
         $this->assertEquals(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());

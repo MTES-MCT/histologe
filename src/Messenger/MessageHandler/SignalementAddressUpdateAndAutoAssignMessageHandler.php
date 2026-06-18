@@ -39,12 +39,12 @@ class SignalementAddressUpdateAndAutoAssignMessageHandler
                 signalement: $signalement,
                 updateRnbId: !$signalement->getRnbIdOccupant()
             );
-            $this->entityManager->flush();
             if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
                 $this->notificationAndMailSender->sendNewSignalementInjonction($signalement);
             } else {
                 $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
             }
+            $this->entityManager->flush();
         } catch (\Throwable $exception) {
             $this->logger->error(
                 sprintf(

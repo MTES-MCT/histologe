@@ -93,7 +93,6 @@ class SignalementActionController extends AbstractController
             user : $user,
             isVisibleForUsager: true,
             createSubscription: false,
-            flush: false,
         );
 
         $entityManager->flush();
@@ -109,6 +108,7 @@ class SignalementActionController extends AbstractController
         Request $request,
         SuiviManager $suiviManager,
         UserRepository $userRepository,
+        EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VALIDATE, $signalement);
         /** @var User $user */
@@ -132,6 +132,7 @@ class SignalementActionController extends AbstractController
                 isVisibleForUsager: true,
                 subscriptionCreated: $subscriptionCreated,
             );
+            $entityManager->flush();
             $this->addFlash('success', ['title' => 'Signalement accepté', 'message' => 'Le signalement a bien été accepté.']);
             if ($subscriptionCreated) {
                 $this->addFlash('success', ['title' => 'Signalement accepté', 'message' => User::MSG_SUBSCRIPTION_CREATED]);
@@ -148,6 +149,7 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         Request $request,
         SuiviManager $suiviManager,
+        EntityManagerInterface $entityManager,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VALIDATE, $signalement);
         $refusSignalement = (new RefusSignalement())->setSignalement($signalement);
@@ -179,6 +181,7 @@ class SignalementActionController extends AbstractController
             files: $refusSignalement->getFiles(),
             subscriptionCreated: $subscriptionCreated,
         );
+        $entityManager->flush();
         $this->addFlash('success', ['title' => 'Signalement refusé', 'message' => 'Le signalement a bien été refusé.']);
         if ($subscriptionCreated) {
             $this->addFlash('success', ['title' => 'Signalement refusé', 'message' => User::MSG_SUBSCRIPTION_CREATED]);
@@ -225,6 +228,7 @@ class SignalementActionController extends AbstractController
                 files: $form->get('files')->getData(),
                 subscriptionCreated: $subscriptionCreated,
             );
+            $entityManager->flush();
             $entityManager->refresh($suivi); // on rafraichit afin d'avoir le SuiviTransformerService et que les potentiels documents liés s'affiche sur le suivi
         } catch (\Throwable $exception) {
             $logger->error($exception->getMessage());
@@ -329,6 +333,7 @@ class SignalementActionController extends AbstractController
         Request $request,
         SuiviManager $suiviManager,
         AffectationUpdater $affectationUpdater,
+        EntityManagerInterface $entityManager,
     ): RedirectResponse|JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
@@ -365,6 +370,7 @@ class SignalementActionController extends AbstractController
                 isVisibleForUsager: ('1' === $request->query->get('publicSuivi')),
                 subscriptionCreated: $subscriptionCreated,
             );
+            $entityManager->flush();
             $this->addFlash('success', ['title' => 'Réouverture enregistrée', 'message' => 'Le dossier a bien été rouvert.']);
             if ($subscriptionCreated) {
                 $this->addFlash('success', ['title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED]);

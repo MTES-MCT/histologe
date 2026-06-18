@@ -289,7 +289,6 @@ class NotificationAndMailSender
                 description: $description
             );
         }
-        $this->entityManager->flush();
     }
 
     private function createInAppNotification(

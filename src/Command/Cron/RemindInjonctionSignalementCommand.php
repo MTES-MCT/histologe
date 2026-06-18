@@ -10,6 +10,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Notification\NotificationAndMailSender;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -36,6 +37,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         private readonly ClockInterface $clock,
         private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -50,6 +52,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
 
         $this->remindAnswerBailleur($io, $output);
         $this->remindSuiviTravaux($io, $output);
+        $this->entityManager->flush();
 
         return Command::SUCCESS;
     }

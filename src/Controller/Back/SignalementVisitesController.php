@@ -188,6 +188,7 @@ class SignalementVisitesController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
         FileRepository $fileRepository,
         UrlGeneratorInterface $urlGenerator,
+        EntityManagerInterface $entityManager,
     ): Response {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_ADD_VISITE, $signalement);
 
@@ -242,6 +243,7 @@ class SignalementVisitesController extends AbstractController
                     ),
                     InterventionCreatedEvent::NAME
                 );
+                $entityManager->flush();
             }
 
             return $this->buildVisitesAjaxResponse(
@@ -345,6 +347,7 @@ class SignalementVisitesController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
         FileRepository $fileRepository,
         UrlGeneratorInterface $urlGenerator,
+        EntityManagerInterface $entityManager,
     ): Response {
         $requestData = $request->request->all();
         $requestRescheduleData = RequestDataExtractor::getArray($requestData, 'visite-reschedule');
@@ -402,6 +405,7 @@ class SignalementVisitesController extends AbstractController
                         $partner
                     ), InterventionRescheduledEvent::NAME
                 );
+                $entityManager->flush();
             }
         } else {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de la modification de la visite, veuillez réessayer.'];
@@ -518,6 +522,7 @@ class SignalementVisitesController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
         FileRepository $fileRepository,
         UrlGeneratorInterface $urlGenerator,
+        EntityManagerInterface $entityManager,
     ): Response {
         $requestData = $request->request->all();
         $requestEditData = RequestDataExtractor::getArray($requestData, 'visite-edit');
@@ -564,6 +569,7 @@ class SignalementVisitesController extends AbstractController
                 $visiteRequest->isUsagerNotified(),
                 $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
             ), InterventionEditedEvent::NAME);
+            $entityManager->flush();
 
             return $this->buildVisitesAjaxResponse(
                 intervention: $intervention,

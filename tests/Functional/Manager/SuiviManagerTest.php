@@ -131,6 +131,7 @@ class SuiviManagerTest extends KernelTestCase
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
             user : $user,
         );
+        $this->entityManager->flush();
 
         $sub = $this->userSignalementSubscriptionRepository->findBy([
             'signalement' => $signalement,
@@ -169,6 +170,7 @@ class SuiviManagerTest extends KernelTestCase
             isVisibleForUsager: true
         );
         $signalement->addSuivi($suivi);
+        $this->entityManager->flush();
         $countSuivisAfterCreate = $signalement->getSuivis()->count();
 
         $this->assertEquals(Suivi::TYPE_PARTNER, $suivi->getType());

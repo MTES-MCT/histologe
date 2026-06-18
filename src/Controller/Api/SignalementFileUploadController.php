@@ -189,13 +189,12 @@ class SignalementFileUploadController extends AbstractController
         );
 
         $this->entityManager->persist($signalement);
-        $this->entityManager->flush();
 
         $fileUploadedEvent = $this->eventDispatcher->dispatch(
             new FileUploadedEvent($signalement, $user, $fileList, $partner),
             FileUploadedEvent::NAME
         );
-
+        $this->entityManager->flush();
         $response = $this->fileFactory->createFromArray($fileUploadedEvent->getFilesPushed());
 
         return $this->json($response, Response::HTTP_CREATED);

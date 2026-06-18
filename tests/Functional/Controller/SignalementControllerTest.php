@@ -829,7 +829,7 @@ class SignalementControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = static::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
@@ -845,9 +845,9 @@ class SignalementControllerTest extends WebTestCase
             description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
             category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
             isVisibleForUsager: true,
-            flush: true
         );
         $signalement->addSuivi($suivi);
+        $entityManager->flush();
 
         /** @var RouterInterface $router */
         $router = static::getContainer()->get(RouterInterface::class);
@@ -905,7 +905,7 @@ class SignalementControllerTest extends WebTestCase
         $client = static::createClient();
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = static::getContainer()->get('doctrine');
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
 
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
@@ -921,9 +921,9 @@ class SignalementControllerTest extends WebTestCase
             description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
             category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
             isVisibleForUsager: true,
-            flush: true
         );
         $signalement->addSuivi($suivi);
+        $entityManager->flush();
 
         /** @var RouterInterface $router */
         $router = static::getContainer()->get(RouterInterface::class);
@@ -988,9 +988,9 @@ class SignalementControllerTest extends WebTestCase
             description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
             category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
             isVisibleForUsager: true,
-            flush: true
         );
         $signalement->addSuivi($suivi);
+        $entityManager->getManager()->flush();
 
         $router = static::getContainer()->get(RouterInterface::class);
 

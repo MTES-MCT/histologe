@@ -15,6 +15,7 @@ use App\Manager\InterventionManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\TimezoneProvider;
+use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,6 +37,7 @@ class VisiteCreateController extends AbstractController
         private readonly SignalementVisiteRequestFactory $signalementVisiteRequestFactory,
         private readonly ValidatorInterface $validator,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -216,6 +218,7 @@ class VisiteCreateController extends AbstractController
                 InterventionCreatedEvent::NAME
             );
         }
+        $this->entityManager->flush();
 
         return $this->json($this->interventionFactory->createInstance($intervention), Response::HTTP_CREATED);
     }
