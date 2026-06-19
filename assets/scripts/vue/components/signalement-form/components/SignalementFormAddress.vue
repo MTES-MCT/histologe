@@ -403,12 +403,14 @@ export default defineComponent({
 
         // keyboard: false désactive la navigation clavier native de Leaflet
         // pour laisser le contrôleur gérer la navigation entre bâtiments
+        // minZoom: 18 évite de dézoomer au point d'avoir trop de bâtiments dans la vue (car api RNB limite à 100 bâtiments par requête)
         this.map = L.map(container, {
           center,
           zoom,
           scrollWheelZoom: true,
           zoomControl: true,
           keyboard: false,
+          minZoom: 18,
         })
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {

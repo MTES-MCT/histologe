@@ -32,27 +32,27 @@ if (L.Canvas && L.Canvas.Tile) {
 export const buildingStyles = {
   initial: {
     radius: 5,
-    fillColor: '#1452e3',
+    fillColor: '#000091',
     color: '#ffffff',
-    weight: 3,
+    weight: 2,
     fill: true,
     fillOpacity: 1,
     opacity: 1,
   },
   clicked: {
     radius: 5,
-    fillColor: '#31e060',
+    fillColor: '#18753c',
     color: '#ffffff',
-    weight: 3,
+    weight: 2,
     fill: true,
     fillOpacity: 1,
     opacity: 1,
   },
   focused: {
     radius: 7,
-    fillColor: '#f95c00',
+    fillColor: '#000091',
     color: '#ffffff',
-    weight: 3,
+    weight: 2,
     fill: true,
     fillOpacity: 1,
     opacity: 1,
@@ -62,6 +62,7 @@ export const buildingStyles = {
 /**
  * Initialise la navigation clavier, les marqueurs numérotés et le fetch des bâtiments RNB.
  *
+ * 
  * @param {object} options
  * @param {HTMLElement} options.mapContainer - Élément DOM de la carte (recevra les keydown)
  * @param {L.Map} options.map
@@ -88,8 +89,13 @@ export function createRnbMapController ({
   let activePreviousRnbId = previousRnbId;
 
   function markerHtml (index, state) {
-    const bg = state === 'focused' ? '#f95c00' : state === 'selected' ? '#31e060' : '#1452e3';
-    return `<div style="background:${bg};color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.4)">${index + 1}</div>`;
+    if (state === 'focused') {
+      return `<div class="rnb-marker rnb-marker--focused"></div>`;
+    }
+    if (state === 'selected') {
+      return `<div class="rnb-marker rnb-marker--selected"><div class="rnb-marker__dot"></div></div>`;
+    }
+    return `<div class="rnb-marker rnb-marker--default"></div>`;
   }
 
   function updateMarker (index, state) {
@@ -118,8 +124,8 @@ export function createRnbMapController ({
         icon: L.divIcon({
           html: markerHtml(index, state),
           className: '',
-          iconSize: [24, 24],
-          iconAnchor: [12, 12],
+          iconSize: [12, 12],   // doit correspondre à la taille CSS de .rnb-marker
+          iconAnchor: [6, 6],   // centre du cercle
         }),
         interactive: false,
         zIndexOffset: 1000,

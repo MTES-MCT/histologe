@@ -124,7 +124,8 @@ if (modalPickLocalisation) {
       requestAnimationFrame(() => {
         // keyboard: false désactive la navigation clavier native de Leaflet (flèches/zoom)
         // pour laisser notre propre handler gérer la navigation entre bâtiments
-        map = L.map('fr-modal-pick-localisation-map', { keyboard: false });
+        // minZoom: 18 évite de dézoomer au point d'avoir trop de bâtiments dans la vue (car api RNB limite à 100 bâtiments par requête)
+        map = L.map('fr-modal-pick-localisation-map', { keyboard: false, minZoom: 18 });
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
           attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
