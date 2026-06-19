@@ -340,7 +340,6 @@ function handleCheckboxKeydown(event) {
   } else if (event.key === 'Tab' && !event.shiftKey) {
     // Tab depuis la dernière checkbox : fermer le container
     if (currentIndex === visibleCheckboxes.length - 1) {
-      // event.preventDefault();
       const container = checkboxesContainer.closest('.search-checkbox-container');
       const closeBtn = container.querySelector('.fr-btn--close');
       if (closeBtn) {
