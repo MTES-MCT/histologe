@@ -22,8 +22,6 @@ use App\Service\Security\PartnerAuthorizedResolver;
 use App\Utils\Address\CommuneHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\ArrayParameterType;
-use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
@@ -42,8 +40,6 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SignalementRepository extends ServiceEntityRepository
 {
-    private const string DATE_FEEDBACK_USAGER_ONLINE = '2023-03-28';
-
     public function __construct(
         ManagerRegistry $registry,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
@@ -498,80 +494,6 @@ class SignalementRepository extends ServiceEntityRepository
 
         return $qb->where('affectations.partner IN (:partners)')
             ->setParameter('partners', $partners);
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     *
-     * @throws Exception
-     * @throws Exception
-     */
-    public function findSignalementsLastSuiviWithSuiviAuto(Territory $territory, int $limit): array
-    {
-        $connexion = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT s.id, s.reference, s.uuid, MAX(su.created_at) as dernier_suivi_date, MAX(su.created_by_id) as dernier_suivi_created_by, MAX(su.description) as dernier_suivi_description
-                FROM signalement s
-                INNER JOIN suivi su ON su.signalement_id = s.id
-                INNER JOIN territory ON s.territory_id = territory.id
-                WHERE s.id in (
-                        SELECT sutech.signalement_id FROM suivi sutech WHERE sutech.type = :suiviTypeTechnical
-                    )
-                AND su.id = (
-                        SELECT MAX(su2.id)
-                        FROM suivi AS su2
-                        WHERE su2.signalement_id = su.signalement_id
-                    )
-                AND s.statut = :statusSignalement
-                AND s.territory_id = :territoryId
-                AND su.category IN (:suiviTypeUsagers)
-                GROUP BY s.id
-                HAVING dernier_suivi_date > \''.self::DATE_FEEDBACK_USAGER_ONLINE.'\'
-                ORDER BY dernier_suivi_date DESC
-                LIMIT '.$limit.';';
-
-        return $connexion->executeQuery(
-            $sql,
-            [
-                'statusSignalement' => SignalementStatus::ACTIVE->value,
-                'territoryId' => $territory->getId(),
-                'suiviTypeTechnical' => Suivi::TYPE_TECHNICAL,
-                'suiviTypeUsagers' => array_map(static fn ($c) => $c->value, SuiviCategory::categoriesSubmittedByUsager()),
-            ],
-            ['suiviTypeUsagers' => ArrayParameterType::STRING]
-        )->fetchAllAssociative();
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     *
-     * @throws Exception
-     */
-    public function findSignalementsLastSuiviByPartnerOlderThan(Territory $territory, int $limit, int $nbDays): array
-    {
-        $connexion = $this->getEntityManager()->getConnection();
-        $sql = 'SELECT s.id, s.reference, s.uuid, MAX(su.created_at) as dernier_suivi_date, MAX(su.created_by_id) as dernier_suivi_created_by, MAX(su.description) as dernier_suivi_description
-                FROM signalement s
-                INNER JOIN suivi su ON su.signalement_id = s.id
-                INNER JOIN territory ON s.territory_id = territory.id
-                WHERE su.id = (
-                        SELECT MAX(su2.id)
-                        FROM suivi AS su2
-                        WHERE su2.signalement_id = su.signalement_id
-                    )
-                AND s.statut = :statusSignalement
-                AND s.territory_id = :territoryId
-                AND su.type = :suiviTypePartner
-                GROUP BY s.id
-                HAVING dernier_suivi_date < NOW() - INTERVAL :nbDays DAY
-                ORDER BY dernier_suivi_date DESC
-                LIMIT '.$limit.';';
-
-        return $connexion->executeQuery($sql, [
-            'statusSignalement' => SignalementStatus::ACTIVE->value,
-            'territoryId' => $territory->getId(),
-            'suiviTypePartner' => Suivi::TYPE_PARTNER,
-            'nbDays' => $nbDays,
-        ])->fetchAllAssociative();
     }
 
     /**

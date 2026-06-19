@@ -172,26 +172,6 @@ class SignalementRepositoryTest extends KernelTestCase
         $this->assertEmpty($emptyEmailExistingSignalements);
     }
 
-    public function testfindSignalementsLastSuiviWithSuiviAuto(): void
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
-
-        $signalements = $signalementRepository->findSignalementsLastSuiviWithSuiviAuto($territory, 10);
-        $this->assertCount(0, $signalements);
-    }
-
-    public function testfindSignalementsLastSuiviByPartnerOlderThan(): void
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '13']);
-
-        $signalements = $signalementRepository->findSignalementsLastSuiviByPartnerOlderThan($territory, 10, 0);
-        $this->assertCount(2, $signalements);
-    }
-
     public function testfindOnSameAddress(): void
     {
         /** @var SignalementRepository $signalementRepository */
