@@ -44,6 +44,7 @@ class Address
     private Collection $arretes;
 
     #[ORM\ManyToOne(inversedBy: 'addresses')]
+    #[ORM\JoinColumn(nullable: false)]
     private Territory $territory;
 
     public function __construct()

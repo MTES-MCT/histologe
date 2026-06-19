@@ -16,7 +16,7 @@ final class Version20260616145448 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE address ADD territory_id INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE address ADD territory_id INT NOT NULL');
         $this->addSql('ALTER TABLE address ADD CONSTRAINT FK_D4E6F8173F74AD4 FOREIGN KEY (territory_id) REFERENCES territory (id)');
         $this->addSql('CREATE INDEX IDX_D4E6F8173F74AD4 ON address (territory_id)');
 

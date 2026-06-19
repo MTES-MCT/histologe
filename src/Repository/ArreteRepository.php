@@ -26,10 +26,10 @@ class ArreteRepository extends ServiceEntityRepository
         $qb->innerJoin('a.address', 'address');
 
         if (!$user->isSuperAdmin()) {
-            $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+            $qb->andWhere('address.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
         }
 
-        return $qb->getQuery()->getSingleScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**

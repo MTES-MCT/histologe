@@ -2,11 +2,8 @@
 
 namespace App\Entity\Enum;
 
-use App\Entity\Behaviour\EnumTrait;
-
 enum TypeArrete: string
 {
-    use EnumTrait;
     // mise en sécurité
     case MISE_EN_SECURITE = 'Mise en sécurité';
     case MISE_EN_SECURITE_PROCEDURE_URGENTE = 'Mise en sécurité procédure urgente';
@@ -26,7 +23,7 @@ enum TypeArrete: string
     case ARRETE_LETCHIMY_ARTICLE_10 = 'Arrêté Letchimy : article 10';
 
     /**
-     * @return array<string>
+     * @return array<self>
      */
     public static function getMiseEnSecuriteChoices(): array
     {
@@ -38,7 +35,7 @@ enum TypeArrete: string
     }
 
     /**
-     * @return array<string>
+     * @return array<self>
      */
     public static function getInsalubriteChoices(): array
     {
@@ -56,7 +53,7 @@ enum TypeArrete: string
     }
 
     /**
-     * @return array<string>
+     * @return array<self>
      */
     public static function getAutresChoices(): array
     {
@@ -67,7 +64,7 @@ enum TypeArrete: string
     }
 
     /**
-     * @return array<string, array<string>>
+     * @return array<string, array<self>>
      */
     public static function getChoices(): array
     {

@@ -22,6 +22,7 @@ class SearchArrete
     private ?string $city = null;
     private ?string $cityCode = null;
 
+    /** @var array<string>|null */
     private ?array $typeArretes = null;
     private ?bool $mainLevee = null;
     private ?string $orderType = null;
@@ -109,11 +110,17 @@ class SearchArrete
         $this->cityCode = $cityCode;
     }
 
+    /**
+     * @return array<string>|null
+     */
     public function getTypeArretes(): ?array
     {
         return $this->typeArretes;
     }
 
+    /**
+     * @param array<string>|null $typeArretes
+     */
     public function setTypeArretes(?array $typeArretes): void
     {
         $this->typeArretes = $typeArretes;
