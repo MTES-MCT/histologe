@@ -14,6 +14,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
+use App\Service\Notification\NotificationAndMailSender;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -31,6 +32,7 @@ class LoadAffectationData extends Fixture implements OrderedFixtureInterface
         private readonly TerritoryRepository $territoryRepository,
         private readonly UserRepository $userRepository,
         private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        private readonly NotificationAndMailSender $notificationAndMailSender,
         #[Autowire(env: 'USER_SYSTEM_EMAIL')]
         private readonly string $userSystemEmail,
     ) {
