@@ -58,7 +58,6 @@ class SignalementSameAddressController extends AbstractController
                     'territoryId' => $signalement['territoryId'],
                     'addressForHuman' => $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant'],
                     'communeForHuman' => $signalement['villeOccupant'].' '.$signalement['cpOccupant'],
-                    'bailleurForHuman' => $signalement['nomProprio'],
                     'lat' => null,
                     'lng' => null,
                     'signalements' => [],

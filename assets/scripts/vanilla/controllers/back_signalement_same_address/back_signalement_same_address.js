@@ -117,17 +117,37 @@ if (document.getElementById('map-same-address')) {
       let excluded = false;
       for (const [filterField, filterValue] of Object.entries(otherFilters)) {
         if (filterField === field) continue; // ne pas appliquer le filtre du champ courant
-        if (filterValue && normalizeStr(item.dataset[filterField]) !== normalizeStr(filterValue)) {
-          excluded = true;
-          break;
+        if (filterValue) {
+          if (filterField === 'bailleur') {
+            const hasBailleur = Array.from(item.querySelectorAll('[data-bailleur]')).some(
+              (el) => normalizeStr(el.dataset.bailleur) === normalizeStr(filterValue)
+            );
+            if (!hasBailleur) {
+              excluded = true;
+              break;
+            }
+          } else if (normalizeStr(item.dataset[filterField]) !== normalizeStr(filterValue)) {
+            excluded = true;
+            break;
+          }
         }
       }
       if (excluded) continue;
 
-      const value = item.dataset[field];
-      if (value && normalizeStr(value).includes(normalizedQuery) && !seen.has(value)) {
-        seen.add(value);
-        results.push(value);
+      if (field === 'bailleur') {
+        item.querySelectorAll('[data-bailleur]').forEach(function (el) {
+          const value = el.dataset.bailleur;
+          if (value && normalizeStr(value).includes(normalizedQuery) && !seen.has(value)) {
+            seen.add(value);
+            results.push(value);
+          }
+        });
+      } else {
+        const value = item.dataset[field];
+        if (value && normalizeStr(value).includes(normalizedQuery) && !seen.has(value)) {
+          seen.add(value);
+          results.push(value);
+        }
       }
     }
     results.sort(function (a, b) {
@@ -174,8 +194,13 @@ if (document.getElementById('map-same-address')) {
       if (communeFilter && normalizeStr(item.dataset.commune) !== normalizeStr(communeFilter)) {
         item.classList.remove('is-active-filters');
       }
-      if (bailleurFilter && normalizeStr(item.dataset.bailleur) !== normalizeStr(bailleurFilter)) {
-        item.classList.remove('is-active-filters');
+      if (bailleurFilter) {
+        const hasBailleur = Array.from(item.querySelectorAll('[data-bailleur]')).some(
+          (el) => normalizeStr(el.dataset.bailleur) === normalizeStr(bailleurFilter)
+        );
+        if (!hasBailleur) {
+          item.classList.remove('is-active-filters');
+        }
       }
     });
     initCounters();

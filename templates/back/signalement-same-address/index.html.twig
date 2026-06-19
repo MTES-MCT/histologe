@@ -104,7 +104,6 @@
                         data-territory-id="{{ address.territoryId }}"
                         data-address="{{ address.addressForHuman }}"
                         data-commune="{{ address.communeForHuman }}"
-                        data-bailleur="{{ address.bailleurForHuman }}"
                         data-nb="{{ address.signalements|length }}"
                         >
                         <div class="fr-grid-row fr-grid-row--gutters">
@@ -142,7 +141,7 @@
                                     </div>
                                     <ul class="fr-list fr-list--none" >
                                         {% for signalement in address.signalements %}
-                                            <li>
+                                            <li data-bailleur="{{ signalement.nomProprio }}">
                                                 <a href="{{ path('back_signalement_view', {uuid: signalement.uuid}) }}" class="fr-link">#{{ signalement.reference }}</a> - 
                                                 {{signalement.nomOccupant|upper}} {{signalement.prenomOccupant|title}} - 
                                                 {% if signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
