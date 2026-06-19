@@ -42,17 +42,25 @@
         {{ _self.display_criteres('BATIMENT', criteresByZone['BATIMENT']) }}
     </div>
 </div>
-<div class="fr-grid-row">
+<div class="fr-grid-row form-nav-row-reverse">
     <div class="fr-col-12 fr-col-md-6">
-        <div class="fr-grid-row fr-grid-row--left">
-            {{ form_row(formDesordres.previous) }}
+        <div class="fr-grid-row fr-grid-row--right">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-md fr-btns-group--icon-left">
+                <li>
+                    {{ form_row(formDesordres.save) }}
+                </li>
+                <li>
+                    {{ form_row(formDesordres.draft) }}
+                </li>
+                <li>
+                    {{ form_row(formDesordres.forceSave) }}
+                </li>
+            </ul>
         </div>
     </div>
     <div class="fr-col-12 fr-col-md-6">
-        <div class="fr-grid-row fr-grid-row--right flex-direction-column-reverse-sm">
-            {{ form_row(formDesordres.forceSave) }}
-            {{ form_row(formDesordres.draft) }}
-            {{ form_row(formDesordres.save) }}
+        <div class="fr-grid-row fr-grid-row--left">
+            {{ form_row(formDesordres.previous) }}
         </div>
     </div>
 </div>

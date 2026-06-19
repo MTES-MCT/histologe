@@ -5,7 +5,16 @@ document.addEventListener('DOMContentLoaded', initSearchCheckboxWidgets);
 export function initSearchCheckboxWidgets() {
   const all = document.querySelectorAll('.search-checkbox-container');
   Array.from(all).forEach((element, idx) => {
+    // Vérifier si l'élément a déjà été initialisé
+    if (element.dataset.searchCheckboxInitialized === 'true') {
+      searchCheckboxCompleteInputValue(element);
+      return;
+    }
+
     try {
+      // Marquer comme initialisé
+      element.dataset.searchCheckboxInitialized = 'true';
+
       searchCheckboxCompleteInputValue(element);
       const input = element.querySelector('input[type="text"]');
       const badgesContainer = element.querySelector('.search-checkbox-badges');
@@ -38,6 +47,8 @@ export function initSearchCheckboxWidgets() {
           badgesContainer.innerHTML = '';
         }
         closeBtn.classList.remove('fr-hidden');
+        // Rendre les checkboxes accessibles au clavier
+        enableCheckboxesKeyboardAccess(checkboxesContainer);
       });
       // filter choices on input keyup
       input.addEventListener('keyup', function () {
@@ -111,6 +122,62 @@ export function initSearchCheckboxWidgets() {
       });
       closeBtn.addEventListener('click', function () {
         searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+      });
+      // Gérer la navigation au clavier dans l'input
+      input.addEventListener('keydown', function (event) {
+        if (
+          event.key === 'Tab' &&
+          !event.shiftKey &&
+          checkboxesContainer.style.display === 'block'
+        ) {
+          // Tab depuis l'input : aller à la première checkbox visible
+          event.preventDefault();
+          const firstVisibleCheckbox = getFirstVisibleCheckbox(checkboxesContainer);
+          if (firstVisibleCheckbox) {
+            firstVisibleCheckbox.focus();
+          }
+        } else if (
+          event.key === 'Tab' &&
+          event.shiftKey &&
+          checkboxesContainer.style.display === 'block'
+        ) {
+          // Shift+Tab depuis l'input quand dropdown ouvert : laisser le comportement natif pour sortir du composant
+          searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+        } else if (event.key === 'Escape' && checkboxesContainer.style.display === 'block') {
+          // Escape : fermer le dropdown
+          event.preventDefault();
+          searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+          input.focus();
+        }
+      });
+
+      // Gérer la navigation au clavier sur le bouton Fermer
+      closeBtn.addEventListener('keydown', function (event) {
+        if (event.key === 'Tab' && !event.shiftKey) {
+          event.preventDefault();
+          const nextFocusable = getNextFocusableElement(closeBtn);
+          if (nextFocusable) {
+            nextFocusable.focus();
+            setTimeout(() => {
+              if (document.activeElement !== nextFocusable) {
+                nextFocusable.focus();
+              }
+              searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+            }, 10);
+          } else {
+            searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+          }
+        } else if (event.key === 'Tab' && event.shiftKey) {
+          event.preventDefault();
+          const visibleCheckboxes = getVisibleCheckboxes(checkboxesContainer);
+          if (visibleCheckboxes.length > 0) {
+            visibleCheckboxes[visibleCheckboxes.length - 1].focus();
+          }
+        } else if (event.key === 'Escape') {
+          event.preventDefault();
+          searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
+          input.focus();
+        }
       });
       // reorder on uncheck
       checkboxesContainer.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
@@ -209,4 +276,146 @@ function searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initi
   searchCheckboxCompleteInputValue(element);
   searchCheckboxTriggerChange(element, initialValues);
   closeBtn.classList.add('fr-hidden');
+  // Retirer l'accessibilité au clavier des checkboxes
+  disableCheckboxesKeyboardAccess(checkboxesContainer);
+}
+
+function enableCheckboxesKeyboardAccess(checkboxesContainer) {
+  const checkboxes = checkboxesContainer.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach((checkbox) => {
+    checkbox.setAttribute('tabindex', '0');
+
+    // Gérer la navigation au clavier sur chaque checkbox
+    checkbox.addEventListener('keydown', handleCheckboxKeydown);
+  });
+}
+
+function disableCheckboxesKeyboardAccess(checkboxesContainer) {
+  const checkboxes = checkboxesContainer.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach((checkbox) => {
+    checkbox.setAttribute('tabindex', '-1');
+    checkbox.removeEventListener('keydown', handleCheckboxKeydown);
+  });
+}
+
+function handleCheckboxKeydown(event) {
+  const checkbox = event.target;
+  const checkboxesContainer = checkbox.closest('.search-checkbox');
+  const visibleCheckboxes = getVisibleCheckboxes(checkboxesContainer);
+  const currentIndex = visibleCheckboxes.indexOf(checkbox);
+
+  if (event.key === 'ArrowDown') {
+    // Aller à la checkbox suivante
+    event.preventDefault();
+    if (currentIndex < visibleCheckboxes.length - 1) {
+      visibleCheckboxes[currentIndex + 1].focus();
+    }
+  } else if (event.key === 'ArrowUp') {
+    // Aller à la checkbox précédente
+    event.preventDefault();
+    if (currentIndex > 0) {
+      visibleCheckboxes[currentIndex - 1].focus();
+    } else {
+      // Si on est sur la première checkbox, revenir à l'input
+      const container = checkboxesContainer.closest('.search-checkbox-container');
+      const input = container.querySelector('input[type="text"]');
+      if (input) {
+        input.focus();
+      }
+    }
+  } else if (event.key === 'Escape') {
+    // Fermer le dropdown et revenir à l'input
+    event.preventDefault();
+    const container = checkboxesContainer.closest('.search-checkbox-container');
+    const input = container.querySelector('input[type="text"]');
+    const closeBtn = container.querySelector('.fr-btn--close');
+    const initialValues = [];
+    checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked').forEach((cb) => {
+      initialValues.push(cb.value);
+    });
+    searchCheckboxHideChoices(container, checkboxesContainer, closeBtn, initialValues);
+    if (input) {
+      input.focus();
+    }
+  } else if (event.key === 'Tab' && !event.shiftKey) {
+    // Tab depuis la dernière checkbox : fermer le container
+    if (currentIndex === visibleCheckboxes.length - 1) {
+      const container = checkboxesContainer.closest('.search-checkbox-container');
+      const closeBtn = container.querySelector('.fr-btn--close');
+      if (closeBtn) {
+        closeBtn.click();
+      }
+    }
+  } else if (event.key === 'Tab' && event.shiftKey) {
+    // Shift+Tab depuis la première checkbox : revenir à l'input
+    if (currentIndex === 0) {
+      event.preventDefault();
+      const container = checkboxesContainer.closest('.search-checkbox-container');
+      const input = container.querySelector('input[type="text"]');
+      if (input) {
+        input.focus();
+      }
+    }
+  }
+}
+
+function getVisibleCheckboxes(checkboxesContainer) {
+  const checkboxes = Array.from(checkboxesContainer.querySelectorAll('input[type="checkbox"]'));
+  return checkboxes.filter((checkbox) => {
+    const parent = checkbox.closest('.fr-fieldset__element');
+    return parent && parent.style.display !== 'none';
+  });
+}
+
+function getFirstVisibleCheckbox(checkboxesContainer) {
+  const visibleCheckboxes = getVisibleCheckboxes(checkboxesContainer);
+  return visibleCheckboxes.length > 0 ? visibleCheckboxes[0] : null;
+}
+
+function getNextFocusableElement(currentElement) {
+  const modal = currentElement.closest('dialog.fr-modal');
+  const searchContext = modal || document;
+  const focusableSelectors =
+    'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href]';
+
+  const allFocusable = Array.from(searchContext.querySelectorAll(focusableSelectors));
+
+  const visibleFocusable = allFocusable.filter((elem) => {
+    if (elem.getAttribute('tabindex') === '-1' || elem.classList.contains('fr-hidden')) {
+      return false;
+    }
+    if (elem.type === 'checkbox' && elem.closest('.search-checkbox')) {
+      return false;
+    }
+    const searchCheckboxContainer = elem.closest('.search-checkbox');
+    if (searchCheckboxContainer && searchCheckboxContainer.style.display === 'none') {
+      return false;
+    }
+    return true;
+  });
+
+  const currentIndex = visibleFocusable.indexOf(currentElement);
+
+  if (currentIndex === -1) {
+    const container = currentElement.closest('.search-checkbox-container');
+    if (container) {
+      for (let i = 0; i < visibleFocusable.length; i++) {
+        if (
+          !container.contains(visibleFocusable[i]) &&
+          isAfterInDOM(container, visibleFocusable[i])
+        ) {
+          return visibleFocusable[i];
+        }
+      }
+    }
+  } else if (currentIndex + 1 < visibleFocusable.length) {
+    return visibleFocusable[currentIndex + 1];
+  }
+
+  return null;
+}
+
+function isAfterInDOM(elementA, elementB) {
+  const position = elementA.compareDocumentPosition(elementB);
+  return (position & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
 }

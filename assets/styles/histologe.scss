@@ -1473,6 +1473,17 @@ ul.fr-toggle__list.fr-toggle__list--inline {
 
 .form-nav-row-reverse {
     flex-direction: row-reverse;
+
+    ul.fr-btns-group.fr-btns-group--right {
+        width: 100%;
+        margin: 0px;
+
+        button {
+            margin-left: 0px;
+            margin-right: 0px;
+            width: 100%;
+        }
+    }
 }
 
 //composant side panel
