@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\Query\SignalementList\SameAddressQuery;
 use App\Repository\TerritoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -14,6 +15,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN_TERRITORY')]
 class HistoAddressController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_HISTO_ADDRESS')]
+        private readonly bool $featureHistoAddress,
+    ) {
+        if (!$this->featureHistoAddress) {
+            throw $this->createNotFoundException();
+        }
+    }
+
     #[Route('/', name: 'back_histo_address_index')]
     public function index(SameAddressQuery $sameAddressQuery, TerritoryRepository $territoryRepository): Response
     {

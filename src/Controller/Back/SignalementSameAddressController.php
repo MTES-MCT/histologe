@@ -11,6 +11,7 @@ use OpenSpout\Writer\CSV\Options as CsvOptions;
 use OpenSpout\Writer\CSV\Writer as CsvWriter;
 use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -26,6 +27,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class SignalementSameAddressController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_HISTO_ADDRESS')]
+        private readonly bool $featureHistoAddress,
+    ) {
+        if ($this->featureHistoAddress) {
+            throw $this->createNotFoundException();
+        }
+    }
+
     #[Route('/', name: 'back_signalement_same_address_index')]
     public function index(SameAddressQuery $sameAddressQuery, TerritoryRepository $territoryRepository): Response
     {
