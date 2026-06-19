@@ -182,7 +182,7 @@
           <template #label>Date de dépot</template>
         </HistoDatePicker>
       </div>
-      <div :class="[defineCssBlocMultiTerritoire(3,3), 'grey-background']">
+      <div v-if="sharedState.user.canSeeInjonction" :class="[defineCssBlocMultiTerritoire(3,3), 'grey-background']">
         <HistoSelect
           id="filter-injonction"
           v-model="sharedState.input.filters.injonction"

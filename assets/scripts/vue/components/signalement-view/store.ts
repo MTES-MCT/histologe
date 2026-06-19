@@ -67,6 +67,7 @@ export const store = {
       isMultiTerritoire: false,
       canSeeStatusAffectation: false,
       canSeeWithoutAffectation: false,
+      canSeeInjonction: false,
       partnerIds: new Array<string>()
     },
     showOptions: false,

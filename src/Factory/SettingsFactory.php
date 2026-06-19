@@ -6,9 +6,11 @@ use App\Dto\Settings;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\UserSearchFilterRepository;
+use App\Security\Voter\InjonctionBailleurVoter;
 use App\Service\Files\UserAvatar;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Psr\Cache\InvalidArgumentException;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class SettingsFactory
 {
@@ -16,6 +18,7 @@ class SettingsFactory
         private readonly SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
         private readonly UserAvatar $userAvatar,
         private readonly UserSearchFilterRepository $userSearchFilterRepository,
+        private readonly Security $security,
     ) {
     }
 
@@ -35,6 +38,7 @@ class SettingsFactory
             tags: $filterOptionData['tags'],
             zones: $filterOptionData['zones'],
             hasSignalementImported: $filterOptionData['hasSignalementsImported'] > 0,
+            hasInjonction: $this->security->isGranted(InjonctionBailleurVoter::INJONCTION_BAILLEUR_SEE),
             bailleursSociaux: $filterOptionData['bailleursSociaux'],
             avatarOrPlaceHolder: $this->userAvatar->userAvatarOrPlaceHolder($user, 80),
             savedSearches: $this->userSearchFilterRepository->findAllForUserArray($user),
