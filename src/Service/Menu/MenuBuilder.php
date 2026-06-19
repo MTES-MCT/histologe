@@ -91,7 +91,6 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(label: 'Bailleurs', route: 'back_bailleur_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Communes', route: 'back_commune_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Historique des modifications', route: 'back_history_entry_diff', roleGranted: User::ROLE_ADMIN))
-            ->addChild(new MenuItem(label: 'Résumés de suivis', route: 'back_suivi_summaries_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Outil RIAL par BAN ID', route: 'back_tools_rial', roleGranted: User::ROLE_ADMIN))
         ;
         $techAdminToolsSubItem
