@@ -6,10 +6,10 @@ import 'leaflet.vectorgrid';
 if (L.Canvas && L.Canvas.Tile) {
   L.Canvas.Tile.include({
     _onClick: function (e) {
-      var point = this._map.mouseEventToLayerPoint(e).subtract(this.getOffset());
-      var layer = L.Layer;
-      var clickedLayer = L.Layer;
-      for (var id in this._layers) {
+      let point = this._map.mouseEventToLayerPoint(e).subtract(this.getOffset());
+      let layer = L.Layer;
+      let clickedLayer = L.Layer;
+      for (let id in this._layers) {
         layer = this._layers[id];
         if (
           layer.options.interactive &&
@@ -62,7 +62,7 @@ export const buildingStyles = {
 /**
  * Initialise la navigation clavier, les marqueurs numérotés et le fetch des bâtiments RNB.
  *
- * 
+ *
  * @param {object} options
  * @param {HTMLElement} options.mapContainer - Élément DOM de la carte (recevra les keydown)
  * @param {L.Map} options.map
@@ -73,7 +73,7 @@ export const buildingStyles = {
  * @param {() => void} [options.onFocusSubmit] - Appelé après sélection au clavier
  * @returns {{ destroy: () => void }}
  */
-export function createRnbMapController ({
+export function createRnbMapController({
   mapContainer,
   map,
   vectorTileLayer,
@@ -88,22 +88,22 @@ export function createRnbMapController ({
   let keyboardPanning = false;
   let activePreviousRnbId = previousRnbId;
 
-  function markerHtml (index, state) {
+  function markerHtml(index, state) {
     if (state === 'focused') {
-      return `<div class="rnb-marker rnb-marker--focused"></div>`;
+      return '<div class="rnb-marker rnb-marker--focused"></div>';
     }
     if (state === 'selected') {
-      return `<div class="rnb-marker rnb-marker--selected"><div class="rnb-marker__dot"></div></div>`;
+      return '<div class="rnb-marker rnb-marker--selected"><div class="rnb-marker__dot"></div></div>';
     }
-    return `<div class="rnb-marker rnb-marker--default"></div>`;
+    return '<div class="rnb-marker rnb-marker--default"></div>';
   }
 
-  function updateMarker (index, state) {
+  function updateMarker(index, state) {
     const el = buildingMarkers[index]?.getElement();
     if (el) el.innerHTML = markerHtml(index, state);
   }
 
-  function refreshBuildings (buildings) {
+  function refreshBuildings(buildings) {
     // Réinitialiser le style du bâtiment en cours de focus avant de tout effacer
     if (focusedIndex >= 0 && focusedIndex < currentBuildings.length) {
       const prev = currentBuildings[focusedIndex];
@@ -124,8 +124,8 @@ export function createRnbMapController ({
         icon: L.divIcon({
           html: markerHtml(index, state),
           className: '',
-          iconSize: [12, 12],   // doit correspondre à la taille CSS de .rnb-marker
-          iconAnchor: [6, 6],   // centre du cercle
+          iconSize: [12, 12], // doit correspondre à la taille CSS de .rnb-marker
+          iconAnchor: [6, 6], // centre du cercle
         }),
         interactive: false,
         zIndexOffset: 1000,
@@ -142,7 +142,7 @@ export function createRnbMapController ({
     }
   }
 
-  function fetchBuildings () {
+  function fetchBuildings() {
     const bounds = map.getBounds();
     const center = map.getCenter();
     const bbox = `${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
@@ -152,8 +152,14 @@ export function createRnbMapController ({
         const sorted = (data.results || [])
           .filter((b) => b.point && b.point.coordinates)
           .sort((a, b) => {
-            const da = Math.hypot(a.point.coordinates[1] - center.lat, a.point.coordinates[0] - center.lng);
-            const db = Math.hypot(b.point.coordinates[1] - center.lat, b.point.coordinates[0] - center.lng);
+            const da = Math.hypot(
+              a.point.coordinates[1] - center.lat,
+              a.point.coordinates[0] - center.lng
+            );
+            const db = Math.hypot(
+              b.point.coordinates[1] - center.lat,
+              b.point.coordinates[0] - center.lng
+            );
             return da - db;
           });
         refreshBuildings(sorted);
@@ -161,11 +167,14 @@ export function createRnbMapController ({
       .catch(() => {});
   }
 
-  function focusBuilding (index) {
+  function focusBuilding(index) {
     if (focusedIndex >= 0 && focusedIndex < currentBuildings.length) {
       const prev = currentBuildings[focusedIndex];
       const prevState = prev.rnb_id === activePreviousRnbId ? 'selected' : 'default';
-      vectorTileLayer.setFeatureStyle(prev.rnb_id, prevState === 'selected' ? buildingStyles.clicked : buildingStyles.initial);
+      vectorTileLayer.setFeatureStyle(
+        prev.rnb_id,
+        prevState === 'selected' ? buildingStyles.clicked : buildingStyles.initial
+      );
       updateMarker(focusedIndex, prevState);
     }
     focusedIndex = index;
@@ -178,11 +187,13 @@ export function createRnbMapController ({
       map.panTo([bLat, bLng]);
     }
     if (onAnnounce) {
-      onAnnounce(`Bâtiment ${index + 1} sur ${currentBuildings.length}, identifiant ${building.rnb_id}`);
+      onAnnounce(
+        `Bâtiment ${index + 1} sur ${currentBuildings.length}, identifiant ${building.rnb_id}`
+      );
     }
   }
 
-  function selectBuilding () {
+  function selectBuilding() {
     if (focusedIndex < 0) return;
     const building = currentBuildings[focusedIndex];
     const rnbId = building.rnb_id;
@@ -288,7 +299,7 @@ export function createRnbMapController ({
   fetchBuildings();
 
   return {
-    destroy () {
+    destroy() {
       mapContainer.removeEventListener('keydown', keyboardHandler);
       buildingMarkers.forEach((m) => map.removeLayer(m));
       buildingMarkers = [];
