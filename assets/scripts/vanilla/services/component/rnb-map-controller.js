@@ -137,7 +137,7 @@ export function createRnbMapController({
     if (buildings.length > 0) {
       mapContainer.setAttribute(
         'aria-label',
-        `Carte de sélection du bâtiment. ${buildings.length} bâtiment(s) numéroté(s) sur la carte. Touches fléchées ou Tab pour naviguer, Entrée pour sélectionner.`
+        `Carte de sélection du bâtiment. ${buildings.length} bâtiment(s) sur la carte. Touches fléchées ou Tab pour naviguer, Entrée pour sélectionner.`
       );
     }
   }
