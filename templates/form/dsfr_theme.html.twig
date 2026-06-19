@@ -208,7 +208,7 @@
             <input id="{{ id }}_input" type="text" placeholder="{{ noselectionlabel }}" class="fr-input" autocomplete="off">
         </div>
         <div class="search-checkbox-badges" {% if not showSelectionAsBadges %}style="display:none"{% endif %}></div>
-        <button type="button" class="fr-btn--close fr-btn fr-hidden">Fermer</button>
+        <button type="button" class="fr-btn--close fr-btn fr-hidden" tabindex="-1">Fermer</button>
         <div class="search-checkbox">
             {{ block('choice_enum_widget_expanded') }}
         </div>

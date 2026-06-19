@@ -288,13 +288,6 @@ function enableCheckboxesKeyboardAccess(checkboxesContainer) {
     // Gérer la navigation au clavier sur chaque checkbox
     checkbox.addEventListener('keydown', handleCheckboxKeydown);
   });
-
-  // Rendre le bouton Fermer accessible au clavier
-  const container = checkboxesContainer.closest('.search-checkbox-container');
-  const closeBtn = container.querySelector('.fr-btn--close');
-  if (closeBtn) {
-    closeBtn.setAttribute('tabindex', '0');
-  }
 }
 
 function disableCheckboxesKeyboardAccess(checkboxesContainer) {
@@ -303,13 +296,6 @@ function disableCheckboxesKeyboardAccess(checkboxesContainer) {
     checkbox.setAttribute('tabindex', '-1');
     checkbox.removeEventListener('keydown', handleCheckboxKeydown);
   });
-
-  // Retirer l'accessibilité du bouton Fermer
-  const container = checkboxesContainer.closest('.search-checkbox-container');
-  const closeBtn = container.querySelector('.fr-btn--close');
-  if (closeBtn) {
-    closeBtn.setAttribute('tabindex', '-1');
-  }
 }
 
 function handleCheckboxKeydown(event) {
@@ -352,13 +338,13 @@ function handleCheckboxKeydown(event) {
       input.focus();
     }
   } else if (event.key === 'Tab' && !event.shiftKey) {
-    // Tab depuis la dernière checkbox : aller au bouton Fermer
+    // Tab depuis la dernière checkbox : fermer le container
     if (currentIndex === visibleCheckboxes.length - 1) {
-      event.preventDefault();
+      // event.preventDefault();
       const container = checkboxesContainer.closest('.search-checkbox-container');
       const closeBtn = container.querySelector('.fr-btn--close');
       if (closeBtn) {
-        closeBtn.focus();
+        closeBtn.click();
       }
     }
   } else if (event.key === 'Tab' && event.shiftKey) {
