@@ -27,6 +27,7 @@ export const store = {
         epcis: new Array<string>(),
         searchTerms: undefined,
         status: undefined,
+        injonction: undefined,
         procedure: undefined,
         procedureConstatee: undefined,
         visiteStatus: undefined,
@@ -115,6 +116,10 @@ export const store = {
       { Id: 'logement_occupe_bailleur_occupant', Text: 'Logement occupé : propriétaire occupant' },
       { Id: 'logement_occupe_locataire', Text: 'Logement occupé : locataire' },
       { Id: 'non_renseigne', Text: 'Non renseigné' }
+    ],
+    injonctionList: [
+      { Id: 'oui', Text: 'Oui' },
+      { Id: 'non', Text: 'Non' }
     ],
     procedureList: [
       { Id: 'non_decence_energetique', Text: 'Non décence énergétique' },

@@ -21,11 +21,9 @@ use App\Repository\EpciRepository;
 use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
 use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
 use App\Repository\SignalementQualificationRepository;
-use App\Repository\TerritoryRepository;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Utils\Address\CommuneHelper;
 use App\Utils\Address\ImportCommune;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
@@ -37,7 +35,6 @@ class SearchFilter
     private SignalementSearchQuery $request;
 
     public function __construct(
-        private TerritoryRepository $territoryRepository,
         private AffectationRepository $affectationRepository,
         private EntityManagerInterface $entityManager,
         private SignalementQualificationRepository $signalementQualificationRepository,
@@ -63,7 +60,6 @@ class SearchFilter
         /** @var SignalementSearchQuery $signalementSearchQuery */
         $signalementSearchQuery = $this->request;
         $filters = $signalementSearchQuery->getFilters();
-        $partners = new ArrayCollection();
 
         if (isset($filters['territories'])) {
             $authorizedTerritories = $user->getPartnersTerritories();
@@ -72,10 +68,6 @@ class SearchFilter
                     unset($filters['territories'][$key]);
                 }
             }
-        }
-        $territory = isset($filters['territories'][0]) ? $this->territoryRepository->find($filters['territories'][0]) : null;
-        if (\in_array(User::ROLE_USER_PARTNER, $user->getRoles())) {
-            $partners = $user->getPartners();
         }
 
         if (isset($filters['bailleurSocial'])) {
@@ -99,8 +91,6 @@ class SearchFilter
             } elseif (preg_match('/^'.InjonctionBailleurService::REFERENCE_PREFIX.'[0-9]{4,}$/', mb_strtoupper(mb_trim($filters['searchterms'])))) {
                 $qb->andWhere('s.referenceInjonction = :searchterms');
                 $qb->setParameter('searchterms', str_replace(InjonctionBailleurService::REFERENCE_PREFIX, '', mb_strtoupper(mb_trim($filters['searchterms']))));
-            } elseif (InjonctionBailleurService::REFERENCE_PREFIX.'XXXX' === mb_strtoupper($filters['searchterms'])) { // top secret
-                $qb->andWhere('s.referenceInjonction IS NOT NULL');
             } elseif (preg_match('/^([0-9]{5})$/', mb_trim($filters['searchterms']))) {
                 $qb->andWhere('s.cpOccupant = :searchterms');
                 $qb->setParameter('searchterms', mb_trim($filters['searchterms']));
@@ -250,6 +240,14 @@ class SearchFilter
                 $qb->andWhere($qb->expr()->exists($subExists->getDQL()))
                 ->andWhere($qb->expr()->not($qb->expr()->exists($subNotExists->getDQL())))
                 ->setParameter('statut_list', [AffectationStatus::ACCEPTED->value, AffectationStatus::CLOSED->value]);
+            }
+        }
+
+        if (!empty($filters['injonction'])) {
+            if ('oui' === $filters['injonction']) {
+                $qb->andWhere('s.referenceInjonction IS NOT NULL');
+            } elseif ('non' === $filters['injonction']) {
+                $qb->andWhere('s.referenceInjonction IS NULL');
             }
         }
 

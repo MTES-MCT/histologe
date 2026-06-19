@@ -184,6 +184,18 @@
       </div>
       <div :class="[defineCssBlocMultiTerritoire(3,3), 'grey-background']">
         <HistoSelect
+          id="filter-injonction"
+          v-model="sharedState.input.filters.injonction"
+          @update:modelValue="onChange(false)"
+          :option-items=injonctionList
+          title="Rechercher par démarche accélérée"
+          :placeholder="'Tous'"
+          >
+          <template #label>Démarche accélérée</template>
+        </HistoSelect>
+      </div>
+      <div :class="[defineCssBlocMultiTerritoire(3,3), 'grey-background']">
+        <HistoSelect
           id="filter-procedure"
           v-model="sharedState.input.filters.procedure"
           @update:modelValue="onChange(false)"
@@ -602,6 +614,7 @@ export default defineComponent({
         epcis: [],
         searchTerms: undefined,
         status: undefined,
+        injonction: undefined,
         procedure: undefined,
         procedureConstatee: undefined,
         visiteStatus: undefined,
@@ -673,6 +686,7 @@ export default defineComponent({
       statusVisiteList: store.state.statusVisiteList,
       situationList: store.state.situationList,
       occupationLogementList: store.state.occupationLogementList,
+      injonctionList: store.state.injonctionList,
       procedureList: store.state.procedureList,
       procedureConstateeList: store.state.procedureConstateeList,
       typeDernierSuiviList: store.state.typeDernierSuiviList,
