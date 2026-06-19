@@ -11,11 +11,14 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Intervention;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
+use App\Entity\UserSignalementSubscription;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
 use App\Factory\SignalementSearchQueryFactory;
@@ -26,6 +29,7 @@ use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
+use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\CritereRepository;
 use App\Repository\DesordreCategorieRepository;
@@ -44,12 +48,14 @@ use App\Repository\ZoneRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\EmailAlert\EmailAlertChecker;
+use App\Service\Mailer\NotificationMailerType;
 use App\Service\MessageHelper;
 use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementQualificationNde;
 use App\Service\Signalement\Suivi\SuiviSeenMarker;
+use App\Service\Signalement\VisiteNotifier;
 use App\Utils\FormHelper;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -67,6 +73,97 @@ class SignalementController extends AbstractController
 {
     public function __construct(private EmailAlertChecker $emailAlertBuilder)
     {
+    }
+
+    #[Route('/debug2', name: 'back_signalement_debug2')]
+    public function debug2Signalement(
+        EntityManagerInterface $entityManager,
+        NotificationAndMailSender $notificationAndMailSender,
+    ): Response {
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['statut' => SignalementStatus::INJONCTION_BAILLEUR]);
+        $partner = $entityManager->getRepository(Partner::class)->findOneBy(['territory' => $signalement->getTerritory()]);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $affectation = (new Affectation())
+            ->setSignalement($signalement)
+            ->setPartner($partner)
+            ->setStatut(AffectationStatus::ACCEPTED)
+            ->setTerritory($signalement->getTerritory())
+            ->setCreatedAt(new \DateTimeImmutable())
+            ->setAffectedBy($user)
+            ->setAnsweredBy($user)
+            ->setAnsweredAt(new \DateTimeImmutable())
+            ->setIsSynchronized(false);
+
+        $notificationAndMailSender->sendNewAffectation($affectation);
+        $entityManager->persist($affectation);
+
+        foreach ($partner->getUsers() as $user) {
+            $subscription = $entityManager->getRepository(UserSignalementSubscription::class)->findOneBy(['user' => $user, 'signalement' => $affectation->getSignalement()]);
+            if ($subscription) {
+                continue;
+            }
+            $subscription = new UserSignalementSubscription();
+            $subscription
+                ->setUser($user)
+                ->setSignalement($affectation->getSignalement())
+                ->setCreatedBy($user)
+                ->setIsLegacy(true);
+            $entityManager->persist($subscription);
+        }
+
+        $entityManager->flush();
+
+        $entityManager->remove($affectation);
+        $entityManager->flush();
+
+        return new Response('<html><body>DEBUG</body></html>');
+    }
+
+    #[Route('/{uuid:signalement}/debug', name: 'back_signalement_debug')]
+    public function debugSignalement(
+        Signalement $signalement,
+        EntityManagerInterface $entityManager,
+        InterventionRepository $interventionRepository,
+        SuiviManager $suiviManager,
+        VisiteNotifier $visiteNotifier,
+    ): Response {
+        /** @var User $user */
+        $user = $this->getUser();
+        $territory = $signalement->getTerritory();
+        $user->getPartnerInTerritory($territory);
+
+        $intervention = $interventionRepository->find(1);
+        $intervention->setDetails('test details'.uniqid());
+
+        $description = 'Annulation de visite :';
+        $description .= ' la visite du logement prévue le '.$intervention->getScheduledAt()->format('d/m/Y');
+        $description .= ' a été annulée pour le motif suivant : <br>';
+        $description .= $intervention->getDetails();
+        $suivi = $suiviManager->createSuivi(
+            signalement: $intervention->getSignalement(),
+            description: $description,
+            category: SuiviCategory::INTERVENTION_IS_CANCELED,
+            // partner: $context['createdByPartner'],
+            user: $user,
+            isVisibleForUsager: true,
+            sendMail: false,
+        );
+
+        $visiteNotifier->notifyUsagers(
+            intervention: $intervention,
+            notificationMailerType: NotificationMailerType::TYPE_VISITE_CANCELED_TO_USAGER,
+            suivi: $suivi
+        );
+
+        $visiteNotifier->notifyInAppSubscribers(
+            intervention: $intervention,
+            suivi: $suivi,
+            currentUser: $user,
+        );
+
+        $entityManager->flush();
+
+        return new Response('<html><body>DEBUG</body></html>');
     }
 
     /**

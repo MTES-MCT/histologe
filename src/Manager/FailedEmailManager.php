@@ -33,7 +33,7 @@ class FailedEmailManager
             ->setErrorMessage($exception->getMessage());
 
         $this->entityManager->persist($failedEmail);
-        $this->entityManager->flush();
+        $this->entityManager->flush(); // TODO : sortir de la méthode pour rationaliser les flush
 
         return $failedEmail;
     }
