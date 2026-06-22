@@ -35,6 +35,7 @@ readonly class MenuBuilder
         }
         if ($this->featureHistoAddress) {
             $signalementsSubMenu->addChild(new MenuItem(label: 'Historique des adresses', route: 'back_histo_address_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+            $signalementsSubMenu->addChild(new MenuItem(label: 'Prototype Carte facile', route: 'back_histo_address_carte_facile', roleGranted: User::ROLE_ADMIN_TERRITORY));
         } else {
             $signalementsSubMenu->addChild(new MenuItem(label: 'Dossiers à la même adresse', route: 'back_signalement_same_address_index', roleGranted: User::ROLE_ADMIN));
         }

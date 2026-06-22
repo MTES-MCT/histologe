@@ -3,147 +3,18 @@
 {% block title %}Historique des événements par adresse{% endblock %}
 
 {% block content %}
-    <div class="fr-container-sml">
-        <section class="fr-pt-4v">
-            {% include 'back/breadcrumb_bo.html.twig' with {
-                'level2Title': 'Historique des événements par adresse',
-                'level2Link': '',
-                'level2Label': ''
-            } %}
-
-            <header>
-                <div class="fr-grid-row fr-grid-row--gutters">
-                    <div class="fr-col-12 fr-col-sm-8">
-                        <h1 class="fr-mb-0">Historique des événements par adresse</h1>
-                        <h2 class="title-counters-same-address"></h2>
-                    </div>
-                    <div class="fr-col-12 fr-col-sm-4 fr-text--right">
-                        <div class="fr-toggle">
-                            <input type="checkbox" class="fr-toggle__input" id="toggle-map" checked>
-                            <label class="fr-toggle__label" for="toggle-map">Afficher la carte</label>
-                        </div>
-                        {# 
-                        <button type="submit" form="search-histo-address-form"
-                            class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill fr-btn--block fr-btn--md-inline"
-                            aria-label="Exporter les résultats des dossiers à la même adresse"
-                            title="Exporter les résultats"
-                        >Exporter les résultats</button>
-                        #}
-                    </div>
-                </div>
-            </header>
-        </section>
+    <section class="fr-pt-5v {{ app.request.attributes.get('_route') == 'back_histo_address_index' ? container_class : 'fr-pl-5v' }}">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Historique des événements par adresse',
+            'level2Link': '',
+            'level2Label': '',
+        } %}
+    </section>
+    <div id="app-addresses-history-view"
+        data-ajaxurl="{{ path('back_histo_addresses_list_json') }}"
+        data-ajaxurl-export-csv="{{ path('back_histo_address_export') }}"
+        data-ajaxurl-settings="{{ path('back_settings') }}"
+        data-platform-name="{{ platform.name }}"
+        >
     </div>
-
-    <form id="search-histo-address-form" action="{{path('back_histo_address_export')}}" method="get" class="fr-pt-4v on-map">
-        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
-            {% if territories|length > 1 %}
-                <div class="fr-col-12 fr-col-lg-3">
-                    <div class="fr-select-group">
-                        <label class="fr-label" for="territoryId">Territoire</label>
-                        <select id="territoryId" name="territoryId" class="fr-select">
-                            <option value="">Tous les territoires</option>
-                            {% for territory in territories %}
-                                <option value="{{ territory.id }}">{{ territory.zipAndName }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-            {% endif %}
-            <div class="fr-col-12 fr-col-lg-3">
-                <div class="fr-input-group">
-                    <label class="fr-label" for="address">Adresse du logement</label>
-                    <div class="fr-input-wrap fr-icon-search-line">
-                        <input type="text" placeholder="Taper l'adresse du logement" id="address" name="address" class="fr-input" autocomplete="off">
-                        <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list fr-autocomplete-absolute">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="fr-col-12 fr-col-lg-3">       
-                <div class="fr-input-group">
-                    <label class="fr-label" for="commune">Commune ou code postal</label>
-                    <div class="fr-input-wrap fr-icon-map-pin-2-fill">
-                        <input type="text" id="commune" name="commune" class="fr-input" autocomplete="off">
-                        <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list fr-autocomplete-absolute">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="fr-col-12 fr-col-lg-3">
-                <div class="fr-input-group">
-                    <label class="fr-label" for="bailleur">Bailleur</label>
-                    <div class="fr-input-wrap fr-icon-user-search-fill">
-                        <input type="text" placeholder="Nom du bailleur" id="bailleur" name="bailleur" class="fr-input" autocomplete="off">
-                        <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list fr-autocomplete-absolute">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
-
-    <section class="container-histo-address-map">
-        <div id="map-histo-address"></div>
-    </section>
-    <section class="fr-container-sml container-histo-address-list">
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12">
-                {% for address in signalementsByAddress %}
-                    <div 
-                        class="same-address-item signalement-group-data-card squared fr-p-5v fr-hidden is-active-filters"
-                        data-lat="{{ address.lat }}"
-                        data-lng="{{ address.lng }}"
-                        data-territory-id="{{ address.territoryId }}"
-                        data-address="{{ address.addressForHuman }}"
-                        data-commune="{{ address.communeForHuman }}"
-                        data-nb="{{ address.signalements|length }}"
-                        >
-                        <div class="fr-grid-row fr-grid-row--gutters">
-                            <div class="fr-col-12">
-                                <div class="fr-badge fr-badge--info fr-badge--no-icon">{{address.signalements|length}} dossiers</div>
-                                {% if not address.lat or not address.lng %}
-                                    <div class="fr-badge fr-badge--warning fr-badge--no-icon">Géolocalisation manquante</div>
-                                {% endif %}
-                                <div class="fr-mt-2w">
-                                    <strong>
-                                        <span class="fr-icon-map-pin-2-fill {% if address.lat and address.lng %}{% else %}fr-link--error{% endif %}" aria-hidden="true"></span>
-                                        {{ address.adresse }}, {{ address.cp }} {{ address.ville }}
-                                    </strong>
-                                </div>
-                            </div>
-                            <div class="fr-col-12">
-                                <div id="same-address-details-{{ loop.index }}">
-                                    <div class="title-blue-france">
-                                        Dossiers à l'adresse : 
-                                        <br>
-                                        {{ address.adresse }}, {{ address.cp }} {{ address.ville }}
-                                    </div>
-                                    <ul class="fr-list fr-list--none" >
-                                        {% for signalement in address.signalements %}
-                                            <li data-bailleur="{{ signalement.nomProprio }}">
-                                                <a href="{{ path('back_signalement_view', {uuid: signalement.uuid}) }}" class="fr-link">#{{ signalement.reference }}</a> - 
-                                                {{signalement.nomOccupant|upper}} {{signalement.prenomOccupant|title}} - 
-                                                {% if signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
-                                                    <span class="fr-badge fr-badge--warning fr-badge--no-icon">Nouveau</span>
-                                                {% elseif signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}
-                                                    <span class="fr-badge fr-badge--success fr-badge--no-icon">En cours</span>
-                                                {% elseif signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
-                                                    <span class="fr-badge fr-badge--no-icon">Fermé</span>
-                                                {% else %}
-                                                    <span class="fr-badge fr-badge--error fr-badge--no-icon">{{ signalement.statut.name }}</span>
-                                                {% endif %}
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-                <nav role="navigation" class="fr-pagination pagination-full-js" aria-label="Pagination"></nav>
-            </div>
-        </div>
-    </section>
-
 {% endblock %}

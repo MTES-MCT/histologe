@@ -3,10 +3,12 @@
 namespace App\Controller\Back;
 
 use App\Entity\User;
+use App\Factory\HistoAddressListViewFactory;
 use App\Repository\Query\SignalementList\SameAddressQuery;
 use App\Repository\TerritoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -25,7 +27,66 @@ class HistoAddressController extends AbstractController
     }
 
     #[Route('/', name: 'back_histo_address_index')]
-    public function index(SameAddressQuery $sameAddressQuery, TerritoryRepository $territoryRepository): Response
+    public function index(): Response
+    {
+        return $this->render('back/histo-address/index.html.twig');
+    }
+
+    #[Route('/list/addresses/', name: 'back_histo_addresses_list_json')]
+    public function list(
+        SameAddressQuery $sameAddressQuery,
+        HistoAddressListViewFactory $histoAddressListViewFactory,
+    ): JsonResponse {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $signalements = $sameAddressQuery->findSameAddressFiltered($user);
+        $addresses = [];
+        foreach ($signalements as $signalement) {
+            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant']));
+            if (!isset($addresses[$addressKey])) {
+                $addresses[$addressKey] = $histoAddressListViewFactory->createInstance(
+                    addressOccupant: $signalement['adresseOccupant'],
+                    cpOccupant: $signalement['cpOccupant'],
+                    villeOccupant: $signalement['villeOccupant'],
+                    territoryId: $signalement['territoryId'],
+                    addressForHuman: $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant'],
+                    communeForHuman: $signalement['villeOccupant'].' '.$signalement['cpOccupant'],
+                );
+            }
+
+            $histoAddressSignalement = $histoAddressListViewFactory->createSignalementInstanceFromSignalementData($signalement);
+            $addresses[$addressKey]->addSignalement($histoAddressSignalement);
+            if ($signalement['geoloc']) {
+                $addresses[$addressKey]->setLat($signalement['geoloc']['lat']);
+                $addresses[$addressKey]->setLng($signalement['geoloc']['lng']);
+            }
+        }
+
+        $response = $this->json(
+            $addresses,
+            Response::HTTP_OK,
+            ['content-type' => 'application/json'],
+            ['groups' => ['signalements:read']]
+        );
+
+        /*
+        // TODO: A gérer plus tard pour l'export
+        // Remove '?' at the start of the string
+        $parsableQueryString = null !== $signalementSearchQuery
+            ? substr($signalementSearchQuery->getQueryStringForUrl(), 1)
+            : '';
+        $cookie = Cookie::create(SignalementSearchQueryFactory::COOKIE_NAME)
+            ->withValue($parsableQueryString)
+            ->withExpires(strtotime('+1 hour'));
+
+        $response->headers->setCookie($cookie);*/
+
+        return $response;
+    }
+
+    #[Route('/proto-carte-facile', name: 'back_histo_address_carte_facile')]
+    public function carteFacile(SameAddressQuery $sameAddressQuery, TerritoryRepository $territoryRepository): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -58,7 +119,7 @@ class HistoAddressController extends AbstractController
             }
         }
 
-        return $this->render('back/histo-address/index.html.twig', [
+        return $this->render('back/histo-address/carte-facile.html.twig', [
             'nbSignalements' => count($signalements),
             'signalementsByAddress' => $signalementsByAddress,
             'territories' => $territories,
