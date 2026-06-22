@@ -119,6 +119,60 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "proxy_open (user : user-69-05@signal-logement.fr)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/proxy_open",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"proxy_open"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "unique_proxy_open (user : user-13-15@signal-logement.fr)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/unique_proxy_open",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"unique_proxy_open"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
@@ -286,8 +340,89 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "error template(user : fox.mulder@fbi.com)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/error_template",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"error_template"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "unsubscribed (user : user-69-05@signal-logement.fr)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8082/brevo/trigger/unsubscribed",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"brevo",
+										"trigger",
+										"unsubscribed"
+									]
+								}
+							},
+							"response": []
 						}
 					]
+				},
+				{
+					"name": "deferred (user : nawell.mapaire)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8082/brevo/trigger/deferred",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"brevo",
+								"trigger",
+								"deferred"
+							]
+						}
+					},
+					"response": []
 				},
 				{
 					"name": "sent (partner: partenaire-13-01)",

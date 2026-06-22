@@ -38,5 +38,29 @@ class BrevoMock
                     )->withPostServeAction('webhook', $webhookDefinition)
             );
         }
+
+        self::registerErrorTemplateStub($wireMock);
+    }
+
+    private static function registerErrorTemplateStub(WireMock $wireMock): void
+    {
+        $body = AppMock::getMockContent(self::RESOURCES_DIR.'/error_template.json');
+
+        $webhookDefinition = (new WebhookDefinition())
+            ->withMethod('POST')
+            ->withUrl(self::WEBHOOK_URL)
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody($body);
+
+        $wireMock->stubFor(
+            WireMock::post(WireMock::urlMatching('/brevo/trigger/error_template'))
+                ->withHeader('Content-Type', WireMock::containing('application/json'))
+                ->willReturn(
+                    WireMock::aResponse()
+                        ->withStatus(202)
+                        ->withHeader('Content-Type', self::CONTENT_TYPE)
+                        ->withBody('{"response": "OK"}')
+                )->withPostServeAction('webhook', $webhookDefinition)
+        );
     }
 }

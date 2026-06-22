@@ -1,0 +1,16 @@
+{
+  "date": "2026-05-21 11:00:14",
+  "email": "fox.mulder@fbi.com",
+  "event": "error",
+  "id": 1444470,
+  "message-id": "<202605210900.72054745906@smtp-relay.mailin.fr>",
+  "reason": "template is disabled",
+  "sender_email": "\"signal-logement - bouches-du-rhone\" <notifications@signal-logement.beta.gouv.fr>",
+  "subject": "SIGNAL-LOGEMENT BOUCHES-DU-RHÔNE - ​Mettez à jour la situation concernant votre logement",
+  "tag": "",
+  "template_id": 287,
+  "ts": 1779354014,
+  "ts_epoch": 1779354014384,
+  "ts_event": 1779354014,
+  "uuid": "00000000-0000-0000-2025-000000000012"
+}

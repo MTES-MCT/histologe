@@ -11,6 +11,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Sentry\Severity;
 use Sentry\State\Scope;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,8 +40,11 @@ class BrevoWebhookController extends AbstractController
     }
 
     #[Route('/webhook/brevo', name: 'webhook_brevo', methods: ['POST'])]
-    public function handle(EmailDeliveryIssueRepository $emailDeliveryIssueRepository, Request $request): Response
-    {
+    public function handle(
+        EmailDeliveryIssueRepository $emailDeliveryIssueRepository,
+        Request $request,
+        LoggerInterface $logger,
+    ): Response {
         $clientIp = $request->getClientIp();
         if (!$this->isAllowedIp($clientIp)) {
             return new Response('Forbidden', Response::HTTP_FORBIDDEN);
@@ -57,6 +61,7 @@ class BrevoWebhookController extends AbstractController
 
         if ($isDeliveryFailure) {
             if ('template is disabled' === ($payload['reason'] ?? null)) {
+                $message = '[BREVO] Template désactivé — template_id: '.($payload['template_id'] ?? 'unknown');
                 \Sentry\withScope(static function (Scope $scope) use ($payload): void {
                     $scope->setLevel(Severity::fatal());
                     $scope->setTag('brevo_error', 'template_disabled');
@@ -67,6 +72,7 @@ class BrevoWebhookController extends AbstractController
                         Severity::fatal()
                     );
                 });
+                $logger->error($message);
 
                 return new Response('OK', Response::HTTP_OK);
             }
