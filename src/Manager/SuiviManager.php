@@ -6,16 +6,16 @@ use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\SuiviDelayed;
 use App\Entity\SuiviFile;
-use App\Entity\TiersInvitation;
 use App\Entity\User;
 use App\Event\SuiviCreatedEvent;
-use App\Security\User\SignalementUser;
 use App\Utils\DateHelper;
 use App\Utils\DictionaryProvider;
 use App\Utils\Sanitizer;
@@ -120,7 +120,6 @@ class SuiviManager
             SuiviCategory::MESSAGE_USAGER,
             SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
             SuiviCategory::MESSAGE_BAILLEUR,
-            SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
             SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
             SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
             SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
@@ -184,24 +183,6 @@ class SuiviManager
         );
 
         return $subscriptionCreated;
-    }
-
-    public function addInviteSuiviFromFo(TiersInvitation $tiersInvitation): void
-    {
-        $description = 'L\'usager a envoyé une invitation à un tiers pour suivre le signalement :';
-        $description .= $this->buildTiersInfoHtml(
-            $tiersInvitation->getLastname(),
-            $tiersInvitation->getFirstname(),
-            $tiersInvitation->getEmail(),
-            $tiersInvitation->getTelephone(),
-        );
-
-        $this->createSuivi(
-            signalement: $tiersInvitation->getSignalement(),
-            description: $description,
-            category: SuiviCategory::SIGNALEMENT_EDITED_FO,
-            user: $this->userManager->getSystemUser(),
-        );
     }
 
     public function addAccepteInvitationSuivi(Signalement $signalement): void
@@ -370,53 +351,65 @@ class SuiviManager
         return 'Le signalement a été refusé avec le motif suivant : '.$motifRejected.'.<br>Plus précisément :<br>'.$commentaire;
     }
 
-    public function createSuiviFromEditUsager(
-        Signalement $signalement,
-        SignalementUser $signalementUser,
-    ): void {
-        $changes = $signalement->getChanges();
-
-        if ([] === $changes) {
-            return;
+    /**
+     * @param array<SuiviDelayed> $suivisDelayed
+     */
+    public function createSuiviFromSuiviDelayedList(array $suivisDelayed): void
+    {
+        $signalement = $suivisDelayed[0]->getSignalement();
+        $user = $suivisDelayed[0]->getUser();
+        $category = $suivisDelayed[0]->getSuiviCategory();
+        $changesGroupedByType = [];
+        $changesCountedByType = [];
+        $filesToAttach = [];
+        foreach ($suivisDelayed as $suiviDelayed) {
+            $type = $suiviDelayed->getSuiviDelayedType()->value;
+            if ($suiviDelayed->getChanges()) {
+                $changesGroupedByType[$type] = array_merge($changesGroupedByType[$type] ?? [], $suiviDelayed->getChanges());
+            } elseif (count($suiviDelayed->getFiles())) {
+                $filesToAttach = array_merge($filesToAttach, $suiviDelayed->getFiles()->toArray());
+            } else {
+                if (!isset($changesCountedByType[$type])) {
+                    $changesCountedByType[$type] = 1;
+                } else {
+                    ++$changesCountedByType[$type];
+                }
+            }
         }
 
-        /** @var User $user */
-        $user = $signalementUser->getUser();
-
-        /** @var array{label:string, fieldChanges:array<mixed>} $sectionChanges */
-        // Un seul formulaire est soumis à la fois,
-        // donc un seul bloc de changements est attendu.
-        $sectionChanges = current($changes);
-
-        if (UserManager::OCCUPANT === $signalementUser->getType()) {
-            $nomComplet = $signalement->getNomOccupantComplet(true);
-        } else {
-            $nomComplet = $signalement->getNomDeclarantComplet(true);
+        $description = 'Des modifications ont été apportées par '.$user->getNomComplet(true).'.<br>';
+        foreach ($changesGroupedByType as $type => $changes) {
+            $suiviDelayedType = SuiviDelayedType::from($type);
+            $description .= '<strong>'.$suiviDelayedType->label().'</strong><br>';
+            $description .= '<ul>';
+            foreach ($changes as $label => $value) {
+                $description .= '<li>'.$label.' : '.$this->formatValue($value).'</li>';
+            }
+            $description .= '</ul>';
+        }
+        if (count($changesCountedByType) > 0) {
+            $description .= '<strong>Autres modifications</strong><br>';
+            $description .= '<ul>';
+        }
+        foreach ($changesCountedByType as $type => $count) {
+            $suiviDelayedType = SuiviDelayedType::from($type);
+            if (SuiviDelayedType::FO_FILE_DELETED === $suiviDelayedType) {
+                $description .= '<li>'.$count.' '.$suiviDelayedType->label().'</li>';
+            } else {
+                $description .= '<li>'.$suiviDelayedType->label().'</li>';
+            }
+        }
+        if (count($changesCountedByType) > 0) {
+            $description .= '</ul>';
         }
 
-        $description = sprintf(
-            '%s ont été modifiées par %s.',
-            $sectionChanges['label'],
-            htmlentities($nomComplet),
-        );
-        $description .= '<ul>';
-
-        foreach ($sectionChanges['fieldChanges'] as $change) {
-            $new = $this->formatValue($change['new']);
-            $description .= sprintf(
-                '<li>%s : %s</li>',
-                $change['label'],
-                $new,
-            );
-        }
-
-        $description .= '</ul>';
         $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            category: SuiviCategory::SIGNALEMENT_EDITED_FO,
+            category: $category,
             user: $user,
             isVisibleForUsager: true,
+            files: $filesToAttach
         );
     }
 

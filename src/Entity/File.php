@@ -179,6 +179,10 @@ class File implements EntityHistoryInterface
     #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: PartnerType::class)]
     private ?array $partner_type = null;
 
+    #[ORM\ManyToOne(inversedBy: 'files')]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?SuiviDelayed $suiviDelayed = null;
+
     public function __construct()
     {
         $this->uuid = Uuid::v4();
@@ -616,6 +620,18 @@ class File implements EntityHistoryInterface
     public function setPartner(?Partner $partner): static
     {
         $this->partner = $partner;
+
+        return $this;
+    }
+
+    public function getSuiviDelayed(): ?SuiviDelayed
+    {
+        return $this->suiviDelayed;
+    }
+
+    public function setSuiviDelayed(?SuiviDelayed $suiviDelayed): static
+    {
+        $this->suiviDelayed = $suiviDelayed;
 
         return $this;
     }
