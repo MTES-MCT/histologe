@@ -14,16 +14,6 @@
             <div class="fr-skiplinks">
               <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#list-signalements" aria-label="Passer directement à la liste des signalements">Passer directement à la liste des signalements</a>
             </div>
-            <!--
-            <SignalementViewFilters
-                :shared-props="sharedProps"
-                @change="handleFilters"
-                @changeTerritory="handleTerritoryChange"
-                @clickReset="handleClickReset"
-                :layout="'horizontal'"
-                :viewType="'list'"
-            />
-            -->
           </div>
         </div>
       </div>
@@ -50,15 +40,16 @@
 import { defineComponent } from 'vue'
 import { store } from './store'
 import { requests } from './requests'
-import SignalementViewFilters from './components/SignalementViewFilters.vue'
-import { handleQueryParameter, handleSettings, handleTerritoryChange, handleFilters, addQueryParameter, buildUrl, clearScreen } from './utils/signalementUtils'
+import { /*handleQueryParameter, */handleSettings, handleTerritoryChange, /*handleFilters,*/ addQueryParameter/*, buildUrl, clearScreen*/ } from './utils/appUtils'
+
+import AddressesHistoryHeader from './components/AddressesHistoryHeader.vue'
 
 const initElements:any = document.querySelector('#app-addresses-history-view')
 
 export default defineComponent({
   name: 'TheAddressesHistoryApp',
   components: {
-    SignalementViewFilters,
+    AddressesHistoryHeader,
   },
   data () {
     return {
@@ -85,10 +76,10 @@ export default defineComponent({
         this.sharedProps.ajaxurlExportCsv = initElements.dataset.ajaxurlExportCsv
         this.sharedProps.platformName = initElements.dataset.platformName
         if (!reset) {
-          handleQueryParameter(this)
+          // handleQueryParameter(this)
         }
 
-        buildUrl(this, initElements.dataset.ajaxurl)
+        // buildUrl(this, initElements.dataset.ajaxurl)
         requests.getSettings(this.handleSettings)
         // requests.getSignalements(this.handleSignalements, { signal: this.abortRequest?.signal })
       } else {
@@ -105,16 +96,16 @@ export default defineComponent({
       this.init(true)
     },
     handlePageChange (pageNumber: number) {
-      clearScreen(this)
+      // clearScreen(this)
       const url = new URL(window.location.toString())
       url.searchParams.set('page', pageNumber.toString())
       window.history.replaceState({}, '', url)
       addQueryParameter(this, 'page', pageNumber.toString())
-      buildUrl(this, initElements.dataset.ajaxurl)
+      // buildUrl(this, initElements.dataset.ajaxurl)
       // requests.getSignalements(this.handleSignalements)
     },
     handleFilters () {
-      handleFilters(this, initElements.dataset.ajaxurl)
+      // handleFilters(this, initElements.dataset.ajaxurl)
     },
     handleViewChange (pageName: string) {
       this.sharedState.viewMode = pageName

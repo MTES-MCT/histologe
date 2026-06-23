@@ -1,6 +1,6 @@
-import { QueryParameter } from './interfaces/queryParameter'
+import { QueryParameter } from '../common/interfaces/queryParameter'
 import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
-import SearchInterfaceSelectOption from './interfaces/SearchInterfaceSelectOption'
+import SearchInterfaceSelectOption from '../common/interfaces/SearchInterfaceSelectOption'
 
 export const store = {
   state: {
