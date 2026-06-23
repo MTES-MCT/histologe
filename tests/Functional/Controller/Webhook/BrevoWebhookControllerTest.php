@@ -7,12 +7,16 @@ use App\Entity\User;
 use App\Repository\EmailDeliveryIssueRepository;
 use App\Utils\Sanitizer;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Sentry\SentrySdk;
+use Sentry\State\HubInterface;
+use Sentry\State\Scope;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class BrevoWebhookControllerTest extends WebTestCase
 {
     private ?string $originalBrevoAllowedIps = null;
+    private ?HubInterface $originalSentryHub = null;
 
     protected function setUp(): void
     {
@@ -27,6 +31,11 @@ class BrevoWebhookControllerTest extends WebTestCase
 
     protected function tearDown(): void
     {
+        if (null !== $this->originalSentryHub) {
+            SentrySdk::setCurrentHub($this->originalSentryHub);
+            $this->originalSentryHub = null;
+        }
+
         if (null !== $this->originalBrevoAllowedIps) {
             putenv('BREVO_ALLOWED_IPS='.$this->originalBrevoAllowedIps);
             $_ENV['BREVO_ALLOWED_IPS'] = $this->originalBrevoAllowedIps;
@@ -183,6 +192,69 @@ class BrevoWebhookControllerTest extends WebTestCase
             'expectDeliveryIssue' => false,
             'expectedPayload' => null,
         ];
+    }
+
+    public function testHandleWebhookTemplateDisabledCapturesSentryFatal(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $container = static::getContainer();
+
+        $this->originalSentryHub = SentrySdk::getCurrentHub();
+        $mockHub = $this->createMock(HubInterface::class);
+        $mockHub->method('withScope')->willReturnCallback(static function (callable $callback): void {
+            $callback(new Scope());
+        });
+        $mockHub->expects($this->once())->method('captureMessage');
+        SentrySdk::setCurrentHub($mockHub);
+
+        $payload = [
+            'event' => 'error',
+            'email' => 'baptiste@yopmail.com',
+            'reason' => 'template is disabled',
+            'template_id' => 287,
+        ];
+
+        $client->request(
+            'POST',
+            '/webhook/brevo',
+            [],
+            [],
+            ['REMOTE_ADDR' => '127.0.0.1', 'CONTENT_TYPE' => 'application/json'],
+            (string) json_encode($payload)
+        );
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+
+        $issue = $container->get(EmailDeliveryIssueRepository::class)->findOneBy(['email' => 'baptiste@yopmail.com']);
+        $this->assertNull($issue);
+    }
+
+    public function testHandleWebhookOtherErrorDoesNotCaptureSentry(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        $this->originalSentryHub = SentrySdk::getCurrentHub();
+        $mockHub = $this->createMock(HubInterface::class);
+        $mockHub->expects($this->never())->method('captureMessage');
+        SentrySdk::setCurrentHub($mockHub);
+
+        $client->request(
+            'POST',
+            '/webhook/brevo',
+            [],
+            [],
+            ['REMOTE_ADDR' => '127.0.0.1', 'CONTENT_TYPE' => 'application/json'],
+            (string) json_encode([
+                'event' => 'error',
+                'email' => 'baptiste@yopmail.com',
+                'reason' => 'smtp error',
+                'template_id' => 287,
+            ])
+        );
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
     public function testArchivedUsersWithSameEmailPrefixCreatesDeliveryIssue(): void

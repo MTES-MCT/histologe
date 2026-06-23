@@ -11,6 +11,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Sentry\Severity;
 use Sentry\State\Scope;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,8 +40,11 @@ class BrevoWebhookController extends AbstractController
     }
 
     #[Route('/webhook/brevo', name: 'webhook_brevo', methods: ['POST'])]
-    public function handle(EmailDeliveryIssueRepository $emailDeliveryIssueRepository, Request $request): Response
-    {
+    public function handle(
+        EmailDeliveryIssueRepository $emailDeliveryIssueRepository,
+        Request $request,
+        LoggerInterface $logger,
+    ): Response {
         $clientIp = $request->getClientIp();
         if (!$this->isAllowedIp($clientIp)) {
             return new Response('Forbidden', Response::HTTP_FORBIDDEN);
@@ -55,26 +59,43 @@ class BrevoWebhookController extends AbstractController
 
         $isDeliveryFailure = BrevoEvent::isErrorEvent($event);
 
-        if (!$this->emailExistsInSystem($email)) {
-            \Sentry\configureScope(static function (Scope $scope) use ($email, $payload): void {
-                $scope->setTag('email_recipient', $email);
-                $scope->setExtra('brevo_payload', $payload);
-            });
+        if ($isDeliveryFailure) {
+            if ('template is disabled' === ($payload['reason'] ?? null)) {
+                $message = '[BREVO] Template désactivé — template_id: '.($payload['template_id'] ?? 'unknown');
+                \Sentry\withScope(static function (Scope $scope) use ($payload): void {
+                    $scope->setLevel(Severity::fatal());
+                    $scope->setTag('brevo_error', 'template_disabled');
+                    $scope->setExtra('template_id', $payload['template_id'] ?? 'unknown');
+                    $scope->setExtra('brevo_payload', $payload);
+                    \Sentry\captureMessage(
+                        '[BREVO] Template désactivé — template_id: '.($payload['template_id'] ?? 'unknown'),
+                        Severity::fatal()
+                    );
+                });
+                $logger->error($message);
 
-            $severity = match ($event) {
-                BrevoEvent::BLOCKED->value => new Severity(Severity::FATAL),
-                BrevoEvent::HARD_BOUNCE, BrevoEvent::SOFT_BOUNCE, BrevoEvent::SPAM, BrevoEvent::INVALID_EMAIL, BrevoEvent::ERROR => new Severity(Severity::ERROR),
-                default => null,
-            };
-
-            if ($severity) {
-                \Sentry\captureMessage("[BREVO] Email: {$event}", $severity);
+                return new Response('OK', Response::HTTP_OK);
             }
 
-            return new Response('OK', Response::HTTP_OK);
-        }
+            if (!$this->emailExistsInSystem($email)) {
+                \Sentry\configureScope(static function (Scope $scope) use ($email, $payload): void {
+                    $scope->setTag('email_recipient', $email);
+                    $scope->setExtra('brevo_payload', $payload);
+                });
 
-        if ($isDeliveryFailure) {
+                $severity = match ($event) {
+                    BrevoEvent::BLOCKED->value => new Severity(Severity::FATAL),
+                    BrevoEvent::HARD_BOUNCE, BrevoEvent::SOFT_BOUNCE, BrevoEvent::SPAM, BrevoEvent::INVALID_EMAIL, BrevoEvent::ERROR, BrevoEvent::UNSUBSCRIBED => new Severity(Severity::ERROR),
+                    default => null,
+                };
+
+                if ($severity) {
+                    \Sentry\captureMessage("[BREVO] Email: {$event}", $severity);
+                }
+
+                return new Response('OK', Response::HTTP_OK);
+            }
+
             $emailDeliveryIssue = $emailDeliveryIssueRepository->findOneBy(['email' => $email]) ?? new EmailDeliveryIssue();
             $emailDeliveryIssue
                 ->setEmail($email)
