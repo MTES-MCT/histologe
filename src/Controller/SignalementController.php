@@ -10,6 +10,7 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\File;
 use App\Entity\Signalement;
@@ -17,6 +18,7 @@ use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
 use App\Entity\TiersInvitation;
 use App\Event\SuiviViewedEvent;
+use App\Factory\SuiviDelayedFactory;
 use App\Form\BailleurClotureProcedureType;
 use App\Form\DemandeLienSignalementType;
 use App\Form\MessageUsagerType;
@@ -26,7 +28,6 @@ use App\Form\UsagerCoordonneesTiersType;
 use App\Form\UsagerPoursuivreProcedureType;
 use App\Manager\SignalementDraftManager;
 use App\Manager\SuiviManager;
-use App\Manager\UserManager;
 use App\Repository\CommuneRepository;
 use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
@@ -48,6 +49,7 @@ use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementDuplicateChecker;
+use App\Service\Signalement\SignalementUpdateService;
 use App\Service\Signalement\Suivi\SuiviCategoryMapper;
 use App\Service\Signalement\Suivi\SuiviSeenMarker;
 use App\Service\UploadHandlerService;
@@ -665,7 +667,7 @@ class SignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         FileRepository $fileRepository,
-        SuiviManager $suiviManager,
+        SuiviDelayedFactory $suiviDelayedFactory,
         Request $request,
         EntityManagerInterface $entityManager,
     ): Response {
@@ -697,18 +699,13 @@ class SignalementController extends AbstractController
                         }
                     }
                     if ($filesToAttach) {
-                        $descriptionDetails = 'un document.';
-                        if (\count($filesToAttach) > 1) {
-                            $descriptionDetails = 'des documents.';
-                        }
-                        $suiviManager->createSuivi(
-                            signalement: $signalement,
-                            description: UserManager::OCCUPANT === $signalementUser->getType() ? 'L\'occupant a ajouté '.$descriptionDetails : 'Le déclarant a ajouté '.$descriptionDetails,
-                            category: SuiviCategory::MESSAGE_USAGER,
-                            user: $signalementUser->getUser(),
-                            isVisibleForUsager: true,
-                            files: $filesToAttach
+                        $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
+                            $signalementUser->getUser(),
+                            $signalement,
+                            SuiviDelayedType::FO_ADD_DOCUMENTS,
+                            $filesToAttach
                         );
+                        $entityManager->persist($suiviDelayed);
                         $entityManager->flush();
                         $this->addFlash('success', ['title' => 'Documents ajoutés', 'message' => 'Vos documents ont bien été enregistrés.']);
                     }
@@ -1057,8 +1054,7 @@ class SignalementController extends AbstractController
     public function signalementBailleurPrevenu(
         string $code,
         SignalementRepository $signalementRepository,
-        SuiviManager $suiviManager,
-        EntityManagerInterface $entityManager,
+        SignalementUpdateService $signalementUpdateService,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement);
@@ -1079,19 +1075,8 @@ class SignalementController extends AbstractController
             return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
         }
 
-        $user = $signalementUser->getUser();
-
-        $description = $user->getNomComplet(true).' a indiqué que le bailleur a été prévenu.';
-
-        $suiviManager->createSuivi(
-            signalement: $signalement,
-            description: $description,
-            category: SuiviCategory::MESSAGE_USAGER,
-            user: $user,
-            isVisibleForUsager: true,
-        );
         $signalement->setIsProprioAverti(true);
-        $entityManager->flush();
+        $signalementUpdateService->saveChangesAndCreateSuivi($signalement, $signalementUser);
 
         $this->addFlash('success', ['title' => 'Bailleur prévenu',
             'message' => 'Votre modification a bien été prise en compte.',
@@ -1106,7 +1091,7 @@ class SignalementController extends AbstractController
         Request $request,
         SignalementRepository $signalementRepository,
         TiersInvitationRepository $tiersInvitationRepository,
-        SuiviManager $suiviManager,
+        SuiviDelayedFactory $suiviDelayedFactory,
         NotificationMailerRegistry $notificationMailerRegistry,
         EntityManagerInterface $entityManager,
     ): Response {
@@ -1136,7 +1121,21 @@ class SignalementController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($invitation);
 
-            $suiviManager->addInviteSuiviFromFo($invitation);
+            /** @var SignalementUser $signalementUser */
+            $signalementUser = $this->getUser();
+
+            $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
+                user: $signalementUser->getUser(),
+                signalement: $invitation->getSignalement(),
+                type: SuiviDelayedType::FO_INVITATION_SENT,
+                customChanges: [
+                    'Nom' => $invitation->getLastname(),
+                    'Prénom' => $invitation->getFirstname(),
+                    'Email' => $invitation->getEmail(),
+                    'Téléphone' => $invitation->getTelephone(),
+                ]
+            );
+            $entityManager->persist($suiviDelayed);
             $entityManager->flush();
 
             $notificationMailerRegistry->send(

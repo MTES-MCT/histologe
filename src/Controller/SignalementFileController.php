@@ -3,7 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Enum\DocumentType;
-use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviDelayedType;
+use App\Factory\SuiviDelayedFactory;
 use App\Manager\SuiviManager;
 use App\Messenger\Message\PdfExportMessage;
 use App\Repository\FileRepository;
@@ -139,6 +140,7 @@ class SignalementFileController extends AbstractController
         FileRepository $fileRepository,
         UploadHandlerService $uploadHandlerService,
         SuiviManager $suiviManager,
+        SuiviDelayedFactory $suiviDelayedFactory,
         SignalementRepository $signalementRepository,
         EntityManagerInterface $entityManager,
     ): Response {
@@ -154,17 +156,13 @@ class SignalementFileController extends AbstractController
         if (null === $file) {
             $this->addFlash('error', 'Ce fichier n\'existe plus');
         } elseif ($this->isCsrfTokenValid('signalement_delete_file_'.$signalement->getId(), (string) $request->request->get('_token'))) {
-            $filename = $file->getFilename();
             if ($uploadHandlerService->deleteFile($file)) {
-                $description = $file->isTypeDocument() ? 'Document supprimé ' : 'Photo supprimée ';
-                $description .= 'par l\'usager :';
-                $description .= '<ul><li>'.$filename.'</li></ul>';
-                $suiviManager->createSuivi(
-                    signalement: $signalement,
-                    description: $description,
-                    category: SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
+                $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
                     user: $signalementUser->getUser(),
+                    signalement: $signalement,
+                    type: SuiviDelayedType::FO_FILE_DELETED,
                 );
+                $entityManager->persist($suiviDelayed);
                 $entityManager->flush();
                 $title = $file->isTypeDocument() ? 'Document supprimé' : 'Photo supprimée';
                 $message = $file->isTypeDocument() ? 'Le document a bien été supprimé.' : 'La photo a bien été supprimée.';

@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Security\User\SignalementUser;
@@ -14,16 +15,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 #[AsEntityListener(event: Events::preUpdate, method: 'preUpdate', entity: Signalement::class)]
 class SignalementUpdatedListener
 {
-    public const string EDIT_ADRESSE_LOGEMENT = 'adresse_logement';
     private const string DATE_FORMAT = 'd/m/Y';
-    public const string EDIT_COORDONNEES_OCCUPANT = 'coordonnees_occupant';
-    public const string EDIT_COORDONNEES_BAILLEUR = 'coordonnees_bailleur';
-    public const string EDIT_COORDONNEES_AGENCE = 'coordonnees_agence';
-    public const string EDIT_COORDONNEES_SYNDIC = 'coordonnees_syndic';
-    public const string EDIT_INFORMATIONS_ASSURANCE = 'informations_assurance';
-    public const string EDIT_SITUATION_FOYER = 'situation_foyer';
-    public const string EDIT_INFORMATIONS_GENERALES = 'informations_generales';
-    public const string EDIT_TYPE_COMPOSITION = 'type_composition';
 
     /**
      * Définition des champs suivis.
@@ -31,8 +23,7 @@ class SignalementUpdatedListener
      * - Champs JSON : "<jsonField>.<jsonProperty>" => "label".
      */
     public const array EDIT_SECTIONS = [
-        self::EDIT_ADRESSE_LOGEMENT => [
-            'label' => 'L\'adresse du logement',
+        SuiviDelayedType::FO_EDIT_ADRESSE_LOGEMENT->value => [
             'fields' => [
                 'etageOccupant' => 'Étage',
                 'escalierOccupant' => 'Escalier',
@@ -40,8 +31,7 @@ class SignalementUpdatedListener
                 'adresseAutreOccupant' => 'Autre',
             ],
         ],
-        self::EDIT_COORDONNEES_OCCUPANT => [
-            'label' => 'Les coordonnées de l\'occupant',
+        SuiviDelayedType::FO_EDIT_COORDONNEES_OCCUPANT->value => [
             'fields' => [
                 'civiliteOccupant' => 'Civilité',
                 'nomOccupant' => 'Nom',
@@ -50,8 +40,7 @@ class SignalementUpdatedListener
                 'telOccupantSecondaire' => 'Téléphone secondaire',
             ],
         ],
-        self::EDIT_COORDONNEES_BAILLEUR => [
-            'label' => 'Les coordonnées du bailleur',
+        SuiviDelayedType::FO_EDIT_COORDONNEES_BAILLEUR->value => [
             'fields' => [
                 'nomProprio' => 'Nom',
                 'prenomProprio' => 'Prénom',
@@ -68,8 +57,7 @@ class SignalementUpdatedListener
                 'informationProcedure.info_procedure_bail_numero' => 'Numéro de réclamation fourni par le bailleur',
             ],
         ],
-        self::EDIT_COORDONNEES_AGENCE => [
-            'label' => 'Les coordonnées de l\'agence',
+        SuiviDelayedType::FO_EDIT_COORDONNEES_AGENCE->value => [
             'fields' => [
                 'denominationAgence' => 'Dénomination',
                 'nomAgence' => 'Nom',
@@ -82,8 +70,7 @@ class SignalementUpdatedListener
                 'villeAgence' => 'Ville',
             ],
         ],
-        self::EDIT_COORDONNEES_SYNDIC => [
-            'label' => 'Les coordonnées du syndic',
+        SuiviDelayedType::FO_EDIT_COORDONNEES_SYNDIC->value => [
             'fields' => [
                 'denominationSyndic' => 'Dénomination',
                 'nomSyndic' => 'Nom',
@@ -92,15 +79,13 @@ class SignalementUpdatedListener
                 'telSyndicSecondaire' => 'Téléphone secondaire',
             ],
         ],
-        self::EDIT_INFORMATIONS_ASSURANCE => [
-            'label' => 'Les informations d\'assurance',
+        SuiviDelayedType::FO_EDIT_INFORMATIONS_ASSURANCE->value => [
             'fields' => [
                 'informationProcedure.info_procedure_reponse_assurance' => 'Réponse de l\'assurance',
                 'informationProcedure.info_procedure_assurance_contactee' => 'Assurance contactée',
             ],
         ],
-        self::EDIT_SITUATION_FOYER => [
-            'label' => 'La situation du foyer',
+        SuiviDelayedType::FO_EDIT_SITUATION_FOYER->value => [
             'fields' => [
                 'isLogementSocial' => 'Logement social',
                 'isRelogement' => 'Relogement',
@@ -121,8 +106,7 @@ class SignalementUpdatedListener
                 'informationProcedure.info_procedure_depart_apres_travaux' => 'Rester si travaux faits',
             ],
         ],
-        self::EDIT_INFORMATIONS_GENERALES => [
-            'label' => 'Les informations générales',
+        SuiviDelayedType::FO_EDIT_INFORMATIONS_GENERALES->value => [
             'fields' => [
                 'dateEntree' => 'Date d\'entrée dans le logement',
                 'nbOccupantsLogement' => 'Nombre de personnes occupant le logement',
@@ -141,8 +125,7 @@ class SignalementUpdatedListener
                 'informationComplementaire.informations_complementaires_logement_annee_construction' => 'Année de construction du logement',
             ],
         ],
-        self::EDIT_TYPE_COMPOSITION => [
-            'label' => 'Le type et la composition du logement',
+        SuiviDelayedType::FO_EDIT_TYPE_COMPOSITION->value => [
             'fields' => [
                 'natureLogement' => 'Nature du logement',
                 'superficie' => 'Superficie du logement',
@@ -218,10 +201,7 @@ class SignalementUpdatedListener
                         $new = $new ? 'Oui' : 'Non';
                     }
 
-                    $fieldChanges[$field] = [
-                        'label' => $label,
-                        'new' => $new,
-                    ];
+                    $fieldChanges[$label] = $new;
 
                     continue;
                 }
@@ -250,18 +230,16 @@ class SignalementUpdatedListener
                 }
 
                 if (array_key_exists('new', $diffProperty)) {
-                    $fieldChanges[$field] = [
-                        'label' => $label,
-                        'new' => $diffProperty['new'],
-                    ];
+                    $fieldChanges[$label] = $diffProperty['new'];
                 }
             }
 
             if ([] !== $fieldChanges) {
-                $changes[$sectionKey] = [
-                    'label' => $sectionDefinition['label'],
+                $changes = [
+                    'suiviDelayedType' => $sectionKey,
                     'fieldChanges' => $fieldChanges,
                 ];
+                break;
             }
         }
 
