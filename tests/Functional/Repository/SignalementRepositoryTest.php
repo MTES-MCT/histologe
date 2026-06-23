@@ -6,6 +6,7 @@ use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
@@ -344,13 +345,13 @@ class SignalementRepositoryTest extends KernelTestCase
         $this->assertCount(1, $signalements);
     }
 
-    public function testFindInjonctionToRemind(): void
+    public function testFindInjonctionToRemindBailleur(): void
     {
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
         $beforeDate = new \DateTimeImmutable('-1 month');
-        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate);
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'bailleur');
         $this->assertCount(0, $signalements);
 
         $container = static::getContainer();
@@ -359,6 +360,109 @@ class SignalementRepositoryTest extends KernelTestCase
 
         $beforeDate = $mockClock->now()->modify('-1 month');
         $signalements = $signalementRepository->findInjonctionBeforeDateWithoutAnswer($beforeDate);
+        $this->assertCount(1, $signalements);
+    }
+
+    public function testFindInjonctionToRemindUsager(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        $beforeDate = new \DateTimeImmutable('-1 month');
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'usager');
+        $this->assertCount(0, $signalements);
+
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
+
+        $beforeDate = $mockClock->now()->modify('-1 month');
+        $signalements = $signalementRepository->findInjonctionBeforeDateWithoutAnswer($beforeDate);
+        $this->assertCount(1, $signalements);
+    }
+
+    public function testFindInjonctionToRemindBailleurWithMessage(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        // Vérification initiale : le suivi bailleur fixture récent de 2025-000000000012 bloque (beforeDate=now-1mois)
+        $beforeDate = new \DateTimeImmutable('-1 month');
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'bailleur');
+        $this->assertCount(0, $signalements);
+
+        // MockClock doit être set avant flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
+
+        // À beforeDate=now, le suivi bailleur fixture de 2025-000000000012 (créé avant now) ne bloque plus → 1 rappel
+        $beforeDate = $mockClock->now()->modify('-1 month'); // = now
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'bailleur');
+        $this->assertCount(1, $signalements);
+
+        // Le bailleur de 2025-000000000012 envoie un suivi à +2 semaines : le timer repart de cette date
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+
+        $suivi = (new Suivi())
+            ->setSignalement($signalement)
+            ->setDescription('On a tout réparé !')
+            ->setCategory(SuiviCategory::MESSAGE_BAILLEUR)
+            ->setIsVisibleForBailleur(true)
+            ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::MESSAGE_BAILLEUR))
+            ->setCreatedAt(new \DateTimeImmutable('+2 weeks'));
+        $this->entityManager->persist($suivi);
+        $this->entityManager->flush();
+
+        // À beforeDate=now : le nouveau suivi bailleur (à +2 semaines) est plus récent → pas de rappel
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'bailleur');
+        $this->assertCount(0, $signalements);
+
+        // À +7 semaines : beforeDate = +3 semaines, suivi à +2 semaines est antérieur → rappel attendu
+        $beforeDate = (new \DateTimeImmutable('+7 weeks'))->modify('-1 month');
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'bailleur');
+        $this->assertCount(1, $signalements);
+    }
+
+    public function testFindInjonctionToRemindUsagerWithMessage(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        // Vérification initiale : le suivi fixture récent de 2025-000000000012 bloque (beforeDate=now-1mois)
+        $beforeDate = new \DateTimeImmutable('-1 month');
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'usager');
+        $this->assertCount(0, $signalements);
+
+        // MockClock doit être set avant flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
+
+        // À beforeDate=now, le suivi fixture de 2025-000000000012 (créé avant now) ne bloque plus → 1 rappel attendu
+        $beforeDate = $mockClock->now()->modify('-1 month'); // = now
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'usager');
+        $this->assertCount(1, $signalements);
+
+        // L'usager de 2025-000000000012 envoie un suivi à +2 semaines : le timer repart de cette date
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+
+        $suivi = (new Suivi())
+            ->setSignalement($signalement)
+            ->setDescription('Les travaux avancent bien.')
+            ->setCategory(SuiviCategory::MESSAGE_USAGER)
+            ->setType(Suivi::TYPE_USAGER)
+            ->setCreatedAt(new \DateTimeImmutable('+2 weeks'));
+        $this->entityManager->persist($suivi);
+        $this->entityManager->flush();
+
+        // À beforeDate=now : le nouveau suivi usager (à +2 semaines) est plus récent → pas de rappel
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'usager');
+        $this->assertCount(0, $signalements);
+
+        // À +7 semaines : beforeDate = +3 semaines, suivi à +2 semaines est antérieur → rappel attendu
+        $beforeDate = (new \DateTimeImmutable('+7 weeks'))->modify('-1 month');
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'usager');
         $this->assertCount(1, $signalements);
     }
 

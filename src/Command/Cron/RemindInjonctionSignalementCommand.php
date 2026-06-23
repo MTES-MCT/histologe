@@ -103,13 +103,23 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
     private function remindSuiviTravaux(SymfonyStyle $io, OutputInterface $output): void
     {
         $beforeDate = $this->clock->now()->modify('-'.$this->reminderSuiviTravauxThreshold);
-        $signalements = $this->signalementRepository->findInjonctionToRemind($beforeDate);
-        foreach ($signalements as $signalement) {
+        $signalementsLastMessageBailleur = $this->signalementRepository->findInjonctionToRemind($beforeDate, 'bailleur');
+        foreach ($signalementsLastMessageBailleur as $signalement) {
             if (!empty($signalement->getMailProprio())) {
-                // Pour l'instant, on n'envoie pas de suivi : on envoie un mail simple
                 $this->notificationAndMailSender->sendReminderToBailleur($signalement);
             }
 
+            $description = 'Relance envoyée au bailleur pour demander un suivi sur les travaux.';
+            $this->suiviManager->createSuivi(
+                signalement: $signalement,
+                description: $description,
+                category: SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_BAILLEUR,
+            );
+
+            $output->writeln(sprintf('#%s reminded', $signalement->getUuid()));
+        }
+        $signalementsLastMessageUsager = $this->signalementRepository->findInjonctionToRemind($beforeDate, 'usager');
+        foreach ($signalementsLastMessageUsager as $signalement) {
             // Pour l'usager, on crée un suivi
             $description = 'Important - Point d\'avancement mensuel : ';
             $description .= 'Merci d\'indiquer si des démarches ont été entamées par votre bailleur (devis reçus, rdv artisans, travaux débutés, aucune avancée...).';
@@ -124,14 +134,26 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         }
 
         $feedbackMsg = '';
-        $countSignalement = count($signalements);
-        if (count($signalements) > 0) {
-            $feedbackMsg = \sprintf(
-                '%s rappels faits pour des signalements avec suivi travaux.',
-                $countSignalement
+        $countSignalementLastMessageBailleur = count($signalementsLastMessageBailleur);
+        if ($countSignalementLastMessageBailleur > 0) {
+            $feedbackMsgBailleur = \sprintf(
+                '%s rappels faits pour les bailleurs pour des signalements avec suivi travaux.',
+                $countSignalementLastMessageBailleur
             );
-            $io->success($feedbackMsg);
-        } else {
+            $io->success($feedbackMsgBailleur);
+            $feedbackMsg = $feedbackMsgBailleur;
+        }
+        $countSignalementLastMessageUsager = count($signalementsLastMessageUsager);
+        if ($countSignalementLastMessageUsager > 0) {
+            $feedbackMsgUsager = \sprintf(
+                '%s rappels faits pour les usagers pour des signalements avec suivi travaux.',
+                $countSignalementLastMessageUsager
+            );
+            $io->success($feedbackMsgUsager);
+            $feedbackMsg .= ' '.$feedbackMsgUsager;
+        }
+
+        if (0 === $countSignalementLastMessageBailleur && 0 === $countSignalementLastMessageUsager) {
             $feedbackMsg = 'Aucun rappel n\'a été envoyé pour le suivi.';
             $io->warning($feedbackMsg);
         }
