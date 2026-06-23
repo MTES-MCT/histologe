@@ -148,15 +148,23 @@ class ForceCloturesDossiersCommand extends Command
     /** @param array<string> $refs */
     private function forceCloturesDossiers(SymfonyStyle $io, array $refs, MotifCloture $motif): void
     {
+        // Gestion volontaire dossier par dossier pour avoir le bilan à la fin à transmettre
         foreach ($refs as $ref) {
             $signalement = $this->signalementRepository->findOneBy(['reference' => $ref, 'territory' => $this->territory]);
             if (!$signalement) {
-                $io->error("Signalement with reference {$ref} not found.");
+                $io->error("Aucun signalement dans le territoire {$this->territory->getZip()} avec la référence {$ref}.");
                 continue;
             }
 
+            // Pas utile de le faire si le signalement n'est pas actif
             if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
-                $io->warning("Signalement with reference {$ref} is not active.");
+                $io->warning("Le signalement avec la référence {$ref} n'est pas actif.");
+                continue;
+            }
+
+            // Pas utile de le faire si il y a des suivis partenaires qui ont moins d'un an
+            if ($this->suiviManager->hasSuiviPartnerNewerThan($signalement, new \DateTimeImmutable('-1 year'))) {
+                $io->warning("Le signalement avec la référence {$ref} a des suivis partenaires de moins d'un an.");
                 continue;
             }
 
@@ -179,12 +187,13 @@ class ForceCloturesDossiersCommand extends Command
                 category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
                 partner: $this->adminUserPartner,
                 user: $this->adminUser,
+                isVisibleForUsager: true,
             );
             $signalement->addSuivi($suivi);
 
             $this->affectationManager->closeBySignalement($signalement, $motif, $this->adminUser, $this->adminUserPartner);
 
-            $io->success("Signalement with reference {$ref} has been closed with motif {$motif->label()}.");
+            $io->success("Le signalement avec la référence {$ref} a été fermé avec le motif {$motif->label()}.");
         }
 
         $this->entityManager->flush();
