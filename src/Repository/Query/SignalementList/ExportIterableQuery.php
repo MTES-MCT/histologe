@@ -253,7 +253,7 @@ class ExportIterableQuery
         $result = $this->em->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('s.id')
-            ->leftJoin('s.files', 'photos', Join::ON, 'photos.extension IN (:photo_extensions)')
+            ->leftJoin('s.files', 'photos', Join::WITH, 'photos.extension IN (:photo_extensions)')
             ->where('s.id IN (:signalementIds)')
             ->setParameter('signalementIds', $signalementIds)
             ->setParameter('photo_extensions', File::RESIZABLE_EXTENSION)
