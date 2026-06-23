@@ -68,7 +68,7 @@ import { store } from '../store'
 import { buildBadge } from '../services/badgeFilterLabelBuilder'
 import { sanitizeFilters } from '../utils/signalementUtils'
 import { requests } from '../requests'
-import SearchInterfaceSelectOption from '../interfaces/SearchInterfaceSelectOption'
+import SearchInterfaceSelectOption from '../../common/interfaces/SearchInterfaceSelectOption'
 
 export default defineComponent({
   name: 'SignalementViewModalSaveSearch',

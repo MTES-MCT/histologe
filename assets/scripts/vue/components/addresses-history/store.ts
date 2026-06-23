@@ -1,4 +1,4 @@
-// import { QueryParameter } from './interfaces/queryParameter'
+import { QueryParameter } from '../common/interfaces/queryParameter'
 import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 
 export const store = {
@@ -18,7 +18,7 @@ export const store = {
     */
     input: {
       order: 'reference-DESC',
-      // queryParameters: [] as QueryParameter[],
+      queryParameters: [] as QueryParameter[],
       filters: {
         territoire: undefined,
         adresse: undefined,
