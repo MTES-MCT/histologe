@@ -7,7 +7,6 @@ use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
-use App\Entity\Signalement;
 use App\Form\SignalementeEditFO\AdresseLogementType;
 use App\Form\SignalementeEditFO\CoordonneesAgenceType;
 use App\Form\SignalementeEditFO\CoordonneesBailleurType;
@@ -17,7 +16,6 @@ use App\Form\SignalementeEditFO\InformationsGeneralesType;
 use App\Form\SignalementeEditFO\ProcedureAssuranceType;
 use App\Form\SignalementeEditFO\TypeCompositionType;
 use App\Form\SignalementeEditFO\UsagerSituationFoyerType;
-use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use App\Security\Voter\SignalementFoVoter;
@@ -29,6 +27,7 @@ use App\Service\MessageHelper;
 use App\Service\RequestDataExtractor;
 use App\Service\Security\CguTiersChecker;
 use App\Service\Signalement\InputValue\SituationFoyerProcessor;
+use App\Service\Signalement\SignalementUpdateService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -44,8 +43,7 @@ class SignalementEditController extends AbstractController
 
     public function __construct(
         private readonly CguTiersChecker $cguTiersChecker,
-        private readonly SuiviManager $suiviManager,
-        private readonly EntityManagerInterface $entityManager,
+        private readonly SignalementUpdateService $signalementUpdateService,
     ) {
     }
 
@@ -68,7 +66,7 @@ class SignalementEditController extends AbstractController
         $formAdresseLogement = $this->createForm(AdresseLogementType::class, $signalement);
         $formAdresseLogement->handleRequest($request);
         if ($formAdresseLogement->isSubmitted() && $formAdresseLogement->isValid()) {
-            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->signalementUpdateService->saveChangesAndCreateSuivi($signalement, $signalementUser);
 
             $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'L\'adresse du logement a bien été mise à jour.']);
 
@@ -158,7 +156,7 @@ class SignalementEditController extends AbstractController
                 );
                 $msg .= ' L\'adresse e-mail sera mise à jour après validation de l\'e-mail de confirmation transmis à cette adresse.';
             }
-            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->signalementUpdateService->saveChangesAndCreateSuivi($signalement, $signalementUser);
             $this->addFlash('success', ['title' => 'Dossier complété', 'message' => $msg]);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
@@ -215,7 +213,7 @@ class SignalementEditController extends AbstractController
 
             $signalement->setInformationProcedure($informationProcedure);
 
-            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->signalementUpdateService->saveChangesAndCreateSuivi($signalement, $signalementUser);
 
             $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Les coordonnées du bailleur ont bien été mises à jour.']);
 
@@ -250,7 +248,7 @@ class SignalementEditController extends AbstractController
         $form = $this->createForm(CoordonneesAgenceType::class, $signalement);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->signalementUpdateService->saveChangesAndCreateSuivi($signalement, $signalementUser);
             $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Les coordonnées de l\'agence ont bien été mises à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
@@ -284,7 +282,7 @@ class SignalementEditController extends AbstractController
         $form = $this->createForm(CoordonneesSyndicType::class, $signalement);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->signalementUpdateService->saveChangesAndCreateSuivi($signalement, $signalementUser);
             $this->addFlash('success', ['title' => 'Dossier complété', 'message' => 'Les coordonnées du syndic ont bien été mises à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
@@ -346,7 +344,7 @@ class SignalementEditController extends AbstractController
             $signalement->setInformationComplementaire($informationComplementaire);
             $signalement->setInformationProcedure($informationProcedure);
 
-            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->signalementUpdateService->saveChangesAndCreateSuivi($signalement, $signalementUser);
             $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'La situation du foyer a bien été mise à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
@@ -379,7 +377,7 @@ class SignalementEditController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $signalement->setInformationProcedure($informationProcedure);
-            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->signalementUpdateService->saveChangesAndCreateSuivi($signalement, $signalementUser);
             $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Les informations sur l\'assurance ont bien été mises à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
@@ -430,7 +428,7 @@ class SignalementEditController extends AbstractController
                 ->setInformationsComplementairesLogementAnneeConstruction($form->get('anneeConstruction')->getData());
             $signalement->setInformationComplementaire($informationComplementaire);
 
-            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->signalementUpdateService->saveChangesAndCreateSuivi($signalement, $signalementUser);
             $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Les informations générales ont bien été mises à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
@@ -532,7 +530,7 @@ class SignalementEditController extends AbstractController
 
             $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
-            $this->saveChangesAndCreateSuivi($signalement, $signalementUser);
+            $this->signalementUpdateService->saveChangesAndCreateSuivi($signalement, $signalementUser);
             $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Le type et la composition du logement ont bien été mis à jour.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
@@ -542,18 +540,5 @@ class SignalementEditController extends AbstractController
             'signalement' => $signalement,
             'form' => $form,
         ]);
-    }
-
-    private function saveChangesAndCreateSuivi(Signalement $signalement, SignalementUser $signalementUser): void
-    {
-        // Ordre volontaire : createSuiviFromEditUsager() utilise les changements enregistrés sur Signalement en preUpdate.
-        $this->entityManager->wrapInTransaction(function () use ($signalement, $signalementUser): void {
-            $this->entityManager->flush(); /* @see SignalementUpdatedListener::preUpdate() écoute l'event dispatché par le flush() */
-            $this->suiviManager->createSuiviFromEditUsager(
-                $signalement,
-                $signalementUser,
-            );
-            $this->entityManager->flush();
-        });
     }
 }
