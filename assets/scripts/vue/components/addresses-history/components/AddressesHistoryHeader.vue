@@ -1,19 +1,17 @@
 <template>
-  <div class="fr-grid-row fr-mb-1w">
-    <div class="fr-col-12 fr-col-lg-6 fr-col-xl-8">
-        Affichage :
-        <ul class="fr-btns-group fr-btns-group--center fr-btns-group--inline-lg fr-btns-group--icon-left">
-            <li>
-                <button :class="['fr-btn', 'fr-icon-road-map-line', sharedState.viewMode === 'map' ? '' : 'fr-btn--tertiary']" type="button" @click="onChange('map')">
-                    Carte
-                </button>
-            </li>
-            <li>
-                <button :class="['fr-btn', 'fr-icon-list-unordered', sharedState.viewMode === 'list' ? '' : 'fr-btn--tertiary']" type="button" @click="onChange('list')">
-                    Liste
-                </button>
-            </li>
-        </ul>
+  <div class="fr-grid-row fr-mb-1w fr-container-sml">
+    <div class="fr-col-12 fr-col-lg-6 fr-col-xl-8 fr-grid-row fr-grid-row--middle">
+        <div class="fr-mr-4v">Affichage :</div>
+        <div class="fr-mr-2v">
+          <button :class="['fr-btn', 'fr-btn--icon-left', 'fr-icon-road-map-line', sharedState.viewMode === 'map' ? '' : 'fr-btn--tertiary']" type="button" @click="onChange('map')">
+              Carte
+          </button>
+        </div>
+        <div>
+          <button :class="['fr-btn', 'fr-btn--icon-left', 'fr-icon-list-unordered', sharedState.viewMode === 'list' ? '' : 'fr-btn--tertiary']" type="button" @click="onChange('list')">
+              Liste
+          </button>
+        </div>
     </div>
     <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4 fr-text--right">
       <a :href="canExport ? `${sharedProps.ajaxurlExportCsv}` : undefined"
