@@ -95,6 +95,13 @@ export function buildBadge (key: string, value: any): string | undefined | null 
     return 'Demande fermeture usager'
   }
 
+  if (key === 'injonction') {
+    const item = store.state.injonctionList.find(item => item.Id === value)
+    if (item != null && item !== undefined) {
+      return 'Démarche accélérée : ' + item.Text
+    }
+  }
+
   if (key === 'procedure') {
     const item = store.state.procedureList.find(item => item.Id === value)
     if (item != null && item !== undefined) {

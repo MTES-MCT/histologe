@@ -61,6 +61,8 @@ class SignalementSearchQuery
         private readonly ?string $situation = null,
         #[Assert\Choice(choices: ['logement_vacant', 'logement_occupe', 'logement_occupe_bailleur_occupant', 'logement_occupe_locataire', 'non_renseigne'], message: 'Occupation du logement invalide')]
         private readonly ?string $occupationLogement = null,
+        #[Assert\Choice(choices: ['oui', 'non'], message: 'La valeur pour la démarche accélérée est invalide')]
+        private readonly ?string $injonction = null,
 
         #[Assert\Choice(choices: [
             'non_decence_energetique',
@@ -261,6 +263,11 @@ class SignalementSearchQuery
         return $this->occupationLogement;
     }
 
+    public function getInjonction(): ?string
+    {
+        return $this->injonction;
+    }
+
     public function getProcedure(): ?string
     {
         return !empty($this->procedure) ? strtoupper($this->procedure) : null;
@@ -406,6 +413,7 @@ class SignalementSearchQuery
         $filters['typeDeclarant'] = $this->getTypeDeclarant();
         $filters['situation'] = $this->getSituation();
         $filters['occupationLogement'] = $this->getOccupationLogement();
+        $filters['injonction'] = $this->getInjonction();
         $filters['procedure'] = $this->getProcedure();
         $filters['procedureConstatee'] = $this->getProcedureConstatee();
         $filters['typeDernierSuivi'] = $this->getTypeDernierSuivi();
@@ -498,6 +506,7 @@ class SignalementSearchQuery
             enfantsM6: $params['enfantsM6'] ?? null,
             situation: $params['situation'] ?? null,
             occupationLogement: $params['occupationLogement'] ?? null,
+            injonction: $params['injonction'] ?? null,
             procedure: $params['procedure'] ?? null,
             procedureConstatee: $params['procedureConstatee'] ?? null,
             page: isset($params['page']) ? (int) $params['page'] : 1,

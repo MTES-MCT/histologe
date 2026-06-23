@@ -54,6 +54,8 @@ class Settings
     private bool $hasSignalementImported = false;
     #[Groups('settings:read')]
     private bool $isMultiTerritoire = false;
+    #[Groups('settings:read')]
+    private bool $hasInjonction = false;
     /**
      * @var array<int, mixed>
      */
@@ -84,6 +86,7 @@ class Settings
         array $tags = [],
         array $zones = [],
         bool $hasSignalementImported = false,
+        bool $hasInjonction = false,
         array $bailleursSociaux = [],
         string $avatarOrPlaceHolder = '',
         array $savedSearches = [],
@@ -100,6 +103,7 @@ class Settings
         $this->tags = $tags;
         $this->zones = $zones;
         $this->hasSignalementImported = $hasSignalementImported;
+        $this->hasInjonction = $hasInjonction;
         $this->isMultiTerritoire = $user->isMultiTerritoire();
         $this->bailleursSociaux = $bailleursSociaux;
         $this->savedSearches = $savedSearches;
@@ -184,6 +188,11 @@ class Settings
     public function getHasSignalementImported(): bool
     {
         return $this->hasSignalementImported;
+    }
+
+    public function getHasInjonction(): bool
+    {
+        return $this->hasInjonction;
     }
 
     public function getIsMultiTerritoire(): bool
