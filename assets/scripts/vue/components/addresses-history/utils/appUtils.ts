@@ -64,6 +64,19 @@ export function handleQueryParameter (context: any): any {
 }
   */
 
+export function handleAddressesShared (context: any, requestResponse: any): any {
+  if (typeof requestResponse === 'string' && requestResponse === 'error') {
+    context.sharedState.hasErrorLoading = true
+  } else {
+    context.sharedState.hasErrorLoading = false
+    context.sharedState.addresses.filters = requestResponse.filters
+    context.sharedState.addresses.list = requestResponse.list
+    context.sharedState.addresses.pagination = requestResponse.pagination
+    context.sharedState.addresses.zoneAreas = requestResponse.zoneAreas
+    context.sharedState.loadingList = false
+  }
+}
+
 export function handleSettings (context: any, requestResponse: any): any {
   context.sharedState.user.isAdmin = requestResponse.roleLabel === 'Super Admin'
   context.sharedState.user.isResponsableTerritoire = requestResponse.roleLabel === 'Resp. Territoire'
@@ -114,10 +127,8 @@ export function handleTerritoryChange (context: any, value: any): any {
   requests.getSettings(context.handleSettings)
 }
 
-/*
-export function handleFilters (context: any, ajaxurl: string): any {
-  context.sharedState.selectedSavedSearchId = undefined
-  clearScreen(context)
+export function handleFilters (context: any): any {
+  // clearScreen(context)
 
   if (context.abortRequest !== null) {
     context.abortRequest?.abort()
@@ -125,32 +136,15 @@ export function handleFilters (context: any, ajaxurl: string): any {
 
   context.abortRequest = new AbortController()
 
-  const url = new URL(window.location.toString())
+  const url = new URL(globalThis.location.toString())
   url.search = ''
   context.sharedState.input.queryParameters = []
   for (const [key, value] of Object.entries(context.sharedState.input.filters)) {
     if (variableTester.isNotEmpty(value)) {
-      if (key === 'dateDepot' || key === 'dateDernierSuivi') {
-        const [dateDebut, dateFin] = handleDateParameter(context, key, value)
-        url.searchParams.set(`${key}Debut`, dateDebut)
-        url.searchParams.set(`${key}Fin`, dateFin)
-        url.searchParams.delete(key)
-      } else if (Array.isArray(value) && (['partenaires', 'communes', 'etiquettes', 'zones'].includes(key))) {
+      if (Array.isArray(value) && (['communes', 'zones'].includes(key))) {
         value.forEach((valueItem: any) => {
           addQueryParameter(context, `${key}[]`, valueItem)
           url.searchParams.append(`${key}[]`, valueItem)
-        })
-      } else if (Array.isArray(value) && key === 'epcis') {
-        if (localStorage.getItem('epci') === null) {
-          requests.getSettings(context.handleSettings)
-        }
-        value.forEach((valueItem: any) => {
-          const matches = PATTERN_BADGE_EPCI.exec(valueItem)
-          if (matches != null) {
-            const valueQueryParameter = matches[0].trim()
-            addQueryParameter(context, `${key}[]`, valueQueryParameter)
-            url.searchParams.append(`${key}[]`, valueQueryParameter)
-          }
         })
       } else if (typeof value === 'string') {
         addQueryParameter(context, key, value)
@@ -162,16 +156,17 @@ export function handleFilters (context: any, ajaxurl: string): any {
     }
   }
 
+  /*
   const [field, direction] = context.sharedState.input.order.split('-')
   url.searchParams.set('sortBy', field)
   url.searchParams.set('direction', direction)
   addQueryParameter(context, 'sortBy', field)
   addQueryParameter(context, 'direction', direction)
   window.history.pushState({}, '', decodeURIComponent(url.toString()))
-  buildUrl(context, ajaxurl)
-  requests.getSignalements(context.handleSignalements, { signal: context.abortRequest?.signal })
-}
   */
+  updateUrlWithParams(context)
+  requests.getAddresses(context.handleAddresses, { signal: context.abortRequest?.signal })
+}
 
 export function addQueryParameter (context: any, name: string, value: string): any {
   const param = store
@@ -193,18 +188,18 @@ export function removeQueryParameter (context: any, name: string): any {
   }
 }
 
-/*
-export function buildUrl (context: any, ajaxurl: string): any {
+export function updateUrlWithParams (context: any): any {
   const queryParams = context
     .sharedState
     .input
     .queryParameters
     .map((parameter: QueryParameter) => `${parameter.name}=${parameter.value}`)
     .join('&')
-  context.sharedProps.ajaxurlSignalement = ajaxurl + '?' + (queryParams as string)
-  localStorage.setItem('back_link_signalement_view', queryParams)
+  context.sharedProps.ajaxurlAddresses = context.sharedProps.baseAjaxUrlAddresses + '?' + (queryParams as string)
+  // localStorage.setItem('back_link_signalement_view', queryParams)
 }
 
+/*
 export function clearScreen (context: any): any {
   context.titleDeleteConfirmation = ''
   context.messageDeleteConfirmation = ''
@@ -221,16 +216,8 @@ export function sanitizeFilters(
   filters: Record<string, any>,
   keepIgnored: boolean = false
 ): Record<string, any> {
-  const ignored = [
-    'isImported',
-    'isZonesDisplayed',
-    'showMyAffectationOnly',
-    'showMySignalementsOnly',
-    'showWithoutAffectationOnly'
-  ]
-
   const entries = Object.entries(filters).filter(([key, value]) => {
-    if (!keepIgnored && ignored.includes(key)) return false
+    if (!keepIgnored) return false
 
     if (value !== null && value !== undefined) {
       if (Array.isArray(value)) return value.length > 0

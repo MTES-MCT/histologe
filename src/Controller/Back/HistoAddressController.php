@@ -2,14 +2,17 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\User;
 use App\Factory\HistoAddressListViewFactory;
 use App\Repository\Query\SignalementList\SameAddressQuery;
 use App\Repository\TerritoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -36,51 +39,58 @@ class HistoAddressController extends AbstractController
     public function list(
         SameAddressQuery $sameAddressQuery,
         HistoAddressListViewFactory $histoAddressListViewFactory,
+        #[MapQueryString] ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
 
-        $signalements = $sameAddressQuery->findSameAddressFiltered($user);
-        $addresses = [];
-        foreach ($signalements as $signalement) {
-            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant']));
-            if (!isset($addresses[$addressKey])) {
-                $addresses[$addressKey] = $histoAddressListViewFactory->createInstance(
-                    addressOccupant: $signalement['adresseOccupant'],
-                    cpOccupant: $signalement['cpOccupant'],
-                    villeOccupant: $signalement['villeOccupant'],
-                    territoryId: $signalement['territoryId'],
-                    addressForHuman: $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant'],
-                    communeForHuman: $signalement['villeOccupant'].' '.$signalement['cpOccupant'],
+        $filters = null !== $addressesHistorySearchQuery
+            ? $addressesHistorySearchQuery->getFilters()
+            : [
+                // 'maxItemsPerPage' => AddressesHistorySearchQuery::MAX_LIST_PAGINATION,
+                // 'orderBy' => 'DESC',
+                // 'sortBy' => 'reference',
+            ];
+
+        $addresses = $sameAddressQuery->findSameAddressFiltered($user, $filters);
+        $responseAddresses = [];
+        foreach ($addresses as $address) {
+            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $address['adresseOccupant'].' '.$address['cpOccupant'].' '.$address['villeOccupant']));
+            if (!isset($responseAddresses[$addressKey])) {
+                $responseAddresses[$addressKey] = $histoAddressListViewFactory->createInstance(
+                    addressOccupant: $address['adresseOccupant'],
+                    cpOccupant: $address['cpOccupant'],
+                    villeOccupant: $address['villeOccupant'],
+                    territoryId: $address['territoryId'],
+                    addressForHuman: $address['adresseOccupant'].' '.$address['cpOccupant'].' '.$address['villeOccupant'],
+                    communeForHuman: $address['villeOccupant'].' '.$address['cpOccupant'],
                 );
             }
 
-            $histoAddressSignalement = $histoAddressListViewFactory->createSignalementInstanceFromSignalementData($signalement);
-            $addresses[$addressKey]->addSignalement($histoAddressSignalement);
-            if ($signalement['geoloc']) {
-                $addresses[$addressKey]->setLat($signalement['geoloc']['lat']);
-                $addresses[$addressKey]->setLng($signalement['geoloc']['lng']);
+            $histoAddressSignalement = $histoAddressListViewFactory->createSignalementInstanceFromSignalementData($address);
+            $responseAddresses[$addressKey]->addSignalement($histoAddressSignalement);
+            if ($address['geoloc'] && isset($address['geoloc']['lat'])) {
+                $responseAddresses[$addressKey]->setLat($address['geoloc']['lat']);
+                $responseAddresses[$addressKey]->setLng($address['geoloc']['lng']);
             }
         }
 
         $response = $this->json(
-            $addresses,
+            $responseAddresses,
             Response::HTTP_OK,
             ['content-type' => 'application/json'],
             ['groups' => ['signalements:read']]
         );
 
-        /*
-        // TODO: A gérer plus tard pour l'export
         // Remove '?' at the start of the string
-        $parsableQueryString = null !== $signalementSearchQuery
-            ? substr($signalementSearchQuery->getQueryStringForUrl(), 1)
+        $parsableQueryString = null !== $addressesHistorySearchQuery
+            ? substr($addressesHistorySearchQuery->getQueryStringForUrl(), 1)
             : '';
-        $cookie = Cookie::create(SignalementSearchQueryFactory::COOKIE_NAME)
+        $cookie = Cookie::create(AddressesHistorySearchQuery::COOKIE_NAME)
             ->withValue($parsableQueryString)
             ->withExpires(strtotime('+1 hour'));
 
-        $response->headers->setCookie($cookie);*/
+        $response->headers->setCookie($cookie);
 
         return $response;
     }
