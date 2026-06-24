@@ -219,7 +219,7 @@ class SignalementActionController extends AbstractController
             $subscriptionCreated = false;
             $suivi = $suiviManager->createSuivi(
                 signalement: $signalement,
-                description: $suivi->getDescription(),
+                description: $suivi->getDescription(raw: true),
                 category: SuiviCategory::MESSAGE_PARTNER,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,

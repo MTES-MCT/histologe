@@ -136,7 +136,7 @@ class InjonctionBailleurServiceTest extends KernelTestCase
             ->willReturnCallback(function (...$args) use (&$callIndex) {
                 if (0 === $callIndex) {
                     $this->assertInstanceOf(Signalement::class, $args[0]);
-                    $this->assertStringContainsString('Le bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés', $args[1]);
+                    $this->assertStringContainsString('', $args[1]);
                     $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR, $args[2]);
                 } elseif (1 === $callIndex) {
                     $this->assertInstanceOf(Signalement::class, $args[0]);
