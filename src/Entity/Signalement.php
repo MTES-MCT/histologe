@@ -231,6 +231,16 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[Assert\Length(max: 100, groups: ['bo_step_address'])]
     private ?string $villeOccupant = null;
 
+    /**
+     * Identifiant BAN (Base Adresse Nationale) de l'adresse de l'occupant.
+     *
+     * Cette valeur est utilisée pour interroger
+     * le Référentiel National des Bâtiments (RNB) afin de retrouver
+     * les bâtiments associés à l'adresse.
+     *
+     * Attention : il s'agit de la clé d'interopérabilité BAN (ex : 13202_2333_00025)
+     * et non de l'UUID technique de la BAN dit `banId`
+     */
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private ?string $banIdOccupant = null;
 

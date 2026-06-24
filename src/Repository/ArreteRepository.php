@@ -15,4 +15,17 @@ class ArreteRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Arrete::class);
     }
+
+    /**
+     * @return Arrete[]
+     */
+    public function findByBanId(string $banId): array
+    {
+        return $this->createQueryBuilder('a')
+            ->join('a.address', 'addr')
+            ->where('addr.banId = :banId')
+            ->setParameter('banId', $banId)
+            ->getQuery()
+            ->getResult();
+    }
 }

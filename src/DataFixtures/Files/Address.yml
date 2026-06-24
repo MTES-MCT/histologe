@@ -49,13 +49,13 @@ addresses:
   cityCode: "44028"
   latitude: 47.338819
   longitude: -1.361458
-- 
+-
   housenumber: "5"
   street: "Rue basse"
   postCode: "30360"
   city: "Vézénobres"
   cityCode: "30348"
-- 
+-
   housenumber: "2"
   street: "Impasse de la peupleraie"
   postCode: "44850"
@@ -63,7 +63,7 @@ addresses:
   cityCode: "44028"
   latitude: 47.3688054
   longitude: -1.4203543
-- 
+-
   housenumber: "2"
   street: "Beau Soleil"
   postCode: "44850"
@@ -71,11 +71,12 @@ addresses:
   cityCode: "44028"
   latitude: 47.3408013
   longitude: -1.3496451
-- 
+-
   housenumber: "25"
   street: "Rue desiree clary"
   postCode: "13002"
   city: "Marseille"
   cityCode: "13202"
+  banId: "13202_2333_00025"
   latitude: 43.3085624
   longitude: 5.3705315

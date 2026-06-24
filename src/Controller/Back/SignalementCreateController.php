@@ -31,6 +31,7 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBoManager;
 use App\Service\Signalement\SignalementDesordresProcessor;
+use App\Service\Signalement\Suivi\HistoriqueEvenementsGenerator;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -48,19 +49,21 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/bo/signalement')]
 class SignalementCreateController extends AbstractController
 {
-    private const SUCCESS_MESSAGE_TITLE_DRAFT_SAVED = 'Brouillon enregistré';
-    private const SUCCESS_MESSAGE_DRAFT_SAVED = 'Le brouillon a bien été enregistré, n\'oubliez pas de le terminer !';
+    private const string SUCCESS_MESSAGE_TITLE_DRAFT_SAVED = 'Brouillon enregistré';
+    private const string SUCCESS_MESSAGE_DRAFT_SAVED = 'Le brouillon a bien été enregistré, n\'oubliez pas de le terminer !';
 
     public function __construct(
         private readonly SignalementBoManager $signalementBoManager,
         private readonly InterconnectionBus $interconnectionBus,
+        private readonly SignalementRepository $signalementRepository,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly HistoriqueEvenementsGenerator $historiqueEventsGenerator,
     ) {
     }
 
     #[Route('/brouillons', name: 'back_signalement_drafts', methods: ['GET'])]
     public function showDrafts(
         Request $request,
-        SignalementRepository $signalementRepository,
         #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         /** @var User $user */
@@ -71,7 +74,7 @@ class SignalementCreateController extends AbstractController
         if ($form->isSubmitted() && !$form->isValid()) {
             $searchDraft = new SearchDraft($user);
         }
-        $paginatedDrafts = $signalementRepository->findFilteredPaginatedDrafts($searchDraft, $maxListPagination);
+        $paginatedDrafts = $this->signalementRepository->findFilteredPaginatedDrafts($searchDraft, $maxListPagination);
 
         return $this->render('back/signalement_drafts/index.html.twig', [
             'form' => $form,
@@ -84,13 +87,11 @@ class SignalementCreateController extends AbstractController
     #[Route('/brouillon/supprimer', name: 'back_signalement_delete_draft', methods: ['POST'])]
     public function deleteDraftSignalement(
         Request $request,
-        SignalementRepository $signalementRepository,
-        EntityManagerInterface $entityManager,
     ): Response {
         /** @var int|string $draftId */
         $draftId = $request->request->get('draft_id');
         /** @var Signalement $signalement */
-        $signalement = $signalementRepository->find($draftId);
+        $signalement = $this->signalementRepository->find($draftId);
 
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_DELETE_DRAFT, $signalement);
 
@@ -99,7 +100,7 @@ class SignalementCreateController extends AbstractController
             && $this->isCsrfTokenValid('draft_delete', (string) $request->request->get('_token'))
         ) {
             $signalement->setStatut(SignalementStatus::DRAFT_ARCHIVED);
-            $entityManager->flush();
+            $this->entityManager->flush();
             $this->addFlash('success', ['title' => 'Brouillon supprimé', 'message' => 'Le brouillon a bien été supprimé.']);
 
             return $this->redirectToRoute('back_signalement_drafts', [], Response::HTTP_SEE_OTHER);
@@ -182,30 +183,24 @@ class SignalementCreateController extends AbstractController
     public function editFormAddress(
         Signalement $signalement,
         Request $request,
-        SignalementRepository $signalementRepository,
-        EntityManagerInterface $entityManager,
     ): Response {
-        return $this->submitFormAddressHandler($signalement, $request, $signalementRepository, $entityManager);
+        return $this->submitFormAddressHandler($signalement, $request);
     }
 
     #[Route('/bo-form-address', name: 'back_signalement_draft_form_address', methods: ['POST'])]
     public function createFormAddress(
         Request $request,
-        SignalementRepository $signalementRepository,
-        EntityManagerInterface $entityManager,
     ): JsonResponse {
         $signalement = new Signalement();
 
-        return $this->submitFormAddressHandler($signalement, $request, $signalementRepository, $entityManager);
+        return $this->submitFormAddressHandler($signalement, $request);
     }
 
     private function submitFormAddressHandler(
         Signalement $signalement,
         Request $request,
-        SignalementRepository $signalementRepository,
-        EntityManagerInterface $entityManager,
     ): JsonResponse {
-        $entityManager->beginTransaction();
+        $this->entityManager->beginTransaction();
         $isCreation = empty($signalement->getId());
         $action = $isCreation ? $this->generateUrl('back_signalement_draft_form_address') : $this->generateUrl('back_signalement_draft_form_address_edit', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(SignalementDraftAddressType::class, $signalement, ['action' => $action]);
@@ -220,7 +215,7 @@ class SignalementCreateController extends AbstractController
             $user = $this->getUser();
             if (
                 $form->get('forceSave')->isEmpty()
-                && $duplicates = $signalementRepository->findOnSameAddress(
+                && $duplicates = $this->signalementRepository->findOnSameAddress(
                     $signalement,
                     exclusiveStatus: [SignalementStatus::NEED_VALIDATION],
                     createdBy: $user,
@@ -232,7 +227,7 @@ class SignalementCreateController extends AbstractController
                 $labelBtnDuplicates = 'Voir mes brouillons';
             } elseif (
                 $form->get('forceSave')->isEmpty()
-                && $duplicates = $signalementRepository->findOnSameAddress($signalement)
+                && $duplicates = $this->signalementRepository->findOnSameAddress($signalement)
             ) {
                 $hasDuplicates = true;
                 $duplicateContent = $this->renderView('back/signalement_create/_modal_duplicate_content.html.twig', ['duplicates' => $duplicates]);
@@ -242,7 +237,7 @@ class SignalementCreateController extends AbstractController
                 ], UrlGeneratorInterface::ABSOLUTE_URL);
             } elseif (
                 $form->get('forceSave')->isEmpty()
-                && $draftDuplicates = $signalementRepository->findOnSameAddress(
+                && $draftDuplicates = $this->signalementRepository->findOnSameAddress(
                     signalement: $signalement,
                     exclusiveStatus: [SignalementStatus::DRAFT],
                     createdBy: $user,
@@ -253,9 +248,9 @@ class SignalementCreateController extends AbstractController
                 $linkDuplicates = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
                 $labelBtnDuplicates = 'Voir mes brouillons';
             } else {
-                $entityManager->persist($signalement);
-                $entityManager->flush();
-                $entityManager->commit();
+                $this->entityManager->persist($signalement);
+                $this->entityManager->flush();
+                $this->entityManager->commit();
                 if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
                     $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE_DRAFT_SAVED, 'message' => self::SUCCESS_MESSAGE_DRAFT_SAVED]);
                     $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -279,16 +274,15 @@ class SignalementCreateController extends AbstractController
     public function editFormLogement(
         Signalement $signalement,
         Request $request,
-        EntityManagerInterface $entityManager,
     ): Response {
-        $entityManager->beginTransaction();
+        $this->entityManager->beginTransaction();
         $action = $this->generateUrl('back_signalement_draft_form_logement_edit', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(SignalementDraftLogementType::class, $signalement, ['action' => $action]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formLogementManager($form, $signalement)) {
-            $entityManager->persist($signalement);
-            $entityManager->flush();
-            $entityManager->commit();
+            $this->entityManager->persist($signalement);
+            $this->entityManager->flush();
+            $this->entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
                 $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE_DRAFT_SAVED, 'message' => self::SUCCESS_MESSAGE_DRAFT_SAVED]);
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -311,16 +305,15 @@ class SignalementCreateController extends AbstractController
     public function editFormSituation(
         Signalement $signalement,
         Request $request,
-        EntityManagerInterface $entityManager,
     ): Response {
-        $entityManager->beginTransaction();
+        $this->entityManager->beginTransaction();
         $action = $this->generateUrl('back_signalement_draft_form_situation_edit', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(SignalementDraftSituationType::class, $signalement, ['action' => $action]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formSituationManager($form, $signalement)) {
-            $entityManager->persist($signalement);
-            $entityManager->flush();
-            $entityManager->commit();
+            $this->entityManager->persist($signalement);
+            $this->entityManager->flush();
+            $this->entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
                 $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE_DRAFT_SAVED, 'message' => self::SUCCESS_MESSAGE_DRAFT_SAVED]);
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -343,10 +336,9 @@ class SignalementCreateController extends AbstractController
     public function editFormCoordonnees(
         Signalement $signalement,
         Request $request,
-        EntityManagerInterface $entityManager,
         BailleurRepository $bailleurRepository,
     ): Response {
-        $entityManager->beginTransaction();
+        $this->entityManager->beginTransaction();
         $action = $this->generateUrl('back_signalement_draft_form_coordonnees_edit', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(SignalementDraftCoordonneesType::class, $signalement, ['action' => $action]);
         $form->handleRequest($request);
@@ -360,9 +352,9 @@ class SignalementCreateController extends AbstractController
                 $signalement->setBailleur($bailleur);
             }
 
-            $entityManager->persist($signalement);
-            $entityManager->flush();
-            $entityManager->commit();
+            $this->entityManager->persist($signalement);
+            $this->entityManager->flush();
+            $this->entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
                 $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE_DRAFT_SAVED, 'message' => self::SUCCESS_MESSAGE_DRAFT_SAVED]);
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -385,18 +377,17 @@ class SignalementCreateController extends AbstractController
     public function editFormDesordres(
         Signalement $signalement,
         Request $request,
-        EntityManagerInterface $entityManager,
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): Response {
-        $entityManager->beginTransaction();
+        $this->entityManager->beginTransaction();
         $action = $this->generateUrl('back_signalement_draft_form_desordres_edit', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(SignalementDraftDesordresType::class, $signalement, ['action' => $action]);
         $form->handleRequest($request);
         $criteresByZone = $signalementDesordresProcessor->processDesordresByZone($signalement);
         if ($form->isSubmitted() && $form->isValid() && $this->signalementBoManager->formDesordresManager($form, $signalement)) {
-            $entityManager->persist($signalement);
-            $entityManager->flush();
-            $entityManager->commit();
+            $this->entityManager->persist($signalement);
+            $this->entityManager->flush();
+            $this->entityManager->commit();
             if ($form->get('draft')->isClicked()) { // @phpstan-ignore-line
                 $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE_DRAFT_SAVED, 'message' => self::SUCCESS_MESSAGE_DRAFT_SAVED]);
                 $url = $this->generateUrl('back_signalement_drafts', [], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -443,7 +434,6 @@ class SignalementCreateController extends AbstractController
         NotificationAndMailSender $notificationAndMailSender,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
         FileUpdater $fileUpdater,
-        EntityManagerInterface $entityManager,
     ): Response {
         $signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
         $signalementQualificationUpdater->updateQualificationFromScore($signalement);
@@ -484,7 +474,7 @@ class SignalementCreateController extends AbstractController
         }
 
         if (!$hasRtSelectionError && !$hasConsentError && !count($errorMsgs) && !empty($token) && $this->isCsrfTokenValid('form_signalement_validation', (string) $token)) {
-            $entityManager->beginTransaction();
+            $this->entityManager->beginTransaction();
             /** @var User $user */
             $user = $this->getUser();
             $this->setSignalementDefaultValuesOnValidation($signalement, $user);
@@ -566,8 +556,9 @@ class SignalementCreateController extends AbstractController
                 $this->interconnectionBus->dispatchAll($signalement);
             }
 
-            $entityManager->flush();
-            $entityManager->commit();
+            $this->historiqueEventsGenerator->generate($signalement);
+            $this->entityManager->flush();
+            $this->entityManager->commit();
 
             return $this->json(['redirect' => true, 'url' => $this->generateUrl($route, $params, UrlGeneratorInterface::ABSOLUTE_URL)]);
         }

@@ -31,6 +31,16 @@ class Address
     #[ORM\Column(type: 'string', length: 5)]
     private string $cityCode = '';
 
+    /**
+     * Identifiant BAN (Base Adresse Nationale) de l'adresse de l'occupant.
+     *
+     * Cette valeur est utilisée pour interroger
+     * le Référentiel National des Bâtiments (RNB) afin de retrouver
+     * les bâtiments associés à l'adresse.
+     *
+     * Attention : il s'agit de la clé d'interopérabilité BAN (ex : 13202_2333_00025)
+     * et non de l'uuid technique de la BAN dit `banId`
+     */
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $banId = null;
 
