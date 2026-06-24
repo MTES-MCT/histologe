@@ -1,42 +1,28 @@
-import 'leaflet/dist/leaflet.css';
+async function initHistoAddress() {
+  const [{ mapStyles }, { default: maplibregl }] = await Promise.all([
+    import('carte-facile'),
+    import('maplibre-gl'),
+    import('maplibre-gl/dist/maplibre-gl.css'),
+    import('carte-facile/carte-facile.css'),
+  ]);
 
-if (document.getElementById('map-same-address')) {
   const ITEMS_PER_PAGE = 5;
-  const searchForm = document.getElementById('search-same-address-form');
+  const searchForm = document.getElementById('search-histo-address-form');
   const toggleMap = document.getElementById('toggle-map');
-  const listContainer = document.querySelector('.container-same-address-list');
-  const mapContainer = document.querySelector('.container-same-address-map');
+  const listContainer = document.querySelector('.container-histo-address-list');
+  const mapContainer = document.querySelector('.container-histo-address-map');
 
   const markersByTarget = new Map();
-  const renderer = L.canvas({ padding: 0.5 });
-  const markersCluster = new L.MarkerClusterGroup({
-    iconCreateFunction: function (cluster) {
-      return L.divIcon({
-        html:
-          '<div class="marker-cluster-custom"><span>' + cluster.getChildCount() + '</span></div>',
-        className: '',
-        iconSize: L.point(28, 28),
-      });
-    },
-  });
+  const SOURCE_ID = 'same-address';
   let map = null;
+  let mapLoaded = false;
+  let currentPopup = null;
 
-  function initMap() {
-    map = L.map('map-same-address').setView([47, 2], 6);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      referrerPolicy: 'origin',
-    }).addTo(map);
-
-    initMarkers();
-  }
-
-  function initMarkers() {
+  function buildGeoJson() {
     markersByTarget.clear();
-    markersCluster.clearLayers();
 
     const allItems = Array.from(document.querySelectorAll('.same-address-item'));
+    const features = [];
 
     document.querySelectorAll('.same-address-item.is-active-filters').forEach(function (item) {
       const lat = Number.parseFloat(item.dataset.lat);
@@ -48,28 +34,143 @@ if (document.getElementById('map-same-address')) {
 
       const index = allItems.indexOf(item);
       const targetId = '#same-address-details-' + (index + 1);
+      const detailsId = 'same-address-details-' + (index + 1);
 
-      const marker = L.circleMarker([lat, lng], {
-        renderer: renderer,
-        radius: 10,
-        fillColor: '#FFF',
-        color: '#000091',
-        weight: 2,
-        opacity: 1,
-        fillOpacity: 0.8,
-      }).bindPopup(function () {
-        const detailsEl = document.getElementById('same-address-details-' + (index + 1));
-        return detailsEl ? detailsEl.innerHTML : '';
+      features.push({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [lng, lat] },
+        properties: { detailsId: detailsId },
       });
-
-      markersCluster.addLayer(marker);
-      markersByTarget.set(targetId, marker);
+      markersByTarget.set(targetId, { lngLat: [lng, lat], detailsId: detailsId });
     });
 
-    markersCluster.addTo(map);
+    return { type: 'FeatureCollection', features: features };
+  }
 
-    if (markersByTarget.size > 0) {
-      map.fitBounds(markersCluster.getBounds());
+  function openPopup(lngLat, detailsId) {
+    if (currentPopup) {
+      currentPopup.remove();
+    }
+    const detailsEl = document.getElementById(detailsId);
+    currentPopup = new maplibregl.Popup({ offset: 12 })
+      .setLngLat(lngLat)
+      .setHTML(detailsEl ? detailsEl.innerHTML : '')
+      .addTo(map);
+  }
+
+  function fitMapToMarkers() {
+    if (!map || markersByTarget.size === 0) {
+      return;
+    }
+    const bounds = new maplibregl.LngLatBounds();
+    markersByTarget.forEach(function (info) {
+      bounds.extend(info.lngLat);
+    });
+    map.fitBounds(bounds, { padding: 20, maxZoom: 16, duration: 1000 });
+  }
+
+  function initMap() {
+    map = new maplibregl.Map({
+      container: 'map-histo-address',
+      style: mapStyles.simple,
+      center: [2, 47],
+      zoom: 6,
+    });
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }));
+
+    map.on('load', function () {
+      map.addSource(SOURCE_ID, {
+        type: 'geojson',
+        data: buildGeoJson(),
+        cluster: true,
+        clusterMaxZoom: 17,
+        clusterRadius: 50,
+      });
+
+      // Cluster : même visuel que .marker-cluster-custom (Leaflet)
+      map.addLayer({
+        id: 'clusters',
+        type: 'circle',
+        source: SOURCE_ID,
+        filter: ['has', 'point_count'],
+        paint: {
+          'circle-radius': 14,
+          'circle-color': '#a9bfff',
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#0063cb',
+        },
+      });
+      map.addLayer({
+        id: 'cluster-count',
+        type: 'symbol',
+        source: SOURCE_ID,
+        filter: ['has', 'point_count'],
+        layout: {
+          'text-field': '{point_count_abbreviated}',
+          'text-font': ['Noto Sans Bold'],
+          'text-size': 11,
+        },
+        paint: {
+          'text-color': '#0063cb',
+        },
+      });
+
+      // Point isolé : même visuel que le circleMarker Leaflet
+      map.addLayer({
+        id: 'unclustered-point',
+        type: 'circle',
+        source: SOURCE_ID,
+        filter: ['!', ['has', 'point_count']],
+        paint: {
+          'circle-radius': 10,
+          'circle-color': '#FFF',
+          'circle-opacity': 0.8,
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#000091',
+        },
+      });
+
+      map.on('click', 'clusters', function (e) {
+        const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+        const clusterId = features[0].properties.cluster_id;
+        map
+          .getSource(SOURCE_ID)
+          .getClusterExpansionZoom(clusterId)
+          .then(function (zoom) {
+            map.easeTo({ center: features[0].geometry.coordinates, zoom: zoom + 0.5 });
+          });
+      });
+
+      map.on('click', 'unclustered-point', function (e) {
+        const feature = e.features[0];
+        openPopup(feature.geometry.coordinates.slice(), feature.properties.detailsId);
+      });
+
+      ['clusters', 'unclustered-point'].forEach(function (layerId) {
+        map.on('mouseenter', layerId, function () {
+          map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', layerId, function () {
+          map.getCanvas().style.cursor = '';
+        });
+      });
+
+      mapLoaded = true;
+      fitMapToMarkers();
+    });
+  }
+
+  function initMarkers() {
+    const geojson = buildGeoJson();
+
+    if (currentPopup) {
+      currentPopup.remove();
+      currentPopup = null;
+    }
+
+    if (map && mapLoaded) {
+      map.getSource(SOURCE_ID).setData(geojson);
+      fitMapToMarkers();
     }
   }
 
@@ -338,59 +439,28 @@ if (document.getElementById('map-same-address')) {
 
   function applyToggleMap() {
     if (toggleMap.checked) {
-      listContainer.classList.remove('fr-col-12');
-      listContainer.classList.add('fr-col-sm-5');
+      listContainer.classList.add('fr-hidden');
       mapContainer.classList.remove('fr-hidden');
+      searchForm.classList.remove('fr-container-sml');
+      searchForm.classList.add('on-map');
       if (map) {
-        map.invalidateSize();
-        if (markersCluster.getLayers().length > 0) {
-          map.fitBounds(markersCluster.getBounds().pad(0.01));
-        }
+        map.resize();
+        fitMapToMarkers();
       } else {
         initMap();
       }
     } else {
-      listContainer.classList.remove('fr-col-sm-5');
-      listContainer.classList.add('fr-col-12');
+      listContainer.classList.remove('fr-hidden');
       mapContainer.classList.add('fr-hidden');
+      searchForm.classList.remove('on-map');
+      searchForm.classList.add('fr-container-sml');
     }
   }
-
-  document.querySelectorAll('.show-on-map').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      toggleMap.checked = true;
-      applyToggleMap();
-      const marker = markersByTarget.get(btn.dataset.target);
-      if (marker) {
-        markersCluster.zoomToShowLayer(marker, function () {
-          marker.openPopup();
-        });
-      }
-    });
-  });
-
-  document.querySelectorAll('.show-details').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      const target = document.querySelector(btn.dataset.target);
-      if (target) {
-        target.classList.toggle('fr-hidden');
-      }
-    });
-  });
 
   searchForm.addEventListener('change', function (e) {
     if (e.target.name === 'territoryId') {
       applyFilters();
     }
-  });
-
-  searchForm.querySelector('button[type="reset"]').addEventListener('click', function () {
-    document.querySelectorAll('.same-address-item').forEach(function (item) {
-      item.classList.add('is-active-filters');
-    });
-    initCounters();
-    map ? initMarkers() : initMap();
-    showPage(1);
   });
 
   ['address', 'commune', 'bailleur'].forEach(function (field) {
@@ -472,4 +542,8 @@ if (document.getElementById('map-same-address')) {
   applyFilters();
   toggleMap.addEventListener('change', applyToggleMap);
   applyToggleMap();
+}
+
+if (document.getElementById('map-histo-address')) {
+  initHistoAddress();
 }

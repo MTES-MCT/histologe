@@ -11,16 +11,31 @@ use OpenSpout\Writer\CSV\Options as CsvOptions;
 use OpenSpout\Writer\CSV\Writer as CsvWriter;
 use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+// TODO à la suppression de FEATURE_HISTO_ADDRESS :
+// - supprimer ce controller et SignalementSameAddressControllerTest
+// - supprimer les vues associées (back/signalement-same-address/*)
+// - supprimer back_signalement_same_address.js et ses références
+// - supprimer #map-same-address et .marker-cluster-custom dans le css
 #[Route('/bo/signalements-meme-adresse')]
 #[IsGranted('ROLE_ADMIN')]
 class SignalementSameAddressController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_HISTO_ADDRESS')]
+        private readonly bool $featureHistoAddress,
+    ) {
+        if ($this->featureHistoAddress) {
+            throw $this->createNotFoundException();
+        }
+    }
+
     #[Route('/', name: 'back_signalement_same_address_index')]
     public function index(SameAddressQuery $sameAddressQuery, TerritoryRepository $territoryRepository): Response
     {
@@ -43,7 +58,6 @@ class SignalementSameAddressController extends AbstractController
                     'territoryId' => $signalement['territoryId'],
                     'addressForHuman' => $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant'],
                     'communeForHuman' => $signalement['villeOccupant'].' '.$signalement['cpOccupant'],
-                    'bailleurForHuman' => $signalement['nomProprio'],
                     'lat' => null,
                     'lng' => null,
                     'signalements' => [],
