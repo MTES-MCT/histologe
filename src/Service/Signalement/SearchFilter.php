@@ -22,6 +22,7 @@ use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
 use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
 use App\Repository\SignalementQualificationRepository;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
+use App\Utils\Address\AddressParser;
 use App\Utils\Address\CommuneHelper;
 use App\Utils\Address\ImportCommune;
 use Doctrine\DBAL\Exception;
@@ -95,14 +96,31 @@ class SearchFilter
                 $qb->andWhere('s.cpOccupant = :searchterms');
                 $qb->setParameter('searchterms', mb_trim($filters['searchterms']));
             } else {
-                $qb->andWhere('LOWER(s.nomOccupant) LIKE :searchterms
-                OR LOWER(s.prenomOccupant) LIKE :searchterms
-                OR LOWER(s.mailOccupant) LIKE :searchterms
-                OR LOWER(s.reference) LIKE :searchterms
-                OR LOWER(s.adresseOccupant) LIKE :searchterms
-                OR LOWER(s.villeOccupant) LIKE :searchterms
-                OR LOWER(s.nomProprio) LIKE :searchterms
-                OR LOWER(s.nomDeclarant) LIKE :searchterms');
+                $adresseOccupant = AddressParser::parse($filters['searchterms']);
+                if (null !== $adresseOccupant['suffix'] && null !== $adresseOccupant['number']) {
+                    $suffix = strtolower($adresseOccupant['suffix']);
+                    $qb->andWhere('LOWER(s.nomOccupant) LIKE :searchterms
+                    OR LOWER(s.prenomOccupant) LIKE :searchterms
+                    OR LOWER(s.mailOccupant) LIKE :searchterms
+                    OR LOWER(s.reference) LIKE :searchterms
+                    OR LOWER(s.adresseOccupant) LIKE :searchterms
+                    OR LOWER(s.adresseOccupant) LIKE :searchterms_suffix_1
+                    OR LOWER(s.adresseOccupant) LIKE :searchterms_suffix_2
+                    OR LOWER(s.villeOccupant) LIKE :searchterms
+                    OR LOWER(s.nomProprio) LIKE :searchterms
+                    OR LOWER(s.nomDeclarant) LIKE :searchterms');
+                    $qb->setParameter('searchterms_suffix_1', '%'.strtolower($adresseOccupant['number'].$suffix.' '.$adresseOccupant['street']).'%');
+                    $qb->setParameter('searchterms_suffix_2', '%'.strtolower($adresseOccupant['number'].' '.$suffix.' '.$adresseOccupant['street']).'%');
+                } else {
+                    $qb->andWhere('LOWER(s.nomOccupant) LIKE :searchterms
+                    OR LOWER(s.prenomOccupant) LIKE :searchterms
+                    OR LOWER(s.mailOccupant) LIKE :searchterms
+                    OR LOWER(s.reference) LIKE :searchterms
+                    OR LOWER(s.adresseOccupant) LIKE :searchterms
+                    OR LOWER(s.villeOccupant) LIKE :searchterms
+                    OR LOWER(s.nomProprio) LIKE :searchterms
+                    OR LOWER(s.nomDeclarant) LIKE :searchterms');
+                }
                 $qb->setParameter('searchterms', '%'.mb_trim(strtolower($filters['searchterms'])).'%');
             }
         }

@@ -8,7 +8,6 @@ use App\Entity\ServiceSecoursRoute;
 use App\Entity\Signalement;
 use App\Factory\SignalementServiceSecoursFactory;
 use App\Form\ServiceSecours\ServiceSecoursType;
-use App\Manager\SignalementManager;
 use App\Manager\UserManager;
 use App\Messenger\Message\SignalementServiceSecoursFileMessage;
 use App\Repository\DesordreCritereRepository;
@@ -18,6 +17,7 @@ use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\Export\ServiceSecoursPdfGenerator;
 use App\Service\Signalement\ReferenceGenerator;
+use App\Service\Signalement\Suivi\HistoriqueEvenementsGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -49,7 +49,6 @@ class ServiceSecoursController extends AbstractController
         ServiceSecoursRoute $serviceSecoursRoute,
         SignalementServiceSecoursFactory $signalementServiceSecoursFactory,
         DesordreCritereRepository $desordreCritereRepository,
-        SignalementManager $signalementManager,
         EntityManagerInterface $entityManager,
         ReferenceGenerator $referenceGenerator,
         UserManager $userManager,
@@ -57,6 +56,7 @@ class ServiceSecoursController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         ServiceSecoursPdfGenerator $serviceSecoursPdfGenerator,
         MessageBusInterface $messageBus,
+        HistoriqueEvenementsGenerator $historiqueEvenementsGenerator,
     ): Response {
         $serviceSecours = new FormServiceSecours();
         /** @var FormFlowInterface $flow */
@@ -78,6 +78,7 @@ class ServiceSecoursController extends AbstractController
             $entityManager->commit();
             $userManager->createUsagersFromSignalement($signalement);
             $autoAssigner->assignOrSendNewSignalementNotification($signalement);
+            $historiqueEvenementsGenerator->generate($signalement);
             $entityManager->flush();
             $pdfContent = $serviceSecoursPdfGenerator->generate($signalement);
             $notificationMailerRegistry->send(
@@ -106,8 +107,8 @@ class ServiceSecoursController extends AbstractController
     #[Route(
         '/services-secours/{slug:serviceSecoursRoute}/{uuid:serviceSecoursRoute}/pdf/{uuidSignalement}',
         name: 'service_secours_pdf',
-        methods: 'GET',
-        defaults: ['_signed' => true]
+        defaults: ['_signed' => true],
+        methods: 'GET'
     )]
     public function pdf(
         ServiceSecoursRoute $serviceSecoursRoute,

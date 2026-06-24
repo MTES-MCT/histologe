@@ -7,6 +7,7 @@ use App\Repository\TerritoryRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use LongitudeOne\Spatial\Exception\InvalidValueException;
 use LongitudeOne\Spatial\PHP\Types\Geometry\Point;
 use Symfony\Component\Yaml\Yaml;
 
@@ -20,6 +21,9 @@ class LoadAddressData extends Fixture implements OrderedFixtureInterface
     ) {
     }
 
+    /**
+     * @throws InvalidValueException
+     */
     public function load(ObjectManager $manager): void
     {
         $list = $this->territoryRepository->findAll();
@@ -35,6 +39,8 @@ class LoadAddressData extends Fixture implements OrderedFixtureInterface
 
     /**
      * @param array<string, mixed> $row
+     *
+     * @throws InvalidValueException
      */
     public function loadAddress(ObjectManager $manager, array $row): void
     {
@@ -45,6 +51,7 @@ class LoadAddressData extends Fixture implements OrderedFixtureInterface
             ->setCity($row['city'])
             ->setCityCode($row['cityCode'])
             ->setTerritory($this->territories[$row['territory']])
+            ->setBanId($row['banId'] ?? null)
         ;
         if (isset($row['latitude']) && isset($row['longitude'])) {
             $point = new Point($row['latitude'], $row['longitude']);
