@@ -54,8 +54,11 @@ class PostalCodeHomeChecker
         return false;
     }
 
-    public function normalizeInseeCode(string $postalCode, string $inseeCode): string
+    public function normalizeInseeCode(string $postalCode, ?string $inseeCode): ?string
     {
+        if (null === $inseeCode) {
+            return null;
+        }
         // Exception that returns city code insee for Marseille and Lyon
         // https://data.geopf.fr/geocodage/search/?q=13001%20Marseille
         // https://data.geopf.fr/geocodage/search/?q=69001%20Lyon
