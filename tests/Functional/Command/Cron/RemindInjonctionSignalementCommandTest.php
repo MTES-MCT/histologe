@@ -11,11 +11,15 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class RemindInjonctionSignalementCommandTest extends KernelTestCase
 {
+    protected function setUp(): void
+    {
+        putenv('APP=test');
+        putenv('COLUMNS=200');
+    }
+
     #[DataProvider('provideReminderSentData')]
     public function testReminderSent(string $dateModifier, string $outputSuivi, string $outputReminderBailleurs, int $expectedEmailCount): void
     {
-        putenv('APP=test');
-
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
@@ -39,8 +43,6 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
 
     public function testReminderSentAfterSecondRelance(): void
     {
-        putenv('APP=test');
-
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
