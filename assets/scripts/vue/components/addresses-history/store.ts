@@ -3,8 +3,7 @@ import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 
 export const store = {
   state: {
-    /*
-    signalements: {
+    addresses: {
       filters: Object,
       list: new Array<Object>(),
       pagination: {
@@ -15,7 +14,6 @@ export const store = {
       },
       zoneAreas: new Array<string>(),
     },
-    */
     input: {
       order: 'reference-DESC',
       queryParameters: [] as QueryParameter[],
@@ -23,7 +21,7 @@ export const store = {
         territoire: undefined,
         adresse: undefined,
         communes: new Array<string>(),
-        bailleur_syndic: undefined,
+        bailleurOuSyndic: undefined,
         zones: new Array<string>(),
         natureParc: undefined,
         dossiersMultiples: undefined,
@@ -44,7 +42,7 @@ export const store = {
     zones: new Array<HistoInterfaceSelectOption>(),
     currentTerritoryId: '',
     currentCommunes: '',
-    viewMode: 'card',
+    viewMode: 'list',
     loadingList: true,
     hasErrorLoading: false,
     natureParcList: [
@@ -54,8 +52,8 @@ export const store = {
     ],
     dossiersMultiplesList: [
       { Id: '', Text: 'Tout' },
-      { Id: 'oui', Text: 'Oui' },
-      { Id: 'non', Text: 'Non' },
+      { Id: 'oui', Text: 'Avec' },
+      { Id: 'non', Text: 'Sans' },
     ],
     typesArretes: [
       { Id: 'bla', Text: 'Bla bla bla' },
@@ -63,8 +61,8 @@ export const store = {
     filtersApplyKey: 0
   },
   props: {
-    ajaxurlSignalement: '',
-    baseAjaxUrlSignalement: '',
+    ajaxurlAddresses: '',
+    baseAjaxUrlAddresses: '',
     ajaxurlExportCsv: '',
     ajaxurlSettings: '',
     platformName: '',

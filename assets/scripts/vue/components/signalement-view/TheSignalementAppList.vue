@@ -222,7 +222,7 @@ export default defineComponent({
     },
     handleFilters () {
       handleFilters(this, initElements.dataset.ajaxurl)
-    },    
+    },
     handleDelete (requestResponse: any) {
       this.titleDeleteConfirmation =
           requestResponse.data.status === 200

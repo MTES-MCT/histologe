@@ -2,6 +2,7 @@
 
 namespace App\Dto;
 
+use App\Entity\Signalement;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[Groups(['signalements:read'])]
@@ -12,7 +13,7 @@ class HistoAddressListView
     public const int MAX_LIST_PAGINATION = 30;
 
     /**
-     * @param array<mixed>         $signalements
+     * @param array<mixed> $signalements
      */
     public function __construct(
         private readonly ?string $address = null,
@@ -77,6 +78,7 @@ class HistoAddressListView
         $this->lng = $lng;
     }
 
+    /** @return array<Signalement> */
     public function getSignalements(): ?array
     {
         return $this->signalements;
@@ -84,7 +86,7 @@ class HistoAddressListView
 
     public function addSignalement(HistoAddressSignalementView $histoAddressSignalement): void
     {
-        if ($this->signalements === null) {
+        if (null === $this->signalements) {
             $this->signalements = [];
         }
         $this->signalements[] = $histoAddressSignalement;

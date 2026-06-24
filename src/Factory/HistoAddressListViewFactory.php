@@ -31,6 +31,9 @@ class HistoAddressListViewFactory
         );
     }
 
+    /**
+     * @param array<mixed> $data
+     */
     public function createSignalementInstanceFromSignalementData(array $data): HistoAddressSignalementView
     {
         $url = $this->urlGenerator->generate('back_signalement_view', [
@@ -40,7 +43,7 @@ class HistoAddressListViewFactory
         return new HistoAddressSignalementView(
             url: $url,
             ref: $data['reference'],
-            usager: $data['prenomOccupant'] . ' ' . $data['nomOccupant'],
+            usager: $data['prenomOccupant'].' '.$data['nomOccupant'],
             statut: $data['statut']->label(),
         );
     }
