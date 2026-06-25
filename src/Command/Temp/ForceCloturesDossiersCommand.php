@@ -31,8 +31,6 @@ class ForceCloturesDossiersCommand extends Command
 {
     private const TERRITORY = '78';
 
-    private const CLOTURE_MESSAGE = 'Clôture forcée par Signal Logement.';
-
     private const REF_WITH_MOTIF_ABANDON = [
         '2023-2', '2023-4', '2023-12', '2023-14', '2023-23', '2023-28', '2023-59',
         '2023-62', '2023-63', '2023-66', '2023-67', '2023-69', '2023-89', '2023-94', '2023-96', '2023-98', '2023-99',
