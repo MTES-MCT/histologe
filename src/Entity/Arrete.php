@@ -2,13 +2,15 @@
 
 namespace App\Entity;
 
+use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\TypeArrete;
 use App\Repository\ArreteRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ArreteRepository::class)]
-class Arrete
+class Arrete implements EntityHistoryInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -155,5 +157,11 @@ class Arrete
         $this->identifiantParcellaire = $identifiantParcellaire;
 
         return $this;
+    }
+
+    /** @return array<HistoryEntryEvent> */
+    public function getHistoryRegisteredEvent(): array
+    {
+        return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
     }
 }

@@ -110,7 +110,7 @@
                                     <h1 id="fr-modal-title-arrete-delete" class="fr-modal__title">
                                         Supprimer l'arrêté : <span id="fr-modal-arrete-delete-arrete-name"></span>
                                     </h1>
-                                    <p>Confirmer vous la suppression de l'arrêté ?</p>
+                                    <p>Confirmez-vous la suppression de l'arrêté ?</p>
                                     <form action="#" id="arrete_delete_form" method="POST" data-submit-type="formData">
                                         <input type="hidden" name="search_params" value="{{ app.request.query.all|url_encode }}">
                                     </form>
@@ -154,7 +154,7 @@
                                             <h2>Arrêté</h2>
                                             <ul>
                                                 <li>Date : {{ arrete.dateArrete|date('d/m/Y') }}</li>
-                                                <li>Type : {{ arrete.typeArrete.value }}</li>
+                                                <li>Type : {{ arrete.typeArrete.label }}</li>
                                                 <li>Main levée : {% if arrete.mainLevee %}Oui{% endif %}</li>
                                                 <li>Date de la main levée : {% if arrete.dateMainLevee %}{{ arrete.dateMainLevee|date('d/m/Y') }}{% endif %}</li>
                                             </ul>
