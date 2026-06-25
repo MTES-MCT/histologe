@@ -743,8 +743,10 @@ class SignalementRepository extends ServiceEntityRepository
      *
      * @throws \Exception
      */
-    public function findInjonctionToRemind(\DateTimeImmutable $beforeDate): array
-    {
+    public function findInjonctionToRemind(
+        \DateTimeImmutable $beforeDate,
+        string $recipient, // bailleur ou usager
+    ): array {
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.statut = :statut');
 
@@ -766,7 +768,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('aideCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE)
             ->setParameter('demarchesCategory', SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES);
 
-        // Aucun rappel envoyé après la date limite
+        // Aucun suivi de la partie concernée ni de rappel envoyé depuis la date limite
         $qb->andWhere(
             $qb->expr()->not(
                 $qb->expr()->exists(
@@ -774,15 +776,16 @@ class SignalementRepository extends ServiceEntityRepository
                         ->select('1')
                         ->join('s2.suivis', 'su2')
                         ->where('s2 = s')
-                        ->andWhere('su2.category = :reminderCategory')
-                        ->andWhere(
-                            $qb->expr()->gte('su2.createdAt', ':date')
-                        )
+                        ->andWhere('su2.category IN (:category_list)')
+                        ->andWhere($qb->expr()->gte('su2.createdAt', ':date'))
                         ->getDQL()
                 )
             )
         );
-        $qb->setParameter('reminderCategory', SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER);
+        $isUsager = 'usager' === $recipient;
+        $qb->setParameter('category_list', $isUsager
+            ? array_merge(SuiviCategory::categoriesSubmittedByUsager(), [SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER])
+            : array_merge(SuiviCategory::categoriesSubmittedByBailleur(), [SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_BAILLEUR]));
 
         $qb->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
             ->setParameter('date', $beforeDate)

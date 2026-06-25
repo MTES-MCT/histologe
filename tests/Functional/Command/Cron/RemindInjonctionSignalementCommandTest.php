@@ -11,11 +11,15 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class RemindInjonctionSignalementCommandTest extends KernelTestCase
 {
+    protected function setUp(): void
+    {
+        putenv('APP=test');
+        putenv('COLUMNS=200');
+    }
+
     #[DataProvider('provideReminderSentData')]
     public function testReminderSent(string $dateModifier, string $outputSuivi, string $outputReminderBailleurs, int $expectedEmailCount): void
     {
-        putenv('APP=test');
-
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
@@ -39,8 +43,6 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
 
     public function testReminderSentAfterSecondRelance(): void
     {
-        putenv('APP=test');
-
         $kernel = self::bootKernel();
         $application = new Application($kernel);
 
@@ -55,7 +57,8 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
 
-        $this->assertStringContainsString('1 rappels faits pour des signalements avec suivi travaux.', $output);
+        $this->assertStringContainsString('1 rappels faits pour les bailleurs pour des signalements avec suivi travaux.', $output);
+        $this->assertStringContainsString('1 rappels faits pour les usagers pour des signalements avec suivi travaux.', $output);
         $this->assertStringContainsString('1 rappels faits pour des signalements sans réponse bailleur.', $output);
         // On exécute le lendemain, aucun rappel ne doit être envoyé
         $mockClock->modify('+1 day');
@@ -69,7 +72,8 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
-        $this->assertStringContainsString('1 rappels faits pour des signalements avec suivi travaux.', $output);
+        $this->assertStringContainsString('1 rappels faits pour les bailleurs pour des signalements avec suivi travaux.', $output);
+        $this->assertStringContainsString('1 rappels faits pour les usagers pour des signalements avec suivi travaux.', $output);
         $this->assertStringContainsString('Aucun rappel n\'a été envoyé pour les bailleurs.', $output);
         // Le lendemain, aucun rappel ne doit être envoyé
         $mockClock->modify('+1 day');
@@ -96,7 +100,7 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         ];
         yield 'One reminder, one suivi' => [
             '+1 month',
-            '1 rappels faits pour des signalements avec suivi travaux.',
+            '1 rappels faits pour les bailleurs pour des signalements avec suivi travaux.',
             '1 rappels faits pour des signalements sans réponse bailleur.',
             5,
         ];
