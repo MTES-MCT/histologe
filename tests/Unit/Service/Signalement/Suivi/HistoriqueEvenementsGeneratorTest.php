@@ -82,7 +82,7 @@ class HistoriqueEvenementsGeneratorTest extends TestCase
 
         $this->urlGenerator->expects($this->once())
             ->method('generate')
-            ->with('back_signalement_same_address_index', ['uuid' => $signalement->getUuid()])
+            ->with('back_signalement_same_address_index')
             ->willReturn('http://localhost/historique');
 
         $this->suiviManager->expects($this->once())
@@ -173,6 +173,39 @@ class HistoriqueEvenementsGeneratorTest extends TestCase
                 ),
                 $this->equalTo(SuiviCategory::SIGNALEMENT_HISTORIQUE_EVENEMENT)
             );
+
+        $this->historiqueEvenementsGenerator->generate($signalement);
+    }
+
+    public function testGenerateWithArretesByAddressWithSuffix(): void
+    {
+        $signalement = $this->getSignalement();
+        $signalement->setBanIdOccupant(null);
+        $signalement->setAdresseOccupant('17 bis Rue de la Paix');
+        $signalement->setCpOccupant('74000');
+        $signalement->setVilleOccupant('Annecy');
+
+        $this->signalementRepository->expects($this->once())
+            ->method('findOnSameAddress')
+            ->willReturn([]);
+
+        $arrete = $this->createArrete(TypeArrete::MISE_EN_SECURITE, new \DateTimeImmutable('2024-01-01'), null);
+        $this->arreteRepository->expects($this->once())
+            ->method('findByAddress')
+            ->with(
+                ['17bis', '17 bis'],
+                'Rue de la Paix',
+                '74000',
+                'Annecy'
+            )
+            ->willReturn([$arrete]);
+
+        $this->parameterBag->expects($this->once())->method('get')->willReturn('system@example.com');
+        $this->userRepository->expects($this->once())->method('findOneBy')->willReturn(new User());
+        $this->urlGenerator->expects($this->once())->method('generate')->willReturn('http://localhost/historique');
+
+        $this->suiviManager->expects($this->once())
+            ->method('createSuivi');
 
         $this->historiqueEvenementsGenerator->generate($signalement);
     }

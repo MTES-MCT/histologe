@@ -2,6 +2,7 @@
 
 namespace App\Service\Signalement\Suivi;
 
+use App\Entity\Arrete;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
@@ -9,6 +10,8 @@ use App\Manager\SuiviManager;
 use App\Repository\ArreteRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Utils\Address\AddressParser;
+use App\Utils\Address\CommuneHelper;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -41,10 +44,7 @@ class HistoriqueEvenementsGenerator
             excludedStatus: SignalementStatus::excludedStatuses(false)
         );
 
-        $arretesSameAddress = [];
-        if ($signalement->getBanIdOccupant()) {
-            $arretesSameAddress = $this->arreteRepository->findByBanId($signalement->getBanIdOccupant());
-        }
+        $arretesSameAddress = $this->findArretesSameAddress($signalement);
 
         if (\count($signalementsSameAddress) > 0 || \count($arretesSameAddress) > 0) {
             $description = 'Voici l\'historique des évènements qui ont été enregistrés sur Signal Logement à cette adresse : <br/>';
@@ -86,5 +86,40 @@ class HistoriqueEvenementsGenerator
                 user: $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')])
             );
         }
+    }
+
+    /**
+     * @return Arrete[]
+     */
+    private function findArretesSameAddress(Signalement $signalement): array
+    {
+        $banId = $signalement->getBanIdOccupant();
+        if (null !== $banId && '' !== $banId && '0' !== $banId) {
+            $arretes = $this->arreteRepository->findByBanId($banId);
+
+            if ([] !== $arretes) {
+                return $arretes;
+            }
+        }
+
+        $address = AddressParser::parse($signalement->getAdresseOccupant());
+
+        $houseNumber = $address['number'];
+        if (null !== $address['suffix'] && null !== $address['number']) {
+            $suffix = strtolower($address['suffix']);
+            $houseNumber = [
+                $address['number'].$suffix,
+                $address['number'].' '.$suffix,
+            ];
+        }
+
+        $city = CommuneHelper::getCommuneFromArrondissement($signalement->getVilleOccupant());
+
+        return $this->arreteRepository->findByAddress(
+            housenumber: $houseNumber,
+            street: $address['street'],
+            postCode: $signalement->getCpOccupant(),
+            city: $city
+        );
     }
 }

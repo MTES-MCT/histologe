@@ -7,7 +7,11 @@ use App\Utils\Enum\ExtensionAdresse;
 class AddressParser
 {
     /**
-     * @return array<mixed>
+     * @return array{
+     *     number: string|null,
+     *     suffix: string|null,
+     *     street: string
+     * }
      */
     public static function parse(string $address): array
     {

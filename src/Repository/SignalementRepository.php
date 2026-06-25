@@ -19,6 +19,7 @@ use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\ListFilters\SearchSignalementInjonction;
 use App\Service\Security\PartnerAuthorizedResolver;
+use App\Utils\Address\AddressParser;
 use App\Utils\Address\CommuneHelper;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Collection;
@@ -510,12 +511,24 @@ class SignalementRepository extends ServiceEntityRepository
         ?bool $compareNomOccupant = false,
     ): array {
         $qb = $this->createQueryBuilder('s')
-            ->where('s.adresseOccupant = :address')
             ->andWhere('s.cpOccupant = :zipcode')
             ->andWhere('s.villeOccupant = :city')
-            ->setParameter('address', $signalement->getAdresseOccupant())
             ->setParameter('zipcode', $signalement->getCpOccupant())
             ->setParameter('city', $signalement->getVilleOccupant());
+
+        $adresseOccupant = AddressParser::parse($signalement->getAdresseOccupant());
+        if (null !== $adresseOccupant['suffix'] && null !== $adresseOccupant['number']) {
+            $suffix = strtolower($adresseOccupant['suffix']);
+            $addresses = [
+                $adresseOccupant['number'].$suffix.' '.$adresseOccupant['street'],
+                $adresseOccupant['number'].' '.$suffix.' '.$adresseOccupant['street'],
+            ];
+            $qb->andWhere('s.adresseOccupant IN (:addresses)')
+                ->setParameter('addresses', $addresses);
+        } else {
+            $qb->andWhere('s.adresseOccupant = :address')
+                ->setParameter('address', $signalement->getAdresseOccupant());
+        }
 
         if (!empty($exclusiveStatus)) {
             $qb->andWhere('s.statut IN (:exclusiveStatus)')

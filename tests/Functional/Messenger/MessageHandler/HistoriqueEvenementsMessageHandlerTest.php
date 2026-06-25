@@ -14,6 +14,7 @@ class HistoriqueEvenementsMessageHandlerTest extends KernelTestCase
 {
     public function testInvokeWithSignalementsAtSameAddress(): void
     {
+        $_ENV['FEATURE_HISTO_ADDRESS'] = '1';
         self::bootKernel();
         $container = static::getContainer();
         $signalementRepository = $container->get(SignalementRepository::class);
@@ -46,5 +47,11 @@ class HistoriqueEvenementsMessageHandlerTest extends KernelTestCase
             $this->assertStringContainsString('historique des', $suivi->getDescription());
             $this->assertStringContainsString('évènements', $suivi->getDescription());
         }
+    }
+
+    protected function tearDown(): void
+    {
+        $_ENV['FEATURE_HISTO_ADDRESS'] = '0';
+        parent::tearDown();
     }
 }

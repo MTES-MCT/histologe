@@ -80,3 +80,14 @@ addresses:
   banId: "13202_2333_00025"
   latitude: 43.3085624
   longitude: 5.3705315
+
+-
+  housenumber: "25 bis"
+  street: "Rue desiree clary"
+  postCode: "13002"
+  city: "Marseille"
+  cityCode: "13202"
+  banId: "0"
+  latitude: 43.3085624
+  longitude: 5.3705315
+
