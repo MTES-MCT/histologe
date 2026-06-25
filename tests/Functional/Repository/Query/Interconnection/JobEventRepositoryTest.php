@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Functional\Repository\Interconnection;
+namespace App\Tests\Functional\Repository\Query\Interconnection;
 
 use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\PartnerType;
