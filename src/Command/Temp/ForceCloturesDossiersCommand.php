@@ -172,7 +172,7 @@ class ForceCloturesDossiersCommand extends Command
                 ->setStatut(SignalementStatus::CLOSED)
                 ->setMotifCloture($motif)
                 ->setClosedAt(new \DateTimeImmutable())
-                ->setComCloture(self::CLOTURE_MESSAGE)
+                ->setComCloture($motif->label())
                 ->setClosedBy($this->adminUser);
 
             $suivi = $this->suiviManager->createSuivi(
@@ -181,7 +181,7 @@ class ForceCloturesDossiersCommand extends Command
                     [
                         'subject' => 'tous les partenaires',
                         'motif_cloture' => $motif,
-                        'motif_suivi' => self::CLOTURE_MESSAGE,
+                        'motif_suivi' => $motif->label(),
                     ]
                 ),
                 category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
