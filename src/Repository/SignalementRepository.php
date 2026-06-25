@@ -745,7 +745,7 @@ class SignalementRepository extends ServiceEntityRepository
      */
     public function findInjonctionToRemind(
         \DateTimeImmutable $beforeDate,
-        string $destinataire, // bailleur ou usager
+        string $recipient, // bailleur ou usager
     ): array {
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.statut = :statut');
@@ -782,7 +782,7 @@ class SignalementRepository extends ServiceEntityRepository
                 )
             )
         );
-        $isUsager = 'usager' === $destinataire;
+        $isUsager = 'usager' === $recipient;
         $qb->setParameter('category_list', $isUsager
             ? array_merge(SuiviCategory::categoriesSubmittedByUsager(), [SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER])
             : array_merge(SuiviCategory::categoriesSubmittedByBailleur(), [SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_BAILLEUR]));
