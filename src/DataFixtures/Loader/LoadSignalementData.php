@@ -40,6 +40,7 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadSignalementData extends Fixture implements OrderedFixtureInterface
@@ -130,7 +131,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsPreavisDepart($row['is_preavis_depart'] ?? false)
             ->setGeoloc(json_decode($row['geoloc'], true))
             ->setIsRsa(false)
-            ->setCodeSuivi($row['code_suivi'] ?? $faker->uuid())
+            ->setCodeSuivi($row['code_suivi'] ?? Uuid::v4())
             ->setUuid($row['uuid'])
             ->setValidatedAt(SignalementStatus::ACTIVE->value === $row['statut'] ? new \DateTimeImmutable() : null)
             ->setCreatedAt(
@@ -370,7 +371,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsPreavisDepart($row['is_preavis_depart'] ?? false)
             ->setGeoloc(json_decode($row['geoloc'], true))
             ->setIsRsa(false)
-            ->setCodeSuivi($row['code_suivi'] ?? $faker->uuid())
+            ->setCodeSuivi($row['code_suivi'] ?? Uuid::v4())
             ->setUuid($row['uuid'])
             ->setValidatedAt(SignalementStatus::ACTIVE->value === $row['statut'] ? new \DateTimeImmutable() : null)
             ->setCreatedAt(
