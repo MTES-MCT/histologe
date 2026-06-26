@@ -43,11 +43,6 @@ class CompositionLogementRequest implements RequestInterface
         )]
         private readonly ?string $superficie = null,
         #[Assert\NotBlank(
-            message: 'Merci de définir la hauteur du logement.',
-            groups: [
-                'LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS', ]
-        )]
-        #[Assert\NotBlank(
             message: 'Merci de définir le nombre de pièces à vivre.',
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
         )]

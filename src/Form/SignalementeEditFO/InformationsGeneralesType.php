@@ -55,6 +55,9 @@ class InformationsGeneralesType extends AbstractType
                 'label' => 'Nombre de personnes occupant le logement <span class="text-required">*</span>',
                 'label_html' => true,
                 'help' => 'Format attendu : saisir un nombre entier',
+                'attr' => [
+                    'maxlength' => 2,
+                ],
                 'required' => false,
                 'constraints' => [
                     new Assert\NotNull(
@@ -78,6 +81,9 @@ class InformationsGeneralesType extends AbstractType
             ->add('nbEnfantsDansLogement', NumberType::class, [
                 'label' => 'Dont enfants (facultatif)',
                 'help' => 'Format attendu : saisir un nombre entier',
+                'attr' => [
+                    'maxlength' => 2,
+                ],
                 'required' => false,
                 'mapped' => false,
                 'data' => $nbEnfantsDansLogement,

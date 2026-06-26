@@ -283,6 +283,9 @@ class SignalementDraftAddressType extends AbstractType
                 'label' => 'Dont enfants',
                 'help' => 'Format attendu : saisir un nombre entier',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 2,
+                ],
                 'mapped' => false,
                 'data' => $nbEnfantsDansLogement,
                 'constraints' => [

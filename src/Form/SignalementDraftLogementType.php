@@ -109,6 +109,9 @@ class SignalementDraftLogementType extends AbstractType
             ->add('nombreEtages', NumberType::class, [
                 'label' => 'Nombre de niveaux',
                 'help' => 'Format attendu : saisir un nombre entier',
+                'attr' => [
+                    'maxlength' => 2,
+                ],
                 'required' => false,
                 'mapped' => false,
                 'data' => $nombreEtages,
@@ -171,6 +174,9 @@ class SignalementDraftLogementType extends AbstractType
             ->add('nombrePieces', NumberType::class, [
                 'label' => 'Nombre de pièces à vivre (salon, chambre)',
                 'help' => 'Format attendu : saisir un nombre entier',
+                'attr' => [
+                    'maxlength' => 3,
+                ],
                 'required' => false,
                 'mapped' => false,
                 'data' => $nombrePieces,
@@ -190,6 +196,9 @@ class SignalementDraftLogementType extends AbstractType
             ->add('superficie', NumberType::class, [
                 'label' => 'Superficie du logement (en m²)',
                 'help' => 'La superficie permet de calculer le risque de suroccupation du logement. Format attendu : Saisir un nombre entier',
+                'attr' => [
+                    'maxlength' => 3,
+                ],
                 'required' => false,
                 'constraints' => [
                     new Assert\GreaterThan(

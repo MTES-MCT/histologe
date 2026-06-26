@@ -153,6 +153,9 @@ class SignalementDraftSituationType extends AbstractType
                 'label' => 'Montant du loyer',
                 'help' => 'Format attendu : saisir un nombre entier',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 10,
+                ],
             ])
             ->add('payementLoyersAJour', ChoiceType::class, [
                 'label' => 'Paiement des loyers à jour',
@@ -204,9 +207,18 @@ class SignalementDraftSituationType extends AbstractType
             ->add('numeroAllocataire', TextType::class, [
                 'label' => 'Numéro d\'allocataire / de dossier',
                 'help' => 'Format attendu : 25 caractères maximum',
+                'attr' => [
+                    'maxlength' => 25,
+                ],
                 'required' => false,
                 'mapped' => false,
                 'data' => $numeroAllocataire,
+                'constraints' => [
+                    new Assert\Length(
+                        max: 25,
+                        maxMessage: 'Le numéro d\'allocataire / de dossier doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('typeAllocation', ChoiceType::class, [
                 'label' => 'Type d\'allocation',
@@ -225,6 +237,9 @@ class SignalementDraftSituationType extends AbstractType
             ->add('montantAllocation', TextType::class, [
                 'label' => 'Montant de l\'allocation',
                 'help' => 'Format attendu : saisir un nombre entier',
+                'attr' => [
+                    'maxlength' => 10,
+                ],
                 'required' => false,
                 'mapped' => false,
                 'data' => $montantAllocation,
