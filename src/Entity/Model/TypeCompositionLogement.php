@@ -419,10 +419,7 @@ class TypeCompositionLogement
             'bail_dpe_dpe' => $this->bailDpeDpe,
             'bail_dpe_classe_energetique' => $this->bailDpeClasseEnergetique,
             'bail_dpe_etat_des_lieux' => $this->bailDpeEtatDesLieux,
-            'desordres_logement_chauffage_details_dpe_conso_finale' => $this->desordresLogementChauffageDetailsDpeConsoFinale,
-            'desordres_logement_chauffage_details_dpe_conso' => $this->desordresLogementChauffageDetailsDpeConso,
             'desordres_logement_chauffage_details_dpe_annee' => $this->desordresLogementChauffageDetailsDpeAnnee,
-            'desordres_logement_chauffage_details_dpe_conso_vide' => $this->desordresLogementChauffageDetailsDpeConsoVide,
         ];
     }
 }

@@ -105,6 +105,9 @@ class ServiceSecoursStep2Type extends AbstractType
                 'label_html' => true,
                 'help' => 'Format attendu : 15 caractères maximum',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 15,
+                ],
             ])
             ->add('typeEtageLogement', EnumType::class, [
                 'class' => EtageType::class,
@@ -120,6 +123,9 @@ class ServiceSecoursStep2Type extends AbstractType
                 'label' => 'Préciser l\'étage',
                 'help' => 'Format attendu : 5 caractères maximum',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 5,
+                ],
             ])
             ->add('nbPiecesLogement', TextType::class, [
                 'label' => 'Nombre de pièces à vivre (salon, chambre) du logement',

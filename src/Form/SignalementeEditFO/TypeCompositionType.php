@@ -65,9 +65,19 @@ class TypeCompositionType extends AbstractType
             ])
             ->add('natureAutrePrecision', TextType::class, [
                 'label' => 'Précision sur la nature (facultatif)',
+                'help' => 'Format attendu : texte (15 caractères maximum)',
                 'required' => false,
                 'mapped' => false,
                 'data' => $natureAutrePrecision,
+                'attr' => [
+                    'maxlength' => 15,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 15,
+                        maxMessage: 'La précision sur la nature du logement doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('appartementEtage', EnumType::class, [
                 'label' => 'Localisation de l\'appartement',

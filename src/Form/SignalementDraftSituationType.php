@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @extends AbstractType<mixed>
@@ -246,18 +247,45 @@ class SignalementDraftSituationType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $accompagnementTravailleurSocialNomStructure,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le nom de la structure d\'accompagnement doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('accompagnementTravailleurSocialNomReferent', TextType::class, [
                 'label' => 'Nom du référent social',
                 'required' => false,
                 'mapped' => false,
                 'data' => $accompagnementTravailleurSocialNom,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le nom du référent social doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('accompagnementTravailleurSocialPrenomReferent', TextType::class, [
                 'label' => 'Prénom du référent social',
                 'required' => false,
                 'mapped' => false,
                 'data' => $accompagnementTravailleurSocialPrenom,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le prénom du référent social doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('beneficiaireRSA', ChoiceType::class, [
                 'label' => 'Bénéficiaire RSA',
@@ -327,6 +355,12 @@ class SignalementDraftSituationType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $reponseProprietaire,
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'La réponse du bailleur doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('isRelogement', ChoiceType::class, [
                 'label' => 'Demande de logement / relogement / mutation',
@@ -398,6 +432,12 @@ class SignalementDraftSituationType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $reponseAssurance,
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'La réponse de l\'assurance doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
 
             ->add('forceSave', HiddenType::class, [

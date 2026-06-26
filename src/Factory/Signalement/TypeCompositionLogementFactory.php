@@ -56,10 +56,7 @@ readonly class TypeCompositionLogementFactory
             bailDpeDpe: $data['bail_dpe_dpe'] ?? null,
             bailDpeClasseEnergetique: $data['bail_dpe_classe_energetique'] ?? null,
             bailDpeEtatDesLieux: $data['bail_dpe_etat_des_lieux'] ?? null,
-            desordresLogementChauffageDetailsDpeConsoFinale: $data['desordres_logement_chauffage_details_dpe_conso_finale'] ?? null,
-            desordresLogementChauffageDetailsDpeConso: $data['desordres_logement_chauffage_details_dpe_conso'] ?? null,
             desordresLogementChauffageDetailsDpeAnnee: $data['desordres_logement_chauffage_details_dpe_annee'] ?? null,
-            desordresLogementChauffageDetailsDpeConsoVide: $data['desordres_logement_chauffage_details_dpe_conso_vide'] ?? null,
         );
     }
 }

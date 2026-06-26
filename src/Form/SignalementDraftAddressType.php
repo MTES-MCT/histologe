@@ -120,6 +120,15 @@ class SignalementDraftAddressType extends AbstractType
             ->add('etageOccupant', null, [
                 'label' => 'Étage',
                 'help' => 'Format attendu : 5 caractères maximum',
+                'attr' => [
+                    'maxlength' => 5,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 5,
+                        maxMessage: 'L\'étage doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('escalierOccupant', null, [
                 'label' => 'Escalier',
@@ -235,16 +244,38 @@ class SignalementDraftAddressType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $signalement->getTypeCompositionLogement()?->getTypeLogementNatureAutrePrecision(),
+                'attr' => [
+                    'maxlength' => 15,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 15,
+                        maxMessage: 'La précision sur la nature du logement doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('nbOccupantsLogement', NumberType::class, [
                 'label' => 'Nombre de personnes occupant le logement',
                 'help' => 'Format attendu : saisir un nombre entier',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 2,
+                ],
                 'constraints' => [
                     new Assert\Regex(
                         pattern: '/^\d+$/',
                         message: 'Veuillez saisir un nombre entier.',
                         groups : ['bo_step_address'],
+                    ),
+                    new Assert\GreaterThan(
+                        value: 0,
+                        message: 'Veuillez saisir un nombre d\'occupants supérieur à 0.',
+                        groups: ['bo_step_logement'],
+                    ),
+                    new Assert\LessThan(
+                        value: 100,
+                        message: 'Veuillez saisir un nombre d\'occupants inférieur à 100.',
+                        groups: ['bo_step_logement'],
                     ),
                 ],
             ])
@@ -259,6 +290,16 @@ class SignalementDraftAddressType extends AbstractType
                         pattern: '/^\d+$/',
                         message: 'Veuillez saisir un nombre entier.',
                         groups: ['bo_step_address'],
+                    ),
+                    new Assert\GreaterThan(
+                        value: 0,
+                        message: 'Veuillez saisir un nombre d\'enfants supérieur à 0.',
+                        groups: ['bo_step_logement'],
+                    ),
+                    new Assert\LessThan(
+                        value: 100,
+                        message: 'Veuillez saisir un nombre d\'enfants inférieur à 100.',
+                        groups: ['bo_step_logement'],
                     ),
                 ],
             ])

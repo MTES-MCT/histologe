@@ -285,6 +285,10 @@ class UsagerSituationFoyerType extends AbstractType
                         pattern: '/^\d+$/',
                         message: 'Veuillez saisir un montant d\'allocation valide (nombre entier).',
                     ),
+                    new Assert\Length(
+                        max: 50,
+                        maxMessage: 'Le revenu fiscal ne doit pas dépasser {{ limit }} caractères.',
+                    ),
                 ],
             ])
             ->add('departApresTravaux', ChoiceType::class, [
