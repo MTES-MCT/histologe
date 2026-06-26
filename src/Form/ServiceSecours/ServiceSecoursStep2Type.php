@@ -131,11 +131,17 @@ class ServiceSecoursStep2Type extends AbstractType
                 'label' => 'Nombre de pièces à vivre (salon, chambre) du logement',
                 'help' => 'Format attendu : Saisir un nombre entier',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 3,
+                ],
             ])
             ->add('superficie', TextType::class, [
                 'label' => 'Superficie approximative du logement (en m²)',
                 'help' => 'Format attendu : Saisir un nombre entier',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 3,
+                ],
             ]);
     }
 

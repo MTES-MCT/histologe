@@ -126,6 +126,9 @@ class TypeCompositionType extends AbstractType
                 'help' => 'Format attendu : saisir un nombre',
                 'required' => false,
                 'data' => $signalement->getSuperficie(),
+                'attr' => [
+                    'maxlength' => 3,
+                ],
                 'constraints' => [
                     new Assert\NotNull(
                         message: 'Veuillez indiquer la superficie.',
@@ -166,6 +169,9 @@ class TypeCompositionType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $nbPieces,
+                'attr' => [
+                    'maxlength' => 3,
+                ],
                 'constraints' => [
                     new Assert\Regex(
                         pattern: '/^\d+$/',

@@ -137,6 +137,9 @@ class UsagerSituationFoyerType extends AbstractType
                 'label' => 'Numéro d\'allocataire / de dossier (facultatif)',
                 'help' => 'Format attendu : 25 caractères maximum',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 25,
+                ],
                 'constraints' => [
                     new Assert\Length(
                         max: 25,
@@ -216,6 +219,9 @@ class UsagerSituationFoyerType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $structureReferentSocial,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
                 'constraints' => [
                     new Assert\Length(
                         max: 255,
@@ -229,6 +235,9 @@ class UsagerSituationFoyerType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $nomReferentSocial,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
                 'constraints' => [
                     new Assert\Length(
                         max: 255,
@@ -242,6 +251,9 @@ class UsagerSituationFoyerType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $prenomReferentSocial,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
                 'constraints' => [
                     new Assert\Length(
                         max: 255,
