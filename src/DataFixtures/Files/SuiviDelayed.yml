@@ -1,0 +1,47 @@
+suivis_delayed:
+-
+  user: "m.assin@yopmail.com" 
+  signalement: "2025-09"
+  suivi_category: "SIGNALEMENT_EDITED_FO"
+  suivid_delayed_type: "FO_EDIT_SITUATION_FOYER"
+  changes: 
+      "Montant de l'allocation": 0
+      "Date de naissance de l'occupant": "09/06/1986"
+      "Allocataire / Caisse d'allocation": "caf"
+  created_at: "-2 hours -30 minutes"
+- 
+  user: "m.assin@yopmail.com" 
+  signalement: "2025-09"
+  suivi_category: "SIGNALEMENT_EDITED_FO"
+  suivid_delayed_type: "FO_EDIT_SITUATION_FOYER"
+  changes: 
+      "Date de naissance de l'occupant": "10/06/1986"
+  created_at: "-2 hours"
+- 
+  user: "m.assin@yopmail.com" 
+  signalement: "2025-09"
+  suivi_category: "SIGNALEMENT_EDITED_FO"
+  suivid_delayed_type: "FO_INVITATION_SENT"
+  changes: 
+    "Nom": "Puche"
+    "Email": "j.puche@yopmail.com"
+    "Prénom": "Jessica"
+    "Téléphone": null
+  created_at: "-1 hour -30 minutes"
+-
+  user: "georges.brassens34300@yopmail.com"
+  signalement: "2024-08"
+  suivi_category: "SIGNALEMENT_EDITED_FO"
+  suivid_delayed_type: "FO_EDIT_COORDONNEES_OCCUPANT"
+  changes: 
+      "Civilité": "mr"
+  created_at: "-2 hours -30 minutes"
+-
+  user: "georges.brassens34300@yopmail.com"
+  signalement: "2024-08"
+  suivi_category: "SIGNALEMENT_EDITED_FO"
+  suivid_delayed_type: "FO_EDIT_INFORMATIONS_ASSURANCE"
+  changes: 
+    "Assurance contactée": "oui"
+    "Réponse de l'assurance": "Les chansons de salle de garde ont toujours été de mon goût, et je suis bien malheureux, car de nos jours on n'en crée plus beaucoup."
+  created_at: "-2 hours"
