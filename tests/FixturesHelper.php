@@ -3,6 +3,7 @@
 namespace App\Tests;
 
 use App\Entity\Affectation;
+use App\Entity\Arrete;
 use App\Entity\AutoAffectationRule;
 use App\Entity\Critere;
 use App\Entity\Criticite;
@@ -10,6 +11,7 @@ use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
+use App\Entity\Enum\TypeArrete;
 use App\Entity\Enum\UserStatus;
 use App\Entity\File;
 use App\Entity\Intervention;
@@ -634,5 +636,15 @@ trait FixturesHelper
             ->setInseeToExclude(null)
             ->setPartnerToExclude([])
             ->setStatus(AutoAffectationRule::STATUS_ACTIVE);
+    }
+
+    private function createArrete(TypeArrete $type, \DateTimeImmutable $date, ?\DateTimeImmutable $dateMainLevee): Arrete
+    {
+        $arrete = new Arrete();
+        $arrete->setTypeArrete($type);
+        $arrete->setDateArrete($date);
+        $arrete->setDateMainLevee($dateMainLevee);
+
+        return $arrete;
     }
 }

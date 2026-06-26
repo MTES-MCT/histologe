@@ -74,7 +74,7 @@ class Adresse
         public ?string $rnbId = null,
         #[OA\Property(
             description: 'Clé BAN de l\'adresse',
-            example: '763f8c4b'
+            example: '75101_7275_00123'
         )]
         public ?string $cleBanAdresse = null,
     ) {

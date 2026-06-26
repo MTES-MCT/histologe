@@ -6,11 +6,15 @@ use App\Entity\Address;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use LongitudeOne\Spatial\Exception\InvalidValueException;
 use LongitudeOne\Spatial\PHP\Types\Geometry\Point;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadAddressData extends Fixture implements OrderedFixtureInterface
 {
+    /**
+     * @throws InvalidValueException
+     */
     public function load(ObjectManager $manager): void
     {
         $addresses = Yaml::parseFile(__DIR__.'/../Files/Address.yml');
@@ -22,6 +26,8 @@ class LoadAddressData extends Fixture implements OrderedFixtureInterface
 
     /**
      * @param array<string, mixed> $row
+     *
+     * @throws InvalidValueException
      */
     public function loadAddress(ObjectManager $manager, array $row): void
     {
@@ -31,6 +37,7 @@ class LoadAddressData extends Fixture implements OrderedFixtureInterface
             ->setPostCode($row['postCode'])
             ->setCity($row['city'])
             ->setCityCode($row['cityCode'])
+            ->setBanId($row['banId'] ?? null)
         ;
         if (isset($row['latitude']) && isset($row['longitude'])) {
             $point = new Point($row['latitude'], $row['longitude']);
