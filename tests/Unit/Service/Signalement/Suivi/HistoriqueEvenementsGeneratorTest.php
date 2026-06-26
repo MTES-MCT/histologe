@@ -196,7 +196,7 @@ class HistoriqueEvenementsGeneratorTest extends TestCase
                 ['17bis', '17 bis'],
                 'Rue de la Paix',
                 '74000',
-                'Annecy'
+                '74010'
             )
             ->willReturn([$arrete]);
 

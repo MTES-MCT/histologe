@@ -38,16 +38,16 @@ class ArreteRepository extends ServiceEntityRepository
         array|string|null $housenumber,
         string $street,
         string $postCode,
-        string $city,
+        string $cityCode, // codeInsee
     ): array {
         $qb = $this->createQueryBuilder('a')
             ->join('a.address', 'addr')
             ->where('addr.street = :street')
             ->andWhere('addr.postCode = :postCode')
-            ->andWhere('addr.city = :city')
+            ->andWhere('addr.cityCode = :cityCode')
             ->setParameter('street', $street)
             ->setParameter('postCode', $postCode)
-            ->setParameter('city', $city);
+            ->setParameter('cityCode', $cityCode);
 
         if (null === $housenumber) {
             $qb->andWhere('addr.housenumber IS NULL');

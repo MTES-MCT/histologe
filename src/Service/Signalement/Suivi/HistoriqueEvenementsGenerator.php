@@ -11,7 +11,6 @@ use App\Repository\ArreteRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Utils\Address\AddressParser;
-use App\Utils\Address\CommuneHelper;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -113,13 +112,11 @@ class HistoriqueEvenementsGenerator
             ];
         }
 
-        $city = CommuneHelper::getCommuneFromArrondissement($signalement->getVilleOccupant());
-
         return $this->arreteRepository->findByAddress(
             housenumber: $houseNumber,
             street: $address['street'],
             postCode: $signalement->getCpOccupant(),
-            city: $city
+            cityCode: $signalement->getInseeOccupant()
         );
     }
 }
