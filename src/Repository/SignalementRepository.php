@@ -522,6 +522,7 @@ class SignalementRepository extends ServiceEntityRepository
             $addresses = [
                 $adresseOccupant['number'].$suffix.' '.$adresseOccupant['street'],
                 $adresseOccupant['number'].' '.$suffix.' '.$adresseOccupant['street'],
+                $signalement->getAdresseOccupant(), // fallback
             ];
             $qb->andWhere('s.adresseOccupant IN (:addresses)')
                 ->setParameter('addresses', $addresses);
