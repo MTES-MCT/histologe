@@ -32,11 +32,16 @@ class HistoriqueEvenementsMessageHandler
         if (null !== $signalement) {
             $this->historiqueEvenementsGenerator->generate($signalement);
             $this->entityManager->flush();
+            $this->logger->info('HistoriqueEvenementsMessageHandler handled successfully', [
+                'signalementId' => $signalementDraftProcessMessage->getSignalementId(),
+                'step' => 'historique-evenements',
+            ]);
+        } else {
+            $this->logger->error('HistoriqueEvenementsMessageHandler failed', [
+                'signalementDraftId' => $signalementDraftProcessMessage->getSignalementDraftId(),
+                'signalementId' => $signalementDraftProcessMessage->getSignalementId(),
+                'step' => 'historique-evenements',
+            ]);
         }
-
-        $this->logger->info('HistoriqueEvenementsMessageHandler handled successfully', [
-            'signalementId' => $signalementDraftProcessMessage->getSignalementId(),
-            'step' => 'historique-evenements',
-        ]);
     }
 }

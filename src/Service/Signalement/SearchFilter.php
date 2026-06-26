@@ -103,6 +103,7 @@ class SearchFilter
                     OR LOWER(s.prenomOccupant) LIKE :searchterms
                     OR LOWER(s.mailOccupant) LIKE :searchterms
                     OR LOWER(s.reference) LIKE :searchterms
+                    OR LOWER(s.adresseOccupant) LIKE :searchterms
                     OR LOWER(s.adresseOccupant) LIKE :searchterms_suffix_1
                     OR LOWER(s.adresseOccupant) LIKE :searchterms_suffix_2
                     OR LOWER(s.villeOccupant) LIKE :searchterms
