@@ -1556,6 +1556,43 @@ dialog.side-panel {
   }
 }
 
+// Marqueurs numérotés sur la carte RNB (pick-localisation / SignalementFormAddress)
+.rnb-marker {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.rnb-marker--default {
+  background: var(--background-action-high-blue-france);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.rnb-marker--focused {
+  background: var(--background-action-high-blue-france);
+  // Double anneau : espace blanc + contour bleu (indicateur de focus clavier)
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--background-action-high-blue-france);
+}
+
+.rnb-marker--selected {
+  background: var(--background-action-high-green-emeraude);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.rnb-marker__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #fff;
+}
+
 @keyframes side-panel-in {
   from { transform: translateX(100%); }
   to   { transform: translateX(0); }
