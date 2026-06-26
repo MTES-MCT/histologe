@@ -708,13 +708,15 @@
                                                 {% endif %}
                                             {% endif %}
                                         {% endif %}
+                                    {% elseif suivi.category in enum('App\\Entity\\Enum\\SuiviCategory').categoriesSubmittedByBailleur() %}
+                                        <b>Bailleur</b>
                                     {% else %}
                                         <b> Aucun</b>
                                     {% endif %}
                                     <br>
                                     <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
                                 </td>
-                                <td style="padding:.5rem;width:85%">{{ suivi.description|raw }}</td>
+                                <td style="padding:.5rem;width:85%">{{ suivi.description(isForUsager: isForUsager)|raw }}</td>
                             </tr>
                         {% endif %}
                     {% endfor %}

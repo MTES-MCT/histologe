@@ -842,9 +842,10 @@ class SignalementControllerTest extends WebTestCase
         $suiviManager = static::getContainer()->get(SuiviManager::class);
         $suivi = $suiviManager->createSuivi(
             signalement: $signalement,
-            description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
+            description: '',
             category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
             isVisibleForUsager: true,
+            isVisibleForBailleur: true,
         );
         $signalement->addSuivi($suivi);
         $entityManager->flush();
@@ -918,9 +919,10 @@ class SignalementControllerTest extends WebTestCase
         $suiviManager = static::getContainer()->get(SuiviManager::class);
         $suivi = $suiviManager->createSuivi(
             signalement: $signalement,
-            description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
+            description: '',
             category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
             isVisibleForUsager: true,
+            isVisibleForBailleur: true,
         );
         $signalement->addSuivi($suivi);
         $entityManager->flush();
@@ -985,9 +987,10 @@ class SignalementControllerTest extends WebTestCase
         $suiviManager = static::getContainer()->get(SuiviManager::class);
         $suivi = $suiviManager->createSuivi(
             signalement: $signalement,
-            description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
+            description: '',
             category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
             isVisibleForUsager: true,
+            isVisibleForBailleur: true,
         );
         $signalement->addSuivi($suivi);
         $entityManager->getManager()->flush();
@@ -1006,5 +1009,17 @@ class SignalementControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('form');
+
+        $url = $router->generate(
+            'front_suivi_signalement_messages',
+            ['code' => $signalement->getCodeSuivi()]
+        );
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        $this->assertSelectorTextContains(
+            '.message-box-message',
+            'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.'
+        );
     }
 }

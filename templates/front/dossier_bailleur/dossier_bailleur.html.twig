@@ -330,16 +330,23 @@
 							{{ form(form) }}
 						{% endif %}
 
+						<h3 class="title-blue-france fr-mt-5w" id="form_stop_procedure_bailleur_title">Demander l'arrêt de la procédure</h3>
+						<div class="fr-my-3w">
 						{% if suiviDemandeCloture is empty %}
-							<h3 class="title-blue-france fr-mt-5w" id="form_stop_procedure_bailleur_title">Demander l'arrêt de la procédure</h3>
-							<div class="fr-my-3w">
+
 								<a class="fr-btn  fr-btn--secondary" href="{{ path('front_dossier_bailleur_cloture') }}"
 									data-matomo-clickable-event-category="Espace bailleur"
 									data-matomo-clickable-event-action="clickButton"
 									data-matomo-clickable-event-name="Arrêter la procédure"
 									>Demander l'arrêt de la procédure</a>
+						{% else %}
+							<div class="signalement-card">
+								Vous avez demandé l'arrêt de la procédure le {{ suiviDemandeCloture.createdAt|date('d/m/Y') }}.
+								<br>
+								Cette demande est en attente de réponse par le locataire.
 							</div>
 						{% endif %}
+						</div>
 					{% endif %}
 				{% else %}
 					<h3 class="title-blue-france fr-mb-1w" id="form_reponse_injonction_bailleur_title">Quelle réponse apportez-vous au locataire ?</h3>
@@ -443,7 +450,7 @@
 					{% set isUnreadMessage = false %}
 					{% set messageBoxClass = 'message-box--usager' %}
 					{% if suivi.category not in enum('App\\Entity\\Enum\\SuiviCategory').categoriesSubmittedByBailleur() %}
-						{% set messageBoxClass = 'message-box--partner message-box--unread' %}
+						{% set messageBoxClass = 'message-box--partner' %}
 					{% endif %}
 					{% include 'front/_partials/_suivi_signalement_suivi.html.twig' with {'forBailleur': true} %}
 				{% endfor %}

@@ -296,6 +296,11 @@ class SuiviBailleurControllerTest extends WebTestCase
             $crawler->filter('.fr-notice.fr-notice--success')->text()
         );
 
+        $this->assertStringContainsString(
+            'Demande de clôture du dossier : les travaux ont été réalisés.',
+            $crawler->filter('.message-box-message')->eq(1)->text()
+        );
+
         $suivis = $entityManager->getRepository(Suivi::class)->findBy([
             'signalement' => $signalement->getId(),
             'category' => SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,

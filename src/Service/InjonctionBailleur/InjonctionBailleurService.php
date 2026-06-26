@@ -180,7 +180,7 @@ class InjonctionBailleurService
         } elseif (MotifCloture::TRAVAUX_FAITS_OU_EN_COURS === $reason) {
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',
+                description: '',
                 category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
                 isVisibleForUsager: true,
                 isVisibleForBailleur: true

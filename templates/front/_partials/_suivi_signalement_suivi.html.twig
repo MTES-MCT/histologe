@@ -20,6 +20,7 @@
 		<span class="fr-badge fr-badge--sm fr-badge--no-icon fr-badge--warning fr-mb-1w">Nouveau message</span>
 	{% endif %}
 	<div class="message-box-message">
-		{{ suivi.description|replace({'___TOKEN___':csrf_token('suivi_signalement_ext_file_view')})|raw }}
+		{% set isForUsager = not forBailleur %}
+		{{ suivi.description(isForUsager: isForUsager)|replace({'___TOKEN___':csrf_token('suivi_signalement_ext_file_view')})|raw }}
 	</div>
 </div>

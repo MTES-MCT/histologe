@@ -4,6 +4,7 @@ namespace App\Service\Signalement\Suivi;
 
 use App\Controller\FileController;
 use App\Entity\Enum\DocumentType;
+use App\Entity\Suivi;
 use App\Entity\SuiviFile;
 use App\Repository\DesordreCritereRepository;
 use CoopTilleuls\UrlSignerBundle\UrlSigner\UrlSignerInterface;
@@ -21,13 +22,18 @@ class SuiviTransformerService
     ) {
     }
 
-    /**
-     * @param Collection<int, SuiviFile> $suiviFiles
-     */
-    public function transformDescription(string $description, Collection $suiviFiles): string
+    public function transformDescription(Suivi $suivi, bool $transformHtml, bool $isForUsager): string
     {
+        $calculatedDescription = SuiviDescriptionHelper::getSpecificDescriptionForCategoryAndRecipient($suivi->getCategory(), $isForUsager);
+        if ($calculatedDescription) {
+            return $calculatedDescription;
+        }
+        $description = $suivi->getDescription(raw: true);
+        if ($transformHtml && $description) {
+            $description = str_replace('&lt;br /&gt;', '<br />', $description);
+        }
         $description = $this->replaceStaticLinkToFiles($description);
-        $description .= $this->addLinkToFiles($suiviFiles);
+        $description .= $this->addLinkToFiles($suivi->getSuiviFiles());
 
         return $description;
     }
