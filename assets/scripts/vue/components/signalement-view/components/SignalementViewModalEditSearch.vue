@@ -89,7 +89,7 @@ import { defineComponent } from 'vue'
 import { store } from '../store'
 import { requests } from '../requests'
 import { buildBadge } from '../services/badgeFilterLabelBuilder'
-import SearchInterfaceSelectOption from '../interfaces/SearchInterfaceSelectOption';
+import SearchInterfaceSelectOption from '../../common/interfaces/SearchInterfaceSelectOption';
 
 export default defineComponent({
   name: 'SignalementViewModalEditSearch',

@@ -1,4 +1,4 @@
-import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
+import HistoInterfaceSelectOption from '../HistoInterfaceSelectOption'
 
 export default class SearchInterfaceSelectOption extends HistoInterfaceSelectOption {
   public Params: object = {}

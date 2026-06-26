@@ -2,12 +2,17 @@
 
 namespace App\Controller\Back;
 
+use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\User;
+use App\Factory\HistoAddressListViewFactory;
 use App\Repository\Query\SignalementList\SameAddressQuery;
 use App\Repository\TerritoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -25,7 +30,73 @@ class HistoAddressController extends AbstractController
     }
 
     #[Route('/', name: 'back_histo_address_index')]
-    public function index(SameAddressQuery $sameAddressQuery, TerritoryRepository $territoryRepository): Response
+    public function index(): Response
+    {
+        return $this->render('back/histo-address/index.html.twig');
+    }
+
+    #[Route('/list/addresses/', name: 'back_histo_addresses_list_json')]
+    public function list(
+        SameAddressQuery $sameAddressQuery,
+        HistoAddressListViewFactory $histoAddressListViewFactory,
+        #[MapQueryString] ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
+    ): JsonResponse {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $filters = null !== $addressesHistorySearchQuery
+            ? $addressesHistorySearchQuery->getFilters()
+            : [
+                // 'maxItemsPerPage' => AddressesHistorySearchQuery::MAX_LIST_PAGINATION,
+                // 'orderBy' => 'DESC',
+                // 'sortBy' => 'reference',
+            ];
+
+        $addresses = $sameAddressQuery->findSameAddressFiltered($user, $filters);
+        $responseAddresses = [];
+        foreach ($addresses as $address) {
+            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $address['adresseOccupant'].' '.$address['cpOccupant'].' '.$address['villeOccupant']));
+            if (!isset($responseAddresses[$addressKey])) {
+                $responseAddresses[$addressKey] = $histoAddressListViewFactory->createInstance(
+                    addressOccupant: $address['adresseOccupant'],
+                    cpOccupant: $address['cpOccupant'],
+                    villeOccupant: $address['villeOccupant'],
+                    territoryId: $address['territoryId'],
+                    addressForHuman: $address['adresseOccupant'].' '.$address['cpOccupant'].' '.$address['villeOccupant'],
+                    communeForHuman: $address['villeOccupant'].' '.$address['cpOccupant'],
+                );
+            }
+
+            $histoAddressSignalement = $histoAddressListViewFactory->createSignalementInstanceFromSignalementData($address);
+            $responseAddresses[$addressKey]->addSignalement($histoAddressSignalement);
+            if ($address['geoloc'] && isset($address['geoloc']['lat'])) {
+                $responseAddresses[$addressKey]->setLat($address['geoloc']['lat']);
+                $responseAddresses[$addressKey]->setLng($address['geoloc']['lng']);
+            }
+        }
+
+        $response = $this->json(
+            $responseAddresses,
+            Response::HTTP_OK,
+            ['content-type' => 'application/json'],
+            ['groups' => ['signalements:read']]
+        );
+
+        // Remove '?' at the start of the string
+        $parsableQueryString = null !== $addressesHistorySearchQuery
+            ? substr($addressesHistorySearchQuery->getQueryStringForUrl(), 1)
+            : '';
+        $cookie = Cookie::create(AddressesHistorySearchQuery::COOKIE_NAME)
+            ->withValue($parsableQueryString)
+            ->withExpires(strtotime('+1 hour'));
+
+        $response->headers->setCookie($cookie);
+
+        return $response;
+    }
+
+    #[Route('/proto-carte-facile', name: 'back_histo_address_carte_facile')]
+    public function carteFacile(SameAddressQuery $sameAddressQuery, TerritoryRepository $territoryRepository): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -58,7 +129,7 @@ class HistoAddressController extends AbstractController
             }
         }
 
-        return $this->render('back/histo-address/index.html.twig', [
+        return $this->render('back/histo-address/carte-facile.html.twig', [
             'nbSignalements' => count($signalements),
             'signalementsByAddress' => $signalementsByAddress,
             'territories' => $territories,

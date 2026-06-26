@@ -103,7 +103,7 @@
 import { defineComponent, watch, onMounted, onBeforeUnmount } from 'vue'
 import formStore from './../store'
 import { requests } from './../requests'
-import { variableTester } from '../../../utils/variableTester'
+import { variableTester } from '../../common/utils/variableTester'
 import { subscreenManager } from './../services/subscreenManager'
 import subscreenData from './../address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
