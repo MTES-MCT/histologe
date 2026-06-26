@@ -6,8 +6,9 @@ use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Signalement;
+use App\Entity\Territory;
 use App\Entity\User;
-use App\Repository\TerritoryRepository;
+use App\Form\Type\TerritoryChoiceType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -29,7 +30,6 @@ class SignalementDraftAddressType extends AbstractType
 {
     public function __construct(
         private readonly Security $security,
-        private readonly TerritoryRepository $territoryRepository,
     ) {
     }
 
@@ -49,31 +49,30 @@ class SignalementDraftAddressType extends AbstractType
 
         /** @var User $user */
         $user = $this->security->getUser();
-        if ($user->isSuperAdmin()) {
-            $territories = $this->territoryRepository->findAllList();
-        } else {
-            $territories = $user->getPartnersTerritories();
-        }
 
-        $territory = $user->getFirstTerritory();
-        if (1 === \count($territories)) {
+        if (!$user->isSuperAdmin()) {
+            $territory = $user->getFirstTerritory();
             $builder->add('filterSearchAddressTerritory', HiddenType::class, [
                 'mapped' => false,
-                'data' => $territory->getZip().'|'.$territory->getName(),
+                'attr' => [
+                    'data-autocomplete-address-filter' => 'true',
+                    'data-filter' => $territory->getZip().'|'.$territory->getName(),
+                ],
             ]);
         } else {
+            $territory = null;
             if (!empty($signalement)) {
                 $territory = $signalement->getTerritory();
             }
-            $choicesTerritories = [];
-            foreach ($territories as $territoryItem) {
-                $choicesTerritories[$territoryItem->getZipAndName()] = $territoryItem->getZip().'|'.$territoryItem->getName();
-            }
-            $builder->add('filterSearchAddressTerritory', ChoiceType::class, [
+            $builder->add('filterSearchAddressTerritory', TerritoryChoiceType::class, [
                 'mapped' => false,
-                'choices' => $choicesTerritories,
-                'label' => 'Territoire',
-                'data' => $territory ? $territory->getZip().'|'.$territory->getName() : '',
+                'attr' => [
+                    'data-autocomplete-address-filter' => 'true',
+                ],
+                'choice_attr' => static function (Territory $territory) {
+                    return ['data-filter' => $territory->getZip().'|'.$territory->getName()];
+                },
+                'data' => $territory,
             ]);
         }
 

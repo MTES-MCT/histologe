@@ -89,6 +89,29 @@
                     </div>
                 </div>
             </div>
+            {% if feature_histo_address %}
+                <div class="fr-col-12 fr-col-md-4">
+                    <div class="fr-tile fr-enlarge-link fr-tile--horizontal">
+                        <div class="fr-tile__body">
+                            <div class="fr-tile__content">
+                                <h3 class="fr-tile__title">
+                                    <a href="{{ path('back_territory_management_arrete_index') }}">Arrêtés</a>
+                                </h3>
+                                <p class="fr-tile__desc">Importer et visualiser l'historique des arrêtés de votre territoire</p>
+                                <p class="fr-tile__detail">
+                                    <span class="fr-icon-road-map-line" aria-hidden="true"></span>
+                                    {{ singular_or_plural(countArretes, 'arrêté', 'arrêtés') }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="fr-tile__header">
+                            <div class="fr-tile__pictogram">
+                                <img src="{{ asset('build/dsfr/artwork/pictograms/institutions/justice.svg') }}" aria-hidden="true" class="fr-artwork" alt="" width="40" height="40">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </section>
 

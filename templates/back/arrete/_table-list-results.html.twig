@@ -1,0 +1,62 @@
+{% set tableHead %}
+    <th scope="col">Date de l'arrêté</th>
+    <th scope="col">Type d'arrêté</th>
+    <th scope="col">Main levée</th>
+    <th scope="col">Adresse</th>
+    <th scope="col">Importé le</th>
+    <th scope="col" class="fr-text--right">Actions</th>
+{% endset %}
+
+{% set tableBody %}
+    {% for arrete in arretes %}
+        <tr class="signalement-row">
+            <td>{{ arrete.dateArrete|date('d/m/Y') }}</td>
+            <td>{{ arrete.typeArrete.label }}</td>
+            <td>
+                {% if arrete.mainLevee %}
+                    <span class="fr-badge fr-badge--success fr-badge--no-icon">Oui</span>
+                    <br>
+                    {% if arrete.dateMainLevee %}
+                        <br>
+                        le {{ arrete.dateMainLevee|date('d/m/Y') }}
+                    {% endif %}
+                {% else %}
+                    <span class="fr-badge fr-badge--info fr-badge--no-icon">Non</span>
+                {% endif %}
+            </td>
+            <td>
+                {{ arrete.address.housenumber }} {{ arrete.address.street }}
+                <br>
+                {{ arrete.address.postcode }} {{ arrete.address.city }}
+            </td>
+            <td>{% if arrete.importedAt %}{{ arrete.importedAt|date('d/m/Y') }}{% endif %}</td>
+            <td class="fr-text--right fr-ws-nowrap">
+                <button class="fr-btn fr-icon-eye-line open-modal-arrete-details"
+                    aria-label="Détails de l'arrêté {{ arrete.typeArrete.label }} du {{ arrete.dateArrete|date('d/m/Y') }}"
+                    title="Détails de l'arrêté {{ arrete.typeArrete.label }} du {{ arrete.dateArrete|date('d/m/Y') }}"
+                    data-fr-opened="false" 
+                    aria-controls="fr-modal-arrete-details"
+                    data-id="{{arrete.id}}"
+                    data-name="{{ arrete.typeArrete.label }} du {{ arrete.dateArrete|date('d/m/Y') }}"
+                    >Détails de l'arrêté</button>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <button class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-arrete-delete"
+                        aria-label="Supprimer l'arrêté {{ arrete.typeArrete.label }} du {{ arrete.dateArrete|date('d/m/Y') }}"
+                        title="Supprimer l'arrêté {{ arrete.typeArrete.label }} du {{ arrete.dateArrete|date('d/m/Y') }}"
+                        data-fr-opened="false" 
+                        aria-controls="fr-modal-arrete-delete"
+                        data-url="{{path('back_territory_management_arrete_delete', {arrete: arrete.id})}}?_token={{ csrf_token('arrete_delete') }}"
+                        data-name="{{ arrete.typeArrete.label }} du {{ arrete.dateArrete|date('d/m/Y') }}"
+                        >Supprimer l'arrêté</button>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+{% endset %}
+
+{% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des arrêtés', 'tableHead': tableHead, 'tableBody': tableBody } %}
+
+<div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" aria-label="Pagination de la liste des arrêtés">
+    {% import '_partials/macros.html.twig' as macros %}
+    {{ macros.customPagination(pages, searchArrete.page, 'back_territory_management_arrete_index', searchArrete.urlParams) }}
+</div>

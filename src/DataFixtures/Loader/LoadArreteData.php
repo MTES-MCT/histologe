@@ -42,17 +42,18 @@ class LoadArreteData extends Fixture implements OrderedFixtureInterface
     {
         $arrete = (new Arrete())
             ->setDateArrete(new \DateTimeImmutable($row['dateArrete']))
-            ->setTypeArrete(TypeArrete::from($row['typeArrete']))
+            ->setTypeArrete(TypeArrete::fromLabel($row['typeArrete']))
             ->setSyndic(isset($row['syndic']) ? $row['syndic'] : null)
             ->setAddress($this->addresses[$row['address']])
             ->setMainLevee(isset($row['mainLevee']) ? $row['mainLevee'] : false)
             ->setDateMainLevee(isset($row['dateMainLevee']) ? new \DateTimeImmutable($row['dateMainLevee']) : null)
+            ->setImportedAt(new \DateTimeImmutable())
         ;
         $manager->persist($arrete);
     }
 
     public function getOrder(): int
     {
-        return 2;
+        return 3;
     }
 }
