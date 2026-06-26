@@ -136,12 +136,8 @@ class SignalementDraftLogementType extends AbstractType
                 ],
                 'constraints' => [
                     new Assert\Length(
-                        min: 4,
-                        maxMessage: 'L\'année de construction doit comporter {{ limit }} caractères.',
-                    ),
-                    new Assert\Length(
-                        max: 4,
-                        maxMessage: 'L\'année de construction doit comporter {{ limit }} caractères.',
+                        exactly: 4,
+                        exactMessage: 'L\'année de construction doit comporter {{ limit }} caractères.',
                     ),
                 ],
             ])
