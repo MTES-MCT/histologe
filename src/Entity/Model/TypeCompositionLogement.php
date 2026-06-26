@@ -31,10 +31,7 @@ class TypeCompositionLogement
         private ?string $bailDpeDpe = null,
         private ?string $bailDpeClasseEnergetique = null,
         private ?string $bailDpeEtatDesLieux = null,
-        private ?string $desordresLogementChauffageDetailsDpeConsoFinale = null,
-        private ?string $desordresLogementChauffageDetailsDpeConso = null,
         private ?string $desordresLogementChauffageDetailsDpeAnnee = null,
-        private ?string $desordresLogementChauffageDetailsDpeConsoVide = null,
     ) {
     }
 
@@ -343,30 +340,6 @@ class TypeCompositionLogement
         return $this;
     }
 
-    public function getDesordresLogementChauffageDetailsDpeConsoFinale(): ?string
-    {
-        return $this->desordresLogementChauffageDetailsDpeConsoFinale;
-    }
-
-    public function setDesordresLogementChauffageDetailsDpeConsoFinale(?string $desordresLogementChauffageDetailsDpeConsoFinale): self
-    {
-        $this->desordresLogementChauffageDetailsDpeConsoFinale = $desordresLogementChauffageDetailsDpeConsoFinale;
-
-        return $this;
-    }
-
-    public function getDesordresLogementChauffageDetailsDpeConso(): ?string
-    {
-        return $this->desordresLogementChauffageDetailsDpeConso;
-    }
-
-    public function setDesordresLogementChauffageDetailsDpeConso(?string $desordresLogementChauffageDetailsDpeConso): self
-    {
-        $this->desordresLogementChauffageDetailsDpeConso = $desordresLogementChauffageDetailsDpeConso;
-
-        return $this;
-    }
-
     public function getDesordresLogementChauffageDetailsDpeAnnee(): ?string
     {
         return $this->desordresLogementChauffageDetailsDpeAnnee;
@@ -375,18 +348,6 @@ class TypeCompositionLogement
     public function setDesordresLogementChauffageDetailsDpeAnnee(?string $desordresLogementChauffageDetailsDpeAnnee): self
     {
         $this->desordresLogementChauffageDetailsDpeAnnee = $desordresLogementChauffageDetailsDpeAnnee;
-
-        return $this;
-    }
-
-    public function getDesordresLogementChauffageDetailsDpeConsoVide(): ?string
-    {
-        return $this->desordresLogementChauffageDetailsDpeConsoVide;
-    }
-
-    public function setDesordresLogementChauffageDetailsDpeConsoVide(?string $desordresLogementChauffageDetailsDpeConsoVide): self
-    {
-        $this->desordresLogementChauffageDetailsDpeConsoVide = $desordresLogementChauffageDetailsDpeConsoVide;
 
         return $this;
     }
