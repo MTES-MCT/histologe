@@ -8,10 +8,12 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Suivi;
+use App\Entity\SuiviDelayed;
 use App\Entity\TiersInvitation;
 use App\Manager\SuiviManager;
 use App\Repository\FileRepository;
@@ -401,7 +403,10 @@ class SignalementControllerTest extends WebTestCase
         $this->assertNotNull($invitation);
         $this->assertEquals($newMail, $invitation->getEmail());
         $this->assertNull($signalementReloaded->getMailDeclarant());
-        $this->assertEmailCount(2);
+        $this->assertEmailCount(1);
+
+        $suiviDelayeds = $entityManager->getRepository(SuiviDelayed::class)->findBy(['signalement' => $signalement, 'suiviCategory' => SuiviCategory::SIGNALEMENT_EDITED_FO]);
+        $this->assertCount(1, $suiviDelayeds);
     }
 
     public function testCoordonneesTiersBloqueSiInvitationExistante(): void
@@ -486,9 +491,12 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(['title' => 'Documents ajoutés', 'message' => 'Vos documents ont bien été enregistrés.'], $successMessages[0]);
 
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2025-09']);
-        $lastSuivi = $signalement->getLastSuivi();
-        $this->assertEquals(count($lastSuivi->getSuiviFiles()), 2);
-        $this->assertStringStartsWith('L&#039;occupant a ajouté des documents.', $lastSuivi->getDescription());
+        $suiviDelayeds = $entityManager->getRepository(SuiviDelayed::class)->findBy(['signalement' => $signalement, 'suiviCategory' => SuiviCategory::SIGNALEMENT_EDITED_FO]);
+        $this->assertCount(4, $suiviDelayeds);
+        $lastSuiviDelayed = $suiviDelayeds[3];
+
+        $this->assertEquals(count($lastSuiviDelayed->getFiles()), 2);
+        $this->assertEquals($lastSuiviDelayed->getSuiviDelayedType(), SuiviDelayedType::FO_ADD_DOCUMENTS);
     }
 
     public function testUsagerAddInvalidDocuments(): void
@@ -807,20 +815,11 @@ class SignalementControllerTest extends WebTestCase
             'L’information procédure doit indiquer que le bailleur a été prévenu.'
         );
 
-        /** @var SuiviRepository $suiviRepository */
-        $suiviRepository = $entityManager->getRepository(Suivi::class);
-        $suivi = $suiviRepository->findOneBy([
-            'signalement' => $signalementUpdated,
-            'type' => Suivi::TYPE_USAGER,
-            'category' => SuiviCategory::MESSAGE_USAGER,
-        ]);
-
-        $this->assertNotNull($suivi, 'Un suivi de type usager doit avoir été créé.');
-        $this->assertStringContainsString(
-            $signalementUser->getUser()->getNomComplet(true),
-            $suivi->getDescription(),
-            'Le suivi doit contenir le nom complet de l’usager.'
-        );
+        $suiviDelayeds = $entityManager->getRepository(SuiviDelayed::class)->findBy(['signalement' => $signalement, 'suiviCategory' => SuiviCategory::SIGNALEMENT_EDITED_FO]);
+        $this->assertCount(1, $suiviDelayeds);
+        $lastSuiviDelayed = $suiviDelayeds[0];
+        $this->assertEquals($lastSuiviDelayed->getUser()->getId(), $signalementUser->getUser()->getId());
+        $this->assertEquals($lastSuiviDelayed->getSuiviDelayedType(), SuiviDelayedType::FO_EDIT_COORDONNEES_BAILLEUR);
     }
 
     public function testSuiviSignalementProcedureBailleurClotureOui(): void

@@ -20,6 +20,9 @@ class SignalementUpdateService
         // Ordre volontaire : createSuiviDelayedFromSignalementChanges() utilise les changements enregistrés sur Signalement en preUpdate.
         $this->entityManager->wrapInTransaction(function () use ($signalement, $signalementUser): void {
             $this->entityManager->flush(); /* @see SignalementUpdatedListener::preUpdate() écoute l'event dispatché par le flush() */
+            if (!$signalement->getChanges()) {
+                return;
+            }
             $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayedFromSignalementChanges($signalementUser->getUser(), $signalement);
             $this->entityManager->persist($suiviDelayed);
             $this->entityManager->flush();

@@ -3,10 +3,11 @@
 namespace App\Tests\Functional\Controller;
 
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\File;
 use App\Entity\Signalement;
-use App\Entity\Suivi;
 use App\Repository\SignalementRepository;
+use App\Repository\SuiviDelayedRepository;
 use App\Security\User\SignalementUser;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Service\UploadHandlerService;
@@ -28,12 +29,14 @@ class SignalementFileControllerTest extends WebTestCase
     private ?SignalementUser $signalementUser = null;
     private RouterInterface $router;
     private SignalementRepository $signalementRepository;
+    private SuiviDelayedRepository $suiviDelayedRepository;
 
     protected function setUp(): void
     {
         self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->suiviDelayedRepository = static::getContainer()->get(SuiviDelayedRepository::class);
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000001']);
         $this->signalementUser = $this->getSignalementUser($this->signalement);
         $this->router = static::getContainer()->get(RouterInterface::class);
@@ -145,10 +148,11 @@ class SignalementFileControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000027']);
-        /** @var Suivi $lastSuivi */
-        $lastSuivi = $signalement->getSuivis()->last();
-        $this->assertStringContainsString('Photo supprimée', $lastSuivi->getDescription());
-        $this->assertStringContainsString($file->getFilename(), $lastSuivi->getDescription());
+
+        $suiviDelayed = $this->suiviDelayedRepository->findOneBy(['signalement' => $signalement, 'suiviDelayedType' => SuiviDelayedType::FO_FILE_DELETED]);
+        $this->assertNotNull($suiviDelayed);
+        $this->assertNull($suiviDelayed->getChanges());
+        $this->assertEquals($signalementUser->getUser()->getId(), $suiviDelayed->getUser()->getId());
 
         $redirectUrl = $this->client->getResponse()->headers->get('Location');
         $this->client->request('GET', $redirectUrl);
