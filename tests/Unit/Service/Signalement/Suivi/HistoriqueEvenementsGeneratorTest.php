@@ -183,6 +183,7 @@ class HistoriqueEvenementsGeneratorTest extends TestCase
         $signalement->setBanIdOccupant(null);
         $signalement->setAdresseOccupant('17 bis Rue de la Paix');
         $signalement->setCpOccupant('74000');
+        $signalement->setInseeOccupant('74010');
         $signalement->setVilleOccupant('Annecy');
 
         $this->signalementRepository->expects($this->once())
