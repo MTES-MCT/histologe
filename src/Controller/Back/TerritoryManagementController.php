@@ -4,8 +4,8 @@ namespace App\Controller\Back;
 
 use App\Entity\File;
 use App\Entity\User;
-use App\Repository\ArreteRepository;
 use App\Repository\FileRepository;
+use App\Repository\Query\Arrete\ArreteQuery;
 use App\Repository\TagRepository;
 use App\Repository\ZoneRepository;
 use App\Service\ListFilters\SearchTerritoryFiles;
@@ -25,14 +25,14 @@ class TerritoryManagementController extends AbstractController
         TagRepository $tagRepository,
         ZoneRepository $zoneRepository,
         FileRepository $fileRepository,
-        ArreteRepository $arreteRepository,
+        ArreteQuery $arreteQuery,
         #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
         $allTags = $tagRepository->findAllActive(null, $user);
         $allZones = $zoneRepository->findForUserAndTerritory($user, null);
-        $countArretes = $arreteRepository->countForUser($user);
+        $countArretes = $arreteQuery->countForUser($user);
 
         $searchTerritoryFiles = new SearchTerritoryFiles($user);
         $territories = null;

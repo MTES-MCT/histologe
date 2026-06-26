@@ -42,9 +42,8 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
     suffix = '-' + inputAdresse.dataset.suffix;
   }
   const addressGroup = document?.querySelector(inputAdresse.dataset.autocompleteQuerySelector);
-  const fieldFilterAddress = document?.querySelector(
-    '#signalement_draft_address_filterSearchAddressTerritory'
-  );
+  const idForm = inputAdresse.closest('form').id;
+  const fieldFilterAddress = document?.querySelector('#' + idForm + ' [data-autocomplete-address-filter' + suffix + ']');
 
   const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q=';
   let addressAbortController;
@@ -57,7 +56,15 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
 
     if (adresse.length > 8) {
       addressAbortController = new AbortController();
-      const zipFilterAddress = fieldFilterAddress ? fieldFilterAddress.value : '';
+      let zipFilterAddress = '';
+      if (fieldFilterAddress) {
+        if (fieldFilterAddress.tagName === 'SELECT') {
+          const selectedOption = fieldFilterAddress.options[fieldFilterAddress.selectedIndex];
+          zipFilterAddress = selectedOption ? selectedOption.dataset.filter || '' : '';
+        } else {
+          zipFilterAddress = fieldFilterAddress.dataset.filter || '';
+        }
+      }
       let query = apiAdresse + adresse;
       let limit = inputAdresse.getAttribute('data-form-limit');
       if (zipFilterAddress !== '') {
@@ -99,7 +106,6 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
     }
     if (adresse.length === 0) {
       addressGroup.innerHTML = '';
-      const idForm = inputAdresse.closest('form').id;
       if (document?.querySelector('#' + idForm + ' [data-autocomplete-housenumber' + suffix + ']')) {
         document.querySelector('#' + idForm + ' [data-autocomplete-housenumber' + suffix + ']').value =
           '';

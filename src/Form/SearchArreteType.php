@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Enum\TypeArrete;
+use App\Entity\Territory;
 use App\Form\Type\SearchCheckboxEnumType;
 use App\Form\Type\TerritoryChoiceType;
 use App\Service\ListFilters\SearchArrete;
@@ -28,7 +29,24 @@ class SearchArreteType extends AbstractType
         $user = $searchArrete->getUser();
 
         if ($user->isSuperAdmin() || count($user->getPartnersTerritories()) > 1) {
-            $builder->add('territory', TerritoryChoiceType::class);
+            $builder->add('territory', TerritoryChoiceType::class, [
+                'attr' => [
+                    'data-autocomplete-address-filter' => 'true',
+                ],
+                'choice_attr' => static function (Territory $territory) {
+                    return ['data-filter' => $territory->getZip().'|'.$territory->getName()];
+                },
+            ]);
+        } else {
+            $territories = $user->getPartnersTerritories();
+            $territory = reset($territories);
+            $builder->add('addressFilter', HiddenType::class, [
+                'mapped' => false,
+                'attr' => [
+                    'data-autocomplete-address-filter' => 'true',
+                    'data-filter' => $territory ? $territory->getZip().'|'.$territory->getName() : '',
+                ],
+            ]);
         }
 
         $builder->add('autocompleteAddress', TextType::class, [
@@ -71,7 +89,7 @@ class SearchArreteType extends AbstractType
             'label' => 'Types d\'arrêtés',
             'choices' => TypeArrete::getChoices(),
             'choice_label' => static function (TypeArrete $typeArrete) {
-                return $typeArrete->value;
+                return $typeArrete->label();
             },
         ]);
         $builder->add('mainLevee', ChoiceType::class, [

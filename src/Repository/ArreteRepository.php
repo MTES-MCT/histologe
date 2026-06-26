@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Arrete;
-use App\Entity\User;
 use App\Service\ListFilters\SearchArrete;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -17,19 +16,6 @@ class ArreteRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Arrete::class);
-    }
-
-    public function countForUser(User $user): int
-    {
-        $qb = $this->createQueryBuilder('a');
-        $qb->select('COUNT(a.id)');
-        $qb->innerJoin('a.address', 'address');
-
-        if (!$user->isSuperAdmin()) {
-            $qb->andWhere('address.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
-        }
-
-        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
