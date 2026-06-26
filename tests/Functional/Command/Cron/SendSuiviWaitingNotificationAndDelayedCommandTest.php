@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class SendSuiviWaitingNotificationCommandTest extends KernelTestCase
+class SendSuiviWaitingNotificationAndDelayedCommandTest extends KernelTestCase
 {
     public function testDisplayMessageSuccessfully(): void
     {
@@ -20,18 +20,21 @@ class SendSuiviWaitingNotificationCommandTest extends KernelTestCase
         $mockClock = new MockClock(new \DateTimeImmutable('+30 minutes'));
         $container->set(ClockInterface::class, $mockClock);
 
-        $command = $application->find('app:send-suivi-waiting-notification');
+        $command = $application->find('app:send-suivi-waiting-notification-and-delayed');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
-
-        $this->assertEquals('[OK] Les notifications de 7 suivis ont été envoyées avec succès.', trim($output));
+        
+        $this->assertStringStartsWith('[OK] Les notifications de 7 suivis ont été envoyées avec succès.', trim($output));
         $this->assertEmailCount(11);
 
         $suiviRepository = static::getContainer()->get(SuiviRepository::class);
 
         $this->assertEquals(0, $suiviRepository->count(['waitingNotification' => 1]));
+
+        //TODO
+        $this->assertStringEndsWith('[OK] 0 suivis générés pour 0 suivi différés traités.', trim($output));
     }
 }
