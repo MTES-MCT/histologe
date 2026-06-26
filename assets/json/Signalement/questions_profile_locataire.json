@@ -1348,8 +1348,8 @@
             "message": "Veuillez renseigner le nombre de personnes vivant dans votre logement.",
             "pattern": "^[0-9]+$",
             "patternMessage": "Veuillez renseigner un nombre de personnes valide.",
-            "expression": "parseInt(formStore.data.composition_logement_nombre_personnes) > 0",
-            "expressionMessage": "Le nombre de personnes doit être un nombre positif."
+            "expression": "parseInt(formStore.data.composition_logement_nombre_personnes) > 0 && parseInt(formStore.data.composition_logement_nombre_personnes) < 100",
+            "expressionMessage": "Merci de saisir une information numérique comprise entre 1 et 99 dans le champs nombre de personnes."
           },
           "accessibility": {
             "focus": true

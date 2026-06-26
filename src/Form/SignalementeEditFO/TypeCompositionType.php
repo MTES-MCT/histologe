@@ -65,9 +65,19 @@ class TypeCompositionType extends AbstractType
             ])
             ->add('natureAutrePrecision', TextType::class, [
                 'label' => 'Précision sur la nature (facultatif)',
+                'help' => 'Format attendu : texte (15 caractères maximum)',
                 'required' => false,
                 'mapped' => false,
                 'data' => $natureAutrePrecision,
+                'attr' => [
+                    'maxlength' => 15,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 15,
+                        maxMessage: 'La précision sur la nature du logement doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('appartementEtage', EnumType::class, [
                 'label' => 'Localisation de l\'appartement',
@@ -116,6 +126,9 @@ class TypeCompositionType extends AbstractType
                 'help' => 'Format attendu : saisir un nombre',
                 'required' => false,
                 'data' => $signalement->getSuperficie(),
+                'attr' => [
+                    'maxlength' => 3,
+                ],
                 'constraints' => [
                     new Assert\NotNull(
                         message: 'Veuillez indiquer la superficie.',
@@ -156,6 +169,9 @@ class TypeCompositionType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $nbPieces,
+                'attr' => [
+                    'maxlength' => 3,
+                ],
                 'constraints' => [
                     new Assert\Regex(
                         pattern: '/^\d+$/',
