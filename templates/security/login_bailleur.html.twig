@@ -37,7 +37,7 @@
                         </label>
                         <input class="fr-input" type="text" id="login-bailleur-code" name="bailleur_code" required>
                     </div>
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('activation') }}">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate_bailleur') }}">
                     <ul class="fr-btns-group fr-mt-5v">
                         <li>
                             <button class="fr-btn fr-btn--lg fr-btn--primary"
