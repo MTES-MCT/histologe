@@ -348,7 +348,9 @@
 					    {{ form_start(form) }}
 						{{ form_errors(form) }}
 						{{ form_row(form.reponse) }}
-						<iframe class="fr-mb-3w" src="{{ path('front_engagement_travaux_bailleur') }}" type="application/pdf" width="100%" height="400px" id="reponse_injonction_bailleur_engagement_travaux"
+						<iframe src="{{ path('front_engagement_travaux_bailleur') }}"
+							id="reponse_injonction_bailleur_engagement_travaux"
+							class="fr-mb-3w"
 							data-matomo-scrollable-event-category="Espace bailleur"
 							data-matomo-scrollable-event-action="scroll"
 							data-matomo-scrollable-event-name="Modèle PDF"
