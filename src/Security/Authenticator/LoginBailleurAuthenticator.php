@@ -27,16 +27,22 @@ class LoginBailleurAuthenticator extends AbstractLoginFormAuthenticator
 
     public function supports(Request $request): bool
     {
-        return $request->isMethod('POST')
-            && $request->request->get('bailleur_reference')
-            && $request->request->get('bailleur_code')
-        ;
+        return $request->isMethod('POST') && $this->getLoginUrl($request) === $request->getPathInfo();
     }
 
     public function authenticate(Request $request): Passport
     {
         $reference = (string) $request->request->get('bailleur_reference');
         $code = (string) $request->request->get('bailleur_code');
+
+        if (empty($reference)) {
+            throw new CustomUserMessageAuthenticationException('Veuillez saisir la référence du dossier.');
+        }
+
+        if (empty($code)) {
+            throw new CustomUserMessageAuthenticationException('Veuillez saisir le code de connexion.');
+        }
+
         $signalement = $this->signalementRepository->findOneForLoginBailleur($reference, $code);
 
         if (!$signalement) {
