@@ -5,6 +5,7 @@ namespace App\Specification\Signalement;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
@@ -20,10 +21,7 @@ readonly class FirstAffectationAcceptedSpecification
     public function isSatisfiedBy(Affectation $affectation): bool
     {
         $signalement = $affectation->getSignalement();
-        $suiviAffectationAccepted = $this->suiviRepository->findSuiviByDescription(
-            $signalement,
-            '<p>Suite à votre signalement, le ou les partenaires compétents'
-        );
+        $suiviAffectationAccepted = $this->suiviRepository->findBy(['signalement' => $signalement, 'category' => SuiviCategory::AFFECTATION_IS_ACCEPTED]);
         $affectationAccepted = $signalement->getAffectations()->filter(static function (Affectation $affectation) {
             return AffectationStatus::ACCEPTED === $affectation->getStatut();
         });

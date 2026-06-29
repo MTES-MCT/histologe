@@ -452,7 +452,7 @@
 					{% if suivi.category not in enum('App\\Entity\\Enum\\SuiviCategory').categoriesSubmittedByBailleur() %}
 						{% set messageBoxClass = 'message-box--partner' %}
 					{% endif %}
-					{% include 'front/_partials/_suivi_signalement_suivi.html.twig' with {'forBailleur': true} %}
+					{% include 'front/_partials/_suivi_signalement_suivi.html.twig' with {'forUsager': false} %}
 				{% endfor %}
 			</div>
 		</div>

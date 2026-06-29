@@ -4,7 +4,6 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Suivi;
 use App\Event\SuiviCreatedEvent;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
@@ -41,7 +40,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             $user = $rt ? $rt[0] : $admin;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
+                description: '',
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
                 user: $user,

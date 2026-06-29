@@ -22,9 +22,9 @@ class SuiviTransformerService
     ) {
     }
 
-    public function transformDescription(Suivi $suivi, bool $transformHtml, bool $isForUsager): string
+    public function transformDescription(Suivi $suivi, bool $transformHtml, SuiviRecipient $recipient): string
     {
-        $calculatedDescription = SuiviDescriptionHelper::getSpecificDescriptionForCategoryAndRecipient($suivi->getCategory(), $isForUsager);
+        $calculatedDescription = SuiviDescriptionHelper::getSpecificDescriptionForCategoryAndRecipient($suivi->getCategory(), $recipient);
         if ($calculatedDescription) {
             return $calculatedDescription;
         }

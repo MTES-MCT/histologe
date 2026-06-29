@@ -53,8 +53,6 @@ class SynchronizeIdossCommand extends AbstractCronCommand
         private readonly AffectationManager $affectationManager,
     ) {
         parent::__construct($this->parameterBag);
-        $this->partners = $this->partnerRepository->findBy(['isIdossActive' => true]);
-        $this->adminUser = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
     }
 
     /**
@@ -63,6 +61,8 @@ class SynchronizeIdossCommand extends AbstractCronCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
+        $this->partners = $this->partnerRepository->findBy(['isIdossActive' => true]);
+        $this->adminUser = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
 
         $nbStatusUpdated = 0;
         foreach ($this->partners as $partner) {

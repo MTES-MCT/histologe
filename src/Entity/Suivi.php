@@ -6,6 +6,7 @@ use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\SuiviCategory;
 use App\Repository\SuiviRepository;
+use App\Service\Signalement\Suivi\SuiviRecipient;
 use App\Service\Signalement\Suivi\SuiviTransformerService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -37,7 +38,6 @@ class Suivi implements EntityHistoryInterface
     public const int DEFAULT_PERIOD_BOUCLE = 90;
 
     public const string DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été clôturé pour';
-    public const string DESCRIPTION_SIGNALEMENT_VALIDE = 'Signalement validé';
     public const string DESCRIPTION_DELETED = 'Ce suivi a été supprimé par un administrateur le ';
 
     private ?SuiviTransformerService $suiviTransformerService = null;
@@ -228,7 +228,7 @@ class Suivi implements EntityHistoryInterface
         return 'OCCUPANT'.$separator.strtoupper($this->getSignalement()->getNomOccupant()).' '.ucfirst($this->getSignalement()->getPrenomOccupant());
     }
 
-    public function getDescription(bool $transformHtml = true, bool $raw = false, bool $isForUsager = false): string
+    public function getDescription(bool $transformHtml = true, bool $raw = false, SuiviRecipient $recipient = SuiviRecipient::DEFAULT): string
     {
         if (null !== $this->deletedAt) {
             return self::DESCRIPTION_DELETED.' '.$this->deletedAt->format('d/m/Y');
@@ -239,7 +239,7 @@ class Suivi implements EntityHistoryInterface
         }
 
         if ($this->suiviTransformerService) {
-            return $this->suiviTransformerService->transformDescription($this, $transformHtml, $isForUsager);
+            return $this->suiviTransformerService->transformDescription($this, $transformHtml, $recipient);
         }
 
         return $this->description;

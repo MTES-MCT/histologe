@@ -110,7 +110,7 @@
 						{% set isUnreadMessage = true %}
 					{% endif %}
 				{% endif %}
-				{% include 'front/_partials/_suivi_signalement_suivi.html.twig' with {'forBailleur': false} %}
+				{% include 'front/_partials/_suivi_signalement_suivi.html.twig' with {'forUsager': true} %}
 			{% endfor %}
 		</div>
 	</div>

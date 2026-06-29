@@ -6,7 +6,6 @@
 
 imports:
     - { resource: 'app/competences.yaml'}
-    - { resource: 'app/suivi_messages.yaml'}
     - { resource: 'app/csp.yaml'}
 parameters:
     .container.dumper.inline_factories: true

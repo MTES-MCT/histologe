@@ -5,6 +5,7 @@ namespace App\Service\Notification;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\NotificationType;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -300,7 +301,7 @@ class NotificationAndMailSender
         ?string $description = null,
     ): void {
         if (NotificationType::NOUVEAU_SUIVI === $type) {
-            if (Suivi::DESCRIPTION_SIGNALEMENT_VALIDE === $this->suivi->getDescription()) {
+            if (SuiviCategory::SIGNALEMENT_IS_ACTIVE === $this->suivi->getCategory()) {
                 return;
             }
         }
