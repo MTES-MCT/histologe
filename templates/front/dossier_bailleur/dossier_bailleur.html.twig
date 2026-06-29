@@ -208,7 +208,7 @@
 
 			<div class="fr-mb-4w">
 				<div class="fr-callout">
-					<h3 class="fr-callout__title">Quelles aides pour rénover mon logement ?</h3>
+					<h2 class="h3 fr-callout__title">Quelles aides pour rénover mon logement ?</h3>
 					<p class="fr-callout__text">En tant que propriétaire, vous pouvez bénéficier d'aides pour rénover votre logement. Estimez vos aides grâce au simulateur France Rénov' en cliquant sur le bouton ci-dessous.</p>
 					<a href="https://mesaidesreno.beta.gouv.fr/simulation" target="_blank" title="Mes Aides Réno - Ouvre une nouvelle fenêtre" class="fr-btn"
 						data-matomo-clickable-event-category="Espace bailleur"
@@ -251,30 +251,26 @@
 			</div>
 			{% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
 				<h3 class="title-blue-france">Bon à savoir</h3>
-				<div>
-					<p> 
-						<ul>
-							<li>Si vous acceptez de remédier aux désordres, <a href="{{ asset('build/files/Engagement_du_bailleur_a_realiser_des_travaux.docx') }}" target="_blank" rel="noopener" title="Modèle de lettre d'engagement - Ouvre une nouvelle fenêtre">vous devrez signer une lettre d’engagement à réalisation des travaux</a>. Un suivi sera opéré mensuellement avec les deux parties afin de vérifier l’avancement.</li>
-							<li>En cas de nécessité vous pourrez mettre un terme à votre engagement et le dossier sera automatiquement transmis aux autorités compétentes.</li>
-							<li>Les éléments constitutifs d’un logement décent sont définis par la loi et peuvent être consultés ici : <a href="{{ sites_faciles_url }}blog/habitat-indigne-quelles-procedures/" target="_blank" rel="noopener external" title="Signal Logement : procédures de l'habitat indigne - Ouvre une nouvelle fenêtre">{{ sites_faciles_url }}blog/habitat-indigne-quelles-procedures/</a></li>
-							<li>Afin d’améliorer les rapports locatifs, la 
-								<a href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000509310/2025-01-01/"
-									target="_blank" rel="noopener external" title="legifrance.gouv.fr - Ouvre une nouvelle fenêtre"
-									data-matomo-clickable-event-category="Espace bailleur"
-									data-matomo-clickable-event-action="clickLink"
-									data-matomo-clickable-event-name="loi n°89-462 du 6 juillet 1989"
-									>loi n°89-462 du 6 juillet 1989</a>
-								dispose quelles réparations incombent au locataire d’un logement et lesquelles incombent au propriétaire. Vous pouvez consulter le guide ici : 
-								<a href="{{ sites_faciles_url }}blog/entretien-logement-qui-paye-quoi/"
-									target="_blank" rel="noopener external" title="Signal Logement : qui paye quoi - Ouvre une nouvelle fenêtre"
-									data-matomo-clickable-event-category="Espace bailleur"
-									data-matomo-clickable-event-action="clickLink"
-									data-matomo-clickable-event-name="blog/entretien-logement-qui-paye-quoi"
-									>{{ sites_faciles_url }}blog/entretien-logement-qui-paye-quoi/</a>
-							</li>
-						</ul>
-					</p>
-				</div>
+				<ul>
+					<li>Si vous acceptez de remédier aux désordres, <a href="{{ asset('build/files/Engagement_du_bailleur_a_realiser_des_travaux.docx') }}" target="_blank" rel="noopener" title="Modèle de lettre d'engagement - Ouvre une nouvelle fenêtre">vous devrez signer une lettre d’engagement à réalisation des travaux</a>. Un suivi sera opéré mensuellement avec les deux parties afin de vérifier l’avancement.</li>
+					<li>En cas de nécessité vous pourrez mettre un terme à votre engagement et le dossier sera automatiquement transmis aux autorités compétentes.</li>
+					<li>Les éléments constitutifs d’un logement décent sont définis par la loi et peuvent être consultés ici : <a href="{{ sites_faciles_url }}blog/habitat-indigne-quelles-procedures/" target="_blank" rel="noopener external" title="Signal Logement : procédures de l'habitat indigne - Ouvre une nouvelle fenêtre">{{ sites_faciles_url }}blog/habitat-indigne-quelles-procedures/</a></li>
+					<li>Afin d’améliorer les rapports locatifs, la 
+						<a href="https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000509310/2025-01-01/"
+							target="_blank" rel="noopener external" title="legifrance.gouv.fr - Ouvre une nouvelle fenêtre"
+							data-matomo-clickable-event-category="Espace bailleur"
+							data-matomo-clickable-event-action="clickLink"
+							data-matomo-clickable-event-name="loi n°89-462 du 6 juillet 1989"
+							>loi n°89-462 du 6 juillet 1989</a>
+						dispose quelles réparations incombent au locataire d’un logement et lesquelles incombent au propriétaire. Vous pouvez consulter le guide ici : 
+						<a href="{{ sites_faciles_url }}blog/entretien-logement-qui-paye-quoi/"
+							target="_blank" rel="noopener external" title="Signal Logement : qui paye quoi - Ouvre une nouvelle fenêtre"
+							data-matomo-clickable-event-category="Espace bailleur"
+							data-matomo-clickable-event-action="clickLink"
+							data-matomo-clickable-event-name="blog/entretien-logement-qui-paye-quoi"
+							>{{ sites_faciles_url }}blog/entretien-logement-qui-paye-quoi/</a>
+					</li>
+				</ul>
 			{% endif %}
 		</div>
 		<div class="fr-col-12 fr-col-md-6">
@@ -330,23 +326,22 @@
 							{{ form(form) }}
 						{% endif %}
 
-						<h3 class="title-blue-france fr-mt-5w" id="form_stop_procedure_bailleur_title">Demander l'arrêt de la procédure</h3>
-						<div class="fr-my-3w">
+						<h3 class="title-blue-france fr-mt-5w">Demander l'arrêt de la procédure</h3>
 						{% if suiviDemandeCloture is empty %}
-
+							<div class="fr-my-3w fr-text--center">
 								<a class="fr-btn  fr-btn--secondary" href="{{ path('front_dossier_bailleur_cloture') }}"
 									data-matomo-clickable-event-category="Espace bailleur"
 									data-matomo-clickable-event-action="clickButton"
 									data-matomo-clickable-event-name="Arrêter la procédure"
 									>Demander l'arrêt de la procédure</a>
+							</div>
 						{% else %}
-							<div class="signalement-card">
+							<div class="signalement-card fr-my-3w">
 								Vous avez demandé l'arrêt de la procédure le {{ suiviDemandeCloture.createdAt|date('d/m/Y') }}.
 								<br>
 								Cette demande est en attente de réponse par le locataire.
 							</div>
 						{% endif %}
-						</div>
 					{% endif %}
 				{% else %}
 					<h3 class="title-blue-france fr-mb-1w" id="form_reponse_injonction_bailleur_title">Quelle réponse apportez-vous au locataire ?</h3>
