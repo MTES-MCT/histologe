@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use LongitudeOne\Spatial\PHP\Types\SpatialInterface;
 
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
+#[ORM\UniqueConstraint(name: 'unique_address_housenumber_street_citycode', columns: ['housenumber', 'street', 'city_code'])]
 class Address
 {
     #[ORM\Id]
@@ -31,7 +32,7 @@ class Address
     #[ORM\Column(type: 'string', length: 5)]
     private string $cityCode = '';
 
-    #[ORM\Column(length: 100, nullable: true)]
+    #[ORM\Column(length: 100, nullable: true, unique: true)]
     private ?string $banId = null;
 
     #[ORM\Column(type: 'point', nullable: true)]
@@ -42,6 +43,10 @@ class Address
      */
     #[ORM\OneToMany(targetEntity: Arrete::class, mappedBy: 'address')]
     private Collection $arretes;
+
+    #[ORM\ManyToOne(inversedBy: 'addresses')]
+    #[ORM\JoinColumn(nullable: false)]
+    private Territory $territory;
 
     public function __construct()
     {
@@ -158,6 +163,18 @@ class Address
     public function removeArrete(Arrete $arrete): static
     {
         $this->arretes->removeElement($arrete);
+
+        return $this;
+    }
+
+    public function getTerritory(): Territory
+    {
+        return $this->territory;
+    }
+
+    public function setTerritory(Territory $territory): static
+    {
+        $this->territory = $territory;
 
         return $this;
     }

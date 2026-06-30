@@ -1,7 +1,7 @@
 arretes:
 -
   dateArrete: "2024-06-01"
-  typeArrete: "mise en sécurité"
+  typeArrete: "Mise en sécurité"
   syndic: "Syndic A"
   address: "25 Rue desiree clary 13002 Marseille"
   mainLevee: true
@@ -18,15 +18,15 @@ arretes:
   address: "25 Rue desiree clary 13002 Marseille"
 -
   dateArrete: "2025-01-10"
-  typeArrete: "mise en sécurité procédure urgente"
+  typeArrete: "Mise en sécurité procédure urgente"
   address: "25 Rue desiree clary 13002 Marseille"
 -
   dateArrete: "2025-02-10"
-  typeArrete: "mise en sécurité procédure urgente"
+  typeArrete: "Mise en sécurité procédure urgente"
   address: "2 Impasse de la peupleraie 44850 Saint-Mars-du-Désert"
 -
   dateArrete: "2025-03-10"
-  typeArrete: "mise en sécurité modificatif"
+  typeArrete: "Mise en sécurité modificatif"
   address: "2 Impasse de la peupleraie 44850 Saint-Mars-du-Désert"
   mainLevee: true
   dateMainLevee: "2025-09-15"
@@ -42,11 +42,11 @@ arretes:
   dateMainLevee: "2025-10-13"
 -
   dateArrete: "2025-06-15"
-  typeArrete: "mise en sécurité"
+  typeArrete: "Mise en sécurité"
   address: "15 Chemin de la route 30360 Vézénobres"
 -
   dateArrete: "2025-07-15"
-  typeArrete: "mise en sécurité"
+  typeArrete: "Mise en sécurité"
   address: "15 Chemin de la route 30360 Vézénobres"
   mainLevee: true
   dateMainLevee: "2025-08-15"
@@ -60,7 +60,7 @@ arretes:
   address: "18 Bd du 8 Mai 1945 30110 La Grand-Combe"
 -
   dateArrete: "2025-08-02"
-  typeArrete: "mise en sécurité"
+  typeArrete: "Mise en sécurité"
   syndic: "Syndic B"
   address: "18 Bd du 8 Mai 1945 30110 La Grand-Combe"
 -
@@ -85,6 +85,6 @@ arretes:
   address: "6 Rue Arnavielle 30900 Nîmes"
 -
   dateArrete: "2025-12-03"
-  typeArrete: "mise en sécurité procédure urgente"
+  typeArrete: "Mise en sécurité procédure urgente"
   syndic: "Syndic C"
   address: "6 Rue Arnavielle 30900 Nîmes"

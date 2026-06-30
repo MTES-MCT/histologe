@@ -79,6 +79,12 @@ class Territory implements EntityHistoryInterface
     #[ORM\Column]
     private bool $isGrilleVisiteDisabled = false;
 
+    /**
+     * @var Collection<int, Address>
+     */
+    #[ORM\OneToMany(targetEntity: Address::class, mappedBy: 'territory')]
+    private Collection $addresses;
+
     public function __construct()
     {
         $this->partners = new ArrayCollection();
@@ -89,6 +95,7 @@ class Territory implements EntityHistoryInterface
         $this->autoAffectationRules = new ArrayCollection();
         $this->communes = new ArrayCollection();
         $this->zones = new ArrayCollection();
+        $this->addresses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -408,5 +415,30 @@ class Territory implements EntityHistoryInterface
     public function getZipAndName(): string
     {
         return sprintf('%s - %s', $this->zip, $this->name);
+    }
+
+    /**
+     * @return Collection<int, Address>
+     */
+    public function getAddresses(): Collection
+    {
+        return $this->addresses;
+    }
+
+    public function addAddress(Address $address): static
+    {
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+            $address->setTerritory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(Address $address): static
+    {
+        $this->addresses->removeElement($address);
+
+        return $this;
     }
 }
