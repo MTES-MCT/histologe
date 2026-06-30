@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
@@ -27,23 +28,35 @@ class LoginBailleurAuthenticator extends AbstractLoginFormAuthenticator
 
     public function supports(Request $request): bool
     {
-        return $request->isMethod('POST')
-            && $request->request->get('bailleur_reference')
-            && $request->request->get('bailleur_code')
-        ;
+        return $request->isMethod('POST') && $this->getLoginUrl($request) === $request->getPathInfo();
     }
 
     public function authenticate(Request $request): Passport
     {
         $reference = (string) $request->request->get('bailleur_reference');
         $code = (string) $request->request->get('bailleur_code');
+        $csrfToken = (string) $request->request->get('_csrf_token');
+
+        if (empty($reference)) {
+            throw new CustomUserMessageAuthenticationException('Veuillez saisir la référence du dossier.');
+        }
+
+        if (empty($code)) {
+            throw new CustomUserMessageAuthenticationException('Veuillez saisir le code de connexion.');
+        }
+
         $signalement = $this->signalementRepository->findOneForLoginBailleur($reference, $code);
 
         if (!$signalement) {
             throw new CustomUserMessageAuthenticationException('La référence et/ou le code ne sont pas valides.');
         }
 
-        return new SelfValidatingPassport(new UserBadge($signalement->getUuid()));
+        return new SelfValidatingPassport(
+            new UserBadge($signalement->getUuid()),
+            [
+                new CsrfTokenBadge('authenticate_bailleur', $csrfToken),
+            ]
+        );
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
