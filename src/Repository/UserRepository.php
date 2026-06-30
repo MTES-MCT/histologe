@@ -471,8 +471,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $qb = $this->createQueryBuilder('u');
 
-        $qb->select('u', 'uap')
+        $qb->select('u', 'uap', 'p', 't')
             ->leftJoin('u.userApiPermissions', 'uap')
+            ->leftJoin('uap.partner', 'p')
+            ->leftJoin('p.territory', 't')
             ->andWhere('JSON_CONTAINS(u.roles, :roles) = 1')
             ->andWhere('u.statut = :statutActive OR u.statut = :statutInactive')
             ->setParameter('statutActive', UserStatus::ACTIVE)
@@ -501,7 +503,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $firstResult = ($searchUser->getPage() - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
-        return new Paginator($queryBuilder->getQuery(), false);
+        return new Paginator($queryBuilder->getQuery());
     }
 
     public function findAgentByEmail(string $email, ?UserStatus $userStatus = null, bool $acceptRoleApi = true): ?User

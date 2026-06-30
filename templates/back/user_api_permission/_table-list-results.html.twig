@@ -26,13 +26,17 @@
             </td>
             <td>
                 {% if user.userApiPermissions|length %}
+                    {% set sortedPermissions = user.userApiPermissions|sort((a, b) =>
+                        ((a.territory ? a.territory.zip : (a.partner ? a.partner.territory.zip : '')) <=> (b.territory ? b.territory.zip : (b.partner ? b.partner.territory.zip : '')))
+                        ?: ((a.partner ? a.partner.nom : '')|lower <=> (b.partner ? b.partner.nom : '')|lower)
+                    ) %}
                     <div class="fr-table fr-table--sm fr-m-0">
                         <div class="fr-table__wrapper">
                             <div class="fr-table__container">
                                 <div class="fr-table__content">
                                     <table>
-                                        {% for permission in user.userApiPermissions %}
-                                            <tr>
+                                        {% for permission in sortedPermissions %}
+                                            <tr{% if loop.index > 10 %} class="js-api-permission-extra fr-hidden"{% endif %}>
                                                 <td>
                                                     {% set currentPermissionDescription %}
                                                     <ul>
@@ -40,7 +44,12 @@
                                                             <li><strong>Territoire :</strong> {{ permission.territory.zipAndName }}</li>
                                                         {% endif %}
                                                         {% if permission.partner is not null %}
-                                                            <li><strong>Partenaire :</strong> <a href="{{ path('back_partner_view', {id: permission.partner.id}) }}">{{ permission.partner.nom }}</a> (territoire : {{ permission.partner.territory.zipAndName }})</li>
+                                                            <li>
+                                                                <strong>Partenaire :</strong> 
+                                                                {{ permission.partner.territory.zip }}
+                                                                - <a href="{{ path('back_partner_view', {id: permission.partner.id}) }}">{{ permission.partner.nom }}</a> 
+                                                                ({{ permission.partner.territory.name }})
+                                                            </li>
                                                         {% endif %}
                                                         {% if permission.partnerType is not null %}
                                                             <li><strong>Type de partenaire :</strong> {{ permission.partnerType.label()}}</li>
@@ -49,7 +58,7 @@
                                                     {% endset %}
                                                     {{ currentPermissionDescription|raw }}
                                                 </td>
-                                                <td class="fr-cell--right">
+                                                <td class="fr-cell--right fr-ws-nowrap">
                                                     <a class="fr-btn fr-btn--sm fr-fi-edit-line" href="{{ path('back_api_user_permission_edit', {'id': permission.id}) }}"
                                                         aria-label="Modifier la permission"
                                                         title="Modifier la permission"></a>
@@ -68,6 +77,15 @@
                             </div>
                         </div>
                 </div>
+                    {% if sortedPermissions|length > 10 %}
+                        <button type="button"
+                            class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm js-api-permission-toggle fr-mt-1w"
+                            aria-expanded="false"
+                            data-show-label="Afficher tout ({{ sortedPermissions|length - 10 }} de plus)"
+                            data-hide-label="Réduire la liste">
+                            Afficher tout ({{ sortedPermissions|length - 10 }} de plus)
+                        </button>
+                    {% endif %}
                 {% endif %}
             </td>
             <td class="fr-cell--right">
