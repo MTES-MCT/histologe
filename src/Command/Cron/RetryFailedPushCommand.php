@@ -3,9 +3,9 @@
 namespace App\Command\Cron;
 
 use App\Entity\Enum\InterfacageType;
-use App\Entity\Enum\PartnerType;
 use App\Messenger\InterconnectionBus;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
+use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\AffectationRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Idoss\IdossService;
@@ -32,7 +32,7 @@ class RetryFailedPushCommand extends AbstractCronCommand
             'label' => 'SI-SH',
             'interfacageType' => InterfacageType::ESABORA,
             'action' => AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE,
-            'partnerTypes' => [PartnerType::ARS],
+            'partnerTypes' => DossierMessageSISH::CAN_SYNC_SISH_ESABORA,
         ],
         'schs' => [
             'label' => 'Esabora SCHS',
