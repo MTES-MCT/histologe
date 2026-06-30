@@ -29,7 +29,7 @@ class SecurityControllerTest extends WebTestCase
         $payload = [
             'bailleur_reference' => $signalement->getReference(),
             'bailleur_code' => $signalement->getLoginBailleur(),
-            '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
+            '_csrf_token' => $this->generateCsrfToken($client, 'authenticate_bailleur'),
         ];
         $client->request('POST', '/connexion-bailleur', $payload);
         $this->assertResponseRedirects('/dossier-bailleur/');
