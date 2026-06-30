@@ -8,9 +8,15 @@ use App\Entity\File;
 use App\Entity\Signalement;
 use App\Entity\SuiviDelayed;
 use App\Entity\User;
+use App\Manager\UserSignalementSubscriptionManager;
 
 class SuiviDelayedFactory
 {
+    public function __construct(
+        private readonly UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
+    ) {
+    }
+
     public function createSuiviDelayedFromSignalementChanges(
         User $user,
         Signalement $signalement,
@@ -37,12 +43,14 @@ class SuiviDelayedFactory
         User $user,
         Signalement $signalement,
         SuiviDelayedType $type,
-        iterable $filesToAttach = [],
+        SuiviCategory $category = SuiviCategory::SIGNALEMENT_EDITED_FO,
         array $customChanges = [],
+        iterable $filesToAttach = [],
+        bool &$subscriptionCreated = false,
     ): SuiviDelayed {
         $suiviDelayed = new SuiviDelayed();
 
-        $suiviDelayed->setSuiviCategory(SuiviCategory::SIGNALEMENT_EDITED_FO);
+        $suiviDelayed->setSuiviCategory($category);
         $suiviDelayed->setSuiviDelayedType($type);
         $suiviDelayed->setUser($user);
         $suiviDelayed->setSignalement($signalement);
@@ -52,6 +60,15 @@ class SuiviDelayedFactory
 
         foreach ($filesToAttach as $file) {
             $file->setSuiviDelayed($suiviDelayed);
+        }
+
+        if (SuiviCategory::SIGNALEMENT_EDITED_BO === $category && $this->userSignalementSubscriptionManager->doesUserNeedSubscription($user, $category, $signalement)) {
+            $this->userSignalementSubscriptionManager->createOrGet(
+                userToSubscribe: $user,
+                signalement: $signalement,
+                createdBy: $user,
+                subscriptionCreated: $subscriptionCreated
+            );
         }
 
         return $suiviDelayed;

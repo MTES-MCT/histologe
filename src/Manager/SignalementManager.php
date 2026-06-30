@@ -22,6 +22,7 @@ use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -35,6 +36,7 @@ use App\Entity\User;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementImportFactory;
+use App\Factory\SuiviDelayedFactory;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
@@ -72,6 +74,7 @@ class SignalementManager
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
         private readonly DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private readonly SuiviManager $suiviManager,
+        private readonly SuiviDelayedFactory $suiviDelayedFactory,
         private readonly UserManager $userManager,
         private readonly BailleurRepository $bailleurRepository,
         private readonly PartnerRepository $partnerRepository,
@@ -325,10 +328,17 @@ class SignalementManager
 
         $this->entityManager->persist($signalement);
 
-        return $this->suiviManager->addSuiviIfNeeded(
+        $subscriptionCreated = false;
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $this->getCurrentUser(),
             signalement: $signalement,
-            description: 'L\'adresse du logement a été modifiée par '
+            type: SuiviDelayedType::BO_EDIT_ADDRESS,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
         );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
     }
 
     public function updateFromCoordonneesTiersRequest(
@@ -365,10 +375,17 @@ class SignalementManager
 
         $this->entityManager->persist($signalement);
 
-        return $this->suiviManager->addSuiviIfNeeded(
+        $subscriptionCreated = false;
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $this->getCurrentUser(),
             signalement: $signalement,
-            description: 'Les coordonnées du tiers déclarant ont été modifiées par ',
+            type: SuiviDelayedType::BO_EDIT_COORDONNEES_TIERS,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
         );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
     }
 
     public function updateFromTiersInvitation(
@@ -422,10 +439,17 @@ class SignalementManager
 
         $this->entityManager->persist($signalement);
 
-        return $this->suiviManager->addSuiviIfNeeded(
+        $subscriptionCreated = false;
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $this->getCurrentUser(),
             signalement: $signalement,
-            description: 'Les coordonnées du foyer ont été modifiées par ',
+            type: SuiviDelayedType::BO_EDIT_COORDONNEES_FOYER,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
         );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
     }
 
     public function updateFromCoordonneesBailleurRequest(
@@ -479,10 +503,17 @@ class SignalementManager
 
         $this->entityManager->persist($signalement);
 
-        return $this->suiviManager->addSuiviIfNeeded(
+        $subscriptionCreated = false;
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $this->getCurrentUser(),
             signalement: $signalement,
-            description: 'Les coordonnées du bailleur ont été modifiées par ',
+            type: SuiviDelayedType::BO_EDIT_COORDONNEES_BAILLEUR,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
         );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
     }
 
     public function updateFromCoordonneesAgenceRequest(
@@ -502,10 +533,17 @@ class SignalementManager
 
         $this->entityManager->persist($signalement);
 
-        return $this->suiviManager->addSuiviIfNeeded(
+        $subscriptionCreated = false;
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $this->getCurrentUser(),
             signalement: $signalement,
-            description: 'Les coordonnées de l\'agence ont été modifiées par ',
+            type: SuiviDelayedType::BO_EDIT_COORDONNEES_AGENCE,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
         );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
     }
 
     public function updateFromCoordonneesSyndicRequest(
@@ -521,10 +559,17 @@ class SignalementManager
 
         $this->entityManager->persist($signalement);
 
-        return $this->suiviManager->addSuiviIfNeeded(
+        $subscriptionCreated = false;
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $this->getCurrentUser(),
             signalement: $signalement,
-            description: 'Les coordonnées du syndic ont été modifiées par ',
+            type: SuiviDelayedType::BO_EDIT_COORDONNEES_SYNDIC,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
         );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
     }
 
     public function updateFromInformationsLogementRequest(
@@ -613,10 +658,17 @@ class SignalementManager
 
         $this->entityManager->persist($signalement);
 
-        return $this->suiviManager->addSuiviIfNeeded(
+        $subscriptionCreated = false;
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $this->getCurrentUser(),
             signalement: $signalement,
-            description: 'Les informations sur le logement ont été modifiées par ',
+            type: SuiviDelayedType::BO_EDIT_INFORMATIONS_LOGEMENT,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
         );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
     }
 
     public function updateDesordresAndScoreWithSuroccupationChanges(
@@ -719,10 +771,17 @@ class SignalementManager
 
         $this->entityManager->persist($signalement);
 
-        return $this->suiviManager->addSuiviIfNeeded(
+        $subscriptionCreated = false;
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $this->getCurrentUser(),
             signalement: $signalement,
-            description: 'La description du logement a été modifiée par ',
+            type: SuiviDelayedType::BO_EDIT_DESCRIPTION_LOGEMENT,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
         );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
     }
 
     /**
@@ -827,10 +886,17 @@ class SignalementManager
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $this->entityManager->persist($signalement);
 
-        return $this->suiviManager->addSuiviIfNeeded(
+        $subscriptionCreated = false;
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $this->getCurrentUser(),
             signalement: $signalement,
-            description: 'La situation du foyer a été modifiée par ',
+            type: SuiviDelayedType::BO_EDIT_SITUATION_FOYER,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
         );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
     }
 
     public function updateFromProcedureDemarchesRequest(
@@ -881,10 +947,17 @@ class SignalementManager
 
         $this->entityManager->persist($signalement);
 
-        return $this->suiviManager->addSuiviIfNeeded(
+        $subscriptionCreated = false;
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $this->getCurrentUser(),
             signalement: $signalement,
-            description: 'Les procédures et démarches ont été modifiées par ',
+            type: SuiviDelayedType::BO_EDIT_PROCEDURE_DEMARCHES,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
         );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
     }
 
     /**
@@ -973,5 +1046,13 @@ class SignalementManager
         );
 
         $this->entityManager->flush();
+    }
+
+    private function getCurrentUser(): User
+    {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        return $user;
     }
 }

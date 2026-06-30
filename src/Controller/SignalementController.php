@@ -700,10 +700,10 @@ class SignalementController extends AbstractController
                     }
                     if ($filesToAttach) {
                         $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
-                            $signalementUser->getUser(),
-                            $signalement,
-                            SuiviDelayedType::FO_ADD_DOCUMENTS,
-                            $filesToAttach
+                            user: $signalementUser->getUser(),
+                            signalement: $signalement,
+                            type: SuiviDelayedType::FO_ADD_DOCUMENTS,
+                            filesToAttach: $filesToAttach
                         );
                         $entityManager->persist($suiviDelayed);
                         $entityManager->flush();

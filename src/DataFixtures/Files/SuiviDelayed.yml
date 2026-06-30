@@ -45,3 +45,15 @@ suivis_delayed:
     "Assurance contactée": "oui"
     "Réponse de l'assurance": "Les chansons de salle de garde ont toujours été de mon goût, et je suis bien malheureux, car de nos jours on n'en crée plus beaucoup."
   created_at: "-2 hours"
+-
+  user: "admin-territoire-30@signal-logement.fr"
+  signalement: "2024-12"
+  suivi_category: "SIGNALEMENT_EDITED_BO"
+  suivid_delayed_type: "BO_EDIT_COORDONNEES_FOYER"
+  created_at: "-2 hours -30 minutes"
+-
+  user: "admin-territoire-30@signal-logement.fr"
+  signalement: "2024-12"
+  suivi_category: "SIGNALEMENT_EDITED_BO"
+  suivid_delayed_type: "BO_EDIT_INFORMATIONS_LOGEMENT"
+  created_at: "-2 hours"

@@ -59,7 +59,6 @@ class SendSuiviWaitingNotificationCommand extends AbstractCronCommand
         foreach ($suivisDelayed as $suiviDelayed) {
             $key = $suiviDelayed->getUser()->getId().'_'.$suiviDelayed->getSignalement()->getId().'_'.$suiviDelayed->getSuiviCategory()->value;
             $groups[$key][] = $suiviDelayed;
-            // comment for debug
             $this->entityManager->remove($suiviDelayed);
         }
 

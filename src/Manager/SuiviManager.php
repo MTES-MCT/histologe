@@ -4,7 +4,6 @@ namespace App\Manager;
 
 use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Entity\Enum\DocumentType;
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\File;
@@ -90,7 +89,7 @@ class SuiviManager
             $suivi->addSuiviFile($suiviFile);
         }
         // abonnement au signalement si le suivi est crée par un agent non abonné
-        if ($createSubscription && $this->doesUserNeedSubscription($user, $suivi)) {
+        if ($createSubscription && $this->userSignalementSubscriptionManager->doesUserNeedSubscription($user, $suivi->getCategory(), $signalement)) {
             $this->userSignalementSubscriptionManager->createOrGet(
                 userToSubscribe: $user,
                 signalement: $signalement,
@@ -102,59 +101,6 @@ class SuiviManager
         $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME);
 
         return $suivi;
-    }
-
-    private function doesUserNeedSubscription(
-        ?User $user,
-        Suivi $suivi,
-    ): bool {
-        if (!$user) {
-            return false;
-        }
-        if ($user->isUsager() || $user->isApiUser() || $user->isSuperAdmin()) {
-            return false;
-        }
-        if (in_array($suivi->getCategory(), [
-            SuiviCategory::AFFECTATION_IS_ACCEPTED,
-            SuiviCategory::AFFECTATION_IS_REFUSED,
-            SuiviCategory::MESSAGE_USAGER,
-            SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
-            SuiviCategory::MESSAGE_BAILLEUR,
-            SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
-            SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
-            SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
-            SuiviCategory::SIGNALEMENT_EDITED_FO,
-        ])) {
-            return false;
-        }
-        if (SignalementStatus::DRAFT === $suivi->getSignalement()->getStatut()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function addSuiviIfNeeded(
-        Signalement $signalement,
-        string $description,
-    ): bool {
-        $subscriptionCreated = false;
-        // on force le flush sinon on ne passe pas dans SignalementUpdatedListener et $signalement->isUpdateOccurred() est toujours false
-        $this->entityManager->flush();
-        if ($signalement->isUpdateOccurred()) {
-            /** @var User $user */
-            $user = $this->security->getUser();
-            $this->createSuivi(
-                signalement: $signalement,
-                description: $description.$user->getNomComplet(),
-                category: SuiviCategory::SIGNALEMENT_EDITED_BO,
-                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
-                user: $user,
-                subscriptionCreated: $subscriptionCreated
-            );
-        }
-
-        return $subscriptionCreated;
     }
 
     public function addInviteSuiviFromBo(
@@ -365,7 +311,11 @@ class SuiviManager
         foreach ($suivisDelayed as $suiviDelayed) {
             $type = $suiviDelayed->getSuiviDelayedType()->value;
             if ($suiviDelayed->getChanges()) {
-                $changesGroupedByType[$type] = array_merge($changesGroupedByType[$type] ?? [], $suiviDelayed->getChanges());
+                if ($type === SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT->value) {
+                    $changesCountedByType[$type] = $suiviDelayed->getChanges()['description'];
+                } else {
+                    $changesGroupedByType[$type] = array_merge($changesGroupedByType[$type] ?? [], $suiviDelayed->getChanges());
+                }
             } elseif (count($suiviDelayed->getFiles())) {
                 $filesToAttach = array_merge($filesToAttach, $suiviDelayed->getFiles()->toArray());
             } else {
@@ -387,14 +337,19 @@ class SuiviManager
             }
             $description .= '</ul>';
         }
+
         if (count($changesCountedByType) > 0) {
-            $description .= '<strong>Autres modifications</strong><br>';
+            if (SuiviCategory::SIGNALEMENT_EDITED_BO !== $category) {
+                $description .= '<strong>Autres modifications</strong><br>';
+            }
             $description .= '<ul>';
         }
-        foreach ($changesCountedByType as $type => $count) {
+        foreach ($changesCountedByType as $type => $value) {
             $suiviDelayedType = SuiviDelayedType::from($type);
             if (SuiviDelayedType::FO_FILE_DELETED === $suiviDelayedType) {
-                $description .= '<li>'.$count.' '.$suiviDelayedType->label().'</li>';
+                $description .= '<li>'.$value.' '.$suiviDelayedType->label().'</li>';
+            } elseif (SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT === $suiviDelayedType) {
+                $description .= '<li>'.$value.'</li>';
             } else {
                 $description .= '<li>'.$suiviDelayedType->label().'</li>';
             }
@@ -403,12 +358,20 @@ class SuiviManager
             $description .= '</ul>';
         }
 
+        $partner = null;
+        $isVisibleForUsager = true;
+        if (SuiviCategory::SIGNALEMENT_EDITED_BO === $category) {
+            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+            $isVisibleForUsager = false;
+        }
+
         $this->createSuivi(
             signalement: $signalement,
             description: $description,
             category: $category,
+            partner: $partner,
             user: $user,
-            isVisibleForUsager: true,
+            isVisibleForUsager: $isVisibleForUsager,
             files: $filesToAttach
         );
     }

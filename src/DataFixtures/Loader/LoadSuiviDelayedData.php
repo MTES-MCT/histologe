@@ -51,7 +51,7 @@ class LoadSuiviDelayedData extends Fixture implements OrderedFixtureInterface
         $suiviDelayed->setCreatedAt($createdAt);
         $suiviDelayed->setSuiviCategory($category);
         $suiviDelayed->setSuiviDelayedType($type);
-        $suiviDelayed->setChanges($row['changes']);
+        $suiviDelayed->setChanges($row['changes'] ?? null);
 
         $manager->persist($suiviDelayed);
     }
