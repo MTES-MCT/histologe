@@ -234,7 +234,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
 
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: "Un message automatique a été envoyé à l'usager pour lui demander de mettre à jour sa situation.",
+                description: '',
                 category: SuiviCategory::ASK_FEEDBACK_SENT,
                 sendMail: false,
             );

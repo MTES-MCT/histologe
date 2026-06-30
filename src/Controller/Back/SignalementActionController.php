@@ -87,7 +87,7 @@ class SignalementActionController extends AbstractController
         $signalement->setStatut(SignalementStatus::ACTIVE);
         $suiviManager->createSuivi(
             signalement: $signalement,
-            description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
+            description: '',
             category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
             partner: $partner,
             user : $user,
@@ -125,7 +125,7 @@ class SignalementActionController extends AbstractController
             $subscriptionCreated = false;
             $suiviManager->createSuivi(
                 signalement: $signalement,
-                description: Suivi::DESCRIPTION_SIGNALEMENT_VALIDE,
+                description: '',
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
                 partner: $partner,
                 user : $user,

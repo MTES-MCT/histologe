@@ -716,7 +716,8 @@
                                     <br>
                                     <small>{{ suivi.createdAt|date('d/m/Y') }}</small>
                                 </td>
-                                <td style="padding:.5rem;width:85%">{{ suivi.description(isForUsager: isForUsager)|raw }}</td>
+                                {% set recipient = isForUsager ? constant('App\\Service\\Signalement\\Suivi\\SuiviRecipient::USAGER') : constant('App\\Service\\Signalement\\Suivi\\SuiviRecipient::DEFAULT') %}
+                                <td style="padding:.5rem;width:85%">{{ suivi.description(recipient: recipient)|raw }}</td>
                             </tr>
                         {% endif %}
                     {% endfor %}

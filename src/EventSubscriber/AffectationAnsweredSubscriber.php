@@ -86,7 +86,7 @@ readonly class AffectationAnsweredSubscriber implements EventSubscriberInterface
             $adminUser = $this->userRepository->findOneBy(['email' => $adminEmail]);
             $this->suiviManager->createSuivi(
                 signalement: $affectation->getSignalement(),
-                description: $this->parameterBag->get('suivi_message')['first_accepted_affectation'],
+                description: '',
                 category: SuiviCategory::AFFECTATION_IS_ACCEPTED,
                 user: $adminUser,
                 isVisibleForUsager: true,

@@ -124,7 +124,7 @@ class SuiviCategoryMapper
         if ($suivi->getCategory() && isset(self::SUIVI_CATEGORIES_CONFIGURATION[$suivi->getCategory()->name])) {
             $configuration = self::SUIVI_CATEGORIES_CONFIGURATION[$suivi->getCategory()->name];
         } else {
-            $title = HtmlCleaner::clean($suivi->getDescription(isForUsager: true));
+            $title = HtmlCleaner::clean($suivi->getDescription(recipient: SuiviRecipient::USAGER));
             $title = (mb_strlen($title) > 50) ? mb_substr($title, 0, 50).'...' : $title;
             $configuration = [
                 'label' => 'Nouveau message',

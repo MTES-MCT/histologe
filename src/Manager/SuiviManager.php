@@ -362,16 +362,10 @@ class SuiviManager
      */
     public static function buildDescriptionAnswerAffectation(array $params): string
     {
-        $description = '';
-        if (isset($params['accept'])) {
-            $description = 'Le signalement a été accepté';
-        } elseif (isset($params['suivi'])) {
-            $motifRejected = !empty($params['motifRefus']) ? $params['motifRefus']->label() : 'Non précisé';
-            $commentaire = Sanitizer::sanitize($params['suivi']);
-            $description = 'Le signalement a été refusé avec le motif suivant : '.$motifRejected.'.<br>Plus précisément :<br>'.$commentaire;
-        }
+        $motifRejected = !empty($params['motifRefus']) ? $params['motifRefus']->label() : 'Non précisé';
+        $commentaire = Sanitizer::sanitize($params['suivi']);
 
-        return $description;
+        return 'Le signalement a été refusé avec le motif suivant : '.$motifRejected.'.<br>Plus précisément :<br>'.$commentaire;
     }
 
     public function createSuiviFromEditUsager(
