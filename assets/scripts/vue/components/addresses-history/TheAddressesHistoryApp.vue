@@ -8,7 +8,10 @@
       <p v-if="sharedState.hasErrorLoading">Veuillez recharger la page ou nous prévenir via le formulaire de contact.</p>
     </section>
     <AddressesHistoryMap v-else-if="sharedState.viewMode === 'map'"/>
-    <AddressesHistoryList v-else-if="sharedState.viewMode === 'list'" @filterChange="handleFilters" />
+    <AddressesHistoryList v-else-if="sharedState.viewMode === 'list'"
+      @filtersChange="handleFilters"
+      @territoryChange="handleTerritoryChange"
+      />
   </div>
 </template>
 
@@ -76,10 +79,12 @@ export default defineComponent({
     handleTerritoryChange (value: any) {
       handleTerritoryChange(this, value)
     },
-    handleClickReset () {
+    /*handleClickReset () {
+      console.log('handleClickReset')
       this.init(true)
-    },
+    },*/
     handleFilters () {
+      console.log('handleFilters')
       handleFilters(this)
     },
     handleViewChange (pageName: string) {

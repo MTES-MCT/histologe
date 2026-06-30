@@ -3,7 +3,7 @@
 {% block title %}Historique des événements par adresse{% endblock %}
 
 {% block content %}
-    <section class="fr-pt-5v {{ app.request.attributes.get('_route') == 'back_histo_address_index' ? container_class : 'fr-pl-5v' }}">
+    <section class="fr-pt-5v {{ app.request.attributes.get('_route') == 'back_addresses_history_index' ? container_class : 'fr-pl-5v' }}">
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Historique des événements par adresse',
             'level2Link': '',
@@ -11,8 +11,8 @@
         } %}
     </section>
     <div id="app-addresses-history-view"
-        data-ajaxurl="{{ path('back_histo_addresses_list_json') }}"
-        data-ajaxurl-export-csv="{{ path('back_histo_address_export') }}"
+        data-ajaxurl="{{ path('back_addresses_history_list_json') }}"
+        data-ajaxurl-export-csv="{{ path('back_addresses_history_export') }}"
         data-ajaxurl-settings="{{ path('back_settings') }}"
         data-platform-name="{{ platform.name }}"
         >

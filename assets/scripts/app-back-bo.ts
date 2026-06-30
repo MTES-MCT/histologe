@@ -47,5 +47,5 @@ import './vanilla/controllers/back_user_index/form_user.js';
 import './vanilla/controllers/back_zone_view/back_zone_index.js';
 import './vanilla/controllers/back_config_service_secours/back_config_service_secours.js';
 import './vanilla/controllers/back_signalement_same_address/back_signalement_same_address.js';
-import './vanilla/controllers/back_histo_address/back_histo_address.js';
+import './vanilla/controllers/back_addresses_history/back_addresses_history.js';
 import './vanilla/controllers/back_territory_management_arrete_index/back_territory_management_arrete_index.js';
