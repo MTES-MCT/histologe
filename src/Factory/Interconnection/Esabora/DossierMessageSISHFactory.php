@@ -86,6 +86,8 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ? substr($signalement->getInseeOccupant(), 0, 5)
             : null;
 
+        $dateEntreeLogement = $this->formatValidDateEntreeLogement($signalement->getDateEntree());
+
         return (new DossierMessageSISH())
             ->setUrl($partner->getEsaboraUrl())
             ->setToken($partner->getEsaboraToken())
@@ -123,7 +125,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setSitOccupantNumAllocataire($signalement->getNumAllocataire())
             ->setSitOccupantMontantAlloc($signalement->getMontantAllocation())
             ->setSitLogementBailEncours(!empty($signalement->getIsBailEnCours()) ? (int) $signalement->getIsBailEnCours() : null)
-            ->setSitLogementBailDateEntree($signalement->getDateEntree()?->format($formatDate))
+            ->setSitLogementBailDateEntree($dateEntreeLogement)
             ->setSitLogementPreavisDepart((int) $signalement->getIsPreavisDepart())
             ->setSitLogementRelogement((int) $signalement->getIsRelogement())
             ->setSitLogementSuperficie((int) $signalement->getSuperficie())
@@ -273,5 +275,21 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $separator = str_repeat('-', 50);
 
         return implode(\PHP_EOL.$separator.\PHP_EOL, $cleanedSuivis);
+    }
+
+    private function formatValidDateEntreeLogement(?\DateTimeImmutable $dateEntreeLogement): ?string
+    {
+        if (null === $dateEntreeLogement) {
+            return null;
+        }
+
+        $minDate = new \DateTimeImmutable('1900-01-01');
+        $today = new \DateTimeImmutable();
+
+        if ($dateEntreeLogement < $minDate || $dateEntreeLogement > $today) {
+            return null;
+        }
+
+        return $dateEntreeLogement->format(AbstractEsaboraService::FORMAT_DATE);
     }
 }
