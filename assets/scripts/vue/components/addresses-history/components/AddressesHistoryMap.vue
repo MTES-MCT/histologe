@@ -1,27 +1,17 @@
 <template>
-    <section>
-        Carte
-    </section>
+  <section>
+    Carte
+  </section>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
 import { store } from '../store'
 
-export default defineComponent({
-  name: 'AddressesHistoryMap',
-  emits: ['change'],
-  data () {
-    return {
-      sharedState: store.state,
-      sharedProps: store.props
-    }
-  },
-  computed: {
-  },
-  methods: {
-  }
-})
+// State
+const sharedState = store.state
+const sharedProps = store.props
 </script>
+
 <style>
 </style>
+
