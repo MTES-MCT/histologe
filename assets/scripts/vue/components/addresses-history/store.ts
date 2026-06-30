@@ -1,8 +1,9 @@
+import { reactive } from 'vue'
 import { QueryParameter } from '../common/interfaces/queryParameter'
 import HistoInterfaceSelectOption from '../common/HistoInterfaceSelectOption'
 
 export const store = {
-  state: {
+  state: reactive({
     addresses: {
       filters: Object,
       list: new Array<Object>(),
@@ -18,13 +19,13 @@ export const store = {
       order: 'reference-DESC',
       queryParameters: [] as QueryParameter[],
       filters: {
-        territoire: undefined,
-        adresse: undefined,
+        territoire: undefined as string | undefined,
+        adresse: undefined as string | undefined,
         communes: new Array<string>(),
-        bailleurOuSyndic: undefined,
+        bailleurOuSyndic: undefined as string | undefined,
         zones: new Array<string>(),
-        natureParc: undefined,
-        dossiersMultiples: undefined,
+        natureParc: undefined as string | undefined,
+        dossiersMultiples: undefined as string | undefined,
         typesArretes: new Array<string>(),
       }
     },
@@ -59,7 +60,7 @@ export const store = {
       { Id: 'bla', Text: 'Bla bla bla' },
     ],
     filtersApplyKey: 0
-  },
+  }),
   props: {
     ajaxurlAddresses: '',
     baseAjaxUrlAddresses: '',
