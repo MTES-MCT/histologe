@@ -17,6 +17,7 @@ use App\Service\UploadHandlerService;
 use App\Utils\Address\AddressParser;
 use App\Utils\Address\EscalierParser;
 use App\Utils\Address\EtageParser;
+use App\Utils\DateHelper;
 use App\Utils\HtmlCleaner;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -86,7 +87,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ? substr($signalement->getInseeOccupant(), 0, 5)
             : null;
 
-        $dateEntreeLogement = $this->formatValidDateEntreeLogement($signalement->getDateEntree());
+        $dateEntreeLogement = null !== $signalement->getDateEntree()
+            ? DateHelper::formatValidDateInput($signalement->getDateEntree(), AbstractEsaboraService::FORMAT_DATE)
+            : null;
 
         return (new DossierMessageSISH())
             ->setUrl($partner->getEsaboraUrl())
@@ -275,21 +278,5 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $separator = str_repeat('-', 50);
 
         return implode(\PHP_EOL.$separator.\PHP_EOL, $cleanedSuivis);
-    }
-
-    private function formatValidDateEntreeLogement(?\DateTimeImmutable $dateEntreeLogement): ?string
-    {
-        if (null === $dateEntreeLogement) {
-            return null;
-        }
-
-        $minDate = new \DateTimeImmutable('1900-01-01');
-        $today = new \DateTimeImmutable();
-
-        if ($dateEntreeLogement < $minDate || $dateEntreeLogement > $today) {
-            return null;
-        }
-
-        return $dateEntreeLogement->format(AbstractEsaboraService::FORMAT_DATE);
     }
 }
