@@ -5,7 +5,7 @@ namespace App\Dto;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[Groups(['signalements:read'])]
-class HistoAddressSignalementView
+class AddressesHistorySignalementView
 {
     public function __construct(
         private readonly ?string $url = null,

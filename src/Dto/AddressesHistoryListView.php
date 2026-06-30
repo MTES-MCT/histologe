@@ -6,7 +6,7 @@ use App\Entity\Signalement;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[Groups(['signalements:read'])]
-class HistoAddressListView
+class AddressesHistoryListView
 {
     public const string SEPARATOR_CONCAT = '||';
     public const string SEPARATOR_GROUP_CONCAT = ';';
@@ -84,11 +84,11 @@ class HistoAddressListView
         return $this->signalements;
     }
 
-    public function addSignalement(HistoAddressSignalementView $histoAddressSignalement): void
+    public function addSignalement(AddressesHistorySignalementView $addressesHistorySignalement): void
     {
         if (null === $this->signalements) {
             $this->signalements = [];
         }
-        $this->signalements[] = $histoAddressSignalement;
+        $this->signalements[] = $addressesHistorySignalement;
     }
 }

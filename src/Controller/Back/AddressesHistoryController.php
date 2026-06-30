@@ -4,7 +4,7 @@ namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\User;
-use App\Factory\HistoAddressListViewFactory;
+use App\Factory\AddressesHistoryListViewFactory;
 use App\Repository\Query\SignalementList\SameAddressQuery;
 use App\Repository\TerritoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,27 +18,27 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/historique-des-adresses')]
 #[IsGranted('ROLE_ADMIN_TERRITORY')]
-class HistoAddressController extends AbstractController
+class AddressesHistoryController extends AbstractController
 {
     public function __construct(
         #[Autowire(env: 'FEATURE_HISTO_ADDRESS')]
-        private readonly bool $featureHistoAddress,
+        private readonly bool $featureAddressesHistory,
     ) {
-        if (!$this->featureHistoAddress) {
+        if (!$this->featureAddressesHistory) {
             throw $this->createNotFoundException();
         }
     }
 
-    #[Route('/', name: 'back_histo_address_index')]
+    #[Route('/', name: 'back_addresses_history_index')]
     public function index(): Response
     {
-        return $this->render('back/histo-address/index.html.twig');
+        return $this->render('back/addresses-history/index.html.twig');
     }
 
-    #[Route('/list/addresses/', name: 'back_histo_addresses_list_json')]
+    #[Route('/list/addresses/', name: 'back_addresses_history_list_json')]
     public function list(
         SameAddressQuery $sameAddressQuery,
-        HistoAddressListViewFactory $histoAddressListViewFactory,
+        AddressesHistoryListViewFactory $addressesHistoryListViewFactory,
         #[MapQueryString] ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
     ): JsonResponse {
         /** @var User $user */
@@ -57,7 +57,7 @@ class HistoAddressController extends AbstractController
         foreach ($addresses as $address) {
             $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $address['adresseOccupant'].' '.$address['cpOccupant'].' '.$address['villeOccupant']));
             if (!isset($responseAddresses[$addressKey])) {
-                $responseAddresses[$addressKey] = $histoAddressListViewFactory->createInstance(
+                $responseAddresses[$addressKey] = $addressesHistoryListViewFactory->createInstance(
                     addressOccupant: $address['adresseOccupant'],
                     cpOccupant: $address['cpOccupant'],
                     villeOccupant: $address['villeOccupant'],
@@ -67,16 +67,23 @@ class HistoAddressController extends AbstractController
                 );
             }
 
-            $histoAddressSignalement = $histoAddressListViewFactory->createSignalementInstanceFromSignalementData($address);
-            $responseAddresses[$addressKey]->addSignalement($histoAddressSignalement);
+            $addressesHistorySignalement = $addressesHistoryListViewFactory->createSignalementInstanceFromSignalementData($address);
+            $responseAddresses[$addressKey]->addSignalement($addressesHistorySignalement);
             if ($address['geoloc'] && isset($address['geoloc']['lat'])) {
                 $responseAddresses[$addressKey]->setLat($address['geoloc']['lat']);
                 $responseAddresses[$addressKey]->setLng($address['geoloc']['lng']);
             }
         }
 
+        $responseData = [
+            'filters' => $filters,
+            'list' => array_values($responseAddresses),
+            'pagination' => [],
+            'zoneAreas' => [],
+        ];
+
         $response = $this->json(
-            $responseAddresses,
+            $responseData,
             Response::HTTP_OK,
             ['content-type' => 'application/json'],
             ['groups' => ['signalements:read']]
@@ -95,7 +102,7 @@ class HistoAddressController extends AbstractController
         return $response;
     }
 
-    #[Route('/proto-carte-facile', name: 'back_histo_address_carte_facile')]
+    #[Route('/proto-carte-facile', name: 'back_addresses_history_carte_facile')]
     public function carteFacile(SameAddressQuery $sameAddressQuery, TerritoryRepository $territoryRepository): Response
     {
         /** @var User $user */
@@ -129,14 +136,14 @@ class HistoAddressController extends AbstractController
             }
         }
 
-        return $this->render('back/histo-address/carte-facile.html.twig', [
+        return $this->render('back/addresses-history/carte-facile.html.twig', [
             'nbSignalements' => count($signalements),
             'signalementsByAddress' => $signalementsByAddress,
             'territories' => $territories,
         ]);
     }
 
-    #[Route('/export', name: 'back_histo_address_export')]
+    #[Route('/export', name: 'back_addresses_history_export')]
     public function export(): Response
     {
         // TODO: implémenter l'export

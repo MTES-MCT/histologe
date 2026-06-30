@@ -146,7 +146,7 @@ export default defineComponent({
     AppSearch,
     AppAutoComplete
   },
-  emits: ['changeTerritory', 'clickReset', 'change'],
+  emits: ['territoryChange', 'filtersChange'],
   data () {
     return {
       reset: false,
@@ -160,7 +160,8 @@ export default defineComponent({
   },
   methods: {
     onChange(refresh: boolean) {
-      this.$emit('change', refresh)
+      console.log('onChange')
+      this.$emit('filtersChange', refresh)
     },
     updateTerritory (value: any) {
       if (typeof this.onChange === 'function') {
@@ -168,11 +169,12 @@ export default defineComponent({
       }
       handleTerritoryChange(this, value)
     },
-    // Callback function (with param 'this' in handleTerritoryChange)
+    // Callback function for handleTerritoryChange
     handleSettings (requestResponse: any) {
       handleSettings(this, requestResponse)
     },
     resetFilters () {
+      console.log('resetFilters')
       this.sharedState.input.filters = {
         territoire: undefined,
         adresse: undefined,
@@ -186,7 +188,6 @@ export default defineComponent({
       this.sharedState.currentTerritoryId = ''
 
       this.reset = !this.reset
-      this.$emit('clickReset')
 
       if (typeof this.onChange === 'function') {
         this.onChange(false)
