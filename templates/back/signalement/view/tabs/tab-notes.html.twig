@@ -1,0 +1,27 @@
+<h2 class="fr-h4">Mes notes et étiquettes</h2>
+<div class="fr-alert fr-alert--info">
+  <p>Cet espace est personnel : vos étiquettes et votre note ne sont visibles que par vous.</p>
+</div>
+
+<div class="fr-grid-row fr-grid-row--gutters fr-mt-4w">
+    <div class="fr-col-12 fr-col-md-6">
+        <section aria-labelledby="tag-users-title">
+            <h3 class="fr-h5" id="tag-users-title">Mes étiquettes</h3>
+            <div data-ajax-form>
+                <div id="signalement-tag-users-container">
+                    {% include 'back/signalement/view/tabs/_tab-notes-tags.html.twig' %}
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <section aria-labelledby="note-title">
+            <h3 class="fr-h5" id="note-title">Ma note</h3>
+            <div data-ajax-form>
+                <div id="signalement-note-container">
+                    {% include 'back/signalement/view/tabs/_tab-notes-note.html.twig' %}
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

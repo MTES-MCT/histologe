@@ -223,6 +223,18 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserSearchFilter::class, orphanRemoval: true)]
     private Collection $userSearchFilters;
 
+    /**
+     * @var Collection<int, TagUser>
+     */
+    #[ORM\OneToMany(targetEntity: TagUser::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $tagUsers;
+
+    /**
+     * @var Collection<int, Note>
+     */
+    #[ORM\OneToMany(targetEntity: Note::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $notes;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -240,6 +252,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->userSignalementSubscriptions = new ArrayCollection();
         $this->userApiPermissions = new ArrayCollection();
         $this->userSearchFilters = new ArrayCollection();
+        $this->tagUsers = new ArrayCollection();
+        $this->notes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1123,6 +1137,66 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
             // set the owning side to null (unless already changed)
             if ($userSearchFilter->getUser() === $this) {
                 $userSearchFilter->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TagUser>
+     */
+    public function getTagUsers(): Collection
+    {
+        return $this->tagUsers;
+    }
+
+    public function addTagUser(TagUser $tagUser): static
+    {
+        if (!$this->tagUsers->contains($tagUser)) {
+            $this->tagUsers->add($tagUser);
+            $tagUser->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTagUser(TagUser $tagUser): static
+    {
+        if ($this->tagUsers->removeElement($tagUser)) {
+            // set the owning side to null (unless already changed)
+            if ($tagUser->getUser() === $this) {
+                $tagUser->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Note>
+     */
+    public function getNotes(): Collection
+    {
+        return $this->notes;
+    }
+
+    public function addNote(Note $note): static
+    {
+        if (!$this->notes->contains($note)) {
+            $this->notes->add($note);
+            $note->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNote(Note $note): static
+    {
+        if ($this->notes->removeElement($note)) {
+            // set the owning side to null (unless already changed)
+            if ($note->getUser() === $this) {
+                $note->setUser(null);
             }
         }
 

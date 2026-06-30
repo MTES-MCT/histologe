@@ -1,5 +1,9 @@
 export function initSearchAndSelectBadges() {
   document?.querySelectorAll('.search-and-select-badges-container')?.forEach((container) => {
+    if (container.dataset.badgesBound === '1') {
+      return;
+    }
+    container.dataset.badgesBound = '1';
     container.querySelectorAll('.search-and-select-badge-add')?.forEach((element) => {
       element.addEventListener('click', () => {
         element.classList?.add('fr-hidden', 'disabled');
@@ -87,6 +91,10 @@ const refreshHiddenInput = (container) => {
       inputHidden.setAttribute('value', element.getAttribute('data-badge-id'));
     }
   });
+
+  if (container.dataset.autosubmit === '1') {
+    inputHidden.closest('form')?.requestSubmit();
+  }
 };
 
 initSearchAndSelectBadges();

@@ -561,6 +561,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     )]
     private Collection $tiersInvitations;
 
+    /**
+     * @var Collection<int, TagUser>
+     */
+    #[ORM\ManyToMany(targetEntity: TagUser::class, mappedBy: 'signalements')]
+    private Collection $tagUsers;
+
     public function __construct()
     {
         $this->criticites = new ArrayCollection();
@@ -582,6 +588,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->userSignalementSubscriptions = new ArrayCollection();
         $this->loginBailleur = BailleurLoginCodeGenerator::generate();
         $this->tiersInvitations = new ArrayCollection();
+        $this->tagUsers = new ArrayCollection();
     }
 
     #[Assert\Callback]
@@ -2985,6 +2992,33 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
             if ($tiersInvitation->getSignalement() === $this) {
                 $tiersInvitation->setSignalement(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TagUser>
+     */
+    public function getTagUsers(): Collection
+    {
+        return $this->tagUsers;
+    }
+
+    public function addTagUser(TagUser $tagUser): static
+    {
+        if (!$this->tagUsers->contains($tagUser)) {
+            $this->tagUsers->add($tagUser);
+            $tagUser->addSignalement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTagUser(TagUser $tagUser): static
+    {
+        if ($this->tagUsers->removeElement($tagUser)) {
+            $tagUser->removeSignalement($this);
         }
 
         return $this;
