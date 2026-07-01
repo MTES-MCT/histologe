@@ -167,7 +167,7 @@ class HistoriqueEvenementsGeneratorTest extends TestCase
                     && !str_contains($description, 'dossier')
                     && str_contains($description, 'sans main levée renseignée')
                     && str_contains($description, 'avec main levée le 01/03/2024')
-                    && str_contains($description, 'mise en sécurité')
+                    && str_contains($description, 'Mise en sécurité')
                     && str_contains($description, 'Arrêté L1331-26')
                     && str_contains($description, 'http://localhost/historique')
                 ),

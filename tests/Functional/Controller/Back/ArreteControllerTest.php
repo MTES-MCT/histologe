@@ -11,6 +11,12 @@ class ArreteControllerTest extends WebTestCase
 {
     use SessionHelper;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $_ENV['FEATURE_HISTO_ADDRESS'] = '1';
+    }
+
     public function testIndexForSuperAdmin(): void
     {
         self::ensureKernelShutdown();
@@ -26,7 +32,7 @@ class ArreteControllerTest extends WebTestCase
         $route = $router->generate('back_territory_management_arrete_index');
         $client->request('GET', $route);
 
-        $this->assertSelectorTextContains('h2#desc-table', '18 arrêtés trouvés');
+        $this->assertSelectorTextContains('h2#desc-table', '19 arrêtés trouvés');
     }
 
     public function testIndexForRT(): void
@@ -62,13 +68,19 @@ class ArreteControllerTest extends WebTestCase
         /** @var RouterInterface $router */
         $router = static::getContainer()->get(RouterInterface::class);
 
-        $route = $router->generate('back_config_club_event_index');
+        $route = $router->generate('back_territory_management_arrete_index');
         $client->request('GET', $route);
 
         $this->assertResponseStatusCodeSame(403);
         $response = $client->getResponse();
         $contentType = $response->headers->get('Content-Type');
         $this->assertStringContainsString('text/html', $contentType);
-        $this->assertStringContainsString('Access Denied. The user doesn\'t have ROLE_ADMIN.', (string) $response->getContent());
+        $this->assertStringContainsString('Access Denied. The user doesn\'t have ROLE_ADMIN_TERRITORY.', (string) $response->getContent());
+    }
+
+    protected function tearDown(): void
+    {
+        $_ENV['FEATURE_HISTO_ADDRESS'] = '0';
+        parent::tearDown();
     }
 }

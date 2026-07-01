@@ -5,6 +5,7 @@ namespace App\Service\Signalement\Suivi;
 use App\Entity\Arrete;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\TypeArrete;
 use App\Entity\Signalement;
 use App\Manager\SuiviManager;
 use App\Repository\ArreteRepository;
@@ -60,14 +61,14 @@ class HistoriqueEvenementsGenerator
                 if ($arrete->getDateMainLevee()) {
                     $description .= sprintf(
                         '- Un arrêté de type %s, pris le %s avec main levée le %s<br/>',
-                        $arrete->getTypeArrete()->value,
+                        TypeArrete::getLabelList()[$arrete->getTypeArrete()->name],
                         $arrete->getDateArrete()->format(self::HISTO_EVENTS_DATE_FORMAT),
                         $arrete->getDateMainLevee()->format(self::HISTO_EVENTS_DATE_FORMAT)
                     );
                 } else {
                     $description .= sprintf(
                         '- Un arrêté de type %s, pris le %s sans main levée renseignée</br>',
-                        $arrete->getTypeArrete()->value,
+                        TypeArrete::getLabelList()[$arrete->getTypeArrete()->name],
                         $arrete->getDateArrete()->format(self::HISTO_EVENTS_DATE_FORMAT)
                     );
                 }
