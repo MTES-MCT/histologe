@@ -53,7 +53,7 @@ class ArreteRepository extends ServiceEntityRepository
         }
 
         if (null !== $searchArrete->getMainLevee()) {
-            $qb->andWhere('a.mainLevee = :mainLevee')->setParameter('mainLevee', $searchArrete->getMainLevee());
+            $qb->andWhere($searchArrete->getMainLevee() ? 'a.dateMainLevee IS NOT NULL' : 'a.dateMainLevee IS NULL');
         }
 
         if ($searchArrete->getOrderType()) {

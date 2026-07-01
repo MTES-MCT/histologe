@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Entity\Arrete;
 use App\Entity\User;
+use App\Form\ImportArreteType;
 use App\Form\SearchArreteType;
 use App\Repository\ArreteRepository;
 use App\Service\ListFilters\SearchArrete;
@@ -65,6 +66,23 @@ class ArreteController extends AbstractController
             'searchArrete' => $searchArrete,
             'arretes' => $paginatedArretes,
             'pages' => (int) ceil($paginatedArretes->count() / $this->maxListPagination),
+        ]);
+    }
+
+    #[Route('/import', name: 'back_arrete_import', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN_TERRITORY')]
+    public function importCsv(Request $request): Response
+    {
+        $form = $this->createForm(ImportArreteType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // todo
+            $this->addFlash('success', 'Fichier envoyé avec succès.');
+        }
+
+        return $this->render('back/arrete/import.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 

@@ -26,9 +26,6 @@ class Arrete implements EntityHistoryInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $syndic = null;
 
-    #[ORM\Column]
-    private bool $mainLevee;
-
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dateMainLevee = null;
 
@@ -89,14 +86,7 @@ class Arrete implements EntityHistoryInterface
 
     public function isMainLevee(): bool
     {
-        return $this->mainLevee;
-    }
-
-    public function setMainLevee(bool $mainLevee): static
-    {
-        $this->mainLevee = $mainLevee;
-
-        return $this;
+        return null !== $this->dateMainLevee;
     }
 
     public function getDateMainLevee(): ?\DateTimeImmutable
