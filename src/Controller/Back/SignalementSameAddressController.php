@@ -29,9 +29,9 @@ class SignalementSameAddressController extends AbstractController
 {
     public function __construct(
         #[Autowire(env: 'FEATURE_HISTO_ADDRESS')]
-        private readonly bool $featureHistoAddress,
+        private readonly bool $featureAddressesHistory,
     ) {
-        if ($this->featureHistoAddress) {
+        if ($this->featureAddressesHistory) {
             throw $this->createNotFoundException();
         }
     }

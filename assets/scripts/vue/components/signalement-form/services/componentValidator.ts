@@ -1,6 +1,6 @@
 import formStore from '../store'
 import { isValidPhoneNumber } from 'libphonenumber-js'
-import { variableTester } from '../../../utils/variableTester'
+import { variableTester } from '../../common/utils/variableTester'
 
 export const componentValidator = {
   validate (component: any) {
