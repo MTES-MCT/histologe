@@ -4,6 +4,8 @@ namespace App\Utils;
 
 class DateHelper
 {
+    public const string MIN_DATE = '1900-01-01';
+
     public static function isValidDate(?string $date, string $format = 'Y-m-d H:i:s'): bool
     {
         $datetime = \DateTimeImmutable::createFromFormat($format, $date);
@@ -24,5 +26,17 @@ class DateHelper
         }
 
         return false;
+    }
+
+    public static function formatValidDateInput(\DateTimeImmutable $dateInput, string $format): ?string
+    {
+        $minDate = new \DateTimeImmutable(self::MIN_DATE);
+        $today = new \DateTimeImmutable();
+
+        if ($dateInput < $minDate || $dateInput > $today) {
+            return null;
+        }
+
+        return $dateInput->format($format);
     }
 }
