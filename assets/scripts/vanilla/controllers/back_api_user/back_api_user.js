@@ -5,6 +5,20 @@ document.addEventListener('click', (event) => {
     document.querySelector('#fr-modal-user-api-permission-delete-description').innerHTML =
       btn.dataset.description;
   }
+
+  const toggle = event.target.closest('.js-api-permission-toggle');
+  if (toggle) {
+    const cell = toggle.closest('td');
+    if (!cell) {
+      return;
+    }
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    cell.querySelectorAll('.js-api-permission-extra').forEach((row) => {
+      row.classList.toggle('fr-hidden', expanded);
+    });
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    toggle.textContent = expanded ? toggle.dataset.showLabel : toggle.dataset.hideLabel;
+  }
 });
 
 const partnerSelect = document.querySelector('#user_api_permission_partner');

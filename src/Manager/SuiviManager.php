@@ -140,6 +140,8 @@ class SuiviManager
         string $description,
     ): bool {
         $subscriptionCreated = false;
+        // on force le flush sinon on ne passe pas dans SignalementUpdatedListener et $signalement->isUpdateOccurred() est toujours false
+        $this->entityManager->flush();
         if ($signalement->isUpdateOccurred()) {
             /** @var User $user */
             $user = $this->security->getUser();
