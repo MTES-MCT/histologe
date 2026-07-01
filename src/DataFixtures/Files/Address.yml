@@ -98,5 +98,6 @@ addresses:
   city: "Marseille"
   cityCode: "13202"
   banId: "0"
+  territory: "Bouches-du-Rhône"
   latitude: 43.3085624
   longitude: 5.3705315
