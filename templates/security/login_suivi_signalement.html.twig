@@ -4,128 +4,124 @@
 
 {% block body %}
     <main class="fr-container fr-py-5w" id="content">
-        <h1>{{ title }}</h1>
-        <div class="fr-notice fr-notice--info fr-mb-5v">
-            <div class="fr-container">
-                <div class="fr-notice__body">
-                    <p>
-                        <span class="fr-notice__desc">
-                            Pour renforcer la sécurité de vos données, l'accès à votre dossier est désormais contrôlé.
-                            Merci de renseigner les informations demandées pour accéder à votre page de suivi.
-                        </span>
-                    </p>
-                    <button title="Masquer le message" class="fr-btn--close fr-btn">Masquer le message</button>
-                </div>
-            </div>
-        </div>
-        <p class="fr-mb-5v">Merci de renseigner les informations demandées pour accéder au dossier !</p>
-        <p>
-            <em>Tous les champs sont obligatoires</em>
-        </p>
-        <form class="needs-validation fr-mt-10v" name="login-form" method="POST" novalidate="">
-            {% if error %}
-                <div class="fr-notice fr-notice--alert fr-mb-5v">
-                    <div class="fr-container">
-                        <div class="fr-notice__body">
-                            <p>
-                                <span class="fr-notice__title">Connexion impossible</span>
-                                <span class="fr-notice__desc">{{ error.messageKey|trans(error.messageData, 'security') }}</span>
-                            </p>
+        <section class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6 fr-background-alt--blue-france fr-p-4w fr-radius--lg">
+                <h1 class="fr-text--center fr-mb-6v">{{ title}}</h1>
+                <p class="fr-mb-10v">
+                    Merci de renseigner les informations demandées pour accéder au dossier !<br>
+                    Tous les champs sont obligatoires.
+                </p>
+                <form class="needs-validation fr-mt-5v fr-col-12" name="login-form" method="POST" novalidate="">
+                    {% if error %}
+                        <div class="fr-notice fr-notice--alert fr-mb-5v">
+                            <div class="fr-container">
+                                <div class="fr-notice__body">
+                                    <p>
+                                        <span class="fr-notice__title">Connexion impossible</span>
+                                        <span class="fr-notice__desc">{{ error.messageKey|trans(error.messageData, 'security') }}</span>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            {% endif %}
-            {% if signalement.mailDeclarant %}
-                <fieldset class="fr-fieldset fr-grid-row fr-grid-row--gutters fr-mb-10v" id="fieldset-visitor-type" aria-labelledby="fieldset-visitor-type-legend">
-                    <legend class="fr-fieldset__legend" id="fieldset-visitor-type-legend">
-                        Qui êtes-vous ?
-                    </legend>
-                    <div class="fr-fieldset__element">
-                        <div class="fr-radio-group">
-                            <input type="radio" id="radio-visitor-type-occupant" name="visitor-type" value="{{constant('App\\Manager\\UserManager::OCCUPANT')}}">
-                            <label class="fr-label" for="radio-visitor-type-occupant">
-                                La personne qui vit dans le logement (occupant)
-                            </label>
-                        </div>
-                    </div>
-                    <div class="fr-fieldset__element">
-                        <div class="fr-radio-group">
-                            <input type="radio" id="radio-visitor-type-declarant" name="visitor-type" value="{{constant('App\\Manager\\UserManager::DECLARANT')}}">
-                            <label class="fr-label" for="radio-visitor-type-declarant">
-                                La personne qui suit le signalement (tiers déclarant, aidant, ...)
-                            </label>
-                        </div>
-                    </div>
-                </fieldset>
-            {% else %}
-                <input type="hidden" name="visitor-type" value="{{constant('App\\Manager\\UserManager::OCCUPANT')}}">
-            {% endif %}
-            <fieldset class="fr-fieldset fr-grid-row fr-grid-row--gutters" id="fieldset-identity" aria-labelledby="fieldset-identity-legend">
-                <legend class="fr-fieldset__legend" id="fieldset-identity-legend">
-                    Confirmez votre identité
-                </legend>
-                <div class="fr-fieldset__element fr-col-12 fr-col-md-6">
-                    <div class="fr-input-group">
-                        <label class="fr-label" for="login-first-letter-prenom">
-                            Première lettre de votre prénom
-                            <span class="fr-hint-text visible-if-occupant fr-hidden">Première lettre du prénom de la personne vivant dans le logement</span>
-                            {% if signalement.profileDeclarant
-                                and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT
-                                and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE
-                            %}
-                            <span class="fr-hint-text visible-if-declarant fr-hidden">Première lettre du prénom de la personne qui a déposé le dossier</span>
-                            {% elseif signalement.mailDeclarant %}
-                            <span class="fr-hint-text visible-if-declarant fr-hidden">Première lettre du prénom de la personne qui aide à suivre le dossier</span>
-                            {% endif %}
-                        </label>
-                        <input class="fr-input" aria-describedby="login-first-letter-prenom-error-desc-error" type="text" maxlength="1"
-                                id="login-first-letter-prenom" name="login-first-letter-prenom" required>
-                    </div>
-                </div>
-                <div class="fr-fieldset__element fr-col-12 fr-col-md-6">
-                    <div class="fr-input-group">
-                        <label class="fr-label" for="login-first-letter-nom">
-                            Première lettre de votre nom de famille
-                            <span class="fr-hint-text visible-if-occupant fr-hidden">Première lettre du nom de famille de la personne vivant dans le logement</span>
-                            {% if signalement.profileDeclarant
-                                and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT
-                                and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE
-                            %}
-                            <span class="fr-hint-text visible-if-declarant fr-hidden">Première lettre du nom de famille de la personne qui a déposé le dossier</span>
-                            {% elseif signalement.mailDeclarant %}
-                            <span class="fr-hint-text visible-if-declarant fr-hidden">Première lettre du nom de famille de la personne qui aide à suivre le dossier</span>
-                            {% endif %}
-                        </label>
-                        <input class="fr-input" aria-describedby="login-first-letter-nom-error-desc-error" type="text" maxlength="1"
-                                id="login-first-letter-nom" name="login-first-letter-nom" required>
-                    </div>
-                </div>
-                <div class="fr-fieldset__element fr-col-12 fr-col-md-6">
-                    <div class="fr-input-group">
-                        <label class="fr-label" for="login-code-postal">
-                            Code postal du logement
-                        </label>
-                        <input class="fr-input" aria-describedby="login-code-postal-error-desc-error" type="text" maxlength="5"
-                                id="login-code-postal" name="login-code-postal" required>
-                    </div>
-                </div>
-            </fieldset>
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-            <div class="fr-form-group fr-mt-3v">
-                <button
-                    class="fr-btn fr-btn--icon-left fr-icon-check-line"
-                    aria-label="Accéder au signalement"
-                    data-matomo-clickable-event-category="Suivre mon signalement"
-                    data-matomo-clickable-event-action="clickButton"
-                    data-matomo-clickable-event-name="Accéder au signalement"
-                    type="submit">
-                    {% if app.request.attributes.get('_route') == 'show_export_pdf_usager' %}
-                        Accéder au fichier
-                    {% else %}
-                        Accéder au signalement
                     {% endif %}
-                </button>
+                    {% if signalement.mailDeclarant %}
+                        <fieldset class="fr-fieldset fr-grid-row fr-grid-row--gutters fr-mb-10v" id="fieldset-visitor-type" aria-labelledby="fieldset-visitor-type-legend">
+                            <legend class="fr-fieldset__legend" id="fieldset-visitor-type-legend">
+                                <h2>Qui êtes-vous ?</h2>
+                            </legend>
+                            <div class="fr-fieldset__element">
+                                <div class="fr-radio-group">
+                                    <input type="radio" id="radio-visitor-type-occupant" name="visitor-type" value="{{constant('App\\Manager\\UserManager::OCCUPANT')}}">
+                                    <label class="fr-label" for="radio-visitor-type-occupant">
+                                        La personne qui vit dans le logement (occupant)
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="fr-fieldset__element">
+                                <div class="fr-radio-group">
+                                    <input type="radio" id="radio-visitor-type-declarant" name="visitor-type" value="{{constant('App\\Manager\\UserManager::DECLARANT')}}">
+                                    <label class="fr-label" for="radio-visitor-type-declarant">
+                                        La personne qui suit le signalement (tiers déclarant, aidant, ...)
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    {% else %}
+                        <input type="hidden" name="visitor-type" value="{{constant('App\\Manager\\UserManager::OCCUPANT')}}">
+                    {% endif %}
+                    <fieldset class="fr-fieldset fr-grid-row fr-grid-row--gutters" id="fieldset-identity" aria-labelledby="fieldset-identity-legend">
+                        <legend class="fr-fieldset__legend" id="fieldset-identity-legend">
+                            <h2>Confirmez votre identité</h2>
+                        </legend>
+                        <div class="fr-fieldset__element">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="login-first-letter-prenom">
+                                    Première lettre de votre prénom
+                                    <span class="fr-hint-text visible-if-occupant fr-hidden">Première lettre du prénom de la personne vivant dans le logement</span>
+                                    {% if signalement.profileDeclarant
+                                        and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT
+                                        and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE
+                                    %}
+                                    <span class="fr-hint-text visible-if-declarant fr-hidden">Première lettre du prénom de la personne qui a déposé le dossier</span>
+                                    {% elseif signalement.mailDeclarant %}
+                                    <span class="fr-hint-text visible-if-declarant fr-hidden">Première lettre du prénom de la personne qui aide à suivre le dossier</span>
+                                    {% endif %}
+                                    <span class="fr-hint-text">Format attendu : 1 lettre</span>
+                                </label>
+                                <input class="fr-input" type="text" maxlength="1"
+                                        id="login-first-letter-prenom" name="login-first-letter-prenom" required>
+                            </div>
+                        </div>
+                        <div class="fr-fieldset__element">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="login-first-letter-nom">
+                                    Première lettre de votre nom de famille
+                                    <span class="fr-hint-text visible-if-occupant fr-hidden">Première lettre du nom de famille de la personne vivant dans le logement</span>
+                                    {% if signalement.profileDeclarant
+                                        and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT
+                                        and signalement.profileDeclarant is not same as enum('App\\Entity\\Enum\\ProfileDeclarant').LOCATAIRE
+                                    %}
+                                    <span class="fr-hint-text visible-if-declarant fr-hidden">Première lettre du nom de famille de la personne qui a déposé le dossier</span>
+                                    {% elseif signalement.mailDeclarant %}
+                                    <span class="fr-hint-text visible-if-declarant fr-hidden">Première lettre du nom de famille de la personne qui aide à suivre le dossier</span>
+                                    {% endif %}
+                                    <span class="fr-hint-text">Format attendu : 1 lettre</span>
+                                </label>
+                                <input class="fr-input" type="text" maxlength="1"
+                                        id="login-first-letter-nom" name="login-first-letter-nom" required>
+                            </div>
+                        </div>
+                        <div class="fr-fieldset__element">
+                            <div class="fr-input-group">
+                                <label class="fr-label" for="login-code-postal">
+                                    Code postal du logement
+                                    <span class="fr-hint-text">Format attendu : 5 chiffres</span>
+                                </label>
+                                <input class="fr-input" type="text" maxlength="5"
+                                        id="login-code-postal" name="login-code-postal" required>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    <ul class="fr-btns-group fr-mt-5v">
+                        <li>
+                            <button
+                                class="fr-btn fr-btn--lg fr-btn--primary"
+                                aria-label="Accéder au signalement"
+                                data-matomo-clickable-event-category="Suivre mon signalement"
+                                data-matomo-clickable-event-action="clickButton"
+                                data-matomo-clickable-event-name="Accéder au signalement"
+                                type="submit">
+                                {% if app.request.attributes.get('_route') == 'show_export_pdf_usager' %}
+                                    Accéder au fichier
+                                {% else %}
+                                    Accéder au signalement
+                                {% endif %}
+                            </button>
+                        </li>
+                    </ul>
+                </form>
             </div>
-        </form>
+        </section>
     </main>
 {% endblock %}
