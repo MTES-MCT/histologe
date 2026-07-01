@@ -16,6 +16,7 @@ use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementApiFactory;
+use App\Service\Signalement\Suivi\HistoriqueEvenementsGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
@@ -44,6 +45,7 @@ class SignalementCreateController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly AutoAssigner $autoAssigner,
         private readonly UserManager $userManager,
+        private readonly HistoriqueEvenementsGenerator $historiqueEvenementsGenerator,
     ) {
     }
 
@@ -264,6 +266,7 @@ class SignalementCreateController extends AbstractController
         $this->entityManager->commit();
         $this->userManager->createUsagersFromSignalement($signalement);
         $this->autoAssigner->assignOrSendNewSignalementNotification($signalement);
+        $this->historiqueEvenementsGenerator->generate($signalement);
         $this->entityManager->flush();
 
         $resource = $this->signalementResponseFactory->createFromSignalement($signalement);

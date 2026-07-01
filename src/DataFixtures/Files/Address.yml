@@ -15,7 +15,7 @@ addresses:
   city: "Castelnau-le-Lez"
   cityCode: "34057"
   territory: "Hérault"
-- 
+-
   housenumber: "4"
   street: "Rue Notre Dame"
   postCode: "34170"
@@ -31,7 +31,7 @@ addresses:
   city: "La Grand-Combe"
   cityCode: "30132"
   territory: "Gard"
-- 
+-
   housenumber: "1"
   street: "D507"
   postCode: "32100"
@@ -47,7 +47,7 @@ addresses:
   city: "Vézénobres"
   cityCode: "30348"
   territory: "Gard"
-- 
+-
   housenumber: ""
   street: "Route des Funeries"
   postCode: "44850"
@@ -56,14 +56,14 @@ addresses:
   territory: "Loire-Atlantique"
   latitude: 47.338819
   longitude: -1.361458
-- 
+-
   housenumber: "5"
   street: "Rue basse"
   postCode: "30360"
   city: "Vézénobres"
   cityCode: "30348"
   territory: "Gard"
-- 
+-
   housenumber: "2"
   street: "Impasse de la peupleraie"
   postCode: "44850"
@@ -72,7 +72,7 @@ addresses:
   territory: "Loire-Atlantique"
   latitude: 47.3688054
   longitude: -1.4203543
-- 
+-
   housenumber: "2"
   street: "Beau Soleil"
   postCode: "44850"
@@ -81,12 +81,23 @@ addresses:
   territory: "Loire-Atlantique"
   latitude: 47.3408013
   longitude: -1.3496451
-- 
+-
   housenumber: "25"
   street: "Rue desiree clary"
   postCode: "13002"
   city: "Marseille"
   cityCode: "13202"
+  banId: "13202_2333_00025"
+  territory: "Bouches-du-Rhône"
+  latitude: 43.3085624
+  longitude: 5.3705315
+-
+  housenumber: "25 bis"
+  street: "Rue desiree clary"
+  postCode: "13002"
+  city: "Marseille"
+  cityCode: "13202"
+  banId: "0"
   territory: "Bouches-du-Rhône"
   latitude: 43.3085624
   longitude: 5.3705315
