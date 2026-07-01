@@ -1,10 +1,19 @@
-{% set getFunky = ('mathilde' in app.user.email or 'numa' in app.user.email or 'helene' in app.user.email or 'saidi' in app.user.email or 'emilien' in app.user.email) %}
-<div class="fr-notice fr-notice--weather-purple">
+{% set getFunky = 
+(
+    app.user and (
+        'mathilde.guillemain@beta.gouv.fr' is same as app.user.email or 
+        'numa.bord@beta.gouv.fr' is same as app.user.email or 
+        'helene.meneuvrier@beta.gouv.fr' is same as app.user.email or 
+        'saidi.ahamada@beta.gouv.fr' is same as app.user.email or 
+        'emilien.schneider@beta.gouv.fr' is same as app.user.email
+    )
+) %}
+<div class="fr-notice fr-notice--kidnapping">
     <div class="fr-container">
         <div class="fr-notice__body">
             <p>
                 <span class="fr-notice__title">
-                    {% set titleList = ['Bonjour !'] %}
+                    {% set titleList = ['Attention !'] %}
                     {% if (getFunky) %}
                         {% set titleList = [
                             'Sapristi !',
@@ -40,7 +49,9 @@
                     {{ random(descList) }}
                 </span>
             </p>
-            <button title="Masquer le message" type="button" class="fr-btn--close fr-btn">Masquer le message</button>
+            {% if (getFunky) %}
+                <button title="Masquer le message" type="button" class="fr-btn--close fr-btn">Masquer le message</button>
+            {% endif %}
         </div>
     </div>
 </div>
