@@ -95,10 +95,11 @@ pre {
         .signalement-form-button[id*="next"] {
             order: 1;
         }
-        .signalement-form-button[id*="previous"] {
+        .signalement-form-button[id*="finish_later"],
+        .signalement-form-link:has(a[id*="_close"]) {
             order: 2;
         }
-        .signalement-form-button[id*="finish_later"] {
+        .signalement-form-button[id*="previous"] {
             order: 3;
         }
     }

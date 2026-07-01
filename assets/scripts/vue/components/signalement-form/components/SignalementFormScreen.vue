@@ -264,6 +264,10 @@ export default defineComponent({
 
 <style>
   @media (max-width: 48em) {
+    html {
+      scroll-padding-bottom: 6rem;
+    }
+
     .form-screen-body {
       margin-bottom: 11rem !important;
     }
@@ -280,12 +284,14 @@ export default defineComponent({
       position: fixed;
       left: 0px;
       bottom: 0px;
+      width: 100%;
+      z-index: 100;
 
       background-position: 0 0;
       background-repeat: no-repeat;
       background-size: 100% 1px;
       background-image: linear-gradient(0deg, var(--border-default-grey), var(--border-default-grey));
-      background-color: var(--background-default-grey);
+      background-color: white;
     }
   }
 

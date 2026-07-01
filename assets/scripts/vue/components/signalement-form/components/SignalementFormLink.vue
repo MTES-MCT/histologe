@@ -72,4 +72,14 @@ export default defineComponent({
   display: inline-flex;
   text-align: center;
 }
+
+@media (max-width: 48em) {
+  .signalement-form-link {
+    display: flex;
+  }
+  .signalement-form-link a {
+    width: 100%;
+    justify-content: center;
+  }
+}
 </style>

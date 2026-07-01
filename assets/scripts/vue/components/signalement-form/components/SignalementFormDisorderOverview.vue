@@ -102,7 +102,9 @@
     <!-- MESSAGE A L'ADMINISTRATION -->
     <div v-if="formStore.currentScreen?.slug !== 'desordres_renseignes_batiment'">
       <br>
-      <h5 class="fr-h6">Précisions sur la situation</h5>
+      <!-- <h3 class="fr-h6">Précisions sur la situation</h3> -->
+      <h5 v-if="isValidationScreen" class="fr-col-10 fr-col-md-11 fr-h2 fr-h6">Précisions sur la situation</h5>
+      <h3 v-else class="fr-col-10 fr-col-md-11 fr-h2 fr-h4">Précisions sur la situation</h3>
       <p class="white-space-pre-line">{{ formStore.data[idMessageAdministration] }}</p>
       <p>
         <span v-if="formStore.data['message_administration_documents_upload'] !== undefined && formStore.data['message_administration_documents_upload'].length > 0">{{ formStore.data['message_administration_documents_upload'].length }} document(s) complémentaire(s) ajouté(s).<br></span>

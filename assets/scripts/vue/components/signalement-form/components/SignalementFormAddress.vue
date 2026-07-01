@@ -591,6 +591,24 @@ export default defineComponent({
   overflow: hidden;
 }
 
+@media (max-width: 48em) {
+  .pick-location-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    overflow-y: auto;
+    border-radius: 0;
+    margin-top: 0 !important;
+  }
+
+  .pick-location-map {
+    height: calc(100vh - 11rem);
+  }
+}
+
 /* Forcer les styles Leaflet pour éviter les interférences CSS - spécificité max */
 .pick-location-map.leaflet-container {
   position: relative !important;
