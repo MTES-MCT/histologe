@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @extends AbstractType<mixed>
@@ -37,6 +38,12 @@ class ProcedureAssuranceType extends AbstractType
             'required' => false,
             'attr' => [
                 'rows' => 4,
+            ],
+            'constraints' => [
+                new Assert\Length(
+                    max: 255,
+                    maxMessage: 'La réponse du bailleur doit comporter au maximum {{ limit }} caractères.',
+                ),
             ],
         ]);
         $builder->add('save', SubmitType::class, [

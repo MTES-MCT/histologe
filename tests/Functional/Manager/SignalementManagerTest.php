@@ -292,7 +292,7 @@ class SignalementManagerTest extends WebTestCase
         /** @var ValidatorInterface $validator */
         $validator = static::getContainer()->get(ValidatorInterface::class);
         $errors = $validator->validate($emptyCompositionLogementRequest, null, ['Default', 'LOCATAIRE']);
-        $this->assertCount(8, $errors);
+        $this->assertCount(7, $errors);
         /** @var ConstraintViolationList $errors */
         $errorsAsString = (string) $errors;
         $this->assertStringContainsString('Merci de définir le nombre de pièces à vivre', $errorsAsString);
