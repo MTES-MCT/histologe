@@ -22,7 +22,7 @@ class StopProcedureType extends AbstractType
                 'choices' => MotifCloture::getListForBailleur(),
                 'choice_label' => static fn (MotifCloture $choice) => $choice->label(),
                 'label' => 'Précisez la raison pour laquelle vous souhaitez arrêter la procédure',
-                'placeholder' => '',
+                'placeholder' => 'Sélectionnez une raison d\'arrêt',
                 'required' => true,
                 'multiple' => false,
                 'expanded' => false,
