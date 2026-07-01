@@ -14,9 +14,11 @@ use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Factory\SuiviDelayedFactory;
 use App\Factory\TiersInvitationFactory;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -712,7 +714,7 @@ class SignalementEditController extends AbstractController
         Signalement $signalement,
         Request $request,
         EntityManagerInterface $entityManager,
-        SuiviManager $suiviManager,
+        SuiviDelayedFactory $suiviDelayedFactory,
     ): Response {
         $token = is_scalar($request->request->get('_token')) ? (string) $request->request->get('_token') : '';
         $logementVacant = (bool) $request->request->get('logementVacant');
@@ -722,13 +724,14 @@ class SignalementEditController extends AbstractController
                 /** @var User $user */
                 $user = $this->getUser();
                 $description = $logementVacant ? 'Le logement a été marqué comme vacant.' : 'Le logement a été marqué comme occupé.';
-                $suiviManager->createSuivi(
-                    signalement: $signalement,
-                    description: $description,
-                    category: SuiviCategory::SIGNALEMENT_EDITED_BO,
-                    partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
                     user: $user,
+                    signalement: $signalement,
+                    type: SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT,
+                    category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+                    customChanges: ['description' => $description]
                 );
+                $entityManager->persist($suiviDelayed);
                 $entityManager->flush();
             }
             $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'Le statut d\'occupation du logement a bien été modifié.']);

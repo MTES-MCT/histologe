@@ -5,16 +5,15 @@ namespace App\Tests\Functional\Controller;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\Signalement;
-use App\Entity\Suivi;
+use App\Entity\SuiviDelayed;
 use App\Manager\UserManager;
-use App\Repository\SuiviRepository;
 use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -171,20 +170,24 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
         $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
 
-        /** @var SuiviRepository $suiviRepository */
-        $suiviRepository = $entityManager->getRepository(Suivi::class);
-        $suivi = $suiviRepository->findOneBy([
+        $suiviDelayedRepository = $entityManager->getRepository(SuiviDelayed::class);
+        $suiviDelayed = $suiviDelayedRepository->findOneBy([
             'signalement' => $signalement,
-            'category' => SuiviCategory::SIGNALEMENT_EDITED_FO,
+            'suiviCategory' => SuiviCategory::SIGNALEMENT_EDITED_FO,
         ]);
-        $this->assertNotNull($suivi);
-        $this->assertStringContainsString('adresse du logement', $description = $suivi->getDescription());
-        $crawler = new Crawler($description);
-        $this->assertEquals(4, $crawler->filter('li')->count());
-        $this->assertEquals('1', $signalement->getEtageOccupant());
-        $this->assertEquals('A', $signalement->getEscalierOccupant());
-        $this->assertEquals('42', $signalement->getNumAppartOccupant());
-        $this->assertEquals('Lieu-dit de la Patate', $signalement->getAdresseAutreOccupant());
+        $this->assertNotNull($suiviDelayed);
+        $this->assertEquals(SuiviDelayedType::FO_EDIT_ADRESSE_LOGEMENT, $suiviDelayed->getSuiviDelayedType());
+        $changes = $suiviDelayed->getChanges();
+        $this->assertEquals(4, count($changes));
+        $this->assertArrayHasKey('Étage', $changes);
+        $this->assertArrayHasKey('Escalier', $changes);
+        $this->assertArrayHasKey('Numéro d\'appartement', $changes);
+        $this->assertArrayHasKey('Autre', $changes);
+
+        $this->assertEquals('1', $changes['Étage']);
+        $this->assertEquals('A', $changes['Escalier']);
+        $this->assertEquals('42', $changes['Numéro d\'appartement']);
+        $this->assertEquals('Lieu-dit de la Patate', $changes['Autre']);
     }
 
     public function testSubmitSuiviSignalementCompleteBailleur(): void
@@ -224,23 +227,23 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
         $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
 
-        /** @var SuiviRepository $suiviRepository */
-        $suiviRepository = $entityManager->getRepository(Suivi::class);
-        $suivi = $suiviRepository->findOneBy([
+        $suiviDelayedRepository = $entityManager->getRepository(SuiviDelayed::class);
+        $suiviDelayed = $suiviDelayedRepository->findOneBy([
             'signalement' => $signalement,
-            'category' => SuiviCategory::SIGNALEMENT_EDITED_FO,
+            'suiviCategory' => SuiviCategory::SIGNALEMENT_EDITED_FO,
         ]);
         $this->assertEquals('nouvel.email@example.org', $signalement->getMailProprio());
-        $this->assertNotNull($suivi);
-        $this->assertStringContainsString('Les coordonnées du bailleur ont été modifiées par', $description = $suivi->getDescription());
-        $crawler = new Crawler($description);
-        $this->assertEquals(6, $crawler->filter('li')->count());
-        $this->assertStringContainsString('E-mail', $description);
-        $this->assertStringContainsString('Adresse', $description);
-        $this->assertStringContainsString('Code postal', $description);
-        $this->assertStringContainsString('Ville', $description);
-        $this->assertStringContainsString('Téléphone', $description);
-        $this->assertStringContainsString('Téléphone secondaire', $description);
+        $this->assertNotNull($suiviDelayed);
+        $this->assertEquals(SuiviDelayedType::FO_EDIT_COORDONNEES_BAILLEUR, $suiviDelayed->getSuiviDelayedType());
+        $changes = $suiviDelayed->getChanges();
+        $this->assertEquals(6, count($changes));
+
+        $this->assertArrayHasKey('E-mail', $changes);
+        $this->assertArrayHasKey('Adresse', $changes);
+        $this->assertArrayHasKey('Code postal', $changes);
+        $this->assertArrayHasKey('Ville', $changes);
+        $this->assertArrayHasKey('Téléphone', $changes);
+        $this->assertArrayHasKey('Téléphone secondaire', $changes);
     }
 
     public function testSubmitSuiviSignalementCompleteOccupantWithEmptyMailOccupant(): void
@@ -279,27 +282,26 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertNull($signalement->getMailOccupantTemp());
         $this->assertEmailCount(0);
 
-        /** @var SuiviRepository $suiviRepository */
-        $suiviRepository = $entityManager->getRepository(Suivi::class);
-        $suivi = $suiviRepository->findBy(['signalement' => $signalement, 'category' => SuiviCategory::SIGNALEMENT_EDITED_FO]);
+        $suiviDelayedRepository = $entityManager->getRepository(SuiviDelayed::class);
+        $suivi = $suiviDelayedRepository->findBy(['signalement' => $signalement, 'suiviCategory' => SuiviCategory::SIGNALEMENT_EDITED_FO]);
         $this->assertCount(1, $suivi);
     }
 
     public function testSubmitSuiviSignalementCompleteAgence(): void
     {
         $fieldValue = 'cest-remy@auber.fr';
-        $signalement = $this->doTestAgenceAndSyndic('front_suivi_signalement_complete_agence', 'coordonnees_agence[mailAgence]', $fieldValue, 'agence');
+        $signalement = $this->doTestAgenceAndSyndic('front_suivi_signalement_complete_agence', 'coordonnees_agence[mailAgence]', $fieldValue, SuiviDelayedType::FO_EDIT_COORDONNEES_AGENCE);
         $this->assertEquals($fieldValue, $signalement->getMailAgence());
     }
 
     public function testSubmitSuiviSignalementCompleteSyndic(): void
     {
         $fieldValue = 'cest-remy@auber.fr';
-        $signalement = $this->doTestAgenceAndSyndic('front_suivi_signalement_complete_syndic', 'coordonnees_syndic[mailSyndic]', $fieldValue, 'syndic');
+        $signalement = $this->doTestAgenceAndSyndic('front_suivi_signalement_complete_syndic', 'coordonnees_syndic[mailSyndic]', $fieldValue, SuiviDelayedType::FO_EDIT_COORDONNEES_SYNDIC);
         $this->assertEquals($fieldValue, $signalement->getMailSyndic());
     }
 
-    private function doTestAgenceAndSyndic(string $urlName, string $fieldName, string $fieldValue, string $descriptionValue): Signalement
+    private function doTestAgenceAndSyndic(string $urlName, string $fieldName, string $fieldValue, SuiviDelayedType $suiviDelayedType): Signalement
     {
         self::ensureKernelShutdown();
         $client = static::createClient();
@@ -340,16 +342,16 @@ class SignalementEditControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
         $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
-        /** @var SuiviRepository $suiviRepository */
-        $suiviRepository = $entityManager->getRepository(Suivi::class);
-        $suivi = $suiviRepository->findOneBy([
+
+        $suiviDelayedRepository = $entityManager->getRepository(SuiviDelayed::class);
+        $suiviDelayed = $suiviDelayedRepository->findOneBy([
             'signalement' => $signalement,
-            'category' => SuiviCategory::SIGNALEMENT_EDITED_FO,
+            'suiviCategory' => SuiviCategory::SIGNALEMENT_EDITED_FO,
         ]);
-        $this->assertNotNull($suivi);
-        $this->assertStringContainsString($descriptionValue, $description = $suivi->getDescription());
-        $crawler = new Crawler($description);
-        $this->assertEquals(1, $crawler->filter('li')->count());
+        $this->assertNotNull($suiviDelayed);
+        $this->assertEquals($suiviDelayedType, $suiviDelayed->getSuiviDelayedType());
+        $changes = $suiviDelayed->getChanges();
+        $this->assertEquals(1, count($changes));
 
         return $signalement;
     }
@@ -396,20 +398,22 @@ class SignalementEditControllerTest extends WebTestCase
 
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
         $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
-        /** @var SuiviRepository $suiviRepository */
-        $suiviRepository = $entityManager->getRepository(Suivi::class);
-        $suivi = $suiviRepository->findOneBy([
+
+        $suiviDelayedRepository = $entityManager->getRepository(SuiviDelayed::class);
+        $suivi = $suiviDelayedRepository->findOneBy([
             'signalement' => $signalement,
-            'category' => SuiviCategory::SIGNALEMENT_EDITED_FO,
+            'suiviCategory' => SuiviCategory::SIGNALEMENT_EDITED_FO,
         ]);
         $this->assertNotNull($suivi);
-        $this->assertStringContainsString('situation du foyer', $description = $suivi->getDescription());
-        $crawler = new Crawler($description);
-        $this->assertEquals(5, $crawler->filter('li')->count());
-        $this->assertTrue($signalement->getIsLogementSocial());
-        $this->assertTrue($signalement->getIsRelogement());
-        $this->assertEquals('11223344', $signalement->getNumAllocataire());
-        $this->assertEquals('555', $signalement->getMontantAllocation());
+        $this->assertEquals(SuiviDelayedType::FO_EDIT_SITUATION_FOYER, $suivi->getSuiviDelayedType());
+        $changes = $suivi->getChanges();
+        $this->assertEquals(5, count($changes));
+        $this->assertArrayHasKey('Logement social', $changes);
+        $this->assertArrayHasKey('Relogement', $changes);
+        $this->assertArrayHasKey('Numéro d\'allocataire / de dossier', $changes);
+        $this->assertArrayHasKey('Montant de l\'allocation', $changes);
+        $this->assertequals('11223344', $changes['Numéro d\'allocataire / de dossier']);
+        $this->assertequals('555', $changes['Montant de l\'allocation']);
     }
 
     public function testSubmitSuiviSignalementCompleteAssurance(): void
@@ -514,15 +518,14 @@ class SignalementEditControllerTest extends WebTestCase
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
         $this->assertEquals('piece_unique', $typeCompositionLogement->getCompositionLogementPieceUnique());
 
-        /** @var SuiviRepository $suiviRepository */
-        $suiviRepository = $entityManager->getRepository(Suivi::class);
-        $suivi = $suiviRepository->findOneBy([
+        $suiviDelayedRepository = $entityManager->getRepository(SuiviDelayed::class);
+        $suiviDelayed = $suiviDelayedRepository->findOneBy([
             'signalement' => $signalement,
-            'category' => SuiviCategory::SIGNALEMENT_EDITED_FO,
+            'suiviCategory' => SuiviCategory::SIGNALEMENT_EDITED_FO,
         ]);
-        $this->assertNotNull($suivi);
-        $this->assertStringContainsString('Le type et la composition du logement', $description = $suivi->getDescription());
-        $crawler = new Crawler($description);
-        $this->assertEquals(2, $crawler->filter('li')->count());
+        $this->assertNotNull($suiviDelayed);
+        $this->assertEquals(SuiviDelayedType::FO_EDIT_TYPE_COMPOSITION, $suiviDelayed->getSuiviDelayedType());
+        $changes = $suiviDelayed->getChanges();
+        $this->assertEquals(2, count($changes));
     }
 }

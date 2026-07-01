@@ -2,8 +2,10 @@
 
 namespace App\Tests\Functional\Controller\Back;
 
+use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
+use App\Repository\SuiviDelayedRepository;
 use App\Repository\UserRepository;
 use App\Service\Gouv\Ban\AddressService;
 use App\Service\Gouv\Ban\Response\Address;
@@ -23,6 +25,7 @@ class SignalementEditControllerTest extends WebTestCase
     private ?KernelBrowser $client = null;
     private UserRepository $userRepository;
     private SignalementRepository $signalementRepository;
+    private SuiviDelayedRepository $suiviDelayedRepository;
     private RouterInterface $router;
     private ?Signalement $signalement = null;
 
@@ -32,6 +35,7 @@ class SignalementEditControllerTest extends WebTestCase
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->suiviDelayedRepository = static::getContainer()->get(SuiviDelayedRepository::class);
         $this->router = static::getContainer()->get(RouterInterface::class);
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -207,9 +211,10 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertResponseRedirects();
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000009']);
         $this->assertTrue($signalement->getIsLogementVacant());
-        $lastSuivi = $signalement->getSuivis()->last();
-        $this->assertNotFalse($lastSuivi);
-        $this->assertEquals('Le logement a été marqué comme vacant.', $lastSuivi->getDescription());
+        $suivDelayed = $this->suiviDelayedRepository->findOneBy(['signalement' => $signalement, 'suiviDelayedType' => SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT]);
+        $this->assertNotNull($suivDelayed);
+        $this->assertStringContainsString('Le logement a été marqué comme vacant.', $suivDelayed->getChanges()['description']);
+
         /** @var Session $session */
         $session = $this->client->getRequest()->getSession();
         $flashBag = $session->getFlashBag();

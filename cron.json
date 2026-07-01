@@ -37,7 +37,7 @@
       "command": "*/30 * * * * php bin/console app:monitor-messenger-queues"
     },
     {
-      "command": "*/10 * * * * php bin/console app:send-suivi-waiting-notification"
+      "command": "*/10 * * * * php bin/console app:send-suivi-waiting-notification-and-delayed"
     },
     {
       "command": "0 9 * * * php bin/console app:remind-injonction-signalement"
