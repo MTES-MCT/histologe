@@ -102,7 +102,6 @@
     <!-- MESSAGE A L'ADMINISTRATION -->
     <div v-if="formStore.currentScreen?.slug !== 'desordres_renseignes_batiment'">
       <br>
-      <!-- <h3 class="fr-h6">Précisions sur la situation</h3> -->
       <h5 v-if="isValidationScreen" class="fr-col-10 fr-col-md-11 fr-h2 fr-h6">Précisions sur la situation</h5>
       <h3 v-else class="fr-col-10 fr-col-md-11 fr-h2 fr-h4">Précisions sur la situation</h3>
       <p class="white-space-pre-line">{{ formStore.data[idMessageAdministration] }}</p>

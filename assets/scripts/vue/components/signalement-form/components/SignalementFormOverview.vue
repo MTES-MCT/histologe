@@ -514,6 +514,11 @@ export default defineComponent({
       }
     },
     initAccordionObserver () {
+      // Ce MutationObserver surveille l'ajout de la classe fr-collapse--expanded sur chaque panneau accordéon. 
+      // Dès qu'un panneau s'ouvre, on attend 350ms (durée de l'animation DSFR) 
+      // puis on calcule si le bas du contenu déplié est masqué par le footer fixe. 
+      // Si c'est le cas, on scrolle juste assez pour le révéler, sans dépasser le haut du contenu, 
+      // pour que le contenu n'apparaisse pas caché par le footer en mobile
       const collapses = (this.$el as HTMLElement).querySelectorAll('.fr-collapse')
       this.accordionObserver = new MutationObserver((mutations) => {
         for (const mutation of mutations) {
