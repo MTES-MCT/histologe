@@ -1869,7 +1869,7 @@
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },
           "validate": {
-            "pattern": "^[0-9]*$",
+            "pattern": "^[0-9]{0,20}$",
             "patternMessage": "Veuillez renseigner un montant d'allocation valide.",
             "required": false
           }
@@ -2455,7 +2455,7 @@
                 "description": "Format attendu : Saisir un nombre entier",
                 "slug": "informations_complementaires_logement_montant_loyer",
                 "validate": {
-                  "pattern": "^[0-9]*$",
+                  "pattern": "^[0-9]{0,20}$",
                   "patternMessage": "Veuillez renseigner un montant valide de votre loyer.",
                   "required": false
                 }
@@ -2469,7 +2469,7 @@
                   "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
                 },
                 "validate": {
-                  "pattern": "^[0-9]*$",
+                  "pattern": "^[0-9]{0,5}$",
                   "patternMessage": "Veuillez renseigner un numéro d'étage valide.",
                   "required": false
                 }

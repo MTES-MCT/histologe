@@ -218,9 +218,9 @@ class SignalementDraftRequest
     private ?string $coordonneesOccupantTel = null;
     #[AppAssert\TelephoneFormat]
     private ?string $coordonneesOccupantTelSecondaire = null;
-    #[Assert\Length(max: 250, maxMessage: 'Le nom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Length(max: 255, maxMessage: 'Le nom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurNom = null;
-    #[Assert\Length(max: 250, maxMessage: 'Le prénom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Length(max: 255, maxMessage: 'Le prénom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurPrenom = null;
     #[Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $coordonneesBailleurEmail = null;
@@ -311,9 +311,9 @@ class SignalementDraftRequest
 
     #[Assert\Positive(message: 'Le nombre de personnes doit être un nombre positif.')]
     #[Assert\Type(type: 'numeric', message: 'Le nombre de personnes doit être un nombre.')]
-    #[Assert\Length(
-        max: 10,
-        maxMessage: 'Le nombre de personnes ne doit pas dépasser {{ limit }} caractères.',
+    #[Assert\LessThanOrEqual(
+        value: 99,
+        message: 'Le nombre de personnes ne doit pas dépasser {{ compared_value }}.',
     )]
     private ?string $compositionLogementNombrePersonnes = null;
 
