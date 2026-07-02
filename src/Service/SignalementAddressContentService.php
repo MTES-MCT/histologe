@@ -7,6 +7,7 @@ use App\Entity\Signalement;
 use App\Repository\EpciRepository;
 use App\Repository\SignalementRepository;
 use App\Service\Signalement\SignalementSameAddressArreteFinder;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
@@ -21,6 +22,7 @@ class SignalementAddressContentService
         private readonly SignalementSameAddressArreteFinder $arreteFinder,
         #[Autowire(env: 'FEATURE_HISTO_ADDRESS')]
         private readonly bool $featureHistoAddress,
+        private readonly Security $security,
     ) {
     }
 
@@ -49,7 +51,7 @@ class SignalementAddressContentService
 
     public function getRouteForListOfSignalementOnAddress(Signalement $signalement): string
     {
-        if ($this->featureHistoAddress) {
+        if ($this->featureHistoAddress && $this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
             // TODO : filtrer sur l'adresse du signalement
             return $this->urlGenerator->generate('back_histo_address_index');
         }

@@ -92,12 +92,24 @@
                 </li>
             {% endif %}
         </ul>
-    {% elseif is_granted('ROLE_ADMIN_TERRITORY') %}
-        {% if signalementsOnSameAddress|length > 0 or arretesOnSameAddress|length > 0 %}  
+    {% elseif signalementsOnSameAddress|length > 0 or arretesOnSameAddress|length > 0 %}
+        {% if is_granted('ROLE_ADMIN_TERRITORY') %}  
             <div class="fr-mb-3v">
                 {{ singular_or_plural(signalementsOnSameAddress|length, ' autre dossier', ' autre dossiers') }} et {{ singular_or_plural(arretesOnSameAddress|length, ' arrêté', ' arrêtés') }} trouvés à cette adresse
                 <a href="{{ routeForListOfSignalementOnAddress }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line fr-ml-2v">
                     Voir l'historique
+                </a>
+            </div>
+        {% elseif signalementsOnSameAddress|length > 0 %}
+            <div class="fr-mb-3v">
+                <a
+                    href="#"
+                    class="fr-ml-6v fr-btn--icon-left fr-a-edit fr-icon-alarm-warning-line"
+                    aria-controls="fr-modal-duplicate-addresses"
+                    data-fr-opened="false"
+                    type="button"
+                >
+                    {{ singular_or_plural(signalementsOnSameAddress|length, ' signalement', ' signalements') }} à la même adresse
                 </a>
             </div>
         {% endif %}
