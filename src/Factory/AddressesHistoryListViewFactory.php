@@ -37,7 +37,7 @@ class AddressesHistoryListViewFactory
     public function createSignalementInstanceFromSignalementData(array $data): AddressesHistorySignalementView
     {
         $url = $this->urlGenerator->generate('back_signalement_view', [
-            'uuid' => $data['uuid'],
+            'uuid' => $data['signalementUuid'],
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return new AddressesHistorySignalementView(

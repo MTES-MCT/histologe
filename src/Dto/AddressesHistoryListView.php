@@ -14,6 +14,7 @@ class AddressesHistoryListView
 
     /**
      * @param array<mixed> $signalements
+     * @param array<mixed> $arretes
      */
     public function __construct(
         private readonly ?string $address = null,
@@ -25,6 +26,7 @@ class AddressesHistoryListView
         private ?string $lat = null,
         private ?string $lng = null,
         private ?array $signalements = null,
+        private ?array $arretes = null,
     ) {
     }
 
@@ -90,5 +92,22 @@ class AddressesHistoryListView
             $this->signalements = [];
         }
         $this->signalements[] = $addressesHistorySignalement;
+    }
+
+    /** @return array<mixed> */
+    public function getArretes(): ?array
+    {
+        return $this->arretes;
+    }
+
+    /**
+     * @param array<mixed> $arrete
+     */
+    public function addArrete(array $arrete): void
+    {
+        if (null === $this->arretes) {
+            $this->arretes = [];
+        }
+        $this->arretes[] = $arrete;
     }
 }

@@ -13,7 +13,6 @@ class AddressesHistorySearchQuery
 
     /**
      * @param array<mixed> $communes
-     * @param array<mixed> $zones
      * @param array<mixed> $typesArretes
      */
     public function __construct(
@@ -21,7 +20,7 @@ class AddressesHistorySearchQuery
         private readonly ?string $adresse = null,
         private readonly ?array $communes = null,
         private readonly ?string $bailleurOuSyndic = null,
-        private readonly ?array $zones = null,
+        private readonly ?string $zone = null,
         #[Assert\Choice(choices: ['privee', 'public', 'non_renseigne'], message: 'Nature du parc invalide')]
         private readonly ?string $natureParc = null,
         #[Assert\Choice(choices: ['oui', 'non'], message: 'Dossiers multiples invalide')]
@@ -58,10 +57,9 @@ class AddressesHistorySearchQuery
         return $this->bailleurOuSyndic;
     }
 
-    /** @return array<mixed> */
-    public function getZones(): ?array
+    public function getZone(): ?string
     {
-        return $this->zones;
+        return $this->zone;
     }
 
     public function getNatureParc(): ?string
@@ -107,7 +105,7 @@ class AddressesHistorySearchQuery
         $filters['adresse'] = $this->getAdresse() ?? null;
         $filters['cities'] = $this->getCommunes() ?? null;
         $filters['bailleurOrSyndic'] = $this->getBailleurOuSyndic() ?? null;
-        $filters['zones'] = $this->getZones() ?? null;
+        $filters['zone'] = $this->getZone() ?? null;
         $filters['housetypes'] = match ($this->getNatureParc()) {
             'public' => [1],
             'privee' => [0],
@@ -151,7 +149,7 @@ class AddressesHistorySearchQuery
             adresse: $params['adresse'] ?? null,
             communes: isset($params['communes']) && is_array($params['communes']) ? $params['communes'] : null,
             bailleurOuSyndic: $params['bailleurOuSyndic'] ?? null,
-            zones: isset($params['zones']) && is_array($params['zones']) ? $params['zones'] : null,
+            zone: $params['zone'] ?? null,
             natureParc: $params['natureParc'] ?? null,
             dossiersMultiples: $params['dossiersMultiples'] ?? null,
             typesArretes: $params['typesArretes'] ?? null,

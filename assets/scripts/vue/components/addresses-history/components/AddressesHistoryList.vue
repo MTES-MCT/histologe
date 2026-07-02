@@ -22,7 +22,10 @@
             <div class="fr-card fr-card--xs">
               <div class="fr-card__body">
                 <h3 class="fr-card__title">{{ item.addressForHuman }}</h3>
-                <p class="fr-card__desc">Nb de signalements à l'adresse : {{ item.signalements.length }}</p>
+                <p class="fr-card__desc">
+                  Nb de signalements à l'adresse : {{ item.signalements ? item.signalements.length : 0 }}<br>
+                  Nb d'arrêtés à l'adresse : {{ item.arretes ? item.arretes.length : 0 }}
+                </p>
               </div>
             </div>
           </div>

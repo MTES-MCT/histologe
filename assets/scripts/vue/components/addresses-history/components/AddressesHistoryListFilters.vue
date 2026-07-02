@@ -73,16 +73,17 @@
         v-if="sharedState.zones.length > 0"
         class="fr-col-12 fr-col-md-3 fr-mb-1v fr-mb-md-2w"
       >
-        <HistoMultiSelect
+        <HistoSelect
           id="filter-zones"
-          v-model="sharedState.input.filters.zones"
+          v-model="sharedState.input.filters.zone"
           @update:modelValue="notifyChange"
           :option-items="sharedState.zones"
           title="Rechercher par zones"
           :active="true"
+          :placeholder="'Toutes'"
         >
-          <template #label>Zones</template>
-        </HistoMultiSelect>
+          <template #label>Zone</template>
+        </HistoSelect>
       </div>
 
       <!-- Nature du parc -->
@@ -196,13 +197,13 @@ const notifyChange = (): void => {
 
 /**
  * Quand le territoire change
- * - Réinitialise communes et zones
+ * - Réinitialise communes et zone
  * - Recharge les settings
  * - Notifie le changement
  */
 const onTerritoryChange = async (value: string): Promise<void> => {
   sharedState.input.filters.communes = []
-  sharedState.input.filters.zones = []
+  sharedState.input.filters.zone = undefined
   sharedState.currentTerritoryId = value
 
   await filtersComposable.reloadSettings()

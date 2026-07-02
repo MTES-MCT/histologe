@@ -7,6 +7,7 @@ export const store = {
     addresses: {
       filters: Object,
       list: new Array<Object>(),
+      allAddresses: new Array<Object>(), // Liste complète sans filtres (pour la carte)
       pagination: {
         current_page: 1,
         total_pages: 1,
@@ -23,7 +24,7 @@ export const store = {
         adresse: undefined as string | undefined,
         communes: new Array<string>(),
         bailleurOuSyndic: undefined as string | undefined,
-        zones: new Array<string>(),
+        zone: undefined as string | undefined,
         natureParc: undefined as string | undefined,
         dossiersMultiples: undefined as string | undefined,
         typesArretes: new Array<string>(),
@@ -43,7 +44,7 @@ export const store = {
     zones: new Array<HistoInterfaceSelectOption>(),
     currentTerritoryId: '',
     currentCommunes: '',
-    viewMode: 'list',
+    viewMode: 'map',
     loadingList: true,
     hasErrorLoading: false,
     natureParcList: [

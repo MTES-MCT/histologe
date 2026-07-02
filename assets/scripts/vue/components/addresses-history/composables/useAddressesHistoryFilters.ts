@@ -9,7 +9,7 @@ export interface AddressesHistoryFilters {
   adresse: string | undefined
   communes: string[]
   bailleurOuSyndic: string | undefined
-  zones: string[]
+  zone: string | undefined
   natureParc: string | undefined
   dossiersMultiples: string | undefined
   typesArretes: string[]
@@ -90,6 +90,36 @@ export function useAddressesHistoryFilters() {
       store.state.hasErrorLoading = false
       store.state.addresses.filters = response.filters
       store.state.addresses.list = response.list
+
+      // Normalise les filtres pour garantir que communes et typesArretes sont des tableaux
+      if (!Array.isArray(store.state.input.filters.communes)) {
+        store.state.input.filters.communes = store.state.input.filters.communes
+          ? [store.state.input.filters.communes as any]
+          : []
+      }
+      if (!Array.isArray(store.state.input.filters.typesArretes)) {
+        store.state.input.filters.typesArretes = store.state.input.filters.typesArretes
+          ? [store.state.input.filters.typesArretes as any]
+          : []
+      }
+      // Zone doit être une string ou undefined (pas un tableau)
+      if (Array.isArray(store.state.input.filters.zone)) {
+        store.state.input.filters.zone = store.state.input.filters.zone.length > 0
+          ? store.state.input.filters.zone[0]
+          : undefined
+      }
+
+      // Stocke la liste complète si on est en mode carte et sans filtres
+      if (store.state.viewMode === 'map') {
+        const hasFilters = Object.values(store.state.input.filters).some((value: any) => {
+          if (Array.isArray(value)) return value.length > 0
+          return value !== undefined && value !== ''
+        })
+        if (!hasFilters) {
+          store.state.addresses.allAddresses = response.list
+        }
+      }
+
       store.state.addresses.pagination = response.pagination
       store.state.addresses.zoneAreas = response.zoneAreas
       store.state.loadingList = false
@@ -124,7 +154,7 @@ export function useAddressesHistoryFilters() {
 
     for (const [key, value] of Object.entries(store.state.input.filters)) {
       if (variableTester.isNotEmpty(value)) {
-        if (Array.isArray(value) && ['communes', 'zones', 'typesArretes'].includes(key)) {
+        if (Array.isArray(value) && ['communes', 'typesArretes'].includes(key)) {
           value.forEach((item: any) => {
             addQueryParameter(key + '[]', item)
             url.searchParams.append(key + '[]', item)
@@ -176,7 +206,7 @@ export function useAddressesHistoryFilters() {
     adresse: undefined,
     communes: [],
     bailleurOuSyndic: undefined,
-    zones: [],
+    zone: undefined,
     natureParc: undefined,
     dossiersMultiples: undefined,
     typesArretes: []

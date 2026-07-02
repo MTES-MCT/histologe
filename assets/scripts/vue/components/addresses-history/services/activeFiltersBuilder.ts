@@ -37,14 +37,10 @@ export function buildFilterLabel(key: keyof AddressesHistoryFilters, value: any)
     return bailleur ? `Bailleur/Syndic : ${bailleur.Text}` : ''
   }
 
-  // Zones (tableau)
-  if (key === 'zones' && Array.isArray(value) && value.length > 0) {
-    const matchedZones = store.state.zones.filter(z => value.includes(z.Id.toString()))
-    if (matchedZones.length > 0) {
-      return matchedZones.length > 1
-        ? `Zones : ${matchedZones[0].Text} +${matchedZones.length - 1}`
-        : `Zone : ${matchedZones[0].Text}`
-    }
+  // Zone (string)
+  if (key === 'zone' && typeof value === 'string') {
+    const zone = store.state.zones.find(z => z.Id.toString() === value)
+    return zone ? `Zone : ${zone.Text}` : ''
   }
 
   // Nature du parc

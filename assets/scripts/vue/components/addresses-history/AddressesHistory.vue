@@ -44,6 +44,29 @@ const onFiltersChange = (): void => {
  */
 const onViewModeChange = (viewMode: string): void => {
   sharedState.viewMode = viewMode
+
+  // Recharge les adresses sans filtres pour la carte, avec filtres pour la liste
+  if (viewMode === 'map') {
+    // Pour la carte, on charge toutes les adresses sans filtres
+    const currentFilters = { ...sharedState.input.filters }
+    // Sauvegarde temporaire des filtres
+    const savedFilters = { ...currentFilters }
+    // Réinitialise les filtres
+    Object.keys(sharedState.input.filters).forEach(key => {
+      if (Array.isArray((sharedState.input.filters as any)[key])) {
+        (sharedState.input.filters as any)[key] = []
+      } else {
+        (sharedState.input.filters as any)[key] = undefined
+      }
+    })
+    // Charge les adresses
+    filtersComposable.reloadAddresses(filtersComposable.handleAddressesResponse)
+    // Restaure les filtres
+    sharedState.input.filters = savedFilters
+  } else {
+    // Pour la liste, on recharge avec les filtres actuels
+    filtersComposable.reloadAddresses(filtersComposable.handleAddressesResponse)
+  }
 }
 
 /**
@@ -65,7 +88,23 @@ const init = (): void => {
 
   // Charge les settings et les données en parallèle
   requests.getSettings(filtersComposable.handleSettingsResponse)
-  filtersComposable.reloadAddresses(filtersComposable.handleAddressesResponse)
+
+  // Charge les adresses : sans filtres si mode carte, avec filtres si mode liste
+  if (sharedState.viewMode === 'map') {
+    // Pour la carte, on charge toutes les adresses sans filtres
+    const savedFilters = { ...sharedState.input.filters }
+    Object.keys(sharedState.input.filters).forEach(key => {
+      if (Array.isArray((sharedState.input.filters as any)[key])) {
+        (sharedState.input.filters as any)[key] = []
+      } else {
+        (sharedState.input.filters as any)[key] = undefined
+      }
+    })
+    filtersComposable.reloadAddresses(filtersComposable.handleAddressesResponse)
+    sharedState.input.filters = savedFilters
+  } else {
+    filtersComposable.reloadAddresses(filtersComposable.handleAddressesResponse)
+  }
 }
 
 onMounted(() => {

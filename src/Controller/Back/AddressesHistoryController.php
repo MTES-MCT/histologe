@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\User;
 use App\Factory\AddressesHistoryListViewFactory;
+use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Repository\Query\SignalementList\SameAddressQuery;
 use App\Repository\TerritoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,7 +38,7 @@ class AddressesHistoryController extends AbstractController
 
     #[Route('/list/addresses/', name: 'back_addresses_history_list_json')]
     public function list(
-        SameAddressQuery $sameAddressQuery,
+        AddressesHistoryQuery $addressesHistoryQuery,
         AddressesHistoryListViewFactory $addressesHistoryListViewFactory,
         #[MapQueryString] ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
     ): JsonResponse {
@@ -52,26 +53,65 @@ class AddressesHistoryController extends AbstractController
                 // 'sortBy' => 'reference',
             ];
 
-        $addresses = $sameAddressQuery->findSameAddressFiltered($user, $filters);
+        $addresses = $addressesHistoryQuery->findAddressesWithHistory($user, $filters);
         $responseAddresses = [];
-        foreach ($addresses as $address) {
-            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $address['adresseOccupant'].' '.$address['cpOccupant'].' '.$address['villeOccupant']));
+        $processedSignalements = [];
+        $processedArretes = [];
+
+        foreach ($addresses as $row) {
+            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $row['adresseOccupant'].' '.$row['cpOccupant'].' '.$row['villeOccupant']));
+
             if (!isset($responseAddresses[$addressKey])) {
                 $responseAddresses[$addressKey] = $addressesHistoryListViewFactory->createInstance(
-                    addressOccupant: $address['adresseOccupant'],
-                    cpOccupant: $address['cpOccupant'],
-                    villeOccupant: $address['villeOccupant'],
-                    territoryId: $address['territoryId'],
-                    addressForHuman: $address['adresseOccupant'].' '.$address['cpOccupant'].' '.$address['villeOccupant'],
-                    communeForHuman: $address['villeOccupant'].' '.$address['cpOccupant'],
+                    addressOccupant: $row['adresseOccupant'],
+                    cpOccupant: $row['cpOccupant'],
+                    villeOccupant: $row['villeOccupant'],
+                    territoryId: $row['territoryId'],
+                    addressForHuman: $row['adresseOccupant'].' '.$row['cpOccupant'].' '.$row['villeOccupant'],
+                    communeForHuman: $row['villeOccupant'].' '.$row['cpOccupant'],
                 );
+                $processedSignalements[$addressKey] = [];
+                $processedArretes[$addressKey] = [];
+
+                // Utilise le point de l'entité Address en priorité
+                if (!empty($row['point'])) {
+                    // Le point est un objet LongitudeOne\Spatial\PHP\Types\Geometry\Point
+                    // x = latitude, y = longitude
+                    $point = $row['point'];
+                    $responseAddresses[$addressKey]->setLat((string) $point->getX());
+                    $responseAddresses[$addressKey]->setLng((string) $point->getY());
+                }
             }
 
-            $addressesHistorySignalement = $addressesHistoryListViewFactory->createSignalementInstanceFromSignalementData($address);
-            $responseAddresses[$addressKey]->addSignalement($addressesHistorySignalement);
-            if ($address['geoloc'] && isset($address['geoloc']['lat'])) {
-                $responseAddresses[$addressKey]->setLat($address['geoloc']['lat']);
-                $responseAddresses[$addressKey]->setLng($address['geoloc']['lng']);
+            // Traitement des signalements (éviter les doublons)
+            if (!empty($row['id']) && !in_array($row['id'], $processedSignalements[$addressKey])) {
+                $addressesHistorySignalement = $addressesHistoryListViewFactory->createSignalementInstanceFromSignalementData([
+                    'signalementUuid' => $row['uuid'],
+                    'reference' => $row['reference'],
+                    'prenomOccupant' => $row['prenomOccupant'],
+                    'nomOccupant' => $row['nomOccupant'],
+                    'statut' => $row['statut'],
+                ]);
+                $responseAddresses[$addressKey]->addSignalement($addressesHistorySignalement);
+                $processedSignalements[$addressKey][] = $row['id'];
+
+                // Fallback : si pas de point dans Address, on utilise geoloc du signalement
+                if (!$responseAddresses[$addressKey]->getLat() && $row['geoloc'] && isset($row['geoloc']['lat'])) {
+                    $responseAddresses[$addressKey]->setLat($row['geoloc']['lat']);
+                    $responseAddresses[$addressKey]->setLng($row['geoloc']['lng']);
+                }
+            }
+
+            // Traitement des arrêtés (éviter les doublons)
+            if (!empty($row['arreteId']) && !in_array($row['arreteId'], $processedArretes[$addressKey])) {
+                $responseAddresses[$addressKey]->addArrete([
+                    'id' => $row['arreteId'],
+                    'dateArrete' => $row['dateArrete'],
+                    'typeArrete' => $row['typeArrete'],
+                    'mainLevee' => $row['mainLevee'],
+                    'dateMainLevee' => $row['dateMainLevee'],
+                ]);
+                $processedArretes[$addressKey][] = $row['arreteId'];
             }
         }
 
@@ -103,8 +143,10 @@ class AddressesHistoryController extends AbstractController
     }
 
     #[Route('/proto-carte-facile', name: 'back_addresses_history_carte_facile')]
-    public function carteFacile(SameAddressQuery $sameAddressQuery, TerritoryRepository $territoryRepository): Response
-    {
+    public function carteFacile(
+        SameAddressQuery $sameAddressQuery,
+        TerritoryRepository $territoryRepository,
+    ): Response {
         /** @var User $user */
         $user = $this->getUser();
         $territories = $user->getPartnersTerritories();
