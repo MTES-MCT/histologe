@@ -88,7 +88,7 @@ export function createRnbMapController({
   let keyboardPanning = false;
   let activePreviousRnbId = previousRnbId;
 
-  function markerHtml(index, state) {
+  function markerHtml(state) {
     if (state === 'focused') {
       return '<div class="rnb-marker rnb-marker--focused"></div>';
     }
@@ -100,7 +100,7 @@ export function createRnbMapController({
 
   function updateMarker(index, state) {
     const el = buildingMarkers[index]?.getElement();
-    if (el) el.innerHTML = markerHtml(index, state);
+    if (el) el.innerHTML = markerHtml(state);
   }
 
   function refreshBuildings(buildings) {
@@ -117,17 +117,18 @@ export function createRnbMapController({
     focusedIndex = -1;
     currentBuildings = buildings;
 
-    buildings.forEach((building, index) => {
+    buildings.forEach((building) => {
       const [bLng, bLat] = building.point.coordinates;
       const state = building.rnb_id === activePreviousRnbId ? 'selected' : 'default';
       const marker = L.marker([bLat, bLng], {
         icon: L.divIcon({
-          html: markerHtml(index, state),
+          html: markerHtml(state),
           className: '',
           iconSize: [12, 12], // doit correspondre à la taille CSS de .rnb-marker
           iconAnchor: [6, 6], // centre du cercle
         }),
         interactive: false,
+        keyboard: false, // empêche Leaflet de mettre tabIndex="0" sur l'élément DOM du marqueur
         zIndexOffset: 1000,
       });
       marker.addTo(map);
@@ -137,7 +138,7 @@ export function createRnbMapController({
     if (buildings.length > 0) {
       mapContainer.setAttribute(
         'aria-label',
-        `Carte de sélection du bâtiment. ${buildings.length} bâtiment(s) sur la carte. Touches fléchées ou Tab pour naviguer, Entrée pour sélectionner.`
+        `Carte de sélection du bâtiment. ${buildings.length} bâtiment(s) sur la carte. Utilisez les touches fléchées pour naviguer entre les bâtiments, Entrée pour sélectionner.`
       );
     }
   }
@@ -240,31 +241,17 @@ export function createRnbMapController({
     fetchBuildings();
   });
 
-  // Navigation clavier : Tab/Shift+Tab, flèches, Entrée/Espace
+  // Navigation clavier : flèches pour naviguer entre bâtiments, Entrée/Espace pour sélectionner.
+  // Les événements remontent (bubble) depuis les éléments focusés à l'intérieur de la carte
+  // (boutons zoom+/zoom−) vers mapContainer.
+  // On n'intercepte jamais Tab pour ne pas perturber la navigation naturelle entre
+  // les boutons de zoom et les éléments du reste de la page.
   const keyboardHandler = (e) => {
     if (!currentBuildings.length) return;
-
-    // Tab / Shift+Tab : navigation séquentielle avec sortie naturelle aux limites
-    if (e.key === 'Tab') {
-      if (!e.shiftKey) {
-        if (focusedIndex < currentBuildings.length - 1) {
-          e.preventDefault();
-          keyboardPanning = true;
-          focusBuilding(focusedIndex < 0 ? 0 : focusedIndex + 1);
-        }
-        // dernier bâtiment : Tab propagé vers le prochain focusable (Valider / Annuler)
-      } else {
-        if (focusedIndex > 0) {
-          e.preventDefault();
-          keyboardPanning = true;
-          focusBuilding(focusedIndex - 1);
-        }
-        // premier bâtiment : Shift+Tab propagé vers l'élément précédent
-      }
-      return;
-    }
-
     if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Enter', ' '].includes(e.key)) return;
+    // Laisser Enter/Espace fonctionner normalement sur les liens et boutons natifs (ex: zoom+/zoom−),
+    // SAUF si un bâtiment est en cours de navigation : dans ce cas Enter/Espace le sélectionne.
+    if (['Enter', ' '].includes(e.key) && focusedIndex < 0 && e.target.matches('a, button, [role="button"]')) return;
     e.preventDefault();
     switch (e.key) {
       case 'ArrowRight':
