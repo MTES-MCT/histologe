@@ -1,6 +1,7 @@
 {% set getFunky = 
 (
-    app.user and (
+    app.user and app.user is instanceof('App\\Entity\\User')
+    and (
         'mathilde.guillemain@beta.gouv.fr' is same as app.user.email or 
         'numa.bord@beta.gouv.fr' is same as app.user.email or 
         'helene.meneuvrier@beta.gouv.fr' is same as app.user.email or 
