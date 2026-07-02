@@ -97,6 +97,10 @@ class JobEventQuery
             $qb->andWhere('j.service = :service')->setParameter('service', $searchInterconnexion->getService());
         }
 
+        if ($searchInterconnexion->getPartnerType()) {
+            $qb->andWhere('j.partnerType = :partnerType')->setParameter('partnerType', $searchInterconnexion->getPartnerType()->value);
+        }
+
         return $qb;
     }
 

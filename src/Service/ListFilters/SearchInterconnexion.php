@@ -2,6 +2,7 @@
 
 namespace App\Service\ListFilters;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Service\Behaviour\SearchQueryTrait;
@@ -15,6 +16,7 @@ class SearchInterconnexion
     private ?string $status = null;
     private ?string $service = null;
     private ?string $action = null;
+    private ?PartnerType $partnerType = null;
     private ?string $orderType = null;
     private ?string $reference = null;
 
@@ -62,6 +64,18 @@ class SearchInterconnexion
     public function setAction(?string $action): static
     {
         $this->action = $action;
+
+        return $this;
+    }
+
+    public function getPartnerType(): ?PartnerType
+    {
+        return $this->partnerType;
+    }
+
+    public function setPartnerType(?PartnerType $partnerType): static
+    {
+        $this->partnerType = $partnerType;
 
         return $this;
     }

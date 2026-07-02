@@ -232,6 +232,9 @@ sync-sish: mock-restart ## Synchronize SISH status and intervention (use make sy
 clean-tasks: ## Clean & Reset task
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh ./scripts/clean.sh
 
+retry-clean-interconnection: ## Retry & Clean interconnection
+	@$(DOCKER_COMP) exec signal_logement_phpfpm sh ./scripts/retry-and-clean-interconnections.sh
+
 ## Quality
 test: ## Run all tests — use VERBOSE=1 to display notices and deprecations
 	@$(DOCKER_COMP) exec signal_logement_phpfpm sh -c "$(PHPUNIT) $(FILE) --stop-on-failure --testdox -d memory_limit=-1 $(PHPUNIT_EXTRA)"

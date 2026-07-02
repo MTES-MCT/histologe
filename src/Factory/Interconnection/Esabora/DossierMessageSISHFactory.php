@@ -17,6 +17,7 @@ use App\Service\UploadHandlerService;
 use App\Utils\Address\AddressParser;
 use App\Utils\Address\EscalierParser;
 use App\Utils\Address\EtageParser;
+use App\Utils\DateHelper;
 use App\Utils\HtmlCleaner;
 use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -86,6 +87,10 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ? substr($signalement->getInseeOccupant(), 0, 5)
             : null;
 
+        $dateEntreeLogement = null !== $signalement->getDateEntree()
+            ? DateHelper::formatValidDateInput($signalement->getDateEntree(), AbstractEsaboraService::FORMAT_DATE)
+            : null;
+
         return (new DossierMessageSISH())
             ->setUrl($partner->getEsaboraUrl())
             ->setToken($partner->getEsaboraToken())
@@ -123,7 +128,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             ->setSitOccupantNumAllocataire($signalement->getNumAllocataire())
             ->setSitOccupantMontantAlloc($signalement->getMontantAllocation())
             ->setSitLogementBailEncours(!empty($signalement->getIsBailEnCours()) ? (int) $signalement->getIsBailEnCours() : null)
-            ->setSitLogementBailDateEntree($signalement->getDateEntree()?->format($formatDate))
+            ->setSitLogementBailDateEntree($dateEntreeLogement)
             ->setSitLogementPreavisDepart((int) $signalement->getIsPreavisDepart())
             ->setSitLogementRelogement((int) $signalement->getIsRelogement())
             ->setSitLogementSuperficie((int) $signalement->getSuperficie())

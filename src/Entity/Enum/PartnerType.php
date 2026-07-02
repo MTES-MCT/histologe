@@ -50,4 +50,14 @@ enum PartnerType: string
             'AUTRE' => 'Autre',
         ];
     }
+
+    /** @return array<PartnerType> */
+    public static function getInterconnected(): array
+    {
+        return [
+            PartnerType::ARS,
+            PartnerType::EPCI,
+            PartnerType::COMMUNE_SCHS,
+        ];
+    }
 }

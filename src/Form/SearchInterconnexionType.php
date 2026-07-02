@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\PartnerType;
 use App\Entity\Partner;
 use App\Entity\Territory;
 use App\Entity\User;
@@ -17,6 +18,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -114,6 +116,13 @@ class SearchInterconnexionType extends AbstractType
                 IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_LIST_STATUTS => IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_LIST_STATUTS,
                 IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_UPLOAD_FILES => IdossService::TYPE_SERVICE.' - '.IdossService::ACTION_UPLOAD_FILES,
             ],
+        ]);
+        $builder->add('partnerType', EnumType::class, [
+            'required' => false,
+            'class' => PartnerType::class,
+            'label' => 'Type de partenaire',
+            'placeholder' => 'Type de partenaire',
+            'choices' => PartnerType::getInterconnected(),
         ]);
         $builder->add('orderType', ChoiceType::class, [
             'choices' => [

@@ -43,5 +43,8 @@ class InterconnexionControllerTest extends WebTestCase
         yield 'Search with action push_dossier' => [['action' => AbstractEsaboraService::TYPE_SERVICE.' - '.AbstractEsaboraService::ACTION_PUSH_DOSSIER]];
         yield 'Search with territory 13' => [['territory' => 13]];
         yield 'Search with reference' => [['reference' => '2023-9']];
+        yield 'Search with partner type ARS' => [['partnerType' => 'ARS']];
+        yield 'Search with partner type SCHS' => [['partnerType' => 'COMMUNE_SCHS']];
+        yield 'Search with partner type EPCI' => [['partnerType' => 'EPCI']];
     }
 }

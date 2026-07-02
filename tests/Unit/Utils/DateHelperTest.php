@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Utils;
 
+use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Utils\DateHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -27,5 +28,47 @@ class DateHelperTest extends TestCase
         yield 'null date' => [null, 'Y-m-d H:i:s', false];
         yield 'non-date string' => ['not-a-date', 'Y-m-d H:i:s', false];
         yield 'partial date' => ['2023-10-05', 'Y-m-d H:i:s', false];
+    }
+
+    #[DataProvider('provideFormatValidDate')]
+    public function testFormatValidDate(
+        ?string $expected,
+        ?\DateTimeImmutable $dateInput,
+        ?string $format,
+    ): void {
+        self::assertSame(
+            $expected,
+            DateHelper::formatValidDateInput($dateInput, $format)
+        );
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public static function provideFormatValidDate(): \Generator
+    {
+        yield 'date en 1899' => [
+            null,
+            new \DateTimeImmutable('1899-12-31'),
+            AbstractEsaboraService::FORMAT_DATE,
+        ];
+
+        yield 'date en 0000' => [
+            null,
+            new \DateTimeImmutable('0000-12-31'),
+            AbstractEsaboraService::FORMAT_DATE,
+        ];
+
+        yield 'date future' => [
+            null,
+            new \DateTimeImmutable('2100-06-15'),
+            AbstractEsaboraService::FORMAT_DATE,
+        ];
+
+        yield 'date cohérente' => [
+            '15/06/2020',
+            new \DateTimeImmutable('2020-06-15'),
+            AbstractEsaboraService::FORMAT_DATE,
+        ];
     }
 }
