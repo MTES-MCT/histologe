@@ -11,6 +11,7 @@ class TestExtension extends AbstractExtension
     {
         return [
             new TwigTest('numeric', static fn ($value) => is_numeric($value)),
+            new TwigTest('instanceof', static fn ($value, string $class): bool => $value instanceof $class),
         ];
     }
 }

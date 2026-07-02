@@ -112,6 +112,9 @@
 <body {% if bodyClass is defined %}class="{{ bodyClass }}"{% endif %}
       data-mode-maintenance="{{ maintenance.enable }}">
 {% include "skiplink.html.twig" %}
+{% if display_staging_notice %}
+    {% include 'back/staging_notice.html.twig' %}
+{% endif %}
 {% include 'maintenance/banner.html.twig' %}
 {% if 'back_' not in app.request.attributes.get('_route') %}
     {% include "header.html.twig" %}
