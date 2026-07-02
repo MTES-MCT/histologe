@@ -6,16 +6,21 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Repository\EpciRepository;
 use App\Repository\SignalementRepository;
+use App\Service\Signalement\SignalementSameAddressArreteFinder;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
 
-class HtmlTargetContentsService
+class SignalementAddressContentService
 {
     public function __construct(
         private readonly Environment $twig,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SignalementRepository $signalementRepository,
         private readonly EpciRepository $epciRepository,
+        private readonly SignalementSameAddressArreteFinder $arreteFinder,
+        #[Autowire(env: 'FEATURE_HISTO_ADDRESS')]
+        private readonly bool $featureHistoAddress,
     ) {
     }
 
@@ -35,13 +40,24 @@ class HtmlTargetContentsService
                     'signalement' => $signalement,
                     'epciOccupant' => $epciOccupant,
                     'signalementsOnSameAddress' => $signalementsOnSameAddress,
-                    'routeForListOfSignalementOnAddress' => $this->urlGenerator->generate('back_signalements_index', [
-                        'isImported' => 'oui',
-                        'searchTerms' => trim($signalement->getAdresseOccupant()),
-                        'communes[]' => $signalement->getCpOccupant(),
-                    ]),
+                    'arretesOnSameAddress' => $this->arreteFinder->find($signalement),
+                    'routeForListOfSignalementOnAddress' => $this->getRouteForListOfSignalementOnAddress($signalement),
                 ]),
             ],
         ];
+    }
+
+    public function getRouteForListOfSignalementOnAddress(Signalement $signalement): string
+    {
+        if ($this->featureHistoAddress) {
+            // TODO : filtrer sur l'adresse du signalement
+            return $this->urlGenerator->generate('back_histo_address_index');
+        }
+
+        return $this->urlGenerator->generate('back_signalements_index', [
+            'isImported' => 'oui',
+            'searchTerms' => trim($signalement->getAdresseOccupant()),
+            'communes[]' => $signalement->getCpOccupant(),
+        ]);
     }
 }
