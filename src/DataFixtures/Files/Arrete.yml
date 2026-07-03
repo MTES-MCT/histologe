@@ -1,19 +1,19 @@
 arretes:
 -
   dateArrete: "2024-06-01"
-  typeArrete: "Mise en sécurité"
+  typeArrete: "Mise en sécurité procédure ordinaire"
   syndic: "Syndic A"
   address: "25 Rue desiree clary 13002 Marseille"
   mainLevee: true
   dateMainLevee: "2025-01-15"
 -
   dateArrete: "2026-01-01"
-  typeArrete: "Arrêté L.511-11 - Impropre"
+  typeArrete: "Impropre"
   syndic: "Syndic A"
   address: "25 Rue desiree clary 13002 Marseille"
 -
   dateArrete: "2026-02-01"
-  typeArrete: "Arrêté L.511-11 - Ordinaire remédiable"
+  typeArrete: "Ordinaire remédiable"
   syndic: "Syndic A"
   address: "25 Rue desiree clary 13002 Marseille"
 -
@@ -32,7 +32,7 @@ arretes:
   dateMainLevee: "2025-09-15"
 -
   dateArrete: "2025-04-13"
-  typeArrete: "Arrêté L.511-11 - Usage non approprié"
+  typeArrete: "Usage non approprié"
   address: "5 Rue basse 30360 Vézénobres"
 -
   dateArrete: "2025-05-13"
@@ -42,11 +42,11 @@ arretes:
   dateMainLevee: "2025-10-13"
 -
   dateArrete: "2025-06-15"
-  typeArrete: "Mise en sécurité"
+  typeArrete: "Mise en sécurité procédure ordinaire"
   address: "15 Chemin de la route 30360 Vézénobres"
 -
   dateArrete: "2025-07-15"
-  typeArrete: "Mise en sécurité"
+  typeArrete: "Mise en sécurité procédure ordinaire"
   address: "15 Chemin de la route 30360 Vézénobres"
   mainLevee: true
   dateMainLevee: "2025-08-15"
@@ -56,27 +56,27 @@ arretes:
   address: "1 D507 32100 Larressingle"
 -
   dateArrete: "2025-08-02"
-  typeArrete: "Arrêté L.511-11 - Suroccupation"
+  typeArrete: "Suroccupation"
   address: "18 Bd du 8 Mai 1945 30110 La Grand-Combe"
 -
   dateArrete: "2025-08-02"
-  typeArrete: "Mise en sécurité"
+  typeArrete: "Mise en sécurité procédure ordinaire"
   syndic: "Syndic B"
   address: "18 Bd du 8 Mai 1945 30110 La Grand-Combe"
 -
   dateArrete: "2025-08-02"
-  typeArrete: "Arrêté L.511-11 - Impropre"
+  typeArrete: "Impropre"
   syndic: "Syndic B"
   address: "18 Bd du 8 Mai 1945 30110 La Grand-Combe"
 -
   dateArrete: "2025-09-02"
-  typeArrete: "Arrêté L.511-19 - Insalubrité & Saturnisme"
+  typeArrete: "Insalubrité & Saturnisme"
   address: "4 Rue Notre Dame 34170 Castelnau-le-Lez"
   mainLevee: true
   dateMainLevee: "2026-01-02"
 -
   dateArrete: "2025-09-02"
-  typeArrete: "Arrêté L.511-19 - Insalubrité & Saturnisme"
+  typeArrete: "Insalubrité & Saturnisme"
   address: "93 Rue Pierre Launay 34170 Castelnau-le-Lez"
 -
   dateArrete: "2025-10-03"
@@ -90,6 +90,6 @@ arretes:
   address: "6 Rue Arnavielle 30900 Nîmes"
 -
   dateArrete: "2026-02-01"
-  typeArrete: "Arrêté L.511-11 - Ordinaire remédiable"
+  typeArrete: "Ordinaire remédiable"
   syndic: "Syndic A"
   address: "25 bis Rue desiree clary 13002 Marseille"
