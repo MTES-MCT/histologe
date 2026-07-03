@@ -445,7 +445,6 @@
           "label": "Quelle a été la réponse du bailleur (propriétaire) ? (facultatif)",
           "slug": "info_procedure_bail_reponse",
           "description": "Format attendu : 255 caractères maximum",
-          "maxlength": 255,
           "conditional": {
             "show": "formStore.data.info_procedure_bailleur_prevenu ===  'oui'"
           },
@@ -1896,23 +1895,27 @@
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_nom_structure",
           "label": "Quel est le nom de la structure qui accompagne le foyer ? (facultatif)",
+          "description": "Format attendu : 50 caractères maximum",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_declarant !== 1"
           },
           "validate": {
             "required": false,
-            "message": "Veuillez indiquer le nom de la structure qui accompagne le foyer."
+            "message": "Veuillez indiquer le nom de la structure qui accompagne le foyer.",
+            "maxLength": 50
           }
         },
         {
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_nom_referent",
           "label": "Nom de famille du référent qui accompagne le foyer (facultatif)",
+          "description": "Format attendu : 50 caractères maximum",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_declarant !== 1"
           },
           "validate": {
-            "required": false
+            "required": false,
+            "maxLength": 50
           },
           "accessibility": {
             "name": "lastName"
@@ -1921,12 +1924,13 @@
         {
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_prenom_referent",
-          "description": "Format attendu : 255 caractères maximum",
+          "description": "Format attendu : 50 caractères maximum",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_declarant !== 1"
           },
           "validate": {
-            "required": false
+            "required": false,
+            "maxLength": 50
           },
           "accessibility": {
             "name": "firstName"
@@ -2051,7 +2055,6 @@
           "label": "Quelle a été la réponse de l'assurance ? (facultatif)",
           "slug": "info_procedure_reponse_assurance",
           "description": "Format attendu : 255 caractères maximum",
-          "maxlength": 255,
           "conditional": {
             "show": "formStore.data.info_procedure_assurance_contactee === 'oui'"
           },

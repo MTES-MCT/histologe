@@ -1488,11 +1488,13 @@
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_nom_structure",
           "label": "Quel est le nom de la structure qui accompagne le foyer ? (facultatif)",
+          "description": "Format attendu : 50 caractères maximum",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
           },
           "validate": {
             "required": false,
+            "maxLength": 50,
             "message": "Veuillez indiquer le nom de la structure qui accompagne le foyer."
           }
         },
@@ -1500,13 +1502,13 @@
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_nom_referent",
           "label": "Nom de famille du référent qui accompagne le foyer (facultatif)",
-          "description": "Format attendu : 255 caractères maximum",
+          "description": "Format attendu : 50 caractères maximum",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
           },
-          "maxlength": 255,
           "validate": {
-            "required": false
+            "required": false,
+            "maxLength": 50
           },
           "accessibility": {
             "name": "lastName"
@@ -1516,13 +1518,13 @@
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_prenom_referent",
           "label": "Prénom du référent qui accompagne le foyer (facultatif)",
-          "description": "Format attendu : 255 caractères maximum",
+          "description": "Format attendu : 50 caractères maximum",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
           },
-          "maxlength": 255,
           "validate": {
-            "required": false
+            "required": false,
+            "maxLength": 50
           },
           "accessibility": {
             "name": "firstName"
@@ -1647,7 +1649,6 @@
           "label": "Quelle a été la réponse de votre assurance ?",
           "slug": "info_procedure_reponse_assurance",
           "description": "Format attendu : 255 caractères maximum",
-          "maxlength": 255,
           "conditional": {
             "show": "formStore.data.info_procedure_assurance_contactee === 'oui'"
           },
@@ -1931,7 +1932,6 @@
                 "label": "Quel est votre revenu fiscal de référence ?",
                 "description": "Format attendu : Saisir un nombre entier",
                 "slug": "informations_complementaires_situation_bailleur_revenu_fiscal",
-                "maxlength": 50,
                 "validate": {
                   "pattern": "^[0-9]*$",
                   "patternMessage": "Veuillez renseigner un montant valide.",

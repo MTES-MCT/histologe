@@ -423,7 +423,23 @@ class SignalementDraftRequest
     #[Assert\Length(max: 50)]
     private ?string $travailleurSocialAccompagnementDeclarant = null;
 
+    #[Assert\Length(max: 50, maxMessage: 'Le nom de la structure d\'accompagnement ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $travailleurSocialAccompagnementNomStructure = null;
+
+    #[Assert\Length(max: 50, maxMessage: 'Le nom de famille du référent d\'accompagnement ne doit pas dépasser {{ limit }} caractères.')]
+    private ?string $travailleurSocialAccompagnementNomReferent = null;
+
+    #[Assert\Length(max: 50, maxMessage: 'Le prénom du référent d\'accompagnement ne doit pas dépasser {{ limit }} caractères.')]
+    private ?string $travailleurSocialAccompagnementPrenomReferent = null;
+
+    #[Assert\Length(max: 50, maxMessage: 'Le nom  de famille du référent d\'accompagnement ne doit pas dépasser {{ limit }} caractères.')]
+    private ?string $travailleurSocialAccompagnementInviterReferentCommeTiersNom = null;
+
+    #[Assert\Length(max: 50, maxMessage: 'Le prénom du référent d\'accompagnement ne doit pas dépasser {{ limit }} caractères.')]
+    private ?string $travailleurSocialAccompagnementInviterReferentCommeTiersPrenom = null;
+
+    #[Assert\Length(max: 50, maxMessage: 'L\'adresse e-mail du référent d\'accompagnement ne doit pas dépasser {{ limit }} caractères.')]
+    private ?string $travailleurSocialAccompagnementInviterReferentCommeTiersEmail = null;
 
     #[Assert\Choice(
         choices: ['oui', 'non', 'nsp'],
@@ -1579,6 +1595,66 @@ class SignalementDraftRequest
     public function setTravailleurSocialAccompagnementNomStructure(?string $travailleurSocialAccompagnementNomStructure): self
     {
         $this->travailleurSocialAccompagnementNomStructure = $travailleurSocialAccompagnementNomStructure;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementNomReferent(): ?string
+    {
+        return $this->travailleurSocialAccompagnementNomReferent;
+    }
+
+    public function setTravailleurSocialAccompagnementNomReferent(?string $travailleurSocialAccompagnementNomReferent): self
+    {
+        $this->travailleurSocialAccompagnementNomReferent = $travailleurSocialAccompagnementNomReferent;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementPrenomReferent(): ?string
+    {
+        return $this->travailleurSocialAccompagnementPrenomReferent;
+    }
+
+    public function setTravailleurSocialAccompagnementPrenomReferent(?string $travailleurSocialAccompagnementPrenomReferent): self
+    {
+        $this->travailleurSocialAccompagnementPrenomReferent = $travailleurSocialAccompagnementPrenomReferent;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementInviterReferentCommeTiersNom(): ?string
+    {
+        return $this->travailleurSocialAccompagnementInviterReferentCommeTiersNom;
+    }
+
+    public function setTravailleurSocialAccompagnementInviterReferentCommeTiersNom(?string $travailleurSocialAccompagnementInviterReferentCommeTiersNom): self
+    {
+        $this->travailleurSocialAccompagnementInviterReferentCommeTiersNom = $travailleurSocialAccompagnementInviterReferentCommeTiersNom;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementInviterReferentCommeTiersPrenom(): ?string
+    {
+        return $this->travailleurSocialAccompagnementInviterReferentCommeTiersPrenom;
+    }
+
+    public function setTravailleurSocialAccompagnementInviterReferentCommeTiersPrenom(?string $travailleurSocialAccompagnementInviterReferentCommeTiersPrenom): self
+    {
+        $this->travailleurSocialAccompagnementInviterReferentCommeTiersPrenom = $travailleurSocialAccompagnementInviterReferentCommeTiersPrenom;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementInviterReferentCommeTiersEmail(): ?string
+    {
+        return $this->travailleurSocialAccompagnementInviterReferentCommeTiersEmail;
+    }
+
+    public function setTravailleurSocialAccompagnementInviterReferentCommeTiersEmail(?string $travailleurSocialAccompagnementInviterReferentCommeTiersEmail): self
+    {
+        $this->travailleurSocialAccompagnementInviterReferentCommeTiersEmail = $travailleurSocialAccompagnementInviterReferentCommeTiersEmail;
 
         return $this;
     }
