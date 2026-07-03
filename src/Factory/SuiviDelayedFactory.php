@@ -20,13 +20,14 @@ class SuiviDelayedFactory
     public function createSuiviDelayedFromSignalementChanges(
         User $user,
         Signalement $signalement,
+        SuiviCategory $category = SuiviCategory::SIGNALEMENT_EDITED_FO,
     ): SuiviDelayed {
         $suiviDelayed = new SuiviDelayed();
 
         $type = SuiviDelayedType::from($signalement->getChanges()['suiviDelayedType']);
         $changes = $signalement->getChanges()['fieldChanges'];
 
-        $suiviDelayed->setSuiviCategory(SuiviCategory::SIGNALEMENT_EDITED_FO);
+        $suiviDelayed->setSuiviCategory($category);
         $suiviDelayed->setSuiviDelayedType($type);
         $suiviDelayed->setChanges($changes);
         $suiviDelayed->setUser($user);
