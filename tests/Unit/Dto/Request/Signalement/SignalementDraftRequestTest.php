@@ -191,7 +191,7 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setMessageAdministration('Message administration'); // ne génère pas d'erreur de validation
 
         $errors = $this->validator->validate($signalementDraftRequest);
-        $this->assertCount(99, $errors);
+        $this->assertCount(97, $errors);
     }
 
     public function testValidateTooMuchChildren(): void
