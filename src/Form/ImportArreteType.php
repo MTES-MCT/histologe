@@ -17,7 +17,7 @@ class ImportArreteType extends AbstractType
     {
         $builder->add('file', FileType::class, [
             'label' => 'Ajouter un fichier',
-            'help' => 'Format supporté : .csv ; 50 lignes maximum.',
+            'help' => 'Format supporté : .csv ; 50 lignes maximum ; Séparateur : point-virgule (,).',
             'attr' => [
                 'accept' => '.csv',
                 'class' => 'fr-upload',

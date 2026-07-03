@@ -27,34 +27,46 @@
         <div class="fr-grid-row fr-mt-4w">
             <div class="fr-col-12">
                 <p>
-                    Vous pouvez importer l'historique des arrêtés pris sur votre territoire à l'aide d'un fichier au format CSV.
-                    Une fois importés, vous pourrez consulter les arrêtés sous forme de liste ou de carte dans l'<a href="#">Historique des adresses</a>.
+                    Vous pouvez importer l'historique des arrêtés pris sur votre territoire à l'aide d'un fichier au
+                    format CSV.
+                    Une fois importés, vous pourrez consulter les arrêtés sous forme de liste ou de carte dans l'<a
+                            href="{{ path('back_histo_address_index') }}">Historique des adresses</a>.
                 </p>
 
                 <div class="fr-callout">
                     <h3 class="fr-callout__title">À lire avant de télécharger votre fichier</h3>
                     <div class="fr-callout__text">
                         <ul>
-                            <li>Votre fichier doit être au format .CSV</li>
-                            <li>Votre fichier peut contenir 50 lignes maximum.</li>
-                            <li>Votre fichier doit inclure les 7 colonnes obligatoires : numéro de voie, nom de la voie, code postal, commune, classification de l'arrêté, date de l'arrêté et identifiant parcellaire.</li>
-                            <li>Votre fichier également contenir 4 colonnes facultatives : indice de répétition de la voie (BIS, TER, etc.), code INSEE de la commune, précision sur l'arrêté (libellé) et le nom du syndicat gestionnaire.</li>
+                            <li>Votre fichier doit être au <strong>format .CSV</strong></li>
+                            <li>Votre fichier peut contenir <strong>50 lignes maximum; Séparateur : point-virgule
+                                    (,)</strong>.
+                            </li>
+                            <li>Votre fichier doit inclure les <strong>7 colonnes obligatoires</strong> : numéro de voie
+                                (avec l'indice de répétition, par exemple « 12bis »), nom de la voie, code postal,
+                                commune, classification de l'arrêté, date de l'arrêté et identifiant parcellaire.
+                            </li>
+                            <li>Votre fichier doit également contenir 2 colonnes facultatives : date de l'arrêté de main
+                                levée et le nom du syndicat gestionnaire.
+                            </li>
                         </ul>
+                        <p class="fr-mt-2w">
+                            Pour plus d'informations, veuillez consulter la <a
+                                    href="https://documentation.signal-logement.beta.gouv.fr/partenaires/responsable-territorial-gerer-mon-territoire/importer-lhistorique-des-arretes-sur-mon-territoire"
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                    title="Documentation imports arrêtés - Ouvre une nouvelle fenêtre"
+
+                            >documentation en cliquant ici</a>.<br>
+                            Pour vous aider, vous pouvez également télécharger le fichier d'exemple en cliquant sur le
+                            bouton ci-dessous.
+                        </p>
+                        <a href="{{ asset('build/files/import_arrete_modele.csv') }}" download
+                           class="fr-btn fr-btn--tertiary fr-icon-download-line fr-btn--icon-left">
+                            Télécharger le fichier d'exemple
+                        </a>
+
                     </div>
                 </div>
-
-                <p class="fr-mt-2w">
-                    {# todo: lien à mettre à jour.  #}
-                    Pour plus d'informations, veuillez consulter la <a href="https://documentation.signal-logement.beta.gouv.fr"
-                                                                       target="_blank"
-                                                                       rel="noreferrer noopener">documentation en cliquant ici</a>.<br>
-                    Pour vous aider, vous pouvez également télécharger le fichier d'exemple en cliquant sur le bouton ci-dessous.
-                </p>
-
-                <a href="{{ asset('build/files/import_arrete_modele.csv') }}" download class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left">
-                    Télécharger le fichier d'exemple
-                </a>
-
                 <hr class="fr-mt-4w">
 
                 <div class="fr-mt-4w">
@@ -72,13 +84,15 @@
                     <div class="fr-mt-2w fr-p-4w import-csv-loading">
                         <span class="fr-icon-time-line fr-text-default--info fr-mb-1v" aria-hidden="true"></span>
                         <p class="fr-text--bold fr-mb-1w">Fichier en cours de téléchargement</p>
-                        <p class="fr-mb-0 fr-text--sm">Veuillez patienter jusqu'à la fin du téléchargement de votre fichier.</p>
+                        <p class="fr-mb-0 fr-text--sm">Veuillez patienter jusqu'à la fin du téléchargement de votre
+                            fichier.</p>
                     </div>
 
                     <div class="fr-mt-2w fr-p-4w fr-grid-row fr-grid-row--middle import-csv-success">
                         <div class="fr-col-10">
                             <div class="fr-mb-1w">
-                                <span class="fr-icon-check-line fr-text-default--success fr-mb-1v" aria-hidden="true"></span>
+                                <span class="fr-icon-check-line fr-text-default--success fr-mb-1v"
+                                      aria-hidden="true"></span>
                                 <p class="fr-text--bold fr-mb-0">Fichier téléchargé !</p>
                             </div>
                             <p class="fr-mb-0 fr-text--sm">nomdufichier12345.csv</p>
@@ -92,7 +106,9 @@
                         <h3 class="fr-callout__title">Résumé du téléchargement :</h3>
                         <div class="fr-callout__text">
                             <ul class="fr-mb-0">
-                                <li>4 lignes présentent une erreur de format et ne pourront pas être importées : lignes 2 ; 12 ; 36 ; 43</li>
+                                <li>4 lignes présentent une erreur de format et ne pourront pas être importées : lignes
+                                    2 ; 12 ; 36 ; 43
+                                </li>
                                 <li>3 adresses à vérifier</li>
                             </ul>
                         </div>
@@ -102,8 +118,10 @@
                 <div class="fr-mt-8w">
                     <h2>2. Vérifier mes données</h2>
                     <p>
-                        Pour importer correctement votre historique, nous avons besoin de vérifier que les adresses sont bien enregistrées dans la Base Adresse Nationale (BAN).
-                        Veuillez rechercher et sélectionner l'adresse correspondante dans la liste déroulante. Sinon, cocher la case « Ignorer ».
+                        Pour importer correctement votre historique, nous avons besoin de vérifier que les adresses sont
+                        bien enregistrées dans la Base Adresse Nationale (BAN).
+                        Veuillez rechercher et sélectionner l'adresse correspondante dans la liste déroulante. Sinon,
+                        cocher la case « Ignorer ».
                     </p>
 
                     <div class="fr-grid-row fr-mt-4w fr-text--bold fr-text-mention--grey import-csv-table-header fr-display-none fr-display-md-flex">
@@ -132,7 +150,9 @@
                                         <input class="fr-input" type="text" id="address-check" name="address-check">
                                     </div>
                                 </div>
-                                <a href="#" class="fr-link fr-icon-map-pin-2-line fr-link--icon-left fr-text--sm fr-hidden">ou sélectionner le bâtiment sur la carte</a>
+                                <a href="#"
+                                   class="fr-link fr-icon-map-pin-2-line fr-link--icon-left fr-text--sm fr-hidden">ou
+                                    sélectionner le bâtiment sur la carte</a>
                             </div>
                         </div>
                     </div>
@@ -193,10 +213,13 @@
                                         <span class="fr-hint-text">Taper une adresse et la sélectionner dans la liste</span>
                                     </label>
                                     <div class="fr-input-wrap fr-icon-check-line">
-                                        <input class="fr-input" type="text" value="80 rue des petites mairies 13001 Marsei..." readonly>
+                                        <input class="fr-input" type="text"
+                                               value="80 rue des petites mairies 13001 Marsei..." readonly>
                                     </div>
                                 </div>
-                                <a href="#" class="fr-link fr-icon-map-pin-2-line fr-link--icon-left fr-text--sm fr-hidden">ou sélectionner le bâtiment sur la carte</a>
+                                <a href="#"
+                                   class="fr-link fr-icon-map-pin-2-line fr-link--icon-left fr-text--sm fr-hidden">ou
+                                    sélectionner le bâtiment sur la carte</a>
                             </div>
                         </div>
                     </div>
@@ -214,7 +237,8 @@
                         <h2>3. Valider</h2>
                         <p>
                             Vous avez terminé ! Cliquez sur le bouton de validation pour finir votre import.
-                            Vous serez redirigé vers l'Historique des adresses où vos arrêtés seront visibles d'ici quelques instants.
+                            Vous serez redirigé vers l'Historique des adresses où vos arrêtés seront visibles d'ici
+                            quelques instants.
                         </p>
                         <div class="fr-mt-4w">
                             <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--center">
