@@ -512,9 +512,9 @@ class SignalementRepository extends ServiceEntityRepository
     ): array {
         $qb = $this->createQueryBuilder('s')
             ->andWhere('s.cpOccupant = :zipcode')
-            ->andWhere('s.villeOccupant = :city')
+            ->andWhere('s.inseeOccupant = :insee')
             ->setParameter('zipcode', $signalement->getCpOccupant())
-            ->setParameter('city', $signalement->getVilleOccupant());
+            ->setParameter('insee', $signalement->getInseeOccupant());
 
         $adresseOccupant = AddressParser::parse($signalement->getAdresseOccupant());
         if (null !== $adresseOccupant['suffix'] && null !== $adresseOccupant['number']) {

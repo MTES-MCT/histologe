@@ -420,7 +420,7 @@ signalements:
     ville_occupant: "AGDE"
     statut: "ACTIVE"
     geoloc: "{\"lat\": 43.311679, \"lng\": 3.4677498}"
-    insee_occupant: "34145"
+    insee_occupant: "34003"
     nb_pieces_logement: 5
     nb_occupants_logement: 4
     score: 35.194711538462
@@ -457,7 +457,7 @@ signalements:
     ville_occupant: "AGDE"
     statut: "ARCHIVED"
     geoloc: "{\"lat\": 43.311679, \"lng\": 3.4677498}"
-    insee_occupant: "34145"
+    insee_occupant: "34003"
     nb_pieces_logement: 5
     nb_occupants_logement: 4
     score: 35.194711538462
