@@ -24,7 +24,7 @@ suivis_delayed:
   suivid_delayed_type: "FO_INVITATION_SENT"
   changes: 
     "Nom": "Puche"
-    "Email": "j.puche@yopmail.com"
+    "E-mail": "j.puche@yopmail.com"
     "Prénom": "Jessica"
     "Téléphone": null
   created_at: "-1 hour -30 minutes"

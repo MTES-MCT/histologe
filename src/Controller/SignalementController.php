@@ -1131,7 +1131,7 @@ class SignalementController extends AbstractController
                 customChanges: [
                     'Nom' => $invitation->getLastname(),
                     'Prénom' => $invitation->getFirstname(),
-                    'Email' => $invitation->getEmail(),
+                    'E-mail' => $invitation->getEmail(),
                     'Téléphone' => $invitation->getTelephone(),
                 ]
             );

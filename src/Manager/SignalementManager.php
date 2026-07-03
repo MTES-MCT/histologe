@@ -329,8 +329,10 @@ class SignalementManager
         $this->entityManager->persist($signalement);
 
         $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
         $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
-            user: $this->getCurrentUser(),
+            user: $user,
             signalement: $signalement,
             type: SuiviDelayedType::BO_EDIT_ADDRESS,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
@@ -376,8 +378,10 @@ class SignalementManager
         $this->entityManager->persist($signalement);
 
         $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
         $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
-            user: $this->getCurrentUser(),
+            user: $user,
             signalement: $signalement,
             type: SuiviDelayedType::BO_EDIT_COORDONNEES_TIERS,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
@@ -440,8 +444,10 @@ class SignalementManager
         $this->entityManager->persist($signalement);
 
         $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
         $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
-            user: $this->getCurrentUser(),
+            user: $user,
             signalement: $signalement,
             type: SuiviDelayedType::BO_EDIT_COORDONNEES_FOYER,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
@@ -504,8 +510,10 @@ class SignalementManager
         $this->entityManager->persist($signalement);
 
         $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
         $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
-            user: $this->getCurrentUser(),
+            user: $user,
             signalement: $signalement,
             type: SuiviDelayedType::BO_EDIT_COORDONNEES_BAILLEUR,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
@@ -534,8 +542,10 @@ class SignalementManager
         $this->entityManager->persist($signalement);
 
         $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
         $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
-            user: $this->getCurrentUser(),
+            user: $user,
             signalement: $signalement,
             type: SuiviDelayedType::BO_EDIT_COORDONNEES_AGENCE,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
@@ -560,8 +570,10 @@ class SignalementManager
         $this->entityManager->persist($signalement);
 
         $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
         $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
-            user: $this->getCurrentUser(),
+            user: $user,
             signalement: $signalement,
             type: SuiviDelayedType::BO_EDIT_COORDONNEES_SYNDIC,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
@@ -659,8 +671,10 @@ class SignalementManager
         $this->entityManager->persist($signalement);
 
         $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
         $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
-            user: $this->getCurrentUser(),
+            user: $user,
             signalement: $signalement,
             type: SuiviDelayedType::BO_EDIT_INFORMATIONS_LOGEMENT,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
@@ -772,8 +786,10 @@ class SignalementManager
         $this->entityManager->persist($signalement);
 
         $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
         $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
-            user: $this->getCurrentUser(),
+            user: $user,
             signalement: $signalement,
             type: SuiviDelayedType::BO_EDIT_DESCRIPTION_LOGEMENT,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
@@ -887,8 +903,10 @@ class SignalementManager
         $this->entityManager->persist($signalement);
 
         $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
         $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
-            user: $this->getCurrentUser(),
+            user: $user,
             signalement: $signalement,
             type: SuiviDelayedType::BO_EDIT_SITUATION_FOYER,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
@@ -948,8 +966,10 @@ class SignalementManager
         $this->entityManager->persist($signalement);
 
         $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
         $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
-            user: $this->getCurrentUser(),
+            user: $user,
             signalement: $signalement,
             type: SuiviDelayedType::BO_EDIT_PROCEDURE_DEMARCHES,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
@@ -1046,13 +1066,5 @@ class SignalementManager
         );
 
         $this->entityManager->flush();
-    }
-
-    private function getCurrentUser(): User
-    {
-        /** @var User $user */
-        $user = $this->security->getUser();
-
-        return $user;
     }
 }
