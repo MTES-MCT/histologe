@@ -4,18 +4,17 @@ namespace App\Manager;
 
 use App\Dto\Request\Signalement\InviteTiersRequest;
 use App\Entity\Enum\DocumentType;
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Entity\SuiviDelayed;
 use App\Entity\SuiviFile;
-use App\Entity\TiersInvitation;
 use App\Entity\User;
 use App\Event\SuiviCreatedEvent;
-use App\Security\User\SignalementUser;
 use App\Utils\DateHelper;
 use App\Utils\DictionaryProvider;
 use App\Utils\Sanitizer;
@@ -90,7 +89,7 @@ class SuiviManager
             $suivi->addSuiviFile($suiviFile);
         }
         // abonnement au signalement si le suivi est crée par un agent non abonné
-        if ($createSubscription && $this->doesUserNeedSubscription($user, $suivi)) {
+        if ($createSubscription && $this->userSignalementSubscriptionManager->doesUserNeedSubscription($user, $suivi->getCategory(), $signalement)) {
             $this->userSignalementSubscriptionManager->createOrGet(
                 userToSubscribe: $user,
                 signalement: $signalement,
@@ -102,60 +101,6 @@ class SuiviManager
         $this->eventDispatcher->dispatch(new SuiviCreatedEvent($suivi), SuiviCreatedEvent::NAME);
 
         return $suivi;
-    }
-
-    private function doesUserNeedSubscription(
-        ?User $user,
-        Suivi $suivi,
-    ): bool {
-        if (!$user) {
-            return false;
-        }
-        if ($user->isUsager() || $user->isApiUser() || $user->isSuperAdmin()) {
-            return false;
-        }
-        if (in_array($suivi->getCategory(), [
-            SuiviCategory::AFFECTATION_IS_ACCEPTED,
-            SuiviCategory::AFFECTATION_IS_REFUSED,
-            SuiviCategory::MESSAGE_USAGER,
-            SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
-            SuiviCategory::MESSAGE_BAILLEUR,
-            SuiviCategory::DOCUMENT_DELETED_BY_USAGER,
-            SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
-            SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
-            SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
-            SuiviCategory::SIGNALEMENT_EDITED_FO,
-        ])) {
-            return false;
-        }
-        if (SignalementStatus::DRAFT === $suivi->getSignalement()->getStatut()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function addSuiviIfNeeded(
-        Signalement $signalement,
-        string $description,
-    ): bool {
-        $subscriptionCreated = false;
-        // on force le flush sinon on ne passe pas dans SignalementUpdatedListener et $signalement->isUpdateOccurred() est toujours false
-        $this->entityManager->flush();
-        if ($signalement->isUpdateOccurred()) {
-            /** @var User $user */
-            $user = $this->security->getUser();
-            $this->createSuivi(
-                signalement: $signalement,
-                description: $description.$user->getNomComplet(),
-                category: SuiviCategory::SIGNALEMENT_EDITED_BO,
-                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
-                user: $user,
-                subscriptionCreated: $subscriptionCreated
-            );
-        }
-
-        return $subscriptionCreated;
     }
 
     public function addInviteSuiviFromBo(
@@ -184,24 +129,6 @@ class SuiviManager
         );
 
         return $subscriptionCreated;
-    }
-
-    public function addInviteSuiviFromFo(TiersInvitation $tiersInvitation): void
-    {
-        $description = 'L\'usager a envoyé une invitation à un tiers pour suivre le signalement :';
-        $description .= $this->buildTiersInfoHtml(
-            $tiersInvitation->getLastname(),
-            $tiersInvitation->getFirstname(),
-            $tiersInvitation->getEmail(),
-            $tiersInvitation->getTelephone(),
-        );
-
-        $this->createSuivi(
-            signalement: $tiersInvitation->getSignalement(),
-            description: $description,
-            category: SuiviCategory::SIGNALEMENT_EDITED_FO,
-            user: $this->userManager->getSystemUser(),
-        );
     }
 
     public function addAccepteInvitationSuivi(Signalement $signalement): void
@@ -370,53 +297,82 @@ class SuiviManager
         return 'Le signalement a été refusé avec le motif suivant : '.$motifRejected.'.<br>Plus précisément :<br>'.$commentaire;
     }
 
-    public function createSuiviFromEditUsager(
-        Signalement $signalement,
-        SignalementUser $signalementUser,
-    ): void {
-        $changes = $signalement->getChanges();
-
-        if ([] === $changes) {
-            return;
+    /**
+     * @param array<SuiviDelayed> $suivisDelayed
+     */
+    public function createSuiviFromSuiviDelayedList(array $suivisDelayed): void
+    {
+        $signalement = $suivisDelayed[0]->getSignalement();
+        $user = $suivisDelayed[0]->getUser();
+        $category = $suivisDelayed[0]->getSuiviCategory();
+        $changesGroupedByType = [];
+        $changesCountedByType = [];
+        $filesToAttach = [];
+        foreach ($suivisDelayed as $suiviDelayed) {
+            $type = $suiviDelayed->getSuiviDelayedType()->value;
+            if ($suiviDelayed->getChanges()) {
+                if ($type === SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT->value) {
+                    $changesCountedByType[$type] = $suiviDelayed->getChanges()['description'];
+                } else {
+                    $changesGroupedByType[$type] = array_merge($changesGroupedByType[$type] ?? [], $suiviDelayed->getChanges());
+                }
+            } elseif (count($suiviDelayed->getFiles())) {
+                $filesToAttach = array_merge($filesToAttach, $suiviDelayed->getFiles()->toArray());
+            } else {
+                if (!isset($changesCountedByType[$type])) {
+                    $changesCountedByType[$type] = 1;
+                } else {
+                    ++$changesCountedByType[$type];
+                }
+            }
         }
 
-        /** @var User $user */
-        $user = $signalementUser->getUser();
-
-        /** @var array{label:string, fieldChanges:array<mixed>} $sectionChanges */
-        // Un seul formulaire est soumis à la fois,
-        // donc un seul bloc de changements est attendu.
-        $sectionChanges = current($changes);
-
-        if (UserManager::OCCUPANT === $signalementUser->getType()) {
-            $nomComplet = $signalement->getNomOccupantComplet(true);
-        } else {
-            $nomComplet = $signalement->getNomDeclarantComplet(true);
+        $description = 'Des modifications ont été apportées par '.$user->getNomComplet(true).'.<br>';
+        foreach ($changesGroupedByType as $type => $changes) {
+            $suiviDelayedType = SuiviDelayedType::from($type);
+            $description .= '<strong>'.$suiviDelayedType->label().'</strong><br>';
+            $description .= '<ul>';
+            foreach ($changes as $label => $value) {
+                $description .= '<li>'.$label.' : '.$this->formatValue($value).'</li>';
+            }
+            $description .= '</ul>';
         }
 
-        $description = sprintf(
-            '%s ont été modifiées par %s.',
-            $sectionChanges['label'],
-            htmlentities($nomComplet),
-        );
-        $description .= '<ul>';
-
-        foreach ($sectionChanges['fieldChanges'] as $change) {
-            $new = $this->formatValue($change['new']);
-            $description .= sprintf(
-                '<li>%s : %s</li>',
-                $change['label'],
-                $new,
-            );
+        if (count($changesCountedByType) > 0) {
+            if (SuiviCategory::SIGNALEMENT_EDITED_BO !== $category) {
+                $description .= '<strong>Autres modifications</strong><br>';
+            }
+            $description .= '<ul>';
+        }
+        foreach ($changesCountedByType as $type => $value) {
+            $suiviDelayedType = SuiviDelayedType::from($type);
+            if (SuiviDelayedType::FO_FILE_DELETED === $suiviDelayedType) {
+                $description .= '<li>'.$value.' '.$suiviDelayedType->label().'</li>';
+            } elseif (SuiviDelayedType::BO_EDIT_OCCUPATION_LOGEMENT === $suiviDelayedType) {
+                $description .= '<li>'.$value.'</li>';
+            } else {
+                $description .= '<li>'.$suiviDelayedType->label().'</li>';
+            }
+        }
+        if (count($changesCountedByType) > 0) {
+            $description .= '</ul>';
         }
 
-        $description .= '</ul>';
+        $partner = null;
+        $isVisibleForUsager = true;
+        if (SuiviCategory::SIGNALEMENT_EDITED_BO === $category) {
+            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+            $isVisibleForUsager = false;
+        }
+
         $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            category: SuiviCategory::SIGNALEMENT_EDITED_FO,
+            category: $category,
+            partner: $partner,
             user: $user,
-            isVisibleForUsager: true,
+            isVisibleForUsager: $isVisibleForUsager,
+            files: $filesToAttach
         );
     }
 

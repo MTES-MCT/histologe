@@ -35,7 +35,6 @@ enum SuiviCategory: string
     case INTERVENTION_ARRETE_IS_CREATED = 'INTERVENTION_ARRETE_IS_CREATED';
     case INTERVENTION_ARRETE_IS_RESCHEDULED = 'INTERVENTION_ARRETE_IS_RESCHEDULED';
     case NEW_DOCUMENT = 'NEW_DOCUMENT';
-    case DOCUMENT_DELETED_BY_USAGER = 'DOCUMENT_DELETED_BY_USAGER';
     case DOCUMENT_DELETED_BY_PARTNER = 'DOCUMENT_DELETED_BY_PARTNER';
     case MESSAGE_USAGER = 'MESSAGE_USAGER';
     case MESSAGE_BAILLEUR = 'MESSAGE_BAILLEUR';
@@ -107,7 +106,6 @@ enum SuiviCategory: string
             'INTERVENTION_ARRETE_IS_CREATED' => 'Prise d\'arrêté',
             'INTERVENTION_ARRETE_IS_RESCHEDULED' => 'Modification d\'arrêté',
             'NEW_DOCUMENT' => 'Ajout de documents',
-            'DOCUMENT_DELETED_BY_USAGER' => 'Document supprimé par l\'usager',
             'DOCUMENT_DELETED_BY_PARTNER' => 'Document supprimé par le partenaire',
             'MESSAGE_USAGER' => 'Message de l\'usager',
             'MESSAGE_BAILLEUR' => 'Message du bailleur',
@@ -165,7 +163,6 @@ enum SuiviCategory: string
         return [
             self::MESSAGE_USAGER,
             self::MESSAGE_USAGER_POST_CLOTURE,
-            self::DOCUMENT_DELETED_BY_USAGER,
             self::DEMANDE_POURSUITE_PROCEDURE,
             self::DEMANDE_ABANDON_PROCEDURE,
             self::SIGNALEMENT_EDITED_FO,
@@ -214,7 +211,6 @@ enum SuiviCategory: string
             case self::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER:
             case self::INJONCTION_BAILLEUR_REMINDER_FOR_BAILLEUR:
             case self::INJONCTION_BAILLEUR_EXPIREE:
-            case self::DOCUMENT_DELETED_BY_USAGER:
             case self::SIGNALEMENT_IS_ACTIVE:
             case self::SIGNALEMENT_IS_REFUSED:
             case self::SIGNALEMENT_IS_REOPENED:

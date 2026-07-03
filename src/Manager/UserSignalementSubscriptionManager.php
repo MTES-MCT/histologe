@@ -3,6 +3,8 @@
 namespace App\Manager;
 
 use App\Entity\Affectation;
+use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Entity\UserSignalementSubscription;
@@ -63,5 +65,36 @@ class UserSignalementSubscriptionManager
             }
             $this->createOrGet(userToSubscribe: $userPartner, signalement: $signalement, createdBy: $createdBy, affectation: $affectation);
         }
+    }
+
+    public function doesUserNeedSubscription(
+        ?User $user,
+        SuiviCategory $category,
+        Signalement $signalement,
+    ): bool {
+        if (!$user) {
+            return false;
+        }
+        if ($user->isUsager() || $user->isApiUser() || $user->isSuperAdmin()) {
+            return false;
+        }
+        if (in_array($category, [
+            SuiviCategory::AFFECTATION_IS_ACCEPTED,
+            SuiviCategory::AFFECTATION_IS_REFUSED,
+            SuiviCategory::MESSAGE_USAGER,
+            SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
+            SuiviCategory::MESSAGE_BAILLEUR,
+            SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
+            SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
+            SuiviCategory::SIGNALEMENT_STATUS_IS_SYNCHRO,
+            SuiviCategory::SIGNALEMENT_EDITED_FO,
+        ])) {
+            return false;
+        }
+        if (SignalementStatus::DRAFT === $signalement->getStatut()) {
+            return false;
+        }
+
+        return true;
     }
 }
