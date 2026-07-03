@@ -65,5 +65,8 @@ class EtageParserTest extends TestCase
         yield '1er' => ['1er', 1];
         yield 'Sous sol' => ['Sous sol', -1];
         yield 'hôtel grac porte 11' => ['hôtel grac porte 11', 11]; // idéalement devrait renvoyer null, mais difficile à mettre en place
+        yield '300' => ['300', 300];
+        yield '6100' => ['6100', null];
+        yield '123456' => ['123456', null];
     }
 }
