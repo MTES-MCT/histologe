@@ -1,0 +1,37 @@
+{% if connection.status == 'failed' %}
+    {% if 'WS_ERR_MOD_VERIFKEY' in connection.response %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Donnée manquante</span>
+    {% elseif 'WS_ERR_SQL' in connection.response %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Doublon</span>
+    {% elseif 'WS_ERR_MULT_TIMEOUT' in connection.response or 'timeout' in connection.response %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Timeout</span>
+    {%  elseif 'WS_ERR_DOCUMENT_SIZE' in connection.response %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Taille du document invalide</span>
+    {% elseif 'WS_ERR_MULT_WSNOTFOUND' in connection.response %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Web service non identifié</span>
+    {% elseif 'not resolve host' in connection.response %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">DNS - Serveur distant inaccessible</span>
+    {% elseif 'blocked' in connection.response or 'Attention Required!' in connection.response %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Connexion bloquée</span>
+    {% elseif 'Connection reset' in connection.response  %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Connexion interrompue</span>
+    {% elseif 'site est en maintenance' in connection.response %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Site en maintenance</span>
+    {% elseif 'nginx' in connection.response %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Erreur serveur partenaire</span>
+    {% elseif 'stream_get_meta_data' in connection.response or 'Path must not be empty' in connection.response %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Erreur traitement document</span>
+    {% elseif 'SSL certificate problem' in connection.response %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Certificat invalide</span>
+    {% elseif 'Bad Gateway' in connection.response %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Serveur indisponible</span>
+    {% elseif connection.response|length === 0 %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--warning">Réponse vide</span>
+    {% else %}
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Fail</span>
+    {% endif %}
+{% elseif connection.status == 'success' and isResponseValid %}
+    <span class="fr-badge fr-badge--no-icon fr-badge--success">Success</span>
+{% else %}
+    <span class="fr-badge fr-badge--no-icon fr-badge--new">Warning</span>
+{% endif %}

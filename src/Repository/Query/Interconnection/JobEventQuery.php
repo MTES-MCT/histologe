@@ -101,6 +101,14 @@ class JobEventQuery
             $qb->andWhere('j.partnerType = :partnerType')->setParameter('partnerType', $searchInterconnexion->getPartnerType()->value);
         }
 
+        if ($searchInterconnexion->showOnlyDataErrors()) {
+            $qb->andWhere('j.response LIKE :data_error_1 OR j.response LIKE :data_error_2 OR j.response LIKE :data_error_3 OR j.status = :status_success')
+                ->setParameter('data_error_1', '%WS_ERR_MOD_VERIFKEY%')
+                ->setParameter('data_error_2', '%WS_ERR_DOCUMENT_SIZE%')
+                ->setParameter('data_error_3', '%stream_get_meta_data%')
+                ->setParameter('status_success', 'success');
+        }
+
         return $qb;
     }
 

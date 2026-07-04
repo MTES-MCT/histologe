@@ -19,6 +19,7 @@ class SearchInterconnexion
     private ?PartnerType $partnerType = null;
     private ?string $orderType = null;
     private ?string $reference = null;
+    private ?bool $showOnlyDataErrors = true;
 
     public function getTerritory(): ?Territory
     {
@@ -112,6 +113,18 @@ class SearchInterconnexion
     public function setService(?string $service): static
     {
         $this->service = $service;
+
+        return $this;
+    }
+
+    public function showOnlyDataErrors(): ?bool
+    {
+        return $this->showOnlyDataErrors;
+    }
+
+    public function setShowOnlyDataErrors(?bool $showOnlyDataErrors): static
+    {
+        $this->showOnlyDataErrors = $showOnlyDataErrors;
 
         return $this;
     }

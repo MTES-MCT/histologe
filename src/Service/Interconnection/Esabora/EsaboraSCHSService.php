@@ -188,7 +188,12 @@ class EsaboraSCHSService extends AbstractEsaboraService
         if ($encodeDocuments) {
             $piecesJointes = array_map(function ($pieceJointe) {
                 $filepath = $this->uploadHandlerService->getTmpFilepath($pieceJointe['documentContent']);
-                $pieceJointe['documentContent'] = base64_encode((string) file_get_contents($filepath));
+                if (null !== $filepath && file_exists($filepath)) {
+                    $content = file_get_contents($filepath);
+                    if (false !== $content) {
+                        $pieceJointe['documentContent'] = base64_encode($content);
+                    }
+                }
 
                 return $pieceJointe;
             }, $dossierMessage->getPiecesJointes());

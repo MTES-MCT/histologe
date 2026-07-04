@@ -4,14 +4,17 @@ namespace App\Repository;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\InterfacageType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\JobEvent;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Service\Interconnection\Esabora\EsaboraSCHSService;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
+use App\Service\Interconnection\Esabora\Handler\AbstractDossierSISHHandler;
 use App\Service\ListFilters\SearchAffectationWithoutSubscription;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -212,14 +215,28 @@ class AffectationRepository extends ServiceEntityRepository
 
     /**
      * @param array<int, PartnerType> $partnerTypes
+     * @param array<int, string>      $actions
      *
      * @return array<int, Affectation>
      */
     public function findAffectationsWithFailedJobEvents(
         string $service,
-        string $action,
+        array $actions,
         array $partnerTypes = [],
     ): array {
+        $subQueryBuilder = $this->getEntityManager()->createQueryBuilder()
+            ->select('1')
+            ->from(JobEvent::class, 'j2')
+            ->where('j2.signalementId = a.signalement')
+            ->andWhere('j2.partnerId = a.partner')
+            ->andWhere('j2.codeStatus = 200')
+            ->andWhere('j2.service LIKE :service')
+            ->andWhere('j2.action IN (:action)');
+
+        if (!empty($partnerTypes)) {
+            $subQueryBuilder->andWhere('j2.partnerType IN (:partnerTypes)');
+        }
+
         $queryBuilder = $this->createQueryBuilder('a');
         $queryBuilder
             ->innerJoin(
@@ -228,35 +245,38 @@ class AffectationRepository extends ServiceEntityRepository
                 'ON',
                 'a.signalement = j.signalementId AND a.partner = j.partnerId'
             )
+            ->innerJoin(
+                Partner::class,
+                'p',
+                'ON',
+                'j.partnerId = p.id'
+            )
             ->andWhere('j.codeStatus > 399')
             ->andWhere('j.service LIKE :service')
-            ->andWhere('j.action LIKE :action')
-        ;
-
-        $subQueryBuilder = $this->getEntityManager()->createQueryBuilder()
-            ->select('1')
-            ->from(JobEvent::class, 'j2')
-            ->where('j2.signalementId = j.signalementId')
-            ->andWhere('j2.partnerId = j.partnerId')
-            ->andWhere('j2.codeStatus = 200')
-            ->andWhere('j2.service LIKE :service')
-            ->andWhere('j2.action LIKE :action')
-        ;
-
-        if (!empty($partnerTypes)) {
-            $subQueryBuilder
-                ->andWhere('j2.partnerType IN (:partnerTypes)');
-        }
-
-        $queryBuilder
+            ->andWhere('j.action IN (:action)')
             ->andWhere(
                 $queryBuilder->expr()->not(
                     $queryBuilder->expr()->exists($subQueryBuilder->getDQL())
                 )
             )
             ->setParameter('service', $service)
-            ->setParameter('action', $action)
+            ->setParameter('action', $actions)
         ;
+
+        if (InterfacageType::ESABORA->value === $service) {
+            $queryBuilder
+                ->andWhere('a.statut LIKE :statut')
+                ->setParameter('statut', AffectationStatus::WAIT)
+                ->andWhere('p.isEsaboraActive = true')
+                ->andWhere('j.response IS NULL OR j.response NOT LIKE :duplicateKey')
+                ->setParameter('duplicateKey', '%'.AbstractDossierSISHHandler::ERROR_SQL_DUPLICATE_KEY.'%')
+            ;
+        } elseif (InterfacageType::IDOSS->value === $service) {
+            $queryBuilder
+                ->andWhere('a.statut LIKE :statut')
+                ->setParameter('statut', AffectationStatus::ACCEPTED)
+                ->andWhere('p.isIdossActive = true');
+        }
 
         if (!empty($partnerTypes)) {
             $queryBuilder

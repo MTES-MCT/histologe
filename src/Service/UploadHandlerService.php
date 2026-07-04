@@ -303,12 +303,16 @@ class UploadHandlerService
             'tmp_filepath' => $tmpFilepath,
         ]);
 
+        $fileResource = null;
         try {
             $pathInfo = pathinfo($tmpFilepath);
             $ext = \array_key_exists('extension', $pathInfo) ? '.'.$pathInfo['extension'] : '';
             $newFilename = $pathInfo['filename'].$ext;
 
             $fileResource = fopen($tmpFilepath, 'r');
+            if (false === $fileResource) {
+                throw new FileException(sprintf('Impossible d’ouvrir le fichier : %s', $tmpFilepath));
+            }
             $this->fileStorage->writeStream($newFilename, $fileResource);
 
             return $newFilename;
@@ -323,6 +327,19 @@ class UploadHandlerService
                     'exception' => $exception->getMessage(),
                 ]
             );
+        } catch (FileException $exception) {
+            $this->logger->error('Impossible d\'ouvrir le fichier local.',
+                [
+                    'filename' => $filename,
+                    'from_folder' => $fromFolder,
+                    'tmp_filepath' => $tmpFilepath,
+                    'exception' => $exception->getMessage(),
+                ]
+            );
+        } finally {
+            if (\is_resource($fileResource)) {
+                fclose($fileResource);
+            }
         }
 
         return null;

@@ -23,12 +23,16 @@
     </section>
 
     {{ form_start(form) }}
-
     <section class="fr-col-12" aria-labelledby="filters-title">
         {% include '_partials/back/filters-title.html.twig' with {
             'skiplink_href': '#list-connections',
             'skiplink_label': 'Accéder à la liste des connexions SI'
         } %}
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-md-4">
+                {{ form_row(form.showOnlyDataErrors) }}
+            </div>
+        </div>
         {{ form_errors(form) }}
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-2">
@@ -97,17 +101,11 @@
                         {% endif %}
                     </td>
                     <td>{{ syncAt }}</td>
-                    <td>{{ connection.nom }}</td>
+                    <td>{{ connection.nom|length > 35 ? connection.nom|slice(0, 35) ~ '…'  : connection.nom }}</td>
                     <td>{{ connection.service }}</td>
                     <td>{{ connection.action }}</td>
                     <td>
-                        {% if connection.status == 'failed' %}
-                            <span class="fr-badge fr-badge--no-icon fr-badge--error">Fail</span>
-                        {% elseif connection.status == 'success' and isResponseValid %}
-                            <span class="fr-badge fr-badge--no-icon fr-badge--success">Success</span>
-                        {% else %}
-                            <span class="fr-badge fr-badge--no-icon fr-badge--new">Warning</span>
-                        {% endif %}
+                        {% include 'back/interconnexion/_badge_status.html.twig' %}
                     </td>
                    <td>
                         {% set modalId = 'modal-' ~ loop.index %}
@@ -146,4 +144,4 @@
         </div>
     </section>
 
-{% endblock %} 
+{% endblock %}
