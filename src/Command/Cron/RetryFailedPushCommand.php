@@ -97,7 +97,7 @@ class RetryFailedPushCommand extends AbstractCronCommand
         }
 
         $config = self::MAPPING_SERVICES[$serviceType];
-        if (!$this->featureSchsDispatchSishEnable) {
+        if ('sish' === $serviceType && !$this->featureSchsDispatchSishEnable) {
             $config['partnerTypes'] = [PartnerType::ARS];
         }
 

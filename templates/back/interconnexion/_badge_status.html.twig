@@ -1,6 +1,6 @@
 {% if connection.status == 'failed' %}
     {% if 'WS_ERR_MOD_VERIFKEY' in connection.response %}
-        <span class="fr-badge fr-badge--no-icon fr-badge--error">Donnée manquante</span>
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Erreur métier</span>
     {% elseif 'WS_ERR_SQL' in connection.response %}
         <span class="fr-badge fr-badge--no-icon fr-badge--error">Doublon</span>
     {% elseif 'WS_ERR_MULT_TIMEOUT' in connection.response or 'timeout' in connection.response %}
@@ -15,7 +15,7 @@
         <span class="fr-badge fr-badge--no-icon fr-badge--error">Connexion bloquée</span>
     {% elseif 'Connection reset' in connection.response  %}
         <span class="fr-badge fr-badge--no-icon fr-badge--error">Connexion interrompue</span>
-    {% elseif 'site est en maintenance' in connection.response %}
+    {% elseif 'maintenance' in connection.response %}
         <span class="fr-badge fr-badge--no-icon fr-badge--error">Site en maintenance</span>
     {% elseif 'nginx' in connection.response %}
         <span class="fr-badge fr-badge--no-icon fr-badge--error">Erreur serveur partenaire</span>
