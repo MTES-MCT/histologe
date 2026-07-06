@@ -3,32 +3,25 @@
     {% if signalement.complementAdresseOccupant %}- {{signalement.complementAdresseOccupant}}{% endif %},
     {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|capitalize }}
     {% if is_granted('SIGN_EDIT_ADDRESS', signalement) %}
-        <a href="#" data-fr-opened="false" aria-controls="fr-modal-edit-address" class="fr-ml-6v fr-btn--icon-left fr-icon-edit-line fr-a-edit">
-            Modifier
-        </a>
+        <button data-fr-opened="false" aria-controls="fr-modal-edit-address" class="fr-ml-6v fr-link--icon-left fr-icon-edit-line fr-a-edit"
+            >Modifier</button>
     {% endif %}
     {% if feature_histo_address %}
         {% if signalement.geoloc.lat is defined and signalement.geoloc.lng is defined %}
-                <a
-                    href="#" 
-                    class="fr-ml-6v fr-btn--icon-left fr-icon-road-map-line fr-a-edit" 
-                    id="fr-modal-localisation-btn"
-                    data-fr-opened="false" 
-                    aria-controls="fr-modal-localisation"
-                    data-lat="{{signalement.geoloc.lat}}"
-                    data-lng="{{signalement.geoloc.lng}}"
-                >
-                    Localiser sur la carte
-                </a>
+            <button
+                class="fr-ml-6v fr-link fr-link--icon-left fr-icon-road-map-line fr-a-edit" 
+                id="fr-modal-localisation-btn"
+                data-fr-opened="false" 
+                aria-controls="fr-modal-localisation"
+                data-lat="{{signalement.geoloc.lat}}"
+                data-lng="{{signalement.geoloc.lng}}"
+                >Localiser sur la carte</button>
         {% elseif is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_NEED_VALIDATION', signalement) %}
-                <a
-                    href="#"  
-                    class="fr-ml-6v fr-btn--icon-left fr-icon-map-pin-2-line fr-a-edit" 
-                    data-fr-opened="false" 
-                    aria-controls="fr-modal-pick-localisation"
-                >
-                    Sélectionner le bâtiment sur la carte
-                </a>
+            <button
+                class="fr-ml-6v fr-link fr-link--icon-left fr-icon-map-pin-2-line fr-a-edit" 
+                data-fr-opened="false" 
+                aria-controls="fr-modal-pick-localisation"
+                >Sélectionner le bâtiment sur la carte</button>
         {% endif %}
     {% endif %}
 </div>
@@ -95,22 +88,19 @@
     {% elseif signalementsOnSameAddress|length > 0 or arretesOnSameAddress|length > 0 %}
         {% if is_granted('ROLE_ADMIN_TERRITORY') %}  
             <div class="fr-mb-3v">
-                {{ singular_or_plural(signalementsOnSameAddress|length, ' autre dossier', ' autre dossiers') }} et {{ singular_or_plural(arretesOnSameAddress|length, ' arrêté', ' arrêtés') }} trouvés à cette adresse
+                {{ singular_or_plural(signalementsOnSameAddress|length, ' autre dossier', ' autres dossiers') }} et {{ singular_or_plural(arretesOnSameAddress|length, ' arrêté', ' arrêtés') }} trouvés à cette adresse
                 <a href="{{ routeForListOfSignalementOnAddress }}" class="fr-link fr-link--icon-right fr-icon-arrow-right-line fr-ml-2v">
                     Voir l'historique
                 </a>
             </div>
         {% elseif signalementsOnSameAddress|length > 0 %}
             <div class="fr-mb-3v">
-                <a
-                    href="#"
-                    class="fr-btn--icon-left fr-a-edit fr-icon-alarm-warning-line"
+                <button
+                    class="fr-link fr-link--icon-left fr-a-edit fr-icon-alarm-warning-line"
                     aria-controls="fr-modal-duplicate-addresses"
                     data-fr-opened="false"
                     type="button"
-                >
-                    {{ singular_or_plural(signalementsOnSameAddress|length, ' signalement', ' signalements') }} à la même adresse
-                </a>
+                    >{{ singular_or_plural(signalementsOnSameAddress|length, ' signalement', ' signalements') }} à la même adresse</button>
             </div>
         {% endif %}
     {% endif %}
