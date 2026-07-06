@@ -430,8 +430,8 @@
                 #}
                 <div class="fr-col-12 fr-col-lg">
                     <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters form-nav-row-reverse fr-mt-4w">
-                        <div class="fr-col-12 fr-col-lg">
-                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left  fr-btns-group--inline-reverse">
+                        <div class="fr-col-12 fr-col-md">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-md fr-btns-group--icon-left fr-btns-group--inline-reverse">
                                 {% if form.navigator.next is defined %}
                                     <li>{{ form_widget(form.navigator.next) }}</li>
                                 {% endif %}
@@ -442,13 +442,13 @@
                                     <li>{{ form_widget(form.navigator.finish) }}</li>
                                 {% endif %}
                                 {% if form.navigator.previous is defined %}
-                                    <li>{{ form_widget(form.navigator.previous) }}</li>
+                                    <li class="fr-mr-0 fr-mr-md-2v">{{ form_widget(form.navigator.previous) }}</li>
                                 {% endif %}
                             </ul>
                         </div>
-                        <div class="fr-col-12 fr-col-lg">
+                        <div class="fr-col-12 fr-col-md">
                             {% if form.navigator.reset is defined %}
-                                <ul class="fr-btns-group fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <ul class="fr-btns-group fr-btns-group--inline-md fr-btns-group--icon-left">
                                     <li>{{ form_widget(form.navigator.reset) }}</li>
                                 </ul>
                             {% endif %}

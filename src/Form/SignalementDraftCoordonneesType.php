@@ -18,6 +18,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -65,15 +66,42 @@ class SignalementDraftCoordonneesType extends AbstractType
             ->add('nomOccupant', TextType::class, [
                 'label' => 'Nom de famille',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 50,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 50,
+                        maxMessage: 'Le nom de l\'occupant doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('prenomOccupant', TextType::class, [
                 'label' => 'Prénom',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 50,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 50,
+                        maxMessage: 'Le prénom de l\'occupant doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('mailOccupant', TextType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'L\'adresse e-mail de l\'occupant doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('telOccupant', PhoneType::class, [
                 'required' => false,
@@ -101,22 +129,56 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'required' => false,
                 'attr' => [
                     'data-autocomplete-bailleur-url' => $this->urlGenerator->generate('app_bailleur', ['inseecode' => $signalement->getInseeOccupant()]),
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'La dénomination du bailleur doit comporter au maximum {{ limit }} caractères.',
+                    ),
                 ],
             ])
             ->add('nomProprio', TextType::class, [
                 'label' => 'Nom de famille',
                 'help' => 'Saisissez le nom du ou de la représentante de la société',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le nom de famille du bailleur doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('prenomProprio', TextType::class, [
                 'label' => 'Prénom',
                 'help' => 'Saisissez le prénom du ou de la représentante de la société',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le nom de famille du bailleur doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('mailProprio', TextType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le nom de famille du bailleur doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('telProprio', PhoneType::class, [
                 'required' => false,
@@ -193,17 +255,42 @@ class SignalementDraftCoordonneesType extends AbstractType
                     : 'Nom de famille',
                 'label_html' => true,
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 50,
+                ],
                 'constraints' => [
+                    new Assert\Length(
+                        max: 50,
+                        maxMessage: 'Le nom du déclarant doit comporter au maximum {{ limit }} caractères.',
+                    ),
                     new NotBlank(message: 'Veuillez renseigner un nom.', groups: ['bo_step_coordonnees_tiers']),
                 ],
             ])
             ->add('prenomDeclarant', TextType::class, [
                 'label' => 'Prénom',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 50,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 50,
+                        maxMessage: 'Le prénom du déclarant doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('matriculeDeclarant', TextType::class, [
                 'label' => 'Matricule',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le matricule du déclarant doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('mailDeclarant', TextType::class, [
                 'label' => $signalement->isTiersDeclarant()
@@ -212,8 +299,15 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'label_html' => true,
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
                 'constraints' => [
                     new NotBlank(message: 'Veuillez renseigner une adresse e-mail.', groups: ['bo_step_coordonnees_tiers']),
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'L\'adresse e-mail du déclarant doit comporter au maximum {{ limit }} caractères.',
+                    ),
                 ],
             ])
             ->add('telDeclarant', PhoneType::class, [
@@ -229,21 +323,57 @@ class SignalementDraftCoordonneesType extends AbstractType
             ->add('denominationAgence', TextType::class, [
                 'label' => 'Dénomination',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'La dénomination de l\'agence doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('nomAgence', TextType::class, [
                 'label' => 'Nom de famille',
                 'help' => 'Saisissez le nom du ou de la gestionnaire du logement',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le nom de famille du ou de la gestionnaire du logement doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('prenomAgence', TextType::class, [
                 'label' => 'Prénom',
                 'help' => 'Saisissez le prénom du ou de la gestionnaire du logement',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le prénom du ou de la gestionnaire du logement doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('mailAgence', TextType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'L\'adresse e-mail du ou de la gestionnaire du logement doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('telAgence', PhoneType::class, [
                 'required' => false,
@@ -296,16 +426,43 @@ class SignalementDraftCoordonneesType extends AbstractType
             ->add('denominationSyndic', TextType::class, [
                 'label' => 'Dénomination',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'La dénomination du syndic doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('nomSyndic', TextType::class, [
                 'label' => 'Nom',
                 'help' => 'Saisissez le nom du contact du syndic',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le nom de famille du contact du syndic doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('mailSyndic', TextType::class, [
                 'label' => 'Adresse e-mail',
                 'help' => 'Format attendu : nom@domaine.fr',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'L\'adresse e-mail du syndic doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('telSyndic', PhoneType::class, [
                 'required' => false,

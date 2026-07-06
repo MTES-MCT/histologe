@@ -28,7 +28,7 @@
                                     {% set autrePrecision = signalement.typeCompositionLogement.typeLogementNatureAutrePrecision %}
                                 {% endif %}
                                 <label class="fr-label" for="compositionLogementTypeLogementNatureAutrePrecision">Précision (si autre)</label>
-                                <input class="fr-input" type="text" id="compositionLogementTypeLogementNatureAutrePrecision" name="typeLogementNatureAutrePrecision" value="{{ autrePrecision }}" maxlength="50">
+                                <input class="fr-input" type="text" id="compositionLogementTypeLogementNatureAutrePrecision" name="typeLogementNatureAutrePrecision" value="{{ autrePrecision }}" maxlength="15">
                             </div>
 
                             <div class="fr-select-group">
@@ -68,7 +68,7 @@
 
                             <div class="fr-input-group">
                                 <label class="fr-label" for="nombreEtages">Nombre d'étages (facultatif)</label>
-                                <input class="fr-input" type="number" id="nombreEtages" name="nombreEtages" value="{{ signalement.informationComplementaire.informationsComplementairesLogementNombreEtages ?? 1 }}">
+                                <input class="fr-input" type="number" id="nombreEtages" name="nombreEtages" value="{{ signalement.informationComplementaire.informationsComplementairesLogementNombreEtages ?? 1 }}" maxlength="5">
                             </div>
 
                             <div class="fr-select-group">

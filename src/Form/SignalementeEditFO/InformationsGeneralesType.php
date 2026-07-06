@@ -55,6 +55,9 @@ class InformationsGeneralesType extends AbstractType
                 'label' => 'Nombre de personnes occupant le logement <span class="text-required">*</span>',
                 'label_html' => true,
                 'help' => 'Format attendu : saisir un nombre entier',
+                'attr' => [
+                    'maxlength' => 2,
+                ],
                 'required' => false,
                 'constraints' => [
                     new Assert\NotNull(
@@ -64,12 +67,23 @@ class InformationsGeneralesType extends AbstractType
                         pattern: '/^\d+$/',
                         message: 'Veuillez saisir un nombre entier.',
                     ),
+                    new Assert\GreaterThan(
+                        value: 0,
+                        message: 'Veuillez saisir un nombre d\'occupants supérieur à 0.',
+                    ),
+                    new Assert\LessThan(
+                        value: 100,
+                        message: 'Veuillez saisir un nombre d\'occupants inférieur à 100.',
+                    ),
                 ],
                 'data' => $signalement->getNbOccupantsLogement(),
             ])
             ->add('nbEnfantsDansLogement', NumberType::class, [
                 'label' => 'Dont enfants (facultatif)',
                 'help' => 'Format attendu : saisir un nombre entier',
+                'attr' => [
+                    'maxlength' => 2,
+                ],
                 'required' => false,
                 'mapped' => false,
                 'data' => $nbEnfantsDansLogement,
@@ -77,6 +91,14 @@ class InformationsGeneralesType extends AbstractType
                     new Assert\Regex(
                         pattern: '/^\d+$/',
                         message: 'Veuillez saisir un nombre entier.',
+                    ),
+                    new Assert\GreaterThan(
+                        value: 0,
+                        message: 'Veuillez saisir un nombre d\'enfants supérieur à 0.',
+                    ),
+                    new Assert\LessThan(
+                        value: 100,
+                        message: 'Veuillez saisir un nombre d\'enfants inférieur à 100.',
                     ),
                 ],
             ])
@@ -201,6 +223,15 @@ class InformationsGeneralesType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $anneeConstruction,
+                'attr' => [
+                    'maxlength' => 4,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        exactly: 4,
+                        exactMessage: 'L\'année de construction doit comporter {{ limit }} caractères.',
+                    ),
+                ],
             ]);
         if ('appartement' === $signalement->getNatureLogement()) {
             $builder->add('autresOccupantsDesordre', ChoiceType::class, [

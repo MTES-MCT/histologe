@@ -52,11 +52,17 @@ class ServiceSecoursStep3Type extends AbstractType
             'label' => 'Nombre d\'adultes vivant dans le logement',
             'help' => 'Format attendu : Saisir un nombre entier',
             'required' => false,
+            'attr' => [
+                'maxlength' => 2,
+            ],
         ]);
         $builder->add('nbEnfantsDansLogement', TextType::class, [
             'label' => 'Nombre de mineurs vivant dans le logement',
             'help' => 'Format attendu : Saisir un nombre entier',
             'required' => false,
+            'attr' => [
+                'maxlength' => 2,
+            ],
         ]);
         $builder->add('isEnfantsMoinsSixAnsDansLogement', ChoiceType::class, [
             'label' => 'Mineurs de 6 ans ou moins',

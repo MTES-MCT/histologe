@@ -76,8 +76,11 @@ readonly class SituationFoyerRequest implements RequestInterface
         private ?string $travailleurSocialAccompagnement = null,
         #[Assert\Length(max: 50)]
         private ?string $travailleurSocialAccompagnementDeclarant = null,
+        #[Assert\Length(max: 255, maxMessage: 'Le nom de la structure du travailleur social ne doit pas dépasser {{ limit }} caractères.')]
         private ?string $travailleurSocialAccompagnementNomStructure = null,
+        #[Assert\Length(max: 255, maxMessage: 'Le nom du travailleur social ne doit pas dépasser {{ limit }} caractères.')]
         private ?string $travailleurSocialAccompagnementNomReferent = null,
+        #[Assert\Length(max: 255, maxMessage: 'Le prénom du travailleur social ne doit pas dépasser {{ limit }} caractères.')]
         private ?string $travailleurSocialAccompagnementPrenomReferent = null,
         #[Assert\Choice(
             choices: ['oui', 'non'],

@@ -148,6 +148,9 @@ class CoordonneesBailleurType extends AbstractType
                     'required' => false,
                     'mapped' => false,
                     'data' => $signalement->getInformationProcedure()?->getInfoProcedureBailReponse(),
+                    'attr' => [
+                        'maxlength' => 255,
+                    ],
                     'constraints' => [
                         new Assert\Length(
                             max: 255,

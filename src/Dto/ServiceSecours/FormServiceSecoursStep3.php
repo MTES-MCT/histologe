@@ -27,11 +27,31 @@ class FormServiceSecoursStep3
         message: 'Merci de saisir un nombre entier.',
         groups: ['step3']
     )]
+    #[Assert\GreaterThan(
+        value: 0,
+        message: 'Merci de saisir un nombre entier positif.',
+        groups: ['step3']
+    )]
+    #[Assert\LessThan(
+        value: 100,
+        message: 'Merci de saisir un nombre inférieur à 100.',
+        groups: ['step3']
+    )]
     public ?string $nbAdultesDansLogement = null;
 
     #[Assert\Regex(
         pattern: '/^\d+$/',
         message: 'Merci de saisir un nombre entier.',
+        groups: ['step3']
+    )]
+    #[Assert\GreaterThan(
+        value: 0,
+        message: 'Merci de saisir un nombre entier positif.',
+        groups: ['step3']
+    )]
+    #[Assert\LessThan(
+        value: 100,
+        message: 'Merci de saisir un nombre inférieur à 100.',
         groups: ['step3']
     )]
     public ?string $nbEnfantsDansLogement = null;

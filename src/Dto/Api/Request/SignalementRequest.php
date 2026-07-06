@@ -189,7 +189,7 @@ class SignalementRequest implements RequestInterface
                     <br>⚠️Pris en compte uniquement dans le cas où natureLogement = "autre".',
         example: 'caravane',
     )]
-    #[Assert\Length(max: 100)]
+    #[Assert\Length(max: 15)]
     public ?string $natureLogementAutre = null;
 
     #[OA\Property(
@@ -455,6 +455,7 @@ class SignalementRequest implements RequestInterface
                      <br>⚠️Pris en compte uniquement dans le cas où isAccompagnementTravailleurSocial = true.',
         example: 'Dupont',
     )]
+    #[Assert\Length(max: 255)]
     public ?string $accompagnementTravailleurSocialNomReferent = null;
 
     #[OA\Property(
@@ -462,6 +463,7 @@ class SignalementRequest implements RequestInterface
                      <br>⚠️Pris en compte uniquement dans le cas où isAccompagnementTravailleurSocial = true.',
         example: 'Dominique',
     )]
+    #[Assert\Length(max: 255)]
     public ?string $accompagnementTravailleurSocialPrenomReferent = null;
 
     #[OA\Property(
@@ -512,7 +514,7 @@ class SignalementRequest implements RequestInterface
                       <br>⚠️Pris en compte uniquement dans le cas où isBailleurAverti = true.',
         example: 'Le bailleur n\'a pas donné suite.',
     )]
-    #[Assert\Length(max: 5000)]
+    #[Assert\Length(max: 255)]
     public ?string $reponseBailleur = null;
 
     #[OA\Property(
@@ -550,7 +552,7 @@ class SignalementRequest implements RequestInterface
                      <br>⚠️Pris en compte uniquement dans le cas où isLogementAssure = true et isAssuranceContactee = true.',
         example: 'L\'assurance refuse de couvrir les dégâts.',
     )]
-    #[Assert\Length(max: 5000)]
+    #[Assert\Length(max: 255)]
     public ?string $reponseAssurance = null;
 
     #[OA\Property(

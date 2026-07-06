@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @extends AbstractType<mixed>
@@ -152,6 +153,9 @@ class SignalementDraftSituationType extends AbstractType
                 'label' => 'Montant du loyer',
                 'help' => 'Format attendu : saisir un nombre entier',
                 'required' => false,
+                'attr' => [
+                    'maxlength' => 10,
+                ],
             ])
             ->add('payementLoyersAJour', ChoiceType::class, [
                 'label' => 'Paiement des loyers à jour',
@@ -203,9 +207,18 @@ class SignalementDraftSituationType extends AbstractType
             ->add('numeroAllocataire', TextType::class, [
                 'label' => 'Numéro d\'allocataire / de dossier',
                 'help' => 'Format attendu : 25 caractères maximum',
+                'attr' => [
+                    'maxlength' => 25,
+                ],
                 'required' => false,
                 'mapped' => false,
                 'data' => $numeroAllocataire,
+                'constraints' => [
+                    new Assert\Length(
+                        max: 25,
+                        maxMessage: 'Le numéro d\'allocataire / de dossier doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('typeAllocation', ChoiceType::class, [
                 'label' => 'Type d\'allocation',
@@ -224,6 +237,9 @@ class SignalementDraftSituationType extends AbstractType
             ->add('montantAllocation', TextType::class, [
                 'label' => 'Montant de l\'allocation',
                 'help' => 'Format attendu : saisir un nombre entier',
+                'attr' => [
+                    'maxlength' => 10,
+                ],
                 'required' => false,
                 'mapped' => false,
                 'data' => $montantAllocation,
@@ -246,18 +262,45 @@ class SignalementDraftSituationType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $accompagnementTravailleurSocialNomStructure,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le nom de la structure d\'accompagnement doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('accompagnementTravailleurSocialNomReferent', TextType::class, [
                 'label' => 'Nom du référent social',
                 'required' => false,
                 'mapped' => false,
                 'data' => $accompagnementTravailleurSocialNom,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le nom du référent social doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('accompagnementTravailleurSocialPrenomReferent', TextType::class, [
                 'label' => 'Prénom du référent social',
                 'required' => false,
                 'mapped' => false,
                 'data' => $accompagnementTravailleurSocialPrenom,
+                'attr' => [
+                    'maxlength' => 255,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'Le prénom du référent social doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('beneficiaireRSA', ChoiceType::class, [
                 'label' => 'Bénéficiaire RSA',
@@ -327,6 +370,12 @@ class SignalementDraftSituationType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $reponseProprietaire,
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'La réponse du bailleur doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
             ->add('isRelogement', ChoiceType::class, [
                 'label' => 'Demande de logement / relogement / mutation',
@@ -398,6 +447,12 @@ class SignalementDraftSituationType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'data' => $reponseAssurance,
+                'constraints' => [
+                    new Assert\Length(
+                        max: 255,
+                        maxMessage: 'La réponse de l\'assurance doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                ],
             ])
 
             ->add('forceSave', HiddenType::class, [

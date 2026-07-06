@@ -26,7 +26,7 @@
                                         signalement.profileDeclarant)
                                     }}
                                 </label>
-                                <input class="fr-input" type="number" id="informationLogementNombrePersonnes" name="nombrePersonnes" value="{{ nombrePersonnes }}">
+                                <input class="fr-input" type="number" id="informationLogementNombrePersonnes" name="nombrePersonnes" value="{{ nombrePersonnes }}" max="99">
                             </div>
 
                             <div class="fr-input-group">
@@ -36,7 +36,7 @@
                                 {% else %}
                                     {% set compositionLogementNombreEnfants = signalement.getNbEnfantsDeprecated %}
                                 {% endif %}
-                                <label class="fr-label" for="informationLogementNombrePersonnes">Dont nb. enfants
+                                <label class="fr-label" for="informationLogementCompositionLogementNombreEnfants">Dont nb. enfants
                                     {{ show_label_facultatif(
                                         'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
                                         'compositionLogementNombreEnfants',
@@ -44,7 +44,7 @@
                                         signalement.isV2)
                                     }}
                                 </label>
-                                <input class="fr-input" type="number" id="informationLogementCompositionLogementNombreEnfants" name="compositionLogementNombreEnfants" value="{{ compositionLogementNombreEnfants }}">
+                                <input class="fr-input" type="number" id="informationLogementCompositionLogementNombreEnfants" name="compositionLogementNombreEnfants" value="{{ compositionLogementNombreEnfants }}" max="99">
                             </div>
 
                             <div class="fr-select-group">
@@ -211,7 +211,7 @@
                                     {% set anneeConstruction = signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction %}
                                 {% endif %}
                                 <label class="fr-label" for="informationLogementAnneeConstruction">Année de construction (facultatif)</label>
-                                <input class="fr-input" type="number" id="informationLogementAnneeConstruction" name="anneeConstruction" value="{{ anneeConstruction }}">
+                                <input class="fr-input" type="number" id="informationLogementAnneeConstruction" name="anneeConstruction" value="{{ anneeConstruction }}" maxlength="4">
                             </div>
                             
                             {% if signalement.natureLogement == 'appartement' %}

@@ -802,8 +802,8 @@
             "message": "Veuillez renseigner le nombre de personnes vivant dans votre logement.",
             "pattern": "^[0-9]+$",
             "patternMessage": "Veuillez renseigner un nombre de personnes valide.",
-            "expression": "parseInt(formStore.data.composition_logement_nombre_personnes) > 0",
-            "expressionMessage": "Le nombre de personnes doit être un nombre positif."
+            "expression": "parseInt(formStore.data.composition_logement_nombre_personnes) > 0 && parseInt(formStore.data.composition_logement_nombre_personnes) < 100",
+            "expressionMessage": "Merci de saisir une information numérique comprise entre 1 et 99 dans le champs nombre de personnes."
           },
           "accessibility": {
             "focus": true
@@ -1241,7 +1241,7 @@
             "show": "formStore.data.logement_social_allocation === 'oui'"
           },
           "validate": {
-            "pattern": "^[0-9]*$",
+            "pattern": "^[0-9]{0,20}$",
             "patternMessage": "Veuillez renseigner un montant d'allocation valide.",
             "required": false
           }
@@ -1335,11 +1335,13 @@
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_nom_structure",
           "label": "Quel est le nom de la structure qui vous accompagne ? (facultatif)",
+          "description": "Format attendu : 50 caractères maximum",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui'"
           },
           "validate": {
             "required": false,
+            "maxLength": 50,
             "message": "Veuillez indiquer le nom de la structure qui vous accompagne."
           }
         },
@@ -1369,11 +1371,13 @@
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_nom_referent",
           "label": "Nom de famille du référent qui vous accompagne (facultatif)",
+          "description": "Format attendu : 50 caractères maximum",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'non'"
           },
           "validate": {
-            "required": false
+            "required": false,
+            "maxLength": 50
           },
           "accessibility": {
             "name": "lastName"
@@ -1383,11 +1387,13 @@
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_prenom_referent",
           "label": "Prénom du référent qui vous accompagne (facultatif)",
+          "description": "Format attendu : 50 caractères maximum",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'non'"
           },
           "validate": {
-            "required": false
+            "required": false,
+            "maxLength": 50
           },
           "accessibility": {
             "name": "firstName"
@@ -1397,14 +1403,14 @@
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_inviter_referent_comme_tiers_nom",
           "label": "Nom de famille du référent qui vous accompagne",
-          "description": "Format attendu : 255 caractères maximum",
+          "description": "Format attendu : 50 caractères maximum",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'oui'"
           },
           "validate": {
-            "message": "Veuillez indiquer le nom de famille du référent qui vous accompagne."
+            "message": "Veuillez indiquer le nom de famille du référent qui vous accompagne.",
+            "maxLength": 50
           },
-          "maxlength": 255,
           "accessibility": {
             "name": "lastName"
           }
@@ -1413,14 +1419,14 @@
           "type": "SignalementFormTextfield",
           "slug": "travailleur_social_accompagnement_inviter_referent_comme_tiers_prenom",
           "label": "Prénom du référent qui vous accompagne",
-          "description": "Format attendu : 255 caractères maximum",
+          "description": "Format attendu : 50 caractères maximum",
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'oui'"
           },
           "validate": {
-            "message": "Veuillez indiquer le prénom du référent qui vous accompagne."
+            "message": "Veuillez indiquer le prénom du référent qui vous accompagne.",
+            "maxLength": 50
           },
-          "maxlength": 255,
           "accessibility": {
             "name": "firstName"
           }
@@ -1431,7 +1437,8 @@
           "label": "Adresse e-mail du référent à inviter",
           "description": "Format attendu : nom@domaine.fr",
           "validate": {
-            "patternMessage": "Veuillez renseigner une adresse e-mail valide."
+            "patternMessage": "Veuillez renseigner une adresse e-mail valide.",
+            "maxLength": 50
           },
           "conditional": {
             "show": "formStore.data.travailleur_social_accompagnement === 'oui' && formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'oui'"
@@ -1559,7 +1566,6 @@
           "label": "Quelle a été la réponse de votre assurance ?",
           "slug": "info_procedure_reponse_assurance",
           "description": "Format attendu : 255 caractères maximum",
-          "maxlength": 255,
           "conditional": {
             "show": "formStore.data.info_procedure_assurance_contactee === 'oui'"
           },
@@ -1781,6 +1787,8 @@
                 "validate": {
                   "pattern": "^[0-9]*$",
                   "patternMessage": "Veuillez renseigner un montant de référence valide.",
+                  "maxLength": 50,
+                  "message": "Veuillez renseigner la réponse de l'assurance.",
                   "required": false
                 }
               }
@@ -1803,7 +1811,7 @@
                   "show": "formStore.data.composition_logement_piece_unique === 'plusieurs_pieces'"
                 },
                 "validate": {
-                  "pattern": "^[0-9]*$",
+                  "pattern": "^[0-9]{0,5}$",
                   "patternMessage": "Veuillez renseigner une numéro d'étage valide.",
                   "required": false
                 }

@@ -218,9 +218,9 @@ class SignalementDraftRequest
     private ?string $coordonneesOccupantTel = null;
     #[AppAssert\TelephoneFormat]
     private ?string $coordonneesOccupantTelSecondaire = null;
-    #[Assert\Length(max: 250, maxMessage: 'Le nom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Length(max: 255, maxMessage: 'Le nom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurNom = null;
-    #[Assert\Length(max: 250, maxMessage: 'Le prénom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Length(max: 255, maxMessage: 'Le prénom du bailleur ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $coordonneesBailleurPrenom = null;
     #[Email(mode: Email::VALIDATION_MODE_STRICT)]
     private ?string $coordonneesBailleurEmail = null;
@@ -311,9 +311,9 @@ class SignalementDraftRequest
 
     #[Assert\Positive(message: 'Le nombre de personnes doit être un nombre positif.')]
     #[Assert\Type(type: 'numeric', message: 'Le nombre de personnes doit être un nombre.')]
-    #[Assert\Length(
-        max: 10,
-        maxMessage: 'Le nombre de personnes ne doit pas dépasser {{ limit }} caractères.',
+    #[Assert\LessThanOrEqual(
+        value: 99,
+        message: 'Le nombre de personnes ne doit pas dépasser {{ compared_value }}.',
     )]
     private ?string $compositionLogementNombrePersonnes = null;
 
@@ -423,7 +423,23 @@ class SignalementDraftRequest
     #[Assert\Length(max: 50)]
     private ?string $travailleurSocialAccompagnementDeclarant = null;
 
+    #[Assert\Length(max: 50, maxMessage: 'Le nom de la structure d\'accompagnement ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $travailleurSocialAccompagnementNomStructure = null;
+
+    #[Assert\Length(max: 50, maxMessage: 'Le nom de famille du référent d\'accompagnement ne doit pas dépasser {{ limit }} caractères.')]
+    private ?string $travailleurSocialAccompagnementNomReferent = null;
+
+    #[Assert\Length(max: 50, maxMessage: 'Le prénom du référent d\'accompagnement ne doit pas dépasser {{ limit }} caractères.')]
+    private ?string $travailleurSocialAccompagnementPrenomReferent = null;
+
+    #[Assert\Length(max: 50, maxMessage: 'Le nom  de famille du référent d\'accompagnement ne doit pas dépasser {{ limit }} caractères.')]
+    private ?string $travailleurSocialAccompagnementInviterReferentCommeTiersNom = null;
+
+    #[Assert\Length(max: 50, maxMessage: 'Le prénom du référent d\'accompagnement ne doit pas dépasser {{ limit }} caractères.')]
+    private ?string $travailleurSocialAccompagnementInviterReferentCommeTiersPrenom = null;
+
+    #[Assert\Length(max: 50, maxMessage: 'L\'adresse e-mail du référent d\'accompagnement ne doit pas dépasser {{ limit }} caractères.')]
+    private ?string $travailleurSocialAccompagnementInviterReferentCommeTiersEmail = null;
 
     #[Assert\Choice(
         choices: ['oui', 'non', 'nsp'],
@@ -1579,6 +1595,66 @@ class SignalementDraftRequest
     public function setTravailleurSocialAccompagnementNomStructure(?string $travailleurSocialAccompagnementNomStructure): self
     {
         $this->travailleurSocialAccompagnementNomStructure = $travailleurSocialAccompagnementNomStructure;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementNomReferent(): ?string
+    {
+        return $this->travailleurSocialAccompagnementNomReferent;
+    }
+
+    public function setTravailleurSocialAccompagnementNomReferent(?string $travailleurSocialAccompagnementNomReferent): self
+    {
+        $this->travailleurSocialAccompagnementNomReferent = $travailleurSocialAccompagnementNomReferent;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementPrenomReferent(): ?string
+    {
+        return $this->travailleurSocialAccompagnementPrenomReferent;
+    }
+
+    public function setTravailleurSocialAccompagnementPrenomReferent(?string $travailleurSocialAccompagnementPrenomReferent): self
+    {
+        $this->travailleurSocialAccompagnementPrenomReferent = $travailleurSocialAccompagnementPrenomReferent;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementInviterReferentCommeTiersNom(): ?string
+    {
+        return $this->travailleurSocialAccompagnementInviterReferentCommeTiersNom;
+    }
+
+    public function setTravailleurSocialAccompagnementInviterReferentCommeTiersNom(?string $travailleurSocialAccompagnementInviterReferentCommeTiersNom): self
+    {
+        $this->travailleurSocialAccompagnementInviterReferentCommeTiersNom = $travailleurSocialAccompagnementInviterReferentCommeTiersNom;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementInviterReferentCommeTiersPrenom(): ?string
+    {
+        return $this->travailleurSocialAccompagnementInviterReferentCommeTiersPrenom;
+    }
+
+    public function setTravailleurSocialAccompagnementInviterReferentCommeTiersPrenom(?string $travailleurSocialAccompagnementInviterReferentCommeTiersPrenom): self
+    {
+        $this->travailleurSocialAccompagnementInviterReferentCommeTiersPrenom = $travailleurSocialAccompagnementInviterReferentCommeTiersPrenom;
+
+        return $this;
+    }
+
+    public function getTravailleurSocialAccompagnementInviterReferentCommeTiersEmail(): ?string
+    {
+        return $this->travailleurSocialAccompagnementInviterReferentCommeTiersEmail;
+    }
+
+    public function setTravailleurSocialAccompagnementInviterReferentCommeTiersEmail(?string $travailleurSocialAccompagnementInviterReferentCommeTiersEmail): self
+    {
+        $this->travailleurSocialAccompagnementInviterReferentCommeTiersEmail = $travailleurSocialAccompagnementInviterReferentCommeTiersEmail;
 
         return $this;
     }

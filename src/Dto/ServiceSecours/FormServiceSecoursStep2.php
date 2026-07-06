@@ -34,12 +34,12 @@ class FormServiceSecoursStep2
     #[Assert\NotBlank(groups: ['step2'])]
     public ?string $natureLogement = null;
 
-    #[Assert\Length(max: 15, groups: ['step2'])]
+    #[Assert\Length(max: 15, maxMessage: 'La précision sur la nature du logement ne peut pas dépasser {{ limit }} caractères.', groups: ['step2'])]
     public ?string $natureLogementAutre = null;
 
     public ?EtageType $typeEtageLogement = null;
 
-    #[Assert\Length(max: 5, groups: ['step2'])]
+    #[Assert\Length(max: 5, maxMessage: 'L\'étage ne peut pas dépasser {{ limit }} caractères.', groups: ['step2'])]
     public ?string $etageOccupant = null;
 
     #[Assert\Regex(

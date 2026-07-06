@@ -147,25 +147,12 @@
       "default": "Date du DPE : {{dictionaryStore::formStore.data.desordres_logement_chauffage_details_dpe_annee}}"
     }
   },
-  "desordres_logement_chauffage_details_dpe_conso_finale": {
-    "default": "Quelle est la consommation en énergie finale indiquée sur le DPE ? (kWh/m²/an)",
-    "disorderOverview": {
-      "default": "Consommation indiquée sur DPE : {{formStore.data.desordres_logement_chauffage_details_dpe_conso_finale}} kWh/m²/an"
-    }
-  },
   "composition_logement_superficie": {
     "default": "Quelle est la superficie du logement ? (m²)",
     "disorderOverview": {
       "default": "Superficie du logement : {{formStore.data.composition_logement_superficie}} m²"
     }
   },
-  "desordres_logement_chauffage_details_dpe_conso": {
-    "default": "Quelle est la consommation en énergie indiquée sur le DPE ? (kWh/an)",
-    "disorderOverview": {
-      "default": "Consommation indiquée sur DPE : {{formStore.data.desordres_logement_chauffage_details_dpe_conso}} (kWh/an)"
-    }
-  },
-  "desordres_logement_chauffage_details_dpe_conso_vide": { "default": "Le DPE est vide" },
   "desordres_logement_humidite_tout": {
     "default": "Tout le logement",
     "disorderOverview": {
