@@ -24,8 +24,10 @@ abstract class AbstractEsaboraMock
         ?string $bodyMatcher = null,
         ?string $basePath = null,
         ?string $resourcesDir = null,
+        int $priority = 1, //   pour être plus prioritaire, il faut un chiffre plus petit.
     ): void {
         $request = WireMock::post(WireMock::urlMatching($basePath.'/modbdd/\\?task='.$task))
+            ->atPriority($priority)
             ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
             ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
             ->withRequestBody(WireMock::matchingJsonPath('$.treatmentName', WireMock::equalTo($service)));
@@ -52,9 +54,11 @@ abstract class AbstractEsaboraMock
         string $response,
         ?string $basePath,
         ?string $resourcesDir,
+        int $priority = 1, //  pour être plus prioritaire, il faut un chiffre plus petit.
     ): void {
         $wiremock->stubFor(
             WireMock::post(WireMock::urlMatching($basePath.'/mult/\\?task='.$task))
+                ->atPriority($priority)
                 ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
                 ->withHeader('Content-Type', WireMock::containing(self::REQUEST_CONTENT_TYPE))
                 ->withRequestBody(WireMock::matchingJsonPath(
