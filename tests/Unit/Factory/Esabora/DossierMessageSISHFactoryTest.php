@@ -71,8 +71,11 @@ class DossierMessageSISHFactoryTest extends TestCase
             $file->setTitle('un titre de fichier très long pour tester le tronquage à 100 caractères ce qui devrait donc donc le reste n\'apparait pas');
         }
         $signalement->setInseeOccupant(null);
+        $signalement->setNomOccupant('');
 
         $dossierMessage = $dossierMessageFactory->createInstance($affectation);
+        $this->assertEquals('Non renseigné', $dossierMessage->getPersonnes()[0]->getNom());
+        $this->assertEquals($signalement->getPrenomOccupant(), $dossierMessage->getPersonnes()[0]->getPrenom());
         $this->assertEquals($signalement->getNomProprio(), $dossierMessage->getPersonnes()[1]->getNom());
         $this->assertEquals(1.5, $dossierMessage->getSignalementScore());
         $this->assertCount(2, $dossierMessage->getPiecesJointesDocuments());

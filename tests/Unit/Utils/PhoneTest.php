@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 class PhoneTest extends TestCase
 {
     #[DataProvider('providePhone')]
-    public function testFormatPhone(?string $phoneNumber, ?string $phoneFormatted, ?string $phoneNationalFormatted): void
+    public function testFormatPhone(?string $phoneNumber, ?string $phoneFormatted, ?string $phoneNationalFormatted, ?string $phoneNationalFormattedIfFrench): void
     {
         $this->assertEquals($phoneFormatted, Phone::format($phoneNumber));
         $this->assertEquals($phoneNationalFormatted, Phone::format($phoneNumber, true));
@@ -17,18 +17,22 @@ class PhoneTest extends TestCase
 
     public static function providePhone(): \Generator
     {
-        yield 'null' => [null, null, null];
+        yield 'null' => [null, null, null, null];
 
-        yield 'empty string' => ['', '', ''];
+        yield 'empty string' => ['', '', '', ''];
 
-        yield 'invalid phone number' => ['invalid phone number', 'invalid phone number', 'invalid phone number'];
+        yield 'invalid phone number' => ['invalid phone number', 'invalid phone number', 'invalid phone number', 'invalid phone number'];
 
-        yield 'phone number without country code' => ['0620212223', '+33620212223', '0620212223'];
+        yield 'phone number without country code' => ['0620212223', '+33620212223', '0620212223', '0620212223'];
 
-        yield 'phone number with country code' => ['+33620212223', '+33620212223', '0620212223'];
+        yield 'phone number with country code' => ['+33620212223', '+33620212223', '0620212223', '0620212223'];
 
-        yield 'phone number with country code and spaces' => ['+33 6 20 21 22 23', '+33620212223', '0620212223'];
+        yield 'phone number with country code and spaces' => ['+33 6 20 21 22 23', '+33620212223', '0620212223', '0620212223'];
 
-        yield 'phone number from foreign country' => ['+49123456789', '+49123456789', '123456789'];
+        yield 'La réunion phone number' => ['+262692345678', '+262692345678', '0692345678', '+262692345678'];
+
+        yield 'phone number from foreign country' => ['+49123456789', '+49123456789', '123456789', '+49123456789'];
+
+        yield 'lithuanian phone number' => ['+37060651270', '+37060651270', '(0-606)51270', '+37060651270'];
     }
 }
