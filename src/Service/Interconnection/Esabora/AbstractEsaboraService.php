@@ -5,6 +5,7 @@ namespace App\Service\Interconnection\Esabora;
 use App\Entity\Affectation;
 use App\Service\Interconnection\Esabora\Response\DossierCollectionResponseInterface;
 use App\Service\Interconnection\Esabora\Response\DossierResponseInterface;
+use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,8 +31,9 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
     public const string FORMAT_DATE_TIME = 'd/m/Y H:i';
 
     public function __construct(
-        private readonly HttpClientInterface $client,
-        private readonly LoggerInterface $logger,
+        protected readonly HttpClientInterface $client,
+        protected readonly LoggerInterface $logger,
+        protected readonly UploadHandlerService $uploadHandlerService,
     ) {
     }
 
@@ -129,5 +131,29 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
         }
 
         return self::TASK_INSERT_PATH;
+    }
+
+    /**
+     * @param array<mixed> $piecesJointes
+     *
+     * @return array<mixed>
+     */
+    protected function preparePiecesJointes(array $piecesJointes): array
+    {
+        return array_map(function ($pieceJointe) {
+            $filepath = $this->uploadHandlerService->getTmpFilepath($pieceJointe['documentContent']);
+            if (null !== $filepath && file_exists($filepath)) {
+                $content = file_get_contents($filepath);
+                if (false !== $content) {
+                    $pieceJointe['documentContent'] = base64_encode($content);
+                } else {
+                    $pieceJointe['documentContent'] = null;
+                }
+            } else {
+                $pieceJointe['documentContent'] = null;
+            }
+
+            return $pieceJointe;
+        }, $piecesJointes);
     }
 }
