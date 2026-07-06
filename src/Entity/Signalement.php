@@ -1120,9 +1120,9 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->telOccupant;
     }
 
-    public function getTelOccupantDecoded(?bool $national = false): ?string
+    public function getTelOccupantDecoded(?bool $national = false, ?bool $nationalIfFrench = false): ?string
     {
-        return Phone::format($this->telOccupant, $national);
+        return Phone::format($this->telOccupant, $national, $nationalIfFrench);
     }
 
     public function setTelOccupant(?string $telOccupant): static

@@ -67,4 +67,19 @@ class DossierMessageSCHSFactoryTest extends TestCase
         yield '4+ children M6, 0 children P6' => ['4+ Enfant(s)', '4+', null];
         yield '0 children M6, 4+ children P6' => ['4+ Enfant(s)', null, '4+'];
     }
+
+    public function testWithLithuanianPhoneNumber(): void
+    {
+        $uploadHandlerServiceMock = $this->createMock(UploadHandlerService::class);
+
+        $dossierMessageFactory = new DossierMessageSCHSFactory($uploadHandlerServiceMock, true);
+
+        $affectation = $this->getSignalementAffectation(PartnerType::COMMUNE_SCHS);
+        $signalement = $affectation->getSignalement();
+        $signalement->setTelOccupant('+37060651270');
+
+        $dossierMessage = $dossierMessageFactory->createInstance($affectation);
+
+        self::assertEquals('37060651270', $dossierMessage->getTelephoneUsager());
+    }
 }

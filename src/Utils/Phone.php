@@ -7,7 +7,7 @@ use libphonenumber\PhoneNumberUtil;
 
 class Phone
 {
-    public static function format(?string $tel, bool $national = false): ?string
+    public static function format(?string $tel, bool $national = false, bool $nationalIfFrench = false): ?string
     {
         if (!$tel) {
             return $tel;
@@ -20,8 +20,11 @@ class Phone
             } else {
                 $phoneNumberParsed = $phoneNumberUtil->parse($tel, 'FR');
             }
-            if ($national) {
-                return str_replace(' ', '', $phoneNumberUtil->format($phoneNumberParsed, PhoneNumberFormat::NATIONAL));
+            // dd($phoneNumberParsed);
+            if ($national || $nationalIfFrench) {
+                if ($national || ($nationalIfFrench && 33 === $phoneNumberParsed->getCountryCode())) {
+                    return str_replace(' ', '', $phoneNumberUtil->format($phoneNumberParsed, PhoneNumberFormat::NATIONAL));
+                }
             }
 
             return $phoneNumberUtil->format($phoneNumberParsed, PhoneNumberFormat::E164);
