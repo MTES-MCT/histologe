@@ -264,11 +264,18 @@ export default defineComponent({
       formStore,
       dictionaryStore,
       idDisorderOverview: this.id + '_disorder_overview',
-      disorderIcons: [{ src: '/img/form/BATIMENT/Picto-batiment.svg', alt: '' }, { src: '/img/form/LOGEMENT/Picto-logement.svg', alt: '' }]
+      disorderIcons: [{ src: '/img/form/BATIMENT/Picto-batiment.svg', alt: '' }, { src: '/img/form/LOGEMENT/Picto-logement.svg', alt: '' }],
+      accordionObserver: null as MutationObserver | null
     }
   },
   mounted () {
     this.focusInput()
+    this.initAccordionObserver()
+  },
+  beforeUnmount () {
+    if (this.accordionObserver) {
+      this.accordionObserver.disconnect()
+    }
   },
   methods: {
     getFormDataAdresse (): string {
@@ -505,6 +512,40 @@ export default defineComponent({
       if (focusableElement) {
         focusableElement.focus()
       }
+    },
+    initAccordionObserver () {
+      // Ce MutationObserver surveille l'ajout de la classe fr-collapse--expanded sur chaque panneau accordéon. 
+      // Dès qu'un panneau s'ouvre, on attend 350ms (durée de l'animation DSFR) 
+      // puis on calcule si le bas du contenu déplié est masqué par le footer fixe. 
+      // Si c'est le cas, on scrolle juste assez pour le révéler, sans dépasser le haut du contenu, 
+      // pour que le contenu n'apparaisse pas caché par le footer en mobile
+      const collapses = (this.$el as HTMLElement).querySelectorAll('.fr-collapse')
+      this.accordionObserver = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          const el = mutation.target as HTMLElement
+          if (el.classList.contains('fr-collapse--expanded')) {
+            setTimeout(() => {
+              const footerEl = document.querySelector('.form-screen-footer') as HTMLElement | null
+              if (!footerEl || window.getComputedStyle(footerEl).position !== 'fixed') {
+                return
+              }
+              const footerHeight = footerEl.getBoundingClientRect().height
+              const margin = 16
+              const visibleBottom = window.innerHeight - footerHeight - margin
+              const rect = el.getBoundingClientRect()
+              if (rect.bottom > visibleBottom) {
+                const scrollAmount = Math.min(rect.top - margin, rect.bottom - visibleBottom)
+                if (scrollAmount > 0) {
+                  window.scrollBy({ top: scrollAmount, behavior: 'smooth' })
+                }
+              }
+            }, 350)
+          }
+        }
+      })
+      collapses.forEach(el => {
+        this.accordionObserver!.observe(el, { attributes: true, attributeFilter: ['class'] })
+      })
     }
   }
 })

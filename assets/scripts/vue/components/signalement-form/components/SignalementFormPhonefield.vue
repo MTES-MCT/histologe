@@ -8,12 +8,12 @@
         </span>
       </legend>
       <div class="fr-fieldset__element fr-col-12 fr-col-md-4">
+        <label class="fr-label fr-sr-only" :for="idCountryCode">Indicatif national</label>
         <select
           :class="['fr-select', hasErrorFirst ? 'fr-select--error' : '']"
           :id="idCountryCode"
           :name="idCountryCode"
           v-model="formStore.data[idCountryCode]"
-          title="Indicatif national"
           :aria-describedby="hasErrorFirst ? id + '-text-input-error-desc-error' : undefined"
           >
           <option
@@ -26,6 +26,7 @@
         </select>
       </div>
       <div class="fr-fieldset__element fr-col-12 fr-col-md-8">
+        <label class="fr-label fr-sr-only" :for="id">Numéro de téléphone</label>
         <div class="fr-input-wrap fr-icon-phone-line">
           <input
             type="text"
@@ -73,12 +74,12 @@
         </span>
       </legend>
       <div class="fr-fieldset__element fr-col-12 fr-col-md-4">
+        <label class="fr-label fr-sr-only" :for="idCountryCodeSecond">Indicatif national</label>
         <select
           :class="['fr-select', hasErrorSecond ? 'fr-select--error' : '']"
           :id="idCountryCodeSecond"
           :name="idCountryCodeSecond"
           v-model="formStore.data[idCountryCodeSecond]"
-          title="Indicatif national"
           :aria-describedby="hasErrorSecond ? idSecond + '-text-input-error-desc-error' : undefined"
           >
           <option
@@ -91,6 +92,7 @@
         </select>
       </div>
       <div class="fr-fieldset__element fr-col-12 fr-col-md-8">
+        <label class="fr-label fr-sr-only" :for="idSecond">Numéro de téléphone secondaire</label>
         <div class="fr-input-wrap fr-icon-phone-line">
           <input
             type="text"
