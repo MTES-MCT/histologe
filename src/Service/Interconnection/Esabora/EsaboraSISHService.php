@@ -519,7 +519,7 @@ class EsaboraSISHService extends AbstractEsaboraService
             ],
             [
                 'fieldName' => 'Personne_Nom',
-                'fieldValue' => $dossierMessageSISHPersonne->getNom() ? $dossierMessageSISHPersonne->getNom() : 'Non renseigné',
+                'fieldValue' => $dossierMessageSISHPersonne->getNom(),
             ],
             [
                 'fieldName' => 'Personne_Prenom',
