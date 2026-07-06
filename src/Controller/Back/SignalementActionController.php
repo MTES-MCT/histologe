@@ -25,9 +25,9 @@ use App\Repository\UserSignalementSubscriptionRepository;
 use App\Security\Voter\SignalementVoter;
 use App\Security\Voter\SuiviVoter;
 use App\Service\Gouv\Rnb\RnbService;
-use App\Service\HtmlTargetContentsService;
 use App\Service\MessageHelper;
 use App\Service\RequestDataExtractor;
+use App\Service\SignalementAddressContentService;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -387,7 +387,7 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         Request $request,
         RnbService $rnbService,
-        HtmlTargetContentsService $htmlTargetContentsService,
+        SignalementAddressContentService $signalementAddressContentService,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         if (!$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement) && !$this->isGranted(SignalementVoter::SIGN_EDIT_NEED_VALIDATION, $signalement)) {
@@ -416,7 +416,7 @@ class SignalementActionController extends AbstractController
         $signalement->setGeoloc(['lat' => $building->getLat(), 'lng' => $building->getLng()]);
         $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Le bâtiment a bien été mis à jour.'];
-        $htmlTargetContents = $htmlTargetContentsService->getHtmlTargetContentsForSignalementAddress($signalement);
+        $htmlTargetContents = $signalementAddressContentService->getHtmlTargetContentsForSignalementAddress($signalement);
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }

@@ -134,7 +134,7 @@ class SignalementEditControllerTest extends WebTestCase
         $entityManager = static::getContainer()->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy([
-            'statut' => SignalementStatus::ACTIVE,
+            'uuid' => '00000000-0000-0000-2026-000000000001',
         ]);
         $signalementUser = $this->getSignalementUser($signalement);
         $client->loginUser($signalementUser, 'code_suivi');

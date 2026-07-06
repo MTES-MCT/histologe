@@ -25,11 +25,11 @@ use App\Manager\SuiviManager;
 use App\Repository\TiersInvitationRepository;
 use App\Security\Voter\SignalementVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
-use App\Service\HtmlTargetContentsService;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\MessageHelper;
+use App\Service\SignalementAddressContentService;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -53,7 +53,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SerializerInterface $serializer,
         ValidatorInterface $validator,
-        HtmlTargetContentsService $htmlTargetContentsService,
+        SignalementAddressContentService $signalementAddressContentService,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
@@ -84,7 +84,7 @@ class SignalementEditController extends AbstractController
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
         }
-        $htmlTargetContents = $htmlTargetContentsService->getHtmlTargetContentsForSignalementAddress($signalement);
+        $htmlTargetContents = $signalementAddressContentService->getHtmlTargetContentsForSignalementAddress($signalement);
         $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
         $functions = [['name' => 'applyFilter']];
 

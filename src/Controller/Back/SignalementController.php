@@ -49,7 +49,9 @@ use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementQualificationNde;
+use App\Service\Signalement\SignalementSameAddressArreteFinder;
 use App\Service\Signalement\Suivi\SuiviSeenMarker;
+use App\Service\SignalementAddressContentService;
 use App\Utils\FormHelper;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -96,6 +98,8 @@ class SignalementController extends AbstractController
         SignalementRepository $signalementRepository,
         TiersInvitationRepository $tiersInvitationRepository,
         UrlGeneratorInterface $urlGenerator,
+        SignalementSameAddressArreteFinder $arreteFinder,
+        SignalementAddressContentService $signalementAddressContentService,
     ): Response {
         // load desordres data to prevent n+1 queries
         $desordreCategorieRepository->findAll();
@@ -243,6 +247,8 @@ class SignalementController extends AbstractController
             exclusiveStatus: [],
             excludedStatus: SignalementStatus::excludedStatuses(),
         );
+
+        $arretesOnSameAddress = $arreteFinder->find($signalement);
         $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
 
         $epciOccupant = $epciRepository->findOneByCommuneInseeAndPostalCode($signalement->getInseeOccupant(), $signalement->getCpOccupant());
@@ -278,6 +284,8 @@ class SignalementController extends AbstractController
             'allPhotosOrdered' => $allPhotosOrdered,
             'zones' => $zoneRepository->findZonesBySignalement($signalement),
             'signalementsOnSameAddress' => $signalementsOnSameAddress,
+            'arretesOnSameAddress' => $arretesOnSameAddress,
+            'routeForListOfSignalementOnAddress' => $signalementAddressContentService->getRouteForListOfSignalementOnAddress($signalement),
             'tiersInvitation' => $tiersInvitation,
             'isUserSubscribed' => $isUserSubscribed,
             'subscriptionsInMyPartner' => $subscriptionsInMyPartner,
