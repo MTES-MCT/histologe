@@ -26,7 +26,7 @@
     {% elseif 'Bad Gateway' in connection.response %}
         <span class="fr-badge fr-badge--no-icon fr-badge--error">Serveur indisponible</span>
     {% elseif connection.response|length === 0 %}
-        <span class="fr-badge fr-badge--no-icon fr-badge--warning">Réponse vide</span>
+        <span class="fr-badge fr-badge--no-icon fr-badge--error">Réponse vide</span>
     {% else %}
         <span class="fr-badge fr-badge--no-icon fr-badge--error">Fail</span>
     {% endif %}

@@ -192,7 +192,11 @@ class EsaboraSCHSService extends AbstractEsaboraService
                     $content = file_get_contents($filepath);
                     if (false !== $content) {
                         $pieceJointe['documentContent'] = base64_encode($content);
+                    } else {
+                        $pieceJointe['documentContent'] = null;
                     }
+                } else {
+                    $pieceJointe['documentContent'] = null;
                 }
 
                 return $pieceJointe;
