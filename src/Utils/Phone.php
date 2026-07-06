@@ -20,7 +20,6 @@ class Phone
             } else {
                 $phoneNumberParsed = $phoneNumberUtil->parse($tel, 'FR');
             }
-            // dd($phoneNumberParsed);
             if ($national || $nationalIfFrench) {
                 if ($national || ($nationalIfFrench && 33 === $phoneNumberParsed->getCountryCode())) {
                     return str_replace(' ', '', $phoneNumberUtil->format($phoneNumberParsed, PhoneNumberFormat::NATIONAL));
