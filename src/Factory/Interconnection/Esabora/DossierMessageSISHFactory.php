@@ -175,7 +175,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             return (new DossierMessageSISHPersonne())
                 ->setType(PersonneType::OCCUPANT->value)
                 ->setQualite($personneQualite->value)
-                ->setNom($signalement->getNomOccupant())
+                ->setNom($signalement->getNomOccupant() ? mb_substr($signalement->getNomOccupant(), 0, 60) : 'Non renseigné')
                 ->setPrenom($prenom)
                 ->setEmail($signalement->getMailOccupant())
                 ->setTelephone($tel);
@@ -196,6 +196,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
                 : null;
             if (empty($nom) && !empty($signalement->getDenominationProprio())) {
                 $nom = substr($signalement->getDenominationProprio(), 0, 60);
+            }
+            if (empty($nom)) {
+                $nom = 'Non renseigné';
             }
 
             $dossierMessageSISHPersonne = new DossierMessageSISHPersonne();
@@ -232,7 +235,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             $dossierMessageSISHPersonne = new DossierMessageSISHPersonne();
             $dossierMessageSISHPersonne
                 ->setType(PersonneType::DECLARANT->value)
-                ->setNom($signalement->getNomDeclarant())
+                ->setNom($signalement->getNomDeclarant() ? substr($signalement->getNomDeclarant(), 0, 60) : 'Non renseigné')
                 ->setPrenom($prenom)
                 ->setEmail($signalement->getMailDeclarant())
                 ->setTelephone($tel)
