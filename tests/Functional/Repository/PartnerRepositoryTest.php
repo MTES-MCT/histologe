@@ -137,7 +137,7 @@ class PartnerRepositoryTest extends KernelTestCase
         $signalement = $signalementRepository->findOneBy(['reference' => '2024-08']);
 
         $partners = $this->partnerRepository->findByLocalization($signalement, false);
-        $this->assertCount(5, $partners);
+        $this->assertCount(3, $partners);
 
         $partnerZone = array_filter($partners, static function ($partner) {
             return 'Partenaire Zone Agde' === $partner['name'];

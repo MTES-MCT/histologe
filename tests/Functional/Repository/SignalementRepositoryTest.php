@@ -189,7 +189,7 @@ class SignalementRepositoryTest extends KernelTestCase
         $new = new Signalement();
         $new->setAdresseOccupant($signalement->getAdresseOccupant());
         $new->setCpOccupant($signalement->getCpOccupant());
-        $new->setVilleOccupant($signalement->getVilleOccupant());
+        $new->setInseeOccupant($signalement->getInseeOccupant());
 
         $signalementsOnSameAddress = $signalementRepository->findOnSameAddress($new);
         $this->assertCount(2, $signalementsOnSameAddress);
