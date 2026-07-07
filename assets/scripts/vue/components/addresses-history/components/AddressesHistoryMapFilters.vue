@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { store } from '../store'
+import { store } from '../composables/useAddressesHistoryStore'
 import { useAddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'
 import { getActiveFilters, type ActiveFilter } from '../services/activeFiltersBuilder'
 import type { AddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'

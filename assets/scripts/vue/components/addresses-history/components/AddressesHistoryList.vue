@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { store } from '../store'
+import { store } from '../composables/useAddressesHistoryStore'
 import AddressesHistoryListFilters from './AddressesHistoryListFilters.vue'
 
 // Émissions

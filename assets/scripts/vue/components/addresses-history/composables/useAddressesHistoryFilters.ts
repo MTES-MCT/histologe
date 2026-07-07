@@ -1,8 +1,9 @@
 import { ref } from 'vue'
-import { requests } from '../requests'
-import { store } from '../store'
+import { useAddressesHistoryApi } from '../api'
+import { store } from './useAddressesHistoryStore'
 import { variableTester } from '../../common/utils/variableTester'
 import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
+import type { AddressesResponse, SettingsResponse } from '../types'
 
 export interface AddressesHistoryFilters {
   territoire: string | undefined
@@ -19,129 +20,158 @@ export function useAddressesHistoryFilters() {
   const abortController = ref<AbortController | null>(null)
   const initialTerritoryId = ref<string>('')
 
+  // Utilise le composable API moderne
+  const api = useAddressesHistoryApi(store.props)
+
   /**
    * Recharge les settings (territoire, zones, communes, bailleurs)
    */
   const reloadSettings = async (): Promise<void> => {
-    return new Promise((resolve) => {
-      requests.getSettings((response: any) => {
-        handleSettingsResponse(response)
-        resolve()
-      })
-    })
+    try {
+      const territoryId = store.state.currentTerritoryId.length > 0
+        ? store.state.currentTerritoryId
+        : undefined
+
+      const response = await api.fetchSettings(territoryId)
+      handleSettingsResponse(response)
+    } catch (error) {
+      console.error('Error reloading settings:', error)
+      store.state.hasErrorLoading = true
+      throw error
+    }
   }
 
   /**
    * Traite la réponse des settings
    */
-  const handleSettingsResponse = (response: any): void => {
+  const handleSettingsResponse = (response: SettingsResponse): void => {
     // User roles
     store.state.user.isAdmin = response.roleLabel === 'Super Admin'
     store.state.user.isResponsableTerritoire = response.roleLabel === 'Resp. Territoire'
     store.state.user.isAdministrateurPartenaire = response.roleLabel === 'Admin. partenaire'
-    store.state.user.isAgent = ['Admin. partenaire', 'Agent'].includes(response.roleLabel)
+    store.state.user.isAgent = ['Admin. partenaire', 'Agent'].includes(response.roleLabel || '')
     store.state.user.isMultiTerritoire = response.isMultiTerritoire === true
 
     // Territories
     store.state.territories = []
-    for (const id in response.territories) {
-      const optionItem = new HistoInterfaceSelectOption()
-      optionItem.Id = response.territories[id].id
-      const territory = response.territories[id]
-      optionItem.Text = variableTester.isNotEmpty(territory)
-        ? `${territory.zip} - ${territory.name}`
-        : 'Territoire inconnu'
-      store.state.territories.push(optionItem)
+    if (response.territories) {
+      for (const id in response.territories) {
+        const optionItem = new HistoInterfaceSelectOption()
+        const territory = response.territories[id]
+        optionItem.Id = territory.id
+        optionItem.Text = variableTester.isNotEmpty(territory)
+          ? `${territory.zip} - ${territory.name}`
+          : 'Territoire inconnu'
+        store.state.territories.push(optionItem)
+      }
     }
 
     // Zones
     store.state.zones = []
-    Object.values(response.zones).forEach((zone: any) => {
-      const optionItem = new HistoInterfaceSelectOption()
-      optionItem.Id = zone.id.toString()
-      optionItem.Text = zone.name
-      store.state.zones.push(optionItem)
-    })
+    if (response.zones) {
+      Object.values(response.zones).forEach((zone) => {
+        const optionItem = new HistoInterfaceSelectOption()
+        optionItem.Id = zone.id.toString()
+        optionItem.Text = zone.name
+        store.state.zones.push(optionItem)
+      })
+    }
 
     // Bailleurs et syndics
     store.state.bailleursAndSyndic = []
-    for (const id in response.bailleursSociaux) {
-      const optionItem = new HistoInterfaceSelectOption()
-      optionItem.Id = response.bailleursSociaux[id].id.toString()
-      optionItem.Text = response.bailleursSociaux[id].name
-      store.state.bailleursAndSyndic.push(optionItem)
+    if (response.bailleursSociaux) {
+      for (const id in response.bailleursSociaux) {
+        const optionItem = new HistoInterfaceSelectOption()
+        const bailleur = response.bailleursSociaux[id]
+        optionItem.Id = bailleur.id.toString()
+        optionItem.Text = bailleur.name
+        store.state.bailleursAndSyndic.push(optionItem)
+      }
     }
 
     // Communes
     store.state.communes = []
-    for (const id in response.communes) {
-      store.state.communes.push(response.communes[id])
+    if (response.communes) {
+      for (const id in response.communes) {
+        const commune = response.communes[id]
+        store.state.communes.push(commune)
+      }
     }
   }
 
   /**
    * Traite la réponse des adresses
    */
-  const handleAddressesResponse = (response: any): void => {
-    if (typeof response === 'string' && response === 'error') {
-      store.state.hasErrorLoading = true
-      store.state.loadingList = false
-    } else {
-      store.state.hasErrorLoading = false
-      store.state.addresses.filters = response.filters
-      store.state.addresses.list = response.list
+  const handleAddressesResponse = (response: AddressesResponse): void => {
+    store.state.hasErrorLoading = false
+    store.state.addresses.filters = (response as any).filters || {}
+    store.state.addresses.list = (response as any).list || []
 
-      // Normalise les filtres pour garantir que communes et typesArretes sont des tableaux
-      if (!Array.isArray(store.state.input.filters.communes)) {
-        store.state.input.filters.communes = store.state.input.filters.communes
-          ? [store.state.input.filters.communes as any]
-          : []
-      }
-      if (!Array.isArray(store.state.input.filters.typesArretes)) {
-        store.state.input.filters.typesArretes = store.state.input.filters.typesArretes
-          ? [store.state.input.filters.typesArretes as any]
-          : []
-      }
-      // Zone doit être une string ou undefined (pas un tableau)
-      if (Array.isArray(store.state.input.filters.zone)) {
-        store.state.input.filters.zone = store.state.input.filters.zone.length > 0
-          ? store.state.input.filters.zone[0]
-          : undefined
-      }
-
-      // Stocke la liste complète si on est en mode carte et sans filtres
-      if (store.state.viewMode === 'map') {
-        const hasFilters = Object.values(store.state.input.filters).some((value: any) => {
-          if (Array.isArray(value)) return value.length > 0
-          return value !== undefined && value !== ''
-        })
-        if (!hasFilters) {
-          store.state.addresses.allAddresses = response.list
-        }
-      }
-
-      store.state.addresses.pagination = response.pagination
-      store.state.addresses.zoneAreas = response.zoneAreas
-      store.state.loadingList = false
+    // Normalise les filtres pour garantir que communes et typesArretes sont des tableaux
+    if (!Array.isArray(store.state.input.filters.communes)) {
+      store.state.input.filters.communes = store.state.input.filters.communes
+        ? [store.state.input.filters.communes as any]
+        : []
     }
+    if (!Array.isArray(store.state.input.filters.typesArretes)) {
+      store.state.input.filters.typesArretes = store.state.input.filters.typesArretes
+        ? [store.state.input.filters.typesArretes as any]
+        : []
+    }
+    // Zone doit être une string ou undefined (pas un tableau)
+    if (Array.isArray(store.state.input.filters.zone)) {
+      store.state.input.filters.zone = store.state.input.filters.zone.length > 0
+        ? store.state.input.filters.zone[0]
+        : undefined
+    }
+
+    // Stocke la liste complète si on est en mode carte et sans filtres
+    if (store.state.viewMode === 'map') {
+      const hasFilters = Object.values(store.state.input.filters).some((value: any) => {
+        if (Array.isArray(value)) return value.length > 0
+        return value !== undefined && value !== ''
+      })
+      if (!hasFilters) {
+        store.state.addresses.allAddresses = (response as any).list || []
+      }
+    }
+
+    store.state.addresses.pagination = (response as any).pagination || store.state.addresses.pagination
+    store.state.addresses.zoneAreas = (response as any).zoneAreas || []
+    store.state.loadingList = false
   }
 
   /**
    * Recharge les données d'adresses avec les filtres actuels
    */
-  const reloadAddresses = (onSuccess: (response: any) => void): void => {
-    // Annule la requête précédente si elle existe
-    if (abortController.value) {
-      abortController.value.abort()
+  const reloadAddresses = async (): Promise<void> => {
+    try {
+      // Annule la requête précédente si elle existe
+      if (abortController.value) {
+        abortController.value.abort()
+      }
+
+      abortController.value = new AbortController()
+
+      // Met à jour l'URL avec les paramètres
+      updateUrlWithFilters()
+
+      // Lance la requête avec le composable API
+      const response = await api.fetchAddresses({
+        signal: abortController.value.signal
+      })
+
+      handleAddressesResponse(response)
+    } catch (error: any) {
+      // Ignore les erreurs d'annulation
+      if (error.name === 'AbortError' || error.message === 'Request cancelled') {
+        return
+      }
+
+      console.error('Error reloading addresses:', error)
+      store.state.hasErrorLoading = true
+      store.state.loadingList = false
     }
-
-    abortController.value = new AbortController()
-
-    // Met à jour l'URL avec les paramètres
-    updateUrlWithFilters()
-
-    // Lance la requête
-    requests.getAddresses(onSuccess, { signal: abortController.value.signal })
   }
 
   /**

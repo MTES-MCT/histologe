@@ -16,8 +16,7 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { store } from './store'
-import { requests } from './requests'
+import { store } from './composables/useAddressesHistoryStore'
 import { useAddressesHistoryFilters } from './composables/useAddressesHistoryFilters'
 
 import AddressesHistoryHeader from './components/AddressesHistoryHeader.vue'
@@ -35,15 +34,15 @@ const filtersComposable = useAddressesHistoryFilters()
  * Gère le changement des filtres
  * Recharge les données avec les nouveaux filtres
  */
-const onFiltersChange = (): void => {
-  filtersComposable.reloadAddresses(filtersComposable.handleAddressesResponse)
+const onFiltersChange = async (): Promise<void> => {
+  await filtersComposable.reloadAddresses()
 }
 
 /**
  * Gère le changement de mode d'affichage (carte/liste)
  */
-const onViewModeChange = (viewMode: string): void => {
-  sharedState.viewMode = viewMode
+const onViewModeChange = async (viewMode: string): Promise<void> => {
+  sharedState.viewMode = viewMode as any
 
   // Recharge les adresses sans filtres pour la carte, avec filtres pour la liste
   if (viewMode === 'map') {
@@ -60,19 +59,19 @@ const onViewModeChange = (viewMode: string): void => {
       }
     })
     // Charge les adresses
-    filtersComposable.reloadAddresses(filtersComposable.handleAddressesResponse)
+    await filtersComposable.reloadAddresses()
     // Restaure les filtres
     sharedState.input.filters = savedFilters
   } else {
     // Pour la liste, on recharge avec les filtres actuels
-    filtersComposable.reloadAddresses(filtersComposable.handleAddressesResponse)
+    await filtersComposable.reloadAddresses()
   }
 }
 
 /**
  * Initialisation
  */
-const init = (): void => {
+const init = async (): Promise<void> => {
   const initElements = document.querySelector('#app-addresses-history-view') as HTMLElement | null
   if (!initElements) {
     sharedState.hasErrorLoading = true
@@ -87,7 +86,7 @@ const init = (): void => {
   sharedProps.platformName = initElements.dataset.platformName || ''
 
   // Charge les settings et les données en parallèle
-  requests.getSettings(filtersComposable.handleSettingsResponse)
+  await filtersComposable.reloadSettings()
 
   // Charge les adresses : sans filtres si mode carte, avec filtres si mode liste
   if (sharedState.viewMode === 'map') {
@@ -100,10 +99,10 @@ const init = (): void => {
         (sharedState.input.filters as any)[key] = undefined
       }
     })
-    filtersComposable.reloadAddresses(filtersComposable.handleAddressesResponse)
+    await filtersComposable.reloadAddresses()
     sharedState.input.filters = savedFilters
   } else {
-    filtersComposable.reloadAddresses(filtersComposable.handleAddressesResponse)
+    await filtersComposable.reloadAddresses()
   }
 }
 

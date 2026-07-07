@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { store } from '../store'
+import { store } from '../composables/useAddressesHistoryStore'
 
 // Émissions
 const emit = defineEmits<{

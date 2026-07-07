@@ -1,4 +1,4 @@
-import { store } from '../store'
+import { store } from '../composables/useAddressesHistoryStore'
 import type { AddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'
 
 export interface ActiveFilter {

@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import { store } from '../store'
+import { store } from '../composables/useAddressesHistoryStore'
 import AddressesHistoryMapFilters from './AddressesHistoryMapFilters.vue'
 import maplibregl from 'maplibre-gl'
 import type { GeoJSONSource } from 'maplibre-gl'
