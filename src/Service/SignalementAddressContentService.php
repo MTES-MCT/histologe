@@ -53,7 +53,7 @@ class SignalementAddressContentService
     {
         if ($this->featureHistoAddress && $this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
             // TODO : filtrer sur l'adresse du signalement
-            return $this->urlGenerator->generate('back_histo_address_index');
+            return $this->urlGenerator->generate('back_addresses_history_index');
         }
 
         return $this->urlGenerator->generate('back_signalements_index', [

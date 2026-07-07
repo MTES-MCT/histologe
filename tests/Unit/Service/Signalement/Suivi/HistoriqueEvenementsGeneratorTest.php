@@ -82,7 +82,7 @@ class HistoriqueEvenementsGeneratorTest extends TestCase
 
         $this->urlGenerator->expects($this->once())
             ->method('generate')
-            ->with('back_histo_address_index')
+            ->with('back_addresses_history_index')
             ->willReturn('http://localhost/historique');
 
         $this->suiviManager->expects($this->once())
