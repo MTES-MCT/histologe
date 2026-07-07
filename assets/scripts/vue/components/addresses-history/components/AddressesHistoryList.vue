@@ -21,10 +21,10 @@
           <div class="fr-col-12 fr-col-md-6 fr-col-lg-4 fr-mb-2w">
             <div class="fr-card fr-card--xs">
               <div class="fr-card__body">
-                <h3 class="fr-card__title">{{ item.addressForHuman }}</h3>
+                <h3 class="fr-card__title">{{ (item as any).addressForHuman }}</h3>
                 <p class="fr-card__desc">
-                  Nb de signalements à l'adresse : {{ item.signalements ? item.signalements.length : 0 }}<br>
-                  Nb d'arrêtés à l'adresse : {{ item.arretes ? item.arretes.length : 0 }}
+                  Nb de signalements à l'adresse : {{ (item as any).signalements ? (item as any).signalements.length : 0 }}<br>
+                  Nb d'arrêtés à l'adresse : {{ (item as any).arretes ? (item as any).arretes.length : 0 }}
                 </p>
               </div>
             </div>
