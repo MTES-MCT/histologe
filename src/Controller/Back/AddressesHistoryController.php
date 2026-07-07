@@ -53,7 +53,7 @@ class AddressesHistoryController extends AbstractController
                 // 'sortBy' => 'reference',
             ];
 
-        $addresses = $addressesHistoryQuery->findAddressesWithHistory($user, $filters);
+        $addresses = $addressesHistoryQuery->findAddressesWithHistory($user, $addressesHistorySearchQuery);
         $responseAddresses = [];
         $processedSignalements = [];
         $processedArretes = [];
@@ -108,7 +108,6 @@ class AddressesHistoryController extends AbstractController
                     'id' => $row['arreteId'],
                     'dateArrete' => $row['dateArrete'],
                     'typeArrete' => $row['typeArrete'],
-                    'mainLevee' => $row['mainLevee'],
                     'dateMainLevee' => $row['dateMainLevee'],
                 ]);
                 $processedArretes[$addressKey][] = $row['arreteId'];

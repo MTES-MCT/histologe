@@ -58,7 +58,8 @@ export const store = {
       { Id: 'non', Text: 'Sans' },
     ],
     typesArretes: [
-      { Id: 'bla', Text: 'Bla bla bla' },
+      { Id: 'MISE_EN_SECURITE', Text: 'Mise en sécurité' },
+      { Id: 'ARRETE_L_511_11_IMPROPRE', Text: 'Arrêté L.511-11 IMPROPRE' },
     ],
     filtersApplyKey: 0
   }),

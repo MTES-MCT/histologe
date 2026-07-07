@@ -2,6 +2,7 @@
 
 namespace App\Repository\Query\Address;
 
+use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\Address;
 use App\Entity\Arrete;
 use App\Entity\Enum\SignalementStatus;
@@ -20,13 +21,11 @@ class AddressesHistoryQuery
     }
 
     /**
-     * @param array<mixed> $filters
-     *
      * @return array<int, array<string, mixed>>
      */
     public function findAddressesWithHistory(
         User $user,
-        array $filters = [],
+        ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
     ): array {
         $statusList = [
             SignalementStatus::ACTIVE,
@@ -60,7 +59,6 @@ class AddressesHistoryQuery
                 'ar.id AS arreteId',
                 'ar.dateArrete',
                 'ar.typeArrete',
-                'ar.mainLevee',
                 'ar.dateMainLevee'
             )
             ->setParameter('statusList', $statusList)
@@ -79,10 +77,12 @@ class AddressesHistoryQuery
                 AND s2.villeOccupant = a.city
                 AND s2.statut IN (:statusList)
                 AND s2.id != s.id';
-        if (isset($filters['dossiersMultiples']) && 'oui' === $filters['dossiersMultiples']) {
-            $qb->andWhere('EXISTS ('.$queryDossiersMultiples.')');
-        } elseif (isset($filters['dossiersMultiples']) && 'non' === $filters['dossiersMultiples']) {
-            $qb->andWhere('NOT EXISTS ('.$queryDossiersMultiples.')');
+        if (!empty($addressesHistorySearchQuery) && null !== $addressesHistorySearchQuery->getDossiersMultiples()) {
+            if ('oui' === $addressesHistorySearchQuery->getDossiersMultiples()) {
+                $qb->andWhere('EXISTS ('.$queryDossiersMultiples.')');
+            } elseif ('non' === $addressesHistorySearchQuery->getDossiersMultiples()) {
+                $qb->andWhere('NOT EXISTS ('.$queryDossiersMultiples.')');
+            }
         }
 
         if ($user->isSuperAdmin()) {
@@ -97,26 +97,26 @@ class AddressesHistoryQuery
                 ->setParameter('partners', $user->getPartners());
         }
 
-        if (!empty($filters)) {
-            $qb = $this->applyFilters($qb, $filters);
+        if (!empty($addressesHistorySearchQuery)) {
+            $qb = $this->applyFilters($qb, $addressesHistorySearchQuery);
         }
 
         return $qb->getQuery()->getArrayResult();
     }
 
     /**
-     * @param array<mixed> $filters
-     *
      * @throws Exception
      */
-    private function applyFilters(QueryBuilder $qb, array $filters): QueryBuilder
-    {
-        if (!empty($filters['adresse'])) {
+    private function applyFilters(
+        QueryBuilder $qb,
+        ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
+    ): QueryBuilder {
+        if (!empty($addressesHistorySearchQuery->getAdresse())) {
             $qb->andWhere('LOWER(a.street) LIKE :adresse');
-            $qb->setParameter('adresse', '%'.$filters['adresse'].'%');
+            $qb->setParameter('adresse', '%'.$addressesHistorySearchQuery->getAdresse().'%');
         }
 
-        if (!empty($filters['zone'])) {
+        if (!empty($addressesHistorySearchQuery->getZone())) {
             $connection = $this->entityManager->getConnection();
             $sql = '
                 SELECT DISTINCT a2.id
@@ -129,7 +129,7 @@ class AddressesHistoryQuery
                 ) = 1
             ';
             $stmt = $connection->prepare($sql);
-            $stmt->bindValue('zoneId', $filters['zone']);
+            $stmt->bindValue('zoneId', $addressesHistorySearchQuery->getZone());
             $zonesAddresses = $stmt->executeQuery()->fetchAllAssociative();
 
             if (!empty($zonesAddresses)) {
@@ -141,40 +141,47 @@ class AddressesHistoryQuery
             }
         }
 
-        if (!empty($filters['cities'])) {
-            foreach ($filters['cities'] as $city) {
-                if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$city])) {
-                    $filters['cities'] = array_merge($filters['cities'], CommuneHelper::COMMUNES_ARRONDISSEMENTS[$city]);
+        if (!empty($addressesHistorySearchQuery->getCommunes())) {
+            $communes = $addressesHistorySearchQuery->getCommunes();
+            foreach ($addressesHistorySearchQuery->getCommunes() as $commune) {
+                if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$commune])) {
+                    $communes = array_merge($communes, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$commune]);
                 }
             }
             $qb->andWhere('a.city IN (:cities) OR a.postCode IN (:cities)')
-                ->setParameter('cities', $filters['cities']);
+                ->setParameter('cities', $communes);
         }
-        if (!empty($filters['territories'])) {
+        if (!empty($addressesHistorySearchQuery->getTerritoire())) {
             $qb->andWhere('a.territory IN (:territories)')
-                ->setParameter('territories', $filters['territories']);
+                ->setParameter('territories', $addressesHistorySearchQuery->getTerritoire());
         }
 
-        if (!empty($filters['housetypes'])) {
-            if (\in_array('non_renseigne', $filters['housetypes'])) {
+        if (!empty($addressesHistorySearchQuery->getNatureParc())) {
+            if ('non_renseigne' === $addressesHistorySearchQuery->getNatureParc()) {
                 $qb->andWhere('s.isLogementSocial IS NULL');
             } else {
-                $qb->andWhere('s.isLogementSocial IN (:housetypes)')->setParameter('housetypes', $filters['housetypes']);
+                $natureParcValue = match ($addressesHistorySearchQuery->getNatureParc()) {
+                    'public' => [1],
+                    'privee' => [0],
+                    'non_renseigne' => ['non_renseigne'],
+                    default => null,
+                };
+                $qb->andWhere('s.isLogementSocial LIKE :natureParc')->setParameter('natureParc', $natureParcValue);
             }
         }
 
-        if (!empty($filters['bailleurOuSyndic'])) {
+        if (!empty($addressesHistorySearchQuery->getBailleurOuSyndic())) {
             $qb
                 ->andWhere('s.nomProprio LIKE :bailleurOuSyndic
                     OR s.denominationProprio LIKE :bailleurOuSyndic
                     OR s.nomSyndic LIKE :bailleurOuSyndic
                     OR s.denominationSyndic LIKE :bailleurOuSyndic')
-                ->setParameter('bailleurOuSyndic', '%'.$filters['bailleurOuSyndic'].'%');
+                ->setParameter('bailleurOuSyndic', '%'.$addressesHistorySearchQuery->getBailleurOuSyndic().'%');
         }
 
-        if (!empty($filters['typesArretes'])) {
+        if (!empty($addressesHistorySearchQuery->getTypesArretes())) {
             $qb->andWhere('ar.typeArrete IN (:typesArretes)')
-                ->setParameter('typesArretes', $filters['typesArretes']);
+                ->setParameter('typesArretes', $addressesHistorySearchQuery->getTypesArretes());
         }
 
         return $qb;
