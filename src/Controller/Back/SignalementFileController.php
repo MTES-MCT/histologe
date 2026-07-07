@@ -23,6 +23,7 @@ use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,11 +33,21 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo/signalements')]
 class SignalementFileController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_S3_ENABLE')]
+        private readonly bool $featureS3Enabled,
+    ) {
+    }
+
     #[Route('/{uuid:signalement}/pdf', name: 'back_signalement_gen_pdf')]
     public function generatePdfSignalement(
         Signalement $signalement,
         MessageBusInterface $messageBus,
     ): JsonResponse {
+        if (!$this->featureS3Enabled) {
+            return $this->json(['response' => 'L\'accès aux documents et photos est temporairement désactivé pour maintenance.'], Response::HTTP_BAD_REQUEST);
+        }
+
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VIEW, $signalement);
         /** @var User $user */
         $user = $this->getUser();
@@ -67,6 +78,10 @@ class SignalementFileController extends AbstractController
         EntityManagerInterface $entityManager,
         SignalementFileProcessor $signalementFileProcessor,
     ): Response {
+        if (!$this->featureS3Enabled) {
+            return $this->json(['response' => 'L\'accès aux documents et photos est temporairement désactivé pour maintenance.'], Response::HTTP_BAD_REQUEST);
+        }
+
         if (!$this->isGranted(SignalementVoter::SIGN_EDIT_DRAFT, $signalement)
             && !$this->isGranted(SignalementVoter::SIGN_EDIT_ACTIVE, $signalement)
             && !$this->isGranted(SignalementVoter::SIGN_EDIT_CLOSED, $signalement)

@@ -6,6 +6,7 @@ use App\Dto\ServiceSecours\FormServiceSecours;
 use App\Dto\ServiceSecours\FormServiceSecoursStep5;
 use App\Entity\Enum\AppContext;
 use App\Repository\DesordreCritereRepository;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -22,8 +23,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ServiceSecoursStep5Type extends AbstractType
 {
-    public function __construct(private readonly DesordreCritereRepository $desordreCritereRepository)
-    {
+    public function __construct(
+        private readonly DesordreCritereRepository $desordreCritereRepository,
+        #[Autowire(env: 'FEATURE_S3_ENABLE')]
+        private readonly bool $featureS3Enabled,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -95,27 +99,29 @@ class ServiceSecoursStep5Type extends AbstractType
             ],
         );
 
-        $builder->add('photos', FileType::class, [
-            'label' => 'Ajouter des photos',
-            'attr' => [
-                'class' => 'fr-btn',
-            ],
-            'mapped' => false,
-            'required' => false,
-            'multiple' => true,
-            'help' => 'Merci de ne transmettre aucun document comportant des données de santé. Les photos ne doivent pas contenir de visages de personnes ou d\'objets personnels.',
-            'help_attr' => [
-                'class' => 'fr-hint-text',
-            ],
-        ]);
+        if ($this->featureS3Enabled) {
+            $builder->add('photos', FileType::class, [
+                'label' => 'Ajouter des photos',
+                'attr' => [
+                    'class' => 'fr-btn',
+                ],
+                'mapped' => false,
+                'required' => false,
+                'multiple' => true,
+                'help' => 'Merci de ne transmettre aucun document comportant des données de santé. Les photos ne doivent pas contenir de visages de personnes ou d\'objets personnels.',
+                'help_attr' => [
+                    'class' => 'fr-hint-text',
+                ],
+            ]);
 
-        $builder->add('uploadedFiles', CollectionType::class, [
-            'entry_type' => HiddenType::class,
-            'mapped' => true,
-            'required' => false,
-            'allow_add' => true,
-            'allow_delete' => true,
-        ]);
+            $builder->add('uploadedFiles', CollectionType::class, [
+                'entry_type' => HiddenType::class,
+                'mapped' => true,
+                'required' => false,
+                'allow_add' => true,
+                'allow_delete' => true,
+            ]);
+        }
     }
 
     /**

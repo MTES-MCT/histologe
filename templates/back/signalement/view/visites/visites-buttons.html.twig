@@ -22,32 +22,35 @@
             </button>
         {% endif %}
         {% if intervention.rapportDeVisite %}
-            <a href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}"
-                class="fr-btn fr-btn--secondary"
-                title="Voir le rapport de visite"
+            <a {% if feature_s3_enable %}href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}"{% endif %}
+                class="fr-btn fr-btn--secondary {% if not feature_s3_enable %}fr-icon-warning-fill{% endif %}"
+                title="{% if feature_s3_enable %}Voir le rapport de visite{% else %}Maintenance en cours{% endif %}"
                 rel="noopener"
-                target="_blank">
-                <span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span> Voir le rapport de visite
+                target="_blank"
+                {% if not feature_s3_enable %}aria-disabled="true" disabled{% endif %}>
+                {% if feature_s3_enable %}<span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span>{% endif %} Voir le rapport de visite
             </a>
         {% endif %}
         {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
             <button
-                class="fr-btn fr-btn--secondary fr-icon-camera-fill open-modal-upload-files-btn"
+                class="fr-btn fr-btn--secondary {% if feature_s3_enable %}fr-icon-camera-fill{% else %}fr-icon-warning-fill{% endif %} open-modal-upload-files-btn"
                 data-fr-opened="false"
                 aria-controls="visites-upload-files-{{intervention.id}}"
                 data-document-type="PHOTO_VISITE"
-                data-intervention-id="{{intervention.id}}">
+                data-intervention-id="{{intervention.id}}"
+                {% if not feature_s3_enable %}disabled title="Maintenance en cours"{% endif %}>
                 Ajouter les photos de la visite
             </button>
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_NOT_DONE') %}
         {% if intervention.rapportDeVisite %}
-            <a href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}"
-                class="fr-btn fr-btn--secondary"
-                title="Voir le rapport de visite"
+            <a {% if feature_s3_enable %}href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}"{% endif %}
+                class="fr-btn fr-btn--secondary {% if not feature_s3_enable %}fr-icon-warning-fill{% endif %}"
+                title="{% if feature_s3_enable %}Voir le rapport de visite{% else %}Maintenance en cours{% endif %}"
                 rel="noopener"
-                target="_blank">
-                <span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span> Voir le rapport de visite
+                target="_blank"
+                {% if not feature_s3_enable %}aria-disabled="true" disabled{% endif %}>
+                {% if feature_s3_enable %}<span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span>{% endif %} Voir le rapport de visite
             </a>
         {% endif %}
     {% else %}

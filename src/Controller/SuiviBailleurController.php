@@ -27,6 +27,7 @@ use App\Utils\HtmlCleaner;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,6 +37,12 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/dossier-bailleur')]
 class SuiviBailleurController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_S3_ENABLE')]
+        private bool $featureS3Enabled,
+    ) {
+    }
+
     #[Route('/', name: 'front_dossier_bailleur', methods: ['GET', 'POST'])]
     public function dossierBailleur(
         Request $request,
@@ -122,6 +129,7 @@ class SuiviBailleurController extends AbstractController
             'form' => $form,
             'formMessage' => $formMessage,
             'engagementTravauxPdf' => $engagementTravauxPdf,
+            'feature_s3_enable' => $this->featureS3Enabled,
         ]);
     }
 
@@ -229,7 +237,7 @@ class SuiviBailleurController extends AbstractController
         $formMessage = $this->createForm(MessageBailleurType::class, null, ['action' => $this->generateUrl('front_dossier_bailleur_add_message')]);
         $formMessage->handleRequest($request);
         if ($formMessage->isSubmitted() && $formMessage->isValid()) {
-            $files = $formMessage->get('files')->getData();
+            $files = $formMessage->has('files') ? $formMessage->get('files')->getData() : [];
             $fileList = $signalementFileProcessor->process($files, DocumentType::MESSAGE_BAILLEUR);
             if (!$signalementFileProcessor->isValid()) {
                 $errors = ['files' => ['errors' => [$signalementFileProcessor->getErrorMessages()]]];

@@ -20,6 +20,7 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,6 +46,8 @@ class VisiteUploadDocumentsController extends AbstractController
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly VisiteFactory $interventionFactory,
         private readonly LoggerInterface $logger,
+        #[Autowire(env: 'FEATURE_S3_ENABLE')]
+        private readonly bool $featureS3Enabled,
     ) {
     }
 
@@ -182,6 +185,12 @@ class VisiteUploadDocumentsController extends AbstractController
         ?Intervention $intervention = null,
         string $typeDocumentVisite = '',
     ): JsonResponse {
+        if (!$this->featureS3Enabled) {
+            return $this->json(
+                ['message' => 'L\'accès aux documents et aux photos est temporairement désactivé pour maintenance.', Response::HTTP_SERVICE_UNAVAILABLE],
+                Response::HTTP_SERVICE_UNAVAILABLE
+            );
+        }
         if (null === $intervention) {
             return $this->json([
                 'message' => 'Intervention introuvable.',

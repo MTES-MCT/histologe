@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\File;
 use App\Service\UploadHandlerService;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -15,6 +16,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class MessageBailleurType extends AbstractType
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_S3_ENABLE')]
+        private bool $featureS3Enabled,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -40,6 +47,7 @@ class MessageBailleurType extends AbstractType
                 'multiple' => true,
                 'attr' => [
                     'accept' => implode(',', File::DOCUMENT_MIME_TYPES),
+                    'disabled' => !$this->featureS3Enabled,
                 ],
                 'constraints' => [
                     new Assert\All([

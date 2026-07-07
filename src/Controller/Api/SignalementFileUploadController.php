@@ -17,6 +17,7 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,6 +41,8 @@ class SignalementFileUploadController extends AbstractController
         private readonly FileFactory $fileFactory,
         private readonly LoggerInterface $logger,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
+        #[Autowire(env: 'FEATURE_S3_ENABLE')]
+        private readonly bool $featureS3Enabled,
     ) {
     }
 
@@ -151,6 +154,12 @@ class SignalementFileUploadController extends AbstractController
         Request $request,
         ?Signalement $signalement = null,
     ): JsonResponse {
+        if (!$this->featureS3Enabled) {
+            return $this->json(
+                ['message' => 'L\'accès aux documents et aux photos est temporairement désactivé pour maintenance.', Response::HTTP_SERVICE_UNAVAILABLE],
+                Response::HTTP_SERVICE_UNAVAILABLE
+            );
+        }
         if (null === $signalement) {
             return $this->json(
                 ['message' => 'Signalement introuvable', 'status' => Response::HTTP_NOT_FOUND],

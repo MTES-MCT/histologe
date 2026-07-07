@@ -120,6 +120,7 @@
 
 			<div class="fr-mb-4w signalement-group-data-card">
 				<h2 class="title-blue-france fr-mb-1w">Les photos et documents du dossier</h2>
+				{% if feature_s3_enable %}
 				{% set photos = signalement.files|filter(photo => photo.documentType == enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION and photo.isTypeImage) %}
 				{% set docs = signalement.files|filter(photo => photo.documentType == enum('App\\Entity\\Enum\\DocumentType').PHOTO_SITUATION and photo.isTypeDocument and not photo.isSuspicious) %}
 				{% if photos is empty and docs is empty %}
@@ -167,6 +168,12 @@
 							</div>
 						</div>
 					{% endfor %}
+					</div>
+				{% endif %}
+				{% else %}
+					<div class="fr-alert fr-alert--warning fr-mb-2w">
+						<h3 class="fr-alert__title">Maintenance en cours</h3>
+						<p>La consultation de documents est temporairement désactivé pour maintenance.</p>
 					</div>
 				{% endif %}
 			</div>
@@ -405,15 +412,19 @@
 							</p>
 							{{ form_row(formMessage.description) }}
 							{{form_label(formMessage.files, 'Ajouter des documents (facultatif)')}}
-							<div class="component-upload-container fr-mb-4w">
+							<div class="component-upload-container fr-mb-4w {% if not feature_s3_enable %}component-upload-container--disabled{% endif %}">
 								<div class="component-upload-drop-section">
 									<span class="fr-icon-upload-2-line fr-icon--lg fr-text-label--blue-france"></span>
 									<div class="component-upload-drop-section-label fr-mt-1w">
-										Faites glisser vos documents ici
+										{% if feature_s3_enable %}
+											Faites glisser vos documents ici
+										{% else %}
+											Le téléchargement de documents est temporairement désactivé
+										{% endif %}
 									</div>
 								</div>
 								<p class="fr-mb-1w">ou</p>
-								<button type="button" class="component-upload-files-selector fr-btn fr-icon-search-line fr-btn--icon-left fr-btn--secondary fr-mb-2v">Parcourir les fichiers de l'appareil</button>
+								<button type="button" class="component-upload-files-selector fr-btn fr-icon-search-line fr-btn--icon-left fr-btn--secondary fr-mb-2v" {% if not feature_s3_enable %}disabled{% endif %}>Parcourir les fichiers de l'appareil</button>
 								{{ form_widget(formMessage.files, {'attr': {'class': 'component-upload-files-selector-input'}}) }}
 								<div class="component-upload-list-errors"></div>
 								<div class="component-upload-list"></div>
