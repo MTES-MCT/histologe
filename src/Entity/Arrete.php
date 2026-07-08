@@ -3,8 +3,8 @@
 namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryInterface;
+use App\Entity\Enum\ArreteType;
 use App\Entity\Enum\HistoryEntryEvent;
-use App\Entity\Enum\TypeArrete;
 use App\Repository\ArreteRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,8 +20,8 @@ class Arrete implements EntityHistoryInterface
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private \DateTimeImmutable $dateArrete;
 
-    #[ORM\Column(enumType: TypeArrete::class)]
-    private TypeArrete $typeArrete;
+    #[ORM\Column(enumType: ArreteType::class)]
+    private ArreteType $typeArrete;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $syndic = null;
@@ -29,11 +29,11 @@ class Arrete implements EntityHistoryInterface
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dateMainLevee = null;
 
-    #[ORM\ManyToOne(inversedBy: 'arretes')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'arretes')]
     #[ORM\JoinColumn(nullable: false)]
     private Address $address;
 
-    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $importedAt = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -55,17 +55,17 @@ class Arrete implements EntityHistoryInterface
 
     public function setDateArrete(\DateTimeImmutable $dateArrete): static
     {
-        $this->dateArrete = $dateArrete;
+        $this->dateArrete = $dateArrete->setTime(0, 0);
 
         return $this;
     }
 
-    public function getTypeArrete(): TypeArrete
+    public function getTypeArrete(): ArreteType
     {
         return $this->typeArrete;
     }
 
-    public function setTypeArrete(TypeArrete $typeArrete): static
+    public function setTypeArrete(ArreteType $typeArrete): static
     {
         $this->typeArrete = $typeArrete;
 
@@ -96,7 +96,7 @@ class Arrete implements EntityHistoryInterface
 
     public function setDateMainLevee(?\DateTimeImmutable $dateMainLevee): static
     {
-        $this->dateMainLevee = $dateMainLevee;
+        $this->dateMainLevee = $dateMainLevee?->setTime(0, 0);
 
         return $this;
     }

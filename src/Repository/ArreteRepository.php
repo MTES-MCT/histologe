@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Address;
 use App\Entity\Arrete;
+use App\Entity\Enum\ArreteType;
 use App\Service\ListFilters\SearchArrete;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -113,5 +115,63 @@ class ArreteRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findOneByCriteria(
+        \DateTimeImmutable $dateArrete,
+        ArreteType $typeArrete,
+        ?string $identifiantParcellaire,
+        Address $address,
+        ?\DateTimeImmutable $dateMainLevee = null,
+        ?string $syndic = null,
+    ): ?Arrete {
+        $qb = $this->createQueryBuilder('a')
+            ->join('a.address', 'addr')
+            ->where('a.dateArrete = :dateArrete')
+            ->andWhere('a.typeArrete = :typeArrete')
+            ->setParameter('dateArrete', $dateArrete->format('Y-m-d'))
+            ->setParameter('typeArrete', $typeArrete);
+
+        if ($address->getBanId()) {
+            $qb->andWhere('addr.banId = :banId')
+                ->setParameter('banId', $address->getBanId());
+        } else {
+            $qb->andWhere('addr.street = :street')
+                ->andWhere('addr.postCode = :postCode')
+                ->andWhere('addr.cityCode = :cityCode')
+                ->setParameter('street', $address->getStreet())
+                ->setParameter('postCode', $address->getPostCode())
+                ->setParameter('cityCode', $address->getCityCode());
+
+            if ($address->getHousenumber()) {
+                $qb->andWhere('addr.housenumber = :housenumber')
+                    ->setParameter('housenumber', $address->getHousenumber());
+            } else {
+                $qb->andWhere('addr.housenumber IS NULL');
+            }
+        }
+
+        if ($identifiantParcellaire) {
+            $qb->andWhere('a.identifiantParcellaire = :identifiantParcellaire')
+                ->setParameter('identifiantParcellaire', $identifiantParcellaire);
+        } else {
+            $qb->andWhere('a.identifiantParcellaire IS NULL');
+        }
+
+        if ($dateMainLevee) {
+            $qb->andWhere('a.dateMainLevee = :dateMainLevee')
+                ->setParameter('dateMainLevee', $dateMainLevee->format('Y-m-d'));
+        } else {
+            $qb->andWhere('a.dateMainLevee IS NULL');
+        }
+
+        if ($syndic) {
+            $qb->andWhere('a.syndic = :syndic')
+                ->setParameter('syndic', $syndic);
+        } else {
+            $qb->andWhere('a.syndic IS NULL');
+        }
+
+        return $qb->getQuery()->setMaxResults(1)->getOneOrNullResult();
     }
 }

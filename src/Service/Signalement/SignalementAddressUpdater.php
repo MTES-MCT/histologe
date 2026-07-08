@@ -10,8 +10,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class SignalementAddressUpdater
 {
-    private const float SCORE_IF_BAN_ID_ACCEPTED = 0.9;
-
     public function __construct(
         private readonly AddressService $addressService,
         private readonly RnbService $rnbService,
@@ -24,7 +22,7 @@ class SignalementAddressUpdater
     public function updateAddressOccupantFromBanData(Signalement $signalement, bool $updateRnbId = true): void
     {
         $addressResult = $this->addressService->getAddress($signalement->getAddressCompleteOccupant(false));
-        if ($addressResult->getScore() > self::SCORE_IF_BAN_ID_ACCEPTED) {
+        if ($addressResult->getScore() > AddressService::SCORE_IF_BAN_ID_ACCEPTED) {
             $signalement
                 ->setBanIdOccupant($addressResult->getBanId())
                 ->setAdresseOccupant($addressResult->getStreet())

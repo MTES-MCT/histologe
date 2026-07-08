@@ -147,6 +147,30 @@ class AddressServiceFake extends AddressService
                     'query' => $address,
                 ]);
                 break;
+            case '10 Rue de la Paix 75002 Paris':
+                $response = new Address([
+                    'type' => 'FeatureCollection',
+                    'features' => [[
+                        'type' => 'Feature',
+                        'properties' => [
+                            'label' => $address,
+                            'score' => 0.96,
+                            'housenumber' => '10',
+                            'id' => '75102_7060_00010',
+                            'banId' => 'b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1',
+                            'name' => '10 Rue de la Paix',
+                            'postcode' => '75002',
+                            'citycode' => '75102',
+                            'city' => 'Paris',
+                        ],
+                        'geometry' => [
+                            'type' => 'Point',
+                            'coordinates' => [2.330, 48.869],
+                        ],
+                    ]],
+                    'query' => $address,
+                ]);
+                break;
             case 'Chemin du grand méchant loup 30360 Vézénobres':
                 $response = new Address([
                     'type' => 'FeatureCollection',
@@ -231,6 +255,30 @@ class AddressServiceFake extends AddressService
                         'geometry' => [
                             'type' => 'Point',
                             'coordinates' => [-1.417255, 47.368537],
+                        ],
+                    ]],
+                    'query' => $address,
+                ]);
+                break;
+            case '29 Rue Désirée Clary 13002 Marseille':
+                $response = new Address([
+                    'type' => 'FeatureCollection',
+                    'features' => [[
+                        'type' => 'Feature',
+                        'properties' => [
+                            'label' => $address,
+                            'score' => 0.96,
+                            'housenumber' => '29',
+                            'id' => '13202_2333_00029',
+                            'banId' => '9c7fb87f-15db-41ac-9444-4cb3745b7ebd',
+                            'name' => '29 Rue Désirée Clary',
+                            'postcode' => '13002',
+                            'citycode' => '13202',
+                            'city' => 'Marseille',
+                        ],
+                        'geometry' => [
+                            'type' => 'Point',
+                            'coordinates' => [5.3705315, 43.3085624],
                         ],
                     ]],
                     'query' => $address,

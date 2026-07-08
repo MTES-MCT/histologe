@@ -2,9 +2,9 @@
 
 namespace App\Tests\Unit\Service\Signalement\Suivi;
 
+use App\Entity\Enum\ArreteType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Enum\TypeArrete;
 use App\Entity\User;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
@@ -63,7 +63,7 @@ class HistoriqueEvenementsGeneratorTest extends TestCase
             ->method('findOnSameAddress')
             ->willReturn([$signalementSameAddress]);
 
-        $arrete = $this->createArrete(TypeArrete::MISE_EN_SECURITE, new \DateTimeImmutable('2024-01-01'), new \DateTimeImmutable('2024-02-01'));
+        $arrete = $this->createArrete(ArreteType::MISE_EN_SECURITE, new \DateTimeImmutable('2024-01-01'), new \DateTimeImmutable('2024-02-01'));
         $this->arreteFinder->expects($this->once())
             ->method('find')
             ->with($signalement)
@@ -147,8 +147,8 @@ class HistoriqueEvenementsGeneratorTest extends TestCase
             ->method('findOnSameAddress')
             ->willReturn([]);
 
-        $arreteWithoutMainLevee = $this->createArrete(TypeArrete::MISE_EN_SECURITE, new \DateTimeImmutable('2024-01-01'), null);
-        $arreteWithMainLevee = $this->createArrete(TypeArrete::ARRETE_L_1331_26, new \DateTimeImmutable('2024-02-01'), new \DateTimeImmutable('2024-03-01'));
+        $arreteWithoutMainLevee = $this->createArrete(ArreteType::MISE_EN_SECURITE, new \DateTimeImmutable('2024-01-01'), null);
+        $arreteWithMainLevee = $this->createArrete(ArreteType::ARRETE_L_1331_26, new \DateTimeImmutable('2024-02-01'), new \DateTimeImmutable('2024-03-01'));
 
         $this->arreteFinder->expects($this->once())
             ->method('find')

@@ -42,7 +42,7 @@ class Address
      * Attention : il s'agit de la clé d'interopérabilité BAN (ex : 13202_2333_00025)
      * et non de l'uuid technique de la BAN dit `banId`
      */
-    #[ORM\Column(length: 100, nullable: true, unique: true)]
+    #[ORM\Column(length: 100, unique: true, nullable: true)]
     private ?string $banId = null;
 
     #[ORM\Column(type: 'point', nullable: true)]
@@ -187,5 +187,16 @@ class Address
         $this->territory = $territory;
 
         return $this;
+    }
+
+    public function getFull(): string
+    {
+        return trim(sprintf(
+            '%s %s %s %s',
+            $this->housenumber,
+            $this->street,
+            $this->postCode,
+            $this->city
+        ));
     }
 }

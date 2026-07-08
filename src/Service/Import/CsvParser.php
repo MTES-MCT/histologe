@@ -93,6 +93,7 @@ class CsvParser
         $rows = [];
         if (($fileResource = fopen($filepath, 'r')) !== false) {
             $i = 0;
+            $headerLine = max(0, (int) $this->options['first_line'] - 1);
             while (($row = fgetcsv(
                 $fileResource,
                 0,
@@ -100,9 +101,9 @@ class CsvParser
                 (string) $this->options['enclosure'],
                 (string) $this->options['escape']
             )) !== false) {
-                if (0 === $i) {
+                if ($i === $headerLine) {
                     $headers = array_map(static fn ($header) => trim((string) $header), $row);
-                } else {
+                } elseif ($i > $headerLine) {
                     $rows[] = $row;
                 }
                 ++$i;
@@ -122,5 +123,44 @@ class CsvParser
     public function getOptions(): array
     {
         return $this->options;
+    }
+
+    public function setFirstLine(int $firstLine): self
+    {
+        $this->options['first_line'] = $firstLine;
+
+        return $this;
+    }
+
+    public function autoDetectDelimiter(string $filepath): self
+    {
+        $delimiters = [',', ';'];
+        $delimiterDetected = ',';
+        $maxFields = -1;
+
+        if (($fileResource = fopen($filepath, 'r')) !== false) {
+            $firstLine = fgets($fileResource);
+            fclose($fileResource);
+
+            if ($firstLine) {
+                foreach ($delimiters as $delimiter) {
+                    $fields = str_getcsv(
+                        $firstLine,
+                        $delimiter,
+                        (string) $this->options['enclosure'],
+                        (string) $this->options['escape']
+                    );
+                    $count = \count($fields);
+                    if ($count > $maxFields) {
+                        $maxFields = $count;
+                        $delimiterDetected = $delimiter;
+                    }
+                }
+            }
+        }
+
+        $this->options['delimiter'] = $delimiterDetected;
+
+        return $this;
     }
 }

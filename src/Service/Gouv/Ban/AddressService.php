@@ -12,6 +12,7 @@ class AddressService
 {
     private const string API_URL = 'https://data.geopf.fr/geocodage/search/?q=';
     private const string API_PARAM_LIMIT = '&limit=1';
+    public const float SCORE_IF_BAN_ID_ACCEPTED = 0.9;
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,

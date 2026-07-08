@@ -28,7 +28,7 @@ class AutoAffectationRuleImportType extends AbstractType
             ])
             ->add('csvFile', FileType::class, [
                 'label' => 'Fichier CSV',
-                'help' => 'Format accepté : .csv — Séparateur : point-virgule (;)',
+                'help' => 'Format accepté : .csv',
                 'mapped' => false,
                 'required' => false,
                 'constraints' => [new NotNull(message: 'Veuillez sélectionner un fichier CSV.')],

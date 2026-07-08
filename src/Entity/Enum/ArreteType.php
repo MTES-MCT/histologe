@@ -4,7 +4,7 @@ namespace App\Entity\Enum;
 
 use App\Entity\Behaviour\EnumTrait;
 
-enum TypeArrete: string
+enum ArreteType: string
 {
     use EnumTrait;
     // mise en sécurité
@@ -92,12 +92,10 @@ enum TypeArrete: string
      */
     public static function getChoices(): array
     {
-        $choices = [
+        return [
             'Mise en sécurité' => self::getMiseEnSecuriteChoices(),
             'Insalubrité' => self::getInsalubriteChoices(),
             'Autres' => self::getAutresChoices(),
         ];
-
-        return $choices;
     }
 }

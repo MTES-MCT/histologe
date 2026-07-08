@@ -177,8 +177,8 @@ function attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix)
     const idForm = inputAdresse.closest('form').id;
     inputAdresse.value = feature.properties.label;
     if (document?.querySelector('#' + idForm + ' [data-autocomplete-housenumber' + suffix + ']')) {
-      document.querySelector('#' + idForm + ' [data-autocomplete-housenumber' + suffix + ']').value =
-        feature.properties.housenumber;
+      document.querySelector('#' + idForm + ' [data-autocomplete-housenumber' + suffix + ']')
+          .value = feature.properties.housenumber ?? '';
     }
     if (document?.querySelector('#' + idForm + ' [data-autocomplete-street' + suffix + ']')) {
       document.querySelector('#' + idForm + ' [data-autocomplete-street' + suffix + ']').value =

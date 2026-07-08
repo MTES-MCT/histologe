@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Service\Signalement;
 
-use App\Entity\Enum\TypeArrete;
+use App\Entity\Enum\ArreteType;
 use App\Repository\ArreteRepository;
 use App\Service\Signalement\SignalementSameAddressArreteFinder;
 use App\Tests\FixturesHelper;
@@ -27,7 +27,7 @@ class SignalementSameAddressArreteFinderTest extends TestCase
         $signalement = $this->getSignalement();
         $signalement->setBanIdOccupant('13202_0001');
 
-        $arrete = $this->createArrete(TypeArrete::MISE_EN_SECURITE, new \DateTimeImmutable('2024-01-01'), null);
+        $arrete = $this->createArrete(ArreteType::MISE_EN_SECURITE, new \DateTimeImmutable('2024-01-01'), null);
 
         $this->arreteRepository->expects($this->once())
             ->method('findByBanId')
@@ -48,7 +48,7 @@ class SignalementSameAddressArreteFinderTest extends TestCase
         $signalement->setCpOccupant('74000');
         $signalement->setInseeOccupant('74010');
 
-        $arrete = $this->createArrete(TypeArrete::MISE_EN_SECURITE, new \DateTimeImmutable('2024-01-01'), null);
+        $arrete = $this->createArrete(ArreteType::MISE_EN_SECURITE, new \DateTimeImmutable('2024-01-01'), null);
 
         $this->arreteRepository->expects($this->once())
             ->method('findByBanId')
@@ -86,7 +86,7 @@ class SignalementSameAddressArreteFinderTest extends TestCase
         $signalement->setCpOccupant('74000');
         $signalement->setInseeOccupant('74010');
 
-        $arrete = $this->createArrete(TypeArrete::MISE_EN_SECURITE, new \DateTimeImmutable('2024-01-01'), null);
+        $arrete = $this->createArrete(ArreteType::MISE_EN_SECURITE, new \DateTimeImmutable('2024-01-01'), null);
 
         $this->arreteRepository->expects($this->never())
             ->method('findByBanId');
