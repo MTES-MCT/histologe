@@ -272,7 +272,7 @@ pre {
 .fr-rounded {
     border-radius: .25rem;
 }
-.fr-select-group--error legend {
+.fr-select-group--error legend, .fr-input-group--error legend {
     color: var(--text-default-error);
 }
 legend.required::after, label.required::after {

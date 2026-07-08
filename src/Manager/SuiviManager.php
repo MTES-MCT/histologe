@@ -278,12 +278,18 @@ class SuiviManager
     {
         $motifSuivi = Sanitizer::sanitize($params['motif_suivi']);
 
-        return \sprintf(
-            Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.' %s avec le motif suivant <br><strong>%s</strong><br><strong>Desc. : </strong>%s',
-            $params['subject'],
-            $params['motif_cloture']->label(),
-            $motifSuivi
-        );
+        $motifCloture = '<strong>'.$params['motif_cloture']->label().'</strong> ';
+        if (!empty($params['travaux_mise_en_conformite'])) {
+            $motifCloture .= ' - Travaux de mise en conformité : '.$params['travaux_mise_en_conformite']->label();
+        }
+
+        $description = Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.' '.$params['subject'].' avec le motif suivant ';
+        $description .= '<br>';
+        $description .= $motifCloture;
+        $description .= '<br>';
+        $description .= '<strong>Desc. : </strong>'.$motifSuivi;
+
+        return $description;
     }
 
     /**

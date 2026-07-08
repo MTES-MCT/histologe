@@ -8,11 +8,15 @@ use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifRefus;
 use App\Entity\Enum\PartnerType;
+use App\Entity\Enum\TravauxMiseEnConformite;
 use App\Repository\AffectationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: AffectationRepository::class)]
 #[ORM\UniqueConstraint(name: 'unique_affectation_signalement_partner', columns: ['signalement_id', 'partner_id'])]
@@ -57,6 +61,7 @@ class Affectation implements EntityHistoryInterface
     private ?MotifRefus $motifRefus = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: MotifCloture::class)]
+    #[Assert\NotBlank(groups: ['close_affectation'])]
     private ?MotifCloture $motifCloture = null;
 
     /** @var Collection<int, Notification> $notifications */
@@ -70,12 +75,30 @@ class Affectation implements EntityHistoryInterface
     private ?AffectationStatus $nextStatut = null;
     private ?bool $hasNotificationUsagerToCreate = null;
 
+    #[ORM\Column(nullable: true, enumType: TravauxMiseEnConformite::class)]
+    private ?TravauxMiseEnConformite $travauxMiseEnConformite = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\NotBlank(groups: ['close_affectation'])]
+    #[Assert\Length(min: 16, groups: ['close_affectation'])] // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
+    private ?string $precisionsCloture = null;
+
     public function __construct()
     {
         $this->statut = AffectationStatus::WAIT;
         $this->createdAt = new \DateTimeImmutable();
         $this->notifications = new ArrayCollection();
         $this->uuid = Uuid::v4();
+    }
+
+    #[Assert\Callback(groups: ['close_affectation'])]
+    public function validateCloseAffectation(ExecutionContextInterface $context, mixed $payload): void
+    {
+        if (!$this->travauxMiseEnConformite && in_array($this->motifCloture, MotifCloture::getListNeedTravauxPrecisions(), true)) {
+            $context->buildViolation('Veuillez préciser si les travaux de mise en conformité du logement ont été réalisés.')
+                ->atPath('travauxMiseEnConformite')
+                ->addViolation();
+        }
     }
 
     public function __toString(): string
@@ -279,6 +302,8 @@ class Affectation implements EntityHistoryInterface
     {
         $this->motifRefus = null;
         $this->motifCloture = null;
+        $this->travauxMiseEnConformite = null;
+        $this->precisionsCloture = null;
     }
 
     public function isSynchronizeWithEsabora(): bool
@@ -297,5 +322,29 @@ class Affectation implements EntityHistoryInterface
     public function getHistoryRegisteredEvent(): array
     {
         return [HistoryEntryEvent::CREATE, HistoryEntryEvent::UPDATE, HistoryEntryEvent::DELETE];
+    }
+
+    public function getTravauxMiseEnConformite(): ?TravauxMiseEnConformite
+    {
+        return $this->travauxMiseEnConformite;
+    }
+
+    public function setTravauxMiseEnConformite(?TravauxMiseEnConformite $travauxMiseEnConformite): static
+    {
+        $this->travauxMiseEnConformite = $travauxMiseEnConformite;
+
+        return $this;
+    }
+
+    public function getPrecisionsCloture(): ?string
+    {
+        return $this->precisionsCloture;
+    }
+
+    public function setPrecisionsCloture(?string $precisionsCloture): static
+    {
+        $this->precisionsCloture = $precisionsCloture;
+
+        return $this;
     }
 }

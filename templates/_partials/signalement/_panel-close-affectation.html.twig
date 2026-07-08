@@ -1,0 +1,41 @@
+<dialog aria-labelledby="panel-close-affectation-title" id="panel-close-affectation" class="side-panel">
+    <div class="side-panel__inner">
+        <div class="side-panel__header">
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-close-affectation" aria-controls="panel-close-affectation" aria-expanded="false">Fermer</button>
+        </div>
+        <div class="side-panel__content fr-mx-3w">
+            <h1 id="panel-close-affectation-title" class="fr-modal__title title-blue-france">
+                {% if is_granted('ROLE_ADMIN_TERRITORY') %}
+                    Fermer l'affectation
+                {% else %}
+                    Fermer le dossier
+                {% endif %}
+            </h1>
+            <p>Expliquez ici les raison de la fermeture du dossier.</p>
+            <p><i>Tous les champs sont obligatoires.</i></p>
+            {{ form_start(closeAffectationForm, {'attr': {'id': 'close-affectation-form', 'data-submit-type':'formData'}}) }}
+            {{ form_errors(closeAffectationForm) }}
+            {{ form_row(closeAffectationForm.motifCloture) }}
+            {{ form_row(closeAffectationForm.travauxMiseEnConformite) }} {#, {display_mode: 'block'} #}
+            {{ form_row(closeAffectationForm.precisionsCloture) }}
+            {{ form_end(closeAffectationForm) }}
+            <div class="fr-alert fr-alert--info">
+            <p>Le motif de fermeture et le commentaire seront visibles uniquement des autres partenaires, ils ne seront pas envoyés à l'usager.</p>
+            </div>
+        </div>
+        <div class="side-panel__footer">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                <li>
+                    <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line" form="close-affectation-form">
+                        Fermer pour mon partenaire
+                    </button>
+                </li>
+                <li>
+                    <button class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel" data-panel="panel-close-affectation" aria-controls="panel-close-affectation" aria-expanded="false" type="button">
+                        Annuler
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</dialog>

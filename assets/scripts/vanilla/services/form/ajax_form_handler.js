@@ -112,6 +112,9 @@ async function submitPayload(formElement) {
           if (inputElements.length > 1) {
             inputElement = inputElements[0];
             parentElement = inputElement.closest('.fr-fieldset');
+            if (parentElement?.tagName === 'FIELDSET') {
+              parentElement = parentElement.parentElement;
+            }
           } else {
             inputElement =
               container.querySelector(
@@ -151,6 +154,12 @@ async function submitPayload(formElement) {
         type: 'alert',
         title: 'Erreur',
         message: "Vous n'avez pas les permissions nécessaires pour effectuer cette action.",
+      });
+    } else if (response.status === 404) {
+      addFlashMessage({
+        type: 'alert',
+        title: 'Erreur',
+        message: "Page introuvable.",
       });
     } else {
       const responseData = await response.json();

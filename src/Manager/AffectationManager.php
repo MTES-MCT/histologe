@@ -181,6 +181,10 @@ class AffectationManager
             ->setMotifCloture($motif)
             ->setAnsweredBy($user);
 
+        if ($affectation->getMotifCloture() && !in_array($affectation->getMotifCloture(), MotifCloture::getListNeedTravauxPrecisions(), true)) {
+            $affectation->setTravauxMiseEnConformite(null);
+        }
+
         $this->removeSubscriptionsOfAffectation($affectation);
 
         if ($createSuiviAndNotifications) {
@@ -200,6 +204,7 @@ class AffectationManager
         $params['subject'] = $affectation->getPartner()->getNom();
         $params['motif_cloture'] = $affectation->getMotifCloture();
         $params['motif_suivi'] = $message;
+        $params['travaux_mise_en_conformite'] = $affectation->getTravauxMiseEnConformite();
         $suivi = $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: SuiviManager::buildDescriptionClotureSignalement($params),
