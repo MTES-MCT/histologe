@@ -47,16 +47,15 @@
                 {% endif %}
                 {% if feature_cloture_v2 %}
                     {% if is_granted('SIGN_CLOSE', signalement) %}
-                        {# TODO #}
                         <li>
-                            <button class="fr-nav__link fr-btn--icon-left fr-icon-close-line" data-panel-open="panel-close-signalement" aria-controls="panel-close-signalement" aria-expanded="false">
-                                Fermer le dossier
+                            <button id="test-bouton-cloturer" class="fr-nav__link fr-btn--icon-left fr-icon-close-line" data-panel-open="panel-close-signalement" aria-controls="panel-close-signalement" aria-expanded="false">
+                                Fermer le dossier #TODO #6044
                             </button>
                         </li>
                     {% endif %}
                     {% if affectation and is_granted('AFFECTATION_CLOSE', affectation) %}
                         <li>
-                            <button class="fr-nav__link fr-btn--icon-left fr-icon-close-line" data-panel-open="panel-close-affectation" aria-controls="panel-close-affectation" aria-expanded="false">
+                            <button id="link-bouton-cloturer" class="fr-nav__link fr-btn--icon-left fr-icon-close-line" data-panel-open="panel-close-affectation" aria-controls="panel-close-affectation" aria-expanded="false">
                                 {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                                     Fermer l'affectation
                                 {% else %}

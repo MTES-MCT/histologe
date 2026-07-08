@@ -81,7 +81,7 @@
     {% include '_partials/_modal_dpe.html.twig' %}
     {% if feature_cloture_v2 %}
         {% if is_granted('SIGN_CLOSE', signalement) %}
-            {# TODO #}
+            {# TODO #6044 #}
         {% endif %}
         {% if affectation and is_granted('AFFECTATION_CLOSE', affectation) %}
             <div data-ajax-form>

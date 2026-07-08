@@ -159,7 +159,7 @@ async function submitPayload(formElement) {
       addFlashMessage({
         type: 'alert',
         title: 'Erreur',
-        message: "Page introuvable.",
+        message: 'Page introuvable.',
       });
     } else {
       const responseData = await response.json();

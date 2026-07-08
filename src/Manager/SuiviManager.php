@@ -278,7 +278,7 @@ class SuiviManager
     {
         $motifSuivi = Sanitizer::sanitize($params['motif_suivi']);
 
-        $motifCloture = '<strong>'.$params['motif_cloture']->label().'</strong> ';
+        $motifCloture = '<strong>'.$params['motif_cloture']->label().'</strong>';
         if (!empty($params['travaux_mise_en_conformite'])) {
             $motifCloture .= ' - Travaux de mise en conformité : '.$params['travaux_mise_en_conformite']->label();
         }

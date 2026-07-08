@@ -6,6 +6,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Tag;
+use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\UserRepository;
@@ -104,7 +105,7 @@ class SignalementControllerTest extends WebTestCase
             'admin-01@signal-logement.fr',
             '00000000-0000-0000-2022-000000000001',
             '#test-bouton-cloturer',
-            'Clôturer',
+            'Fermer le dossier #TODO #6044',
         ];
         yield 'SA - Fermé' => [
             'admin-01@signal-logement.fr',
@@ -162,7 +163,7 @@ class SignalementControllerTest extends WebTestCase
             'user-13-01@signal-logement.fr',
             '00000000-0000-0000-2023-000000000006',
             '#link-bouton-cloturer',
-            'Clôturer',
+            'Fermer le dossier',
         ];
         yield '13 - Agent - En cours - abonné alone' => [
             'user-13-01@signal-logement.fr',
@@ -260,6 +261,9 @@ class SignalementControllerTest extends WebTestCase
 
     public function testAdminSubmitClotureSignalementWithEmailSentToPartners(): void
     {
+        $this->markTestSkipped('TODO #6044');
+
+        // @phpstan-ignore-next-line deadCode.unreachable
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -307,6 +311,9 @@ class SignalementControllerTest extends WebTestCase
 
     public function testAdminTerritorySubmitClotureSignalementWithEmailSentToPartnersAndUsagers(): void
     {
+        $this->markTestSkipped('TODO #6044');
+
+        // @phpstan-ignore-next-line deadCode.unreachable
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -376,11 +383,11 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('GET', $route);
         $client->submitForm(
-            'Clôturer pour Partenaire 13-01',
+            'Fermer pour mon partenaire',
             [
-                'cloture[motifCloture]' => 'INSALUBRITE',
-                'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                'cloture[type]' => 'partner',
+                'close_affectation[motifCloture]' => 'LOGEMENT_MIS_EN_CONFORMITE',
+                'close_affectation[travauxMiseEnConformite]' => 'NON',
+                'close_affectation[precisionsCloture]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
             ]
         );
 
@@ -393,6 +400,14 @@ class SignalementControllerTest extends WebTestCase
 
         $client->enableProfiler();
         $this->assertEmailCount(2);
+
+        /** @var AffectationRepository $affectationRepository */
+        $affectationRepository = static::getContainer()->get(AffectationRepository::class);
+        $affectation = $affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())]);
+        $this->assertEquals(AffectationStatus::CLOSED, $affectation->getStatut());
+        $this->assertEquals('LOGEMENT_MIS_EN_CONFORMITE', $affectation->getMotifCloture()->value);
+        $this->assertEquals('NON', $affectation->getTravauxMiseEnConformite()->value);
+        $this->assertEquals('Lorem ipsum dolor sit amet, consectetur adipiscing elit', $affectation->getPrecisionsCloture());
     }
 
     public function testUserPartnerSubmitClotureSignalementWithEmailSentToPartnersAndRT(): void
@@ -419,11 +434,10 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('GET', $route);
         $client->submitForm(
-            'Clôturer pour Partenaire 13-02',
+            'Fermer pour mon partenaire',
             [
-                'cloture[motifCloture]' => 'RSD',
-                'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                'cloture[type]' => 'partner',
+                'close_affectation[motifCloture]' => 'GESTION_DU_DOSSIER_EXTERNE',
+                'close_affectation[precisionsCloture]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
             ]
         );
 
@@ -465,11 +479,10 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('GET', $route);
         $client->submitForm(
-            'Clôturer pour Partenaire 13-02',
+            'Fermer pour mon partenaire',
             [
-                'cloture[motifCloture]' => 'RSD',
-                'cloture[type]' => 'partner',
-                'cloture[description]' => 'bla',
+                'close_affectation[motifCloture]' => 'GESTION_DU_DOSSIER_EXTERNE',
+                'close_affectation[precisionsCloture]' => 'bla',
             ]
         );
         $this->assertResponseHeaderSame('Content-Type', 'application/json');

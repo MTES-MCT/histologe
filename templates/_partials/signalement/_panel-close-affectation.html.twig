@@ -16,7 +16,9 @@
             {{ form_start(closeAffectationForm, {'attr': {'id': 'close-affectation-form', 'data-submit-type':'formData'}}) }}
             {{ form_errors(closeAffectationForm) }}
             {{ form_row(closeAffectationForm.motifCloture) }}
-            {{ form_row(closeAffectationForm.travauxMiseEnConformite) }} {#, {display_mode: 'block'} #}
+            <div id="close_affectation_travauxMiseEnConformite_container">
+                {{ form_row(closeAffectationForm.travauxMiseEnConformite) }}
+            </div>
             {{ form_row(closeAffectationForm.precisionsCloture) }}
             {{ form_end(closeAffectationForm) }}
             <div class="fr-alert fr-alert--info">

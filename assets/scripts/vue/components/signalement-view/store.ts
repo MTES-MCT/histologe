@@ -175,10 +175,10 @@ export const store = {
       { Id: 'non_renseigne', Text: 'Présence d\'enfants moins de 6ans non renseignée' }
     ],
     motifClotureList: [
-      { Id: 'abandon_de_procedure_absence_de_reponse', Text: 'Abandon de procédure / absence de réponse' },
+      { Id: 'abandon_de_procedure_absence_de_reponse', Text: 'Demande fermeture / abandon occupant' },
       { Id: 'depart_occupant', Text: 'Départ occupant' },
       { Id: 'insalubrite', Text: 'Insalubrité' },
-      { Id: 'logement_decent', Text: 'Logement décent / Pas d\'infraction' },
+      { Id: 'logement_decent', Text: 'Pas d\'infraction dans le logement' },
       { Id: 'logement_vendu', Text: 'Logement vendu' },
       { Id: 'non_decence', Text: 'Non décence' },
       { Id: 'peril', Text: 'Mise en sécurité / Péril' },

@@ -165,7 +165,7 @@ class SignalementController extends AbstractController
         $closeAffectationForm = null;
         if ($this->featureClotureV2) {
             if ($this->isGranted(SignalementVoter::SIGN_CLOSE, $signalement)) {
-                // TODO
+                // TODO #6044
             }
             if ($affectation && $this->isGranted(AffectationVoter::AFFECTATION_CLOSE, $affectation)) {
                 $closeAffectationForm = $this->createForm(CloseAffectationType::class, $affectation, ['action' => $this->generateUrl('back_affectation_close', ['uuid' => $signalement->getUuid()])]);

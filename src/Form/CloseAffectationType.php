@@ -22,6 +22,13 @@ class CloseAffectationType extends AbstractType
                 'choice_label' => static function ($choice, $key, $value) {
                     return $choice->label();
                 },
+                'choice_attr' => static function ($choice, string $key, mixed $value) {
+                    if (in_array($choice, MotifCloture::getListNeedTravauxPrecisions(), true)) {
+                        return ['data-need-travaux-precisions' => 'true'];
+                    }
+
+                    return [];
+                },
                 'required' => false,
                 'placeholder' => 'Sélectionner un motif',
             ]);
