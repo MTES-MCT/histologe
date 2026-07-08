@@ -39,7 +39,7 @@ readonly class SignalementResponseFactory
         private VisiteFactory $visiteFactory,
         private Security $security,
         private PartnerAuthorizedResolver $partnerAuthorizedResolver,
-        #[Autowire(env:'FEATURE_S3_ENABLE')]
+        #[Autowire(env: 'FEATURE_S3_ENABLE')]
         private bool $featureS3Enable,
     ) {
     }
