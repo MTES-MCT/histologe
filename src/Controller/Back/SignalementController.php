@@ -257,7 +257,10 @@ class SignalementController extends AbstractController
 
         $epciOccupant = $epciRepository->findOneByCommuneInseeAndPostalCode($signalement->getInseeOccupant(), $signalement->getCpOccupant());
 
-        $userNote = $noteRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
+        $userNote = null;
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $userNote = $noteRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
+        }
 
         $syncStatuses = [];
         if ($this->isGranted('ROLE_ADMIN')) {
