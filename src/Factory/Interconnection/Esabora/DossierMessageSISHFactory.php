@@ -201,11 +201,12 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
                 $nom = 'Non renseigné';
             }
 
+            $adressCompleteProprio = $signalement->getAdresseProprio().' - '.$signalement->getCodePostalProprio().' '.$signalement->getVilleProprio();
             $dossierMessageSISHPersonne = new DossierMessageSISHPersonne();
             $dossierMessageSISHPersonne
                 ->setType(PersonneType::PROPRIETAIRE->value)
                 ->setNom($nom)
-                ->setAdresse($signalement->getAdresseProprio())
+                ->setAdresse($adressCompleteProprio)
                 ->setEmail($signalement->getMailProprio())
                 ->setTelephone($tel);
             if (!empty($personneQualite)) {

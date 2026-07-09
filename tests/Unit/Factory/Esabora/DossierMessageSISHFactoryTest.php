@@ -22,6 +22,7 @@ class DossierMessageSISHFactoryTest extends TestCase
 
     /**
      * @throws NonUniqueResultException
+     * @throws \Exception
      */
     public function testDossierMessageFactoryIsFullyCreated(): void
     {
@@ -74,9 +75,19 @@ class DossierMessageSISHFactoryTest extends TestCase
         $signalement->setNomOccupant('');
 
         $dossierMessage = $dossierMessageFactory->createInstance($affectation);
+
+        foreach ($dossierMessage->getPersonnes() as $personne) {
+            if ('P' === $personne->getType()) { // P : Propriétaire
+                $this->assertEquals('27 rue de la république - 13002 Marseille', $personne->getAdresse());
+            } else {
+                $this->assertNull($personne->getAdresse());
+            }
+        }
+
         $this->assertEquals('Non renseigné', $dossierMessage->getPersonnes()[0]->getNom());
         $this->assertEquals($signalement->getPrenomOccupant(), $dossierMessage->getPersonnes()[0]->getPrenom());
         $this->assertEquals($signalement->getNomProprio(), $dossierMessage->getPersonnes()[1]->getNom());
+
         $this->assertEquals(1.5, $dossierMessage->getSignalementScore());
         $this->assertCount(2, $dossierMessage->getPiecesJointesDocuments());
         $this->assertEquals(PartnerType::ARS, $dossierMessage->getPartnerType());
