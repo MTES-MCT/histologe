@@ -272,6 +272,7 @@ class AffectationRepository extends ServiceEntityRepository
                 ->setParameter('duplicateKey', '%'.AbstractDossierSISHHandler::ERROR_SQL_DUPLICATE_KEY.'%')
             ;
         } elseif (InterfacageType::IDOSS->value === $service) {
+            //  Idoss - Seuls les dossiers acceptés dont la connexion est active sont concernés.
             $queryBuilder
                 ->andWhere('a.statut LIKE :statut')
                 ->setParameter('statut', AffectationStatus::ACCEPTED)
