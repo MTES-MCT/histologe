@@ -79,7 +79,7 @@ class SignalementFileController extends AbstractController
         SignalementFileProcessor $signalementFileProcessor,
     ): Response {
         if (!$this->s3Enable) {
-            return $this->json(['response' => 'L\'envoi aux documents et photos est temporairement désactivé pour maintenance.'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['response' => 'L\'envoi des documents et photos est temporairement désactivé pour maintenance.'], Response::HTTP_BAD_REQUEST);
         }
 
         if (!$this->isGranted(SignalementVoter::SIGN_EDIT_DRAFT, $signalement)

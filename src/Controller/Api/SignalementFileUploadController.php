@@ -156,7 +156,7 @@ class SignalementFileUploadController extends AbstractController
     ): JsonResponse {
         if (!$this->s3Enable) {
             return $this->json(
-                ['message' => 'L\'envoi aux documents et aux photos est temporairement désactivé pour maintenance.', Response::HTTP_SERVICE_UNAVAILABLE],
+                ['message' => 'L\'envoi des documents et photos est temporairement désactivé pour maintenance.', Response::HTTP_SERVICE_UNAVAILABLE],
                 Response::HTTP_SERVICE_UNAVAILABLE
             );
         }
