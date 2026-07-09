@@ -30,8 +30,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class SignalementFileController extends AbstractController
 {
     public function __construct(
-        #[Autowire(env: 'FEATURE_S3_ENABLE')]
-        private readonly bool $featureS3Enabled,
+        #[Autowire(env: 'S3_ENABLE')]
+        private readonly bool $s3Enable,
     ) {
     }
 
@@ -43,9 +43,9 @@ class SignalementFileController extends AbstractController
         SignalementFileProcessor $signalementFileProcessor,
         SignalementRepository $signalementRepository,
     ): JsonResponse {
-        if (!$this->featureS3Enabled) {
+        if (!$this->s3Enable) {
             return $this->json(
-                ['response' => 'L\'accès aux documents et photos est temporairement désactivé pour maintenance.'],
+                ['response' => 'L\'envoi aux documents et photos est temporairement désactivé pour maintenance.'],
                 Response::HTTP_BAD_REQUEST
             );
         }
@@ -82,7 +82,7 @@ class SignalementFileController extends AbstractController
         SignalementRepository $signalementRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): JsonResponse {
-        if (!$this->featureS3Enabled) {
+        if (!$this->s3Enable) {
             return $this->json(
                 ['response' => 'L\'accès aux documents et photos est temporairement désactivé pour maintenance.'],
                 Response::HTTP_BAD_REQUEST
@@ -131,9 +131,9 @@ class SignalementFileController extends AbstractController
         FileRepository $fileRepository,
         SignalementRepository $signalementRepository,
     ): JsonResponse {
-        if (!$this->featureS3Enabled) {
+        if (!$this->s3Enable) {
             return $this->json(
-                ['response' => 'L\'accès aux documents et photos est temporairement désactivé pour maintenance.'],
+                ['response' => 'La suppression aux documents et photos est temporairement désactivé pour maintenance.'],
                 Response::HTTP_BAD_REQUEST
             );
         }
@@ -168,9 +168,9 @@ class SignalementFileController extends AbstractController
         SignalementRepository $signalementRepository,
         EntityManagerInterface $entityManager,
     ): Response {
-        if (!$this->featureS3Enabled) {
+        if (!$this->s3Enable) {
             return $this->json(
-                ['response' => 'L\'accès aux documents et photos est temporairement désactivé pour maintenance.'],
+                ['response' => 'La suppression aux documents et photos est temporairement désactivé pour maintenance.'],
                 Response::HTTP_BAD_REQUEST
             );
         }
@@ -217,7 +217,7 @@ class SignalementFileController extends AbstractController
         MessageBusInterface $messageBus,
         SignalementRepository $signalementRepository,
     ): Response {
-        if (!$this->featureS3Enabled) {
+        if (!$this->s3Enable) {
             return $this->json(
                 ['response' => 'L\'accès aux documents et photos est temporairement désactivé pour maintenance.'],
                 Response::HTTP_BAD_REQUEST

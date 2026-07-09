@@ -22,7 +22,7 @@ twig:
         feature_imprim_fip: '%env(bool:FEATURE_IMPRIM_FIP)%'
         MAX_ITEMS_LIST: !php/const App\Service\DashboardTabPanel\TabDossier::MAX_ITEMS_LIST
         rial_enable: '%env(bool:RIAL_ENABLE)%'
-        feature_s3_enable: '%env(bool:FEATURE_S3_ENABLE)%'
+        s3_enable: '%env(bool:S3_ENABLE)%'
         feature_histo_address: '%env(bool:FEATURE_HISTO_ADDRESS)%'
     paths:
         # point this wherever your images live

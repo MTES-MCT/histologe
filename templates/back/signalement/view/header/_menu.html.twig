@@ -67,10 +67,10 @@
                 {% endif %}
                 {% if is_granted('SIGN_VIEW', signalement) %}
                     <li>
-                        <a {% if feature_s3_enable %}href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"{% endif %}
-                            class="fr-nav__link fr-btn--icon-left {% if feature_s3_enable %}fr-icon-file-download-line simple-ajax-link{% else %}fr-icon-warning-fill disabled{% endif %}"
-                            title="{% if feature_s3_enable %}Télécharger le PDF{% else %}Maintenance en cours{% endif %}"
-                            {% if not feature_s3_enable %}aria-disabled="true" disabled{% endif %}>
+                        <a {% if s3_enable %}href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"{% endif %}
+                            class="fr-nav__link fr-btn--icon-left {% if s3_enable %}fr-icon-file-download-line simple-ajax-link{% else %}fr-icon-warning-fill disabled{% endif %}"
+                            title="{% if s3_enable %}Télécharger le PDF{% else %}Maintenance en cours{% endif %}"
+                            {% if not s3_enable %}aria-disabled="true" disabled{% endif %}>
                             Télécharger le PDF
                         </a>
                     </li>

@@ -46,8 +46,8 @@ class VisiteUploadDocumentsController extends AbstractController
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly VisiteFactory $interventionFactory,
         private readonly LoggerInterface $logger,
-        #[Autowire(env: 'FEATURE_S3_ENABLE')]
-        private readonly bool $featureS3Enabled,
+        #[Autowire(env: 'S3_ENABLE')]
+        private readonly bool $s3Enable,
     ) {
     }
 
@@ -185,9 +185,9 @@ class VisiteUploadDocumentsController extends AbstractController
         ?Intervention $intervention = null,
         string $typeDocumentVisite = '',
     ): JsonResponse {
-        if (!$this->featureS3Enabled) {
+        if (!$this->s3Enable) {
             return $this->json(
-                ['message' => 'L\'accès aux documents et aux photos est temporairement désactivé pour maintenance.', Response::HTTP_SERVICE_UNAVAILABLE],
+                ['message' => 'L\'envoi aux documents et aux photos est temporairement désactivé pour maintenance.', Response::HTTP_SERVICE_UNAVAILABLE],
                 Response::HTTP_SERVICE_UNAVAILABLE
             );
         }

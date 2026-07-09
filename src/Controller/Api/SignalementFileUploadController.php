@@ -41,8 +41,8 @@ class SignalementFileUploadController extends AbstractController
         private readonly FileFactory $fileFactory,
         private readonly LoggerInterface $logger,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
-        #[Autowire(env: 'FEATURE_S3_ENABLE')]
-        private readonly bool $featureS3Enabled,
+        #[Autowire(env: 'S3_ENABLE')]
+        private readonly bool $s3Enable,
     ) {
     }
 
@@ -154,9 +154,9 @@ class SignalementFileUploadController extends AbstractController
         Request $request,
         ?Signalement $signalement = null,
     ): JsonResponse {
-        if (!$this->featureS3Enabled) {
+        if (!$this->s3Enable) {
             return $this->json(
-                ['message' => 'L\'accès aux documents et aux photos est temporairement désactivé pour maintenance.', Response::HTTP_SERVICE_UNAVAILABLE],
+                ['message' => 'L\'envoi aux documents et aux photos est temporairement désactivé pour maintenance.', Response::HTTP_SERVICE_UNAVAILABLE],
                 Response::HTTP_SERVICE_UNAVAILABLE
             );
         }

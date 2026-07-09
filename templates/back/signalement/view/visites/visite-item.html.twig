@@ -96,7 +96,7 @@
 </div>
 
 {% if intervention is defined and isForBO is defined and isForBO %}
-    {% if feature_s3_enable %}
+    {% if s3_enable %}
         {% include 'back/signalement/view/photos-documents.html.twig' with {'zonetitle': null,'filesFilter': 'visite','interventionId': intervention.id,'context': 'visiteitem'} %}
     {% else %}
         <div class="fr-alert fr-alert--warning">

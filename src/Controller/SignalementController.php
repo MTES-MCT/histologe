@@ -73,8 +73,8 @@ class SignalementController extends AbstractController
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly CguTiersChecker $cguTiersChecker,
-        #[Autowire(env: 'FEATURE_S3_ENABLE')]
-        private readonly bool $featureS3Enabled,
+        #[Autowire(env: 'S3_ENABLE')]
+        private readonly bool $s3Enable,
     ) {
     }
 
@@ -429,7 +429,7 @@ class SignalementController extends AbstractController
         ImageManipulationHandler $imageManipulationHandler,
         FileScanner $fileScanner,
     ): JsonResponse {
-        if (!$this->featureS3Enabled) {
+        if (!$this->s3Enable) {
             return $this->json([
                 'response' => 'L\'accès aux documents et aux photos est temporairement désactivé pour maintenance. '
                     .'Vous pouvez néanmoins déposer votre signalement dès maintenant. '

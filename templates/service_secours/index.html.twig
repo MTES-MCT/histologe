@@ -205,7 +205,7 @@
                     {% if form.step5.autresOccupantsDesordre is defined %}
                         {{ form_row(form.step5.autresOccupantsDesordre, {display_mode: 'block'}) }}
                     {% endif %}
-                    {% if feature_s3_enable %}
+                    {% if s3_enable %}
                         <div
                                 class="fr-upload-group js-upload-photos"
                                 data-ajaxurl-handle-upload="{{ path('handle_upload') }}">
@@ -246,7 +246,7 @@
                         {% else %}
                             <div class="fr-alert fr-alert--warning">
                                 <h3 class="fr-alert__title">Maintenance en cours</h3>
-                                <p>L'accès aux documents et photos est temporairement désactivé pour maintenance.</p>
+                                <p>L'envoi aux documents et photos est temporairement désactivé pour maintenance.</p>
                             </div>
                         {% endif %}
                 {% elseif current_step == 'step6' %}

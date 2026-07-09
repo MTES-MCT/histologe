@@ -24,10 +24,10 @@ class FileController extends AbstractController
         Request $request,
         LoggerInterface $logger,
         ImageVariantProvider $imageVariantProvider,
-        #[Autowire(env: 'FEATURE_S3_ENABLE')]
-        bool $featureS3Enabled,
+        #[Autowire(env: 'S3_ENABLE')]
+        bool $s3Enable,
     ): BinaryFileResponse {
-        if (!$featureS3Enabled) {
+        if (!$s3Enable) {
             return new BinaryFileResponse(
                 new SymfonyFile($this->getParameter('images_dir').'doc-file-maintenance.png'),
             );

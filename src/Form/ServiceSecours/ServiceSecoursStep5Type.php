@@ -25,8 +25,8 @@ class ServiceSecoursStep5Type extends AbstractType
 {
     public function __construct(
         private readonly DesordreCritereRepository $desordreCritereRepository,
-        #[Autowire(env: 'FEATURE_S3_ENABLE')]
-        private readonly bool $featureS3Enabled,
+        #[Autowire(env: 'S3_ENABLE')]
+        private readonly bool $s3Enable,
     ) {
     }
 
@@ -99,7 +99,7 @@ class ServiceSecoursStep5Type extends AbstractType
             ],
         );
 
-        if ($this->featureS3Enabled) {
+        if ($this->s3Enable) {
             $builder->add('photos', FileType::class, [
                 'label' => 'Ajouter des photos',
                 'attr' => [

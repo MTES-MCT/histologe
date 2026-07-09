@@ -16,7 +16,7 @@
         <li role="presentation">
             <button id="tabpanel-documents" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-documents-panel">
                 Documents et photos
-                {% if not feature_s3_enable %}
+                {% if not s3_enable %}
                     <span class="fr-badge fr-badge--warning fr-badge--sm fr-ml-1w">Maintenance</span>
                 {% endif %}
             </button>

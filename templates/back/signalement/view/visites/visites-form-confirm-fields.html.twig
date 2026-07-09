@@ -178,7 +178,7 @@
         <label class="fr-label" for="visite-{{ formType }}[rapport]">Rapport de visite (facultatif) 
             <span class="fr-hint-text">Formats supportés : {{ get_accepted_extensions()}}</span>
         </label>
-        {% if feature_s3_enable %}
+        {% if s3_enable %}
             <input class="fr-upload" type="file" accept={{ get_accepted_mime_type()}} name="visite-{{ formType }}[rapport]">
         {% else %}
             <div class="fr-alert fr-alert--warning fr-mb-2w">
@@ -188,7 +188,7 @@
         {% endif %}
     </div>
 {% elseif intervention is defined and intervention.rapportDeVisite %}
-    {% if feature_s3_enable %}
+    {% if s3_enable %}
         <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-5v">
             <ul class="fr-btns-group fr-btns-group--inline-sm fr-btns-group--sm">
                 <li>

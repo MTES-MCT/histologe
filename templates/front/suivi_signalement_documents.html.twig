@@ -25,7 +25,7 @@
 			<h1 class="title-blue-france">Les documents et photos du dossier</h1>
 			{% include 'front/_partials/_suivi_signalement_card.html.twig' %}
 
-            {% if not feature_s3_enable %}
+            {% if not s3_enable %}
                 <div class="fr-alert fr-alert--warning fr-mb-2w">
                     <h3 class="fr-alert__title">Maintenance en cours</h3>
                     <p>L'ajout et la consultation de documents sont temporairement désactivés pour maintenance.</p>
@@ -40,7 +40,7 @@
 							type="button" 
 							data-fr-opened="false" 
 							aria-controls="fr-modal-upload-files-usager" 
-                            {% if not feature_s3_enable %}disabled{% endif %}
+                            {% if not s3_enable %}disabled{% endif %}
 							>
 							Ajouter des documents
 						</button>
@@ -57,7 +57,7 @@
 
 		<div class="fr-col-12 fr-col-md-6">
 			<h2 class="title-blue-france fr-mb-1w">Les photos et documents du dossier</h2>
-            {% if feature_s3_enable %}
+            {% if s3_enable %}
                 {% set photos = signalement.files|filter(photo => photo.isSituationImage) %}
                 {% set documents = signalement.files|filter(photo => photo.isSituationDocument) %}
                 {% if photos is empty and documents is empty %}

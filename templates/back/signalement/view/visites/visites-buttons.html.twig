@@ -22,36 +22,51 @@
             </button>
         {% endif %}
         {% if intervention.rapportDeVisite %}
-            <a {% if feature_s3_enable %}href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}"{% endif %}
-                class="fr-btn fr-btn--secondary {% if not feature_s3_enable %}fr-icon-warning-fill{% endif %}"
-                title="{% if feature_s3_enable %}Voir le rapport de visite{% else %}Maintenance en cours{% endif %}"
-                rel="noopener"
-                target="_blank"
-                {% if not feature_s3_enable %}aria-disabled="true" disabled{% endif %}>
-                {% if feature_s3_enable %}<span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span>{% endif %} Voir le rapport de visite
-            </a>
+            {% if s3_enable %}
+                <a href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}"
+                   class="fr-btn fr-btn--secondary"
+                   title="Voir le rapport de visite"
+                   rel="noopener"
+                   target="_blank">
+                    <span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span> Voir le rapport de visite
+                </a>
+            {% else %}
+                <span class="fr-btn fr-btn--secondary fr-icon-warning-fill" title="Maintenance en cours">
+                    Voir le rapport de visite
+                </span>
+            {% endif %}
         {% endif %}
         {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
-            <button
-                class="fr-btn fr-btn--secondary {% if feature_s3_enable %}fr-icon-camera-fill{% else %}fr-icon-warning-fill{% endif %} open-modal-upload-files-btn"
-                data-fr-opened="false"
-                aria-controls="visites-upload-files-{{intervention.id}}"
-                data-document-type="PHOTO_VISITE"
-                data-intervention-id="{{intervention.id}}"
-                {% if not feature_s3_enable %}disabled title="Maintenance en cours"{% endif %}>
-                Ajouter les photos de la visite
-            </button>
+            {% if s3_enable %}
+                <button
+                        class="fr-btn fr-btn--secondary fr-icon-camera-fill open-modal-upload-files-btn"
+                        data-fr-opened="false"
+                        aria-controls="visites-upload-files-{{intervention.id}}"
+                        data-document-type="PHOTO_VISITE"
+                        data-intervention-id="{{intervention.id}}">
+                    Ajouter les photos de la visite
+                </button>
+            {% else %}
+                <span class="fr-btn fr-btn--secondary fr-icon-warning-fill" title="Maintenance en cours">
+                    Ajouter les photos de la visite
+                </span>
+            {% endif %}
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_NOT_DONE') %}
         {% if intervention.rapportDeVisite %}
-            <a {% if feature_s3_enable %}href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}"{% endif %}
-                class="fr-btn fr-btn--secondary {% if not feature_s3_enable %}fr-icon-warning-fill{% endif %}"
-                title="{% if feature_s3_enable %}Voir le rapport de visite{% else %}Maintenance en cours{% endif %}"
-                rel="noopener"
-                target="_blank"
-                {% if not feature_s3_enable %}aria-disabled="true" disabled{% endif %}>
-                {% if feature_s3_enable %}<span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span>{% endif %} Voir le rapport de visite
-            </a>
+            {% if s3_enable %}
+                <a href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}"
+                   class="fr-btn fr-btn--secondary"
+                   title="Voir le rapport de visite"
+                   rel="noopener"
+                   target="_blank">
+                    <span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span> Voir le rapport de visite
+                </a>
+            {% else %}
+                <span class="fr-btn fr-btn--secondary fr-icon-warning-fill" title="Maintenance en cours">
+                    Voir le rapport de visite
+                </span>
+            {% endif %}
         {% endif %}
     {% else %}
         &nbsp;

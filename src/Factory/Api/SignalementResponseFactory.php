@@ -39,8 +39,8 @@ readonly class SignalementResponseFactory
         private VisiteFactory $visiteFactory,
         private Security $security,
         private PartnerAuthorizedResolver $partnerAuthorizedResolver,
-        #[Autowire(env: 'FEATURE_S3_ENABLE')]
-        private bool $featureS3Enable,
+        #[Autowire(env: 'S3_ENABLE')]
+        private bool $s3Enable,
     ) {
     }
 
@@ -167,7 +167,7 @@ readonly class SignalementResponseFactory
             }
         }
 
-        if ($this->featureS3Enable) {
+        if ($this->s3Enable) {
             foreach ($signalement->getFiles() as $file) {
                 $signalementResponse->files[] = $this->fileFactory->createFrom($file);
             }

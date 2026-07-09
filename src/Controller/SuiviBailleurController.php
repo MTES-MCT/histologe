@@ -38,8 +38,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class SuiviBailleurController extends AbstractController
 {
     public function __construct(
-        #[Autowire(env: 'FEATURE_S3_ENABLE')]
-        private bool $featureS3Enabled,
+        #[Autowire(env: 'S3_ENABLE')]
+        private bool $s3Enable,
     ) {
     }
 
@@ -129,7 +129,7 @@ class SuiviBailleurController extends AbstractController
             'form' => $form,
             'formMessage' => $formMessage,
             'engagementTravauxPdf' => $engagementTravauxPdf,
-            'feature_s3_enable' => $this->featureS3Enabled,
+            's3_enable' => $this->s3Enable,
         ]);
     }
 

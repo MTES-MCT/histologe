@@ -17,8 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 class MessageBailleurType extends AbstractType
 {
     public function __construct(
-        #[Autowire(env: 'FEATURE_S3_ENABLE')]
-        private bool $featureS3Enabled,
+        #[Autowire(env: 'S3_ENABLE')]
+        private bool $s3Enable,
     ) {
     }
 
@@ -47,7 +47,7 @@ class MessageBailleurType extends AbstractType
                 'multiple' => true,
                 'attr' => [
                     'accept' => implode(',', File::DOCUMENT_MIME_TYPES),
-                    'disabled' => !$this->featureS3Enabled,
+                    'disabled' => !$this->s3Enable,
                 ],
                 'constraints' => [
                     new Assert\All([
