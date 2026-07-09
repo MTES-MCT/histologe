@@ -120,15 +120,15 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?ProprioType $typeProprio = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $nomProprio = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $denominationProprio = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $prenomProprio = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -166,12 +166,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?bool $isNotOccupant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
-    #[Assert\Length(max: 50, groups: ['Default', 'fo_suivi_usager_tiers'])]
+    #[Assert\Length(max: 50, groups: ['Default', 'fo_suivi_usager_tiers', 'bo_step_coordonnees'])]
     #[Assert\NotBlank(groups: ['fo_suivi_usager_tiers'])]
     private ?string $nomDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
-    #[Assert\Length(max: 50, groups: ['Default', 'fo_suivi_usager_tiers'])]
+    #[Assert\Length(max: 50, groups: ['Default', 'fo_suivi_usager_tiers', 'bo_step_coordonnees'])]
     #[Assert\NotBlank(groups: ['fo_suivi_usager_tiers'])]
     private ?string $prenomDeclarant = null;
 
@@ -189,22 +189,24 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $mailDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 200, nullable: true)]
+    #[Assert\Length(max: 200, groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $structureDeclarant = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(max: 255, groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $matriculeDeclarant = null;
 
     #[ORM\Column(type: 'string', length: 10, nullable: true)]
     private ?string $civiliteOccupant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
-    #[Assert\NotBlank(groups: ['Default', 'fo_coordonnees_occupant'])]
-    #[Assert\Length(max: 50)]
+    #[Assert\NotBlank(groups: ['Default', 'fo_coordonnees_occupant', 'bo_step_coordonnees'])]
+    #[Assert\Length(max: 50, groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $nomOccupant = null;
 
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
-    #[Assert\NotBlank(groups: ['Default', 'fo_coordonnees_occupant'])]
-    #[Assert\Length(max: 50)]
+    #[Assert\NotBlank(groups: ['Default', 'fo_coordonnees_occupant', 'bo_step_coordonnees'])]
+    #[Assert\Length(max: 50, groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $prenomOccupant = null;
 
     #[ORM\Column(type: 'string', length: 128, nullable: true)]
@@ -245,15 +247,15 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?string $banIdOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $nomAgence = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $denominationAgence = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $prenomAgence = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
