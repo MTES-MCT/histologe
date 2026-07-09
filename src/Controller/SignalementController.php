@@ -431,7 +431,7 @@ class SignalementController extends AbstractController
     ): JsonResponse {
         if (!$this->s3Enable) {
             return $this->json([
-                'response' => 'L\'accès aux documents et aux photos est temporairement désactivé pour maintenance. '
+                'response' => 'L\'envoi des documents et des photos est temporairement désactivé pour maintenance. '
                     .'Vous pouvez néanmoins déposer votre signalement dès maintenant. '
                     .'Les documents et photos pourront être ajoutés ultérieurement.',
             ], Response::HTTP_BAD_REQUEST);
