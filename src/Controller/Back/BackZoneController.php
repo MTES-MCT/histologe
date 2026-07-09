@@ -103,7 +103,9 @@ class BackZoneController extends AbstractController
             if ($file) {
                 $this->manageCsvFileFormErrors($file, $zone, $form, $csvParser);
             }
-            $this->validateArea($zone, $form, $em);
+            if ($form->isValid()) {
+                $this->validateArea($zone, $form, $em);
+            }
             if (!$form->isValid()) {
                 $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm($form)];
 
@@ -135,7 +137,9 @@ class BackZoneController extends AbstractController
             if ($file) {
                 $this->manageCsvFileFormErrors($file, $zone, $form, $csvParser);
             }
-            $this->validateArea($zone, $form, $em);
+            if ($form->isValid()) {
+                $this->validateArea($zone, $form, $em);
+            }
             if ($form->isValid()) {
                 $em->flush();
                 $this->addFlash('success', ['title' => 'Modifications enregistrées', 'message' => 'La zone a bien été modifiée.']);
