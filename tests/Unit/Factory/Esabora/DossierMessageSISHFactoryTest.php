@@ -87,7 +87,6 @@ class DossierMessageSISHFactoryTest extends TestCase
         $this->assertEquals('Non renseigné', $dossierMessage->getPersonnes()[0]->getNom());
         $this->assertEquals($signalement->getPrenomOccupant(), $dossierMessage->getPersonnes()[0]->getPrenom());
         $this->assertEquals($signalement->getNomProprio(), $dossierMessage->getPersonnes()[1]->getNom());
-
         $this->assertEquals(1.5, $dossierMessage->getSignalementScore());
         $this->assertCount(2, $dossierMessage->getPiecesJointesDocuments());
         $this->assertEquals(PartnerType::ARS, $dossierMessage->getPartnerType());
