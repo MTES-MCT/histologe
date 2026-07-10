@@ -209,4 +209,35 @@ class JobEventQuery
             'failed_count' => (int) ($result['failed_count'] ?? 0),
         ];
     }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function findSyncStatusesForSignalement(Signalement $signalement): array
+    {
+        // Pour chaque partenaire affecté au signalement, on récupère le dernier événement de synchronisation (JobEvent) et on détermine le statut de synchronisation en fonction du statut de l'événement.
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->from(JobEvent::class, 'j')
+            ->select([
+                'p.id AS partner_id',
+                'j.action AS last_job_event_action',
+                'j.status AS last_job_event_status',
+            ])
+            ->innerJoin(Partner::class, 'p', 'ON', 'p.id = j.partnerId')
+            ->where('j.signalementId = :signalementId')
+            ->setParameter('signalementId', $signalement->getId())
+            ->orderBy('j.createdAt', 'DESC');
+
+        // On retourne un tableau associatif dont la clé est l'ID du partenaire
+        $results = $qb->getQuery()->getArrayResult();
+        $syncStatuses = [];
+        foreach ($results as $result) {
+            $syncStatuses[$result['partner_id']] = [
+                'last_job_event_action' => $result['last_job_event_action'],
+                'last_job_event_status' => $result['last_job_event_status'],
+            ];
+        }
+
+        return $syncStatuses;
+    }
 }
