@@ -31,9 +31,9 @@
                     <span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span> Voir le rapport de visite
                 </a>
             {% else %}
-                <span class="fr-btn fr-btn--secondary fr-icon-warning-fill" title="Maintenance en cours">
+                <button class="fr-btn fr-btn--secondary fr-icon-warning-fill" disabled title="Maintenance en cours">
                     Voir le rapport de visite
-                </span>
+                </button>
             {% endif %}
         {% endif %}
         {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
@@ -47,9 +47,9 @@
                     Ajouter les photos de la visite
                 </button>
             {% else %}
-                <span class="fr-btn fr-btn--secondary fr-icon-warning-fill" title="Maintenance en cours">
+                <button class="fr-btn fr-btn--secondary fr-icon-warning-fill" disabled title="Maintenance en cours">
                     Ajouter les photos de la visite
-                </span>
+                </button>
             {% endif %}
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_NOT_DONE') %}
@@ -63,9 +63,9 @@
                     <span aria-hidden="true" class="fr-fi-file-line fr-icon--sm"></span> Voir le rapport de visite
                 </a>
             {% else %}
-                <span class="fr-btn fr-btn--secondary fr-icon-warning-fill" title="Maintenance en cours">
+                <button class="fr-btn fr-btn--secondary fr-icon-warning-fill" disabled title="Maintenance en cours">
                     Voir le rapport de visite
-                </span>
+                </button>
             {% endif %}
         {% endif %}
     {% else %}

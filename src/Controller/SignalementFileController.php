@@ -133,7 +133,7 @@ class SignalementFileController extends AbstractController
     ): JsonResponse {
         if (!$this->s3Enable) {
             return $this->json(
-                ['response' => 'La suppression aux documents et photos est temporairement désactivé pour maintenance.'],
+                ['response' => 'La suppression des documents et photos est temporairement désactivée pour maintenance.'],
                 Response::HTTP_BAD_REQUEST
             );
         }
@@ -170,7 +170,7 @@ class SignalementFileController extends AbstractController
     ): Response {
         if (!$this->s3Enable) {
             return $this->json(
-                ['response' => 'La suppression aux documents et photos est temporairement désactivé pour maintenance.'],
+                ['response' => 'La suppression des documents et photos est temporairement désactivée pour maintenance.'],
                 Response::HTTP_BAD_REQUEST
             );
         }
