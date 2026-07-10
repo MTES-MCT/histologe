@@ -23,11 +23,11 @@ class EsaboraSCHSService extends AbstractEsaboraService
     public const string ACTION_SYNC_EVENTFILES = 'sync_eventfiles';
 
     public function __construct(
-        private readonly HttpClientInterface $client,
-        private readonly LoggerInterface $logger,
-        private readonly UploadHandlerService $uploadHandlerService,
+        HttpClientInterface $client,
+        LoggerInterface $logger,
+        UploadHandlerService $uploadHandlerService,
     ) {
-        parent::__construct($this->client, $this->logger);
+        parent::__construct($client, $logger, $uploadHandlerService);
     }
 
     public function pushDossier(DossierMessageSCHS $dossierMessage): ResponseInterface|JsonResponse
@@ -186,12 +186,7 @@ class EsaboraSCHSService extends AbstractEsaboraService
     {
         $piecesJointes = [];
         if ($encodeDocuments) {
-            $piecesJointes = array_map(function ($pieceJointe) {
-                $filepath = $this->uploadHandlerService->getTmpFilepath($pieceJointe['documentContent']);
-                $pieceJointe['documentContent'] = base64_encode((string) file_get_contents($filepath));
-
-                return $pieceJointe;
-            }, $dossierMessage->getPiecesJointes());
+            $piecesJointes = $this->preparePiecesJointes($dossierMessage->getPiecesJointes());
         }
 
         return [

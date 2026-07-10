@@ -14,19 +14,22 @@
                                 <span class="fr-icon-arrow-right-line fr-icon--lg" aria-hidden="true"></span>
                                 Détails #{{ connection.reference }}
                             </h2>
-                            <p>Synchronisation du {{ syncAt }} pour {{ connection.nom }}<br>
-                                {% if connection.status == 'failed' %}
-                                    <span class="fr-badge fr-badge--no-icon fr-badge--error">Fail</span>
-                                {% elseif connection.status == 'success' and isResponseValid %}
-                                    <span class="fr-badge fr-badge--no-icon fr-badge--success">Success</span>
-                                {% else %}
-                                    <span class="fr-badge fr-badge--no-icon fr-badge--new">Warning</span>
-                                {% endif %}
-                            </p>
+                        <p>Synchronisation du {{ syncAt }} pour {{ connection.nom }}<br>
+                            {% include 'back/interconnexion/_badge_status.html.twig' %}
+                        </p>
                         </div>
-                        <div>
-                            <h3>Requête</h3>
-                            <pre>
+                        <div class="fr-mb-2w">
+                            <div class="fr-grid-row fr-grid-row--middle">
+                                <h3 class="fr-m-0 fr-mr-2w">Requête</h3>
+                                {% if connection.message is not empty %}
+                                    <button class="fr-btn fr-btn--sm fr-btn--tertiary-no-outline fr-icon-clipboard-line fr-btn--icon-left btn-copy-request"
+                                            data-copy-target="request-{{ modalId }}"
+                                            title="Copier la requête">
+                                        Copier
+                                    </button>
+                                {% endif %}
+                            </div>
+                            <pre id="request-{{ modalId }}">
                                 <code>{{ connection.message }}</code>
                             </pre>
                         </div>
@@ -39,12 +42,41 @@
                                 </p>
                             </div>
                         {% endif %}
-                        <div>
-                            <h3>Réponse</h3>
-                            <pre>
+                        <div class="fr-mb-2w">
+                            <div class="fr-grid-row fr-grid-row--middle">
+                                <h3 class="fr-m-0 fr-mr-2w">Réponse</h3>
+                                {% if connection.response is not empty %}
+                                    <button class="fr-btn fr-btn--sm fr-btn--tertiary-no-outline fr-icon-clipboard-line fr-btn--icon-left btn-copy-response"
+                                            data-copy-target="response-{{ modalId }}"
+                                            title="Copier la réponse">
+                                        Copier
+                                    </button>
+                                {% endif %}
+                            </div>
+                            <pre id="response-{{ modalId }}">
                                 <code>{{ connection.response }}</code>
                             </pre>
                         </div>
+                    </div>
+                    <div class="fr-modal__footer">
+                        <ul class="fr-btns-group fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                            {% if loop.index > 1 %}
+                                <li>
+                                    <button class="fr-btn fr-btn--secondary fr-icon-arrow-left-line fr-btn--icon-left btn-modal-prev"
+                                            data-prev-modal="modal-{{ loop.index - 1 }}">
+                                        Précédent
+                                    </button>
+                                </li>
+                            {% endif %}
+                            {% if not loop.last %}
+                                <li>
+                                    <button class="fr-btn fr-btn--secondary fr-icon-arrow-right-line fr-btn--icon-right btn-modal-next"
+                                            data-next-modal="modal-{{ loop.index + 1 }}">
+                                        Suivant
+                                    </button>
+                                </li>
+                            {% endif %}
+                        </ul>
                     </div>
                 </div>
             </div>

@@ -49,3 +49,4 @@ import './vanilla/controllers/back_signalement_same_address/back_signalement_sam
 import './vanilla/controllers/back_histo_address/back_histo_address.js';
 import './vanilla/controllers/back_territory_management_arrete_index/back_territory_management_arrete_index.js';
 import './vanilla/controllers/back_arrete_import/back_arrete_import.js';
+import './vanilla/controllers/back_interconnexion_index/back_interconnexion_index.js';

@@ -24,11 +24,11 @@ class EsaboraSISHService extends AbstractEsaboraService
     public const string NAME_SI = 'SI-Santé Habitat (SI-SH)';
 
     public function __construct(
-        private readonly HttpClientInterface $client,
-        private readonly LoggerInterface $logger,
-        private readonly UploadHandlerService $uploadHandlerService,
+        HttpClientInterface $client,
+        LoggerInterface $logger,
+        UploadHandlerService $uploadHandlerService,
     ) {
-        parent::__construct($this->client, $this->logger);
+        parent::__construct($client, $logger, $uploadHandlerService);
     }
 
     public function pushAdresse(DossierMessageSISH $dossierMessageSISH): DossierPushSISHResponse
@@ -299,12 +299,7 @@ class EsaboraSISHService extends AbstractEsaboraService
     private function preparePayloadPushDossier(
         DossierMessageSISH $dossierMessageSISH,
     ): array {
-        $piecesJointes = array_map(function ($pieceJointe) {
-            $filepath = $this->uploadHandlerService->getTmpFilepath($pieceJointe['documentContent']);
-            $pieceJointe['documentContent'] = base64_encode((string) file_get_contents($filepath));
-
-            return $pieceJointe;
-        }, $dossierMessageSISH->getPiecesJointesDocuments());
+        $piecesJointes = $this->preparePiecesJointes($dossierMessageSISH->getPiecesJointesDocuments());
 
         $transliterator = EmojiTransliterator::create('strip');
 

@@ -7,6 +7,7 @@ use App\Entity\JobEvent;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Service\ListFilters\SearchInterconnexion;
+use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -99,6 +100,31 @@ class JobEventQuery
 
         if ($searchInterconnexion->getPartnerType()) {
             $qb->andWhere('j.partnerType = :partnerType')->setParameter('partnerType', $searchInterconnexion->getPartnerType()->value);
+        }
+
+        if ($searchInterconnexion->showOnlyDataErrors()) {
+            // `stream_get_meta_data()`est remonté lorsqu'une ressource est attendue
+            // mais qu'une valeur `false` est renvoyée (par exemple par `fopen()` en cas d'échec).
+            // Ajout de contrôles manquants
+            /* @see UploadHandlerService::toTempFolder */
+            /* @see AbstractEsaboraService::preparePiecesJointes */
+            $qb->andWhere('
+            j.response LIKE :data_error_1 
+            OR j.response LIKE :data_error_2 
+            OR j.response LIKE :data_error_3 
+            OR j.response LIKE :data_error_4 
+            OR j.response LIKE :data_error_5 
+            OR j.response LIKE :data_error_6 
+            OR j.response LIKE :data_error_7 
+            OR j.status = :status_success')
+                ->setParameter('data_error_1', '%WS_ERR_MOD_VERIFKEY%')
+                ->setParameter('data_error_2', '%WS_ERR_DOCUMENT_SIZE%')
+                ->setParameter('data_error_3', '%WS_ERR_MULT_TIMEOUT%')
+                ->setParameter('data_error_4', '%WS_ERR_MULT_WSNOTFOUND%')
+                ->setParameter('data_error_5', '%stream_get_meta_data%')
+                ->setParameter('data_error_6', '%timeout%')
+                ->setParameter('data_error_7', '%nginx%')
+                ->setParameter('status_success', 'success');
         }
 
         return $qb;

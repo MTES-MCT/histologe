@@ -57,7 +57,7 @@ class JobEventRepositoryTest extends KernelTestCase
             0
         );
 
-        $this->assertCount(5, $jobEvents);
+        $this->assertCount(4, $jobEvents);
         $this->assertEquals($signalement->getReference(), $jobEvents[0]['reference']);
     }
 
@@ -69,6 +69,7 @@ class JobEventRepositoryTest extends KernelTestCase
 
         $searchInterconnexion = new SearchInterconnexion();
         $searchInterconnexion->setAction(AbstractEsaboraService::ACTION_PUSH_DOSSIER);
+        $searchInterconnexion->setShowOnlyDataErrors(false);
 
         $jobEvents = $jobEventQuery->findLastByTerritory(
             365,
@@ -81,18 +82,51 @@ class JobEventRepositoryTest extends KernelTestCase
         $this->assertEquals(AbstractEsaboraService::ACTION_PUSH_DOSSIER, $jobEvents[0]['action']);
     }
 
+    public function testFindLastJobEventByTerritoryShowingOnlyDataErrors(): void
+    {
+        $container = static::getContainer();
+        /** @var JobEventQuery $jobEventQuery */
+        $jobEventQuery = $container->get(JobEventQuery::class);
+
+        $searchInterconnexion = new SearchInterconnexion();
+        $searchInterconnexion->setShowOnlyDataErrors(true);
+
+        $jobEvents = $jobEventQuery->findLastByTerritory(
+            365,
+            $searchInterconnexion,
+            100,
+            0
+        );
+
+        foreach ($jobEvents as $jobEvent) {
+            $response = $jobEvent['response'];
+            $status = $jobEvent['status'];
+            $this->assertTrue(
+                'success' === $status
+                || str_contains($response, 'WS_ERR_MOD_VERIFKEY')
+                || str_contains($response, 'WS_ERR_DOCUMENT_SIZE')
+                || str_contains($response, 'stream_get_meta_data')
+            );
+        }
+    }
+
     /**
      * @param array<int, PartnerType> $partnerTypes
+     * @param array<int, string>      $actions
      */
     #[DataProvider('provideDataForFailedJobEvents')]
-    public function testFindAffectationsWithFailedJobEvents(string $interfacageType, string $action, array $partnerTypes, int $expectedCount): void
-    {
+    public function testFindAffectationsWithFailedJobEvents(
+        string $interfacageType,
+        array $actions,
+        array $partnerTypes,
+        int $expectedCount,
+    ): void {
         $container = static::getContainer();
         $affectationRepository = $container->get(AffectationRepository::class);
 
         $affectationsWithFailedJobEvents = $affectationRepository->findAffectationsWithFailedJobEvents(
             $interfacageType,
-            $action,
+            $actions,
             $partnerTypes
         );
 
@@ -103,21 +137,25 @@ class JobEventRepositoryTest extends KernelTestCase
     {
         yield 'sish - push dossier adresse' => [
             InterfacageType::ESABORA->value,
-            AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE,
-            [],
+            [
+                AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE,
+                AbstractEsaboraService::ACTION_PUSH_DOSSIER,
+                AbstractEsaboraService::ACTION_PUSH_DOSSIER_PERSONNE,
+            ],
+            [PartnerType::ARS, PartnerType::COMMUNE_SCHS],
             1,
         ];
 
         yield 'schs - push dossier SCHS' => [
             InterfacageType::ESABORA->value,
-            AbstractEsaboraService::ACTION_PUSH_DOSSIER,
+            [AbstractEsaboraService::ACTION_PUSH_DOSSIER],
             [PartnerType::COMMUNE_SCHS],
             0,
         ];
 
         yield 'idoss - push dossier IDOSS' => [
             InterfacageType::IDOSS->value,
-            IdossService::ACTION_PUSH_DOSSIER,
+            [IdossService::ACTION_PUSH_DOSSIER],
             [],
             1,
         ];

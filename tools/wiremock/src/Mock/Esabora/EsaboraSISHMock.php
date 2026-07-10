@@ -58,6 +58,18 @@ class EsaboraSISHMock extends AbstractEsaboraMock
             self::RESOURCES_DIR,
         );
 
+        self::createPushDossierMock(
+            $wiremock,
+            'doTreatment',
+            'SISH_DOSSIER',
+            'ws_dossier.json',
+            200,
+            '$.fieldList[?(@.fieldName == "Reference_Dossier" && @.fieldValue =~ /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/)]',
+            self::BASE_PATH,
+            self::RESOURCES_DIR,
+            10
+        );
+
         self::createSearchDossierMock(
             $wiremock,
             'doSearch',
@@ -108,6 +120,20 @@ class EsaboraSISHMock extends AbstractEsaboraMock
             'ws_etat_dossier_sas/etat_termine.json',
             self::BASE_PATH,
             self::RESOURCES_DIR,
+        );
+
+        self::createSearchDossierMock(
+            $wiremock,
+            'doSearch',
+            self::SISH_ETAT_DOSSIER_SAS,
+            WireMock::matchingJsonPath(
+                self::MATCH_JSON_PATH,
+                WireMock::matching('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')
+            ),
+            'ws_etat_dossier_sas/etat_importe.json',
+            self::BASE_PATH,
+            self::RESOURCES_DIR,
+            10
         );
 
         self::createMockIntervention(
