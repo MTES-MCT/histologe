@@ -5,6 +5,7 @@ namespace App\Service\Interconnection\Esabora;
 use App\Entity\Affectation;
 use App\Service\Interconnection\Esabora\Response\DossierCollectionResponseInterface;
 use App\Service\Interconnection\Esabora\Response\DossierResponseInterface;
+use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,8 +31,9 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
     public const string FORMAT_DATE_TIME = 'd/m/Y H:i';
 
     public function __construct(
-        private readonly HttpClientInterface $client,
-        private readonly LoggerInterface $logger,
+        protected readonly HttpClientInterface $client,
+        protected readonly LoggerInterface $logger,
+        protected readonly UploadHandlerService $uploadHandlerService,
     ) {
     }
 
@@ -58,14 +60,29 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
 
             $options = [...$options, ...$requestOptions];
 
-            return $this->client->request('POST', $url.$taskPath, $options);
+            $response = $this->client->request('POST', $url.$taskPath, $options);
+
+            if (Response::HTTP_BAD_REQUEST === $response->getStatusCode()) {
+                $metadata = $options['extra']['job_event_metadata'] ?? [];
+                $this->logger->error('[Esabora] Bad request', [
+                    'status_code' => $response->getStatusCode(),
+                    'url' => $url.$taskPath,
+                    'response' => $response->getContent(false),
+                    'signalement_id' => $metadata['signalementId'] ?? null,
+                    'partner_id' => $metadata['partnerId'] ?? null,
+                    'partner_type' => $metadata['partnerType'] ?? null,
+                    'action' => $metadata['action'] ?? null,
+                ]);
+            }
+
+            return $response;
         } catch (\Throwable $exception) {
             $this->logger->error($exception->getMessage());
         }
 
-        return (new JsonResponse([
+        return new JsonResponse([
             'message' => $exception->getMessage(),
-        ]))->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
+        ])->setStatusCode(Response::HTTP_SERVICE_UNAVAILABLE);
     }
 
     abstract public function getStateDossier(Affectation $affectation, string $uuidSignalement): DossierResponseInterface;
@@ -114,5 +131,29 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
         }
 
         return self::TASK_INSERT_PATH;
+    }
+
+    /**
+     * @param array<mixed> $piecesJointes
+     *
+     * @return array<mixed>
+     */
+    protected function preparePiecesJointes(array $piecesJointes): array
+    {
+        return array_map(function ($pieceJointe) {
+            $filepath = $this->uploadHandlerService->getTmpFilepath($pieceJointe['documentContent']);
+            if (null !== $filepath && file_exists($filepath)) {
+                $content = file_get_contents($filepath);
+                if (false !== $content) {
+                    $pieceJointe['documentContent'] = base64_encode($content);
+                } else {
+                    $pieceJointe['documentContent'] = null;
+                }
+            } else {
+                $pieceJointe['documentContent'] = null;
+            }
+
+            return $pieceJointe;
+        }, $piecesJointes);
     }
 }

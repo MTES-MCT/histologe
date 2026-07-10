@@ -17,6 +17,7 @@ use App\Service\ListFilters\SearchPartner;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -48,22 +49,32 @@ class SearchInterconnexionType extends AbstractType
             'attr' => ['placeholder' => 'Taper la référence'],
         ]);
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($builder) {
-            $territory = $builder->getData()->getTerritory() ? $this->territoryRepository->find($builder->getData()->getTerritory()) : null;
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $data = $event->getData();
+            $territory = $data->getTerritory() ? $this->territoryRepository->find($data->getTerritory()) : null;
+            $partnerType = $data->getPartnerType();
             $this->addPartnersField(
                 $event->getForm(),
-                $territory
+                $territory,
+                $partnerType
             );
         });
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $data = $event->getData();
+            $territory = null;
             if (isset($data['territory'])) {
-                $territory = $data['territory'] ? $this->territoryRepository->find($data['territory']) : null;
-                $this->addPartnersField(
-                    $event->getForm(),
-                    $territory
-                );
+                $territory = $this->territoryRepository->find($data['territory']);
             }
+            $partnerType = null;
+            if (isset($data['partnerType'])) {
+                $partnerType = PartnerType::tryFrom($data['partnerType']);
+            }
+
+            $this->addPartnersField(
+                $event->getForm(),
+                $territory,
+                $partnerType
+            );
 
             if (isset($data['page']) && (!is_numeric($data['page']))) {
                 $data['page'] = 1;
@@ -134,13 +145,28 @@ class SearchInterconnexionType extends AbstractType
             'label' => 'Trier par',
             'data' => 'j.createdAt-DESC',
         ]);
+        $builder->add('showOnlyDataErrors', CheckboxType::class, [
+            'required' => false,
+            'label' => 'Masquer les erreurs techniques',
+            'attr' => [
+                'class' => 'fr-toggle__input fr-auto-submit',
+            ],
+            'row_attr' => [
+                'class' => 'fr-toggle',
+            ],
+            'label_attr' => [
+                'class' => 'fr-toggle__label',
+            ],
+            'false_values' => ['0', null],
+            'empty_data' => '0',
+        ]);
         $builder->add('page', HiddenType::class);
     }
 
     /**
      * @param FormInterface<mixed> $builder
      */
-    private function addPartnersField(FormInterface $builder, ?Territory $territory): void
+    private function addPartnersField(FormInterface $builder, ?Territory $territory, ?PartnerType $partnerType): void
     {
         $choicesPartners = [];
         /** @var User $user */
@@ -149,6 +175,9 @@ class SearchInterconnexionType extends AbstractType
         $searchPartner->setIsOnlyInterconnected(true);
         if ($territory) {
             $searchPartner->setTerritoire($territory);
+        }
+        if ($partnerType) {
+            $searchPartner->setPartnerType($partnerType);
         }
         $partners = $this->partnerRepository->getPartners(1000, $searchPartner);
 

@@ -3,6 +3,7 @@
 namespace App\Command\Cron;
 
 use App\Entity\Enum\InterfacageType;
+use App\Entity\Enum\PartnerType;
 use App\Messenger\InterconnectionBus;
 use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
@@ -18,6 +19,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
@@ -31,19 +33,23 @@ class RetryFailedPushCommand extends AbstractCronCommand
         'sish' => [
             'label' => 'SI-SH',
             'interfacageType' => InterfacageType::ESABORA,
-            'action' => AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE,
+            'actions' => [
+                AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE,
+                AbstractEsaboraService::ACTION_PUSH_DOSSIER,
+                AbstractEsaboraService::ACTION_PUSH_DOSSIER_PERSONNE,
+            ],
             'partnerTypes' => DossierMessageSISH::CAN_SYNC_SISH_ESABORA,
         ],
         'schs' => [
             'label' => 'Esabora SCHS',
             'interfacageType' => InterfacageType::ESABORA,
-            'action' => AbstractEsaboraService::ACTION_PUSH_DOSSIER,
+            'actions' => [AbstractEsaboraService::ACTION_PUSH_DOSSIER],
             'partnerTypes' => DossierMessageSCHS::CAN_SYNC_SCHS_ESABORA,
         ],
         'idoss' => [
             'label' => 'IDOSS',
             'interfacageType' => InterfacageType::IDOSS,
-            'action' => IdossService::ACTION_PUSH_DOSSIER,
+            'actions' => [IdossService::ACTION_PUSH_DOSSIER],
             'partnerTypes' => [],
         ],
     ];
@@ -53,6 +59,8 @@ class RetryFailedPushCommand extends AbstractCronCommand
         private readonly InterconnectionBus $interconnectionBus,
         private readonly ParameterBagInterface $parameterBag,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        #[Autowire(env: 'FEATURE_SCHS_DISPATCH_SISH_ENABLE')]
+        private readonly bool $featureSchsDispatchSishEnable,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -89,10 +97,13 @@ class RetryFailedPushCommand extends AbstractCronCommand
         }
 
         $config = self::MAPPING_SERVICES[$serviceType];
+        if ('sish' === $serviceType && !$this->featureSchsDispatchSishEnable) {
+            $config['partnerTypes'] = [PartnerType::ARS];
+        }
 
         $affectations = $this->affectationRepository->findAffectationsWithFailedJobEvents(
             $config['interfacageType']->value,
-            $config['action'],
+            $config['actions'],
             $config['partnerTypes'],
         );
 
