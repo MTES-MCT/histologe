@@ -52,14 +52,14 @@ readonly class QueryBuilderFactory
             if (empty($options['territories'])) {
                 $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
                 if (empty($filterTerritoryId) && 1 === \count($user->getPartnersTerritories())) {
-                    $filterTerritoryId = $user->getPartnersTerritories()[0]->getId();
+                    $filterTerritoryId = $user->getFirstTerritory()->getId();
                 }
             }
         } elseif ($user->isUserPartner() || $user->isPartnerAdmin()) {
             if (empty($options['territories'])) {
                 $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
                 if (empty($filterTerritoryId) && 1 === \count($user->getPartnersTerritories())) {
-                    $filterTerritoryId = $user->getPartnersTerritories()[0]->getId();
+                    $filterTerritoryId = $user->getFirstTerritory()->getId();
                 }
             }
             $statuses = [];
