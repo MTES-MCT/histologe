@@ -718,6 +718,14 @@ div.photos-album {
     border: 2px dashed #929292;
     color: #929292;
 }
+.component-upload-container--disabled {
+    .component-upload-drop-section {
+        background-color: var(--background-disabled-grey);
+        color: var(--text-disabled-grey);
+        border-color: var(--border-disabled-grey);
+        cursor: not-allowed;
+    }
+}
 .component-upload-list, .component-upload-list-errors {
     text-align: left;
 }

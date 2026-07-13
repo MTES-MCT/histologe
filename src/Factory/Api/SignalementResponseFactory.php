@@ -20,6 +20,7 @@ use App\Entity\User;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 readonly class SignalementResponseFactory
 {
@@ -38,6 +39,8 @@ readonly class SignalementResponseFactory
         private VisiteFactory $visiteFactory,
         private Security $security,
         private PartnerAuthorizedResolver $partnerAuthorizedResolver,
+        #[Autowire(env: 'S3_ENABLE')]
+        private bool $s3Enable,
     ) {
     }
 
@@ -163,8 +166,11 @@ readonly class SignalementResponseFactory
                 $signalementResponse->visites[] = $this->visiteFactory->createInstance($intervention);
             }
         }
-        foreach ($signalement->getFiles() as $file) {
-            $signalementResponse->files[] = $this->fileFactory->createFrom($file);
+
+        if ($this->s3Enable) {
+            foreach ($signalement->getFiles() as $file) {
+                $signalementResponse->files[] = $this->fileFactory->createFrom($file);
+            }
         }
         // divers
         $signalementResponse->territoireNom = $signalement->getTerritory()?->getName();
@@ -276,8 +282,8 @@ readonly class SignalementResponseFactory
 
             return new Personne(
                 personneType: $personneType,
-                precisionTypeSiBailleur: $signalement->getTypeProprio(),
                 structure: ProprioType::ORGANISME_SOCIETE === $signalement->getTypeProprio() ? $signalement->getDenominationProprio() : '',
+                precisionTypeSiBailleur: $signalement->getTypeProprio(),
                 nom: $signalement->getNomProprio(),
                 prenom: $signalement->getPrenomProprio(),
                 email: $signalement->getMailProprio(),
