@@ -103,6 +103,7 @@ class JobEventHttpClient implements HttpClientInterface
             $payload = $this->filterPayload($jobEventMetaData->getPayload());
         }
 
+        $hasOperationalError = $this->hasOperationalError((string) $responseContent);
         $this->jobEventManager->createJobEvent(
             service: $service,
             action: $action,
@@ -115,6 +116,7 @@ class JobEventHttpClient implements HttpClientInterface
             partnerType: $jobEventMetaData->getPartnerType(),
             attachmentsCount: $jobEventMetaData->getAttachmentsCount(),
             attachmentsSize: $jobEventMetaData->getAttachmentsSize(),
+            isOperationalError: $hasOperationalError,
         );
         $flush = 'esabora' !== $jobEventMetaData->getService() || !str_contains($jobEventMetaData->getAction(), 'sync');
         if ($flush) {
@@ -162,5 +164,16 @@ class JobEventHttpClient implements HttpClientInterface
         }
 
         return !empty($responseDecoded) ? $responseDecoded : [];
+    }
+
+    private function hasOperationalError(string $response): bool
+    {
+        foreach (JobEvent::OPERATIONAL_ERRORS as $error) {
+            if (str_contains($response, $error)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
