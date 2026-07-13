@@ -31,7 +31,7 @@ class ArreteImportLoader
     /**
      * @return array{string[], ArreteImportRow[]}
      */
-    public function validate(string $filepath, ?User $user = null): array
+    public function validate(string $filepath, User $user): array
     {
         $errors = [];
         $validRows = [];
@@ -96,7 +96,7 @@ class ArreteImportLoader
      *
      * @throws InvalidValueException
      */
-    public function load(array $data, ?User $user = null): array
+    public function load(array $data, User $user): array
     {
         $this->metadata = [];
         $this->metadata['countSuccess'] = 0;
@@ -161,7 +161,7 @@ class ArreteImportLoader
 
     private function shouldValidateAddress(
         ArreteImportRow $arreteImportRow,
-        ?User $user,
+        User $user,
     ): bool {
         $address = $this->addressService->getAddress($arreteImportRow->getAddress());
 
@@ -179,7 +179,7 @@ class ArreteImportLoader
             return true;
         }
 
-        if (!$user?->isTerritoryAdmin()) {
+        if (!$user->isTerritoryAdmin()) {
             return false;
         }
 

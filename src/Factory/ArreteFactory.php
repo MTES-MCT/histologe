@@ -25,7 +25,7 @@ class ArreteFactory
     /**
      * @throws InvalidValueException
      */
-    public function createInstanceFrom(ArreteImportRow $arreteImportRow, ?User $user = null): ?Arrete
+    public function createInstanceFrom(ArreteImportRow $arreteImportRow, User $user): ?Arrete
     {
         $addressResponse = $this->addressService->getAddress($arreteImportRow->getAddress());
         if ($addressResponse->getScore() < AddressService::SCORE_IF_BAN_ID_ACCEPTED) {
@@ -80,7 +80,7 @@ class ArreteFactory
             $address->setTerritory($territoryAddress);
         }
 
-        if ($user?->isTerritoryAdmin() && $territoryAddress->getId() !== $user->getFirstTerritory()->getId()) {
+        if ($user->isTerritoryAdmin() && $territoryAddress->getId() !== $user->getFirstTerritory()->getId()) {
             return null;
         }
 
