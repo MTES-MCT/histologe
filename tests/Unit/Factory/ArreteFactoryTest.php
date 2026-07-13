@@ -137,7 +137,7 @@ class ArreteFactoryTest extends TestCase
                 ->setNomVoie('Chemin du grand méchant loup')
                 ->setCodePostal('30360')
                 ->setCommune('Vézénobres'),
-            null,
+            new User(),
             null,
             null,
             null,
@@ -146,7 +146,7 @@ class ArreteFactoryTest extends TestCase
 
         yield 'Adresse trouvée par banId' => [
             $importRow,
-            null,
+            new User(),
             new Address()->setBanId('2ac4d3cd-67ee-46d4-9b5f-207bc6143aab'),
             null,
             null,
@@ -156,7 +156,7 @@ class ArreteFactoryTest extends TestCase
 
         yield 'Adresse trouvée par critères' => [
             $importRow,
-            null,
+            new User(),
             null,
             new Address()->setStreet('Rue de la tourmentinerie'),
             null,
@@ -166,7 +166,7 @@ class ArreteFactoryTest extends TestCase
 
         yield 'Nouvelle adresse créée avec succès' => [
             $importRow,
-            new User()->setRoles(['ROLE_ADMIN']),
+            (new User())->setRoles(['ROLE_ADMIN']),
             null,
             null,
             'territory_44',
@@ -176,7 +176,7 @@ class ArreteFactoryTest extends TestCase
 
         yield 'Territoire non trouvé' => [
             $importRow,
-            null,
+            new User(),
             null,
             null,
             null,
@@ -197,7 +197,7 @@ class ArreteFactoryTest extends TestCase
 
         yield 'Avec date de main levée' => [
             $importRowWithMainLevee,
-            null,
+            new User(),
             null,
             new Address()->setStreet('Rue de la tourmentinerie'),
             null,
