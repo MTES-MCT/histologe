@@ -27,6 +27,11 @@ class JobEvent
     public const string EXPIRATION_PERIOD_FAILED = '- 6 months';
     public const string EXPIRATION_PERIOD_DEFAULT = '- 1 month';
 
+    // `stream_get_meta_data()`est remonté lorsqu'une ressource est attendue
+    // mais qu'une valeur `false` est renvoyée (par exemple par `fopen()` en cas d'échec).
+    // Ajout de contrôles manquants
+    /* @see UploadHandlerService::toTempFolder */
+    /* @see AbstractEsaboraService::preparePiecesJointes */
     public const array OPERATIONAL_ERRORS = [
         '%WS_ERR_MOD_VERIFKEY%',
         '%WS_ERR_DOCUMENT_SIZE%',
