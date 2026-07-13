@@ -25,8 +25,9 @@ class JobEventManager
         ?PartnerType $partnerType,
         ?int $attachmentsCount = null,
         ?int $attachmentsSize = null,
+        bool $isOperationalError = false,
     ): JobEvent {
-        $jobEvent = (new JobEvent())
+        $jobEvent = new JobEvent()
             ->setSignalementId($signalementId)
             ->setPartnerId($partnerId)
             ->setPartnerType($partnerType)
@@ -34,6 +35,7 @@ class JobEventManager
             ->setAction($action)
             ->setMessage($message)
             ->setResponse($response)
+            ->setIsOperationalError($isOperationalError)
             ->setStatus($status)
             ->setAttachmentsCount($attachmentsCount)
             ->setAttachmentsSize($attachmentsSize)

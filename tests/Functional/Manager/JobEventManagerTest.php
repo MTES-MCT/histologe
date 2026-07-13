@@ -31,12 +31,14 @@ class JobEventManagerTest extends KernelTestCase
             Response::HTTP_OK,
             10,
             10,
-            PartnerType::COMMUNE_SCHS
+            PartnerType::COMMUNE_SCHS,
+            0,
+            0,
         );
 
         $entityManager->flush();
 
-        $this->assertInstanceOf(JobEvent::class, $jobEvent);
         $this->assertEquals('success', $jobEvent->getStatus());
+        $this->assertFalse($jobEvent->isOperationalError());
     }
 }

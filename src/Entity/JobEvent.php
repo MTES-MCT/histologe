@@ -10,13 +10,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: JobEventRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
-#[ORM\Index(columns: ['created_at'], name: 'idx_job_event_created_at')]
-#[ORM\Index(columns: ['partner_id'], name: 'idx_job_event_partner_id')]
-#[ORM\Index(columns: ['service'], name: 'idx_job_event_service')]
-#[ORM\Index(columns: ['partner_type'], name: 'idx_job_event_partner_type')]
-#[ORM\Index(columns: ['created_at', 'partner_id'], name: 'idx_job_event_created_at_partner_id')]
-#[ORM\Index(columns: ['status', 'created_at'], name: 'idx_job_event_status_created_at')]
-#[ORM\Index(columns: ['service', 'action', 'created_at'], name: 'idx_job_event_service_action_created_at')]
+#[ORM\Index(name: 'idx_job_event_created_at', columns: ['created_at'])]
+#[ORM\Index(name: 'idx_job_event_partner_id', columns: ['partner_id'])]
+#[ORM\Index(name: 'idx_job_event_service', columns: ['service'])]
+#[ORM\Index(name: 'idx_job_event_partner_type', columns: ['partner_type'])]
+#[ORM\Index(name: 'idx_job_event_created_at_partner_id', columns: ['created_at', 'partner_id'])]
+#[ORM\Index(name: 'idx_job_event_status_created_at', columns: ['status', 'created_at'])]
+#[ORM\Index(name: 'idx_job_event_service_action_created_at', columns: ['service', 'action', 'created_at'])]
+#[ORM\Index(name: 'idx_job_event_is_operational_error', columns: ['is_operational_error'])]
 class JobEvent
 {
     use TimestampableTrait;
@@ -25,6 +26,21 @@ class JobEvent
     public const string STATUS_FAILED = 'failed';
     public const string EXPIRATION_PERIOD_FAILED = '- 6 months';
     public const string EXPIRATION_PERIOD_DEFAULT = '- 1 month';
+
+    // `stream_get_meta_data()`est remonté lorsqu'une ressource est attendue
+    // mais qu'une valeur `false` est renvoyée (par exemple par `fopen()` en cas d'échec).
+    // Ajout de contrôles manquants
+    /* @see UploadHandlerService::toTempFolder */
+    /* @see AbstractEsaboraService::preparePiecesJointes */
+    public const array OPERATIONAL_ERRORS = [
+        '%WS_ERR_MOD_VERIFKEY%',
+        '%WS_ERR_DOCUMENT_SIZE%',
+        '%WS_ERR_MULT_TIMEOUT%',
+        '%WS_ERR_MULT_WSNOTFOUND%',
+        '%stream_get_meta_data%',
+        '%timeout%',
+        '%nginx%',
+    ];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -51,6 +67,9 @@ class JobEvent
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $response = null;
+
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isOperationalError = false;
 
     #[ORM\Column(nullable: true)]
     private ?int $attachmentsCount = null;
@@ -113,6 +132,18 @@ class JobEvent
     public function setResponse(?string $response): static
     {
         $this->response = $response;
+
+        return $this;
+    }
+
+    public function isOperationalError(): bool
+    {
+        return $this->isOperationalError;
+    }
+
+    public function setIsOperationalError(bool $isOperationalError): static
+    {
+        $this->isOperationalError = $isOperationalError;
 
         return $this;
     }

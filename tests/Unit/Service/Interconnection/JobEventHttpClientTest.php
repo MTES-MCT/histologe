@@ -7,6 +7,8 @@ use App\Manager\JobEventManager;
 use App\Service\Interconnection\JobEventHttpClient;
 use App\Service\Interconnection\JobEventMetaData;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -17,6 +19,7 @@ use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class JobEventHttpClientTest extends TestCase
 {
@@ -200,5 +203,48 @@ class JobEventHttpClientTest extends TestCase
         $this->expectExceptionMessage('url must contain "signal_logement_wiremock" when on localhost.');
 
         $jobEventHttpClient->request('POST', self::API_RANDOM_URL, $options);
+    }
+
+    /**
+     * @dataProvider provideOperationalErrors
+     *
+     * @throws \ReflectionException
+     */
+    #[DataProvider('provideOperationalErrors')]
+    #[AllowMockObjectsWithoutExpectations]
+    public function testHasOperationalError(string $responseContent, bool $expectedResult): void
+    {
+        $mockHttpClient = $this->createMock(HttpClientInterface::class);
+        $jobEventManagerMock = $this->createMock(JobEventManager::class);
+        $loggerMock = $this->createMock(LoggerInterface::class);
+        $entityManagerMock = $this->createMock(EntityManagerInterface::class);
+
+        $jobEventHttpClient = new JobEventHttpClient(
+            $mockHttpClient,
+            $jobEventManagerMock,
+            $loggerMock,
+            $entityManagerMock,
+            self::HISTOLOGE_LOCAL_URL
+        );
+
+        $reflection = new \ReflectionClass(JobEventHttpClient::class);
+        $method = $reflection->getMethod('hasOperationalError');
+
+        $result = $method->invokeArgs($jobEventHttpClient, [$responseContent]);
+        $this->assertSame($expectedResult, $result);
+    }
+
+    public static function provideOperationalErrors(): \Generator
+    {
+        yield 'Error WS_ERR_MOD_VERIFKEY' => ['%WS_ERR_MOD_VERIFKEY%', true];
+        yield 'Error WS_ERR_DOCUMENT_SIZE' => ['%WS_ERR_DOCUMENT_SIZE%', true];
+        yield 'Error WS_ERR_MULT_TIMEOUT' => ['%WS_ERR_MULT_TIMEOUT%', true];
+        yield 'Error WS_ERR_MULT_WSNOTFOUND' => ['%WS_ERR_MULT_WSNOTFOUND%', true];
+        yield 'Error stream_get_meta_data' => ['%stream_get_meta_data%', true];
+        yield 'Error timeout' => ['%timeout%', true];
+        yield 'Error nginx' => ['%nginx%', true];
+        yield 'Mixed content with error' => ['Something happened %WS_ERR_MOD_VERIFKEY% here', true];
+        yield 'No error' => ['Success response', false];
+        yield 'Empty response' => ['', false];
     }
 }
