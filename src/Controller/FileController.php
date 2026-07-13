@@ -7,6 +7,7 @@ use App\Entity\File;
 use App\Service\Files\ImageVariantProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +24,15 @@ class FileController extends AbstractController
         Request $request,
         LoggerInterface $logger,
         ImageVariantProvider $imageVariantProvider,
+        #[Autowire(env: 'S3_ENABLE')]
+        bool $s3Enable,
     ): BinaryFileResponse {
+        if (!$s3Enable) {
+            return new BinaryFileResponse(
+                new SymfonyFile($this->getParameter('images_dir').'doc-file-maintenance.png'),
+            );
+        }
+
         if ($file->getIsSuspicious()) {
             $logger->error(
                 'Tentative d\'accès à un fichier suspect', [
@@ -42,7 +51,7 @@ class FileController extends AbstractController
             $disposition = DocumentType::EXPORT === $file->getDocumentType() ? ResponseHeaderBag::DISPOSITION_ATTACHMENT : ResponseHeaderBag::DISPOSITION_INLINE;
             $file = $imageVariantProvider->getFileVariant($filename, $variant);
 
-            return (new BinaryFileResponse($file))->setContentDisposition(
+            return new BinaryFileResponse($file)->setContentDisposition(
                 $disposition,
                 $file->getFilename()
             );

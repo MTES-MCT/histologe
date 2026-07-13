@@ -4,6 +4,9 @@ function initComponentFileUpload() {
   const containers = document.querySelectorAll('.component-upload-container');
 
   containers.forEach((container) => {
+    if (container.classList.contains('component-upload-container--disabled')) {
+      return;
+    }
     const dropArea = container.querySelector('.component-upload-drop-section');
     const fileSelector = container.querySelector('.component-upload-files-selector');
     const fileSelectorInput = container.querySelector('.component-upload-files-selector-input');

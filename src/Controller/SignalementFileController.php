@@ -19,6 +19,7 @@ use App\Service\UploadHandlerService;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,6 +29,12 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/signalement')]
 class SignalementFileController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(env: 'S3_ENABLE')]
+        private readonly bool $s3Enable,
+    ) {
+    }
+
     #[Route('/{code}/file/add', name: 'signalement_add_file')]
     public function addFileSignalement(
         string $code,
@@ -36,6 +43,13 @@ class SignalementFileController extends AbstractController
         SignalementFileProcessor $signalementFileProcessor,
         SignalementRepository $signalementRepository,
     ): JsonResponse {
+        if (!$this->s3Enable) {
+            return $this->json(
+                ['response' => 'L\'envoi des documents et photos est temporairement désactivé pour maintenance.'],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement) && false === !$this->isGranted(SignalementFoVoter::SIGN_USAGER_ADD_SUIVI, $signalement)) {
             throw $this->createAccessDeniedException();
@@ -68,6 +82,12 @@ class SignalementFileController extends AbstractController
         SignalementRepository $signalementRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
     ): JsonResponse {
+        if (!$this->s3Enable) {
+            return $this->json(
+                ['response' => 'L\'accès aux documents et photos est temporairement désactivé pour maintenance.'],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement) && false === !$this->isGranted(SignalementFoVoter::SIGN_USAGER_ADD_SUIVI, $signalement)) {
             throw $this->createAccessDeniedException();
@@ -111,6 +131,12 @@ class SignalementFileController extends AbstractController
         FileRepository $fileRepository,
         SignalementRepository $signalementRepository,
     ): JsonResponse {
+        if (!$this->s3Enable) {
+            return $this->json(
+                ['response' => 'La suppression des documents et photos est temporairement désactivée pour maintenance.'],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         if (!$this->isGranted(SignalementFoVoter::SIGN_USAGER_EDIT, $signalement) && false === !$this->isGranted(SignalementFoVoter::SIGN_USAGER_ADD_SUIVI, $signalement)) {
             throw $this->createAccessDeniedException();
@@ -142,6 +168,12 @@ class SignalementFileController extends AbstractController
         SignalementRepository $signalementRepository,
         EntityManagerInterface $entityManager,
     ): Response {
+        if (!$this->s3Enable) {
+            return $this->json(
+                ['response' => 'La suppression des documents et photos est temporairement désactivée pour maintenance.'],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted('SIGN_USAGER_EDIT', $signalement);
         /** @var SignalementUser $signalementUser */
@@ -185,6 +217,12 @@ class SignalementFileController extends AbstractController
         MessageBusInterface $messageBus,
         SignalementRepository $signalementRepository,
     ): Response {
+        if (!$this->s3Enable) {
+            return $this->json(
+                ['response' => 'L\'accès aux documents et photos est temporairement désactivé pour maintenance.'],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
         /** @var SignalementUser $signalementUser */

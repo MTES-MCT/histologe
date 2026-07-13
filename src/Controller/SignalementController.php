@@ -56,6 +56,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -72,6 +73,8 @@ class SignalementController extends AbstractController
     public function __construct(
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly CguTiersChecker $cguTiersChecker,
+        #[Autowire(env: 'S3_ENABLE')]
+        private readonly bool $s3Enable,
     ) {
     }
 
@@ -426,6 +429,14 @@ class SignalementController extends AbstractController
         ImageManipulationHandler $imageManipulationHandler,
         FileScanner $fileScanner,
     ): JsonResponse {
+        if (!$this->s3Enable) {
+            return $this->json([
+                'response' => 'L\'envoi des documents et photos est temporairement désactivé pour maintenance. '
+                    .'Vous pouvez néanmoins déposer votre signalement dès maintenant. '
+                    .'Les documents et photos pourront être ajoutés ultérieurement.',
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
         if (null !== ($files = $request->files->get('signalement'))) {
             try {
                 foreach ($files as $key => $file) {
