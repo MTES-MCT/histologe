@@ -19,6 +19,7 @@ class JobEventTest extends TestCase
             ->setResponse('{"sasReference":"00000000-0000-0000-2022-000000000008"}')
             ->setPartnerType(PartnerType::ARS)
             ->setCodeStatus(200)
+            ->setIsOperationalError(false)
             ->setStatus(JobEvent::STATUS_SUCCESS);
 
         $this->assertNull($jobEvent->getId());
@@ -31,5 +32,6 @@ class JobEventTest extends TestCase
         $this->assertEquals('{"sasReference":"00000000-0000-0000-2022-000000000008"}', $jobEvent->getResponse());
         $this->assertEquals(200, $jobEvent->getCodeStatus());
         $this->assertEquals(PartnerType::ARS, $jobEvent->getPartnerType());
+        $this->assertFalse($jobEvent->isOperationalError());
     }
 }

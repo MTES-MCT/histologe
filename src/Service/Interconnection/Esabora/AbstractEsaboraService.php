@@ -5,6 +5,7 @@ namespace App\Service\Interconnection\Esabora;
 use App\Entity\Affectation;
 use App\Service\Interconnection\Esabora\Response\DossierCollectionResponseInterface;
 use App\Service\Interconnection\Esabora\Response\DossierResponseInterface;
+use App\Service\Interconnection\JobEventMetaData;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -63,15 +64,16 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
             $response = $this->client->request('POST', $url.$taskPath, $options);
 
             if (Response::HTTP_BAD_REQUEST === $response->getStatusCode()) {
-                $metadata = $options['extra']['job_event_metadata'] ?? [];
+                /** @var JobEventMetaData|null $metadata */
+                $metadata = $options['extra']['job_event_metadata'] ?? null;
                 $this->logger->error('[Esabora] Bad request', [
                     'status_code' => $response->getStatusCode(),
                     'url' => $url.$taskPath,
                     'response' => $response->getContent(false),
-                    'signalement_id' => $metadata['signalementId'] ?? null,
-                    'partner_id' => $metadata['partnerId'] ?? null,
-                    'partner_type' => $metadata['partnerType'] ?? null,
-                    'action' => $metadata['action'] ?? null,
+                    'signalement_id' => $metadata?->getSignalementId(),
+                    'partner_id' => $metadata?->getPartnerId(),
+                    'partner_type' => $metadata?->getPartnerType()?->value,
+                    'action' => $metadata?->getAction(),
                 ]);
             }
 
@@ -147,9 +149,15 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
                 if (false !== $content) {
                     $pieceJointe['documentContent'] = base64_encode($content);
                 } else {
+                    $this->logger->error('[Esabora] Impossible de lire le fichier temporaire', [
+                        'filepath' => $filepath,
+                    ]);
                     $pieceJointe['documentContent'] = null;
                 }
             } else {
+                $this->logger->error('[Esabora] Fichier temporaire manquant ou invalide', [
+                    'filepath' => $filepath,
+                ]);
                 $pieceJointe['documentContent'] = null;
             }
 
