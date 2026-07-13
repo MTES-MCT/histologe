@@ -377,6 +377,7 @@ export default defineComponent({
       const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
       const address = this.formStore.data[this.id + '_detail_numero'] + ' ' + this.formStore.data[this.id + '_detail_commune']
       const postCode = this.formStore.data[this.id + '_detail_code_postal']
+      const geolocParis = [48.8566, 2.3522] // Coordonnées de Paris par défaut
 
       fetch(apiAdresse + address + '&postcode=' + postCode)
         .then((response) => response.json())
@@ -384,11 +385,11 @@ export default defineComponent({
           if (json.features && json.features.length > 0) {
             this.setupMap([json.features[0].geometry.coordinates[1], json.features[0].geometry.coordinates[0]], 18)
           } else {
-            this.setupMap([48.8566, 2.3522], 13)
+            this.setupMap(geolocParis, 13)
           }
         })
         .catch(() => {
-          this.setupMap([48.8566, 2.3522], 13)
+          this.setupMap(geolocParis, 13)
         })
     },
     setupMap (center: [number, number], zoom: number) {
