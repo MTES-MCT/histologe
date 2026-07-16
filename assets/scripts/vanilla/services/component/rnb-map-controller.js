@@ -247,11 +247,11 @@ export function createRnbMapController({
   // On n'intercepte jamais Tab pour ne pas perturber la navigation naturelle entre
   // les boutons de zoom et les éléments du reste de la page.
   const keyboardHandler = (e) => {
+    // Flèches et Entrée/Espace ne s'appliquent que si le focus est sur mapContainer lui-même,
+    // pas sur ses enfants (boutons zoom+/zoom−, liens attribution, etc.).
+    if (e.target !== mapContainer) return;
     if (!currentBuildings.length) return;
     if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Enter', ' '].includes(e.key)) return;
-    // Laisser Enter/Espace fonctionner normalement sur les liens et boutons natifs (ex: zoom+/zoom−),
-    // SAUF si un bâtiment est en cours de navigation : dans ce cas Enter/Espace le sélectionne.
-    if (['Enter', ' '].includes(e.key) && focusedIndex < 0 && e.target.matches('a, button, [role="button"]')) return;
     e.preventDefault();
     switch (e.key) {
       case 'ArrowRight':
@@ -275,6 +275,7 @@ export function createRnbMapController({
     }
   };
 
+  mapContainer.setAttribute('tabindex', '0');
   mapContainer.addEventListener('keydown', keyboardHandler);
 
   // Restaurer le style du bâtiment précédemment sélectionné
@@ -288,6 +289,7 @@ export function createRnbMapController({
   return {
     destroy() {
       mapContainer.removeEventListener('keydown', keyboardHandler);
+      mapContainer.removeAttribute('tabindex');
       buildingMarkers.forEach((m) => map.removeLayer(m));
       buildingMarkers = [];
       currentBuildings = [];

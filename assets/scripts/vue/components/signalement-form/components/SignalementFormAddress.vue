@@ -75,6 +75,7 @@
           Fermer
         </button>
       </div>
+      <p>Cliquez sur un bâtiment pour le sélectionner, ou utilisez les touches fléchées puis Entrée.</p>
       <div ref="pickLocationMessage" class="fr-hidden fr-mb-2v">Chargement en cours</div>
       <div :key="mapKey" ref="pickLocationMapContainer" :id="idPickLocationMap" class="pick-location-map"></div>
       <div ref="pickLocationAnnouncement" aria-live="polite" aria-atomic="true" class="fr-sr-only"></div>
@@ -377,7 +378,7 @@ export default defineComponent({
       const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
       const address = this.formStore.data[this.id + '_detail_numero'] + ' ' + this.formStore.data[this.id + '_detail_commune']
       const postCode = this.formStore.data[this.id + '_detail_code_postal']
-      const geolocParis = [48.8566, 2.3522] // Coordonnées de Paris par défaut
+      const geolocParis: [number, number] = [48.8566, 2.3522] // Coordonnées de Paris par défaut
 
       fetch(apiAdresse + address + '&postcode=' + postCode)
         .then((response) => response.json())
