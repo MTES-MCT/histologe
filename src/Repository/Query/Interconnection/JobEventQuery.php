@@ -222,6 +222,7 @@ class JobEventQuery
                 'p.id AS partner_id',
                 'j.action AS last_job_event_action',
                 'j.status AS last_job_event_status',
+                'j.response AS last_job_event_response',
             ])
             ->innerJoin(Partner::class, 'p', 'ON', 'p.id = j.partnerId')
             ->where('j.signalementId = :signalementId')
@@ -235,6 +236,7 @@ class JobEventQuery
             $syncStatuses[$result['partner_id']] = [
                 'last_job_event_action' => $result['last_job_event_action'],
                 'last_job_event_status' => $result['last_job_event_status'],
+                'last_job_event_response' => $result['last_job_event_response'],
             ];
         }
 

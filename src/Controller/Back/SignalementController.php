@@ -255,8 +255,8 @@ class SignalementController extends AbstractController
 
         $epciOccupant = $epciRepository->findOneByCommuneInseeAndPostalCode($signalement->getInseeOccupant(), $signalement->getCpOccupant());
 
-        $syncStatuses = null;
-        if ($this->isGranted(SignalementVoter::SIGN_AFFECTATION_SEE, $signalement)) {
+        $syncStatuses = [];
+        if ($this->isGranted('ROLE_ADMIN')) {
             $syncStatuses = $jobEventQuery->findSyncStatusesForSignalement($signalement);
         }
 

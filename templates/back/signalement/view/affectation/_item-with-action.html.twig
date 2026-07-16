@@ -65,7 +65,12 @@
                                             {% elseif 'sync' in syncStatuses[partnerAffectation.partner.id].last_job_event_action %}
                                                 Echec de la synchronisation du dossier.
                                             {% endif %}
-                                            Merci de nous contacter pour résoudre le problème.
+                                            Détails : 
+                                            {% if syncStatuses[partnerAffectation.partner.id].last_job_event_response is not empty %}
+                                                {{ syncStatuses[partnerAffectation.partner.id].last_job_event_response }}
+                                            {% else %}
+                                                Aucune information disponible.
+                                            {% endif %}
                                         </p>
                                     </span>
                                 </div>
