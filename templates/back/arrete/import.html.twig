@@ -6,7 +6,7 @@
     <section class="fr-pt-4v"
              id="import-arrete-container"
              data-url-confirm-arrete="{{ path('back_arrete_import_confirm') }}"
-             data-url-redirection-arrete-list="{{ path('back_territory_management_arrete_index') }}"
+             data-url-redirection-arrete-list="{{ path('back_territory_management_arrete_index', {'orderType': 'a.importedAt-DESC'}) }}"
     >
         {% include 'back/breadcrumb_bo.html.twig' with {
             'level2Title': 'Outils admin',
