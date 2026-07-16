@@ -43,13 +43,24 @@ readonly class QueryBuilderFactory
         $qb->groupBy('s.id');
         $qb->where('s.statut NOT IN (:statusList)');
 
+        $filterTerritoryId = null;
+        if (!empty($options['territories']) && is_array($options['territories']) && 1 === \count($options['territories'])) {
+            $filterTerritoryId = $options['territories'][0];
+        }
+
         if ($user->isTerritoryAdmin()) {
             if (empty($options['territories'])) {
                 $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+                if (empty($filterTerritoryId) && is_array($options['territories']) && 1 === \count($user->getPartnersTerritories())) {
+                    $filterTerritoryId = $user->getFirstTerritory()->getId();
+                }
             }
         } elseif ($user->isUserPartner() || $user->isPartnerAdmin()) {
             if (empty($options['territories'])) {
                 $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+                if (empty($filterTerritoryId) && is_array($options['territories']) && 1 === \count($user->getPartnersTerritories())) {
+                    $filterTerritoryId = $user->getFirstTerritory()->getId();
+                }
             }
             $statuses = [];
             if (!empty($options['statuses'])) {
@@ -88,7 +99,9 @@ readonly class QueryBuilderFactory
         }
 
         if (!empty($options['isDossiersSansActivite'])) {
-            $params = new TabQueryParameters();
+            $params = new TabQueryParameters(
+                territoireId: $filterTerritoryId,
+            );
             $signalementIds = $this->dossiersSansSuivisPartenaireQuery->getSignalementsId($user, $params);
             $qb->andWhere('s.id IN (:signalement_ids)')
                 ->setParameter('signalement_ids', $signalementIds);
@@ -101,7 +114,9 @@ readonly class QueryBuilderFactory
         }
 
         if (!empty($options['isDossiersSansAgent'])) {
-            $params = new TabQueryParameters();
+            $params = new TabQueryParameters(
+                territoireId: $filterTerritoryId,
+            );
             $signalementUuids = $this->dossiersQuery->getSignalementsUuidSansAgent($params);
             $qb->andWhere('s.uuid IN (:signalement_uuids)')
                 ->setParameter('signalement_uuids', $signalementUuids);
