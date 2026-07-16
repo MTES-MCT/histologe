@@ -891,7 +891,9 @@
           "description": "Format attendu : JJ/MM/AAAA. Si vous ne connaissez pas la date exacte, sélectionnez un jour du mois d'emménagement",
           "slug": "bail_dpe_date_emmenagement",
           "validate": {
-            "message": "Veuillez renseigner une date d'emménagement."
+            "message": "Veuillez renseigner une date d'emménagement.",
+            "min": "1900-01-01",
+            "minMessage": "La date d'entrée dans le logement doit être postérieure au 1er janvier 1900."
           },
           "accessibility": {
             "focus": true
