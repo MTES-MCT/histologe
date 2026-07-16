@@ -363,6 +363,49 @@ class SignalementRepositoryTest extends KernelTestCase
         $this->assertCount(1, $signalements);
     }
 
+    public function testFindInjonctionToRemindBailleurAskedForCloture(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        // Vérification initiale : le suivi bailleur fixture récent de 2025-000000000012 bloque (beforeDate=now-1mois)
+        $beforeDate = new \DateTimeImmutable('-1 month');
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'bailleur');
+        $this->assertCount(0, $signalements);
+
+        // MockClock doit être set avant flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
+
+        // À beforeDate=now, le suivi bailleur fixture de 2025-000000000012 (créé avant now) ne bloque plus → 1 rappel
+        $beforeDate = $mockClock->now()->modify('-1 month'); // = now
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'bailleur');
+        $this->assertCount(1, $signalements);
+
+        // Le bailleur de 2025-000000000012 demande la clôture de l'injonction
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+
+        $suivi = (new Suivi())
+            ->setSignalement($signalement)
+            ->setDescription('Les travaux sont terminés, merci de clôturer le signalement.')
+            ->setCategory(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR)
+            ->setIsVisibleForBailleur(true)
+            ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR))
+            ->setCreatedAt(new \DateTimeImmutable('+2 weeks'));
+        $this->entityManager->persist($suivi);
+        $this->entityManager->flush();
+
+        // À beforeDate=now : la demande de clôture du bailleur exclut définitivement le signalement des rappels
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'bailleur');
+        $this->assertCount(0, $signalements);
+
+        // Même bien après la demande de clôture, le signalement reste exclu des rappels
+        $beforeDate = (new \DateTimeImmutable('+7 weeks'))->modify('-1 month');
+        $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'bailleur');
+        $this->assertCount(0, $signalements);
+    }
+
     public function testFindInjonctionToRemindUsager(): void
     {
         /** @var SignalementRepository $signalementRepository */
