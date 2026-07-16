@@ -15,8 +15,10 @@
                     </div>
                     <div class="fr-modal__content">
                         <h1 class="fr-modal__title">Sélectionner le bâtiment correspondant au logement</h1>
+                        <p>Cliquez sur un bâtiment pour le sélectionner, ou utilisez les touches fléchées puis Entrée.</p>
                         <div id="fr-modal-pick-localisation-message" class="fr-hidden">Chargement en cours</div>
                         <div id="fr-modal-pick-localisation-map"></div>
+                        <div id="fr-modal-pick-localisation-announcement" aria-live="polite" aria-atomic="true" class="fr-sr-only"></div>
                     </div>
                     <form action="{{ url }}" method="POST" id="fr-modal-pick-localisation-form" data-submit-type="formData">
                         <input type="hidden" name="rnbId" id="fr-modal-pick-localisation-rnb-id">
