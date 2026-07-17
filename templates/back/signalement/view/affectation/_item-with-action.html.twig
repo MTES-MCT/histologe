@@ -52,7 +52,7 @@
                                 {% endif %}
                             </div>
 
-                            {% if partnerAffectation.isSynchronized and syncStatuses[partnerAffectation.partner.id] is defined and syncStatuses[partnerAffectation.partner.id].last_job_event_status is same as 'failed' %}
+                            {% if syncStatuses[partnerAffectation.partner.id] is defined and syncStatuses[partnerAffectation.partner.id].last_job_event_status is same as 'failed' %}
                                 <div>
                                     <span class="fr-badge fr-badge--warning fr-badge--sm">Syncro.</span>
                                     <button class="fr-btn--tooltip fr-btn" type="button" aria-describedby="tooltip_sync_{{ partnerAffectation.id }}"
@@ -65,12 +65,15 @@
                                             {% elseif 'sync' in syncStatuses[partnerAffectation.partner.id].last_job_event_action %}
                                                 Echec de la synchronisation du dossier.
                                             {% endif %}
+                                            <br>
                                             Détails : 
                                             {% if syncStatuses[partnerAffectation.partner.id].last_job_event_response is not empty %}
                                                 {{ syncStatuses[partnerAffectation.partner.id].last_job_event_response }}
                                             {% else %}
                                                 Aucune information disponible.
                                             {% endif %}
+                                            <br>
+                                            <a href="{{ path('back_interconnexion_index', { territory: signalement.territory.id, reference: signalement.reference, status: 'failed', partner: partnerAffectation.partner.id }) }}" class="fr-link" target="_blank">Voir le journal de synchronisation</a>
                                         </p>
                                     </span>
                                 </div>
