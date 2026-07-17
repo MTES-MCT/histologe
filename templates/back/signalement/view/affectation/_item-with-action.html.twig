@@ -34,20 +34,49 @@
                             {% endif %}
                         </div>
                         <div class="fr-col-10 fr-col-lg-3">
-                            {% if partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT %}
-                                <span class="fr-badge fr-badge--info fr-badge--sm">En attente</span>
-                            {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED %}
-                                <span class="fr-badge fr-badge--success fr-badge--sm">Acceptée</span>
-                            {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').REFUSED %}
-                                <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">Refusée</span>
-                            {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').CLOSED %}
-                                <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">Clôturée</span>
-                            {% endif %}
-                            {% if not partnerAffectation.partner.receiveEmailNotifications %}
-                                <span class="fr-badge fr-badge--warning fr-badge--sm">Notif. e-mail désactivées</span>
-                            {% endif %}
-                            {% if partnerEmailAlerts[partnerAffectation.partner.id] %}
-                                <span class="fr-badge fr-badge--warning fr-badge--sm">Problème d'e-mail non remis</span>
+                            <div>
+                                {% if partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT %}
+                                    <span class="fr-badge fr-badge--info fr-badge--sm">En attente</span>
+                                {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED %}
+                                    <span class="fr-badge fr-badge--success fr-badge--sm">Acceptée</span>
+                                {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').REFUSED %}
+                                    <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">Refusée</span>
+                                {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').CLOSED %}
+                                    <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">Clôturée</span>
+                                {% endif %}
+                                {% if not partnerAffectation.partner.receiveEmailNotifications %}
+                                    <span class="fr-badge fr-badge--warning fr-badge--sm">Notif. e-mail désactivées</span>
+                                {% endif %}
+                                {% if partnerEmailAlerts[partnerAffectation.partner.id] %}
+                                    <span class="fr-badge fr-badge--warning fr-badge--sm">Problème d'e-mail non remis</span>
+                                {% endif %}
+                            </div>
+
+                            {% if syncStatuses[partnerAffectation.partner.id] is defined and syncStatuses[partnerAffectation.partner.id].last_job_event_status is same as 'failed' %}
+                                <div>
+                                    <span class="fr-badge fr-badge--warning fr-badge--sm">Syncro.</span>
+                                    <button class="fr-btn--tooltip fr-btn" type="button" aria-describedby="tooltip_sync_{{ partnerAffectation.id }}"
+                                        title="Voir les erreurs de synchronisation"
+                                        >Voir les erreurs de synchronisation</button>
+                                    <span class="fr-tooltip fr-placement" id="tooltip_sync_{{ partnerAffectation.id }}" role="tooltip">
+                                        <p class="fr-text--sm">
+                                            {% if 'push' in syncStatuses[partnerAffectation.partner.id].last_job_event_action %}
+                                                Echec de l'envoi de dossier.
+                                            {% elseif 'sync' in syncStatuses[partnerAffectation.partner.id].last_job_event_action %}
+                                                Echec de la synchronisation du dossier.
+                                            {% endif %}
+                                            <br>
+                                            Détails : 
+                                            {% if syncStatuses[partnerAffectation.partner.id].last_job_event_response is not empty %}
+                                                {{ syncStatuses[partnerAffectation.partner.id].last_job_event_response }}
+                                            {% else %}
+                                                Aucune information disponible.
+                                            {% endif %}
+                                            <br>
+                                            <a href="{{ path('back_interconnexion_index', { territory: signalement.territory.id, reference: signalement.reference, status: 'failed', partner: partnerAffectation.partner.id }) }}" class="fr-link" target="_blank">Voir le journal de synchronisation</a>
+                                        </p>
+                                    </span>
+                                </div>
                             {% endif %}
                         </div>
                         <div class="fr-col-2 fr-text--right">

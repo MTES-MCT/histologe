@@ -34,6 +34,7 @@ use App\Repository\EpciRepository;
 use App\Repository\FileRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\NotificationRepository;
+use App\Repository\Query\Interconnection\JobEventQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
@@ -100,6 +101,7 @@ class SignalementController extends AbstractController
         UrlGeneratorInterface $urlGenerator,
         SignalementSameAddressArreteFinder $arreteFinder,
         SignalementAddressContentService $signalementAddressContentService,
+        JobEventQuery $jobEventQuery,
     ): Response {
         // load desordres data to prevent n+1 queries
         $desordreCategorieRepository->findAll();
@@ -253,6 +255,11 @@ class SignalementController extends AbstractController
 
         $epciOccupant = $epciRepository->findOneByCommuneInseeAndPostalCode($signalement->getInseeOccupant(), $signalement->getCpOccupant());
 
+        $syncStatuses = [];
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $syncStatuses = $jobEventQuery->findSyncStatusesForSignalement($signalement);
+        }
+
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',
             'situations' => $infoDesordres['criticitesArranged'],
@@ -291,6 +298,7 @@ class SignalementController extends AbstractController
             'subscriptionsInMyPartner' => $subscriptionsInMyPartner,
             'partnerEmailAlerts' => $this->emailAlertBuilder->buildPartnerEmailAlert($signalement),
             'isUniqueRtInCurrentPartner' => $isUniqueRtInCurrentPartner,
+            'syncStatuses' => $syncStatuses,
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);
