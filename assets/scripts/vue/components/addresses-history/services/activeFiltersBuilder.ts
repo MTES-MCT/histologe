@@ -32,9 +32,8 @@ export function buildFilterLabel(key: keyof AddressesHistoryFilters, value: any)
   }
 
   // Bailleur ou syndic
-  if (key === 'bailleurOuSyndic') {
-    const bailleur = store.state.bailleursAndSyndic.find(b => b.Id.toString() === value)
-    return bailleur ? `Bailleur/Syndic : ${bailleur.Text}` : ''
+  if (key === 'bailleurOuSyndic' && typeof value === 'string') {
+    return `Bailleur/Syndic : ${value}`
   }
 
   // Zone (string)

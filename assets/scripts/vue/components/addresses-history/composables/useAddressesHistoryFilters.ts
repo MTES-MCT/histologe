@@ -81,11 +81,8 @@ export function useAddressesHistoryFilters() {
     store.state.bailleursAndSyndic = []
     if (response.bailleursSociaux) {
       for (const id in response.bailleursSociaux) {
-        const optionItem = new HistoInterfaceSelectOption()
         const bailleur = response.bailleursSociaux[id]
-        optionItem.Id = bailleur.id.toString()
-        optionItem.Text = bailleur.name
-        store.state.bailleursAndSyndic.push(optionItem)
+        store.state.bailleursAndSyndic.push(bailleur.name)
       }
     }
 

@@ -25,8 +25,11 @@ class AddressesHistoryListView
         private readonly ?string $communeForHuman = null,
         private ?string $lat = null,
         private ?string $lng = null,
+        private bool $hasLogementSocial = false,
+        private bool $hasLogementPrive = false,
         private ?array $signalements = null,
         private ?array $arretes = null,
+        private ?array $bailleurNames = [],
     ) {
     }
 
@@ -80,6 +83,26 @@ class AddressesHistoryListView
         $this->lng = $lng;
     }
 
+    public function hasLogementSocial(): bool
+    {
+        return $this->hasLogementSocial;
+    }
+
+    public function setHasLogementSocial(bool $hasLogementSocial): void
+    {
+        $this->hasLogementSocial = $hasLogementSocial;
+    }
+
+    public function hasLogementPrive(): bool
+    {
+        return $this->hasLogementPrive;
+    }
+
+    public function setHasLogementPrive(bool $hasLogementPrive): void
+    {
+        $this->hasLogementPrive = $hasLogementPrive;
+    }
+
     /** @return array<Signalement> */
     public function getSignalements(): ?array
     {
@@ -109,5 +132,16 @@ class AddressesHistoryListView
             $this->arretes = [];
         }
         $this->arretes[] = $arrete;
+    }
+
+    /** @return array<string> */
+    public function getBailleurNames(): ?array
+    {
+        return $this->bailleurNames;
+    }
+
+    public function addBailleurName(string $bailleurName): void
+    {
+        $this->bailleurNames[] = $bailleurName;
     }
 }

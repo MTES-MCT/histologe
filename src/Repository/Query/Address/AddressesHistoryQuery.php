@@ -5,6 +5,7 @@ namespace App\Repository\Query\Address;
 use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\Address;
 use App\Entity\Arrete;
+use App\Entity\Bailleur;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -38,6 +39,7 @@ class AddressesHistoryQuery
             ->leftJoin(Signalement::class, 's', 'WITH',
                 's.adresseOccupant = CONCAT(a.housenumber, \' \', a.street) AND s.cpOccupant = a.postCode AND s.villeOccupant = a.city AND s.statut IN (:statusList)'
             )
+            ->leftJoin(Bailleur::class, 'b', 'WITH', 'b.id = s.bailleur')
             ->leftJoin('a.arretes', 'ar')
             ->select(
                 'a.id AS addressId',
@@ -56,6 +58,8 @@ class AddressesHistoryQuery
                 's.nomOccupant',
                 's.prenomOccupant',
                 's.nomProprio',
+                's.isLogementSocial',
+                'b.name AS bailleurName',
                 'ar.id AS arreteId',
                 'ar.dateArrete',
                 'ar.typeArrete',
