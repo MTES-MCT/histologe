@@ -2,10 +2,10 @@ import { requests } from '../requests'
 import { PATTERN_BADGE_EPCI, store } from '../store'
 import { Filters, SEARCH_FILTERS } from '../interfaces/filters'
 import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
-import SearchInterfaceSelectOption from '../interfaces/SearchInterfaceSelectOption'
+import SearchInterfaceSelectOption from '../../common/interfaces/SearchInterfaceSelectOption'
 
-import { variableTester } from '../../../utils/variableTester'
-import { QueryParameter } from '../interfaces/queryParameter'
+import { variableTester } from '../../common/utils/variableTester'
+import { QueryParameter } from '../../common/interfaces/queryParameter'
 
 export function handleQueryParameter (context: any): any {
   const url = new URL(window.location.toString())

@@ -14,7 +14,7 @@ readonly class MenuBuilder
         #[Autowire(env: 'FEATURE_METABASE_STATS_ENABLE')]
         private readonly bool $featureMetabaseStats,
         #[Autowire(env: 'FEATURE_HISTO_ADDRESS')]
-        private readonly bool $featureHistoAddress,
+        private readonly bool $featureAddressesHistory,
     ) {
     }
 
@@ -33,8 +33,9 @@ readonly class MenuBuilder
         if ($this->currentRoute->isGranted(InjonctionBailleurVoter::INJONCTION_BAILLEUR_SEE)) {
             $signalementsSubMenu->addChild(new MenuItem(label: 'Signalements en démarche accélérée', route: 'back_injonction_signalement_index', roleGranted: User::ROLE_USER));
         }
-        if ($this->featureHistoAddress) {
-            $signalementsSubMenu->addChild(new MenuItem(label: 'Historique des adresses', route: 'back_histo_address_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+        if ($this->featureAddressesHistory) {
+            $signalementsSubMenu->addChild(new MenuItem(label: 'Historique des adresses', route: 'back_addresses_history_index', roleGranted: User::ROLE_ADMIN_TERRITORY));
+            $signalementsSubMenu->addChild(new MenuItem(label: 'Prototype Carte facile', route: 'back_addresses_history_carte_facile', roleGranted: User::ROLE_ADMIN_TERRITORY));
         } else {
             $signalementsSubMenu->addChild(new MenuItem(label: 'Dossiers à la même adresse', route: 'back_signalement_same_address_index', roleGranted: User::ROLE_ADMIN));
         }

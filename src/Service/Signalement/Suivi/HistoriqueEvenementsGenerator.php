@@ -75,7 +75,7 @@ class HistoriqueEvenementsGenerator
             // https://github.com/MTES-MCT/histologe/issues/5949
             $description .= sprintf(
                 '<br/>Pour plus d\'informations, consultez l\'<a href="%s">historique des événements</a>.',
-                $this->urlGenerator->generate('back_histo_address_index')
+                $this->urlGenerator->generate('back_addresses_history_index')
             );
             $this->suiviManager->createSuivi(
                 signalement: $signalement,

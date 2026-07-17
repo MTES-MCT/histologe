@@ -23,7 +23,7 @@
                             <label class="fr-toggle__label" for="toggle-map">Afficher la carte</label>
                         </div>
                         {# 
-                        <button type="submit" form="search-histo-address-form"
+                        <button type="submit" form="search-addresses-history-form"
                             class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill fr-btn--block fr-btn--md-inline"
                             aria-label="Exporter les résultats des dossiers à la même adresse"
                             title="Exporter les résultats"
@@ -35,7 +35,7 @@
         </section>
     </div>
 
-    <form id="search-histo-address-form" action="{{path('back_histo_address_export')}}" method="get" class="fr-pt-4v on-map">
+    <form id="search-addresses-history-form" action="{{path('back_addresses_history_export')}}" method="get" class="fr-pt-4v on-map">
         <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
             {% if territories|length > 1 %}
                 <div class="fr-col-12 fr-col-lg-3">
@@ -83,10 +83,10 @@
         </div>
     </form>
 
-    <section class="container-histo-address-map">
-        <div id="map-histo-address"></div>
+    <section class="container-addresses-history-map">
+        <div id="map-addresses-history"></div>
     </section>
-    <section class="fr-container-sml container-histo-address-list">
+    <section class="fr-container-sml container-addresses-history-list">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12">
                 {% for address in signalementsByAddress %}

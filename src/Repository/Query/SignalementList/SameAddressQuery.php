@@ -43,27 +43,26 @@ class SameAddressQuery
                 's.nomProprio',
                 'IDENTITY(s.territory) AS territoryId',
             )
-            ->where('EXISTS (
-                SELECT 1 FROM '.Signalement::class.' s2
-                WHERE s2.adresseOccupant = s.adresseOccupant
-                AND s2.cpOccupant = s.cpOccupant
-                AND s2.villeOccupant = s.villeOccupant
-                AND s2.statut IN (:statusList)
-                AND s2.id != s.id
-            )')
-            ->andWhere('s.statut IN (:statusList)')
+            ->where('s.statut IN (:statusList)')
             ->setParameter('statusList', $statusList)
             ->orderBy('s.adresseOccupant', 'ASC')
             ->addOrderBy('s.cpOccupant', 'ASC')
             ->addOrderBy('s.villeOccupant', 'ASC')
             ->addOrderBy('s.createdAt', 'ASC');
 
+        $queryDossiersMultiples = 'SELECT 1 FROM '.Signalement::class.' s2
+                WHERE s2.adresseOccupant = s.adresseOccupant
+                AND s2.cpOccupant = s.cpOccupant
+                AND s2.villeOccupant = s.villeOccupant
+                AND s2.statut IN (:statusList)
+                AND s2.id != s.id';
+        $qb->andWhere('EXISTS ('.$queryDossiersMultiples.')');
+
         if ($user->isSuperAdmin()) {
             // pas de restrictions pour les SA
         } elseif ($user->isTerritoryAdmin()) {
             $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
         } else {
-            // inutilisé pour l'instant car la route est limité au RT, mais fonctionnel pour les autres profils.
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')
                 ->andWhere('partner IN (:partners)')

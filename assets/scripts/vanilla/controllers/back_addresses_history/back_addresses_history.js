@@ -1,4 +1,4 @@
-async function initHistoAddress() {
+async function initAddressesHistory() {
   const [{ mapStyles }, { default: maplibregl }] = await Promise.all([
     import('carte-facile'),
     import('maplibre-gl'),
@@ -7,10 +7,10 @@ async function initHistoAddress() {
   ]);
 
   const ITEMS_PER_PAGE = 5;
-  const searchForm = document.getElementById('search-histo-address-form');
+  const searchForm = document.getElementById('search-addresses-history-form');
   const toggleMap = document.getElementById('toggle-map');
-  const listContainer = document.querySelector('.container-histo-address-list');
-  const mapContainer = document.querySelector('.container-histo-address-map');
+  const listContainer = document.querySelector('.container-addresses-history-list');
+  const mapContainer = document.querySelector('.container-addresses-history-map');
 
   const markersByTarget = new Map();
   const SOURCE_ID = 'same-address';
@@ -71,7 +71,7 @@ async function initHistoAddress() {
 
   function initMap() {
     map = new maplibregl.Map({
-      container: 'map-histo-address',
+      container: 'map-addresses-history',
       style: mapStyles.simple,
       center: [2, 47],
       zoom: 6,
@@ -544,6 +544,6 @@ async function initHistoAddress() {
   applyToggleMap();
 }
 
-if (document.getElementById('map-histo-address')) {
-  initHistoAddress();
+if (document.getElementById('map-addresses-history')) {
+  initAddressesHistory();
 }
