@@ -80,7 +80,7 @@ class Affectation implements EntityHistoryInterface
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\NotBlank(groups: ['close_affectation'])]
-    #[Assert\Length(min: 16, groups: ['close_affectation'], minMessage: 'Le contenu doit contenir au moins 10 caractères.')] // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
+    #[Assert\Length(min: 16, groups: ['close_affectation'], minMessage: 'La précision doit contenir au moins 10 caractères.')] // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
     private ?string $precisionsCloture = null;
 
     public function __construct()
@@ -92,7 +92,7 @@ class Affectation implements EntityHistoryInterface
     }
 
     #[Assert\Callback(groups: ['close_affectation'])]
-    public function validateCloseAffectation(ExecutionContextInterface $context, mixed $payload): void
+    public function validateCloseAffectation(ExecutionContextInterface $context): void
     {
         if (!$this->travauxMiseEnConformite && in_array($this->motifCloture, MotifCloture::getListNeedTravauxPrecisions(), true)) {
             $context->buildViolation('Veuillez préciser si les travaux de mise en conformité du logement ont été réalisés.')

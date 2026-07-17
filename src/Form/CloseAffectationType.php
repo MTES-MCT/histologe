@@ -19,10 +19,10 @@ class CloseAffectationType extends AbstractType
             ->add('motifCloture', null, [
                 'choices' => MotifCloture::getListForV2(),
                 'label' => 'Motif de fermeture',
-                'choice_label' => static function ($choice, $key, $value) {
+                'choice_label' => static function ($choice) {
                     return $choice->label();
                 },
-                'choice_attr' => static function ($choice, string $key, mixed $value) {
+                'choice_attr' => static function ($choice) {
                     if (in_array($choice, MotifCloture::getListNeedTravauxPrecisions(), true)) {
                         return ['data-need-travaux-precisions' => 'true'];
                     }
@@ -34,7 +34,7 @@ class CloseAffectationType extends AbstractType
             ]);
         $builder->add('travauxMiseEnConformite', null, [
             'label' => 'Les travaux de mise en conformité du logement ont-ils été réalisés ?',
-            'choice_label' => static function ($choice, $key, $value) {
+            'choice_label' => static function ($choice) {
                 return $choice->label();
             },
             'expanded' => true,

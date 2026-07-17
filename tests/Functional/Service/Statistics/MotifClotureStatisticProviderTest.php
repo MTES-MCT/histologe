@@ -32,8 +32,8 @@ class MotifClotureStatisticProviderTest extends KernelTestCase
         $motifClotureStatisticsQuery = static::getContainer()->get(MotifClotureStatisticsQuery::class);
         $data = (new MotifClotureStatisticProvider($motifClotureStatisticsQuery))->getData(null, null, 'bar');
         $this->assertEquals(4, \count($data));
-        $this->assertArrayHasKey('Demande fermeture / abandon occupant', $data);
-        $this->assertEquals(1, $data['Demande fermeture / abandon occupant']);
+        $this->assertArrayHasKey('Abandon de procédure / absence de réponse', $data);
+        $this->assertEquals(1, $data['Abandon de procédure / absence de réponse']);
         $this->assertArrayHasKey('Non décence', $data);
         $this->assertEquals(2, $data['Non décence']);
         $this->assertArrayHasKey('Travaux faits ou en cours', $data);

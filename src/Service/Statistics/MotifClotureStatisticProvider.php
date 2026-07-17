@@ -118,7 +118,7 @@ class MotifClotureStatisticProvider
                 'count' => 0,
             ],
             'ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE' => [
-                'label' => 'Demande fermeture / abandon occupant',
+                'label' => 'Abandon de procédure / absence de réponse',
                 'color' => '#FF5655',
                 'count' => 0,
             ],

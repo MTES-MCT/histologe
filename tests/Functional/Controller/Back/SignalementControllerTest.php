@@ -486,7 +486,7 @@ class SignalementControllerTest extends WebTestCase
             ]
         );
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
-        $this->assertStringContainsString('Le contenu doit contenir au moins 10 caract\u00e8res.', (string) $client->getResponse()->getContent());
+        $this->assertStringContainsString('La pr\u00e9cision doit contenir au moins 10 caract\u00e8res.', (string) $client->getResponse()->getContent());
         $this->assertEquals(400, $client->getResponse()->getStatusCode());
     }
 

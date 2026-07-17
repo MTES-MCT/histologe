@@ -23,6 +23,7 @@ enum MotifCloture: string
     case DOUBLON = 'DOUBLON';
     case AUTRE = 'AUTRE';
     // Ajout V2
+    case DEMANDE_FERMETURE_ABANDON_OCCUPANT = 'DEMANDE_FERMETURE_ABANDON_OCCUPANT';
     case LOGEMENT_MIS_EN_CONFORMITE = 'LOGEMENT_MIS_EN_CONFORMITE';
     case ABSENCE_DE_REPONSE_OCCUPANT = 'ABSENCE_DE_REPONSE_OCCUPANT';
     case GESTION_DU_DOSSIER_EXTERNE = 'GESTION_DU_DOSSIER_EXTERNE';
@@ -32,7 +33,7 @@ enum MotifCloture: string
     public static function getLabelList(): array
     {
         return [
-            self::ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE->value => 'Demande fermeture / abandon occupant', // précédement 'Abandon de procédure / absence de réponse',
+            self::ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE->value => 'Abandon de procédure / absence de réponse',
             self::DEPART_OCCUPANT->value => 'Départ occupant',
             self::INSALUBRITE->value => 'Insalubrité',
             self::LOGEMENT_DECENT->value => 'Pas d\'infraction dans le logement', // précédement 'Logement décent / Pas d'infraction',
@@ -49,6 +50,7 @@ enum MotifCloture: string
             self::AUTRE->value => 'Autre',
 
             self::LOGEMENT_MIS_EN_CONFORMITE->value => 'Logement mis en conformité',
+            self::DEMANDE_FERMETURE_ABANDON_OCCUPANT->value => 'Demande fermeture / abandon occupant',
             self::ABSENCE_DE_REPONSE_OCCUPANT->value => 'Absence de réponse occupant',
             self::GESTION_DU_DOSSIER_EXTERNE->value => 'Gestion du dossier externe',
             self::HORS_PERIMETRE_LHI->value => 'Hors périmètre LHI',
@@ -83,7 +85,7 @@ enum MotifCloture: string
         return [
             self::LOGEMENT_MIS_EN_CONFORMITE,
             self::RELOGEMENT_OCCUPANT,
-            self::ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE,
+            self::DEMANDE_FERMETURE_ABANDON_OCCUPANT,
             self::ABSENCE_DE_REPONSE_OCCUPANT,
             self::REFUS_DE_VISITE,
             self::REFUS_DE_TRAVAUX,
@@ -104,7 +106,7 @@ enum MotifCloture: string
         return [
             self::LOGEMENT_MIS_EN_CONFORMITE,
             self::RELOGEMENT_OCCUPANT,
-            self::ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE,
+            self::DEMANDE_FERMETURE_ABANDON_OCCUPANT,
             self::ABSENCE_DE_REPONSE_OCCUPANT,
             self::DEPART_OCCUPANT,
             self::LOGEMENT_VENDU,
