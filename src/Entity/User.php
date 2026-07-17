@@ -224,16 +224,16 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private Collection $userSearchFilters;
 
     /**
-     * @var Collection<int, TagUser>
+     * @var Collection<int, PersonalTag>
      */
-    #[ORM\OneToMany(targetEntity: TagUser::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $tagUsers;
+    #[ORM\OneToMany(targetEntity: PersonalTag::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $personalTags;
 
     /**
-     * @var Collection<int, Note>
+     * @var Collection<int, PersonalNote>
      */
-    #[ORM\OneToMany(targetEntity: Note::class, mappedBy: 'user', orphanRemoval: true)]
-    private Collection $notes;
+    #[ORM\OneToMany(targetEntity: PersonalNote::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $personalNotes;
 
     public function __construct()
     {
@@ -252,8 +252,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->userSignalementSubscriptions = new ArrayCollection();
         $this->userApiPermissions = new ArrayCollection();
         $this->userSearchFilters = new ArrayCollection();
-        $this->tagUsers = new ArrayCollection();
-        $this->notes = new ArrayCollection();
+        $this->personalTags = new ArrayCollection();
+        $this->personalNotes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1144,29 +1144,29 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     }
 
     /**
-     * @return Collection<int, TagUser>
+     * @return Collection<int, PersonalTag>
      */
-    public function getTagUsers(): Collection
+    public function getPersonalTags(): Collection
     {
-        return $this->tagUsers;
+        return $this->personalTags;
     }
 
-    public function addTagUser(TagUser $tagUser): static
+    public function addPersonalTag(PersonalTag $personalTag): static
     {
-        if (!$this->tagUsers->contains($tagUser)) {
-            $this->tagUsers->add($tagUser);
-            $tagUser->setUser($this);
+        if (!$this->personalTags->contains($personalTag)) {
+            $this->personalTags->add($personalTag);
+            $personalTag->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeTagUser(TagUser $tagUser): static
+    public function removePersonalTag(PersonalTag $personalTag): static
     {
-        if ($this->tagUsers->removeElement($tagUser)) {
+        if ($this->personalTags->removeElement($personalTag)) {
             // set the owning side to null (unless already changed)
-            if ($tagUser->getUser() === $this) {
-                $tagUser->setUser(null);
+            if ($personalTag->getUser() === $this) {
+                $personalTag->setUser(null);
             }
         }
 
@@ -1174,29 +1174,29 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     }
 
     /**
-     * @return Collection<int, Note>
+     * @return Collection<int, PersonalNote>
      */
-    public function getNotes(): Collection
+    public function getPersonalNotes(): Collection
     {
-        return $this->notes;
+        return $this->personalNotes;
     }
 
-    public function addNote(Note $note): static
+    public function addPersonalNote(PersonalNote $personalNote): static
     {
-        if (!$this->notes->contains($note)) {
-            $this->notes->add($note);
-            $note->setUser($this);
+        if (!$this->personalNotes->contains($personalNote)) {
+            $this->personalNotes->add($personalNote);
+            $personalNote->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeNote(Note $note): static
+    public function removePersonalNote(PersonalNote $personalNote): static
     {
-        if ($this->notes->removeElement($note)) {
+        if ($this->personalNotes->removeElement($personalNote)) {
             // set the owning side to null (unless already changed)
-            if ($note->getUser() === $this) {
-                $note->setUser(null);
+            if ($personalNote->getUser() === $this) {
+                $personalNote->setUser(null);
             }
         }
 

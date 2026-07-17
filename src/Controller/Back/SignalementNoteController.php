@@ -2,12 +2,12 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\Note;
+use App\Entity\PersonalNote;
+use App\Entity\PersonalTag;
 use App\Entity\Signalement;
-use App\Entity\TagUser;
 use App\Entity\User;
-use App\Repository\NoteRepository;
-use App\Repository\TagUserRepository;
+use App\Repository\PersonalNoteRepository;
+use App\Repository\PersonalTagRepository;
 use App\Service\MessageHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,14 +21,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class SignalementNoteController extends AbstractController
 {
-    #[Route('/{uuid:signalement}/save-tag-users', name: 'back_signalement_save_tag_users', methods: 'POST')]
-    public function saveSignalementTagUsers(
+    #[Route('/{uuid:signalement}/save-personal-tags', name: 'back_signalement_save_personal_tags', methods: 'POST')]
+    public function saveSignalementPersonalTags(
         Signalement $signalement,
         Request $request,
-        TagUserRepository $tagUserRepository,
+        PersonalTagRepository $personalTagRepository,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
-        if (!$this->isCsrfTokenValid('signalement_save_tag_users', (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('signalement_save_personal_tags', (string) $request->request->get('_token'))) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
@@ -37,32 +37,32 @@ class SignalementNoteController extends AbstractController
         $user = $this->getUser();
         $tagIds = (string) $request->request->get('tag-ids');
         $tagList = array_filter(explode(',', $tagIds));
-        foreach ($signalement->getTagUsers() as $existingTag) {
+        foreach ($signalement->getPersonalTags() as $existingTag) {
             if ($existingTag->getUser() === $user && !\in_array((string) $existingTag->getId(), $tagList, true)) {
-                $signalement->removeTagUser($existingTag);
+                $signalement->removePersonalTag($existingTag);
             }
         }
         foreach ($tagList as $tagId) {
-            $tagUser = $tagUserRepository->findOneBy(['id' => $tagId, 'user' => $user]);
-            if ($tagUser) {
-                $signalement->addTagUser($tagUser);
+            $personalTag = $personalTagRepository->findOneBy(['id' => $tagId, 'user' => $user]);
+            if ($personalTag) {
+                $signalement->addPersonalTag($personalTag);
             }
         }
         $entityManager->flush();
 
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Vos étiquettes ont bien été modifiées.'];
 
-        return $this->json($this->buildTagUsersResponse($signalement, $flashMessages));
+        return $this->json($this->buildPersonalTagsResponse($signalement, $flashMessages));
     }
 
-    #[Route('/{uuid:signalement}/create-tag-user', name: 'back_signalement_create_tag_user', methods: 'POST')]
-    public function createSignalementTagUser(
+    #[Route('/{uuid:signalement}/create-personal-tag', name: 'back_signalement_create_personal_tag', methods: 'POST')]
+    public function createSignalementPersonalTag(
         Signalement $signalement,
         Request $request,
-        TagUserRepository $tagUserRepository,
+        PersonalTagRepository $personalTagRepository,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
-        if (!$this->isCsrfTokenValid('signalement_create_tag_user', (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('signalement_create_personal_tag', (string) $request->request->get('_token'))) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
@@ -76,32 +76,32 @@ class SignalementNoteController extends AbstractController
                 Response::HTTP_BAD_REQUEST
             );
         }
-        $tagUser = $tagUserRepository->findOneBy(['label' => $label, 'user' => $user]);
-        if ($tagUser) {
+        $personalTag = $personalTagRepository->findOneBy(['label' => $label, 'user' => $user]);
+        if ($personalTag) {
             return $this->json(
                 ['errors' => ['label' => ['errors' => ['Une étiquette portant ce nom existe déjà.']]]],
                 Response::HTTP_BAD_REQUEST
             );
         }
-        $tagUser = (new TagUser())->setLabel($label);
-        $user->addTagUser($tagUser);
-        $entityManager->persist($tagUser);
-        $signalement->addTagUser($tagUser);
+        $personalTag = (new PersonalTag())->setLabel($label);
+        $user->addPersonalTag($personalTag);
+        $entityManager->persist($personalTag);
+        $signalement->addPersonalTag($personalTag);
         $entityManager->flush();
 
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'L\'étiquette a bien été créée et attribuée.'];
 
-        return $this->json($this->buildTagUsersResponse($signalement, $flashMessages));
+        return $this->json($this->buildPersonalTagsResponse($signalement, $flashMessages));
     }
 
-    #[Route('/{uuid:signalement}/save-note', name: 'back_signalement_save_note', methods: 'POST')]
-    public function saveSignalementNote(
+    #[Route('/{uuid:signalement}/save-personal-note', name: 'back_signalement_save_personal_note', methods: 'POST')]
+    public function saveSignalementPersonalNote(
         Signalement $signalement,
         Request $request,
-        NoteRepository $noteRepository,
+        PersonalNoteRepository $personalNoteRepository,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
-        if (!$this->isCsrfTokenValid('signalement_save_note', (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('signalement_save_personal_note', (string) $request->request->get('_token'))) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
@@ -109,51 +109,51 @@ class SignalementNoteController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $content = trim((string) $request->request->get('content'));
-        $note = $noteRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
+        $personalNote = $personalNoteRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
         if ('' === $content) {
-            if ($note) {
-                $entityManager->remove($note);
+            if ($personalNote) {
+                $entityManager->remove($personalNote);
                 $entityManager->flush();
             }
             $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Votre note a bien été supprimée.'];
 
-            return $this->json($this->buildNoteResponse($signalement, null, $flashMessages));
+            return $this->json($this->buildPersonalNoteResponse($signalement, null, $flashMessages));
         }
-        if (!$note) {
-            $note = (new Note())->setUser($user)->setSignalement($signalement);
-            $entityManager->persist($note);
+        if (!$personalNote) {
+            $personalNote = (new PersonalNote())->setUser($user)->setSignalement($signalement);
+            $entityManager->persist($personalNote);
         }
-        $note->setContent($content);
+        $personalNote->setContent($content);
         $entityManager->flush();
 
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Votre note a bien été enregistrée.'];
 
-        return $this->json($this->buildNoteResponse($signalement, $note, $flashMessages));
+        return $this->json($this->buildPersonalNoteResponse($signalement, $personalNote, $flashMessages));
     }
 
-    #[Route('/{uuid:signalement}/delete-note', name: 'back_signalement_delete_note', methods: 'POST')]
-    public function deleteSignalementNote(
+    #[Route('/{uuid:signalement}/delete-personal-note', name: 'back_signalement_delete_personal_note', methods: 'POST')]
+    public function deleteSignalementPersonalNote(
         Signalement $signalement,
         Request $request,
-        NoteRepository $noteRepository,
+        PersonalNoteRepository $personalNoteRepository,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
-        if (!$this->isCsrfTokenValid('signalement_delete_note', (string) $request->request->get('_token'))) {
+        if (!$this->isCsrfTokenValid('signalement_delete_personal_note', (string) $request->request->get('_token'))) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         /** @var User $user */
         $user = $this->getUser();
-        $note = $noteRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
-        if ($note) {
-            $entityManager->remove($note);
+        $personalNote = $personalNoteRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
+        if ($personalNote) {
+            $entityManager->remove($personalNote);
             $entityManager->flush();
         }
 
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Votre note a bien été supprimée.'];
 
-        return $this->json($this->buildNoteResponse($signalement, null, $flashMessages));
+        return $this->json($this->buildPersonalNoteResponse($signalement, null, $flashMessages));
     }
 
     /**
@@ -161,15 +161,15 @@ class SignalementNoteController extends AbstractController
      *
      * @return array<string, mixed>
      */
-    private function buildTagUsersResponse(Signalement $signalement, array $flashMessages): array
+    private function buildPersonalTagsResponse(Signalement $signalement, array $flashMessages): array
     {
         return [
             'stayOnPage' => true,
             'flashMessages' => $flashMessages,
             'htmlTargetContents' => [
                 [
-                    'target' => '#signalement-tag-users-container',
-                    'content' => $this->renderView('back/signalement/view/tabs/_tab-notes-tags.html.twig', ['signalement' => $signalement]),
+                    'target' => '#signalement-personal-tags-container',
+                    'content' => $this->renderView('back/signalement/view/tabs/_tab-notes-personal-tags.html.twig', ['signalement' => $signalement]),
                 ],
             ],
             'functions' => [
@@ -184,23 +184,23 @@ class SignalementNoteController extends AbstractController
      *
      * @return array<string, mixed>
      */
-    private function buildNoteResponse(Signalement $signalement, ?Note $note, array $flashMessages): array
+    private function buildPersonalNoteResponse(Signalement $signalement, ?PersonalNote $personalNote, array $flashMessages): array
     {
         return [
             'stayOnPage' => true,
             'flashMessages' => $flashMessages,
             'htmlTargetContents' => [
                 [
-                    'target' => '#signalement-note-container',
-                    'content' => $this->renderView('back/signalement/view/tabs/_tab-notes-note.html.twig', [
+                    'target' => '#signalement-personal-note-container',
+                    'content' => $this->renderView('back/signalement/view/tabs/_tab-notes-personal-note.html.twig', [
                         'signalement' => $signalement,
-                        'userNote' => $note,
+                        'personalNote' => $personalNote,
                     ]),
                 ],
             ],
             'functions' => [
                 ['name' => 'attachAjaxFormHandlers'],
-                ['name' => 'reloadNoteEditor'],
+                ['name' => 'reloadPersonalNoteEditor'],
             ],
         ];
     }

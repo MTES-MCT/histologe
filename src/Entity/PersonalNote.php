@@ -5,14 +5,14 @@ namespace App\Entity;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\EntitySanitizerInterface;
 use App\Entity\Enum\HistoryEntryEvent;
-use App\Repository\NoteRepository;
+use App\Repository\PersonalNoteRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
-#[ORM\Entity(repositoryClass: NoteRepository::class)]
+#[ORM\Entity(repositoryClass: PersonalNoteRepository::class)]
 #[ORM\UniqueConstraint(name: 'unique_user_signalement', columns: ['user_id', 'signalement_id'])]
-class Note implements EntityHistoryInterface, EntitySanitizerInterface
+class PersonalNote implements EntityHistoryInterface, EntitySanitizerInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,7 +22,7 @@ class Note implements EntityHistoryInterface, EntitySanitizerInterface
     #[ORM\Column(type: Types::TEXT)]
     private string $content = '';
 
-    #[ORM\ManyToOne(inversedBy: 'notes')]
+    #[ORM\ManyToOne(inversedBy: 'personalNotes')]
     private ?User $user = null;
 
     #[ORM\ManyToOne]

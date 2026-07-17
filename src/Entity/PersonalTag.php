@@ -4,14 +4,14 @@ namespace App\Entity;
 
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
-use App\Repository\TagUserRepository;
+use App\Repository\PersonalTagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TagUserRepository::class)]
+#[ORM\Entity(repositoryClass: PersonalTagRepository::class)]
 #[ORM\UniqueConstraint(name: 'unique_label_user', columns: ['label', 'user_id'])]
-class TagUser implements EntityHistoryInterface
+class PersonalTag implements EntityHistoryInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -21,13 +21,13 @@ class TagUser implements EntityHistoryInterface
     #[ORM\Column(length: 255)]
     private string $label = '';
 
-    #[ORM\ManyToOne(inversedBy: 'tagUsers')]
+    #[ORM\ManyToOne(inversedBy: 'personalTags')]
     private ?User $user = null;
 
     /**
      * @var Collection<int, Signalement>
      */
-    #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'tagUsers')]
+    #[ORM\ManyToMany(targetEntity: Signalement::class, inversedBy: 'personalTags')]
     private Collection $signalements;
 
     public function __construct()

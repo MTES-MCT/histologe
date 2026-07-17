@@ -3,7 +3,7 @@ import { reloadTinyMCE } from '../form/form_helper';
 import { attachAjaxFormHandlers } from '../form/ajax_form_handler.js';
 import { initSearchCheckboxWidgets } from '../component/component_search_checkbox.js';
 import { initSearchAndSelectBadges } from '../component/component_search_and_select_badges.js';
-import { reloadNoteEditor } from '../../controllers/back_signalement_view/note.js';
+import { reloadPersonalNoteEditor } from '../../controllers/back_signalement_view/personal_note.js';
 import { initializeVisitesUploadFilesModal } from '../../controllers/back_signalement_view/form_upload_documents.js';
 import {
   openPhotoAlbumAddEventListeners,
@@ -88,8 +88,8 @@ export function jsonResponseProcess(response) {
           case 'initSearchAndSelectBadges':
             initSearchAndSelectBadges();
             break;
-          case 'reloadNoteEditor':
-            reloadNoteEditor();
+          case 'reloadPersonalNoteEditor':
+            reloadPersonalNoteEditor();
             break;
           case 'initializeVisitesUploadFilesModal':
             initializeVisitesUploadFilesModal();

@@ -562,10 +562,10 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private Collection $tiersInvitations;
 
     /**
-     * @var Collection<int, TagUser>
+     * @var Collection<int, PersonalTag>
      */
-    #[ORM\ManyToMany(targetEntity: TagUser::class, mappedBy: 'signalements')]
-    private Collection $tagUsers;
+    #[ORM\ManyToMany(targetEntity: PersonalTag::class, mappedBy: 'signalements')]
+    private Collection $personalTags;
 
     public function __construct()
     {
@@ -588,7 +588,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->userSignalementSubscriptions = new ArrayCollection();
         $this->loginBailleur = BailleurLoginCodeGenerator::generate();
         $this->tiersInvitations = new ArrayCollection();
-        $this->tagUsers = new ArrayCollection();
+        $this->personalTags = new ArrayCollection();
     }
 
     #[Assert\Callback]
@@ -2998,27 +2998,27 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     }
 
     /**
-     * @return Collection<int, TagUser>
+     * @return Collection<int, PersonalTag>
      */
-    public function getTagUsers(): Collection
+    public function getPersonalTags(): Collection
     {
-        return $this->tagUsers;
+        return $this->personalTags;
     }
 
-    public function addTagUser(TagUser $tagUser): static
+    public function addPersonalTag(PersonalTag $personalTag): static
     {
-        if (!$this->tagUsers->contains($tagUser)) {
-            $this->tagUsers->add($tagUser);
-            $tagUser->addSignalement($this);
+        if (!$this->personalTags->contains($personalTag)) {
+            $this->personalTags->add($personalTag);
+            $personalTag->addSignalement($this);
         }
 
         return $this;
     }
 
-    public function removeTagUser(TagUser $tagUser): static
+    public function removePersonalTag(PersonalTag $personalTag): static
     {
-        if ($this->tagUsers->removeElement($tagUser)) {
-            $tagUser->removeSignalement($this);
+        if ($this->personalTags->removeElement($personalTag)) {
+            $personalTag->removeSignalement($this);
         }
 
         return $this;

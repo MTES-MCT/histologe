@@ -1,6 +1,6 @@
-{% set userTags = app.user.tagUsers|sort((a, b) => a.label|lower <=> b.label|lower) %}
-{% set selectedTagUsers = signalement.tagUsers|filter(tagUser => tagUser.user and tagUser.user.id == app.user.id) %}
-{% set selectedTagUserIds = selectedTagUsers|map(tagUser => tagUser.id) %}
+{% set userTags = app.user.personalTags|sort((a, b) => a.label|lower <=> b.label|lower) %}
+{% set selectedPersonalTags = signalement.personalTags|filter(personalTag => personalTag.user and personalTag.user.id == app.user.id) %}
+{% set selectedPersonalTagIds = selectedPersonalTags|map(personalTag => personalTag.id) %}
 <div class="fr-grid-row fr-grid-row--gutters search-and-select-badges-container" data-autosubmit="1">
     <div class="fr-col-12 fr-col-md-6">
         <h4 class="fr-h6">Sélectionner les étiquettes</h4>
@@ -8,14 +8,14 @@
             Recherchez une étiquette et cliquez dessus pour l'attribuer au signalement.
         </p>
         <div class="fr-search-bar" role="search">
-            <label class="fr-label" for="tag-user-filter-input">Recherche</label>
-            <input class="fr-input search-and-select-badges-search-input" placeholder="Rechercher" type="search" id="tag-user-filter-input" name="tag-user-filter-input">
+            <label class="fr-label" for="personal-tag-filter-input">Recherche</label>
+            <input class="fr-input search-and-select-badges-search-input" placeholder="Rechercher" type="search" id="personal-tag-filter-input" name="personal-tag-filter-input">
             <button class="fr-btn" title="Rechercher">Rechercher</button>
         </div>
         <div class="fr-my-3v">
             {% for tag in userTags %}
                 <span
-                    class="fr-badge fr-m-1v search-and-select-badge-add search-and-select-badge-add-{{ tag.id }} {% if tag.id in selectedTagUserIds %}fr-hidden disabled{% endif %}"
+                    class="fr-badge fr-m-1v search-and-select-badge-add search-and-select-badge-add-{{ tag.id }} {% if tag.id in selectedPersonalTagIds %}fr-hidden disabled{% endif %}"
                     data-badge-id="{{ tag.id }}" data-badge-label="{{ tag.label }}"
                     >{{ tag.label }} <span class="fr-icon-add-line" aria-hidden="true"></span></span>
             {% else %}
@@ -25,15 +25,15 @@
             {% endfor %}
         </div>
         <div class="single-ajax-form-container fr-mt-3v">
-            <form method="POST" action="{{ path('back_signalement_create_tag_user', {uuid: signalement.uuid}) }}" id="form-create-tag-user" data-submit-type="formData">
+            <form method="POST" action="{{ path('back_signalement_create_personal_tag', {uuid: signalement.uuid}) }}" id="form-create-personal-tag" data-submit-type="formData">
                 <div class="fr-input-group">
-                    <label class="fr-label" for="new-tag-user-label" data-error-target="1">
+                    <label class="fr-label" for="new-personal-tag-label" data-error-target="1">
                         Créer une nouvelle étiquette
                         <span class="fr-hint-text">Elle sera créée et attribuée immédiatement à ce signalement.</span>
                     </label>
-                    <input class="fr-input" type="text" id="new-tag-user-label" name="label" placeholder="Nom de l'étiquette" maxlength="255">
+                    <input class="fr-input" type="text" id="new-personal-tag-label" name="label" placeholder="Nom de l'étiquette" maxlength="255">
                 </div>
-                <input type="hidden" name="_token" value="{{ csrf_token('signalement_create_tag_user') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('signalement_create_personal_tag') }}">
                 <button class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line fr-mt-2v" type="submit">
                     Créer et attribuer
                 </button>
@@ -46,7 +46,7 @@
             Cliquez sur une étiquette pour la retirer de ce signalement. Les changements sont enregistrés automatiquement.
         </p>
         <div class="search-and-select-badges-selected fr-my-3v">
-            {% for tag in selectedTagUsers %}
+            {% for tag in selectedPersonalTags %}
                 <span
                     class="fr-badge fr-badge--blue-ecume fr-m-1v search-and-select-badge-remove"
                     data-badge-id="{{ tag.id }}"
@@ -58,9 +58,9 @@
             {% endfor %}
         </div>
         <div class="single-ajax-form-container">
-            <form method="POST" action="{{ path('back_signalement_save_tag_users', {uuid: signalement.uuid}) }}" id="form-signalement-save-tag-users" data-submit-type="formData">
-                <input type="hidden" class="search-and-select-badges-input" name="tag-ids" value="{% for tag in selectedTagUsers %}{{ tag.id }},{% endfor %}">
-                <input type="hidden" name="_token" value="{{ csrf_token('signalement_save_tag_users') }}">
+            <form method="POST" action="{{ path('back_signalement_save_personal_tags', {uuid: signalement.uuid}) }}" id="form-signalement-save-personal-tags" data-submit-type="formData">
+                <input type="hidden" class="search-and-select-badges-input" name="tag-ids" value="{% for tag in selectedPersonalTags %}{{ tag.id }},{% endfor %}">
+                <input type="hidden" name="_token" value="{{ csrf_token('signalement_save_personal_tags') }}">
             </form>
         </div>
     </div>
