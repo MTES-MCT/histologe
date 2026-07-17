@@ -115,16 +115,15 @@
 
       <!-- Types d'arrêtés -->
       <div class="fr-col-12 fr-col-md-3 fr-mb-1v fr-mb-md-2w">
-        <HistoMultiSelect
+        <AppListCheckboxes
           id="filter-types-arretes"
           v-model="sharedState.input.filters.typesArretes"
           @update:modelValue="notifyChange"
-          :option-items="sharedState.typesArretes"
-          title="Rechercher par types d'arrêtés"
-          :active="true"
+          :option-groups="typesArretesGroups"
+          :reset="resetKey"
         >
           <template #label>Types d'arrêtés</template>
-        </HistoMultiSelect>
+        </AppListCheckboxes>
       </div>
 
       <!-- Filtres actifs -->
@@ -158,9 +157,10 @@ import { useAddressesHistoryFilters } from '../composables/useAddressesHistoryFi
 import { getActiveFilters, type ActiveFilter } from '../services/activeFiltersBuilder'
 import type { AddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'
 import HistoSelect from '../../common/HistoSelect.vue'
-import HistoMultiSelect from '../../common/HistoMultiSelect.vue'
 import AppSearch from '../../common/AppSearch.vue'
 import AppAutoComplete from '../../common/AppAutoComplete.vue'
+import AppListCheckboxes from '../../common/AppListCheckboxes.vue'
+import type { CheckboxGroup } from '../../common/AppListCheckboxes.types'
 
 // Émissions
 const emit = defineEmits<{
@@ -177,6 +177,17 @@ const filtersComposable = useAddressesHistoryFilters()
 // Options statiques
 const natureParcOptions = computed(() => store.state.natureParcList)
 const dossiersMultiplesOptions = computed(() => store.state.dossiersMultiplesList)
+
+// Groupes pour les types d'arrêtés
+const typesArretesGroups = computed<CheckboxGroup[]>(() => [
+  {
+    title: 'Mise en sécurité',
+    options: store.state.typesArretes.filter(t => t.Id.toString().startsWith('MISE_EN_SECURITE'))
+  },
+  {
+    options: store.state.typesArretes.filter(t => !t.Id.toString().startsWith('MISE_EN_SECURITE'))
+  }
+])
 
 // Filtres actifs
 const activeFilters = computed<ActiveFilter[]>(() => {

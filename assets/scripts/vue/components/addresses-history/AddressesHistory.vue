@@ -1,6 +1,7 @@
 <template>
   <div id="histo-app-addresses-history-view">
     <AddressesHistoryHeader @view-mode-change="onViewModeChange" />
+    <hr class="fr-mt-4w">
     <section v-if="sharedState.loadingList" class="loading fr-m-10w fr-text--center">
       <h2 class="fr-text--light" v-if="!sharedState.hasErrorLoading">Chargement de la liste...</h2>
       <h2 class="fr-text--light" v-if="sharedState.hasErrorLoading">Erreur lors du chargement de la liste.</h2>
