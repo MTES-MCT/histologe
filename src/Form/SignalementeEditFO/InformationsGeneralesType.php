@@ -43,6 +43,12 @@ class InformationsGeneralesType extends AbstractType
                 'label' => 'Date arrivée (facultatif)',
                 'required' => false,
                 'placeholder' => false,
+                'constraints' => [
+                    new Assert\GreaterThan(
+                        value: new \DateTimeImmutable('1900-01-01'),
+                        message: 'La date d\'entrée dans le logement doit être postérieure au 1er janvier 1900.',
+                    ),
+                ],
             ])
             ->add('dateEffetBail', DateType::class, [
                 'label' => 'Date d\'effet du bail (facultatif)',

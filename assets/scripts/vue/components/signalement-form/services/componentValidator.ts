@@ -45,6 +45,11 @@ export const componentValidator = {
           formStore.validationErrors[componentSlug] = 'Veuillez choisir une date de naissance dans le passé.'
         }
       }
+      if (component.validate?.min !== undefined) {
+        if (Date.parse(value) < Date.parse(component.validate.min)) {
+          formStore.validationErrors[componentSlug] = component.validate?.minMessage ?? 'Date invalide.'
+        }
+      }
     }
 
     if (variableTester.isNotEmpty(value) && component.validate?.maxLength !== undefined) {

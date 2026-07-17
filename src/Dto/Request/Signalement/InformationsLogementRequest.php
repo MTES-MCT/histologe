@@ -28,6 +28,7 @@ class InformationsLogementRequest implements RequestInterface
         private readonly ?string $autreSituationVulnerabilite = null,
         #[Assert\NotBlank(message: 'Merci de définir la date d\'arrivée.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
         #[Assert\DateTime('Y-m-d')]
+        #[Assert\GreaterThan(value: '1900-01-01', message: 'La date d\'entrée dans le logement doit être postérieure au 1er janvier 1900.')]
         private readonly ?string $dateEntree = null,
         #[Assert\DateTime('Y-m-d')]
         private readonly ?string $bailleurDateEffetBail = null,

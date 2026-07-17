@@ -952,6 +952,9 @@ class SignalementRequest implements RequestInterface
             if ($dateEntree && $dateEntree > $now) {
                 $context->buildViolation('La date d\'entrée dans le logement ne peut pas être dans le futur.')->atPath('dateEntreeLogement')->addViolation();
             }
+            if ($dateEntree && $dateEntree <= new \DateTime('1900-01-01')) {
+                $context->buildViolation('La date d\'entrée dans le logement doit être postérieure au 1er janvier 1900.')->atPath('dateEntreeLogement')->addViolation();
+            }
         }
         if ($this->dateBailleurAverti) {
             $dateBailleurAverti = \DateTime::createFromFormat('Y-m-d', $this->dateBailleurAverti);

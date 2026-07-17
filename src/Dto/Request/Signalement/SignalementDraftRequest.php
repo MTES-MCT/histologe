@@ -371,6 +371,7 @@ class SignalementDraftRequest
     )]
     private ?string $typeLogementCommoditesWcCuisine = null;
     #[Assert\DateTime('Y-m-d')]
+    #[Assert\GreaterThan(value: '1900-01-01', message: 'La date d\'entrée dans le logement doit être postérieure au 1er janvier 1900.')]
     private ?string $bailDpeDateEmmenagement = null;
     #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bailDpeBail" est incorrect.')]
     private ?string $bailDpeBail = null;
@@ -504,6 +505,7 @@ class SignalementDraftRequest
     )]
     private ?string $informationsComplementairesSituationOccupantsDemandeRelogement = null;
     #[Assert\DateTime('Y-m-d')]
+    #[Assert\GreaterThan(value: '1900-01-01', message: 'La date d\'entrée dans le logement doit être postérieure au 1er janvier 1900.')]
     private ?string $informationsComplementairesSituationOccupantsDateEmmenagement = null;
     #[Assert\Choice(
         choices: ['oui', 'non'],

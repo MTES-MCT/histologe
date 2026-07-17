@@ -148,6 +148,13 @@ class SignalementDraftSituationType extends AbstractType
                 'label' => 'Date d\'entrée dans le logement',
                 'required' => false,
                 'placeholder' => false,
+                'constraints' => [
+                    new Assert\GreaterThan(
+                        value: new \DateTimeImmutable('1900-01-01'),
+                        message: 'La date d\'entrée dans le logement doit être postérieure au 1er janvier 1900.',
+                        groups: ['bo_step_situation'],
+                    ),
+                ],
             ])
             ->add('loyer', NumberType::class, [
                 'label' => 'Montant du loyer',

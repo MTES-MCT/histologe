@@ -2295,7 +2295,9 @@
                 "slug": "informations_complementaires_situation_occupants_date_emmenagement",
                 "description": "Format attendu : JJ/MM/AAAA",
                 "validate": {
-                  "required": false
+                  "required": false,
+                  "min": "1900-01-01",
+                  "minMessage": "La date d'entrée dans le logement doit être postérieure au 1er janvier 1900."
                 }
               }
             ]
