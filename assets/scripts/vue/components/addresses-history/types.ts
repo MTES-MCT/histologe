@@ -70,7 +70,7 @@ export interface StoreState {
   user: UserState
   territories: HistoInterfaceSelectOption[]
   communes: string[]
-  bailleursAndSyndic: HistoInterfaceSelectOption[]
+  bailleursAndSyndic: string[]
   zones: HistoInterfaceSelectOption[]
   currentTerritoryId: string
   currentCommunes: string

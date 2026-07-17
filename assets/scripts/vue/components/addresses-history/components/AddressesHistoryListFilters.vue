@@ -56,15 +56,14 @@
           id="filter-bailleur-ou-syndic"
           v-model="sharedState.input.filters.bailleurOuSyndic"
           :suggestions="sharedState.bailleursAndSyndic"
-          :initSelectedSuggestions="sharedState.input.filters.bailleurOuSyndic"
-          :placeholder="'Nom du bailleur ou syndic'"
-          title="Nom du bailleur ou syndic"
-          :multiple="true"
+          :placeholder="'Nom du bailleur ou syndicat'"
+          title="Nom du bailleur ou syndicat"
+          :multiple="false"
           @update:modelValue="notifyChange"
           :reset="resetKey"
           :iconClass="'fr-icon-user-search-fill'"
         >
-          <template #label>Bailleur ou syndic gestionnaire</template>
+          <template #label>Bailleur ou syndicat gestionnaire</template>
         </AppAutoComplete>
       </div>
 
@@ -128,27 +127,23 @@
         </HistoMultiSelect>
       </div>
 
-      <!-- Bouton Reset -->
-      <div class="fr-col-12 fr-col-md-3 fr-pt-0w fr-pt-md-5w fr-grid-row--middle">
-        <button
-          @click="onFiltersReset"
-          class="fr-link fr-link--icon-left fr-icon-close-circle-line fr-text--sm"
-        >
-          Réinitialiser les résultats
-        </button>
-      </div>
-
       <!-- Filtres actifs -->
-      <div v-if="activeFilters.length > 0" class="fr-col-12 fr-mt-2w">
+      <div v-if="activeFilters.length > 0" class="fr-col-12">
         <ul class="fr-tags-group">
           <li v-for="filter in activeFilters" :key="filter.key">
             <button
-              class="fr-tag fr-tag--sm fr-tag--dismiss"
+              class="fr-tag fr-tag--sm fr-tag--dismiss fr-mt-3v"
               :aria-label="`Retirer le filtre ${filter.label}`"
               @click="onRemoveFilter(filter.key)"
             >
               {{ filter.label }}
             </button>
+          </li>
+          <li>
+            <button
+              @click="onFiltersReset"
+              class="fr-link fr-link--icon-left fr-icon-close-circle-line fr-text--sm fr-ml-5w"
+              >Réinitialiser les résultats</button>
           </li>
         </ul>
       </div>

@@ -55,7 +55,7 @@ const state = ref<StoreState>({
   zones: [],
   currentTerritoryId: '',
   currentCommunes: '',
-  viewMode: 'map' as ViewMode,
+  viewMode: 'list' as ViewMode,
   loadingList: true,
   hasErrorLoading: false,
   natureParcList: [
@@ -162,7 +162,7 @@ function setCommunes(communes: string[]): void {
   state.value.communes = communes
 }
 
-function setBailleursAndSyndic(bailleursAndSyndic: HistoInterfaceSelectOption[]): void {
+function setBailleursAndSyndic(bailleursAndSyndic: string[]): void {
   state.value.bailleursAndSyndic = bailleursAndSyndic
 }
 

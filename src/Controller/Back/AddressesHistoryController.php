@@ -125,7 +125,7 @@ class AddressesHistoryController extends AbstractController
                     'id' => $row['arreteId'],
                     'dateArrete' => $row['dateArrete'] ? $row['dateArrete']->format('d/m/Y') : null,
                     'arreteType' => $row['arreteType'],
-                    'arreteTypeLabel' => $row['arreteType'] ? $row['arreteType']->label() : null,
+                    'arreteTypeLabel' => $row['arreteType'] ? $row['arreteType']->completeLabel() : null,
                     'dateMainLevee' => $row['dateMainLevee'] ? $row['dateMainLevee']->format('d/m/Y') : null,
                 ]);
                 $processedArretes[$addressKey][] = $row['arreteId'];
