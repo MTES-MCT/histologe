@@ -152,10 +152,8 @@ class ArreteRepository extends ServiceEntityRepository
         }
 
         if ($identifiantParcellaire) {
-            $qb->andWhere('a.identifiantParcellaire = :identifiantParcellaire')
+            $qb->andWhere('a.identifiantParcellaire = :identifiantParcellaire OR a.identifiantParcellaire IS NULL')
                 ->setParameter('identifiantParcellaire', $identifiantParcellaire);
-        } else {
-            $qb->andWhere('a.identifiantParcellaire IS NULL');
         }
 
         if ($dateMainLevee) {
@@ -166,10 +164,8 @@ class ArreteRepository extends ServiceEntityRepository
         }
 
         if ($syndic) {
-            $qb->andWhere('a.syndic = :syndic')
+            $qb->andWhere('a.syndic = :syndic OR a.syndic IS NULL')
                 ->setParameter('syndic', $syndic);
-        } else {
-            $qb->andWhere('a.syndic IS NULL');
         }
 
         return $qb->getQuery()->setMaxResults(1)->getOneOrNullResult();

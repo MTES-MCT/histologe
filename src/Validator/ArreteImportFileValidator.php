@@ -53,7 +53,7 @@ class ArreteImportFileValidator extends ConstraintValidator
 
         $uniqueRows = [];
         $duplicateLines = [];
-        $headerOffset = ((int) ($csvParser->getOptions()['first_line'] ?? 0)) + ArreteImportRow::FIRST_LINE;
+        $headerOffset = ((int) ($csvParser->getOptions()['first_line'] ?? 0)) + 1;
         foreach ($data as $index => $row) {
             $rowString = implode('|', $row);
             if (isset($uniqueRows[$rowString])) {

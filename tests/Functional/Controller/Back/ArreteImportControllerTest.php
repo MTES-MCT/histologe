@@ -67,7 +67,6 @@ class ArreteImportControllerTest extends WebTestCase
         $content = $response->getContent();
         $data = json_decode($content, true);
 
-        $this->assertFalse($data['success']);
         $this->assertContains($expectedErrorMessage, $data['errors']);
 
         unlink($tmpFile);
@@ -108,7 +107,6 @@ class ArreteImportControllerTest extends WebTestCase
         $content = $response->getContent();
         $data = json_decode($content, true);
 
-        $this->assertTrue($data['success']);
         $this->assertArrayHasKey('errors', $data);
         $this->assertCount(1, $data['errors']);
         $this->assertStringContainsString('ligne 6', $data['errors'][0]);
@@ -171,7 +169,6 @@ class ArreteImportControllerTest extends WebTestCase
         $content = $response->getContent();
         $data = json_decode($content, true);
 
-        $this->assertTrue($data['success']);
         $this->assertArrayNotHasKey('errors', $data);
         $this->assertArrayHasKey('data', $data);
         $this->assertCount(2, $data['data']);
@@ -220,10 +217,6 @@ class ArreteImportControllerTest extends WebTestCase
 
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        /** @var string $responseContent */
-        $responseContent = $response->getContent();
-        $responseData = json_decode($responseContent, true);
-        $this->assertTrue($responseData['success']);
 
         $client->request('GET', '/bo/gerer-territoire/arretes/import');
 
@@ -279,11 +272,6 @@ class ArreteImportControllerTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
-        $content = $response->getContent();
-        $this->assertIsString($content);
-        $responseData = json_decode($content, true);
-        $this->assertTrue($responseData['success']);
-
         $client->request('GET', '/bo/gerer-territoire/arretes/import');
 
         $this->assertSelectorTextContains('.fr-notice--success', '1 arrêté a été importé.');
@@ -320,7 +308,7 @@ class ArreteImportControllerTest extends WebTestCase
         yield 'Duplicate lines' => [
             $lines,
             'duplicate_lines.csv',
-            'Le fichier CSV contient des lignes en doublon aux lignes : 5.',
+            'Le fichier CSV contient des lignes en doublon aux lignes : 4.',
         ];
     }
 }

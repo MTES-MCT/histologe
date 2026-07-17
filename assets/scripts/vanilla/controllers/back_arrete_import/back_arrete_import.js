@@ -35,6 +35,7 @@ function getElements(root) {
     root,
     fileInput,
     form: fileInput?.closest('form'),
+    uploadFile: root.querySelector('.import-csv-upload-file'),
     loadingBlock: root.querySelector('.import-csv-loading'),
     successBlock: root.querySelector('.import-csv-success'),
     errorBlock: root.querySelector('.import-csv-error-callout'),
@@ -96,7 +97,6 @@ async function handleUpload(elements) {
       if (elements.fileInput.files.length > 0) {
         localStorage.setItem('import_arrete_filename', elements.fileInput.files[0].name);
       }
-      showErrors(elements, payload.errors);
       showSuccess(elements);
       renderCards(elements, payload.data);
       updateValidationState(elements);
@@ -146,6 +146,7 @@ async function handleConfirm(elements) {
 function resetUploadState(elements) {
   localStorage.removeItem('import_arrete_data');
   localStorage.removeItem('import_arrete_filename');
+  elements.uploadFile?.classList.add('fr-display-none');
   elements.loadingBlock?.classList.remove('fr-display-none');
   elements.successBlock?.classList.add('fr-display-none');
   elements.errorBlock?.classList.add('fr-display-none');
@@ -162,6 +163,7 @@ function resetUploadState(elements) {
 }
 
 function showSuccess(elements, fileName = null) {
+  elements.uploadFile?.classList.add('fr-display-none');
   elements.successBlock?.classList.remove('fr-display-none');
 
   const fileNameElement = elements.successBlock?.querySelector('.fr-text--sm');
@@ -177,6 +179,7 @@ function showSuccess(elements, fileName = null) {
 }
 
 function showErrors(elements, errors) {
+  elements.uploadFile?.classList.remove('fr-display-none');
   elements.errorBlock?.classList.remove('fr-display-none');
 
   if (!elements.errorList) return;

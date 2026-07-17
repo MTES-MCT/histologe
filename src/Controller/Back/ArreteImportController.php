@@ -51,7 +51,7 @@ class ArreteImportController extends AbstractController
         Request $request,
     ): Response {
         if (!$request->isXmlHttpRequest()) {
-            return $this->json(['success' => false, 'message' => 'Requête invalide'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['message' => 'Requête invalide'], Response::HTTP_BAD_REQUEST);
         }
 
         $form = $this->createForm(ImportArreteType::class);
@@ -63,10 +63,10 @@ class ArreteImportController extends AbstractController
             $user = $this->getUser();
             [$errors, $data] = $this->arreteImportLoader->validate($csvFile->getPathname(), $user);
             if (!empty($errors)) {
-                return $this->json(['success' => true, 'errors' => $errors, 'data' => $data]);
+                return $this->json(['errors' => $errors, 'data' => $data]);
             }
 
-            return $this->json(['success' => true, 'data' => $data]);
+            return $this->json(['data' => $data]);
         }
 
         $errors = [];
@@ -75,7 +75,6 @@ class ArreteImportController extends AbstractController
         }
 
         return $this->json([
-            'success' => false,
             'errors' => $errors ?: ['Formulaire non soumis.']],
             Response::HTTP_BAD_REQUEST
         );
@@ -91,7 +90,7 @@ class ArreteImportController extends AbstractController
         Request $request,
     ): Response {
         if (!$request->isXmlHttpRequest()) {
-            return $this->json(['success' => false, 'message' => 'Requête invalide'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['message' => 'Requête invalide'], Response::HTTP_BAD_REQUEST);
         }
 
         /* @var ArreteImportRow[] $arreteImportRows */
@@ -104,7 +103,7 @@ class ArreteImportController extends AbstractController
         foreach ($arreteImportRows as $arreteImportRow) {
             $violations = $this->validator->validate($arreteImportRow);
             if ($violations->count() > 0) {
-                return $this->json(['success' => false, 'errors' => $violations], Response::HTTP_BAD_REQUEST);
+                return $this->json(['errors' => $violations], Response::HTTP_BAD_REQUEST);
             }
         }
 
@@ -146,6 +145,6 @@ class ArreteImportController extends AbstractController
             }
         }
 
-        return $this->json(['success' => true]);
+        return $this->json([]);
     }
 }
