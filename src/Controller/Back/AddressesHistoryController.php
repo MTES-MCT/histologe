@@ -48,10 +48,17 @@ class AddressesHistoryController extends AbstractController
         $filters = null !== $addressesHistorySearchQuery
             ? $addressesHistorySearchQuery->getFilters()
             : [
-                // 'maxItemsPerPage' => AddressesHistorySearchQuery::MAX_LIST_PAGINATION,
+                'maxItemsPerPage' => AddressesHistorySearchQuery::MAX_LIST_PAGINATION,
                 // 'orderBy' => 'DESC',
                 // 'sortBy' => 'reference',
             ];
+
+        $page = null !== $addressesHistorySearchQuery && null !== $addressesHistorySearchQuery->getPage()
+            ? $addressesHistorySearchQuery->getPage()
+            : 1;
+
+        $totalAddresses = $addressesHistoryQuery->countAddressesWithHistory($user, $addressesHistorySearchQuery);
+        $totalPages = (int) ceil($totalAddresses / AddressesHistorySearchQuery::MAX_LIST_PAGINATION);
 
         $addresses = $addressesHistoryQuery->findAddressesWithHistory($user, $addressesHistorySearchQuery);
         $responseAddresses = [];
@@ -128,7 +135,11 @@ class AddressesHistoryController extends AbstractController
         $responseData = [
             'filters' => $filters,
             'list' => array_values($responseAddresses),
-            'pagination' => [],
+            'pagination' => [
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_items' => $totalAddresses,
+            ],
             'zoneAreas' => [],
         ];
 

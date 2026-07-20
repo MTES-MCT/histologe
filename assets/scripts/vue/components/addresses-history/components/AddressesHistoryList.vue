@@ -13,9 +13,9 @@
       </div>
       <AddressesHistoryListFilters @change="onChange" />
       <div id="list-addresses" class="fr-mt-2w">
-        <h2 v-if="sharedState.addresses.list.length > 1"
-          >{{ sharedState.addresses.list.length }} entrées trouvées</h2>
-        <h2 v-else-if="sharedState.addresses.list.length === 1"
+        <h2 v-if="sharedState.addresses.pagination.total_items > 1"
+          >{{ sharedState.addresses.pagination.total_items }} entrées trouvées</h2>
+        <h2 v-else-if="sharedState.addresses.pagination.total_items === 1"
           >1 entrée trouvée</h2>
         <h2 v-else>Aucune entrée trouvée</h2>
 
@@ -67,6 +67,11 @@
           </div>
         </div>
       </div>
+      <AddressesHistoryListPagination
+        v-if="sharedState.addresses.pagination.total_pages > 1"
+        :pagination="sharedState.addresses.pagination"
+        @changePage="onPageChange"
+      />
     </div>
   </section>
 </template>
@@ -74,6 +79,7 @@
 <script setup lang="ts">
 import { store } from '../composables/useAddressesHistoryStore'
 import AddressesHistoryListFilters from './AddressesHistoryListFilters.vue'
+import AddressesHistoryListPagination from './AddressesHistoryListPagination.vue'
 
 // Émissions
 const emit = defineEmits<{
@@ -88,6 +94,21 @@ const sharedState = store.state
  */
 const onChange = (): void => {
   emit('change')
+}
+
+/**
+ * Gère le changement de page avec scroll vers le haut
+ */
+const onPageChange = (page: number): void => {
+  sharedState.addresses.pagination.current_page = page
+
+  // Scroll vers le haut de la liste
+  const listElement = document.getElementById('list-addresses')
+  if (listElement) {
+    listElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  onChange()
 }
 
 function getStatusLabel(status: string): string {

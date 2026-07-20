@@ -24,8 +24,12 @@ class AddressFactory
             ->setCityCode($signalement->getInseeOccupant())
             ->setCity($signalement->getVilleOccupant())
             ->setPostCode($signalement->getCpOccupant())
-            ->setBanId($signalement->getBanIdOccupant())
             ->setTerritory($signalement->getTerritory());
+
+        // Ne définir le banId que s'il n'est pas vide
+        if (!empty($signalement->getBanIdOccupant())) {
+            $address->setBanId($signalement->getBanIdOccupant());
+        }
 
         // Convertir geoloc JSON en point PostGIS
         $point = null;
