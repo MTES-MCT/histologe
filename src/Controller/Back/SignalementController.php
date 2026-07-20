@@ -34,6 +34,7 @@ use App\Repository\EpciRepository;
 use App\Repository\FileRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\NotificationRepository;
+use App\Repository\PersonalNoteRepository;
 use App\Repository\Query\Interconnection\JobEventQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
@@ -101,6 +102,7 @@ class SignalementController extends AbstractController
         UrlGeneratorInterface $urlGenerator,
         SignalementSameAddressArreteFinder $arreteFinder,
         SignalementAddressContentService $signalementAddressContentService,
+        PersonalNoteRepository $personalNoteRepository,
         JobEventQuery $jobEventQuery,
     ): Response {
         // load desordres data to prevent n+1 queries
@@ -255,6 +257,11 @@ class SignalementController extends AbstractController
 
         $epciOccupant = $epciRepository->findOneByCommuneInseeAndPostalCode($signalement->getInseeOccupant(), $signalement->getCpOccupant());
 
+        $personalNote = null;
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $personalNote = $personalNoteRepository->findOneBy(['user' => $user, 'signalement' => $signalement]);
+        }
+
         $syncStatuses = [];
         if ($this->isGranted('ROLE_ADMIN')) {
             $syncStatuses = $jobEventQuery->findSyncStatusesForSignalement($signalement);
@@ -298,6 +305,7 @@ class SignalementController extends AbstractController
             'subscriptionsInMyPartner' => $subscriptionsInMyPartner,
             'partnerEmailAlerts' => $this->emailAlertBuilder->buildPartnerEmailAlert($signalement),
             'isUniqueRtInCurrentPartner' => $isUniqueRtInCurrentPartner,
+            'personalNote' => $personalNote,
             'syncStatuses' => $syncStatuses,
         ];
 

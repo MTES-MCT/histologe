@@ -223,6 +223,18 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserSearchFilter::class, orphanRemoval: true)]
     private Collection $userSearchFilters;
 
+    /**
+     * @var Collection<int, PersonalTag>
+     */
+    #[ORM\OneToMany(targetEntity: PersonalTag::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $personalTags;
+
+    /**
+     * @var Collection<int, PersonalNote>
+     */
+    #[ORM\OneToMany(targetEntity: PersonalNote::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $personalNotes;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -240,6 +252,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->userSignalementSubscriptions = new ArrayCollection();
         $this->userApiPermissions = new ArrayCollection();
         $this->userSearchFilters = new ArrayCollection();
+        $this->personalTags = new ArrayCollection();
+        $this->personalNotes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1123,6 +1137,66 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
             // set the owning side to null (unless already changed)
             if ($userSearchFilter->getUser() === $this) {
                 $userSearchFilter->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PersonalTag>
+     */
+    public function getPersonalTags(): Collection
+    {
+        return $this->personalTags;
+    }
+
+    public function addPersonalTag(PersonalTag $personalTag): static
+    {
+        if (!$this->personalTags->contains($personalTag)) {
+            $this->personalTags->add($personalTag);
+            $personalTag->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonalTag(PersonalTag $personalTag): static
+    {
+        if ($this->personalTags->removeElement($personalTag)) {
+            // set the owning side to null (unless already changed)
+            if ($personalTag->getUser() === $this) {
+                $personalTag->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PersonalNote>
+     */
+    public function getPersonalNotes(): Collection
+    {
+        return $this->personalNotes;
+    }
+
+    public function addPersonalNote(PersonalNote $personalNote): static
+    {
+        if (!$this->personalNotes->contains($personalNote)) {
+            $this->personalNotes->add($personalNote);
+            $personalNote->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePersonalNote(PersonalNote $personalNote): static
+    {
+        if ($this->personalNotes->removeElement($personalNote)) {
+            // set the owning side to null (unless already changed)
+            if ($personalNote->getUser() === $this) {
+                $personalNote->setUser(null);
             }
         }
 
