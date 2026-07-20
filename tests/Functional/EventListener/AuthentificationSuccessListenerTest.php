@@ -7,6 +7,7 @@ use App\Manager\HistoryEntryManager;
 use App\Repository\HistoryEntryRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Service\History\HistoryEntryBuffer;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
@@ -70,7 +71,8 @@ class AuthentificationSuccessListenerTest extends WebTestCase
             $this->logger,
             $signalementRepository,
             $entityManager,
-            '1'
+            '1',
+            static::getContainer()->get(HistoryEntryBuffer::class)
         );
 
         /** @var UserRepository $userRepository */

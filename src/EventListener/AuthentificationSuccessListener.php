@@ -9,6 +9,7 @@ use App\Manager\HistoryEntryManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementBailleur;
 use App\Security\User\SignalementUser;
+use App\Service\History\HistoryEntryBuffer;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthenticationEvent;
@@ -27,6 +28,7 @@ class AuthentificationSuccessListener
         private readonly EntityManagerInterface $entityManager,
         #[Autowire(env: 'HISTORY_TRACKING_ENABLE')]
         private readonly string $historyTrackingEnable,
+        private readonly HistoryEntryBuffer $historyEntryBuffer,
     ) {
     }
 
@@ -67,11 +69,10 @@ class AuthentificationSuccessListener
 
         if ($user instanceof User) {
             $user->setLastLoginAt(new \DateTimeImmutable());
-            $this->entityManager->persist($user);
+            $this->entityManager->flush();
         }
 
         $this->createAuthentificationHistory($eventType, $user);
-        $this->entityManager->flush();
     }
 
     private function createAuthentificationHistory(HistoryEntryEvent $historyEntryEvent, UserInterface $user): void
@@ -95,7 +96,9 @@ class AuthentificationSuccessListener
 
             $source = $this->historyEntryManager->getSource();
             $historyEntry->setSource($source);
-            $this->entityManager->persist($historyEntry);
+
+            $historyKey = $entityHistory::class.'_'.$entityHistory->getId().'_'.$historyEntryEvent->value;
+            $this->historyEntryBuffer->add($historyKey, $historyEntry);
 
             return;
         } catch (\Throwable $exception) {
