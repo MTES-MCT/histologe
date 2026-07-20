@@ -2,8 +2,11 @@
 
 namespace App\Command\Cron;
 
+use App\Dto\SignalementAffectationClose;
+use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
+use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Service\Mailer\NotificationMail;
@@ -30,10 +33,15 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         private readonly ParameterBagInterface $parameterBag,
         private readonly SignalementRepository $signalementRepository,
         private readonly SuiviManager $suiviManager,
+        private readonly SignalementManager $signalementManager,
         #[Autowire(env: 'INJONCTION_REMINDER_THRESHOLD')]
         private readonly string $reminderSuiviTravauxThreshold,
         #[Autowire(env: 'INJONCTION_ANSWER_BAILLEUR_THRESHOLD')]
         private readonly string $answerBailleurThreshold,
+        #[Autowire(env: 'INJONCTION_USAGER_CLOTURE_THRESHOLD')]
+        private readonly string $usagerClotureThreshold,
+        #[Autowire(env: 'INJONCTION_USAGER_CLOTURE_AND_CLOSE_THRESHOLD')]
+        private readonly string $usagerClotureAndCloseThreshold,
         private readonly ClockInterface $clock,
         private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
@@ -52,6 +60,8 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
 
         $this->remindAnswerBailleur($io, $output);
         $this->remindSuiviTravaux($io, $output);
+        $this->remindUsagerForCloture($io, $output);
+        $this->remindUsagerForClotureAndClose($io, $output);
         $this->entityManager->flush();
 
         return Command::SUCCESS;
@@ -164,6 +174,109 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                 to: (string) $this->parameterBag->get('admin_email'),
                 message: $feedbackMsg,
                 cronLabel: 'rappel de mise à jour en cours d\'injonction',
+                cronCount: null,
+            )
+        );
+    }
+
+    private function remindUsagerForCloture(SymfonyStyle $io, OutputInterface $output): void
+    {
+        // Si le bailleur a demandé la clôture et que 15 jours plus tard il n'y a pas de réponse usager,
+        // on relance le déclarant (mail template 318) + suivi automatique dédié.
+        $beforeDate = $this->clock->now()->modify('-'.$this->usagerClotureThreshold);
+        $signalements = $this->signalementRepository->findInjonctionClotureBailleurToRemindUsager($beforeDate);
+        foreach ($signalements as $signalement) {
+            if (!empty($signalement->getMailOccupant())) {
+                $this->notificationAndMailSender->sendReminderClotureToUsager($signalement);
+            }
+
+            $description = 'Relance envoyée à l\'usager pour lui demander de confirmer la réalisation des travaux déclarée par le bailleur il y a 15 jours.';
+            $this->suiviManager->createSuivi(
+                signalement: $signalement,
+                description: $description,
+                category: SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE,
+                sendMail: false,
+            );
+
+            $output->writeln(sprintf('#%s reminded', $signalement->getUuid()));
+        }
+
+        $countSignalements = count($signalements);
+        if ($countSignalements > 0) {
+            $feedbackMsgBailleur = \sprintf(
+                '%s rappels envoyés à l\'usager suite à une demande de clôture par le bailleur au bout de 15 jours.',
+                $countSignalements
+            );
+            $io->success($feedbackMsgBailleur);
+            $feedbackMsg = $feedbackMsgBailleur;
+        } else {
+            $feedbackMsg = 'Aucun rappel n\'a été envoyé pour l\'usager suite à une demande de clôture par le bailleur au bout de 15 jours.';
+            $io->warning($feedbackMsg);
+        }
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_CRON,
+                to: (string) $this->parameterBag->get('admin_email'),
+                message: $feedbackMsg,
+                cronLabel: 'rappel usager suite demande de cloture par bailleur au bout de 15 jours',
+                cronCount: null,
+            )
+        );
+    }
+
+    private function remindUsagerForClotureAndClose(SymfonyStyle $io, OutputInterface $output): void
+    {
+        // Si le bailleur a demandé la clôture et que 30 jours plus tard il n'y a toujours pas de réponse usager,
+        // on clôture le dossier (motif Résolution), et on notifie l'usager (template 320) et le bailleur (template 319).
+        $beforeDate = $this->clock->now()->modify('-'.$this->usagerClotureAndCloseThreshold);
+        $signalements = $this->signalementRepository->findInjonctionClotureBailleurToClose($beforeDate);
+        $description = 'En l\'absence de réponse ou d\'opposition du déclarant dans le délai imparti, le dossier est clôturé et réputé résolu.';
+        foreach ($signalements as $signalement) {
+            if (!empty($signalement->getMailOccupant())) {
+                $this->notificationAndMailSender->sendReminderClotureAndCloseToUsager($signalement);
+            }
+            if (!empty($signalement->getMailProprio())) {
+                $this->notificationAndMailSender->sendReminderClotureAndCloseToBailleur($signalement);
+            }
+
+            $signalementAffectationClose = (new SignalementAffectationClose())
+                ->setSignalement($signalement)
+                ->setMotifCloture(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS)
+                ->setDescription($description);
+            $this->signalementManager->closeSignalement($signalementAffectationClose);
+
+            $this->suiviManager->createSuivi(
+                signalement: $signalement,
+                description: $description,
+                category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
+                isVisibleForUsager: true,
+                isVisibleForBailleur: true,
+                sendMail: false,
+            );
+
+            $output->writeln(sprintf('#%s closed', $signalement->getUuid()));
+        }
+
+        $countSignalements = count($signalements);
+        if ($countSignalements > 0) {
+            $feedbackMsgBailleur = \sprintf(
+                '%s rappels envoyés à l\'usager et au bailleur suite à une demande de clôture par le bailleur au bout de 30 jours.',
+                $countSignalements
+            );
+            $io->success($feedbackMsgBailleur);
+            $feedbackMsg = $feedbackMsgBailleur;
+        } else {
+            $feedbackMsg = 'Aucun rappel n\'a été envoyé pour l\'usager ou le bailleursuite à une demande de clôture par le bailleur au bout de 30 jours.';
+            $io->warning($feedbackMsg);
+        }
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_CRON,
+                to: (string) $this->parameterBag->get('admin_email'),
+                message: $feedbackMsg,
+                cronLabel: 'rappel usager et bailleur suite demande de cloture par bailleur au bout de 30 jours',
                 cronCount: null,
             )
         );

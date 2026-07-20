@@ -828,6 +828,95 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
+     * Dossiers dont le bailleur a demandé la clôture depuis plus de $beforeDate,
+     * et pour lesquels l'usager n'a ni répondu ni déjà reçu la relance de clôture.
+     *
+     * @return Signalement[]
+     *
+     * @throws \Exception
+     */
+    public function findInjonctionClotureBailleurToRemindUsager(
+        \DateTimeImmutable $beforeDate,
+    ): array {
+        return $this->findInjonctionClotureBailleurWithoutUsagerAnswer(
+            $beforeDate,
+            array_merge(SuiviCategory::categoriesSubmittedByUsager(), [SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE])
+        );
+    }
+
+    /**
+     * Dossiers dont le bailleur a demandé la clôture depuis plus de $beforeDate,
+     * et pour lesquels l'usager n'a jamais répondu (une relance déjà envoyée ne compte pas comme une réponse).
+     *
+     * @return Signalement[]
+     *
+     * @throws \Exception
+     */
+    public function findInjonctionClotureBailleurToClose(
+        \DateTimeImmutable $beforeDate,
+    ): array {
+        return $this->findInjonctionClotureBailleurWithoutUsagerAnswer(
+            $beforeDate,
+            SuiviCategory::categoriesSubmittedByUsager()
+        );
+    }
+
+    /**
+     * @param array<SuiviCategory> $categoriesExcluantLeDossier
+     *
+     * @return Signalement[]
+     *
+     * @throws \Exception
+     */
+    private function findInjonctionClotureBailleurWithoutUsagerAnswer(
+        \DateTimeImmutable $beforeDate,
+        array $categoriesExcluantLeDossier,
+    ): array {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.statut = :statut');
+
+        // Il existe une demande de clôture du bailleur, faite avant la date, pour laquelle
+        // l'usager n'a donné aucune réponse depuis (une réponse antérieure à la demande ne compte pas).
+        $qb->andWhere(
+            $qb->expr()->exists(
+                $this->createQueryBuilder('s1')
+                    ->select('1')
+                    ->join('s1.suivis', 'su1')
+                    ->where('s1 = s')
+                    ->andWhere('su1.category IN (:category_demande_cloture)')
+                    ->andWhere(
+                        $qb->expr()->lt('su1.createdAt', ':date')
+                    )
+                    ->andWhere(
+                        $qb->expr()->not(
+                            $qb->expr()->exists(
+                                $this->createQueryBuilder('s2')
+                                    ->select('1')
+                                    ->join('s2.suivis', 'su2')
+                                    ->where('s2 = s1')
+                                    ->andWhere('su2.category IN (:category_list)')
+                                    ->andWhere('su2.createdAt >= su1.createdAt')
+                                    ->getDQL()
+                            )
+                        )
+                    )
+                    ->getDQL()
+            )
+        );
+        $qb->setParameter('category_demande_cloture', [
+            SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
+            SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,
+        ]);
+        $qb->setParameter('category_list', $categoriesExcluantLeDossier);
+
+        $qb->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
+            ->setParameter('date', $beforeDate)
+            ->orderBy('s.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @return array<Signalement>|int
      */
     public function getActiveSignalementsForUser(User $user, ?bool $count = false): array|int

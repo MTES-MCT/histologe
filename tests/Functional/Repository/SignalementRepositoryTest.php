@@ -509,6 +509,118 @@ class SignalementRepositoryTest extends KernelTestCase
         $this->assertCount(1, $signalements);
     }
 
+    public function testFindInjonctionClotureBailleurToRemindUsager(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        // Aucune demande de clôture du bailleur : rien à relancer
+        $beforeDate = new \DateTimeImmutable('-15 days');
+        $signalements = $signalementRepository->findInjonctionClotureBailleurToRemindUsager($beforeDate);
+        $this->assertCount(0, $signalements);
+
+        // MockClock doit être set avant flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable());
+        $container->set(ClockInterface::class, $mockClock);
+        $demandeCreatedAt = $mockClock->now();
+
+        // Le bailleur de 2025-000000000012 demande la clôture de l'injonction
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+        $suiviDemande = (new Suivi())
+            ->setSignalement($signalement)
+            ->setDescription('Les travaux sont terminés, merci de clôturer le signalement.')
+            ->setCategory(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR)
+            ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR))
+            ->setCreatedAt($demandeCreatedAt);
+        $this->entityManager->persist($suiviDemande);
+        $this->entityManager->flush();
+
+        // 10 jours après la demande : pas encore 15 jours, pas de relance attendue
+        $mockClock->modify('+10 days');
+        $beforeDate = $mockClock->now()->modify('-15 days');
+        $signalements = $signalementRepository->findInjonctionClotureBailleurToRemindUsager($beforeDate);
+        $this->assertCount(0, $signalements);
+
+        // 16 jours après la demande, toujours sans réponse de l'usager : relance attendue
+        $mockClock->modify('+6 days');
+        $beforeDate = $mockClock->now()->modify('-15 days');
+        $signalements = $signalementRepository->findInjonctionClotureBailleurToRemindUsager($beforeDate);
+        $this->assertCount(1, $signalements);
+
+        // Une fois la relance envoyée (suivi dédié créé), le dossier ne doit plus être proposé à nouveau
+        $suiviRelance = (new Suivi())
+            ->setSignalement($signalement)
+            ->setDescription('Relance envoyée à l\'usager.')
+            ->setCategory(SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE)
+            ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE))
+            ->setCreatedAt($mockClock->now());
+        $this->entityManager->persist($suiviRelance);
+        $this->entityManager->flush();
+
+        $signalements = $signalementRepository->findInjonctionClotureBailleurToRemindUsager($beforeDate);
+        $this->assertCount(0, $signalements);
+    }
+
+    public function testFindInjonctionClotureBailleurToClose(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+
+        // Aucune demande de clôture du bailleur : rien à clôturer
+        $beforeDate = new \DateTimeImmutable('-30 days');
+        $signalements = $signalementRepository->findInjonctionClotureBailleurToClose($beforeDate);
+        $this->assertCount(0, $signalements);
+
+        // MockClock doit être set avant flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable());
+        $container->set(ClockInterface::class, $mockClock);
+        $demandeCreatedAt = $mockClock->now();
+
+        // Le bailleur de 2025-000000000012 demande la clôture de l'injonction
+        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+        $suiviDemande = (new Suivi())
+            ->setSignalement($signalement)
+            ->setDescription('Les travaux sont terminés, merci de clôturer le signalement.')
+            ->setCategory(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR)
+            ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR))
+            ->setCreatedAt($demandeCreatedAt);
+        $this->entityManager->persist($suiviDemande);
+        $this->entityManager->flush();
+
+        // À j+16 après la demande, la relance automatique à l'usager est envoyée
+        $mockClock->modify('+16 days');
+        $suiviRelance = (new Suivi())
+            ->setSignalement($signalement)
+            ->setDescription('Relance envoyée à l\'usager.')
+            ->setCategory(SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE)
+            ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE))
+            ->setCreatedAt($mockClock->now());
+        $this->entityManager->persist($suiviRelance);
+        $this->entityManager->flush();
+
+        // À j+31 après la demande : le dossier doit être proposé à la clôture, même si la relance
+        // de j+16 a été envoyée entre-temps (une relance n'est pas une réponse de l'usager - non-régression)
+        $mockClock->modify('+15 days');
+        $beforeDate = $mockClock->now()->modify('-30 days');
+        $signalements = $signalementRepository->findInjonctionClotureBailleurToClose($beforeDate);
+        $this->assertCount(1, $signalements);
+
+        // Si l'usager répond après la demande de clôture, le dossier ne doit plus être clôturé automatiquement
+        $suiviReponseUsager = (new Suivi())
+            ->setSignalement($signalement)
+            ->setDescription('Je ne suis pas d\'accord avec cette clôture.')
+            ->setCategory(SuiviCategory::MESSAGE_USAGER)
+            ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::MESSAGE_USAGER))
+            ->setCreatedAt($mockClock->now());
+        $this->entityManager->persist($suiviReponseUsager);
+        $this->entityManager->flush();
+
+        $signalements = $signalementRepository->findInjonctionClotureBailleurToClose($beforeDate);
+        $this->assertCount(0, $signalements);
+    }
+
     public function testFindInjonctionFilteredPaginatedReturnsOnlyInjonctionStatuses(): void
     {
         $user = new User();

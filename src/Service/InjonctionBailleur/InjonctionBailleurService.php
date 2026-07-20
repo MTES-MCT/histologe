@@ -186,6 +186,8 @@ class InjonctionBailleurService
                 isVisibleForBailleur: true
             );
 
+            // TODO : vérifier si un mail est envoyé à l'usager, doit être le mail template 317 (activer le template)
+
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: HtmlCleaner::cleanFrontEndEntry($description),

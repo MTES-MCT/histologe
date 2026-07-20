@@ -63,6 +63,7 @@ enum SuiviCategory: string
     case INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR = 'INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR';
     case INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE = 'INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE';
     case INJONCTION_BAILLEUR_LOGIN_BAILLEUR = 'INJONCTION_BAILLEUR_LOGIN_BAILLEUR';
+    case INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE = 'INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE';
 
     public function labelReponseBailleur(): string
     {
@@ -130,6 +131,7 @@ enum SuiviCategory: string
             'INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR' => 'Le bailleur a souhaité arrêter l\'injonction pour travaux effectués',
             'INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE' => 'Commentaire du bailleur sur la demande de clôture de l\'injonction',
             'INJONCTION_BAILLEUR_LOGIN_BAILLEUR' => 'Connexion du bailleur',
+            'INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE' => 'Relance automatique de l\'usager suite à une demande de clôture du bailleur',
         ];
     }
 
@@ -193,6 +195,7 @@ enum SuiviCategory: string
             self::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
             self::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,
             self::INJONCTION_BAILLEUR_LOGIN_BAILLEUR,
+            self::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE,
         ];
     }
 
@@ -245,6 +248,7 @@ enum SuiviCategory: string
             case self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE:
             case self::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR:
             case self::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE:
+            case self::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE:
             case self::ASK_DOCUMENT:
                 return Suivi::TYPE_AUTO;
             case self::ASK_FEEDBACK_SENT:
