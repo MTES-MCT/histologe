@@ -107,7 +107,7 @@ class ArreteFactoryTest extends TestCase
             $this->assertInstanceOf(Arrete::class, $arrete);
             $this->assertEquals($arreteImportRow->getDateArrete(), $arrete->getDateArrete());
             if ($expectedType) {
-                $this->assertEquals($expectedType, $arrete->getTypeArrete()->name);
+                $this->assertEquals($expectedType, $arrete->getArreteType()->name);
             }
             if ($arreteImportRow->getDateArreteMainLevee()) {
                 $this->assertEquals($arreteImportRow->getDateArreteMainLevee(), $arrete->getDateMainLevee());

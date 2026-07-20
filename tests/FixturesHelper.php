@@ -641,7 +641,7 @@ trait FixturesHelper
     private function createArrete(ArreteType $type, \DateTimeImmutable $date, ?\DateTimeImmutable $dateMainLevee): Arrete
     {
         $arrete = new Arrete();
-        $arrete->setTypeArrete($type);
+        $arrete->setArreteType($type);
         $arrete->setDateArrete($date);
         $arrete->setDateMainLevee($dateMainLevee);
 

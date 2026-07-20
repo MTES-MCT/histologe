@@ -50,8 +50,8 @@ class ArreteRepository extends ServiceEntityRepository
             $qb->andWhere('address.cityCode = :cityCode')->setParameter('cityCode', $searchArrete->getCityCode());
         }
 
-        if ($searchArrete->getTypeArretes()) {
-            $qb->andWhere('a.typeArrete IN (:typeArretes)')->setParameter('typeArretes', $searchArrete->getTypeArretes());
+        if ($searchArrete->getArreteTypes()) {
+            $qb->andWhere('a.arreteType IN (:arreteTypes)')->setParameter('arreteTypes', $searchArrete->getArreteTypes());
         }
 
         if (null !== $searchArrete->getMainLevee()) {
@@ -119,7 +119,7 @@ class ArreteRepository extends ServiceEntityRepository
 
     public function findOneByCriteria(
         \DateTimeImmutable $dateArrete,
-        ArreteType $typeArrete,
+        ArreteType $arreteType,
         ?string $identifiantParcellaire,
         Address $address,
         ?\DateTimeImmutable $dateMainLevee = null,
@@ -128,9 +128,9 @@ class ArreteRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('a')
             ->join('a.address', 'addr')
             ->where('a.dateArrete = :dateArrete')
-            ->andWhere('a.typeArrete = :typeArrete')
+            ->andWhere('a.arreteType = :arreteType')
             ->setParameter('dateArrete', $dateArrete->format('Y-m-d'))
-            ->setParameter('typeArrete', $typeArrete);
+            ->setParameter('arreteType', $arreteType);
 
         if ($address->getBanId()) {
             $qb->andWhere('addr.banId = :banId')

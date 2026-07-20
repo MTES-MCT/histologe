@@ -21,7 +21,7 @@ class Arrete implements EntityHistoryInterface
     private \DateTimeImmutable $dateArrete;
 
     #[ORM\Column(enumType: ArreteType::class)]
-    private ArreteType $typeArrete;
+    private ArreteType $arreteType;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $syndic = null;
@@ -60,14 +60,14 @@ class Arrete implements EntityHistoryInterface
         return $this;
     }
 
-    public function getTypeArrete(): ArreteType
+    public function getArreteType(): ArreteType
     {
-        return $this->typeArrete;
+        return $this->arreteType;
     }
 
-    public function setTypeArrete(ArreteType $typeArrete): static
+    public function setArreteType(ArreteType $arreteType): static
     {
-        $this->typeArrete = $typeArrete;
+        $this->arreteType = $arreteType;
 
         return $this;
     }

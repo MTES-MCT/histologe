@@ -23,7 +23,7 @@ class SearchArrete
     private ?string $cityCode = null;
 
     /** @var array<string>|null */
-    private ?array $typeArretes = null;
+    private ?array $arreteTypes = null;
     private ?bool $mainLevee = null;
     private ?string $orderType = null;
 
@@ -113,17 +113,17 @@ class SearchArrete
     /**
      * @return array<string>|null
      */
-    public function getTypeArretes(): ?array
+    public function getArreteTypes(): ?array
     {
-        return $this->typeArretes;
+        return $this->arreteTypes;
     }
 
     /**
-     * @param array<string>|null $typeArretes
+     * @param array<string>|null $arreteTypes
      */
-    public function setTypeArretes(?array $typeArretes): void
+    public function setArreteTypes(?array $arreteTypes): void
     {
-        $this->typeArretes = $typeArretes;
+        $this->arreteTypes = $arreteTypes;
     }
 
     public function getMainLevee(): ?bool

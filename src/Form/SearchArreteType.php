@@ -84,12 +84,12 @@ class SearchArreteType extends AbstractType
             ],
         ]);
 
-        $builder->add('typeArretes', SearchCheckboxEnumType::class, [
+        $builder->add('arreteTypes', SearchCheckboxEnumType::class, [
             'class' => ArreteType::class,
             'label' => 'Types d\'arrêtés',
             'choices' => ArreteType::getChoices(),
-            'choice_label' => static function (ArreteType $typeArrete) {
-                return $typeArrete->label();
+            'choice_label' => static function (ArreteType $arreteType) {
+                return $arreteType->label();
             },
         ]);
         $builder->add('mainLevee', ChoiceType::class, [

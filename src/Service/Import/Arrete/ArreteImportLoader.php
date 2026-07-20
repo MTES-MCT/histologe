@@ -124,7 +124,7 @@ class ArreteImportLoader
 
             $existingArrete = $this->arreteRepository->findOneByCriteria(
                 $arrete->getDateArrete(),
-                $arrete->getTypeArrete(),
+                $arrete->getArreteType(),
                 $arrete->getIdentifiantParcellaire(),
                 $arrete->getAddress(),
                 $arrete->getDateMainLevee(),
@@ -134,7 +134,7 @@ class ArreteImportLoader
             if ($existingArrete) {
                 $this->metadata['errors'][] = sprintf(
                     'L\'arrêté %s du %s %s situé au %s a déjà été importé.',
-                    $arrete->getTypeArrete()->label(),
+                    $arrete->getArreteType()->label(),
                     $arrete->getDateArrete()->format('d/m/Y'),
                     $arrete->isMainLevee() ? 'avec main levée' : 'sans main levée',
                     $arrete->getAddress()->getFull()

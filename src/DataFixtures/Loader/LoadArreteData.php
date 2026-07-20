@@ -44,7 +44,7 @@ class LoadArreteData extends Fixture implements OrderedFixtureInterface
     {
         $arrete = (new Arrete())
             ->setDateArrete(new \DateTimeImmutable($row['dateArrete']))
-            ->setTypeArrete(ArreteType::fromLabel($row['typeArrete']))
+            ->setArreteType(ArreteType::fromLabel($row['arreteType']))
             ->setSyndic($row['syndic'] ?? null)
             ->setAddress($this->addresses[$row['address']])
             ->setDateMainLevee(isset($row['dateMainLevee']) ? new \DateTimeImmutable($row['dateMainLevee']) : null)

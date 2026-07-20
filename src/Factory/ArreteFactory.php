@@ -86,7 +86,7 @@ class ArreteFactory
 
         $arrete = new Arrete()
             ->setDateArrete($arreteImportRow->getDateArrete())
-            ->setTypeArrete(ArreteType::tryFromLabel($arreteImportRow->getClassificationArrete()))
+            ->setArreteType(ArreteType::tryFromLabel($arreteImportRow->getClassificationArrete()))
             ->setSyndic($arreteImportRow->getDenominationSyndic())
             ->setAddress($address)
             ->setIdentifiantParcellaire($arreteImportRow->getIdentifiantParcellaire())

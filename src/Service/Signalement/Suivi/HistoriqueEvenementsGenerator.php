@@ -59,14 +59,14 @@ class HistoriqueEvenementsGenerator
                 if ($arrete->getDateMainLevee()) {
                     $description .= sprintf(
                         '- Un arrêté de type %s, pris le %s avec main levée le %s<br/>',
-                        ArreteType::getLabelList()[$arrete->getTypeArrete()->name],
+                        ArreteType::getLabelList()[$arrete->getArreteType()->name],
                         $arrete->getDateArrete()->format(self::HISTO_EVENTS_DATE_FORMAT),
                         $arrete->getDateMainLevee()->format(self::HISTO_EVENTS_DATE_FORMAT)
                     );
                 } else {
                     $description .= sprintf(
                         '- Un arrêté de type %s, pris le %s sans main levée renseignée</br>',
-                        ArreteType::getLabelList()[$arrete->getTypeArrete()->name],
+                        ArreteType::getLabelList()[$arrete->getArreteType()->name],
                         $arrete->getDateArrete()->format(self::HISTO_EVENTS_DATE_FORMAT)
                     );
                 }
