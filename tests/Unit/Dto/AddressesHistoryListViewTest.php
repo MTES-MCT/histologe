@@ -129,7 +129,7 @@ class AddressesHistoryListViewTest extends TestCase
         $arrete = [
             'id' => 1,
             'dateArrete' => '2024-01-15',
-            'typeArrete' => 'interdiction',
+            'arreteType' => 'interdiction',
         ];
 
         $this->assertNull($addressesHistory->getArretes());
@@ -149,13 +149,13 @@ class AddressesHistoryListViewTest extends TestCase
         $arrete1 = [
             'id' => 1,
             'dateArrete' => '2024-01-15',
-            'typeArrete' => 'interdiction',
+            'arreteType' => 'interdiction',
         ];
 
         $arrete2 = [
             'id' => 2,
             'dateArrete' => '2024-02-20',
-            'typeArrete' => 'peril',
+            'arreteType' => 'peril',
         ];
 
         $addressesHistory->addArrete($arrete1);
@@ -198,7 +198,7 @@ class AddressesHistoryListViewTest extends TestCase
         $existingArrete = [
             'id' => 1,
             'dateArrete' => '2024-01-15',
-            'typeArrete' => 'interdiction',
+            'arreteType' => 'interdiction',
         ];
 
         $addressesHistory = new AddressesHistoryListView(
@@ -208,7 +208,7 @@ class AddressesHistoryListViewTest extends TestCase
         $newArrete = [
             'id' => 2,
             'dateArrete' => '2024-02-20',
-            'typeArrete' => 'peril',
+            'arreteType' => 'peril',
         ];
 
         $addressesHistory->addArrete($newArrete);

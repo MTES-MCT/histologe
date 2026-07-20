@@ -107,7 +107,7 @@ class AddressesHistoryController extends AbstractController
                 $responseAddresses[$addressKey]->addArrete([
                     'id' => $row['arreteId'],
                     'dateArrete' => $row['dateArrete'],
-                    'typeArrete' => $row['typeArrete'],
+                    'arreteType' => $row['arreteType'],
                     'dateMainLevee' => $row['dateMainLevee'],
                 ]);
                 $processedArretes[$addressKey][] = $row['arreteId'];

@@ -58,7 +58,7 @@ class AddressesHistoryQuery
                 's.nomProprio',
                 'ar.id AS arreteId',
                 'ar.dateArrete',
-                'ar.typeArrete',
+                'ar.arreteType',
                 'ar.dateMainLevee'
             )
             ->setParameter('statusList', $statusList)
@@ -179,9 +179,9 @@ class AddressesHistoryQuery
                 ->setParameter('bailleurOuSyndic', '%'.$addressesHistorySearchQuery->getBailleurOuSyndic().'%');
         }
 
-        if (!empty($addressesHistorySearchQuery->getTypesArretes())) {
-            $qb->andWhere('ar.typeArrete IN (:typesArretes)')
-                ->setParameter('typesArretes', $addressesHistorySearchQuery->getTypesArretes());
+        if (!empty($addressesHistorySearchQuery->getArreteTypes())) {
+            $qb->andWhere('ar.arreteType IN (:arreteTypes)')
+                ->setParameter('arreteTypes', $addressesHistorySearchQuery->getArreteTypes());
         }
 
         return $qb;

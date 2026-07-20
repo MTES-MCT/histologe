@@ -18,7 +18,7 @@ export enum DossiersMultiples {
   Sans = 'non'
 }
 
-export enum TypeArrete {
+export enum ArreteType {
   MiseEnSecurite = 'MISE_EN_SECURITE',
   ArreteL51111Impropre = 'ARRETE_L_511_11_IMPROPRE'
 }
@@ -46,7 +46,7 @@ export interface Filters {
   zone?: string
   natureParc?: string
   dossiersMultiples?: string
-  typesArretes: string[]
+  arreteTypes: string[]
 }
 
 export interface InputState {
@@ -79,7 +79,7 @@ export interface StoreState {
   hasErrorLoading: boolean
   natureParcList: Array<{ Id: string; Text: string }>
   dossiersMultiplesList: Array<{ Id: string; Text: string }>
-  typesArretes: Array<{ Id: string; Text: string }>
+  arreteTypes: Array<{ Id: string; Text: string }>
   filtersApplyKey: number
 }
 
