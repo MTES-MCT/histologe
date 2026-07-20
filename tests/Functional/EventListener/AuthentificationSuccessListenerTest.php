@@ -4,6 +4,7 @@ namespace App\Tests\Functional\EventListener;
 
 use App\EventListener\AuthentificationSuccessListener;
 use App\Manager\HistoryEntryManager;
+use App\Manager\SuiviManager;
 use App\Repository\HistoryEntryRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
@@ -72,7 +73,8 @@ class AuthentificationSuccessListenerTest extends WebTestCase
             $signalementRepository,
             $entityManager,
             '1',
-            static::getContainer()->get(HistoryEntryBuffer::class)
+            static::getContainer()->get(HistoryEntryBuffer::class),
+            static::getContainer()->get(SuiviManager::class)
         );
 
         /** @var UserRepository $userRepository */

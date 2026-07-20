@@ -909,4 +909,14 @@ class SignalementRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findOneByUuidWithSuivis(string $uuid): ?Signalement
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('s', 'su');
+        $qb->leftJoin('s.suivis', 'su');
+        $qb->where('s.uuid = :uuid')->setParameter('uuid', $uuid);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }
