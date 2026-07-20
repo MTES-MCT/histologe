@@ -111,23 +111,21 @@ function getStatusLabel(status: string): string {
 
 function getArreteClass(typeArrete: string): string {
   let className = 'fr-icon fr-mr-2v '
-  switch (typeArrete) {
-    case 'MISE_EN_SECURITE':
-    case 'MISE_EN_SECURITE_PROCEDURE_URGENTE':
-    case 'MISE_EN_SECURITE_MODIFICATIF':
-      className += 'fr-icon-hexagon-fill fr-color-mise-en-securite'
-      break
-    case 'ARRETE_L_511_19_INSALUBRITE':
-    case 'ARRETE_L_511_19_INSALUBRITE_SATURNISME':
-    case 'ARRETE_L_511_19_SATURNISME':
-      className += 'fr-icon-square-fill fr-color-insalubrite'
-      break
-    default:
-      className += 'fr-icon-circle-fill fr-color-autre'
-      break
+
+  // Groupe "Mise en sécurité"
+  if (typeArrete.startsWith('MISE_EN_SECURITE')) {
+    className += 'fr-icon-hexagon-fill fr-color-mise-en-securite'
+  }
+  // Groupe "Insalubrité"
+  else if (typeArrete.startsWith('ARRETE_L_511') || typeArrete.startsWith('ARRETE_L_1331')) {
+    className += 'fr-icon-square-fill fr-color-insalubrite'
+  }
+  // Groupe "Autres"
+  else {
+    className += 'fr-icon-circle-fill fr-color-autre'
   }
 
-  return className 
+  return className
 }
 </script>
 

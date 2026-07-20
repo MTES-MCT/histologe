@@ -178,16 +178,47 @@ const filtersComposable = useAddressesHistoryFilters()
 const natureParcOptions = computed(() => store.state.natureParcList)
 const dossiersMultiplesOptions = computed(() => store.state.dossiersMultiplesList)
 
-// Groupes pour les types d'arrêtés
-const typesArretesGroups = computed<CheckboxGroup[]>(() => [
-  {
-    title: 'Mise en sécurité',
-    options: store.state.typesArretes.filter(t => t.Id.toString().startsWith('MISE_EN_SECURITE'))
-  },
-  {
-    options: store.state.typesArretes.filter(t => !t.Id.toString().startsWith('MISE_EN_SECURITE'))
+// Groupes pour les types d'arrêtés (définis côté backend)
+const typesArretesGroups = computed<CheckboxGroup[]>(() => {
+  const groups: CheckboxGroup[] = []
+
+  // Groupe "Mise en sécurité"
+  const miseEnSecurite = store.state.typesArretes.filter(t =>
+    t.Id.toString().startsWith('MISE_EN_SECURITE')
+  )
+  if (miseEnSecurite.length > 0) {
+    groups.push({
+      title: 'Mise en sécurité',
+      options: miseEnSecurite
+    })
   }
-])
+
+  // Groupe "Insalubrité"
+  const insalubrite = store.state.typesArretes.filter(t =>
+    t.Id.toString().startsWith('ARRETE_L_511') || t.Id.toString().startsWith('ARRETE_L_1331')
+  )
+  if (insalubrite.length > 0) {
+    groups.push({
+      title: 'Insalubrité',
+      options: insalubrite
+    })
+  }
+
+  // Groupe "Autres"
+  const autres = store.state.typesArretes.filter(t =>
+    !t.Id.toString().startsWith('MISE_EN_SECURITE') &&
+    !t.Id.toString().startsWith('ARRETE_L_511') &&
+    !t.Id.toString().startsWith('ARRETE_L_1331')
+  )
+  if (autres.length > 0) {
+    groups.push({
+      title: 'Autres',
+      options: autres
+    })
+  }
+
+  return groups
+})
 
 // Filtres actifs
 const activeFilters = computed<ActiveFilter[]>(() => {

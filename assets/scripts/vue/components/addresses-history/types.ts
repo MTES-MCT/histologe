@@ -114,4 +114,5 @@ export interface SettingsResponse {
   communes?: Record<string, string>
   zones?: Record<string, { id: number; name: string }>
   bailleursSociaux?: Record<string, { id: number; name: string }>
+  typesArretes?: Record<string, Array<{ Id: string; Text: string }>>
 }

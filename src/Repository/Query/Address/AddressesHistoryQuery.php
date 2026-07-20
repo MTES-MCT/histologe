@@ -184,7 +184,11 @@ class AddressesHistoryQuery
         }
 
         if (!empty($addressesHistorySearchQuery->getTypesArretes())) {
-            $qb->andWhere('ar.typeArrete IN (:typesArretes)')
+            // Utilise une sous-requête pour filtrer les adresses qui ont au moins un arrêté du type recherché
+            // tout en chargeant tous les arrêtés de ces adresses
+            $subQuery = 'SELECT IDENTITY(ar2.address) FROM '.Arrete::class.' ar2
+                         WHERE ar2.typeArrete IN (:typesArretes)';
+            $qb->andWhere('a.id IN ('.$subQuery.')')
                 ->setParameter('typesArretes', $addressesHistorySearchQuery->getTypesArretes());
         }
 

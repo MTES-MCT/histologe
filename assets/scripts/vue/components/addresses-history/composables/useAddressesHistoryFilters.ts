@@ -94,6 +94,20 @@ export function useAddressesHistoryFilters() {
         store.state.communes.push(commune)
       }
     }
+
+    // Types d'arrêtés (chargés depuis le backend)
+    if (response.typesArretes) {
+      store.state.typesArretes = []
+      for (const groupTitle in response.typesArretes) {
+        const arretes = response.typesArretes[groupTitle]
+        arretes.forEach((arrete: { Id: string; Text: string }) => {
+          store.state.typesArretes.push({
+            Id: arrete.Id,
+            Text: arrete.Text
+          })
+        })
+      }
+    }
   }
 
   /**
