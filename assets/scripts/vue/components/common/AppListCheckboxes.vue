@@ -5,30 +5,27 @@
         <slot name="label"></slot>
       </label>
       <div class="fr-select-group">
-        <div :class="['fr-input-wrap', iconClass, 'app-list-checkboxes-wrapper', 'fr-mt-2v']">
-          <input
-            :id="id"
-            :name="id"
-            class="fr-input"
-            type="text"
-            :value="displayText"
-            @click="toggleDropdown"
-            :placeholder="placeholder"
-          />
+        <div
+          :class="['app-list-checkboxes-display', iconClass]"
+          @click="toggleDropdown"
+        >
+          <span class="app-list-checkboxes-text">
+            {{ displayText || placeholder }}
+          </span>
           <span class="fr-icon-arrow-down-s-line app-list-checkboxes-icon" aria-hidden="true"></span>
         </div>
       </div>
       <div
         v-if="isOpen"
-        class="fr-grid-row fr-background-alt--blue-france fr-checkboxes-list"
+        class="fr-grid-row fr-background--white fr-checkboxes-list"
       >
         <div class="fr-col-12 fr-p-3v">
           <template v-for="(group, groupIndex) in optionGroups" :key="groupIndex">
-            <div v-if="group.title" class="fr-text--bold fr-mb-1v">{{ group.title }}</div>
+            <div v-if="group.title" class="fr-mb-2v">{{ group.title }}</div>
             <div
               v-for="option in group.options"
               :key="option.Id"
-              class="fr-checkbox-group fr-mb-1v"
+              class="fr-checkbox-group fr-mb-2v"
             >
               <input
                 type="checkbox"
@@ -41,7 +38,7 @@
                 {{ option.Text }}
               </label>
             </div>
-            <hr v-if="groupIndex < optionGroups.length - 1" class="fr-my-2v" />
+            <hr v-if="groupIndex < optionGroups.length - 1" class="fr-my-2w fr-pb-1v" />
           </template>
         </div>
       </div>
@@ -136,13 +133,27 @@ export default defineComponent({
   width: 100%;
 }
 
-.app-list-checkboxes-wrapper {
-  position: relative;
+.app-list-checkboxes .fr-select-group {
+  margin-bottom: 0px;
 }
 
-.app-list-checkboxes-wrapper .fr-input {
+.app-list-checkboxes-display {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 2.5rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 3rem 0.5rem 1rem;
+  background-color: #eeeeee;
+  border-bottom: 2px solid var(--border-plain-grey);
   cursor: pointer;
-  padding-right: 3rem;
+  transition: border-color 0.2s;
+}
+
+.app-list-checkboxes-text {
+  flex: 1;
+  color: var(--text-default-grey);
 }
 
 .app-list-checkboxes-icon {

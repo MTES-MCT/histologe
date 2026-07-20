@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Dto\Settings;
+use App\Entity\Enum\TypeArrete;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\UserSearchFilterRepository;
@@ -43,6 +44,7 @@ class SettingsFactory
             bailleursSociaux: $filterOptionData['bailleursSociaux'],
             avatarOrPlaceHolder: $this->userAvatar->userAvatarOrPlaceHolder($user, 80),
             savedSearches: $this->userSearchFilterRepository->findAllForUserArray($user),
+            typesArretes: $this->getTypesArretesGrouped(),
         );
     }
 
@@ -75,5 +77,26 @@ class SettingsFactory
         );
 
         return array_filter($suggestionsCommuneZipCode);
+    }
+
+    /**
+     * @return array<string, array<int, array<string, string>>>
+     */
+    private function getTypesArretesGrouped(): array
+    {
+        $choices = TypeArrete::getChoices();
+        $result = [];
+
+        foreach ($choices as $groupTitle => $arretes) {
+            $result[$groupTitle] = array_map(
+                static fn (TypeArrete $arrete): array => [
+                    'Id' => $arrete->value,
+                    'Text' => $arrete->completeLabel(),
+                ],
+                $arretes
+            );
+        }
+
+        return $result;
     }
 }
