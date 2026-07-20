@@ -153,7 +153,7 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $this->assertCount(2, $this->getMailerMessagesWithSubjectContaining('Fin de la procédure concernant votre logement'));
 
         $entityManager->refresh($signalement);
-        $this->assertSame(SignalementStatus::CLOSED, $signalement->getStatut());
+        $this->assertSame(SignalementStatus::INJONCTION_CLOSED, $signalement->getStatut());
         $this->assertSame(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS, $signalement->getMotifCloture());
     }
 
