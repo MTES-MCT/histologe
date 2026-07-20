@@ -64,6 +64,11 @@ export interface UserState {
   partnerIds: string[]
 }
 
+export interface ArretesTypesGroup {
+  title: string
+  options: Array<{ Id: string; Text: string }>
+}
+
 export interface StoreState {
   addresses: AddressesState
   input: InputState
@@ -79,7 +84,7 @@ export interface StoreState {
   hasErrorLoading: boolean
   natureParcList: Array<{ Id: string; Text: string }>
   dossiersMultiplesList: Array<{ Id: string; Text: string }>
-  arreteTypes: Array<{ Id: string; Text: string }>
+  arretesTypesGroups: ArretesTypesGroup[]
   filtersApplyKey: number
 }
 
@@ -114,5 +119,5 @@ export interface SettingsResponse {
   communes?: Record<string, string>
   zones?: Record<string, { id: number; name: string }>
   bailleursSociaux?: Record<string, { id: number; name: string }>
-  typesArretes?: Record<string, Array<{ Id: string; Text: string }>>
+  arretesTypes?: Record<string, Array<{ Id: string; Text: string }>>
 }

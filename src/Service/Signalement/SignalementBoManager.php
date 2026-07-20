@@ -32,6 +32,7 @@ class SignalementBoManager
         private readonly PostalCodeHomeChecker $postalCodeHomeChecker,
         private readonly ReferenceGenerator $referenceGenerator,
         private readonly SituationFoyerProcessor $situationFoyerProcessor,
+        private readonly AddressManager $addressManager,
     ) {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -134,6 +135,8 @@ class SignalementBoManager
         if (!$signalement->getReference()) {
             $signalement->setReference($this->referenceGenerator->generateReference($territory, false));
         }
+
+        $this->addressManager->createOrUpdateFrom($signalement);
 
         return true;
     }

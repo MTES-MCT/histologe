@@ -3,7 +3,7 @@
 namespace App\Factory;
 
 use App\Dto\Settings;
-use App\Entity\Enum\TypeArrete;
+use App\Entity\Enum\ArreteType;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\UserSearchFilterRepository;
@@ -44,7 +44,7 @@ class SettingsFactory
             bailleursSociaux: $filterOptionData['bailleursSociaux'],
             avatarOrPlaceHolder: $this->userAvatar->userAvatarOrPlaceHolder($user, 80),
             savedSearches: $this->userSearchFilterRepository->findAllForUserArray($user),
-            typesArretes: $this->getTypesArretesGrouped(),
+            arretesTypes: $this->getArretesTypesGrouped(),
         );
     }
 
@@ -82,14 +82,14 @@ class SettingsFactory
     /**
      * @return array<string, array<int, array<string, string>>>
      */
-    private function getTypesArretesGrouped(): array
+    private function getArretesTypesGrouped(): array
     {
-        $choices = TypeArrete::getChoices();
+        $choices = ArreteType::getChoices();
         $result = [];
 
         foreach ($choices as $groupTitle => $arretes) {
             $result[$groupTitle] = array_map(
-                static fn (TypeArrete $arrete): array => [
+                static fn (ArreteType $arrete): array => [
                     'Id' => $arrete->value,
                     'Text' => $arrete->completeLabel(),
                 ],
