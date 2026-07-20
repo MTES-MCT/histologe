@@ -5,7 +5,8 @@ if (modalArreteDetails) {
   document.addEventListener('click', (e) => {
     const button = e.target.closest('.open-modal-arrete-details');
     if (!button) return;
-    document.getElementById('fr-modal-arrete-details-arrete-name').textContent = button.dataset.name;
+    document.getElementById('fr-modal-arrete-details-arrete-name').textContent =
+      button.dataset.name;
     const items = document.querySelectorAll('.item-arrete-details');
     items.forEach((item) => {
       item.classList.add('fr-hidden');

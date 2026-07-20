@@ -1,5 +1,10 @@
 import { attacheAutocompleteAddressEvent } from '../../services/component/component_search_address';
 
+const STORAGE_DATA_KEY = 'import_arrete_data';
+const STORAGE_FILENAME_KEY = 'import_arrete_filename';
+const STORAGE_EXPIRATION_KEY = 'import_arrete_expiration';
+const STORAGE_DURATION_MS = 60 * 60 * 1000; // 1 hour in milliseconds
+
 const root = document.querySelector('#import-arrete-container');
 
 if (root) {
@@ -12,8 +17,15 @@ if (root) {
 }
 
 function restoreFromLocalStorage(elements) {
-  const savedData = localStorage.getItem('import_arrete_data');
-  const savedFileName = localStorage.getItem('import_arrete_filename');
+  const savedData = localStorage.getItem(STORAGE_DATA_KEY);
+  const savedFileName = localStorage.getItem(STORAGE_FILENAME_KEY);
+  const expiration = Number(localStorage.getItem(STORAGE_EXPIRATION_KEY));
+
+  if (!expiration || Date.now() >= expiration) {
+    clearStoredImport();
+    return;
+  }
+
   if (savedData) {
     try {
       const data = JSON.parse(savedData);
@@ -22,10 +34,15 @@ function restoreFromLocalStorage(elements) {
       updateValidationState(elements);
     } catch (e) {
       console.error('Error restoring data from localStorage', e);
-      localStorage.removeItem('import_arrete_data');
-      localStorage.removeItem('import_arrete_filename');
+      clearStoredImport();
     }
   }
+}
+
+function clearStoredImport() {
+  localStorage.removeItem(STORAGE_DATA_KEY);
+  localStorage.removeItem(STORAGE_FILENAME_KEY);
+  localStorage.removeItem(STORAGE_EXPIRATION_KEY);
 }
 
 function getElements(root) {
@@ -59,8 +76,7 @@ function bindEvents(elements) {
   elements.cancelElements.forEach((element) => {
     element.addEventListener('click', (e) => {
       e.preventDefault();
-      localStorage.removeItem('import_arrete_data');
-      localStorage.removeItem('import_arrete_filename');
+      clearStoredImport();
       window.location.reload();
     });
   });
@@ -93,9 +109,10 @@ async function handleUpload(elements) {
     }
 
     if (payload.data?.length) {
-      localStorage.setItem('import_arrete_data', JSON.stringify(payload.data));
+      localStorage.setItem(STORAGE_DATA_KEY, JSON.stringify(payload.data));
+      localStorage.setItem(STORAGE_EXPIRATION_KEY, String(Date.now() + STORAGE_DURATION_MS));
       if (elements.fileInput.files.length > 0) {
-        localStorage.setItem('import_arrete_filename', elements.fileInput.files[0].name);
+        localStorage.setItem(STORAGE_FILENAME_KEY, elements.fileInput.files[0].name);
       }
       showSuccess(elements);
       renderCards(elements, payload.data);
@@ -134,8 +151,7 @@ async function handleConfirm(elements) {
       return;
     }
 
-    localStorage.removeItem('import_arrete_data');
-    localStorage.removeItem('import_arrete_filename');
+    clearStoredImport();
     window.location.href = elements.root.dataset.urlRedirectionArreteList;
   } catch (error) {
     console.error('Error during import confirmation:', error);
@@ -144,8 +160,7 @@ async function handleConfirm(elements) {
 }
 
 function resetUploadState(elements) {
-  localStorage.removeItem('import_arrete_data');
-  localStorage.removeItem('import_arrete_filename');
+  clearStoredImport();
   elements.uploadFile?.classList.add('fr-display-none');
   elements.loadingBlock?.classList.remove('fr-display-none');
   elements.successBlock?.classList.add('fr-display-none');
@@ -434,13 +449,13 @@ function configureIgnoreCheckbox(elements, clone, card, index) {
 }
 
 function updateRowInData(index, updatedFields) {
-  const savedData = localStorage.getItem('import_arrete_data');
+  const savedData = localStorage.getItem(STORAGE_DATA_KEY);
   if (savedData) {
     try {
       const data = JSON.parse(savedData);
       if (data[index]) {
         data[index] = { ...data[index], ...updatedFields };
-        localStorage.setItem('import_arrete_data', JSON.stringify(data));
+        localStorage.setItem(STORAGE_DATA_KEY, JSON.stringify(data));
       }
     } catch (e) {
       console.error('Error updating row in data', e);

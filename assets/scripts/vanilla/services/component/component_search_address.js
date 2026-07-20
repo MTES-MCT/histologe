@@ -1,7 +1,7 @@
+let isClickOutsideEventAttached = false;
+const autocompleteInputsByGroup = new WeakMap();
+
 export function attacheAutocompleteAddressEvents() {
-  if (document.querySelector('[data-fr-adresse-autocomplete]')) {
-    attachAutocompleteClickOutsideEvent();
-  }
   document.querySelectorAll('[data-fr-adresse-autocomplete]').forEach((inputAdresse) => {
     attacheAutocompleteAddressEvent(inputAdresse);
   });
@@ -19,12 +19,20 @@ document
   ?.addEventListener('input', (event) => setManualEdit(event.target, true));
 
 function attachAutocompleteClickOutsideEvent() {
+  if (isClickOutsideEventAttached) {
+    return;
+  }
+
+  isClickOutsideEventAttached = true;
   document.addEventListener('click', function (event) {
     document
       ?.querySelectorAll('.fr-address-group, .fr-address-group-bo')
       .forEach((addressGroup) => {
-        const isClickInside = addressGroup.contains(event.target);
+        const inputAdresse = autocompleteInputsByGroup.get(addressGroup);
+        const isClickInside =
+          addressGroup.contains(event.target) || inputAdresse?.contains(event.target);
         if (!isClickInside) {
+          addressGroup.dispatchEvent(new CustomEvent('autocompleteAddressClosed'));
           addressGroup.innerHTML = '';
         }
       });
@@ -36,6 +44,8 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
     return false;
   }
 
+  attachAutocompleteClickOutsideEvent();
+
   let selectionIndex = -1;
   let suffix = '';
   if (inputAdresse.dataset.suffix !== undefined && inputAdresse.dataset.suffix !== '') {
@@ -43,72 +53,91 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
   }
   const addressGroup = document?.querySelector(inputAdresse.dataset.autocompleteQuerySelector);
   const idForm = inputAdresse.closest('form').id;
-  const fieldFilterAddress = document?.querySelector('#' + idForm + ' [data-autocomplete-address-filter' + suffix + ']');
+  const fieldFilterAddress = document?.querySelector(
+    '#' + idForm + ' [data-autocomplete-address-filter' + suffix + ']'
+  );
+
+  autocompleteInputsByGroup.set(addressGroup, inputAdresse);
 
   const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q=';
   let addressAbortController;
-  inputAdresse.addEventListener('input', (e) => {
-    const adresse = e.target.value;
+  addressGroup.addEventListener('autocompleteAddressClosed', () => {
+    addressAbortController?.abort();
+    selectionIndex = -1;
+  });
 
+  const searchAddress = (adresse) => {
     if (addressAbortController) {
       addressAbortController.abort();
     }
 
-    if (adresse.length > 8) {
-      addressAbortController = new AbortController();
-      let zipFilterAddress = '';
-      if (fieldFilterAddress) {
-        if (fieldFilterAddress.tagName === 'SELECT') {
-          const selectedOption = fieldFilterAddress.options[fieldFilterAddress.selectedIndex];
-          zipFilterAddress = selectedOption ? selectedOption.dataset.filter || '' : '';
-        } else {
-          zipFilterAddress = fieldFilterAddress.dataset.filter || '';
-        }
-      }
-      let query = apiAdresse + adresse;
-      let limit = inputAdresse.getAttribute('data-form-limit');
-      if (zipFilterAddress !== '') {
-        const splitFilter = zipFilterAddress.split('|');
-        query += ' ' + splitFilter[1];
-        limit = splitFilter[0];
-      }
-      if (inputAdresse.getAttribute('data-form-lat')) {
-        query += '&lat=' + inputAdresse.getAttribute('data-form-lat');
-      }
-      if (inputAdresse.getAttribute('data-form-lng')) {
-        query += '&lon=' + inputAdresse.getAttribute('data-form-lng');
-      }
-      fetch(query, { signal: addressAbortController.signal })
-        .then((response) => response.json())
-        .then((json) => {
-          addressGroup.innerHTML = '';
-          json.features.forEach((feature) => {
-            if (limit === null || feature.properties.citycode.startsWith(limit)) {
-              const suggestion = document.createElement('div');
-              suggestion.classList.add(
-                'fr-col-12',
-                'fr-p-3v',
-                'fr-text-label--blue-france',
-                'fr-adresse-suggestion'
-              );
-              suggestion.innerHTML = feature.properties.label;
-              attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix);
-              addressGroup.appendChild(suggestion);
-            }
-          });
-        })
-        .catch((error) => {
-          if (error.name === 'AbortError') {
-            return;
-          }
-          console.error('Error:', error);
-        });
+    if (adresse.length <= 8) {
+      return;
     }
+
+    addressAbortController = new AbortController();
+    let zipFilterAddress = '';
+    if (fieldFilterAddress) {
+      if (fieldFilterAddress.tagName === 'SELECT') {
+        const selectedOption = fieldFilterAddress.options[fieldFilterAddress.selectedIndex];
+        zipFilterAddress = selectedOption ? selectedOption.dataset.filter || '' : '';
+      } else {
+        zipFilterAddress = fieldFilterAddress.dataset.filter || '';
+      }
+    }
+    let query = apiAdresse + adresse;
+    let limit = inputAdresse.getAttribute('data-form-limit');
+    if (zipFilterAddress !== '') {
+      const splitFilter = zipFilterAddress.split('|');
+      query += ' ' + splitFilter[1];
+      limit = splitFilter[0];
+    }
+    if (inputAdresse.getAttribute('data-form-lat')) {
+      query += '&lat=' + inputAdresse.getAttribute('data-form-lat');
+    }
+    if (inputAdresse.getAttribute('data-form-lng')) {
+      query += '&lon=' + inputAdresse.getAttribute('data-form-lng');
+    }
+    fetch(query, { signal: addressAbortController.signal })
+      .then((response) => response.json())
+      .then((json) => {
+        addressGroup.innerHTML = '';
+        json.features.forEach((feature) => {
+          if (limit === null || feature.properties.citycode.startsWith(limit)) {
+            const suggestion = document.createElement('div');
+            suggestion.classList.add(
+              'fr-col-12',
+              'fr-p-3v',
+              'fr-text-label--blue-france',
+              'fr-adresse-suggestion'
+            );
+            suggestion.innerHTML = feature.properties.label;
+            attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix);
+            addressGroup.appendChild(suggestion);
+          }
+        });
+      })
+      .catch((error) => {
+        if (error.name === 'AbortError') {
+          return;
+        }
+        console.error('Error:', error);
+      });
+  };
+
+  inputAdresse.addEventListener('input', (e) => {
+    const adresse = e.target.value;
+
+    searchAddress(adresse);
+
     if (adresse.length === 0) {
       addressGroup.innerHTML = '';
-      if (document?.querySelector('#' + idForm + ' [data-autocomplete-housenumber' + suffix + ']')) {
-        document.querySelector('#' + idForm + ' [data-autocomplete-housenumber' + suffix + ']').value =
-          '';
+      if (
+        document?.querySelector('#' + idForm + ' [data-autocomplete-housenumber' + suffix + ']')
+      ) {
+        document.querySelector(
+          '#' + idForm + ' [data-autocomplete-housenumber' + suffix + ']'
+        ).value = '';
       }
       if (document?.querySelector('#' + idForm + ' [data-autocomplete-street' + suffix + ']')) {
         document.querySelector('#' + idForm + ' [data-autocomplete-street' + suffix + ']').value =
@@ -133,6 +162,15 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
       }
     }
   });
+
+  if (inputAdresse.hasAttribute('data-autocomplete-search-on-focus')) {
+    inputAdresse.addEventListener('focus', () => searchAddress(inputAdresse.value));
+    inputAdresse.addEventListener('pointerdown', () => {
+      if (document.activeElement === inputAdresse) {
+        searchAddress(inputAdresse.value);
+      }
+    });
+  }
 
   inputAdresse.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' || e.key === 'Tab') {
@@ -177,8 +215,9 @@ function attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix)
     const idForm = inputAdresse.closest('form').id;
     inputAdresse.value = feature.properties.label;
     if (document?.querySelector('#' + idForm + ' [data-autocomplete-housenumber' + suffix + ']')) {
-      document.querySelector('#' + idForm + ' [data-autocomplete-housenumber' + suffix + ']')
-          .value = feature.properties.housenumber ?? '';
+      document.querySelector(
+        '#' + idForm + ' [data-autocomplete-housenumber' + suffix + ']'
+      ).value = feature.properties.housenumber ?? '';
     }
     if (document?.querySelector('#' + idForm + ' [data-autocomplete-street' + suffix + ']')) {
       document.querySelector('#' + idForm + ' [data-autocomplete-street' + suffix + ']').value =
