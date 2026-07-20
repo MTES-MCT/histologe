@@ -8,6 +8,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Factory\Api\SignalementResponseFactory;
+use App\Manager\AddressManager;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
 use App\Repository\SignalementRepository;
@@ -45,6 +46,7 @@ class SignalementCreateController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly AutoAssigner $autoAssigner,
         private readonly UserManager $userManager,
+        private readonly AddressManager $addressManager,
         private readonly HistoriqueEvenementsGenerator $historiqueEvenementsGenerator,
     ) {
     }
@@ -262,6 +264,7 @@ class SignalementCreateController extends AbstractController
         $this->entityManager->beginTransaction();
         $signalement->setReference($this->referenceGenerator->generateReference($signalement->getTerritory()));
         $this->entityManager->persist($signalement);
+        $this->addressManager->createOrUpdateFrom($signalement);
         $this->entityManager->flush();
         $this->entityManager->commit();
         $this->userManager->createUsagersFromSignalement($signalement);

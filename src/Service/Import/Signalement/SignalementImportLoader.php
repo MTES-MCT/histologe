@@ -16,6 +16,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Manager\AddressManager;
 use App\Manager\AffectationManager;
 use App\Manager\FileManager;
 use App\Manager\InterventionManager;
@@ -95,6 +96,7 @@ class SignalementImportLoader
         private SignalementQualificationUpdater $signalementQualificationUpdater,
         private FileManager $fileManager,
         private FilesystemOperator $fileStorage,
+        private AddressManager $addressManager,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private HtmlSanitizerInterface $htmlSanitizer,
         private UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
@@ -171,6 +173,8 @@ class SignalementImportLoader
                 $signalement->setIsLogementVacant(false);
             }
             $this->entityManager->persist($signalement);
+
+            $this->addressManager->createOrUpdateFrom($signalement);
 
             $this->loadTags($signalement, $territory, $dataMapped);
             foreach (self::SITUATIONS as $situation) {

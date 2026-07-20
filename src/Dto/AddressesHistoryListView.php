@@ -15,6 +15,7 @@ class AddressesHistoryListView
     /**
      * @param array<mixed> $signalements
      * @param array<mixed> $arretes
+     * @param array<mixed> $bailleurNames
      */
     public function __construct(
         private readonly ?string $address = null,

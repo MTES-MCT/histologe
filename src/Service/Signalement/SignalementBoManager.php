@@ -14,6 +14,7 @@ use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Manager\AddressManager;
 use App\Service\Signalement\InputValue\SituationFoyerProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -30,6 +31,7 @@ class SignalementBoManager
         private readonly PostalCodeHomeChecker $postalCodeHomeChecker,
         private readonly ReferenceGenerator $referenceGenerator,
         private readonly SituationFoyerProcessor $situationFoyerProcessor,
+        private readonly AddressManager $addressManager,
     ) {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -118,6 +120,8 @@ class SignalementBoManager
         if (!$signalement->getReference()) {
             $signalement->setReference($this->referenceGenerator->generateReference($territory, false));
         }
+
+        $this->addressManager->createOrUpdateFrom($signalement);
 
         return true;
     }

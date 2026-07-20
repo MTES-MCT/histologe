@@ -95,16 +95,14 @@ export function useAddressesHistoryFilters() {
       }
     }
 
-    // Types d'arrêtés (chargés depuis le backend)
+    // Types d'arrêtés
     if (response.typesArretes) {
-      store.state.typesArretes = []
+      store.state.typesArretesGroups = []
       for (const groupTitle in response.typesArretes) {
         const arretes = response.typesArretes[groupTitle]
-        arretes.forEach((arrete: { Id: string; Text: string }) => {
-          store.state.typesArretes.push({
-            Id: arrete.Id,
-            Text: arrete.Text
-          })
+        store.state.typesArretesGroups.push({
+          title: groupTitle,
+          options: arretes
         })
       }
     }

@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Service\Import\Signalement;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\EventListener\SuiviCreatedListener;
+use App\Manager\AddressManager;
 use App\Manager\AffectationManager;
 use App\Manager\FileManager;
 use App\Manager\InterventionManager;
@@ -48,6 +49,7 @@ class SignalementImportLoaderTest extends KernelTestCase
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private FileManager $fileManager;
     private FilesystemOperator $filesystemOperator;
+    private AddressManager $addressManager;
     private HtmlSanitizerInterface $htmlSanitizerInterface;
     private UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
     private CritereRepository $critereRepository;
@@ -72,6 +74,7 @@ class SignalementImportLoaderTest extends KernelTestCase
         $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
         $this->fileManager = static::getContainer()->get(FileManager::class);
         $this->filesystemOperator = $this->createStub(FilesystemOperator::class);
+        $this->addressManager = static::getContainer()->get(AddressManager::class);
         $this->critereRepository = static::getContainer()->get(CritereRepository::class);
         $this->criticiteRepository = static::getContainer()->get(CriticiteRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
@@ -109,6 +112,7 @@ class SignalementImportLoaderTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->fileManager,
             $this->filesystemOperator,
+            $this->addressManager,
             $this->htmlSanitizerInterface,
             $this->userSignalementSubscriptionManager,
             $this->critereRepository,
@@ -149,6 +153,7 @@ class SignalementImportLoaderTest extends KernelTestCase
             $this->signalementQualificationUpdater,
             $this->fileManager,
             $this->filesystemOperator,
+            $this->addressManager,
             $this->htmlSanitizerInterface,
             $this->userSignalementSubscriptionManager,
             $this->critereRepository,
