@@ -22,20 +22,33 @@ class AddressManager
     public function createOrUpdateFrom(
         Signalement $signalement,
     ): Address {
+        // Si le signalement n'a pas d'adresse, retourner une adresse vide (ne devrait pas arriver)
+        if (empty($signalement->getAdresseOccupant())) {
+            throw new \InvalidArgumentException('Le signalement doit avoir une adresse occupant');
+        }
+
         // Extraire le numéro de rue et le nom de la rue depuis adresseOccupant
         [$housenumber, $street] = AddressHelper::getHouseNumberAndStreetFromAddress($signalement->getAdresseOccupant());
 
-        // Vérifier si l'adresse existe déjà (contrainte unique sur housenumber, street, city_code)
-        $checkParams = [
-            'street' => $street,
-            'cityCode' => $signalement->getInseeOccupant(),
-        ];
-
-        if ($housenumber) {
-            $checkParams['housenumber'] = $housenumber;
+        // Vérifier d'abord par banId si disponible
+        $existingAddress = null;
+        if (!empty($signalement->getBanIdOccupant())) {
+            $existingAddress = $this->addressRepository->findOneBy(['banId' => $signalement->getBanIdOccupant()]);
         }
 
-        $existingAddress = $this->addressRepository->findOneBy($checkParams);
+        // Si pas trouvé par banId, vérifier par l'adresse (contrainte unique sur housenumber, street, city_code)
+        if (!$existingAddress) {
+            $checkParams = [
+                'street' => $street,
+                'cityCode' => $signalement->getInseeOccupant(),
+            ];
+
+            if ($housenumber) {
+                $checkParams['housenumber'] = $housenumber;
+            }
+
+            $existingAddress = $this->addressRepository->findOneBy($checkParams);
+        }
 
         // Insérer uniquement si l'adresse n'existe pas déjà
         if (!$existingAddress) {
@@ -45,7 +58,9 @@ class AddressManager
             return $address;
         }
         $save = false;
-        if (empty($existingAddress->getBanId())) {
+        // Si l'adresse existante n'a pas de banId, on peut le mettre à jour
+        // (on sait qu'il n'est pas déjà utilisé car on a cherché par banId au début)
+        if (empty($existingAddress->getBanId()) && !empty($signalement->getBanIdOccupant())) {
             $existingAddress->setBanId($signalement->getBanIdOccupant());
             $save = true;
         }
@@ -56,7 +71,7 @@ class AddressManager
                 $lng = $geoloc['lng'];
                 $point = new Point($lat, $lng);
                 $existingAddress->setPoint($point);
-                $save = false;
+                $save = true;
             }
         }
         if ($save) {
