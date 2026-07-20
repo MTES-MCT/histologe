@@ -68,10 +68,7 @@ const state = ref<StoreState>({
     { Id: DossiersMultiples.Avec, Text: 'Avec' },
     { Id: DossiersMultiples.Sans, Text: 'Sans' },
   ],
-  arreteTypes: [
-    { Id: ArreteType.MiseEnSecurite, Text: 'Mise en sécurité' },
-    { Id: ArreteType.ArreteL51111Impropre, Text: 'Arrêté L.511-11 IMPROPRE' },
-  ],
+  arretesTypesGroups: [],
   filtersApplyKey: 0
 })
 

@@ -180,44 +180,7 @@ const dossiersMultiplesOptions = computed(() => store.state.dossiersMultiplesLis
 
 // Groupes pour les types d'arrêtés (définis côté backend)
 const arretesTypesGroups = computed<CheckboxGroup[]>(() => {
-  const groups: CheckboxGroup[] = []
-
-  // Groupe "Mise en sécurité"
-  const miseEnSecurite = store.state.arreteTypes.filter(t =>
-    t.Id.toString().startsWith('MISE_EN_SECURITE')
-  )
-  if (miseEnSecurite.length > 0) {
-    groups.push({
-      title: 'Mise en sécurité',
-      options: miseEnSecurite
-    })
-  }
-
-  // Groupe "Insalubrité"
-  const insalubrite = store.state.arreteTypes.filter(t =>
-    t.Id.toString().startsWith('ARRETE_L_511') || t.Id.toString().startsWith('ARRETE_L_1331')
-  )
-  if (insalubrite.length > 0) {
-    groups.push({
-      title: 'Insalubrité',
-      options: insalubrite
-    })
-  }
-
-  // Groupe "Autres"
-  const autres = store.state.arreteTypes.filter(t =>
-    !t.Id.toString().startsWith('MISE_EN_SECURITE') &&
-    !t.Id.toString().startsWith('ARRETE_L_511') &&
-    !t.Id.toString().startsWith('ARRETE_L_1331')
-  )
-  if (autres.length > 0) {
-    groups.push({
-      title: 'Autres',
-      options: autres
-    })
-  }
-
-  return groups
+  return sharedState.arretesTypesGroups
 })
 
 // Filtres actifs

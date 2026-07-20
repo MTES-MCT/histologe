@@ -162,7 +162,10 @@ export default defineComponent({
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
+}
+.app-list-checkboxes-icon:before {
   font-size: 1rem;
+  --icon-size: 1rem;
 }
 
 .fr-checkboxes-list {

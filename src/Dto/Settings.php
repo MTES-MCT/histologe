@@ -75,7 +75,7 @@ class Settings
      * @var array<string, array<int, array<string, string>>>
      */
     #[Groups('settings:read')]
-    private array $typesArretes = [];
+    private array $arretesTypes = [];
 
     /**
      * @param array<int, mixed>                                $territories
@@ -87,7 +87,7 @@ class Settings
      * @param array<int, mixed>                                $zones
      * @param array<int, mixed>                                $bailleursSociaux
      * @param array<string, mixed>                             $savedSearches
-     * @param array<string, array<int, array<string, string>>> $typesArretes
+     * @param array<string, array<int, array<string, string>>> $arretesTypes
      */
     public function __construct(
         User $user,
@@ -103,7 +103,7 @@ class Settings
         array $bailleursSociaux = [],
         string $avatarOrPlaceHolder = '',
         array $savedSearches = [],
-        array $typesArretes = [],
+        array $arretesTypes = [],
     ) {
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
@@ -122,7 +122,7 @@ class Settings
         $this->isMultiTerritoire = $user->isMultiTerritoire();
         $this->bailleursSociaux = $bailleursSociaux;
         $this->savedSearches = $savedSearches;
-        $this->typesArretes = $typesArretes;
+        $this->arretesTypes = $arretesTypes;
     }
 
     public function getFirstname(): ?string
@@ -243,8 +243,8 @@ class Settings
     /**
      * @return array<string, array<int, array<string, string>>>
      */
-    public function getTypesArretes(): array
+    public function getArretesTypes(): array
     {
-        return $this->typesArretes;
+        return $this->arretesTypes;
     }
 }

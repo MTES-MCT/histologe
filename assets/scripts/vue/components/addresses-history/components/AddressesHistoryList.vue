@@ -8,9 +8,7 @@
             class="fr-link fr-link--icon-right fr-icon-arrow-down-line"
             href="#list-addresses"
             aria-label="Passer directement à la liste des adresses"
-          >
-            Passer directement à la liste des adresses
-          </a>
+            >Passer directement à la liste des adresses</a>
         </div>
       </div>
       <AddressesHistoryListFilters @change="onChange" />

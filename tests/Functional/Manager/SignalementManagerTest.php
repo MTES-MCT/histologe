@@ -18,6 +18,7 @@ use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementImportFactory;
 use App\Factory\SuiviDelayedFactory;
+use App\Manager\AddressManager;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -61,6 +62,7 @@ class SignalementManagerTest extends WebTestCase
     private SuiviManager $suiviManager;
     private SuiviDelayedFactory $suiviDelayedFactory;
     private UserManager $userManager;
+    private AddressManager $addressManager;
     private BailleurRepository $bailleurRepository;
     private PartnerRepository $partnerRepository;
     private SignalementRepository $signalementRepository;
@@ -93,6 +95,7 @@ class SignalementManagerTest extends WebTestCase
         $this->suiviManager = static::getContainer()->get(SuiviManager::class);
         $this->suiviDelayedFactory = static::getContainer()->get(SuiviDelayedFactory::class);
         $this->userManager = static::getContainer()->get(UserManager::class);
+        $this->addressManager = static::getContainer()->get(AddressManager::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
@@ -118,6 +121,7 @@ class SignalementManagerTest extends WebTestCase
             $this->suiviManager,
             $this->suiviDelayedFactory,
             $this->userManager,
+            $this->addressManager,
             $this->bailleurRepository,
             $this->partnerRepository,
             $this->signalementRepository,
