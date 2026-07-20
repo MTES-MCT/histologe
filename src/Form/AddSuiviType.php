@@ -56,6 +56,7 @@ class AddSuiviType extends AbstractType
             'label' => 'Votre message',
             'help' => 'Décrivez la ou les action(s) menée(s). 10 caractères minimum <span class="fr-text-default--error">*</span>',
             'help_html' => true,
+            'empty_data' => '',
             'attr' => [
                 'class' => 'editor',
             ],

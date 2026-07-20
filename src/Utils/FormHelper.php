@@ -46,7 +46,7 @@ class FormHelper
         while ($form->getParent()) {
             $form = $form->getParent();
         }
-        $blockPrefix = $form->getConfig()->getType()->getBlockPrefix();
+        $blockPrefix = $form->getName();
 
         return $blockPrefix.'['.$fieldName.']';
     }

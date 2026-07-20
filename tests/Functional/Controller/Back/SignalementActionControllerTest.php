@@ -361,6 +361,28 @@ class SignalementActionControllerTest extends WebTestCase
         $this->assertTrue($suivi->getIsVisibleForUsager());
     }
 
+    public function testEditSuiviWithEmptyDescription(): void
+    {
+        $description = 'Un petit message de rappel afin d&#039;y revenir plus tard';
+        $suivi = $this->suiviRepository->findOneBy(['description' => $description]);
+        $suivi->setCreatedAt(new \DateTimeImmutable('-2 minutes'));
+        $this->client->getContainer()->get('doctrine')->getManager()->flush();
+
+        $route = $this->router->generate('back_signalement_edit_suivi', ['suivi' => $suivi->getId()]);
+
+        $this->client->request('POST', $route, [
+            'edit_suivi' => [
+                'isVisibleForUsager' => '1',
+                'description' => '',
+                '_token' => $this->generateCsrfToken($this->client, 'edit_suivi'),
+            ],
+        ]);
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertStringContainsString('Cette valeur ne doit pas \u00eatre vide.', (string) $this->client->getResponse()->getContent());
+    }
+
     public function testEditSuiviExpired(): void
     {
         $description = 'Un petit message de rappel afin d&#039;y revenir plus tard';
