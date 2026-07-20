@@ -208,6 +208,13 @@ export function useAddressesHistoryFilters() {
       }
     }
 
+    // Ajoute le paramètre page si différent de 1
+    const currentPage = store.state.addresses.pagination.current_page
+    if (currentPage && currentPage > 1) {
+      addQueryParameter('page', currentPage.toString())
+      url.searchParams.set('page', currentPage.toString())
+    }
+
     // Met à jour l'URL AJAX
     const queryParams = store.state.input.queryParameters
       .map((param: any) => `${param.name}=${param.value}`)
