@@ -2,11 +2,9 @@
 
 namespace App\Command\Cron;
 
-use App\Dto\SignalementAffectationClose;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Suivi;
-use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Service\Mailer\NotificationMail;
@@ -33,7 +31,6 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         private readonly ParameterBagInterface $parameterBag,
         private readonly SignalementRepository $signalementRepository,
         private readonly SuiviManager $suiviManager,
-        private readonly SignalementManager $signalementManager,
         #[Autowire(env: 'INJONCTION_REMINDER_THRESHOLD')]
         private readonly string $reminderSuiviTravauxThreshold,
         #[Autowire(env: 'INJONCTION_ANSWER_BAILLEUR_THRESHOLD')]
@@ -240,12 +237,6 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                 $this->notificationAndMailSender->sendReminderClotureAndCloseToBailleur($signalement);
             }
 
-            $signalementAffectationClose = (new SignalementAffectationClose())
-                ->setSignalement($signalement)
-                ->setMotifCloture(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS)
-                ->setDescription($description);
-            $this->signalementManager->closeSignalement($signalementAffectationClose);
-
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $description,
@@ -254,6 +245,10 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                 isVisibleForBailleur: true,
                 sendMail: false,
             );
+
+            // On clôture le signalement
+            $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
+            $signalement->setMotifCloture(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS);
 
             $output->writeln(sprintf('#%s closed', $signalement->getUuid()));
         }

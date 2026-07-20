@@ -566,6 +566,23 @@ class NotificationAndMailSender
         );
     }
 
+    public function sendBailleurAskForClotureToUsager(Signalement $signalement): void
+    {
+        if (empty($signalement->getMailOccupant())) {
+            return;
+        }
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_BAILLEUR_CLOSE_INJONCTION_TO_USAGER,
+                to: $signalement->getMailOccupant(),
+                territory: $signalement->getTerritory(),
+                signalement: $signalement,
+                isRecipientVisible: true,
+            )
+        );
+    }
+
     private function isAgentSubscribedToSignalement(string $recipient): bool
     {
         $agent = $this->userRepository->findAgentByEmail(

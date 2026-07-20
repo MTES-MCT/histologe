@@ -797,25 +797,24 @@ class SignalementRepository extends ServiceEntityRepository
             )
         );
         $isUsager = 'usager' === $recipient;
-        // Aucune demande de cloture de la part du bailleur
-        if (!$isUsager) {
-            $qb->andWhere(
-                $qb->expr()->not(
-                    $qb->expr()->exists(
-                        $this->createQueryBuilder('s3')
-                            ->select('1')
-                            ->join('s3.suivis', 'su3')
-                            ->where('s3 = s')
-                            ->andWhere('su3.category IN (:category_demande_cloture)')
-                            ->getDQL()
-                    )
+        // Aucune demande de clôture de la part du bailleur en cours : le suivi mensuel classique est alors
+        // remplacé par les relances dédiées de la démarche de clôture (côté usager comme côté bailleur).
+        $qb->andWhere(
+            $qb->expr()->not(
+                $qb->expr()->exists(
+                    $this->createQueryBuilder('s3')
+                        ->select('1')
+                        ->join('s3.suivis', 'su3')
+                        ->where('s3 = s')
+                        ->andWhere('su3.category IN (:category_demande_cloture)')
+                        ->getDQL()
                 )
-            );
-            $qb->setParameter('category_demande_cloture', [
-                SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
-                SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,
-            ]);
-        }
+            )
+        );
+        $qb->setParameter('category_demande_cloture', [
+            SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
+            SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,
+        ]);
         $qb->setParameter('category_list', $isUsager
             ? array_merge(SuiviCategory::categoriesSubmittedByUsager(), [SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER])
             : array_merge(SuiviCategory::categoriesSubmittedByBailleur(), [SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_BAILLEUR]));

@@ -10,12 +10,13 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SignalementReminderInjonctionClotureUsagerMailer extends AbstractNotificationMailer
+class SignalementBailleurCloseInjonctionUsagerMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_REMINDER_CLOTURE_TO_USAGER;
-    protected ?string $mailerSubject = "\u{200b}Votre bailleur indique la fin des travaux concernant votre logement";
-    protected ?string $brevoTemplateId = '318';
-    protected ?string $tagHeader = 'Usager Rappel Clôture Signalement Injonction';
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_BAILLEUR_CLOSE_INJONCTION_TO_USAGER;
+    protected ?string $mailerSubject = 'Votre bailleur indique la fin des travaux concernant votre logement';
+    protected ?string $mailerButtonText = 'Accéder à mon dossier';
+    protected ?string $brevoTemplateId = '317';
+    protected ?string $tagHeader = 'Bailleur Close Signalement To Usager';
 
     public function __construct(
         protected MailerInterface $mailer,

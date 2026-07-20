@@ -16,6 +16,7 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
+use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\UploadHandlerService;
@@ -41,6 +42,7 @@ class InjonctionBailleurService
         private readonly ParameterBagInterface $parameterBag,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly FileManager $fileManager,
+        private readonly NotificationAndMailSender $notificationAndMailSender,
     ) {
     }
 
@@ -183,10 +185,11 @@ class InjonctionBailleurService
                 description: '',
                 category: SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
                 isVisibleForUsager: true,
-                isVisibleForBailleur: true
+                isVisibleForBailleur: true,
+                sendMail: false,
             );
 
-            // TODO : vérifier si un mail est envoyé à l'usager, doit être le mail template 317 (activer le template)
+            $this->notificationAndMailSender->sendBailleurAskForClotureToUsager($signalement);
 
             $this->suiviManager->createSuivi(
                 signalement: $signalement,

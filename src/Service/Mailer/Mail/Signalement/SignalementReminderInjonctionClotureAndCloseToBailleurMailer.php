@@ -35,7 +35,6 @@ class SignalementReminderInjonctionClotureAndCloseToBailleurMailer extends Abstr
 
         return [
             'ADRESSE_OCCUPANT' => $signalement->getAddressCompleteOccupant(),
-            'REFERENCE_INJONCTION' => $signalement->getReferenceInjonction(),
             'NOM_COMPLET_DECLARANT' => $signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(),
             'LINK_DOSSIER_BAILLEUR' => $this->urlGenerator->generate(
                 'app_login_bailleur',
