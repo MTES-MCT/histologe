@@ -8,13 +8,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 
 class ApiLimiterSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         #[Autowire(service: 'limiter.api_limiter')]
-        private readonly RateLimiterFactory $apiLimiter,
+        private readonly RateLimiterFactoryInterface $apiLimiter,
     ) {
     }
 

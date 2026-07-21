@@ -4,7 +4,6 @@ namespace App\Controller\Webhook;
 
 use App\Entity\EmailDeliveryIssue;
 use App\Entity\Enum\BrevoEvent;
-use App\Entity\Signalement;
 use App\Entity\User;
 use App\Repository\EmailDeliveryIssueRepository;
 use App\Repository\PartnerRepository;
@@ -85,7 +84,7 @@ class BrevoWebhookController extends AbstractController
 
                 $severity = match ($event) {
                     BrevoEvent::BLOCKED->value => new Severity(Severity::FATAL),
-                    BrevoEvent::HARD_BOUNCE, BrevoEvent::SOFT_BOUNCE, BrevoEvent::SPAM, BrevoEvent::INVALID_EMAIL, BrevoEvent::ERROR, BrevoEvent::UNSUBSCRIBED => new Severity(Severity::ERROR),
+                    BrevoEvent::HARD_BOUNCE->value, BrevoEvent::SOFT_BOUNCE->value, BrevoEvent::SPAM->value, BrevoEvent::INVALID_EMAIL->value, BrevoEvent::ERROR->value, BrevoEvent::UNSUBSCRIBED->value => new Severity(Severity::ERROR),
                     default => null,
                 };
 

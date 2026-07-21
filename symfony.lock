@@ -8,9 +8,6 @@
     "beberlei/doctrineextensions": {
         "version": "v1.3.0"
     },
-    "composer/package-versions-deprecated": {
-        "version": "1.11.99.4"
-    },
     "dama/doctrine-test-bundle": {
         "version": "7.1",
         "recipe": {

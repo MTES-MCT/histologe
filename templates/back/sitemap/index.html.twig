@@ -2,38 +2,38 @@
 
 {% block title %}Plan du site (espace pro){% endblock %}
 
-{% block content %}
-    {% macro render_menu(item, security) %}
-        {% if item.isVisible(security) %}
-            {% set hasLink = item.route or item.externalLink %}
+{% macro render_menu(item, security) %}
+    {% if item.isVisible(security) %}
+        {% set hasLink = item.route or item.externalLink %}
 
-            {% if item.label and hasLink %}
-                <li>
-                    {% if item.externalLink %}
-                        <a href="{{ item.externalLink }}" target="_blank" rel="noopener">
-                            {{ item.label }}
-                        </a>
-                    {% else %}
-                        <a href="{{ path(item.route, item.routeParameters) }}">
-                            {{ item.label }}
-                        </a>
-                    {% endif %}
-                </li>
-            {% elseif item.label %}
-                <h2 class="fr-mt-6v">{{ item.label }}</h2>
-            {% endif %}
-
-            {% set children = item.getVisibleChildren(security) %}
-            {% if children is not empty %}
-                <ul>
-                    {% for child in children %}
-                        {{ _self.render_menu(child, security) }}
-                    {% endfor %}
-                </ul>
-            {% endif %}
+        {% if item.label and hasLink %}
+            <li>
+                {% if item.externalLink %}
+                    <a href="{{ item.externalLink }}" target="_blank" rel="noopener">
+                        {{ item.label }}
+                    </a>
+                {% else %}
+                    <a href="{{ path(item.route, item.routeParameters) }}">
+                        {{ item.label }}
+                    </a>
+                {% endif %}
+            </li>
+        {% elseif item.label %}
+            <h2 class="fr-mt-6v">{{ item.label }}</h2>
         {% endif %}
-    {% endmacro %}
 
+        {% set children = item.getVisibleChildren(security) %}
+        {% if children is not empty %}
+            <ul>
+                {% for child in children %}
+                    {{ _self.render_menu(child, security) }}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
 
     {% import _self as macros %}
 

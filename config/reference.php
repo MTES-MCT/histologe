@@ -121,7 +121,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  * }
  * @psalm-type ServicesConfig = array{
  *     _defaults?: DefaultsType,
- *     _instanceof?: InstanceofType,
+ *     _instanceof?: array<class-string, InstanceofType>,
  *     ...<string, DefinitionType|AliasType|PrototypeType|StackType|ArgumentsType|null>
  * }
  * @psalm-type ExtensionType = array<string, mixed>
@@ -1803,7 +1803,8 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     strategy?: scalar|Param|null, // Default: "clamd_unix"
  *     socket?: scalar|Param|null, // Default: null
  *     host?: scalar|Param|null, // Default: null
- *     port?: scalar|Param|null, // Default: null
+ *     port?: int|Param, // Default: null
+ *     socket_timeout?: int|Param, // Socket read/write timeout in seconds. Null means no timeout. // Default: null
  * }
  * @psalm-type NelmioApiDocConfig = array{
  *     type_info?: bool|Param, // Use the symfony/type-info component for determining types. // Default: true
