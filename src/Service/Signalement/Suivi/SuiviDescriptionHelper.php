@@ -28,6 +28,9 @@ class SuiviDescriptionHelper
             SuiviRecipient::DEFAULT->value => 'La réalisation d\'une visite est nécessaire pour caractériser les désordres signalés.
                 Merci de renseigner la date ou les conclusions de la visite afin de poursuivre la prise en charge de ce signalement.',
         ],
+        SuiviCategory::INJONCTION_BAILLEUR_LOGIN_BAILLEUR->value => [
+            SuiviRecipient::DEFAULT->value => 'Le bailleur s\'est connecté à l\'espace bailleur',
+        ],
     ];
 
     public static function getSpecificDescriptionForCategoryAndRecipient(SuiviCategory $category, SuiviRecipient $recipient): ?string

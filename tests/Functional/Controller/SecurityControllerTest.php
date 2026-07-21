@@ -2,8 +2,10 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\User;
 use App\Repository\SignalementRepository;
+use App\Repository\SuiviRepository;
 use App\Repository\UserRepository;
 use App\Security\User\SignalementUser;
 use App\Tests\ApiHelper;
@@ -33,6 +35,22 @@ class SecurityControllerTest extends WebTestCase
         ];
         $client->request('POST', '/connexion-bailleur', $payload);
         $this->assertResponseRedirects('/dossier-bailleur/');
+
+        $suiviRepository = $client->getContainer()->get(SuiviRepository::class);
+        $suivis = $suiviRepository->findBy(['signalement' => $signalement, 'category' => SuiviCategory::INJONCTION_BAILLEUR_LOGIN_BAILLEUR]);
+        $this->assertCount(1, $suivis);
+        $suivi = $suivis[0];
+        $this->assertSame('Le bailleur s\'est connecté à l\'espace bailleur', $suivi->getDescription());
+        $this->assertFalse($suivi->getIsVisibleForUsager());
+        $this->assertFalse($suivi->getIsVisibleForBailleur());
+
+        $client->request('GET', '/logout-bailleur');
+        $payload['_csrf_token'] = $this->generateCsrfToken($client, 'authenticate_bailleur');
+        $client->request('POST', '/connexion-bailleur', $payload);
+        $this->assertResponseRedirects('/dossier-bailleur/');
+
+        $suivis = $suiviRepository->findBy(['signalement' => $signalement, 'category' => SuiviCategory::INJONCTION_BAILLEUR_LOGIN_BAILLEUR]);
+        $this->assertCount(1, $suivis);
     }
 
     public function testLoginBailleurFailedWithValidLoginGET(): void

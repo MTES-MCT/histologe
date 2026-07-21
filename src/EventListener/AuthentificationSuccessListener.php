@@ -4,8 +4,10 @@ namespace App\EventListener;
 
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Enum\HistoryEntryEvent;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\User;
 use App\Manager\HistoryEntryManager;
+use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementBailleur;
 use App\Security\User\SignalementUser;
@@ -29,6 +31,7 @@ class AuthentificationSuccessListener
         #[Autowire(env: 'HISTORY_TRACKING_ENABLE')]
         private readonly string $historyTrackingEnable,
         private readonly HistoryEntryBuffer $historyEntryBuffer,
+        private readonly SuiviManager $suiviManager,
     ) {
     }
 
@@ -69,6 +72,16 @@ class AuthentificationSuccessListener
 
         if ($user instanceof User) {
             $user->setLastLoginAt(new \DateTimeImmutable());
+            $this->entityManager->flush();
+        } elseif ($user instanceof SignalementBailleur) {
+            $signalement = $this->signalementRepository->findOneByUuidWithSuivis($user->getUserIdentifier());
+            if ($signalement && !$signalement->hasSuiviWithCategory(SuiviCategory::INJONCTION_BAILLEUR_LOGIN_BAILLEUR)) {
+                $this->suiviManager->createSuivi(
+                    signalement: $signalement,
+                    description: '',
+                    category: SuiviCategory::INJONCTION_BAILLEUR_LOGIN_BAILLEUR,
+                );
+            }
             $this->entityManager->flush();
         }
 
