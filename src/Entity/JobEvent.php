@@ -18,6 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Index(name: 'idx_job_event_status_created_at', columns: ['status', 'created_at'])]
 #[ORM\Index(name: 'idx_job_event_service_action_created_at', columns: ['service', 'action', 'created_at'])]
 #[ORM\Index(name: 'idx_job_event_is_operational_error', columns: ['is_operational_error'])]
+#[ORM\Index(name: 'idx_job_event_signalement_partner_created', columns: ['signalement_id', 'partner_id', 'created_at', 'id'])]
 class JobEvent
 {
     use TimestampableTrait;
