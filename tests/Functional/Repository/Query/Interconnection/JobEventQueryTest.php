@@ -2,7 +2,6 @@
 
 namespace App\Tests\Functional\Repository\Query\Interconnection;
 
-use App\Entity\JobEvent;
 use App\Repository\Query\Interconnection\JobEventQuery;
 use App\Repository\SignalementRepository;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -25,7 +24,6 @@ class JobEventQueryTest extends KernelTestCase
     public function testFindSyncStatusesForSignalement(
         string $reference,
         string $expectedAction,
-        string $expectedStatus,
         string $assertionMessage,
     ): void {
         $signalement = $this->signalementRepository->findOneBy(['reference' => $reference]);
@@ -39,15 +37,12 @@ class JobEventQueryTest extends KernelTestCase
         foreach ($syncStatuses as $partnerId => $status) {
             $this->assertIsInt($partnerId);
             $this->assertArrayHasKey('last_job_event_action', $status);
-            $this->assertArrayHasKey('last_job_event_status', $status);
             $this->assertArrayHasKey('last_job_event_response', $status);
         }
 
         $hasExpectedEvent = false;
         foreach ($syncStatuses as $status) {
-            if ($expectedAction === $status['last_job_event_action']
-                && $expectedStatus === $status['last_job_event_status']
-            ) {
+            if ($expectedAction === $status['last_job_event_action']) {
                 $hasExpectedEvent = true;
                 break;
             }
@@ -60,14 +55,12 @@ class JobEventQueryTest extends KernelTestCase
         yield 'signalement 2023-9 with failed idoss push_dossier' => [
             'reference' => '2023-9',
             'expectedAction' => 'push_dossier',
-            'expectedStatus' => JobEvent::STATUS_FAILED,
             'assertionMessage' => 'Should have at least one failed push_dossier event for signalement 2023-9',
         ];
 
         yield 'signalement 2023-10 with failed push_dossier_adresse' => [
             'reference' => '2023-10',
             'expectedAction' => 'push_dossier_adresse',
-            'expectedStatus' => JobEvent::STATUS_FAILED,
             'assertionMessage' => 'Should have a failed push_dossier_adresse event for signalement 2023-10',
         ];
     }

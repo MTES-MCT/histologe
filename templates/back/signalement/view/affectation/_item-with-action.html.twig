@@ -52,7 +52,7 @@
                                 {% endif %}
                             </div>
 
-                            {% if syncStatuses[partnerAffectation.partner.id] is defined and syncStatuses[partnerAffectation.partner.id].last_job_event_status is same as 'failed' %}
+                            {% if syncStatuses[partnerAffectation.partner.id] is defined %}
                                 <div>
                                     <span class="fr-badge fr-badge--warning fr-badge--sm">Syncro.</span>
                                     <button class="fr-btn--tooltip fr-btn" type="button" aria-describedby="tooltip_sync_{{ partnerAffectation.id }}"

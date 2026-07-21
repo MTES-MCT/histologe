@@ -215,27 +215,40 @@ class JobEventQuery
      */
     public function findSyncStatusesForSignalement(Signalement $signalement): array
     {
-        // Pour chaque partenaire affecté au signalement, on récupère le dernier événement de synchronisation (JobEvent) et on détermine le statut de synchronisation en fonction du statut de l'événement.
+        // Sous-requête corrélée : recherche un événement terminal plus récent
+        // pour le même signalement et le même partenaire.
+        $newerEventQb = $this->entityManager->createQueryBuilder();
+        $newerEventQb->select('1')
+            ->from(JobEvent::class, 'newer_event')
+            ->where('newer_event.signalementId = j.signalementId')
+            ->andWhere('newer_event.partnerId = j.partnerId')
+            ->andWhere('newer_event.status IN (:terminalStatuses)')
+            ->andWhere('(
+                newer_event.createdAt > j.createdAt
+                OR (newer_event.createdAt = j.createdAt AND newer_event.id > j.id)
+            )');
+
+        // Sélectionne les échecs qui ne sont suivis d'aucun autre événement terminal.
+        // Si un succès ou un nouvel échec existe, l'événement courant est ignoré.
         $qb = $this->entityManager->createQueryBuilder();
         $qb->from(JobEvent::class, 'j')
             ->select([
-                'p.id AS partner_id',
+                'j.partnerId AS partner_id',
                 'j.action AS last_job_event_action',
-                'j.status AS last_job_event_status',
                 'j.response AS last_job_event_response',
             ])
-            ->innerJoin(Partner::class, 'p', 'ON', 'p.id = j.partnerId')
             ->where('j.signalementId = :signalementId')
+            ->andWhere('j.status = :failedStatus')
+            ->andWhere($qb->expr()->not($qb->expr()->exists($newerEventQb->getDQL())))
             ->setParameter('signalementId', $signalement->getId())
-            ->orderBy('j.createdAt', 'DESC');
+            ->setParameter('failedStatus', JobEvent::STATUS_FAILED)
+            ->setParameter('terminalStatuses', [JobEvent::STATUS_FAILED, JobEvent::STATUS_SUCCESS]);
 
-        // On retourne un tableau associatif dont la clé est l'ID du partenaire
         $results = $qb->getQuery()->getArrayResult();
         $syncStatuses = [];
         foreach ($results as $result) {
             $syncStatuses[$result['partner_id']] = [
                 'last_job_event_action' => $result['last_job_event_action'],
-                'last_job_event_status' => $result['last_job_event_status'],
                 'last_job_event_response' => $result['last_job_event_response'],
             ];
         }
