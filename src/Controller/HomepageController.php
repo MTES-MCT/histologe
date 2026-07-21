@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\Cache;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class HomepageController extends AbstractController
@@ -46,7 +46,7 @@ class HomepageController extends AbstractController
         Request $request,
         SignalementRepository $signalementRepository,
         NotificationMailerRegistry $notificationMailerRegistry,
-        RateLimiterFactory $askLinkFormLimiter,
+        RateLimiterFactoryInterface $askLinkFormLimiter,
     ): JsonResponse {
         $demandeLienSignalement = new DemandeLienSignalement();
         $form = $this->createForm(DemandeLienSignalementType::class, $demandeLienSignalement, [

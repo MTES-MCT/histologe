@@ -2,8 +2,7 @@
 flysystem:
     storages:
         file.storage:
-            adapter: 'aws'
-            options:
+            aws:
                 client: Aws\S3\S3Client
                 bucket: '%env(resolve:S3_BUCKET)%'
                 prefix: ''
@@ -13,6 +12,5 @@ when@test:
     flysystem:
         storages:
             file.storage:
-                adapter: 'local'
-                options:
+                local:
                     directory: '%kernel.project_dir%/var/storage'

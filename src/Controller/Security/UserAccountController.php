@@ -16,7 +16,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\RateLimiter\RateLimiterFactory;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -30,7 +30,7 @@ class UserAccountController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         UserRepository $userRepository,
         Request $request,
-        RateLimiterFactory $loginActivationFormLimiter,
+        RateLimiterFactoryInterface $loginActivationFormLimiter,
     ): Response {
         if ($request->isMethod('POST') && is_string($email = $request->request->get('email'))) {
             $limiter = $loginActivationFormLimiter->create($email);
@@ -73,7 +73,7 @@ class UserAccountController extends AbstractController
         UserRepository $userRepository,
         Request $request,
         NotificationMailerRegistry $notificationMailerRegistry,
-        RateLimiterFactory $loginPasswordFormLimiter,
+        RateLimiterFactoryInterface $loginPasswordFormLimiter,
     ): Response {
         $title = 'Récupération de votre mot de passe';
         if ($request->isMethod('POST') && is_string($email = $request->request->get('email'))) {
