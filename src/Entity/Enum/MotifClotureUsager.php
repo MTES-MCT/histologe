@@ -23,4 +23,15 @@ enum MotifClotureUsager: string
             'AUTRE' => 'Autre',
         ];
     }
+
+    public function labelForAdmin(): string
+    {
+        $labels = [
+            'ACCORD_PROPRIETAIRE' => 'Accord entre le propriétaire et l\'occupant',
+            'RELOGEMENT_OCCUPANT' => 'Changement de logement de l\'occupant',
+            'TRAVAUX_FAITS_OU_EN_COURS' => 'Travaux faits ou en cours',
+            'AUTRE' => 'Autre',
+        ];
+        return $labels[$this->name];
+    }
 }
