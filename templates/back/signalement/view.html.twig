@@ -117,6 +117,8 @@
         <div data-ajax-form>
             {% include '_partials/_modal_send_lien_suivi.html.twig' %}
         </div>
+    {% endif %}
+    {% if (is_granted('SIGN_INJONCTION_CLOSE', signalement)) %}
         <div data-ajax-form>
             {% include '_partials/_modal_close_demarche_acceleree.html.twig' %}
         </div>

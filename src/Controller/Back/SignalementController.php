@@ -28,7 +28,6 @@ use App\Form\CloseAffectationType;
 use App\Form\ClotureType;
 use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
@@ -58,6 +57,7 @@ use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementQualificationNde;
 use App\Service\Signalement\SignalementSameAddressArreteFinder;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\Suivi\SuiviSeenMarker;
 use App\Service\SignalementAddressContentService;
 use App\Utils\FormHelper;
@@ -73,6 +73,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements')]
 class SignalementController extends AbstractController
@@ -288,9 +289,12 @@ class SignalementController extends AbstractController
         if ($this->isGranted('ROLE_ADMIN')) {
             $syncStatuses = $jobEventQuery->findSyncStatusesForSignalement($signalement);
         }
-        
-        $adminCancelProcedureFormRoute = $this->generateUrl('back_signalement_admin_cancel_procedure', ['uuid' => $signalement->getUuid()]);
-        $adminCancelProcedureForm = $this->createForm(AdminCancelProcedureType::class, options: ['action' => $adminCancelProcedureFormRoute]);
+
+        $adminCancelProcedureForm = null;
+        if ($this->isGranted(SignalementVoter::SIGN_INJONCTION_CLOSE, $signalement)) {
+            $adminCancelProcedureFormRoute = $this->generateUrl('back_signalement_admin_cancel_procedure', ['uuid' => $signalement->getUuid()]);
+            $adminCancelProcedureForm = $this->createForm(AdminCancelProcedureType::class, options: ['action' => $adminCancelProcedureFormRoute]);
+        }
 
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',
@@ -349,10 +353,6 @@ class SignalementController extends AbstractController
     ): JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_INJONCTION_CLOSE, $signalement);
 
-        if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
-            return $this->json(['code' => Response::HTTP_BAD_REQUEST], Response::HTTP_BAD_REQUEST);
-        }
-
         $adminCancelProcedureFormRoute = $this->generateUrl('back_signalement_admin_cancel_procedure', ['uuid' => $signalement->getUuid()]);
         $form = $this->createForm(AdminCancelProcedureType::class, options: ['action' => $adminCancelProcedureFormRoute]);
         $form->handleRequest($request);
@@ -369,18 +369,15 @@ class SignalementController extends AbstractController
         $user = $this->getUser();
         /** @var MotifClotureUsager $motif */
         $motif = $form->get('reason')->getData();
-        $details = $form->get('details')->getData();
+        $details = HtmlCleaner::cleanFrontEndEntry($form->get('details')->getData());
 
         $signalement->setMotifClotureUsager($motif);
         $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
 
-        $description = 'Un administrateur a clôturé le dossier en démarche accélérée depuis le back-office pour le motif suivant :'.\PHP_EOL
-            .$motif->labelForAdmin().\PHP_EOL
-            .'Détails du motif d\'arrêt de procédure : '.$details;
-
+        $description = \sprintf(SuiviDescriptionHelper::DESCRIPTION_MOTIF_CLOTURE_INJONCTION_ADMIN, $motif->labelForAdmin(), $details);
         $suiviManager->createSuivi(
             signalement: $signalement,
-            description: HtmlCleaner::cleanFrontEndEntry($description),
+            description: $description,
             category: SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN,
             user: $user,
             isVisibleForUsager: true,

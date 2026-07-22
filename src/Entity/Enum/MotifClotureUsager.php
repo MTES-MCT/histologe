@@ -32,6 +32,7 @@ enum MotifClotureUsager: string
             'TRAVAUX_FAITS_OU_EN_COURS' => 'Travaux faits ou en cours',
             'AUTRE' => 'Autre',
         ];
+
         return $labels[$this->name];
     }
 }
