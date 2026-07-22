@@ -189,7 +189,7 @@ enum SuiviCategory: string
             self::INJONCTION_BAILLEUR_REPONSE_COMMENTAIRE,
             self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
             self::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER,
-            self::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN, // à mettre ici ? impacts ?
+            self::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN,
             self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
             self::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR_COMMENTAIRE,
             self::INJONCTION_BAILLEUR_EXPIREE,
@@ -274,7 +274,7 @@ enum SuiviCategory: string
             case self::AFFECTATION_IS_CLOSED:
             case self::SIGNALEMENT_IS_CLOSED:
             case self::MESSAGE_ESABORA_SCHS:
-            case self::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN: // TODO : ici ou en TYPE_AUTO ?
+            case self::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN:
                 return Suivi::TYPE_PARTNER;
             default:
                 throw new \LogicException(sprintf('La catégorie de suivi %s n\'a pas de type de suivi défini.', $category->name));
