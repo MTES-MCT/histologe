@@ -130,6 +130,13 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         );
         $this->assertCount(1, $this->getMailerMessagesWithSubjectContaining('Votre bailleur indique la fin des travaux'));
 
+        $entityManager->refresh($signalement);
+        $suiviRelance = $entityManager->getRepository(Suivi::class)->findOneBy([
+            'signalement' => $signalement,
+            'category' => SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE,
+        ]);
+        $this->assertStringContainsString('il y a 15 jours.', $suiviRelance->getDescription());
+
         // Le lendemain : la relance ne doit pas être renvoyée (non-régression)
         $mockClock->modify('+1 day');
         $commandTester->execute([]);

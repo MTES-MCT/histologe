@@ -39,4 +39,25 @@ class DateHelper
 
         return $dateInput->format($format);
     }
+
+    /**
+     * Traduit en français un seuil de durée au format attendu par DateTimeImmutable::modify()
+     * (ex. '15 days' -> '15 jours'), sans changer la valeur numérique.
+     */
+    public static function translateDurationThresholdToFrench(string $threshold): string
+    {
+        [$value, $unit] = explode(' ', $threshold, 2);
+        $units = [
+            'day' => 'jour',
+            'days' => 'jours',
+            'week' => 'semaine',
+            'weeks' => 'semaines',
+            'month' => 'mois',
+            'months' => 'mois',
+            'year' => 'an',
+            'years' => 'ans',
+        ];
+
+        return $value.' '.($units[$unit] ?? $unit);
+    }
 }

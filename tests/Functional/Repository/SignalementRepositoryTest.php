@@ -651,14 +651,23 @@ class SignalementRepositoryTest extends KernelTestCase
         $signalements = $signalementRepository->findInjonctionClotureBailleurToClose($beforeDate);
         $this->assertCount(1, $signalements);
 
-        // Si l'usager répond après la demande de clôture, le dossier ne doit plus être clôturé automatiquement
-        $suiviReponseUsager = (new Suivi())
+        // Un simple message de l'usager n'a pas de valeur décisionnelle (ce n'est ni une confirmation,
+        // ni une demande de transfert) : le dossier reste proposé à la clôture automatique
+        $suiviMessageUsager = (new Suivi())
             ->setSignalement($signalement)
-            ->setDescription('Je ne suis pas d\'accord avec cette clôture.')
+            ->setDescription('Une question sans rapport avec la clôture.')
             ->setCategory(SuiviCategory::MESSAGE_USAGER)
             ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::MESSAGE_USAGER))
             ->setCreatedAt($mockClock->now());
-        $this->entityManager->persist($suiviReponseUsager);
+        $this->entityManager->persist($suiviMessageUsager);
+        $this->entityManager->flush();
+
+        $signalements = $signalementRepository->findInjonctionClotureBailleurToClose($beforeDate);
+        $this->assertCount(1, $signalements);
+
+        // En revanche, si l'usager prend une vraie décision (ex. confirme la clôture), le statut du dossier
+        // change et sort de INJONCTION_BAILLEUR : il ne doit plus être proposé à la clôture automatique
+        $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
         $this->entityManager->flush();
 
         $signalements = $signalementRepository->findInjonctionClotureBailleurToClose($beforeDate);
