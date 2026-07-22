@@ -6,6 +6,9 @@ use App\Entity\Enum\SuiviCategory;
 
 class SuiviDescriptionHelper
 {
+    public const string DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été clôturé pour %s avec le motif suivant :';
+    public const string DESCRIPTION_TRAVAUX_MISE_EN_CONFORMITE = 'Travaux de mise en conformité : ';
+
     private const SPECIFIC_DESCRIPTIONS = [
         SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR->value => [
             SuiviRecipient::USAGER->value => 'Votre bailleur souhaite terminer la démarche pour le motif suivant : les travaux ont été réalisés. Veuillez confirmer sur la page d\'accueil de votre dossier.',

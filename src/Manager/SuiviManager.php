@@ -15,6 +15,7 @@ use App\Entity\SuiviDelayed;
 use App\Entity\SuiviFile;
 use App\Entity\User;
 use App\Event\SuiviCreatedEvent;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Utils\DateHelper;
 use App\Utils\DictionaryProvider;
 use App\Utils\Sanitizer;
@@ -280,10 +281,10 @@ class SuiviManager
 
         $motifCloture = '<strong>'.$params['motif_cloture']->label().'</strong>';
         if (!empty($params['travaux_mise_en_conformite'])) {
-            $motifCloture .= ' - Travaux de mise en conformité : '.$params['travaux_mise_en_conformite']->label();
+            $motifCloture .= ' - '.SuiviDescriptionHelper::DESCRIPTION_TRAVAUX_MISE_EN_CONFORMITE.$params['travaux_mise_en_conformite']->label();
         }
 
-        $description = Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.' '.$params['subject'].' avec le motif suivant ';
+        $description = \sprintf(SuiviDescriptionHelper::DESCRIPTION_MOTIF_CLOTURE_PARTNER, $params['subject']);
         $description .= '<br>';
         $description .= $motifCloture;
         $description .= '<br>';
