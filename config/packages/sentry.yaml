@@ -24,10 +24,8 @@ when@prod:
     monolog:
       handlers:
         sentry:
-          type: sentry
-          level: !php/const Monolog\Logger::ERROR
-          hub_id: Sentry\State\HubInterface
-          fill_extra_context: true
+          type: service
+          id: Sentry\Monolog\Handler
         sentry_logs:
           type: service
           id: Sentry\SentryBundle\Monolog\LogsHandler
@@ -37,6 +35,12 @@ when@prod:
     services:
       Monolog\Processor\PsrLogMessageProcessor:
         tags: { name: monolog.processor, handler: sentry }
+
+      Sentry\Monolog\Handler:
+        arguments:
+          $hub: '@Sentry\State\HubInterface'
+          $level: !php/const Monolog\Logger::ERROR
+          $bubble: false
 
       Sentry\SentryBundle\Monolog\LogsHandler:
         arguments:

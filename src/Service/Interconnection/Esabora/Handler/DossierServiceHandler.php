@@ -6,7 +6,9 @@ use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Esabora\AttachmentsUtils;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
+#[AsTaggedItem(priority: 2)]
 class DossierServiceHandler extends AbstractDossierSISHHandler
 {
     protected ?string $action = AbstractEsaboraService::ACTION_PUSH_DOSSIER;
@@ -32,10 +34,5 @@ class DossierServiceHandler extends AbstractDossierSISHHandler
         $dossierMessageSISH->setSasDossierId($this->response->getSasId());
 
         return parent::handle($dossierMessageSISH);
-    }
-
-    public static function getPriority(): int
-    {
-        return 2;
     }
 }

@@ -31,10 +31,7 @@ final class SyncEsaboraSISHInterventionMessageHandler
         private readonly ParameterBagInterface $parameterBag,
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
-        #[AutowireIterator(
-            'app.intervention_sish_handler',
-            defaultPriorityMethod: 'getPriority'
-        )] iterable $interventionHandlers,
+        #[AutowireIterator('app.intervention_sish_handler')] iterable $interventionHandlers,
     ) {
         $this->interventionHandlers = $interventionHandlers;
     }

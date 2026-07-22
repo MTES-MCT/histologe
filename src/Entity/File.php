@@ -118,7 +118,7 @@ class File implements EntityHistoryInterface
     private ?Intervention $intervention = null;
 
     #[ORM\Column(type: Types::BIGINT, nullable: true)]
-    private ?string $size = null;
+    private ?int $size = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: DocumentType::class)]
     private ?DocumentType $documentType = null;
@@ -313,12 +313,12 @@ class File implements EntityHistoryInterface
         return $this;
     }
 
-    public function getSize(): ?string
+    public function getSize(): ?int
     {
         return $this->size;
     }
 
-    public function setSize(?string $size): static
+    public function setSize(?int $size): static
     {
         $this->size = $size;
 

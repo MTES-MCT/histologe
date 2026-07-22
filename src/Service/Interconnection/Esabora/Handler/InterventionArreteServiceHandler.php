@@ -7,7 +7,9 @@ use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Esabora\EsaboraManager;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
 use App\Service\Interconnection\Esabora\Normalizer\ArreteSISHCollectionResponseNormalizer;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
+#[AsTaggedItem(priority: 2)]
 class InterventionArreteServiceHandler implements InterventionSISHHandlerInterface
 {
     private int $countSuccess = 0;

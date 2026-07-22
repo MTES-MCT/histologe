@@ -15,7 +15,7 @@ class ValueLessThanOtherValue extends Constraint
         string $property,
         string $otherProperty,
         ?string $message = null,
-        ...$options,
+        mixed ...$options,
     ) {
         parent::__construct($options);
         $this->property = $property;

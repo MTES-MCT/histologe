@@ -8,7 +8,6 @@ use App\Service\Import\CsvParser;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -32,16 +31,15 @@ class ImportBailleurCommandTest extends KernelTestCase
 
     public function testDisplayWithFailureMessage(): void
     {
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
+        self::bootKernel();
 
-        $command = $application->add(new ImportBailleurCommand(
+        $command = new ImportBailleurCommand(
             $this->csvParser,
             $this->bailleurLoader,
             $this->uploadHandlerServiceMock,
             $this->fileStorage,
             $this->parameterBag
-        ));
+        );
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
         $this->assertStringContainsString('CSV File does not exists', $commandTester->getDisplay());
@@ -50,8 +48,7 @@ class ImportBailleurCommandTest extends KernelTestCase
 
     public function testDisplayWithSucessMessage(): void
     {
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
+        self::bootKernel();
 
         $this->fileStorage
             ->expects($this->once())
@@ -73,13 +70,13 @@ class ImportBailleurCommandTest extends KernelTestCase
                 'errors' => ['[125] ligne 2 - Le territoire n\'existe pas'],
             ]);
 
-        $command = $application->add(new ImportBailleurCommand(
+        $command = new ImportBailleurCommand(
             $this->csvParser,
             $this->bailleurLoader,
             $this->uploadHandlerServiceMock,
             $this->fileStorage,
             $this->parameterBag
-        ));
+        );
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);

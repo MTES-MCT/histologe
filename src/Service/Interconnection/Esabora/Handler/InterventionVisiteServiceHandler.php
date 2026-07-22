@@ -6,7 +6,9 @@ use App\Entity\Affectation;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Esabora\EsaboraManager;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
+#[AsTaggedItem(priority: 1)]
 class InterventionVisiteServiceHandler implements InterventionSISHHandlerInterface
 {
     private int $countSuccess = 0;

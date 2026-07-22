@@ -29,7 +29,7 @@ class CompositionLogementRequest implements RequestInterface
             groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
         )]
         #[Assert\Choice(
-            options: ['piece_unique', 'plusieurs_pieces'],
+            choices: ['piece_unique', 'plusieurs_pieces'],
             message: 'Merci de sélectionner pièce unique ou plusieurs pièces.')]
         private readonly ?string $typeCompositionLogement = null,
         #[Assert\NotBlank(

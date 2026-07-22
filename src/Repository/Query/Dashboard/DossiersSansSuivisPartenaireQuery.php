@@ -19,7 +19,7 @@ class DossiersSansSuivisPartenaireQuery
     }
 
     /**
-     * @return array<int, array<string, array<int|string|null>|int|string>|string>
+     * @return array{string, array<string, array<int|string|null>|int|string>, array<string, ArrayParameterType>}
      */
     private function getBaseSql(
         User $user,

@@ -5,7 +5,6 @@ namespace App\Tests\Unit\Command\Cron;
 use App\Command\Cron\SynchronizeInterventionSISHCommand;
 use App\Scheduler\Message\SyncEsaboraSISHInterventionMessage;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -16,8 +15,7 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
 {
     public function testSyncInterventionDossier(): void
     {
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
+        self::bootKernel();
 
         /** @var MessageBusInterface&MockObject $messageBusMock */
         $messageBusMock = $this->createMock(MessageBusInterface::class);
@@ -29,10 +27,10 @@ class SynchronizeInterventionSISHCommandTest extends KernelTestCase
         /** @var ParameterBagInterface $parameterBag */
         $parameterBag = static::getContainer()->get(ParameterBagInterface::class);
 
-        $command = $application->add(new SynchronizeInterventionSISHCommand(
+        $command = new SynchronizeInterventionSISHCommand(
             $messageBusMock,
             $parameterBag,
-        ));
+        );
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);

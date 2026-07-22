@@ -20,6 +20,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
@@ -35,7 +36,7 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         private readonly SignalementRepository $signalementRepository,
         private readonly CsvParser $csvParser,
         private readonly ParameterBagInterface $parameterBag,
-        private readonly FilesystemOperator $fileStorage,
+        #[Target('file.storage')] private readonly FilesystemOperator $fileStorage,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly FileManager $fileManager,
         private readonly LoggerInterface $logger,

@@ -12,6 +12,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
@@ -24,7 +25,7 @@ class ImportBailleurCommand extends Command
         private readonly CsvParser $csvParser,
         private readonly BailleurLoader $bailleurLoader,
         private readonly UploadHandlerService $uploadHandlerService,
-        private readonly FilesystemOperator $fileStorage,
+        #[Target('file.storage')] private readonly FilesystemOperator $fileStorage,
         private readonly ParameterBagInterface $parameterBag,
     ) {
         parent::__construct();

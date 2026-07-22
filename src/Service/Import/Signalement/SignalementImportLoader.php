@@ -39,6 +39,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
@@ -94,7 +95,7 @@ class SignalementImportLoader
         private CriticiteCalculator $criticiteCalculator,
         private SignalementQualificationUpdater $signalementQualificationUpdater,
         private FileManager $fileManager,
-        private FilesystemOperator $fileStorage,
+        #[Target('file.storage')] private FilesystemOperator $fileStorage,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private HtmlSanitizerInterface $htmlSanitizer,
         private UserSignalementSubscriptionManager $userSignalementSubscriptionManager,

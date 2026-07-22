@@ -21,6 +21,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
@@ -34,7 +35,7 @@ class ForceEsaboraDossierClotureCommand extends Command
         private readonly AffectationRepository $affectationRepository,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly ParameterBagInterface $parameterBag,
-        private readonly FilesystemOperator $fileStorage,
+        #[Target('file.storage')] private readonly FilesystemOperator $fileStorage,
         private readonly CsvParser $csvParser,
         private readonly SignalementRepository $signalementRepository,
         private readonly TerritoryRepository $territoryRepository,
