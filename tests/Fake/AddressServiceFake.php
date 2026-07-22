@@ -285,7 +285,8 @@ class AddressServiceFake extends AddressService
                         'type' => 'Feature',
                         'properties' => [
                             'label' => $address,
-                            'score' => 0.9544881818181816,
+                            'score' => 0.954561818181818,
+                            'housenumber' => '2',
                             'id' => '44179_0470_00002',
                             'banId' => 'c64486f8-9f6f-4d8b-9648-e186357d8c43',
                             'name' => '2 Impasse de la peupleraie',
@@ -296,7 +297,31 @@ class AddressServiceFake extends AddressService
                         ],
                         'geometry' => [
                             'type' => 'Point',
-                            'coordinates' => [-1.417255, 47.368537],
+                            'coordinates' => [-1.417255, 	47.368537],
+                        ],
+                    ]],
+                    'query' => $address,
+                ]);
+                break;
+            case '34 Rue des Arawaks 97223 Le Diamant':
+                $response = new Address([
+                    'type' => 'FeatureCollection',
+                    'features' => [[
+                        'type' => 'Feature',
+                        'properties' => [
+                            'label' => $address,
+                            'score' => 0.9571472727272726,
+                            'housenumber' => '34',
+                            'id' => '97206_0021_00034',
+                            'banId' => '31916f1c-1e82-4a21-86d8-836eb6c340e9',
+                            'name' => '34 Rue des Arawaks',
+                            'postcode' => '97223',
+                            'citycode' => '97206',
+                            'city' => 'Le Diamant',
+                        ],
+                        'geometry' => [
+                            'type' => 'Point',
+                            'coordinates' => [-61.030632, 14.47869],
                         ],
                     ]],
                     'query' => $address,
