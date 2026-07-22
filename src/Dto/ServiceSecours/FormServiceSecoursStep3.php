@@ -27,9 +27,9 @@ class FormServiceSecoursStep3
         message: 'Merci de saisir un nombre entier.',
         groups: ['step3']
     )]
-    #[Assert\GreaterThan(
+    #[Assert\GreaterThanOrEqual(
         value: 0,
-        message: 'Merci de saisir un nombre entier positif.',
+        message: 'Merci de saisir un nombre positif ou zéro.',
         groups: ['step3']
     )]
     #[Assert\LessThan(
@@ -44,9 +44,9 @@ class FormServiceSecoursStep3
         message: 'Merci de saisir un nombre entier.',
         groups: ['step3']
     )]
-    #[Assert\GreaterThan(
+    #[Assert\GreaterThanOrEqual(
         value: 0,
-        message: 'Merci de saisir un nombre entier positif.',
+        message: 'Merci de saisir un nombre positif ou zéro.',
         groups: ['step3']
     )]
     #[Assert\LessThan(
