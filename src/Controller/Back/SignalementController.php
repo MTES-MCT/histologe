@@ -72,7 +72,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SignalementController extends AbstractController
 {
     public function __construct(
-        private EmailAlertChecker $emailAlertBuilder,
+        private EmailAlertChecker $emailAlertChecker,
         #[Autowire(env: 'FEATURE_CLOTURE_V2')]
         private readonly bool $featureClotureV2,
     ) {
@@ -320,7 +320,7 @@ class SignalementController extends AbstractController
             'tiersInvitation' => $tiersInvitation,
             'isUserSubscribed' => $isUserSubscribed,
             'subscriptionsInMyPartner' => $subscriptionsInMyPartner,
-            'partnerEmailAlerts' => $this->emailAlertBuilder->buildPartnerEmailAlert($signalement),
+            'partnerEmailAlerts' => $this->emailAlertChecker->buildPartnerEmailAlert($signalement),
             'isUniqueRtInCurrentPartner' => $isUniqueRtInCurrentPartner,
             'personalNote' => $personalNote,
             'syncStatuses' => $syncStatuses,

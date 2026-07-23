@@ -61,7 +61,7 @@ class Affectation implements EntityHistoryInterface
     private ?MotifRefus $motifRefus = null;
 
     #[ORM\Column(type: 'string', nullable: true, enumType: MotifCloture::class)]
-    #[Assert\NotBlank(groups: ['close_affectation'])]
+    #[Assert\NotBlank(groups: ['close_affectation'], message: 'Veuillez préciser le motif de clôture.')]
     private ?MotifCloture $motifCloture = null;
 
     /** @var Collection<int, Notification> $notifications */
@@ -79,7 +79,7 @@ class Affectation implements EntityHistoryInterface
     private ?TravauxMiseEnConformite $travauxMiseEnConformite = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Assert\NotBlank(groups: ['close_affectation'])]
+    #[Assert\NotBlank(groups: ['close_affectation'], message: 'Veuillez commenter la clôture de l\'affectation.')]
     #[Assert\Length(min: 16, groups: ['close_affectation'], minMessage: 'La précision doit contenir au moins 10 caractères.')] // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
     private ?string $precisionsCloture = null;
 

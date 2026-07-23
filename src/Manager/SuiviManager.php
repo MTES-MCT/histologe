@@ -281,7 +281,7 @@ class SuiviManager
 
         $motifCloture = '<strong>'.$params['motif_cloture']->label().'</strong>';
         if (!empty($params['travaux_mise_en_conformite'])) {
-            $motifCloture .= ' - '.SuiviDescriptionHelper::DESCRIPTION_TRAVAUX_MISE_EN_CONFORMITE.$params['travaux_mise_en_conformite']->label();
+            $motifCloture .= '<br><strong>'.SuiviDescriptionHelper::DESCRIPTION_TRAVAUX_MISE_EN_CONFORMITE.'</strong>'.$params['travaux_mise_en_conformite']->label();
         }
 
         $description = \sprintf(SuiviDescriptionHelper::DESCRIPTION_MOTIF_CLOTURE_PARTNER, $params['subject']);
