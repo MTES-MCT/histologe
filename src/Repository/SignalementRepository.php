@@ -834,41 +834,10 @@ class SignalementRepository extends ServiceEntityRepository
     public function findInjonctionClotureBailleurToRemindUsager(
         \DateTimeImmutable $beforeDate,
     ): array {
-        return $this->findInjonctionClotureBailleurDemandee(
-            $beforeDate,
-            SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE
-        );
-    }
-
-    /**
-     * Dossiers dont le bailleur a demandé la clôture depuis plus de $beforeDate, et toujours en statut
-     * INJONCTION_BAILLEUR.
-     *
-     * @return Signalement[]
-     *
-     * @throws \Exception
-     */
-    public function findInjonctionClotureBailleurToClose(
-        \DateTimeImmutable $beforeDate,
-    ): array {
-        return $this->findInjonctionClotureBailleurDemandee($beforeDate, null);
-    }
-
-    /**
-     * @param ?SuiviCategory $categorieDejaEnvoyee catégorie dont la présence signifie que l'action
-     *                                             (relance, etc.) a déjà été faite pour ce dossier
-     *
-     * @return Signalement[]
-     *
-     * @throws \Exception
-     */
-    private function findInjonctionClotureBailleurDemandee(
-        \DateTimeImmutable $beforeDate,
-        ?SuiviCategory $categorieDejaEnvoyee,
-    ): array {
         $qb = $this->createQueryBuilder('s');
         $qb->where('s.statut = :statut');
 
+        // Une demande de clôture du bailleur, faite avant la date
         $qb->andWhere(
             $qb->expr()->exists(
                 $this->createQueryBuilder('s1')
@@ -882,25 +851,59 @@ class SignalementRepository extends ServiceEntityRepository
                     ->getDQL()
             )
         );
-        $qb->setParameter('category_demande_cloture', SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR);
-
-        if (null !== $categorieDejaEnvoyee) {
-            $qb->andWhere(
-                $qb->expr()->not(
-                    $qb->expr()->exists(
-                        $this->createQueryBuilder('s2')
-                            ->select('1')
-                            ->join('s2.suivis', 'su2')
-                            ->where('s2 = s')
-                            ->andWhere('su2.category = :category_deja_envoyee')
-                            ->getDQL()
-                    )
+        // Pas encore de relance envoyée
+        $qb->andWhere(
+            $qb->expr()->not(
+                $qb->expr()->exists(
+                    $this->createQueryBuilder('s2')
+                        ->select('1')
+                        ->join('s2.suivis', 'su2')
+                        ->where('s2 = s')
+                        ->andWhere('su2.category = :category_relance')
+                        ->getDQL()
                 )
-            );
-            $qb->setParameter('category_deja_envoyee', $categorieDejaEnvoyee);
-        }
+            )
+        );
 
-        $qb->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
+        $qb->setParameter('category_demande_cloture', SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR)
+            ->setParameter('category_relance', SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE)
+            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
+            ->setParameter('date', $beforeDate)
+            ->orderBy('s.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Dossiers pour lesquels la relance de clôture a été envoyée à l'usager il y a plus de $beforeDate,
+     * toujours en statut INJONCTION_BAILLEUR (donc sans décision de l'usager).
+     *
+     * @return Signalement[]
+     *
+     * @throws \Exception
+     */
+    public function findInjonctionClotureBailleurToClose(
+        \DateTimeImmutable $beforeDate,
+    ): array {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.statut = :statut');
+
+        $qb->andWhere(
+            $qb->expr()->exists(
+                $this->createQueryBuilder('s1')
+                    ->select('1')
+                    ->join('s1.suivis', 'su1')
+                    ->where('s1 = s')
+                    ->andWhere('su1.category = :category_relance')
+                    ->andWhere(
+                        $qb->expr()->lt('su1.createdAt', ':date')
+                    )
+                    ->getDQL()
+            )
+        );
+
+        $qb->setParameter('category_relance', SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE)
+            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
             ->setParameter('date', $beforeDate)
             ->orderBy('s.createdAt', 'DESC');
 

@@ -41,8 +41,6 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         private readonly string $answerBailleurThreshold,
         #[Autowire(env: 'INJONCTION_USAGER_CLOTURE_THRESHOLD')]
         private readonly string $usagerClotureThreshold,
-        #[Autowire(env: 'INJONCTION_USAGER_CLOTURE_AND_CLOSE_THRESHOLD')]
-        private readonly string $usagerClotureAndCloseThreshold,
         private readonly ClockInterface $clock,
         private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
@@ -229,11 +227,12 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
 
     private function remindUsagerForClotureAndClose(SymfonyStyle $io, OutputInterface $output): void
     {
-        // Si le bailleur a demandé la clôture et que 30 jours plus tard il n'y a toujours pas de réponse usager,
-        // on clôture le dossier (motif Résolution), et on notifie l'usager (template 320) et le bailleur (template 319).
-        $beforeDate = $this->clock->now()->modify('-'.$this->usagerClotureAndCloseThreshold);
+        // Si la relance de clôture a été envoyée à l'usager et que, 15 jours plus tard, il n'y a toujours
+        // pas de réponse, on clôture le dossier (motif Résolution), et on notifie l'usager (template 320)
+        // et le bailleur (template 319).
+        $beforeDate = $this->clock->now()->modify('-'.$this->usagerClotureThreshold);
         $signalements = $this->signalementRepository->findInjonctionClotureBailleurToClose($beforeDate);
-        $usagerClotureAndCloseThresholdFR = DateHelper::translateDurationThresholdToFrench($this->usagerClotureAndCloseThreshold);
+        $usagerClotureThresholdFR = DateHelper::translateDurationThresholdToFrench($this->usagerClotureThreshold);
         foreach ($signalements as $signalement) {
             if (!empty($signalement->getMailOccupant())) {
                 $this->notificationAndMailSender->sendReminderClotureAndCloseToUsager($signalement);
@@ -261,14 +260,14 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         $countSignalements = count($signalements);
         if ($countSignalements > 0) {
             $feedbackMsgBailleur = \sprintf(
-                '%s rappels envoyés à l\'usager et au bailleur suite à une demande de clôture par le bailleur au bout de %s.',
+                '%s rappels envoyés à l\'usager et au bailleur suite à une relance de clôture restée sans réponse depuis %s.',
                 $countSignalements,
-                $usagerClotureAndCloseThresholdFR
+                $usagerClotureThresholdFR
             );
             $io->success($feedbackMsgBailleur);
             $feedbackMsg = $feedbackMsgBailleur;
         } else {
-            $feedbackMsg = 'Aucun rappel n\'a été envoyé pour l\'usager ou le bailleur suite à une demande de clôture par le bailleur au bout de '.$usagerClotureAndCloseThresholdFR.'.';
+            $feedbackMsg = 'Aucun rappel n\'a été envoyé pour l\'usager ou le bailleur suite à une relance de clôture restée sans réponse depuis '.$usagerClotureThresholdFR.'.';
             $io->warning($feedbackMsg);
         }
 
@@ -277,7 +276,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                 type: NotificationMailerType::TYPE_CRON,
                 to: (string) $this->parameterBag->get('admin_email'),
                 message: $feedbackMsg,
-                cronLabel: 'rappel usager et bailleur suite demande de cloture par bailleur au bout de '.$usagerClotureAndCloseThresholdFR,
+                cronLabel: 'rappel usager et bailleur suite à une relance de clôture restée sans réponse depuis '.$usagerClotureThresholdFR,
                 cronCount: null,
             )
         );

@@ -611,8 +611,8 @@ class SignalementRepositoryTest extends KernelTestCase
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
-        // Aucune demande de clôture du bailleur : rien à clôturer
-        $beforeDate = new \DateTimeImmutable('-30 days');
+        // Aucune relance de clôture envoyée : rien à clôturer
+        $beforeDate = new \DateTimeImmutable('-15 days');
         $signalements = $signalementRepository->findInjonctionClotureBailleurToClose($beforeDate);
         $this->assertCount(0, $signalements);
 
@@ -620,34 +620,43 @@ class SignalementRepositoryTest extends KernelTestCase
         $container = static::getContainer();
         $mockClock = new MockClock(new \DateTimeImmutable());
         $container->set(ClockInterface::class, $mockClock);
-        $demandeCreatedAt = $mockClock->now();
 
-        // Le bailleur de 2025-000000000012 demande la clôture de l'injonction
+        // Le bailleur de 2025-000000000012 demande la clôture de l'injonction il y a déjà 90 jours (cas d'un
+        // dossier déjà ancien au moment du déploiement de cette fonctionnalité) - sans conséquence sur le
+        // délai de clôture, qui se calcule depuis la relance et non depuis cette demande initiale
         $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
         $suiviDemande = (new Suivi())
             ->setSignalement($signalement)
             ->setDescription('Les travaux sont terminés, merci de clôturer le signalement.')
             ->setCategory(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR)
             ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR))
-            ->setCreatedAt($demandeCreatedAt);
+            ->setCreatedAt($mockClock->now()->modify('-90 days'));
         $this->entityManager->persist($suiviDemande);
         $this->entityManager->flush();
 
-        // À j+16 après la demande, la relance automatique à l'usager est envoyée
-        $mockClock->modify('+16 days');
+        // La relance de clôture vient tout juste d'être envoyée (premier passage du cron sur ce dossier
+        // déjà ancien) : même si la demande date de 90 jours, le dossier n'est pas encore proposé à la
+        // clôture - il doit d'abord bénéficier des 15 jours annoncés dans le mail de relance
+        $relanceCreatedAt = $mockClock->now();
         $suiviRelance = (new Suivi())
             ->setSignalement($signalement)
             ->setDescription('Relance envoyée à l\'usager.')
             ->setCategory(SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE)
             ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE))
-            ->setCreatedAt($mockClock->now());
+            ->setCreatedAt($relanceCreatedAt);
         $this->entityManager->persist($suiviRelance);
         $this->entityManager->flush();
 
-        // À j+31 après la demande : le dossier doit être proposé à la clôture, même si la relance
-        // de j+16 a été envoyée entre-temps (une relance n'est pas une réponse de l'usager - non-régression)
+        // Le lendemain de la relance : pas encore 15 jours, pas de clôture
+        $mockClock->modify('+1 day');
+        $beforeDate = $mockClock->now()->modify('-15 days');
+        $signalements = $signalementRepository->findInjonctionClotureBailleurToClose($beforeDate);
+        $this->assertCount(0, $signalements);
+
+        // 16 jours après la relance, toujours sans réponse de l'usager : le dossier doit être proposé
+        // à la clôture, quel que soit l'âge de la demande initiale du bailleur
         $mockClock->modify('+15 days');
-        $beforeDate = $mockClock->now()->modify('-30 days');
+        $beforeDate = $mockClock->now()->modify('-15 days');
         $signalements = $signalementRepository->findInjonctionClotureBailleurToClose($beforeDate);
         $this->assertCount(1, $signalements);
 
