@@ -24,6 +24,7 @@ twig:
         rial_enable: '%env(bool:RIAL_ENABLE)%'
         s3_enable: '%env(bool:S3_ENABLE)%'
         feature_histo_address: '%env(bool:FEATURE_HISTO_ADDRESS)%'
+        feature_cloture_v2: '%env(bool:FEATURE_CLOTURE_V2)%'
     paths:
         # point this wherever your images live
         '%kernel.project_dir%/public/img': images

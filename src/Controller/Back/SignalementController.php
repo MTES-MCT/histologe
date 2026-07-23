@@ -21,6 +21,7 @@ use App\Event\SignalementViewedEvent;
 use App\Factory\SignalementSearchQueryFactory;
 use App\Form\AddSuiviType;
 use App\Form\AgentSelectionType;
+use App\Form\CloseAffectationType;
 use App\Form\ClotureType;
 use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
@@ -59,6 +60,7 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -69,8 +71,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 #[Route('/bo/signalements')]
 class SignalementController extends AbstractController
 {
-    public function __construct(private EmailAlertChecker $emailAlertBuilder)
-    {
+    public function __construct(
+        private EmailAlertChecker $emailAlertChecker,
+        #[Autowire(env: 'FEATURE_CLOTURE_V2')]
+        private readonly bool $featureClotureV2,
+    ) {
     }
 
     /**
@@ -156,9 +161,20 @@ class SignalementController extends AbstractController
             $refusSignalementForm = $this->createForm(RefusSignalementType::class, $refusSignalement, ['action' => $refusSignalementRoute]);
         }
 
-        $signalementAffectationClose = (new SignalementAffectationClose())->setSignalement($signalement);
-        $clotureFormRoute = $this->generateUrl('back_signalement_close_affectation', ['uuid' => $signalement->getUuid()]);
-        $clotureForm = $this->createForm(ClotureType::class, $signalementAffectationClose, ['action' => $clotureFormRoute]);
+        $clotureForm = null;
+        $closeAffectationForm = null;
+        if ($this->featureClotureV2) {
+            if ($this->isGranted(SignalementVoter::SIGN_CLOSE, $signalement)) {
+                // TODO #6044
+            }
+            if ($affectation && $this->isGranted(AffectationVoter::AFFECTATION_CLOSE, $affectation)) {
+                $closeAffectationForm = $this->createForm(CloseAffectationType::class, $affectation, ['action' => $this->generateUrl('back_affectation_close', ['uuid' => $signalement->getUuid()])]);
+            }
+        } else {
+            $signalementAffectationClose = (new SignalementAffectationClose())->setSignalement($signalement);
+            $clotureFormRoute = $this->generateUrl('back_signalement_close_affectation', ['uuid' => $signalement->getUuid()]);
+            $clotureForm = $this->createForm(ClotureType::class, $signalementAffectationClose, ['action' => $clotureFormRoute]);
+        }
 
         $newSuiviToAdd = (new Suivi())->setSignalement($signalement);
         $addSuiviRoute = $this->generateUrl('back_signalement_add_suivi', ['uuid' => $signalement->getUuid()]);
@@ -279,6 +295,7 @@ class SignalementController extends AbstractController
             'partner' => $partner,
             'partners' => $partners,
             'clotureForm' => $clotureForm,
+            'closeAffectationForm' => $closeAffectationForm,
             'addSuiviForm' => $addSuiviForm,
             'acceptSignalementForm' => $acceptSignalementForm,
             'refusSignalementForm' => $refusSignalementForm,
@@ -303,7 +320,7 @@ class SignalementController extends AbstractController
             'tiersInvitation' => $tiersInvitation,
             'isUserSubscribed' => $isUserSubscribed,
             'subscriptionsInMyPartner' => $subscriptionsInMyPartner,
-            'partnerEmailAlerts' => $this->emailAlertBuilder->buildPartnerEmailAlert($signalement),
+            'partnerEmailAlerts' => $this->emailAlertChecker->buildPartnerEmailAlert($signalement),
             'isUniqueRtInCurrentPartner' => $isUniqueRtInCurrentPartner,
             'personalNote' => $personalNote,
             'syncStatuses' => $syncStatuses,
@@ -322,6 +339,9 @@ class SignalementController extends AbstractController
         SignalementSearchQueryFactory $signalementSearchQueryFactory,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
+        if ($this->featureClotureV2) {
+            return $this->json(['code' => Response::HTTP_NOT_FOUND], Response::HTTP_NOT_FOUND);
+        }
         /** @var User $user */
         $user = $this->getUser();
         $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());

@@ -12,6 +12,7 @@ use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Utils\DictionaryProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -93,7 +94,7 @@ class SuiviManagerTest extends KernelTestCase
         $this->assertEquals(Suivi::TYPE_PARTNER, $suivi->getType());
         $this->assertNotEquals($countSuivisBeforeCreate, $countSuivisAfterCreate);
         $this->assertInstanceOf(Suivi::class, $suivi);
-        $desc = Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.' test avec le motif suivant <br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
+        $desc = \sprintf(SuiviDescriptionHelper::DESCRIPTION_MOTIF_CLOTURE_PARTNER, 'test').'<br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
         $this->assertEquals($desc, $suivi->getDescription());
         $this->assertTrue($suivi->getIsVisibleForUsager());
         $this->assertTrue($suivi->getIsSanitized());
@@ -176,7 +177,7 @@ class SuiviManagerTest extends KernelTestCase
         $this->assertEquals(Suivi::TYPE_PARTNER, $suivi->getType());
         $this->assertNotEquals($countSuivisBeforeCreate, $countSuivisAfterCreate);
         $this->assertInstanceOf(Suivi::class, $suivi);
-        $desc = Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.' test avec le motif suivant <br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
+        $desc = \sprintf(SuiviDescriptionHelper::DESCRIPTION_MOTIF_CLOTURE_PARTNER, 'test').'<br /><strong>Non décence</strong><br /><strong>Desc. : </strong>Lorem ipsum suivi sit amet, consectetur adipiscing elit.';
         $this->assertEquals($desc, $suivi->getDescription());
         $this->assertFalse($suivi->getIsVisibleForUsager());
         $this->assertTrue($suivi->getIsSanitized());

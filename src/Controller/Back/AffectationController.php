@@ -9,7 +9,9 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Factory\SignalementSearchQueryFactory;
 use App\Form\AgentSelectionType;
+use App\Form\CloseAffectationType;
 use App\Form\RefusAffectationType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
@@ -27,6 +29,7 @@ use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,6 +49,8 @@ class AffectationController extends AbstractController
         private readonly PartnerRepository $partnerRepository,
         private readonly AffectationEsaboraPolicy $affectationEsaboraPolicy,
         private readonly EmailAlertChecker $emailAlertChecker,
+        #[Autowire(env: 'FEATURE_CLOTURE_V2')]
+        private readonly bool $featureClotureV2,
     ) {
     }
 
@@ -336,6 +341,59 @@ class AffectationController extends AbstractController
         $this->addFlash('success', ['title' => 'Affectation refusée', 'message' => 'L\'affectation a bien été refusée.']);
 
         $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return $this->json(['redirect' => true, 'url' => $url]);
+    }
+
+    #[Route('/{uuid:signalement}/close-affectation', name: 'back_affectation_close', methods: 'POST')]
+    public function closeAffectation(
+        Request $request,
+        Signalement $signalement,
+        AffectationManager $affectationManager,
+        EntityManagerInterface $entityManager,
+        SignalementSearchQueryFactory $signalementSearchQueryFactory,
+    ): JsonResponse {
+        if (!$this->featureClotureV2) {
+            return $this->json(['code' => Response::HTTP_NOT_FOUND], Response::HTTP_NOT_FOUND);
+        }
+        /** @var User $user */
+        $user = $this->getUser();
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+        $affectation = $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
+            return $affectation->getPartner() === $partner;
+        })->first();
+        if (!$affectation || !$this->isGranted(AffectationVoter::AFFECTATION_CLOSE, $affectation)) {
+            return $this->json(['code' => Response::HTTP_FORBIDDEN], Response::HTTP_FORBIDDEN);
+        }
+
+        $form = $this->createForm(CloseAffectationType::class, $affectation, ['action' => $this->generateUrl('back_affectation_close', ['uuid' => $signalement->getUuid()])]);
+        $form->handleRequest($request);
+        if (!$form->isSubmitted()) {
+            return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+        }
+        if (!$form->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
+
+            return $this->json($response, $response['code']);
+        }
+
+        $affectationManager->closeAffectation(
+            affectation: $affectation,
+            user: $user,
+            motif: $affectation->getMotifCloture(),
+            partner: $partner,
+            message: $affectation->getPrecisionsCloture(),
+            createSuiviAndNotifications: true
+        );
+        $entityManager->flush();
+        $this->addFlash('success', ['title' => 'Dossier fermé', 'message' => sprintf('Le dossier #%s a bien été fermé.', $signalement->getReference())]);
+        $signalementSearchQuery = $signalementSearchQueryFactory->createFromCookie($request);
+        if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
+            $url = $this->generateUrl('back_injonction_signalement_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        } else {
+            $url = $this->generateUrl('back_signalements_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
+            $url .= $signalementSearchQuery?->getQueryStringForUrl();
+        }
 
         return $this->json(['redirect' => true, 'url' => $url]);
     }

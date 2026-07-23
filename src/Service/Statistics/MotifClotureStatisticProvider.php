@@ -103,7 +103,7 @@ class MotifClotureStatisticProvider
                 'count' => 0,
             ],
             'LOGEMENT_DECENT' => [
-                'label' => "Logement décent / Pas d'infraction",
+                'label' => "Pas d\'infraction dans le logement",
                 'color' => '#C3FAD5',
                 'count' => 0,
             ],

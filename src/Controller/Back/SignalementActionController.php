@@ -4,7 +4,6 @@ namespace App\Controller\Back;
 
 use App\Dto\AgentSelection;
 use App\Dto\RefusSignalement;
-use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;

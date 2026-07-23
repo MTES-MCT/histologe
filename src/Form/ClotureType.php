@@ -33,6 +33,7 @@ class ClotureType extends AbstractType
         $builder
             ->add('motifCloture', EnumType::class, [
                 'class' => MotifCloture::class,
+                'choices' => MotifCloture::getListForV1(),
                 'choice_label' => static function ($choice) {
                     return $choice->label();
                 },

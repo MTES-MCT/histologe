@@ -15,6 +15,7 @@ use App\Entity\SuiviDelayed;
 use App\Entity\SuiviFile;
 use App\Entity\User;
 use App\Event\SuiviCreatedEvent;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Utils\DateHelper;
 use App\Utils\DictionaryProvider;
 use App\Utils\Sanitizer;
@@ -278,12 +279,18 @@ class SuiviManager
     {
         $motifSuivi = Sanitizer::sanitize($params['motif_suivi']);
 
-        return \sprintf(
-            Suivi::DESCRIPTION_MOTIF_CLOTURE_PARTNER.' %s avec le motif suivant <br><strong>%s</strong><br><strong>Desc. : </strong>%s',
-            $params['subject'],
-            $params['motif_cloture']->label(),
-            $motifSuivi
-        );
+        $motifCloture = '<strong>'.$params['motif_cloture']->label().'</strong>';
+        if (!empty($params['travaux_mise_en_conformite'])) {
+            $motifCloture .= '<br><strong>'.SuiviDescriptionHelper::DESCRIPTION_TRAVAUX_MISE_EN_CONFORMITE.'</strong>'.$params['travaux_mise_en_conformite']->label();
+        }
+
+        $description = \sprintf(SuiviDescriptionHelper::DESCRIPTION_MOTIF_CLOTURE_PARTNER, $params['subject']);
+        $description .= '<br>';
+        $description .= $motifCloture;
+        $description .= '<br>';
+        $description .= '<strong>Desc. : </strong>'.$motifSuivi;
+
+        return $description;
     }
 
     /**

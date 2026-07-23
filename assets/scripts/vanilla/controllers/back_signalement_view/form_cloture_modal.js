@@ -13,3 +13,19 @@ radioButtons.forEach((radioButton) => {
     }
   });
 });
+
+//cloture affectation v2
+const motifClotureSelect = document.querySelector('#close_affectation_motifCloture');
+const travauxContainer = document.querySelector(
+  '#close_affectation_travauxMiseEnConformite_container'
+);
+
+function updateTravauxVisibility() {
+  if (!motifClotureSelect || !travauxContainer) return;
+  const selectedOption = motifClotureSelect.options[motifClotureSelect.selectedIndex];
+  const needTravaux = selectedOption?.hasAttribute('data-need-travaux-precisions');
+  travauxContainer.classList.toggle('fr-hidden', !needTravaux);
+}
+
+motifClotureSelect?.addEventListener('change', updateTravauxVisibility);
+updateTravauxVisibility();

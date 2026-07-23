@@ -79,10 +79,21 @@
         {% include '_partials/_modal_historique_affectation.html.twig' %}
     {% endif %}
     {% include '_partials/_modal_dpe.html.twig' %}
-    {% if is_granted('SIGN_CLOSE', signalement) or (affectation and is_granted('AFFECTATION_CLOSE', affectation)) %}
-        <div data-ajax-form>
-            {% include '_partials/_modal_cloture.html.twig' %}
-        </div>
+    {% if feature_cloture_v2 %}
+        {% if is_granted('SIGN_CLOSE', signalement) %}
+            {# TODO #6044 #}
+        {% endif %}
+        {% if affectation and is_granted('AFFECTATION_CLOSE', affectation) %}
+            <div data-ajax-form>
+                {% include '_partials/signalement/_panel-close-affectation.html.twig' %}
+            </div>
+        {% endif %}
+    {% else %}
+        {% if is_granted('SIGN_CLOSE', signalement) or (affectation and is_granted('AFFECTATION_CLOSE', affectation)) %}
+            <div data-ajax-form>
+                {% include '_partials/_modal_cloture.html.twig' %}
+            </div>
+        {% endif %}
     {% endif %}
     {% if is_granted('SIGN_EDIT_NDE', signalement) %}
         {% include '_partials/_modal_edit_nde.html.twig' %}
