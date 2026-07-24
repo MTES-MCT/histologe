@@ -9,7 +9,7 @@ export interface AddressesHistoryFilters {
   territoire: string | undefined
   adresse: string | undefined
   communes: string[]
-  bailleurOuSyndic: string | undefined
+  bailleurOuSyndic: string[]
   zone: string | undefined
   natureParc: string | undefined
   dossiersMultiples: string | undefined
@@ -91,17 +91,26 @@ export function useAddressesHistoryFilters() {
     store.state.bailleursAndSyndic = []
     if (response.bailleursSociaux) {
       for (const id in response.bailleursSociaux) {
-        const bailleur = response.bailleursSociaux[id]
-        store.state.bailleursAndSyndic.push(bailleur.name)
+        const bailleurName = response.bailleursSociaux[id]
+        store.state.bailleursAndSyndic.push(bailleurName)
       }
     }
 
-    // Communes
+    // Communes et EPCIs
     store.state.communes = []
     if (response.communes) {
       for (const id in response.communes) {
         const commune = response.communes[id]
         store.state.communes.push(commune)
+      }
+    }
+    // Ajouter les EPCIs avec un préfixe pour les différencier
+    if (response.epcis) {
+      for (const id in response.epcis) {
+        const epci = response.epcis[id]
+        // Les EPCIs sont retournés comme des objets avec 'nom' et 'code'
+        const epciName = typeof epci === 'object' && epci !== null ? epci.nom : epci
+        store.state.communes.push(`EPCI : ${epciName}`)
       }
     }
 
@@ -203,7 +212,7 @@ export function useAddressesHistoryFilters() {
 
     for (const [key, value] of Object.entries(store.state.input.filters)) {
       if (variableTester.isNotEmpty(value)) {
-        if (Array.isArray(value) && ['communes', 'arreteTypes'].includes(key)) {
+        if (Array.isArray(value) && ['communes', 'bailleurOuSyndic', 'arreteTypes'].includes(key)) {
           value.forEach((item: any) => {
             addQueryParameter(key + '[]', item)
             url.searchParams.append(key + '[]', item)
@@ -261,7 +270,7 @@ export function useAddressesHistoryFilters() {
     territoire: undefined,
     adresse: undefined,
     communes: [],
-    bailleurOuSyndic: undefined,
+    bailleurOuSyndic: [],
     zone: undefined,
     natureParc: undefined,
     dossiersMultiples: undefined,

@@ -74,7 +74,9 @@ class SearchFilterOptionDataProvider
                     'listVisiteStatus' => VisiteStatus::getLabelList(),
                     'hasSignalementsImported' => $user->isSuperAdmin() || $user->isTerritoryAdmin()
                         ? $this->countStatisticsQuery->countImported($territory) : $this->countStatisticsQuery->countImported($territory, $user),
-                    'bailleursSociaux' => $this->bailleurRepository->findBailleursByTerritory($user, $territory),
+                    'bailleursSociaux' => $isAddressesHistoryContext
+                        ? $this->signalementRepository->findBailleursAndSyndics($user, $territory)
+                        : $this->bailleurRepository->findBailleursByTerritory($user, $territory),
                 ];
             }
         );
