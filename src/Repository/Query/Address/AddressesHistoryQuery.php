@@ -5,6 +5,10 @@ namespace App\Repository\Query\Address;
 use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\Address;
 use App\Entity\Arrete;
+<<<<<<< HEAD
+=======
+use App\Entity\Bailleur;
+>>>>>>> 5c94a84c4 (fixes bailleurs and epcis #5949)
 use App\Entity\Commune;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
