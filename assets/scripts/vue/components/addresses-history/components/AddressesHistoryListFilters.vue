@@ -20,16 +20,19 @@
 
       <!-- Adresse -->
       <div class="fr-col-12 fr-col-md-3 fr-mb-1v fr-mb-md-2w">
-        <AppSearch
+        <AppAutoComplete
           id="filter-search-terms"
           v-model="sharedState.input.filters.adresse"
+          :suggestions="sharedState.addressesSuggestions"
           :placeholder="'Taper l\'adresse'"
           title="Taper l'adresse"
           :minLengthSearch="3"
           @update:modelValue="notifyChange"
+          :reset="resetKey"
+          :iconClass="'fr-icon-search-line'"
         >
           <template #label>Adresse</template>
-        </AppSearch>
+        </AppAutoComplete>
       </div>
 
       <!-- Communes -->
@@ -39,8 +42,8 @@
           v-model="sharedState.input.filters.communes"
           :suggestions="sharedState.communes"
           :initSelectedSuggestions="sharedState.input.filters.communes"
-          :placeholder="'Commune ou code postal'"
-          title="Commune ou code postal"
+          :placeholder="'Commune ou EPCI'"
+          title="Commune ou EPCI"
           :multiple="true"
           @update:modelValue="notifyChange"
           :reset="resetKey"

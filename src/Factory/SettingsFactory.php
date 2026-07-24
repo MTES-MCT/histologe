@@ -26,15 +26,18 @@ class SettingsFactory
     /**
      * @throws InvalidArgumentException
      */
-    public function createInstanceFrom(User $user, ?Territory $territory = null): Settings
+    public function createInstanceFrom(User $user, ?Territory $territory = null, ?string $context = null): Settings
     {
-        $filterOptionData = $this->searchFilterOptionDataProvider->getData($user, $territory);
+        $filterOptionData = $this->searchFilterOptionDataProvider->getData($user, $territory, $context);
+
+        $isAddressesHistoryContext = 'addresses-history' === $context;
 
         return new Settings(
             user: $user,
             territories: $filterOptionData['territories'],
             partners: $filterOptionData['partners'],
-            communes: $this->getCommunesAndZipCodes($filterOptionData, $territory),
+            addresses: $filterOptionData['addresses'],
+            communes: $this->getCommunesAndZipCodes($filterOptionData, $territory, $isAddressesHistoryContext),
             epcis: $filterOptionData['epcis'],
             tags: $filterOptionData['tags'],
             personalTags: $user->getPersonalTags()->toArray(),
@@ -53,7 +56,7 @@ class SettingsFactory
      *
      * @return array<int, string>
      */
-    private function getCommunesAndZipCodes(array $filterOptionData, ?Territory $territory = null): array
+    private function getCommunesAndZipCodes(array $filterOptionData, ?Territory $territory = null, bool $isAddressesHistoryContext = false): array
     {
         // If a territory is selected, only return its communes and zips
         if (!empty($territory)) {
@@ -61,7 +64,9 @@ class SettingsFactory
             $communes = $territory->getCommunes();
             foreach ($communes as $commune) {
                 $suggestionsCommuneZipCode[] = $commune->getNom();
-                $suggestionsCommuneZipCode[] = $commune->getCodePostal();
+                if (!$isAddressesHistoryContext) {
+                    $suggestionsCommuneZipCode[] = $commune->getCodePostal();
+                }
             }
             $suggestionsCommuneZipCode = array_unique($suggestionsCommuneZipCode);
 
@@ -69,12 +74,23 @@ class SettingsFactory
         }
 
         // Otherwise, return all available communes and zips from existing signalements
-        $suggestionsCommuneZipCode = [...$filterOptionData['cities'], ...$filterOptionData['zipcodes']];
+        if ($isAddressesHistoryContext) {
+            $suggestionsCommuneZipCode = [...$filterOptionData['cities']];
+        } else {
+            $suggestionsCommuneZipCode = [...$filterOptionData['cities'], ...$filterOptionData['zipcodes']];
+        }
 
-        $suggestionsCommuneZipCode = array_map(
-            static fn ($suggestion): string => $suggestion['city'] ?? $suggestion['zipcode'] ?? '',
-            $suggestionsCommuneZipCode
-        );
+        if ($isAddressesHistoryContext) {
+            $suggestionsCommuneZipCode = array_map(
+                static fn ($suggestion): string => $suggestion['city'] ?? '',
+                $suggestionsCommuneZipCode
+            );
+        } else {
+            $suggestionsCommuneZipCode = array_map(
+                static fn ($suggestion): string => $suggestion['city'] ?? $suggestion['zipcode'] ?? '',
+                $suggestionsCommuneZipCode
+            );
+        }
 
         return array_filter($suggestionsCommuneZipCode);
     }
