@@ -58,6 +58,7 @@ class SummaryMailService
             NotificationType::CLOTURE_PARTENAIRE->name => [],
             NotificationType::DEMANDE_ABANDON_PROCEDURE->name => [],
         ];
+        // TODO : Intégrer ces mentions dans l'email de récap
         foreach ($notifications as $notification) {
             $notificationType = $notification->getType()->name;
             $signalement = $notification->getSignalement();

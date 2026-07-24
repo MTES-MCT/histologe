@@ -2,6 +2,7 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
@@ -39,9 +40,40 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         if ($suivi->isWaitingNotification()) {
             return;
         }
+        $mentionedPartners = $this->extractMentionedPartners($suivi);
+        if (!empty($mentionedPartners)) {
+            dump('Mentioned partners', $mentionedPartners);
+            // TODO : Les agents abonnés du partenaire mentionné sur le suivi ont une notification {{nom de l'agent - partenaire}} vous a mentionné dans un suivi sur le dossier {{ref}}
+            // TODO : Les agents abonnés des autres partenaires ne reçoivent pas de notif
+        }
         $this->sendToAdminAndPartners($suivi);
         $this->sendToUsagers($suivi);
         $this->sendToBailleur($suivi);
+    }
+
+    private function extractMentionedPartners(Suivi $suivi): array
+    {
+        if ($suivi->getIsVisibleForUsager() || $suivi->getIsVisibleForBailleur()) {
+            return []; // pas de notification de mention si le suivi est visible usager/bailleur
+        }
+
+        preg_match_all('/data-partner-id="(\d+)"/', $suivi->getDescription(raw: true), $matches);
+$mentionedIds = array_unique(array_map('intval', $matches[1]));
+return $mentionedIds;
+        // $acceptedPartners = $suivi->getSignalement()->getAffectations()->filter(static fn ($affectation) => AffectationStatus::ACCEPTED === $affectation->getStatut());
+        // dump($acceptedPartners);
+        // $mentionedPartners = [];
+        // foreach ($acceptedPartners as $partner) {
+        //     // TODO : rendre plus robuste la mise en forme (car utilisée pour repérer les partenaires mentionnés dans le suivi)
+        //     // TODO : essayer de passer par l'id du partenaire ?
+        //     if (str_contains($suivi->getDescription(raw: true), '<strong>@'.$partner->getNom().'</strong>')) {
+        //         $mentionedPartners[] = $partner;
+        //     }
+        // }
+
+        // dump($mentionedPartners);
+
+        // return $mentionedPartners;
     }
 
     private function sendToAdminAndPartners(Suivi $suivi): void

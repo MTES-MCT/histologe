@@ -26,7 +26,10 @@
         </div>
     </fieldset>
     <div class="fr-mb-3w">
-        {{ form_row(form.description) }}
+        {% set mentionPartners = signalement.affectations
+            |filter(a => a.statut == enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED)
+            |map(a => {id: a.partner.id, nom: a.partner.nom}) %}
+        {{ form_row(form.description, {attr: {'data-mention-partners': mentionPartners|json_encode}}) }}
     </div>
     <div class="fr-mb-3w">
         {{ form_row(form.files) }}
