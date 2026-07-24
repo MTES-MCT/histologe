@@ -767,4 +767,32 @@ class SignalementRepositoryTest extends KernelTestCase
         );
         $this->assertEquals(1, $paginator->count());
     }
+
+    public function testFindBailleursAndSyndics(): void
+    {
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+        /** @var TerritoryRepository $territoryRepository */
+        $territoryRepository = $this->entityManager->getRepository(Territory::class);
+
+        // Test SA
+        $adminUser = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $bailleurs = $signalementRepository->findBailleursAndSyndics($adminUser);
+
+        $this->assertIsArray($bailleurs);
+        $this->assertNotEmpty($bailleurs);
+
+        $this->assertContains('Habitat 44', $bailleurs);
+        $this->assertEquals(count($bailleurs), count(array_unique($bailleurs)));
+
+        // Test avec un territoire spécifique
+        $territory = $territoryRepository->findOneBy(['zip' => '13']);
+        $bailleursTerritory = $signalementRepository->findBailleursAndSyndics($adminUser, $territory);
+
+        $this->assertIsArray($bailleursTerritory);
+        $this->assertContains('13 Habitat', $bailleursTerritory);
+        $this->assertNotContains('Habitat 44', $bailleursTerritory);
+    }
 }
