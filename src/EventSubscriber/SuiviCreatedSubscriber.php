@@ -2,7 +2,6 @@
 
 namespace App\EventSubscriber;
 
-use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
@@ -41,16 +40,14 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
             return;
         }
         $mentionedPartners = $this->extractMentionedPartners($suivi);
-        if (!empty($mentionedPartners)) {
-            dump('Mentioned partners', $mentionedPartners);
-            // TODO : Les agents abonnés du partenaire mentionné sur le suivi ont une notification {{nom de l'agent - partenaire}} vous a mentionné dans un suivi sur le dossier {{ref}}
-            // TODO : Les agents abonnés des autres partenaires ne reçoivent pas de notif
-        }
-        $this->sendToAdminAndPartners($suivi);
+        $this->sendToAdminAndPartners($suivi, $mentionedPartners);
         $this->sendToUsagers($suivi);
         $this->sendToBailleur($suivi);
     }
 
+    /**
+     * @return array<int, int>
+     */
     private function extractMentionedPartners(Suivi $suivi): array
     {
         if ($suivi->getIsVisibleForUsager() || $suivi->getIsVisibleForBailleur()) {
@@ -58,25 +55,15 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         }
 
         preg_match_all('/data-partner-id="(\d+)"/', $suivi->getDescription(raw: true), $matches);
-$mentionedIds = array_unique(array_map('intval', $matches[1]));
-return $mentionedIds;
-        // $acceptedPartners = $suivi->getSignalement()->getAffectations()->filter(static fn ($affectation) => AffectationStatus::ACCEPTED === $affectation->getStatut());
-        // dump($acceptedPartners);
-        // $mentionedPartners = [];
-        // foreach ($acceptedPartners as $partner) {
-        //     // TODO : rendre plus robuste la mise en forme (car utilisée pour repérer les partenaires mentionnés dans le suivi)
-        //     // TODO : essayer de passer par l'id du partenaire ?
-        //     if (str_contains($suivi->getDescription(raw: true), '<strong>@'.$partner->getNom().'</strong>')) {
-        //         $mentionedPartners[] = $partner;
-        //     }
-        // }
+        $mentionedIds = array_unique(array_map('intval', $matches[1]));
 
-        // dump($mentionedPartners);
-
-        // return $mentionedPartners;
+        return $mentionedIds;
     }
 
-    private function sendToAdminAndPartners(Suivi $suivi): void
+    /**
+     * @param array<int, int> $mentionedPartners
+     */
+    private function sendToAdminAndPartners(Suivi $suivi, array $mentionedPartners): void
     {
         if (in_array($suivi->getCategory(), SuiviCategory::categoriesNotifyUsagerOnly()) || in_array($suivi->getCategory(), SuiviCategory::injonctionBailleurCategories())) {
             return;
@@ -90,7 +77,8 @@ return $mentionedIds;
         } else {
             $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners(
                 suivi: $suivi,
-                sendEmail: (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut())
+                sendEmail: (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut()),
+                mentionedPartners: $mentionedPartners,
             );
         }
     }

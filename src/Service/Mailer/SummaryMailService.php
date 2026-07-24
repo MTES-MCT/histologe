@@ -57,8 +57,8 @@ class SummaryMailService
             NotificationType::CLOTURE_SIGNALEMENT->name => [],
             NotificationType::CLOTURE_PARTENAIRE->name => [],
             NotificationType::DEMANDE_ABANDON_PROCEDURE->name => [],
+            NotificationType::NOUVELLE_MENTION->name => [],
         ];
-        // TODO : Intégrer ces mentions dans l'email de récap
         foreach ($notifications as $notification) {
             $notificationType = $notification->getType()->name;
             $signalement = $notification->getSignalement();
@@ -75,6 +75,7 @@ class SummaryMailService
                     ];
                     break;
                 case NotificationType::NOUVEAU_SUIVI:
+                case NotificationType::NOUVELLE_MENTION:
                     if (!isset($events[$notificationType][$signalementId])) {
                         $events[$notificationType][$signalementId] = [
                             'uuid' => $signalement->getUuid(),

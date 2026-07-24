@@ -26,9 +26,9 @@
         </div>
     </fieldset>
     <div class="fr-mb-3w">
-        {% set mentionPartners = signalement.affectations
+        {% set mentionPartners = []|merge(signalement.affectations
             |filter(a => a.statut == enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED)
-            |map(a => {id: a.partner.id, nom: a.partner.nom}) %}
+            |map(a => {id: a.partner.id, nom: a.partner.nom})) %}
         {{ form_row(form.description, {attr: {'data-mention-partners': mentionPartners|json_encode}}) }}
     </div>
     <div class="fr-mb-3w">

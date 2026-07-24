@@ -54,6 +54,16 @@
     <br>
 {% endif %}
 
+{% if events[enum('App\\Entity\\Enum\\NotificationType').NOUVELLE_MENTION.name]|length %}
+    <p><u>Nouvelles mentions :</u></p>
+    <ul>
+    {% for event in events[enum('App\\Entity\\Enum\\NotificationType').NOUVELLE_MENTION.name] %}
+        <li>{{event.nb}} nouvelles mentions sur le signalement <strong><a href="{{url('back_signalement_view', {uuid : event.uuid})}}">{{event.reference}}</a></strong></li>
+    {% endfor %}
+    </ul>
+    <br>
+{% endif %}
+
 {% if events[enum('App\\Entity\\Enum\\NotificationType').CLOTURE_SIGNALEMENT.name]|length %}
     <p><u>Clôtures de signalements :</u></p>
     <ul>

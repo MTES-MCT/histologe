@@ -143,18 +143,47 @@ class NotificationAndMailSender
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::CLOTURE_PARTENAIRE, affectation: $affectation);
     }
 
-    public function sendNewSuiviToAdminsAndPartners(Suivi $suivi, bool $sendEmail): void
+    /**
+     * @param array<int, int> $mentionedPartners
+     */
+    public function sendNewSuiviToAdminsAndPartners(Suivi $suivi, bool $sendEmail, array $mentionedPartners = []): void
     {
         $mailerType = $sendEmail ? NotificationMailerType::TYPE_NEW_COMMENT_BACK : null;
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
-        $userList = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
-        $adminList = $this->userRepository->findActiveAdmins();
-        $partnerList = $this->getPartnersWithEmailNotifiable(isFilteredAffectationStatus: true);
-        $recipients = new ArrayCollection(array_merge($userList, $adminList, $partnerList));
+        if (empty($mentionedPartners)) {
+            $userList = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
+            $adminList = $this->userRepository->findActiveAdmins();
+            $partnerList = $this->getPartnersWithEmailNotifiable(isFilteredAffectationStatus: true);
+            $recipients = new ArrayCollection(array_merge($userList, $adminList, $partnerList));
+            $notificationType = NotificationType::NOUVEAU_SUIVI;
+            $description = null;
+        } else {
+            $recipients = new ArrayCollection();
+            foreach ($mentionedPartners as $partnerId) {
+                $partner = $this->entityManager->getRepository(Partner::class)->find($partnerId);
+                $affectation = $this->signalement->getAffectationForPartner($partner);
+                if ($partner instanceof Partner && $affectation instanceof Affectation && AffectationStatus::ACCEPTED === $affectation->getStatut()) {
+                    $partnerUsers = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
+                    foreach ($partnerUsers as $user) {
+                        if ($user instanceof User && $user->hasPartner($partner) && UserStatus::ACTIVE === $user->getStatut()) {
+                            $recipients->add($user);
+                        }
+                    }
+                }
+            }
+            $notificationType = NotificationType::NOUVELLE_MENTION;
+
+            $description = sprintf(
+                '%s - %s vous a mentionné dans un suivi sur le dossier #%s.',
+                $suivi->getCreatedBy()?->getNomComplet(),
+                $suivi->getPartner()?->getNom(),
+                $this->signalement->getReference()
+            );
+        }
 
         $this->sendMail($recipients, $mailerType, $suivi);
-        $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
+        $this->createInAppNotifications(recipients: $recipients, type: $notificationType, suivi: $suivi, description: $description);
     }
 
     public function sendDemandeAbandonProcedureToAdminsAndPartners(Suivi $suivi): void
