@@ -49,7 +49,7 @@
           :reset="resetKey"
           :iconClass="'fr-icon-map-pin-2-line'"
         >
-          <template #label>Commune</template>
+          <template #label>Commune ou EPCI</template>
         </AppAutoComplete>
       </div>
 
@@ -59,9 +59,10 @@
           id="filter-bailleur-ou-syndic"
           v-model="sharedState.input.filters.bailleurOuSyndic"
           :suggestions="sharedState.bailleursAndSyndic"
+          :initSelectedSuggestions="sharedState.input.filters.bailleurOuSyndic"
           :placeholder="'Nom du bailleur ou syndicat'"
           title="Nom du bailleur ou syndicat"
-          :multiple="false"
+          :multiple="true"
           @update:modelValue="notifyChange"
           :reset="resetKey"
           :iconClass="'fr-icon-user-search-fill'"

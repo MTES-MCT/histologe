@@ -105,6 +105,7 @@ export default defineComponent({
       if (this.multiple) {
         this.selectedSuggestions.push(this.suggestionFilteredList[index])
         this.searchText = ''
+        this.showNoResultsMessage = false
       } else {
         this.searchText = this.suggestionFilteredList[index]
         this.showNoResultsMessage = false
