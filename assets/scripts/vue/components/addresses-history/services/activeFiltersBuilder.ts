@@ -31,9 +31,12 @@ export function buildFilterLabel(key: keyof AddressesHistoryFilters, value: any)
       : `Commune : ${firstCommune}`
   }
 
-  // Bailleur ou syndic
-  if (key === 'bailleurOuSyndic' && typeof value === 'string') {
-    return `Bailleur/Syndic : ${value}`
+  // Bailleur ou syndic (tableau)
+  if (key === 'bailleurOuSyndic' && Array.isArray(value) && value.length > 0) {
+    const count = value.length
+    return count > 1
+      ? `Bailleurs/Syndics : ${value[0]} +${count - 1}`
+      : `Bailleur/Syndic : ${value[0]}`
   }
 
   // Zone (string)

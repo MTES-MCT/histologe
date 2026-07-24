@@ -6,6 +6,7 @@ use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\Address;
 use App\Entity\Arrete;
 use App\Entity\Bailleur;
+use App\Entity\Commune;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -211,14 +212,48 @@ class AddressesHistoryQuery
         }
 
         if (!empty($addressesHistorySearchQuery->getCommunes())) {
-            $communes = $addressesHistorySearchQuery->getCommunes();
-            foreach ($addressesHistorySearchQuery->getCommunes() as $commune) {
-                if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$commune])) {
-                    $communes = array_merge($communes, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$commune]);
+            $communes = [];
+            $epcis = [];
+
+            foreach ($addressesHistorySearchQuery->getCommunes() as $communeOrEpci) {
+                // Vérifier si c'est un EPCI (préfixé par "EPCI: ")
+                if (str_starts_with($communeOrEpci, 'EPCI : ')) {
+                    $epcis[] = substr($communeOrEpci, 7); // Retirer le préfixe "EPCI : "
+                } else {
+                    $communes[] = $communeOrEpci;
+                    // Gérer les arrondissements
+                    if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$communeOrEpci])) {
+                        $communes = array_merge($communes, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$communeOrEpci]);
+                    }
                 }
             }
-            $qb->andWhere('a.city IN (:cities) OR a.postCode IN (:cities)')
-                ->setParameter('cities', $communes);
+
+            // Construire la condition de filtre
+            if (!empty($communes) && !empty($epcis)) {
+                // Si on a les deux, faire un OR entre communes et EPCIs
+                // Utiliser une sous-requête pour les EPCIs
+                $subQuery = 'SELECT DISTINCT a2.id FROM '.Address::class.' a2
+                    INNER JOIN '.Commune::class.' c2 WITH a2.postCode = c2.codePostal AND a2.cityCode = c2.codeInsee
+                    INNER JOIN c2.epci e2
+                    WHERE e2.nom IN (:epcis)';
+
+                $qb->andWhere('a.city IN (:cities) OR a.id IN ('.$subQuery.')')
+                   ->setParameter('cities', $communes)
+                   ->setParameter('epcis', $epcis);
+            } elseif (!empty($communes)) {
+                // Seulement des communes
+                $qb->andWhere('a.city IN (:cities)')
+                    ->setParameter('cities', $communes);
+            } elseif (!empty($epcis)) {
+                // Seulement des EPCIs - utiliser une sous-requête
+                $subQuery = 'SELECT DISTINCT a2.id FROM '.Address::class.' a2
+                    INNER JOIN '.Commune::class.' c2 WITH a2.postCode = c2.codePostal AND a2.cityCode = c2.codeInsee
+                    INNER JOIN c2.epci e2
+                    WHERE e2.nom IN (:epcis)';
+
+                $qb->andWhere('a.id IN ('.$subQuery.')')
+                   ->setParameter('epcis', $epcis);
+            }
         }
         if (!empty($addressesHistorySearchQuery->getTerritoire())) {
             $qb->andWhere('a.territory IN (:territories)')
@@ -240,12 +275,16 @@ class AddressesHistoryQuery
         }
 
         if (!empty($addressesHistorySearchQuery->getBailleurOuSyndic())) {
-            $qb
-                ->andWhere('s.nomProprio LIKE :bailleurOuSyndic
-                    OR s.denominationProprio LIKE :bailleurOuSyndic
-                    OR s.nomSyndic LIKE :bailleurOuSyndic
-                    OR s.denominationSyndic LIKE :bailleurOuSyndic')
-                ->setParameter('bailleurOuSyndic', '%'.$addressesHistorySearchQuery->getBailleurOuSyndic().'%');
+            $bailleurs = $addressesHistorySearchQuery->getBailleurOuSyndic();
+            $conditions = [];
+            foreach ($bailleurs as $index => $bailleur) {
+                $paramName = 'bailleur'.$index;
+                $conditions[] = "(s.nomProprio = :$paramName
+                    OR s.denominationProprio = :$paramName
+                    OR s.denominationSyndic = :$paramName)";
+                $qb->setParameter($paramName, $bailleur);
+            }
+            $qb->andWhere(implode(' OR ', $conditions));
         }
 
         if (!empty($addressesHistorySearchQuery->getTypesArretes())) {

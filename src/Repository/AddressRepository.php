@@ -17,6 +17,9 @@ class AddressRepository extends ServiceEntityRepository
         parent::__construct($registry, Address::class);
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function findAllList(?Territory $territory = null): array
     {
         $qb = $this->createQueryBuilder('a')

@@ -79,6 +79,7 @@ class Settings
 
     /**
      * @param array<int, mixed>                                $territories
+     * @param array<int, mixed>                                $addresses
      * @param array<int, mixed>                                $partners
      * @param array<int, mixed>                                $communes
      * @param array<int, mixed>                                $epcis
