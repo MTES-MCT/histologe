@@ -5,6 +5,7 @@ namespace App\Service\Signalement;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Repository\AddressRepository;
 use App\Repository\BailleurRepository;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
@@ -26,6 +27,7 @@ class SearchFilterOptionDataProvider
     public function __construct(
         private readonly CritereRepository $critereRepository,
         private readonly TerritoryRepository $territoryRepository,
+        private readonly AddressRepository $addressRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly TagRepository $tagsRepository,
         private readonly SignalementRepository $signalementRepository,
@@ -43,11 +45,11 @@ class SearchFilterOptionDataProvider
      *
      * @throws InvalidArgumentException
      */
-    public function getData(User $user, ?Territory $territory = null): array
+    public function getData(User $user, ?Territory $territory = null, ?string $context = null): array
     {
         return $this->cache->get(
-            $this->getCacheKey($user, $territory),
-            function (ItemInterface $item) use ($territory, $user) {
+            $this->getCacheKey($user, $territory, $context),
+            function (ItemInterface $item) use ($territory, $user, $context) {
                 $item->expiresAfter(3600);
 
                 if ($territory) {
@@ -56,9 +58,12 @@ class SearchFilterOptionDataProvider
                     $item->tag([self::CACHE_TAG]);
                 }
 
+                $isAddressesHistoryContext = 'addresses-history' === $context;
+
                 return [
                     'criteres' => $this->critereRepository->findAllList(),
                     'territories' => $user->isSuperAdmin() ? $this->territoryRepository->findAllList(indexById: false) : $user->getPartnersTerritories(true),
+                    'addresses' => $isAddressesHistoryContext ? $this->addressRepository->findAllList($territory) : [],
                     'partners' => $this->partnerRepository->findAllList($territory, $user),
                     'epcis' => $this->communeEpciQuery->findEpciByCommuneTerritory($territory, $user),
                     'tags' => $this->tagsRepository->findAllActive($territory, $user),
@@ -75,16 +80,16 @@ class SearchFilterOptionDataProvider
         );
     }
 
-    private function getCacheKey(User $user, ?Territory $territory = null): string
+    private function getCacheKey(User $user, ?Territory $territory = null, ?string $context = null): string
     {
         $className = (new \ReflectionClass(__CLASS__))->getShortName();
 
         if ($user->isSuperAdmin()) {
-            return $className.User::ROLE_ADMIN.'-territory-'.$territory?->getZip();
+            return $className.User::ROLE_ADMIN.'-territory-'.$territory?->getZip().'-context-'.$context;
         }
         $role = $user->getRoles();
         $partnersIds = implode('-', $user->getPartners()->map(static fn ($partner) => $partner->getId())->toArray());
 
-        return $className.array_shift($role).'-partners-'.$partnersIds.'-territory-'.$territory?->getZip();
+        return $className.array_shift($role).'-partners-'.$partnersIds.'-territory-'.$territory?->getZip().'-context-'.$context;
     }
 }
