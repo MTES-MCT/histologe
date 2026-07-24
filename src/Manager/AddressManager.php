@@ -6,7 +6,7 @@ use App\Entity\Address;
 use App\Entity\Signalement;
 use App\Factory\AddressFactory;
 use App\Repository\AddressRepository;
-use App\Service\Address\AddressHelper;
+use App\Utils\Address\AddressParser;
 use Doctrine\ORM\EntityManagerInterface;
 use LongitudeOne\Spatial\PHP\Types\Geometry\Point;
 
@@ -28,7 +28,9 @@ class AddressManager
         }
 
         // Extraire le numéro de rue et le nom de la rue depuis adresseOccupant
-        [$housenumber, $street] = AddressHelper::getHouseNumberAndStreetFromAddress($signalement->getAdresseOccupant());
+        $parsedAddress = AddressParser::parse($signalement->getAdresseOccupant());
+        $housenumber = $parsedAddress['number'].$parsedAddress['suffix'];
+        $street = $parsedAddress['street'];
 
         // Vérifier d'abord par banId si disponible
         $existingAddress = null;
@@ -69,7 +71,8 @@ class AddressManager
             if (isset($geoloc['lat']) && isset($geoloc['lng'])) {
                 $lat = $geoloc['lat'];
                 $lng = $geoloc['lng'];
-                $point = new Point($lat, $lng);
+                // Point prend (longitude, latitude) selon le standard spatial
+                $point = new Point($lng, $lat);
                 $existingAddress->setPoint($point);
                 $save = true;
             }

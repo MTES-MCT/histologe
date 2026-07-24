@@ -5,6 +5,7 @@ namespace App\Service\Signalement;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Repository\AddressRepository;
 use App\Repository\BailleurRepository;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
@@ -27,6 +28,7 @@ class SearchFilterOptionDataProvider
     public function __construct(
         private readonly CritereRepository $critereRepository,
         private readonly TerritoryRepository $territoryRepository,
+        private readonly AddressRepository $addressRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly TagRepository $tagsRepository,
         private readonly SignalementRepository $signalementRepository,
@@ -67,6 +69,8 @@ class SearchFilterOptionDataProvider
                     $hasSignalementImported = $user->isSuperAdmin() || $user->isTerritoryAdmin()
                         ? $this->countStatisticsQuery->countImported($territory) : $this->countStatisticsQuery->countImported($territory, $user);
                 }
+
+                $isAddressesHistoryContext = 'addresses-history' === $context;
 
                 return [
                     'criteres' => $isAddressesHistoryContext ? [] : $this->critereRepository->findAllList(),
