@@ -7,6 +7,7 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\SuiviCreatedEvent;
 use App\Service\Notification\NotificationAndMailSender;
+use App\Service\Signalement\Suivi\SuiviMentionExtractor;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SuiviCreatedSubscriber implements EventSubscriberInterface
@@ -15,6 +16,7 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
 
     public function __construct(
         private readonly NotificationAndMailSender $notificationAndMailSender,
+        private readonly SuiviMentionExtractor $suiviMentionExtractor,
     ) {
     }
 
@@ -39,25 +41,10 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         if ($suivi->isWaitingNotification()) {
             return;
         }
-        $mentionedPartners = $this->extractMentionedPartners($suivi);
+        $mentionedPartners = $this->suiviMentionExtractor->extract($suivi);
         $this->sendToAdminAndPartners($suivi, $mentionedPartners);
         $this->sendToUsagers($suivi);
         $this->sendToBailleur($suivi);
-    }
-
-    /**
-     * @return array<int, int>
-     */
-    private function extractMentionedPartners(Suivi $suivi): array
-    {
-        if ($suivi->getIsVisibleForUsager() || $suivi->getIsVisibleForBailleur()) {
-            return []; // pas de notification de mention si le suivi est visible usager/bailleur
-        }
-
-        preg_match_all('/data-partner-id="(\d+)"/', $suivi->getDescription(raw: true), $matches);
-        $mentionedIds = array_unique(array_map('intval', $matches[1]));
-
-        return $mentionedIds;
     }
 
     /**

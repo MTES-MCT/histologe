@@ -15,6 +15,7 @@ use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\InjonctionBailleur\CourrierBailleurGenerator;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Notification\NotificationAndMailSender;
+use App\Service\Signalement\Suivi\SuiviMentionExtractor;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -199,7 +200,115 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->assertCount(count($subscriptions) + \count($existingNotifications), $newNotifications);
     }
 
-    // TODO ajouter un test
+    public function testSendNewSuiviToAdminsAndPartnersWithMentionNotifiesOnlyMentionedPartnerSubscribers(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            'reference' => '2022-10',
+        ]);
+        /** @var User $respTerritoire */
+        $respTerritoire = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'admin-territoire-13-01@signal-logement.fr',
+        ]);
+        // abonné au partenaire 3 ("Partenaire 13-02"), affectation EN_COURS sur 2022-10, is_mailing_summary = 1
+        /** @var User $mentionedPartnerUser */
+        $mentionedPartnerUser = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'user-13-01@signal-logement.fr',
+        ]);
+
+        $suivi = (new Suivi())
+        ->setCreatedBy($respTerritoire)
+        ->setSignalement($signalement)
+        ->setDescription('test description avec mention <span class="mention" data-partner-id="3">@Partenaire 13-02</span>')
+        ->setType(Suivi::TYPE_PARTNER)
+        ->setIsVisibleForUsager(false);
+
+        $this->entityManager->persist($suivi);
+        $mentionedPartners = (new SuiviMentionExtractor())->extract($suivi);
+        $this->assertSame([3], $mentionedPartners);
+        $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true, mentionedPartners: $mentionedPartners);
+        $this->entityManager->flush();
+
+        // user-13-01 est en mode récap : pas de mail immédiat, seulement une notification in-app en attente de récap
+        $this->assertEmailCount(0);
+
+        $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
+        $this->assertCount(1, $newNotifications);
+        $this->assertSame(NotificationType::NOUVELLE_MENTION, $newNotifications[0]->getType());
+        $this->assertSame($mentionedPartnerUser->getEmail(), $newNotifications[0]->getUser()->getEmail());
+        $this->assertTrue($newNotifications[0]->isWaitMailingSummary());
+        $this->assertStringContainsString($respTerritoire->getNomComplet(), (string) $newNotifications[0]->getDescription());
+        $this->assertStringContainsString($signalement->getReference(), (string) $newNotifications[0]->getDescription());
+    }
+
+    public function testSendNewSuiviToAdminsAndPartnersWithMentionSendsImmediateEmailForNonSummaryUser(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            'reference' => '2022-10',
+        ]);
+        /** @var User $respTerritoire */
+        $respTerritoire = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'admin-territoire-13-01@signal-logement.fr',
+        ]);
+        // abonné au partenaire 4 ("Partenaire 13-03"), affectation EN_COURS sur 2022-10, is_mailing_summary = 0
+        /** @var User $mentionedPartnerUser */
+        $mentionedPartnerUser = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'user-13-02@signal-logement.fr',
+        ]);
+
+        $suivi = (new Suivi())
+        ->setCreatedBy($respTerritoire)
+        ->setSignalement($signalement)
+        ->setDescription('test description avec mention <span class="mention" data-partner-id="4">@Partenaire 13-03</span>')
+        ->setType(Suivi::TYPE_PARTNER)
+        ->setIsVisibleForUsager(false);
+
+        $this->entityManager->persist($suivi);
+        $mentionedPartners = (new SuiviMentionExtractor())->extract($suivi);
+        $this->assertSame([4], $mentionedPartners);
+        $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true, mentionedPartners: $mentionedPartners);
+        $this->entityManager->flush();
+
+        $this->assertEmailCount(1);
+        $this->assertEmailAddressContains($this->getMailerMessage(), 'bcc', $mentionedPartnerUser->getEmail());
+
+        $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
+        $this->assertCount(1, $newNotifications);
+        $this->assertSame(NotificationType::NOUVELLE_MENTION, $newNotifications[0]->getType());
+        $this->assertFalse($newNotifications[0]->isWaitMailingSummary());
+    }
+
+    public function testSendNewSuiviToAdminsAndPartnersWithMentionIgnoresPartnerWithoutAcceptedAffectation(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            'reference' => '2022-1',
+        ]);
+        /** @var User $respTerritoire */
+        $respTerritoire = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'admin-territoire-13-01@signal-logement.fr',
+        ]);
+
+        // partenaire 2 ("Partenaire 13-01") a une affectation NOUVEAU (pas encore acceptée) sur 2022-1
+        $suivi = (new Suivi())
+        ->setCreatedBy($respTerritoire)
+        ->setSignalement($signalement)
+        ->setDescription('test description avec mention sur affectation non acceptée <span class="mention" data-partner-id="2">@Partenaire 13-01</span>')
+        ->setType(Suivi::TYPE_PARTNER)
+        ->setIsVisibleForUsager(false);
+
+        $this->entityManager->persist($suivi);
+        $mentionedPartners = (new SuiviMentionExtractor())->extract($suivi);
+        $this->assertSame([2], $mentionedPartners);
+        $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true, mentionedPartners: $mentionedPartners);
+        $this->entityManager->flush();
+
+        $this->assertEmailCount(0);
+        $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
+        $this->assertCount(0, $newNotifications);
+    }
+
     public function testSendNDemandeAbandonProcedureToUsager(): void
     {
         /** @var Signalement $signalement */

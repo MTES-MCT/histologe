@@ -28,4 +28,29 @@ class NotificationCounter implements RuntimeExtensionInterface
             'deleted' => false]
         );
     }
+
+    public function countUnseenMention(User $user): int
+    {
+        return $this->notificationRepository->count([
+            'user' => $user,
+            'isSeen' => 0,
+            'type' => [
+                NotificationType::NOUVELLE_MENTION],
+            'deleted' => false]
+        );
+    }
+
+    public function countUnseenSuivi(User $user): int
+    {
+        return $this->notificationRepository->count([
+            'user' => $user,
+            'isSeen' => 0,
+            'type' => [
+                NotificationType::NOUVEAU_SUIVI,
+                NotificationType::CLOTURE_SIGNALEMENT,
+                NotificationType::NOUVEL_ABONNEMENT,
+                NotificationType::DEMANDE_ABANDON_PROCEDURE],
+            'deleted' => false]
+        );
+    }
 }
