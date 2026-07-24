@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SignalementReminderInjonctionClotureAndCloseToUsagerMailer extends AbstractNotificationMailer
 {
     protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_REMINDER_CLOTURE_AND_CLOSE_TO_USAGER;
-    protected ?string $mailerSubject = "Fin de la procédure concernant votre logement";
+    protected ?string $mailerSubject = 'Fin de la procédure concernant votre logement';
     protected ?string $brevoTemplateId = '320';
     protected ?string $tagHeader = 'Notification usager SiLo close démarche';
 
