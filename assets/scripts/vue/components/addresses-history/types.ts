@@ -74,6 +74,7 @@ export interface StoreState {
   input: InputState
   user: UserState
   territories: HistoInterfaceSelectOption[]
+  addressesSuggestions: string[]
   communes: string[]
   bailleursAndSyndic: string[]
   zones: HistoInterfaceSelectOption[]
@@ -116,6 +117,7 @@ export interface SettingsResponse {
   roleLabel?: string
   isMultiTerritoire?: boolean
   territories?: Record<string, { id: string; zip: string; name: string }>
+  addresses?: Record<string, { id: string; address: string; }>
   communes?: Record<string, string>
   zones?: Record<string, { id: number; name: string }>
   bailleursSociaux?: Record<string, { id: number; name: string }>

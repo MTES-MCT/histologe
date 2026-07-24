@@ -25,6 +25,7 @@ class SettingsController extends AbstractController
         TerritoryRepository $territoryRepository,
         Security $security,
         #[MapQueryParameter] ?int $territoryId = null,
+        #[MapQueryParameter] ?string $context = null,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
@@ -38,7 +39,7 @@ class SettingsController extends AbstractController
         }
 
         return $this->json(
-            $settingsFactory->createInstanceFrom($user, $territory),
+            $settingsFactory->createInstanceFrom($user, $territory, $context),
             Response::HTTP_OK,
             ['content-type' => 'application/json'],
             ['groups' => ['settings:read']]

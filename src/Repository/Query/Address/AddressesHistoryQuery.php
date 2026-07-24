@@ -179,8 +179,8 @@ class AddressesHistoryQuery
         ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
     ): QueryBuilder {
         if (!empty($addressesHistorySearchQuery->getAdresse())) {
-            $qb->andWhere('LOWER(a.street) LIKE :adresse');
-            $qb->setParameter('adresse', '%'.$addressesHistorySearchQuery->getAdresse().'%');
+            $qb->andWhere('LOWER(CONCAT(a.housenumber, \' \', a.street)) LIKE :adresse');
+            $qb->setParameter('adresse', '%'.strtolower($addressesHistorySearchQuery->getAdresse()).'%');
         }
 
         if (!empty($addressesHistorySearchQuery->getZone())) {
@@ -190,6 +190,7 @@ class AddressesHistoryQuery
                 FROM address a2
                 JOIN zone z ON z.id = :zoneId
                 WHERE z.territory_id = a2.territory_id
+                AND a2.point IS NOT NULL
                 AND ST_Contains(
                     z.area,
                     a2.point
@@ -204,7 +205,8 @@ class AddressesHistoryQuery
                 $qb->andWhere('a.id IN (:zonesAddresses)')
                    ->setParameter('zonesAddresses', $addressIds);
             } else {
-                $qb->andWhere('a.id IS NULL');
+                // Aucune adresse trouvée dans cette zone, retourner aucun résultat
+                $qb->andWhere('1 = 0');
             }
         }
 

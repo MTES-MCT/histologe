@@ -50,6 +50,7 @@ const state = ref<StoreState>({
     partnerIds: []
   },
   territories: [],
+  addressesSuggestions: [],
   communes: [],
   bailleursAndSyndic: [],
   zones: [],

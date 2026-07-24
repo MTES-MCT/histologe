@@ -29,6 +29,11 @@ class Settings
      * @var array<int, mixed>
      */
     #[Groups('settings:read')]
+    private array $addresses = [];
+    /**
+     * @var array<int, mixed>
+     */
+    #[Groups('settings:read')]
     private array $partners = [];
     /**
      * @var array<int, mixed>
@@ -86,6 +91,7 @@ class Settings
     public function __construct(
         User $user,
         array $territories,
+        array $addresses = [],
         array $partners = [],
         array $communes = [],
         array $epcis = [],
@@ -104,6 +110,7 @@ class Settings
         $this->roleLabel = $user->getRoleLabel();
         $this->partnerIds = $user->getUserPartners()->map(static fn ($userPartner) => $userPartner->getPartner()->getId())->toArray();
         $this->territories = $territories;
+        $this->addresses = $addresses;
         $this->partners = $partners;
         $this->communes = $communes;
         $this->epcis = $epcis;
@@ -151,6 +158,14 @@ class Settings
     public function getTerritories(): array
     {
         return $this->territories;
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    public function getAddresses(): array
+    {
+        return $this->addresses;
     }
 
     /**

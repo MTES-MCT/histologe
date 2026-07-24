@@ -21,9 +21,9 @@ class AddressFactory
         $address
             ->setHousenumber($housenumber)
             ->setStreet($street)
-            ->setCityCode($signalement->getInseeOccupant())
-            ->setCity($signalement->getVilleOccupant())
-            ->setPostCode($signalement->getCpOccupant())
+            ->setCityCode($signalement->getInseeOccupant() ?? '00000')
+            ->setCity($signalement->getVilleOccupant() ?? '')
+            ->setPostCode($signalement->getCpOccupant() ?? '')
             ->setTerritory($signalement->getTerritory());
 
         // Ne définir le banId que s'il n'est pas vide
@@ -38,7 +38,8 @@ class AddressFactory
             if (isset($geoloc['lat']) && isset($geoloc['lng'])) {
                 $lat = $geoloc['lat'];
                 $lng = $geoloc['lng'];
-                $point = new Point($lat, $lng);
+                // Point prend (longitude, latitude) selon le standard spatial
+                $point = new Point($lng, $lat);
                 $address->setPoint($point);
             }
         }

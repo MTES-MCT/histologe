@@ -66,6 +66,16 @@ export function useAddressesHistoryFilters() {
       }
     }
 
+    store.state.addressesSuggestions = []
+    if (response.addresses) {
+      for (const id in response.addresses) {
+        const address = response.addresses[id]
+        if (variableTester.isNotEmpty(address) && address.address) {
+          store.state.addressesSuggestions.push(address.address)
+        }
+      }
+    }
+
     // Zones
     store.state.zones = []
     if (response.zones) {
