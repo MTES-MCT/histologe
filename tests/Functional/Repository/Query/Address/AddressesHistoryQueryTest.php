@@ -5,8 +5,10 @@ namespace App\Tests\Functional\Repository\Query\Address;
 use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\Address;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\TypeArrete;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Entity\Zone;
 use App\Repository\Query\Address\AddressesHistoryQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -250,6 +252,107 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $this->assertIsArray($results);
         foreach ($results as $result) {
             $this->assertEquals($territory->getId(), $result['territoryId']);
+        }
+    }
+
+    public function testFindAddressesWithHistoryWithBailleurOuSyndicFilter(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $this->assertNotNull($user);
+
+        // Test avec un bailleur connu dans les fixtures
+        $searchQuery = new AddressesHistorySearchQuery(
+            bailleurOuSyndic: ['Habitat 44']
+        );
+
+        $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
+
+        $this->assertIsArray($results);
+        $this->assertCount(1, $results);
+
+        // Test avec plusieurs bailleurs
+        $searchQuery = new AddressesHistorySearchQuery(
+            bailleurOuSyndic: ['Habitat 44', 'Bailleur fatigué', '13 Habitat']
+        );
+
+        $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
+
+        $this->assertIsArray($results);
+        $this->assertCount(5, $results);
+    }
+
+    public function testFindAddressesWithHistoryWithTypesArretesFilter(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $this->assertNotNull($user);
+
+        // Test avec un type d'arrêté connu
+        $searchQuery = new AddressesHistorySearchQuery(
+            typesArretes: [TypeArrete::MISE_EN_SECURITE->value]
+        );
+
+        $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
+
+        $this->assertIsArray($results);
+        $this->assertCount(11, $results);
+
+        // Test avec un type d'arrêté connu
+        $searchQuery = new AddressesHistorySearchQuery(
+            typesArretes: [TypeArrete::MISE_EN_SECURITE->value, TypeArrete::MISE_EN_SECURITE_PROCEDURE_URGENTE->value]
+        );
+
+        $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
+
+        $this->assertIsArray($results);
+        $this->assertCount(15, $results);
+    }
+
+    public function testFindAddressesWithHistoryWithCommuneAndEpciFilter(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $this->assertNotNull($user);
+
+        $address = $this->entityManager->getRepository(Address::class)->findOneBy([]);
+        $this->assertNotNull($address);
+
+        // Test avec un mélange de commune et EPCI (préfixé par "EPCI : ")
+        $searchQuery = new AddressesHistorySearchQuery(
+            communes: ['Marseille']
+        );
+
+        $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
+
+        $this->assertIsArray($results);
+        $this->assertCount(28, $results);
+
+        // Test avec un mélange de commune et EPCI (préfixé par "EPCI : ")
+        $searchQuery = new AddressesHistorySearchQuery(
+            communes: ['Marseille', 'EPCI : CC d\'Erdre et Gesvres']
+        );
+
+        $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
+
+        $this->assertIsArray($results);
+        $this->assertCount(30, $results);
+    }
+
+    public function testFindAddressesWithHistoryWithZoneFilter(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $this->assertNotNull($user);
+
+        // Récupère une zone existante dans les fixtures
+        $zone = $this->entityManager->getRepository(Zone::class)->findOneBy(['name' => 'StMars']);
+
+        if ($zone) {
+            $searchQuery = new AddressesHistorySearchQuery(
+                zone: (string) $zone->getId()
+            );
+
+            $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
+
+            $this->assertIsArray($results);
+            $this->assertCount(2, $results);
         }
     }
 }

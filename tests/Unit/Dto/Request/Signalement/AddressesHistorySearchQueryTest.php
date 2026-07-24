@@ -120,7 +120,7 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
 
         static::assertStringContainsString('territoire=13', $queryString);
         static::assertStringContainsString('adresse=rue+de+la+paix', $queryString);
-        static::assertStringContainsString('bailleurOuSyndic[]=ACME', $queryString);
+        static::assertStringContainsString('bailleurOuSyndic%5B%5D=ACME', $queryString);
         static::assertStringContainsString('zone=5', $queryString);
         static::assertStringContainsString('natureParc=public', $queryString);
         static::assertStringContainsString('dossiersMultiples=oui', $queryString);

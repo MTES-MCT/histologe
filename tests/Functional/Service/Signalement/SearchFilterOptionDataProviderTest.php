@@ -92,4 +92,26 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         $this->assertSameSize($expectedData['tags'], $actualData['tags']);
         $this->assertSameSize($expectedData['cities'], $actualData['cities']);
     }
+
+    public function testGetDataWithContexts(): void
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+
+        // Test sans contexte
+        $dataWithoutContext = $this->searchFilterOptionDataProvider->getData($user, null, null);
+        $this->assertArrayHasKey('bailleursSociaux', $dataWithoutContext);
+        $this->assertNotEmpty($dataWithoutContext['bailleursSociaux']);
+        $this->assertArrayHasKey('addresses', $dataWithoutContext);
+        $this->assertEmpty($dataWithoutContext['addresses']);
+
+        // Test avec contexte addresses-history
+        $dataWithContext = $this->searchFilterOptionDataProvider->getData($user, null, 'addresses-history');
+        $this->assertArrayHasKey('bailleursSociaux', $dataWithContext);
+        $this->assertIsArray($dataWithContext['bailleursSociaux']);
+        $this->assertContains('Habitat 44', $dataWithContext['bailleursSociaux']);
+        $this->assertArrayHasKey('addresses', $dataWithContext);
+        $this->assertNotEmpty($dataWithContext['addresses']);
+    }
 }
