@@ -234,11 +234,20 @@ export function useAddressesHistoryFilters() {
       url.searchParams.set('page', currentPage.toString())
     }
 
+    // Ajoute le paramètre view (map ou list)
+    if (store.state.viewMode) {
+      addQueryParameter('view', store.state.viewMode)
+      url.searchParams.set('view', store.state.viewMode)
+    }
+
     // Met à jour l'URL AJAX
     const queryParams = store.state.input.queryParameters
       .map((param: any) => `${param.name}=${param.value}`)
       .join('&')
     store.props.ajaxurlAddresses = store.props.baseAjaxUrlAddresses + '?' + queryParams
+
+    // Met à jour l'URL du navigateur sans recharger la page
+    window.history.replaceState({}, '', url.toString())
   }
 
   /**
@@ -260,6 +269,66 @@ export function useAddressesHistoryFilters() {
     const index = store.state.input.queryParameters.findIndex((p: any) => p.name === name)
     if (index !== -1) {
       store.state.input.queryParameters.splice(index, 1)
+    }
+  }
+
+  /**
+   * Initialise les filtres depuis les paramètres URL
+   */
+  const initFiltersFromUrl = (): void => {
+    const urlParams = new URLSearchParams(window.location.search)
+
+    // Territoire
+    if (urlParams.has('territoire')) {
+      store.state.input.filters.territoire = urlParams.get('territoire') || undefined
+    }
+
+    // Adresse
+    if (urlParams.has('adresse')) {
+      store.state.input.filters.adresse = urlParams.get('adresse') || undefined
+    }
+
+    // Communes (tableau)
+    const communes = urlParams.getAll('communes[]')
+    if (communes.length > 0) {
+      store.state.input.filters.communes = communes
+    }
+
+    // Bailleurs/Syndics (tableau)
+    const bailleurs = urlParams.getAll('bailleurOuSyndic[]')
+    if (bailleurs.length > 0) {
+      store.state.input.filters.bailleurOuSyndic = bailleurs
+    }
+
+    // Zone
+    if (urlParams.has('zone')) {
+      store.state.input.filters.zone = urlParams.get('zone') || undefined
+    }
+
+    // Nature du parc
+    if (urlParams.has('natureParc')) {
+      store.state.input.filters.natureParc = urlParams.get('natureParc') || undefined
+    }
+
+    // Dossiers multiples
+    if (urlParams.has('dossiersMultiples')) {
+      store.state.input.filters.dossiersMultiples = urlParams.get('dossiersMultiples') || undefined
+    }
+
+    // Types d'arrêtés (tableau)
+    const typesArretes = urlParams.getAll('typesArretes[]')
+    if (typesArretes.length > 0) {
+      store.state.input.filters.typesArretes = typesArretes
+    }
+
+    // View mode
+    if (urlParams.has('view')) {
+      const viewMode = urlParams.get('view')
+      if (viewMode === 'map') {
+        store.state.viewMode = 'map' as any
+      } else if (viewMode === 'list') {
+        store.state.viewMode = 'list' as any
+      }
     }
   }
 
@@ -303,6 +372,7 @@ export function useAddressesHistoryFilters() {
     reloadSettings,
     reloadAddresses,
     resetFilters,
+    initFiltersFromUrl,
     getDefaultFilters,
     saveCurrentTerritory,
     hasTerritoryChanged,
