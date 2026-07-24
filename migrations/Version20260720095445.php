@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
-use App\Service\Address\AddressHelper;
+use App\Utils\Address\AddressParser;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
@@ -37,7 +37,9 @@ final class Version20260720095445 extends AbstractMigration
 
         foreach ($signalements as $signalement) {
             // Extraire le numéro de rue et le nom de la rue depuis adresseOccupant
-            [$housenumber, $street] = AddressHelper::getHouseNumberAndStreetFromAddress($signalement['adresse_occupant']);
+            $parsedAddress = AddressParser::parse($signalement['adresse_occupant']);
+            $housenumber = $parsedAddress['number'].$parsedAddress['suffix'];
+            $street = $parsedAddress['street'];
 
             // Vérifier si l'adresse existe déjà (contrainte unique sur housenumber, street, city_code)
             $checkParams = [
