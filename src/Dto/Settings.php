@@ -29,6 +29,11 @@ class Settings
      * @var array<int, mixed>
      */
     #[Groups('settings:read')]
+    private array $addresses = [];
+    /**
+     * @var array<int, mixed>
+     */
+    #[Groups('settings:read')]
     private array $partners = [];
     /**
      * @var array<int, mixed>
@@ -66,20 +71,28 @@ class Settings
      */
     #[Groups('settings:read')]
     private array $savedSearches = [];
+    /**
+     * @var array<string, array<int, array<string, string>>>
+     */
+    #[Groups('settings:read')]
+    private array $typesArretes = [];
 
     /**
-     * @param array<int, mixed>    $territories
-     * @param array<int, mixed>    $partners
-     * @param array<int, mixed>    $communes
-     * @param array<int, mixed>    $epcis
-     * @param array<int, mixed>    $tags
-     * @param array<int, mixed>    $zones
-     * @param array<int, mixed>    $bailleursSociaux
-     * @param array<string, mixed> $savedSearches
+     * @param array<int, mixed>                                $territories
+     * @param array<int, mixed>                                $addresses
+     * @param array<int, mixed>                                $partners
+     * @param array<int, mixed>                                $communes
+     * @param array<int, mixed>                                $epcis
+     * @param array<int, mixed>                                $tags
+     * @param array<int, mixed>                                $zones
+     * @param array<int, mixed>                                $bailleursSociaux
+     * @param array<string, mixed>                             $savedSearches
+     * @param array<string, array<int, array<string, string>>> $typesArretes
      */
     public function __construct(
         User $user,
         array $territories,
+        array $addresses = [],
         array $partners = [],
         array $communes = [],
         array $epcis = [],
@@ -90,6 +103,7 @@ class Settings
         array $bailleursSociaux = [],
         string $avatarOrPlaceHolder = '',
         array $savedSearches = [],
+        array $typesArretes = [],
     ) {
         $this->firstname = $user->getPrenom();
         $this->lastname = $user->getNom();
@@ -97,6 +111,7 @@ class Settings
         $this->roleLabel = $user->getRoleLabel();
         $this->partnerIds = $user->getUserPartners()->map(static fn ($userPartner) => $userPartner->getPartner()->getId())->toArray();
         $this->territories = $territories;
+        $this->addresses = $addresses;
         $this->partners = $partners;
         $this->communes = $communes;
         $this->epcis = $epcis;
@@ -107,6 +122,7 @@ class Settings
         $this->isMultiTerritoire = $user->isMultiTerritoire();
         $this->bailleursSociaux = $bailleursSociaux;
         $this->savedSearches = $savedSearches;
+        $this->typesArretes = $typesArretes;
     }
 
     public function getFirstname(): ?string
@@ -143,6 +159,14 @@ class Settings
     public function getTerritories(): array
     {
         return $this->territories;
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    public function getAddresses(): array
+    {
+        return $this->addresses;
     }
 
     /**
@@ -214,5 +238,13 @@ class Settings
     public function getSavedSearches(): array
     {
         return $this->savedSearches;
+    }
+
+    /**
+     * @return array<string, array<int, array<string, string>>>
+     */
+    public function getTypesArretes(): array
+    {
+        return $this->typesArretes;
     }
 }

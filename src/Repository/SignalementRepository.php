@@ -65,6 +65,53 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return array<int, string>
+     */
+    public function findBailleursAndSyndics(User $user, ?Territory $territory = null): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->where('s.statut NOT IN (:statutList)')
+            ->setParameter('statutList', SignalementStatus::excludedStatuses());
+
+        if (!$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
+            $qb->leftJoin('s.affectations', 'affectations')
+                ->leftJoin('affectations.partner', 'partner')
+                ->andWhere('partner IN (:partners)')
+                ->setParameter('partners', $user->getPartners());
+        }
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')
+                ->setParameter('territory', $territory);
+        } elseif (!$user->isSuperAdmin()) {
+            $qb->andWhere('s.territory IN (:territories)')
+                ->setParameter('territories', $user->getPartnersTerritories());
+        }
+
+        // Récupérer tous les noms uniques
+        $results = $qb->getQuery()->getResult();
+        $names = [];
+
+        foreach ($results as $signalement) {
+            if (!empty($signalement->getNomProprio())) {
+                $names[] = $signalement->getNomProprio();
+            }
+            if (!empty($signalement->getDenominationProprio())) {
+                $names[] = $signalement->getDenominationProprio();
+            }
+            if (!empty($signalement->getDenominationSyndic())) {
+                $names[] = $signalement->getDenominationSyndic();
+            }
+        }
+
+        // Retourner les noms uniques triés
+        $names = array_unique($names);
+        sort($names);
+
+        return $names;
+    }
+
+    /**
      * @return array<int, array<string, mixed>>|int|string
      */
     public function findCommunes(

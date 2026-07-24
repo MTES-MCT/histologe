@@ -34,7 +34,7 @@ const state = ref<StoreState>({
       territoire: undefined,
       adresse: undefined,
       communes: [],
-      bailleurOuSyndic: undefined,
+      bailleurOuSyndic: [],
       zone: undefined,
       natureParc: undefined,
       dossiersMultiples: undefined,
@@ -50,12 +50,13 @@ const state = ref<StoreState>({
     partnerIds: []
   },
   territories: [],
+  addressesSuggestions: [],
   communes: [],
   bailleursAndSyndic: [],
   zones: [],
   currentTerritoryId: '',
   currentCommunes: '',
-  viewMode: 'map' as ViewMode,
+  viewMode: 'list' as ViewMode,
   loadingList: true,
   hasErrorLoading: false,
   natureParcList: [
@@ -68,10 +69,7 @@ const state = ref<StoreState>({
     { Id: DossiersMultiples.Avec, Text: 'Avec' },
     { Id: DossiersMultiples.Sans, Text: 'Sans' },
   ],
-  typesArretes: [
-    { Id: TypeArrete.MiseEnSecurite, Text: 'Mise en sécurité' },
-    { Id: TypeArrete.ArreteL51111Impropre, Text: 'Arrêté L.511-11 IMPROPRE' },
-  ],
+  typesArretesGroups: [],
   filtersApplyKey: 0
 })
 
@@ -145,7 +143,7 @@ function resetFilters(): void {
     territoire: undefined,
     adresse: undefined,
     communes: [],
-    bailleurOuSyndic: undefined,
+    bailleurOuSyndic: [],
     zone: undefined,
     natureParc: undefined,
     dossiersMultiples: undefined,
@@ -162,7 +160,7 @@ function setCommunes(communes: string[]): void {
   state.value.communes = communes
 }
 
-function setBailleursAndSyndic(bailleursAndSyndic: HistoInterfaceSelectOption[]): void {
+function setBailleursAndSyndic(bailleursAndSyndic: string[]): void {
   state.value.bailleursAndSyndic = bailleursAndSyndic
 }
 

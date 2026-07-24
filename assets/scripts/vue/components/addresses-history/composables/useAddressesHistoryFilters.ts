@@ -9,7 +9,7 @@ export interface AddressesHistoryFilters {
   territoire: string | undefined
   adresse: string | undefined
   communes: string[]
-  bailleurOuSyndic: string | undefined
+  bailleurOuSyndic: string[]
   zone: string | undefined
   natureParc: string | undefined
   dossiersMultiples: string | undefined
@@ -66,6 +66,16 @@ export function useAddressesHistoryFilters() {
       }
     }
 
+    store.state.addressesSuggestions = []
+    if (response.addresses) {
+      for (const id in response.addresses) {
+        const address = response.addresses[id]
+        if (variableTester.isNotEmpty(address) && address.address) {
+          store.state.addressesSuggestions.push(address.address)
+        }
+      }
+    }
+
     // Zones
     store.state.zones = []
     if (response.zones) {
@@ -81,20 +91,38 @@ export function useAddressesHistoryFilters() {
     store.state.bailleursAndSyndic = []
     if (response.bailleursSociaux) {
       for (const id in response.bailleursSociaux) {
-        const optionItem = new HistoInterfaceSelectOption()
-        const bailleur = response.bailleursSociaux[id]
-        optionItem.Id = bailleur.id.toString()
-        optionItem.Text = bailleur.name
-        store.state.bailleursAndSyndic.push(optionItem)
+        const bailleurName = response.bailleursSociaux[id]
+        store.state.bailleursAndSyndic.push(bailleurName)
       }
     }
 
-    // Communes
+    // Communes et EPCIs
     store.state.communes = []
     if (response.communes) {
       for (const id in response.communes) {
         const commune = response.communes[id]
         store.state.communes.push(commune)
+      }
+    }
+    // Ajouter les EPCIs avec un préfixe pour les différencier
+    if (response.epcis) {
+      for (const id in response.epcis) {
+        const epci = response.epcis[id]
+        // Les EPCIs sont retournés comme des objets avec 'nom' et 'code'
+        const epciName = typeof epci === 'object' && epci !== null ? epci.nom : epci
+        store.state.communes.push(`EPCI : ${epciName}`)
+      }
+    }
+
+    // Types d'arrêtés
+    if (response.typesArretes) {
+      store.state.typesArretesGroups = []
+      for (const groupTitle in response.typesArretes) {
+        const arretes = response.typesArretes[groupTitle]
+        store.state.typesArretesGroups.push({
+          title: groupTitle,
+          options: arretes
+        })
       }
     }
   }
@@ -184,7 +212,7 @@ export function useAddressesHistoryFilters() {
 
     for (const [key, value] of Object.entries(store.state.input.filters)) {
       if (variableTester.isNotEmpty(value)) {
-        if (Array.isArray(value) && ['communes', 'typesArretes'].includes(key)) {
+        if (Array.isArray(value) && ['communes', 'bailleurOuSyndic', 'typesArretes'].includes(key)) {
           value.forEach((item: any) => {
             addQueryParameter(key + '[]', item)
             url.searchParams.append(key + '[]', item)
@@ -199,11 +227,27 @@ export function useAddressesHistoryFilters() {
       }
     }
 
+    // Ajoute le paramètre page si différent de 1
+    const currentPage = store.state.addresses.pagination.current_page
+    if (currentPage && currentPage > 1) {
+      addQueryParameter('page', currentPage.toString())
+      url.searchParams.set('page', currentPage.toString())
+    }
+
+    // Ajoute le paramètre view (map ou list)
+    if (store.state.viewMode) {
+      addQueryParameter('view', store.state.viewMode)
+      url.searchParams.set('view', store.state.viewMode)
+    }
+
     // Met à jour l'URL AJAX
     const queryParams = store.state.input.queryParameters
       .map((param: any) => `${param.name}=${param.value}`)
       .join('&')
     store.props.ajaxurlAddresses = store.props.baseAjaxUrlAddresses + '?' + queryParams
+
+    // Met à jour l'URL du navigateur sans recharger la page
+    window.history.replaceState({}, '', url.toString())
   }
 
   /**
@@ -229,13 +273,73 @@ export function useAddressesHistoryFilters() {
   }
 
   /**
+   * Initialise les filtres depuis les paramètres URL
+   */
+  const initFiltersFromUrl = (): void => {
+    const urlParams = new URLSearchParams(window.location.search)
+
+    // Territoire
+    if (urlParams.has('territoire')) {
+      store.state.input.filters.territoire = urlParams.get('territoire') || undefined
+    }
+
+    // Adresse
+    if (urlParams.has('adresse')) {
+      store.state.input.filters.adresse = urlParams.get('adresse') || undefined
+    }
+
+    // Communes (tableau)
+    const communes = urlParams.getAll('communes[]')
+    if (communes.length > 0) {
+      store.state.input.filters.communes = communes
+    }
+
+    // Bailleurs/Syndics (tableau)
+    const bailleurs = urlParams.getAll('bailleurOuSyndic[]')
+    if (bailleurs.length > 0) {
+      store.state.input.filters.bailleurOuSyndic = bailleurs
+    }
+
+    // Zone
+    if (urlParams.has('zone')) {
+      store.state.input.filters.zone = urlParams.get('zone') || undefined
+    }
+
+    // Nature du parc
+    if (urlParams.has('natureParc')) {
+      store.state.input.filters.natureParc = urlParams.get('natureParc') || undefined
+    }
+
+    // Dossiers multiples
+    if (urlParams.has('dossiersMultiples')) {
+      store.state.input.filters.dossiersMultiples = urlParams.get('dossiersMultiples') || undefined
+    }
+
+    // Types d'arrêtés (tableau)
+    const typesArretes = urlParams.getAll('typesArretes[]')
+    if (typesArretes.length > 0) {
+      store.state.input.filters.typesArretes = typesArretes
+    }
+
+    // View mode
+    if (urlParams.has('view')) {
+      const viewMode = urlParams.get('view')
+      if (viewMode === 'map') {
+        store.state.viewMode = 'map' as any
+      } else if (viewMode === 'list') {
+        store.state.viewMode = 'list' as any
+      }
+    }
+  }
+
+  /**
    * Obtient les filtres par défaut
    */
   const getDefaultFilters = (): AddressesHistoryFilters => ({
     territoire: undefined,
     adresse: undefined,
     communes: [],
-    bailleurOuSyndic: undefined,
+    bailleurOuSyndic: [],
     zone: undefined,
     natureParc: undefined,
     dossiersMultiples: undefined,
@@ -268,6 +372,7 @@ export function useAddressesHistoryFilters() {
     reloadSettings,
     reloadAddresses,
     resetFilters,
+    initFiltersFromUrl,
     getDefaultFilters,
     saveCurrentTerritory,
     hasTerritoryChanged,

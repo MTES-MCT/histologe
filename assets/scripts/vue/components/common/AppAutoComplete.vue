@@ -33,7 +33,7 @@
           {{ suggestion }}
         </li>
       </ul>
-      <ul v-else-if="searchText.length > 0"
+      <ul v-else-if="searchText.length >= 0 && showNoResultsMessage"
           class="fr-grid-row fr-background--white fr-text-label--red-marianne fr-autocomplete-list">
         <li class="fr-col-12 fr-p-3v fr-autocomplete-suggestion--disabled fr-text--xs">Aucun résultat trouvé</li>
       </ul>
@@ -92,7 +92,8 @@ export default defineComponent({
       selectedSuggestions: this.initSelectedSuggestions || [] as string[],
       suggestionFilteredList: [] as string[],
       selectedSuggestion: '',
-      selectedSuggestionIndex: -1
+      selectedSuggestionIndex: -1,
+      showNoResultsMessage: false
     }
   },
   created () {
@@ -104,8 +105,10 @@ export default defineComponent({
       if (this.multiple) {
         this.selectedSuggestions.push(this.suggestionFilteredList[index])
         this.searchText = ''
+        this.showNoResultsMessage = false
       } else {
         this.searchText = this.suggestionFilteredList[index]
+        this.showNoResultsMessage = false
       }
       this.suggestionFilteredList = []
       this.$emit('update:modelValue', this.multiple ? this.selectedSuggestions : this.searchText)
@@ -113,6 +116,11 @@ export default defineComponent({
     updateSearch () {
       if (this.searchText.length < 1) {
         this.suggestionFilteredList = []
+        this.showNoResultsMessage = false
+        // En mode non-multiple, si le texte est vide, émettre undefined pour réinitialiser le filtre
+        if (!this.multiple) {
+          this.$emit('update:modelValue', undefined)
+        }
       } else if (this.searchText.length > 1) {
         const searchTextNormalized = this.searchText
           .toLowerCase()
@@ -122,6 +130,8 @@ export default defineComponent({
 
         this.suggestionFilteredList = (this.suggestions as string[])
           .filter((item: string) => {
+            if (!item || typeof item !== 'string') return false
+
             const itemNormalized = item
               .toLowerCase()
               .normalize('NFD')
@@ -130,6 +140,8 @@ export default defineComponent({
 
             return !this.selectedSuggestions.includes(item) && itemNormalized.includes(searchTextNormalized)
           })
+
+        this.showNoResultsMessage = true
       }
     },
     handleDownSuggestion () {
@@ -153,7 +165,11 @@ export default defineComponent({
       if (target && !event.target.closest('.fr-autocomplete-list')) {
         this.suggestionFilteredList = []
         this.selectedSuggestionIndex = -1
-        this.searchText = ''
+        this.showNoResultsMessage = false
+        // Ne vider le champ qu'en mode multiple
+        if (this.multiple) {
+          this.searchText = ''
+        }
       }
     },
     resetData () {
@@ -162,6 +178,7 @@ export default defineComponent({
       this.suggestionFilteredList = []
       this.selectedSuggestion = ''
       this.selectedSuggestionIndex = -1
+      this.showNoResultsMessage = false
     }
   }
 })

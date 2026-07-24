@@ -48,10 +48,17 @@ class AddressesHistoryController extends AbstractController
         $filters = null !== $addressesHistorySearchQuery
             ? $addressesHistorySearchQuery->getFilters()
             : [
-                // 'maxItemsPerPage' => AddressesHistorySearchQuery::MAX_LIST_PAGINATION,
+                'maxItemsPerPage' => AddressesHistorySearchQuery::MAX_LIST_PAGINATION,
                 // 'orderBy' => 'DESC',
                 // 'sortBy' => 'reference',
             ];
+
+        $page = null !== $addressesHistorySearchQuery && null !== $addressesHistorySearchQuery->getPage()
+            ? $addressesHistorySearchQuery->getPage()
+            : 1;
+
+        $totalAddresses = $addressesHistoryQuery->countAddressesWithHistory($user, $addressesHistorySearchQuery);
+        $totalPages = (int) ceil($totalAddresses / AddressesHistorySearchQuery::MAX_LIST_PAGINATION);
 
         $addresses = $addressesHistoryQuery->findAddressesWithHistory($user, $addressesHistorySearchQuery);
         $responseAddresses = [];
@@ -95,6 +102,16 @@ class AddressesHistoryController extends AbstractController
                 $responseAddresses[$addressKey]->addSignalement($addressesHistorySignalement);
                 $processedSignalements[$addressKey][] = $row['id'];
 
+                if (true === $row['isLogementSocial']) {
+                    $responseAddresses[$addressKey]->setHasLogementSocial(true);
+                } elseif (false === $row['isLogementSocial']) {
+                    $responseAddresses[$addressKey]->setHasLogementPrive(true);
+                }
+
+                if (!empty($row['bailleurName'])) {
+                    $responseAddresses[$addressKey]->addBailleurName($row['bailleurName']);
+                }
+
                 // Fallback : si pas de point dans Address, on utilise geoloc du signalement
                 if (!$responseAddresses[$addressKey]->getLat() && $row['geoloc'] && isset($row['geoloc']['lat'])) {
                     $responseAddresses[$addressKey]->setLat($row['geoloc']['lat']);
@@ -106,9 +123,10 @@ class AddressesHistoryController extends AbstractController
             if (!empty($row['arreteId']) && !in_array($row['arreteId'], $processedArretes[$addressKey])) {
                 $responseAddresses[$addressKey]->addArrete([
                     'id' => $row['arreteId'],
-                    'dateArrete' => $row['dateArrete'],
+                    'dateArrete' => $row['dateArrete'] ? $row['dateArrete']->format('d/m/Y') : null,
                     'typeArrete' => $row['typeArrete'],
-                    'dateMainLevee' => $row['dateMainLevee'],
+                    'typeArreteLabel' => $row['typeArrete'] ? $row['typeArrete']->completeLabel() : null,
+                    'dateMainLevee' => $row['dateMainLevee'] ? $row['dateMainLevee']->format('d/m/Y') : null,
                 ]);
                 $processedArretes[$addressKey][] = $row['arreteId'];
             }
@@ -117,7 +135,11 @@ class AddressesHistoryController extends AbstractController
         $responseData = [
             'filters' => $filters,
             'list' => array_values($responseAddresses),
-            'pagination' => [],
+            'pagination' => [
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_items' => $totalAddresses,
+            ],
             'zoneAreas' => [],
         ];
 

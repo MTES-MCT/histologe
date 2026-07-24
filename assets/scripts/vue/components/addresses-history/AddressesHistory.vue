@@ -1,6 +1,7 @@
 <template>
   <div id="histo-app-addresses-history-view">
     <AddressesHistoryHeader @view-mode-change="onViewModeChange" />
+    <hr class="fr-mt-4w">
     <section v-if="sharedState.loadingList" class="loading fr-m-10w fr-text--center">
       <h2 class="fr-text--light" v-if="!sharedState.hasErrorLoading">Chargement de la liste...</h2>
       <h2 class="fr-text--light" v-if="sharedState.hasErrorLoading">Erreur lors du chargement de la liste.</h2>
@@ -42,6 +43,7 @@ const onFiltersChange = async (): Promise<void> => {
  * Gère le changement de mode d'affichage (carte/liste)
  */
 const onViewModeChange = async (viewMode: string): Promise<void> => {
+  // Change le mode de vue (sera inclus dans l'URL lors du reload)
   sharedState.viewMode = viewMode as any
 
   // Recharge les adresses sans filtres pour la carte, avec filtres pour la liste
@@ -84,6 +86,9 @@ const init = async (): Promise<void> => {
   sharedProps.ajaxurlSettings = initElements.dataset.ajaxurlSettings || ''
   sharedProps.ajaxurlExportCsv = initElements.dataset.ajaxurlExportCsv || ''
   sharedProps.platformName = initElements.dataset.platformName || ''
+
+  // Initialise les filtres depuis l'URL avant de charger les données
+  filtersComposable.initFiltersFromUrl()
 
   // Charge les settings et les données en parallèle
   await filtersComposable.reloadSettings()

@@ -46,6 +46,32 @@ enum TypeArrete: string
         ];
     }
 
+    /** @return array<string, string> */
+    public static function getCompleteLabelList(): array
+    {
+        return [
+            self::MISE_EN_SECURITE->name => 'Mise en sécurité procédure ordinaire',
+            self::MISE_EN_SECURITE_PROCEDURE_URGENTE->name => 'Mise en sécurité procédure urgente',
+            self::MISE_EN_SECURITE_MODIFICATIF->name => 'Mise en sécurité modificatif',
+            self::ARRETE_L_511_11_IMPROPRE->name => 'Impropre (Arrêté L.511-11)',
+            self::ARRETE_L_511_11_ORDINAIRE_IRREMEDIABLE->name => 'Ordinaire irrémédiable (Arrêté L.511-11)',
+            self::ARRETE_L_511_11_ORDINAIRE_REMEDIABLE->name => 'Ordinaire remédiable (Arrêté L.511-11)',
+            self::ARRETE_L_511_11_SUROCCUPATION->name => 'Suroccupation (Arrêté L.511-11)',
+            self::ARRETE_L_511_11_USAGE_NON_APPROPRIE->name => 'Usage non approprié (Arrêté L.511-11)',
+            self::ARRETE_L_511_19_INSALUBRITE->name => 'Insalubrité (Arrêté L.511-19)',
+            self::ARRETE_L_511_19_INSALUBRITE_SATURNISME->name => 'Insalubrité & Saturnisme (Arrêté L.511-19)',
+            self::ARRETE_L_511_19_SATURNISME->name => 'Saturnisme (Arrêté L.511-19)',
+            self::ARRETE_L_1331_26->name => 'Arrêté L.1331-26',
+            self::ARRETE_L_1311_4->name => 'Arrêté L.1311-4',
+            self::ARRETE_LETCHIMY_ARTICLE_10->name => 'Arrêté Letchimy : article 10',
+        ];
+    }
+
+    public function completeLabel(): string
+    {
+        return self::getCompleteLabelList()[$this->name];
+    }
+
     /**
      * @return array<self>
      */

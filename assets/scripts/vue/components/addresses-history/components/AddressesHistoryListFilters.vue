@@ -20,16 +20,19 @@
 
       <!-- Adresse -->
       <div class="fr-col-12 fr-col-md-3 fr-mb-1v fr-mb-md-2w">
-        <AppSearch
+        <AppAutoComplete
           id="filter-search-terms"
           v-model="sharedState.input.filters.adresse"
+          :suggestions="sharedState.addressesSuggestions"
           :placeholder="'Taper l\'adresse'"
           title="Taper l'adresse"
           :minLengthSearch="3"
           @update:modelValue="notifyChange"
+          :reset="resetKey"
+          :iconClass="'fr-icon-search-line'"
         >
           <template #label>Adresse</template>
-        </AppSearch>
+        </AppAutoComplete>
       </div>
 
       <!-- Communes -->
@@ -39,14 +42,14 @@
           v-model="sharedState.input.filters.communes"
           :suggestions="sharedState.communes"
           :initSelectedSuggestions="sharedState.input.filters.communes"
-          :placeholder="'Commune ou code postal'"
-          title="Commune ou code postal"
+          :placeholder="'Commune ou EPCI'"
+          title="Commune ou EPCI"
           :multiple="true"
           @update:modelValue="notifyChange"
           :reset="resetKey"
           :iconClass="'fr-icon-map-pin-2-line'"
         >
-          <template #label>Commune</template>
+          <template #label>Commune ou EPCI</template>
         </AppAutoComplete>
       </div>
 
@@ -57,14 +60,14 @@
           v-model="sharedState.input.filters.bailleurOuSyndic"
           :suggestions="sharedState.bailleursAndSyndic"
           :initSelectedSuggestions="sharedState.input.filters.bailleurOuSyndic"
-          :placeholder="'Nom du bailleur ou syndic'"
-          title="Nom du bailleur ou syndic"
+          :placeholder="'Nom du bailleur ou syndicat'"
+          title="Nom du bailleur ou syndicat"
           :multiple="true"
           @update:modelValue="notifyChange"
           :reset="resetKey"
           :iconClass="'fr-icon-user-search-fill'"
         >
-          <template #label>Bailleur ou syndic gestionnaire</template>
+          <template #label>Bailleur ou syndicat gestionnaire</template>
         </AppAutoComplete>
       </div>
 
@@ -116,39 +119,34 @@
 
       <!-- Types d'arrêtés -->
       <div class="fr-col-12 fr-col-md-3 fr-mb-1v fr-mb-md-2w">
-        <HistoMultiSelect
+        <AppListCheckboxes
           id="filter-types-arretes"
           v-model="sharedState.input.filters.typesArretes"
           @update:modelValue="notifyChange"
-          :option-items="sharedState.typesArretes"
-          title="Rechercher par types d'arrêtés"
-          :active="true"
+          :option-groups="typesArretesGroups"
+          :reset="resetKey"
         >
           <template #label>Types d'arrêtés</template>
-        </HistoMultiSelect>
-      </div>
-
-      <!-- Bouton Reset -->
-      <div class="fr-col-12 fr-col-md-3 fr-pt-0w fr-pt-md-5w fr-grid-row--middle">
-        <button
-          @click="onFiltersReset"
-          class="fr-link fr-link--icon-left fr-icon-close-circle-line fr-text--sm"
-        >
-          Réinitialiser les résultats
-        </button>
+        </AppListCheckboxes>
       </div>
 
       <!-- Filtres actifs -->
-      <div v-if="activeFilters.length > 0" class="fr-col-12 fr-mt-2w">
+      <div v-if="activeFilters.length > 0" class="fr-col-12">
         <ul class="fr-tags-group">
           <li v-for="filter in activeFilters" :key="filter.key">
             <button
-              class="fr-tag fr-tag--sm fr-tag--dismiss"
+              class="fr-tag fr-tag--sm fr-tag--dismiss fr-mt-3v"
               :aria-label="`Retirer le filtre ${filter.label}`"
               @click="onRemoveFilter(filter.key)"
             >
               {{ filter.label }}
             </button>
+          </li>
+          <li>
+            <button
+              @click="onFiltersReset"
+              class="fr-link fr-link--icon-left fr-icon-close-circle-line fr-text--sm fr-ml-5w"
+              >Réinitialiser les résultats</button>
           </li>
         </ul>
       </div>
@@ -163,9 +161,10 @@ import { useAddressesHistoryFilters } from '../composables/useAddressesHistoryFi
 import { getActiveFilters, type ActiveFilter } from '../services/activeFiltersBuilder'
 import type { AddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'
 import HistoSelect from '../../common/HistoSelect.vue'
-import HistoMultiSelect from '../../common/HistoMultiSelect.vue'
 import AppSearch from '../../common/AppSearch.vue'
 import AppAutoComplete from '../../common/AppAutoComplete.vue'
+import AppListCheckboxes from '../../common/AppListCheckboxes.vue'
+import type { CheckboxGroup } from '../../common/AppListCheckboxes.types'
 
 // Émissions
 const emit = defineEmits<{
@@ -182,6 +181,11 @@ const filtersComposable = useAddressesHistoryFilters()
 // Options statiques
 const natureParcOptions = computed(() => store.state.natureParcList)
 const dossiersMultiplesOptions = computed(() => store.state.dossiersMultiplesList)
+
+// Groupes pour les types d'arrêtés (définis côté backend)
+const typesArretesGroups = computed<CheckboxGroup[]>(() => {
+  return sharedState.typesArretesGroups
+})
 
 // Filtres actifs
 const activeFilters = computed<ActiveFilter[]>(() => {

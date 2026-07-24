@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Service\Signalement;
 
+use App\Repository\AddressRepository;
 use App\Repository\BailleurRepository;
 use App\Repository\CommuneRepository;
 use App\Repository\CritereRepository;
@@ -22,6 +23,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
     private SearchFilterOptionDataProvider $searchFilterOptionDataProvider;
     private CritereRepository $critereRepository;
     private TerritoryRepository $territoryRepository;
+    private AddressRepository $addressRepository;
     private CommuneRepository $communeRepository;
     private PartnerRepository $partnerRepository;
     private TagRepository $tagsRepository;
@@ -38,6 +40,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
 
         $this->critereRepository = static::getContainer()->get(CritereRepository::class);
         $this->territoryRepository = static::getContainer()->get(TerritoryRepository::class);
+        $this->addressRepository = static::getContainer()->get(AddressRepository::class);
         $this->communeRepository = static::getContainer()->get(CommuneRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->tagsRepository = static::getContainer()->get(TagRepository::class);
@@ -51,6 +54,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         $this->searchFilterOptionDataProvider = new SearchFilterOptionDataProvider(
             $this->critereRepository,
             $this->territoryRepository,
+            $this->addressRepository,
             $this->communeRepository,
             $this->partnerRepository,
             $this->tagsRepository,
@@ -87,5 +91,27 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         $this->assertSameSize($expectedData['partners'], $actualData['partners']);
         $this->assertSameSize($expectedData['tags'], $actualData['tags']);
         $this->assertSameSize($expectedData['cities'], $actualData['cities']);
+    }
+
+    public function testGetDataWithContexts(): void
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+
+        // Test sans contexte
+        $dataWithoutContext = $this->searchFilterOptionDataProvider->getData($user, null, null);
+        $this->assertArrayHasKey('bailleursSociaux', $dataWithoutContext);
+        $this->assertNotEmpty($dataWithoutContext['bailleursSociaux']);
+        $this->assertArrayHasKey('addresses', $dataWithoutContext);
+        $this->assertEmpty($dataWithoutContext['addresses']);
+
+        // Test avec contexte addresses-history
+        $dataWithContext = $this->searchFilterOptionDataProvider->getData($user, null, 'addresses-history');
+        $this->assertArrayHasKey('bailleursSociaux', $dataWithContext);
+        $this->assertIsArray($dataWithContext['bailleursSociaux']);
+        $this->assertContains('Habitat 44', $dataWithContext['bailleursSociaux']);
+        $this->assertArrayHasKey('addresses', $dataWithContext);
+        $this->assertNotEmpty($dataWithContext['addresses']);
     }
 }
