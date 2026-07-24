@@ -52,8 +52,11 @@ class SignalementAddressContentService
     public function getRouteForListOfSignalementOnAddress(Signalement $signalement): string
     {
         if ($this->featureHistoAddress && $this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
-            // TODO : filtrer sur l'adresse du signalement
-            return $this->urlGenerator->generate('back_addresses_history_index');
+            return $this->urlGenerator->generate('back_addresses_history_index', [
+                'view' => 'list',
+                'adresse' => trim($signalement->getAdresseOccupant()),
+                'communes[]' => $signalement->getVilleOccupant(),
+            ]);
         }
 
         return $this->urlGenerator->generate('back_signalements_index', [
