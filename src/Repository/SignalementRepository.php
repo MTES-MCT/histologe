@@ -824,7 +824,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
-     * Dossiers dont le bailleur a demandé la clôture depuis plus de $beforeDate, toujours en statut
+     * Dossiers dont le bailleur a demandé la clôture avant $beforeDate, toujours en statut
      * INJONCTION_BAILLEUR (donc sans décision de l'usager), et n'ayant pas déjà reçu la relance de clôture.
      *
      * @return Signalement[]
@@ -875,7 +875,7 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
-     * Dossiers pour lesquels la relance de clôture a été envoyée à l'usager il y a plus de $beforeDate,
+     * Dossiers pour lesquels la relance de clôture a été envoyée à l'usager avant $beforeDate,
      * toujours en statut INJONCTION_BAILLEUR (donc sans décision de l'usager).
      *
      * @return Signalement[]
