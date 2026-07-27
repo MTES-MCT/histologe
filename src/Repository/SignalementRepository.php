@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Dto\Api\Request\SignalementListQueryParams;
 use App\Entity\Commune;
+use App\Entity\EmailDeliveryIssue;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
@@ -906,6 +907,133 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
             ->setParameter('date', $beforeDate)
             ->orderBy('s.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Dossiers en démarche accélérée sans aucune activité : 3 relances consécutives sans réponse
+     * du bailleur ET 3 relances consécutives sans réponse de l'usager (chacune datant d'avant
+     * $beforeDate), avec un email exploitable pour notifier la clôture.
+     *
+     * @return Signalement[]
+     */
+    public function findInjonctionToCloseWithoutActivity(\DateTimeImmutable $beforeDate): array
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.statut = :statut')
+            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR);
+
+        // Réponse initiale du bailleur (le dossier est bien entré en phase de suivi des travaux)
+        $qb->andWhere(
+            $qb->expr()->exists(
+                $this->createQueryBuilder('s1')
+                    ->select('1')
+                    ->join('s1.suivis', 'su1')
+                    ->where('s1 = s')
+                    ->andWhere('su1.category IN (:reponseInitialeCategories)')
+                    ->getDQL()
+            )
+        );
+        $qb->setParameter('reponseInitialeCategories', [
+            SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI,
+            SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE,
+            SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES,
+        ]);
+
+        // Au moins 3 relances bailleur consécutives depuis sa dernière réponse, chacune ≤ beforeDate
+        $qb->andWhere(
+            $qb->expr()->exists(
+                $this->createQueryBuilder('s2')
+                    ->select('1')
+                    ->join('s2.suivis', 'su2')
+                    ->where('s2 = s')
+                    ->andWhere('su2.category = :reminderBailleur')
+                    ->andWhere('su2.createdAt <= :beforeDate')
+                    ->andWhere(
+                        $qb->expr()->orX(
+                            $qb->expr()->not(
+                                $qb->expr()->exists(
+                                    $this->createQueryBuilder('s2resp')
+                                        ->select('1')
+                                        ->join('s2resp.suivis', 'su2resp')
+                                        ->where('s2resp = s2')
+                                        ->andWhere('su2resp.category IN (:reponseBailleurCategories)')
+                                        ->getDQL()
+                                )
+                            ),
+                            'su2.createdAt > (SELECT MAX(subB.createdAt) FROM App\Entity\Suivi subB WHERE subB.signalement = s2 AND subB.category IN (:reponseBailleurCategories))'
+                        )
+                    )
+                    ->groupBy('s2.id')
+                    ->having('COUNT(su2.id) >= 3')
+                    ->getDQL()
+            )
+        );
+
+        // Au moins 3 relances usager consécutives depuis sa dernière réponse, chacune ≤ beforeDate
+        $qb->andWhere(
+            $qb->expr()->exists(
+                $this->createQueryBuilder('s3')
+                    ->select('1')
+                    ->join('s3.suivis', 'su3')
+                    ->where('s3 = s')
+                    ->andWhere('su3.category = :reminderUsager')
+                    ->andWhere('su3.createdAt <= :beforeDate')
+                    ->andWhere(
+                        $qb->expr()->orX(
+                            $qb->expr()->not(
+                                $qb->expr()->exists(
+                                    $this->createQueryBuilder('s3resp')
+                                        ->select('1')
+                                        ->join('s3resp.suivis', 'su3resp')
+                                        ->where('s3resp = s3')
+                                        ->andWhere('su3resp.category IN (:reponseUsagerCategories)')
+                                        ->getDQL()
+                                )
+                            ),
+                            'su3.createdAt > (SELECT MAX(subU.createdAt) FROM App\Entity\Suivi subU WHERE subU.signalement = s3 AND subU.category IN (:reponseUsagerCategories))'
+                        )
+                    )
+                    ->groupBy('s3.id')
+                    ->having('COUNT(su3.id) >= 3')
+                    ->getDQL()
+            )
+        );
+
+        $qb->setParameter('reminderBailleur', SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_BAILLEUR)
+            ->setParameter('reminderUsager', SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER)
+            ->setParameter('reponseBailleurCategories', SuiviCategory::categoriesSubmittedByBailleur())
+            ->setParameter('reponseUsagerCategories', SuiviCategory::categoriesSubmittedByUsager())
+            ->setParameter('beforeDate', $beforeDate);
+
+        // Au moins un email exploitable (mailProprio ou mailOccupant), sans problème de distribution
+        $qb->andWhere(
+            $qb->expr()->orX(
+                $qb->expr()->andX(
+                    $qb->expr()->isNotNull('s.mailProprio'),
+                    $qb->expr()->not($qb->expr()->exists(
+                        $this->getEntityManager()->createQueryBuilder()
+                            ->select('1')
+                            ->from(EmailDeliveryIssue::class, 'edi1')
+                            ->where('edi1.email = s.mailProprio')
+                            ->getDQL()
+                    ))
+                ),
+                $qb->expr()->andX(
+                    $qb->expr()->isNotNull('s.mailOccupant'),
+                    $qb->expr()->not($qb->expr()->exists(
+                        $this->getEntityManager()->createQueryBuilder()
+                            ->select('1')
+                            ->from(EmailDeliveryIssue::class, 'edi2')
+                            ->where('edi2.email = s.mailOccupant')
+                            ->getDQL()
+                    ))
+                )
+            )
+        );
+
+        $qb->orderBy('s.createdAt', 'DESC');
 
         return $qb->getQuery()->getResult();
     }

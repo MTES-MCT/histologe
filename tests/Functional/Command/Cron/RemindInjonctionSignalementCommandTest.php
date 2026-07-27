@@ -46,6 +46,7 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
 
         $this->assertStringContainsString($outputSuivi, $output);
         $this->assertStringContainsString($outputReminderBailleurs, $output);
+        $this->assertStringContainsString('Aucun signalement n\'a été clôturé pour absence de suivi de travaux.', $output);
         $this->assertEmailCount($expectedEmailCount);
     }
 
@@ -67,6 +68,7 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $this->assertStringContainsString('1 rappels faits pour les bailleurs pour des signalements avec suivi travaux.', $output);
         $this->assertStringContainsString('1 rappels faits pour les usagers pour des signalements avec suivi travaux.', $output);
         $this->assertStringContainsString('1 rappels faits pour des signalements sans réponse bailleur.', $output);
+        $this->assertStringContainsString('Aucun signalement n\'a été clôturé pour absence de suivi de travaux.', $output);
         // On exécute le lendemain, aucun rappel ne doit être envoyé
         $mockClock->modify('+1 day');
         $commandTester->execute([]);
@@ -74,7 +76,8 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Aucun rappel n\'a été envoyé pour le suivi.', $output);
         $this->assertStringContainsString('Aucun rappel n\'a été envoyé pour les bailleurs.', $output);
-        // On exécute un mois plus tard, les rappels sont à nouveau envoyés
+        $this->assertStringContainsString('Aucun signalement n\'a été clôturé pour absence de suivi de travaux.', $output);
+        // On exécute un mois plus tard, les rappels sont à nouveau envoyés (2e relance : toujours pas assez pour clôturer)
         $mockClock->modify('+1 month');
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
@@ -82,6 +85,7 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $this->assertStringContainsString('1 rappels faits pour les bailleurs pour des signalements avec suivi travaux.', $output);
         $this->assertStringContainsString('1 rappels faits pour les usagers pour des signalements avec suivi travaux.', $output);
         $this->assertStringContainsString('Aucun rappel n\'a été envoyé pour les bailleurs.', $output);
+        $this->assertStringContainsString('Aucun signalement n\'a été clôturé pour absence de suivi de travaux.', $output);
         // Le lendemain, aucun rappel ne doit être envoyé
         $mockClock->modify('+1 day');
         $commandTester->execute([]);
@@ -89,6 +93,74 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('Aucun rappel n\'a été envoyé pour le suivi.', $output);
         $this->assertStringContainsString('Aucun rappel n\'a été envoyé pour les bailleurs.', $output);
+        $this->assertStringContainsString('Aucun signalement n\'a été clôturé pour absence de suivi de travaux.', $output);
+    }
+
+    public function testSignalementClosedAfterThreeRemindersWithoutActivity(): void
+    {
+        $kernel = self::bootKernel();
+        $application = new Application($kernel);
+        $container = static::getContainer();
+
+        // Le MockClock doit être positionné avant tout flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
+        $now = new \DateTimeImmutable();
+        $mockClock = new MockClock($now->modify('+4 months'));
+        $container->set(ClockInterface::class, $mockClock);
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $container->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+        $mailProprio = $signalement->getMailProprio();
+        $mailOccupant = $signalement->getMailOccupant();
+
+        // 3 relances déjà envoyées à chaque partie, espacées d'un mois, sans aucune réponse depuis
+        foreach ([SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_BAILLEUR, SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER] as $category) {
+            foreach ([1, 2, 3] as $monthsAfter) {
+                $suivi = (new Suivi())
+                    ->setSignalement($signalement)
+                    ->setDescription('Relance de test')
+                    ->setCategory($category)
+                    ->setType(SuiviCategory::getSuiviTypeForSuiviCategory($category))
+                    ->setCreatedAt($now->modify("+{$monthsAfter} months"));
+                $entityManager->persist($suivi);
+            }
+        }
+        $entityManager->flush();
+
+        // On se place 1 mois après la 3e et dernière relance : le dossier doit être clôturé
+        $command = $application->find('app:remind-injonction-signalement');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([]);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('1 signalement clôturé pour absence de suivi de travaux.', $output);
+
+        // Le signalement est clôturé en base avec le bon motif
+        $entityManager->clear();
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+        $this->assertSame(SignalementStatus::INJONCTION_CLOSED, $signalement->getStatut());
+        $this->assertSame(MotifCloture::ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE, $signalement->getMotifCloture());
+
+        // Un suivi de clôture visible du bailleur et de l'usager a été créé
+        $suivisCloture = $signalement->getSuivis()->filter(
+            static fn (Suivi $suivi) => SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_SANS_ACTIVITE === $suivi->getCategory()
+        );
+        $this->assertCount(1, $suivisCloture);
+        /** @var Suivi $suiviCloture */
+        $suiviCloture = $suivisCloture->first();
+        $this->assertTrue($suiviCloture->getIsVisibleForBailleur());
+        $this->assertTrue($suiviCloture->getIsVisibleForUsager());
+
+        // Le bailleur et l'usager sont notifiés par mail de la clôture (en copie cachée, comme les autres relances d'injonction)
+        $closureMails = array_values(array_filter(
+            self::getMailerMessages(),
+            static fn ($mail) => $mail instanceof Email && str_contains($mail->getSubject() ?? '', 'Fin de la procédure concernant votre logement')
+        ));
+        $this->assertCount(2, $closureMails);
+        $this->assertEmailAddressContains($closureMails[0], 'bcc', $mailProprio);
+        $this->assertEmailAddressContains($closureMails[1], 'bcc', $mailOccupant);
     }
 
     public function testReminderClotureBailleurThenAutoClose(): void
@@ -245,19 +317,19 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
             '',
             'Aucun rappel n\'a été envoyé pour le suivi',
             '1 rappels faits pour des signalements sans réponse bailleur.',
-            5,
+            6,
         ];
         yield 'No reminder, no suivi' => [
             '-1 month',
             'Aucun rappel n\'a été envoyé pour le suivi',
             'Aucun rappel n\'a été envoyé pour les bailleurs.',
-            4,
+            5,
         ];
         yield 'One reminder, one suivi' => [
             '+1 month',
             '1 rappels faits pour les bailleurs pour des signalements avec suivi travaux.',
             '1 rappels faits pour des signalements sans réponse bailleur.',
-            7,
+            8,
         ];
     }
 }

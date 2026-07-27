@@ -583,6 +583,32 @@ class NotificationAndMailSender
         );
     }
 
+    public function sendSignalementClosedToBailleurAndUsager(Signalement $signalement): void
+    {
+        if (!empty($signalement->getMailProprio())) {
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_SIGNALEMENT_INJONCTION_CLOSED_TO_BAILLEUR,
+                    to: $signalement->getMailProprio(),
+                    territory: $signalement->getTerritory(),
+                    signalement: $signalement,
+                    isRecipientVisible: false,
+                )
+            );
+        }
+        if (!empty($signalement->getMailOccupant())) {
+            $this->notificationMailerRegistry->send(
+                new NotificationMail(
+                    type: NotificationMailerType::TYPE_SIGNALEMENT_INJONCTION_CLOSED_TO_USAGER,
+                    to: $signalement->getMailOccupant(),
+                    territory: $signalement->getTerritory(),
+                    signalement: $signalement,
+                    isRecipientVisible: false,
+                )
+            );
+        }
+    }
+
     private function isAgentSubscribedToSignalement(string $recipient): bool
     {
         $agent = $this->userRepository->findAgentByEmail(

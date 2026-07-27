@@ -65,6 +65,7 @@ enum SuiviCategory: string
     case INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE = 'INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE';
     case INJONCTION_BAILLEUR_LOGIN_BAILLEUR = 'INJONCTION_BAILLEUR_LOGIN_BAILLEUR';
     case INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE = 'INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE';
+    case INJONCTION_BAILLEUR_CLOTURE_SANS_ACTIVITE = 'INJONCTION_BAILLEUR_CLOTURE_SANS_ACTIVITE';
 
     public function labelReponseBailleur(): string
     {
@@ -134,6 +135,7 @@ enum SuiviCategory: string
             'INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE' => 'Commentaire du bailleur sur la demande de clôture de l\'injonction',
             'INJONCTION_BAILLEUR_LOGIN_BAILLEUR' => 'Connexion du bailleur',
             'INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE' => 'Relance automatique de l\'usager suite à une demande de clôture du bailleur',
+            'INJONCTION_BAILLEUR_CLOTURE_SANS_ACTIVITE' => 'Clôture du dossier en démarche accélérée suite à l\'absence de suivi de travaux de la part du bailleur ou de l\'usager',
         ];
     }
 
@@ -199,6 +201,7 @@ enum SuiviCategory: string
             self::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,
             self::INJONCTION_BAILLEUR_LOGIN_BAILLEUR,
             self::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE,
+            self::INJONCTION_BAILLEUR_CLOTURE_SANS_ACTIVITE,
         ];
     }
 
@@ -253,6 +256,7 @@ enum SuiviCategory: string
             case self::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE:
             case self::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE:
             case self::ASK_DOCUMENT:
+            case self::INJONCTION_BAILLEUR_CLOTURE_SANS_ACTIVITE:
                 return Suivi::TYPE_AUTO;
             case self::ASK_FEEDBACK_SENT:
             case self::INTERVENTION_PLANNED_REMINDER:
