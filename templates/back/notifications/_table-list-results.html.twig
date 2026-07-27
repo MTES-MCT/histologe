@@ -24,7 +24,7 @@
                 ({{ notification.signalement.villeOccupant }})
             </td>
             <td>{{ notification.createdAt|format_datetime(locale='fr', timezone=territory_timezone, pattern='d MMMM yyyy à HH:mm:ss') }}</td>
-            <td class="word-wrap-anywhere">{{ notification.description ? notification.description : transform_suivi_description(notification.suivi)|raw }}</td>
+            <td class="word-wrap-anywhere">{{ notification.description ? notification.description : (notification.suivi ? transform_suivi_description(notification.suivi) : '')|raw }}</td>
             {% if notification.suivi and notification.suivi.createdBy %}
                 {% set auteur =  notification.suivi.createdByNomComplet %} 
             {% elseif notification.affectation and notification.affectation.answeredBy %}
