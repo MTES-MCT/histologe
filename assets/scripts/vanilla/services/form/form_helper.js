@@ -106,15 +106,13 @@ export function initTinyMCE(selector) {
             return new Promise((resolve) => {
               const results = getMatchedChars(pattern).map((char) => ({
                 type: 'autocompleteitem',
-                value: char.id.toString(), // TODO : char.id.toString() ?
+                value: char.id.toString(),
                 text: char.nom,
               }));
-              console.log('results', results);
               resolve(results);
             });
           },
           onAction: (autocompleteApi, rng, value) => {
-            console.log('onAction', autocompleteApi, rng, value);
             const partner = partners.find((p) => p.id.toString() === value);
             ed.selection.setRng(rng);
             ed.insertContent(buildMentionHtml(partner));
