@@ -60,6 +60,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
 
         $this->remindAnswerBailleur($io, $output);
         $this->closeSignalementsWithoutSuiviTravaux($io, $output);
+        $this->entityManager->flush();
         $this->remindSuiviTravaux($io, $output);
         $this->remindUsagerForCloture($io, $output);
         $this->remindUsagerForClotureAndClose($io, $output);

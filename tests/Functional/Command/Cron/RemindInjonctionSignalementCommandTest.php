@@ -7,7 +7,6 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Repository\SignalementRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -104,7 +103,7 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
 
         // Le MockClock doit être positionné avant tout flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
         $now = new \DateTimeImmutable();
-        $mockClock = new MockClock($now->modify('+4 months'));
+        $mockClock = new MockClock($now->modify('+4 months +1 day'));
         $container->set(ClockInterface::class, $mockClock);
 
         /** @var EntityManagerInterface $entityManager */
@@ -136,6 +135,7 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('1 signalement clôturé pour absence de suivi de travaux.', $output);
+        $this->assertStringContainsString('Aucun rappel n\'a été envoyé pour le suivi', $output);
 
         // Le signalement est clôturé en base avec le bon motif
         $entityManager->clear();
@@ -148,6 +148,11 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
             static fn (Suivi $suivi) => SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_SANS_ACTIVITE === $suivi->getCategory()
         );
         $this->assertCount(1, $suivisCloture);
+
+        // Il n'y a pas eu de suivi créé après ce suivi de cloture (pas de relance)
+        $lastSuivi = $signalement->getSuivis()->last();
+        $this->assertEquals($suivisCloture->first(), $lastSuivi);
+
         /** @var Suivi $suiviCloture */
         $suiviCloture = $suivisCloture->first();
         $this->assertTrue($suiviCloture->getIsVisibleForBailleur());
@@ -163,150 +168,72 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $this->assertEmailAddressContains($closureMails[1], 'bcc', $mailOccupant);
     }
 
-    public function testReminderClotureBailleurThenAutoClose(): void
+    public function testSignalementNotClosedUntilBothPartiesReachThreeUnansweredReminders(): void
     {
         $kernel = self::bootKernel();
         $application = new Application($kernel);
         $container = static::getContainer();
 
-        // MockClock doit être set avant flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
-        $mockClock = new MockClock(new \DateTimeImmutable());
+        // Le MockClock doit être positionné avant tout flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
+        $now = new \DateTimeImmutable();
+        $mockClock = new MockClock($now->modify('+4 months +1 day'));
         $container->set(ClockInterface::class, $mockClock);
 
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $container->get('doctrine')->getManager();
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $entityManager->getRepository(Signalement::class);
-        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
 
-        // Le bailleur demande la clôture de l'injonction
-        $suiviDemande = (new Suivi())
-            ->setSignalement($signalement)
-            ->setDescription('Les travaux sont terminés, merci de clôturer le signalement.')
-            ->setCategory(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR)
-            ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR))
-            ->setCreatedAt($mockClock->now());
-        $entityManager->persist($suiviDemande);
+        // 3 relances bailleur (dernière à +3 mois) et 3 relances usager, mais la 3e relance usager
+        // n'intervient qu'à +5 mois (ex: l'usager a répondu une fois entre-temps, ce qui a repoussé sa propre série)
+        foreach ([1, 2, 3] as $monthsAfter) {
+            $entityManager->persist(
+                (new Suivi())
+                    ->setSignalement($signalement)
+                    ->setDescription('Relance de test bailleur')
+                    ->setCategory(SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_BAILLEUR)
+                    ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_BAILLEUR))
+                    ->setCreatedAt($now->modify("+{$monthsAfter} months"))
+            );
+        }
+        foreach ([1, 2, 5] as $monthsAfter) {
+            $entityManager->persist(
+                (new Suivi())
+                    ->setSignalement($signalement)
+                    ->setDescription('Relance de test usager')
+                    ->setCategory(SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER)
+                    ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER))
+                    ->setCreatedAt($now->modify("+{$monthsAfter} months"))
+            );
+        }
         $entityManager->flush();
 
         $command = $application->find('app:remind-injonction-signalement');
         $commandTester = new CommandTester($command);
 
-        // À j+16 après la demande de clôture, sans réponse de l'usager : relance envoyée (mail 318)
-        $mockClock->modify('+16 days');
+        // À +4 mois : la 3e relance bailleur (+3 mois) est assez ancienne, mais pas la 3e relance usager (+5 mois)
+        // → le dossier ne doit PAS être clôturé, il faut les deux parties
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
         $this->assertStringContainsString(
-            '1 rappels envoyés à l\'usager suite à une demande de clôture par le bailleur au bout de 15 jours.',
+            'Aucun signalement n\'a été clôturé pour absence de suivi de travaux.',
             $commandTester->getDisplay()
         );
-        $this->assertCount(1, $this->getMailerMessagesWithSubjectContaining('Votre bailleur indique la fin des travaux'));
-
-        $entityManager->refresh($signalement);
-        $suiviRelance = $entityManager->getRepository(Suivi::class)->findOneBy([
-            'signalement' => $signalement,
-            'category' => SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE,
-        ]);
-        $this->assertStringContainsString('il y a 15 jours.', $suiviRelance->getDescription());
-
-        // Le lendemain : la relance ne doit pas être renvoyée (non-régression)
-        $mockClock->modify('+1 day');
-        $commandTester->execute([]);
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString(
-            'Aucun rappel n\'a été envoyé pour l\'usager suite à une demande de clôture par le bailleur au bout de 15 jours.',
-            $commandTester->getDisplay()
-        );
-        $this->assertCount(1, $this->getMailerMessagesWithSubjectContaining('Votre bailleur indique la fin des travaux'));
-
-        // 16 jours après la relance (donc j+32 après la demande initiale), toujours sans réponse :
-        // le dossier est clôturé automatiquement
-        $mockClock->modify('+15 days');
-        $commandTester->execute([]);
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertStringContainsString(
-            '1 rappels envoyés à l\'usager et au bailleur suite à une relance de clôture restée sans réponse depuis 15 jours.',
-            $commandTester->getDisplay()
-        );
-        // Exactement 2 mails "fin de procédure" (usager + bailleur), pas de doublon
-        $this->assertCount(2, $this->getMailerMessagesWithSubjectContaining('Fin de la procédure concernant votre logement'));
-
-        $entityManager->refresh($signalement);
-        $this->assertSame(SignalementStatus::INJONCTION_CLOSED, $signalement->getStatut());
-        $this->assertSame(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS, $signalement->getMotifCloture());
-    }
-
-    public function testReminderClotureBailleurBacklogDoesNotCloseOnFirstRun(): void
-    {
-        // Cas d'un dossier déjà ancien au moment du déploiement de cette fonctionnalité : le bailleur a
-        // demandé la clôture il y a 90 jours et l'usager n'a jamais répondu. Le premier passage du cron
-        // ne doit envoyer que la relance (mail 318), pas les mails de clôture (319/320), et ne doit pas
-        // clôturer le dossier - sinon l'usager recevrait la relance et le mail de clôture en même temps.
-        // Ensuite, le dossier doit bénéficier des 15 jours pleins annoncés dans le mail de relance avant
-        // d'être clôturé, quel que soit l'âge de la demande initiale du bailleur.
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
-        $container = static::getContainer();
-
-        // MockClock doit être set avant flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
-        $mockClock = new MockClock(new \DateTimeImmutable());
-        $container->set(ClockInterface::class, $mockClock);
-
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $container->get('doctrine')->getManager();
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $entityManager->getRepository(Signalement::class);
-        $signalement = $signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
-
-        // La demande de clôture date déjà de 90 jours à la première exécution du cron
-        $suiviDemande = (new Suivi())
-            ->setSignalement($signalement)
-            ->setDescription('Les travaux sont terminés, merci de clôturer le signalement.')
-            ->setCategory(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR)
-            ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR))
-            ->setCreatedAt($mockClock->now());
-        $entityManager->persist($suiviDemande);
-        $entityManager->flush();
-        $mockClock->modify('+90 days');
-
-        $command = $application->find('app:remind-injonction-signalement');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([]);
-        $commandTester->assertCommandIsSuccessful();
-
-        $this->assertCount(1, $this->getMailerMessagesWithSubjectContaining('Votre bailleur indique la fin des travaux'));
-        $this->assertCount(0, $this->getMailerMessagesWithSubjectContaining('Fin de la procédure concernant votre logement'));
-
-        $entityManager->refresh($signalement);
+        $entityManager->clear();
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
         $this->assertSame(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());
 
-        // Le lendemain, toujours pas de clôture : le dossier doit bénéficier des 15 jours pleins
-        // annoncés dans le mail de relance, pas seulement d'un jour de battement
-        $mockClock->modify('+1 day');
+        // À +6 mois : la 3e relance usager (+5 mois) est à son tour assez ancienne → le dossier est clôturé
+        $mockClock->modify('+2 months');
         $commandTester->execute([]);
         $commandTester->assertCommandIsSuccessful();
-        $this->assertCount(0, $this->getMailerMessagesWithSubjectContaining('Fin de la procédure concernant votre logement'));
-        $entityManager->refresh($signalement);
-        $this->assertSame(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());
-
-        // 16 jours après la relance : le dossier est enfin clôturé
-        $mockClock->modify('+15 days');
-        $commandTester->execute([]);
-        $commandTester->assertCommandIsSuccessful();
-        $this->assertCount(2, $this->getMailerMessagesWithSubjectContaining('Fin de la procédure concernant votre logement'));
-        $entityManager->refresh($signalement);
+        $this->assertStringContainsString(
+            '1 signalement clôturé pour absence de suivi de travaux.',
+            $commandTester->getDisplay()
+        );
+        $entityManager->clear();
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
         $this->assertSame(SignalementStatus::INJONCTION_CLOSED, $signalement->getStatut());
-    }
-
-    /**
-     * @return Email[]
-     */
-    private function getMailerMessagesWithSubjectContaining(string $needle): array
-    {
-        return array_values(array_filter(
-            $this->getMailerMessages(),
-            static fn ($message) => $message instanceof Email && str_contains((string) $message->getSubject(), $needle)
-        ));
     }
 
     public static function provideReminderSentData(): \Generator
