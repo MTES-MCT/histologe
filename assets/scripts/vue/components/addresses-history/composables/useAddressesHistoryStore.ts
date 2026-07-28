@@ -10,7 +10,7 @@ import type {
 import {
   NatureParc,
   DossiersMultiples,
-  TypeArrete
+  ArreteType
 } from '../types'
 
 // State
@@ -38,7 +38,7 @@ const state = ref<StoreState>({
       zone: undefined,
       natureParc: undefined,
       dossiersMultiples: undefined,
-      typesArretes: [],
+      arreteTypes: [],
     }
   },
   user: {
@@ -68,9 +68,9 @@ const state = ref<StoreState>({
     { Id: DossiersMultiples.Avec, Text: 'Avec' },
     { Id: DossiersMultiples.Sans, Text: 'Sans' },
   ],
-  typesArretes: [
-    { Id: TypeArrete.MiseEnSecurite, Text: 'Mise en sécurité' },
-    { Id: TypeArrete.ArreteL51111Impropre, Text: 'Arrêté L.511-11 IMPROPRE' },
+  arreteTypes: [
+    { Id: ArreteType.MiseEnSecurite, Text: 'Mise en sécurité' },
+    { Id: ArreteType.ArreteL51111Impropre, Text: 'Arrêté L.511-11 IMPROPRE' },
   ],
   filtersApplyKey: 0
 })
@@ -95,7 +95,7 @@ const hasActiveFilters = computed(() => {
     filters.zone ||
     filters.natureParc ||
     filters.dossiersMultiples ||
-    filters.typesArretes.length > 0
+    filters.arreteTypes.length > 0
   )
 })
 
@@ -149,7 +149,7 @@ function resetFilters(): void {
     zone: undefined,
     natureParc: undefined,
     dossiersMultiples: undefined,
-    typesArretes: [],
+    arreteTypes: [],
   }
   state.value.filtersApplyKey++
 }

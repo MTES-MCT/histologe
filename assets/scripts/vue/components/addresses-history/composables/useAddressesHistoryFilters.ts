@@ -13,7 +13,7 @@ export interface AddressesHistoryFilters {
   zone: string | undefined
   natureParc: string | undefined
   dossiersMultiples: string | undefined
-  typesArretes: string[]
+  arreteTypes: string[]
 }
 
 export function useAddressesHistoryFilters() {
@@ -107,15 +107,15 @@ export function useAddressesHistoryFilters() {
     store.state.addresses.filters = (response as any).filters || {}
     store.state.addresses.list = (response as any).list || []
 
-    // Normalise les filtres pour garantir que communes et typesArretes sont des tableaux
+    // Normalise les filtres pour garantir que communes et arreteTypes sont des tableaux
     if (!Array.isArray(store.state.input.filters.communes)) {
       store.state.input.filters.communes = store.state.input.filters.communes
         ? [store.state.input.filters.communes as any]
         : []
     }
-    if (!Array.isArray(store.state.input.filters.typesArretes)) {
-      store.state.input.filters.typesArretes = store.state.input.filters.typesArretes
-        ? [store.state.input.filters.typesArretes as any]
+    if (!Array.isArray(store.state.input.filters.arreteTypes)) {
+      store.state.input.filters.arreteTypes = store.state.input.filters.arreteTypes
+        ? [store.state.input.filters.arreteTypes as any]
         : []
     }
     // Zone doit être une string ou undefined (pas un tableau)
@@ -184,7 +184,7 @@ export function useAddressesHistoryFilters() {
 
     for (const [key, value] of Object.entries(store.state.input.filters)) {
       if (variableTester.isNotEmpty(value)) {
-        if (Array.isArray(value) && ['communes', 'typesArretes'].includes(key)) {
+        if (Array.isArray(value) && ['communes', 'arreteTypes'].includes(key)) {
           value.forEach((item: any) => {
             addQueryParameter(key + '[]', item)
             url.searchParams.append(key + '[]', item)
@@ -239,7 +239,7 @@ export function useAddressesHistoryFilters() {
     zone: undefined,
     natureParc: undefined,
     dossiersMultiples: undefined,
-    typesArretes: []
+    arreteTypes: []
   })
 
   /**

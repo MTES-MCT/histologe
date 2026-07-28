@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Address;
 use App\Entity\Arrete;
+use App\Entity\Enum\ArreteType;
 use App\Service\ListFilters\SearchArrete;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -48,8 +50,8 @@ class ArreteRepository extends ServiceEntityRepository
             $qb->andWhere('address.cityCode = :cityCode')->setParameter('cityCode', $searchArrete->getCityCode());
         }
 
-        if ($searchArrete->getTypeArretes()) {
-            $qb->andWhere('a.typeArrete IN (:typeArretes)')->setParameter('typeArretes', $searchArrete->getTypeArretes());
+        if ($searchArrete->getArreteTypes()) {
+            $qb->andWhere('a.arreteType IN (:arreteTypes)')->setParameter('arreteTypes', $searchArrete->getArreteTypes());
         }
 
         if (null !== $searchArrete->getMainLevee()) {
@@ -113,5 +115,59 @@ class ArreteRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findOneByCriteria(
+        \DateTimeImmutable $dateArrete,
+        ArreteType $arreteType,
+        ?string $identifiantParcellaire,
+        Address $address,
+        ?\DateTimeImmutable $dateMainLevee = null,
+        ?string $syndic = null,
+    ): ?Arrete {
+        $qb = $this->createQueryBuilder('a')
+            ->join('a.address', 'addr')
+            ->where('a.dateArrete = :dateArrete')
+            ->andWhere('a.arreteType = :arreteType')
+            ->setParameter('dateArrete', $dateArrete->format('Y-m-d'))
+            ->setParameter('arreteType', $arreteType);
+
+        if ($address->getBanId()) {
+            $qb->andWhere('addr.banId = :banId')
+                ->setParameter('banId', $address->getBanId());
+        } else {
+            $qb->andWhere('addr.street = :street')
+                ->andWhere('addr.postCode = :postCode')
+                ->andWhere('addr.cityCode = :cityCode')
+                ->setParameter('street', $address->getStreet())
+                ->setParameter('postCode', $address->getPostCode())
+                ->setParameter('cityCode', $address->getCityCode());
+
+            if ($address->getHousenumber()) {
+                $qb->andWhere('addr.housenumber = :housenumber')
+                    ->setParameter('housenumber', $address->getHousenumber());
+            } else {
+                $qb->andWhere('addr.housenumber IS NULL');
+            }
+        }
+
+        if ($identifiantParcellaire) {
+            $qb->andWhere('a.identifiantParcellaire = :identifiantParcellaire OR a.identifiantParcellaire IS NULL')
+                ->setParameter('identifiantParcellaire', $identifiantParcellaire);
+        }
+
+        if ($dateMainLevee) {
+            $qb->andWhere('a.dateMainLevee = :dateMainLevee')
+                ->setParameter('dateMainLevee', $dateMainLevee->format('Y-m-d'));
+        } else {
+            $qb->andWhere('a.dateMainLevee IS NULL');
+        }
+
+        if ($syndic) {
+            $qb->andWhere('a.syndic = :syndic OR a.syndic IS NULL')
+                ->setParameter('syndic', $syndic);
+        }
+
+        return $qb->getQuery()->setMaxResults(1)->getOneOrNullResult();
     }
 }

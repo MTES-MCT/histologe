@@ -21,7 +21,7 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
             zone: '5',
             natureParc: 'public',
             dossiersMultiples: 'oui',
-            typesArretes: ['interdiction', 'peril'],
+            arreteTypes: ['interdiction', 'peril'],
             page: 2,
         );
 
@@ -33,7 +33,7 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
             'zone' => '5',
             'housetypes' => [1],
             'dossiersMultiples' => 'oui',
-            'typesArretes' => ['interdiction', 'peril'],
+            'arreteTypes' => ['interdiction', 'peril'],
             'page' => 2,
             'maxItemsPerPage' => 25,
         ];
@@ -87,7 +87,7 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
             zone: '5',
             natureParc: 'public',
             dossiersMultiples: 'oui',
-            typesArretes: ['interdiction'],
+            arreteTypes: ['interdiction'],
             page: 3,
         );
 
@@ -98,7 +98,7 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
         static::assertSame('5', $query->getZone());
         static::assertSame('public', $query->getNatureParc());
         static::assertSame('oui', $query->getDossiersMultiples());
-        static::assertSame(['interdiction'], $query->getTypesArretes());
+        static::assertSame(['interdiction'], $query->getArreteTypes());
         static::assertSame(3, $query->getPage());
     }
 
@@ -112,7 +112,7 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
             zone: '5',
             natureParc: 'public',
             dossiersMultiples: 'oui',
-            typesArretes: ['interdiction'],
+            arreteTypes: ['interdiction'],
             page: 2,
         );
 
@@ -159,7 +159,7 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
             'zone' => '5',
             'natureParc' => 'public',
             'dossiersMultiples' => 'oui',
-            'typesArretes' => ['interdiction'],
+            'arreteTypes' => ['interdiction'],
             'page' => '3',
         ];
 
@@ -172,7 +172,7 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
         static::assertSame('5', $query->getZone());
         static::assertSame('public', $query->getNatureParc());
         static::assertSame('oui', $query->getDossiersMultiples());
-        static::assertSame(['interdiction'], $query->getTypesArretes());
+        static::assertSame(['interdiction'], $query->getArreteTypes());
         static::assertSame(3, $query->getPage());
     }
 
@@ -187,7 +187,7 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
         static::assertNull($query->getZone());
         static::assertNull($query->getNatureParc());
         static::assertNull($query->getDossiersMultiples());
-        static::assertNull($query->getTypesArretes());
+        static::assertNull($query->getArreteTypes());
         static::assertSame(1, $query->getPage());
     }
 

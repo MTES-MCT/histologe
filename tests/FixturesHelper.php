@@ -7,11 +7,11 @@ use App\Entity\Arrete;
 use App\Entity\AutoAffectationRule;
 use App\Entity\Critere;
 use App\Entity\Criticite;
+use App\Entity\Enum\ArreteType;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\ProfileDeclarant;
-use App\Entity\Enum\TypeArrete;
 use App\Entity\Enum\UserStatus;
 use App\Entity\File;
 use App\Entity\Intervention;
@@ -638,10 +638,10 @@ trait FixturesHelper
             ->setStatus(AutoAffectationRule::STATUS_ACTIVE);
     }
 
-    private function createArrete(TypeArrete $type, \DateTimeImmutable $date, ?\DateTimeImmutable $dateMainLevee): Arrete
+    private function createArrete(ArreteType $type, \DateTimeImmutable $date, ?\DateTimeImmutable $dateMainLevee): Arrete
     {
         $arrete = new Arrete();
-        $arrete->setTypeArrete($type);
+        $arrete->setArreteType($type);
         $arrete->setDateArrete($date);
         $arrete->setDateMainLevee($dateMainLevee);
 

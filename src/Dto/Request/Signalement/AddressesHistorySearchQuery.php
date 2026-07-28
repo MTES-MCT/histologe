@@ -13,7 +13,7 @@ class AddressesHistorySearchQuery
 
     /**
      * @param array<mixed> $communes
-     * @param array<mixed> $typesArretes
+     * @param array<mixed> $arreteTypes
      */
     public function __construct(
         private readonly ?string $territoire = null,
@@ -25,7 +25,7 @@ class AddressesHistorySearchQuery
         private readonly ?string $natureParc = null,
         #[Assert\Choice(choices: ['oui', 'non'], message: 'Dossiers multiples invalide')]
         private readonly ?string $dossiersMultiples = null,
-        private readonly ?array $typesArretes = null,
+        private readonly ?array $arreteTypes = null,
         private readonly ?int $page = 1,
         /*
         #[Assert\Choice(choices: ['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant', 'createdAt'], message: 'Champ de tri invalide')]
@@ -78,9 +78,9 @@ class AddressesHistorySearchQuery
     }
 
     /** @return array<mixed> */
-    public function getTypesArretes(): ?array
+    public function getArreteTypes(): ?array
     {
-        return $this->typesArretes;
+        return $this->arreteTypes;
     }
 
     /*
@@ -113,7 +113,7 @@ class AddressesHistorySearchQuery
             default => null,
         };
         $filters['dossiersMultiples'] = $this->getDossiersMultiples();
-        $filters['typesArretes'] = $this->getTypesArretes() ?? null;
+        $filters['arreteTypes'] = $this->getArreteTypes() ?? null;
         $filters['page'] = $this->getPage() ?? 1;
         $filters['maxItemsPerPage'] = self::MAX_LIST_PAGINATION;
         /*
@@ -152,7 +152,7 @@ class AddressesHistorySearchQuery
             zone: $params['zone'] ?? null,
             natureParc: $params['natureParc'] ?? null,
             dossiersMultiples: $params['dossiersMultiples'] ?? null,
-            typesArretes: $params['typesArretes'] ?? null,
+            arreteTypes: $params['arreteTypes'] ?? null,
             page: isset($params['page']) ? (int) $params['page'] : 1,
             /*
             sortBy: $params['sortBy'] ?? 'reference',

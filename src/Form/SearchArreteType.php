@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Enum\TypeArrete;
+use App\Entity\Enum\ArreteType;
 use App\Entity\Territory;
 use App\Form\Type\SearchCheckboxEnumType;
 use App\Form\Type\TerritoryChoiceType;
@@ -84,12 +84,12 @@ class SearchArreteType extends AbstractType
             ],
         ]);
 
-        $builder->add('typeArretes', SearchCheckboxEnumType::class, [
-            'class' => TypeArrete::class,
+        $builder->add('arreteTypes', SearchCheckboxEnumType::class, [
+            'class' => ArreteType::class,
             'label' => 'Types d\'arrêtés',
-            'choices' => TypeArrete::getChoices(),
-            'choice_label' => static function (TypeArrete $typeArrete) {
-                return $typeArrete->label();
+            'choices' => ArreteType::getChoices(),
+            'choice_label' => static function (ArreteType $arreteType) {
+                return $arreteType->label();
             },
         ]);
         $builder->add('mainLevee', ChoiceType::class, [
@@ -106,8 +106,8 @@ class SearchArreteType extends AbstractType
             'choices' => [
                 'Date de l\'arrêté (du plus ancien au plus récent)' => 'a.dateArrete-ASC',
                 'Date de l\'arrêté (du plus récent au plus ancien)' => 'a.dateArrete-DESC',
-                'Date de l\'import (du plus ancien au plus récent)' => 'a.imported-ASC',
-                'Date de l\'import (du plus récent au plus ancien)' => 'a.imported-DESC',
+                'Date de l\'import (du plus ancien au plus récent)' => 'a.importedAt-ASC',
+                'Date de l\'import (du plus récent au plus ancien)' => 'a.importedAt-DESC',
             ],
             'placeholder' => false,
             'label' => 'Trier par',

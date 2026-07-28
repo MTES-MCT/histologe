@@ -199,8 +199,14 @@ pre {
 }
 
 .import-csv {
-    &-step-container {
+    &-upload-file {
         border: 1px solid var(--border-action-high-blue-france);
+    }
+
+    &-section--disabled {
+        opacity: 0.5;
+        pointer-events: none;
+        user-select: none;
     }
 
     &-loading {
@@ -228,15 +234,25 @@ pre {
 
     &-table-header {
         text-transform: uppercase;
-        font-size: 0.75rem;
+        font-size: 1rem;
     }
 
     &-card {
         border: 1px solid var(--border-default-grey);
 
+        &--valid-address {
+            border-inline-start: 2px solid var(--border-action-high-success);
+            padding-inline-start: 0.5rem;
+        }
+
         &--to-check {
             background-color: var(--background-contrast-info);
             border: 1px solid var(--border-action-high-blue-france);
+        }
+
+        &--valid {
+            background-color: var(--background-contrast-success);
+            border: 1px solid var(--border-action-high-success);
         }
 
         &--ignored {
@@ -248,9 +264,19 @@ pre {
             }
         }
 
-        &--valid {
-            background-color: var(--background-contrast-success);
-            border: 1px solid var(--border-action-high-success);
+        [data-arrete-adresse-1], [data-arrete-adresse-2] {
+            text-transform: uppercase;
+        }
+
+        .fr-address-group {
+            margin-top: 0;
+            margin-left: 1px;
+            background-color: white;
+            position: absolute;
+            z-index: 1000;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
         }
     }
 }

@@ -117,6 +117,24 @@ class CsvParserTest extends KernelTestCase
         $this->assertArrayHasKey('rows', $content);
     }
 
+    public function testAutoDetectDelimiter(): void
+    {
+        $filepathSemicolon = $this->projectDir.'/tmp/data_semicolon_detect.csv';
+        $this->createRandomCSV($filepathSemicolon, 5, ';');
+
+        $csvParser = new CsvParser();
+        $csvParser->autoDetectDelimiter($filepathSemicolon);
+        $this->assertEquals(';', $csvParser->getOptions()['delimiter']);
+
+        $filepathComma = $this->projectDir.'/tmp/data_comma_detect.csv';
+        $this->createRandomCSV($filepathComma, 5, ',');
+        $csvParser->autoDetectDelimiter($filepathComma);
+        $this->assertEquals(',', $csvParser->getOptions()['delimiter']);
+
+        unlink($filepathSemicolon);
+        unlink($filepathComma);
+    }
+
     protected function tearDown(): void
     {
         unlink($this->projectDir.self::FILEPATH);

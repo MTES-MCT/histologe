@@ -118,9 +118,9 @@
       <div class="fr-col-12 fr-col-md-3 fr-mb-1v fr-mb-md-2w">
         <HistoMultiSelect
           id="filter-types-arretes"
-          v-model="sharedState.input.filters.typesArretes"
+          v-model="sharedState.input.filters.arreteTypes"
           @update:modelValue="notifyChange"
-          :option-items="sharedState.typesArretes"
+          :option-items="sharedState.arreteTypes"
           title="Rechercher par types d'arrêtés"
           :active="true"
         >

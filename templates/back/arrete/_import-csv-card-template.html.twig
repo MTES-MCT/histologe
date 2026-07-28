@@ -1,0 +1,67 @@
+<template id="import-csv-card-template">
+    <div class="fr-mt-4w fr-p-4w import-csv-card"
+         data-arrete-denomination-syndic=""
+         data-arrete-identifiant-parcellaire=""
+         data-arrete-numero-voie=""
+         data-arrete-nom-voie=""
+         data-arrete-code-postal=""
+         data-arrete-commune=""
+    >
+        <form id="import-csv-card-form-template">
+        <div class="fr-grid-row">
+            <div class="fr-col-12 fr-col-md-3">
+                <p class="fr-mb-1w" data-arrete-date></p>
+                <p class="fr-mb-1w fr-display-none" data-arrete-date-main-levee-container>
+                    <strong>Date d'arrêté de mainlevée :</strong> <span data-arrete-date-main-levee></span>
+                </p>
+                <p class="fr-mb-0" data-arrete-classification></p>
+            </div>
+            <div class="fr-col-12 fr-col-md-4 fr-pl-md-2w fr-mt-2w fr-mt-md-0">
+                <p class="fr-mb-1w" data-arrete-adresse-1></p>
+                <p class="fr-mb-0" data-arrete-adresse-2></p>
+            </div>
+            <div class="fr-col-12 fr-col-md-5 fr-pl-md-2w fr-mt-2w fr-mt-md-0">
+                <div class="fr-input-group fr-mb-2w" data-address-container>
+                    <label for="address-template" class="fr-label" data-arrete-adresse-complete-label>Adresse
+                        <span id="address-help-template" class="fr-hint-text" data-arrete-adresse-help>Taper une adresse et la sélectionner dans la liste</span>
+                    </label>
+                    <div class="fr-input-wrap">
+                        <input id="address-template"
+                               class="fr-input"
+                               type="text"
+                               value=""
+                               data-arrete-adresse-complete
+                               data-fr-adresse-autocomplete
+                               data-autocomplete-search-on-focus
+                               data-autocomplete-query-selector=""
+                               data-territory-zip="{{ app.user.getFirstTerritory() ? app.user.getFirstTerritory().zip : '' }}"
+                               autocomplete="off"
+                               aria-describedby="address-help-template"
+                        >
+                        <input type="hidden" data-autocomplete-housenumber>
+                        <input type="hidden" data-autocomplete-street>
+                        <input type="hidden" data-autocomplete-addresse>
+                        <input type="hidden" data-autocomplete-codepostal>
+                        <input type="hidden" data-autocomplete-ville>
+                        <input type="hidden" data-autocomplete-address-filter data-filter="|{{ app.user.getFirstTerritory() ? app.user.getFirstTerritory().name : '' }}">
+                        <div class="fr-address-group fr-grid-row fr-grid-row--gutters" data-arrete-adresse-suggestions></div>
+                    </div>
+                    <p class="fr-error-text fr-hidden" data-arrete-adresse-error>
+                        L'adresse sélectionnée n'est pas dans votre territoire.
+                    </p>
+                </div>
+                <a href="#"
+                   class="fr-link fr-icon-map-pin-2-line fr-link--icon-left fr-text--sm fr-hidden">ou
+                    sélectionner le bâtiment sur la carte</a>
+            </div>
+        </div>
+        </form>
+    </div>
+    <div class="fr-checkbox-group fr-mt-2w">
+        <input type="checkbox" id="ignore-template" data-arrete-ignore-checkbox>
+        <label for="ignore-template" class="fr-label" data-arrete-ignore-label>
+            Ignorer cette entrée
+            <span class="fr-hint-text">L'arrêté ne sera pas importé</span>
+        </label>
+    </div>
+</template>

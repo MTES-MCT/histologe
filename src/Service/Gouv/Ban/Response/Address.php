@@ -5,7 +5,9 @@ namespace App\Service\Gouv\Ban\Response;
 class Address
 {
     private ?string $label = null;
+    private ?string $housenumber = null;
     private ?string $street = null;
+    private ?string $streetWithoutHouseNumber = null;
     private ?string $zipCode = null;
     private ?string $city = null;
     private ?string $inseeCode = null;
@@ -22,7 +24,9 @@ class Address
         if (null !== $data && !empty($data['features'][0]['properties'])) {
             $properties = $data['features'][0]['properties'];
             $this->label = $properties['label'] ?? null;
+            $this->housenumber = $properties['housenumber'] ?? null;
             $this->street = $properties['name'] ?? null;
+            $this->streetWithoutHouseNumber = $properties['street'] ?? null;
             $this->zipCode = $properties['postcode'] ?? null;
             $this->city = $properties['city'] ?? null;
             $this->score = $properties['score'] ?? null;
@@ -37,9 +41,9 @@ class Address
         }
     }
 
-    public function getStreet(): ?string
+    public function getStreet(bool $withHouseNumber = true): ?string
     {
-        return $this->street;
+        return $withHouseNumber ? $this->street : $this->streetWithoutHouseNumber;
     }
 
     public function getZipCode(): ?string
@@ -80,6 +84,11 @@ class Address
     public function getLabel(): ?string
     {
         return $this->label;
+    }
+
+    public function getHousenumber(): ?string
+    {
+        return $this->housenumber;
     }
 
     /**

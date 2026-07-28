@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Validator as AppAssert;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,7 +18,7 @@ class ImportArreteType extends AbstractType
     {
         $builder->add('file', FileType::class, [
             'label' => 'Ajouter un fichier',
-            'help' => 'Format supporté : .csv ; 50 lignes maximum ; Séparateur : point-virgule (,).',
+            'help' => 'Format supporté : .csv ; 50 lignes maximum.',
             'attr' => [
                 'accept' => '.csv',
                 'class' => 'fr-upload',
@@ -26,9 +27,10 @@ class ImportArreteType extends AbstractType
                 new Assert\NotBlank(message: 'Veuillez sélectionner un fichier.'),
                 new Assert\File(
                     maxSize: '1M',
-                    mimeTypes: ['text/csv', 'application/csv'],
+                    mimeTypes: ['text/csv', 'application/csv', 'text/plain'],
                     mimeTypesMessage: 'Veuillez uploader un fichier CSV valide.',
                 ),
+                new AppAssert\ArreteImportFile(),
             ],
         ]);
     }

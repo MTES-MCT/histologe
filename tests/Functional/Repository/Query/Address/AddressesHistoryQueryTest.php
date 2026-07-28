@@ -224,7 +224,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
             if (null !== $result['arreteId']) {
                 $foundArrete = true;
                 $this->assertArrayHasKey('dateArrete', $result);
-                $this->assertArrayHasKey('typeArrete', $result);
+                $this->assertArrayHasKey('arreteType', $result);
             }
         }
 

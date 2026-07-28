@@ -1,0 +1,6 @@
+PREMIERE LIGNE A IGNORER
+date arrêté,classification arrêté,date arrêté main levée,numéro de voie,nom de la voie,code postal,commune,dénomination syndic,identifiant parcellaire
+01/01/2023,Insalubrité,,8,Rue de la tourmentinerie,44850,Saint-Mars-du-Désert,,12345
+02/01/2023,Mise en sécurité procédure ordinaire,,10,Rue de la Paix,75002,Paris,,67890
+01/01/2023,Insalubrité,02/01/2023,8,Rue de la tourmentinerie,44850,Saint-Mars-du-Désert,,12345
+01/01/2023,Insalubrité,,,,,,,NON_VIDE
