@@ -10,12 +10,13 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class SignalementReminderInjonctionBailleurMailer extends AbstractNotificationMailer
+class SignalementBailleurCloseInjonctionUsagerMailer extends AbstractNotificationMailer
 {
-    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_REMINDER_TO_BAILLEUR;
-    protected ?string $mailerSubject = 'Mettez à jour la situation concernant votre logement';
-    protected ?string $brevoTemplateId = '287';
-    protected ?string $tagHeader = 'Bailleur Rappel Avancées Signalement Injonction';
+    protected ?NotificationMailerType $mailerType = NotificationMailerType::TYPE_BAILLEUR_CLOSE_INJONCTION_TO_USAGER;
+    protected ?string $mailerSubject = 'Votre bailleur indique la fin des travaux concernant votre logement';
+    protected ?string $mailerButtonText = 'Accéder à mon dossier';
+    protected ?string $brevoTemplateId = '317';
+    protected ?string $tagHeader = 'Bailleur Close Signalement To Usager';
 
     public function __construct(
         protected MailerInterface $mailer,
@@ -35,7 +36,11 @@ class SignalementReminderInjonctionBailleurMailer extends AbstractNotificationMa
 
         return [
             'ADRESSE_OCCUPANT' => $signalement->getAddressCompleteOccupant(),
-            'REFERENCE_INJONCTION' => $signalement->getReferenceInjonction(),
+            'NOM_COMPLET_PROPRIO' => $signalement->getNomProprio().' '.$signalement->getPrenomProprio(),
+            'LINK_SIGNALEMENT_USAGER' => $this->generateLink(
+                'front_suivi_signalement',
+                ['code' => $signalement->getCodeSuivi()]
+            ),
         ];
     }
 }

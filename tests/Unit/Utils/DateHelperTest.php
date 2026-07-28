@@ -71,4 +71,25 @@ class DateHelperTest extends TestCase
             AbstractEsaboraService::FORMAT_DATE,
         ];
     }
+
+    #[DataProvider('provideThresholds')]
+    public function testTranslateDurationThresholdToFrench(string $threshold, string $expected): void
+    {
+        $result = DateHelper::translateDurationThresholdToFrench($threshold);
+        $this->assertSame($expected, $result);
+    }
+
+    public static function provideThresholds(): \Generator
+    {
+        yield '1 day' => ['1 day', '1 jour'];
+        yield '2 days' => ['2 days', '2 jours'];
+        yield '1 week' => ['1 week', '1 semaine'];
+        yield '2 weeks' => ['2 weeks', '2 semaines'];
+        yield '1 month' => ['1 month', '1 mois'];
+        yield '2 months' => ['2 months', '2 mois'];
+        yield '1 year' => ['1 year', '1 an'];
+        yield '2 years' => ['2 years', '2 ans'];
+        yield '1 plop' => ['1 plop', '1 plop'];
+        yield '9 plops' => ['9 plops', '9 plops'];
+    }
 }

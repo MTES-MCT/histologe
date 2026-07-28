@@ -17,6 +17,7 @@ use App\Manager\UserManager;
 use App\Repository\PartnerRepository;
 use App\Service\InjonctionBailleur\EngagementTravauxBailleurGenerator;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
+use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\UploadHandlerService;
@@ -41,6 +42,7 @@ class InjonctionBailleurServiceTest extends KernelTestCase
     private ParameterBagInterface $parameterBag;
     private UploadHandlerService $uploadHandlerService;
     private FileManager $fileManager;
+    private NotificationAndMailSender $notificationAndMailSender;
 
     protected function setUp(): void
     {
@@ -61,7 +63,7 @@ class InjonctionBailleurServiceTest extends KernelTestCase
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $this->uploadHandlerService = static::getContainer()->get(UploadHandlerService::class);
         $this->fileManager = static::getContainer()->get(FileManager::class);
-
+        $this->notificationAndMailSender = static::getContainer()->get(NotificationAndMailSender::class);
         $this->service = new InjonctionBailleurService(
             $this->suiviManager,
             $this->autoAssigner,
@@ -75,6 +77,7 @@ class InjonctionBailleurServiceTest extends KernelTestCase
             $this->parameterBag,
             $this->uploadHandlerService,
             $this->fileManager,
+            $this->notificationAndMailSender,
         );
     }
 

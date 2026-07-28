@@ -797,30 +797,113 @@ class SignalementRepository extends ServiceEntityRepository
             )
         );
         $isUsager = 'usager' === $recipient;
-        // Aucune demande de cloture de la part du bailleur
-        if (!$isUsager) {
-            $qb->andWhere(
-                $qb->expr()->not(
-                    $qb->expr()->exists(
-                        $this->createQueryBuilder('s3')
-                            ->select('1')
-                            ->join('s3.suivis', 'su3')
-                            ->where('s3 = s')
-                            ->andWhere('su3.category IN (:category_demande_cloture)')
-                            ->getDQL()
-                    )
+        // Aucune demande de clôture de la part du bailleur en cours : le suivi mensuel classique est alors
+        // remplacé par les relances dédiées de la démarche de clôture (côté usager comme côté bailleur).
+        $qb->andWhere(
+            $qb->expr()->not(
+                $qb->expr()->exists(
+                    $this->createQueryBuilder('s3')
+                        ->select('1')
+                        ->join('s3.suivis', 'su3')
+                        ->where('s3 = s')
+                        ->andWhere('su3.category = :category_demande_cloture')
+                        ->getDQL()
                 )
-            );
-            $qb->setParameter('category_demande_cloture', [
-                SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR,
-                SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR_COMMENTAIRE,
-            ]);
-        }
+            )
+        );
+        $qb->setParameter('category_demande_cloture', SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR);
         $qb->setParameter('category_list', $isUsager
             ? array_merge(SuiviCategory::categoriesSubmittedByUsager(), [SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER])
             : array_merge(SuiviCategory::categoriesSubmittedByBailleur(), [SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_BAILLEUR]));
 
         $qb->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
+            ->setParameter('date', $beforeDate)
+            ->orderBy('s.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Dossiers dont le bailleur a demandé la clôture avant $beforeDate, toujours en statut
+     * INJONCTION_BAILLEUR (donc sans décision de l'usager), et n'ayant pas déjà reçu la relance de clôture.
+     *
+     * @return Signalement[]
+     *
+     * @throws \Exception
+     */
+    public function findInjonctionClotureBailleurToRemindUsager(
+        \DateTimeImmutable $beforeDate,
+    ): array {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.statut = :statut');
+
+        // Une demande de clôture du bailleur, faite avant la date
+        $qb->andWhere(
+            $qb->expr()->exists(
+                $this->createQueryBuilder('s1')
+                    ->select('1')
+                    ->join('s1.suivis', 'su1')
+                    ->where('s1 = s')
+                    ->andWhere('su1.category = :category_demande_cloture')
+                    ->andWhere(
+                        $qb->expr()->lt('su1.createdAt', ':date')
+                    )
+                    ->getDQL()
+            )
+        );
+        // Pas encore de relance envoyée
+        $qb->andWhere(
+            $qb->expr()->not(
+                $qb->expr()->exists(
+                    $this->createQueryBuilder('s2')
+                        ->select('1')
+                        ->join('s2.suivis', 'su2')
+                        ->where('s2 = s')
+                        ->andWhere('su2.category = :category_relance')
+                        ->getDQL()
+                )
+            )
+        );
+
+        $qb->setParameter('category_demande_cloture', SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR)
+            ->setParameter('category_relance', SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE)
+            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
+            ->setParameter('date', $beforeDate)
+            ->orderBy('s.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Dossiers pour lesquels la relance de clôture a été envoyée à l'usager avant $beforeDate,
+     * toujours en statut INJONCTION_BAILLEUR (donc sans décision de l'usager).
+     *
+     * @return Signalement[]
+     *
+     * @throws \Exception
+     */
+    public function findInjonctionClotureBailleurToClose(
+        \DateTimeImmutable $beforeDate,
+    ): array {
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.statut = :statut');
+
+        $qb->andWhere(
+            $qb->expr()->exists(
+                $this->createQueryBuilder('s1')
+                    ->select('1')
+                    ->join('s1.suivis', 'su1')
+                    ->where('s1 = s')
+                    ->andWhere('su1.category = :category_relance')
+                    ->andWhere(
+                        $qb->expr()->lt('su1.createdAt', ':date')
+                    )
+                    ->getDQL()
+            )
+        );
+
+        $qb->setParameter('category_relance', SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE)
+            ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR)
             ->setParameter('date', $beforeDate)
             ->orderBy('s.createdAt', 'DESC');
 

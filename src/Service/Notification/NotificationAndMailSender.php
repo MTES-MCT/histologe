@@ -515,6 +515,74 @@ class NotificationAndMailSender
         );
     }
 
+    public function sendReminderClotureToUsager(Signalement $signalement): void
+    {
+        if (empty($signalement->getMailOccupant())) {
+            return;
+        }
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_REMINDER_CLOTURE_TO_USAGER,
+                to: $signalement->getMailOccupant(),
+                territory: $signalement->getTerritory(),
+                signalement: $signalement,
+                isRecipientVisible: true,
+            )
+        );
+    }
+
+    public function sendReminderClotureAndCloseToUsager(Signalement $signalement): void
+    {
+        if (empty($signalement->getMailOccupant())) {
+            return;
+        }
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_REMINDER_CLOTURE_AND_CLOSE_TO_USAGER,
+                to: $signalement->getMailOccupant(),
+                territory: $signalement->getTerritory(),
+                signalement: $signalement,
+                isRecipientVisible: true,
+            )
+        );
+    }
+
+    public function sendReminderClotureAndCloseToBailleur(Signalement $signalement): void
+    {
+        if (empty($signalement->getMailProprio())) {
+            return;
+        }
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_REMINDER_CLOTURE_AND_CLOSE_TO_BAILLEUR,
+                to: $signalement->getMailProprio(),
+                territory: $signalement->getTerritory(),
+                signalement: $signalement,
+                isRecipientVisible: true,
+            )
+        );
+    }
+
+    public function sendBailleurAskForClotureToUsager(Signalement $signalement): void
+    {
+        if (empty($signalement->getMailOccupant())) {
+            return;
+        }
+
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_BAILLEUR_CLOSE_INJONCTION_TO_USAGER,
+                to: $signalement->getMailOccupant(),
+                territory: $signalement->getTerritory(),
+                signalement: $signalement,
+                isRecipientVisible: true,
+            )
+        );
+    }
+
     private function isAgentSubscribedToSignalement(string $recipient): bool
     {
         $agent = $this->userRepository->findAgentByEmail(
