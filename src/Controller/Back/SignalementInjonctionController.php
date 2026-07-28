@@ -2,19 +2,30 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\Enum\MotifClotureUsager;
+use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Form\AdminCancelInjonctionProcedureType;
 use App\Form\SearchSignalementInjonctionType;
+use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Security\Voter\InjonctionBailleurVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\InjonctionBailleur\CourrierBailleurGenerator;
 use App\Service\ListFilters\SearchSignalementInjonction;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
+use App\Utils\FormHelper;
+use App\Utils\HtmlCleaner;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/bo/signalement-injonction')]
 class SignalementInjonctionController extends AbstractController
@@ -76,5 +87,53 @@ class SignalementInjonctionController extends AbstractController
         $response->headers->set('Content-Disposition', 'inline; filename="courrier-bailleur.pdf"');
 
         return $response;
+    }
+
+    #[Route('/{uuid:signalement}/admin-cancel-procedure', name: 'back_injonction_signalement_admin_cancel_procedure', methods: 'POST')]
+    public function adminCancelInjonctionProcedure(
+        Signalement $signalement,
+        Request $request,
+        SuiviManager $suiviManager,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_INJONCTION_CLOSE, $signalement);
+
+        $adminCancelInjonctionProcedureFormRoute = $this->generateUrl('back_injonction_signalement_admin_cancel_procedure', ['uuid' => $signalement->getUuid()]);
+        $form = $this->createForm(AdminCancelInjonctionProcedureType::class, options: ['action' => $adminCancelInjonctionProcedureFormRoute]);
+        $form->handleRequest($request);
+        if (!$form->isSubmitted()) {
+            return $this->json(['code' => Response::HTTP_BAD_REQUEST], Response::HTTP_BAD_REQUEST);
+        }
+        if (!$form->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
+
+            return $this->json($response, $response['code']);
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+        /** @var MotifClotureUsager $motif */
+        $motif = $form->get('reason')->getData();
+        $details = HtmlCleaner::cleanFrontEndEntry($form->get('details')->getData());
+
+        $signalement->setMotifClotureUsager($motif);
+        $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
+
+        $description = \sprintf(SuiviDescriptionHelper::DESCRIPTION_MOTIF_CLOTURE_INJONCTION_ADMIN, $motif->labelForAdmin(), $details);
+        $suiviManager->createSuivi(
+            signalement: $signalement,
+            description: $description,
+            category: SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN,
+            user: $user,
+            isVisibleForUsager: true,
+        );
+
+        $entityManager->flush();
+
+        $this->addFlash('success', ['title' => 'Dossier fermé', 'message' => sprintf('Le dossier #%s a bien été fermé.', $signalement->getReference())]);
+
+        $url = $this->generateUrl('back_injonction_signalement_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return $this->json(['redirect' => true, 'url' => $url]);
     }
 }

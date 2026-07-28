@@ -17,9 +17,9 @@ modalElements.forEach((modalElement) => {
 });
 
 function clearErrors() {
-  const divErrorElements = document.querySelectorAll('.fr-input-group--error');
+  const divErrorElements = document.querySelectorAll('.fr-input-group--error, .fr-fieldset--error');
   divErrorElements.forEach((divErrorElement) => {
-    divErrorElement.classList.remove('fr-label--error', 'fr-input-group--error');
+    divErrorElement.classList.remove('fr-label--error', 'fr-input-group--error', 'fr-fieldset--error');
   });
   document.querySelectorAll('.fr-error-text').forEach((pErrorElement) => {
     pErrorElement.remove();
@@ -111,10 +111,7 @@ async function submitPayload(formElement) {
           let parentElement;
           if (inputElements.length > 1) {
             inputElement = inputElements[0];
-            parentElement = inputElement.closest('.fr-fieldset');
-            if (parentElement?.tagName === 'FIELDSET') {
-              parentElement = parentElement.parentElement;
-            }
+            parentElement = inputElement.closest('.fr-fieldset') || inputElement.parentElement;
           } else {
             inputElement =
               container.querySelector(
@@ -126,12 +123,16 @@ async function submitPayload(formElement) {
           }
 
           inputElement.setAttribute('aria-describedby', `${property}-desc-error`);
-          parentElement.classList.add('fr-input-group--error');
+          const isFieldset = parentElement.tagName === 'FIELDSET';
+          parentElement.classList.add(isFieldset ? 'fr-fieldset--error' : 'fr-input-group--error');
 
           const existingErrorElement = document.getElementById(`${property}-desc-error`);
           if (!existingErrorElement) {
             const pElement = document.createElement('p');
             pElement.classList.add('fr-error-text');
+            if (isFieldset) {
+              pElement.classList.add('fr-fieldset__element');
+            }
             pElement.id = `${property}-desc-error`;
 
             let messageError = '';

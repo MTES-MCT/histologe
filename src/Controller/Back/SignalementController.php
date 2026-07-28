@@ -9,10 +9,8 @@ use App\Dto\SignalementAffectationClose;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\DocumentType;
-use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
-use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
@@ -22,7 +20,7 @@ use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
 use App\Factory\SignalementSearchQueryFactory;
 use App\Form\AddSuiviType;
-use App\Form\AdminCancelProcedureType;
+use App\Form\AdminCancelInjonctionProcedureType;
 use App\Form\AgentSelectionType;
 use App\Form\CloseAffectationType;
 use App\Form\ClotureType;
@@ -30,7 +28,6 @@ use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
-use App\Manager\SuiviManager;
 use App\Repository\AffectationRepository;
 use App\Repository\CritereRepository;
 use App\Repository\DesordreCategorieRepository;
@@ -57,11 +54,9 @@ use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementQualificationNde;
 use App\Service\Signalement\SignalementSameAddressArreteFinder;
-use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
 use App\Service\Signalement\Suivi\SuiviSeenMarker;
 use App\Service\SignalementAddressContentService;
 use App\Utils\FormHelper;
-use App\Utils\HtmlCleaner;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -73,7 +68,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements')]
 class SignalementController extends AbstractController
@@ -290,10 +284,10 @@ class SignalementController extends AbstractController
             $syncStatuses = $jobEventQuery->findSyncStatusesForSignalement($signalement);
         }
 
-        $adminCancelProcedureForm = null;
+        $adminCancelInjonctionProcedureForm = null;
         if ($this->isGranted(SignalementVoter::SIGN_INJONCTION_CLOSE, $signalement)) {
-            $adminCancelProcedureFormRoute = $this->generateUrl('back_signalement_admin_cancel_procedure', ['uuid' => $signalement->getUuid()]);
-            $adminCancelProcedureForm = $this->createForm(AdminCancelProcedureType::class, options: ['action' => $adminCancelProcedureFormRoute]);
+            $adminCancelInjonctionProcedureFormRoute = $this->generateUrl('back_injonction_signalement_admin_cancel_procedure', ['uuid' => $signalement->getUuid()]);
+            $adminCancelInjonctionProcedureForm = $this->createForm(AdminCancelInjonctionProcedureType::class, options: ['action' => $adminCancelInjonctionProcedureFormRoute]);
         }
 
         $twigParams = [
@@ -337,59 +331,10 @@ class SignalementController extends AbstractController
             'isUniqueRtInCurrentPartner' => $isUniqueRtInCurrentPartner,
             'personalNote' => $personalNote,
             'syncStatuses' => $syncStatuses,
-            'adminCancelProcedureForm' => $adminCancelProcedureForm,
+            'adminCancelInjonctionProcedureForm' => $adminCancelInjonctionProcedureForm,
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);
-    }
-
-    #[Route('/{uuid:signalement}/admin-cancel-procedure', name: 'back_signalement_admin_cancel_procedure', methods: 'POST')]
-    #[IsGranted('ROLE_ADMIN')]
-    public function adminCancelProcedure(
-        Signalement $signalement,
-        Request $request,
-        SuiviManager $suiviManager,
-        EntityManagerInterface $entityManager,
-    ): JsonResponse {
-        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_INJONCTION_CLOSE, $signalement);
-
-        $adminCancelProcedureFormRoute = $this->generateUrl('back_signalement_admin_cancel_procedure', ['uuid' => $signalement->getUuid()]);
-        $form = $this->createForm(AdminCancelProcedureType::class, options: ['action' => $adminCancelProcedureFormRoute]);
-        $form->handleRequest($request);
-        if (!$form->isSubmitted()) {
-            return $this->json(['code' => Response::HTTP_BAD_REQUEST], Response::HTTP_BAD_REQUEST);
-        }
-        if (!$form->isValid()) {
-            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
-
-            return $this->json($response, $response['code']);
-        }
-
-        /** @var User $user */
-        $user = $this->getUser();
-        /** @var MotifClotureUsager $motif */
-        $motif = $form->get('reason')->getData();
-        $details = HtmlCleaner::cleanFrontEndEntry($form->get('details')->getData());
-
-        $signalement->setMotifClotureUsager($motif);
-        $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
-
-        $description = \sprintf(SuiviDescriptionHelper::DESCRIPTION_MOTIF_CLOTURE_INJONCTION_ADMIN, $motif->labelForAdmin(), $details);
-        $suiviManager->createSuivi(
-            signalement: $signalement,
-            description: $description,
-            category: SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN,
-            user: $user,
-            isVisibleForUsager: true,
-        );
-
-        $entityManager->flush();
-
-        $this->addFlash('success', ['title' => 'Dossier fermé', 'message' => sprintf('Le dossier #%s a bien été fermé.', $signalement->getReference())]);
-
-        $url = $this->generateUrl('back_injonction_signalement_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        return $this->json(['redirect' => true, 'url' => $url]);
     }
 
     #[Route('/{uuid:signalement}/close-signalement-affectation', name: 'back_signalement_close_affectation', methods: 'POST')]

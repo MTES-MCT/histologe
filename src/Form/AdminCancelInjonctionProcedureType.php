@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @extends AbstractType<array<string, mixed>>
  */
-class AdminCancelProcedureType extends AbstractType
+class AdminCancelInjonctionProcedureType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
