@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Service\Notification;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\NotificationType;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -35,6 +36,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
     private Security $security;
     private NotificationAndMailSender $notificationAndMailSender;
     private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
+    private SuiviMentionExtractor $suiviMentionExtractor;
 
     protected function setUp(): void
     {
@@ -52,6 +54,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->notificationFactory = static::getContainer()->get(NotificationFactory::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->suiviMentionExtractor = static::getContainer()->get(SuiviMentionExtractor::class);
         /** @var CourrierBailleurGenerator $courrierBailleurGenerator */
         $courrierBailleurGenerator = static::getContainer()->get(CourrierBailleurGenerator::class);
         $this->notificationAndMailSender = new NotificationAndMailSender(
@@ -62,6 +65,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->security,
             $courrierBailleurGenerator,
             $this->userSignalementSubscriptionRepository,
+            $this->suiviMentionExtractor,
         );
     }
 
@@ -221,12 +225,11 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description avec mention <span class="mention" data-partner-id="3">@Partenaire 13-02</span>')
         ->setType(Suivi::TYPE_PARTNER)
+        ->setCategory(SuiviCategory::MESSAGE_PARTNER)
         ->setIsVisibleForUsager(false);
 
         $this->entityManager->persist($suivi);
-        $mentionedPartners = (new SuiviMentionExtractor())->extract($suivi);
-        $this->assertSame([3], $mentionedPartners);
-        $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true, mentionedPartners: $mentionedPartners);
+        $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true);
         $this->entityManager->flush();
 
         // user-13-01 est en mode récap : pas de mail immédiat, seulement une notification in-app en attente de récap
@@ -262,12 +265,11 @@ class NotificationAndMailSenderTest extends KernelTestCase
         ->setSignalement($signalement)
         ->setDescription('test description avec mention <span class="mention" data-partner-id="4">@Partenaire 13-03</span>')
         ->setType(Suivi::TYPE_PARTNER)
+        ->setCategory(SuiviCategory::MESSAGE_PARTNER)
         ->setIsVisibleForUsager(false);
 
         $this->entityManager->persist($suivi);
-        $mentionedPartners = (new SuiviMentionExtractor())->extract($suivi);
-        $this->assertSame([4], $mentionedPartners);
-        $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true, mentionedPartners: $mentionedPartners);
+        $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true);
         $this->entityManager->flush();
 
         $this->assertEmailCount(1);
@@ -279,7 +281,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->assertFalse($newNotifications[0]->isWaitMailingSummary());
     }
 
-    public function testSendNewSuiviToAdminsAndPartnersWithMentionIgnoresPartnerWithoutAcceptedAffectation(): void
+    public function testSendNewSuiviToAdminsAndPartnersWithMentionOnPartnerWithoutAcceptedAffectationFallsBackToStandardBroadcast(): void
     {
         /** @var Signalement $signalement */
         $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
@@ -290,23 +292,26 @@ class NotificationAndMailSenderTest extends KernelTestCase
             'email' => 'admin-territoire-13-01@signal-logement.fr',
         ]);
 
-        // partenaire 2 ("Partenaire 13-01") a une affectation NOUVEAU (pas encore acceptée) sur 2022-1
+        // partenaire 2 ("Partenaire 13-01") a une affectation NOUVEAU (pas encore acceptée) sur 2022-1 :
+        // la mention est ignorée et on retombe sur la diffusion standard "nouveau suivi"
         $suivi = (new Suivi())
         ->setCreatedBy($respTerritoire)
         ->setSignalement($signalement)
         ->setDescription('test description avec mention sur affectation non acceptée <span class="mention" data-partner-id="2">@Partenaire 13-01</span>')
         ->setType(Suivi::TYPE_PARTNER)
+        ->setCategory(SuiviCategory::MESSAGE_PARTNER)
         ->setIsVisibleForUsager(false);
 
         $this->entityManager->persist($suivi);
-        $mentionedPartners = (new SuiviMentionExtractor())->extract($suivi);
-        $this->assertSame([2], $mentionedPartners);
-        $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true, mentionedPartners: $mentionedPartners);
+        $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true);
         $this->entityManager->flush();
 
-        $this->assertEmailCount(0);
+        $this->assertEmailCount(1);
         $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
-        $this->assertCount(0, $newNotifications);
+        $this->assertNotEmpty($newNotifications);
+        foreach ($newNotifications as $notification) {
+            $this->assertSame(NotificationType::NOUVEAU_SUIVI, $notification->getType());
+        }
     }
 
     public function testSendNDemandeAbandonProcedureToUsager(): void
@@ -343,6 +348,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->security,
             $courrierBailleurGenerator,
             $this->userSignalementSubscriptionRepository,
+            $this->suiviMentionExtractor,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
@@ -395,6 +401,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->security,
             $courrierBailleurGenerator,
             $this->userSignalementSubscriptionRepository,
+            $this->suiviMentionExtractor,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);
@@ -439,6 +446,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->security,
             $courrierBailleurGenerator,
             $this->userSignalementSubscriptionRepository,
+            $this->suiviMentionExtractor,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
@@ -486,6 +494,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->security,
             $courrierBailleurGenerator,
             $this->userSignalementSubscriptionRepository,
+            $this->suiviMentionExtractor,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);

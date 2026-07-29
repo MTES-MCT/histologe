@@ -20,6 +20,7 @@ use App\Service\InjonctionBailleur\CourrierBailleurGenerator;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\Suivi\SuiviMentionExtractor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -39,6 +40,7 @@ class NotificationAndMailSender
         private readonly Security $security,
         private readonly CourrierBailleurGenerator $courrierBailleurGenerator,
         private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        private readonly SuiviMentionExtractor $suiviMentionExtractor,
     ) {
         $this->suivi = null;
         $user = $this->security->getUser();
@@ -143,14 +145,12 @@ class NotificationAndMailSender
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::CLOTURE_PARTENAIRE, affectation: $affectation);
     }
 
-    /**
-     * @param array<int, int> $mentionedPartners
-     */
-    public function sendNewSuiviToAdminsAndPartners(Suivi $suivi, bool $sendEmail, array $mentionedPartners = []): void
+    public function sendNewSuiviToAdminsAndPartners(Suivi $suivi, bool $sendEmail): void
     {
         $mailerType = $sendEmail ? NotificationMailerType::TYPE_NEW_COMMENT_BACK : null;
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
+        $mentionedPartners = $this->suiviMentionExtractor->extract($suivi);
         if (empty($mentionedPartners)) {
             $userList = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
             $adminList = $this->userRepository->findActiveAdmins();
@@ -160,15 +160,11 @@ class NotificationAndMailSender
             $description = null;
         } else {
             $recipients = new ArrayCollection();
-            foreach ($mentionedPartners as $partnerId) {
-                $partner = $this->entityManager->getRepository(Partner::class)->find($partnerId);
-                $affectation = $this->signalement->getAffectationForPartner($partner);
-                if ($partner instanceof Partner && $affectation instanceof Affectation && AffectationStatus::ACCEPTED === $affectation->getStatut()) {
-                    $partnerUsers = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
-                    foreach ($partnerUsers as $user) {
-                        if ($user instanceof User && $user->hasPartner($partner) && UserStatus::ACTIVE === $user->getStatut()) {
-                            $recipients->add($user);
-                        }
+            foreach ($mentionedPartners as $partner) {
+                $partnerUsers = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
+                foreach ($partnerUsers as $user) {
+                    if ($user instanceof User && $user->hasPartner($partner) && UserStatus::ACTIVE === $user->getStatut()) {
+                        $recipients->add($user);
                     }
                 }
             }

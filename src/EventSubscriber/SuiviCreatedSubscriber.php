@@ -7,7 +7,6 @@ use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Event\SuiviCreatedEvent;
 use App\Service\Notification\NotificationAndMailSender;
-use App\Service\Signalement\Suivi\SuiviMentionExtractor;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class SuiviCreatedSubscriber implements EventSubscriberInterface
@@ -16,7 +15,6 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
 
     public function __construct(
         private readonly NotificationAndMailSender $notificationAndMailSender,
-        private readonly SuiviMentionExtractor $suiviMentionExtractor,
     ) {
     }
 
@@ -41,16 +39,12 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         if ($suivi->isWaitingNotification()) {
             return;
         }
-        $mentionedPartners = $this->suiviMentionExtractor->extract($suivi);
-        $this->sendToAdminAndPartners($suivi, $mentionedPartners);
+        $this->sendToAdminAndPartners($suivi);
         $this->sendToUsagers($suivi);
         $this->sendToBailleur($suivi);
     }
 
-    /**
-     * @param array<int, int> $mentionedPartners
-     */
-    private function sendToAdminAndPartners(Suivi $suivi, array $mentionedPartners): void
+    private function sendToAdminAndPartners(Suivi $suivi): void
     {
         if (in_array($suivi->getCategory(), SuiviCategory::categoriesNotifyUsagerOnly()) || in_array($suivi->getCategory(), SuiviCategory::injonctionBailleurCategories())) {
             return;
@@ -65,7 +59,6 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
             $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners(
                 suivi: $suivi,
                 sendEmail: (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut()),
-                mentionedPartners: $mentionedPartners,
             );
         }
     }

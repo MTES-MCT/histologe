@@ -31,7 +31,7 @@ export function initTinyMCE(selector) {
   const editor = document.querySelector(selector);
   if (editor !== null) {
     let toolbar = 'undo redo | styleselect | bold italic | numlist bullist';
-    if ('textarea.editor[data-mention-partners]' == selector) {
+    if (editor.dataset.mentionPartners) {
       toolbar += ' | partnersButton';
     }
     tinymce.init({
