@@ -11,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
-class BackTagControllerTest extends WebTestCase
+class TagControllerTest extends WebTestCase
 {
     use SessionHelper;
 
@@ -186,7 +186,7 @@ class BackTagControllerTest extends WebTestCase
             '13',
             false,
             Response::HTTP_BAD_REQUEST,
-            'Le jeton CSRF est invalide. Veuillez renvoyer le formulaire.',
+            'Veuillez rafra\u00eechir la page et r\u00e9essayer (erreur : jeton CSRF).',
         ];
     }
 
@@ -221,7 +221,7 @@ class BackTagControllerTest extends WebTestCase
             'Urgent Nouveau',
             false,
             Response::HTTP_BAD_REQUEST,
-            'Le jeton CSRF est invalide. Veuillez renvoyer le formulaire.',
+            'Veuillez rafra\u00eechir la page et r\u00e9essayer (erreur : jeton CSRF).',
         ];
     }
 }

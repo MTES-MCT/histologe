@@ -604,7 +604,7 @@ class PartnerController extends AbstractController
         /** @var int|string $userId */
         $userId = $request->request->get('user_id');
         if (!$this->isCsrfTokenValid('partner_user_delete', (string) $request->request->get('_token'))) {
-            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
+            $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF); // TODO à virer ?
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
