@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Tag;
-use App\Service\MessageHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -39,7 +38,6 @@ class EditTagType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Tag::class,
             'csrf_token_id' => 'edit_tag',
-            'csrf_message' => MessageHelper::ERROR_MESSAGE_CSRF,
         ]);
     }
 }

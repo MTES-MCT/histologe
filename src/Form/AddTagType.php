@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\Tag;
 use App\Form\Type\TerritoryChoiceType;
-use App\Service\MessageHelper;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -46,8 +45,6 @@ class AddTagType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Tag::class,
             'csrf_token_id' => 'add_tag',
-
-            'csrf_message' => MessageHelper::ERROR_MESSAGE_CSRF,
         ]);
     }
 
