@@ -37,10 +37,10 @@ readonly class SuiviMentionExtractor
             }
             $affectation = $suivi->getSignalement()->getAffectationForPartner($partner);
             if ($affectation instanceof Affectation && AffectationStatus::ACCEPTED === $affectation->getStatut()) {
-                $mentionedPartners[] = $partner;
+                $mentionedPartners[$partner->getId()] = $partner;
             }
         }
 
-        return $mentionedPartners;
+        return array_values($mentionedPartners);
     }
 }
