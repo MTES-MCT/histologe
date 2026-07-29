@@ -310,6 +310,9 @@ legend.required::after, label.required::after {
 .text-required {
     color: var(--red-marianne-425-625);
 }
+.text-mentioned {
+    color: var(--text-action-high-purple-glycine);
+}
 .fr-fieldset__content .fr-checkbox-group input[type="checkbox"] + label.required::after,
 .fr-fieldset__content .fr-radio-group:not(.fr-radio-rich) input[type="radio"] + label.required::after {
     position: absolute;

@@ -67,7 +67,7 @@ export function initTinyMCE(selector) {
 
         const buildMentionHtml = (partner) => {
           const span = document.createElement('span');
-          span.className = 'mention';
+          span.className = 'text-mentioned';
           span.setAttribute('contenteditable', 'false');
           span.dataset.partnerId = partner.id;
           span.textContent = '@' + partner.nom;
