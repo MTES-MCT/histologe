@@ -12,22 +12,22 @@ class ArreteImportRow
     public const int FIRST_LINE = 2;
     public const string DATE_FORMAT = 'd/m/Y';
 
-    #[Assert\NotBlank]
-    #[Assert\LessThanOrEqual('today')]
+    #[Assert\NotBlank(message: 'La date d\'arrêté est obligatoire.')]
+    #[Assert\LessThanOrEqual('today', message: 'La date d\'arrêté ne peut pas être supérieure à la date du jour.')]
     #[Context([
         DateTimeNormalizer::FORMAT_KEY => self::DATE_FORMAT,
     ])]
     private ?\DateTimeImmutable $dateArrete = null;
 
-    #[Assert\NotBlank]
-    #[Assert\Choice(callback: [ArreteType::class, 'getLabelList'])]
+    #[Assert\NotBlank(message: 'La classification de l\'arrêté est obligatoire.')]
+    #[Assert\Choice(callback: [ArreteType::class, 'getLabelList'], message: 'La classification de l\'arrêté est invalide.')]
     private ?string $classificationArrete = null;
 
     #[Assert\GreaterThan(
         propertyPath: 'dateArrete',
         message: 'La date de mainlevée doit être supérieure à la date d\'arrêté.'
     )]
-    #[Assert\LessThanOrEqual('today')]
+    #[Assert\LessThanOrEqual('today', message: 'La date de mainlevée ne peut pas être supérieure à la date du jour.')]
     #[Context([
         DateTimeNormalizer::FORMAT_KEY => self::DATE_FORMAT,
     ])]
@@ -35,18 +35,18 @@ class ArreteImportRow
 
     private ?string $numeroVoie = null;
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Le nom de la voie est obligatoire.')]
     private ?string $nomVoie = null;
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'Le code postal est obligatoire.')]
     private ?string $codePostal = null;
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'La commune est obligatoire.')]
     private ?string $commune = null;
 
     private ?string $denominationSyndic = null;
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(message: 'L\'identifiant parcellaire est obligatoire.')]
     private ?string $identifiantParcellaire = null;
 
     private ?bool $addressToValidate = false;
