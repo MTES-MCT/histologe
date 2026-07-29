@@ -8,6 +8,7 @@ use App\Entity\Signalement;
 use App\Entity\Tag;
 use App\Repository\AffectationRepository;
 use App\Repository\SignalementRepository;
+use App\Repository\SuiviRepository;
 use App\Repository\TagRepository;
 use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
@@ -105,7 +106,7 @@ class SignalementControllerTest extends WebTestCase
             'admin-01@signal-logement.fr',
             '00000000-0000-0000-2022-000000000001',
             '#test-bouton-cloturer',
-            'Fermer le dossier #TODO #6044',
+            'Fermer le dossier',
         ];
         yield 'SA - Fermé' => [
             'admin-01@signal-logement.fr',
@@ -261,9 +262,6 @@ class SignalementControllerTest extends WebTestCase
 
     public function testAdminSubmitClotureSignalementWithEmailSentToPartners(): void
     {
-        $this->markTestSkipped('TODO #6044');
-
-        // @phpstan-ignore-next-line deadCode.unreachable
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -286,12 +284,13 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('GET', $route);
         $client->submitForm(
-            'Clôturer pour tous les partenaires',
+            'Fermer le dossier',
             [
-                'cloture[motifCloture]' => 'INSALUBRITE',
-                'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                'cloture[isVisibleForUsager]' => '0',
-                'cloture[type]' => 'all',
+                'close_signalement[motifCloture]' => 'RELOGEMENT_OCCUPANT',
+                'close_signalement[travauxMiseEnConformite]' => 'NON',
+                'close_signalement[comCloture]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'close_signalement[procedures][0]' => true, // NON_DECENCE
+                'close_signalement[procedures][2]' => true, // INSALUBRITE
             ]
         );
 
@@ -304,6 +303,20 @@ class SignalementControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-8']);
         $this->assertEquals(SignalementStatus::CLOSED, $signalement->getStatut());
+        $this->assertNotNull($signalement->getClosedAt());
+        $this->assertEquals('RELOGEMENT_OCCUPANT', $signalement->getMotifCloture()->value);
+        $this->assertEquals('NON', $signalement->getTravauxMiseEnConformite()->value);
+        $this->assertEquals('Lorem ipsum dolor sit amet, consectetur adipiscing elit', $signalement->getComCloture());
+        $this->assertCount(2, $signalement->getSignalementProcedures());
+
+        $suiviRepository = static::getContainer()->get(SuiviRepository::class);
+        $suivi = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => 'SIGNALEMENT_IS_CLOSED']);
+        $this->assertNotNull($suivi);
+        $this->assertFalse($suivi->getIsVisibleForUsager());
+        $this->assertFalse($suivi->getIsVisibleForBailleur());
+        $this->assertStringContainsString('Le signalement a été clôturé pour tous les partenaires avec le motif suivant :<br /><strong>Relogement occupant</strong><br />', $suivi->getDescription());
+        $this->assertStringContainsString('<strong>Procédures engagées : </strong>Non décence / Insalubrité<br />', $suivi->getDescription());
+        $this->assertStringContainsString('<strong>Desc. : </strong>Lorem ipsum dolor sit amet, consectetur adipiscing elit', $suivi->getDescription());
 
         $client->enableProfiler();
         $this->assertEmailCount(1);
@@ -311,9 +324,6 @@ class SignalementControllerTest extends WebTestCase
 
     public function testAdminTerritorySubmitClotureSignalementWithEmailSentToPartnersAndUsagers(): void
     {
-        $this->markTestSkipped('TODO #6044');
-
-        // @phpstan-ignore-next-line deadCode.unreachable
         self::ensureKernelShutdown();
         $client = static::createClient();
 
@@ -336,12 +346,13 @@ class SignalementControllerTest extends WebTestCase
 
         $client->request('GET', $route);
         $client->submitForm(
-            'Clôturer pour tous les partenaires',
+            'Fermer le dossier',
             [
-                'cloture[motifCloture]' => 'INSALUBRITE',
-                'cloture[description]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                'cloture[isVisibleForUsager]' => '1',
-                'cloture[type]' => 'all',
+                'close_signalement[motifCloture]' => 'RELOGEMENT_OCCUPANT',
+                'close_signalement[travauxMiseEnConformite]' => 'OUI',
+                'close_signalement[comCloture]' => 'un deux trois soleil',
+                'close_signalement[isVisibleForUsager]' => '1',
+                'close_signalement[procedures]' => [],
             ]
         );
 
@@ -354,6 +365,20 @@ class SignalementControllerTest extends WebTestCase
         /** @var Signalement $signalement */
         $signalement = $signalementRepository->findOneBy(['reference' => '2022-1']);
         $this->assertEquals(SignalementStatus::CLOSED, $signalement->getStatut());
+        $this->assertNotNull($signalement->getClosedAt());
+        $this->assertEquals('RELOGEMENT_OCCUPANT', $signalement->getMotifCloture()->value);
+        $this->assertEquals('OUI', $signalement->getTravauxMiseEnConformite()->value);
+        $this->assertEquals('un deux trois soleil', $signalement->getComCloture());
+        $this->assertCount(0, $signalement->getSignalementProcedures());
+
+        $suiviRepository = static::getContainer()->get(SuiviRepository::class);
+        $suivi = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => 'SIGNALEMENT_IS_CLOSED']);
+        $this->assertNotNull($suivi);
+        $this->assertTrue($suivi->getIsVisibleForUsager());
+        $this->assertFalse($suivi->getIsVisibleForBailleur());
+        $this->assertStringContainsString('Le signalement a été clôturé pour tous les partenaires avec le motif suivant :<br /><strong>Relogement occupant</strong><br />', $suivi->getDescription());
+        $this->assertStringNotContainsString('Procédures engagées', $suivi->getDescription());
+        $this->assertStringContainsString('<strong>Desc. : </strong>un deux trois soleil', $suivi->getDescription());
 
         $client->enableProfiler();
         $this->assertEmailCount(1);
@@ -436,7 +461,7 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Fermer pour mon partenaire',
             [
-                'close_affectation[motifCloture]' => 'GESTION_DU_DOSSIER_EXTERNE',
+                'close_affectation[motifCloture]' => 'DOUBLON',
                 'close_affectation[precisionsCloture]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
             ]
         );
@@ -481,7 +506,7 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Fermer pour mon partenaire',
             [
-                'close_affectation[motifCloture]' => 'GESTION_DU_DOSSIER_EXTERNE',
+                'close_affectation[motifCloture]' => 'DOUBLON',
                 'close_affectation[precisionsCloture]' => 'bla',
             ]
         );
