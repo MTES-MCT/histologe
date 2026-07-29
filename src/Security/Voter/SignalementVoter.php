@@ -41,6 +41,7 @@ class SignalementVoter extends Voter
     public const string SIGN_AFFECTATION_TOGGLE = 'SIGN_AFFECTATION_TOGGLE';
     public const string SIGN_AFFECTATION_SEE = 'SIGN_AFFECTATION_SEE';
     public const string SIGN_SWITCH_LOGEMENT_VACANT = 'SIGN_SWITCH_LOGEMENT_VACANT';
+    public const string SIGN_INJONCTION_CLOSE = 'SIGN_INJONCTION_CLOSE';
 
     public function __construct(
         private readonly Security $security,
@@ -73,6 +74,7 @@ class SignalementVoter extends Voter
                 self::SIGN_AFFECTATION_TOGGLE,
                 self::SIGN_AFFECTATION_SEE,
                 self::SIGN_SWITCH_LOGEMENT_VACANT,
+                self::SIGN_INJONCTION_CLOSE,
             ])
             && ($subject instanceof Signalement);
     }
@@ -119,6 +121,7 @@ class SignalementVoter extends Voter
             self::SIGN_AFFECTATION_TOGGLE => $this->canToggleAffectation($subject, $user),
             self::SIGN_AFFECTATION_SEE => $this->canSeeAffectation($subject, $user),
             self::SIGN_SWITCH_LOGEMENT_VACANT => $this->canSwitchLogementVacant($subject, $user),
+            self::SIGN_INJONCTION_CLOSE => $this->canCloseInjonction($subject, $user),
             default => false,
         };
     }
@@ -393,5 +396,14 @@ class SignalementVoter extends Voter
         }
 
         return false;
+    }
+
+    private function canCloseInjonction(Signalement $signalement, User $user): bool
+    {
+        if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
+            return false;
+        }
+
+        return $this->security->isGranted('ROLE_ADMIN');
     }
 }

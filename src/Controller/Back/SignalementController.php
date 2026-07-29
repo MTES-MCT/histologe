@@ -20,6 +20,7 @@ use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
 use App\Factory\SignalementSearchQueryFactory;
 use App\Form\AddSuiviType;
+use App\Form\AdminCancelInjonctionProcedureType;
 use App\Form\AgentSelectionType;
 use App\Form\CloseAffectationType;
 use App\Form\ClotureType;
@@ -283,6 +284,12 @@ class SignalementController extends AbstractController
             $syncStatuses = $jobEventQuery->findSyncStatusesForSignalement($signalement);
         }
 
+        $adminCancelInjonctionProcedureForm = null;
+        if ($this->isGranted(SignalementVoter::SIGN_INJONCTION_CLOSE, $signalement)) {
+            $adminCancelInjonctionProcedureFormRoute = $this->generateUrl('back_injonction_signalement_admin_cancel_procedure', ['uuid' => $signalement->getUuid()]);
+            $adminCancelInjonctionProcedureForm = $this->createForm(AdminCancelInjonctionProcedureType::class, options: ['action' => $adminCancelInjonctionProcedureFormRoute]);
+        }
+
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',
             'situations' => $infoDesordres['criticitesArranged'],
@@ -324,6 +331,7 @@ class SignalementController extends AbstractController
             'isUniqueRtInCurrentPartner' => $isUniqueRtInCurrentPartner,
             'personalNote' => $personalNote,
             'syncStatuses' => $syncStatuses,
+            'adminCancelInjonctionProcedureForm' => $adminCancelInjonctionProcedureForm,
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);

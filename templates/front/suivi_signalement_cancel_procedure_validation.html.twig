@@ -26,7 +26,8 @@
 					</div>
 					
 					{{ form_widget(form.reason, {display_mode: 'block-borders'}) }}
-					
+					{{ form_errors(form.reason) }}
+
 					{{ form_row(form.details,{}) }}
 				</div>	
 

@@ -8,6 +8,7 @@ class SuiviDescriptionHelper
 {
     public const string DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été clôturé pour %s avec le motif suivant :';
     public const string DESCRIPTION_TRAVAUX_MISE_EN_CONFORMITE = 'Travaux de mise en conformité réalisés ? ';
+    public const string DESCRIPTION_MOTIF_CLOTURE_INJONCTION_ADMIN = 'Un administrateur a clôturé le dossier en démarche accélérée depuis le back-office pour le motif suivant :<br>%s<br>Détails du motif d\'arrêt de procédure : %s';
 
     private const SPECIFIC_DESCRIPTIONS = [
         SuiviCategory::INJONCTION_BAILLEUR_DEMANDE_CLOTURE_PAR_BAILLEUR->value => [

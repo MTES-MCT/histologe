@@ -87,6 +87,17 @@
                             </li>
                     {% endif %}
                 {% endif %}
+                {% if is_granted('SIGN_INJONCTION_CLOSE', signalement) %}
+                    <li>
+                        <button
+                            class="fr-nav__link fr-btn--icon-left fr-icon-close-line" 
+                            aria-controls="close-demarche-acceleree-modal" 
+                            data-fr-opened="false" 
+                            title="Clôturer la démarche accélérée">
+                            Clôturer la démarche accélérée
+                        </button>
+                    </li>
+                {% endif %}
                 {% if is_granted('SIGN_VIEW', signalement) %}
                     <li>
                         <a {% if s3_enable %}href="{{ path('back_signalement_gen_pdf',{uuid:signalement.uuid}) }}"{% endif %}
