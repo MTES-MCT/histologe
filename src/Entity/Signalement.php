@@ -19,6 +19,7 @@ use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\TravauxMiseEnConformite;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
@@ -416,7 +417,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private Collection $affectations;
 
     #[ORM\Column(type: 'string', enumType: MotifCloture::class, nullable: true, length: 50)]
+    #[Assert\NotBlank(groups: ['close_signalement'], message: 'Veuillez préciser le motif de clôture.')]
     private ?MotifCloture $motifCloture = null;
+
+    #[ORM\Column(nullable: true, enumType: TravauxMiseEnConformite::class)]
+    private ?TravauxMiseEnConformite $travauxMiseEnConformite = null;
 
     #[ORM\Column(type: 'string', enumType: MotifClotureUsager::class, nullable: true, length: 50)]
     private ?MotifClotureUsager $motifClotureUsager = null;
@@ -514,6 +519,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?bool $hasSeenDesordres = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\NotBlank(groups: ['close_signalement'], message: 'Veuillez commenter la clôture du signalement.')]
+    #[Assert\Length(min: 16, groups: ['close_signalement'], minMessage: 'La précision doit contenir au moins 10 caractères.')] // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
     private ?string $comCloture = null;
 
     #[ORM\OneToOne(mappedBy: 'signalement', targetEntity: SignalementUsager::class)]
@@ -567,6 +574,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\ManyToMany(targetEntity: PersonalTag::class, mappedBy: 'signalements')]
     private Collection $personalTags;
 
+    /**
+     * @var Collection<int, SignalementProcedure>
+     */
+    #[ORM\OneToMany(targetEntity: SignalementProcedure::class, mappedBy: 'signalement', orphanRemoval: true)]
+    private Collection $signalementProcedures;
+
     public function __construct()
     {
         $this->criticites = new ArrayCollection();
@@ -589,6 +602,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         $this->loginBailleur = BailleurLoginCodeGenerator::generate();
         $this->tiersInvitations = new ArrayCollection();
         $this->personalTags = new ArrayCollection();
+        $this->signalementProcedures = new ArrayCollection();
     }
 
     #[Assert\Callback]
@@ -605,6 +619,16 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
             $context->buildViolation('les adresses e-mails du déclarant et de l\'occupant sont identiques (laisser l\'adresse vide si l\'occupant n\'en dispose pas).')
                 ->atPath('mailDeclarant')
                 ->atPath('mailOccupant')
+                ->addViolation();
+        }
+    }
+
+    #[Assert\Callback(groups: ['close_signalement'])]
+    public function validateCloseSignalement(ExecutionContextInterface $context): void
+    {
+        if (!$this->travauxMiseEnConformite && in_array($this->motifCloture, MotifCloture::getListNeedTravauxPrecisions(), true)) {
+            $context->buildViolation('Veuillez préciser si les travaux de mise en conformité du logement ont été réalisés.')
+                ->atPath('travauxMiseEnConformite')
                 ->addViolation();
         }
     }
@@ -2012,6 +2036,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    public function getTravauxMiseEnConformite(): ?TravauxMiseEnConformite
+    {
+        return $this->travauxMiseEnConformite;
+    }
+
+    public function setTravauxMiseEnConformite(?TravauxMiseEnConformite $travauxMiseEnConformite): static
+    {
+        $this->travauxMiseEnConformite = $travauxMiseEnConformite;
+
+        return $this;
+    }
+
     public function getMotifClotureUsager(): ?MotifClotureUsager
     {
         return $this->motifClotureUsager;
@@ -3032,6 +3068,31 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         if ($this->personalTags->removeElement($personalTag)) {
             $personalTag->removeSignalement($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SignalementProcedure>
+     */
+    public function getSignalementProcedures(): Collection
+    {
+        return $this->signalementProcedures;
+    }
+
+    public function addSignalementProcedure(SignalementProcedure $signalementProcedure): static
+    {
+        if (!$this->signalementProcedures->contains($signalementProcedure)) {
+            $this->signalementProcedures->add($signalementProcedure);
+            $signalementProcedure->setSignalement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSignalementProcedure(SignalementProcedure $signalementProcedure): static
+    {
+        $this->signalementProcedures->removeElement($signalementProcedure);
 
         return $this;
     }

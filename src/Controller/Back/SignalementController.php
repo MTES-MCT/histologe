@@ -22,6 +22,7 @@ use App\Factory\SignalementSearchQueryFactory;
 use App\Form\AddSuiviType;
 use App\Form\AgentSelectionType;
 use App\Form\CloseAffectationType;
+use App\Form\CloseSignalementType;
 use App\Form\ClotureType;
 use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
@@ -163,9 +164,10 @@ class SignalementController extends AbstractController
 
         $clotureForm = null;
         $closeAffectationForm = null;
+        $closeSignalementForm = null;
         if ($this->featureClotureV2) {
             if ($this->isGranted(SignalementVoter::SIGN_CLOSE, $signalement)) {
-                // TODO #6044
+                $closeSignalementForm = $this->createForm(CloseSignalementType::class, $signalement, ['action' => $this->generateUrl('back_signalement_close', ['uuid' => $signalement->getUuid()])]);
             }
             if ($affectation && $this->isGranted(AffectationVoter::AFFECTATION_CLOSE, $affectation)) {
                 $closeAffectationForm = $this->createForm(CloseAffectationType::class, $affectation, ['action' => $this->generateUrl('back_affectation_close', ['uuid' => $signalement->getUuid()])]);
@@ -295,6 +297,7 @@ class SignalementController extends AbstractController
             'partner' => $partner,
             'partners' => $partners,
             'clotureForm' => $clotureForm,
+            'closeSignalementForm' => $closeSignalementForm,
             'closeAffectationForm' => $closeAffectationForm,
             'addSuiviForm' => $addSuiviForm,
             'acceptSignalementForm' => $acceptSignalementForm,

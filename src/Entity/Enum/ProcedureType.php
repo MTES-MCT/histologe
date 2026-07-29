@@ -32,4 +32,17 @@ enum ProcedureType: string
             'AUTRE' => 'Autre',
         ];
     }
+
+    /** @return array<ProcedureType> */
+    public static function getListForClotureSignalement(): array
+    {
+        return [
+            self::NON_DECENCE,
+            self::RSD,
+            self::INSALUBRITE,
+            self::MISE_EN_SECURITE_PERIL,
+            self::SALETE,
+            self::AUTRE,
+        ];
+    }
 }

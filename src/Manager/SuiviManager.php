@@ -288,6 +288,17 @@ class SuiviManager
         $description .= '<br>';
         $description .= $motifCloture;
         $description .= '<br>';
+        if (isset($params['procedures']) && is_iterable($params['procedures'])) {
+            $procedureLabels = [];
+            foreach ($params['procedures'] as $procedure) {
+                $procedureLabels[] = $procedure->getProcedureType()->label();
+            }
+            if ([] !== $procedureLabels) {
+                $description .= '<strong>Procédures engagées : </strong>';
+                $description .= implode(' / ', $procedureLabels);
+                $description .= '<br>';
+            }
+        }
         $description .= '<strong>Desc. : </strong>'.$motifSuivi;
 
         return $description;
