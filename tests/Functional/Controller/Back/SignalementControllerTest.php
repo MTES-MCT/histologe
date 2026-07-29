@@ -603,8 +603,8 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Fermer le signalement',
             [
-                'admin_cancel_procedure[reason]' => 'ACCORD_PROPRIETAIRE',
-                'admin_cancel_procedure[details]' => 'Le propriétaire et l\'occupant se sont mis d\'accord à l\'amiable.',
+                'admin_cancel_injonction_procedure[reason]' => 'ACCORD_PROPRIETAIRE',
+                'admin_cancel_injonction_procedure[details]' => 'Le propriétaire et l\'occupant se sont mis d\'accord à l\'amiable.',
             ]
         );
 
@@ -654,8 +654,8 @@ class SignalementControllerTest extends WebTestCase
         $client->submitForm(
             'Fermer le signalement',
             [
-                'admin_cancel_procedure[reason]' => 'ACCORD_PROPRIETAIRE',
-                'admin_cancel_procedure[details]' => 'trop',
+                'admin_cancel_injonction_procedure[reason]' => 'ACCORD_PROPRIETAIRE',
+                'admin_cancel_injonction_procedure[details]' => 'trop',
             ]
         );
 
