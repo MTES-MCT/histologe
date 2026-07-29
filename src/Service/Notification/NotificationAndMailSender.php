@@ -151,8 +151,8 @@ class NotificationAndMailSender
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $mentionedPartners = $this->suiviMentionExtractor->extract($suivi);
+        $userList = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
         if (empty($mentionedPartners)) {
-            $userList = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
             $adminList = $this->userRepository->findActiveAdmins();
             $partnerList = $this->getPartnersWithEmailNotifiable(isFilteredAffectationStatus: true);
             $recipients = new ArrayCollection(array_merge($userList, $adminList, $partnerList));
@@ -161,9 +161,8 @@ class NotificationAndMailSender
         } else {
             $recipients = new ArrayCollection();
             foreach ($mentionedPartners as $partner) {
-                $partnerUsers = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
-                foreach ($partnerUsers as $user) {
-                    if ($user instanceof User && $user->hasPartner($partner) && UserStatus::ACTIVE === $user->getStatut()) {
+                foreach ($userList as $user) {
+                    if ($user instanceof User && $user->hasPartner($partner)) {
                         $recipients->add($user);
                     }
                 }

@@ -56,7 +56,7 @@ export function initTinyMCE(selector) {
         // Pour supprimer les mentions pré-existantes si le suivi est visible pour le bailleur ou l'usager
         const removeMentionsIfBlocked = () => {
           if (!isMentionBlocked()) return;
-          ed.dom.select('span.mention').forEach((mentionNode) => ed.dom.remove(mentionNode));
+          ed.dom.select('span.text-mentioned').forEach((mentionNode) => ed.dom.remove(mentionNode));
         };
         usagerCheckbox?.addEventListener('change', removeMentionsIfBlocked);
         bailleurCheckbox?.addEventListener('change', removeMentionsIfBlocked);
@@ -84,9 +84,9 @@ export function initTinyMCE(selector) {
             }));
             callback(items);
           },
-          // pouvoir désactiver le menu si le suivi est visible bailleur ou usager
+          // désactivé si le suivi est visible bailleur/usager, ou s'il n'y a aucun partenaire mentionnable
           onSetup: (api) => {
-            const update = () => api.setEnabled(!isMentionBlocked());
+            const update = () => api.setEnabled(!isMentionBlocked() && partners.length > 0);
             update();
             usagerCheckbox?.addEventListener('change', update);
             bailleurCheckbox?.addEventListener('change', update);
