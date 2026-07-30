@@ -3,12 +3,13 @@
 namespace App\Controller\Back;
 
 use App\Entity\Enum\MotifClotureUsager;
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Form\AdminCancelInjonctionProcedureType;
 use App\Form\SearchSignalementInjonctionType;
+use App\Manager\AffectationManager;
+use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Security\Voter\InjonctionBailleurVoter;
@@ -95,6 +96,8 @@ class SignalementInjonctionController extends AbstractController
         Request $request,
         SuiviManager $suiviManager,
         EntityManagerInterface $entityManager,
+        SignalementManager $signalementManager,
+        AffectationManager $affectationManager,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_INJONCTION_CLOSE, $signalement);
 
@@ -116,8 +119,19 @@ class SignalementInjonctionController extends AbstractController
         $motif = $form->get('reason')->getData();
         $details = HtmlCleaner::cleanFrontEndEntry($form->get('details')->getData());
 
-        $signalement->setMotifClotureUsager($motif);
-        $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
+        $signalementManager->closeInjonction(
+            signalement: $signalement,
+            closedBy: $user,
+            motifClotureUsager: $motif,
+            motifCloture: $motif->mapMotifCloture(),
+            description: $details,
+        );
+        $affectationManager->closeBySignalement(
+            signalement: $signalement,
+            motif: $motif->mapMotifCloture(),
+            user: $user,
+            partner: null
+        );
 
         $description = \sprintf(SuiviDescriptionHelper::DESCRIPTION_MOTIF_CLOTURE_INJONCTION_ADMIN, $motif->labelForAdmin(), $details);
         $suiviManager->createSuivi(

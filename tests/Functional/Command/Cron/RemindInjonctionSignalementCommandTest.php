@@ -2,11 +2,13 @@
 
 namespace App\Tests\Functional\Command\Cron;
 
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -14,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Clock\ClockInterface;
 use Symfony\Component\Clock\MockClock;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Mime\Email;
 
 class RemindInjonctionSignalementCommandTest extends KernelTestCase
@@ -142,6 +145,18 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
         $this->assertSame(SignalementStatus::INJONCTION_CLOSED, $signalement->getStatut());
         $this->assertSame(MotifCloture::ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE, $signalement->getMotifCloture());
+        $this->assertInstanceOf(\DateTimeInterface::class, $signalement->getClosedAt());
+        $this->assertStringContainsString('Sans suivi des parties', (string) $signalement->getComCloture());
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        $adminUser = $userRepository->findOneBy(['email' => $container->get(ParameterBagInterface::class)->get('user_system_email')]);
+        $this->assertEquals($adminUser, $signalement->getClosedBy());
+
+        // L'affectation en cours a également été clôturée avec le même motif
+        $affectation = $signalement->getAffectations()->first();
+        $this->assertNotFalse($affectation);
+        $this->assertSame(AffectationStatus::CLOSED, $affectation->getStatut());
+        $this->assertSame(MotifCloture::ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE, $affectation->getMotifCloture());
 
         // Un suivi de clôture visible du bailleur et de l'usager a été créé
         $suivisCloture = $signalement->getSuivis()->filter(
@@ -234,6 +249,84 @@ class RemindInjonctionSignalementCommandTest extends KernelTestCase
         $entityManager->clear();
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
         $this->assertSame(SignalementStatus::INJONCTION_CLOSED, $signalement->getStatut());
+    }
+
+    public function testSignalementClosedAfterUsagerClotureRelanceUnanswered(): void
+    {
+        $kernel = self::bootKernel();
+        $application = new Application($kernel);
+        $container = static::getContainer();
+
+        // Le MockClock doit être positionné avant tout flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
+        $now = new \DateTimeImmutable();
+        $mockClock = new MockClock($now->modify('+16 days'));
+        $container->set(ClockInterface::class, $mockClock);
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $container->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+        $mailProprio = $signalement->getMailProprio();
+        $mailOccupant = $signalement->getMailOccupant();
+
+        // Le bailleur a demandé la clôture, et la relance envoyée à l'usager (+16 jours) est restée sans réponse
+        $suivi = (new Suivi())
+            ->setSignalement($signalement)
+            ->setDescription('Relance de clôture envoyée à l\'usager')
+            ->setCategory(SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE)
+            ->setType(SuiviCategory::getSuiviTypeForSuiviCategory(SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE))
+            ->setCreatedAt($now);
+        $entityManager->persist($suivi);
+        $entityManager->flush();
+
+        $command = $application->find('app:remind-injonction-signalement');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([]);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString(sprintf('#%s closed', $signalement->getUuid()), $output);
+        $this->assertStringContainsString(
+            '1 rappels envoyés à l\'usager et au bailleur suite à une relance de clôture restée sans réponse depuis 15 jours.',
+            $output
+        );
+
+        // Le signalement est clôturé en base avec le bon motif
+        $entityManager->clear();
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+        $this->assertSame(SignalementStatus::INJONCTION_CLOSED, $signalement->getStatut());
+        $this->assertSame(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS, $signalement->getMotifCloture());
+        $this->assertInstanceOf(\DateTimeInterface::class, $signalement->getClosedAt());
+        $this->assertStringContainsString('dossier est clôturé et réputé résolu', (string) $signalement->getComCloture());
+        /** @var UserRepository $userRepository */
+        $userRepository = $container->get(UserRepository::class);
+        $adminUser = $userRepository->findOneBy(['email' => $container->get(ParameterBagInterface::class)->get('user_system_email')]);
+        $this->assertEquals($adminUser, $signalement->getClosedBy());
+
+        // L'affectation en cours a également été clôturée avec le même motif
+        $affectation = $signalement->getAffectations()->first();
+        $this->assertNotFalse($affectation);
+        $this->assertSame(AffectationStatus::CLOSED, $affectation->getStatut());
+        $this->assertSame(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS, $affectation->getMotifCloture());
+
+        // Un suivi de clôture visible du bailleur et de l'usager a été créé
+        $suivisCloture = $signalement->getSuivis()->filter(
+            static fn (Suivi $suivi) => SuiviCategory::SIGNALEMENT_IS_CLOSED === $suivi->getCategory()
+        );
+        $this->assertCount(1, $suivisCloture);
+        /** @var Suivi $suiviCloture */
+        $suiviCloture = $suivisCloture->first();
+        $this->assertTrue($suiviCloture->getIsVisibleForBailleur());
+        $this->assertTrue($suiviCloture->getIsVisibleForUsager());
+
+        // Le bailleur et l'usager sont notifiés par mail de la fin de la procédure
+        $closureMails = array_values(array_filter(
+            self::getMailerMessages(),
+            static fn ($mail) => $mail instanceof Email && str_contains($mail->getSubject() ?? '', 'Fin de la procédure concernant votre logement')
+        ));
+        $this->assertCount(2, $closureMails);
+        $this->assertEmailAddressContains($closureMails[0], 'to', $mailOccupant);
+        $this->assertEmailAddressContains($closureMails[1], 'to', $mailProprio);
     }
 
     public static function provideReminderSentData(): \Generator

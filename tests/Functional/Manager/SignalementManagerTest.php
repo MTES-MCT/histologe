@@ -8,6 +8,7 @@ use App\Dto\SignalementAffectationClose;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
@@ -184,6 +185,47 @@ class SignalementManagerTest extends WebTestCase
                 && str_contains($affectation->getMotifCloture()->label(), 'Travaux faits ou en cours'); // TODO ??
             });
 
+        $this->assertTrue($signalementHasAllAffectationsClosed);
+    }
+
+    public function testCloseInjonction(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000012']);
+        $this->assertEquals(SignalementStatus::INJONCTION_BAILLEUR, $signalement->getStatut());
+        $affectation = $signalement->getAffectations()->first() ?: null;
+        if (!$affectation) {
+            $this->fail('No affectation found for the signalement');
+        }
+
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $signalementClosed = $this->signalementManager->closeInjonction(
+            signalement: $signalement,
+            closedBy: $user,
+            description: 'Le problème est résolu, les travaux ont été réalisés.',
+            motifCloture: MotifCloture::TRAVAUX_FAITS_OU_EN_COURS,
+            motifClotureUsager: MotifClotureUsager::TRAVAUX_FAITS_OU_EN_COURS,
+        );
+        $this->affectationManager->closeBySignalement(
+            signalement: $signalementClosed,
+            motif: MotifCloture::TRAVAUX_FAITS_OU_EN_COURS,
+            user: $user,
+            partner: null,
+        );
+
+        $this->assertEquals(SignalementStatus::INJONCTION_CLOSED, $signalementClosed->getStatut());
+        $this->assertEquals(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS, $signalementClosed->getMotifCloture());
+        $this->assertEquals(MotifClotureUsager::TRAVAUX_FAITS_OU_EN_COURS, $signalementClosed->getMotifClotureUsager());
+        $this->assertEquals($user, $signalementClosed->getClosedBy());
+        $this->assertEquals('Le problème est résolu, les travaux ont été réalisés.', $signalementClosed->getComCloture());
+        $this->assertInstanceOf(\DateTimeInterface::class, $signalementClosed->getClosedAt());
+
+        $signalementHasAllAffectationsClosed = $signalementClosed->getAffectations()
+            ->forAll(static function (int $index, Affectation $affectation) {
+                return AffectationStatus::CLOSED === $affectation->getStatut()
+                    && MotifCloture::TRAVAUX_FAITS_OU_EN_COURS === $affectation->getMotifCloture();
+            });
         $this->assertTrue($signalementHasAllAffectationsClosed);
     }
 

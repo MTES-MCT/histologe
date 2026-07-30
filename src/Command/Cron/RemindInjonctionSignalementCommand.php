@@ -3,10 +3,13 @@
 namespace App\Command\Cron;
 
 use App\Entity\Enum\MotifCloture;
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\User;
+use App\Manager\AffectationManager;
+use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
+use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -28,9 +31,11 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
     description: 'Every month, remind bailleurs and usagers to give news about injonction signalements')]
 class RemindInjonctionSignalementCommand extends AbstractCronCommand
 {
-    public const string REMIND_USAGER_FOR_CLOTURE_SUIVI = 'Relance envoyée à l\'usager pour lui demander de confirmer la réalisation des travaux déclarée par le bailleur il y a %s.';
-    public const string CLOSE_INJONCTION_SUIVI = 'En l\'absence de réponse ou d\'opposition du déclarant dans le délai imparti, le dossier est clôturé et réputé résolu.';
-    public const string CLOSE_INJONCTION_WITHOUT_SUIVI_TRAVAUX = 'Sans suivi des parties, locataire et bailleur, nous procédons à la clôture du dossier';
+    private const string REMIND_USAGER_FOR_CLOTURE_SUIVI = 'Relance envoyée à l\'usager pour lui demander de confirmer la réalisation des travaux déclarée par le bailleur il y a %s.';
+    private const string CLOSE_INJONCTION_SUIVI = 'En l\'absence de réponse ou d\'opposition du déclarant dans le délai imparti, le dossier est clôturé et réputé résolu.';
+    private const string CLOSE_INJONCTION_WITHOUT_SUIVI_TRAVAUX = 'Sans suivi des parties, locataire et bailleur, nous procédons à la clôture du dossier';
+
+    private User $adminUser;
 
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
@@ -46,6 +51,9 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly EntityManagerInterface $entityManager,
+        private readonly SignalementManager $signalementManager,
+        private readonly AffectationManager $affectationManager,
+        private readonly UserRepository $userRepository,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -57,6 +65,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $this->adminUser = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
 
         $this->remindAnswerBailleur($io, $output);
         $this->closeSignalementsWithoutSuiviTravaux($io, $output);
@@ -254,8 +263,18 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
             );
 
             // On clôture le signalement
-            $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
-            $signalement->setMotifCloture(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS);
+            $this->signalementManager->closeInjonction(
+                signalement: $signalement,
+                closedBy: $this->adminUser,
+                motifCloture: MotifCloture::TRAVAUX_FAITS_OU_EN_COURS,
+                description: self::CLOSE_INJONCTION_SUIVI,
+            );
+            $this->affectationManager->closeBySignalement(
+                signalement: $signalement,
+                motif: MotifCloture::TRAVAUX_FAITS_OU_EN_COURS,
+                user: $this->adminUser,
+                partner: null,
+            );
 
             $output->writeln(sprintf('#%s closed', $signalement->getUuid()));
         }
@@ -303,8 +322,18 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
             );
 
             // On clôture le signalement
-            $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
-            $signalement->setMotifCloture(MotifCloture::ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE);
+            $this->signalementManager->closeInjonction(
+                signalement: $signalement,
+                closedBy: $this->adminUser,
+                motifCloture: MotifCloture::ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE,
+                description: self::CLOSE_INJONCTION_WITHOUT_SUIVI_TRAVAUX,
+            );
+            $this->affectationManager->closeBySignalement(
+                signalement: $signalement,
+                motif: MotifCloture::ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE,
+                user: $this->adminUser,
+                partner: null,
+            );
         }
 
         $feedbackMsg = '';

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\ProfileDeclarant;
@@ -19,12 +20,14 @@ use App\Manager\SuiviManager;
 use App\Repository\FileRepository;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\SuiviRepository;
+use App\Repository\UserRepository;
 use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bridge\Twig\Mime\NotificationEmail;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
@@ -195,6 +198,13 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(SignalementStatus::INJONCTION_CLOSED, $signalement->getStatut());
         $this->assertTrue($signalement->getIsUsagerAbandonProcedure());
         $this->assertEquals($signalement->getMotifClotureUsager(), MotifClotureUsager::TRAVAUX_FAITS_OU_EN_COURS);
+        $this->assertEquals(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS, $signalement->getMotifCloture());
+        $this->assertInstanceOf(\DateTimeInterface::class, $signalement->getClosedAt());
+        $this->assertStringContainsString('Le propriétaire a effectué les réparations nécessaires', (string) $signalement->getComCloture());
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $adminUser = $userRepository->findOneBy(['email' => static::getContainer()->get(ParameterBagInterface::class)->get('user_system_email')]);
+        $this->assertEquals($adminUser, $signalement->getClosedBy());
         /** @var Suivi $lastSuivi */
         $lastSuivi = $signalement->getSuivis()->last();
         $this->assertEquals($lastSuivi->getCategory(), SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER);
@@ -884,6 +894,24 @@ class SignalementControllerTest extends WebTestCase
             MotifCloture::TRAVAUX_FAITS_OU_EN_COURS,
             $signalement->getMotifCloture()
         );
+
+        $this->assertEquals(
+            MotifClotureUsager::TRAVAUX_FAITS_OU_EN_COURS,
+            $signalement->getMotifClotureUsager()
+        );
+
+        $this->assertInstanceOf(\DateTimeInterface::class, $signalement->getClosedAt());
+        $this->assertStringContainsString('confirme la réalisation des travaux', (string) $signalement->getComCloture());
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $adminUser = $userRepository->findOneBy(['email' => static::getContainer()->get(ParameterBagInterface::class)->get('user_system_email')]);
+        $this->assertEquals($adminUser, $signalement->getClosedBy());
+
+        // L'affectation en cours a également été clôturée avec le même motif
+        $affectation = $signalement->getAffectations()->first();
+        $this->assertNotFalse($affectation);
+        $this->assertEquals(AffectationStatus::CLOSED, $affectation->getStatut());
+        $this->assertEquals(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS, $affectation->getMotifCloture());
 
         /** @var Suivi $lastSuivi */
         $lastSuivi = $signalement->getSuivis()->last();

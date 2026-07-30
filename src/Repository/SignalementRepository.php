@@ -962,7 +962,7 @@ class SignalementRepository extends ServiceEntityRepository
                                         ->getDQL()
                                 )
                             ),
-                            'su2.createdAt > (SELECT MAX(subB.createdAt) FROM App\Entity\Suivi subB WHERE subB.signalement = s2 AND subB.category IN (:reponseBailleurCategories))'
+                            'su2.createdAt > (SELECT MAX(subB.createdAt) FROM '.Suivi::class.' subB WHERE subB.signalement = s2 AND subB.category IN (:reponseBailleurCategories))'
                         )
                     )
                     ->groupBy('s2.id')
@@ -992,7 +992,7 @@ class SignalementRepository extends ServiceEntityRepository
                                         ->getDQL()
                                 )
                             ),
-                            'su3.createdAt > (SELECT MAX(subU.createdAt) FROM App\Entity\Suivi subU WHERE subU.signalement = s3 AND subU.category IN (:reponseUsagerCategories))'
+                            'su3.createdAt > (SELECT MAX(subU.createdAt) FROM '.Suivi::class.' subU WHERE subU.signalement = s3 AND subU.category IN (:reponseUsagerCategories))'
                         )
                     )
                     ->groupBy('s3.id')

@@ -26,13 +26,16 @@ use App\Form\UsagerBasculeProcedureType;
 use App\Form\UsagerCancelProcedureType;
 use App\Form\UsagerCoordonneesTiersType;
 use App\Form\UsagerPoursuivreProcedureType;
+use App\Manager\AffectationManager;
 use App\Manager\SignalementDraftManager;
+use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Repository\CommuneRepository;
 use App\Repository\FileRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TiersInvitationRepository;
+use App\Repository\UserRepository;
 use App\Security\User\SignalementUser;
 use App\Security\Voter\SignalementFoVoter;
 use App\Serializer\SignalementDraftRequestSerializer;
@@ -59,6 +62,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -767,6 +771,10 @@ class SignalementController extends AbstractController
         SuiviManager $suiviManager,
         NotificationAndMailSender $notificationAndMailSender,
         EntityManagerInterface $entityManager,
+        SignalementManager $signalementManager,
+        AffectationManager $affectationManager,
+        UserRepository $userRepository,
+        ParameterBagInterface $parameterBag,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
         $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_VIEW, $signalement);
@@ -795,16 +803,31 @@ class SignalementController extends AbstractController
             $signalement->setIsUsagerAbandonProcedure(true);
             /** @var MotifClotureUsager $motif */
             $motif = $form->get('reason')->getData();
-            $signalement->setMotifClotureUsager($motif);
 
             if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
-                $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
                 $category = SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER;
                 $description = $user->getNomComplet().' a clôturé son dossier en démarche accélérée pour le motif suivant :
                     '.$motif->label().\PHP_EOL
                     .'Détails du motif d\'arrêt de procédure : '.$form->get('details')->getData();
                 $notificationAndMailSender->sendUsagerCloseInjonctionToBailleur($signalement, $motif->label());
+
+                // On clôture le signalement
+                $adminUser = $userRepository->findOneBy(['email' => $parameterBag->get('user_system_email')]);
+                $signalementManager->closeInjonction(
+                    signalement: $signalement,
+                    closedBy: $adminUser,
+                    motifCloture: $motif->mapMotifCloture(),
+                    motifClotureUsager: $motif,
+                    description: $description,
+                );
+                $affectationManager->closeBySignalement(
+                    signalement: $signalement,
+                    motif: $motif->mapMotifCloture(),
+                    user: $adminUser,
+                    partner: null,
+                );
             } else {
+                $signalement->setMotifClotureUsager($motif);
                 $category = SuiviCategory::DEMANDE_ABANDON_PROCEDURE;
                 $description = $user->getNomComplet().' souhaite fermer son dossier sur '
                     .$this->getParameter('platform_name')
@@ -970,6 +993,10 @@ class SignalementController extends AbstractController
         InjonctionBailleurService $injonctionBailleurService,
         EntityManagerInterface $entityManager,
         AutoAssigner $autoAssigner,
+        SignalementManager $signalementManager,
+        AffectationManager $affectationManager,
+        UserRepository $userRepository,
+        ParameterBagInterface $parameterBag,
         LoggerInterface $logger,
     ): Response {
         $signalement = $signalementRepository->findOneByCodeForPublic($code);
@@ -1032,8 +1059,21 @@ class SignalementController extends AbstractController
                 if ('non' === $reponse) {
                     $injonctionBailleurService->switchFromInjonctionToProcedure($signalement);
                 } else {
-                    $signalement->setStatut(SignalementStatus::INJONCTION_CLOSED);
-                    $signalement->setMotifCloture(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS);
+                    // On clôture le signalement
+                    $adminUser = $userRepository->findOneBy(['email' => $parameterBag->get('user_system_email')]);
+                    $signalementManager->closeInjonction(
+                        signalement: $signalement,
+                        closedBy: $adminUser,
+                        motifCloture: MotifCloture::TRAVAUX_FAITS_OU_EN_COURS,
+                        motifClotureUsager: MotifClotureUsager::TRAVAUX_FAITS_OU_EN_COURS,
+                        description: $description,
+                    );
+                    $affectationManager->closeBySignalement(
+                        signalement: $signalement,
+                        motif: MotifCloture::TRAVAUX_FAITS_OU_EN_COURS,
+                        user: $adminUser,
+                        partner: null,
+                    );
                 }
                 $entityManager->flush();
                 $entityManager->commit();
