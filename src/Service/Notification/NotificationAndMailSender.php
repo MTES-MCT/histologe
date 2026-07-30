@@ -156,8 +156,8 @@ class NotificationAndMailSender
             $adminList = $this->userRepository->findActiveAdmins();
             $partnerList = $this->getPartnersWithEmailNotifiable(isFilteredAffectationStatus: true);
             $recipients = new ArrayCollection(array_merge($userList, $adminList, $partnerList));
-            $notificationType = NotificationType::NOUVEAU_SUIVI;
             $description = null;
+            $notificationType = NotificationType::NOUVEAU_SUIVI;
         } else {
             $recipients = new ArrayCollection();
             foreach ($mentionedPartners as $partner) {
@@ -179,6 +179,15 @@ class NotificationAndMailSender
 
         $this->sendMail($recipients, $mailerType, $suivi);
         $this->createInAppNotifications(recipients: $recipients, type: $notificationType, suivi: $suivi, description: $description);
+
+        // on continue à notifier les RT et Admins même en cas de mention
+        if (!empty($mentionedPartners)) {
+            $description = null;
+            $notificationType = NotificationType::NOUVEAU_SUIVI;
+            $recipients = $this->getRecipientsAdmin($this->signalement->getTerritory());
+            $this->sendMail($recipients, $mailerType, $suivi);
+            $this->createInAppNotifications(recipients: $recipients, type: $notificationType, suivi: $suivi, description: $description);
+        }
     }
 
     public function sendDemandeAbandonProcedureToAdminsAndPartners(Suivi $suivi): void

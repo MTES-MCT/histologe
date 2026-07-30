@@ -233,11 +233,13 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->entityManager->flush();
 
         // user-13-01 est en mode récap : pas de mail immédiat, seulement une notification in-app en attente de récap
-        $this->assertEmailCount(0);
+        // mais un mail aux Admins/RT
+        $this->assertEmailCount(1);
 
         $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
-        $this->assertCount(1, $newNotifications);
+        $this->assertCount(6, $newNotifications);
         $this->assertSame(NotificationType::NOUVELLE_MENTION, $newNotifications[0]->getType());
+        $this->assertSame(NotificationType::NOUVEAU_SUIVI, $newNotifications[1]->getType());
         $this->assertSame($mentionedPartnerUser->getEmail(), $newNotifications[0]->getUser()->getEmail());
         $this->assertTrue($newNotifications[0]->isWaitMailingSummary());
         $this->assertStringContainsString($respTerritoire->getNomComplet(), (string) $newNotifications[0]->getDescription());
@@ -272,12 +274,14 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true);
         $this->entityManager->flush();
 
-        $this->assertEmailCount(1);
+        // mail aux utilisateurs mentionnés et mails aux admins/Rt
+        $this->assertEmailCount(2);
         $this->assertEmailAddressContains($this->getMailerMessage(), 'bcc', $mentionedPartnerUser->getEmail());
 
         $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
-        $this->assertCount(1, $newNotifications);
+        $this->assertCount(6, $newNotifications);
         $this->assertSame(NotificationType::NOUVELLE_MENTION, $newNotifications[0]->getType());
+        $this->assertSame(NotificationType::NOUVEAU_SUIVI, $newNotifications[1]->getType());
         $this->assertFalse($newNotifications[0]->isWaitMailingSummary());
     }
 
