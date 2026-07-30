@@ -103,9 +103,11 @@ async function handleUpload(elements) {
       return;
     }
 
-    if (payload.errors?.length && !payload.data?.length) {
+    if (payload.errors?.length) {
       showErrors(elements, payload.errors);
-      return;
+      if(!payload.data?.length) {
+        return ;
+      }
     }
 
     if (payload.data?.length) {

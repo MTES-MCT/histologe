@@ -36,6 +36,7 @@ class ArreteImportLoader
         $errors = [];
         $validRows = [];
         $invalidLineNumbers = [];
+        $detailedErrors = [];
         $countAddressToValidate = 0;
         $csvParser = new CsvParser()
             ->setFirstLine(ArreteImportRow::FIRST_LINE)
@@ -58,7 +59,11 @@ class ArreteImportLoader
 
             $violations = $this->validator->validate($arreteImportRow);
             if ($violations->count() > 0) {
-                $invalidLineNumbers[] = $index + ArreteImportRow::FIRST_LINE + 1;
+                $lineNumber = $index + ArreteImportRow::FIRST_LINE + 1;
+                $invalidLineNumbers[] = $lineNumber;
+                foreach ($violations as $violation) {
+                    $detailedErrors[] = sprintf('Ligne %d : %s', $lineNumber, $violation->getMessage());
+                }
                 continue;
             }
 
@@ -71,19 +76,20 @@ class ArreteImportLoader
             $validRows[] = $arreteImportRow;
         }
 
+        if ($countAddressToValidate > 0) {
+            $errors[] = sprintf('%d adresses à valider sur %d.', $countAddressToValidate, count($validRows));
+        }
+
         if (!empty($invalidLineNumbers)) {
             $lineLabel = count($invalidLineNumbers) > 1 ? 'lignes' : 'ligne';
             $errors[] = sprintf(
-                '%d %s présentent une erreur de format et ne pourront pas être importées : %s %s.',
+                '%d %s présentent une erreur de format et ne pourront pas être importées : %s %s. Détails ci-dessous.',
                 count($invalidLineNumbers),
                 $lineLabel,
                 $lineLabel,
                 implode('; ', $invalidLineNumbers),
             );
-        }
-
-        if ($countAddressToValidate > 0) {
-            $errors[] = sprintf('%d adresses à valider sur %d.', $countAddressToValidate, count($validRows));
+            $errors = array_merge($errors, $detailedErrors);
         }
 
         return [$errors, $validRows];

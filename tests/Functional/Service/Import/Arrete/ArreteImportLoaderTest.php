@@ -32,9 +32,12 @@ class ArreteImportLoaderTest extends WebTestCase
         $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
 
         [$errors, $validRows] = $arreteImportLoader->validate($filepath, $user);
-        $this->assertCount(1, $errors);
+        $this->assertCount(4, $errors);
         $this->assertStringContainsString('1 ligne présentent une erreur de format', $errors[0]);
         $this->assertStringContainsString('ligne 6', $errors[0]);
+        $this->assertEquals('Ligne 6 : Le nom de la voie est obligatoire.', $errors[1]);
+        $this->assertEquals('Ligne 6 : Le code postal est obligatoire.', $errors[2]);
+        $this->assertEquals('Ligne 6 : La commune est obligatoire.', $errors[3]);
 
         $this->assertCount(3, $validRows, 'Il devrait y avoir 3 lignes valides.');
 

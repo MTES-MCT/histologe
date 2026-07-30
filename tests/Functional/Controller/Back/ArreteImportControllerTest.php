@@ -108,8 +108,11 @@ class ArreteImportControllerTest extends WebTestCase
         $data = json_decode($content, true);
 
         $this->assertArrayHasKey('errors', $data);
-        $this->assertCount(1, $data['errors']);
+        $this->assertCount(4, $data['errors']);
         $this->assertStringContainsString('ligne 6', $data['errors'][0]);
+        $this->assertEquals('Ligne 6 : Le nom de la voie est obligatoire.', $data['errors'][1]);
+        $this->assertEquals('Ligne 6 : Le code postal est obligatoire.', $data['errors'][2]);
+        $this->assertEquals('Ligne 6 : La commune est obligatoire.', $data['errors'][3]);
         $this->assertArrayHasKey('data', $data);
         $this->assertCount(3, $data['data']);
     }
