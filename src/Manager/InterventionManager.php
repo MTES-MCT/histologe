@@ -23,6 +23,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -32,6 +33,7 @@ class InterventionManager
         private readonly InterventionRepository $interventionRepository,
         private readonly InterventionFactory $interventionFactory,
         private readonly PartnerManager $partnerManager,
+        #[Target('interventionPlanningStateMachine')]
         private readonly WorkflowInterface $interventionPlanningStateMachine,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         private readonly FileFactory $fileFactory,

@@ -4,7 +4,7 @@ namespace App\Dto\Api\Response;
 
 use App\Dto\Api\Model\Partner;
 use OpenApi\Attributes as OA;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[OA\Schema(
     schema: 'UserMeResponse',

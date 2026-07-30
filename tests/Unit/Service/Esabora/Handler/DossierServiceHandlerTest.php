@@ -9,6 +9,7 @@ use App\Service\Interconnection\Esabora\Handler\DossierServiceHandler;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class DossierServiceHandlerTest extends TestCase
@@ -40,9 +41,11 @@ class DossierServiceHandlerTest extends TestCase
         $handler->handle($this->getDossierMessageSISH());
     }
 
-    public function testGetPriority(): void
+    public function testPriority(): void
     {
-        $handler = new DossierServiceHandler($this->esaboraSISHService);
-        $this->assertSame(2, $handler::getPriority());
+        $attributes = (new \ReflectionClass(DossierServiceHandler::class))->getAttributes(AsTaggedItem::class);
+
+        $this->assertCount(1, $attributes);
+        $this->assertSame(2, $attributes[0]->newInstance()->priority);
     }
 }

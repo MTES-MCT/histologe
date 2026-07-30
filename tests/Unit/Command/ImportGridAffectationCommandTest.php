@@ -12,7 +12,6 @@ use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -51,8 +50,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
 
     public function testDisplaySuccessfullyMessageWithPartnersAndUserCreated(): void
     {
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
+        self::bootKernel();
 
         $this->fileStorage
             ->expects($this->once())
@@ -79,7 +77,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             ->method('send')
             ->willReturn(true);
 
-        $command = $application->add(new ImportGridAffectationCommand(
+        $command = new ImportGridAffectationCommand(
             $this->fileStorage,
             $this->parameterBag,
             $this->csvParser,
@@ -89,7 +87,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             $this->notificationMailerRegistryMock,
             $this->urlGeneratorMock,
             $this->entityManagerMock
-        ));
+        );
 
         $commandTester = new CommandTester($command);
 
@@ -105,8 +103,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
 
     public function testDisplayFailedMessage(): void
     {
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
+        self::bootKernel();
 
         $this->fileStorage
             ->expects($this->once())
@@ -124,7 +121,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             ->method('getMetaData')
             ->willReturn(['nb_partners' => 1, 'nb_users_created' => 1, 'nb_users_multi_territory' => 0, 'errors' => []]);
 
-        $command = $application->add(new ImportGridAffectationCommand(
+        $command = new ImportGridAffectationCommand(
             $this->fileStorage,
             $this->parameterBag,
             $this->csvParser,
@@ -134,7 +131,7 @@ class ImportGridAffectationCommandTest extends KernelTestCase
             $this->notificationMailerRegistryMock,
             $this->urlGeneratorMock,
             $this->entityManagerMock
-        ));
+        );
 
         $commandTester = new CommandTester($command);
 

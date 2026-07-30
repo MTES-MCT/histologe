@@ -4,13 +4,14 @@ namespace App\Service\Files;
 
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\File;
 
 class ImageVariantProvider
 {
     public function __construct(
-        private FilesystemOperator $fileStorage,
+        #[Target('file.storage')] private FilesystemOperator $fileStorage,
         private ParameterBagInterface $parameterBag,
         private TmpFileWriter $tmpFileWriter,
     ) {

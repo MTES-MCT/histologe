@@ -33,7 +33,7 @@ class SignalementFileAttacher
         $file = $this->fileFactory->createFromFileArray(file: $fileData, signalement: $signalement);
         $fileSize = $this->uploadHandlerService->getFileSize($file->getFilename());
 
-        $file->setSize(null !== $fileSize ? (string) $fileSize : null);
+        $file->setSize($fileSize);
         $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
 
         if (null !== $uploadedBy) {

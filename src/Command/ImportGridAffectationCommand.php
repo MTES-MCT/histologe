@@ -21,6 +21,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -36,7 +37,7 @@ class ImportGridAffectationCommand extends Command
     private const string PARAM_FILE_VERSION = 'file-version';
 
     public function __construct(
-        private readonly FilesystemOperator $fileStorage,
+        #[Target('file.storage')] private readonly FilesystemOperator $fileStorage,
         private readonly ParameterBagInterface $parameterBag,
         private readonly CsvParser $csvParser,
         private readonly TerritoryRepository $territoryRepository,

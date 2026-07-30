@@ -29,9 +29,12 @@ class ValidFilesValidator extends ConstraintValidator
             throw new UnexpectedValueException($value, 'array');
         }
 
-        $signalement = $this->signalementRepository->findOneBy([
-            'uuid' => $this->requestStack->getCurrentRequest()->get('signalement')]
-        );
+        $signalementUuid = $this->requestStack->getCurrentRequest()?->attributes->get('uuid');
+        if (!is_string($signalementUuid)) {
+            return;
+        }
+
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => $signalementUuid]);
 
         if (null === $signalement) {
             return;

@@ -151,7 +151,7 @@ class SignalementFileProcessor
                 isSuspicious: $fileItem['isSuspicious'] ?? null,
             );
             $fileSize = $this->uploadHandlerService->getFileSize($file->getFilename());
-            $file->setSize(null !== $fileSize ? (string) $fileSize : null);
+            $file->setSize($fileSize);
             $file->setIsVariantsGenerated($this->uploadHandlerService->hasVariants($file->getFilename()));
             $signalement->addFile($file);
             $intervention?->addFile($file);

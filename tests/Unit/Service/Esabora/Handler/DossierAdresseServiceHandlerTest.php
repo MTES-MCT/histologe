@@ -8,6 +8,7 @@ use App\Service\Interconnection\Esabora\Handler\DossierAdresseServiceHandler;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class DossierAdresseServiceHandlerTest extends TestCase
@@ -40,12 +41,11 @@ class DossierAdresseServiceHandlerTest extends TestCase
         $handler->handle($dossierMessageSISH);
     }
 
-    public function testGetPriority(): void
+    public function testPriority(): void
     {
-        $handler = new DossierAdresseServiceHandler(
-            $this->esaboraSISHService,
-        );
+        $attributes = (new \ReflectionClass(DossierAdresseServiceHandler::class))->getAttributes(AsTaggedItem::class);
 
-        $this->assertSame(3, $handler::getPriority());
+        $this->assertCount(1, $attributes);
+        $this->assertSame(3, $attributes[0]->newInstance()->priority);
     }
 }

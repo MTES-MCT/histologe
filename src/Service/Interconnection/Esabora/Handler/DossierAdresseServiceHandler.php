@@ -5,7 +5,9 @@ namespace App\Service\Interconnection\Esabora\Handler;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
+#[AsTaggedItem(priority: 3)]
 class DossierAdresseServiceHandler extends AbstractDossierSISHHandler
 {
     protected ?string $action = AbstractEsaboraService::ACTION_PUSH_DOSSIER_ADRESSE;
@@ -30,10 +32,5 @@ class DossierAdresseServiceHandler extends AbstractDossierSISHHandler
         }
 
         return parent::handle($dossierMessageSISH);
-    }
-
-    public static function getPriority(): int
-    {
-        return 3;
     }
 }

@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
@@ -26,7 +27,7 @@ class ImportSignalementCommand extends Command
     public function __construct(
         private readonly CsvParser $csvParser,
         private readonly ParameterBagInterface $parameterBag,
-        private readonly FilesystemOperator $fileStorage,
+        #[Target('file.storage')] private readonly FilesystemOperator $fileStorage,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly SignalementImportLoader $signalementImportLoader,
         private readonly TerritoryRepository $territoryRepository,

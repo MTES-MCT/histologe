@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 
 #[AsCommand(
     name: 'app:create-signalement-photo-variants',
@@ -30,7 +31,7 @@ class CreateSignalementPhotoVariantsCommand extends Command
         private readonly EntityManagerInterface $entityManager,
         private readonly TerritoryRepository $territoryRepository,
         private readonly FileRepository $fileRepository,
-        private readonly FilesystemOperator $fileStorage,
+        #[Target('file.storage')] private readonly FilesystemOperator $fileStorage,
         private readonly ImageManipulationHandler $imageManipulationHandler,
     ) {
         parent::__construct();
@@ -81,12 +82,12 @@ class CreateSignalementPhotoVariantsCommand extends Command
             if (!$this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_RESIZE])) {
                 $this->imageManipulationHandler->resize($file->getFilename());
                 $fileSize = $this->fileStorage->fileSize($variantNames[ImageManipulationHandler::SUFFIX_RESIZE]);
-                $file->setSize((string) $fileSize);
+                $file->setSize($fileSize);
                 $processed = true;
             }
             if (!$file->getSize()) {
                 $fileSize = $this->fileStorage->fileSize($file->getFilename());
-                $file->setSize((string) $fileSize);
+                $file->setSize($fileSize);
             }
             if (!$this->fileStorage->fileExists($variantNames[ImageManipulationHandler::SUFFIX_THUMB])) {
                 $this->imageManipulationHandler->thumbnail($file->getFilename());

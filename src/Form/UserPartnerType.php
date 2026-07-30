@@ -110,7 +110,7 @@ class UserPartnerType extends AbstractType
                 'help' => 'Si vous cochez oui, des e-mails concernant les signalements seront envoyés à cette adresse.',
             ]);
         if (!$user->getId()) {
-            $builder->add('isMailingSummary', ChoiceType::class, [
+            $mailingSummaryOptions = [
                 'choices' => [
                     'Un e-mail récapitulatif par jour' => true,
                     'Tous les e-mails' => false,
@@ -118,12 +118,13 @@ class UserPartnerType extends AbstractType
                 'expanded' => true,
                 'label' => 'Fréquence de notifications par e-mail',
                 'help' => 'Choisissez si ce compte va recevoir un e-mail à chaque nouveauté sur ses signalements ou un e-mail récapitulatif quotidien.',
-            ]);
-            $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $event): void {
+            ];
+            $builder->add('isMailingSummary', ChoiceType::class, $mailingSummaryOptions);
+            $builder->addEventListener(FormEvents::PRE_SUBMIT, static function (FormEvent $event) use ($mailingSummaryOptions): void {
                 $data = $event->getData();
-                if (!\array_key_exists('isMailingSummary', $data)) {
-                    $data['isMailingSummary'] = '1';
-                    $event->setData($data);
+                if ('0' === $data['isMailingActive']) {
+                    $mailingSummaryOptions['disabled'] = true;
+                    $event->getForm()->add('isMailingSummary', ChoiceType::class, $mailingSummaryOptions);
                 }
             });
         }

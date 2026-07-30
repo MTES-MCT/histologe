@@ -20,7 +20,7 @@ class ArreteRequest implements RequestInterface
     )]
     #[Assert\NotBlank]
     #[Assert\Date]
-    #[Assert\Callback([self::class, 'validatePastDate'])]
+    #[Assert\Callback(callback: [self::class, 'validatePastDate'])]
     public ?string $date = null;
 
     #[OA\Property(
@@ -54,7 +54,7 @@ class ArreteRequest implements RequestInterface
         nullable: true,
     )]
     #[Assert\Date]
-    #[Assert\Callback([self::class, 'validatePastDate'])]
+    #[Assert\Callback(callback: [self::class, 'validatePastDate'])]
     public ?string $mainLeveeDate = null;
 
     #[OA\Property(
@@ -85,7 +85,7 @@ class ArreteRequest implements RequestInterface
         }
     }
 
-    #[Assert\Callback([self::class, 'validateMainLeveeAfterDate'])]
+    #[Assert\Callback]
     public function validateMainLeveeAfterDate(ExecutionContextInterface $context): void
     {
         if (null === $this->date || null === $this->mainLeveeDate) {

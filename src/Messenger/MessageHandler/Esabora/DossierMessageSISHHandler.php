@@ -20,10 +20,7 @@ final class DossierMessageSISHHandler
      * @param iterable<string, DossierSISHHandlerInterface> $dossierSISHHandlers
      */
     public function __construct(
-        #[AutowireIterator(
-            'app.dossier_sish_handler',
-            defaultPriorityMethod: 'getPriority'
-        )] iterable $dossierSISHHandlers,
+        #[AutowireIterator('app.dossier_sish_handler')] iterable $dossierSISHHandlers,
         private readonly AffectationManager $affectationManager,
     ) {
         $this->dossierSISHHandlers = $dossierSISHHandlers;

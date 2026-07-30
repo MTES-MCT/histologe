@@ -31,6 +31,9 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @param TransitionEvent<Intervention> $event
+     */
     public function onInterventionAborted(TransitionEvent $event): void
     {
         /** @var Intervention $intervention */

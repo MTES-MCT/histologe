@@ -4,6 +4,7 @@ namespace App\Service\Files;
 
 use App\Entity\User;
 use League\Flysystem\FilesystemOperator;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -11,7 +12,7 @@ class UserAvatar implements RuntimeExtensionInterface
 {
     public function __construct(
         private readonly ParameterBagInterface $parameterBag,
-        private readonly FilesystemOperator $fileStorage,
+        #[Target('file.storage')] private readonly FilesystemOperator $fileStorage,
     ) {
     }
 

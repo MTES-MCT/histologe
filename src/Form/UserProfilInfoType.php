@@ -27,12 +27,12 @@ class UserProfilInfoType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'constraints' => [
-                    new Assert\Image([
-                        'maxSize' => '5M',
-                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif'],
-                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (JPEG, PNG ou GIF)',
-                        'maxSizeMessage' => 'La taille du fichier ne doit pas dépasser 5 Mo.',
-                    ]),
+                    new Assert\Image(
+                        maxSize : '5M',
+                        mimeTypes : ['image/jpeg', 'image/png', 'image/gif'],
+                        mimeTypesMessage : 'Veuillez télécharger une image valide (JPEG, PNG ou GIF)',
+                        maxSizeMessage : 'La taille du fichier ne doit pas dépasser 5 Mo.',
+                    ),
                 ],
             ])
             ->add('prenom', null, [

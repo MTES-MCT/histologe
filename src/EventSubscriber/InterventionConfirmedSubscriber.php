@@ -34,6 +34,9 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @param TransitionEvent<Intervention> $event
+     */
     public function onInterventionConfirmed(TransitionEvent $event): void
     {
         /** @var Intervention $intervention */

@@ -9,7 +9,6 @@ use App\Service\Import\CsvParser;
 use App\Service\Import\Signalement\SignalementImportLoader;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemOperator;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -18,8 +17,7 @@ class ImportSignalementCommandTest extends KernelTestCase
 {
     public function testDisplaySuccessfullyMessage(): void
     {
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
+        self::bootKernel();
 
         $territoryRepository = $this->createMock(TerritoryRepository::class);
         $territoryRepository->expects($this->once())
@@ -74,14 +72,14 @@ class ImportSignalementCommandTest extends KernelTestCase
             ->with('uploads_tmp_dir')
             ->willReturn('/tmp/');
 
-        $command = $application->add(new ImportSignalementCommand(
+        $command = new ImportSignalementCommand(
             $csvParser,
             $parameterBag,
             $fileStorage,
             $uploadHandlerService,
             $signalementImportLoader,
             $territoryRepository,
-        ));
+        );
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([
@@ -95,8 +93,7 @@ class ImportSignalementCommandTest extends KernelTestCase
 
     public function testTerritoryDoesNotExist(): void
     {
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
+        self::bootKernel();
 
         $territoryRepository = $this->createMock(TerritoryRepository::class);
         $territoryRepository->expects($this->once())
@@ -110,14 +107,14 @@ class ImportSignalementCommandTest extends KernelTestCase
         $fileStorage = $this->createMock(FilesystemOperator::class);
         $parameterBag = $this->createMock(ParameterBagInterface::class);
 
-        $command = $application->add(new ImportSignalementCommand(
+        $command = new ImportSignalementCommand(
             $csvParser,
             $parameterBag,
             $fileStorage,
             $uploadHandlerService,
             $signalementImportLoader,
             $territoryRepository,
-        ));
+        );
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([
@@ -131,8 +128,7 @@ class ImportSignalementCommandTest extends KernelTestCase
 
     public function testFileDoesNotExist(): void
     {
-        $kernel = self::bootKernel();
-        $application = new Application($kernel);
+        self::bootKernel();
 
         $territoryRepository = $this->createMock(TerritoryRepository::class);
         $territoryRepository->expects($this->once())
@@ -156,14 +152,14 @@ class ImportSignalementCommandTest extends KernelTestCase
             ->with('uploads_tmp_dir')
             ->willReturn('/tmp/');
 
-        $command = $application->add(new ImportSignalementCommand(
+        $command = new ImportSignalementCommand(
             $csvParser,
             $parameterBag,
             $fileStorage,
             $uploadHandlerService,
             $signalementImportLoader,
             $territoryRepository,
-        ));
+        );
 
         $commandTester = new CommandTester($command);
         $commandTester->execute([

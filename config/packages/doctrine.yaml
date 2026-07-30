@@ -8,7 +8,6 @@ doctrine:
                 # IMPORTANT: You MUST configure your server version,
                 # either here or in the DATABASE_URL env var (see .env file)
                 server_version: '8.4.8'
-                use_savepoints: false
                 charset: utf8mb4
                 # The schema tool will ignore all views or tables as well as start by view.
                 schema_filter: ~^(?!view_)~
@@ -25,10 +24,6 @@ doctrine:
             polygon: LongitudeOne\Spatial\DBAL\Types\Geometry\PolygonType
             linestring: LongitudeOne\Spatial\DBAL\Types\Geometry\LineStringType
     orm:
-        controller_resolver:
-            auto_mapping: false
-        auto_generate_proxy_classes: true
-        enable_native_lazy_objects: true 
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
         mappings:
@@ -59,10 +54,3 @@ doctrine:
                 REGEXP: DoctrineExtensions\Query\Mysql\Regexp
             numeric_functions:
                 JSON_LENGTH: DoctrineExtensions\Query\Mysql\JsonLength
-
-when@test:
-    doctrine:
-        dbal:
-            connections:
-                default:
-                    use_savepoints: true

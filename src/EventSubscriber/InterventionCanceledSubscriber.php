@@ -31,6 +31,9 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @param TransitionEvent<Intervention> $event
+     */
     public function onInterventionCanceled(TransitionEvent $event): void
     {
         /** @var Intervention $intervention */

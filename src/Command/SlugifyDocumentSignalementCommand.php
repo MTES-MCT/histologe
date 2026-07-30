@@ -19,6 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -50,7 +51,7 @@ class SlugifyDocumentSignalementCommand extends Command
         private ParameterBagInterface $parameterBag,
         private SluggerInterface $slugger,
         private LoggerInterface $logger,
-        private FilesystemOperator $fileStorage,
+        #[Target('file.storage')] private FilesystemOperator $fileStorage,
         private UploadHandlerService $uploadHandlerService,
         private TerritoryRepository $territoryRepository,
         private CsvParser $csvParser,
