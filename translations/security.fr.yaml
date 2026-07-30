@@ -5,3 +5,4 @@ User not found.: Utilisateur introuvable.
 Missing email or password.: Email ou mot de passe manquant.
 An authentication exception occurred.: Une exception d'authentification s'est produite.
 The presented password is invalid.: Les identifiants sont invalides.
+Invalid CSRF token.: 'Veuillez rafraîchir la page et réessayer (erreur : jeton CSRF).'
