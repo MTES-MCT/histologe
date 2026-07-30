@@ -78,10 +78,19 @@ class SignalementNoteController extends AbstractController
         }
         $personalTag = $personalTagRepository->findOneBy(['label' => $label, 'user' => $user]);
         if ($personalTag) {
-            return $this->json(
-                ['errors' => ['label' => ['errors' => ['Une étiquette portant ce nom existe déjà.']]]],
-                Response::HTTP_BAD_REQUEST
-            );
+            if ($signalement->getPersonalTags()->contains($personalTag)) {
+                return $this->json(
+                    ['errors' => ['label' => ['errors' => ['Cette étiquette est déjà attribuée à ce signalement.']]]],
+                    Response::HTTP_BAD_REQUEST
+                );
+            }
+
+            $signalement->addPersonalTag($personalTag);
+            $entityManager->flush();
+
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'L\'étiquette a bien été attribuée.'];
+
+            return $this->json($this->buildPersonalTagsResponse($signalement, $flashMessages));
         }
         $personalTag = (new PersonalTag())->setLabel($label);
         $user->addPersonalTag($personalTag);

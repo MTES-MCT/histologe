@@ -1,23 +1,19 @@
 {% if personalNote and personalNote.content %}
-    <div class="signalement-personal-note-display">
-        <div class="fr-p-3w fr-background-alt--grey fr-mb-3v">{{ personalNote.content|raw }}</div>
-        <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--icon-left">
-            <li>
-                <button type="button" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line signalement-personal-note-edit-btn">
-                    Modifier
-                </button>
-            </li>
-            <li>
-                <div class="single-ajax-form-container">
-                    <form method="POST" action="{{ path('back_signalement_delete_personal_note', {uuid: signalement.uuid}) }}" data-submit-type="formData">
-                        <input type="hidden" name="_token" value="{{ csrf_token('signalement_delete_personal_note') }}">
-                        <button type="submit" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-delete-line">
-                            Supprimer
-                        </button>
-                    </form>
-                </div>
-            </li>
-        </ul>
+    <div class="signalement-personal-note-display fr-p-5v">
+        <div class="fr-mb-3v">{{ personalNote.content|raw }}</div>
+        <div class="fr-display-flex-row fr-align-items-center">
+            <button type="button" class="fr-link--icon-left fr-a-edit fr-icon-edit-line fr-underline signalement-personal-note-edit-btn">
+                Modifier
+            </button>
+            <div class="single-ajax-form-container fr-ml-3v">
+                <form method="POST" action="{{ path('back_signalement_delete_personal_note', {uuid: signalement.uuid}) }}" data-submit-type="formData">
+                    <input type="hidden" name="_token" value="{{ csrf_token('signalement_delete_personal_note') }}">
+                    <button type="submit" class="fr-link--icon-left fr-a-edit fr-underline fr-icon-eraser-fill fr-display-block">
+                        Effacer la note
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
     <div class="signalement-personal-note-edit fr-hidden">
         <div class="single-ajax-form-container">

@@ -1,12 +1,24 @@
-<h2 class="fr-h4">Mes notes et étiquettes</h2>
-<div class="fr-alert fr-alert--info">
-  <p>Cet espace est personnel : vos étiquettes et votre note ne sont visibles que par vous.</p>
+<h2 class="fr-h4">Mes notes personnelles</h2>
+
+<div class="fr-notice fr-notice--info fr-notice--no-icon">
+  <div class="fr-container fr-container-sml">
+    <div class="fr-notice__body">
+      <p>
+        <span class="fr-notice__title">Cet espace est personnel :</span>
+        <span class="fr-notice__desc">vos observations et vos étiquettes ne sont visibles que par vous ; les autres agents n'y ont pas accès.</span>
+      </p>
+      <button onclick="const notice = this.parentNode.parentNode.parentNode; notice.parentNode.removeChild(notice)" title="Masquer le message" type="button" class="fr-btn--close fr-btn">Masquer le message</button>
+    </div>
+  </div>
 </div>
 
 <div class="fr-grid-row fr-grid-row--gutters fr-mt-4w">
     <div class="fr-col-12 fr-col-md-6">
         <section aria-labelledby="personal-tags-title">
-            <h3 class="fr-h5" id="personal-tags-title">Mes étiquettes</h3>
+            <h3 class="fr-h5" id="personal-tags-title">Mes étiquettes perso</h3>
+            <p>
+                Créez vos étiquettes personnelles et attribuez-les à vos dossiers. Ces étiquettes ne seront pas visibles par les autres agents.
+            </p>
             <div data-ajax-form>
                 <div id="signalement-personal-tags-container">
                     {% include 'back/signalement/view/tabs/_tab-notes-personal-tags.html.twig' %}
@@ -16,7 +28,7 @@
     </div>
     <div class="fr-col-12 fr-col-md-6">
         <section aria-labelledby="personal-note-title">
-            <h3 class="fr-h5" id="personal-note-title">Ma note</h3>
+            <h3 class="fr-h5" id="personal-note-title">Mes observations sur le dossier</h3>
             <div data-ajax-form>
                 <div id="signalement-personal-note-container">
                     {% include 'back/signalement/view/tabs/_tab-notes-personal-note.html.twig' %}
