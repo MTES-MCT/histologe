@@ -13,7 +13,7 @@ class ArreteImportRow
     public const string DATE_FORMAT = 'd/m/Y';
 
     #[Assert\NotBlank(message: 'La date d\'arrêté est obligatoire.')]
-    #[Assert\LessThanOrEqual('today', message: 'La date d\'arrêté ne peut pas être supérieure à la date du jour.')]
+    #[Assert\LessThanOrEqual('today', message: 'La date d\'arrêté ne peut pas être dans le futur.')]
     #[Context([
         DateTimeNormalizer::FORMAT_KEY => self::DATE_FORMAT,
     ])]
@@ -25,9 +25,9 @@ class ArreteImportRow
 
     #[Assert\GreaterThan(
         propertyPath: 'dateArrete',
-        message: 'La date de mainlevée doit être supérieure à la date d\'arrêté.'
+        message: 'La date de main levée doit être postérieure à la date d\'arrêté.'
     )]
-    #[Assert\LessThanOrEqual('today', message: 'La date de mainlevée ne peut pas être supérieure à la date du jour.')]
+    #[Assert\LessThanOrEqual('today', message: 'La date de main levée ne peut pas être dans le futur.')]
     #[Context([
         DateTimeNormalizer::FORMAT_KEY => self::DATE_FORMAT,
     ])]
