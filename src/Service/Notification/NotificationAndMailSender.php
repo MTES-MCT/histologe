@@ -184,9 +184,10 @@ class NotificationAndMailSender
         if (!empty($mentionedPartners)) {
             $description = null;
             $notificationType = NotificationType::NOUVEAU_SUIVI;
-            $recipients = $this->getRecipientsAdmin($this->signalement->getTerritory());
-            $this->sendMail($recipients, $mailerType, $suivi);
-            $this->createInAppNotifications(recipients: $recipients, type: $notificationType, suivi: $suivi, description: $description);
+            $adminRecipients = $this->getRecipientsAdmin($this->signalement->getTerritory())
+                ->filter(static fn (User $user) => !$recipients->contains($user));
+            $this->sendMail($adminRecipients, $mailerType, $suivi);
+            $this->createInAppNotifications(recipients: $adminRecipients, type: $notificationType, suivi: $suivi, description: $description);
         }
     }
 
