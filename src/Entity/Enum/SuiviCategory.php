@@ -230,13 +230,11 @@ enum SuiviCategory: string
             case self::AFFECTATION_IS_ACCEPTED:
             case self::INTERVENTION_IS_ABORTED:
             case self::INTERVENTION_IS_CANCELED:
-            case self::INTERVENTION_HAS_CONCLUSION:
             case self::INTERVENTION_IS_DONE:
             case self::INTERVENTION_IS_CREATED:
             case self::INTERVENTION_CONTROLE_IS_DONE:
             case self::INTERVENTION_CONTROLE_IS_CREATED:
             case self::INTERVENTION_ARRETE_IS_CREATED:
-            case self::INTERVENTION_HAS_CONCLUSION_EDITED:
             case self::INTERVENTION_IS_RESCHEDULED:
             case self::INTERVENTION_CONTROLE_IS_RESCHEDULED:
             case self::INTERVENTION_ARRETE_IS_RESCHEDULED:
@@ -275,6 +273,8 @@ enum SuiviCategory: string
             case self::SIGNALEMENT_IS_CLOSED:
             case self::MESSAGE_ESABORA_SCHS:
             case self::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN:
+            case self::INTERVENTION_HAS_CONCLUSION:
+            case self::INTERVENTION_HAS_CONCLUSION_EDITED:
                 return Suivi::TYPE_PARTNER;
             default:
                 throw new \LogicException(sprintf('La catégorie de suivi %s n\'a pas de type de suivi défini.', $category->name));
