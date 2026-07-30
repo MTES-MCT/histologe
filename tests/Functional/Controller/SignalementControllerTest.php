@@ -198,7 +198,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(SignalementStatus::INJONCTION_CLOSED, $signalement->getStatut());
         $this->assertTrue($signalement->getIsUsagerAbandonProcedure());
         $this->assertEquals($signalement->getMotifClotureUsager(), MotifClotureUsager::TRAVAUX_FAITS_OU_EN_COURS);
-        $this->assertEquals(MotifCloture::TRAVAUX_FAITS_OU_EN_COURS, $signalement->getMotifCloture());
+        $this->assertEquals(MotifCloture::LOGEMENT_MIS_EN_CONFORMITE, $signalement->getMotifCloture());
         $this->assertInstanceOf(\DateTimeInterface::class, $signalement->getClosedAt());
         $this->assertStringContainsString('Le propriétaire a effectué les réparations nécessaires', (string) $signalement->getComCloture());
         /** @var UserRepository $userRepository */

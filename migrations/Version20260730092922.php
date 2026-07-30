@@ -36,7 +36,7 @@ final class Version20260730092922 extends AbstractMigration
                 SET motif_cloture = CASE motif_cloture_usager
                     WHEN 'ACCORD_PROPRIETAIRE' THEN 'AUTRE'
                     WHEN 'RELOGEMENT_OCCUPANT' THEN 'RELOGEMENT_OCCUPANT'
-                    WHEN 'TRAVAUX_FAITS_OU_EN_COURS' THEN 'TRAVAUX_FAITS_OU_EN_COURS'
+                    WHEN 'TRAVAUX_FAITS_OU_EN_COURS' THEN 'LOGEMENT_MIS_EN_CONFORMITE'
                     WHEN 'AUTRE' THEN 'AUTRE'
                     ELSE motif_cloture
                 END
