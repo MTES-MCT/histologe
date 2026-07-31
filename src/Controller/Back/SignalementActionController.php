@@ -201,7 +201,7 @@ class SignalementActionController extends AbstractController
     }
 
     #[Route('/{uuid:signalement}/close-signalement', name: 'back_signalement_close', methods: 'POST')]
-    public function closeAffectation(
+    public function closeSignalement(
         Signalement $signalement,
         Request $request,
         AffectationManager $affectationManager,
