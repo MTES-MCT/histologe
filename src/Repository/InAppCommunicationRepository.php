@@ -25,6 +25,7 @@ class InAppCommunicationRepository extends ServiceEntityRepository
     public function findFilteredPaginated(SearchInAppCommunication $searchInAppCommunication, int $maxResult): Paginator
     {
         $qb = $this->createQueryBuilder('i');
+        $qb->leftJoin('i.inAppCommunicationUsers', 'iu')->addSelect('iu');
 
         if (!empty($searchInAppCommunication->getOrderType())) {
             [$orderField, $orderDirection] = explode('-', $searchInAppCommunication->getOrderType());

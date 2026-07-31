@@ -169,6 +169,11 @@ class InAppCommunication implements EntityHistoryInterface
         return $this->inAppCommunicationUsers;
     }
 
+    public function countInAppCommunicationUsersClosed(): int
+    {
+        return $this->inAppCommunicationUsers->filter(static fn (InAppCommunicationUser $inAppCommunicationUser) => null !== $inAppCommunicationUser->getClosedAt())->count();
+    }
+
     public function addInAppCommunicationUser(InAppCommunicationUser $inAppCommunicationUser): static
     {
         if (!$this->inAppCommunicationUsers->contains($inAppCommunicationUser)) {

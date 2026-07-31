@@ -66,6 +66,7 @@
             <th scope="col">Lien</th>
             <th scope="col">Type</th>
             <th scope="col">Rôles</th>
+            <th scope="col">Stats</th>
             <th scope="col" class="fr-text--right">Actions</th>
         {% endset %}
 
@@ -94,6 +95,9 @@
                         {% for role in communication.userRoles %}
                             <span class="fr-badge fr-badge--info fr-mr-1v">{{ role }}</span>
                         {% endfor %}
+                    </td>
+                    <td>
+                        Vues : {{ communication.inAppCommunicationUsers|length }} / Masqués : {{ communication.countInAppCommunicationUsersClosed }}
                     </td>
                     <td class="fr-cell--right fr-ws-nowrap">
                         <a href="{{path('back_config_in_app_communication_edit', {id: communication.id})}}" class="fr-btn fr-icon-edit-line"
