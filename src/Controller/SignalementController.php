@@ -1054,6 +1054,7 @@ class SignalementController extends AbstractController
                     category: $category,
                     user: $user,
                     isVisibleForUsager: true,
+                    isVisibleForBailleur: 'oui' === $reponse,
                 );
 
                 if ('non' === $reponse) {

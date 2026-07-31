@@ -140,6 +140,7 @@ class SignalementInjonctionController extends AbstractController
             category: SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN,
             user: $user,
             isVisibleForUsager: true,
+            isVisibleForBailleur: true,
         );
 
         $entityManager->flush();
