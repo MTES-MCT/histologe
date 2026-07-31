@@ -153,7 +153,7 @@ class AffectationManager
         Signalement $signalement,
         MotifCloture $motif,
         User $user,
-        Partner $partner,
+        ?Partner $partner,
     ): void {
         foreach ($signalement->getAffectations() as $affectation) {
             if (in_array($affectation->getStatut(), [AffectationStatus::CLOSED, AffectationStatus::REFUSED])) {

@@ -35,4 +35,14 @@ enum MotifClotureUsager: string
 
         return $labels[$this->name];
     }
+
+    public function mapMotifCloture(): MotifCloture
+    {
+        return match ($this) {
+            self::ACCORD_PROPRIETAIRE => MotifCloture::AUTRE,
+            self::RELOGEMENT_OCCUPANT => MotifCloture::RELOGEMENT_OCCUPANT,
+            self::TRAVAUX_FAITS_OU_EN_COURS => MotifCloture::LOGEMENT_MIS_EN_CONFORMITE,
+            self::AUTRE => MotifCloture::AUTRE,
+        };
+    }
 }

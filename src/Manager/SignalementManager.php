@@ -16,6 +16,7 @@ use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationClose;
 use App\Dto\SignalementAffectationListView;
 use App\Entity\Enum\MotifCloture;
+use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
@@ -239,6 +240,30 @@ class SignalementManager
             ->setMotifCloture($signalementAffectationClose->getMotifCloture())
             ->setClosedAt(new \DateTimeImmutable())
             ->setComCloture($this->htmlSanitizer->sanitize($signalementAffectationClose->getDescription()));
+
+        return $signalement;
+    }
+
+    public function closeInjonction(
+        Signalement $signalement,
+        User $closedBy,
+        ?string $description = null,
+        ?MotifCloture $motifCloture = null,
+        ?MotifClotureUsager $motifClotureUsager = null,
+    ): Signalement {
+        $signalement
+            ->setStatut(SignalementStatus::INJONCTION_CLOSED)
+            ->setClosedAt(new \DateTimeImmutable())
+            ->setClosedBy($closedBy);
+        if ($description) {
+            $signalement->setComCloture($this->htmlSanitizer->sanitize($description));
+        }
+        if ($motifCloture) {
+            $signalement->setMotifCloture($motifCloture);
+        }
+        if ($motifClotureUsager) {
+            $signalement->setMotifClotureUsager($motifClotureUsager);
+        }
 
         return $signalement;
     }
