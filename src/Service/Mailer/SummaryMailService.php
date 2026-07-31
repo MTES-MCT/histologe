@@ -57,6 +57,7 @@ class SummaryMailService
             NotificationType::CLOTURE_SIGNALEMENT->name => [],
             NotificationType::CLOTURE_PARTENAIRE->name => [],
             NotificationType::DEMANDE_ABANDON_PROCEDURE->name => [],
+            NotificationType::NOUVELLE_MENTION->name => [],
         ];
         foreach ($notifications as $notification) {
             $notificationType = $notification->getType()->name;
@@ -74,6 +75,7 @@ class SummaryMailService
                     ];
                     break;
                 case NotificationType::NOUVEAU_SUIVI:
+                case NotificationType::NOUVELLE_MENTION:
                     if (!isset($events[$notificationType][$signalementId])) {
                         $events[$notificationType][$signalementId] = [
                             'uuid' => $signalement->getUuid(),

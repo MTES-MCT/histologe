@@ -20,6 +20,7 @@ use App\Service\InjonctionBailleur\CourrierBailleurGenerator;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use App\Service\Signalement\Suivi\SuiviMentionExtractor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -39,6 +40,7 @@ class NotificationAndMailSender
         private readonly Security $security,
         private readonly CourrierBailleurGenerator $courrierBailleurGenerator,
         private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        private readonly SuiviMentionExtractor $suiviMentionExtractor,
     ) {
         $this->suivi = null;
         $user = $this->security->getUser();
@@ -148,13 +150,47 @@ class NotificationAndMailSender
         $mailerType = $sendEmail ? NotificationMailerType::TYPE_NEW_COMMENT_BACK : null;
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
+        $mentionedPartners = $this->suiviMentionExtractor->extract($suivi);
         $userList = $this->userRepository->findUsersSubscribedToSignalement($this->signalement);
-        $adminList = $this->userRepository->findActiveAdmins();
-        $partnerList = $this->getPartnersWithEmailNotifiable(isFilteredAffectationStatus: true);
-        $recipients = new ArrayCollection(array_merge($userList, $adminList, $partnerList));
+        if (empty($mentionedPartners)) {
+            $adminList = $this->userRepository->findActiveAdmins();
+            $partnerList = $this->getPartnersWithEmailNotifiable(isFilteredAffectationStatus: true);
+            $recipients = new ArrayCollection(array_merge($userList, $adminList, $partnerList));
+            $description = null;
+            $notificationType = NotificationType::NOUVEAU_SUIVI;
+        } else {
+            $recipients = new ArrayCollection();
+            $rtAndSa = [];
+            foreach ($userList as $user) {
+                $isInPartners = false;
+                foreach ($mentionedPartners as $partner) {
+                    if ($user->hasPartner($partner)) {
+                        $isInPartners = true;
+                        $recipients->add($user);
+                        break;
+                    }
+                }
+                if (!$isInPartners && ($user->isTerritoryAdmin() || $user->isSuperAdmin())) {
+                    $rtAndSa[] = $user;
+                }
+            }
+            $adminList = $this->userRepository->findActiveAdmins();
+            $recipientsRtAndSa = new ArrayCollection(array_merge($rtAndSa, $adminList));
+            if (!$recipientsRtAndSa->isEmpty()) {
+                $this->sendMail($recipientsRtAndSa, $mailerType, $suivi);
+                $this->createInAppNotifications(recipients: $recipientsRtAndSa, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
+            }
+            $notificationType = NotificationType::NOUVELLE_MENTION;
 
+            $description = sprintf(
+                '%s - %s vous a mentionné dans un suivi sur le dossier #%s.',
+                $suivi->getCreatedBy()?->getNomComplet(),
+                $suivi->getPartner()?->getNom(),
+                $this->signalement->getReference()
+            );
+        }
         $this->sendMail($recipients, $mailerType, $suivi);
-        $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
+        $this->createInAppNotifications(recipients: $recipients, type: $notificationType, suivi: $suivi, description: $description);
     }
 
     public function sendDemandeAbandonProcedureToAdminsAndPartners(Suivi $suivi): void

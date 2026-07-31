@@ -54,7 +54,7 @@ class AddSuiviType extends AbstractType
 
         $builder->add('description', null, [
             'label' => 'Votre message',
-            'help' => 'Décrivez la ou les action(s) menée(s). 10 caractères minimum <span class="fr-text-default--error">*</span>',
+            'help' => 'Décrivez la ou les action(s) menée(s). Pour notifier un partenaire spécifique, tapez @ dans le texte ou cliquez sur le bouton @ et sélectionnez un partenaire dans la liste. 10 caractères minimum <span class="fr-text-default--error">*</span>',
             'help_html' => true,
             'empty_data' => '',
             'attr' => [

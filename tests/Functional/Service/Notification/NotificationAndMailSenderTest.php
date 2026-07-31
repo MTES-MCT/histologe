@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Service\Notification;
 use App\Entity\Affectation;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\NotificationType;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Entity\User;
@@ -15,6 +16,7 @@ use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\InjonctionBailleur\CourrierBailleurGenerator;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Notification\NotificationAndMailSender;
+use App\Service\Signalement\Suivi\SuiviMentionExtractor;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -34,6 +36,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
     private Security $security;
     private NotificationAndMailSender $notificationAndMailSender;
     private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
+    private SuiviMentionExtractor $suiviMentionExtractor;
 
     protected function setUp(): void
     {
@@ -51,6 +54,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->notificationFactory = static::getContainer()->get(NotificationFactory::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->suiviMentionExtractor = static::getContainer()->get(SuiviMentionExtractor::class);
         /** @var CourrierBailleurGenerator $courrierBailleurGenerator */
         $courrierBailleurGenerator = static::getContainer()->get(CourrierBailleurGenerator::class);
         $this->notificationAndMailSender = new NotificationAndMailSender(
@@ -61,6 +65,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->security,
             $courrierBailleurGenerator,
             $this->userSignalementSubscriptionRepository,
+            $this->suiviMentionExtractor,
         );
     }
 
@@ -199,6 +204,115 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->assertCount(count($subscriptions) + \count($existingNotifications), $newNotifications);
     }
 
+    public function testSendNewSuiviToAdminsAndPartnersWithMentionNotifiesOnlyMentionedPartnerSubscribers(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            'reference' => '2022-10',
+        ]);
+        /** @var User $respTerritoire */
+        $respTerritoire = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'admin-territoire-13-01@signal-logement.fr',
+        ]);
+        // abonné au partenaire 3 ("Partenaire 13-02"), affectation EN_COURS sur 2022-10, is_mailing_summary = 1
+        /** @var User $mentionedPartnerUser */
+        $mentionedPartnerUser = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'user-13-01@signal-logement.fr',
+        ]);
+
+        $suivi = (new Suivi())
+        ->setCreatedBy($respTerritoire)
+        ->setSignalement($signalement)
+        ->setDescription('test description avec mention <span class="text-mentioned" data-partner-id="3">@Partenaire 13-02</span>')
+        ->setType(Suivi::TYPE_PARTNER)
+        ->setCategory(SuiviCategory::MESSAGE_PARTNER)
+        ->setIsVisibleForUsager(false);
+
+        $this->entityManager->persist($suivi);
+        $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true);
+        $this->entityManager->flush();
+
+        $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
+        $this->assertCount(4, $newNotifications);
+        $this->assertSame(NotificationType::NOUVEAU_SUIVI, $newNotifications[0]->getType());
+        $this->assertSame(NotificationType::NOUVELLE_MENTION, $newNotifications[3]->getType());
+        $this->assertSame($mentionedPartnerUser->getEmail(), $newNotifications[3]->getUser()->getEmail());
+        $this->assertTrue($newNotifications[3]->isWaitMailingSummary());
+        $this->assertStringContainsString($respTerritoire->getNomComplet(), (string) $newNotifications[3]->getDescription());
+        $this->assertStringContainsString($signalement->getReference(), (string) $newNotifications[3]->getDescription());
+    }
+
+    public function testSendNewSuiviToAdminsAndPartnersWithMentionSendsImmediateEmailForNonSummaryUser(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            'reference' => '2022-10',
+        ]);
+        /** @var User $respTerritoire */
+        $respTerritoire = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'admin-territoire-13-01@signal-logement.fr',
+        ]);
+        // abonné au partenaire 4 ("Partenaire 13-03"), affectation EN_COURS sur 2022-10, is_mailing_summary = 0
+        /** @var User $mentionedPartnerUser */
+        $mentionedPartnerUser = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'user-13-02@signal-logement.fr',
+        ]);
+
+        $suivi = (new Suivi())
+        ->setCreatedBy($respTerritoire)
+        ->setSignalement($signalement)
+        ->setDescription('test description avec mention <span class="text-mentioned" data-partner-id="4">@Partenaire 13-03</span>')
+        ->setType(Suivi::TYPE_PARTNER)
+        ->setCategory(SuiviCategory::MESSAGE_PARTNER)
+        ->setIsVisibleForUsager(false);
+
+        $this->entityManager->persist($suivi);
+        $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true);
+        $this->entityManager->flush();
+
+        $this->assertEmailCount(1);
+        $this->assertEmailAddressContains($this->getMailerMessage(), 'bcc', $mentionedPartnerUser->getEmail());
+
+        $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
+        $this->assertCount(4, $newNotifications);
+        $this->assertSame(NotificationType::NOUVEAU_SUIVI, $newNotifications[0]->getType());
+        $this->assertSame(NotificationType::NOUVELLE_MENTION, $newNotifications[3]->getType());
+        $this->assertFalse($newNotifications[3]->isWaitMailingSummary());
+    }
+
+    public function testSendNewSuiviToAdminsAndPartnersWithMentionOnPartnerWithoutAcceptedAffectationFallsBackToStandardBroadcast(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->entityManager->getRepository(Signalement::class)->findOneBy([
+            'reference' => '2022-1',
+        ]);
+        /** @var User $respTerritoire */
+        $respTerritoire = $this->entityManager->getRepository(User::class)->findOneBy([
+            'email' => 'admin-territoire-13-01@signal-logement.fr',
+        ]);
+
+        // partenaire 2 ("Partenaire 13-01") a une affectation NOUVEAU (pas encore acceptée) sur 2022-1 :
+        // la mention est ignorée et on retombe sur la diffusion standard "nouveau suivi"
+        $suivi = (new Suivi())
+        ->setCreatedBy($respTerritoire)
+        ->setSignalement($signalement)
+        ->setDescription('test description avec mention sur affectation non acceptée <span class="text-mentioned" data-partner-id="2">@Partenaire 13-01</span>')
+        ->setType(Suivi::TYPE_PARTNER)
+        ->setCategory(SuiviCategory::MESSAGE_PARTNER)
+        ->setIsVisibleForUsager(false);
+
+        $this->entityManager->persist($suivi);
+        $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true);
+        $this->entityManager->flush();
+
+        $this->assertEmailCount(1);
+        $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
+        $this->assertNotEmpty($newNotifications);
+        foreach ($newNotifications as $notification) {
+            $this->assertSame(NotificationType::NOUVEAU_SUIVI, $notification->getType());
+        }
+    }
+
     public function testSendNDemandeAbandonProcedureToUsager(): void
     {
         /** @var Signalement $signalement */
@@ -233,6 +347,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->security,
             $courrierBailleurGenerator,
             $this->userSignalementSubscriptionRepository,
+            $this->suiviMentionExtractor,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToUsager($suivi);
@@ -285,6 +400,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->security,
             $courrierBailleurGenerator,
             $this->userSignalementSubscriptionRepository,
+            $this->suiviMentionExtractor,
         );
 
         $notificationAndMailSender->sendDemandeAbandonProcedureToAdminsAndPartners($suivi);
@@ -329,6 +445,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->security,
             $courrierBailleurGenerator,
             $this->userSignalementSubscriptionRepository,
+            $this->suiviMentionExtractor,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);
@@ -376,6 +493,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
             $this->security,
             $courrierBailleurGenerator,
             $this->userSignalementSubscriptionRepository,
+            $this->suiviMentionExtractor,
         );
 
         $notificationAndMailSender->sendNewSuiviToUsagers($suivi);

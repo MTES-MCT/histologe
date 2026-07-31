@@ -15,6 +15,7 @@ enum NotificationType: string
     case SUIVI_USAGER = 'SUIVI_USAGER';
     case NOUVEL_ABONNEMENT = 'NOUVEL_ABONNEMENT';
     case DEMANDE_ABANDON_PROCEDURE = 'DEMANDE_ABANDON_PROCEDURE';
+    case NOUVELLE_MENTION = 'NOUVELLE_MENTION';
 
     /** @return array<string, string> */
     public static function getLabelList(): array
@@ -28,6 +29,7 @@ enum NotificationType: string
             self::SUIVI_USAGER->name => self::SUIVI_USAGER->value,
             self::NOUVEL_ABONNEMENT->name => self::NOUVEL_ABONNEMENT->value,
             self::DEMANDE_ABANDON_PROCEDURE->name => self::DEMANDE_ABANDON_PROCEDURE->value,
+            self::NOUVELLE_MENTION->name => self::NOUVELLE_MENTION->value,
         ];
     }
 

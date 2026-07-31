@@ -229,6 +229,8 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     {
         return [
             new TwigFunction('count_notification', [NotificationCounter::class, 'countUnseenNotification']),
+            new TwigFunction('count_mention', [NotificationCounter::class, 'countUnseenMention']),
+            new TwigFunction('count_suivi', [NotificationCounter::class, 'countUnseenSuivi']),
             new TwigFunction('show_label_facultatif', [AttributeParser::class, 'showLabelAsFacultatif']),
             new TwigFunction('get_accepted_mime_type', [$this, 'getAcceptedMimeTypes']),
             new TwigFunction('get_accepted_extensions', [UploadHandlerService::class, 'getAcceptedExtensions']),

@@ -58,7 +58,7 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
         } else {
             $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners(
                 suivi: $suivi,
-                sendEmail: (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut())
+                sendEmail: (SignalementStatus::CLOSED !== $suivi->getSignalement()->getStatut()),
             );
         }
     }

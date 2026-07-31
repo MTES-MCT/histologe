@@ -11,7 +11,7 @@ framework:
                     li: ''
                     strong: ''
                     em: ''
-                    span: ''
+                    span: ['class', 'data-partner-id', 'contenteditable']
                     div: ''
                     table: ''
                     thead: ''

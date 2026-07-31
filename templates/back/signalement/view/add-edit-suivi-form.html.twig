@@ -5,7 +5,10 @@
     {{ form_errors(form) }}
     {% include "back/signalement/view/_destinataires-du-message.html.twig" with {'form': form, 'signalement': signalement} %}
     <div class="fr-mb-3w">
-        {{ form_row(form.description) }}
+        {% set mentionPartners = []|merge(signalement.affectations
+            |filter(a => a.statut == enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED)
+            |map(a => {id: a.partner.id, nom: a.partner.nom})) %}
+        {{ form_row(form.description, {attr: {'data-mention-partners': mentionPartners|json_encode}}) }}
     </div>
     <div class="fr-mb-3w">
         {{ form_row(form.files) }}
