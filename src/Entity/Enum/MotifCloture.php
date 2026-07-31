@@ -28,6 +28,7 @@ enum MotifCloture: string
     case ABSENCE_DE_REPONSE_OCCUPANT = 'ABSENCE_DE_REPONSE_OCCUPANT';
     case GESTION_DU_DOSSIER_EXTERNE = 'GESTION_DU_DOSSIER_EXTERNE';
     case HORS_PERIMETRE_LHI = 'HORS_PERIMETRE_LHI';
+    case HORS_COMPETENCE = 'HORS_COMPETENCE';
 
     /** @return array<string, string> */
     public static function getLabelList(): array
@@ -54,6 +55,7 @@ enum MotifCloture: string
             self::ABSENCE_DE_REPONSE_OCCUPANT->value => 'Absence de réponse occupant',
             self::GESTION_DU_DOSSIER_EXTERNE->value => 'Gestion du dossier externe',
             self::HORS_PERIMETRE_LHI->value => 'Hors périmètre LHI',
+            self::HORS_COMPETENCE->value => 'Hors compétence',
         ];
     }
 
@@ -94,6 +96,54 @@ enum MotifCloture: string
             self::DOUBLON,
             self::GESTION_DU_DOSSIER_EXTERNE,
             self::HORS_PERIMETRE_LHI,
+            self::HORS_COMPETENCE,
+            self::LOGEMENT_DECENT,
+            self::RESPONSABILITE_DE_L_OCCUPANT,
+            self::AUTRE,
+        ];
+    }
+
+    /** @return array<MotifCloture> */
+    public static function getListForAffectation(): array
+    {
+        // getListForV2
+        // moins GESTION_DU_DOSSIER_EXTERNE et HORS_PERIMETRE_LHI
+        // plus HORS_COMPETENCE
+        // ordre différent
+        return [
+            self::LOGEMENT_MIS_EN_CONFORMITE,
+            self::RELOGEMENT_OCCUPANT,
+            self::DEMANDE_FERMETURE_ABANDON_OCCUPANT,
+            self::ABSENCE_DE_REPONSE_OCCUPANT,
+            self::REFUS_DE_VISITE,
+            self::REFUS_DE_TRAVAUX,
+            self::DEPART_OCCUPANT,
+            self::LOGEMENT_VENDU,
+            self::LOGEMENT_DECENT,
+            self::RESPONSABILITE_DE_L_OCCUPANT,
+            self::DOUBLON,
+            self::HORS_COMPETENCE,
+            self::AUTRE,
+        ];
+    }
+
+    /** @return array<MotifCloture> */
+    public static function getListForSignalement(): array
+    {
+        // getListForV2
+        // moins HORS_COMPETENCE
+        return [
+            self::LOGEMENT_MIS_EN_CONFORMITE,
+            self::RELOGEMENT_OCCUPANT,
+            self::DEMANDE_FERMETURE_ABANDON_OCCUPANT,
+            self::ABSENCE_DE_REPONSE_OCCUPANT,
+            self::REFUS_DE_VISITE,
+            self::REFUS_DE_TRAVAUX,
+            self::DEPART_OCCUPANT,
+            self::LOGEMENT_VENDU,
+            self::DOUBLON,
+            self::GESTION_DU_DOSSIER_EXTERNE,
+            self::HORS_COMPETENCE,
             self::LOGEMENT_DECENT,
             self::RESPONSABILITE_DE_L_OCCUPANT,
             self::AUTRE,
@@ -110,6 +160,7 @@ enum MotifCloture: string
             self::ABSENCE_DE_REPONSE_OCCUPANT,
             self::DEPART_OCCUPANT,
             self::LOGEMENT_VENDU,
+            self::GESTION_DU_DOSSIER_EXTERNE,
             self::AUTRE,
         ];
     }

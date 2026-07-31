@@ -20,12 +20,68 @@ const travauxContainer = document.querySelector(
   '#close_affectation_travauxMiseEnConformite_container'
 );
 
-function updateTravauxVisibility() {
+function updateTravauxVisibilityAffectation() {
   if (!motifClotureSelect || !travauxContainer) return;
   const selectedOption = motifClotureSelect.options[motifClotureSelect.selectedIndex];
   const needTravaux = selectedOption?.hasAttribute('data-need-travaux-precisions');
   travauxContainer.classList.toggle('fr-hidden', !needTravaux);
 }
 
-motifClotureSelect?.addEventListener('change', updateTravauxVisibility);
-updateTravauxVisibility();
+motifClotureSelect?.addEventListener('change', updateTravauxVisibilityAffectation);
+updateTravauxVisibilityAffectation();
+
+//cloture signalement v2
+const motifClotureSelectSignalement = document.querySelector('#close_signalement_motifCloture');
+const travauxContainerSignalement = document.querySelector(
+  '#close_signalement_travauxMiseEnConformite_container'
+);
+const travauxRadioButtonsSignalement = document.querySelectorAll(
+  'input[name="close_signalement[travauxMiseEnConformite]"]'
+);
+const travauxWarningSignalement = document.querySelector(
+  '#close_signalement_travauxMiseEnConformite_warning'
+);
+const proceduresContainerSignalement = document.querySelector(
+  '#close_signalement_procedures_container'
+);
+const withoutProcedureCheckboxSignalement = document.querySelector(
+  '#close_signalement_withoutProcedure'
+);
+
+function updateTravauxVisibilitySignalement() {
+  if (!motifClotureSelectSignalement || !travauxContainerSignalement) return;
+  const selectedOption =
+    motifClotureSelectSignalement.options[motifClotureSelectSignalement.selectedIndex];
+  const needTravaux = selectedOption?.hasAttribute('data-need-travaux-precisions');
+  travauxContainerSignalement.classList.toggle('fr-hidden', !needTravaux);
+}
+
+function updateTravauxWarningSignalement() {
+  const selectedTravaux = document.querySelector(
+    'input[name="close_signalement[travauxMiseEnConformite]"]:checked'
+  );
+  travauxWarningSignalement?.classList.toggle('fr-hidden', selectedTravaux?.value !== 'EN_COURS');
+}
+
+function updateProceduresStateSignalement() {
+  if (!proceduresContainerSignalement || !withoutProcedureCheckboxSignalement) return;
+
+  const isWithoutProcedure = withoutProcedureCheckboxSignalement.checked;
+  proceduresContainerSignalement.querySelectorAll('input, button').forEach((control) => {
+    if (isWithoutProcedure && control.type === 'checkbox') {
+      control.checked = false;
+    }
+    control.disabled = isWithoutProcedure;
+  });
+
+  window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
+}
+
+motifClotureSelectSignalement?.addEventListener('change', updateTravauxVisibilitySignalement);
+travauxRadioButtonsSignalement.forEach((radioButton) => {
+  radioButton.addEventListener('change', updateTravauxWarningSignalement);
+});
+withoutProcedureCheckboxSignalement?.addEventListener('change', updateProceduresStateSignalement);
+updateTravauxVisibilitySignalement();
+updateTravauxWarningSignalement();
+updateProceduresStateSignalement();

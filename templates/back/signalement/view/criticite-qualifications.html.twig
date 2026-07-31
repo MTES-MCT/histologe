@@ -30,5 +30,19 @@
             {% endfor %}
         </div>
         {% endif %}
+        {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
+            <div class="fr-mt-3v">
+                <h3 class="fr-h5">Procédure(s) engagée(s)</h3>
+                    {% for procedure in signalement.signalementProcedures %}
+                        {% set typeBadge = 'info' %}
+                        {% if procedure.procedureType is same as enum('App\\Entity\\Enum\\ProcedureType').MISE_EN_SECURITE_PERIL %}
+                            {% set typeBadge = 'error' %}
+                        {% elseif procedure.procedureType is same as enum('App\\Entity\\Enum\\ProcedureType').INSALUBRITE %}
+                            {% set typeBadge = 'warning' %}
+                        {% endif %}
+                        <small class="fr-badge fr-badge--{{typeBadge}} fr-badge--no-icon fr-mb-1v">{{ procedure.procedureType.label }}</small>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 </div>

@@ -17,7 +17,7 @@ class CloseAffectationType extends AbstractType
     {
         $builder
             ->add('motifCloture', null, [
-                'choices' => MotifCloture::getListForV2(),
+                'choices' => MotifCloture::getListForAffectation(),
                 'label' => 'Motif de fermeture',
                 'choice_label' => static function ($choice) {
                     return $choice->label();

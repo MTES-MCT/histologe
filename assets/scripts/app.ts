@@ -13,6 +13,7 @@ import './vanilla/services/component/component_file_upload.js';
 import './vanilla/services/cookie/cookie_banner.js';
 import './vanilla/services/file/file_delete.js';
 import './vanilla/services/form/ajax_form_handler.js';
+import './vanilla/services/form/ajax_form_steps.js';
 import './vanilla/services/form/form_helper.js';
 import './vanilla/services/matomo/matomo_events_pusher.js';
 import './vanilla/services/ui/notice_helper.js';

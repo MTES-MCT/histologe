@@ -8,12 +8,16 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
+use App\Entity\SignalementProcedure;
 use App\Entity\Suivi;
 use App\Entity\SuiviFile;
 use App\Entity\User;
+use App\Factory\SignalementSearchQueryFactory;
 use App\Form\AddSuiviType;
 use App\Form\AgentSelectionType;
+use App\Form\CloseSignalementType;
 use App\Form\RefusSignalementType;
+use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
@@ -33,6 +37,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,10 +50,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class SignalementActionController extends AbstractController
 {
     public function __construct(
+        #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
+        private readonly HtmlSanitizerInterface $htmlSanitizer,
         #[Autowire(env: 'EDITION_SUIVI_ENABLE')]
         private readonly bool $editionSuiviEnable,
         #[Autowire(env: 'DELAY_SUIVI_EDITABLE_IN_MINUTES')]
         private readonly int $delaySuiviEditableInMinutes,
+        #[Autowire(env: 'FEATURE_CLOTURE_V2')]
+        private readonly bool $featureClotureV2,
     ) {
     }
 
@@ -187,6 +196,78 @@ class SignalementActionController extends AbstractController
         }
 
         $url = $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return $this->json(['redirect' => true, 'url' => $url]);
+    }
+
+    #[Route('/{uuid:signalement}/close-signalement', name: 'back_signalement_close', methods: 'POST')]
+    public function closeSignalement(
+        Signalement $signalement,
+        Request $request,
+        AffectationManager $affectationManager,
+        SuiviManager $suiviManager,
+        SignalementSearchQueryFactory $signalementSearchQueryFactory,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        if (!$this->featureClotureV2) {
+            return $this->json(['code' => Response::HTTP_NOT_FOUND], Response::HTTP_NOT_FOUND);
+        }
+        if (!$this->isGranted(SignalementVoter::SIGN_CLOSE, $signalement)) {
+            return $this->json(['code' => Response::HTTP_FORBIDDEN, 'message' => 'Vous n\'êtes pas autorisé à fermer ce signalement ou cette affectation.'], Response::HTTP_FORBIDDEN);
+        }
+
+        $form = $this->createForm(CloseSignalementType::class, $signalement, ['action' => $this->generateUrl('back_signalement_close', ['uuid' => $signalement->getUuid()])]);
+        $form->handleRequest($request);
+        if (!$form->isSubmitted()) {
+            return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+        }
+        if (!$form->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
+
+            return $this->json($response, $response['code']);
+        }
+        // persist procedures
+        foreach ($signalement->getSignalementProcedures() as $signalementProcedure) {
+            $entityManager->remove($signalementProcedure);
+        }
+        $entityManager->flush();
+        foreach ($form->get('procedures')->getData() as $procedure) {
+            $signalementProcedure = (new SignalementProcedure())->setSignalement($signalement)->setProcedureType($procedure);
+            $signalement->addSignalementProcedure($signalementProcedure);
+            $entityManager->persist($signalementProcedure);
+        }
+        /** @var User $user */
+        $user = $this->getUser();
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+
+        $signalement->setStatut(SignalementStatus::CLOSED);
+        $signalement->setClosedAt(new \DateTimeImmutable());
+        $signalement->setComCloture($this->htmlSanitizer->sanitize($signalement->getComCloture()));
+        $signalement->setClosedBy($user);
+
+        $description = SuiviManager::buildDescriptionClotureSignalement([
+            'subject' => 'tous les partenaires',
+            'motif_cloture' => $signalement->getMotifCloture(),
+            'motif_suivi' => $signalement->getComCloture(),
+            'procedures' => $signalement->getSignalementProcedures(),
+        ]);
+        $suiviManager->createSuivi(
+            signalement: $signalement,
+            description: $description,
+            category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
+            partner: $partner,
+            user: $user,
+            isVisibleForUsager: (bool) $form->get('isVisibleForUsager')->getData(),
+            isVisibleForBailleur: $form->has('isVisibleForBailleur') ? (bool) $form->get('isVisibleForBailleur')->getData() : false,
+        );
+        // à garder aprés la création du suivi afin que les notifications de fermeture partent bien (avant la suppression des abonnements)
+        $affectationManager->closeBySignalement($signalement, $signalement->getMotifCloture(), $user, $partner);
+
+        $entityManager->flush();
+        $this->addFlash('success', ['title' => 'Dossier fermé', 'message' => sprintf('Le dossier #%s a bien été fermé.', $signalement->getReference())]);
+        $signalementSearchQuery = $signalementSearchQueryFactory->createFromCookie($request);
+        $url = $this->generateUrl('back_signalements_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $url .= $signalementSearchQuery?->getQueryStringForUrl();
 
         return $this->json(['redirect' => true, 'url' => $url]);
     }

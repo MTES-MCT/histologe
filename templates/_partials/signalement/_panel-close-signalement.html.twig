@@ -1,0 +1,68 @@
+<dialog aria-labelledby="panel-close-signalement-title" id="panel-close-signalement" class="side-panel" data-form-steps>
+    <div class="side-panel__inner">
+        <div class="side-panel__header">
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-close-signalement" aria-controls="panel-close-signalement" aria-expanded="false">Fermer</button>
+        </div>
+        <div class="side-panel__content fr-mx-3w">
+            <h1 id="panel-close-signalement-title" class="fr-modal__title title-blue-france">
+                Fermer le dossier
+            </h1>
+            {{ form_start(closeSignalementForm, {'attr': {'id': 'close-signalement-form', 'data-submit-type':'formData', 'class': 'form-with-steps'}}) }}
+            {{ form_errors(closeSignalementForm) }}
+            <div data-step="1">
+                <p>
+                    Expliquez ici les raisons de la fermeture du dossier et choisissez à qui ces informations seront transmises. 
+                    A l'étape suivante, vous pourrez indiquer les procédures engagées sur le dossier.
+                </p> 
+                <p><i>Sauf mention contraire, tous les champs sont obligatoires.</i></p>
+                {{ form_row(closeSignalementForm.motifCloture) }}
+                <div id="close_signalement_travauxMiseEnConformite_container">
+                    {{ form_row(closeSignalementForm.travauxMiseEnConformite) }}
+                    <div class="fr-notice fr-notice--warning fr-notice--no-icon fr-mt-n6v fr-mb-4v fr-hidden" id="close_signalement_travauxMiseEnConformite_warning">
+                        <div class="fr-container">
+                            <div class="fr-notice__body">
+                                <p><span class="fr-notice__title">Dans 6 mois, nous enverrons un message à l'usager pour l’interroger sur l’avancement des travaux.</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ form_row(closeSignalementForm.comCloture) }}
+                {% include "back/signalement/view/_destinataires-du-message.html.twig" with {'form': closeSignalementForm, 'signalement': signalement} %}
+            </div>
+            <div data-step="2">
+                <p>
+                    Vérifiez et / ou complétez les informations concernant les procédures engagées sur ce dossier. 
+                    Les informations saisies à cette étape ne seront pas envoyées à l'usager.
+                </p>
+                {{ form_row(closeSignalementForm.procedures) }}
+                {{ form_row(closeSignalementForm.withoutProcedure) }}
+            </div>
+
+            {{ form_end(closeSignalementForm) }}
+        </div>
+        <div class="side-panel__footer">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm fr-btns-group--icon-left">
+                <li>
+                    <button type="button" class="fr-btn fr-icon-arrow-right-line fr-btn--icon-right" data-step-next>
+                        Étape suivante
+                    </button>
+                </li>
+                <li>
+                    <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line fr-hidden" form="close-signalement-form" data-step-submit>
+                        Fermer le dossier
+                    </button>
+                </li>
+                <li>
+                    <button class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel" data-panel="panel-close-signalement" aria-controls="panel-close-signalement" aria-expanded="false" type="button">
+                        Annuler
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-icon-arrow-left-line fr-hidden" data-step-previous>
+                        Étape précédente
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</dialog>
