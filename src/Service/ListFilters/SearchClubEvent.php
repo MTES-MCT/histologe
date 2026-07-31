@@ -4,29 +4,16 @@ namespace App\Service\ListFilters;
 
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
-use App\Entity\User;
 use App\Service\Behaviour\SearchQueryTrait;
 
 class SearchClubEvent
 {
     use SearchQueryTrait;
-
-    private User $user;
     private ?bool $isInFuture = null;
     private ?string $queryName = null;
     private ?PartnerType $partnerType = null;
     private ?Qualification $partnerCompetence = null;
     private ?string $orderType = null;
-
-    public function __construct(User $user)
-    {
-        $this->user = $user;
-    }
-
-    public function getUser(): User
-    {
-        return $this->user;
-    }
 
     public function getIsInFuture(): ?bool
     {

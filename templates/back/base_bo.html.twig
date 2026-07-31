@@ -3,6 +3,7 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
+    {{ render(controller('App\\Controller\\Back\\InAppCommunicationController::show')) }}
     {% include 'back/nav_bo.html.twig' %}
     {% block notice %}{% endblock %}
     <main id="container-horizontal" class="{{ app.request.attributes.get('_route') in ['back_cartographie', 'back_addresses_history_index', 'back_addresses_history_carte_facile'] ? '' : 'fr-mb-5v'}}">

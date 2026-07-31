@@ -1,0 +1,20 @@
+{% for inAppCommunication in inAppCommunications %}
+  <div class="fr-notice fr-notice--{{ inAppCommunication.communicationType }}">
+    <div class="fr-container">
+      <div class="fr-notice__body">
+        <p>
+          {% if inAppCommunication.title %}
+            <span class="fr-notice__title">{{ inAppCommunication.title }}</span>
+          {% endif %}
+          {% if inAppCommunication.description %}
+            <span class="fr-notice__desc">{{ inAppCommunication.description }}</span>
+          {% endif %}
+          {% if inAppCommunication.url %}
+            <a href="{{ inAppCommunication.url }}" target="_blank" rel="noopener external" class="fr-notice__link">{{inAppCommunication.urlTitle}}</a>
+          {% endif %}
+        </p>
+        <button title="Masquer le message" type="button" data-close-url="{{ path('back_in_app_communication_close', {'id': inAppCommunication.id}) }}" class="fr-btn--close fr-btn">Masquer le message</button>
+      </div>
+    </div>
+  </div>
+{% endfor %}

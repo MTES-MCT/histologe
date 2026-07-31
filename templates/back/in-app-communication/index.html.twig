@@ -1,0 +1,126 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Configuration des bandeaux de communication{% endblock %}
+
+{% block content %}
+    <section class="fr-pt-4v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Bandeaux de communication',
+            'level3Link': path('back_config_in_app_communication_index'),
+        } %}
+
+        <header>
+            <div class="fr-grid-row">
+                <div class="fr-col-12 fr-col-lg-8 fr-text--left">
+                    <h1 class="fr-mb-0">Liste des bandeaux de communication</h1>
+                </div>
+                <div class="fr-col-12 fr-col-lg-4 fr-text--md-right">
+                    <a href="{{ path('back_config_in_app_communication_add') }}" class="fr-btn fr-btn--icon-left fr-icon-add-line fr-btn--block fr-btn--md-inline" title="Ajouter un bandeau de communication">Ajouter un bandeau de communication</a>
+                </div>
+            </div>
+        </header>
+    </section>
+    {{ form_start(form) }}
+
+    <section class="fr-col-12" aria-labelledby="filters-title">
+        {% include '_partials/back/filters-title.html.twig' with {
+            'skiplink_href': '#list-communications',
+            'skiplink_label': 'Accéder à la liste des bandeaux de communication'
+        } %}
+        {{ form_errors(form) }}
+        <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.queryTitleOrDescription) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                {{ form_row(form.communicationType) }}
+            </div>
+            <div class="fr-col-12 fr-col-lg-3">
+                <a href="{{ path('back_config_in_app_communication_index') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line">Réinitialiser les résultats</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
+            <div id="list-communications">
+                <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(inAppCommunications|length, 'bandeau de communication trouvé', 'bandeaux de communication trouvés') }}</h2>
+            <div class="fr-skiplinks">
+                <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                    >Accéder à la pagination</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="fr-col-12 fr-col-lg-3 fr-pt-0">
+        {{ form_row(form.orderType) }}
+    </section>
+    {{ form_end(form) }}
+
+    <section class="fr-col-12" id="table-list-results">
+        {% set tableHead %}
+            <th scope="col">ID</th>
+            <th scope="col" data-responsive-title="1">Titre et description</th>
+            <th scope="col">Lien</th>
+            <th scope="col">Type</th>
+            <th scope="col">Rôles</th>
+            <th scope="col">Stats</th>
+            <th scope="col" class="fr-text--right">Actions</th>
+        {% endset %}
+
+        {% set tableBody %}
+            {% for communication in inAppCommunications %}
+                <tr>
+                    <td>{{communication.id}}</td>
+                    <td>
+                        {{communication.title}}
+                        <br>
+                        {{communication.description}}
+                    </td>
+                    <td>
+                        {% if communication.url %}
+                            <a href="{{ communication.url }}" target="_blank">{{ communication.urlTitle }}</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% set badgeType = communication.communicationType %}
+                        {% if communication.communicationType is same as 'alert' %}
+                            {% set badgeType = 'error' %}
+                        {% endif %}
+                        <p class="fr-badge fr-badge--{{ badgeType }} fr-badge--no-icon">{{ communication.communicationType }}</p>
+                    </td>
+                    <td>
+                        {% for role in communication.userRoles %}
+                            <span class="fr-badge fr-badge--info fr-mr-1v">{{ role }}</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        Vues : {{ communication.inAppCommunicationUsers|length }} / Masqués : {{ communication.countInAppCommunicationUsersClosed }}
+                    </td>
+                    <td class="fr-cell--right fr-ws-nowrap">
+                        <a href="{{path('back_config_in_app_communication_edit', {id: communication.id})}}" class="fr-btn fr-icon-edit-line"
+                            aria-label="Éditer le bandeau de communication (id: {{ communication.id }})"
+                            title="Éditer le bandeau de communication (id: {{ communication.id }})"
+                            >Éditer le bandeau de communication (id: {{ communication.id }})</a>
+                        <form method="post" class="fr-display-inline-flex" action="{{path('back_config_in_app_communication_delete', {id: communication.id})}}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('in_app_communication_delete') }}">
+                            <button type="submit" class="fr-btn fr-btn--secondary fr-icon-delete-line"
+                                aria-label="Supprimer le bandeau de communication (id: {{ communication.id }})"
+                                title="Supprimer le bandeau de communication (id: {{ communication.id }})"
+                                >Supprimer le bandeau de communication (id: {{ communication.id }})</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endset %}
+        {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des bandeaux de communication', 'tableHead': tableHead, 'tableBody': tableBody } %}
+
+        <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" aria-label="Pagination de la liste des bandeaux de communication">
+            {% import '_partials/macros.html.twig' as macros %}
+            {{ macros.customPagination(pages, searchInAppCommunication.page, 'back_config_in_app_communication_index', searchInAppCommunication.urlParams) }}
+        </div>
+
+    </section>
+{% endblock %}

@@ -1,0 +1,15 @@
+inAppCommunications:
+-
+  title: Information importante : 
+  description: Que tous les RT dans la vibe lèvent le doigt
+  url: https://www.youtube.com/watch?v=9tpS-lzqHJo
+  urlTitle: La la la
+  communicationType: warning
+  userRoles:
+    - ROLE_ADMIN_TERRITORY
+-
+  description: On a pas d'amiral pour nous saper le moral
+  communicationType: info
+  userRoles:
+    - ROLE_ADMIN_PARTNER
+    - ROLE_USER_PARTNER
