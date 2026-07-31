@@ -235,6 +235,12 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\OneToMany(targetEntity: PersonalNote::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $personalNotes;
 
+    /**
+     * @var Collection<int, InAppCommunicationUser>
+     */
+    #[ORM\OneToMany(targetEntity: InAppCommunicationUser::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $inAppCommunicationUsers;
+
     public function __construct()
     {
         $this->suivis = new ArrayCollection();
@@ -254,6 +260,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         $this->userSearchFilters = new ArrayCollection();
         $this->personalTags = new ArrayCollection();
         $this->personalNotes = new ArrayCollection();
+        $this->inAppCommunicationUsers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1199,6 +1206,31 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
                 $personalNote->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InAppCommunicationUser>
+     */
+    public function getInAppCommunicationUsers(): Collection
+    {
+        return $this->inAppCommunicationUsers;
+    }
+
+    public function addInAppCommunicationUser(InAppCommunicationUser $inAppCommunicationUser): static
+    {
+        if (!$this->inAppCommunicationUsers->contains($inAppCommunicationUser)) {
+            $this->inAppCommunicationUsers->add($inAppCommunicationUser);
+            $inAppCommunicationUser->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInAppCommunicationUser(InAppCommunicationUser $inAppCommunicationUser): static
+    {
+        $this->inAppCommunicationUsers->removeElement($inAppCommunicationUser);
 
         return $this;
     }

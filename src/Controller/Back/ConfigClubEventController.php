@@ -3,7 +3,6 @@
 namespace App\Controller\Back;
 
 use App\Entity\ClubEvent;
-use App\Entity\User;
 use App\Form\ClubEventType;
 use App\Form\SearchClubEventType;
 use App\Repository\ClubEventRepository;
@@ -27,14 +26,12 @@ final class ConfigClubEventController extends AbstractController
         Request $request,
         #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
     ): Response {
-        /** @var User $user */
-        $user = $this->getUser();
-        $searchClubEvent = new SearchClubEvent($user);
+        $searchClubEvent = new SearchClubEvent();
         $form = $this->createForm(SearchClubEventType::class, $searchClubEvent);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && !$form->isValid()) {
-            $searchClubEvent = new SearchClubEvent($user);
+            $searchClubEvent = new SearchClubEvent();
         }
 
         $paginatedClubEvents = $clubEventRepository->findFilteredPaginated($searchClubEvent, $maxListPagination);
