@@ -8,6 +8,7 @@ use App\Entity\Signalement;
 use App\Entity\User;
 use App\Messenger\Message\GenerateFileZipMessage;
 use App\Security\Voter\SignalementVoter;
+use App\Service\MessageHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -86,7 +87,7 @@ class SignalementFileGenerateZipController extends AbstractController
         $user = $this->getUser();
 
         if (!$this->isCsrfTokenValid('zip_selection_'.$signalement->getUuid(), (string) $request->request->get('_token'))) {
-            throw $this->createAccessDeniedException('Invalid CSRF token.');
+            throw $this->createAccessDeniedException(MessageHelper::ERROR_MESSAGE_CSRF);
         }
         $violations = $validator->validate($generateFileZipSelectionRequest);
         if (\count($violations) > 0) {

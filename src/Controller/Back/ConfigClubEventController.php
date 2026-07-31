@@ -8,6 +8,7 @@ use App\Form\ClubEventType;
 use App\Form\SearchClubEventType;
 use App\Repository\ClubEventRepository;
 use App\Service\ListFilters\SearchClubEvent;
+use App\Service\MessageHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -103,7 +104,7 @@ final class ConfigClubEventController extends AbstractController
     ): RedirectResponse {
         $token = (string) $request->request->get('_token');
         if (!$this->isCsrfTokenValid('club_event_delete', $token)) {
-            $this->addFlash('error', 'Le jeton CSRF est invalide. Veuillez actualiser la page et réessayer.');
+            $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
 
             return $this->redirectToRoute('back_config_club_event_index');
         }

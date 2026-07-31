@@ -89,7 +89,7 @@ class SignalementFileController extends AbstractController
             throw $this->createAccessDeniedException();
         }
         if (!$this->isCsrfTokenValid('signalement_add_file_'.$signalement->getId(), (string) $request->request->get('_token')) || !$files = $request->files->get('signalement-add-file')) {
-            return $this->json(['response' => 'Token CSRF invalide ou paramètre manquant, veuillez recharger la page'], Response::HTTP_BAD_REQUEST);
+            return $this->json(['response' => MessageHelper::ERROR_MESSAGE_CSRF], Response::HTTP_BAD_REQUEST);
         }
         $documentType = DocumentType::AUTRE;
         if ($request->request->get('documentType') && $request->request->get('documentType') === DocumentType::AUTRE_PROCEDURE->name) {
@@ -274,7 +274,7 @@ class SignalementFileController extends AbstractController
         $requestData = $request->request->all();
         $token = RequestDataExtractor::getString($requestData, '_token');
         if (!$this->isCsrfTokenValid('signalement_edit_file_'.$signalement->getId(), $token)) {
-            $errorMsg = 'Token CSRF invalide, veuillez recharger la page';
+            $errorMsg = MessageHelper::ERROR_MESSAGE_CSRF;
 
             return $this->json(['response' => $errorMsg, 'errors' => ['custom' => ['errors' => [$errorMsg]]]], Response::HTTP_BAD_REQUEST);
         }

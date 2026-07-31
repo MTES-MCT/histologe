@@ -12,6 +12,7 @@ use App\Security\Voter\UserVoter;
 use App\Service\EmailAlert\EmailAlertChecker;
 use App\Service\Export\UserExportLoader;
 use App\Service\ListFilters\SearchUser;
+use App\Service\MessageHelper;
 use App\Utils\ExportFormat;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -148,7 +149,7 @@ class UserController extends AbstractController
         /** @var string $userId */
         $userId = $request->request->get('user_id');
         if (!$this->isCsrfTokenValid('user_disable', (string) $request->request->get('_token'))) {
-            $this->addFlash('error', 'Token CSRF invalide, merci d\'actualiser la page et réessayer.');
+            $this->addFlash('error', MessageHelper::ERROR_MESSAGE_CSRF);
 
             return $this->redirectToRoute('back_user_index', $searchUser->getUrlParams(), Response::HTTP_SEE_OTHER);
         }
