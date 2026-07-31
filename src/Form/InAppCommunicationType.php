@@ -15,13 +15,13 @@ class InAppCommunicationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('title', null, [
-            'label' => 'Titre (facultatif)',
-            'help' => '255 caractères maximum.',
+            'label' => 'Titre',
+            'help' => 'Titre ou description obligatoire (l\'un des deux). 255 caractères maximum.',
             'required' => false,
         ]);
         $builder->add('description', null, [
-            'label' => 'Description (facultatif)',
-            'help' => '255 caractères maximum.',
+            'label' => 'Description',
+            'help' => 'Titre ou description obligatoire (l\'un des deux). 255 caractères maximum.',
             'required' => false,
         ]);
         $builder->add('url', null, [

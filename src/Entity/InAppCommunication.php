@@ -65,6 +65,9 @@ class InAppCommunication implements EntityHistoryInterface
             $context->buildViolation('Veuillez préciser le titre ou la description.')
                 ->atPath('title')
                 ->addViolation();
+            $context->buildViolation('Veuillez préciser le titre ou la description.')
+                ->atPath('description')
+                ->addViolation();
         }
         if (!$this->url && $this->urlTitle) {
             $context->buildViolation('Veuillez préciser l\'URL.')

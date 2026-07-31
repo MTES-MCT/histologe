@@ -101,15 +101,15 @@
                     </td>
                     <td class="fr-cell--right fr-ws-nowrap">
                         <a href="{{path('back_config_in_app_communication_edit', {id: communication.id})}}" class="fr-btn fr-icon-edit-line"
-                            aria-label="Éditer le bandeau de communication {{ communication.title }}"
-                            title="Éditer le bandeau de communication {{ communication.title }}"
-                            >Éditer le bandeau de communication {{ communication.title }}</a>
+                            aria-label="Éditer le bandeau de communication (id: {{ communication.id }})"
+                            title="Éditer le bandeau de communication (id: {{ communication.id }})"
+                            >Éditer le bandeau de communication (id: {{ communication.id }})</a>
                         <form method="post" class="fr-display-inline-flex" action="{{path('back_config_in_app_communication_delete', {id: communication.id})}}">
                             <input type="hidden" name="_token" value="{{ csrf_token('in_app_communication_delete') }}">
                             <button type="submit" class="fr-btn fr-btn--secondary fr-icon-delete-line"
-                                aria-label="Supprimer le bandeau de communication {{ communication.title }}"
-                                title="Supprimer le bandeau de communication {{ communication.title }}"
-                                >Supprimer le bandeau de communication {{ communication.title }}</button>
+                                aria-label="Supprimer le bandeau de communication (id: {{ communication.id }})"
+                                title="Supprimer le bandeau de communication (id: {{ communication.id }})"
+                                >Supprimer le bandeau de communication (id: {{ communication.id }})</button>
                         </form>
                     </td>
                 </tr>
