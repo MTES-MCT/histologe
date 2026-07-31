@@ -160,12 +160,25 @@ class NotificationAndMailSender
             $notificationType = NotificationType::NOUVEAU_SUIVI;
         } else {
             $recipients = new ArrayCollection();
-            foreach ($mentionedPartners as $partner) {
-                foreach ($userList as $user) {
-                    if ($user instanceof User && $user->hasPartner($partner)) {
+            $rtAndSa = [];
+            foreach ($userList as $user) {
+                $isInPartners = false;
+                foreach ($mentionedPartners as $partner) {
+                    if ($user->hasPartner($partner)) {
+                        $isInPartners = true;
                         $recipients->add($user);
+                        break;
                     }
                 }
+                if (!$isInPartners && ($user->isTerritoryAdmin() || $user->isSuperAdmin())) {
+                    $rtAndSa[] = $user;
+                }
+            }
+            $adminList = $this->userRepository->findActiveAdmins();
+            $recipientsRtAndSa = new ArrayCollection(array_merge($rtAndSa, $adminList));
+            if (!$recipientsRtAndSa->isEmpty()) {
+                $this->sendMail($recipientsRtAndSa, $mailerType, $suivi);
+                $this->createInAppNotifications(recipients: $recipientsRtAndSa, type: NotificationType::NOUVEAU_SUIVI, suivi: $suivi);
             }
             $notificationType = NotificationType::NOUVELLE_MENTION;
 
@@ -176,19 +189,8 @@ class NotificationAndMailSender
                 $this->signalement->getReference()
             );
         }
-
         $this->sendMail($recipients, $mailerType, $suivi);
         $this->createInAppNotifications(recipients: $recipients, type: $notificationType, suivi: $suivi, description: $description);
-
-        // on continue à notifier les RT et Admins même en cas de mention
-        if (!empty($mentionedPartners)) {
-            $description = null;
-            $notificationType = NotificationType::NOUVEAU_SUIVI;
-            $adminRecipients = $this->getRecipientsAdmin($this->signalement->getTerritory())
-                ->filter(static fn (User $user) => !$recipients->contains($user));
-            $this->sendMail($adminRecipients, $mailerType, $suivi);
-            $this->createInAppNotifications(recipients: $adminRecipients, type: $notificationType, suivi: $suivi, description: $description);
-        }
     }
 
     public function sendDemandeAbandonProcedureToAdminsAndPartners(Suivi $suivi): void
