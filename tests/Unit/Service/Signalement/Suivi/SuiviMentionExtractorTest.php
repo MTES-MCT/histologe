@@ -41,7 +41,7 @@ class SuiviMentionExtractorTest extends KernelTestCase
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2022-000000000010']);
         $this->partner3 = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-02']);
         $this->partner4 = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 13-03']);
-        $this->description = 'Merci de vérifier avec <span class="mention" data-partner-id="'.$this->partner3->getId().'">@'.$this->partner3->getNom().'</span>';
+        $this->description = 'Merci de vérifier avec <span class="text-mentioned" data-partner-id="'.$this->partner3->getId().'">@'.$this->partner3->getNom().'</span>';
     }
 
     public function testExtractFromDescription(): void
@@ -49,8 +49,8 @@ class SuiviMentionExtractorTest extends KernelTestCase
         $suivi = (new Suivi())
             ->setDescription(
                 $this->description
-                .' et <span class="mention" data-partner-id="'.$this->partner4->getId().'">@'.$this->partner4->getNom().'</span>,'
-                .' merci <span class="mention" data-partner-id="'.$this->partner3->getId().'">@'.$this->partner3->getNom().'</span>'
+                .' et <span class="text-mentioned" data-partner-id="'.$this->partner4->getId().'">@'.$this->partner4->getNom().'</span>,'
+                .' merci <span class="text-mentioned" data-partner-id="'.$this->partner3->getId().'">@'.$this->partner3->getNom().'</span>'
             )
             ->setType(Suivi::TYPE_PARTNER)
             ->setSignalement($this->signalement)
@@ -106,7 +106,7 @@ class SuiviMentionExtractorTest extends KernelTestCase
         $partner = $this->partnerRepository->findOneBy(['nom' => 'Partenaire 63-01']);
         $suivi = (new Suivi())
             ->setDescription(
-                'Merci de vérifier avec <span class="mention" data-partner-id="'.$partner->getId().'">@'.$partner->getNom().'</span>'
+                'Merci de vérifier avec <span class="text-mentioned" data-partner-id="'.$partner->getId().'">@'.$partner->getNom().'</span>'
             )
             ->setType(Suivi::TYPE_PARTNER)
             ->setSignalement($this->signalement)

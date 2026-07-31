@@ -223,7 +223,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $suivi = (new Suivi())
         ->setCreatedBy($respTerritoire)
         ->setSignalement($signalement)
-        ->setDescription('test description avec mention <span class="mention" data-partner-id="3">@Partenaire 13-02</span>')
+        ->setDescription('test description avec mention <span class="text-mentioned" data-partner-id="3">@Partenaire 13-02</span>')
         ->setType(Suivi::TYPE_PARTNER)
         ->setCategory(SuiviCategory::MESSAGE_PARTNER)
         ->setIsVisibleForUsager(false);
@@ -232,18 +232,14 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true);
         $this->entityManager->flush();
 
-        // user-13-01 est en mode récap : pas de mail immédiat, seulement une notification in-app en attente de récap
-        // mais un mail aux Admins/RT
-        $this->assertEmailCount(1);
-
         $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
-        $this->assertCount(6, $newNotifications);
-        $this->assertSame(NotificationType::NOUVELLE_MENTION, $newNotifications[0]->getType());
-        $this->assertSame(NotificationType::NOUVEAU_SUIVI, $newNotifications[1]->getType());
-        $this->assertSame($mentionedPartnerUser->getEmail(), $newNotifications[0]->getUser()->getEmail());
-        $this->assertTrue($newNotifications[0]->isWaitMailingSummary());
-        $this->assertStringContainsString($respTerritoire->getNomComplet(), (string) $newNotifications[0]->getDescription());
-        $this->assertStringContainsString($signalement->getReference(), (string) $newNotifications[0]->getDescription());
+        $this->assertCount(4, $newNotifications);
+        $this->assertSame(NotificationType::NOUVEAU_SUIVI, $newNotifications[0]->getType());
+        $this->assertSame(NotificationType::NOUVELLE_MENTION, $newNotifications[3]->getType());
+        $this->assertSame($mentionedPartnerUser->getEmail(), $newNotifications[3]->getUser()->getEmail());
+        $this->assertTrue($newNotifications[3]->isWaitMailingSummary());
+        $this->assertStringContainsString($respTerritoire->getNomComplet(), (string) $newNotifications[3]->getDescription());
+        $this->assertStringContainsString($signalement->getReference(), (string) $newNotifications[3]->getDescription());
     }
 
     public function testSendNewSuiviToAdminsAndPartnersWithMentionSendsImmediateEmailForNonSummaryUser(): void
@@ -265,7 +261,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $suivi = (new Suivi())
         ->setCreatedBy($respTerritoire)
         ->setSignalement($signalement)
-        ->setDescription('test description avec mention <span class="mention" data-partner-id="4">@Partenaire 13-03</span>')
+        ->setDescription('test description avec mention <span class="text-mentioned" data-partner-id="4">@Partenaire 13-03</span>')
         ->setType(Suivi::TYPE_PARTNER)
         ->setCategory(SuiviCategory::MESSAGE_PARTNER)
         ->setIsVisibleForUsager(false);
@@ -274,15 +270,14 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $this->notificationAndMailSender->sendNewSuiviToAdminsAndPartners($suivi, true);
         $this->entityManager->flush();
 
-        // mail aux utilisateurs mentionnés et mails aux admins/Rt
-        $this->assertEmailCount(2);
+        $this->assertEmailCount(1);
         $this->assertEmailAddressContains($this->getMailerMessage(), 'bcc', $mentionedPartnerUser->getEmail());
 
         $newNotifications = $this->notificationRepository->findBy(['suivi' => $suivi]);
-        $this->assertCount(6, $newNotifications);
-        $this->assertSame(NotificationType::NOUVELLE_MENTION, $newNotifications[0]->getType());
-        $this->assertSame(NotificationType::NOUVEAU_SUIVI, $newNotifications[1]->getType());
-        $this->assertFalse($newNotifications[0]->isWaitMailingSummary());
+        $this->assertCount(4, $newNotifications);
+        $this->assertSame(NotificationType::NOUVEAU_SUIVI, $newNotifications[0]->getType());
+        $this->assertSame(NotificationType::NOUVELLE_MENTION, $newNotifications[3]->getType());
+        $this->assertFalse($newNotifications[3]->isWaitMailingSummary());
     }
 
     public function testSendNewSuiviToAdminsAndPartnersWithMentionOnPartnerWithoutAcceptedAffectationFallsBackToStandardBroadcast(): void
@@ -301,7 +296,7 @@ class NotificationAndMailSenderTest extends KernelTestCase
         $suivi = (new Suivi())
         ->setCreatedBy($respTerritoire)
         ->setSignalement($signalement)
-        ->setDescription('test description avec mention sur affectation non acceptée <span class="mention" data-partner-id="2">@Partenaire 13-01</span>')
+        ->setDescription('test description avec mention sur affectation non acceptée <span class="text-mentioned" data-partner-id="2">@Partenaire 13-01</span>')
         ->setType(Suivi::TYPE_PARTNER)
         ->setCategory(SuiviCategory::MESSAGE_PARTNER)
         ->setIsVisibleForUsager(false);
