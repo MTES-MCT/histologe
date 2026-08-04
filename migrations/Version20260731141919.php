@@ -22,8 +22,6 @@ final class Version20260731141919 extends AbstractMigration
         $this->addSql('ALTER TABLE signalement ADD address_id INT DEFAULT NULL, CHANGE date_entree date_entree DATE DEFAULT NULL, CHANGE created_at created_at DATETIME NOT NULL, CHANGE modified_at modified_at DATETIME DEFAULT NULL, CHANGE last_suivi_at last_suivi_at DATETIME DEFAULT NULL, CHANGE validated_at validated_at DATETIME DEFAULT NULL, CHANGE proprio_averti_at proprio_averti_at DATETIME DEFAULT NULL, CHANGE closed_at closed_at DATETIME DEFAULT NULL, CHANGE date_naissance_occupant date_naissance_occupant DATETIME DEFAULT NULL, CHANGE type_composition_logement type_composition_logement JSON DEFAULT NULL, CHANGE situation_foyer situation_foyer JSON DEFAULT NULL, CHANGE information_procedure information_procedure JSON DEFAULT NULL, CHANGE information_complementaire information_complementaire JSON DEFAULT NULL, CHANGE date_mission_service_secours date_mission_service_secours DATE DEFAULT NULL');
         $this->addSql('ALTER TABLE signalement ADD CONSTRAINT FK_F4B55114F5B7AF75 FOREIGN KEY (address_id) REFERENCES address (id) ON DELETE SET NULL');
         $this->addSql('CREATE INDEX IDX_F4B55114F5B7AF75 ON signalement (address_id)');
-
-        // $this->addSql('UPDATE signalement SET ban_id_occupant = null WHERE ban_id_occupant = \'0\'');
     }
 
     public function down(Schema $schema): void
