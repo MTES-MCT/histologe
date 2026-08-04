@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\DemandeLienSignalement;
+use App\Dto\Request\Signalement\SignalementDraftArchiveRequest;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
@@ -30,6 +31,7 @@ use App\Manager\SignalementDraftManager;
 use App\Manager\SuiviManager;
 use App\Repository\CommuneRepository;
 use App\Repository\FileRepository;
+use App\Repository\SignalementDraftRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TiersInvitationRepository;
@@ -65,6 +67,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -239,6 +243,9 @@ class SignalementController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/signalement-draft/send_mail', name: 'send_mail_continue_from_draft', methods: 'POST')]
     public function sendMailContinueFromDraft(
         NotificationMailerRegistry $notificationMailerRegistry,
@@ -248,7 +255,7 @@ class SignalementController extends AbstractController
     ): JsonResponse {
         /** @var SignalementDraftRequest $signalementDraftRequest */
         $signalementDraftRequest = $serializer->deserialize(
-            $payload = $request->getContent(),
+            $request->getContent(),
             SignalementDraftRequest::class,
             'json'
         );
@@ -331,29 +338,38 @@ class SignalementController extends AbstractController
         return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/signalement-draft/archive', name: 'archive_draft', methods: 'POST')]
     public function archiveDraft(
         Request $request,
-        SignalementDraftRequestSerializer $serializer,
-        SignalementDraftManager $signalementDraftManager,
+        SerializerInterface $serializer,
+        SignalementDraftRepository $signalementDraftRepository,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
-        /** @var SignalementDraftRequest $signalementDraftRequest */
-        $signalementDraftRequest = $serializer->deserialize(
-            $payload = $request->getContent(),
-            SignalementDraftRequest::class,
+        /** @var SignalementDraftArchiveRequest $signalementDraftArchiveRequest */
+        $signalementDraftArchiveRequest = $serializer->deserialize(
+            $request->getContent(),
+            SignalementDraftArchiveRequest::class,
             'json'
         );
 
-        $signalementDraft = $signalementDraftManager->findSignalementDraftByAddressAndMail(
-            $signalementDraftRequest,
-        );
+        if (empty($signalementDraftArchiveRequest->uuid)) {
+            return $this->json(['response' => 'error'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $signalementDraft = $signalementDraftRepository->findOneBy([
+            'uuid' => $signalementDraftArchiveRequest->uuid,
+            'status' => SignalementDraftStatus::EN_COURS,
+        ], [
+            'id' => 'DESC',
+        ]);
 
         if (
             $signalementDraft
         ) {
             $signalementDraft->setStatus(SignalementDraftStatus::ARCHIVE);
-            $entityManager->persist($signalementDraft);
             $entityManager->flush();
 
             return $this->json(['success' => true]);

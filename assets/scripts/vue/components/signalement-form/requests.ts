@@ -123,9 +123,9 @@ export const requests = {
     requests.doRequestPost(url, '', functionReturn, undefined)
   },
 
-  archiveDraft (functionReturn: Function) {
+  archiveDraft (draftUuid: string, functionReturn: Function) {
     const url = formStore.props.ajaxurlArchiveDraft
-    requests.doRequestPost(url, formStore.data, functionReturn, undefined)
+    requests.doRequestPost(url, { uuid: draftUuid }, functionReturn, undefined)
   },
 
   validateAddress (valueAdress: string, functionReturn: Function) {

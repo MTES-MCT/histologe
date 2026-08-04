@@ -662,6 +662,31 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals(Response::HTTP_NOT_FOUND, $client->getResponse()->getStatusCode());
     }
 
+    public function testArchiveDraft(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var RouterInterface $router */
+        $router = $client->getContainer()->get(RouterInterface::class);
+        $urlArchiveDraft = $router->generate('archive_draft');
+
+        $client->request('POST', $urlArchiveDraft, [], [], [], json_encode(['uuid' => '']));
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
+
+        $client->request('POST', $urlArchiveDraft, [], [], [], json_encode(['uuid' => '00000000-0000-0000-2023-locataire001']));
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertTrue($response['success']);
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $client->getContainer()->get('doctrine')->getManager();
+        /** @var SignalementDraftRepository $signalementDraftRepository */
+        $signalementDraftRepository = $entityManager->getRepository(SignalementDraft::class);
+        $signalementDraft = $signalementDraftRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-locataire001']);
+        $this->assertEquals(SignalementDraftStatus::ARCHIVE, $signalementDraft->getStatus());
+    }
+
     #[DataProvider('provideSignalementDraftUuid')]
     public function testGetSignalementDraft(string $uuid, string $step): void
     {
