@@ -23,6 +23,7 @@ use App\Service\Security\FileScanner;
 use App\Service\UploadHandlerService;
 use App\Utils\FormHelper;
 use App\Validator\EmailFormatValidator;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -416,6 +417,7 @@ class ProfilController extends AbstractController
     public function subscriptionsChanges(
         Request $request,
         EntityManagerInterface $entityManager,
+        ManagerRegistry $managerRegistry,
         SignalementRepository $signalementRepository,
         UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
         AffectationRepository $affectationRepository,
@@ -458,7 +460,12 @@ class ProfilController extends AbstractController
                 $sendFlashSuccess = true;
             }
         }
-        $entityManager->flush();
+        try {
+            $entityManager->flush();
+        } catch (UniqueConstraintViolationException) {
+            // abonnement déjà créé en parallèle (double soumission) : l'EntityManager est fermé par Doctrine, on le réinitialise
+            $managerRegistry->resetManager();
+        }
         if ($sendFlashSuccess) {
             $this->addFlash('success', ['title' => 'Mise à jour des abonnements',
                 'message' => 'Vos abonnements ont bien été mises à jour.',
