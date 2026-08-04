@@ -1130,4 +1130,21 @@ class SignalementRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    /** @return array<int, array{0: Signalement, territoryId: int|null}> */
+    public function findWithoutAddressId(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->select('partial s.{id, adresseOccupant, cpOccupant, villeOccupant, banIdOccupant, inseeOccupant, geoloc, statut}')
+            ->addSelect('signalementUsager')
+            ->leftJoin('s.signalementUsager', 'signalementUsager')
+            ->addSelect('IDENTITY(s.territory) AS territoryId')
+            ->where('s.address IS NULL')
+            // a garder pour accelerer le traitement de la commande qui de toute facon ignore ces signalements
+            // a commenter une fois le traitement de la commande terminé pour connaitre le nombre de signalements concernés
+            ->andWhere('(s.cpOccupant IS NOT NULL AND s.cpOccupant != \'\' AND s.cpOccupant != \'#N/D\') OR (s.inseeOccupant IS NOT NULL AND s.inseeOccupant != \'\' AND s.inseeOccupant != \'#N/D\')')
+            ->setMaxResults(6000)
+            ->getQuery()
+            ->getResult();
+    }
 }

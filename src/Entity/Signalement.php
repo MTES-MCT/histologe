@@ -247,6 +247,21 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 50, nullable: true)]
     private ?string $banIdOccupant = null;
 
+    #[ORM\Column(type: 'string', length: 10, nullable: true)]
+    private ?string $inseeOccupant = null;
+
+    /** @var array<mixed> $geoloc */
+    #[ORM\Column(type: 'json')]
+    private array $geoloc = [];
+
+    #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'signalements')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Territory $territory = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Address $address = null;
+
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255, groups: ['Default', 'bo_step_coordonnees'])]
     private ?string $nomAgence = null;
@@ -326,10 +341,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'json')]
     private array $jsonContent = [];
 
-    /** @var array<mixed> $geoloc */
-    #[ORM\Column(type: 'json')]
-    private array $geoloc = [];
-
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $montantAllocation = null;
 
@@ -365,9 +376,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[Assert\Length(max: 255, groups: ['bo_step_address'])]
     private ?string $adresseAutreOccupant = null;
-
-    #[ORM\Column(type: 'string', length: 10, nullable: true)]
-    private ?string $inseeOccupant = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $manualAddressOccupant = null;
@@ -443,10 +451,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'signalements')]
     #[ORM\JoinTable(name: 'tag_signalement')]
     private Collection $tags;
-
-    #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'signalements')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Territory $territory = null;
 
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $isImported = null;
@@ -2146,6 +2150,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setTerritory(?Territory $territory): static
     {
         $this->territory = $territory;
+
+        return $this;
+    }
+
+    public function getAddress(): ?Address
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?Address $address): static
+    {
+        $this->address = $address;
 
         return $this;
     }
