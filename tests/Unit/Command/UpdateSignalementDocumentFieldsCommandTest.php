@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Command;
 
 use App\Command\SlugifyDocumentSignalementCommand;
 use App\Command\UpdateSignalementDocumentFieldsCommand;
+use App\Entity\Address;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Manager\FileManager;
@@ -55,12 +56,13 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             ->willReturn($this->territory);
 
         $signalementRepositoryMock = $this->createMock(SignalementRepository::class);
+        $address = (new Address())->setTerritory($this->territory);
         $expectedCalls = [
-            [$this->territory, '1000', (new Signalement())->setTerritory($this->territory)->setReference('2023-1000')],
-            [$this->territory, '1000', (new Signalement())->setTerritory($this->territory)->setReference('2023-1000')],
-            [$this->territory, '1001', (new Signalement())->setTerritory($this->territory)->setReference('2023-1001')],
-            [$this->territory, '1001', (new Signalement())->setTerritory($this->territory)->setReference('2023-1001')],
-            [$this->territory, '1001', (new Signalement())->setTerritory($this->territory)->setReference('2023-1001')],
+            [$this->territory, '1000', (new Signalement())->setAddress($address)->setReference('2023-1000')],
+            [$this->territory, '1000', (new Signalement())->setAddress($address)->setReference('2023-1000')],
+            [$this->territory, '1001', (new Signalement())->setAddress($address)->setReference('2023-1001')],
+            [$this->territory, '1001', (new Signalement())->setAddress($address)->setReference('2023-1001')],
+            [$this->territory, '1001', (new Signalement())->setAddress($address)->setReference('2023-1001')],
         ];
         $callIndex = 0;
         $signalementRepositoryMock

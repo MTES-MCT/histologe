@@ -9,14 +9,11 @@ export function attacheAutocompleteAddressEvents() {
 attacheAutocompleteAddressEvents();
 
 document
-  .querySelector('#form-edit-address-adresse')
-  ?.addEventListener('input', (event) => setManualEdit(event.target, false));
-document
   .querySelector('#form-edit-address-codepostal')
-  ?.addEventListener('input', (event) => setManualEdit(event.target, true));
+  ?.addEventListener('input', (event) => setResetInsee(event.target));
 document
   .querySelector('#form-edit-address-ville')
-  ?.addEventListener('input', (event) => setManualEdit(event.target, true));
+  ?.addEventListener('input', (event) => setResetInsee(event.target));
 
 function attachAutocompleteClickOutsideEvent() {
   if (isClickOutsideEventAttached) {
@@ -235,9 +232,6 @@ function attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix)
       document.querySelector('#' + idForm + ' [data-autocomplete-ville' + suffix + ']').value =
         feature.properties.city;
     }
-    if (document?.querySelector('#' + idForm + ' [data-autocomplete-manual' + suffix + ']')) {
-      document.querySelector('#' + idForm + ' [data-autocomplete-manual' + suffix + ']').value = 0;
-    }
     if (
       document?.querySelector('#' + idForm + ' [data-autocomplete-need-reset-insee' + suffix + ']')
     ) {
@@ -255,12 +249,9 @@ function attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix)
   });
 }
 
-function setManualEdit(input, needResetInsee) {
+function setResetInsee(input) {
   const idForm = input.closest('form').id;
-  document.querySelector('#' + idForm + ' [data-autocomplete-manual]').value = 1;
-  if (needResetInsee) {
-    document.querySelector('#' + idForm + ' [data-autocomplete-need-reset-insee]').value = 1;
-  }
+  document.querySelector('#' + idForm + ' [data-autocomplete-need-reset-insee]').value = 1;
 }
 
 export function initComponentAddress(id) {

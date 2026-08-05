@@ -27,7 +27,6 @@ signalements:
     etage_occupant: "A"
     escalier_occupant: "1"
     insee_occupant: "13213"
-    territory: "Bouches-du-Rhône"
     nb_occupants_logement: 5
     situation_occupant: "1"
     origine_signalement: "Guichet Unique"
@@ -73,7 +72,6 @@ signalements:
     nb_chambres_logement: 0
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
-    territory: "Ain"
     tags:
       - "Peril"
     criticites:
@@ -111,7 +109,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -149,7 +146,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -187,7 +183,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -224,7 +219,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -260,7 +254,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -298,7 +291,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -335,7 +327,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -372,7 +363,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -409,7 +399,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -448,7 +437,6 @@ signalements:
     nb_chambres_logement: 0
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
-    territory: "Ain"
     tags:
       - "Peril"
     criticites:
@@ -487,7 +475,6 @@ signalements:
     nb_chambres_logement: 0
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
-    territory: "Ain"
     tags:
       - "Peril"
     criticites:
@@ -527,7 +514,6 @@ signalements:
     nb_chambres_logement: 0
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
-    territory: "Ain"
     tags:
       - "Peril"
     criticites:
@@ -566,7 +552,6 @@ signalements:
     nb_chambres_logement: 0
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
-    territory: "Ain"
     is_imported: true
     tags: []
     criticites: []
@@ -602,7 +587,6 @@ signalements:
     nb_chambres_logement: 2
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
-    territory: "Rhône"
     tags: []
     criticites: []
   -
@@ -636,7 +620,6 @@ signalements:
     nb_chambres_logement: 2
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
-    territory: "Métropole de Lyon"
     tags: []
     criticites: []
   -
@@ -670,7 +653,6 @@ signalements:
     nb_chambres_logement: 2
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
-    territory: "Métropole de Lyon"
     tags: []
     criticites: []
   -
@@ -704,7 +686,6 @@ signalements:
     nb_chambres_logement: 2
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
-    territory: "Rhône"
     tags: []
     criticites: []
   -
@@ -737,7 +718,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -775,7 +755,6 @@ signalements:
     nb_chambres_logement: 0
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
-    territory: "Yonne"
     tags: []
     criticites:
       - "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
@@ -814,7 +793,6 @@ signalements:
     nb_chambres_logement: 0
     nb_niveaux_logement: 0
     nb_occupants_logement: 2
-    territory: "Puy-de-Dôme"
     tags: []
     criticites:
       - "Le DPE indique une étiquette énergie F ou G ou n’a pas été fait. J’ai tout le temps la sensation d'avoir froid en hiver et/ou très chaud en été."
@@ -852,7 +830,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -888,7 +865,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 2
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -927,7 +903,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 2
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -967,7 +942,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -1008,7 +982,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -1050,7 +1023,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -1088,7 +1060,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -1126,7 +1097,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -1164,7 +1134,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -1202,7 +1171,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -1241,7 +1209,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -1281,7 +1248,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -1321,7 +1287,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Bouches-du-Rhône"
     tags:
       - "Urgent"
     criticites:
@@ -1357,7 +1322,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Isère"
     is_imported: true
   -
     uuid: "00000000-0000-0000-2023-000000000023"
@@ -1390,7 +1354,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Isère"
     is_imported: true
   -
     uuid: "00000000-0000-0000-2023-000000000024"
@@ -1423,7 +1386,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Finistère"
     is_imported: true
   -
     uuid: "00000000-0000-0000-2023-000000000025"
@@ -1456,7 +1418,6 @@ signalements:
     origine_signalement: ""
     nb_occupants_logement: 3
     situation_occupant: "1"
-    territory: "Finistère"
     is_imported: true
   -
     uuid: "00000000-0000-0000-2023-000000000026"
@@ -1484,7 +1445,6 @@ signalements:
     etage_occupant: "A"
     escalier_occupant: "1"
     insee_occupant: "13213"
-    territory: "Bouches-du-Rhône"
     nb_occupants_logement: 5
     situation_occupant: "1"
     origine_signalement: "Guichet Unique"
@@ -1516,7 +1476,6 @@ signalements:
     insee_occupant: "62023"
     is_rsa: 0
     nb_occupants_logement: 4
-    territory: "Pas-de-Calais"
     criticites:
       - "Infiltration ou fuite d'air dans plus de deux des éléments suivants : toit, charpente, façades, murs extérieurs. Sensation de courant d'air régulière ou très fréquente."
       - "Ma facture est trop élevée et le chauffage est limité dans le logement."
@@ -1552,7 +1511,6 @@ signalements:
     insee_occupant: "13202"
     is_rsa: 0
     nb_occupants_logement: 4
-    territory: "Bouches-du-Rhône"
     criticites:
       - "Infiltration ou fuite d'air dans plus de deux des éléments suivants : toit, charpente, façades, murs extérieurs. Sensation de courant d'air régulière ou très fréquente."
       - "Ma facture est trop élevée et le chauffage est limité dans le logement."
@@ -1586,7 +1544,6 @@ signalements:
     insee_occupant: "93066"
     is_rsa: 0
     nb_occupants_logement: 4
-    territory: "Seine-Saint-Denis"
     criticites:
       - "Infiltration ou fuite d'air dans plus de deux des éléments suivants : toit, charpente, façades, murs extérieurs. Sensation de courant d'air régulière ou très fréquente."
       - "Ma facture est trop élevée et le chauffage est limité dans le logement."

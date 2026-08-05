@@ -12,7 +12,7 @@
                             Vous allez être redirigé vers la liste des dossiers à la même adresse.
                         </p>
                         <p>
-                            Attention, vous verrez uniquement les dossiers auxquels votre partenaire {{app.user.getPartnerInTerritory(signalement.territory).nom}} a été affecté.
+                            Attention, vous verrez uniquement les dossiers auxquels votre partenaire {{app.user.getPartnerInTerritory(signalement.address.territory).nom}} a été affecté.
                         </p>
                         <form action="{{ path('dismiss_modal_duplicate_addresses') }}" method="POST" id="form-modal-duplicate-addresses">
                             <div class="fr-checkbox-group">

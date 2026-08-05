@@ -213,7 +213,7 @@ class Suivi implements EntityHistoryInterface
                 return 'DECLARANT'.$separator.$this->getCreatedByNomComplet(true);
             }
 
-            return $this->getCreatedBy()->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getTerritory())?->getNom().$separator.$this->getCreatedBy()->getNomComplet(true);
+            return $this->getCreatedBy()->getPartnerInTerritoryOrFirstOne($this->getSignalement()->getAddress()->getTerritory())?->getNom().$separator.$this->getCreatedBy()->getNomComplet(true);
         }
         if (in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByBailleur())) {
             return $forBailleur ? 'Vous (bailleur)' : 'Bailleur';

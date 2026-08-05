@@ -56,7 +56,7 @@ class DossiersActiviteRecenteQueryTest extends KernelTestCase
             $this->assertArrayHasKey('reference', $row);
             $this->assertArrayHasKey('nomOccupant', $row);
             $this->assertArrayHasKey('prenomOccupant', $row);
-            $this->assertArrayHasKey('adresseOccupant', $row);
+            $this->assertArrayHasKey('adresseComplete', $row);
             $this->assertArrayHasKey('uuid', $row);
             $this->assertArrayHasKey('statut', $row);
             $this->assertArrayHasKey('suiviCreatedAt', $row);

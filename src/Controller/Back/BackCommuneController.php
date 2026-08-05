@@ -5,11 +5,11 @@ namespace App\Controller\Back;
 use App\Entity\Commune;
 use App\Form\CommuneType;
 use App\Form\SearchCommuneType;
+use App\Repository\AddressRepository;
 use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\CommuneRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\Query\Commune\CommuneStatisticsQuery;
-use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Service\Gouv\Ban\AddressService;
 use App\Service\ListFilters\SearchCommune;
@@ -69,7 +69,7 @@ class BackCommuneController extends AbstractController
     public function edit(
         Commune $commune,
         Request $request,
-        SignalementRepository $signalementRepository,
+        AddressRepository $addressRepository,
         CommuneStatisticsQuery $communeStatisticsQuery,
         AutoAffectationRuleRepository $autoAffectationRuleRepository,
         PartnerRepository $partnerRepository,
@@ -79,12 +79,12 @@ class BackCommuneController extends AbstractController
     ): Response {
         $poiCommune = $addressService->getMunicipalityByCityCode($commune->getNom(), $commune->getCodeInsee());
         $countSignalementsWithCommune = $communeStatisticsQuery->countForCommune($commune);
-        $inconsistentSignalements = $signalementRepository->findWithInconsistentCommuneName($commune);
+        $inconsistentAddresses = $addressRepository->findWithInconsistentCommuneName($commune);
         $form = $this->createForm(CommuneType::class, $commune);
         $originalNom = $commune->getNom();
         $originalInsee = $commune->getCodeInsee();
-        $signalementsWithInsee = $signalementRepository->findBy(['inseeOccupant' => $originalInsee]);
-        $countSignalementsWithInsee = \count($signalementsWithInsee);
+        $addressesWithInsee = $addressRepository->findBy(['cityCode' => $originalInsee]);
+        $countAddressesWithInsee = \count($addressesWithInsee);
         $autoAffectationRulesWithInseeToInclude = $autoAffectationRuleRepository->findWithInseeToInclude($originalInsee);
         $countWithAutoAffectationRulesWithInseeToInclude = \count($autoAffectationRulesWithInseeToInclude);
         $autoAffectationRulesWithInseeToExclude = $autoAffectationRuleRepository->findWithInseeToExclude($originalInsee);
@@ -111,16 +111,16 @@ class BackCommuneController extends AbstractController
             // Modification du nom de la commune
             if ($originalNom !== $commune->getNom()) {
                 $nomUpdated = true;
-                foreach ($inconsistentSignalements as $signalement) {
-                    $signalement->setVilleOccupant($commune->getNom());
+                foreach ($inconsistentAddresses as $address) {
+                    $address->setCity($commune->getNom());
                 }
             }
             // Modification du code INSEE de la commune, et propagation aux données associées
             if ($originalInsee !== $commune->getCodeInsee()) {
                 $inseeUpdated = true;
                 // Si une commune avec le nouveau code INSEE existe, on met à jour les signalements pour qu'ils pointent vers cette commune
-                foreach ($signalementsWithInsee as $signalement) {
-                    $signalement->setInseeOccupant($commune->getCodeInsee());
+                foreach ($addressesWithInsee as $address) {
+                    $address->setCityCode($commune->getCodeInsee());
                 }
                 // auto-affectation : change in list of inseeToInclude (type string)
                 foreach ($autoAffectationRulesWithInseeToInclude as $autoAffectationRule) {
@@ -154,12 +154,12 @@ class BackCommuneController extends AbstractController
 
             $em->flush();
             $message = 'La commune a bien été modifiée.';
-            if ($nomUpdated && count($inconsistentSignalements) > 0) {
-                $message .= sprintf(' %d signalement(s) ont été mis à jour pour être cohérents avec le nouveau nom de la commune.', count($inconsistentSignalements));
+            if ($nomUpdated && count($inconsistentAddresses) > 0) {
+                $message .= sprintf(' %d adresse(s) ont été mises à jour pour être cohérentes avec le nouveau nom de la commune.', count($inconsistentAddresses));
             }
             if ($inseeUpdated) {
-                if ($countSignalementsWithInsee > 0) {
-                    $message .= sprintf(' %d signalement(s) ont été mis à jour pour être cohérents avec le nouveau code INSEE de la commune.', $countSignalementsWithInsee);
+                if ($countAddressesWithInsee > 0) {
+                    $message .= sprintf(' %d adresse(s) ont été mises à jour pour être cohérentes avec le nouveau code INSEE de la commune.', $countAddressesWithInsee);
                 }
                 if ($countWithAutoAffectationRulesWithInseeToInclude > 0) {
                     $message .= sprintf(' %d règle(s) d\'auto-affectation ont été mises à jour pour inclure le nouveau code INSEE de la commune.', $countWithAutoAffectationRulesWithInseeToInclude);
@@ -183,8 +183,8 @@ class BackCommuneController extends AbstractController
             'form' => $form,
             'commune' => $commune,
             'countSignalementsWithCommune' => $countSignalementsWithCommune,
-            'inconsistentSignalements' => $inconsistentSignalements,
-            'countSignalementsWithInsee' => $countSignalementsWithInsee,
+            'inconsistentAddresses' => $inconsistentAddresses,
+            'countAddressesWithInsee' => $countAddressesWithInsee,
             'countWithAutoAffectationRulesWithInseeToInclude' => $countWithAutoAffectationRulesWithInseeToInclude,
             'countWithAutoAffectationRulesWithInseeToExclude' => $countWithAutoAffectationRulesWithInseeToExclude,
             'countWithPartenairesWithInsee' => $countWithPartenairesWithInsee,

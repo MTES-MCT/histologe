@@ -437,7 +437,7 @@ class ProfilController extends AbstractController
             $lastUserOnSignalements = [];
             foreach ($subsOnInactiveSignalements as $sub) {
                 if (!$user->isSuperAdmin()) { // les SA peuvent toujours se désabonner
-                    $partner = $user->getPartnerInTerritory($sub->getSignalement()->getTerritory());
+                    $partner = $user->getPartnerInTerritory($sub->getSignalement()->getAddress()->getTerritory());
                     $affectation = $affectationRepository->findOneBy(['signalement' => $sub->getSignalement(), 'partner' => $partner, 'statut' => AffectationStatus::ACCEPTED]);
                     $subsForPartner = $userSignalementSubscriptionRepository->findForSignalementAndPartner($sub->getSignalement(), $partner);
                     if ($affectation && 1 === count($subsForPartner)) {

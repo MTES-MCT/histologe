@@ -50,7 +50,7 @@ class InterventionVoter extends Voter
             return true;
         }
 
-        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
         if (!$partner) {
             return false;
         }

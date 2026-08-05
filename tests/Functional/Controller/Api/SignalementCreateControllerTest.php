@@ -60,14 +60,13 @@ class SignalementCreateControllerTest extends WebTestCase
         $jsonContent = [];
 
         // adresse BAN
-        $this->assertEquals($signalement->getAdresseOccupant(), '151 Avenue du Pont Trinquat');
-        $this->assertEquals($signalement->getCpOccupant(), $payload['codePostalOccupant']);
-        $this->assertEquals($signalement->getVilleOccupant(), $payload['communeOccupant']);
-        $this->assertEquals($signalement->getTerritory()->getZip(), 34);
-        $this->assertEquals($signalement->getInseeOccupant(), 34172);
-        $this->assertArrayHasKey('lat', $signalement->getGeoloc());
-        $this->assertArrayHasKey('lng', $signalement->getGeoloc());
-        $this->assertNotEmpty($signalement->getBanIdOccupant());
+        $this->assertEquals($signalement->getAddress()->getHousenumberAndStreet(), '151 Avenue du Pont Trinquat');
+        $this->assertEquals($signalement->getAddress()->getPostCode(), $payload['codePostalOccupant']);
+        $this->assertEquals($signalement->getAddress()->getCity(), $payload['communeOccupant']);
+        $this->assertEquals($signalement->getAddress()->getTerritory()->getZip(), 34);
+        $this->assertEquals($signalement->getAddress()->getCityCode(), 34172);
+        $this->assertNotNull($signalement->getAddress()->getPoint());
+        $this->assertNotEmpty($signalement->getAddress()->getBanId());
         // champs classiques
         $this->assertEquals($signalement->getEtageOccupant(), $payload['etageOccupant']);
         $this->assertEquals($signalement->getEscalierOccupant(), $payload['escalierOccupant']);
@@ -201,11 +200,11 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertNotNull($signalement);
         $this->assertEquals($signalement->getCreatedByPartner()->getId(), $partner->getId());
 
-        $this->assertEquals($signalement->getAdresseOccupant(), $payload['adresseOccupant']);
-        $this->assertEquals($signalement->getCpOccupant(), $payload['codePostalOccupant']);
-        $this->assertEquals($signalement->getVilleOccupant(), $payload['communeOccupant']);
+        $this->assertEquals($signalement->getAddress()->getHousenumberAndStreet(), $payload['adresseOccupant']);
+        $this->assertEquals($signalement->getAddress()->getPostCode(), $payload['codePostalOccupant']);
+        $this->assertEquals($signalement->getAddress()->getCity(), $payload['communeOccupant']);
         $this->assertEquals($signalement->getMailOccupant(), $payload['mailOccupant']);
-        $this->assertEquals($signalement->getTerritory()->getZip(), 30);
+        $this->assertEquals($signalement->getAddress()->Territory()->getZip(), 30);
         $this->assertEquals($signalement->getProfileDeclarant(), ProfileDeclarant::from($payload['profilDeclarant']));
         $this->assertEquals($signalement->getProfileOccupant(), ProfileOccupant::LOCATAIRE);
         $this->assertEquals($signalement->getIsLogementSocial(), $payload['isLogementSocial']);

@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Dto\Api\Request\SignalementListQueryParams;
-use App\Entity\Commune;
 use App\Entity\EmailDeliveryIssue;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
@@ -54,7 +53,7 @@ class SignalementRepository extends ServiceEntityRepository
      */
     public function findCities(User $user, ?Territory $territory = null): array|int|string
     {
-        return $this->findCommunes($user, $territory, 's.villeOccupant', 'city');
+        return $this->findCommunes($user, $territory, 'address.city', 'city');
     }
 
     /**
@@ -62,7 +61,7 @@ class SignalementRepository extends ServiceEntityRepository
      */
     public function findZipcodes(User $user, ?Territory $territory = null): array|int|string
     {
-        return $this->findCommunes($user, $territory, 's.cpOccupant', 'zipcode');
+        return $this->findCommunes($user, $territory, 'address.postCode', 'zipcode');
     }
 
     /**
@@ -76,6 +75,7 @@ class SignalementRepository extends ServiceEntityRepository
     ): array|int|string {
         $qb = $this->createQueryBuilder('s')
             ->select($field.' '.$alias)
+            ->innerJoin('s.address', 'address')
             ->where('s.statut NOT IN (:statutList)')
             ->setParameter('statutList', SignalementStatus::excludedStatuses());
         if (!$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
@@ -85,10 +85,10 @@ class SignalementRepository extends ServiceEntityRepository
                 ->setParameter('partners', $user->getPartners());
         }
         if ($territory) {
-            $qb->andWhere('s.territory = :territory')
+            $qb->andWhere('address.territory = :territory')
                 ->setParameter('territory', $territory);
         } elseif (!$user->isSuperAdmin()) {
-            $qb->andWhere('s.territory IN (:territories)')
+            $qb->andWhere('address.territory IN (:territories)')
                 ->setParameter('territories', $user->getPartnersTerritories());
         }
 
@@ -128,9 +128,10 @@ class SignalementRepository extends ServiceEntityRepository
             ->select('s.reference')
             ->addSelect("SUBSTRING_INDEX(s.reference, '-', 1) AS year")
             ->addSelect("CAST(SUBSTRING_INDEX(s.reference, '-', -1) AS SIGNED) AS reference_index")
+            ->innerJoin('s.address', 'address')
             ->where('YEAR(s.createdAt) = :year')
             ->setParameter('year', $year)
-            ->andWhere('s.territory = :territory')
+            ->andWhere('address.territory = :territory')
             ->setParameter('territory', $territory)
             ->orderBy('reference_index', 'DESC')
             ->setMaxResults(1);
@@ -154,7 +155,8 @@ class SignalementRepository extends ServiceEntityRepository
     public function findByReferenceChunk(Territory $territory, string $chunkReference): ?Signalement
     {
         return $this->createQueryBuilder('s')
-            ->where('s.territory = :territory')
+            ->innerJoin('s.address', 'address')
+            ->where('address.territory = :territory')
             ->andWhere('s.reference LIKE :reference')
             ->setParameter('territory', $territory)
             ->setParameter('reference', '%'.$chunkReference.'%')
@@ -176,36 +178,31 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * @return array<int, Signalement>
-     */
-    public function findWithNoGeolocalisation(?Territory $territory = null): array
-    {
-        $qb = $this->createQueryBuilder('s')
-            ->where('s.inseeOccupant LIKE :insee_occupant OR s.inseeOccupant IS NULL')
-            ->setParameter('insee_occupant', '%#ERROR%');
-
-        if ($territory) {
-            $qb->andWhere('s.territory = :territory')
-                ->setParameter('territory', $territory)
-                ->setParameter('territory', $territory);
-        }
-
-        return $qb->getQuery()->getResult();
-    }
-
     public function findOneForEmailAndAddress(
         string $email,
         string $address,
         string $zipcode,
         string $city,
     ): ?Signalement {
+        $parsedAddress = AddressParser::parse($address);
+        $houseNumber = $parsedAddress['number'];
+        if ($houseNumber && $parsedAddress['suffix']) {
+            $houseNumber .= ' '.$parsedAddress['suffix'];
+        }
+        $street = mb_trim($parsedAddress['street']);
+
         $qb = $this->createQueryBuilder('s')
+            ->innerJoin('s.address', 'address')
             ->andWhere('s.mailDeclarant = :email OR s.mailOccupant = :email')->setParameter('email', $email)
-            ->andWhere('s.adresseOccupant = :address')->setParameter('address', $address)
-            ->andWhere('s.cpOccupant = :zipcode')->setParameter('zipcode', $zipcode)
-            ->andWhere('s.villeOccupant = :city')->setParameter('city', $city)
+            ->andWhere('address.street = :street')->setParameter('street', $street)
+            ->andWhere('address.postCode = :zipcode')->setParameter('zipcode', $zipcode)
+            ->andWhere('address.city = :city')->setParameter('city', $city)
             ->andWhere('s.statut NOT IN (:statutList)')->setParameter('statutList', SignalementStatus::excludedStatuses());
+        if ($houseNumber) {
+            $qb->andWhere('address.housenumber = :housenumber')->setParameter('housenumber', $houseNumber);
+        } else {
+            $qb->andWhere('address.housenumber IS NULL');
+        }
 
         $list = $qb->addOrderBy('s.createdAt', 'DESC')
             ->getQuery()->getResult();
@@ -247,6 +244,7 @@ class SignalementRepository extends ServiceEntityRepository
         $city = CommuneHelper::getCommuneFromArrondissement($city);
 
         $qb = $this->createQueryBuilder('s');
+        $qb->innerJoin('s.address', 'address');
         if ($isTiersDeclarant) {
             $qb
                 ->andWhere('s.mailDeclarant = :email')->setParameter('email', $email)
@@ -254,9 +252,21 @@ class SignalementRepository extends ServiceEntityRepository
         } else {
             $qb->andWhere('s.mailOccupant = :email')->setParameter('email', $email);
         }
-        $qb->andWhere('LOWER(s.adresseOccupant) = :address')->setParameter('address', strtolower($address))
-            ->andWhere('s.cpOccupant = :zipcode')->setParameter('zipcode', $zipcode)
-            ->andWhere('LOWER(s.villeOccupant) = :city')->setParameter('city', strtolower($city))
+
+        $parsedAddress = AddressParser::parse($address);
+        $houseNumber = $parsedAddress['number'];
+        if ($houseNumber && $parsedAddress['suffix']) {
+            $houseNumber .= ' '.$parsedAddress['suffix'];
+        }
+        $street = mb_trim($parsedAddress['street']);
+        if ($houseNumber) {
+            $qb->andWhere('address.housenumber = :housenumber')->setParameter('housenumber', $houseNumber);
+        } else {
+            $qb->andWhere('address.housenumber IS NULL');
+        }
+        $qb->andWhere('LOWER(address.street) = :address')->setParameter('address', strtolower($street))
+            ->andWhere('address.postCode = :zipcode')->setParameter('zipcode', $zipcode)
+            ->andWhere('LOWER(address.city) = :city')->setParameter('city', strtolower($city))
             ->andWhere('s.statut IN (:statusSignalement)')
             ->setParameter(
                 'statusSignalement',
@@ -347,7 +357,8 @@ class SignalementRepository extends ServiceEntityRepository
         ?string $referenceTerms,
         ?SearchArchivedSignalement $searchArchivedSignalement = null,
     ): Paginator {
-        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder = $this->createQueryBuilder('s')
+            ->innerJoin('s.address', 'address');
 
         $queryBuilder
             ->where('s.statut = :archived')
@@ -355,7 +366,7 @@ class SignalementRepository extends ServiceEntityRepository
 
         if (!empty($territory)) {
             $queryBuilder
-                ->andWhere('s.territory = :territory')
+                ->andWhere('address.territory = :territory')
                 ->setParameter('territory', $territory);
         }
 
@@ -392,34 +403,6 @@ class SignalementRepository extends ServiceEntityRepository
             ->orderBy('s.createdAt', 'ASC')
             ->getQuery()
             ->getResult();
-    }
-
-    /**
-     * @return array<int, Signalement>
-     */
-    public function findSignalementsByYear(?int $year, Territory $territory, ?bool $emptyGeolocOnly = false): array
-    {
-        $qb = $this->createQueryBuilder('s')
-            ->where('s.territory = :territory')
-            ->setParameter('territory', $territory)
-            ->orderBy('s.createdAt', 'ASC');
-
-        if ($emptyGeolocOnly) {
-            $qb->andWhere('s.geoloc IS NULL OR JSON_LENGTH(s.geoloc) = 0');
-        }
-
-        if (null !== $year) {
-            $start = new \DateTimeImmutable(sprintf('%d-01-01 00:00:00', $year));
-            $end = $start->modify('+1 year');
-
-            $qb
-                ->andWhere('s.createdAt >= :start')
-                ->andWhere('s.createdAt < :end')
-                ->setParameter('start', $start)
-                ->setParameter('end', $end);
-        }
-
-        return $qb->getQuery()->getResult();
     }
 
     public function findOneForApi(
@@ -469,7 +452,7 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         if (!empty($signalementListQueryParams->codeInsee)) {
-            $qb->andWhere('s.inseeOccupant = :codeInsee')
+            $qb->andWhere('address.cityCode = :codeInsee')
                 ->setParameter('codeInsee', $signalementListQueryParams->codeInsee);
         }
 
@@ -483,10 +466,11 @@ class SignalementRepository extends ServiceEntityRepository
     public function findForAPIQueryBuilder(User $user, ?bool $includeCreatedByUser = false): QueryBuilder
     {
         $partners = $this->partnerAuthorizedResolver->resolveBy($user);
-        $qb = $this->createQueryBuilder('s');
+        $qb = $this->createQueryBuilder('s')
+            ->innerJoin('s.address', 'address');
 
         $qb->select('DISTINCT s', 'territory')
-            ->leftJoin('s.territory', 'territory')
+            ->leftJoin('address.territory', 'territory')
             ->leftJoin('s.affectations', 'affectations');
         if ($includeCreatedByUser) {
             return $qb->where('affectations.partner IN (:partners) OR s.createdBy = :user')
@@ -512,24 +496,19 @@ class SignalementRepository extends ServiceEntityRepository
         ?bool $compareNomOccupant = false,
     ): array {
         $qb = $this->createQueryBuilder('s')
-            ->andWhere('s.cpOccupant = :zipcode')
-            ->andWhere('s.inseeOccupant = :insee')
-            ->setParameter('zipcode', $signalement->getCpOccupant())
-            ->setParameter('insee', $signalement->getInseeOccupant());
+            ->innerJoin('s.address', 'address')
+            ->andWhere('address.street = :street')
+            ->andWhere('address.postCode = :zipcode')
+            ->andWhere('address.cityCode = :insee')
+            ->setParameter('street', $signalement->getAddress()->getStreet())
+            ->setParameter('zipcode', $signalement->getAddress()->getPostCode())
+            ->setParameter('insee', $signalement->getAddress()->getCityCode());
 
-        $adresseOccupant = AddressParser::parse($signalement->getAdresseOccupant());
-        if (null !== $adresseOccupant['suffix'] && null !== $adresseOccupant['number']) {
-            $suffix = strtolower($adresseOccupant['suffix']);
-            $addresses = [
-                $adresseOccupant['number'].$suffix.' '.$adresseOccupant['street'],
-                $adresseOccupant['number'].' '.$suffix.' '.$adresseOccupant['street'],
-                $signalement->getAdresseOccupant(), // fallback
-            ];
-            $qb->andWhere('s.adresseOccupant IN (:addresses)')
-                ->setParameter('addresses', $addresses);
+        if ($signalement->getAddress()->getHousenumber()) {
+            $qb->andWhere('address.housenumber = :housenumber')
+                ->setParameter('housenumber', $signalement->getAddress()->getHousenumber());
         } else {
-            $qb->andWhere('s.adresseOccupant = :address')
-                ->setParameter('address', $signalement->getAdresseOccupant());
+            $qb->andWhere('a.housenumber IS NULL');
         }
 
         if (!empty($exclusiveStatus)) {
@@ -591,13 +570,14 @@ class SignalementRepository extends ServiceEntityRepository
     ): Paginator {
         $queryBuilder = $this->createQueryBuilder('s')
             ->select('s, su')
+            ->innerJoin('s.address', 'address')
             ->leftJoin('s.suivis', 'su')
             ->where('s.statut IN (:signalementStatusList)')
             ->setParameter('signalementStatusList', SignalementStatus::injonctionStatuses());
 
         if (!empty($searchSignalementInjonction->getTerritoire())) {
             $queryBuilder
-                ->andWhere('s.territory = :territory')
+                ->andWhere('address.territory = :territory')
                 ->setParameter('territory', $searchSignalementInjonction->getTerritoire());
         }
 
@@ -1043,7 +1023,8 @@ class SignalementRepository extends ServiceEntityRepository
      */
     public function getActiveSignalementsForUser(User $user, ?bool $count = false): array|int
     {
-        $qb = $this->createQueryBuilder('s');
+        $qb = $this->createQueryBuilder('s')
+            ->innerJoin('s.address', 'address');
         if ($count) {
             $qb->select('COUNT(s.id)');
         } else {
@@ -1053,7 +1034,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('statut', SignalementStatus::ACTIVE);
 
         if ($user->isTerritoryAdmin() || $user->isSuperAdmin()) {
-            $qb->andWhere('s.territory IN (:territories)')
+            $qb->andWhere('address.territory IN (:territories)')
                 ->setParameter('territories', $user->getPartnersTerritories());
         } else {
             $qb->innerJoin('s.affectations', 'a')
@@ -1075,7 +1056,8 @@ class SignalementRepository extends ServiceEntityRepository
      */
     public function getActiveSignalementsWithInteractionsForUser(User $user, ?bool $count = false): array|int
     {
-        $qb = $this->createQueryBuilder('s');
+        $qb = $this->createQueryBuilder('s')
+            ->innerJoin('s.address', 'address');
         if ($count) {
             $qb->select('COUNT(DISTINCT s.id)');
         } else {
@@ -1091,7 +1073,7 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('partners', $user->getPartners());
 
         if ($user->isTerritoryAdmin()) {
-            $qb->andWhere('s.territory IN (:territories)')
+            $qb->andWhere('address.territory IN (:territories)')
                 ->setParameter('territories', $user->getPartnersTerritories());
         } else {
             $qb->innerJoin('s.affectations', 'a')
@@ -1107,20 +1089,6 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * @return array<Signalement>
-     */
-    public function findWithInconsistentCommuneName(Commune $commune): array
-    {
-        $qb = $this->createQueryBuilder('s');
-        $qb->where('s.inseeOccupant = :insee')
-            ->andWhere('s.villeOccupant != :ville')
-            ->setParameter('insee', $commune->getCodeInsee())
-            ->setParameter('ville', $commune->getNom());
-
-        return $qb->getQuery()->getResult();
-    }
-
     public function findOneByUuidWithSuivis(string $uuid): ?Signalement
     {
         $qb = $this->createQueryBuilder('s');
@@ -1129,5 +1097,27 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->where('s.uuid = :uuid')->setParameter('uuid', $uuid);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    // utilisation uniquement dans les tests
+    public function findByAddress(?string $housenumber, string $street, string $postCode, string $city): array
+    {
+        $qb = $this->createQueryBuilder('s');
+        if ($housenumber) {
+            $qb->andWhere('s.address.housenumber = :housenumber')
+                ->setParameter('housenumber', $housenumber);
+        } else {
+            $qb->andWhere('s.address.housenumber IS NULL');
+        }
+        $qb->andWhere('s.address.street = :street')
+            ->andWhere('s.address.postCode = :postCode')
+            ->andWhere('s.address.city = :city')
+            ->setParameter('street', $street)
+            ->setParameter('postCode', $postCode)
+            ->setParameter('city', $city);
+
+        $qb->orderBy('s.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
     }
 }

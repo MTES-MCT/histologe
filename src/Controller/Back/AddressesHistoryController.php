@@ -48,10 +48,17 @@ class AddressesHistoryController extends AbstractController
         $filters = null !== $addressesHistorySearchQuery
             ? $addressesHistorySearchQuery->getFilters()
             : [
-                // 'maxItemsPerPage' => AddressesHistorySearchQuery::MAX_LIST_PAGINATION,
+                'maxItemsPerPage' => AddressesHistorySearchQuery::MAX_LIST_PAGINATION,
                 // 'orderBy' => 'DESC',
                 // 'sortBy' => 'reference',
             ];
+
+        $page = null !== $addressesHistorySearchQuery && null !== $addressesHistorySearchQuery->getPage()
+            ? $addressesHistorySearchQuery->getPage()
+            : 1;
+
+        $totalAddresses = $addressesHistoryQuery->countAddressesWithHistory($user, $addressesHistorySearchQuery);
+        $totalPages = (int) ceil($totalAddresses / AddressesHistorySearchQuery::MAX_LIST_PAGINATION);
 
         $addresses = $addressesHistoryQuery->findAddressesWithHistory($user, $addressesHistorySearchQuery);
         $responseAddresses = [];
@@ -59,16 +66,16 @@ class AddressesHistoryController extends AbstractController
         $processedArretes = [];
 
         foreach ($addresses as $row) {
-            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $row['adresseOccupant'].' '.$row['cpOccupant'].' '.$row['villeOccupant']));
+            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $row['housenumber'].' '.$row['street'].' '.$row['postCode'].' '.$row['cityCode']));
 
             if (!isset($responseAddresses[$addressKey])) {
                 $responseAddresses[$addressKey] = $addressesHistoryListViewFactory->createInstance(
-                    addressOccupant: $row['adresseOccupant'],
-                    cpOccupant: $row['cpOccupant'],
-                    villeOccupant: $row['villeOccupant'],
+                    addressOccupant: mb_trim($row['housenumber'].' '.$row['street']),
+                    cpOccupant: $row['postCode'],
+                    villeOccupant: $row['city'],
                     territoryId: $row['territoryId'],
-                    addressForHuman: $row['adresseOccupant'].' '.$row['cpOccupant'].' '.$row['villeOccupant'],
-                    communeForHuman: $row['villeOccupant'].' '.$row['cpOccupant'],
+                    addressForHuman: mb_trim($row['housenumber'].' '.$row['street'].' '.$row['postCode'].' '.$row['city']),
+                    communeForHuman: $row['city'].' '.$row['postCode'],
                 );
                 $processedSignalements[$addressKey] = [];
                 $processedArretes[$addressKey] = [];
@@ -95,6 +102,16 @@ class AddressesHistoryController extends AbstractController
                 $responseAddresses[$addressKey]->addSignalement($addressesHistorySignalement);
                 $processedSignalements[$addressKey][] = $row['id'];
 
+                if (true === $row['isLogementSocial']) {
+                    $responseAddresses[$addressKey]->setHasLogementSocial(true);
+                } elseif (false === $row['isLogementSocial']) {
+                    $responseAddresses[$addressKey]->setHasLogementPrive(true);
+                }
+
+                if (!empty($row['bailleurName'])) {
+                    $responseAddresses[$addressKey]->addBailleurName($row['bailleurName']);
+                }
+
                 // Fallback : si pas de point dans Address, on utilise geoloc du signalement
                 if (!$responseAddresses[$addressKey]->getLat() && $row['geoloc'] && isset($row['geoloc']['lat'])) {
                     $responseAddresses[$addressKey]->setLat($row['geoloc']['lat']);
@@ -106,9 +123,10 @@ class AddressesHistoryController extends AbstractController
             if (!empty($row['arreteId']) && !in_array($row['arreteId'], $processedArretes[$addressKey])) {
                 $responseAddresses[$addressKey]->addArrete([
                     'id' => $row['arreteId'],
-                    'dateArrete' => $row['dateArrete'],
-                    'arreteType' => $row['arreteType'],
-                    'dateMainLevee' => $row['dateMainLevee'],
+                    'dateArrete' => $row['dateArrete'] ? $row['dateArrete']->format('d/m/Y') : null,
+                    'typeArrete' => $row['typeArrete'],
+                    'typeArreteLabel' => $row['typeArrete'] ? $row['typeArrete']->completeLabel() : null,
+                    'dateMainLevee' => $row['dateMainLevee'] ? $row['dateMainLevee']->format('d/m/Y') : null,
                 ]);
                 $processedArretes[$addressKey][] = $row['arreteId'];
             }
@@ -117,7 +135,11 @@ class AddressesHistoryController extends AbstractController
         $responseData = [
             'filters' => $filters,
             'list' => array_values($responseAddresses),
-            'pagination' => [],
+            'pagination' => [
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_items' => $totalAddresses,
+            ],
             'zoneAreas' => [],
         ];
 
@@ -156,24 +178,24 @@ class AddressesHistoryController extends AbstractController
         $signalements = $sameAddressQuery->findSameAddressFiltered($user);
         $signalementsByAddress = [];
         foreach ($signalements as $signalement) {
-            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant']));
+            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['housenumber'].' '.$signalement['street'].' '.$signalement['postCode'].' '.$signalement['cityCode']));
             if (!isset($signalementsByAddress[$addressKey])) {
                 $signalementsByAddress[$addressKey] = [
-                    'adresse' => $signalement['adresseOccupant'],
-                    'cp' => $signalement['cpOccupant'],
-                    'ville' => $signalement['villeOccupant'],
+                    'adresse' => mb_trim($signalement['housenumber'].' '.$signalement['street']),
+                    'cp' => $signalement['postCode'],
+                    'ville' => $signalement['city'],
                     'territoryId' => $signalement['territoryId'],
-                    'addressForHuman' => $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant'],
-                    'communeForHuman' => $signalement['villeOccupant'].' '.$signalement['cpOccupant'],
+                    'addressForHuman' => mb_trim($signalement['housenumber'].' '.$signalement['street'].' '.$signalement['postCode'].' '.$signalement['city']),
+                    'communeForHuman' => mb_trim($signalement['city'].' '.$signalement['postCode']),
                     'lat' => null,
                     'lng' => null,
                     'signalements' => [],
                 ];
             }
             $signalementsByAddress[$addressKey]['signalements'][] = $signalement;
-            if ($signalement['geoloc']) {
-                $signalementsByAddress[$addressKey]['lat'] = $signalement['geoloc']['lat'];
-                $signalementsByAddress[$addressKey]['lng'] = $signalement['geoloc']['lng'];
+            if (!empty($signalement['point'])) {
+                $signalementsByAddress[$addressKey]['lat'] = (string) $signalement['point']->getY();
+                $signalementsByAddress[$addressKey]['lng'] = (string) $signalement['point']->getX();
             }
         }
 

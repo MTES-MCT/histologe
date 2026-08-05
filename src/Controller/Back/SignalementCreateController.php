@@ -232,8 +232,8 @@ class SignalementCreateController extends AbstractController
                 $hasDuplicates = true;
                 $duplicateContent = $this->renderView('back/signalement_create/_modal_duplicate_content.html.twig', ['duplicates' => $duplicates]);
                 $linkDuplicates = $this->generateUrl('back_signalements_index', [
-                    'searchTerms' => $signalement->getAdresseOccupant(),
-                    'communes[]' => $signalement->getCpOccupant(),
+                    'searchTerms' => $signalement->getAddress()->getHousenumberAndStreet(),
+                    'communes[]' => $signalement->getAddress()->getPostCode(),
                 ], UrlGeneratorInterface::ABSOLUTE_URL);
             } elseif (
                 $form->get('forceSave')->isEmpty()
@@ -346,7 +346,7 @@ class SignalementCreateController extends AbstractController
             if ($signalement->getIsLogementSocial() && $signalement->getDenominationProprio()) {
                 $bailleur = $bailleurRepository->findOneBailleurBy(
                     name: $signalement->getDenominationProprio(),
-                    territory: $signalement->getTerritory(),
+                    territory: $signalement->getAddress()->getTerritory(),
                     bailleurSanitized: true
                 );
                 $signalement->setBailleur($bailleur);
@@ -518,7 +518,7 @@ class SignalementCreateController extends AbstractController
                 $signalementManager->activateSignalementAndCreateFirstSuivi(
                     signalement: $signalement,
                     adminUser: $user,
-                    partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                    partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
                     createSubscription: false
                 );
                 $this->addFlash('success', ['title' => 'Signalement validé', 'message' => 'Le signalement a bien été créé et validé. Il a été affecté aux partenaires définis.']);
@@ -529,7 +529,7 @@ class SignalementCreateController extends AbstractController
                 $signalementManager->activateSignalementAndCreateFirstSuivi(
                     signalement: $signalement,
                     adminUser: $user,
-                    partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                    partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
                     createSubscription: false
                 );
                 $this->addFlash('success', ['title' => 'Signalement ajouté',
@@ -545,7 +545,7 @@ class SignalementCreateController extends AbstractController
                 $route = 'back_signalement_drafts';
                 $params = [];
             }
-            $signalement->setReference($referenceGenerator->generateReference($signalement->getTerritory()));
+            $signalement->setReference($referenceGenerator->generateReference($signalement->getAddress()->getTerritory()));
             $signalement->setCreatedAt(new \DateTimeImmutable());
             $userManager->createUsagersFromSignalement($signalement);
             $fileUpdater->updateIsWaitingSuiviForSignalement($signalement);
@@ -607,7 +607,7 @@ class SignalementCreateController extends AbstractController
                 $errorMsgs[] = 'En tant que tiers déclarant, vous devez renseigner un nom pour le tiers.';
             }
         }
-        if (!$signalement->getAdresseOccupant()) {
+        if (!$signalement->getAddress()) {
             $errorMsgs[] = 'Vous devez renseigner l\'adresse du logement pour pouvoir soumettre le signalement.';
         }
         if (null === $signalement->getProfileDeclarant()) {

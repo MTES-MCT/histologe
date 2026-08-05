@@ -6,10 +6,8 @@ use App\Entity\Enum\NotificationType;
 use App\Entity\Signalement;
 use App\Event\SignalementViewedEvent;
 use App\Event\SuiviViewedEvent;
-use App\Manager\SignalementManager;
 use App\Repository\NotificationRepository;
 use App\Security\User\SignalementUser;
-use App\Service\Gouv\Ban\AddressService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -18,8 +16,6 @@ class SignalementViewedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly AddressService $addressService,
-        private readonly SignalementManager $signalementManager,
         private readonly NotificationRepository $notificationRepository,
     ) {
     }
@@ -41,7 +37,6 @@ class SignalementViewedSubscriber implements EventSubscriberInterface
             user: $user,
             includedNotificationTypes: NotificationType::getForAgent()
         );
-        $this->updateGeolocationDataIfNeeded($signalement);
 
         $this->entityManager->flush();
     }
@@ -82,15 +77,6 @@ class SignalementViewedSubscriber implements EventSubscriberInterface
             $notification->setIsSeen(true);
             $notification->setSeenAt(new \DateTimeImmutable());
             $this->entityManager->persist($notification);
-        }
-    }
-
-    private function updateGeolocationDataIfNeeded(Signalement $signalement): void
-    {
-        if (empty($signalement->getInseeOccupant())) {
-            $address = $this->addressService->getAddress($signalement->getAddressCompleteOccupant());
-            $this->signalementManager->updateAddressOccupantFromAddress($signalement, $address);
-            $this->entityManager->persist($signalement);
         }
     }
 }

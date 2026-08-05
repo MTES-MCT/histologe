@@ -133,7 +133,7 @@ class AffectationManager
             ->setSignalement($signalement)
             ->setPartner($partner)
             ->setAffectedBy($user ?? null)
-            ->setTerritory($signalement->getTerritory());
+            ->setTerritory($signalement->getAddress()->getTerritory());
 
         if ($dispatchEvent) {
             $this->notificationAndMailSender->sendNewAffectation($affectation);
@@ -271,7 +271,7 @@ class AffectationManager
         if ($affectation->isSynchronized() && AffectationStatus::ACCEPTED === $affectation->getStatut()) {
             $message = \sprintf(
                 '[%s][%s] Suppression du partenaire %s sur le dossier synchronisé #%s',
-                $affectation->getSignalement()->getTerritory()->getZipAndName(),
+                $affectation->getSignalement()->getAddress()->getTerritory()->getZipAndName(),
                 $affectation->getPartner()->getType()->value,
                 $affectation->getPartner()->getId(),
                 $affectation->getSignalement()->getReference()

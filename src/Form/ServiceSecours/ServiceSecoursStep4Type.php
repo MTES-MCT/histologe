@@ -59,7 +59,7 @@ class ServiceSecoursStep4Type extends AbstractType
                             'label' => 'Dénomination du bailleur',
                             'help' => 'Format attendu : Tappez le nom du bailleur et sélectionnez-le dans la liste.',
                             'attr' => [
-                                'data-autocomplete-bailleur-url' => $this->urlGenerator->generate('app_bailleur', ['inseecode' => $rootData->step2->inseeOccupant]),
+                                'data-autocomplete-bailleur-url' => $this->urlGenerator->generate('app_bailleur', ['inseecode' => $rootData->step2->addressCityCode]),
                             ],
                         ]);
                     } else {

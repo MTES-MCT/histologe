@@ -34,6 +34,7 @@ use App\Entity\SignalementQualification;
 use App\Entity\Territory;
 use App\Entity\TiersInvitation;
 use App\Entity\User;
+use App\Exception\Address\CityNotFoundException;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementImportFactory;
@@ -45,7 +46,7 @@ use App\Repository\PartnerRepository;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
 use App\Repository\Query\SignalementList\QueryBuilderFactory;
 use App\Repository\SignalementRepository;
-use App\Service\Gouv\Ban\Response\Address;
+use App\Service\Gouv\Ban\AddressService;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\Qualification\QualificationStatusService;
@@ -80,6 +81,7 @@ class SignalementManager
         private readonly BailleurRepository $bailleurRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly SignalementRepository $signalementRepository,
+        private readonly AddressService $addressService,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly ExportIterableQuery $exportIterableQuery,
@@ -103,7 +105,7 @@ class SignalementManager
         ]);
 
         if ($signalement instanceof Signalement) {
-            return $this->update($signalement, $data);
+            return $this->update($signalement, $data, $territory);
         }
 
         return $this->signalementImportFactory->create($territory, $data);
@@ -112,7 +114,7 @@ class SignalementManager
     /**
      * @param array<int|string, mixed> $data
      */
-    public function update(Signalement $signalement, array $data): Signalement
+    public function update(Signalement $signalement, array $data, Territory $territory): Signalement
     {
         if (empty($data['statut'])) {
             $data['statut'] = SignalementStatus::ACTIVE;
@@ -121,7 +123,7 @@ class SignalementManager
             }
         }
 
-        return $signalement
+        $signalement
             ->setDetails($data['details'])
             ->setIsProprioAverti((bool) $data['isProprioAverti'])
             ->setNbAdultes($data['nbAdultes'])
@@ -151,9 +153,6 @@ class SignalementManager
             ->setPrenomOccupant($data['prenomOccupant'])
             ->setTelOccupant($data['telOccupant'])
             ->setMailOccupant($data['mailOccupant'])
-            ->setAdresseOccupant($data['adresseOccupant'])
-            ->setCpOccupant($data['cpOccupant'])
-            ->setVilleOccupant($data['villeOccupant'])
             ->setIsCguAccepted((bool) $data['isCguAccepted'])
             ->setCreatedAt($data['createdAt'])
             ->setModifiedAt(new \DateTimeImmutable())
@@ -167,7 +166,6 @@ class SignalementManager
             ->setEscalierOccupant($data['escalierOccupant'])
             ->setNumAppartOccupant($data['numAppartOccupant'])
             ->setAdresseAutreOccupant($data['adresseAutreOccupant'])
-            ->setInseeOccupant($data['inseeOccupant'])
             ->setLienDeclarantOccupant($data['lienDeclarantOccupant'])
             ->setIsRsa((bool) $data['isRsa'])
             ->setAnneeConstruction($data['anneeConstruction'])
@@ -184,15 +182,29 @@ class SignalementManager
                     : null
             )
             ->setClosedAt($data['closedAt']);
-    }
 
-    public function updateAddressOccupantFromAddress(Signalement $signalement, Address $address): void
-    {
-        $signalement->setInseeOccupant($address->getInseeCode());
-
-        if (empty($signalement->getCpOccupant())) {
-            $signalement->setCpOccupant($address->getZipCode());
+        $adresseComplete = $data['adresseOccupant'].' '.$data['cpOccupant'].' '.$data['villeOccupant'];
+        if ($banAddress = $this->addressService->getAcceptableBanAddress($adresseComplete)) {
+            $this->signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
+        } else {
+            if (!$this->signalementAddressUpdater->attachAddressToSignalementFromManualAddress(
+                $signalement,
+                $data['adresseOccupant'],
+                $data['cpOccupant'],
+                $data['villeOccupant']
+            )) {
+                throw new CityNotFoundException($data['villeOccupant']);
+            }
         }
+
+        if ($signalement->getAddress()->getTerritory() !== $territory) {
+            throw new \Exception('Le territoire calculé ('.$signalement->getAddress()->getTerritory()->getName().') pour l\'adresse ne correspond pas au territoire attendu ('.$territory->getName().').');
+        }
+
+        $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);
+        $this->signalementAddressUpdater->getRialDataForSignalement($signalement);
+
+        return $signalement;
     }
 
     /**
@@ -332,23 +344,31 @@ class SignalementManager
         Signalement $signalement,
         AdresseOccupantRequest $adresseOccupantRequest,
     ): bool {
-        $addressIsModified = $signalement->getAdresseOccupant() !== $adresseOccupantRequest->getAdresse()
-                || $signalement->getVilleOccupant() !== $adresseOccupantRequest->getVille()
-                || $signalement->getCpOccupant() !== $adresseOccupantRequest->getCodePostal();
+        $addressIsModified = $signalement->getAddress()->getHousenumberAndStreet() !== $adresseOccupantRequest->getAdresse()
+                || $signalement->getAddress()->getCity() !== $adresseOccupantRequest->getVille()
+                || $signalement->getAddress()->getPostCode() !== $adresseOccupantRequest->getCodePostal();
 
-        $signalement->setAdresseOccupant($adresseOccupantRequest->getAdresse())
-            ->setCpOccupant($adresseOccupantRequest->getCodePostal())
-            ->setVilleOccupant($adresseOccupantRequest->getVille())
-            ->setInseeOccupant($adresseOccupantRequest->getInsee())
-
-            ->setEtageOccupant($adresseOccupantRequest->getEtage())
+        $signalement->setEtageOccupant($adresseOccupantRequest->getEtage())
             ->setEscalierOccupant($adresseOccupantRequest->getEscalier())
             ->setNumAppartOccupant($adresseOccupantRequest->getNumAppart())
-            ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre())
-            ->setManualAddressOccupant('1' === $adresseOccupantRequest->getManual());
+            ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre());
 
         if ($addressIsModified) {
-            $this->signalementAddressUpdater->updateAddressOccupantFromBanData(signalement: $signalement);
+            $adresseComplete = $adresseOccupantRequest->getAdresse().' '.$adresseOccupantRequest->getCodePostal().' '.$adresseOccupantRequest->getVille();
+            if ($banAddress = $this->addressService->getAcceptableBanAddress($adresseComplete)) {
+                $this->signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
+            } else {
+                if (!$this->signalementAddressUpdater->attachAddressToSignalementFromManualAddress(
+                    $signalement,
+                    $adresseOccupantRequest->getAdresse(),
+                    $adresseOccupantRequest->getCodePostal(),
+                    $adresseOccupantRequest->getVille()
+                )) {
+                    throw new CityNotFoundException($adresseOccupantRequest->getVille());
+                }
+            }
+            $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);
+            $this->signalementAddressUpdater->getRialDataForSignalement($signalement);
         }
 
         $this->entityManager->persist($signalement);
@@ -491,7 +511,7 @@ class SignalementManager
         if ($signalement->getIsLogementSocial() && $coordonneesBailleurRequest->getDenomination()) {
             $bailleur = $this->bailleurRepository->findOneBailleurBy(
                 $coordonneesBailleurRequest->getDenomination(),
-                $this->zipcodeProvider->getTerritoryByInseeCode($signalement->getInseeOccupant())
+                $this->zipcodeProvider->getTerritoryByInseeCode($signalement->getAddress()->getCityCode())
             );
         }
 

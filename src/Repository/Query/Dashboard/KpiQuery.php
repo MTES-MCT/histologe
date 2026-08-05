@@ -31,6 +31,7 @@ class KpiQuery
     ): int {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
+            ->innerJoin('s.address', 'address')
             ->where('s.statut = :statut')
             ->setParameter('statut', SignalementStatus::INJONCTION_BAILLEUR);
 
@@ -38,11 +39,11 @@ class KpiQuery
 
         if ($params?->territoireId) {
             $qb
-                ->andWhere('s.territory = :territoireId')
+                ->andWhere('address.territory = :territoireId')
                 ->setParameter('territoireId', $params->territoireId);
         } elseif (!$user->isSuperAdmin()) {
             $qb
-                ->andWhere('s.territory IN (:territories)')
+                ->andWhere('address.territory IN (:territories)')
                 ->setParameter('territories', $user->getPartnersTerritories());
         }
 
@@ -63,11 +64,11 @@ class KpiQuery
 
         if ($params?->territoireId) {
             $qb
-                ->andWhere('s.territory = :territoireId')
+                ->andWhere('address.territory = :territoireId')
                 ->setParameter('territoireId', $params->territoireId);
         } elseif (!$user->isSuperAdmin()) {
             $qb
-                ->andWhere('s.territory IN (:territories)')
+                ->andWhere('address.territory IN (:territories)')
                 ->setParameter('territories', $user->getPartnersTerritories());
         }
 

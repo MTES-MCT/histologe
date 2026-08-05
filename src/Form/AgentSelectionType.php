@@ -112,11 +112,11 @@ class AgentSelectionType extends AbstractType
     private function getChoicesAgents(Signalement $signalement, array $options): array
     {
         $choicesAgents = [];
-        $partner = $this->currentUser->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+        $partner = $this->currentUser->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
 
         if ($options['only_rt']) {
             if ($this->currentUser->isSuperAdmin()) {
-                $choicesAgents = $this->userRepository->findActiveTerritoryAdmins($signalement->getTerritory()->getId());
+                $choicesAgents = $this->userRepository->findActiveTerritoryAdmins($signalement->getAddress()->getTerritory()->getId());
             } elseif ($this->currentUser->isTerritoryAdmin()) {
                 $choicesAgents = $this->userRepository->findActiveTerritoryAdminsInPartner($partner);
             }

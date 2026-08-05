@@ -72,7 +72,7 @@ class SignalementActionController extends AbstractController
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VALIDATE, $signalement);
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
 
         $agentSelection = (new AgentSelection())->setSignalement($signalement);
         $form = $this->createForm(AgentSelectionType::class, $agentSelection, [
@@ -121,7 +121,7 @@ class SignalementActionController extends AbstractController
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VALIDATE, $signalement);
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
         if ($this->isGranted('ROLE_ADMIN') || (count($userRepository->findActiveTerritoryAdminsInPartner($partner)) > 1)) {
             $this->addFlash('error', 'Vous devez sélectionner les responsables de territoire à abonner au dossier.');
 
@@ -183,7 +183,7 @@ class SignalementActionController extends AbstractController
             signalement: $signalement,
             description: $description,
             category: SuiviCategory::SIGNALEMENT_IS_REFUSED,
-            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
             user : $user,
             isVisibleForUsager: true,
             files: $refusSignalement->getFiles(),
@@ -238,7 +238,7 @@ class SignalementActionController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
 
         $signalement->setStatut(SignalementStatus::CLOSED);
         $signalement->setClosedAt(new \DateTimeImmutable());
@@ -301,7 +301,7 @@ class SignalementActionController extends AbstractController
                 signalement: $signalement,
                 description: $suivi->getDescription(raw: true),
                 category: SuiviCategory::MESSAGE_PARTNER,
-                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
                 user: $user,
                 isVisibleForUsager: $suivi->getIsVisibleForUsager(),
                 isVisibleForBailleur: $suivi->getIsVisibleForBailleur(),
@@ -428,7 +428,7 @@ class SignalementActionController extends AbstractController
 
                 return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
             } else {
-                $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+                $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
                 $reopenFor = mb_strtoupper($partner->getNom());
                 foreach ($partner->getAffectations() as $affectation) {
                     if ($affectation->getSignalement()->getId() === $signalement->getId()) {
@@ -445,7 +445,7 @@ class SignalementActionController extends AbstractController
                 signalement: $signalement,
                 description: 'Signalement rouvert pour '.$reopenFor,
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
-                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
                 user: $user,
                 isVisibleForUsager: ('1' === $request->query->get('publicSuivi')),
                 subscriptionCreated: $subscriptionCreated,
@@ -579,7 +579,7 @@ class SignalementActionController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
 
         if ($request->isMethod('POST')) {
             $requestData = $request->request->all();

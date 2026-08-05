@@ -161,7 +161,7 @@ class HistoryEntryManager
             } elseif ('affectation' === $type) {
                 $partner = $this->getPartnerByAffectationId($entry->getEntityId()) ?? $this->getPartnerByDeleteHistoryEntry($entry->getEntityId());
             } else {
-                $partner = $entry->getUser()?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+                $partner = $entry->getUser()?->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
             }
             $partnerName = $partner ? $partner->getNom() : 'N/A';
             $date = $entry->getCreatedAt()
@@ -406,7 +406,7 @@ class HistoryEntryManager
             return null;
         }
 
-        $territory = $entry->getSignalement()->getTerritory();
+        $territory = $entry->getSignalement()->getAddress()->getTerritory();
         $currentPartner = $user->getPartnerInTerritoryOrFirstOne($territory);
 
         if (null === $currentPartner) {

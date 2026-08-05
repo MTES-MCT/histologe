@@ -128,7 +128,7 @@ class CodeSuiviLoginAuthenticator extends AbstractLoginFormAuthenticator
                 $testDeclarant = $firstLetterPrenomToCheck === $inputFirstLetterPrenom && $firstLetterNomToCheck === $inputFirstLetterNom;
             }
         }
-        if ((!$testDeclarant && !$testOccupant) || $signalement->getCpOccupant() !== $inputCodePostal) {
+        if ((!$testDeclarant && !$testOccupant) || $signalement->getAddress()->getPostCode() !== $inputCodePostal) {
             throw new CustomUserMessageAuthenticationException('Informations incorrectes');
         }
     }

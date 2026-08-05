@@ -26,6 +26,7 @@ class DossiersUndeliverableEmailQuery
         $qb = $this->entityManager->createQueryBuilder();
 
         $qb->from(Signalement::class, 's')
+            ->innerJoin('s.address', 'address')
             ->innerJoin(
                 EmailDeliveryIssue::class,
                 'edi',
@@ -54,11 +55,11 @@ class DossiersUndeliverableEmailQuery
 
         if ($params?->territoireId) {
             $qb
-                ->andWhere('s.territory = :territoireId')
+                ->andWhere('address.territory = :territoireId')
                 ->setParameter('territoireId', $params->territoireId);
         } elseif (!$user->isSuperAdmin()) {
             $qb
-                ->andWhere('s.territory IN (:territories)')
+                ->andWhere('address.territory IN (:territories)')
                 ->setParameter('territories', $user->getPartnersTerritories());
         }
 
@@ -78,8 +79,8 @@ class DossiersUndeliverableEmailQuery
             $qb
                 ->andWhere(
                     $qb->expr()->orX(
-                        $qb->expr()->like('s.cpOccupant', ':query'),
-                        $qb->expr()->like('s.villeOccupant', ':query')
+                        $qb->expr()->like('address.postCode', ':query'),
+                        $qb->expr()->like('address.city', ':query')
                     )
                 )
                 ->setParameter('query', '%'.$query.'%');
@@ -105,7 +106,7 @@ class DossiersUndeliverableEmailQuery
             s.nomOccupant AS nomOccupant,
             s.prenomOccupant AS prenomOccupant,
             s.reference AS reference,
-            CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)) AS adresse,
+            CONCAT_WS(\', \', CONCAT_WS(\' \', address.housenumber, address.street), CONCAT_WS(\' \', address.postCode, address.city)) AS adresse,
             s.createdAt AS createdAt,
             s.lastSuiviAt AS dernierSuiviAt,
             s.lastSuiviBy AS derniereActionPartenaireNom,

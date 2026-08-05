@@ -101,7 +101,7 @@ class SignalementActionControllerTest extends WebTestCase
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000016']);
         $route = $this->router->generate('back_signalement_accept', ['uuid' => $signalement->getUuid()]);
 
-        $agents = $this->userRepository->findActiveTerritoryAdminsInPartner($user->getPartnerInTerritory($signalement->getTerritory()));
+        $agents = $this->userRepository->findActiveTerritoryAdminsInPartner($user->getPartnerInTerritory($signalement->getAddress()->getTerritory()));
         $agentIds = [];
         foreach ($agents as $agent) {
             $agentIds[] = $agent->getId();
@@ -588,7 +588,7 @@ class SignalementActionControllerTest extends WebTestCase
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-06']);
         $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-34-02@signal-logement.fr']);
-        $territory = $signalement->getTerritory();
+        $territory = $signalement->getAddress()->getTerritory();
         $partner = $user->getPartnerInTerritory($territory);
 
         $affectation = (new Affectation())->setPartner($partner)

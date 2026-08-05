@@ -96,7 +96,7 @@ class SignalementSearchQuery
         #[Assert\Choice(choices: ['oui'], message: 'La valeur pour l\'affichage des zones est invalide')]
         private readonly ?string $isZonesDisplayed = null,
         private readonly ?bool $usagerAbandonProcedure = false,
-        #[Assert\Choice(choices: ['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant', 'createdAt'], message: 'Champ de tri invalide')]
+        #[Assert\Choice(choices: ['reference', 'nomOccupant', 'lastSuiviAt', 'addressCity', 'createdAt'], message: 'Champ de tri invalide')]
         private readonly string $sortBy = 'reference',
         #[Assert\Choice(choices: ['ASC', 'DESC', 'asc', 'desc'], message: 'Direction de tri invalide')]
         private readonly string $direction = 'DESC',

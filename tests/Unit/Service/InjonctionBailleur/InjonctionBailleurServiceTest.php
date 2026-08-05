@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Service\InjonctionBailleur;
 
 use App\Dto\StopProcedure;
+use App\Entity\Address;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
@@ -85,7 +86,8 @@ class InjonctionBailleurServiceTest extends KernelTestCase
     {
         $signalement = new Signalement();
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '30']);
-        $signalement->setTerritory($territory);
+        $address = (new Address())->setTerritory($territory);
+        $signalement->setAddress($address);
         $stopProcedure = new StopProcedure();
         $stopProcedure->setSignalement($signalement);
         $stopProcedure->setReason(MotifCloture::AUTRE);
@@ -125,7 +127,8 @@ class InjonctionBailleurServiceTest extends KernelTestCase
     {
         $signalement = new Signalement();
         $territory = $this->entityManager->getRepository(Territory::class)->findOneBy(['zip' => '30']);
-        $signalement->setTerritory($territory);
+        $address = (new Address())->setTerritory($territory);
+        $signalement->setAddress($address);
         $signalement->setStatut(SignalementStatus::INJONCTION_BAILLEUR);
         $stopProcedure = new StopProcedure();
         $stopProcedure->setSignalement($signalement);

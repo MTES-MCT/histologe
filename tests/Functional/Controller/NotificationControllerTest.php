@@ -104,7 +104,7 @@ class NotificationControllerTest extends WebTestCase
         yield 'Delete' => [
             'back_notifications_list_delete',
             'delete_notifications_'.$user->getId(),
-            'orderType=si.villeOccupant-ASC&page=2',
+            'orderType=address.city-ASC&page=2',
             'Les notifications sélectionnées ont bien été supprimées.',
         ];
     }

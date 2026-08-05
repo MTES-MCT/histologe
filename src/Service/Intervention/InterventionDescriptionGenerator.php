@@ -45,7 +45,7 @@ class InterventionDescriptionGenerator
             ucfirst($labelVisite),
             $isInPast ? 'réalisée' : 'programmée',
             $labelVisite,
-            $intervention->getSignalement()->getAdresseOccupant(),
+            $intervention->getSignalement()->getAddress()->getHousenumberAndStreet(),
             $isInPast ? 'a été effectuée' : 'est prévue',
             $intervention->getScheduledAtFormated(),
             $labelVisite,

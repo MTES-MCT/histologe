@@ -204,6 +204,6 @@ class InjonctionBailleurService
     {
         $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
         $signalement->setCreatedAt(new \DateTimeImmutable());
-        $signalement->setReference($this->referenceGenerator->generateReference($signalement->getTerritory()));
+        $signalement->setReference($this->referenceGenerator->generateReference($signalement->getAddress()->getTerritory()));
     }
 }

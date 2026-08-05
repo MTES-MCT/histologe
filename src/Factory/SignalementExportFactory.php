@@ -39,8 +39,8 @@ class SignalementExportFactory
             'interventionOccupantPresent', 'typeCompositionLogement', 'nbEnfantsM6',
             'nbEnfantsP6', 'proprioAvertiAt', 'informationProcedure', 'autresOccupantsDesordre',
             'reference', 'details', 'nomOccupant', 'prenomOccupant', 'telOccupant',
-            'telOccupantBis', 'mailOccupant', 'adresseOccupant', 'cpOccupant',
-            'villeOccupant', 'inseeOccupant', 'epciNom', 'etageOccupant',
+            'telOccupantBis', 'mailOccupant', 'addressHousenumber', 'addressStreet', 'addressPostcode',
+            'addressCity', 'addressCityCode', 'epciNom', 'etageOccupant',
             'escalierOccupant', 'numAppartOccupant', 'adresseAutreOccupant',
             'listDesordreCategories', 'oldSituations', 'listDesordreCriteres', 'oldCriteres',
             'score', 'debutDesordres', 'etiquettes', 'photosName', 'documentsName',
@@ -72,6 +72,17 @@ class SignalementExportFactory
         $status = SignalementAffectationHelper::getStatusLabelFrom($user, $data);
 
         $geoloc = $data['geoloc'];
+        $addressPoint = $data['addressPoint'];
+
+        if (!empty($geoloc)) {
+            $longitude = $geoloc['lng'] ?? '';
+            $latitude = $geoloc['lat'] ?? '';
+        }
+        if (!empty($addressPoint) && '' === $longitude && '' === $latitude) {
+            $longitude = $addressPoint->getX();
+            $latitude = $addressPoint->getY();
+        }
+
         $dateVisite = $data['interventionScheduledAt'];
         $dateVisite = (!empty($dateVisite) && DateHelper::isValidDate($dateVisite)) ? (new \DateTime($dateVisite))->format(self::DATE_FORMAT) : '';
         $interventionStatus = $this->mapInterventionStatus($dateVisite, $data['interventionStatus']);
@@ -126,10 +137,10 @@ class SignalementExportFactory
             telephoneOccupant: '\''.$data['telOccupant'].'\'',
             telephoneOccupantBis: $data['telOccupantBis'] ?? self::NON_RENSEIGNE,
             emailOccupant: $data['mailOccupant'],
-            adresseOccupant: $data['adresseOccupant'],
-            cpOccupant: $data['cpOccupant'],
-            villeOccupant: $data['villeOccupant'],
-            inseeOccupant: $data['inseeOccupant'],
+            addressHousenumberAndStreet: mb_trim($data['addressHousenumber'].' '.$data['addressStreet']),
+            addressPostcode: $data['addressPostcode'],
+            addressCity: $data['addressCity'],
+            addressCityCode: $data['addressCityCode'],
             epciNom: $data['epciNom'] ?? '-',
             etageOccupant: $data['etageOccupant'] ?? self::NON_RENSEIGNE,
             escalierOccupant: $data['escalierOccupant'] ?? self::NON_RENSEIGNE,

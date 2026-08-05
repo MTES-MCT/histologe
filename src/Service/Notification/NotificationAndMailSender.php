@@ -53,7 +53,7 @@ class NotificationAndMailSender
     {
         $mailerType = NotificationMailerType::TYPE_SIGNALEMENT_NEW;
         $this->signalement = $signalement;
-        $territory = $this->signalement->getTerritory();
+        $territory = $this->signalement->getAddress()->getTerritory();
         $recipients = $this->getRecipientsAdmin($territory);
         $this->sendMail($recipients, $mailerType);
         $this->createInAppNotifications(recipients: $recipients, type: NotificationType::NOUVEAU_SIGNALEMENT, signalement: $signalement);
@@ -72,7 +72,7 @@ class NotificationAndMailSender
                 new NotificationMail(
                     type: $mailerType,
                     to: $mailProprio,
-                    territory: $this->signalement->getTerritory(),
+                    territory: $this->signalement->getAddress()->getTerritory(),
                     signalement: $this->signalement,
                     attachment: $pdfContent,
                     isReminder: true,
@@ -92,7 +92,7 @@ class NotificationAndMailSender
                 new NotificationMail(
                     type: $mailerType,
                     to: $mailProprio,
-                    territory: $this->signalement->getTerritory(),
+                    territory: $this->signalement->getAddress()->getTerritory(),
                     signalement: $this->signalement,
                     isReminder: true,
                     params: ['motif_cloture' => $motifCloture]
@@ -231,7 +231,7 @@ class NotificationAndMailSender
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_USAGER,
                     to: $this->suivi->getCreatedBy()->getEmail(),
-                    territory: $this->signalement->getTerritory(),
+                    territory: $this->signalement->getAddress()->getTerritory(),
                     signalement: $this->signalement,
                     suivi: $this->suivi,
                     motif: null,
@@ -248,7 +248,7 @@ class NotificationAndMailSender
                         new NotificationMail(
                             type: NotificationMailerType::TYPE_DEMANDE_ABANDON_PROCEDURE_TO_OTHER_USAGER,
                             to: $recipient,
-                            territory: $this->signalement->getTerritory(),
+                            territory: $this->signalement->getAddress()->getTerritory(),
                             signalement: $this->signalement,
                             suivi: $this->suivi,
                             motif: null,
@@ -373,7 +373,7 @@ class NotificationAndMailSender
                     new NotificationMail(
                         type: $mailType,
                         to: $recipient,
-                        territory: $this->signalement->getTerritory(),
+                        territory: $this->signalement->getAddress()->getTerritory(),
                         signalement: $this->signalement,
                         suivi: $this->suivi,
                         motif: $motif,
@@ -409,7 +409,7 @@ class NotificationAndMailSender
                     new NotificationMail(
                         type: $mailType,
                         to: $recipientsEmails,
-                        territory: $this->signalement->getTerritory(),
+                        territory: $this->signalement->getAddress()->getTerritory(),
                         signalement: $this->signalement,
                         suivi: $this->suivi,
                         isRecipientVisible: false,
@@ -544,7 +544,7 @@ class NotificationAndMailSender
             new NotificationMail(
                 type: NotificationMailerType::TYPE_REMINDER_TO_BAILLEUR,
                 to: $signalement->getMailProprio(),
-                territory: $signalement->getTerritory(),
+                territory: $signalement->getAddress()->getTerritory(),
                 signalement: $signalement,
                 isRecipientVisible: false,
             )
@@ -561,7 +561,7 @@ class NotificationAndMailSender
             new NotificationMail(
                 type: NotificationMailerType::TYPE_REMINDER_CLOTURE_TO_USAGER,
                 to: $signalement->getMailOccupant(),
-                territory: $signalement->getTerritory(),
+                territory: $signalement->getAddress()->getTerritory(),
                 signalement: $signalement,
                 isRecipientVisible: true,
             )
@@ -578,7 +578,7 @@ class NotificationAndMailSender
             new NotificationMail(
                 type: NotificationMailerType::TYPE_REMINDER_CLOTURE_AND_CLOSE_TO_USAGER,
                 to: $signalement->getMailOccupant(),
-                territory: $signalement->getTerritory(),
+                territory: $signalement->getAddress()->getTerritory(),
                 signalement: $signalement,
                 isRecipientVisible: true,
             )
@@ -595,7 +595,7 @@ class NotificationAndMailSender
             new NotificationMail(
                 type: NotificationMailerType::TYPE_REMINDER_CLOTURE_AND_CLOSE_TO_BAILLEUR,
                 to: $signalement->getMailProprio(),
-                territory: $signalement->getTerritory(),
+                territory: $signalement->getAddress()->getTerritory(),
                 signalement: $signalement,
                 isRecipientVisible: true,
             )
@@ -612,7 +612,7 @@ class NotificationAndMailSender
             new NotificationMail(
                 type: NotificationMailerType::TYPE_BAILLEUR_CLOSE_INJONCTION_TO_USAGER,
                 to: $signalement->getMailOccupant(),
-                territory: $signalement->getTerritory(),
+                territory: $signalement->getAddress()->getTerritory(),
                 signalement: $signalement,
                 isRecipientVisible: true,
             )
@@ -626,7 +626,7 @@ class NotificationAndMailSender
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_SIGNALEMENT_INJONCTION_CLOSED_TO_BAILLEUR,
                     to: $signalement->getMailProprio(),
-                    territory: $signalement->getTerritory(),
+                    territory: $signalement->getAddress()->getTerritory(),
                     signalement: $signalement,
                     isRecipientVisible: false,
                 )
@@ -637,7 +637,7 @@ class NotificationAndMailSender
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_SIGNALEMENT_INJONCTION_CLOSED_TO_USAGER,
                     to: $signalement->getMailOccupant(),
-                    territory: $signalement->getTerritory(),
+                    territory: $signalement->getAddress()->getTerritory(),
                     signalement: $signalement,
                     isRecipientVisible: false,
                 )

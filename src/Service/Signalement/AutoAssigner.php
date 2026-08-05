@@ -64,7 +64,7 @@ class AutoAssigner
     public function assign(Signalement $signalement, bool $simulation = false, bool $subscribeTerritoryAdmins = true): array
     {
         $this->countAffectations = 0;
-        $autoAffectationRules = $signalement->getTerritory()->getAutoAffectationRules()->filter(static function (AutoAffectationRule $autoAffectationRule) {
+        $autoAffectationRules = $signalement->getAddress()->getTerritory()->getAutoAffectationRules()->filter(static function (AutoAffectationRule $autoAffectationRule) {
             return AutoAffectationRule::STATUS_ACTIVE === $autoAffectationRule->getStatus();
         });
         if ($autoAffectationRules->isEmpty()) {
@@ -148,7 +148,7 @@ class AutoAssigner
     private function subscribeTerritoryAdmins(Signalement $signalement, ?User $adminUser): void
     {
         $territoryAdmins = $this->userRepository->findActiveTerritoryAdmins(
-            territoryId: $signalement->getTerritory()->getId(),
+            territoryId: $signalement->getAddress()->getTerritory()->getId(),
         );
 
         foreach ($territoryAdmins as $territoryAdmin) {

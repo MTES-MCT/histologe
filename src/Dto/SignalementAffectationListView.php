@@ -34,9 +34,10 @@ class SignalementAffectationListView
         private readonly ?SignalementStatus $statut = null,
         private readonly ?string $nomOccupant = null,
         private readonly ?string $prenomOccupant = null,
-        private readonly ?string $adresseOccupant = null,
-        private readonly ?string $codepostalOccupant = null,
-        private readonly ?string $villeOccupant = null,
+        private readonly ?string $addressHousenumber = null,
+        private readonly ?string $addressStreet = null,
+        private readonly ?string $addressPostCode = null,
+        private readonly ?string $addressCity = null,
         private readonly \DateTimeImmutable|string|null $lastSuiviAt = null,
         private readonly ?string $lastSuiviBy = null,
         private readonly ?bool $lastSuiviIsVisibleForUsager = null,
@@ -95,19 +96,24 @@ class SignalementAffectationListView
         return $this->prenomOccupant;
     }
 
-    public function getAdresseOccupant(): ?string
+    public function getAddressHousenumber(): ?string
     {
-        return $this->adresseOccupant;
+        return $this->addressHousenumber;
     }
 
-    public function getCodepostalOccupant(): ?string
+    public function getAddressStreet(): ?string
     {
-        return $this->codepostalOccupant;
+        return $this->addressStreet;
     }
 
-    public function getVilleOccupant(): ?string
+    public function getAddressPostCode(): ?string
     {
-        return $this->villeOccupant;
+        return $this->addressPostCode;
+    }
+
+    public function getAddressCity(): ?string
+    {
+        return $this->addressCity;
     }
 
     public function getLastSuiviAt(): \DateTimeImmutable|string|null

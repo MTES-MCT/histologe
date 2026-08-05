@@ -148,7 +148,7 @@ class InterventionManagerTest extends KernelTestCase
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-10']);
         $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
-        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
 
         $visiteRequest = new VisiteRequest(
             date: (new \DateTimeImmutable())->modify('+ 1 month')->format('Y-m-d'),

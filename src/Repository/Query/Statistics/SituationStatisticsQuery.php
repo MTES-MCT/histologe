@@ -24,6 +24,7 @@ class SituationStatisticsQuery
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('COUNT(s.id) AS count, sit.id, sit.menuLabel')
+            ->innerJoin('s.address', 'address')
             ->leftJoin('s.criticites', 'criticites')
             ->leftJoin('criticites.critere', 'critere')
             ->leftJoin('critere.situation', 'sit')
@@ -37,7 +38,7 @@ class SituationStatisticsQuery
         $qb->andWhere('sit.isActive = :isActive')->setParameter('isActive', true);
 
         if ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+            $qb->andWhere('address.territory = :territory')->setParameter('territory', $territory);
         }
         if ($year) {
             $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);

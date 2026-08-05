@@ -35,10 +35,12 @@ class SignalementAddressUpdateAndAutoAssignMessageHandler
 
         try {
             $signalement = $this->signalementRepository->find($signalementDraftProcessMessage->getSignalementId());
-            $this->signalementAddressUpdater->updateAddressOccupantFromBanData(
-                signalement: $signalement,
-                updateRnbId: !$signalement->getRnbIdOccupant()
-            );
+            if ($signalement->getRnbIdOccupant()) {
+                $this->signalementAddressUpdater->updateGeolocFromRnbService($signalement);
+            } else {
+                $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);
+            }
+            $this->signalementAddressUpdater->getRialDataForSignalement($signalement);
             if (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()) {
                 $this->notificationAndMailSender->sendNewSignalementInjonction($signalement);
             } else {

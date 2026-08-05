@@ -16,7 +16,7 @@
                             {% if linkToVisitGrid %}
                                 <div class="fr-my-5v fr-text--right">
                                     <a class="fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left matomo_download" 
-                                    title="Télécharger la grille de visite {% if signalement.territory.grilleVisiteFilename %}du territoire{% endif %}"
+                                    title="Télécharger la grille de visite {% if signalement.address.territory.grilleVisiteFilename %}du territoire{% endif %}"
                                     download href="{{ sign_url(linkToVisitGrid) }}">
                                         Grille de visite
                                     </a>
@@ -83,7 +83,7 @@
                                             <input type="text" name="visite-add[externalOperator]" maxlength="255" class="fr-input visite-external-operator">
                                         </div>
                                     {% else %}
-                                        <input type="hidden" name="visite-add[partner]" value="{{ app.user.partnerInTerritory(signalement.territory).id }}">
+                                        <input type="hidden" name="visite-add[partner]" value="{{ app.user.partnerInTerritory(signalement.address.territory).id }}">
                                     {% endif %}
 
                                     <div class="fr-input-group" id="visite-add-future-date-complementary-fields">

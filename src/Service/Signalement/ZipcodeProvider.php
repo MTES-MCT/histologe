@@ -32,6 +32,11 @@ class ZipcodeProvider
         $this->territories = $this->territoryRepository->findAllIndexedByZip();
     }
 
+    public function reloadTerritories(): void
+    {
+        $this->territories = $this->territoryRepository->findAllIndexedByZip();
+    }
+
     public function getTerritoryByInseeCode(?string $inseeCode, bool $forceReload = false): ?Territory
     {
         if (empty($inseeCode)) {

@@ -3,7 +3,7 @@
 namespace App\Tests\Fake;
 
 use App\Service\Gouv\Ban\AddressService;
-use App\Service\Gouv\Ban\Response\Address;
+use App\Service\Gouv\Ban\Response\BanAddress;
 use App\Service\Gouv\Ban\Response\Poi;
 
 class AddressServiceFake extends AddressService
@@ -22,11 +22,11 @@ class AddressServiceFake extends AddressService
         return null;
     }
 
-    public function getAddress(string $address): Address
+    public function getAddress(string $address): BanAddress
     {
         switch (trim($address)) {
             case '8 Rue de la tourmentinerie 44850 Saint-Mars-du-Désert':
-                $response = new Address([
+                $response = new BanAddress([
                     'type' => 'FeatureCollection',
                     'features' => [
                         [
@@ -52,7 +52,7 @@ class AddressServiceFake extends AddressService
                 ]);
                 break;
             case 'Route des Funeries 44850 Le Cellier':
-                $response = new Address([
+                $response = new BanAddress([
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -75,7 +75,7 @@ class AddressServiceFake extends AddressService
                 ]);
                 break;
             case '5 Rue Basse 44350 Guérande':
-                $response = new Address([
+                $response = new BanAddress([
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -100,7 +100,7 @@ class AddressServiceFake extends AddressService
                 break;
             case '5 Rue Basse 30360 Vézénobres':
             case '5 Rue basse 30360 Vézénobres':
-                $response = new Address([
+                $response = new BanAddress([
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -124,7 +124,7 @@ class AddressServiceFake extends AddressService
                 ]);
                 break;
             case '151 Avenue du Pont Trinquat 34070 Montpellier':
-                $response = new Address([
+                $response = new BanAddress([
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -148,7 +148,7 @@ class AddressServiceFake extends AddressService
                 ]);
                 break;
             case '10 Rue de la Paix 75002 Paris':
-                $response = new Address([
+                $response = new BanAddress([
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -172,7 +172,7 @@ class AddressServiceFake extends AddressService
                 ]);
                 break;
             case 'Chemin du grand méchant loup 30360 Vézénobres':
-                $response = new Address([
+                $response = new BanAddress([
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -196,7 +196,7 @@ class AddressServiceFake extends AddressService
                 ]);
                 break;
             case '30360 Vézénobres':
-                $response = new Address([
+                $response = new BanAddress([
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -217,7 +217,7 @@ class AddressServiceFake extends AddressService
                 ]);
                 break;
             case '34300 Agde':
-                $response = new Address([
+                $response = new BanAddress([
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -238,7 +238,7 @@ class AddressServiceFake extends AddressService
                 ]);
                 break;
             case '2 impasse de la peupleraie 44850 Saint-Mars-du-Désert':
-                $response = new Address([
+                $response = new BanAddress([
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -261,7 +261,7 @@ class AddressServiceFake extends AddressService
                 ]);
                 break;
             case '29 Rue Désirée Clary 13002 Marseille':
-                $response = new Address([
+                $response = new BanAddress([
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -285,7 +285,7 @@ class AddressServiceFake extends AddressService
                 ]);
                 break;
             default:
-                $response = new Address();
+                $response = new BanAddress();
         }
 
         return $response;

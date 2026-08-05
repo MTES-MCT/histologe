@@ -123,7 +123,7 @@ class SuiviManager
             signalement: $signalement,
             description: $description,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
-            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
             user: $user,
             isVisibleForUsager: true,
             subscriptionCreated: $subscriptionCreated
@@ -233,7 +233,7 @@ class SuiviManager
 
         if (DocumentType::PROCEDURE_RAPPORT_DE_VISITE === $documentType && null !== $intervention) {
             $isVisibleForUsager = true;
-            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
             if ($nbDocs > 0) {
                 $description .= \sprintf(
                     '%s a ajouté %s %s de la visite du %s :',
@@ -247,7 +247,7 @@ class SuiviManager
 
         if (DocumentType::PHOTO_VISITE === $documentType && null !== $intervention) {
             $isVisibleForUsager = true;
-            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
             if ($nbDocs > 0) {
                 $description .= \sprintf(
                     '%s a ajouté %s %s de la visite du %s :',
@@ -379,7 +379,7 @@ class SuiviManager
         $partner = null;
         $isVisibleForUsager = true;
         if (SuiviCategory::SIGNALEMENT_EDITED_BO === $category) {
-            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
             $isVisibleForUsager = false;
         }
 

@@ -34,7 +34,7 @@ class SignalementReminderInjonctionClotureAndCloseToUsagerMailer extends Abstrac
         $signalement = $notificationMail->getSignalement();
 
         return [
-            'ADRESSE_OCCUPANT' => $signalement->getAddressCompleteOccupant(),
+            'ADRESSE_OCCUPANT' => $signalement->getAddress()->getFull(),
             'NOM_COMPLET_PROPRIO' => $signalement->getNomProprio().' '.$signalement->getPrenomProprio(),
             'LINK_SIGNALEMENT_USAGER' => $this->generateLink(
                 'front_suivi_signalement',

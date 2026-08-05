@@ -272,9 +272,9 @@ class PartnerRepository extends ServiceEntityRepository
         $affectedPartners = $subquery->getQuery()->getSingleColumnResult();
 
         $params = [
-            'territory' => $signalement->getTerritory()->getId(),
-            'insee_like' => '%'.$signalement->getInseeOccupant().'%',
-            'insee' => $signalement->getInseeOccupant(),
+            'territory' => $signalement->getAddress()->getTerritory()->getId(),
+            'insee_like' => '%'.$signalement->getAddress()->getCityCode().'%',
+            'insee' => $signalement->getAddress()->getCityCode(),
             'lng' => $signalement->getGeoloc()['lng'] ?? 'notInZone',
             'lat' => $signalement->getGeoloc()['lat'] ?? 'notInZone',
         ];

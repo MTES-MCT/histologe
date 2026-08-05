@@ -99,7 +99,7 @@ class SignalementVisitesController extends AbstractController
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
         $linkToVisitGrid = false;
         $existingVisitGrid = $fileRepository->findOneBy([
-            'territory' => $signalement->getTerritory(),
+            'territory' => $signalement->getAddress()->getTerritory(),
             'documentType' => DocumentType::GRILLE_DE_VISITE,
         ]);
         if ($existingVisitGrid) {
@@ -223,7 +223,7 @@ class SignalementVisitesController extends AbstractController
         );
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
         $errorMessage = $this->validateRequest($visiteRequest, $validator);
         if ($errorMessage) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => \sprintf("Erreurs lors de l'enregistrement de la visite : %s, veuillez réessayer.", $errorMessage)];
@@ -239,7 +239,7 @@ class SignalementVisitesController extends AbstractController
                     new InterventionCreatedEvent(
                         $intervention,
                         $user,
-                        $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
+                        $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory())
                     ),
                     InterventionCreatedEvent::NAME
                 );
@@ -312,7 +312,7 @@ class SignalementVisitesController extends AbstractController
         );
         /** @var User $user */
         $user = $this->getUser();
-        if ($interventionManager->cancelVisiteFromRequest($visiteRequest, $user->getPartnerInTerritory($signalement->getTerritory()))) {
+        if ($interventionManager->cancelVisiteFromRequest($visiteRequest, $user->getPartnerInTerritory($signalement->getAddress()->getTerritory()))) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Visite annulée', 'message' => 'La visite a bien été annulée.'];
         } else {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de l\'annulation de la visite.'];
@@ -390,7 +390,7 @@ class SignalementVisitesController extends AbstractController
         );
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
         $errorMessage = $this->validateRequest($visiteRequest, $validator);
         if ($errorMessage) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => \sprintf('Erreurs lors de la modification de la visite : %s, veuillez réessayer.', $errorMessage)];
@@ -479,7 +479,7 @@ class SignalementVisitesController extends AbstractController
         if ($errorMessage) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => \sprintf('Erreurs lors de la conclusion de la visite : %s, veuillez réessayer.', $errorMessage)];
         }
-        if ($interventionManager->confirmVisiteFromRequest($visiteRequest, $user->getPartnerInTerritory($signalement->getTerritory()))) {
+        if ($interventionManager->confirmVisiteFromRequest($visiteRequest, $user->getPartnerInTerritory($signalement->getAddress()->getTerritory()))) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM];
 
             return $this->buildVisitesAjaxResponse(
@@ -559,7 +559,7 @@ class SignalementVisitesController extends AbstractController
         );
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
 
         if ($interventionManager->editVisiteFromRequest($visiteRequest, $partner)) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM];
@@ -567,7 +567,7 @@ class SignalementVisitesController extends AbstractController
                 $intervention,
                 $user,
                 $visiteRequest->isUsagerNotified(),
-                $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
+                $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory())
             ), InterventionEditedEvent::NAME);
             $entityManager->flush();
 

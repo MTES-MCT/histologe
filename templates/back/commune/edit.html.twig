@@ -125,18 +125,18 @@
                     </p>
                 </div>
             {% endif %}
-            {% if inconsistentSignalements|length > 0 %}
+            {% if inconsistentAddresses|length > 0 %}
                 <div class="fr-alert fr-alert--warning fr-mt-2v">
                     <p>
-                        Attention, il y a {{ inconsistentSignalements|length }} signalement(s) avec un nom de commune différent du nom actuel ({{ commune.nom }}).
+                        Attention, il y a {{ inconsistentAddresses|length }} adresse(s) avec un nom de commune différent du nom actuel ({{ commune.nom }}).
                         <br>
                         Voici la liste des signalements concernés et le nom de commune enregistré :
                     </p>
                     <ul class="fr-mt-2v">
-                        {% for signalement in inconsistentSignalements %}
+                        {% for address in inconsistentAddresses %}
                             <li>
-                                <a href="{{ path('back_signalement_view', {uuid: signalement.uuid}) }}">
-                                    Signalement #{{ signalement.reference }} - {{ signalement.villeOccupant }}
+                                <a href="{{ path('back_address_view', {uuid: address.uuid}) }}">
+                                    Adresse #{{ address.reference }} - {{ address.city }}
                                 </a>
                             </li>
                         {% endfor %}

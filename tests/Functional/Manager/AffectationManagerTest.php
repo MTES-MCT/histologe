@@ -113,7 +113,7 @@ class AffectationManagerTest extends WebTestCase
             ['email' => $firstUser->getEmail()]
         );
         $this->client->loginUser($user);
-        $partner = $user->getPartnerInTerritoryOrFirstOne($affectationAccepted->getSignalement()->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($affectationAccepted->getSignalement()->getAddress()->getTerritory());
 
         $affectationClosed = $this->affectationManager->closeAffectation(
             affectation: $affectationAccepted,

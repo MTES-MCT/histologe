@@ -7,6 +7,7 @@ use App\Dto\Api\Response\SignalementResponse;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Exception\Address\CityNotFoundException;
 use App\Factory\Api\SignalementResponseFactory;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
@@ -247,9 +248,22 @@ class SignalementCreateController extends AbstractController
         if (count($errors) > 0) {
             throw new ValidationFailedException($signalementRequest, $errors);
         }
-        $signalement = $this->signalementApiFactory->createFromSignalementRequest($signalementRequest);
-        $this->signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
-        $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
+        try {
+            $signalement = $this->signalementApiFactory->createFromSignalementRequest($signalementRequest);
+            $this->signalementManager->updateDesordresAndScoreWithSuroccupationChanges($signalement, false);
+            $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
+        } catch (CityNotFoundException $e) {
+            $violation = new ConstraintViolation(
+                $e->getMessage(),
+                null,
+                [],
+                $signalementRequest,
+                null,
+                $signalementRequest->communeOccupant
+            );
+            $errors->add($violation);
+            throw new ValidationFailedException($signalementRequest, $errors);
+        }
         // domage de ne pas avoir toutes les erreurs dés le départ mais la vérif du territoire et des doublons demande des traitement intermédiaires (appels BAN API),
         // a voir si on intégre quand même avec les autres contraintes
         $errors = $this->checkPartnerAndTerritory($partner, $signalementRequest, $signalement, $errors);
@@ -260,7 +274,7 @@ class SignalementCreateController extends AbstractController
 
         $signalement->setCreatedByPartner($partner);
         $this->entityManager->beginTransaction();
-        $signalement->setReference($this->referenceGenerator->generateReference($signalement->getTerritory()));
+        $signalement->setReference($this->referenceGenerator->generateReference($signalement->getAddress()->getTerritory()));
         $this->entityManager->persist($signalement);
         $this->entityManager->flush();
         $this->entityManager->commit();
@@ -276,27 +290,14 @@ class SignalementCreateController extends AbstractController
 
     private function checkPartnerAndTerritory(Partner $partner, SignalementRequest $signalementRequest, Signalement $signalement, ConstraintViolationListInterface $errors): ConstraintViolationListInterface
     {
-        if (!$signalement->getInseeOccupant() || !$signalement->getTerritory()) {
+        if ($partner->getTerritory() !== $signalement->getAddress()->getTerritory()) {
             $violation = new ConstraintViolation(
-                'L\'adresse de l\'occupant est invalide ou incomplète, merci de la vérifier ainsi que le code postal et la commune.',
+                'Vous n\'avez pas le droit de créer un signalement sur le territoire "'.$signalement->getAddress()->getTerritory()->getName().'".',
                 null,
                 [],
                 $signalementRequest,
                 null,
-                $signalement->getAddressCompleteOccupant(false)
-            );
-            $errors->add($violation);
-
-            return $errors;
-        }
-        if ($partner->getTerritory() !== $signalement->getTerritory()) {
-            $violation = new ConstraintViolation(
-                'Vous n\'avez pas le droit de créer un signalement sur le territoire "'.$signalement->getTerritory()->getName().'".',
-                null,
-                [],
-                $signalementRequest,
-                null,
-                $signalement->getAddressCompleteOccupant(false)
+                $signalement->getAddress()->getFull(false)
             );
             $errors->add($violation);
         }
@@ -309,12 +310,12 @@ class SignalementCreateController extends AbstractController
         $duplicates = $this->signalementRepository->findOnSameAddress(signalement: $signalement, compareNomOccupant: true);
         if (count($duplicates) > 0) {
             $violation = new ConstraintViolation(
-                'Un signalement existe déjà à cette adresse pour le même occupant ('.$signalement->getAddressCompleteOccupant(false).' - '.$signalement->getNomOccupant().').',
+                'Un signalement existe déjà à cette adresse pour le même occupant ('.$signalement->getAddress()->getFull(false).' - '.$signalement->getNomOccupant().').',
                 null,
                 [],
                 $signalementRequest,
                 null,
-                $signalement->getAddressCompleteOccupant(false).' - '.$signalement->getNomOccupant()
+                $signalement->getAddress()->getFull(false).' - '.$signalement->getNomOccupant()
             );
             $errors->add($violation);
         }

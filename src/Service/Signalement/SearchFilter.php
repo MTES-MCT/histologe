@@ -93,33 +93,37 @@ class SearchFilter
                 $qb->andWhere('s.referenceInjonction = :searchterms');
                 $qb->setParameter('searchterms', str_replace(InjonctionBailleurService::REFERENCE_PREFIX, '', mb_strtoupper(mb_trim($filters['searchterms']))));
             } elseif (preg_match('/^([0-9]{5})$/', mb_trim($filters['searchterms']))) {
-                $qb->andWhere('s.cpOccupant = :searchterms');
+                $qb->andWhere('address.postCode = :searchterms');
                 $qb->setParameter('searchterms', mb_trim($filters['searchterms']));
             } else {
-                $adresseOccupant = AddressParser::parse($filters['searchterms']);
-                if (null !== $adresseOccupant['suffix'] && null !== $adresseOccupant['number']) {
-                    $suffix = strtolower($adresseOccupant['suffix']);
+                $parsedAddress = AddressParser::parse($filters['searchterms']);
+                $houseNumber = $parsedAddress['number'];
+                if ($houseNumber && $parsedAddress['suffix']) {
+                    $houseNumber .= ' '.$parsedAddress['suffix'];
+                }
+                $street = mb_trim($parsedAddress['street']);
+
+                if ($houseNumber) {
                     $qb->andWhere('LOWER(s.nomOccupant) LIKE :searchterms
                     OR LOWER(s.prenomOccupant) LIKE :searchterms
                     OR LOWER(s.mailOccupant) LIKE :searchterms
                     OR LOWER(s.reference) LIKE :searchterms
-                    OR LOWER(s.adresseOccupant) LIKE :searchterms
-                    OR LOWER(s.adresseOccupant) LIKE :searchterms_suffix_1
-                    OR LOWER(s.adresseOccupant) LIKE :searchterms_suffix_2
-                    OR LOWER(s.villeOccupant) LIKE :searchterms
+                    OR (address.housenumber LIKE :housenumber AND address.street LIKE :street)
+                    OR LOWER(address.city) LIKE :searchterms
                     OR LOWER(s.nomProprio) LIKE :searchterms
                     OR LOWER(s.nomDeclarant) LIKE :searchterms');
-                    $qb->setParameter('searchterms_suffix_1', '%'.strtolower($adresseOccupant['number'].$suffix.' '.$adresseOccupant['street']).'%');
-                    $qb->setParameter('searchterms_suffix_2', '%'.strtolower($adresseOccupant['number'].' '.$suffix.' '.$adresseOccupant['street']).'%');
+                    $qb->setParameter('housenumber', '%'.mb_trim($houseNumber).'%');
+                    $qb->setParameter('street', '%'.mb_trim($street).'%');
                 } else {
                     $qb->andWhere('LOWER(s.nomOccupant) LIKE :searchterms
                     OR LOWER(s.prenomOccupant) LIKE :searchterms
                     OR LOWER(s.mailOccupant) LIKE :searchterms
                     OR LOWER(s.reference) LIKE :searchterms
-                    OR LOWER(s.adresseOccupant) LIKE :searchterms
-                    OR LOWER(s.villeOccupant) LIKE :searchterms
+                    OR (address.housenumber IS NULL AND address.street LIKE :street)
+                    OR LOWER(address.city) LIKE :searchterms
                     OR LOWER(s.nomProprio) LIKE :searchterms
                     OR LOWER(s.nomDeclarant) LIKE :searchterms');
+                    $qb->setParameter('street', '%'.mb_trim($street).'%');
                 }
                 $qb->setParameter('searchterms', '%'.mb_trim(strtolower($filters['searchterms'])).'%');
             }
@@ -192,13 +196,14 @@ class SearchFilter
                 $subqueryClosedAffectation = $this->affectationRepository->createQueryBuilder('a')
                     ->select('DISTINCT IDENTITY(a.signalement)')
                     ->innerJoin('a.signalement', 's')
+                    ->innerJoin('s.address', 'address')
                     ->where('a.statut = :statut_affectation_closed')
                     ->andWhere('s.statut NOT IN (:excluded_statuses)')
                     ->setParameter('excluded_statuses', array_merge([SignalementStatus::CLOSED], SignalementStatus::excludedStatuses()))
                     ->setParameter('statut_affectation_closed', AffectationStatus::CLOSED->value);
 
                 if (!empty($filters['territories'])) {
-                    $subqueryClosedAffectation->andWhere('a.territory IN (:territories)')
+                    $subqueryClosedAffectation->andWhere('address.territory IN (:territories)')
                         ->setParameter('territories', $filters['territories']);
                 }
 
@@ -300,15 +305,19 @@ class SearchFilter
             $sql = '
                 SELECT DISTINCT s2.id
                 FROM signalement s2
+                JOIN address address2 ON address2.id = s2.address_id
                 JOIN zone z ON z.id IN ('.implode(',', $zonesParams).')
-                WHERE z.territory_id = s2.territory_id
-                AND ST_Contains(
-                    z.area,
-                    Point(
-                        JSON_EXTRACT(s2.geoloc, \'$.lng\'),
-                        JSON_EXTRACT(s2.geoloc, \'$.lat\')
-                    )
-                ) = 1
+                WHERE z.territory_id = address2.territory_id
+                AND (
+                    (address2.point IS NOT NULL AND ST_Contains(z.area, address2.point) = 1)
+                    OR (ST_Contains(
+                        z.area,
+                        Point(
+                            JSON_EXTRACT(s2.geoloc, \'$.lng\'),
+                            JSON_EXTRACT(s2.geoloc, \'$.lat\')
+                        )
+                    ) = 1
+                )
             ';
             $stmt = $connection->prepare($sql);
             foreach ($params as $key => $value) {
@@ -319,7 +328,7 @@ class SearchFilter
 
             if (!empty($zonesSignalements)) {
                 $qb->andWhere('s.id IN (:zonesSignalements)')
-                   ->setParameter('zonesSignalements', $zonesSignalements);
+                ->setParameter('zonesSignalements', array_column($zonesSignalements, 'id'));
             } else {
                 $qb->andWhere('s.id IS NULL');
             }
@@ -350,7 +359,7 @@ class SearchFilter
                     $filters['cities'] = array_merge($filters['cities'], CommuneHelper::COMMUNES_ARRONDISSEMENTS[$city]);
                 }
             }
-            $qb->andWhere('s.villeOccupant IN (:cities) OR s.cpOccupant IN (:cities)')
+            $qb->andWhere('address.city IN (:cities) OR address.postCode IN (:cities)')
                 ->setParameter('cities', $filters['cities']);
         }
 
@@ -424,7 +433,7 @@ class SearchFilter
                 ->setParameter('proprios', $filters['proprios']);
         }
         if (!empty($filters['territories'])) {
-            $qb->andWhere('s.territory IN (:territories)')
+            $qb->andWhere('address.territory IN (:territories)')
                 ->setParameter('territories', $filters['territories']);
         }
 
@@ -680,14 +689,14 @@ class SearchFilter
         $orX = $qb->expr()->orX();
         foreach ($communes as $key => $commune) {
             $orX->add($qb->expr()->andX(
-                $qb->expr()->eq('s.cpOccupant', ':cpOccupant_'.$key),
-                $qb->expr()->eq('s.villeOccupant', ':villeOccupant_'.$key)
+                $qb->expr()->eq('address.postCode', ':codePostal_'.$key),
+                $qb->expr()->eq('address.city', ':commune_'.$key)
             ));
 
             $qb
-                ->setParameter('cpOccupant_'.$key, $commune['codePostal'])
+                ->setParameter('codePostal_'.$key, $commune['codePostal'])
                 ->setParameter(
-                    'villeOccupant_'.$key,
+                    'commune_'.$key,
                     ImportCommune::sanitizeCommuneWithArrondissement($commune['nom'])
                 );
         }

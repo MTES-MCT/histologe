@@ -234,7 +234,7 @@ class EsaboraManagerTest extends KernelTestCase
         $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
         $signalement = $this->getSignalement();
 
-        $signalement->setTerritory($territory);
+        $signalement->getAddress()->setTerritory($territory);
 
         $affectation = new Affectation();
         $affectation->setSignalement($signalement);
@@ -289,7 +289,7 @@ class EsaboraManagerTest extends KernelTestCase
         $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
         $signalement = $this->getSignalement();
 
-        $signalement->setTerritory($territory);
+        $signalement->getAddress()->setTerritory($territory);
 
         $affectation = new Affectation();
         $affectation->setSignalement($signalement);

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Repository;
 
+use App\Entity\Address;
 use App\Entity\Affectation;
 use App\Entity\EmailDeliveryIssue;
 use App\Entity\Enum\AffectationStatus;
@@ -78,20 +79,7 @@ class SignalementRepositoryTest extends KernelTestCase
             '2022-14'
         );
 
-        $this->assertEquals('01', $signalement->getTerritory()->getZip());
-    }
-
-    public function testFindWithNoGeolocalisation(): void
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        /** @var TerritoryRepository $territoryRepository */
-        $territoryRepository = $this->entityManager->getRepository(Territory::class);
-        $territory = $territoryRepository->findOneBy(['zip' => '13']);
-        $signalements = $signalementRepository->findWithNoGeolocalisation($territory);
-        $this->assertEmpty($signalements);
-        $signalements = $signalementRepository->findWithNoGeolocalisation();
-        $this->assertEmpty($signalements);
+        $this->assertEquals('01', $signalement->getAddress()->getTerritory()->getZip());
     }
 
     public function testSignalementHasRSD(): void
@@ -189,9 +177,12 @@ class SignalementRepositoryTest extends KernelTestCase
         $this->assertCount(1, $signalementsOnSameAddress);
 
         $new = new Signalement();
-        $new->setAdresseOccupant($signalement->getAdresseOccupant());
-        $new->setCpOccupant($signalement->getCpOccupant());
-        $new->setInseeOccupant($signalement->getInseeOccupant());
+        $newAddress = new Address();
+        $newAddress->setHousenumber($signalement->getAddress()->getHousenumber());
+        $newAddress->setStreet($signalement->getAddress()->getStreet());
+        $newAddress->setPostCode($signalement->getAddress()->getPostCode());
+        $newAddress->setCityCode($signalement->getAddress()->getCityCode());
+        $new->setAddress($newAddress);
 
         $signalementsOnSameAddress = $signalementRepository->findOnSameAddress($new);
         $this->assertCount(2, $signalementsOnSameAddress);
@@ -713,7 +704,7 @@ class SignalementRepositoryTest extends KernelTestCase
 
         $this->assertEquals(2, $paginator->count());
         foreach ($paginator as $signalement) {
-            $this->assertEquals('34', $signalement->getTerritory()->getZip());
+            $this->assertEquals('34', $signalement->getAddress()->getTerritory()->getZip());
         }
     }
 

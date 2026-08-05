@@ -105,7 +105,7 @@ class SignalementFileController extends AbstractController
         $signalementFileProcessor->addFilesToSignalement(
             fileList: $fileList,
             signalement: $signalement,
-            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
             user: $user,
             isWaitingSuivi: true
         );
@@ -146,7 +146,7 @@ class SignalementFileController extends AbstractController
                 user: $user,
                 signalement: $signalement,
                 files: $files,
-                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
                 subscriptionCreated: $subscriptionCreated
             );
         }
@@ -223,7 +223,7 @@ class SignalementFileController extends AbstractController
                 signalement: $signalement,
                 description: $description,
                 category: SuiviCategory::DOCUMENT_DELETED_BY_PARTNER,
-                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
                 user: $user,
                 subscriptionCreated: $subscriptionCreated,
             );

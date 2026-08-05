@@ -92,7 +92,7 @@ class SecurityControllerTest extends WebTestCase
             'visitor-type' => 'occupant',
             'login-first-letter-prenom' => mb_substr($signalement->getPrenomOccupant(), 0, 1),
             'login-first-letter-nom' => mb_substr($signalement->getNomOccupant(), 0, 1),
-            'login-code-postal' => $signalement->getCpOccupant(),
+            'login-code-postal' => $signalement->getAddress()->getPostCode(),
             '_csrf_token' => $this->generateCsrfToken($client, 'authenticate'),
         ];
         $client->request('POST', '/authentification/'.$signalement->getCodeSuivi(), $payload);

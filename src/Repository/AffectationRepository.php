@@ -188,7 +188,8 @@ class AffectationRepository extends ServiceEntityRepository
         $qb->select('a', 'p', 's', 't', 'su')
             ->innerJoin('a.partner', 'p')
             ->innerJoin('a.signalement', 's')
-            ->innerJoin('s.territory', 't')
+            ->innerJoin('s.address', 'address')
+            ->innerJoin('address.territory', 't')
             ->leftJoin('s.signalementUsager', 'su')
             ->where('a.statut = :status')->setParameter('status', AffectationStatus::ACCEPTED)
             ->andWhere($qb->expr()->not($qb->expr()->in('a.id', $subQb->getDQL())));

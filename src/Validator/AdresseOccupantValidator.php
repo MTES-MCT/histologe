@@ -28,9 +28,7 @@ class AdresseOccupantValidator extends ConstraintValidator
         }
 
         // Validation 1: Vérifier que l'adresse est complète
-        $hasManualAddress = !empty($value->adresseOccupant)
-            || !empty($value->cpOccupant)
-            || !empty($value->villeOccupant);
+        $hasManualAddress = !empty($value->addressAddress) || !empty($value->addressPostcode) || !empty($value->addressCity);
 
         if (!$hasManualAddress && !empty($value->adresseCompleteOccupant)) {
             // L'utilisateur utilise l'autocomplete, pas besoin de valider les champs manuels
@@ -39,7 +37,7 @@ class AdresseOccupantValidator extends ConstraintValidator
             // Si on est en mode adresse manuelle, tous les champs sont requis
             $hasViolation = false;
 
-            if (empty($value->adresseOccupant)) {
+            if (empty($value->addressAddress)) {
                 $this->context
                     ->buildViolation($constraint->messageAdresse)
                     ->atPath('adresseCompleteOccupant')
@@ -47,7 +45,7 @@ class AdresseOccupantValidator extends ConstraintValidator
                 $hasViolation = true;
             }
 
-            if (empty($value->cpOccupant)) {
+            if (empty($value->addressPostcode)) {
                 $this->context
                     ->buildViolation($constraint->messageCp)
                     ->atPath('adresseCompleteOccupant')
@@ -55,7 +53,7 @@ class AdresseOccupantValidator extends ConstraintValidator
                 $hasViolation = true;
             }
 
-            if (empty($value->villeOccupant)) {
+            if (empty($value->addressCity)) {
                 $this->context
                     ->buildViolation($constraint->messageVille)
                     ->atPath('adresseCompleteOccupant')
@@ -70,8 +68,8 @@ class AdresseOccupantValidator extends ConstraintValidator
         }
 
         // Validation 2: Vérifier que le territoire est actif
-        $inseeCode = $value->inseeOccupant;
-        $postalCode = $value->cpOccupant;
+        $inseeCode = $value->addressCityCode;
+        $postalCode = $value->addressPostcode;
         $territory = null;
         $usedInseeCode = false;
 

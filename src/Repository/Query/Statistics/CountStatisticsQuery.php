@@ -28,12 +28,13 @@ class CountStatisticsQuery
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('COUNT(s.id)')
+            ->innerJoin('s.address', 'address')
             ->andWhere('s.statut NOT IN (:statutList)')
             ->setParameter('statutList', SignalementStatus::excludedStatuses())
             ->andWhere('s.isImported = 1');
 
         if (null !== $territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+            $qb->andWhere('address.territory = :territory')->setParameter('territory', $territory);
         }
 
         if ($user && !$user->isSuperAdmin()) {
@@ -103,7 +104,8 @@ class CountStatisticsQuery
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('COUNT(s.id) AS count, t.zip, t.name, t.id')
-            ->leftJoin('s.territory', 't')
+            ->innerJoin('s.address', 'address')
+            ->leftJoin('address.territory', 't')
             ->where('s.statut NOT IN (:statutList)')
             ->setParameter('statutList', SignalementStatus::excludedStatuses());
 
@@ -127,6 +129,7 @@ class CountStatisticsQuery
             ->addSelect('SUM(CASE WHEN c.type = :logement THEN 1 ELSE 0 END) AS critere_logement_count')
             ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :batimentString THEN 1 ELSE 0 END) AS desordrecritere_batiment_count')
             ->addSelect('SUM(CASE WHEN dc.zoneCategorie = :logementString THEN 1 ELSE 0 END) AS desordrecritere_logement_count')
+            ->innerJoin('s.address', 'address')
             ->leftJoin('s.criticites', 'criticites')
             ->leftJoin('criticites.critere', 'c')
             ->leftJoin('s.desordrePrecisions', 'dp')
@@ -139,7 +142,7 @@ class CountStatisticsQuery
         $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
 
         if ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+            $qb->andWhere('address.territory = :territory')->setParameter('territory', $territory);
         }
         if ($year) {
             $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
@@ -159,6 +162,7 @@ class CountStatisticsQuery
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('COUNT(s.id) AS count, desordreCriteres.labelCritere')
+            ->innerJoin('s.address', 'address')
             ->leftJoin('s.desordrePrecisions', 'dp')
             ->leftJoin('dp.desordreCritere', 'desordreCriteres')
             ->where('s.statut NOT IN (:statutList)')
@@ -167,7 +171,7 @@ class CountStatisticsQuery
             ->setParameter('creationSource', CreationSource::FORM_USAGER_V2);
 
         if ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+            $qb->andWhere('address.territory = :territory')->setParameter('territory', $territory);
         }
         if ($year) {
             $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);
@@ -193,12 +197,13 @@ class CountStatisticsQuery
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('COUNT(s.id)')
+            ->innerJoin('s.address', 'address')
             ->where('s.statut IN (:statutList)')
             ->andWhere('s.isUsagerAbandonProcedure = 1')
             ->setParameter('statutList', [SignalementStatus::ACTIVE]);
 
         if (\count($territories)) {
-            $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $territories);
+            $qb->andWhere('address.territory IN (:territories)')->setParameter('territories', $territories);
         }
 
         return (int) $qb->getQuery()->getSingleScalarResult();

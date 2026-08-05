@@ -8,7 +8,7 @@
 			{% elseif suivi.createdBy is not null and suivi.category in enum('App\\Entity\\Enum\\SuiviCategory').categoriesSubmittedByUsager() %}
 				{{ suivi.createdBy is same as signalement.getSignalementUsager.getOccupant ? 'OCCUPANT' : 'DECLARANT' }}
 			{% elseif suivi.createdBy is not null %}
-				{{ suivi.createdBy.getPartnerInTerritoryOrFirstOne(suivi.signalement.territory) ? suivi.createdBy.getPartnerInTerritoryOrFirstOne(suivi.signalement.territory).nom : '' }}
+				{{ suivi.createdBy.getPartnerInTerritoryOrFirstOne(suivi.signalement.address.territory) ? suivi.createdBy.getPartnerInTerritoryOrFirstOne(suivi.signalement.address.territory).nom : '' }}
 			{% else %}
 				{{ suivi.getCreatedByLabel(forBailleur: not forUsager) }}
 			{% endif %}

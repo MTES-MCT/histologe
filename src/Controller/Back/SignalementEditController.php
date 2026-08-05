@@ -18,6 +18,7 @@ use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Exception\Address\CityNotFoundException;
 use App\Factory\SuiviDelayedFactory;
 use App\Factory\TiersInvitationFactory;
 use App\Manager\SignalementManager;
@@ -33,6 +34,7 @@ use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\SignalementAddressContentService;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,6 +59,7 @@ class SignalementEditController extends AbstractController
         SignalementAddressContentService $signalementAddressContentService,
         SignalementAddressUpdater $signalementAddressUpdater,
         EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
@@ -80,14 +83,18 @@ class SignalementEditController extends AbstractController
 
             return $this->json($response, $response['code']);
         }
+        try {
+            $subscriptionCreated = $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
+        } catch (CityNotFoundException $e) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $e->getMessage()];
 
-        if (!$signalementAddressUpdater->canUpdateWithNewAddress($signalement, $adresseOccupantRequest->getCodePostal(), $adresseOccupantRequest->getInsee())) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'L\'adresse renseignée ne correspond pas au territoire d\'origine du signalement.'];
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        } catch (\Exception $e) {
+            $logger->error('Erreur lors de la mise à jour de l\'adresse du signalement '.$signalement->getId().': '.$e->getMessage());
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $e->getMessage()];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
-
-        $subscriptionCreated = $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
         $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'L\'adresse du logement a bien été modifiée.'];
         if ($subscriptionCreated) {

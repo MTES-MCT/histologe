@@ -60,14 +60,14 @@
                 <ul>
                     {% for signalement in signalements %}
                         <li class="location" 
-                        data-lat="{{ signalement.geoloc.lat }}" 
-                        data-lng="{{ signalement.geoloc.lng }}" 
+                        data-lat="{{ signalement.lat }}" 
+                        data-lng="{{ signalement.lng }}" 
                         data-ref="{{signalement.reference}}" 
                         data-link="{{path('back_signalement_view', {uuid: signalement.uuid})}}"
-                        data-address="{{signalement.adresse_occupant}} {{signalement.cp_occupant}} {{signalement.ville_occupant}}"
+                        data-address="{{signalement.housenumber}} {{signalement.street}} {{signalement.post_code}} {{signalement.city}}"
                         >
                             <a href="{{path('back_signalement_view', {uuid: signalement.uuid})}}">{{signalement.reference}}</a>
-                            <small>{{signalement.adresse_occupant}} {{signalement.cp_occupant}} {{signalement.ville_occupant}}</small>
+                            <small>{{signalement.housenumber}} {{signalement.street}} {{signalement.post_code}} {{signalement.city}}</small>
                         </li>
                     {% endfor %}
                 </ul>

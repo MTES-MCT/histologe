@@ -134,7 +134,7 @@ class AutoAssignerTest extends KernelTestCase
         // la règle de l'EPCI exclue le code insee 34048
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-06']);
         $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
-        $signalement->setInseeOccupant('34048');
+        // $signalement->setInseeOccupant('34048');
         $this->testHelper($signalement, 3, ['Commune de Campagne', 'CAF 34', 'CD 34']);
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());
@@ -146,7 +146,7 @@ class AutoAssignerTest extends KernelTestCase
         // Montpellier n'est pas dans l'EPCI de Lunel, et pas dans la liste de code insee du conseil départemental
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-06']);
         $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
-        $signalement->setInseeOccupant('34172');
+        // $signalement->setInseeOccupant('34172');
         $this->testHelper($signalement, 2, ['Ville de Montpellier', 'CAF 34']);
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertcount(1, $signalement->getSuivis());

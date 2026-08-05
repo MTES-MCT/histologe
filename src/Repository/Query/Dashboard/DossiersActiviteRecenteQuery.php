@@ -33,6 +33,7 @@ class DossiersActiviteRecenteQuery
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Suivi::class, 'suivi')
             ->innerJoin('suivi.signalement', 'signalement')
+            ->innerJoin('signalement.address', 'address')
             ->andWhere('signalement.statut NOT IN (:excludedStatus)')
             ->andWhere('suivi.createdBy != :user')
             ->andWhere('suivi.category NOT IN (:excludedCategories)')
@@ -66,15 +67,15 @@ class DossiersActiviteRecenteQuery
 
         $qb->leftJoin('suivi.createdBy', 'u')
         ->leftJoin(UserPartner::class, 'up', 'WITH', 'up.user = u')
-        ->leftJoin('up.partner', 'p', 'WITH', 'p.territory = signalement.territory');
+        ->leftJoin('up.partner', 'p', 'WITH', 'p.territory = address.territory');
 
         if ($params?->territoireId) {
             $qb
-                ->andWhere('signalement.territory = :territoireId')
+                ->andWhere('address.territory = :territoireId')
                 ->setParameter('territoireId', $params->territoireId);
         } elseif (!$user->isSuperAdmin()) {
             $qb
-                ->andWhere('signalement.territory IN (:territories)')
+                ->andWhere('address.territory IN (:territories)')
                 ->setParameter('territories', $user->getPartnersTerritories());
         }
 
@@ -103,7 +104,7 @@ class DossiersActiviteRecenteQuery
             signalement.reference AS reference,
             signalement.nomOccupant AS nomOccupant,
             signalement.prenomOccupant AS prenomOccupant,
-            CONCAT(signalement.adresseOccupant, \' \' , signalement.cpOccupant, \' \' , signalement.villeOccupant) AS adresseOccupant,
+            CONCAT_WS(\', \', CONCAT_WS(\' \', address.housenumber, address.street), CONCAT_WS(\' \', address.postCode, address.city)) AS adresseComplete,
             signalement.uuid AS uuid,
             signalement.statut AS statut,
             suivi.createdAt AS suiviCreatedAt,
@@ -132,6 +133,7 @@ class DossiersActiviteRecenteQuery
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Suivi::class, 'suivi')
             ->innerJoin('suivi.signalement', 'signalement')
+            ->innerJoin('signalement.address', 'address')
             ->where('suivi.createdBy = :user')
             ->andWhere('signalement.statut NOT IN (:excludedStatus)')
             ->andWhere('suivi.createdAt = ('.$subQb->getDQL().')')
@@ -144,7 +146,7 @@ class DossiersActiviteRecenteQuery
                ->setParameter('partners', $user->getPartners());
         }
         if (null !== $territory) {
-            $qb->andWhere('signalement.territory = :territory')
+            $qb->andWhere('address.territory = :territory')
                 ->setParameter('territory', $territory);
         }
 
@@ -176,7 +178,7 @@ class DossiersActiviteRecenteQuery
             signalement.reference AS reference,
             signalement.nomOccupant AS nomOccupant,
             signalement.prenomOccupant AS prenomOccupant,
-            CONCAT(signalement.adresseOccupant, \' \' , signalement.cpOccupant, \' \' , signalement.villeOccupant) AS adresseOccupant,
+            CONCAT(address.housenumber, \' \' , address.street, \' \' , address.postCode, \' \' , address.city) AS adresseComplete,
             signalement.uuid AS uuid,
             '.$statutField.' AS statut,
             suivi.createdAt AS suiviCreatedAt,

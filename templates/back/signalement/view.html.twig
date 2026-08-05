@@ -7,7 +7,7 @@
             {% set noticeDesc = 'Ce signalement a été créé via API par ' ~ signalement.createdBy.email ~ ' pour le partenaire ' ~ signalement.createdByPartner.nom ~ '.' %}
         {% else %}
             {% set noticeTitle = 'Signalement BO' %}
-            {% set partnerProvenance = signalement.createdBy.getPartnerInTerritory(signalement.territory) ? ', du partenaire ' ~ signalement.createdBy.getPartnerInTerritory(signalement.territory).nom : '' %}
+            {% set partnerProvenance = signalement.createdBy.getPartnerInTerritory(signalement.address.territory) ? ', du partenaire ' ~ signalement.createdBy.getPartnerInTerritory(signalement.address.territory).nom : '' %}
             {% set noticeDesc = 'Ce signalement a été créé par ' ~ signalement.createdBy.prenom ~ ' ' ~ signalement.createdBy.nom ~ partnerProvenance ~ ' depuis le formulaire pro.' %}
         {% endif %}
             <div class="fr-notice fr-notice--info">

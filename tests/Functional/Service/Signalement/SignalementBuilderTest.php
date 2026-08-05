@@ -128,7 +128,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertNotEmpty($signalement->getUuid());
         $this->assertNotEmpty($signalement->getReference());
         $this->assertNotEmpty($signalement->getCodeSuivi());
-        $this->assertEquals('13', $signalement->getTerritory()->getZip());
+        $this->assertEquals('13', $signalement->getAddress()->getTerritory()->getZip());
         $this->assertEquals(ProfileDeclarant::LOCATAIRE, $signalement->getProfileDeclarant());
         $this->assertEquals(ProfileOccupant::LOCATAIRE, $signalement->getProfileOccupant());
         $this->assertEquals(
@@ -156,9 +156,9 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertEquals('Locataire Prenom', $signalement->getPrenomOccupant());
         $this->assertEquals('locataire-01@signal-logement.fr', $signalement->getMailOccupant());
         $this->assertEquals('appartement', $signalement->getNatureLogement());
-        $this->assertEquals('33 Rue des phoceens', $signalement->getAdresseOccupant());
-        $this->assertEquals('13002', $signalement->getCpOccupant());
-        $this->assertEquals('Marseille', $signalement->getVilleOccupant());
+        $this->assertEquals('33 Rue des phoceens', $signalement->getAddress()->getHousenumberAndStreet());
+        $this->assertEquals('13002', $signalement->getAddress()->getPostCode());
+        $this->assertEquals('Marseille', $signalement->getAddress()->getCity());
         $this->assertEquals('5', $signalement->getEtageOccupant());
         $this->assertEquals('A', $signalement->getEscalierOccupant());
 
