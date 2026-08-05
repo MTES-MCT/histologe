@@ -33,22 +33,19 @@ class ZoneRepository extends ServiceEntityRepository
         $parameters['statut_list'] = SignalementStatus::excludedStatusesValue();
         $types['statut_list'] = ArrayParameterType::STRING;
         $sql = '
-            SELECT s.uuid, s.reference, s.geoloc, s.adresse_occupant, s.cp_occupant, s.ville_occupant
+            SELECT s.uuid, s.reference, ST_Y(address.point) AS lat, ST_X(address.point) AS lng,
+                address.housenumber, address.street, address.post_code, address.city
             FROM signalement s
-            JOIN zone z ON ST_Contains(z.area,
-            Point(JSON_EXTRACT(s.geoloc, "$.lng"), JSON_EXTRACT(s.geoloc, "$.lat")))
-            WHERE z.id = :zone AND s.territory_id = z.territory_id
+            JOIN address ON s.address_id = address.id
+            JOIN zone z ON ST_Contains(z.area, address.point)
+            WHERE z.id = :zone AND address.territory_id = z.territory_id
             AND s.statut NOT IN (:statut_list)
             ORDER BY s.created_at DESC
             ';
 
         $resultSet = $conn->executeQuery($sql, $parameters, $types);
-        $list = $resultSet->fetchAllAssociative();
-        foreach ($list as $key => $value) {
-            $list[$key]['geoloc'] = json_decode($value['geoloc'], true);
-        }
 
-        return $list;
+        return $resultSet->fetchAllAssociative();
     }
 
     /**
@@ -60,9 +57,9 @@ class ZoneRepository extends ServiceEntityRepository
         $sql = '
             SELECT z.name
             FROM signalement s
-            JOIN zone z ON ST_Contains(z.area,
-            Point(JSON_EXTRACT(s.geoloc, "$.lng"), JSON_EXTRACT(s.geoloc, "$.lat")))
-            WHERE s.id = :signalement AND z.territory_id = z.territory_id
+            JOIN address ON s.address_id = address.id
+            JOIN zone z ON ST_Contains(z.area, address.point)
+            WHERE s.id = :signalement AND address.territory_id = z.territory_id
             ORDER BY z.name ASC
             ';
         $resultSet = $conn->executeQuery($sql, ['signalement' => $signalement->getId()]);

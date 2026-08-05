@@ -29,7 +29,6 @@ use App\Service\InjonctionBailleur\BailleurLoginCodeGenerator;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\TimezoneProvider;
-use App\Utils\Address\CommuneHelper;
 use App\Utils\Phone;
 use App\Utils\TrimHelper;
 use App\Validator as AppAssert;
@@ -221,18 +220,17 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $mailOccupantTemp = null;
 
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    #[Assert\Length(max: 100, groups: ['bo_step_address'])]
-    private ?string $adresseOccupant = null;
+    // TODO ADDRESS : A SUPPRIMER
+    #[ORM\Column(name: 'adresse_occupant', type: 'string', length: 100, nullable: true)]
+    private ?string $adresseOccupantDeprecated = null;
 
-    #[ORM\Column(type: 'string', length: 5, nullable: true)]
-    #[Assert\NotBlank]
-    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.', groups: ['Default', 'bo_step_address'])]
-    private ?string $cpOccupant = null;
+    // TODO ADDRESS : A SUPPRIMER
+    #[ORM\Column(name: 'cp_occupant', type: 'string', length: 5, nullable: true)]
+    private ?string $cpOccupantDeprecated = null;
 
-    #[ORM\Column(type: 'string', length: 100, nullable: true)]
-    #[Assert\Length(max: 100, groups: ['bo_step_address'])]
-    private ?string $villeOccupant = null;
+    // TODO ADDRESS : A SUPPRIMER
+    #[ORM\Column(name: 'ville_occupant', type: 'string', length: 100, nullable: true)]
+    private ?string $villeOccupantDeprecated = null;
 
     /**
      * Identifiant BAN (Base Adresse Nationale) de l'adresse de l'occupant.
@@ -244,21 +242,24 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      * Attention : il s'agit de la clé d'interopérabilité BAN (ex : 13202_2333_00025)
      * et non de l'UUID technique de la BAN dit `banId`
      */
-    #[ORM\Column(type: 'string', length: 50, nullable: true)]
-    private ?string $banIdOccupant = null;
+    // TODO ADDRESS : A SUPPRIMER
+    #[ORM\Column(name: 'ban_id_occupant', type: 'string', length: 50, nullable: true)]
+    private ?string $banIdOccupantDeprecated = null;
 
-    #[ORM\Column(type: 'string', length: 10, nullable: true)]
-    private ?string $inseeOccupant = null;
+    #[ORM\Column(name: 'insee_occupant', type: 'string', length: 10, nullable: true)]
+    // TODO ADDRESS : A SUPPRIMER
+    private ?string $inseeOccupantDeprecated = null;
+
+    // TODO ADDRESS : A SUPPRIMER
+    #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'signalements')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Territory $territory = null;
 
     /** @var array<mixed> $geoloc */
     #[ORM\Column(type: 'json')]
     private array $geoloc = [];
 
-    #[ORM\ManyToOne(targetEntity: Territory::class, inversedBy: 'signalements')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Territory $territory = null;
-
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'signalements')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Address $address = null;
 
@@ -1193,64 +1194,28 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getAdresseOccupant(): ?string
+    // TODO ADDRESS : A SUPPRIMER
+    public function getAdresseOccupantDeprecated(): ?string
     {
-        return $this->adresseOccupant;
+        return $this->adresseOccupantDeprecated;
     }
 
-    public function setAdresseOccupant(string $adresseOccupant): static
+    // TODO ADDRESS : A SUPPRIMER
+    public function getCpOccupantDeprecated(): ?string
     {
-        $this->adresseOccupant = $adresseOccupant;
-
-        return $this;
+        return $this->cpOccupantDeprecated;
     }
 
-    public function getCpOccupant(): ?string
+    // TODO ADDRESS : A SUPPRIMER
+    public function getVilleOccupantDeprecated(): ?string
     {
-        return $this->cpOccupant;
+        return $this->villeOccupantDeprecated;
     }
 
-    public function setCpOccupant(?string $cpOccupant): static
+    // TODO ADDRESS : A SUPPRIMER
+    public function getBanIdOccupantDeprecated(): ?string
     {
-        $this->cpOccupant = $cpOccupant;
-
-        return $this;
-    }
-
-    public function getVilleOccupant(): ?string
-    {
-        return $this->villeOccupant;
-    }
-
-    public function setVilleOccupant(string $villeOccupant): static
-    {
-        $this->villeOccupant = $villeOccupant;
-
-        return $this;
-    }
-
-    public function getAddressCompleteOccupant(bool $withArrondisement = true): ?string
-    {
-        $ville = $withArrondisement ? $this->villeOccupant : CommuneHelper::getCommuneFromArrondissement($this->villeOccupant);
-
-        return \sprintf(
-            '%s %s %s',
-            $this->adresseOccupant,
-            $this->cpOccupant,
-            $ville
-        );
-    }
-
-    public function getBanIdOccupant(): ?string
-    {
-        return $this->banIdOccupant;
-    }
-
-    public function setBanIdOccupant(?string $banIdOccupant): static
-    {
-        $this->banIdOccupant = $banIdOccupant;
-
-        return $this;
+        return $this->banIdOccupantDeprecated;
     }
 
     public function hasInfosAgence(): bool
@@ -1762,28 +1727,10 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return mb_strtoupper(mb_substr($complement, 0, 1)).mb_substr($complement, 1);
     }
 
-    public function getInseeOccupant(): ?string
+    // TODO ADDRESS : A SUPPRIMER
+    public function getInseeOccupantDeprecated(): ?string
     {
-        return $this->inseeOccupant;
-    }
-
-    public function setInseeOccupant(?string $inseeOccupant): static
-    {
-        $this->inseeOccupant = $inseeOccupant;
-
-        return $this;
-    }
-
-    public function getManualAddressOccupant(): ?bool
-    {
-        return $this->manualAddressOccupant;
-    }
-
-    public function setManualAddressOccupant(?bool $manualAddressOccupant): static
-    {
-        $this->manualAddressOccupant = $manualAddressOccupant;
-
-        return $this;
+        return $this->inseeOccupantDeprecated;
     }
 
     public function getCodeSuivi(): ?string
@@ -2138,18 +2085,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         if ($this->tags->removeElement($tag)) {
             $tag->removeSignalement($this);
         }
-
-        return $this;
-    }
-
-    public function getTerritory(): ?Territory
-    {
-        return $this->territory;
-    }
-
-    public function setTerritory(?Territory $territory): static
-    {
-        $this->territory = $territory;
 
         return $this;
     }

@@ -178,18 +178,18 @@ readonly class SignalementResponseFactory
         $signalementResponse->signalementImporte = $signalement->getIsImported();
 
         $signalementResponse->adresse = new Adresse(
-            adresse: $signalement->getAdresseOccupant(),
-            codePostal: $signalement->getCpOccupant(),
-            ville: $signalement->getVilleOccupant(),
+            adresse: $signalement->getAddress()->getHousenumberAndStreet(),
+            codePostal: $signalement->getAddress()->getPostCode(),
+            ville: $signalement->getAddress()->getCity(),
             etage: $signalement->getEtageOccupant(),
             escalier: $signalement->getEscalierOccupant(),
             numAppart: $signalement->getNumAppartOccupant(),
-            codeInsee: $signalement->getInseeOccupant(),
+            codeInsee: $signalement->getAddress()->getCityCode(),
             latitude: $signalement->getGeoloc()['lat'] ?? null,
             longitude: $signalement->getGeoloc()['lng'] ?? null,
             adresseAutre: $signalement->getAdresseAutreOccupant(),
             rnbId: $signalement->getRnbIdOccupant(),
-            cleBanAdresse: $signalement->getBanIdOccupant(),
+            cleBanAdresse: $signalement->getAddress()->getBanId(),
         );
 
         foreach (self::PERSONNE_TYPES as $personneType) {

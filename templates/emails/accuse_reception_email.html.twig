@@ -4,7 +4,7 @@
     <p>Bonjour,</p>
     <p>
         Nous avons bien reçu votre signalement concernant le logement situé <br>
-        <strong>{{ signalement_adresseOccupant~', '~signalement_cpOccupant~' '~signalement_villeOccupant|upper }}</strong><br>
+        <strong>{{ signalement_addressHousenumberAndStreet~', '~signalement_addressPostCode~' '~signalement_addressCity|upper }}</strong><br>
         Vous recevrez par e-mail les mises à jour concernant votre signalement.
     </p>
     {% if not signalement_isProprioAverti %}

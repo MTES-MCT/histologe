@@ -14,7 +14,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Security\User\SignalementUser;
 use App\Service\Gouv\Ban\AddressService;
-use App\Service\Gouv\Ban\Response\Address;
+use App\Service\Gouv\Ban\Response\BanAddress;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -69,7 +69,7 @@ class SignalementViewedSubscriberTest extends WebTestCase
         $signalementViewedEvent = new SignalementViewedEvent($this->signalement, $user);
 
         $addressResult = json_decode((string) file_get_contents(__DIR__.'/../../files/datagouv/get_api_ban_item_response_13203.json'), true);
-        $address = new Address($addressResult);
+        $address = new BanAddress($addressResult);
         $this->addressServiceMock
             ->expects($this->once())
             ->method('getAddress')

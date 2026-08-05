@@ -2,7 +2,7 @@
 
 namespace App\Service\Gouv\Ban;
 
-use App\Service\Gouv\Ban\Response\Address;
+use App\Service\Gouv\Ban\Response\BanAddress;
 use App\Service\Gouv\Ban\Response\Poi;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,8 +59,18 @@ class AddressService
         return null;
     }
 
-    public function getAddress(string $address): Address
+    public function getAddress(string $address): BanAddress
     {
-        return new Address($this->searchAddress($address));
+        return new BanAddress($this->searchAddress($address));
+    }
+
+    public function getAcceptableBanAddress(string $address): ?BanAddress
+    {
+        $addressResult = $this->getAddress($address);
+        if ($addressResult->getScore() > self::SCORE_IF_BAN_ID_ACCEPTED) {
+            return $addressResult;
+        }
+
+        return null;
     }
 }

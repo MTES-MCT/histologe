@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\Loader;
 
+use App\Entity\Address;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\MotifCloture;
@@ -20,21 +21,24 @@ use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\User;
+use App\Factory\AddressFactory;
 use App\Factory\FileFactory;
 use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
 use App\Manager\UserManager;
+use App\Repository\AddressRepository;
 use App\Repository\BailleurRepository;
 use App\Repository\CriticiteRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\TagRepository;
-use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Service\Signalement\ReferenceGenerator;
+use App\Service\Signalement\ZipcodeProvider;
+use App\Utils\Address\AddressParser;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -48,7 +52,8 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
     private ?User $admin = null;
 
     public function __construct(
-        private readonly TerritoryRepository $territoryRepository,
+        private readonly AddressRepository $addressRepository,
+        private readonly AddressFactory $addressFactory,
         private readonly BailleurRepository $bailleurRepository,
         private readonly CriticiteRepository $criticiteRepository,
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
@@ -60,6 +65,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
         private readonly ParameterBagInterface $parameterBag,
         private readonly ReferenceGenerator $referenceGenerator,
+        private readonly ZipcodeProvider $zipcodeProvider,
     ) {
     }
 
@@ -68,17 +74,18 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
      */
     public function load(ObjectManager $manager): void
     {
+        $this->zipcodeProvider->reloadTerritories();
         $this->admin = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
         $signalementRows = Yaml::parseFile(__DIR__.'/../Files/Signalement.yml');
         foreach ($signalementRows['signalements'] as $row) {
             $this->loadSignalements($manager, $row);
+            $manager->flush(); // on force le flush à chaque ligne pour eviter les erreur de duplication d'addresse
         }
         $newSignalementRows = Yaml::parseFile(__DIR__.'/../Files/NewSignalement.yml');
         foreach ($newSignalementRows['signalements'] as $row) {
             $this->loadNewSignalements($manager, $row);
+            $manager->flush(); // on force le flush à chaque ligne pour eviter les erreur de duplication d'addresse
         }
-
-        $manager->flush();
     }
 
     /**
@@ -92,16 +99,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         $phoneNumber = $row['phone_number'];
 
         $signalement = (new Signalement())
-            ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreationSource(CreationSource::FORM_USAGER_V1)
             ->setProfileDeclarant(ProfileDeclarant::from($row['profile_declarant']))
             ->setNomOccupant($row['nom_occupant'] ?? $faker->lastName())
             ->setPrenomOccupant($faker->firstName())
             ->setTelOccupant($phoneNumber)
-            ->setAdresseOccupant($row['adresse_occupant'] ?? str_replace(',', '', $faker->streetAddress()))
-            ->setVilleOccupant($row['ville_occupant'])
-            ->setCpOccupant($row['cp_occupant'])
-            ->setInseeOccupant($row['insee_occupant'])
             ->setNbOccupantsLogement($row['nb_occupants_logement'])
             ->setNbAdultes($row['nb_adultes'])
             ->setNbEnfantsM6($row['nb_enfants_m6'])
@@ -142,6 +144,17 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsUsagerAbandonProcedure($row['usager_abandon_procedure'] ?? null);
 
         $signalement->setProfileOccupant(ProfileOccupant::from($row['profile_occupant'] ?? ''));
+
+        $rawAddress = $row['adresse_occupant'] ?? str_replace(',', '', $faker->streetAddress());
+        $parsedAddress = AddressParser::parse($rawAddress);
+        $houseNumber = $parsedAddress['number'];
+        if ($houseNumber && $parsedAddress['suffix']) {
+            $houseNumber .= ' '.$parsedAddress['suffix'];
+        }
+
+        $address = $this->getAddressToAttach($houseNumber, $parsedAddress['street'], $row['cp_occupant'], $row['ville_occupant'], $row['insee_occupant']);
+        $manager->persist($address);
+        $signalement->setAddress($address);
 
         if (isset($row['is_not_occupant'])) {
             $linkChoices = OccupantLink::getLabelList();
@@ -198,7 +211,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         if (isset($row['tags'])) {
             foreach ($row['tags'] as $tag) {
-                $signalement->addTag($this->tagRepository->findOneBy(['label' => $tag, 'territory' => $signalement->getTerritory()]));
+                $signalement->addTag($this->tagRepository->findOneBy(['label' => $tag, 'territory' => $signalement->getAddress()->getTerritory()]));
             }
         }
 
@@ -209,7 +222,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         }
 
         if (isset($row['bailleur'])) {
-            $signalement->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $signalement->getTerritory()));
+            $signalement->setBailleur($this->bailleurRepository->findOneBailleurBy($row['bailleur'], $signalement->getAddress()->getTerritory()));
         }
 
         if (isset($row['synchro_data'])) {
@@ -332,16 +345,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         /** @var Signalement $signalement */
         $signalement = (new Signalement())
-            ->setTerritory($this->territoryRepository->findOneBy(['name' => $row['territory']]))
             ->setCreationSource(CreationSource::FORM_USAGER_V2)
             ->setCiviliteOccupant($row['civilite_occupant'] ?? 'mme')
             ->setNomOccupant($row['nom_occupant'] ?? $faker->lastName())
             ->setPrenomOccupant($row['prenom_occupant'] ?? $faker->firstName())
             ->setTelOccupant($row['tel_occupant'] ?? $phoneNumber)
-            ->setAdresseOccupant($row['adresse_occupant'] ?? str_replace(',', '', $faker->streetAddress()))
-            ->setVilleOccupant($row['ville_occupant'])
-            ->setCpOccupant($row['cp_occupant'])
-            ->setInseeOccupant($row['insee_occupant'])
             ->setNbOccupantsLogement($row['nb_occupants_logement'])
             ->setMailOccupant($row['mail_occupant'] ?? $faker->email())
             ->setEtageOccupant($row['etage_occupant'] ?? $faker->randomNumber(2))
@@ -384,6 +392,17 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             ->setIsLogementVacant($row['logement_vacant'] ?? false);
 
         $signalement->setProfileOccupant(ProfileOccupant::from($row['profile_occupant'] ?? ''));
+
+        $rawaddress = $row['adresse_occupant'] ?? str_replace(',', '', $faker->streetAddress());
+        $parsedAddress = AddressParser::parse($rawaddress);
+        $houseNumber = $parsedAddress['number'];
+        if ($houseNumber && $parsedAddress['suffix']) {
+            $houseNumber .= ' '.$parsedAddress['suffix'];
+        }
+
+        $address = $this->getAddressToAttach($houseNumber, $parsedAddress['street'], $row['cp_occupant'], $row['ville_occupant'], $row['insee_occupant']);
+        $manager->persist($address);
+        $signalement->setAddress($address);
 
         if (isset($row['created_from_uuid'])) {
             $signalement->setCreatedFrom(
@@ -549,6 +568,23 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         }
 
         return $signalementQualification;
+    }
+
+    private function getAddressToAttach(string $housenumber, string $street, string $postCode, string $city, string $inseeCode): Address
+    {
+        $address = $this->addressRepository->findForManualAddress($housenumber, $street, $postCode, $inseeCode);
+
+        if (!$address) {
+            $address = $this->addressFactory->createInstance(
+                $housenumber,
+                $street,
+                $postCode,
+                $city,
+                $inseeCode,
+            );
+        }
+
+        return $address;
     }
 
     public function getOrder(): int

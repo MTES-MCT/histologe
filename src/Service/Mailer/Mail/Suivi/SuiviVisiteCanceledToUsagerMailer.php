@@ -37,9 +37,9 @@ class SuiviVisiteCanceledToUsagerMailer extends AbstractNotificationMailer
         $interventionScheduledAt = $intervention->getScheduledAtFormated();
 
         return [
-            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
-            'signalement_cpOccupant' => $signalement->getCpOccupant(),
-            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'signalement_addressHousenumberAndStreet' => $signalement->getAddress()->getHousenumberAndStreet(),
+            'signalement_addressPostCode' => $signalement->getAddress()->getPostCode(),
+            'signalement_addressCity' => $signalement->getAddress()->getCity(),
             'intervention_scheduledAt' => $interventionScheduledAt,
             'lien_suivi' => $this->generateLink(
                 'front_suivi_signalement',

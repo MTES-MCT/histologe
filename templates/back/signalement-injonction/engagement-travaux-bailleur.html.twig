@@ -23,7 +23,7 @@
     <div style="text-align: right;">       
         {{signalement.civiliteOccupant(false)}} {{ signalement.nomOccupant|capitalize }} {{ signalement.prenomOccupant|capitalize }}
         <br>
-        {{ signalement.adresseOccupant }} {{ signalement.cpOccupant }} {{ signalement.villeOccupant }}
+        {{ signalement.address.full }
         {% if signalement.complementAdresseOccupant %}
             <br>
             {{signalement.complementAdresseOccupant}}

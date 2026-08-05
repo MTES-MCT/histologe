@@ -39,7 +39,7 @@
                                        maxlength="255"
                                        autocomplete="off"
                                         {% if signalement.isLogementSocial %}
-                                            data-autocomplete-bailleur-url="{{ path('app_bailleur', {'inseecode': signalement.inseeOccupant}) }}"
+                                            data-autocomplete-bailleur-url="{{ path('app_bailleur', {'inseecode': signalement.address.cityCode}) }}"
                                         {% endif %}
                                 >
                                 <ul class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list">

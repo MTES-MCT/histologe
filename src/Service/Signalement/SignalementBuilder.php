@@ -16,6 +16,7 @@ use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\SignalementDraft;
 use App\Entity\Territory;
+use App\Exception\Address\CityNotFoundException;
 use App\Exception\Signalement\DesordreTraitementProcessorNotFound;
 use App\Exception\Signalement\PrecisionNotFound;
 use App\Factory\Signalement\InformationComplementaireFactory;
@@ -27,6 +28,7 @@ use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\DesordrePrecisionRepository;
 use App\Serializer\SignalementDraftRequestSerializer;
+use App\Service\Gouv\Ban\AddressService;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
@@ -63,6 +65,8 @@ class SignalementBuilder
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         private readonly DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private readonly ZipcodeProvider $zipcodeProvider,
+        private readonly AddressService $addressService,
+        private readonly SignalementAddressUpdater $signalementAddressUpdater,
         #[Autowire(env: 'INJONCTION_BAILLEUR_DEPTS')]
         private string $injonctionBailleurDepts = '',
     ) {
@@ -411,18 +415,27 @@ class SignalementBuilder
     {
         $this->signalement
             ->setIsLogementSocial($this->isLogementSocial())
-            ->setAdresseOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero())
-            ->setCpOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal())
-            ->setInseeOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailInsee())
-            ->setVilleOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune())
             ->setEtageOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseEtage())
             ->setEscalierOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseEscalier())
             ->setNumAppartOccupant(
                 $this->signalementDraftRequest->getAdresseLogementComplementAdresseNumeroAppartement()
             )
             ->setAdresseAutreOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseAutre())
-            ->setManualAddressOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailManual())
             ->setRnbIdOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailRnbId());
+
+        $adresseComplete = $this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero().' '.$this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal().' '.$this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune();
+        if ($banAddress = $this->addressService->getAcceptableBanAddress($adresseComplete)) {
+            $this->signalementAddressUpdater->attachAddressToSignalementFromBanAddress($this->signalement, $banAddress);
+        } else {
+            if ($this->signalementAddressUpdater->attachAddressToSignalementFromManualAddress(
+                $this->signalement,
+                $this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
+                $this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
+                $this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune()
+            )) {
+                throw new CityNotFoundException($this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune());
+            }
+        }
     }
 
     private function setOccupantDeclarantData(): void

@@ -36,9 +36,9 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
         );
 
         $signalementDraftRequest->setProfil(ProfileDeclarant::LOCATAIRE->name);
-        $signalementDraftRequest->setAdresseLogementAdresseDetailNumero($signalement->getAdresseOccupant());
-        $signalementDraftRequest->setAdresseLogementAdresseDetailCodePostal($signalement->getCpOccupant());
-        $signalementDraftRequest->setAdresseLogementAdresseDetailCommune($signalement->getVilleOccupant());
+        $signalementDraftRequest->setAdresseLogementAdresseDetailNumero($signalement->getAddress()->getHousenumberAndStreet());
+        $signalementDraftRequest->setAdresseLogementAdresseDetailCodePostal($signalement->getAddress()->getPostCode());
+        $signalementDraftRequest->setAdresseLogementAdresseDetailCommune($signalement->getAddress()->getCity());
         $signalementDraftRequest->setVosCoordonneesOccupantEmail($signalement->getMailOccupant());
 
         /** @var SignalementDuplicateChecker $signalementDuplicateChecker */
@@ -73,9 +73,9 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
         );
 
         $signalementDraftRequest->setProfil(ProfileDeclarant::TIERS_PRO->name);
-        $signalementDraftRequest->setAdresseLogementAdresseDetailNumero($signalement->getAdresseOccupant());
-        $signalementDraftRequest->setAdresseLogementAdresseDetailCodePostal($signalement->getCpOccupant());
-        $signalementDraftRequest->setAdresseLogementAdresseDetailCommune($signalement->getVilleOccupant());
+        $signalementDraftRequest->setAdresseLogementAdresseDetailNumero($signalement->getAddress()->getHousenumberAndStreet());
+        $signalementDraftRequest->setAdresseLogementAdresseDetailCodePostal($signalement->getAddress()->getPostCode());
+        $signalementDraftRequest->setAdresseLogementAdresseDetailCommune($signalement->getAddress()->getCity());
         $signalementDraftRequest->setCoordonneesOccupantEmail($signalement->getMailOccupant());
         $signalementDraftRequest->setCoordonneesOccupantNom($signalement->getNomOccupant());
         $signalementDraftRequest->setVosCoordonneesTiersEmail($signalement->getMailDeclarant());
@@ -148,9 +148,9 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
         );
 
         $signalementDraftRequest->setProfil(ProfileDeclarant::LOCATAIRE->name);
-        $signalementDraftRequest->setAdresseLogementAdresseDetailNumero($signalement->getAdresseOccupant());
-        $signalementDraftRequest->setAdresseLogementAdresseDetailCodePostal($signalement->getCpOccupant());
-        $signalementDraftRequest->setAdresseLogementAdresseDetailCommune($signalement->getVilleOccupant());
+        $signalementDraftRequest->setAdresseLogementAdresseDetailNumero($signalement->getAddress()->getHousenumberAndStreet());
+        $signalementDraftRequest->setAdresseLogementAdresseDetailCodePostal($signalement->getAddress()->getPostCode());
+        $signalementDraftRequest->setAdresseLogementAdresseDetailCommune($signalement->getAddress()->getCity());
         $signalementDraftRequest->setVosCoordonneesOccupantEmail($signalement->getMailOccupant());
         $signalementDraftRequest->setVosCoordonneesOccupantNom($signalement->getNomOccupant());
 

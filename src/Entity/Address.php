@@ -3,10 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\AddressRepository;
+use App\Utils\Address\CommuneHelper;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use LongitudeOne\Spatial\PHP\Types\SpatialInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
 #[ORM\UniqueConstraint(name: 'unique_address_housenumber_street_postcode_citycode', columns: ['housenumber', 'street', 'post_code', 'city_code'])]
@@ -21,15 +23,24 @@ class Address
     private ?string $housenumber = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\Length(max: 100)]
     private string $street = '';
 
     #[ORM\Column(length: 100)]
+    #[Assert\Length(max: 100)]
     private string $city = '';
 
     #[ORM\Column(type: 'string', length: 5)]
+    #[Assert\NotBlank]
+    #[Assert\Regex(pattern: '/^[0-9]{5}$/', message: 'Le code postal doit être composé de 5 chiffres.')]
     private string $postCode = '';
 
     #[ORM\Column(type: 'string', length: 5)]
+    #[Assert\NotBlank]
+    #[Assert\Regex(
+        pattern: '/^(?:\d{5}|2[AB]\d{3})$/i',
+        message: 'Le code INSEE doit être au format 5 chiffres (ex: 13201) ou 2A/2B + 3 chiffres (ex: 2A004).'
+    )]
     private string $cityCode = '';
 
     /**
@@ -54,6 +65,12 @@ class Address
     #[ORM\OneToMany(targetEntity: Arrete::class, mappedBy: 'address')]
     private Collection $arretes;
 
+    /**
+     * @var Collection<int, Signalement>
+     */
+    #[ORM\OneToMany(targetEntity: Signalement::class, mappedBy: 'address')]
+    private Collection $signalements;
+
     #[ORM\ManyToOne(inversedBy: 'addresses')]
     #[ORM\JoinColumn(nullable: false)]
     private Territory $territory;
@@ -61,6 +78,7 @@ class Address
     public function __construct()
     {
         $this->arretes = new ArrayCollection();
+        $this->signalements = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -177,6 +195,33 @@ class Address
         return $this;
     }
 
+    /**
+     * @return Collection<int, Signalement>
+     */
+    public function getSignalements(): Collection
+    {
+        return $this->signalements;
+    }
+
+    public function addSignalement(Signalement $signalement): static
+    {
+        if (!$this->signalements->contains($signalement)) {
+            $this->signalements->add($signalement);
+            $signalement->setAddress($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSignalement(Signalement $signalement): static
+    {
+        if ($this->signalements->removeElement($signalement) && $signalement->getAddress() === $this) {
+            $signalement->setAddress(null);
+        }
+
+        return $this;
+    }
+
     public function getTerritory(): Territory
     {
         return $this->territory;
@@ -189,14 +234,25 @@ class Address
         return $this;
     }
 
-    public function getFull(): string
+    public function getFull(bool $withArrondisement = true): string
     {
-        return trim(sprintf(
+        $city = $withArrondisement ? $this->city : CommuneHelper::getCommuneFromArrondissement($this->city);
+
+        return mb_trim(sprintf(
             '%s %s %s %s',
             $this->housenumber,
             $this->street,
             $this->postCode,
-            $this->city
+            $city
+        ));
+    }
+
+    public function getHousenumberAndStreet(): string
+    {
+        return mb_trim(sprintf(
+            '%s %s',
+            $this->housenumber,
+            $this->street
         ));
     }
 }

@@ -1,6 +1,5 @@
 signalements:
-  -
-    territory: "Loire-Atlantique"
+  - 
     uuid: "00000000-0000-0000-2023-000000000027"
     reference: "2023-27"
     details: "Ma maison avait l'air bien, mais en fait c'est une véritable passoire."
@@ -74,7 +73,6 @@ signalements:
         slug: "desordres_logement_chauffage_details_fenetres_permeables"
         document_type: "PHOTO_SITUATION"
   -
-    territory: "Pas-de-Calais"
     uuid: "00000000-0000-0000-2024-000000000002"
     reference: "2024-02"
     details: "Ma maison avait l'air bien, mais en fait c'est une véritable passoire."
@@ -139,7 +137,6 @@ signalements:
       - "RSD"
       - "NON_DECENCE"
   -
-    territory: "Pas-de-Calais"
     uuid: "00000000-0000-0000-2024-000000000003"
     reference: "2024-03"
     details: "Ma maison avait l'air bien, mais en fait c'est une véritable passoire."
@@ -203,7 +200,6 @@ signalements:
       - "RSD"
       - "NON_DECENCE"
   -
-    territory: "Gard"
     uuid: "00000000-0000-0000-2024-000000000012"
     reference: "2024-12"
     details: "Ma maison avait l'air bien, mais en fait c'est une véritable passoire."
@@ -271,7 +267,6 @@ signalements:
         titre: "rapport-de-visite-sans-intervention-id.pdf"
         document_type: "PROCEDURE_RAPPORT_DE_VISITE"
   -
-    territory: "Hérault"
     uuid: "00000000-0000-0000-2024-000000000006"
     reference: "2024-06"
     details: "Signalement auto-assigné Lunel."
@@ -334,7 +329,6 @@ signalements:
     qualifications:
       - "RSD"
       - "NON_DECENCE"
-  - territory: "Martinique"
     uuid: "00000000-0000-0000-2024-000000000007"
     reference: "2024-07"
     details: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur lacinia eget ipsum id facilisis"
@@ -398,7 +392,6 @@ signalements:
       - "RSD"
       - "NON_DECENCE"
   -
-    territory: "Hérault"
     uuid: "00000000-0000-0000-2024-000000000008"
     reference: "2024-08"
     details: "Signalement Agde zone"
@@ -435,7 +428,6 @@ signalements:
     score_logement: 13.990384615385
     score_batiment: 50
   -
-    territory: "Hérault"
     uuid: "00000000-0000-0000-2025-000000000003"
     reference: "2024-08b"
     details: "Signalement archivé Agde zone"
@@ -472,7 +464,6 @@ signalements:
     score_logement: 13.990384615385
     score_batiment: 50
   -
-    territory: "Loire-Atlantique"
     uuid: "00000000-0000-0000-2024-000000000009"
     reference: "2024-09"
     details: "Je crois que ma maison risque de s'écrouler."
@@ -516,7 +507,6 @@ signalements:
       - "desordres_batiment_securite_balcons"
       - "desordres_batiment_incendie_odeur_gaz"
   -
-    territory: "Bouches-du-Rhône"
     uuid: "00000000-0000-0000-2024-000000000010"
     reference: "2024-10"
     details: "Je crois que ma maison risque de s'envoler."
@@ -562,8 +552,7 @@ signalements:
       - "desordres_batiment_securite_murs_fissures_details_mur_porteur_oui"
       - "desordres_batiment_securite_balcons"
       - "desordres_batiment_incendie_odeur_gaz"
-  -     
-    territory: "Loire-Atlantique"
+  - 
     uuid: "00000000-0000-0000-2024-000000000011"
     reference: "2024-11"
     details: "Je crois que ma maison risque de s'écrouler."
@@ -607,8 +596,7 @@ signalements:
       - "desordres_batiment_securite_murs_fissures_details_mur_porteur_oui"
       - "desordres_batiment_securite_balcons"
       - "desordres_batiment_incendie_odeur_gaz"
-  -     
-    territory: "Loire-Atlantique"
+  - 
     uuid: "00000000-0000-0000-2025-000000000001"
     reference: "2025-01"
     details: "Je crois que ma maison risque de s'écrouler."
@@ -652,8 +640,7 @@ signalements:
       - "desordres_batiment_securite_murs_fissures_details_mur_porteur_oui"
       - "desordres_batiment_securite_balcons"
       - "desordres_batiment_incendie_odeur_gaz"
-  -     
-    territory: "Loire-Atlantique"
+  - 
     uuid: "00000000-0000-0000-2025-000000000002"
     reference: "2025-02"
     details: "Le locataire nous a informé de fortes dégradations dans son logement"
@@ -696,8 +683,7 @@ signalements:
       - "desordres_batiment_securite_murs_fissures_details_mur_porteur_oui"
       - "desordres_batiment_securite_balcons"
       - "desordres_batiment_incendie_odeur_gaz"
-  -     
-    territory: "Gard"
+  - 
     uuid: "00000000-0000-0000-2025-000000000004"
     reference: "2025-04"
     details: "Il fait trés froid dans mon logement même avec le chauffage à fond."
@@ -734,8 +720,7 @@ signalements:
     situation_foyer: "[]"
     information_procedure: "[]"
     information_complementaire: "[]"
-  -     
-    territory: "Loire-Atlantique"
+  - 
     uuid: "00000000-0000-0000-2025-000000000005"
     reference: "2025-05"
     is_proprio_averti: 1
@@ -768,8 +753,7 @@ signalements:
     situation_foyer: "[]"
     information_procedure: "[]"
     information_complementaire: "[]"
-  -     
-    territory: "Loire-Atlantique"
+  - 
     uuid: "00000000-0000-0000-2025-000000000006"
     reference: "2025-06"
     is_proprio_averti: 1
@@ -802,8 +786,7 @@ signalements:
     situation_foyer: "[]"
     information_procedure: "[]"
     information_complementaire: "[]"
-  -     
-    territory: "Gard"
+  - 
     uuid: "00000000-0000-0000-2025-000000000007"
     reference: "2025-07"
     is_proprio_averti: 1
@@ -836,8 +819,7 @@ signalements:
     information_procedure: "[]"
     information_complementaire: "[]"
     motif_cloture: "REFUS_DE_VISITE"
-  -     
-    territory: "Loire-Atlantique"
+  - 
     uuid: "00000000-0000-0000-2025-000000000008"
     reference: "2025-08"
     details: "Le locataire nous a informé de fortes dégradations dans son logement"
@@ -880,8 +862,7 @@ signalements:
       - "desordres_batiment_securite_murs_fissures_details_mur_porteur_oui"
       - "desordres_batiment_securite_balcons"
       - "desordres_batiment_incendie_odeur_gaz"
-  -     
-    territory: "Gard"
+  - 
     uuid: "00000000-0000-0000-2025-000000000009"
     reference: "2025-09"
     details: "Les murs sont complétements fissurés et le vent s'engouffre."
@@ -918,8 +899,7 @@ signalements:
     situation_foyer: "[]"
     information_procedure: "[]"
     information_complementaire: "[]"
-  -     
-    territory: "Gers"
+  - 
     uuid: "00000000-0000-0000-2025-000000000010"
     reference: "2025-10"
     details: "Les murs sont complétements fissurés et le vent s'engouffre."
@@ -965,8 +945,7 @@ signalements:
     situation_foyer: "[]"
     information_procedure: "[]"
     information_complementaire: "[]"
-  -     
-    territory: "Gard"
+  - 
     uuid: "00000000-0000-0000-2025-000000000011"
     reference: "2025-TEMPORAIRE"
     details: "Le toit n'est plus étanche."
@@ -1008,8 +987,7 @@ signalements:
     desordre_precision:
       - "desordres_batiment_isolation_infiltration_eau_maison_individuelle"
       - "desordres_logement_electricite_installation_dangereuse"
-  -     
-    territory: "Hérault"
+  - 
     uuid: "00000000-0000-0000-2025-000000000012"
     reference: "2025-TEMPORAIRE"
     details: "Il y a du scotch sur mes fenêtres."
@@ -1051,8 +1029,7 @@ signalements:
     desordre_precision:
       - "desordres_batiment_isolation_infiltration_eau_maison_individuelle"
       - "desordres_logement_electricite_installation_dangereuse"
-  -     
-    territory: "Hérault"
+  - 
     uuid: "00000000-0000-0000-2025-000000000013"
     reference: "2025-13"
     details: "Rien ne va dans cette bicoque."
@@ -1085,8 +1062,7 @@ signalements:
     desordre_precision:
       - "desordres_batiment_isolation_infiltration_eau_maison_individuelle"
       - "desordres_logement_electricite_installation_dangereuse"
-  -     
-    territory: "Gard"
+  - 
     uuid: "00000000-0000-0000-2026-000000000001"
     reference: "2026-01"
     details: "Aucun chauffage fonctionnel depuis plusieurs mois."

@@ -26,9 +26,10 @@ class MapGeoDataQuery
 
         $qb->addSelect('
             s.statut,
-            s.adresseOccupant,
-            s.cpOccupant,
-            s.villeOccupant,
+            address.housenumber,
+            address.street,
+            address.postCode,
+            address.city,
             s.reference,
             s.score,
             s.nomOccupant,

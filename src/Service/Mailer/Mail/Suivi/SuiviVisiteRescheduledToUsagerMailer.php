@@ -40,9 +40,9 @@ class SuiviVisiteRescheduledToUsagerMailer extends AbstractNotificationMailer
         $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
 
         return [
-            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
-            'signalement_cpOccupant' => $signalement->getCpOccupant(),
-            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'signalement_addressHousenumberAndStreet' => $signalement->getAddress()->getHousenumberAndStreet(),
+            'signalement_addressPostCode' => $signalement->getAddress()->getPostCode(),
+            'signalement_addressCity' => $signalement->getAddress()->getCity(),
             'old_date' => $previousDate,
             'intervention_scheduledAt' => $interventionScheduledAt,
             'partner_name' => $partnerName,

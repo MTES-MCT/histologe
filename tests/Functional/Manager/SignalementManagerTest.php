@@ -272,6 +272,7 @@ class SignalementManagerTest extends WebTestCase
         $signalement = $this->signalementManager->update(
             $signalementImportedClone,
             $this->getSignalementData(),
+            $this->zipcodeProvider->getTerritoryByInseeCode($this->getSignalementData()['inseeOccupant'])
         );
 
         $this->assertTrue($signalement->getIsImported());

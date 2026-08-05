@@ -36,6 +36,7 @@ class DossiersUndeliverableEmailQuery
                 )
             )
             ->leftJoin('s.affectations', 'aff')
+            ->leftJoin('s.address', 'address')
             ->where('s.statut IN (:statutList)')
             ->setParameter('statutList', [SignalementStatus::NEED_VALIDATION, SignalementStatus::ACTIVE]);
 
@@ -105,7 +106,7 @@ class DossiersUndeliverableEmailQuery
             s.nomOccupant AS nomOccupant,
             s.prenomOccupant AS prenomOccupant,
             s.reference AS reference,
-            CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)) AS adresse,
+            CONCAT_WS(\', \', CONCAT_WS(\' \', address.housenumber, address.street), CONCAT_WS(\' \', address.postCode, address.city)) AS adresse,
             s.createdAt AS createdAt,
             s.lastSuiviAt AS dernierSuiviAt,
             s.lastSuiviBy AS derniereActionPartenaireNom,

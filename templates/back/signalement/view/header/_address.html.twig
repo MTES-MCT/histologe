@@ -1,7 +1,7 @@
 <div class="fr-h5">
-    {{ signalement.adresseOccupant }}
+    {{ signalement.address.housenumberAndStreet }}
     {% if signalement.complementAdresseOccupant %}- {{signalement.complementAdresseOccupant}}{% endif %},
-    {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|capitalize }}
+    {{ signalement.address.postCode ~' '~ signalement.address.city|capitalize }}
     {% if is_granted('SIGN_EDIT_ADDRESS', signalement) %}
         <button data-fr-opened="false" aria-controls="fr-modal-edit-address" class="fr-ml-6v fr-link--icon-left fr-icon-edit-line fr-a-edit"
             >Modifier</button>
@@ -39,7 +39,7 @@
     </p>
 {% else %}
     <p class="fr-badge fr-badge--info fr-badge--no-icon">
-        Aucun EPCI trouvé pour ce couple code postal ({{ signalement.cpOccupant }}) - code insee ({{ signalement.inseeOccupant }}).
+        Aucun EPCI trouvé pour ce couple code postal ({{ signalement.address.postCode }}) - code insee ({{ signalement.address.cityCode }}).
     </p>
 {% endif %}
 </div>

@@ -8,7 +8,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\SuiviDelayedRepository;
 use App\Repository\UserRepository;
 use App\Service\Gouv\Ban\AddressService;
-use App\Service\Gouv\Ban\Response\Address;
+use App\Service\Gouv\Ban\Response\BanAddress;
 use App\Service\MessageHelper;
 use App\Tests\SessionHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -140,7 +140,7 @@ class SignalementEditControllerTest extends WebTestCase
     {
         $addressResult = json_decode((string) file_get_contents(__DIR__.'/../../../files/datagouv/get_api_ban_item_response_13202.json'), true);
         $addressMock = $this->createMock(AddressService::class);
-        $addressMock->method('getAddress')->willReturn(new Address($addressResult));
+        $addressMock->method('getAddress')->willReturn(new BanAddress($addressResult));
         $this->client->getContainer()->set(AddressService::class, $addressMock);
         $route = $this->router->generate(
             $routeName,

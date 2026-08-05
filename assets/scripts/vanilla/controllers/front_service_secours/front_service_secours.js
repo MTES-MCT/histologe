@@ -86,8 +86,8 @@ function attachFormServiceSecoursEvent() {
 }
 
 function initPickLocalisationButton() {
-  const adresseInput = document.querySelector('#service_secours_step2_adresseOccupant');
-  const cpInput = document.querySelector('#service_secours_step2_cpOccupant');
+  const adresseInput = document.querySelector('#service_secours_step2_addressAddress');
+  const cpInput = document.querySelector('#service_secours_step2_addressPostcode');
   const formRnbIdInput = document.getElementById('service_secours_step2_rnbId');
   const pickButton = document.querySelector('.btn-pick-localisation');
   const modal = document.querySelector('#fr-modal-pick-localisation');

@@ -40,7 +40,7 @@ final readonly class DashboardKpiCacheInvalidationListener
         if ($entity instanceof Signalement) {
             // NOUVEAUX_DOSSIERS - Dossiers déposés depuis le formulaire usager
             // NOUVEAUX_DOSSIERS - Dossiers déposés depuis un formulaire pro
-            $territoryId = $entity->getTerritory()->getId();
+            $territoryId = $entity->getAddress()->getTerritory()->getId();
             $this->invalidateTerritoryKpiTags(
                 TabCountKpiCacheHelper::NOUVEAUX_DOSSIERS,
                 $territoryId

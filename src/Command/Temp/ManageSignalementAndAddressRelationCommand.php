@@ -55,11 +55,11 @@ class ManageSignalementAndAddressRelationCommand extends Command
         foreach ($addressesToProcess as $row) {
             $signalement = $row[0];
             $territoryId = $row['territoryId'];
-            $rawAddress = trim((string) $signalement->getAdresseOccupant());
-            $villeOccupant = trim((string) $signalement->getVilleOccupant());
-            $cpOccupant = trim((string) $signalement->getCpOccupant());
-            $inseeOccupant = trim((string) $signalement->getInseeOccupant());
-            $banId = trim((string) $signalement->getBanIdOccupant());
+            $rawAddress = trim((string) $signalement->getAdresseOccupantDeprecated());
+            $villeOccupant = trim((string) $signalement->getVilleOccupantDeprecated());
+            $cpOccupant = trim((string) $signalement->getCpOccupantDeprecated());
+            $inseeOccupant = trim((string) $signalement->getInseeOccupantDeprecated());
+            $banId = trim((string) $signalement->getBanIdOccupantDeprecated());
 
             if ((!$cpOccupant && !$inseeOccupant) || ('#N/D' == $cpOccupant && '#N/D' == $inseeOccupant)) {
                 ++$errorCpInseeCount;
@@ -141,6 +141,7 @@ class ManageSignalementAndAddressRelationCommand extends Command
                 $address->setPostCode($cpOccupant);
                 $address->setCityCode($inseeOccupant);
                 $address->setBanId('' !== $banId && '0' !== $banId ? $banId : null);
+                $this->
 
                 $geoloc = $signalement->getGeoloc();
                 if (isset($geoloc['lng'], $geoloc['lat'])) {

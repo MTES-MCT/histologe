@@ -34,9 +34,10 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $this->assertIsArray($results);
         foreach ($results as $result) {
             $this->assertArrayHasKey('addressId', $result);
-            $this->assertArrayHasKey('adresseOccupant', $result);
-            $this->assertArrayHasKey('cpOccupant', $result);
-            $this->assertArrayHasKey('villeOccupant', $result);
+            $this->assertArrayHasKey('housenumber', $result);
+            $this->assertArrayHasKey('street', $result);
+            $this->assertArrayHasKey('postcode', $result);
+            $this->assertArrayHasKey('city', $result);
             $this->assertArrayHasKey('territoryId', $result);
 
             // Ensure we have at least one signalement or one arrete
@@ -85,10 +86,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         $this->assertIsArray($results);
         foreach ($results as $result) {
-            $this->assertStringContainsStringIgnoringCase(
-                substr($address->getStreet(), 0, 5),
-                $result['adresseOccupant']
-            );
+            $this->assertEquals($address->getStreet(), $result['street']);
         }
     }
 
@@ -109,7 +107,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $this->assertIsArray($results);
         foreach ($results as $result) {
             $matchesCity = $result['villeOccupant'] === $address->getCity();
-            $matchesPostCode = $result['cpOccupant'] === $address->getCity();
+            $matchesPostCode = $result['cpOccupant'] === $address->getPostCode();
             $this->assertTrue($matchesCity || $matchesPostCode);
         }
     }

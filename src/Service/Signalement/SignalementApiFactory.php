@@ -13,8 +13,10 @@ use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Exception\Address\CityNotFoundException;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
+use App\Service\Gouv\Ban\AddressService;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementApiFactory
@@ -23,8 +25,8 @@ class SignalementApiFactory
 
     public function __construct(
         private readonly Security $security,
+        private readonly AddressService $addressService,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
-        private readonly PostalCodeHomeChecker $postalCodeHomeChecker,
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
         private readonly BailleurRepository $bailleurRepository,
     ) {
@@ -42,15 +44,22 @@ class SignalementApiFactory
         $informationComplementaire = new InformationComplementaire();
         $jsonContent = [];
 
-        $signalement->setAdresseOccupant($request->adresseOccupant);
-        $signalement->setCpOccupant($request->codePostalOccupant);
-        $signalement->setVilleOccupant($request->communeOccupant);
-        $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
-        if (!$signalement->getInseeOccupant()) {
-            return $signalement;
+        $adresseComplete = $request->adresseOccupant.' '.$request->codePostalOccupant.' '.$request->communeOccupant;
+        if ($banAddress = $this->addressService->getAcceptableBanAddress($adresseComplete)) {
+            $this->signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
+        } else {
+            if (!$this->signalementAddressUpdater->attachAddressToSignalementFromManualAddress(
+                $signalement,
+                $request->adresseOccupant,
+                $request->codePostalOccupant,
+                $request->communeOccupant
+            )) {
+                throw new CityNotFoundException($request->communeOccupant);
+            }
         }
-        $territory = $this->postalCodeHomeChecker->getActiveTerritory($signalement->getInseeOccupant());
-        $signalement->setTerritory($territory);
+        $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);
+        $this->signalementAddressUpdater->getRialDataForSignalement($signalement);
+
         $signalement->setEtageOccupant($request->etageOccupant);
         $signalement->setEscalierOccupant($request->escalierOccupant);
         $signalement->setNumAppartOccupant($request->numAppartOccupant);

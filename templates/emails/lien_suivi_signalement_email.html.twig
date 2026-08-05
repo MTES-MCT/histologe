@@ -3,7 +3,7 @@
 {% block body %}
 	<p>
 		Vous avez demandé à recevoir un lien vers la page de suivi de votre signalement pour le logement situé
-		<strong>{{signalement_adresseOccupant}} {{signalement_cpOccupant}} {{signalement_villeOccupant}}</strong>
+		<strong>{{signalement_addressHousenumberAndStreet}} {{signalement_addressPostCode}} {{signalement_addressCity|upper }}</strong>
 	</p>
 	<p>Pour rappel, votre page de suivi vous permet de :</p>
 	<ul>

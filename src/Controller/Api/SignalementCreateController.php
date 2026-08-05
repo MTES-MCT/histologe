@@ -283,7 +283,7 @@ class SignalementCreateController extends AbstractController
                 [],
                 $signalementRequest,
                 null,
-                $signalement->getAddressCompleteOccupant(false)
+                $signalement->getAddress()->getFull(false)
             );
             $errors->add($violation);
 
@@ -296,7 +296,7 @@ class SignalementCreateController extends AbstractController
                 [],
                 $signalementRequest,
                 null,
-                $signalement->getAddressCompleteOccupant(false)
+                $signalement->getAddress()->getFull(false)
             );
             $errors->add($violation);
         }
@@ -309,12 +309,12 @@ class SignalementCreateController extends AbstractController
         $duplicates = $this->signalementRepository->findOnSameAddress(signalement: $signalement, compareNomOccupant: true);
         if (count($duplicates) > 0) {
             $violation = new ConstraintViolation(
-                'Un signalement existe déjà à cette adresse pour le même occupant ('.$signalement->getAddressCompleteOccupant(false).' - '.$signalement->getNomOccupant().').',
+                'Un signalement existe déjà à cette adresse pour le même occupant ('.$signalement->getAddress()->getFull(false).' - '.$signalement->getNomOccupant().').',
                 null,
                 [],
                 $signalementRequest,
                 null,
-                $signalement->getAddressCompleteOccupant(false).' - '.$signalement->getNomOccupant()
+                $signalement->getAddress()->getFull(false).' - '.$signalement->getNomOccupant()
             );
             $errors->add($violation);
         }

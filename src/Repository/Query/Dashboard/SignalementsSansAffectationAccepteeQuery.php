@@ -26,6 +26,7 @@ class SignalementsSansAffectationAccepteeQuery
         $types = [];
         $sql = <<<SQL
             FROM signalement s
+            INNER JOIN address ON address.id = s.address_id
             INNER JOIN affectation a ON a.signalement_id = s.id
             LEFT JOIN affectation a_active 
                 ON a_active.signalement_id = s.id
@@ -35,9 +36,9 @@ class SignalementsSansAffectationAccepteeQuery
         SQL;
 
         if ($params->territoireId) {
-            $sql .= ' AND s.territory_id = '.$params->territoireId;
+            $sql .= ' AND address.territory_id = '.$params->territoireId;
         } elseif (!$user->isSuperAdmin()) {
-            $sql .= ' AND s.territory_id IN ('.implode(',', array_keys($user->getPartnersTerritories())).')';
+            $sql .= ' AND address.territory_id IN ('.implode(',', array_keys($user->getPartnersTerritories())).')';
         }
 
         if ($params->mesDossiersAverifier && '1' === $params->mesDossiersAverifier) {
@@ -65,7 +66,7 @@ class SignalementsSansAffectationAccepteeQuery
             if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$params->queryCommune])) {
                 $listCity = array_merge($listCity, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$params->queryCommune]);
             }
-            $sql .= ' AND (s.cp_occupant IN (:cities) OR s.ville_occupant IN (:cities))';
+            $sql .= ' AND (address.cp_occupant IN (:cities) OR address.city IN (:cities))';
             $paramsToBind['cities'] = $listCity;
             $types['cities'] = ArrayParameterType::STRING;
         }
@@ -101,7 +102,7 @@ class SignalementsSansAffectationAccepteeQuery
             s.reference AS reference,
             s.nom_occupant AS nomOccupant,
             s.prenom_occupant AS prenomOccupant,
-            CONCAT_WS(', ', s.adresse_occupant, CONCAT(s.cp_occupant, ' ', s.ville_occupant)) AS adresse,
+            CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.post_code, address.city)) AS adresse,
             CASE
                 WHEN s.is_logement_social = true THEN 'PUBLIC'
                 ELSE 'PRIVÉ'
@@ -121,9 +122,10 @@ class SignalementsSansAffectationAccepteeQuery
             s.reference,
             s.nom_occupant,
             s.prenom_occupant,
-            s.adresse_occupant,
-            s.cp_occupant,
-            s.ville_occupant,
+            address.housenumber,
+            address.street,
+            address.post_code,
+            address.city,
             s.is_logement_social
         ';
 

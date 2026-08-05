@@ -57,8 +57,8 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
         $timezone = $partner->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
-
-        $address = AddressParser::parse($signalement->getAdresseOccupant());
+        // on parse la concaténation du numéro de rue et de la rue pour séparer l'eventuel "BIS" ou "TER" associé au numéro.
+        $address = AddressParser::parse($signalement->getAddress()->getHousenumberAndStreet());
         $formatDate = AbstractEsaboraService::FORMAT_DATE;
         $formatDateTime = AbstractEsaboraService::FORMAT_DATE_TIME;
         $routeSignalement = $this->urlGenerator->generate(

@@ -10,7 +10,6 @@ use App\Service\Geometry\GeometryFactory;
 use App\Service\Signalement\SearchFilter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,7 +29,6 @@ class CartographieController extends AbstractController
         ZoneRepository $zoneRepository,
         SearchFilter $searchFilter,
         GeometryFactory $geometryFactory,
-        Request $request,
         #[MapQueryString] ?SignalementSearchQuery $signalementSearchQuery = null,
     ): JsonResponse {
         /** @var User $user */

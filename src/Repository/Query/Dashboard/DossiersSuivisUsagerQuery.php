@@ -107,7 +107,7 @@ class DossiersSuivisUsagerQuery
             'signalement.nomOccupant AS nomOccupant',
             'signalement.prenomOccupant AS prenomOccupant',
             'signalement.reference AS reference',
-            "CONCAT_WS(', ', signalement.adresseOccupant, CONCAT(signalement.cpOccupant, ' ', signalement.villeOccupant)) AS adresse",
+            "CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.postCode, address.city)) AS fullAddress",
             'MAX(s.createdAt) AS messageAt',
             'DATE_DIFF(CURRENT_DATE(), MAX(s.createdAt)) AS messageDaysAgo',
             'signalement.closedAt AS clotureAt',
