@@ -142,7 +142,7 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
      */
     protected function preparePiecesJointes(array $piecesJointes): array
     {
-        return array_map(function ($pieceJointe) {
+        $piecesJointes = array_map(function ($pieceJointe) {
             $filepath = $this->uploadHandlerService->getTmpFilepath($pieceJointe['documentContent']);
             if (null !== $filepath && file_exists($filepath)) {
                 $content = file_get_contents($filepath);
@@ -163,5 +163,9 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
 
             return $pieceJointe;
         }, $piecesJointes);
+
+        return array_filter($piecesJointes, function ($pieceJointe) {
+            return null !== $pieceJointe['documentContent'];
+        });
     }
 }
