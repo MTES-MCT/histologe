@@ -671,10 +671,10 @@ class SignalementControllerTest extends WebTestCase
         $router = $client->getContainer()->get(RouterInterface::class);
         $urlArchiveDraft = $router->generate('archive_draft');
 
-        $client->request('POST', $urlArchiveDraft, [], [], [], json_encode(['uuid' => '']));
+        $client->request('POST', $urlArchiveDraft, [], [], [], (string) json_encode(['uuid' => '']));
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
 
-        $client->request('POST', $urlArchiveDraft, [], [], [], json_encode(['uuid' => '00000000-0000-0000-2023-locataire001']));
+        $client->request('POST', $urlArchiveDraft, [], [], [], (string) json_encode(['uuid' => '00000000-0000-0000-2023-locataire001']));
         $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
         $response = json_decode((string) $client->getResponse()->getContent(), true);
         $this->assertTrue($response['success']);
