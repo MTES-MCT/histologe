@@ -108,7 +108,7 @@ class SuiviBailleurController extends AbstractController
                         $entityManager->commit();
                         $this->addFlash('success', ['title' => 'Réponse enregistrée', 'message' => 'Votre réponse a été enregistrée avec succès.']);
                     } catch (UniqueConstraintViolationException $exception) {
-                        $logger->error('Notifications emails locataire et partenaire envoyées en doublons !');
+                        $logger->error('Notifications emails locataire et partenaire envoyées en doublons !', ['error_message' => $exception->getMessage()]);
                         $entityManager->rollback();
                         $managerRegistry->resetManager();
 
