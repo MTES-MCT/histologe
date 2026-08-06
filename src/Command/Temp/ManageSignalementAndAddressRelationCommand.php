@@ -3,12 +3,10 @@
 namespace App\Command\Temp;
 
 use App\Entity\Address;
+use App\Entity\Signalement;
 use App\Manager\HistoryEntryManager;
-use App\Repository\AddressRepository;
-use App\Repository\SignalementRepository;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Utils\Address\AddressParser;
-use App\Utils\StringHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use LongitudeOne\Spatial\PHP\Types\Geometry\Point;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -26,8 +24,6 @@ class ManageSignalementAndAddressRelationCommand extends Command
     private const int BATCH_SIZE = 500;
 
     public function __construct(
-        private readonly SignalementRepository $signalementRepository,
-        private readonly AddressRepository $addressRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly ZipcodeProvider $zipCodeProvider,
         private readonly HistoryEntryManager $historyEntryManager,
@@ -40,14 +36,14 @@ class ManageSignalementAndAddressRelationCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $this->historyEntryManager->removeEntityListeners();
 
-        $existingAddresses = $this->addressRepository->findAllIndexed();
+        $existingAddresses = $this->findAllAddressesIndexed();
         $addressKeysByBanId = [];
         foreach ($existingAddresses as $addressKey => $existingAddress) {
             if ($existingAddress->getBanId()) {
                 $addressKeysByBanId[$existingAddress->getBanId()] = $addressKey;
             }
         }
-        $addressesToProcess = $this->signalementRepository->findWithoutAddressId();
+        $addressesToProcess = $this->findSignalementsWithoutAddressId();
         $linkedCount = 0;
         $createdCount = 0;
         $errorCpInseeCount = 0;
@@ -55,7 +51,8 @@ class ManageSignalementAndAddressRelationCommand extends Command
         $errorsTerritoriesIds = [];
 
         $io->progressStart(count($addressesToProcess));
-        foreach ($addressesToProcess as $index => $row) {
+        $counter = 0;
+        foreach ($addressesToProcess as $row) {
             $signalement = $row[0];
             $territoryId = $row['territoryId'];
             $rawAddress = trim((string) $signalement->getAdresseOccupant());
@@ -162,7 +159,8 @@ class ManageSignalementAndAddressRelationCommand extends Command
                 }
             }
 
-            if (0 === ($index + 1) % self::BATCH_SIZE) {
+            ++$counter;
+            if (0 === ($counter % self::BATCH_SIZE)) {
                 $this->entityManager->flush();
             }
             $io->progressAdvance();
@@ -185,21 +183,17 @@ class ManageSignalementAndAddressRelationCommand extends Command
             $errorInseeFormatCount
         ));
 
-        /*if(count($errorsTerritoriesIds)) {
-            $io->warning('Liste des signalements avec incohérence de territoire : '.implode(', ', $errorsTerritoriesIds));
-        }*/
-
         return Command::SUCCESS;
     }
 
-    public static function generateAddressKey(
+    private static function generateAddressKey(
         ?string $houseNumber,
         ?string $street,
         ?string $postCode,
         ?string $cityCode,
     ): string {
         return implode('|', array_map(
-            StringHelper::normalize(...),
+            self::normalize(...),
             [
                 (string) $houseNumber,
                 (string) $street,
@@ -207,5 +201,48 @@ class ManageSignalementAndAddressRelationCommand extends Command
                 (string) $cityCode,
             ],
         ));
+    }
+
+    /** @return array<string, Address> */
+    private function findAllAddressesIndexed(): array
+    {
+        $addresses = $this->entityManager->getRepository(Address::class)->findAll();
+        $indexedAddresses = [];
+
+        foreach ($addresses as $address) {
+            $key = self::generateAddressKey(
+                $address->getHousenumber(),
+                $address->getStreet(),
+                $address->getPostCode(),
+                $address->getCityCode(),
+            );
+            $indexedAddresses[$key] = $address;
+        }
+
+        return $indexedAddresses;
+    }
+
+    /** @return array<int, array{0: Signalement, territoryId: int|null}> */
+    private function findSignalementsWithoutAddressId(): array
+    {
+        return $this->entityManager->createQueryBuilder()
+            ->select('partial s.{id, adresseOccupant, cpOccupant, villeOccupant, banIdOccupant, inseeOccupant, geoloc, statut}')
+            ->from(Signalement::class, 's')
+            ->addSelect('signalementUsager')
+            ->leftJoin('s.signalementUsager', 'signalementUsager')
+            ->addSelect('IDENTITY(s.territory) AS territoryId')
+            ->where('s.address IS NULL')
+            ->andWhere('(s.cpOccupant IS NOT NULL AND s.cpOccupant != \'\' AND s.cpOccupant != \'#N/D\') OR (s.inseeOccupant IS NOT NULL AND s.inseeOccupant != \'\' AND s.inseeOccupant != \'#N/D\')')
+            ->setMaxResults(6000)
+            ->getQuery()
+            ->getResult();
+    }
+
+    private static function normalize(string $str): string
+    {
+        $normalized = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str));
+        $normalized = str_replace(['-', "'"], ' ', $normalized);
+
+        return trim((string) preg_replace('/\s+/', ' ', $normalized));
     }
 }

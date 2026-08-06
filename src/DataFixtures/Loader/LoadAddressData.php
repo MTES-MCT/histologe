@@ -54,7 +54,7 @@ class LoadAddressData extends Fixture implements OrderedFixtureInterface
             ->setBanId($row['banId'] ?? null)
         ;
         if (isset($row['latitude']) && isset($row['longitude'])) {
-            $point = new Point($row['latitude'], $row['longitude']);
+            $point = new Point($row['longitude'], $row['latitude']);
             $address->setPoint($point);
         }
         $manager->persist($address);
