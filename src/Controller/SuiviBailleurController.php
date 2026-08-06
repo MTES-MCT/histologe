@@ -24,7 +24,9 @@ use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementFileProcessor;
 use App\Utils\FormHelper;
 use App\Utils\HtmlCleaner;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -51,6 +53,7 @@ class SuiviBailleurController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
         InjonctionBailleurService $injonctionBailleurService,
         EntityManagerInterface $entityManager,
+        ManagerRegistry $managerRegistry,
         FileRepository $fileRepository,
         LoggerInterface $logger,
     ): Response {
@@ -103,9 +106,13 @@ class SuiviBailleurController extends AbstractController
                         $injonctionBailleurService->handleResponse($reponseInjonctionBailleur);
                         $entityManager->flush();
                         $entityManager->commit();
-                        $this->addFlash('success', ['title' => 'Réponse enregistrée',
-                            'message' => 'Votre réponse a été enregistrée avec succès.',
-                        ]);
+                        $this->addFlash('success', ['title' => 'Réponse enregistrée', 'message' => 'Votre réponse a été enregistrée avec succès.']);
+                    } catch (UniqueConstraintViolationException $exception) {
+                        $logger->error('Notifications emails locataire et partenaire envoyées en doublons !', ['error_message' => $exception->getMessage()]);
+                        $entityManager->rollback();
+                        $managerRegistry->resetManager();
+
+                        return $this->redirectToRoute('front_dossier_bailleur');
                     } catch (\Exception $e) {
                         $logger->critical($e->getMessage());
                         $entityManager->rollback();

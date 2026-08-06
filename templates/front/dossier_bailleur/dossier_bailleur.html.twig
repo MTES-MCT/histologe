@@ -352,7 +352,7 @@
 					{% endif %}
 				{% else %}
 					<h3 class="title-blue-france fr-mb-1w" id="form_reponse_injonction_bailleur_title">Quelle réponse apportez-vous au locataire ?</h3>
-					    {{ form_start(form) }}
+					    {{ form_start(form, {'attr': {'class': 'fr-disable-button-when-submit'}}) }}
 						{{ form_errors(form) }}
 						{{ form_row(form.reponse) }}
 						<iframe src="{{ path('front_engagement_travaux_bailleur') }}"
