@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use LongitudeOne\Spatial\PHP\Types\SpatialInterface;
 
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
-#[ORM\UniqueConstraint(name: 'unique_address_housenumber_street_citycode', columns: ['housenumber', 'street', 'city_code'])]
+#[ORM\UniqueConstraint(name: 'unique_address_housenumber_street_postcode_citycode', columns: ['housenumber', 'street', 'post_code', 'city_code'])]
 class Address
 {
     #[ORM\Id]
