@@ -125,7 +125,7 @@ class DossiersQueryTest extends KernelTestCase
         $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
         static::getContainer()->get('security.token_storage')->setToken($token);
 
-        // Ferleture des affectations
+        // Fermeture des affectations
         $affRepo = $this->entityManager->getRepository(Affectation::class);
         $affectations = $affRepo->createQueryBuilder('a')
             ->innerJoin('a.signalement', 's')

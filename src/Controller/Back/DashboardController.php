@@ -11,6 +11,7 @@ use App\Service\DashboardTabPanel\TabDataManager;
 use App\Service\ListFilters\SearchDashboardAverifier;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query\QueryException;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +26,7 @@ class DashboardController extends AbstractController
      * @throws NonUniqueResultException
      * @throws NoResultException
      * @throws InvalidArgumentException
+     * @throws QueryException
      */
     #[Route('/', name: 'back_dashboard')]
     public function index(
@@ -95,6 +97,8 @@ class DashboardController extends AbstractController
 
     /**
      * @return array{0: Territory|null, 1: array<int, Territory>}
+     *
+     * @throws QueryException
      */
     private function resolveTerritoryAndTerritories(
         User $user,

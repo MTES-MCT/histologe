@@ -277,7 +277,12 @@ class DossiersQuery
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        if (null === $params->territoireId) {
+
+        if ($user->isSuperAdmin() || $user->isTerritoryAdmin()) {
+            return [];
+        }
+
+        if (null !== $params->territoireId) {
             $params->partenairesId = $user->getPartners()
                 ->map(static fn ($partner) => $partner->getId())
                 ->toArray();
