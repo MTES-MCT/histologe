@@ -102,6 +102,8 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Provenance FORM_PRO_BO' => [['createdFrom' => CreationSource::FORM_PRO_BO->value], 11];
         yield 'Search by Provenance API' => [['createdFrom' => CreationSource::API->value], 0];
         yield 'Search by Mes dossiers' => [['showMySignalementsOnly' => 'oui', 'isImported' => 'oui'], 0];
+        yield 'Search by isDossiersSansAgent for admin' => [['territoire' => 13, 'isImported' => 'oui', 'isDossiersSansAgent' => 'oui'], 0];
+        yield 'Search by isDossiersSansAgent for territory admin' => [['territoire' => 13, 'isImported' => 'oui', 'isDossiersSansAgent' => 'oui'], 0, 'admin-territoire-13-01@signal-logement.fr'];
         yield 'Search by relanceUsagerSansReponse' => [['relanceUsagerSansReponse' => 'oui', 'isImported' => 'oui'], 1];
         yield 'Search by Messages usagers après fermeture' => [['isMessagePostCloture' => 'oui', 'isImported' => 'oui'], 1];
         yield 'Search by Nouveaux messages usagers' => [['isNouveauMessage' => 'oui', 'isImported' => 'oui'], 1];

@@ -28,8 +28,8 @@ class DossiersNoAgentTabBodyLoader extends AbstractTabBodyLoader
         parent::load($tabBody);
 
         $result = $this->tabDataManager->getDossiersNoAgentWithCount(
-            affectationStatus: AffectationStatus::ACCEPTED,
             tabQueryParameters: $this->tabQueryParameters,
+            affectationStatus: AffectationStatus::ACCEPTED,
             territoires: $tabBody->getTerritoires(),
         );
 
