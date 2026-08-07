@@ -37,9 +37,9 @@ class SuiviVisiteEditedToUsagerMailer extends AbstractNotificationMailer
         $partnerName = $intervention->getPartner() ? $intervention->getPartner()->getNom() : 'Non renseigné';
 
         return [
-            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
-            'signalement_cpOccupant' => $signalement->getCpOccupant(),
-            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'signalement_addressHousenumberAndStreet' => $signalement->getAddress()->getHousenumberAndStreet(),
+            'signalement_addressPostCode' => $signalement->getAddress()->getPostCode(),
+            'signalement_addressCity' => $signalement->getAddress()->getCity(),
             'intervention_changes' => $intervention->getChangesForMail(),
             'partner_name' => $partnerName,
             'lien_suivi' => $this->generateLink(

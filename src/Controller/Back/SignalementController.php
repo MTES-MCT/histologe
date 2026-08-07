@@ -274,7 +274,7 @@ class SignalementController extends AbstractController
         $arretesOnSameAddress = $arreteFinder->find($signalement);
         $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
 
-        $epciOccupant = $epciRepository->findOneByCommuneInseeAndPostalCode($signalement->getInseeOccupant(), $signalement->getCpOccupant());
+        $epciOccupant = $epciRepository->findOneByCommuneInseeAndPostalCode($signalement->getAddress()->getCityCode(), $signalement->getAddress()->getPostCode());
 
         $personalNote = null;
         if ($this->isGranted('ROLE_ADMIN')) {

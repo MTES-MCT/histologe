@@ -49,6 +49,7 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->leftJoin('n.suivi', 's')
             ->leftJoin('s.createdBy', 'cb')
             ->leftJoin('n.signalement', 'si')
+            ->leftJoin('si.address', 'address')
             ->leftJoin('n.affectation', 'a')
             ->leftJoin('a.answeredBy', 'ab')
             ->addSelect('s', 'si', 'a', 'u', 'cb', 'ab');

@@ -2,23 +2,21 @@
 
 namespace App\Factory;
 
-use App\Entity\Address;
 use App\Entity\Arrete;
 use App\Entity\Enum\ArreteType;
 use App\Entity\User;
+use App\Exception\Address\TerritoryNotFoundForCityCodeException;
 use App\Repository\AddressRepository;
 use App\Service\Gouv\Ban\AddressService;
 use App\Service\Import\Arrete\ArreteImportRow;
-use App\Service\Signalement\ZipcodeProvider;
 use LongitudeOne\Spatial\Exception\InvalidValueException;
-use LongitudeOne\Spatial\PHP\Types\Geometry\Point;
 
 class ArreteFactory
 {
     public function __construct(
         private readonly AddressService $addressService,
         private readonly AddressRepository $addressRepository,
-        private readonly ZipcodeProvider $zipcodeProvider,
+        private readonly AddressFactory $addressFactory,
     ) {
     }
 
@@ -33,7 +31,7 @@ class ArreteFactory
         }
 
         $housenumber = $addressResponse->getHousenumber() ?? $arreteImportRow->getNumeroVoie();
-        $street = $addressResponse->getStreet(withHouseNumber: false) ?? $arreteImportRow->getNomVoie();
+        $street = $addressResponse->getStreet() ?? $arreteImportRow->getNomVoie();
         $postCode = $addressResponse->getZipCode() ?? $arreteImportRow->getCodePostal();
         $city = $addressResponse->getCity() ?? $arreteImportRow->getCommune();
         $cityCode = $addressResponse->getInseeCode();
@@ -45,7 +43,6 @@ class ArreteFactory
         if (null === $cityCode) {
             return null;
         }
-        $territoryAddress = $this->zipcodeProvider->getTerritoryByInseeCode($cityCode);
 
         if ($banId) {
             $address = $this->addressRepository->findOneBy(['banId' => $banId]);
@@ -61,26 +58,23 @@ class ArreteFactory
         }
 
         if (null === $address) {
-            $address = new Address()
-                ->setHousenumber($housenumber)
-                ->setStreet($street)
-                ->setPostCode($postCode)
-                ->setCity($city)
-                ->setCityCode($cityCode)
-                ->setBanId($banId);
-
-            if ($longitude && $latitude) {
-                $address->setPoint(new Point($longitude, $latitude));
-            }
-
-            if (null === $territoryAddress) {
+            try {
+                $address = $this->addressFactory->createInstance(
+                    $housenumber,
+                    $street,
+                    $postCode,
+                    $city,
+                    $cityCode,
+                    $banId,
+                    $longitude,
+                    $latitude
+                );
+            } catch (TerritoryNotFoundForCityCodeException) {
                 return null;
             }
-
-            $address->setTerritory($territoryAddress);
         }
 
-        if ($user->isTerritoryAdmin() && $territoryAddress->getId() !== $user->getFirstTerritory()->getId()) {
+        if ($user->isTerritoryAdmin() && $address->getTerritory()->getId() !== $user->getFirstTerritory()->getId()) {
             return null;
         }
 

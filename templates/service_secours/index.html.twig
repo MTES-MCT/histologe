@@ -8,8 +8,8 @@
                 aria-labelledby="fr-modal-pick-localisation-title" 
                 id="fr-modal-pick-localisation" 
                 class="fr-modal" 
-                data-address="{{form.step2.adresseOccupant.vars.value}}"
-                data-postcode="{{form.step2.cpOccupant.vars.value}}"
+                data-address="{{form.step2.addressAddress.vars.value}}"
+                data-postcode="{{form.step2.addressPostcode.vars.value}}"
                 data-loaded="false"
                 >
                 <div class="fr-container fr-container--fluid fr-container-md">
@@ -116,10 +116,10 @@
                         <button type="button" class="fr-link fr-link--icon-left fr-icon-edit-line manual-address-switcher">Saisir une adresse manuellement</button>
                     </div>
 				    <div class="fr-hidden fr-mb-2w manual-address-container">
-                        {{ form_row(form.step2.adresseOccupant) }}
-                        {{ form_row(form.step2.cpOccupant) }}
-                        {{ form_row(form.step2.villeOccupant) }}
-                        {{ form_row(form.step2.inseeOccupant) }}
+                        {{ form_row(form.step2.addressAddress) }}
+                        {{ form_row(form.step2.addressPostcode) }}
+                        {{ form_row(form.step2.addressCity) }}
+                        {{ form_row(form.step2.addressCityCode) }}
                         {{ form_widget(form.step2.rnbId) }}
                         <button 
                             type="button"
@@ -283,11 +283,11 @@
                             <h2 class="fr-h6">Infos sur le logement</h2>
                             {{ form_row(form.navigator.editStep2) }}
                         </div>
-                        {{ data.step2.adresseOccupant }} <br>
+                        {{ data.step2.addressAddress }} <br>
                         {% if data.step2.adresseAutreOccupant %}
                             {{ data.step2.adresseAutreOccupant }}<br>
                         {% endif %}
-                        {{ data.step2.cpOccupant }} {{ data.step2.villeOccupant }}<br>
+                        {{ data.step2.addressPostcode }} {{ data.step2.addressCity }}<br>
                         {% if data.step2.isLogementSocial %}
                             Logement social : {{ data.step2.isLogementSocial|format_answer }}<br>
                         {% endif %}

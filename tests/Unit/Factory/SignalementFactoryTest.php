@@ -93,14 +93,13 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['nomOccupant'], $signalement->getNomOccupant());
         $this->assertEquals($data['telOccupant'], $signalement->getTelOccupant());
         $this->assertEquals($data['mailOccupant'], $signalement->getMailOccupant());
-        $this->assertEquals($data['adresseOccupant'], $signalement->getAdresseOccupant());
-        $this->assertEquals($data['cpOccupant'], $signalement->getCpOccupant());
-        $this->assertEquals($data['villeOccupant'], $signalement->getVilleOccupant());
-        $this->assertEquals($data['inseeOccupant'], $signalement->getInseeOccupant());
+        $this->assertEquals($data['adresseOccupant'], $signalement->getAddress()->getHousenumberAndStreet());
+        $this->assertEquals($data['cpOccupant'], $signalement->getAddress()->getPostCode());
+        $this->assertEquals($data['villeOccupant'], $signalement->getAddress()->getCity());
+        $this->assertEquals($data['inseeOccupant'], $signalement->getAddress()->getCityCode());
         $this->assertEquals($data['etageOccupant'], $signalement->getEtageOccupant());
         $this->assertEquals($data['escalierOccupant'], $signalement->getEscalierOccupant());
         $this->assertEquals($data['numAppartOccupant'], $signalement->getNumAppartOccupant());
-        $this->assertEquals($data['adresseOccupant'], $signalement->getAdresseOccupant());
         $this->assertEquals($data['naissanceOccupants'], $signalement->getNaissanceOccupants());
         $this->assertEquals($data['adresseAutreOccupant'], $signalement->getAdresseAutreOccupant());
 

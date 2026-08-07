@@ -34,7 +34,7 @@ class SuiviNewCommentForBailleurMailer extends AbstractNotificationMailer
         $signalement = $notificationMail->getSignalement();
 
         return [
-            'addressCompleteOccupant' => $signalement->getAddressCompleteOccupant(),
+            'addressFull' => $signalement->getAddress()->getFull(),
             'referenceInjonction' => $signalement->getReferenceInjonction(),
         ];
     }

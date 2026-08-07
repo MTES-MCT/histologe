@@ -75,8 +75,8 @@ class SearchSignalementInjonctionType extends AbstractType
             'choices' => [
                 'Ordre croissant' => 's.id-ASC',
                 'Ordre décroissant' => 's.id-DESC',
-                'Ordre ville alphabétique (A -> Z)' => 's.villeOccupant-ASC',
-                'Ordre ville alphabétique inversé (Z -> A)' => 's.villeOccupant-DESC',
+                'Ordre ville alphabétique (A -> Z)' => 'address.city-ASC',
+                'Ordre ville alphabétique inversé (Z -> A)' => 'address.city-DESC',
             ],
             'required' => false,
             'placeholder' => false,

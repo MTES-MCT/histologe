@@ -31,9 +31,9 @@ class SuiviDemandeAbandonProcedureToOtherUsagerMailer extends AbstractNotificati
         $signalement = $notificationMail->getSignalement();
 
         return [
-            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
-            'signalement_cpOccupant' => $signalement->getCpOccupant(),
-            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'signalement_addressHousenumberAndStreet' => $signalement->getAddress()->getHousenumberAndStreet(),
+            'signalement_addressPostCode' => $signalement->getAddress()->getPostCode(),
+            'signalement_addressCity' => $signalement->getAddress()->getCity(),
             'demandeur_abandon' => $notificationMail->getParams()['demandeur_abandon'],
             'reference' => $signalement->getReference(),
             'lien_suivi' => $this->generateLink(

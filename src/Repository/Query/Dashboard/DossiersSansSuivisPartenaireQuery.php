@@ -56,6 +56,7 @@ class DossiersSansSuivisPartenaireQuery
         $categoryList = "'".implode("','", $categories)."'";
         $sql = <<<SQL
             FROM signalement si
+            INNER JOIN address ON address.id = si.address_id
             INNER JOIN suivi s ON s.signalement_id = si.id
         SQL;
         if ($withJoins) {
@@ -94,9 +95,9 @@ class DossiersSansSuivisPartenaireQuery
         }
 
         if ($params->territoireId) {
-            $sql .= ' AND si.territory_id = '.$params->territoireId;
+            $sql .= ' AND address.territory_id = '.$params->territoireId;
         } elseif (!$user->isSuperAdmin()) {
-            $sql .= ' AND si.territory_id IN ('.implode(',', array_keys($user->getPartnersTerritories())).')';
+            $sql .= ' AND address.territory_id IN ('.implode(',', array_keys($user->getPartnersTerritories())).')';
         }
 
         if ($params->mesDossiersAverifier && '1' === $params->mesDossiersAverifier) {
@@ -121,7 +122,7 @@ class DossiersSansSuivisPartenaireQuery
             if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$params->queryCommune])) {
                 $listCity = array_merge($listCity, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$params->queryCommune]);
             }
-            $sql .= ' AND (si.cp_occupant IN (:cities) OR si.ville_occupant IN (:cities))';
+            $sql .= ' AND (address.post_code IN (:cities) OR address.city IN (:cities))';
             $paramsToBind['cities'] = $listCity;
             $types['cities'] = ArrayParameterType::STRING;
         }
@@ -180,7 +181,7 @@ class DossiersSansSuivisPartenaireQuery
             si.reference AS reference,
             si.nom_occupant AS nomOccupant,
             si.prenom_occupant AS prenomOccupant,
-            CONCAT_WS(', ', si.adresse_occupant, CONCAT(si.cp_occupant, ' ', si.ville_occupant)) AS adresse,
+            CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.post_code, address.city)) AS adresse,
             MAX(s.created_at) AS dernierSuiviAt,
             DATEDIFF(CURRENT_DATE(), MAX(s.created_at)) AS nbJoursDepuisDernierSuivi,
             MAX(s.category) AS suiviCategory,
@@ -193,7 +194,7 @@ class DossiersSansSuivisPartenaireQuery
         /** @var array<mixed> $types */
         [$sqlPrincipal, $paramsToBind, $types] = $this->getBaseSql($user, $params, true);
         $sql .= $sqlPrincipal;
-        $sql .= ' GROUP BY si.id, si.uuid, si.reference, si.nom_occupant, si.prenom_occupant, si.adresse_occupant, si.cp_occupant, si.ville_occupant';
+        $sql .= ' GROUP BY si.id, si.uuid, si.reference, si.nom_occupant, si.prenom_occupant, address.housenumber, address.street, address.post_code, address.city';
 
         if ($params && in_array($params->sortBy, ['createdAt'], true)
             && in_array($params->orderBy, ['ASC', 'DESC', 'asc', 'desc'], true)

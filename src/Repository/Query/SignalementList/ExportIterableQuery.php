@@ -124,6 +124,7 @@ class ExportIterableQuery
 
         $qb = $this->em->createQueryBuilder()
             ->from(Signalement::class, 's')
+            ->innerJoin('s.address', 'address')
             ->select('s.id')
             ->where('s.id IN (:signalementIds)')
             ->setParameter('signalementIds', $signalementIds)
@@ -134,7 +135,7 @@ class ExportIterableQuery
                 continue;
             }
             $export = $columns[$column]['export'];
-            if (str_starts_with($export, 's.')) {
+            if (str_starts_with($export, 's.') || str_starts_with($export, 'address.')) {
                 $qb->addSelect($export);
             }
         }
@@ -151,7 +152,7 @@ class ExportIterableQuery
         }
 
         if (\in_array('EPCI_NOM', $selectedColumns, true)) {
-            $qb->leftJoin(Commune::class, 'c', Join::ON, 'c.codePostal = s.cpOccupant AND c.codeInsee = s.inseeOccupant');
+            $qb->leftJoin(Commune::class, 'c', Join::ON, 'c.codePostal = address.postCode AND c.codeInsee = address.cityCode');
             $qb->leftJoin('c.epci', 'e');
             $qb->addSelect('e.nom as epciNom');
         }
@@ -358,8 +359,9 @@ class ExportIterableQuery
             '
             SELECT s.id as signalementId, GROUP_CONCAT(z.name SEPARATOR :sep) as zones
             FROM signalement s
-            LEFT JOIN zone z ON ST_Contains(z.area, Point(JSON_EXTRACT(s.geoloc, "$.lng"), JSON_EXTRACT(s.geoloc, "$.lat")))
-            WHERE s.id IN (:signalementIds) AND s.geoloc IS NOT NULL
+            JOIN address ON s.address_id = address.id
+            LEFT JOIN zone z ON ST_Contains(z.area, address.point) AND address.territory_id = z.territory_id
+            WHERE s.id IN (:signalementIds) AND address.point IS NOT NULL
             GROUP BY s.id
             ',
             [

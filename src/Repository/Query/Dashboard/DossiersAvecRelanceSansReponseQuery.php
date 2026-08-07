@@ -26,9 +26,9 @@ class DossiersAvecRelanceSansReponseQuery
         $clauseTerritoriesSi3 = '';
         $clauseTerritoriesSi = '';
         if (null !== $territoriesIds) {
-            $clauseTerritoriesSi2 = ' AND si2.territory_id IN (:territories_ids) ';
-            $clauseTerritoriesSi3 = ' AND si3.territory_id IN (:territories_ids) ';
-            $clauseTerritoriesSi = ' AND si.territory_id IN (:territories_ids) ';
+            $clauseTerritoriesSi2 = ' AND address2.territory_id IN (:territories_ids) ';
+            $clauseTerritoriesSi3 = ' AND address3.territory_id IN (:territories_ids) ';
+            $clauseTerritoriesSi = ' AND address.territory_id IN (:territories_ids) ';
         }
         $suiviTypeUsager = Suivi::TYPE_USAGER;
 
@@ -42,6 +42,7 @@ class DossiersAvecRelanceSansReponseQuery
                 WHERE s.category = 'ASK_FEEDBACK_SENT'
                   AND EXISTS (
                     SELECT 1 FROM signalement si2
+                    INNER JOIN address address2 ON address2.id = si2.address_id
                     WHERE si2.id = s.signalement_id
                       AND si2.statut = 'ACTIVE'
                       $clauseTerritoriesSi2
@@ -50,6 +51,7 @@ class DossiersAvecRelanceSansReponseQuery
                 HAVING COUNT(*) >= 3
             ) relances_usager
             INNER JOIN signalement si ON si.id = relances_usager.signalement_id
+            INNER JOIN address ON address.id = si.address_id
             INNER JOIN (
                 SELECT
                     s.signalement_id,
@@ -59,6 +61,7 @@ class DossiersAvecRelanceSansReponseQuery
                 WHERE s.is_visible_for_usager = 1
                   AND EXISTS (
                     SELECT 1 FROM signalement si3
+                    INNER JOIN address address3 ON address3.id = si3.address_id
                     WHERE si3.id = s.signalement_id
                       AND si3.statut = 'ACTIVE'
                       $clauseTerritoriesSi3
@@ -95,7 +98,7 @@ class DossiersAvecRelanceSansReponseQuery
                 si.reference,
                 si.nom_occupant,
                 si.prenom_occupant,
-                CONCAT_WS(', ', si.adresse_occupant, CONCAT(si.cp_occupant, ' ', si.ville_occupant)) AS fullAddress,
+                CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.post_code, address.city)) AS fullAddress,
                 relances_usager.nb_relances,
                 relances_usager.first_relance_at,
                 last_usager_suivi.shared_usager_at AS last_suivi_shared_usager_at,

@@ -55,7 +55,7 @@
                                         href="tel:{{ signalement.telOccupant }}">{{ signalement.telOccupant }}</a></li>
                             <li><b>Profil :</b> {{ signalement.profileOccupant ? signalement.profileOccupant.label : 'N/R' }}</li>
                             <li>
-                                <b>Adresse :</b> {{ signalement.adresseOccupant ~', '~signalement.cpOccupant ~' '~ signalement.villeOccupant|upper }}
+                                <b>Adresse :</b> {{ signalement.address.housenumberAndStreet ~', '~signalement.address.postCode ~' '~ signalement.address.city|upper }}
                                 {% if signalement.complementAdresseOccupant %}
                                     <br>
                                     {{signalement.complementAdresseOccupant}}

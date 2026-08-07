@@ -49,7 +49,7 @@ class AssignementNewMailer extends AbstractNotificationMailer
     {
         $this->mailerSubject = \sprintf(
             self::MAILER_SUBJECT,
-            $notificationMail->getSignalement()->getCpOccupant()
+            $notificationMail->getSignalement()->getAddress()->getPostCode()
         );
     }
 }

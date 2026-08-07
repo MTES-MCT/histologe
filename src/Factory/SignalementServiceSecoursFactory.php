@@ -12,16 +12,17 @@ use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\ServiceSecoursRoute;
 use App\Entity\Signalement;
+use App\Exception\Address\CityNotFoundException;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
+use App\Service\Gouv\Ban\AddressService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementAddressUpdater;
-use App\Service\Signalement\ZipcodeProvider;
 
 class SignalementServiceSecoursFactory
 {
     public function __construct(
-        private readonly ZipcodeProvider $zipcodeProvider,
+        private readonly AddressService $addressService,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly BailleurRepository $bailleurRepository,
         private readonly DesordreCritereRepository $desordreCritereRepository,
@@ -72,20 +73,29 @@ class SignalementServiceSecoursFactory
         Signalement $signalement,
         TypeCompositionLogement $typeCompositionLogement,
     ): void {
-        $signalement->setAdresseOccupant($formServiceSecours->step2->adresseOccupant)
-            ->setCpOccupant($formServiceSecours->step2->cpOccupant)
-            ->setVilleOccupant($formServiceSecours->step2->villeOccupant)
-            ->setAdresseAutreOccupant($formServiceSecours->step2->adresseAutreOccupant)
+        $signalement->setAdresseAutreOccupant($formServiceSecours->step2->adresseAutreOccupant)
             ->setNatureLogement($formServiceSecours->step2->natureLogement);
 
-        if (empty($formServiceSecours->step2->inseeOccupant)) {
-            $signalement->setManualAddressOccupant(true);
-            $signalement->setRnbIdOccupant($formServiceSecours->step2->rnbId);
-            $this->signalementAddressUpdater->updateAddressOccupantFromBanData(signalement: $signalement, updateRnbId: false);
+        $adresseComplete = $formServiceSecours->step2->addressAddress.' '.$formServiceSecours->step2->addressPostcode.' '.$formServiceSecours->step2->addressCity;
+        if ($banAddress = $this->addressService->getAcceptableBanAddress($adresseComplete)) {
+            $this->signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
         } else {
-            $signalement->setInseeOccupant($formServiceSecours->step2->inseeOccupant);
-            $this->signalementAddressUpdater->updateAddressOccupantFromBanData(signalement: $signalement);
+            $signalement->setRnbIdOccupant($formServiceSecours->step2->rnbId);
+            if (!$this->signalementAddressUpdater->attachAddressToSignalementFromManualAddress(
+                $signalement,
+                $formServiceSecours->step2->addressAddress,
+                $formServiceSecours->step2->addressPostcode,
+                $formServiceSecours->step2->addressCity,
+            )) {
+                throw new CityNotFoundException($formServiceSecours->step2->addressCity);
+            }
         }
+        if ($signalement->getRnbIdOccupant()) {
+            $this->signalementAddressUpdater->updateGeolocFromRnbService($signalement);
+        } else {
+            $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);
+        }
+        $this->signalementAddressUpdater->getRialDataForSignalement($signalement);
 
         $isLogementSocial = $formServiceSecours->step2->isLogementSocial;
         // case 'nsp' si null, which is the default value of the entity
@@ -94,10 +104,6 @@ class SignalementServiceSecoursFactory
         } elseif ('non' === $isLogementSocial) {
             $signalement->setIsLogementSocial(false);
         }
-
-        $signalement->setTerritory(
-            territory: $this->zipcodeProvider->getTerritoryByInseeCode($signalement->getInseeOccupant())
-        );
 
         if ('appartement' === $signalement->getNatureLogement()) {
             /** @var EtageType $appartementEtage */

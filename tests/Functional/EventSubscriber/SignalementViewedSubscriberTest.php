@@ -14,7 +14,7 @@ use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Security\User\SignalementUser;
 use App\Service\Gouv\Ban\AddressService;
-use App\Service\Gouv\Ban\Response\Address;
+use App\Service\Gouv\Ban\Response\BanAddress;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -54,11 +54,6 @@ class SignalementViewedSubscriberTest extends WebTestCase
     public function testOnSignalementViewed(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@signal-logement.fr']);
-        // Empty this data voluntarily to check if the dispatcher handles it.
-        $this->signalement
-            ->setInseeOccupant(null)
-            ->setGeoloc([])
-            ->setCpOccupant(null);
 
         $notifications = $this->notificationRepository->findUnseenNotificationsBy($this->signalement, $user, NotificationType::getForAgent());
         foreach ($notifications as $notification) {
@@ -69,7 +64,7 @@ class SignalementViewedSubscriberTest extends WebTestCase
         $signalementViewedEvent = new SignalementViewedEvent($this->signalement, $user);
 
         $addressResult = json_decode((string) file_get_contents(__DIR__.'/../../files/datagouv/get_api_ban_item_response_13203.json'), true);
-        $address = new Address($addressResult);
+        $address = new BanAddress($addressResult);
         $this->addressServiceMock
             ->expects($this->once())
             ->method('getAddress')
@@ -91,10 +86,6 @@ class SignalementViewedSubscriberTest extends WebTestCase
         foreach ($notifications as $notification) {
             $this->assertTrue($notification->getIsSeen());
         }
-
-        $this->assertEquals('13203', $this->signalement->getInseeOccupant());
-        $this->assertEquals([], $this->signalement->getGeoloc());
-        $this->assertEquals('13003', $this->signalement->getCpOccupant());
     }
 
     public function testOnSuiviViewed(): void

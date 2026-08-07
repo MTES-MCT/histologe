@@ -7,7 +7,7 @@
     Madame, Monsieur,
     <br><br>
 
-    <p style="margin-bottom: 16px;">Votre locataire {{ signalement.prenomOccupant }} {{ signalement.nomOccupant }} a mis fin à la procédure concernant votre logement situé {{ signalement.addressCompleteOccupant }}</p>
+    <p style="margin-bottom: 16px;">Votre locataire {{ signalement.prenomOccupant }} {{ signalement.nomOccupant }} a mis fin à la procédure concernant votre logement situé {{ signalement.address.full }}</p>
     {% if signalement.motifClotureUsager is not empty %}
         <p style="margin-bottom: 16px;">Motif de clôture indiqué par votre locataire : {{ signalement.motifClotureUsager.label }}</p>
     {% endif %}

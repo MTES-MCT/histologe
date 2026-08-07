@@ -34,7 +34,7 @@ class SignalementReminderInjonctionBailleurMailer extends AbstractNotificationMa
         $signalement = $notificationMail->getSignalement();
 
         return [
-            'ADRESSE_OCCUPANT' => $signalement->getAddressCompleteOccupant(),
+            'ADRESSE_OCCUPANT' => $signalement->getAddress()->getFull(),
             'REFERENCE_INJONCTION' => $signalement->getReferenceInjonction(),
         ];
     }

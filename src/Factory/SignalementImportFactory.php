@@ -7,9 +7,18 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Exception\Address\CityNotFoundException;
+use App\Service\Gouv\Ban\AddressService;
+use App\Service\Signalement\SignalementAddressUpdater;
 
 class SignalementImportFactory
 {
+    public function __construct(
+        private readonly AddressService $addressService,
+        private readonly SignalementAddressUpdater $signalementAddressUpdater,
+    ) {
+    }
+
     /**
      * @param array<int|string, mixed> $data
      */
@@ -22,10 +31,9 @@ class SignalementImportFactory
             }
         }
 
-        return (new Signalement())
+        $signalement = (new Signalement())
             ->setIsImported(true)
             ->setCreationSource(CreationSource::IMPORT)
-            ->setTerritory($territory)
             ->setDetails($data['details'])
             ->setIsProprioAverti((bool) $data['isProprioAverti'])
             ->setNbAdultes($data['nbAdultes'])
@@ -55,9 +63,6 @@ class SignalementImportFactory
             ->setPrenomOccupant($data['prenomOccupant'])
             ->setTelOccupant($data['telOccupant'])
             ->setMailOccupant($data['mailOccupant'])
-            ->setAdresseOccupant($data['adresseOccupant'])
-            ->setCpOccupant($data['cpOccupant'])
-            ->setVilleOccupant($data['villeOccupant'])
             ->setIsCguAccepted((bool) $data['isCguAccepted'])
             ->setCreatedAt($data['createdAt'])
             ->setModifiedAt($data['modifiedAt'])
@@ -71,7 +76,6 @@ class SignalementImportFactory
             ->setEscalierOccupant($data['escalierOccupant'])
             ->setNumAppartOccupant($data['numAppartOccupant'])
             ->setAdresseAutreOccupant($data['adresseAutreOccupant'])
-            ->setInseeOccupant($data['inseeOccupant'])
             ->setLienDeclarantOccupant($data['lienDeclarantOccupant'])
             ->setIsRsa((bool) $data['isRsa'])
             ->setAnneeConstruction($data['anneeConstruction'])
@@ -87,5 +91,28 @@ class SignalementImportFactory
                     ? MotifCloture::tryFrom($data['motifCloture'])
                     : null)
             ->setClosedAt($data['closedAt']);
+
+        $adresseComplete = $data['adresseOccupant'].' '.$data['cpOccupant'].' '.$data['villeOccupant'];
+        if ($banAddress = $this->addressService->getAcceptableBanAddress($adresseComplete)) {
+            $this->signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
+        } else {
+            if (!$this->signalementAddressUpdater->attachAddressToSignalementFromManualAddress(
+                $signalement,
+                $data['adresseOccupant'],
+                $data['cpOccupant'],
+                $data['villeOccupant']
+            )) {
+                throw new CityNotFoundException($data['villeOccupant']);
+            }
+        }
+
+        if ($signalement->getAddress()->getTerritory() !== $territory) {
+            throw new \Exception('Le territoire calculé ('.$signalement->getAddress()->getTerritory()->getName().') pour l\'adresse ne correspond pas au territoire attendu ('.$territory->getName().').');
+        }
+
+        $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);
+        $this->signalementAddressUpdater->getRialDataForSignalement($signalement);
+
+        return $signalement;
     }
 }

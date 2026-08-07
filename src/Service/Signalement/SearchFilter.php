@@ -93,33 +93,37 @@ class SearchFilter
                 $qb->andWhere('s.referenceInjonction = :searchterms');
                 $qb->setParameter('searchterms', str_replace(InjonctionBailleurService::REFERENCE_PREFIX, '', mb_strtoupper(mb_trim($filters['searchterms']))));
             } elseif (preg_match('/^([0-9]{5})$/', mb_trim($filters['searchterms']))) {
-                $qb->andWhere('s.cpOccupant = :searchterms');
+                $qb->andWhere('address.postCode = :searchterms');
                 $qb->setParameter('searchterms', mb_trim($filters['searchterms']));
             } else {
-                $adresseOccupant = AddressParser::parse($filters['searchterms']);
-                if (null !== $adresseOccupant['suffix'] && null !== $adresseOccupant['number']) {
-                    $suffix = strtolower($adresseOccupant['suffix']);
+                $parsedAddress = AddressParser::parse($filters['searchterms']);
+                $houseNumber = $parsedAddress['number'];
+                if ($houseNumber && $parsedAddress['suffix']) {
+                    $houseNumber .= ' '.$parsedAddress['suffix'];
+                }
+                $street = mb_trim($parsedAddress['street']);
+
+                if ($houseNumber) {
                     $qb->andWhere('LOWER(s.nomOccupant) LIKE :searchterms
                     OR LOWER(s.prenomOccupant) LIKE :searchterms
                     OR LOWER(s.mailOccupant) LIKE :searchterms
                     OR LOWER(s.reference) LIKE :searchterms
-                    OR LOWER(s.adresseOccupant) LIKE :searchterms
-                    OR LOWER(s.adresseOccupant) LIKE :searchterms_suffix_1
-                    OR LOWER(s.adresseOccupant) LIKE :searchterms_suffix_2
-                    OR LOWER(s.villeOccupant) LIKE :searchterms
+                    OR (address.housenumber LIKE :housenumber AND address.street LIKE :street)
+                    OR LOWER(address.city) LIKE :searchterms
                     OR LOWER(s.nomProprio) LIKE :searchterms
                     OR LOWER(s.nomDeclarant) LIKE :searchterms');
-                    $qb->setParameter('searchterms_suffix_1', '%'.strtolower($adresseOccupant['number'].$suffix.' '.$adresseOccupant['street']).'%');
-                    $qb->setParameter('searchterms_suffix_2', '%'.strtolower($adresseOccupant['number'].' '.$suffix.' '.$adresseOccupant['street']).'%');
+                    $qb->setParameter('housenumber', '%'.mb_trim($houseNumber).'%');
+                    $qb->setParameter('street', '%'.mb_trim($street).'%');
                 } else {
                     $qb->andWhere('LOWER(s.nomOccupant) LIKE :searchterms
                     OR LOWER(s.prenomOccupant) LIKE :searchterms
                     OR LOWER(s.mailOccupant) LIKE :searchterms
                     OR LOWER(s.reference) LIKE :searchterms
-                    OR LOWER(s.adresseOccupant) LIKE :searchterms
-                    OR LOWER(s.villeOccupant) LIKE :searchterms
+                    OR (address.housenumber IS NULL AND address.street LIKE :street)
+                    OR LOWER(address.city) LIKE :searchterms
                     OR LOWER(s.nomProprio) LIKE :searchterms
                     OR LOWER(s.nomDeclarant) LIKE :searchterms');
+                    $qb->setParameter('street', '%'.mb_trim($street).'%');
                 }
                 $qb->setParameter('searchterms', '%'.mb_trim(strtolower($filters['searchterms'])).'%');
             }
@@ -343,7 +347,7 @@ class SearchFilter
                     $filters['cities'] = array_merge($filters['cities'], CommuneHelper::COMMUNES_ARRONDISSEMENTS[$city]);
                 }
             }
-            $qb->andWhere('s.villeOccupant IN (:cities) OR s.cpOccupant IN (:cities)')
+            $qb->andWhere('address.city IN (:cities) OR address.postCode IN (:cities)')
                 ->setParameter('cities', $filters['cities']);
         }
 
@@ -673,14 +677,14 @@ class SearchFilter
         $orX = $qb->expr()->orX();
         foreach ($communes as $key => $commune) {
             $orX->add($qb->expr()->andX(
-                $qb->expr()->eq('s.cpOccupant', ':cpOccupant_'.$key),
-                $qb->expr()->eq('s.villeOccupant', ':villeOccupant_'.$key)
+                $qb->expr()->eq('address.postCode', ':codePostal_'.$key),
+                $qb->expr()->eq('address.city', ':commune_'.$key)
             ));
 
             $qb
-                ->setParameter('cpOccupant_'.$key, $commune['codePostal'])
+                ->setParameter('codePostal_'.$key, $commune['codePostal'])
                 ->setParameter(
-                    'villeOccupant_'.$key,
+                    'commune_'.$key,
                     ImportCommune::sanitizeCommuneWithArrondissement($commune['nom'])
                 );
         }

@@ -41,9 +41,9 @@ class SignalementFeedbackUsagerWithResponseMailer extends AbstractNotificationMa
         );
 
         return [
-            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
-            'signalement_cpOccupant' => $signalement->getCpOccupant(),
-            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'signalement_addressHousenumberAndStreet' => $signalement->getAddress()->getHousenumberAndStreet(),
+            'signalement_addressPostCode' => $signalement->getAddress()->getPostCode(),
+            'signalement_addressCity' => $signalement->getAddress()->getCity(),
             'signalement_mailOccupant' => $signalement->getMailOccupant(),
             'signalement_nomOccupant' => $signalement->getNomOccupant(),
             'signalement_prenomOccupant' => $signalement->getPrenomOccupant(),

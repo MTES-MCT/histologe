@@ -32,7 +32,7 @@ class ServiceSecoursStep2Type extends AbstractType
                     'data-autocomplete-query-selector' => '#fo-form-service-secours-adresse .fr-address-group',
                 ],
             ])
-            ->add('adresseOccupant', TextType::class, [
+            ->add('addressAddress', TextType::class, [
                 'label' => 'Numéro et voie',
                 'required' => false,
                 'empty_data' => '',
@@ -41,7 +41,7 @@ class ServiceSecoursStep2Type extends AbstractType
                     'data-autocomplete-addresse' => 'true',
                 ],
             ])
-            ->add('cpOccupant', TextType::class, [
+            ->add('addressPostcode', TextType::class, [
                 'label' => 'Code postal',
                 'required' => false,
                 'empty_data' => '',
@@ -50,7 +50,7 @@ class ServiceSecoursStep2Type extends AbstractType
                     'data-autocomplete-codepostal' => 'true',
                 ],
             ])
-            ->add('villeOccupant', TextType::class, [
+            ->add('addressCity', TextType::class, [
                 'label' => 'Ville',
                 'required' => false,
                 'empty_data' => '',
@@ -59,7 +59,7 @@ class ServiceSecoursStep2Type extends AbstractType
                     'data-autocomplete-ville' => 'true',
                 ],
             ])
-            ->add('inseeOccupant', HiddenType::class, [
+            ->add('addressCityCode', HiddenType::class, [
                 'attr' => [
                     'data-autocomplete-insee' => 'true',
                 ],

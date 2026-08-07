@@ -41,8 +41,8 @@ class SignalementDraftAddressType extends AbstractType
         /** @var Signalement $signalement */
         $signalement = $builder->getData();
         $adresseCompleteOccupant = '';
-        if ($signalement->getBanIdOccupant()) {
-            $adresseCompleteOccupant = mb_trim($signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant());
+        if ($signalement->getAddress() && $signalement->getAddress()->getBanId()) {
+            $adresseCompleteOccupant = $signalement->getAddress()->getFull(); // TODO ADDRESS : passer withArrondisement = false ?
         }
         $nbEnfantsDansLogement = $signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants();
         $enfantsDansLogementMoinsSixAns = $signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants();
@@ -62,7 +62,7 @@ class SignalementDraftAddressType extends AbstractType
         } else {
             $territory = null;
             if (!empty($signalement)) {
-                $territory = $signalement->getTerritory();
+                $territory = $signalement->getAddress()->getTerritory();
             }
             $builder->add('filterSearchAddressTerritory', TerritoryChoiceType::class, [
                 'mapped' => false,
@@ -93,28 +93,50 @@ class SignalementDraftAddressType extends AbstractType
                     'data-autocomplete-query-selector' => '#bo-form-signalement-adresse .fr-address-group',
                 ],
             ])
-            ->add('adresseOccupant', null, [
+            ->add('addressAddress', null, [
                 'label' => 'Numéro et voie',
                 'attr' => [
                     'class' => 'bo-form-signalement-manual-address bo-form-signalement-manual-address-input',
                 ],
                 'empty_data' => '',
+                'mapped' => false,
+                'constraints' => [
+                    new Assert\Length(
+                        max: 100,
+                        groups: ['bo_step_address'],
+                    ),
+                ],
             ])
-            ->add('cpOccupant', null, [
+            ->add('addressPostCode', null, [
                 'label' => 'Code postal',
                 'required' => false,
                 'attr' => [
                     'class' => 'bo-form-signalement-manual-address',
                 ],
+                'mapped' => false,
                 'empty_data' => '',
+                'constraints' => [
+                    new Assert\Regex(
+                        pattern: '/^[0-9]{5}$/',
+                        message: 'Le code postal doit être composé de 5 chiffres.',
+                        groups: ['bo_step_address'],
+                    ),
+                ],
             ])
-            ->add('villeOccupant', null, [
+            ->add('addressCity', null, [
                 'label' => 'Ville',
                 'required' => false,
                 'attr' => [
                     'class' => 'bo-form-signalement-manual-address',
                 ],
+                'mapped' => false,
                 'empty_data' => '',
+                'constraints' => [
+                    new Assert\Length(
+                        max: 100,
+                        groups: ['bo_step_address'],
+                    ),
+                ],
             ])
             ->add('etageOccupant', null, [
                 'label' => 'Étage',
@@ -357,19 +379,19 @@ class SignalementDraftAddressType extends AbstractType
     public function validateAddress(mixed $value, ExecutionContextInterface $context): void
     {
         $form = $context->getRoot();
-        $manualAddressEmpty = $form->get('adresseOccupant')->isEmpty() && $form->get('cpOccupant')->isEmpty() && $form->get('villeOccupant')->isEmpty();
+        $manualAddressEmpty = $form->get('addressAddress')->isEmpty() && $form->get('addressPostCode')->isEmpty() && $form->get('addressCity')->isEmpty();
         if ($form->get('adresseCompleteOccupant')->isEmpty() && $manualAddressEmpty) {
             $form->get('adresseCompleteOccupant')->addError(new FormError('Veuillez renseigner une adresse.'));
         }
         if ($form->get('adresseCompleteOccupant')->isEmpty() && !$manualAddressEmpty) {
-            if ($form->get('adresseOccupant')->isEmpty()) {
-                $form->get('adresseOccupant')->addError(new FormError('Veuillez renseigner une adresse.'));
+            if ($form->get('addressAddress')->isEmpty()) {
+                $form->get('addressAddress')->addError(new FormError('Veuillez renseigner une adresse.'));
             }
-            if ($form->get('cpOccupant')->isEmpty()) {
-                $form->get('cpOccupant')->addError(new FormError('Veuillez renseigner un code postal.'));
+            if ($form->get('addressPostCode')->isEmpty()) {
+                $form->get('addressPostCode')->addError(new FormError('Veuillez renseigner un code postal.'));
             }
-            if ($form->get('villeOccupant')->isEmpty()) {
-                $form->get('villeOccupant')->addError(new FormError('Veuillez renseigner une ville.'));
+            if ($form->get('addressCity')->isEmpty()) {
+                $form->get('addressCity')->addError(new FormError('Veuillez renseigner une ville.'));
             }
         }
 

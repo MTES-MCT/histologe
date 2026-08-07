@@ -35,9 +35,9 @@ class SignalementValidationMailer extends AbstractNotificationMailer
         $signalement = $notificationMail->getSignalement();
 
         return [
-            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
-            'signalement_cpOccupant' => $signalement->getCpOccupant(),
-            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'signalement_addressHousenumberAndStreet' => $signalement->getAddress()->getHousenumberAndStreet(),
+            'signalement_addressPostCode' => $signalement->getAddress()->getPostCode(),
+            'signalement_addressCity' => $signalement->getAddress()->getCity(),
             'lien_suivi' => $this->urlGenerator->generate(
                 'front_suivi_signalement',
                 ['code' => $signalement->getCodeSuivi()],

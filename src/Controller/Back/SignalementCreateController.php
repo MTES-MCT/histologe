@@ -232,8 +232,8 @@ class SignalementCreateController extends AbstractController
                 $hasDuplicates = true;
                 $duplicateContent = $this->renderView('back/signalement_create/_modal_duplicate_content.html.twig', ['duplicates' => $duplicates]);
                 $linkDuplicates = $this->generateUrl('back_signalements_index', [
-                    'searchTerms' => $signalement->getAdresseOccupant(),
-                    'communes[]' => $signalement->getCpOccupant(),
+                    'searchTerms' => $signalement->getAddress()->getHousenumberAndStreet(),
+                    'communes[]' => $signalement->getAddress()->getPostCode(),
                 ], UrlGeneratorInterface::ABSOLUTE_URL);
             } elseif (
                 $form->get('forceSave')->isEmpty()
@@ -607,7 +607,7 @@ class SignalementCreateController extends AbstractController
                 $errorMsgs[] = 'En tant que tiers déclarant, vous devez renseigner un nom pour le tiers.';
             }
         }
-        if (!$signalement->getAdresseOccupant()) {
+        if (!$signalement->getAddress()) {
             $errorMsgs[] = 'Vous devez renseigner l\'adresse du logement pour pouvoir soumettre le signalement.';
         }
         if (null === $signalement->getProfileDeclarant()) {

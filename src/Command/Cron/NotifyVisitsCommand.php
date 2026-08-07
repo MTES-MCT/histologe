@@ -62,7 +62,7 @@ class NotifyVisitsCommand extends AbstractCronCommand
                 continue;
             }
             $description = '<strong>Rappel de visite :</strong> la visite du logement situé ';
-            $description .= $signalement->getAdresseOccupant().' '.$signalement->getCpOccupant().' '.$signalement->getVilleOccupant();
+            $description .= $signalement->getAddress()?->getFull();
             $description .= ' aura lieu le '.$intervention->getScheduledAt()->format('d/m/Y');
             $description .= '<br>La visite sera effectuée par '.$partnerName.'.';
             $suivi = $this->suiviManager->createSuivi(

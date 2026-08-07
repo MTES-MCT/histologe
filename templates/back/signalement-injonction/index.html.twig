@@ -124,7 +124,7 @@
                     {% endif %}
                     <td>{{ signalement.reference }}</td>
                     <td>{{ signalement.createdAt.format('d/m/Y') }}</td>
-                    <td>{{ signalement.getAddressCompleteOccupant() }}</td>
+                    <td>{{ signalement.address.full }}</td>
                     <td>{{ signalement.prenomOccupant ~ ' ' ~ signalement.nomOccupant }}</td>
                     <td>{{ signalement.getDisplayedNomProprio() }}</td>
                     <td><span class="fr-badge {{ classeBadgeReponseBailleur }} fr-badge--no-icon fr-ws-nowrap ">{{ labelReponseBailleur }}</span></td>

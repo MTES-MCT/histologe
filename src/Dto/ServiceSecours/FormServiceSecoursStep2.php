@@ -15,13 +15,13 @@ class FormServiceSecoursStep2
 
     public ?string $adresseCompleteOccupant = null;
 
-    public ?string $adresseOccupant = null;
+    public ?string $addressAddress = null;
 
-    public ?string $cpOccupant = null;
+    public ?string $addressPostcode = null;
 
-    public ?string $villeOccupant = null;
+    public ?string $addressCity = null;
 
-    public ?string $inseeOccupant = null;
+    public ?string $addressCityCode = null;
 
     public ?string $rnbId = null;
 

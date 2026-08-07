@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Repository;
 
+use App\Entity\Address;
 use App\Entity\Affectation;
 use App\Entity\EmailDeliveryIssue;
 use App\Entity\Enum\AffectationStatus;
@@ -189,9 +190,12 @@ class SignalementRepositoryTest extends KernelTestCase
         $this->assertCount(1, $signalementsOnSameAddress);
 
         $new = new Signalement();
-        $new->setAdresseOccupant($signalement->getAdresseOccupant());
-        $new->setCpOccupant($signalement->getCpOccupant());
-        $new->setInseeOccupant($signalement->getInseeOccupant());
+        $newAddress = new Address();
+        $newAddress->setHousenumber($signalement->getAddress()->getHousenumber());
+        $newAddress->setStreet($signalement->getAddress()->getStreet());
+        $newAddress->setPostCode($signalement->getAddress()->getPostCode());
+        $newAddress->setCityCode($signalement->getAddress()->getCityCode());
+        $new->setAddress($newAddress);
 
         $signalementsOnSameAddress = $signalementRepository->findOnSameAddress($new);
         $this->assertCount(2, $signalementsOnSameAddress);

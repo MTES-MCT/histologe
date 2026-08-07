@@ -5,7 +5,6 @@ namespace App\Messenger\Message\Idoss;
 use App\Entity\Affectation;
 use App\Entity\Enum\PartnerType;
 use App\Messenger\Message\DossierMessageInterface;
-use App\Utils\Address\AddressParser;
 
 final class DossierMessage implements DossierMessageInterface
 {
@@ -72,23 +71,22 @@ final class DossierMessage implements DossierMessageInterface
             ];
         }
 
-        $addressParsed = AddressParser::parse($signalement->getAdresseOccupant());
         $this->occupant = [
             'nomOccupant' => $signalement->getNomOccupant() ?? 'Non renseigné',
             'prenomOccupant' => $signalement->getPrenomOccupant() ?? 'Non renseigné',
             'telephoneOccupant' => $signalement->getTelOccupantDecoded(),
             'mailOccupant' => $signalement->getMailOccupant(),
             'adresseLogement' => [
-                'adresse' => $signalement->getAddressCompleteOccupant(),
-                'novoie' => $addressParsed['number'],
-                'nomvoie' => $addressParsed['street'],
-                'CP' => $signalement->getCpOccupant(),
-                'nomCommune' => $signalement->getVilleOccupant(),
-                'codeInseeCommune' => $signalement->getInseeOccupant(),
+                'adresse' => $signalement->getAddress()->getFull(),
+                'novoie' => $signalement->getAddress()->getHousenumber(),
+                'nomvoie' => $signalement->getAddress()->getStreet(),
+                'CP' => $signalement->getAddress()->getPostCode(),
+                'nomCommune' => $signalement->getAddress()->getCity(),
+                'codeInseeCommune' => $signalement->getAddress()->getCityCode(),
             ],
         ];
         // seul code insee accepté par IDOSS pour le service Habitat de Marseille, on force la valeur tant qu'on est dans le 13
-        if (str_starts_with($signalement->getInseeOccupant(), self::DEPT_BOUCHES_DU_RHONE)) {
+        if (str_starts_with($signalement->getAddress()->getCityCode(), self::DEPT_BOUCHES_DU_RHONE)) {
             $this->occupant['adresseLogement']['codeInseeCommune'] = self::CODE_INSEE_BASSIN_VIE_MARSEILLE;
         }
 

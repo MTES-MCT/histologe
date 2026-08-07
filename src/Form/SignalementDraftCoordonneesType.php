@@ -128,7 +128,7 @@ class SignalementDraftCoordonneesType extends AbstractType
                 'label' => 'Dénomination',
                 'required' => false,
                 'attr' => [
-                    'data-autocomplete-bailleur-url' => $this->urlGenerator->generate('app_bailleur', ['inseecode' => $signalement->getInseeOccupant()]),
+                    'data-autocomplete-bailleur-url' => $this->urlGenerator->generate('app_bailleur', ['inseecode' => $signalement->getAddress()->getCityCode()]),
                     'maxlength' => 255,
                 ],
                 'constraints' => [

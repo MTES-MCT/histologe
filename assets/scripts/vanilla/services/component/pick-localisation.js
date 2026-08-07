@@ -36,13 +36,13 @@ if (modalPickLocalisation) {
     // Essayer plusieurs sélecteurs pour différents contextes
     const addressInputSelectors = [
       '#form-edit-address-adresse', // Back office - edit address modal
-      '#service_secours_step2_adresseOccupant', // Service secours
+      '#service_secours_step2_addressAddress', // Service secours
       'input[name="adresse"]', // Générique
     ];
 
     const postcodeInputSelectors = [
       '#form-edit-address-codepostal', // Back office - edit address modal
-      '#service_secours_step2_cpOccupant', // Service secours
+      '#service_secours_step2_addressPostcode', // Service secours
       'input[name="codePostal"]', // Générique
     ];
 

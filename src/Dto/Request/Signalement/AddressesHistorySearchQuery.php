@@ -27,12 +27,6 @@ class AddressesHistorySearchQuery
         private readonly ?string $dossiersMultiples = null,
         private readonly ?array $arreteTypes = null,
         private readonly ?int $page = 1,
-        /*
-        #[Assert\Choice(choices: ['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant', 'createdAt'], message: 'Champ de tri invalide')]
-        private readonly string $sortBy = 'reference',
-        #[Assert\Choice(choices: ['ASC', 'DESC', 'asc', 'desc'], message: 'Direction de tri invalide')]
-        private readonly string $direction = 'DESC',
-        */
     ) {
     }
 
