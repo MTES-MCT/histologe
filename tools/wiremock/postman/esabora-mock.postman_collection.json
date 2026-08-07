@@ -319,6 +319,53 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
+							"raw": "{\n    \"treatmentName\": \"Import HISTOLOGE\",\n    \"fieldList\": [\n        {\n            \"fieldName\": \"Référence_Histologe\",\n            \"fieldValue\": \"00000001\"\n        },\n        {\n            \"fieldName\": \"Usager_Nom\",\n            \"fieldValue\": \"Doe\"\n        },\n        {\n            \"fieldName\": \"Usager_Prénom\",\n            \"fieldValue\": \"John\"\n        },\n        {\n            \"fieldName\": \"Usager_Mail\",\n            \"fieldValue\": \"john.doe@yopmail.com\"\n        },\n        {\n            \"fieldName\": \"Usager_Téléphone\",\n            \"fieldValue\": \"0112154578\"\n        },\n        {\n            \"fieldName\": \"Adresse_Numéro\",\n            \"fieldValue\": \"15\"\n        },\n        {\n            \"fieldName\": \"Adresse_Nom_Rue\",\n            \"fieldValue\": \"rue de la république\"\n        },\n        {\n            \"fieldName\": \"Adresse_CodePostal\",\n            \"fieldValue\": \"13002\"\n        },\n        {\n            \"fieldName\": \"Adresse_Ville\",\n            \"fieldValue\": \"Marseille\"\n        },\n        {\n            \"fieldName\": \"Adresse_Etage\",\n            \"fieldValue\": \"2\"\n        },\n        {\n            \"fieldName\": \"Adresse_Latitude\",\n            \"fieldValue\": \"43.2975711\"\n        },\n        {\n            \"fieldName\": \"Adresse_Longitude\",\n            \"fieldValue\": \"5.372884\"\n        },\n        {\n            \"fieldName\": \"Dossier_Ouverture\",\n            \"fieldValue\": \"29/01/2022\"\n        },\n        {\n            \"fieldName\": \"Dossier_Commentaire\",\n            \"fieldValue\": \"Point signalés...\"\n        },\n        {\n            \"fieldName\": \"PJ_Observations\",\n            \"fieldValue\": \"Sample image\"\n        },\n        {\n            \"fieldName\": \"PJ_Documents\",\n            \"fieldDocumentUpdate\": 1,\n            \"fieldValue\": [\n                {\n                    \"documentName\": \"sample-image.png\",\n                    \"documentSize\": 204,\n                    \"documentContent\": \"iVBORw0KGgoAAAANSUhEUgAAABoAAAAZCAYAAAAv3j5gAAAABHNCSVQICAgIfAhkiAAAABl0RVh0U29mdHdhcmUAZ25vbWUtc2NyZWVuc2hvdO8Dvz4AAAAodEVYdENyZWF0aW9uIFRpbWUAdmVuLiAwNyBhb/t0IDIwMjYgMTE6NDc6MzTqJAs0AAAAKklEQVRIiWN8/PjvfwY6ACZ6WDJq0ahFoxaNWjRq0ahFoxaNWjRqEc0BAIuJA/RUcJJBAAAAAElFTkSuQmCC\"\n                }\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8082/ws/rest/modbdd/?task=doTreatment",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"ws",
+								"rest",
+								"modbdd",
+								""
+							],
+							"query": [
+								{
+									"key": "task",
+									"value": "doTreatment"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "import Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "test",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
 							"raw": "{\n    \"treatmentName\": \"Import HISTOLOGE\",\n    \"fieldList\": [\n        {\n            \"fieldName\": \"Référence_Histologe\",\n            \"fieldValue\": \"00000001\"\n        },\n        {\n            \"fieldName\": \"Usager_Nom\",\n            \"fieldValue\": \"Doe\"\n        },\n        {\n            \"fieldName\": \"Usager_Prénom\",\n            \"fieldValue\": \"John\"\n        },\n        {\n            \"fieldName\": \"Usager_Mail\",\n            \"fieldValue\": \"john.doe@yopmail.com\"\n        },\n        {\n            \"fieldName\": \"Usager_Téléphone\",\n            \"fieldValue\": \"0112154578\"\n        },\n        {\n            \"fieldName\": \"Addresse_Numéro\",\n            \"fieldValue\": \"15\"\n        },\n        {\n            \"fieldName\": \"Addresse_Nom_Rue\",\n            \"fieldValue\": \"rue de la république\"\n        },\n        {\n            \"fieldName\": \"Addresse_CodePostal\",\n            \"fieldValue\": \"13002\"\n        },\n        {\n            \"fieldName\": \"Addresse_Ville\",\n            \"fieldValue\": \"Marseille\"\n        },\n        {\n            \"fieldName\": \"Addesse_Etage\",\n            \"fieldValue\": \"2\"\n        },\n        {\n            \"fieldName\": \"Addresse_Latitude\",\n            \"fieldValue\": \"43.2975711\"\n        },\n        {\n            \"fieldName\": \"Addresse_Longitude\",\n            \"fieldValue\": \"5.372884\"\n        },\n        {\n            \"fieldName\": \"Dossier_Ouverture\",\n            \"fieldValue\": \"29/01/2022\"\n        },\n        {\n            \"fieldName\": \"Dossier_Commentaire\",\n            \"fieldValue\": \"Point signalés...\"\n        },\n        {\n            \"fieldName\": \"PJ_Observations\",\n            \"fieldValue\": \"Sample image\"\n        },\n        {\n            \"fieldName\": \"PJ_Documents\",\n            \"fieldDocumentUpdate\": 1,\n            \"fieldValue\": [\n                {\n                    \"documentName\": \"sample-image.png\",\n                    \"documentSize\": \"52\",\n                    \"documentContent\": \"R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==\"\n                }\n            ]\n        }\n    ]\n}",
 							"options": {
 								"raw": {
