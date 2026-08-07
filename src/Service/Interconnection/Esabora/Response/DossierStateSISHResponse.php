@@ -19,6 +19,7 @@ class DossierStateSISHResponse implements DossierResponseInterface
     public const string COL_SISH_DOSS_ETAT = 'SISH_DossEtat';
     public const string COL_SISH_DOSS_TYPE_CODE = 'SISH_DossTypeCode';
     public const string COL_SISH_DOSS_TYPE_LIB = 'SISH_DossTypeLib';
+    public const string COL_SISH_COMMENTAIRE_SAS = 'SISH_CommentaireSAS';
 
     private ?string $referenceDossier = null;
     private ?string $sasEtat = null;
@@ -33,6 +34,7 @@ class DossierStateSISHResponse implements DossierResponseInterface
     private ?string $dossEtat = null;
     private ?string $dossTypeCode = null;
     private ?string $dossTypeLib = null;
+    private ?string $commentaireSas = null;
     private ?int $statusCode = null;
     private ?string $errorReason = null;
 
@@ -63,6 +65,7 @@ class DossierStateSISHResponse implements DossierResponseInterface
                     $this->dossEtat = $data[self::COL_SISH_DOSS_ETAT] ?? null;
                     $this->dossTypeCode = $data[self::COL_SISH_DOSS_TYPE_CODE] ?? null;
                     $this->dossTypeLib = $data[self::COL_SISH_DOSS_TYPE_LIB] ?? null;
+                    $this->commentaireSas = $data[self::COL_SISH_COMMENTAIRE_SAS] ?? null;
                 }
             } else {
                 $this->errorReason = (string) json_encode($response);
@@ -134,6 +137,11 @@ class DossierStateSISHResponse implements DossierResponseInterface
     public function getDossTypeLib(): ?string
     {
         return $this->dossTypeLib;
+    }
+
+    public function getCommentaireSas(): ?string
+    {
+        return $this->commentaireSas;
     }
 
     public function getStatusCode(): ?int

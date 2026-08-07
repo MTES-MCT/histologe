@@ -23,6 +23,7 @@ use App\Service\Files\ZipHelper;
 use App\Service\Interconnection\Esabora\Enum\EsaboraStatus;
 use App\Service\Interconnection\Esabora\EsaboraManager;
 use App\Service\Interconnection\Esabora\Response\DossierResponseInterface;
+use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
 use App\Service\Security\FileScanner;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\TimezoneProvider;
@@ -385,5 +386,83 @@ class EsaboraManagerTest extends KernelTestCase
 
         $description = $esaboraManager->updateStatusAndBuildDescription($affectation, $user, $dossierResponse);
         $this->assertStringContainsString('resynchronisé avec Partenaire 01-01 via SISH (Dossier 2023/SISH/0010)', $description);
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function testUpdateFromDossierArretePartialWithExistingML(): void
+    {
+        $intervention = new Intervention();
+        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
+        $existingAdditionalInfo = [
+            'arrete_numero' => 'AP45OL022',
+            'arrete_type' => 'INSALUBRITE',
+            'arrete_mainlevee_date' => '01/01/2024',
+            'arrete_mainlevee_numero' => 'ML001',
+        ];
+        $intervention->setAdditionalInformation($existingAdditionalInfo);
+
+        $territory = $this->getTerritory();
+        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
+        $signalement = $this->getSignalement();
+        $signalement->setTerritory($territory);
+
+        $affectation = new Affectation();
+        $affectation->setSignalement($signalement);
+
+        // Simule des données entrantes avec un nouvel Arrêté mais une Mainlevée nulle (synchronisation splitée)
+        $item = [
+            'keyDataList' => [null, 123],
+            'columnDataList' => [
+                'SISH',
+                'REF123',
+                'DOSS456',
+                '01/01/2024', // arrete_date
+                'AP45OL023', // new arrete_numero
+                'INSALUBRITE', // arrete_type
+                null, // arrete_mainlevee_date est nulle dans cette partie (split)
+                null, // arrete_mainlevee_numero est nulle dans cette partie (split)
+            ],
+        ];
+        $dossierArrete = new DossierArreteSISH($item);
+
+        $esaboraManager = new EsaboraManager(
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->suiviRepository,
+            $this->interventionRepository,
+            $this->interventionFactory,
+            $this->eventDispatcher,
+            $this->userManager,
+            $this->logger,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHandler,
+            $this->imageManipulationHandler,
+            $this->fileFactory,
+            $this->signalementQualificationUpdater,
+            $this->htmlSanitizer,
+            $this->workflow,
+            $this->userSignalementSubscriptionManager,
+            true,
+        );
+
+        $reflector = new \ReflectionClass($esaboraManager);
+        $method = $reflector->getMethod('updateFromDossierArrete');
+        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
+            'arrete_numero' => $dossierArrete->getArreteNumero(),
+            'arrete_type' => $dossierArrete->getArreteType(),
+            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
+            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
+        ]);
+
+        $this->assertTrue($result);
+        $additionalInformation = $intervention->getAdditionalInformation();
+        $this->assertEquals('AP45OL023', $additionalInformation['arrete_numero']);
+        // Vérifie que les informations de mainlevée ont été préservées même si des valeurs nulles ont été envoyées dans le premier objet splitté
+        $this->assertEquals('01/01/2024', $additionalInformation['arrete_mainlevee_date']);
+        $this->assertEquals('ML001', $additionalInformation['arrete_mainlevee_numero']);
     }
 }

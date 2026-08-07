@@ -72,4 +72,9 @@ class DossierPushSISHResponse implements DossierResponseInterface
     {
         return $this->errorCode;
     }
+
+    public function getCommentaireSas(): ?string
+    {
+        return null;
+    }
 }
