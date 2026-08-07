@@ -14,7 +14,8 @@
     "SISH_DossStatut",
     "SISH_DossEtat",
     "SISH_DossTypeCode",
-    "SISH_DossTypeLib"
+    "SISH_DossTypeLib",
+    "SISH_CommentaireSAS"
   ],
   "keyList": [
     "i1.iaff_id"
@@ -26,6 +27,7 @@
         "Rejeté",
         "07/01/2026 18:22",
         "Le dossier n'est pas assez complet, il manque des photos et des détails sur les désordres et les problèmes d'insalubrité.",
+        null,
         null,
         null,
         null,

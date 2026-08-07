@@ -107,6 +107,7 @@ class EsaboraManager
         $currentStatus = $affectation->getStatut();
 
         $esaboraStatus = $dossierResponse->getSasEtat();
+        $commentaireSas = $dossierResponse->getCommentaireSas();
         $esaboraDossierStatus = null !== $dossierResponse->getEtat()
         ? strtolower($dossierResponse->getEtat())
         : '';
@@ -119,6 +120,9 @@ class EsaboraManager
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::WAIT, $affectation->getPartner());
                     $this->affectationManager->removeSubscriptionsOfAffectation($affectation);
                     $description = 'remis en attente par '.$namePartner.' via '.$dossierResponse->getNameSI();
+                    if ($commentaireSas) {
+                        $description .= 'Commentaire SAS : '.$commentaireSas;
+                    }
                 }
                 break;
             case EsaboraStatus::ESABORA_ACCEPTED->value:
@@ -137,18 +141,28 @@ class EsaboraManager
                     if (count($suivis) > 0) {
                         $description = 'resynchronisé avec '.$namePartner.' via '.$dossierResponse->getNameSI();
                     }
+
+                    if ($commentaireSas) {
+                        $description .= 'Commentaire SAS : '.$commentaireSas;
+                    }
                 }
 
                 if ($this->shouldBeClosedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::CLOSED, $affectation->getPartner());
                     $this->affectationManager->removeSubscriptionsOfAffectation($affectation);
                     $description = 'clôturé par '.$namePartner.' via '.$dossierResponse->getNameSI();
+                    if ($commentaireSas) {
+                        $description .= 'Commentaire SAS : '.$commentaireSas;
+                    }
                 }
                 break;
             case EsaboraStatus::ESABORA_REFUSED->value:
                 if (AffectationStatus::REFUSED !== $currentStatus) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::REFUSED, $affectation->getPartner());
                     $description = 'refusé par '.$namePartner.' via '.$dossierResponse->getNameSI();
+                    if ($commentaireSas) {
+                        $description .= 'Commentaire SAS : '.$commentaireSas;
+                    }
                 }
                 break;
             case EsaboraStatus::ESABORA_REJECTED->value:
@@ -181,6 +195,10 @@ class EsaboraManager
                             'refusé via '.$dossierResponse->getNameSI().' pour motif suivant : %s',
                             $dossierResponse->getSasCauseRefus()
                         );
+                    }
+
+                    if ($commentaireSas) {
+                        $description .= 'Commentaire SAS : '.$commentaireSas;
                     }
                 }
                 break;

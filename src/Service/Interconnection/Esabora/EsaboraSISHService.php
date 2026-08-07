@@ -325,6 +325,10 @@ class EsaboraSISHService extends AbstractEsaboraService
                 'fieldValue' => $dossierMessageSISH->getSasDateAffectation(),
             ],
             [
+                'fieldName' => 'Sas_Destinataire',
+                'fieldValue' => $dossierMessageSISH->getSasDestinataire(),
+            ],
+            [
                 'fieldName' => 'Localisation_Etage',
                 'fieldValue' => $dossierMessageSISH->getLocalisationEtage(),
             ],
