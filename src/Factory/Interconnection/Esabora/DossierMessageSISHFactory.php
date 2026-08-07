@@ -73,8 +73,8 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $numPorte = $signalement->getNumAppartOccupant()
             ? substr($signalement->getNumAppartOccupant(), 0, 30)
             : null;
-        $villeOccupant = $signalement->getVilleOccupant()
-            ? substr($signalement->getVilleOccupant(), 0, 60)
+        $city = $signalement->getAddress()->getCity()
+            ? substr($signalement->getAddress()->getCity(), 0, 60)
             : null;
         $numeroInvariant = null;
         if (!empty($signalement->getNumeroInvariantRial())) {
@@ -83,9 +83,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
             $numeroInvariant = substr($signalement->getNumeroInvariant(), 0, 12);
         }
 
-        $codeInsee = $signalement->getInseeOccupant()
-            ? substr($signalement->getInseeOccupant(), 0, 5)
-            : null;
+        $cityCode = $signalement->getAddress()->getCityCode();
 
         $dateEntreeLogement = null !== $signalement->getDateEntree()
             ? DateHelper::formatValidDateInput($signalement->getDateEntree(), AbstractEsaboraService::FORMAT_DATE)
@@ -107,9 +105,9 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
                     : null
             )
             ->setLocalisationAdresse2($signalement->getAdresseAutreOccupant())
-            ->setLocalisationCodePostal($signalement->getCpOccupant())
-            ->setLocalisationVille($villeOccupant)
-            ->setLocalisationLocalisationInsee($codeInsee)
+            ->setLocalisationCodePostal($signalement->getAddress()->getPostCode())
+            ->setLocalisationVille($city)
+            ->setLocalisationLocalisationInsee($cityCode)
             ->setSasLogicielProvenance('H')
             ->setReferenceDossier($signalement->getUuid())
             ->setSasDateAffectation(

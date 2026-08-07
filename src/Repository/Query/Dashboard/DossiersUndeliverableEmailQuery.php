@@ -79,8 +79,8 @@ class DossiersUndeliverableEmailQuery
             $qb
                 ->andWhere(
                     $qb->expr()->orX(
-                        $qb->expr()->like('s.cpOccupant', ':query'),
-                        $qb->expr()->like('s.villeOccupant', ':query')
+                        $qb->expr()->like('address.postCode', ':query'),
+                        $qb->expr()->like('address.city', ':query')
                     )
                 )
                 ->setParameter('query', '%'.$query.'%');

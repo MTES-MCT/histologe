@@ -66,7 +66,7 @@ class SignalementsSansAffectationAccepteeQuery
             if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$params->queryCommune])) {
                 $listCity = array_merge($listCity, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$params->queryCommune]);
             }
-            $sql .= ' AND (address.cp_occupant IN (:cities) OR address.city IN (:cities))';
+            $sql .= ' AND (address.post_code IN (:cities) OR address.city IN (:cities))';
             $paramsToBind['cities'] = $listCity;
             $types['cities'] = ArrayParameterType::STRING;
         }

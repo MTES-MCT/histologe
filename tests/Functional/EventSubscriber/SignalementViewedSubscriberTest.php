@@ -54,11 +54,6 @@ class SignalementViewedSubscriberTest extends WebTestCase
     public function testOnSignalementViewed(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-multi-ter-34-30@signal-logement.fr']);
-        // Empty this data voluntarily to check if the dispatcher handles it.
-        $this->signalement
-            ->setInseeOccupant(null)
-            ->setGeoloc([])
-            ->setCpOccupant(null);
 
         $notifications = $this->notificationRepository->findUnseenNotificationsBy($this->signalement, $user, NotificationType::getForAgent());
         foreach ($notifications as $notification) {
@@ -91,10 +86,6 @@ class SignalementViewedSubscriberTest extends WebTestCase
         foreach ($notifications as $notification) {
             $this->assertTrue($notification->getIsSeen());
         }
-
-        $this->assertEquals('13203', $this->signalement->getInseeOccupant());
-        $this->assertEquals([], $this->signalement->getGeoloc());
-        $this->assertEquals('13003', $this->signalement->getCpOccupant());
     }
 
     public function testOnSuiviViewed(): void

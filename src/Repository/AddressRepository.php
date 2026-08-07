@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Address;
+use App\Entity\Commune;
 use App\Service\Gouv\Ban\Response\BanAddress;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -45,5 +46,14 @@ class AddressRepository extends ServiceEntityRepository
         $qb->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function findWithInconsistentCommuneName(Commune $commune): array
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->where('a.cityCode = :communeCode')->setParameter('communeCode', $commune->getCodeInsee());
+        $qb->andWhere('a.city != :communeName')->setParameter('communeName', $commune->getNom());
+
+        return $qb->getQuery()->getResult();
     }
 }

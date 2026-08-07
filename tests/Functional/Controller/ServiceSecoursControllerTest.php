@@ -180,8 +180,8 @@ class ServiceSecoursControllerTest extends WebTestCase
         $this->assertSame('BMPM', $signalement->getOrigineMissionServiceSecours());
         $this->assertSame('Ordre de mission', $signalement->getOrdreMissionServiceSecours());
         $this->assertSame('27/03/2026', $signalement->getDateMissionServiceSecours()->format('d/m/Y'));
-        $this->assertSame('44179', $signalement->getInseeOccupant());
-        $this->assertSame('44850', $signalement->getCpOccupant());
+        $this->assertSame('44179', $signalement->getAddress()->getCityCode());
+        $this->assertSame('44850', $signalement->getAddress()->getPostCode());
         $this->assertFalse($signalement->getIsLogementSocial());
         $this->assertSame('2', $signalement->getEtageOccupant());
         $this->assertSame('Martin', $signalement->getNomProprio());

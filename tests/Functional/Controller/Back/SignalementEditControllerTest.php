@@ -44,9 +44,10 @@ class SignalementEditControllerTest extends WebTestCase
 
     public function testEditCoordonneesBailleurWithBailleur(): void
     {
+        // TODO ADDRESS : sélectionner directement un signalement via REF ou UUID
         $signalement = $this->signalementRepository->findOneBy([
             'isLogementSocial' => true,
-            'villeOccupant' => 'Marseille',
+            'address.city' => 'Marseille',
         ]);
 
         $route = $this->router->generate(

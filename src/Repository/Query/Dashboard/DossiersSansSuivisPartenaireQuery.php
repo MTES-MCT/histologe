@@ -122,7 +122,7 @@ class DossiersSansSuivisPartenaireQuery
             if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$params->queryCommune])) {
                 $listCity = array_merge($listCity, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$params->queryCommune]);
             }
-            $sql .= ' AND (si.cp_occupant IN (:cities) OR si.ville_occupant IN (:cities))';
+            $sql .= ' AND (address.post_code IN (:cities) OR address.city IN (:cities))';
             $paramsToBind['cities'] = $listCity;
             $types['cities'] = ArrayParameterType::STRING;
         }

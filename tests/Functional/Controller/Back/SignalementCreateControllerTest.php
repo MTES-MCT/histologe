@@ -240,9 +240,9 @@ class SignalementCreateControllerTest extends WebTestCase
 
         $form = $crawler->filter('#bo-form-signalement-adresse')->form();
         $form->setValues([
-            'signalement_draft_address[adresseOccupant]' => 'xrickr jdjerdhjf',
-            'signalement_draft_address[cpOccupant]' => '99999',
-            'signalement_draft_address[villeOccupant]' => 'vlspeotmdmzor',
+            'signalement_draft_address[addressAddress]' => 'xrickr jdjerdhjf',
+            'signalement_draft_address[addressPostCode]' => '99999',
+            'signalement_draft_address[addressCity]' => 'vlspeotmdmzor',
             'signalement_draft_address[isLogementSocial]' => '1',
             'signalement_draft_address[profileDeclarant]' => 'LOCATAIRE',
             'signalement_draft_address[natureLogement]' => 'appartement',

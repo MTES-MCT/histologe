@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Dto\Api\Request\SignalementListQueryParams;
-use App\Entity\Commune;
 use App\Entity\EmailDeliveryIssue;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
@@ -613,6 +612,7 @@ class SignalementRepository extends ServiceEntityRepository
     ): Paginator {
         $queryBuilder = $this->createQueryBuilder('s')
             ->select('s, su')
+            ->innerJoin('s.address', 'address')
             ->leftJoin('s.suivis', 'su')
             ->where('s.statut IN (:signalementStatusList)')
             ->setParameter('signalementStatusList', SignalementStatus::injonctionStatuses());
@@ -1125,20 +1125,6 @@ class SignalementRepository extends ServiceEntityRepository
         if ($count) {
             return (int) $qb->getQuery()->getSingleScalarResult();
         }
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @return array<Signalement>
-     */
-    public function findWithInconsistentCommuneName(Commune $commune): array
-    {
-        $qb = $this->createQueryBuilder('s');
-        $qb->where('s.inseeOccupant = :insee')
-            ->andWhere('s.villeOccupant != :ville')
-            ->setParameter('insee', $commune->getCodeInsee())
-            ->setParameter('ville', $commune->getNom());
 
         return $qb->getQuery()->getResult();
     }

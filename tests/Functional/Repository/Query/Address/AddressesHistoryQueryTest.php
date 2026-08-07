@@ -106,8 +106,8 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         $this->assertIsArray($results);
         foreach ($results as $result) {
-            $matchesCity = $result['villeOccupant'] === $address->getCity();
-            $matchesPostCode = $result['cpOccupant'] === $address->getPostCode();
+            $matchesCity = $result['city'] === $address->getCity();
+            $matchesPostCode = $result['postCode'] === $address->getPostCode();
             $this->assertTrue($matchesCity || $matchesPostCode);
         }
     }

@@ -93,7 +93,7 @@ class SearchFilter
                 $qb->andWhere('s.referenceInjonction = :searchterms');
                 $qb->setParameter('searchterms', str_replace(InjonctionBailleurService::REFERENCE_PREFIX, '', mb_strtoupper(mb_trim($filters['searchterms']))));
             } elseif (preg_match('/^([0-9]{5})$/', mb_trim($filters['searchterms']))) {
-                $qb->andWhere('s.cpOccupant = :searchterms');
+                $qb->andWhere('address.postCode = :searchterms');
                 $qb->setParameter('searchterms', mb_trim($filters['searchterms']));
             } else {
                 $parsedAddress = AddressParser::parse($filters['searchterms']);
@@ -347,7 +347,7 @@ class SearchFilter
                     $filters['cities'] = array_merge($filters['cities'], CommuneHelper::COMMUNES_ARRONDISSEMENTS[$city]);
                 }
             }
-            $qb->andWhere('s.villeOccupant IN (:cities) OR s.cpOccupant IN (:cities)')
+            $qb->andWhere('address.city IN (:cities) OR address.postCode IN (:cities)')
                 ->setParameter('cities', $filters['cities']);
         }
 
@@ -677,14 +677,14 @@ class SearchFilter
         $orX = $qb->expr()->orX();
         foreach ($communes as $key => $commune) {
             $orX->add($qb->expr()->andX(
-                $qb->expr()->eq('s.cpOccupant', ':cpOccupant_'.$key),
-                $qb->expr()->eq('s.villeOccupant', ':villeOccupant_'.$key)
+                $qb->expr()->eq('address.postCode', ':codePostal_'.$key),
+                $qb->expr()->eq('address.city', ':commune_'.$key)
             ));
 
             $qb
-                ->setParameter('cpOccupant_'.$key, $commune['codePostal'])
+                ->setParameter('codePostal_'.$key, $commune['codePostal'])
                 ->setParameter(
-                    'villeOccupant_'.$key,
+                    'commune_'.$key,
                     ImportCommune::sanitizeCommuneWithArrondissement($commune['nom'])
                 );
         }
