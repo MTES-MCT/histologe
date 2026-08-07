@@ -164,7 +164,7 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
             return $pieceJointe;
         }, $piecesJointes);
 
-        return array_filter($piecesJointes, function ($pieceJointe) {
+        return array_filter($piecesJointes, static function ($pieceJointe) {
             return null !== $pieceJointe['documentContent'];
         });
     }
