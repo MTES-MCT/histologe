@@ -216,8 +216,9 @@ export default defineComponent({
     },
     makeNewSignalement () {
       this.desactiveNextbutton()
+      const draftUuid = formStore.alreadyExists.draftUuid || formStore.data.uuidSignalementDraft
       if (formStore.alreadyExists.draftExists && (formStore.alreadyExists.type === 'draft' || formStore.alreadyExists.type === 'signalement')) {
-        requests.archiveDraft(this.saveAndContinue)
+        requests.archiveDraft(draftUuid, this.saveAndContinue)
       } else if (formStore.alreadyExists.type === 'signalement') {
         this.saveAndContinue()
       }

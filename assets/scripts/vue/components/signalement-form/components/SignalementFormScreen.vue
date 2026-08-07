@@ -54,6 +54,7 @@ import { componentValidator } from './../services/componentValidator'
 import { findPreviousScreen, findNextScreen } from '../services/disorderScreenNavigator'
 import SignalementFormComponentGenerator from './SignalementFormComponentGenerator.vue'
 import SignalementFormWarning from './SignalementFormWarning.vue'
+import * as Sentry from "@sentry/browser";
 
 export default defineComponent({
   name: 'SignalementFormScreen',
@@ -134,7 +135,14 @@ export default defineComponent({
       } else if (type === 'toggle') {
         this.toggleComponentBySlug(param, param2)
       } else if (type === 'archive') {
-        requests.archiveDraft(this.gotoHomepage)
+        const draftUuid = formStore.data.uuidSignalementDraft || formStore.alreadyExists.draftUuid
+        if (draftUuid) {
+          requests.archiveDraft(draftUuid, this.gotoHomepage)
+        } else {
+          const errorMessage = 'Tentative d\'archivage sans UUID de draft.'
+          console.error(errorMessage)
+          Sentry.captureException(new Error(errorMessage))
+        }
       } else if (type.includes('goto')) {
         await this.showScreenBySlug(param, param2, type.includes('save'), type.includes('checkloc'), type.includes('checkonly'))
       } else if (type.includes('resolve')) {

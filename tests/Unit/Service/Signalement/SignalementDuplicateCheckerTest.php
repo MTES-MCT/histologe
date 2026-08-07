@@ -122,8 +122,9 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
         $signalementDuplicateChecker = static::getContainer()->get(SignalementDuplicateChecker::class);
         $result = $signalementDuplicateChecker->check($signalementDraftRequest);
 
-        $this->assertEquals($result['already_exists'], true);
-        $this->assertEquals($result['type'], 'draft');
+        $this->assertNotNull($result['draft_uuid']);
+        $this->assertTrue($result['already_exists']);
+        $this->assertEquals('draft', $result['type']);
     }
 
     public function testCheckSignalementInjonction(): void
@@ -158,9 +159,9 @@ class SignalementDuplicateCheckerTest extends KernelTestCase
         $signalementDuplicateChecker = static::getContainer()->get(SignalementDuplicateChecker::class);
         $result = $signalementDuplicateChecker->check($signalementDraftRequest);
 
-        $this->assertEquals($result['already_exists'], true);
-        $this->assertEquals($result['type'], 'signalement');
-        $this->assertEquals($result['has_created_recently'], true);
-        $this->assertEquals($result['signalements'][0]['uuid'], $uuid);
+        $this->assertTrue($result['already_exists']);
+        $this->assertEquals('signalement', $result['type']);
+        $this->assertTrue($result['has_created_recently']);
+        $this->assertEquals($uuid, $result['signalements'][0]['uuid']);
     }
 }

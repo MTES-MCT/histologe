@@ -62,6 +62,7 @@ class SignalementDuplicateChecker
                 'signalements' => $signalements,
                 'has_created_recently' => $hasCreatedRecently,
                 'draft_exists' => (bool) $existingSignalementDraft,
+                'draft_uuid' => $existingSignalementDraft?->getUuid(),
             ];
         }
 
@@ -70,6 +71,7 @@ class SignalementDuplicateChecker
                 'already_exists' => true,
                 'type' => 'draft',
                 'draft_exists' => true,
+                'draft_uuid' => $existingSignalementDraft->getUuid(),
                 'created_at' => $existingSignalementDraft->getCreatedAt(),
                 'updated_at' => $existingSignalementDraft->getUpdatedAt(),
             ];
