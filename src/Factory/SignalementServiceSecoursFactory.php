@@ -12,17 +12,14 @@ use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\ServiceSecoursRoute;
 use App\Entity\Signalement;
-use App\Exception\Address\CityNotFoundException;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordreCritereRepository;
-use App\Service\Gouv\Ban\AddressService;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\SignalementAddressUpdater;
 
 class SignalementServiceSecoursFactory
 {
     public function __construct(
-        private readonly AddressService $addressService,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly BailleurRepository $bailleurRepository,
         private readonly DesordreCritereRepository $desordreCritereRepository,
@@ -74,22 +71,10 @@ class SignalementServiceSecoursFactory
         TypeCompositionLogement $typeCompositionLogement,
     ): void {
         $signalement->setAdresseAutreOccupant($formServiceSecours->step2->adresseAutreOccupant)
-            ->setNatureLogement($formServiceSecours->step2->natureLogement);
+            ->setNatureLogement($formServiceSecours->step2->natureLogement)
+            ->setrnbIdOccupant($formServiceSecours->step2->rnbId);
 
-        $adresseComplete = $formServiceSecours->step2->addressAddress.' '.$formServiceSecours->step2->addressPostcode.' '.$formServiceSecours->step2->addressCity;
-        if ($banAddress = $this->addressService->getAcceptableBanAddress($adresseComplete)) {
-            $this->signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
-        } else {
-            $signalement->setRnbIdOccupant($formServiceSecours->step2->rnbId);
-            if (!$this->signalementAddressUpdater->attachAddressToSignalementFromManualAddress(
-                $signalement,
-                $formServiceSecours->step2->addressAddress,
-                $formServiceSecours->step2->addressPostcode,
-                $formServiceSecours->step2->addressCity,
-            )) {
-                throw new CityNotFoundException($formServiceSecours->step2->addressCity);
-            }
-        }
+        $this->signalementAddressUpdater->attachAddressToSignalement($signalement, $formServiceSecours->step2->addressAddress, $formServiceSecours->step2->addressPostcode, $formServiceSecours->step2->addressCity);
         if ($signalement->getRnbIdOccupant()) {
             $this->signalementAddressUpdater->updateGeolocFromRnbService($signalement);
         } else {

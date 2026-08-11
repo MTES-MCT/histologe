@@ -13,13 +13,14 @@ class AddressesHistorySearchQuery
 
     /**
      * @param array<mixed> $communes
+     * @param array<mixed> $bailleurOuSyndic
      * @param array<mixed> $arreteTypes
      */
     public function __construct(
         private readonly ?string $territoire = null,
         private readonly ?string $adresse = null,
         private readonly ?array $communes = null,
-        private readonly ?string $bailleurOuSyndic = null,
+        private readonly ?array $bailleurOuSyndic = null,
         private readonly ?string $zone = null,
         #[Assert\Choice(choices: ['privee', 'public', 'non_renseigne'], message: 'Nature du parc invalide')]
         private readonly ?string $natureParc = null,
@@ -27,6 +28,12 @@ class AddressesHistorySearchQuery
         private readonly ?string $dossiersMultiples = null,
         private readonly ?array $arreteTypes = null,
         private readonly ?int $page = 1,
+        /*
+        #[Assert\Choice(choices: ['reference', 'nomOccupant', 'lastSuiviAt', 'villeOccupant', 'createdAt'], message: 'Champ de tri invalide')]
+        private readonly string $sortBy = 'reference',
+        #[Assert\Choice(choices: ['ASC', 'DESC', 'asc', 'desc'], message: 'Direction de tri invalide')]
+        private readonly string $direction = 'DESC',
+        */
     ) {
     }
 
@@ -46,7 +53,8 @@ class AddressesHistorySearchQuery
         return $this->communes;
     }
 
-    public function getBailleurOuSyndic(): ?string
+    /** @return array<mixed> */
+    public function getBailleurOuSyndic(): ?array
     {
         return $this->bailleurOuSyndic;
     }
@@ -142,7 +150,7 @@ class AddressesHistorySearchQuery
             territoire: $params['territoire'] ?? null,
             adresse: $params['adresse'] ?? null,
             communes: isset($params['communes']) && is_array($params['communes']) ? $params['communes'] : null,
-            bailleurOuSyndic: $params['bailleurOuSyndic'] ?? null,
+            bailleurOuSyndic: isset($params['bailleurOuSyndic']) && is_array($params['bailleurOuSyndic']) ? $params['bailleurOuSyndic'] : null,
             zone: $params['zone'] ?? null,
             natureParc: $params['natureParc'] ?? null,
             dossiersMultiples: $params['dossiersMultiples'] ?? null,

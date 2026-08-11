@@ -159,7 +159,7 @@ class FilteredStatisticsQuery
                     Commune::class,
                     'c2',
                     'ON',
-                    'address2.postCode = c2.codePostal AND address2.insee = c2.codeInsee AND c2.epci IN (:epcis)'
+                    'address2.postCode = c2.codePostal AND address2.cityCode = c2.codeInsee AND c2.epci IN (:epcis)'
                 );
             $qb->andWhere('s.id IN ('.$subQuery->getDQL().')')->setParameter('epcis', $filters->getEpcis());
         }

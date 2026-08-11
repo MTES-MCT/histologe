@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Factory;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Territory;
 use App\Factory\SignalementImportFactory;
+use App\Service\Signalement\SignalementAddressUpdater;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -48,10 +49,10 @@ class SignalementFactoryTest extends KernelTestCase
             'prenomOccupant' => $faker->firstName(),
             'telOccupant' => $faker->phoneNumber(),
             'mailOccupant' => $faker->email(),
-            'adresseOccupant' => $faker->address(),
-            'cpOccupant' => $faker->postcode(),
-            'villeOccupant' => $faker->city(),
-            'inseeOccupant' => $faker->postcode(),
+            'adresseOccupant' => '22 Rue du test',
+            'cpOccupant' => '01170',
+            'villeOccupant' => 'Gex',
+            'inseeOccupant' => '01173',
             'etageOccupant' => $faker->randomDigit(),
             'escalierOccupant' => $faker->randomDigit(),
             'numAppartOccupant' => $faker->randomDigit(),
@@ -78,8 +79,11 @@ class SignalementFactoryTest extends KernelTestCase
             ->setName('Ain')
             ->setZip('01')
             ->setIsActive(true);
+        $reflection = new \ReflectionClass($territory);
+        $property = $reflection->getProperty('id');
+        $property->setValue($territory, 1);
 
-        $signalementImportFactory = new SignalementImportFactory();
+        $signalementImportFactory = new SignalementImportFactory($this->getContainer()->get(SignalementAddressUpdater::class));
         $signalement = $signalementImportFactory->create($territory, $data);
 
         $this->assertEquals($data['reference'], $signalement->getReference());

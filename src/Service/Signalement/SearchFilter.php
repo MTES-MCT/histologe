@@ -97,10 +97,7 @@ class SearchFilter
                 $qb->setParameter('searchterms', mb_trim($filters['searchterms']));
             } else {
                 $parsedAddress = AddressParser::parse($filters['searchterms']);
-                $houseNumber = $parsedAddress['number'];
-                if ($houseNumber && $parsedAddress['suffix']) {
-                    $houseNumber .= ' '.$parsedAddress['suffix'];
-                }
+                $houseNumber = $parsedAddress['numberAndSuffix'];
                 $street = mb_trim($parsedAddress['street']);
 
                 if ($houseNumber) {
@@ -317,7 +314,7 @@ class SearchFilter
                             JSON_EXTRACT(s2.geoloc, \'$.lat\')
                         )
                     ) = 1
-                )
+                ))
             ';
             $stmt = $connection->prepare($sql);
             foreach ($params as $key => $value) {

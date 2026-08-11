@@ -182,6 +182,7 @@ class SignalementRepositoryTest extends KernelTestCase
         $newAddress->setStreet($signalement->getAddress()->getStreet());
         $newAddress->setPostCode($signalement->getAddress()->getPostCode());
         $newAddress->setCityCode($signalement->getAddress()->getCityCode());
+        $newAddress->setTerritory($signalement->getAddress()->getTerritory());
         $new->setAddress($newAddress);
 
         $signalementsOnSameAddress = $signalementRepository->findOnSameAddress($new);
@@ -219,7 +220,7 @@ class SignalementRepositoryTest extends KernelTestCase
         $user = $userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
 
         $count = $signalementRepository->getActiveSignalementsForUser($user, true);
-        $expected = \count($signalementRepository->findBy(['territory' => 13, 'statut' => SignalementStatus::ACTIVE]));
+        $expected = \count($signalementRepository->findByWithAddressCriteria(['address.territory' => 13, 's.statut' => SignalementStatus::ACTIVE]));
         $this->assertEquals($expected, $count);
     }
 

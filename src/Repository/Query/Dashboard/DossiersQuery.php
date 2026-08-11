@@ -316,7 +316,7 @@ class DossiersQuery
             s.nomOccupant,
             s.prenomOccupant,
             s.reference,
-            CONCAT_WS(\', \', CONCAT_WS(\' \', address.housenumber, address.street), CONCAT_WS(\' \', address.postCode, address.city)) AS fullAddress,
+            CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.postCode, address.city)) AS fullAddress,
             MAX(a.answeredAt) AS lastClosedAt
         ")
             ->innerJoin('s.affectations', 'a')
@@ -404,7 +404,7 @@ class DossiersQuery
             s.nomOccupant,
             s.prenomOccupant,
             s.reference,
-            CONCAT_WS(\', \', CONCAT_WS(\' \', address.housenumber, address.street), CONCAT_WS(\' \', address.postCode, address.city)) AS fullAddress,
+            CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.postCode, address.city)) AS fullAddress,
             MAX(a.answeredAt) AS lastClosedAt
         ")
             ->innerJoin('s.affectations', 'a')
@@ -490,7 +490,7 @@ class DossiersQuery
             s.nomOccupant,
             s.prenomOccupant,
             s.reference,
-            CONCAT_WS(\', \', CONCAT_WS(\' \', address.housenumber, address.street), CONCAT_WS(\' \', address.postCode, address.city)) AS fullAddress,
+            CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.postCode, address.city)) AS fullAddress,
             MAX(su.createdAt) AS demandeFermetureUsagerAt,
             DATEDIFF(CURRENT_DATE(), MAX(su.createdAt)) AS demandeFermetureUsagerDaysAgo,
             CASE WHEN s.isNotOccupant = 1 THEN 'TIERS DÉCLARANT' ELSE 'OCCUPANT' END AS demandeFermetureUsagerProfileDeclarant

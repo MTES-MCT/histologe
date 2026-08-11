@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Security\Authenticator;
 use App\Entity\Address;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Signalement;
+use App\Entity\Territory;
 use App\Repository\SignalementRepository;
 use App\Security\Authenticator\CodeSuiviLoginAuthenticator;
 use App\Security\Provider\SignalementUserProvider;
@@ -263,7 +264,9 @@ class CodeSuiviLoginAuthenticatorTest extends TestCase
            ->setMailOccupant($email)
            ->setProfileDeclarant($profileDeclarant);
 
-        $address = (new Address())->setPostCode($codePostal);
+        $address = (new Address())
+            ->setPostCode($codePostal)
+            ->setTerritory(new Territory());
         $signalement->setAddress($address);
 
         if (ProfileDeclarant::TIERS_PARTICULIER === $profileDeclarant

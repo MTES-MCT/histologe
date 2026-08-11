@@ -19,6 +19,7 @@ use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Exception\Address\CityNotFoundException;
+use App\Exception\Address\TerritoryInconsistentException;
 use App\Factory\SuiviDelayedFactory;
 use App\Factory\TiersInvitationFactory;
 use App\Manager\SignalementManager;
@@ -30,7 +31,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\MessageHelper;
-use App\Service\Signalement\SignalementAddressUpdater;
+use App\Service\Signalement\PostalCodeHomeChecker;
 use App\Service\SignalementAddressContentService;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -57,7 +58,7 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
         SignalementAddressContentService $signalementAddressContentService,
-        SignalementAddressUpdater $signalementAddressUpdater,
+        PostalCodeHomeChecker $postalCodeHomeChecker,
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
     ): JsonResponse {
@@ -85,7 +86,7 @@ class SignalementEditController extends AbstractController
         }
         try {
             $subscriptionCreated = $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
-        } catch (CityNotFoundException $e) {
+        } catch (CityNotFoundException|TerritoryInconsistentException $e) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $e->getMessage()];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
@@ -95,6 +96,12 @@ class SignalementEditController extends AbstractController
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
+        if (!$postalCodeHomeChecker->isActiveByInseeCode($signalement->getAddress()->getCityCode())) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Le territoire n\'est pas actif pour le code insee '.$signalement->getAddress()->getCityCode().'.'];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+
         $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'L\'adresse du logement a bien été modifiée.'];
         if ($subscriptionCreated) {

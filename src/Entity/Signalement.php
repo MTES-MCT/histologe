@@ -28,6 +28,7 @@ use App\Repository\SignalementRepository;
 use App\Service\InjonctionBailleur\BailleurLoginCodeGenerator;
 use App\Service\InjonctionBailleur\InjonctionBailleurService;
 use App\Service\Signalement\PhotoHelper;
+use App\Utils\Address\AddressParser;
 use App\Utils\Phone;
 use App\Utils\TrimHelper;
 use App\Validator as AppAssert;
@@ -2104,14 +2105,30 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getAddress(): ?Address
+    public function getAddress(): Address
     {
-        return $this->address;
+        if ($this->address) {
+            return $this->address;
+        }
+        // fallback pour l'affichage des signalements sans addresse en attendant que les cas particuliers soient traités
+        $address = new Address();
+        $parsedAddress = AddressParser::parse($this->adresseOccupant);
+        $houseNumber = $parsedAddress['numberAndSuffix'];
+        $address->setHouseNumber($houseNumber);
+        $address->setStreet((string) $parsedAddress['street']);
+        $address->setPostCode((string) $this->cpOccupant);
+        $address->setCity((string) $this->villeOccupant);
+        $address->setCityCode((string) $this->inseeOccupant);
+        $address->setBanId($this->banIdOccupant);
+        $address->setTerritory($this->territory);
+
+        return $address;
     }
 
     public function setAddress(?Address $address): static
     {
         $this->address = $address;
+        $this->territory = $address?->getTerritory();
 
         return $this;
     }

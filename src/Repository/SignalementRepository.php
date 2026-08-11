@@ -185,10 +185,7 @@ class SignalementRepository extends ServiceEntityRepository
         string $city,
     ): ?Signalement {
         $parsedAddress = AddressParser::parse($address);
-        $houseNumber = $parsedAddress['number'];
-        if ($houseNumber && $parsedAddress['suffix']) {
-            $houseNumber .= ' '.$parsedAddress['suffix'];
-        }
+        $houseNumber = $parsedAddress['numberAndSuffix'];
         $street = mb_trim($parsedAddress['street']);
 
         $qb = $this->createQueryBuilder('s')
@@ -254,10 +251,7 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         $parsedAddress = AddressParser::parse($address);
-        $houseNumber = $parsedAddress['number'];
-        if ($houseNumber && $parsedAddress['suffix']) {
-            $houseNumber .= ' '.$parsedAddress['suffix'];
-        }
+        $houseNumber = $parsedAddress['numberAndSuffix'];
         $street = mb_trim($parsedAddress['street']);
         if ($houseNumber) {
             $qb->andWhere('address.housenumber = :housenumber')->setParameter('housenumber', $houseNumber);
@@ -469,7 +463,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s')
             ->innerJoin('s.address', 'address');
 
-        $qb->select('DISTINCT s', 'territory')
+        $qb->select('DISTINCT s', 'address', 'territory')
             ->leftJoin('address.territory', 'territory')
             ->leftJoin('s.affectations', 'affectations');
         if ($includeCreatedByUser) {
@@ -508,7 +502,7 @@ class SignalementRepository extends ServiceEntityRepository
             $qb->andWhere('address.housenumber = :housenumber')
                 ->setParameter('housenumber', $signalement->getAddress()->getHousenumber());
         } else {
-            $qb->andWhere('a.housenumber IS NULL');
+            $qb->andWhere('address.housenumber IS NULL');
         }
 
         if (!empty($exclusiveStatus)) {
@@ -1099,19 +1093,66 @@ class SignalementRepository extends ServiceEntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @param array<string, mixed> $criteria
+     */
+    public function findOneByWithAddressCriteria(array $criteria): ?Signalement
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('s', 'address');
+        $qb->innerJoin('s.address', 'address');
+        foreach ($criteria as $field => $value) {
+            $parameter = str_replace('.', '_', $field);
+            $qb->andWhere($field.' = :'.$parameter)->setParameter($parameter, $value);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param array<string, mixed>       $criteria
+     * @param array<string, string>|null $orderBy
+     *
+     * @return array<Signalement>
+     */
+    public function findByWithAddressCriteria(array $criteria, ?array $orderBy = null, ?int $limit = null): array
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->select('s', 'address');
+        $qb->innerJoin('s.address', 'address');
+        foreach ($criteria as $field => $value) {
+            $parameter = str_replace('.', '_', $field);
+            $qb->andWhere($field.' = :'.$parameter)->setParameter($parameter, $value);
+        }
+        if ($orderBy) {
+            foreach ($orderBy as $field => $direction) {
+                $qb->addOrderBy($field, $direction);
+            }
+        }
+        if ($limit) {
+            $qb->setMaxResults($limit);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
     // utilisation uniquement dans les tests
+    /**
+     * @return array<Signalement>
+     */
     public function findByAddress(?string $housenumber, string $street, string $postCode, string $city): array
     {
         $qb = $this->createQueryBuilder('s');
+        $qb->innerJoin('s.address', 'address');
         if ($housenumber) {
-            $qb->andWhere('s.address.housenumber = :housenumber')
+            $qb->andWhere('address.housenumber = :housenumber')
                 ->setParameter('housenumber', $housenumber);
         } else {
-            $qb->andWhere('s.address.housenumber IS NULL');
+            $qb->andWhere('address.housenumber IS NULL');
         }
-        $qb->andWhere('s.address.street = :street')
-            ->andWhere('s.address.postCode = :postCode')
-            ->andWhere('s.address.city = :city')
+        $qb->andWhere('address.street = :street')
+            ->andWhere('address.postCode = :postCode')
+            ->andWhere('address.city = :city')
             ->setParameter('street', $street)
             ->setParameter('postCode', $postCode)
             ->setParameter('city', $city);

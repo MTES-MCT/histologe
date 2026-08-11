@@ -29,7 +29,6 @@ class ZoneRepositoryTest extends KernelTestCase
 
         $this->assertArrayHasKey('uuid', $first);
         $this->assertArrayHasKey('reference', $first);
-        $this->assertArrayHasKey('geoloc', $first);
         $this->assertArrayHasKey('housenumber', $first);
         $this->assertArrayHasKey('street', $first);
         $this->assertArrayHasKey('post_code', $first);

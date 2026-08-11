@@ -36,7 +36,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
             $this->assertArrayHasKey('addressId', $result);
             $this->assertArrayHasKey('housenumber', $result);
             $this->assertArrayHasKey('street', $result);
-            $this->assertArrayHasKey('postcode', $result);
+            $this->assertArrayHasKey('postCode', $result);
             $this->assertArrayHasKey('city', $result);
             $this->assertArrayHasKey('territoryId', $result);
 
@@ -78,15 +78,14 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $address = $this->entityManager->getRepository(Address::class)->findOneBy([]);
         $this->assertNotNull($address, 'Need at least one address in the database');
 
-        $searchQuery = new AddressesHistorySearchQuery(
-            adresse: strtolower(substr($address->getStreet(), 0, 5))
-        );
+        $search = strtolower(substr($address->getStreet(), 0, 5)); // Use the first 5 characters of the street name for search
+        $searchQuery = new AddressesHistorySearchQuery($search);
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
         $this->assertIsArray($results);
         foreach ($results as $result) {
-            $this->assertEquals($address->getStreet(), $result['street']);
+            $this->assertStringContainsString($search, strtolower($result['street']));
         }
     }
 

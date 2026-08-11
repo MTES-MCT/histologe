@@ -85,7 +85,7 @@ export default defineComponent({
           const signalementOptions: SignalementMarkerOptions = {
             id: signalement.id,
             status: signalement.statut,
-            address: signalement.housenumber + ' ' + signalement.street,
+            address: `${signalement.housenumber ?? ''} ${signalement.street ?? ''}`.trim(),
             zip: signalement.postCode,
             city: signalement.city,
             reference: signalement.reference,

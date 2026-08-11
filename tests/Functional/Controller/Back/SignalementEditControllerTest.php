@@ -44,11 +44,7 @@ class SignalementEditControllerTest extends WebTestCase
 
     public function testEditCoordonneesBailleurWithBailleur(): void
     {
-        // TODO ADDRESS : sélectionner directement un signalement via REF ou UUID
-        $signalement = $this->signalementRepository->findOneBy([
-            'isLogementSocial' => true,
-            'address.city' => 'Marseille',
-        ]);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
 
         $route = $this->router->generate(
             'back_signalement_edit_coordonnees_bailleur',
@@ -426,5 +422,95 @@ class SignalementEditControllerTest extends WebTestCase
     private function getCsrfToken(string $tokenId, int $signalementId): string
     {
         return $this->generateCsrfToken($this->client, $tokenId.$signalementId);
+    }
+
+    /**
+     * @param array<string, string> $formData
+     */
+    #[DataProvider('provideEditAddressData')]
+    public function testEditAddress(
+        string $signalementReference,
+        array $formData,
+        string $expectedMessage,
+    ): void {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => $signalementReference]);
+        $route = $this->router->generate('back_signalement_edit_address', ['uuid' => $signalement->getUuid()]);
+
+        $payload = array_merge($formData, ['_token' => $this->generateCsrfToken($this->client, 'signalement_edit_address_'.$signalement->getId())]);
+
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertEquals($expectedMessage, $response['flashMessages'][0]['message']);
+    }
+
+    public static function provideEditAddressData(): \Generator
+    {
+        yield 'Bouches-du-Rhône: peut mettre à jour avec un autre code postal/insee du 13' => [
+            'signalementReference' => '2022-1',
+            'formData' => [
+                'adresse' => '3 Rue Mars',
+                'codePostal' => '13015',
+                'ville' => 'Marseille',
+                'insee' => '13203',
+            ],
+            'expectedMessage' => 'L\'adresse du logement a bien été modifiée.',
+        ];
+
+        yield 'Bouches-du-Rhône: ne peut pas mettre à jour avec un autre code postal autre territoire mais insee du 13' => [
+            'signalementReference' => '2022-1',
+            'formData' => [
+                'adresse' => '3 Rue Mars',
+                'codePostal' => '14004',
+                'ville' => 'Marseille',
+                'insee' => '13203',
+            ],
+            'expectedMessage' => 'Commune Marseille introuvable pour le code postal 14004',
+        ];
+
+        yield 'Bouches-du-Rhône: ne peut pas mettre à jour avec le code postal/insee d\'un autre territoire' => [
+            'signalementReference' => '2022-1',
+            'formData' => [
+                'adresse' => '3 Rue Mars',
+                'codePostal' => '01170',
+                'ville' => 'Gex',
+                'insee' => '01173',
+            ],
+            'expectedMessage' => 'Le territoire calculé (Ain) pour l\'adresse ne correspond pas au territoire attendu (Bouches-du-Rhône).',
+        ];
+
+        yield 'Rhône: ne peut pas mettre à jour avec le code postal/insee de la Métropole de Lyon' => [
+            'signalementReference' => '2023-2',
+            'formData' => [
+                'adresse' => 'Le Bourg 47 route du Montmeterme',
+                'codePostal' => '69001',
+                'ville' => 'Lyon',
+                'insee' => '69381',
+            ],
+            'expectedMessage' => 'Le territoire calculé (Métropole de Lyon) pour l\'adresse ne correspond pas au territoire attendu (Rhône).',
+        ];
+
+        yield 'Finistère: ne peut pas mettre à jour avec le code postal/insee d\'une commune non autorisée' => [
+            'signalementReference' => '2023-24',
+            'formData' => [
+                'adresse' => '4 Rue Auguste Gache',
+                'codePostal' => '29100',
+                'ville' => 'Douarnenez',
+                'insee' => '29046',
+            ],
+            'expectedMessage' => 'Le territoire n\'est pas actif pour le code insee 29046.',
+        ];
+
+        yield 'Finistère: peut mettre à jour de Quimper vers Brest' => [
+            'signalementReference' => '2023-24',
+            'formData' => [
+                'adresse' => '4 Rue Auguste Gache',
+                'codePostal' => '29200',
+                'ville' => 'Brest',
+                'insee' => '29019',
+            ],
+            'expectedMessage' => 'L\'adresse du logement a bien été modifiée.',
+        ];
     }
 }

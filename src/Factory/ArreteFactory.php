@@ -26,27 +26,7 @@ class ArreteFactory
      */
     public function createInstanceFrom(ArreteImportRow $arreteImportRow, User $user): ?Arrete
     {
-        $addressResponse = $this->addressService->getAddress($arreteImportRow->getAddress());
-        $hasValidBan = $addressResponse->getScore() >= AddressService::SCORE_IF_BAN_ID_ACCEPTED;
-        $rnbBuilding = !empty($arreteImportRow->getRnbId())
-            ? $this->rnbService->getBuilding($arreteImportRow->getRnbId())
-            : null;
-
-        if (!$hasValidBan && null === $rnbBuilding) {
-            return null;
-        }
-
-        $cityCode = $addressResponse->getInseeCode();
-        if (null === $cityCode) {
-            return null;
-        }
-
-        $territoryAddress = $this->zipcodeProvider->getTerritoryByInseeCode($cityCode);
-        if (null === $territoryAddress) {
-            return null;
-        }
-
-        if ($user->isTerritoryAdmin() && $territoryAddress->getId() !== $user->getFirstTerritory()?->getId()) {
+        if (!$addressResponse = $this->addressService->getAcceptableBanAddress($arreteImportRow->getAddress())) {
             return null;
         }
 
@@ -100,7 +80,7 @@ class ArreteFactory
             }
         }
 
-        if ($user->isTerritoryAdmin() && $address->getTerritory()->getId() !== $user->getFirstTerritory()->getId()) {
+        if (!$user->isSuperAdmin() && $address->getTerritory()->getId() !== $user->getFirstTerritory()->getId()) {
             return null;
         }
 

@@ -34,12 +34,12 @@ class AutoAssignerSimulatorController extends AbstractController
         AutoAssigner $autoAssigner,
     ): Response {
         $results = [];
-        $criteria = ['territory' => $territory];
+        $criteria = ['address.territory' => $territory];
         $limit = $request->query->getInt('limit', 10);
         if ($uuid = $request->query->get('uuid')) {
             $criteria['uuid'] = $uuid;
         }
-        $signalements = $signalementRepository->findBy($criteria, ['createdAt' => 'DESC'], $limit);
+        $signalements = $signalementRepository->findByWithAddressCriteria($criteria, ['s.createdAt' => 'DESC'], $limit);
         foreach ($signalements as $signalement) {
             $assignablePartners = $autoAssigner->assign($signalement, true);
             $results[] = [

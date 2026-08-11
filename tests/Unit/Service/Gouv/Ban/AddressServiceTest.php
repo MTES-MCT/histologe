@@ -43,7 +43,5 @@ class AddressServiceTest extends TestCase
         $this->assertSame($address->getLabel(), $addressComputed);
         $this->assertNotEmpty($address->getLongitude());
         $this->assertNotEmpty($address->getLatitude());
-        $this->assertArrayHasKey('lat', $address->getGeoloc());
-        $this->assertArrayHasKey('lng', $address->getGeoloc());
     }
 }

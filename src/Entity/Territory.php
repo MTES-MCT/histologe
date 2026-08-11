@@ -173,28 +173,6 @@ class Territory implements EntityHistoryInterface
         return $this->signalements;
     }
 
-    public function addSignalement(Signalement $signalement): static
-    {
-        if (!$this->signalements->contains($signalement)) {
-            $this->signalements[] = $signalement;
-            $signalement->setTerritory($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSignalement(Signalement $signalement): static
-    {
-        if ($this->signalements->removeElement($signalement)) {
-            // set the owning side to null (unless already changed)
-            if ($signalement->getTerritory() === $this) {
-                $signalement->setTerritory(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function isIsActive(): ?bool
     {
         return $this->isActive;

@@ -7,14 +7,12 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
-use App\Exception\Address\CityNotFoundException;
-use App\Service\Gouv\Ban\AddressService;
+use App\Exception\Address\TerritoryInconsistentException;
 use App\Service\Signalement\SignalementAddressUpdater;
 
 class SignalementImportFactory
 {
     public function __construct(
-        private readonly AddressService $addressService,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
     ) {
     }
@@ -92,22 +90,10 @@ class SignalementImportFactory
                     : null)
             ->setClosedAt($data['closedAt']);
 
-        $adresseComplete = $data['adresseOccupant'].' '.$data['cpOccupant'].' '.$data['villeOccupant'];
-        if ($banAddress = $this->addressService->getAcceptableBanAddress($adresseComplete)) {
-            $this->signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
-        } else {
-            if (!$this->signalementAddressUpdater->attachAddressToSignalementFromManualAddress(
-                $signalement,
-                $data['adresseOccupant'],
-                $data['cpOccupant'],
-                $data['villeOccupant']
-            )) {
-                throw new CityNotFoundException($data['villeOccupant']);
-            }
-        }
+        $this->signalementAddressUpdater->attachAddressToSignalement($signalement, $data['adresseOccupant'], $data['cpOccupant'], $data['villeOccupant']);
 
-        if ($signalement->getAddress()->getTerritory() !== $territory) {
-            throw new \Exception('Le territoire calculé ('.$signalement->getAddress()->getTerritory()->getName().') pour l\'adresse ne correspond pas au territoire attendu ('.$territory->getName().').');
+        if ($signalement->getAddress()->getTerritory()->getId() !== $territory->getId()) {
+            throw new TerritoryInconsistentException($signalement->getAddress()->getTerritory(), $territory);
         }
 
         $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);

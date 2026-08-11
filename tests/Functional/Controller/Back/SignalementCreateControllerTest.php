@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Controller\Back;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\SignalementStatus;
+use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\SignalementUsagerRepository;
@@ -81,7 +82,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertTrue($response['redirect']);
         $this->assertStringContainsString('/bo/signalement/brouillon/editer/', $response['url']);
 
-        $signalements = $this->signalementRepository->findByAddress('8', ' Rue de la tourmentinerie', '44850', 'Saint-Mars-du-Désert');
+        $signalements = $this->signalementRepository->findByAddress('8', 'Rue de la tourmentinerie', '44850', 'Saint-Mars-du-Désert');
 
         $this->assertCount(2, $signalements);
         $this->assertEquals($user->getId(), $signalements[0]->getCreatedBy()->getId());
@@ -252,7 +253,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('tabContent', $response);
-        $this->assertStringContainsString('L&#039;adresse renseignée ne correspond pas à un territoire actif.', $response['tabContent']);
+        $this->assertStringContainsString('Commune introuvable.', $response['tabContent']);
     }
 
     public function testEditLogement(): void
@@ -430,9 +431,15 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->loginUser($user);
 
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000002']);
-        // $signalement->setInseeOccupant(null);
         $partner1 = $this->partnerRepository->findOneBy(['nom' => 'SDIS 44']);
-        $partner2 = $this->partnerRepository->findOneBy(['nom' => 'Partner Habitat 44']);
+        $partner2 = $this->partnerRepository->findOneBy(['nom' => 'DDT Loire-Atlantique']);
+        // Remove auto affectation rules for the territory to test manual affectation
+        $autoAffectationRuleRepository = static::getContainer()->get(AutoAffectationRuleRepository::class);
+        $autoAffectations = $autoAffectationRuleRepository->findBy(['territory' => $signalement->getAddress()->getTerritory()]);
+        foreach ($autoAffectations as $autoAffectation) {
+            $this->entityManager->remove($autoAffectation);
+        }
+        $this->entityManager->flush();
 
         $route = $this->router->generate('back_signalement_draft_form_validation', ['uuid' => $signalement->getUuid()]);
         $this->client->request('POST', $route, [
@@ -456,12 +463,11 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertNotEmpty($expectedUrl);
         $this->assertStringEndsWith($expectedUrl, $response['url']);
 
-        // $this->assertNull($signalement->getInseeOccupant());
         $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
         $this->assertCount(1, $signalement->getSuivis());
         $this->assertCount(2, $signalement->getAffectations());
 
-        $this->assertEmailCount(4);
+        $this->assertEmailCount(3);
         $this->assertCount(1, $this->userSignalementSubscriptionRepository->findBy(['signalement' => $signalement]));
     }
 
@@ -471,7 +477,13 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->client->loginUser($user);
 
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2025-000000000008']);
-        // $signalement->setInseeOccupant(null);
+        // Remove auto affectation rules for the territory to test manual affectation
+        $autoAffectationRuleRepository = static::getContainer()->get(AutoAffectationRuleRepository::class);
+        $autoAffectations = $autoAffectationRuleRepository->findBy(['territory' => $signalement->getAddress()->getTerritory()]);
+        foreach ($autoAffectations as $autoAffectation) {
+            $this->entityManager->remove($autoAffectation);
+        }
+        $this->entityManager->flush();
 
         $route = $this->router->generate('back_signalement_draft_form_validation', ['uuid' => $signalement->getUuid()]);
         $this->client->request('POST', $route, [
@@ -489,7 +501,6 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertNotEmpty($expectedUrl);
         $this->assertStringEndsWith($expectedUrl, $response['url']);
 
-        // $this->assertNull($signalement->getInseeOccupant());
         $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
         $this->assertCount(0, $signalement->getSuivis());
         $this->assertCount(0, $signalement->getAffectations());

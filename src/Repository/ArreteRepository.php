@@ -84,6 +84,9 @@ class ArreteRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return Arrete[]
+     */
     public function findByAddress(Address $address): array
     {
         $qb = $this->createQueryBuilder('a')

@@ -67,7 +67,7 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             ->setPrenomUsager($prenomUsager)
             ->setMailUsager($signalement->getMailOccupant())
             ->setTelephoneUsager(ltrim($signalement->getTelOccupantDecoded(nationalIfFrench: true) ?? '', '+'))
-            ->setAdresseSignalement($signalement->getAddress()->getStreet())
+            ->setAdresseSignalement(ucfirst($signalement->getAddress()->getStreet()))
             ->setCodepostaleSignalement($signalement->getAddress()->getPostCode())
             ->setVilleSignalement($signalement->getAddress()->getCity())
             ->setEtageSignalement(!empty($etage) ? (string) $etage : null)

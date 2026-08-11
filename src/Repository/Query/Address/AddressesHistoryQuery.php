@@ -5,7 +5,6 @@ namespace App\Repository\Query\Address;
 use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\Address;
 use App\Entity\Arrete;
-use App\Entity\Bailleur;
 use App\Entity\Commune;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
@@ -57,7 +56,7 @@ class AddressesHistoryQuery
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Address::class, 'a')
             ->leftJoin('a.signalements', 's', 'WITH', 's.statut IN (:statusList)')
-            ->leftJoin(Bailleur::class, 'b', 'WITH', 'b.id = s.bailleur')
+            ->leftJoin('s.bailleur', 'b')
             ->leftJoin('a.arretes', 'ar')
             ->select(
                 'a.id AS addressId',
@@ -176,7 +175,7 @@ class AddressesHistoryQuery
         ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
     ): QueryBuilder {
         if (!empty($addressesHistorySearchQuery->getAdresse())) {
-            $qb->andWhere('LOWER(CONCAT(a.housenumber, \' \', a.street)) LIKE :adresse');
+            $qb->andWhere("LOWER(CONCAT_WS(' ', a.housenumber, a.street)) LIKE :adresse");
             $qb->setParameter('adresse', '%'.strtolower($addressesHistorySearchQuery->getAdresse()).'%');
         }
 

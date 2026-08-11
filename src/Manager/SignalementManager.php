@@ -34,7 +34,7 @@ use App\Entity\SignalementQualification;
 use App\Entity\Territory;
 use App\Entity\TiersInvitation;
 use App\Entity\User;
-use App\Exception\Address\CityNotFoundException;
+use App\Exception\Address\TerritoryInconsistentException;
 use App\Factory\SignalementAffectationListViewFactory;
 use App\Factory\SignalementExportFactory;
 use App\Factory\SignalementImportFactory;
@@ -46,7 +46,6 @@ use App\Repository\PartnerRepository;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
 use App\Repository\Query\SignalementList\QueryBuilderFactory;
 use App\Repository\SignalementRepository;
-use App\Service\Gouv\Ban\AddressService;
 use App\Service\Signalement\CriticiteCalculator;
 use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\Qualification\QualificationStatusService;
@@ -81,7 +80,6 @@ class SignalementManager
         private readonly BailleurRepository $bailleurRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly SignalementRepository $signalementRepository,
-        private readonly AddressService $addressService,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly ExportIterableQuery $exportIterableQuery,
@@ -183,22 +181,10 @@ class SignalementManager
             )
             ->setClosedAt($data['closedAt']);
 
-        $adresseComplete = $data['adresseOccupant'].' '.$data['cpOccupant'].' '.$data['villeOccupant'];
-        if ($banAddress = $this->addressService->getAcceptableBanAddress($adresseComplete)) {
-            $this->signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
-        } else {
-            if (!$this->signalementAddressUpdater->attachAddressToSignalementFromManualAddress(
-                $signalement,
-                $data['adresseOccupant'],
-                $data['cpOccupant'],
-                $data['villeOccupant']
-            )) {
-                throw new CityNotFoundException($data['villeOccupant']);
-            }
-        }
+        $this->signalementAddressUpdater->attachAddressToSignalement($signalement, $data['adresseOccupant'], $data['cpOccupant'], $data['villeOccupant']);
 
         if ($signalement->getAddress()->getTerritory() !== $territory) {
-            throw new \Exception('Le territoire calculé ('.$signalement->getAddress()->getTerritory()->getName().') pour l\'adresse ne correspond pas au territoire attendu ('.$territory->getName().').');
+            throw new TerritoryInconsistentException($signalement->getAddress()->getTerritory(), $territory);
         }
 
         $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);
@@ -354,18 +340,11 @@ class SignalementManager
             ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre());
 
         if ($addressIsModified) {
-            $adresseComplete = $adresseOccupantRequest->getAdresse().' '.$adresseOccupantRequest->getCodePostal().' '.$adresseOccupantRequest->getVille();
-            if ($banAddress = $this->addressService->getAcceptableBanAddress($adresseComplete)) {
-                $this->signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
-            } else {
-                if (!$this->signalementAddressUpdater->attachAddressToSignalementFromManualAddress(
-                    $signalement,
-                    $adresseOccupantRequest->getAdresse(),
-                    $adresseOccupantRequest->getCodePostal(),
-                    $adresseOccupantRequest->getVille()
-                )) {
-                    throw new CityNotFoundException($adresseOccupantRequest->getVille());
-                }
+            $srcTerritory = $signalement->getAddress()->getTerritory();
+
+            $this->signalementAddressUpdater->attachAddressToSignalement($signalement, $adresseOccupantRequest->getAdresse(), $adresseOccupantRequest->getCodePostal(), $adresseOccupantRequest->getVille());
+            if ($signalement->getAddress()->getTerritory()->getId() !== $srcTerritory->getId()) {
+                throw new TerritoryInconsistentException($signalement->getAddress()->getTerritory(), $srcTerritory);
             }
             $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);
             $this->signalementAddressUpdater->getRialDataForSignalement($signalement);

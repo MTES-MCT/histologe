@@ -392,7 +392,7 @@ class PartnerController extends AbstractController
                     if ($this->shouldCancelFutureVisite($intervention)) {
                         /** @var User $user */
                         $user = $this->getUser();
-                        $context = ['createdByPartner' => $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getTerritory())];
+                        $context = ['createdByPartner' => $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getAddress()->getTerritory())];
                         $interventionPlanningStateMachine->apply($intervention, 'cancel', $context);
                         $entityManager->persist($intervention); // flushed in bulk at the end of the loop to avoid multiple flush if many interventions
 

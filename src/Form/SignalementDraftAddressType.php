@@ -41,8 +41,17 @@ class SignalementDraftAddressType extends AbstractType
         /** @var Signalement $signalement */
         $signalement = $builder->getData();
         $adresseCompleteOccupant = '';
-        if ($signalement->getAddress() && $signalement->getAddress()->getBanId()) {
-            $adresseCompleteOccupant = $signalement->getAddress()->getFull(); // TODO ADDRESS : passer withArrondisement = false ?
+        $addressAddress = '';
+        $addressPostCode = '';
+        $addressCity = '';
+        if ($signalement->getId()) {
+            if ($signalement->getAddress()->getBanId()) {
+                $adresseCompleteOccupant = $signalement->getAddress()->getFull();
+            } else {
+                $addressAddress = $signalement->getAddress()->getHouseNumberAndStreet();
+                $addressPostCode = $signalement->getAddress()->getPostCode();
+                $addressCity = $signalement->getAddress()->getCity();
+            }
         }
         $nbEnfantsDansLogement = $signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants();
         $enfantsDansLogementMoinsSixAns = $signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants();
@@ -61,7 +70,7 @@ class SignalementDraftAddressType extends AbstractType
             ]);
         } else {
             $territory = null;
-            if (!empty($signalement)) {
+            if ($signalement->getId()) {
                 $territory = $signalement->getAddress()->getTerritory();
             }
             $builder->add('filterSearchAddressTerritory', TerritoryChoiceType::class, [
@@ -98,6 +107,7 @@ class SignalementDraftAddressType extends AbstractType
                 'attr' => [
                     'class' => 'bo-form-signalement-manual-address bo-form-signalement-manual-address-input',
                 ],
+                'data' => $addressAddress,
                 'empty_data' => '',
                 'mapped' => false,
                 'constraints' => [
@@ -114,6 +124,7 @@ class SignalementDraftAddressType extends AbstractType
                     'class' => 'bo-form-signalement-manual-address',
                 ],
                 'mapped' => false,
+                'data' => $addressPostCode,
                 'empty_data' => '',
                 'constraints' => [
                     new Assert\Regex(
@@ -130,6 +141,7 @@ class SignalementDraftAddressType extends AbstractType
                     'class' => 'bo-form-signalement-manual-address',
                 ],
                 'mapped' => false,
+                'data' => $addressCity,
                 'empty_data' => '',
                 'constraints' => [
                     new Assert\Length(

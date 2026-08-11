@@ -3,6 +3,7 @@
 namespace App\Service\Signalement;
 
 use App\Entity\Signalement;
+use App\Exception\Address\CityNotFoundException;
 use App\Factory\AddressFactory;
 use App\Repository\AddressRepository;
 use App\Service\Gouv\Ban\AddressService;
@@ -23,11 +24,22 @@ class SignalementAddressUpdater
         private readonly EntityManagerInterface $entityManager,
         private readonly RnbService $rnbService,
         private readonly RialService $rialService,
-        private readonly ZipcodeProvider $zipcodeProvider,
-        private readonly PostalCodeHomeChecker $postalCodeHomeChecker,
         #[Autowire(env: 'RIAL_ENABLE')]
         private readonly string $rialEnable,
     ) {
+    }
+
+    public function attachAddressToSignalement(Signalement $signalement, string $address, string $postCode, string $city, ?string $rnbId = null): void
+    {
+        $adresseComplete = $address.' '.$postCode.' '.$city;
+        if ($banAddress = $this->addressService->getAcceptableBanAddress($adresseComplete)) {
+            $this->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
+        } else {
+            $signalement->setRnbIdOccupant($rnbId);
+            if (!$this->attachAddressToSignalementFromManualAddress($signalement, $address, $postCode, $city)) {
+                throw new CityNotFoundException($city, $postCode);
+            }
+        }
     }
 
     public function attachAddressToSignalementFromBanAddress(Signalement $signalement, BanAddress $banAddress): void
@@ -63,23 +75,20 @@ class SignalementAddressUpdater
     public function attachAddressToSignalementFromManualAddress(Signalement $signalement, string $numberAndStreet, string $postCode, string $city): bool
     {
         $addressResult = $this->addressService->getAddress($postCode.' '.$city);
-        if (!$addressResult->getCity()) {
+        if (!$addressResult->getCity() || $addressResult->getZipCode() !== $postCode) {
             return false;
         }
 
         $parsedAddress = AddressParser::parse($numberAndStreet);
-        $houseNumber = $parsedAddress['number'];
-        if ($houseNumber && $parsedAddress['suffix']) {
-            $houseNumber .= ' '.$parsedAddress['suffix'];
-        }
+        $houseNumber = $parsedAddress['numberAndSuffix'];
         $street = mb_trim($parsedAddress['street']);
-        $address = $this->addressRepository->findForManualAddress($houseNumber, $street, $postCode, $addressResult->getInseeCode());
+        $address = $this->addressRepository->findForManualAddress($houseNumber, $street, $addressResult->getZipCode(), $addressResult->getInseeCode());
 
         if (!$address) {
             $address = $this->addressFactory->createInstance(
                 $houseNumber,
                 $street,
-                $postCode,
+                $addressResult->getZipCode(),
                 $addressResult->getCity(),
                 $addressResult->getInseeCode(),
             );
@@ -94,7 +103,7 @@ class SignalementAddressUpdater
     {
         $signalement->setRnbIdOccupant(null);
         $signalement->setGeoloc([]);
-        if ($signalement->getAddress() && $signalement->getAddress()->getBanId()) {
+        if ($signalement->getAddress()->getBanId()) {
             $buildings = $this->rnbService->getBuildings($signalement->getAddress()->getBanId());
             if (1 === \count($buildings)) {
                 $signalement
@@ -110,7 +119,7 @@ class SignalementAddressUpdater
             return;
         }
         $signalement->setNumeroInvariantRial(null);
-        if ($signalement->getAddress() && $signalement->getAddress()->getBanId()) {
+        if ($signalement->getAddress()->getBanId()) {
             $rialResult = $this->rialService->getSingleInvariantByBanId($signalement->getAddress()->getBanId());
             if ($rialResult) {
                 $signalement->setNumeroInvariantRial($rialResult);

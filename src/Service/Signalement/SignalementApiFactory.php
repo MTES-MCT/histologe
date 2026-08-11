@@ -13,10 +13,8 @@ use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Exception\Address\CityNotFoundException;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
-use App\Service\Gouv\Ban\AddressService;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class SignalementApiFactory
@@ -25,7 +23,6 @@ class SignalementApiFactory
 
     public function __construct(
         private readonly Security $security,
-        private readonly AddressService $addressService,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
         private readonly BailleurRepository $bailleurRepository,
@@ -44,19 +41,7 @@ class SignalementApiFactory
         $informationComplementaire = new InformationComplementaire();
         $jsonContent = [];
 
-        $adresseComplete = $request->adresseOccupant.' '.$request->codePostalOccupant.' '.$request->communeOccupant;
-        if ($banAddress = $this->addressService->getAcceptableBanAddress($adresseComplete)) {
-            $this->signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
-        } else {
-            if (!$this->signalementAddressUpdater->attachAddressToSignalementFromManualAddress(
-                $signalement,
-                $request->adresseOccupant,
-                $request->codePostalOccupant,
-                $request->communeOccupant
-            )) {
-                throw new CityNotFoundException($request->communeOccupant);
-            }
-        }
+        $this->signalementAddressUpdater->attachAddressToSignalement($signalement, $request->adresseOccupant, $request->codePostalOccupant, $request->communeOccupant);
         $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);
         $this->signalementAddressUpdater->getRialDataForSignalement($signalement);
 

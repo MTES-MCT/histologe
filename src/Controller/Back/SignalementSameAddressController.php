@@ -49,7 +49,7 @@ class SignalementSameAddressController extends AbstractController
         $signalements = $sameAddressQuery->findSameAddressFiltered($user);
         $signalementsByAddress = [];
         foreach ($signalements as $signalement) {
-            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['housenumber'].' '.$signalement['street'].' '.$signalement['postCode'].' '.$signalement['cityCode']));
+            $addressKey = mb_trim(strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['housenumber'].' '.$signalement['street'].' '.$signalement['postCode'].' '.$signalement['cityCode'])));
             if (!isset($signalementsByAddress[$addressKey])) {
                 $signalementsByAddress[$addressKey] = [
                     'adresse' => mb_trim($signalement['housenumber'].' '.$signalement['street']),

@@ -2,6 +2,7 @@
 
 namespace App\Tests;
 
+use App\Entity\Address;
 use App\Entity\Affectation;
 use App\Entity\Arrete;
 use App\Entity\AutoAffectationRule;
@@ -32,7 +33,6 @@ use App\Service\Interconnection\Esabora\Response\DossierPushSISHResponse;
 use App\Service\Interconnection\Esabora\Response\DossierVisiteSISHCollectionResponse;
 use App\Utils\Enum\ExtensionAdresse;
 use Faker\Factory;
-use Proxies\__CG__\App\Entity\Address;
 
 trait FixturesHelper
 {
@@ -50,6 +50,10 @@ trait FixturesHelper
             )->setSignalement(
                 (new Signalement())
                     ->setUuid($faker->uuid())
+                    ->setAddress(
+                        (new Address())
+                            ->setTerritory($this->getTerritory())
+                    )
             );
     }
 
@@ -95,7 +99,7 @@ trait FixturesHelper
         $address->setPostCode($codePostal ?? '62100');
         $address->setCity('Calais');
         $address->setCityCode('62193');
-        $address->setTerritory($territory);
+        $address->setTerritory($territory ?? $this->getTerritory());
         $signalement->setAddress($address);
 
         if (null !== $profileDeclarant && ProfileDeclarant::LOCATAIRE !== $profileDeclarant) {

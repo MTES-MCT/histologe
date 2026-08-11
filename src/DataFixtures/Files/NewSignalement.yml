@@ -745,7 +745,7 @@ signalements:
     statut: "NEED_VALIDATION"
     created_by: "admin-territoire-44-01@signal-logement.fr"
     geoloc: "{\"lat\": 47.3688054, \"lng\": -1.4203543}"
-    insee_occupant: "44028"
+    insee_occupant: "44179"
     nb_pieces_logement: 3
     nb_occupants_logement: 4
     profile_declarant: "LOCATAIRE"
@@ -778,7 +778,7 @@ signalements:
     statut: "DRAFT_ARCHIVED"
     created_by: "admin-territoire-44-01@signal-logement.fr"
     geoloc: "{\"lat\": 47.3688054, \"lng\": -1.4203543}"
-    insee_occupant: "44028"
+    insee_occupant: "44179"
     nb_pieces_logement: 3
     nb_occupants_logement: 4
     profile_declarant: "LOCATAIRE"

@@ -74,6 +74,8 @@ class SignalementExportFactory
         $geoloc = $data['geoloc'];
         $addressPoint = $data['addressPoint'];
 
+        $longitude = '';
+        $latitude = '';
         if (!empty($geoloc)) {
             $longitude = $geoloc['lng'] ?? '';
             $latitude = $geoloc['lat'] ?? '';
@@ -194,8 +196,8 @@ class SignalementExportFactory
             closedAt: $closedAt,
             motifCloture: $motifCloture,
             comCloture: $data['comCloture'] ? HtmlCleaner::clean($data['comCloture']) : '',
-            longitude: is_array($geoloc) ? $geoloc['lng'] ?? '' : '',
-            latitude: is_array($geoloc) ? $geoloc['lat'] ?? '' : '',
+            longitude: $longitude,
+            latitude: $latitude,
             zones: $data['zones'] ?? null,
         );
     }

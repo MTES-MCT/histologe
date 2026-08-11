@@ -204,7 +204,7 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertEquals($signalement->getAddress()->getPostCode(), $payload['codePostalOccupant']);
         $this->assertEquals($signalement->getAddress()->getCity(), $payload['communeOccupant']);
         $this->assertEquals($signalement->getMailOccupant(), $payload['mailOccupant']);
-        $this->assertEquals($signalement->getAddress()->Territory()->getZip(), 30);
+        $this->assertEquals($signalement->getAddress()->getTerritory()->getZip(), 30);
         $this->assertEquals($signalement->getProfileDeclarant(), ProfileDeclarant::from($payload['profilDeclarant']));
         $this->assertEquals($signalement->getProfileOccupant(), ProfileOccupant::LOCATAIRE);
         $this->assertEquals($signalement->getIsLogementSocial(), $payload['isLogementSocial']);

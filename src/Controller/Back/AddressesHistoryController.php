@@ -66,7 +66,7 @@ class AddressesHistoryController extends AbstractController
         $processedArretes = [];
 
         foreach ($addresses as $row) {
-            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $row['housenumber'].' '.$row['street'].' '.$row['postCode'].' '.$row['cityCode']));
+            $addressKey = mb_trim(strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $row['housenumber'].' '.$row['street'].' '.$row['postCode'].' '.$row['cityCode'])));
 
             if (!isset($responseAddresses[$addressKey])) {
                 $responseAddresses[$addressKey] = $addressesHistoryListViewFactory->createInstance(
@@ -124,8 +124,8 @@ class AddressesHistoryController extends AbstractController
                 $responseAddresses[$addressKey]->addArrete([
                     'id' => $row['arreteId'],
                     'dateArrete' => $row['dateArrete'] ? $row['dateArrete']->format('d/m/Y') : null,
-                    'typeArrete' => $row['typeArrete'],
-                    'typeArreteLabel' => $row['typeArrete'] ? $row['typeArrete']->completeLabel() : null,
+                    'arreteType' => $row['arreteType'],
+                    'arreteTypeLabel' => $row['arreteType'] ? $row['arreteType']->label() : null,
                     'dateMainLevee' => $row['dateMainLevee'] ? $row['dateMainLevee']->format('d/m/Y') : null,
                 ]);
                 $processedArretes[$addressKey][] = $row['arreteId'];
@@ -178,7 +178,7 @@ class AddressesHistoryController extends AbstractController
         $signalements = $sameAddressQuery->findSameAddressFiltered($user);
         $signalementsByAddress = [];
         foreach ($signalements as $signalement) {
-            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['housenumber'].' '.$signalement['street'].' '.$signalement['postCode'].' '.$signalement['cityCode']));
+            $addressKey = mb_trim(strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['housenumber'].' '.$signalement['street'].' '.$signalement['postCode'].' '.$signalement['cityCode'])));
             if (!isset($signalementsByAddress[$addressKey])) {
                 $signalementsByAddress[$addressKey] = [
                     'adresse' => mb_trim($signalement['housenumber'].' '.$signalement['street']),

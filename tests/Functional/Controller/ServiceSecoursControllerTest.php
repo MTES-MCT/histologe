@@ -240,7 +240,7 @@ class ServiceSecoursControllerTest extends WebTestCase
     ): Crawler {
         $form = $crawler->selectButton('Suivant')->form([
             'service_secours[step2][addressAddress]' => '8 Rue de la tourmentinerie',
-            'service_secours[step2][addressPostCode]' => '44850',
+            'service_secours[step2][addressPostcode]' => '44850',
             'service_secours[step2][addressCity]' => 'Saint-Mars-du-Désert',
             'service_secours[step2][addressCityCode]' => '44179',
             'service_secours[step2][rnbId]' => 'plop',

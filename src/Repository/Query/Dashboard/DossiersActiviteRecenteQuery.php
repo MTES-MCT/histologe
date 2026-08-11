@@ -178,7 +178,7 @@ class DossiersActiviteRecenteQuery
             signalement.reference AS reference,
             signalement.nomOccupant AS nomOccupant,
             signalement.prenomOccupant AS prenomOccupant,
-            CONCAT(address.housenumber, \' \' , address.street, \' \' , address.postCode, \' \' , address.city) AS adresseComplete,
+            CONCAT_WS(\', \', CONCAT_WS(\' \', address.housenumber, address.street), CONCAT_WS(\' \', address.postCode, address.city)) AS adresseComplete,
             signalement.uuid AS uuid,
             '.$statutField.' AS statut,
             suivi.createdAt AS suiviCreatedAt,

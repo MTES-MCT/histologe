@@ -12,8 +12,8 @@ class BanAddress
     private ?string $inseeCode = null;
     private ?float $score = 0;
     private ?string $banId = null;
-    private ?string $longitude = null;
-    private ?string $latitude = null;
+    private ?float $longitude = null;
+    private ?float $latitude = null;
 
     /**
      * @param array<string, mixed> $data
@@ -34,8 +34,8 @@ class BanAddress
 
         if (null !== $data && !empty($data['features'][0]['geometry']['coordinates'])) {
             $coordinates = $data['features'][0]['geometry']['coordinates'];
-            $this->longitude = $coordinates[0] ?? null;
-            $this->latitude = $coordinates[1] ?? null;
+            $this->longitude = isset($coordinates[0]) ? (float) $coordinates[0] : null;
+            $this->latitude = isset($coordinates[1]) ? (float) $coordinates[1] : null;
         }
     }
 
@@ -69,12 +69,12 @@ class BanAddress
         return $this->banId;
     }
 
-    public function getLongitude(): ?string
+    public function getLongitude(): ?float
     {
         return $this->longitude;
     }
 
-    public function getLatitude(): ?string
+    public function getLatitude(): ?float
     {
         return $this->latitude;
     }
@@ -87,16 +87,5 @@ class BanAddress
     public function getHousenumber(): ?string
     {
         return $this->housenumber;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public function getGeoloc(): array
-    {
-        return [
-            'lat' => $this->latitude,
-            'lng' => $this->longitude,
-        ];
     }
 }

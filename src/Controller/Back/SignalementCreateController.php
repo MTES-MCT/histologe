@@ -607,9 +607,6 @@ class SignalementCreateController extends AbstractController
                 $errorMsgs[] = 'En tant que tiers déclarant, vous devez renseigner un nom pour le tiers.';
             }
         }
-        if (!$signalement->getAddress()) {
-            $errorMsgs[] = 'Vous devez renseigner l\'adresse du logement pour pouvoir soumettre le signalement.';
-        }
         if (null === $signalement->getProfileDeclarant()) {
             $errorMsgs[] = 'Vous devez renseigner le profil du déclarant pour pouvoir soumettre le signalement.';
         }

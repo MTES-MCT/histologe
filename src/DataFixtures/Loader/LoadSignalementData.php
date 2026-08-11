@@ -148,10 +148,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         $rawAddress = $row['adresse_occupant'] ?? str_replace(',', '', $faker->streetAddress());
         $parsedAddress = AddressParser::parse($rawAddress);
-        $houseNumber = $parsedAddress['number'];
-        if ($houseNumber && $parsedAddress['suffix']) {
-            $houseNumber .= ' '.$parsedAddress['suffix'];
-        }
+        $houseNumber = $parsedAddress['numberAndSuffix'];
 
         $address = $this->getAddressToAttach($houseNumber, $parsedAddress['street'], $row['cp_occupant'], $row['ville_occupant'], $row['insee_occupant'], json_decode($row['geoloc'], true));
         $manager->persist($address);
@@ -395,10 +392,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         $rawaddress = $row['adresse_occupant'] ?? str_replace(',', '', $faker->streetAddress());
         $parsedAddress = AddressParser::parse($rawaddress);
-        $houseNumber = $parsedAddress['number'];
-        if ($houseNumber && $parsedAddress['suffix']) {
-            $houseNumber .= ' '.$parsedAddress['suffix'];
-        }
+        $houseNumber = $parsedAddress['numberAndSuffix'];
 
         $address = $this->getAddressToAttach($houseNumber, $parsedAddress['street'], $row['cp_occupant'], $row['ville_occupant'], $row['insee_occupant'], json_decode($row['geoloc'], true));
         $manager->persist($address);
@@ -579,11 +573,14 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         return $signalementQualification;
     }
 
+    /**
+     * @param array{lat?: string, lng?: string}|null $geoloc
+     */
     private function getAddressToAttach(?string $housenumber, string $street, string $postCode, string $city, string $inseeCode, ?array $geoloc = null): Address
     {
         $address = $this->addressRepository->findForManualAddress($housenumber, $street, $postCode, $inseeCode);
-        $longitude = $geoloc['lng'] ?? null;
-        $latitude = $geoloc['lat'] ?? null;
+        $longitude = isset($geoloc['lng']) ? (float) $geoloc['lng'] : null;
+        $latitude = isset($geoloc['lat']) ? (float) $geoloc['lat'] : null;
 
         if (!$address) {
             $address = $this->addressFactory->createInstance(

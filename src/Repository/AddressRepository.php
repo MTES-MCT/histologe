@@ -22,9 +22,13 @@ class AddressRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('a');
         $qb->where('a.banId = :banId')->setParameter('banId', $banAddress->getBanId());
-        $qb->orWhere('a.housenumber = :housenumber AND a.street = :street AND a.postCode = :postCode AND a.cityCode = :cityCode')
-            ->setParameter('housenumber', $banAddress->getHousenumber())
-            ->setParameter('street', $banAddress->getStreet())
+        if ($banAddress->getHousenumber()) {
+            $qb->orWhere('a.housenumber = :housenumber AND a.street = :street AND a.postCode = :postCode AND a.cityCode = :cityCode')
+                ->setParameter('housenumber', $banAddress->getHousenumber());
+        } else {
+            $qb->orWhere('a.housenumber IS NULL AND a.street = :street AND a.postCode = :postCode AND a.cityCode = :cityCode');
+        }
+        $qb->setParameter('street', $banAddress->getStreet())
             ->setParameter('postCode', $banAddress->getZipCode())
             ->setParameter('cityCode', $banAddress->getInseeCode());
         $qb->setMaxResults(1);
@@ -48,6 +52,9 @@ class AddressRepository extends ServiceEntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @return Address[]
+     */
     public function findWithInconsistentCommuneName(Commune $commune): array
     {
         $qb = $this->createQueryBuilder('a');
