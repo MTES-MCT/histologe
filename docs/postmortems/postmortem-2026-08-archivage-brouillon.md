@@ -116,7 +116,7 @@ La requête attendue est désormais de la forme suivante :
 
 ## 📌 Annexes
 
-- Lien de la PR : https://github.com/MTES-MCT/histologe/issues/6201
+- Lien de la PR : https://github.com/MTES-MCT/histologe/pull/6207
 
 ---
 
