@@ -421,7 +421,8 @@ class Partner implements EntityHistoryInterface
     public function isConnectedToSanteHabitat(): bool
     {
         return str_contains($this->esaboraUrl, 'sante-habitat')
-            || str_contains($this->esaboraUrl, 'ARS');
+            || str_contains($this->esaboraUrl, 'ARS')
+            || str_contains($this->esaboraUrl, 'sish');
     }
 
     public function canSyncWithIdoss(): bool
