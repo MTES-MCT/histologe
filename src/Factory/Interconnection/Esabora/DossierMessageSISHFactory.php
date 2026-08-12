@@ -57,7 +57,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
         $timezone = $partner->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
-
+        $destinataire = PartnerType::ARS === $partner->getType() ? 'A' : 'S';
         $address = AddressParser::parse($signalement->getAdresseOccupant());
         $formatDate = AbstractEsaboraService::FORMAT_DATE;
         $formatDateTime = AbstractEsaboraService::FORMAT_DATE_TIME;
@@ -118,6 +118,7 @@ class DossierMessageSISHFactory extends AbstractDossierMessageFactory
                     ?->setTimezone(new \DateTimeZone($timezone))
                     ->format($formatDateTime)
             )
+            ->setSasDestinataire($destinataire)
             ->setLocalisationEtage(!empty($etage) ? (string) $etage : null)
             ->setLocalisationEscalier($escalier)
             ->setLocalisationNumPorte($numPorte)

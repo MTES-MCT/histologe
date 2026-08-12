@@ -14,12 +14,17 @@ class InterventionDescriptionGenerator
 {
     public static function generate(Intervention $intervention, string $eventName): ?string
     {
-        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
-            return $intervention->getDetails();
-        }
         if (InterventionCreatedEvent::NAME === $eventName) {
+            if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
+                return $intervention->getDetails();
+            }
+
             return self::buildDescriptionVisiteCreated($intervention);
         } elseif (InterventionUpdatedByEsaboraEvent::NAME === $eventName) {
+            if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
+                return $intervention->getDetails();
+            }
+
             return self::buildDescriptionVisiteUpdated($intervention);
         }
 
@@ -93,6 +98,56 @@ class InterventionDescriptionGenerator
         }
 
         return $description;
+    }
+
+    public static function buildDescriptionArreteUpdated(Intervention $intervention, DossierArreteSISH $dossierArreteSISH): string
+    {
+        $messages = [];
+        $oldAdditionalInformation = $intervention->getAdditionalInformation() ?? [];
+
+        $oldDate = $intervention->getScheduledAt()?->format('d/m/Y');
+        $newDate = $dossierArreteSISH->getArreteDate();
+        $oldNumero = $oldAdditionalInformation['arrete_numero'] ?? null;
+        $newNumero = $dossierArreteSISH->getArreteNumero();
+
+        if ($oldDate !== $newDate && !empty($oldDate)) {
+            $messages[] = \sprintf(
+                'La date de l\'arrêté dans %s a été modifiée ; La nouvelle date est %s',
+                EsaboraSISHService::NAME_SI,
+                $newDate
+            );
+        }
+        if ($oldNumero !== $newNumero && !empty($oldNumero)) {
+            $messages[] = \sprintf(
+                'Le numéro de l\'arrêté dans %s a été modifié ; Le nouveau numéro est %s',
+                EsaboraSISHService::NAME_SI,
+                $newNumero
+            );
+        }
+
+        $oldMLDate = $oldAdditionalInformation['arrete_mainlevee_date'] ?? null;
+        $newMLDate = $dossierArreteSISH->getArreteMLDate();
+        $oldMLNumero = $oldAdditionalInformation['arrete_mainlevee_numero'] ?? null;
+        $newMLNumero = $dossierArreteSISH->getArreteMLNumero();
+
+        if (!empty($newMLDate) && !empty($newMLNumero)) {
+            if ($oldMLDate !== $newMLDate && !empty($oldMLDate)) {
+                $messages[] = \sprintf(
+                    'La date de la mainlevée dans %s a été modifiée ; La nouvelle date est %s',
+                    EsaboraSISHService::NAME_SI,
+                    $newMLDate
+                );
+            }
+            if ($oldMLNumero !== $newMLNumero && !empty($oldMLNumero)) {
+                $messages[] = \sprintf(
+                    'Le numéro de la mainlevée dans %s a été modifié ; Le nouveau numéro est %s',
+                    EsaboraSISHService::NAME_SI,
+                    $newMLNumero
+                );
+            }
+        }
+
+        return implode('<br>', $messages);
     }
 
     public static function buildDescriptionArreteCreatedFromRequest(ArreteRequest $arreteRequest): string

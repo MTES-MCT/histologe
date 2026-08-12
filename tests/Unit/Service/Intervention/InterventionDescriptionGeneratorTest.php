@@ -8,6 +8,7 @@ use App\Event\InterventionCreatedEvent;
 use App\Event\InterventionRescheduledEvent;
 use App\Event\InterventionUpdatedByEsaboraEvent;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
+use App\Service\Interconnection\Esabora\Response\Model\DossierArreteSISH;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Tests\FixturesHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -58,6 +59,89 @@ class InterventionDescriptionGeneratorTest extends TestCase
                 InterventionCreatedEvent::NAME
             )
         );
+    }
+
+    public function testArreteDescriptionOnInterventionUpdated(): void
+    {
+        $oldAdditionalInformation = [
+            'arrete_numero' => '2023/DD13/00664',
+            'arrete_type' => 'INSALUBRITE',
+            'arrete_mainlevee_date' => '01/07/2023',
+            'arrete_mainlevee_numero' => '2023-DD13-00172',
+        ];
+        $intervention = new Intervention()
+            ->setScheduledAt(new \DateTimeImmutable('2023-06-14'))
+            ->setAdditionalInformation($oldAdditionalInformation);
+
+        // Test modification date et numéro arrêté
+        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00665');
+        $dossierArreteSISH->method('getArreteDate')->willReturn('15/06/2023');
+        $dossierArreteSISH->method('getArreteMLDate')->willReturn('01/07/2023');
+        $dossierArreteSISH->method('getArreteMLNumero')->willReturn('2023-DD13-00172');
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
+        $this->assertEquals('La date de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 15/06/2023<br>Le numéro de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est 2023/DD13/00665', $description);
+
+        // Test modification date seule arrêté
+        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
+        $dossierArreteSISH->method('getArreteDate')->willReturn('15/06/2023');
+        $dossierArreteSISH->method('getArreteMLDate')->willReturn('01/07/2023');
+        $dossierArreteSISH->method('getArreteMLNumero')->willReturn('2023-DD13-00172');
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
+        $this->assertEquals('La date de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 15/06/2023', $description);
+
+        // Test modification numéro seule arrêté
+        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00665');
+        $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
+        $dossierArreteSISH->method('getArreteMLDate')->willReturn('01/07/2023');
+        $dossierArreteSISH->method('getArreteMLNumero')->willReturn('2023-DD13-00172');
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
+        $this->assertEquals('Le numéro de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est 2023/DD13/00665', $description);
+
+        // Test modification date et numéro mainlevée
+        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
+        $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
+        $dossierArreteSISH->method('getArreteMLDate')->willReturn('02/07/2023');
+        $dossierArreteSISH->method('getArreteMLNumero')->willReturn('2023-DD13-00173');
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
+        $this->assertEquals('La date de la mainlevée dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 02/07/2023<br>Le numéro de la mainlevée dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est 2023-DD13-00173', $description);
+
+        // Test modification les deux (arrêté et mainlevée)
+        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00665');
+        $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
+        $dossierArreteSISH->method('getArreteMLDate')->willReturn('02/07/2023');
+        $dossierArreteSISH->method('getArreteMLNumero')->willReturn('2023-DD13-00172');
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
+        $this->assertEquals('Le numéro de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est 2023/DD13/00665<br>La date de la mainlevée dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 02/07/2023', $description);
+    }
+
+    public function testArreteDescriptionOnMainLeveeCreated(): void
+    {
+        $oldAdditionalInformation = [
+            'arrete_numero' => '2023/DD13/00664',
+            'arrete_type' => 'INSALUBRITE',
+            'arrete_mainlevee_date' => null,
+            'arrete_mainlevee_numero' => null,
+        ];
+
+        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
+        $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
+        $dossierArreteSISH->method('getArreteMLDate')->willReturn('01/02/2026');
+        $dossierArreteSISH->method('getArreteMLNumero')->willReturn('APML45K09O');
+        $dossierArreteSISH->method('getDossNum')->willReturn('2023/DD13/0010');
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH);
+        $this->assertStringContainsString('Un arrêté de mainlevée APML45K09O du 01/02/2026 a été pris pour l\'arrêté 2023/DD13/00664 du 14/06/2023 dans le dossier de n°2023/DD13/0010.', $description);
     }
 
     public function testVisiteDescriptionOnInterventionUpdated(): void

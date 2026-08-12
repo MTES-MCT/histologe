@@ -14,7 +14,8 @@
     "SISH_DossStatut",
     "SISH_DossEtat",
     "SISH_DossTypeCode",
-    "SISH_DossTypeLib"
+    "SISH_DossTypeLib",
+    "SISH_CommentaireSAS"
   ],
   "keyList": [
     "i1.imdo_id"
@@ -34,7 +35,8 @@
         "Traité",
         "terminé",
         "INS",
-        "Insalubrité"
+        "Insalubrité",
+        "Dossier classé suite à la destruction de l'immeuble"
       ],
       "keyDataList": [
         "10"

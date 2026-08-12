@@ -118,4 +118,9 @@ class DossierStateSCHSResponse implements DossierResponseInterface
     {
         return 'Esabora';
     }
+
+    public function getCommentaireSas(): ?string
+    {
+        return null;
+    }
 }

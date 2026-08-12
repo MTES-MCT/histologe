@@ -107,6 +107,7 @@ class EsaboraManager
         $currentStatus = $affectation->getStatut();
 
         $esaboraStatus = $dossierResponse->getSasEtat();
+        $commentaireSas = $dossierResponse->getCommentaireSas();
         $esaboraDossierStatus = null !== $dossierResponse->getEtat()
         ? strtolower($dossierResponse->getEtat())
         : '';
@@ -119,6 +120,9 @@ class EsaboraManager
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::WAIT, $affectation->getPartner());
                     $this->affectationManager->removeSubscriptionsOfAffectation($affectation);
                     $description = 'remis en attente par '.$namePartner.' via '.$dossierResponse->getNameSI();
+                    if ($commentaireSas) {
+                        $description .= '<br>Commentaire Santé-Habitat : '.$commentaireSas;
+                    }
                 }
                 break;
             case EsaboraStatus::ESABORA_ACCEPTED->value:
@@ -137,18 +141,28 @@ class EsaboraManager
                     if (count($suivis) > 0) {
                         $description = 'resynchronisé avec '.$namePartner.' via '.$dossierResponse->getNameSI();
                     }
+
+                    if ($commentaireSas) {
+                        $description .= '<br>Commentaire Santé-Habitat : '.$commentaireSas;
+                    }
                 }
 
                 if ($this->shouldBeClosedViaEsabora($esaboraDossierStatus, $currentStatus)) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::CLOSED, $affectation->getPartner());
                     $this->affectationManager->removeSubscriptionsOfAffectation($affectation);
                     $description = 'clôturé par '.$namePartner.' via '.$dossierResponse->getNameSI();
+                    if ($commentaireSas) {
+                        $description .= '<br>Commentaire Santé-Habitat : '.$commentaireSas;
+                    }
                 }
                 break;
             case EsaboraStatus::ESABORA_REFUSED->value:
                 if (AffectationStatus::REFUSED !== $currentStatus) {
                     $this->affectationManager->updateAffectation($affectation, $user, AffectationStatus::REFUSED, $affectation->getPartner());
                     $description = 'refusé par '.$namePartner.' via '.$dossierResponse->getNameSI();
+                    if ($commentaireSas) {
+                        $description .= '<br>Commentaire Santé-Habitat : '.$commentaireSas;
+                    }
                 }
                 break;
             case EsaboraStatus::ESABORA_REJECTED->value:
@@ -181,6 +195,10 @@ class EsaboraManager
                             'refusé via '.$dossierResponse->getNameSI().' pour motif suivant : %s',
                             $dossierResponse->getSasCauseRefus()
                         );
+                    }
+
+                    if ($commentaireSas) {
+                        $description .= '<br>Commentaire Santé-Habitat : '.$commentaireSas;
                     }
                 }
                 break;
@@ -436,14 +454,23 @@ class EsaboraManager
     }
 
     /**
-     * @param array<mixed> $additionalInformation
+     * @param array{
+     *      arrete_numero: string|null,
+     *      arrete_type: string|null,
+     *      arrete_mainlevee_date: string|null,
+     *      arrete_mainlevee_numero: string|null
+     *  } $additionalInformation
      *
      * @throws \Exception
      */
-    private function updateFromDossierArrete(Intervention $intervention, DossierArreteSISH $dossierArreteSISH, array $additionalInformation): bool
-    {
+    private function updateFromDossierArrete(
+        Intervention $intervention,
+        DossierArreteSISH $dossierArreteSISH,
+        array $additionalInformation,
+    ): bool {
         $hasChanged = false;
         $currentAdditionalInformationSorted = $intervention->getAdditionalInformation() ?? [];
+        $currentAdditionalInformationSorted['arrete_date'] = $intervention->getScheduledAt()?->format(AbstractEsaboraService::FORMAT_DATE);
 
         // Pour rappel, une seule intervention regroupe les deux arrêtés.
         // Un arrêté seul produit un tableau `$additionalInformation` avec des champs de main-levée à null,
@@ -452,19 +479,28 @@ class EsaboraManager
         // systématiquement détecté comme modifié lors de la comparaison (présence de clé avec valeur null).
         $additionalInformationNonNull = array_filter($additionalInformation);
         $mergedAdditionalInformation = array_replace($currentAdditionalInformationSorted, $additionalInformationNonNull);
+        unset($mergedAdditionalInformation['arrete_date']);
         $mergedAdditionalInformationSorted = $mergedAdditionalInformation;
-
+        $mergedAdditionalInformationSorted['arrete_date'] = $dossierArreteSISH->getArreteDate();
         ksort($currentAdditionalInformationSorted);
         ksort($mergedAdditionalInformationSorted);
 
         if ($currentAdditionalInformationSorted !== $mergedAdditionalInformationSorted) {
-            $intervention->setAdditionalInformation($additionalInformation);
-            $hasChanged = true;
-        }
+            $isNewMainLevee = $this->isNewMainLevee($currentAdditionalInformationSorted, $mergedAdditionalInformationSorted);
+            $hasNoChangesArrete = $this->hasNoChangesArrete($currentAdditionalInformationSorted, $mergedAdditionalInformationSorted);
 
-        $scheduledAt = DateParser::parse($dossierArreteSISH->getArreteDate());
-        if ($intervention->getScheduledAt() != $scheduledAt) {
-            $intervention->setScheduledAt($scheduledAt);
+            if ($isNewMainLevee && $hasNoChangesArrete) {
+                $newDetails = InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH);
+            } else {
+                $newDetails = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
+            }
+
+            $intervention->setDetails($this->htmlSanitizer->sanitize($newDetails));
+            $intervention->setAdditionalInformation($mergedAdditionalInformation);
+            $scheduledAt = DateParser::parse($mergedAdditionalInformationSorted['arrete_date']);
+            if ($intervention->getScheduledAt() != $scheduledAt) {
+                $intervention->setScheduledAt($scheduledAt);
+            }
             $hasChanged = true;
         }
 
@@ -474,8 +510,6 @@ class EsaboraManager
         }
 
         if ($hasChanged) {
-            $newDetails = InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH);
-            $intervention->setDetails($this->htmlSanitizer->sanitize($newDetails));
             $this->entityManager->flush();
         }
 
@@ -492,5 +526,25 @@ class EsaboraManager
     {
         return EsaboraStatus::ESABORA_CLOSED->value === $esaboraDossierStatus
             && AffectationStatus::CLOSED !== $currentStatus;
+    }
+
+    /**
+     * @param array<string, mixed> $currentAdditionalInformation
+     * @param array<string, mixed> $mergedAdditionalInformation
+     */
+    private function isNewMainLevee(array $currentAdditionalInformation, array $mergedAdditionalInformation): bool
+    {
+        return (empty($currentAdditionalInformation['arrete_mainlevee_date']) && !empty($mergedAdditionalInformation['arrete_mainlevee_date']))
+            || (empty($currentAdditionalInformation['arrete_mainlevee_numero']) && !empty($mergedAdditionalInformation['arrete_mainlevee_numero']));
+    }
+
+    /**
+     * @param array<string, mixed> $currentAdditionalInformation
+     * @param array<string, mixed> $mergedAdditionalInformation
+     */
+    private function hasNoChangesArrete(array $currentAdditionalInformation, array $mergedAdditionalInformation): bool
+    {
+        return $mergedAdditionalInformation['arrete_numero'] === $currentAdditionalInformation['arrete_numero']
+            && $mergedAdditionalInformation['arrete_date'] === $currentAdditionalInformation['arrete_date'];
     }
 }

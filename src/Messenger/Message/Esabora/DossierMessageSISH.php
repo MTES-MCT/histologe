@@ -36,6 +36,7 @@ final class DossierMessageSISH implements DossierMessageInterface
     private ?string $referenceDossier = null;
     private ?SISHDossierType $sasTypeDossier = null;
     private ?string $sasDateAffectation = null;
+    private ?string $sasDestinataire = null;
     private ?string $localisationEtage = null;
     private ?string $localisationEscalier = null;
     private ?string $localisationNumPorte = null;
@@ -343,6 +344,18 @@ final class DossierMessageSISH implements DossierMessageInterface
     public function setSasDateAffectation(?string $sasDateAffectation): self
     {
         $this->sasDateAffectation = $sasDateAffectation;
+
+        return $this;
+    }
+
+    public function getSasDestinataire(): ?string
+    {
+        return $this->sasDestinataire;
+    }
+
+    public function setSasDestinataire(?string $sasDestinataire): self
+    {
+        $this->sasDestinataire = $sasDestinataire;
 
         return $this;
     }
