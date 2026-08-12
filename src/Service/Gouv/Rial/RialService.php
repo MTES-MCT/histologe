@@ -15,6 +15,15 @@ class RialService
     private const string URI_LOCAL_BY_ID = '/rial/v1/locaux/%s';
     private const string URI_LOCAUX_BY_ADRESSE = '/rial/v1/locaux/adressetopographique';
 
+    // Scalingo n'expose pas l'IP publique sortante (egress IP) de l'instance
+    // dans une variable d'environnement, ni via $_SERVER côté PHP.
+    // Pour connaître l'IP publique utilisée par une requête
+    // sortante et visible par un service distant (ici Rial), il est nécessaire de
+    // l'observer via un service externe.
+    //
+    // @see https://doc.scalingo.com/platform/networking/public/egress
+    private const string API_IPIFY = 'https://api.ipify.org';
+
     /**
      * @var array<string>
      *                    AP : appartement
@@ -72,7 +81,7 @@ class RialService
                 $context = [];
                 if (Response::HTTP_UNAUTHORIZED === $response->getStatusCode()) {
                     try {
-                        $ipResponse = $this->httpClient->request('GET', 'https://api.ipify.org');
+                        $ipResponse = $this->httpClient->request('GET', self::API_IPIFY);
                         $context['outbound_ip'] = $ipResponse->getContent();
                     } catch (\Throwable) {
                         $context['outbound_ip'] = 'unknown';
@@ -162,7 +171,7 @@ class RialService
                     || Response::HTTP_BAD_REQUEST === $response->getStatusCode()
                 ) {
                     try {
-                        $ipResponse = $this->httpClient->request('GET', 'https://api.ipify.org');
+                        $ipResponse = $this->httpClient->request('GET', self::API_IPIFY);
                         $context['outbound_ip'] = $ipResponse->getContent();
                     } catch (\Throwable) {
                         $context['outbound_ip'] = 'unknown';
@@ -219,7 +228,7 @@ class RialService
                     || Response::HTTP_BAD_REQUEST === $response->getStatusCode()
                 ) {
                     try {
-                        $ipResponse = $this->httpClient->request('GET', 'https://api.ipify.org');
+                        $ipResponse = $this->httpClient->request('GET', self::API_IPIFY);
                         $context['outbound_ip'] = $ipResponse->getContent();
                     } catch (\Throwable) {
                         $context['outbound_ip'] = 'unknown';
