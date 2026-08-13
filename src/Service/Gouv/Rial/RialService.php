@@ -15,6 +15,15 @@ class RialService
     private const string URI_LOCAL_BY_ID = '/rial/v1/locaux/%s';
     private const string URI_LOCAUX_BY_ADRESSE = '/rial/v1/locaux/adressetopographique';
 
+    // Scalingo n'expose pas l'IP publique sortante (egress IP) de l'instance
+    // dans une variable d'environnement, ni via $_SERVER côté PHP.
+    // Pour connaître l'IP publique utilisée par une requête
+    // sortante et visible par un service distant (ici Rial), il est nécessaire de
+    // l'observer via un service externe.
+    //
+    // @see https://doc.scalingo.com/platform/networking/public/egress
+    private const string API_IPIFY = 'https://api.ipify.org';
+
     /**
      * @var array<string>
      *                    AP : appartement
@@ -69,7 +78,16 @@ class RialService
 
                     return $this->accessToken;
                 }
-                $this->logger->warning(\sprintf('Rial API access token failed (status %s)', $response->getStatusCode()));
+                $context = [];
+                if (Response::HTTP_UNAUTHORIZED === $response->getStatusCode()) {
+                    try {
+                        $ipResponse = $this->httpClient->request('GET', self::API_IPIFY);
+                        $context['outbound_ip'] = $ipResponse->getContent();
+                    } catch (\Throwable) {
+                        $context['outbound_ip'] = 'unknown';
+                    }
+                }
+                $this->logger->warning(\sprintf('Rial API access token failed (status %s)', $response->getStatusCode()), $context);
             } catch (\Throwable $exception) {
                 $this->logger->error($exception->getMessage());
             }
@@ -107,6 +125,10 @@ class RialService
     }
 
     /**
+     * Recherche de locaux par adresse codifiée
+     * GET /locaux/adresseTopographique
+     * Obtenir un ou plusieurs identifiants de locaux à partir de leur adresse topographique codifiée.
+     *
      * In sandbox env: Only available cities are Aulnay sous bois, Ajaccio and Pointe à Pitre.
      *
      * @return ?array<mixed>
@@ -126,7 +148,9 @@ class RialService
 
             $queryParams = '?'.http_build_query($params);
             $url = $this->urlDgfip.self::URI_LOCAUX_BY_ADRESSE.$queryParams;
-            $headers = RialHeaders::getSearchLocauxHeaders($accessToken);
+            $rialHeaders = RialHeaders::getSearchLocauxHeaders($accessToken);
+            $headers = $rialHeaders['headers'];
+            $correlationId = $rialHeaders['correlation_id'];
 
             try {
                 $response = $this->httpClient->request('GET', $url, [
@@ -138,7 +162,28 @@ class RialService
 
                     return $responseArray['listeIdentifiantsFiscaux'];
                 }
-                $this->logger->warning(\sprintf('Rial API search by BAN id failed for: %s (status %s)', $url, $response->getStatusCode()));
+                $context = [
+                    'correlation_id' => $correlationId,
+                    'ban_id' => $banId,
+                    'params' => $params,
+                ];
+                if (Response::HTTP_UNAUTHORIZED === $response->getStatusCode()
+                    || Response::HTTP_BAD_REQUEST === $response->getStatusCode()
+                ) {
+                    try {
+                        $ipResponse = $this->httpClient->request('GET', self::API_IPIFY);
+                        $context['outbound_ip'] = $ipResponse->getContent();
+                    } catch (\Throwable) {
+                        $context['outbound_ip'] = 'unknown';
+                    }
+                    $context['response'] = $response->getContent(false);
+                }
+                $this->logger->warning(
+                    \sprintf('Rial API search by BAN id failed for: %s (status %s)',
+                        $url,
+                        $response->getStatusCode()),
+                    $context
+                );
             } catch (\Throwable $exception) {
                 $this->logger->error($exception->getMessage());
             }
@@ -148,6 +193,10 @@ class RialService
     }
 
     /**
+     * Restitution de locaux par identifiants fiscaux
+     * GET /locaux/{identifiantFiscal}
+     * Obtenir les descriptifs détaillés de locaux à partir de leurs identifiants fiscaux respectifs.
+     *
      * @return ?array<mixed>
      */
     public function searchLocalByIdFiscal(string $identifiantFiscal): ?array
@@ -160,7 +209,9 @@ class RialService
 
             $url = $this->urlDgfip.self::URI_LOCAL_BY_ID;
             $url = sprintf($url, $identifiantFiscal);
-            $headers = RialHeaders::getSearchLocauxHeaders($accessToken);
+            $rialHeaders = RialHeaders::getSearchLocauxHeaders($accessToken);
+            $headers = $rialHeaders['headers'];
+            $correlationId = $rialHeaders['correlation_id'];
 
             try {
                 $response = $this->httpClient->request('GET', $url, [
@@ -172,7 +223,24 @@ class RialService
 
                     return $responseArray[0];
                 }
-                $this->logger->warning(\sprintf('Rial API search by invariant failed for: %s (status %s)', $url, $response->getStatusCode()));
+                $context = ['correlation_id' => $correlationId];
+                if (Response::HTTP_UNAUTHORIZED === $response->getStatusCode()
+                    || Response::HTTP_BAD_REQUEST === $response->getStatusCode()
+                ) {
+                    try {
+                        $ipResponse = $this->httpClient->request('GET', self::API_IPIFY);
+                        $context['outbound_ip'] = $ipResponse->getContent();
+                    } catch (\Throwable) {
+                        $context['outbound_ip'] = 'unknown';
+                    }
+                    $context['response'] = $response->getContent(false);
+                }
+                $this->logger->warning(\sprintf(
+                    'Rial API search by invariant failed for: %s (status %s)',
+                    $url,
+                    $response->getStatusCode()),
+                    $context
+                );
             } catch (\Throwable $exception) {
                 $this->logger->error($exception->getMessage());
             }
