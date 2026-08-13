@@ -12,6 +12,22 @@
             'level3Link': path('back_tools_rial'),
         } %}
         {% if rial_enable %}
+            <div class="fr-alert fr-alert--info fr-mb-5v">
+                <p>
+                    Plus d'informations sur l'API RIAL (Répertoire Inter-administratif des Locaux) sur data.gouv.fr :
+                    <a href="https://www.data.gouv.fr/dataservices/rial-repertoire-inter-administratif-des-locaux" target="_blank" rel="noopener">
+                        https://www.data.gouv.fr/dataservices/rial-repertoire-inter-administratif-des-locaux
+                    </a>
+                </p>
+                <hr>
+                <p class="fr-mb-4v">Codes natures acceptés par la plateforme :</p>
+                <ul>
+                    <li><strong>AP</strong> : appartement</li>
+                    <li><strong>MA</strong> : maison</li>
+                    <li><strong>MP</strong> : maison partagée (maison à cheval sur 2 communes)</li>
+                    <li><strong>ME</strong> : maison exceptionnelle d'habitation</li>
+                </ul>
+            </div>
             <header>
                 <div class="fr-grid-row">
                     <div class="fr-col-12 fr-text--left">

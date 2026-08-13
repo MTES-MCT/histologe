@@ -20,16 +20,19 @@ class RialHeaders
     }
 
     /**
-     * @return array<string, string>
+     * @return array{headers: array<string, string>, correlation_id: string}
      */
     public static function getSearchLocauxHeaders(string $accessToken): array
     {
-        $correlationId = Uuid::v4();
+        $correlationId = (string) Uuid::v4();
 
         return [
-            'Accept' => 'application/json',
-            'Authorization' => 'Bearer '.$accessToken,
-            'X-Correlation-ID' => $correlationId,
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer '.$accessToken,
+                'X-Correlation-ID' => $correlationId,
+            ],
+            'correlation_id' => $correlationId,
         ];
     }
 }
