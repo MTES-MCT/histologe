@@ -50,6 +50,7 @@ class RialToolController extends AbstractController
         $results = [];
         $topoSearches = [];
         $topoResults = [];
+        $totalFiscalCount = 0;
 
         $isTopoSubmit = $request->request->has('topo_search');
         $submittedBanId = null;
@@ -82,6 +83,7 @@ class RialToolController extends AbstractController
                         continue;
                     }
                     foreach ($identifiantsFiscaux as $identifiantFiscal) {
+                        ++$totalFiscalCount;
                         $localData = $rialService->searchLocalByIdFiscal($identifiantFiscal);
                         $results[] = [
                             'ban_id' => $banId,
@@ -147,6 +149,7 @@ class RialToolController extends AbstractController
             'topoForms' => $topoForms,
             'topoResults' => $topoResults,
             'submittedBanId' => $submittedBanId,
+            'totalFiscalCount' => $totalFiscalCount,
         ]);
     }
 
