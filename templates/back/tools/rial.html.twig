@@ -40,11 +40,95 @@
             </header>
             
             <div class="fr-mb-5v">
-                {{ form(form) }}
+                {{ form_start(form) }}
+                    {{ form_row(form.banIds) }}
+                    {{ form_widget(form.submit) }}
+                {{ form_end(form) }}
             </div>
 
             {% if results is defined and results|length > 0 %}
-                <h2>Résultats</h2>
+                <h2>Résultats ({{ results|length }})</h2>
+
+                {% set pseudo_code_detected = false %}
+                {% for row in results %}
+                    {% if row.is_pseudo_code %}
+                        {% set pseudo_code_detected = true %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if pseudo_code_detected %}
+                    <div class="fr-alert fr-alert--warning fr-mb-5v">
+                        <p>Le BAN ID contient un pseudo-code de voie sur 6 caractères.</p>
+                        <p>La recherche RIAL ne peut pas utiliser ce pseudo-code comme code TOPO.</p>
+                        <p>Vous pouvez effectuer une recherche manuelle dans le référentiel TOPO DGFiP.</p>
+                    </div>
+
+                    <div class="fr-card fr-card--no-border fr-mb-5v fr-p-4v" style="background-color: var(--background-alt-blue-france)">
+                        <h3>Recherche TOPO DGFiP</h3>
+                        <p>
+                            Département : <strong>{{ topoSearchData.code_dep }}</strong><br>
+                            Commune : <strong>{{ topoSearchData.code_commune }}</strong>
+                        </p>
+                        {{ form_start(topoForm) }}
+                            <input type="hidden" name="rial_search[banIds]" value="{{ form.banIds.vars.value }}">
+                            {{ form_row(topoForm.libelle, {
+                                'help': topoForm.libelle.vars.help|raw
+                            }) }}
+                            {{ form_widget(topoForm.submit_topo) }}
+                            {{ form_rest(topoForm) }}
+                        {{ form_end(topoForm) }}
+                    </div>
+
+                    {% if topoSearchData.searched is defined %}
+                        <h4>Résultats TOPO DGFiP</h4>
+                        <p>
+                            Département : <strong>{{ topoSearchData.code_dep }}</strong> |
+                            Commune : <strong>{{ topoSearchData.code_commune }}</strong> |
+                            Recherche : <strong>{{ topoSearchData.libelle }}</strong>
+                        </p>
+                        {% if topoResults|length > 0 %}
+                            <div class="fr-table fr-table--sm fr-table--bordered">
+                                <div class="fr-table__wrapper">
+                                    <div class="fr-table__container">
+                                        <div class="fr-table__content">
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Code voie</th>
+                                                        <th scope="col">Nature de voie</th>
+                                                        <th scope="col">Libellé</th>
+                                                        <th scope="col">Code BAN potentiel</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for topoRow in topoResults %}
+                                                        <tr>
+                                                            <td>{{ topoRow.code_voie }}</td>
+                                                            <td>{{ topoRow.nature_de_voie }}</td>
+                                                            <td>{{ topoRow.libelle }}</td>
+                                                            <td>
+                                                                {% set ban_parts = topoSearchData.ban_id|split('_') %}
+                                                                {% if ban_parts|length >= 3 %}
+                                                                    {{ ban_parts[0] }}_{{ topoRow.code_voie }}_{{ ban_parts[2] }}
+                                                                {% else %}
+                                                                    {{ topoSearchData.code_dep }}{{ topoSearchData.code_commune }}_{{ topoRow.code_voie }}
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p class="fr-text--error">Aucune voie TOPO trouvée pour le libellé "{{ topoSearchData.libelle }}" dans la commune {{ topoSearchData.code_dep }}{{ topoSearchData.code_commune }}.</p>
+                        {% endif %}
+                        <hr class="fr-my-5v">
+                    {% endif %}
+                {% endif %}
+
                 <div class="fr-table fr-table--lg fr-table--bordered">
                     <div class="fr-table__wrapper">
                         <div class="fr-table__container">
