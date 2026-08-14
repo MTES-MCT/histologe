@@ -3,6 +3,7 @@
 namespace App\Service\Gouv\Topo;
 
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class TopoService
@@ -29,7 +30,6 @@ class TopoService
         string $codeCommune,
         string $libelle,
     ): array {
-        $this->logger->info(sprintf('TOPO DGFiP search request: dep=%s, commune=%s, libelle=%s', $codeDepartement, $codeCommune, $libelle));
         try {
             $response = $this->httpClient->request('GET', self::API_URL, [
                 'query' => [
@@ -45,21 +45,18 @@ class TopoService
             ]);
 
             $statusCode = $response->getStatusCode();
-            $this->logger->info('TOPO DGFiP API response status: '.$statusCode);
 
-            if (200 !== $statusCode) {
-                $this->logger->error('TOPO DGFiP API error: '.$statusCode.' '.$response->getContent(false));
+            if (Response::HTTP_OK !== $statusCode) {
+                $this->logger->error(sprintf('TOPO DGFiP API error: %s %s', $statusCode, $response->getContent(false)));
 
                 return [];
             }
 
             $data = $response->toArray();
-            $results = $data['results'] ?? [];
-            $this->logger->info(sprintf('TOPO DGFiP search results: %d found', \count($results)));
 
-            return $results;
-        } catch (\Throwable $e) {
-            $this->logger->error('TOPO DGFiP API exception: '.$e->getMessage());
+            return $data['results'] ?? [];
+        } catch (\Throwable $exception) {
+            $this->logger->error(sprintf('TOPO DGFiP API exception: %s', $exception->getMessage()));
 
             return [];
         }
