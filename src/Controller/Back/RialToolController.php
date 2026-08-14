@@ -28,10 +28,10 @@ class RialToolController extends AbstractController
         TopoService $topoService,
         FormFactoryInterface $formFactory,
         #[Autowire(env: 'RIAL_ENABLE')]
-        string $rialEnable,
+        bool $rialEnable,
     ): Response {
         if (!$rialEnable) {
-            return $this->render('back/tools/rial.html.twig', ['rial_enable' => false]);
+            return $this->render('back/tools/rial.html.twig');
         }
 
         $rialSearchData = ['banIds' => $request->request->all()['rial_search']['banIds'] ?? null];
@@ -141,7 +141,6 @@ class RialToolController extends AbstractController
         }
 
         return $this->render('back/tools/rial.html.twig', [
-            'rial_enable' => true,
             'rialForm' => $rialForm->createView(),
             'results' => $results,
             'topoSearches' => $topoSearches,
