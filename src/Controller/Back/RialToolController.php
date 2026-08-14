@@ -4,8 +4,6 @@ namespace App\Controller\Back;
 
 use App\Service\Gouv\Rial\RialService;
 use App\Service\Gouv\Topo\TopoService;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -13,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -22,23 +21,21 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class RialToolController extends AbstractController
 {
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
     #[Route('/', name: 'back_tools_rial', methods: ['GET', 'POST'])]
     public function index(
         Request $request,
         RialService $rialService,
         TopoService $topoService,
+        FormFactoryInterface $formFactory,
         #[Autowire(env: 'RIAL_ENABLE')]
         string $rialEnable,
     ): Response {
         if (!$rialEnable) {
             return $this->render('back/tools/rial.html.twig', ['rial_enable' => false]);
         }
-        $rialData = ['banIds' => $request->request->all()['rial_search']['banIds'] ?? null];
-        $form = $this->container->get('form.factory')->createNamedBuilder('rial_search', FormType::class, $rialData, [
+
+        $rialSearchData = ['banIds' => $request->request->all()['rial_search']['banIds'] ?? null];
+        $rialForm = $formFactory->createNamedBuilder('rial_search', FormType::class, $rialSearchData, [
             'allow_extra_fields' => true,
         ])
             ->add('banIds', TextareaType::class, [
@@ -48,104 +45,67 @@ class RialToolController extends AbstractController
             ->add('submit', SubmitType::class, ['label' => 'Rechercher'])
             ->getForm();
 
-        $form->handleRequest($request);
+        $rialForm->handleRequest($request);
+
         $results = [];
-        $topoSearchData = null;
+        $topoSearches = [];
         $topoResults = [];
-        $banIdsRaw = null;
 
         $isTopoSubmit = $request->request->has('topo_search');
+        $submittedBanId = null;
 
         if ($isTopoSubmit) {
             $topoDataRaw = $request->request->all()['topo_search'];
-            $topoSearchData = [
-                'ban_id' => $topoDataRaw['ban_id'] ?? '',
-                'code_dep' => $topoDataRaw['code_dep'] ?? '',
-                'code_commune' => $topoDataRaw['code_commune'] ?? '',
-            ];
-            // On conserve les identifiants BAN saisis dans le formulaire RIAL
-            $rialDataRaw = $request->request->all()['rial_search'] ?? [];
-            $banIdsRaw = $rialDataRaw['banIds'] ?? null;
+            $submittedBanId = $topoDataRaw['ban_id'] ?? null;
         }
 
-        if ($form->isSubmitted() && !$isTopoSubmit) {
-            if ($form->isValid()) {
-                $banIdsRaw = $form->get('banIds')->getData();
-                $parts = preg_split('/[\s,]+/', $banIdsRaw);
-                $banIds = array_filter(array_map('trim', $parts ?: []));
-                foreach ($banIds as $banId) {
-                    try {
-                        $identifiantsFiscaux = $rialService->searchLocauxByBanId($banId) ?? [];
-                        $isPseudoCode = false;
-                        $banParts = explode('_', $banId);
-                        if (\count($banParts) >= 2 && 6 === \strlen($banParts[1])) {
-                            $isPseudoCode = true;
-                            $insee = $banParts[0];
-                            $codeDep = $this->extractDepartement($insee);
-                            $codeCommune = $this->extractCommune($insee, $codeDep);
-                            $topoSearchData = [
-                                'ban_id' => $banId,
-                                'code_dep' => $codeDep,
-                                'code_commune' => $codeCommune,
-                            ];
-                        }
+        if (($rialForm->isSubmitted() && $rialForm->isValid() && !$isTopoSubmit) || ($isTopoSubmit && $submittedBanId)) {
+            $banIdsRaw = $isTopoSubmit ? ($request->request->all()['rial_search']['banIds'] ?? '') : $rialForm->get('banIds')->getData();
+            $parts = preg_split('/[\s,]+/', $banIdsRaw);
+            $banIds = array_filter(array_map('trim', $parts ?: []));
+            foreach ($banIds as $banId) {
+                try {
+                    $identifiantsFiscaux = $rialService->searchLocauxByBanId($banId) ?? [];
+                    $analysis = $this->analyzeBanId($banId);
 
-                        if (empty($identifiantsFiscaux)) {
-                            $results[] = [
-                                'ban_id' => $banId,
-                                'identifiant_fiscal' => 'Aucun identifiant fiscal pour cet identifiant BAN',
-                                'local_data' => '',
-                                'is_pseudo_code' => $isPseudoCode,
-                            ];
-                            continue;
-                        }
-                        foreach ($identifiantsFiscaux as $identifiantFiscal) {
-                            $localData = $rialService->searchLocalByIdFiscal($identifiantFiscal);
-                            if ($localData) {
-                                $results[] = [
-                                    'ban_id' => $banId,
-                                    'identifiant_fiscal' => $identifiantFiscal,
-                                    'local_data' => json_encode($localData, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_UNICODE),
-                                    'is_pseudo_code' => $isPseudoCode,
-                                ];
-                            } else {
-                                $results[] = [
-                                    'ban_id' => $banId,
-                                    'identifiant_fiscal' => $identifiantFiscal,
-                                    'local_data' => 'Aucune info pour cet identifiant fiscal',
-                                    'is_pseudo_code' => $isPseudoCode,
-                                ];
-                            }
-                        }
-                    } catch (\Throwable $e) {
+                    if ($analysis['is_pseudo_code']) {
+                        $topoSearches[$banId] = $analysis;
+                    }
+
+                    if (empty($identifiantsFiscaux)) {
                         $results[] = [
                             'ban_id' => $banId,
-                            'identifiant_fiscal' => 'ERROR BAN',
+                            'identifiant_fiscal' => 'Aucun identifiant fiscal pour cet identifiant BAN',
                             'local_data' => '',
-                            'is_pseudo_code' => false,
+                            'is_pseudo_code' => $analysis['is_pseudo_code'],
+                        ];
+                        continue;
+                    }
+                    foreach ($identifiantsFiscaux as $identifiantFiscal) {
+                        $localData = $rialService->searchLocalByIdFiscal($identifiantFiscal);
+                        $results[] = [
+                            'ban_id' => $banId,
+                            'identifiant_fiscal' => $identifiantFiscal,
+                            'local_data' => $localData ? json_encode($localData, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_UNICODE) : 'Aucune info pour cet identifiant fiscal',
+                            'is_pseudo_code' => $analysis['is_pseudo_code'],
                         ];
                     }
+                } catch (\Throwable $e) {
+                    $results[] = [
+                        'ban_id' => $banId,
+                        'identifiant_fiscal' => 'ERROR BAN',
+                        'local_data' => '',
+                        'is_pseudo_code' => false,
+                    ];
                 }
             }
-        } elseif ($isTopoSubmit && isset($topoSearchData['ban_id'])) {
-            // If it's a topo search, we still want to show the RIAL "no result" line 
-            // to trigger the display of the TOPO form in the template
-            $results[] = [
-                'ban_id' => $topoSearchData['ban_id'],
-                'identifiant_fiscal' => 'Aucun identifiant fiscal pour cet identifiant BAN',
-                'local_data' => '',
-                'is_pseudo_code' => true,
-            ];
         }
 
-        $topoForm = null;
-        // On recrée les données topoSearchData si on est en POST sur le formulaire TOPO
-        // pour pouvoir reconstruire le formulaire et le valider
-        if ($topoSearchData) {
-            $topoForm = $this->container->get('form.factory')->createNamedBuilder('topo_search', FormType::class, $topoSearchData, [
+        $topoForms = [];
+        foreach ($topoSearches as $banId => $topoSearchData) {
+            $topoForm = $formFactory->createNamedBuilder('topo_search', FormType::class, $topoSearchData, [
                 'action' => $this->generateUrl('back_tools_rial'),
                 'method' => 'POST',
-                'attr' => ['id' => 'topo-search-form'],
                 'allow_extra_fields' => true,
             ])
                 ->add('code_dep', HiddenType::class)
@@ -157,14 +117,14 @@ class RialToolController extends AbstractController
                     'attr' => ['placeholder' => 'Ex: LOUBRETTE'],
                     'help' => sprintf(
                         'Pour vous aider à retrouver le libellé exact, vous pouvez consulter la fiche BAN correspondante : <a href="https://adresse.data.gouv.fr/carte-base-adresse-nationale?id=%s" target="_blank" rel="noopener">voir sur adresse.data.gouv.fr</a>',
-                        $topoSearchData['ban_id']
+                        $banId
                     ),
                     'help_html' => true,
                 ])
                 ->add('submit_topo', SubmitType::class, ['label' => 'Rechercher dans TOPO DGFiP'])
                 ->getForm();
 
-            if ($isTopoSubmit) {
+            if ($isTopoSubmit && $submittedBanId === $banId) {
                 $topoForm->handleRequest($request);
                 if ($topoForm->isSubmitted() && $topoForm->isValid()) {
                     $topoData = $topoForm->getData();
@@ -173,29 +133,50 @@ class RialToolController extends AbstractController
                         $topoData['code_commune'],
                         $topoData['libelle']
                     );
-                    $topoSearchData['libelle'] = $topoData['libelle'];
-                    $topoSearchData['searched'] = true;
+                    $topoSearches[$banId]['libelle'] = $topoData['libelle'];
+                    $topoSearches[$banId]['searched'] = true;
                 }
             }
+            $topoForms[$banId] = $topoForm->createView();
         }
 
         return $this->render('back/tools/rial.html.twig', [
             'rial_enable' => true,
-            'form' => $form->createView(),
+            'rialForm' => $rialForm->createView(),
             'results' => $results,
-            'topoSearchData' => $topoSearchData,
-            'topoForm' => $topoForm?->createView(),
+            'topoSearches' => $topoSearches,
+            'topoForms' => $topoForms,
             'topoResults' => $topoResults,
+            'submittedBanId' => $submittedBanId,
         ]);
+    }
+
+    /**
+     * @return array{is_pseudo_code: bool, ban_id?: string, code_dep?: string, code_commune?: string}
+     */
+    private function analyzeBanId(string $banId): array
+    {
+        $banParts = explode('_', $banId);
+        $isPseudoCode = \count($banParts) >= 2 && 6 === \strlen($banParts[1]);
+
+        if (!$isPseudoCode) {
+            return ['is_pseudo_code' => false];
+        }
+
+        $insee = $banParts[0];
+        $codeDep = $this->extractDepartement($insee);
+
+        return [
+            'is_pseudo_code' => true,
+            'ban_id' => $banId,
+            'code_dep' => $codeDep,
+            'code_commune' => $this->extractCommune($insee, $codeDep),
+        ];
     }
 
     private function extractDepartement(string $insee): string
     {
-        if (str_starts_with($insee, '97')) {
-            return substr($insee, 0, 3);
-        }
-
-        return substr($insee, 0, 2);
+        return str_starts_with($insee, '97') ? substr($insee, 0, 3) : substr($insee, 0, 2);
     }
 
     private function extractCommune(string $insee, string $codeDep): string

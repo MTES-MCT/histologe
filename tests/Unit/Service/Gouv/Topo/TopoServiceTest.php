@@ -31,7 +31,10 @@ class TopoServiceTest extends TestCase
             ],
         ];
 
-        $mockResponse = new MockResponse(json_encode($mockData), [
+        $jsonMockData = json_encode($mockData);
+        $this->assertNotFalse($jsonMockData);
+
+        $mockResponse = new MockResponse($jsonMockData, [
             'http_code' => 200,
             'response_headers' => ['Content-Type' => 'application/json'],
         ]);
@@ -45,7 +48,7 @@ class TopoServiceTest extends TestCase
         $this->assertCount(2, $results);
         $this->assertEquals('0136', $results[0]['code_voie']);
         $this->assertEquals('DE LOUBRETTE', $results[0]['libelle']);
-        
+
         $this->assertEquals('GET', $mockResponse->getRequestMethod());
         $url = $mockResponse->getRequestUrl();
         $this->assertStringContainsString('code_dep%3D%2263%22', $url);
@@ -62,7 +65,7 @@ class TopoServiceTest extends TestCase
         $httpClient = new MockHttpClient($mockResponse);
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->once())->method('error');
-        
+
         $topoService = new TopoService($httpClient, $logger);
 
         $results = $topoService->searchVoies('63', '214', 'LOUBRETTE');
