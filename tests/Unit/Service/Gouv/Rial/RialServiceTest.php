@@ -20,6 +20,58 @@ class RialServiceTest extends TestCase
         $this->assertEquals('fake-access-token', $response);
     }
 
+    public function testGetAccessTokenReuseValid(): void
+    {
+        $rialService = $this->getRialService(__DIR__.'/../../../../../tools/wiremock/src/Resources/Rial/token.json');
+        $rialService->setAccessToken('existing-token', 3600);
+        $response = $rialService->getAccessToken();
+        $this->assertEquals('existing-token', $response);
+    }
+
+    public function testGetAccessTokenRenewExpired(): void
+    {
+        $rialService = $this->getRialService(__DIR__.'/../../../../../tools/wiremock/src/Resources/Rial/token.json');
+        $rialService->setAccessToken('expired-token', -10);
+        $response = $rialService->getAccessToken();
+        $this->assertEquals('fake-access-token', $response);
+    }
+
+    public function testGetAccessTokenRenewNearExpiration(): void
+    {
+        $rialService = $this->getRialService(__DIR__.'/../../../../../tools/wiremock/src/Resources/Rial/token.json');
+        $rialService->setAccessToken('almost-expired-token', 50); // < 60s
+        $response = $rialService->getAccessToken();
+        $this->assertEquals('fake-access-token', $response);
+    }
+
+    public function testGetAccessTokenError(): void
+    {
+        /** @var LoggerInterface&MockObject $logger */
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())->method('warning');
+
+        $mockResponse = new MockResponse('', ['http_code' => 500]);
+        $mockHttpClient = new MockHttpClient($mockResponse);
+
+        $rialService = new RialService(
+            $mockHttpClient,
+            $logger,
+            self::API_WIREMOCK_URL,
+            'rialKey',
+            'rialSecret',
+            '1'
+        );
+
+        $response = $rialService->getAccessToken();
+        $this->assertNull($response);
+    }
+
+    public function testNoResetInterface(): void
+    {
+        $reflection = new \ReflectionClass(RialService::class);
+        $this->assertNotContains('Symfony\Contracts\Service\ResetInterface', $reflection->getInterfaceNames());
+    }
+
     public function testGetLocaux(): void
     {
         $rialService = $this->getRialService(__DIR__.'/../../../../../tools/wiremock/src/Resources/Rial/list.json');

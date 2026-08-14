@@ -18,6 +18,8 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class UpdateSignalementInvariantRialCommand extends Command
 {
+    private ?float $lastCallTime = null;
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly SignalementRepository $signalementRepository,
@@ -52,6 +54,7 @@ class UpdateSignalementInvariantRialCommand extends Command
                 continue;
             }
 
+            $this->waitIfNecessary();
             $invariantRial = $this->rialService->getSingleInvariantByBanId($banId);
             if (!empty($invariantRial)) {
                 $signalement->setNumeroInvariantRial($invariantRial);
@@ -79,5 +82,17 @@ class UpdateSignalementInvariantRialCommand extends Command
         $io->success(sprintf('%d signalements ont été mis à jour.', $countUpdated));
 
         return Command::SUCCESS;
+    }
+
+    private function waitIfNecessary(): void
+    {
+        if (null !== $this->lastCallTime) {
+            $elapsed = microtime(true) - $this->lastCallTime;
+            $minInterval = 0.33; // 200 calls / 60 seconds = 1 call / 0.3 seconds + margin
+            if ($elapsed < $minInterval) {
+                usleep((int) (($minInterval - $elapsed) * 1000000));
+            }
+        }
+        $this->lastCallTime = microtime(true);
     }
 }
