@@ -25,7 +25,7 @@ class InAppCommunicationUserRepository extends ServiceEntityRepository
     public function markAsSeen(User $user, InAppCommunication $inAppCommunication): void
     {
         $this->getEntityManager()->getConnection()->executeStatement(
-            'INSERT IGNORE INTO in_app_communication_user (user_id, in_app_communication_id, seen_at) 
+            'INSERT IGNORE INTO in_app_communication_user (user_id, in_app_communication_id, seen_at)
              VALUES (:user_id, :communication_id, :seen_at)',
             [
                 'user_id' => $user->getId(),
@@ -42,8 +42,8 @@ class InAppCommunicationUserRepository extends ServiceEntityRepository
     {
         $now = (new \DateTimeImmutable())->format('Y-m-d H:i:s');
         $this->getEntityManager()->getConnection()->executeStatement(
-            'INSERT INTO in_app_communication_user (user_id, in_app_communication_id, seen_at, closed_at) 
-             VALUES (:user_id, :communication_id, :seen_at, :closed_at) 
+            'INSERT INTO in_app_communication_user (user_id, in_app_communication_id, seen_at, closed_at)
+             VALUES (:user_id, :communication_id, :seen_at, :closed_at)
              ON DUPLICATE KEY UPDATE closed_at = :closed_at',
             [
                 'user_id' => $user->getId(),
