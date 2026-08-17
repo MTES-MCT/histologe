@@ -20,7 +20,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
     use FileHelper;
     use FixturesHelper;
 
-    public const PATH_RESOURCE_JSON = '/../../../../tools/wiremock/src/Resources/Esabora/sish/';
+    public const string PATH_RESOURCE_JSON = '/../../../../tools/wiremock/src/Resources/Esabora/sish/';
 
     private MockObject&UploadHandlerService $uploadHandlerService;
     private MockObject&LoggerInterface $logger;
@@ -118,6 +118,6 @@ class EsaboraSISHServiceTest extends KernelTestCase
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
 
-        return new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        return new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService, true);
     }
 }
