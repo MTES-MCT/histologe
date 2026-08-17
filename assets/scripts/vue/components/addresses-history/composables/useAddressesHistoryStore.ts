@@ -69,11 +69,7 @@ const state = ref<StoreState>({
     { Id: DossiersMultiples.Avec, Text: 'Avec' },
     { Id: DossiersMultiples.Sans, Text: 'Sans' },
   ],
-<<<<<<< HEAD
   arreteTypesGroups: [],
-=======
-  arretesTypesGroups: [],
->>>>>>> 0a563d925 (add address entry sync with signalements #5949)
   filtersApplyKey: 0
 })
 
