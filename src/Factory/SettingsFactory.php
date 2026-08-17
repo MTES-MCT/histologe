@@ -47,7 +47,7 @@ class SettingsFactory
             bailleursSociaux: $filterOptionData['bailleursSociaux'],
             avatarOrPlaceHolder: $this->userAvatar->userAvatarOrPlaceHolder($user, 80),
             savedSearches: $this->userSearchFilterRepository->findAllForUserArray($user),
-            arretesTypes: $this->getArretesTypesGrouped(),
+            arreteTypes: $this->getArreteTypesGrouped(),
         );
     }
 
@@ -98,7 +98,7 @@ class SettingsFactory
     /**
      * @return array<string, array<int, array<string, string>>>
      */
-    private function getArretesTypesGrouped(): array
+    private function getArreteTypesGrouped(): array
     {
         $choices = ArreteType::getChoices();
         $result = [];
