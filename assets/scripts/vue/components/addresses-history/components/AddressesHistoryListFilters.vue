@@ -123,7 +123,7 @@
           id="filter-types-arretes"
           v-model="sharedState.input.filters.arreteTypes"
           @update:modelValue="notifyChange"
-          :option-groups="arretesTypesGroups"
+          :option-groups="arreteTypesGroups"
           :reset="resetKey"
         >
           <template #label>Types d'arrêtés</template>
@@ -183,8 +183,8 @@ const natureParcOptions = computed(() => store.state.natureParcList)
 const dossiersMultiplesOptions = computed(() => store.state.dossiersMultiplesList)
 
 // Groupes pour les types d'arrêtés (définis côté backend)
-const arretesTypesGroups = computed<CheckboxGroup[]>(() => {
-  return sharedState.arretesTypesGroups
+const arreteTypesGroups = computed<CheckboxGroup[]>(() => {
+  return sharedState.arreteTypesGroups
 })
 
 // Filtres actifs

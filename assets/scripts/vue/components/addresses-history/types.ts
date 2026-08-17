@@ -64,7 +64,7 @@ export interface UserState {
   partnerIds: string[]
 }
 
-export interface ArretesTypesGroup {
+export interface ArreteTypesGroup {
   title: string
   options: Array<{ Id: string; Text: string }>
 }
@@ -85,7 +85,7 @@ export interface StoreState {
   hasErrorLoading: boolean
   natureParcList: Array<{ Id: string; Text: string }>
   dossiersMultiplesList: Array<{ Id: string; Text: string }>
-  arretesTypesGroups: ArretesTypesGroup[]
+  arreteTypesGroups: ArreteTypesGroup[]
   filtersApplyKey: number
 }
 
@@ -122,5 +122,5 @@ export interface SettingsResponse {
   epcis?: Record<string, { code: string; nom: string }>
   zones?: Record<string, { id: number; name: string }>
   bailleursSociaux?: Record<string, string>
-  arretesTypes?: Record<string, Array<{ Id: string; Text: string }>>
+  arreteTypes?: Record<string, Array<{ Id: string; Text: string }>>
 }

@@ -115,11 +115,11 @@ export function useAddressesHistoryFilters() {
     }
 
     // Types d'arrêtés
-    if (response.arretesTypes) {
-      store.state.arretesTypesGroups = []
-      for (const groupTitle in response.arretesTypes) {
-        const arretes = response.arretesTypes[groupTitle]
-        store.state.arretesTypesGroups.push({
+    if (response.arreteTypes) {
+      store.state.arreteTypesGroups = []
+      for (const groupTitle in response.arreteTypes) {
+        const arretes = response.arreteTypes[groupTitle]
+        store.state.arreteTypesGroups.push({
           title: groupTitle,
           options: arretes
         })
@@ -316,9 +316,9 @@ export function useAddressesHistoryFilters() {
     }
 
     // Types d'arrêtés (tableau)
-    const typesArretes = urlParams.getAll('typesArretes[]')
-    if (typesArretes.length > 0) {
-      store.state.input.filters.typesArretes = typesArretes
+    const arreteTypes = urlParams.getAll('arreteTypes[]')
+    if (arreteTypes.length > 0) {
+      store.state.input.filters.arreteTypes = arreteTypes
     }
 
     // View mode

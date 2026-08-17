@@ -58,9 +58,9 @@ export function buildFilterLabel(key: keyof AddressesHistoryFilters, value: any)
   }
 
   // Types d'arrêtés (tableau)
-  if (key === 'arretesTypes' && Array.isArray(value) && value.length > 0) {
+  if (key === 'arreteTypes' && Array.isArray(value) && value.length > 0) {
     // Récupère toutes les options de tous les groupes
-    const allOptions = store.state.arretesTypesGroups.flatMap((group) => group.options)
+    const allOptions = store.state.arreteTypesGroups.flatMap((group) => group.options)
     const matchedTypes = allOptions.filter((t: { Id: string; Text: string }) => value.includes(t.Id.toString()))
     if (matchedTypes.length > 0) {
       return matchedTypes.length > 1
