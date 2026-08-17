@@ -82,12 +82,13 @@ class AffectationRepository extends ServiceEntityRepository
             $qb->andWhere('a.territory = :territory')->setParameter('territory', $territory);
         }
 
-        $esaboraCondition = $qb->expr()->orX(
-            'p.esaboraUrl LIKE :esabora_url', 'p.esaboraUrl LIKE :esabora_url_local'
-        );
-        $qb
-            ->setParameter('esabora_url', '%sante-habitat%')
-            ->setParameter('esabora_url_local', '%ARS%');
+        $esaboraConditions = [];
+        foreach (Partner::SANTE_HABITAT_URL_PATTERNS as $index => $pattern) {
+            $paramName = 'esabora_url_'.$index;
+            $esaboraConditions[] = "p.esaboraUrl LIKE :$paramName";
+            $qb->setParameter($paramName, '%'.$pattern.'%');
+        }
+        $esaboraCondition = $qb->expr()->orX(...$esaboraConditions);
 
         if (EsaboraSISHService::SERVICE_TYPE === $serviceType) {
             $qb->andWhere($esaboraCondition);

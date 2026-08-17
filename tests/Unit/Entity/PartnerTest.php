@@ -62,4 +62,20 @@ class PartnerTest extends KernelTestCase
 
         yield 'Create partner valid with email exists in territory' => [1, 0];
     }
+
+    #[DataProvider('provideDataForIsConnectedToSanteHabitat')]
+    public function testIsConnectedToSanteHabitat(?string $esaboraUrl, bool $expected): void
+    {
+        $partner = new Partner()->setEsaboraUrl($esaboraUrl);
+        $this->assertSame($expected, $partner->isConnectedToSanteHabitat());
+    }
+
+    public static function provideDataForIsConnectedToSanteHabitat(): \Generator
+    {
+        yield 'null url' => [null, false];
+        yield 'schs url' => ['https://esabora.schs.fr/ws', false];
+        yield 'sante-habitat url' => ['https://sante-habitat.esabora.fr/ws', true];
+        yield 'ARS url' => ['https://ARS.esabora.fr/ws', true];
+        yield 'sish url' => ['https://sish.esabora.fr/ws', true];
+    }
 }

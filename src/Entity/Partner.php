@@ -33,6 +33,7 @@ class Partner implements EntityHistoryInterface
     use TimestampableTrait;
 
     public const string DEFAULT_PARTNER = 'Administrateurs Signal-logement';
+    public const array SANTE_HABITAT_URL_PATTERNS = ['sante-habitat', 'ARS', 'sish'];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -420,9 +421,17 @@ class Partner implements EntityHistoryInterface
 
     public function isConnectedToSanteHabitat(): bool
     {
-        return str_contains($this->esaboraUrl, 'sante-habitat')
-            || str_contains($this->esaboraUrl, 'ARS')
-            || str_contains($this->esaboraUrl, 'sish');
+        if (null === $this->esaboraUrl) {
+            return false;
+        }
+
+        foreach (self::SANTE_HABITAT_URL_PATTERNS as $pattern) {
+            if (str_contains($this->esaboraUrl, $pattern)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function canSyncWithIdoss(): bool

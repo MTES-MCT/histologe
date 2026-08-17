@@ -13,6 +13,7 @@ use App\Service\Interconnection\Esabora\Response\DossierVisiteSISHCollectionResp
 use App\Service\Interconnection\JobEventMetaData;
 use App\Service\UploadHandlerService;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Emoji\EmojiTransliterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -27,6 +28,8 @@ class EsaboraSISHService extends AbstractEsaboraService
         HttpClientInterface $client,
         LoggerInterface $logger,
         UploadHandlerService $uploadHandlerService,
+        #[Autowire(env: 'FEATURE_SCHS_DISPATCH_SISH_ENABLE')]
+        private readonly bool $featureSchsDispatchSishEnable = false,
     ) {
         parent::__construct($client, $logger, $uploadHandlerService);
     }
@@ -324,10 +327,10 @@ class EsaboraSISHService extends AbstractEsaboraService
                 'fieldName' => 'Sas_DateAffectation',
                 'fieldValue' => $dossierMessageSISH->getSasDateAffectation(),
             ],
-            [
+            ...($this->featureSchsDispatchSishEnable ? [[
                 'fieldName' => 'Sas_Destinataire',
                 'fieldValue' => $dossierMessageSISH->getSasDestinataire(),
-            ],
+            ]] : []),
             [
                 'fieldName' => 'Localisation_Etage',
                 'fieldValue' => $dossierMessageSISH->getLocalisationEtage(),
