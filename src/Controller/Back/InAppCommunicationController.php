@@ -7,7 +7,6 @@ use App\Entity\User;
 use App\Repository\InAppCommunicationRepository;
 use App\Repository\InAppCommunicationUserRepository;
 use Doctrine\DBAL\Exception;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +21,6 @@ class InAppCommunicationController extends AbstractController
     public function show(
         InAppCommunicationRepository $inAppCommunicationRepository,
         InAppCommunicationUserRepository $inAppCommunicationUserRepository,
-        EntityManagerInterface $entityManager,
     ): Response {
         /** @var ?User $user */
         $user = $this->getUser();
@@ -38,15 +36,7 @@ class InAppCommunicationController extends AbstractController
             }
 
             if (!$inAppCommunicationUser) {
-                $entityManager->getConnection()->executeStatement(
-                    'INSERT IGNORE INTO in_app_communication_user (user_id, in_app_communication_id, seen_at) 
-                     VALUES (:user_id, :communication_id, :seen_at)',
-                    [
-                        'user_id' => $user->getId(),
-                        'communication_id' => $inAppCommunication->getId(),
-                        'seen_at' => new \DateTimeImmutable()->format('Y-m-d H:i:s'),
-                    ]
-                );
+                $inAppCommunicationUserRepository->markAsSeen($user, $inAppCommunication);
             }
 
             $listInAppCommunications[] = $inAppCommunication;
@@ -64,7 +54,7 @@ class InAppCommunicationController extends AbstractController
     public function close(
         InAppCommunication $inAppCommunication,
         InAppCommunicationRepository $inAppCommunicationRepository,
-        EntityManagerInterface $entityManager,
+        InAppCommunicationUserRepository $inAppCommunicationUserRepository,
     ): JsonResponse {
         /** @var ?User $user */
         $user = $this->getUser();
@@ -73,18 +63,7 @@ class InAppCommunicationController extends AbstractController
             return new JsonResponse(['success' => true]);
         }
 
-        $now = new \DateTimeImmutable()->format('Y-m-d H:i:s');
-        $entityManager->getConnection()->executeStatement(
-            'INSERT INTO in_app_communication_user (user_id, in_app_communication_id, seen_at, closed_at) 
-             VALUES (:user_id, :communication_id, :seen_at, :closed_at) 
-             ON DUPLICATE KEY UPDATE closed_at = :closed_at',
-            [
-                'user_id' => $user->getId(),
-                'communication_id' => $inAppCommunication->getId(),
-                'seen_at' => $now,
-                'closed_at' => $now,
-            ]
-        );
+        $inAppCommunicationUserRepository->markAsClosed($user, $inAppCommunication);
 
         return new JsonResponse(['success' => true]);
     }
