@@ -3,10 +3,10 @@
 namespace App\Controller\Back;
 
 use App\Entity\InAppCommunication;
-use App\Entity\InAppCommunicationUser;
 use App\Entity\User;
 use App\Repository\InAppCommunicationRepository;
 use App\Repository\InAppCommunicationUserRepository;
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,6 +16,9 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo/in-app-communication')]
 class InAppCommunicationController extends AbstractController
 {
+    /**
+     * @throws Exception
+     */
     public function show(
         InAppCommunicationRepository $inAppCommunicationRepository,
         InAppCommunicationUserRepository $inAppCommunicationUserRepository,
@@ -30,30 +33,37 @@ class InAppCommunicationController extends AbstractController
         // - si elle a déjà été clôturée on l'ignore
         foreach ($inAppCommunications as $inAppCommunication) {
             $inAppCommunicationUser = $inAppCommunicationUserRepository->findOneBy(['user' => $user, 'inAppCommunication' => $inAppCommunication]);
-            if (!$inAppCommunicationUser) {
-                $inAppCommunicationUser = new InAppCommunicationUser();
-                $inAppCommunicationUser->setUser($user);
-                $inAppCommunicationUser->setInAppCommunication($inAppCommunication);
-                $inAppCommunicationUser->setSeenAt(new \DateTimeImmutable());
-                $entityManager->persist($inAppCommunicationUser);
-            } elseif ($inAppCommunicationUser->getClosedAt()) {
+            if ($inAppCommunicationUser?->getClosedAt()) {
                 continue;
             }
+
+            if (!$inAppCommunicationUser) {
+                $entityManager->getConnection()->executeStatement(
+                    'INSERT IGNORE INTO in_app_communication_user (user_id, in_app_communication_id, seen_at) 
+                     VALUES (:user_id, :communication_id, :seen_at)',
+                    [
+                        'user_id' => $user->getId(),
+                        'communication_id' => $inAppCommunication->getId(),
+                        'seen_at' => new \DateTimeImmutable()->format('Y-m-d H:i:s'),
+                    ]
+                );
+            }
+
             $listInAppCommunications[] = $inAppCommunication;
         }
-
-        $entityManager->flush();
 
         return $this->render('back/in-app-communication/show.html.twig', [
             'inAppCommunications' => $listInAppCommunications,
         ]);
     }
 
+    /**
+     * @throws Exception
+     */
     #[Route('/close/{id}', name: 'back_in_app_communication_close', methods: ['POST'])]
     public function close(
         InAppCommunication $inAppCommunication,
         InAppCommunicationRepository $inAppCommunicationRepository,
-        InAppCommunicationUserRepository $inAppCommunicationUserRepository,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var ?User $user */
@@ -62,16 +72,19 @@ class InAppCommunicationController extends AbstractController
         if (!$inAppCommunications) {
             return new JsonResponse(['success' => true]);
         }
-        $inAppCommunicationUser = $inAppCommunicationUserRepository->findOneBy(['user' => $user, 'inAppCommunication' => $inAppCommunication]);
-        if (!$inAppCommunicationUser) {
-            $inAppCommunicationUser = new InAppCommunicationUser();
-            $inAppCommunicationUser->setUser($user);
-            $inAppCommunicationUser->setInAppCommunication($inAppCommunication);
-            $inAppCommunicationUser->setSeenAt(new \DateTimeImmutable());
-            $entityManager->persist($inAppCommunicationUser);
-        }
-        $inAppCommunicationUser->setClosedAt(new \DateTimeImmutable());
-        $entityManager->flush();
+
+        $now = new \DateTimeImmutable()->format('Y-m-d H:i:s');
+        $entityManager->getConnection()->executeStatement(
+            'INSERT INTO in_app_communication_user (user_id, in_app_communication_id, seen_at, closed_at) 
+             VALUES (:user_id, :communication_id, :seen_at, :closed_at) 
+             ON DUPLICATE KEY UPDATE closed_at = :closed_at',
+            [
+                'user_id' => $user->getId(),
+                'communication_id' => $inAppCommunication->getId(),
+                'seen_at' => $now,
+                'closed_at' => $now,
+            ]
+        );
 
         return new JsonResponse(['success' => true]);
     }
