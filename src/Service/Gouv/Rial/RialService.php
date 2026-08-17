@@ -23,6 +23,7 @@ class RialService
     //
     // @see https://doc.scalingo.com/platform/networking/public/egress
     private const string API_IPIFY = 'https://api.ipify.org';
+    private const int ACCESS_TOKEN_EXPIRATION_DELAY = 3600;
 
     /**
      * @var array<string>
@@ -33,7 +34,8 @@ class RialService
      */
     private const array CODES_NATURES_ACCEPTED = ['AP', 'MA', 'MP', 'ME'];
 
-    private string $accessToken;
+    private ?string $accessToken = null;
+    private ?int $accessTokenExpiresAt = null;
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -49,15 +51,16 @@ class RialService
     ) {
     }
 
-    public function setAccessToken(string $accessToken): void
+    public function setAccessToken(string $accessToken, int $expiresIn = self::ACCESS_TOKEN_EXPIRATION_DELAY): void
     {
         $this->accessToken = $accessToken;
+        $this->accessTokenExpiresAt = time() + $expiresIn;
     }
 
     public function getAccessToken(): ?string
     {
         if ($this->rialEnable) {
-            if (!empty($this->accessToken)) {
+            if ($this->hasValidAccessToken()) {
                 return $this->accessToken;
             }
 
@@ -67,6 +70,7 @@ class RialService
                 'grant_type' => 'client_credentials',
             ];
 
+            $context = [];
             try {
                 $response = $this->httpClient->request('POST', $url, [
                     'headers' => $headers,
@@ -74,11 +78,13 @@ class RialService
                 ]);
 
                 if (Response::HTTP_OK === $response->getStatusCode()) {
-                    $this->accessToken = $response->toArray()['access_token'];
+                    $data = $response->toArray();
+                    $this->accessToken = $data['access_token'] ?? null;
+                    $this->accessTokenExpiresAt = time() + (int) ($data['expires_in'] ?? self::ACCESS_TOKEN_EXPIRATION_DELAY);
+                    $this->logger->info('Rial API access token retrieved', ['expires_at' => $this->accessTokenExpiresAt]);
 
                     return $this->accessToken;
                 }
-                $context = [];
                 if (Response::HTTP_UNAUTHORIZED === $response->getStatusCode()) {
                     try {
                         $ipResponse = $this->httpClient->request('GET', self::API_IPIFY);
@@ -89,7 +95,7 @@ class RialService
                 }
                 $this->logger->warning(\sprintf('Rial API access token failed (status %s)', $response->getStatusCode()), $context);
             } catch (\Throwable $exception) {
-                $this->logger->error($exception->getMessage());
+                $this->logger->error($exception->getMessage(), $context);
             }
         }
 
@@ -108,7 +114,10 @@ class RialService
             $result = null;
             foreach ($listLocaux as $localId) {
                 $infoLocal = $this->searchLocalByIdFiscal($localId);
-                if (!empty($infoLocal) && in_array($infoLocal['descriptifGeneralLocal']['codeNatureLocal'], self::CODES_NATURES_ACCEPTED)) {
+                if (!empty($infoLocal)
+                    && isset($infoLocal['descriptifGeneralLocal']['codeNatureLocal'])
+                    && in_array($infoLocal['descriptifGeneralLocal']['codeNatureLocal'], self::CODES_NATURES_ACCEPTED)
+                ) {
                     if (empty($result)) {
                         $result = $localId;
                     } else {
@@ -152,6 +161,11 @@ class RialService
             $headers = $rialHeaders['headers'];
             $correlationId = $rialHeaders['correlation_id'];
 
+            $context = [
+                'ban_id' => $banId,
+                'params' => $params,
+                'correlation_id' => $correlationId,
+            ];
             try {
                 $response = $this->httpClient->request('GET', $url, [
                     'headers' => $headers,
@@ -162,11 +176,6 @@ class RialService
 
                     return $responseArray['listeIdentifiantsFiscaux'];
                 }
-                $context = [
-                    'correlation_id' => $correlationId,
-                    'ban_id' => $banId,
-                    'params' => $params,
-                ];
                 if (Response::HTTP_UNAUTHORIZED === $response->getStatusCode()
                     || Response::HTTP_BAD_REQUEST === $response->getStatusCode()
                 ) {
@@ -185,7 +194,7 @@ class RialService
                     $context
                 );
             } catch (\Throwable $exception) {
-                $this->logger->error($exception->getMessage());
+                $this->logger->error($exception->getMessage(), $context);
             }
         }
 
@@ -213,6 +222,10 @@ class RialService
             $headers = $rialHeaders['headers'];
             $correlationId = $rialHeaders['correlation_id'];
 
+            $context = [
+                'identifiant_fiscal' => $identifiantFiscal,
+                'correlation_id' => $correlationId,
+            ];
             try {
                 $response = $this->httpClient->request('GET', $url, [
                     'headers' => $headers,
@@ -223,7 +236,6 @@ class RialService
 
                     return $responseArray[0];
                 }
-                $context = ['correlation_id' => $correlationId];
                 if (Response::HTTP_UNAUTHORIZED === $response->getStatusCode()
                     || Response::HTTP_BAD_REQUEST === $response->getStatusCode()
                 ) {
@@ -242,10 +254,17 @@ class RialService
                     $context
                 );
             } catch (\Throwable $exception) {
-                $this->logger->error($exception->getMessage());
+                $this->logger->error($exception->getMessage(), $context);
             }
         }
 
         return null;
+    }
+
+    private function hasValidAccessToken(): bool
+    {
+        return null !== $this->accessToken
+            && null !== $this->accessTokenExpiresAt
+            && time() < ($this->accessTokenExpiresAt - 60);
     }
 }
