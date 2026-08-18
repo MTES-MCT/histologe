@@ -7,6 +7,7 @@ use App\Entity\Address;
 use App\Entity\Enum\ArreteType;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\ArreteType;
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\Zone;
