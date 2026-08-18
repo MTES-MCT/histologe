@@ -19,7 +19,11 @@ modalElements.forEach((modalElement) => {
 function clearErrors() {
   const divErrorElements = document.querySelectorAll('.fr-input-group--error, .fr-fieldset--error');
   divErrorElements.forEach((divErrorElement) => {
-    divErrorElement.classList.remove('fr-label--error', 'fr-input-group--error', 'fr-fieldset--error');
+    divErrorElement.classList.remove(
+      'fr-label--error',
+      'fr-input-group--error',
+      'fr-fieldset--error'
+    );
   });
   document.querySelectorAll('.fr-error-text').forEach((pErrorElement) => {
     pErrorElement.remove();

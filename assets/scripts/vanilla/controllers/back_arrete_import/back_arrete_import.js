@@ -105,8 +105,8 @@ async function handleUpload(elements) {
 
     if (payload.errors?.length) {
       showErrors(elements, payload.errors);
-      if(!payload.data?.length) {
-        return ;
+      if (!payload.data?.length) {
+        return;
       }
     }
 
