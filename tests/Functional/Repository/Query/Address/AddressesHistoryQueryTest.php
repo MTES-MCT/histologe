@@ -5,7 +5,7 @@ namespace App\Tests\Functional\Repository\Query\Address;
 use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\Address;
 use App\Entity\Enum\SignalementStatus;
-use App\Entity\Enum\TypeArrete;
+use App\Entity\Enum\ArreteType;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\Zone;
@@ -285,7 +285,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec un type d'arrêté connu
         $searchQuery = new AddressesHistorySearchQuery(
-            typesArretes: [TypeArrete::MISE_EN_SECURITE->value]
+            arreteTypes: [ArreteType::MISE_EN_SECURITE->value]
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
@@ -295,7 +295,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec un type d'arrêté connu
         $searchQuery = new AddressesHistorySearchQuery(
-            typesArretes: [TypeArrete::MISE_EN_SECURITE->value, TypeArrete::MISE_EN_SECURITE_PROCEDURE_URGENTE->value]
+            arreteTypes: [ArreteType::MISE_EN_SECURITE->value, ArreteType::MISE_EN_SECURITE_PROCEDURE_URGENTE->value]
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
