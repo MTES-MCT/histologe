@@ -6,5 +6,9 @@
         (signalement.typeCompositionLogement.typeLogementSousSolSansFenetre == 'oui' ? EtageType.SOUSSOL.value : 
         EtageType.AUTRE.value))) %}
 
-    {{ EtageType.from(etage).label }}
+    {% if etage == EtageType.AUTRE.value and signalement.etageOccupant %}
+        {{ signalement.etageOccupant }}
+    {% else %}
+        {{ EtageType.from(etage).label }}
+    {% endif %}
 {% endif %}
