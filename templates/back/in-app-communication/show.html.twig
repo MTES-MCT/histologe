@@ -13,7 +13,7 @@
             <a href="{{ inAppCommunication.url }}" target="_blank" rel="noopener external" class="fr-notice__link">{{inAppCommunication.urlTitle}}</a>
           {% endif %}
         </p>
-        <button title="Masquer le message" type="button" data-close-url="{{ path('back_in_app_communication_close', {'id': inAppCommunication.id}) }}" class="fr-btn--close fr-btn">Masquer le message</button>
+        <button title="Masquer le message" type="button" data-close-url="{{ path('back_in_app_communication_close', {'id': inAppCommunication.id}) }}" class="fr-btn fr-btn--sm fr-btn--tertiary-no-outline fr-btn--icon-right fr-icon-close-circle-fill">Fermer</button>
       </div>
     </div>
   </div>

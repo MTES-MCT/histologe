@@ -1,5 +1,7 @@
 document.addEventListener('click', (event) => {
-  const closeButton = event.target.closest('.fr-notice .fr-btn--close');
+  const closeButton = event.target.closest(
+    '.fr-notice .fr-btn--close, .fr-notice .fr-icon-close-circle-fill'
+  );
 
   if (closeButton) {
     if (closeButton.dataset.closeUrl) {
