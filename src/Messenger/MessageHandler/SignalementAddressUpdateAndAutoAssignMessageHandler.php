@@ -3,7 +3,6 @@
 namespace App\Messenger\MessageHandler;
 
 use App\Entity\Enum\SignalementStatus;
-use App\Manager\AddressManager;
 use App\Messenger\Message\SignalementDraftProcessMessage;
 use App\Repository\SignalementRepository;
 use App\Service\Notification\NotificationAndMailSender;
@@ -20,7 +19,6 @@ class SignalementAddressUpdateAndAutoAssignMessageHandler
         private readonly SignalementRepository $signalementRepository,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly AutoAssigner $autoAssigner,
-        private readonly AddressManager $addressManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly LoggerInterface $logger,
