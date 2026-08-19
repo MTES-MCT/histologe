@@ -36,7 +36,7 @@ class AddressRepositoryTest extends KernelTestCase
 
         $this->assertIsArray($allAddresses);
         $this->assertNotEmpty($allAddresses);
-        $this->assertCount(59, $allAddresses);
+        $this->assertCount(12, $allAddresses); // à ajuster quand fixtures adresses gérées dans la PR #6212
 
         // Vérifie la structure des résultats
         foreach ($allAddresses as $address) {
@@ -64,6 +64,6 @@ class AddressRepositoryTest extends KernelTestCase
         $addressesForTerritory = $addressRepository->findAllList($territory);
 
         $this->assertIsArray($addressesForTerritory);
-        $this->assertCount(21, $addressesForTerritory);
+        $this->assertCount(2, $addressesForTerritory); // à ajuster quand fixtures adresses gérées dans la PR #6212
     }
 }
