@@ -81,7 +81,7 @@
                     </td>
                     <td>
                         {% if communication.url %}
-                            <a href="{{ communication.url }}" target="_blank">{{ communication.urlTitle }}</a>
+                            <a href="{{ communication.url }}" target="_blank" rel="noopener external" title="{{ communication.urlTitle }} - Ouvre une nouvelle fenêtre">{{ communication.urlTitle }}</a>
                         {% endif %}
                     </td>
                     <td>

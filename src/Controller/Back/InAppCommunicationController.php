@@ -6,6 +6,7 @@ use App\Entity\InAppCommunication;
 use App\Entity\User;
 use App\Repository\InAppCommunicationRepository;
 use App\Repository\InAppCommunicationUserRepository;
+use App\Repository\Query\InAppCommunication\InAppCommunicationUserQuery;
 use Doctrine\DBAL\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,6 +16,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/bo/in-app-communication')]
 class InAppCommunicationController extends AbstractController
 {
+    public function __construct(
+        private readonly InAppCommunicationUserQuery $inAppCommunicationUserQuery,
+    ) {
+    }
+
     /**
      * @throws Exception
      */
@@ -36,7 +42,7 @@ class InAppCommunicationController extends AbstractController
             }
 
             if (!$inAppCommunicationUser) {
-                $inAppCommunicationUserRepository->markAsSeen($user, $inAppCommunication);
+                $this->inAppCommunicationUserQuery->markAsSeen($user, $inAppCommunication);
             }
 
             $listInAppCommunications[] = $inAppCommunication;
@@ -54,7 +60,6 @@ class InAppCommunicationController extends AbstractController
     public function close(
         InAppCommunication $inAppCommunication,
         InAppCommunicationRepository $inAppCommunicationRepository,
-        InAppCommunicationUserRepository $inAppCommunicationUserRepository,
     ): JsonResponse {
         /** @var ?User $user */
         $user = $this->getUser();
@@ -63,7 +68,7 @@ class InAppCommunicationController extends AbstractController
             return new JsonResponse(['success' => true]);
         }
 
-        $inAppCommunicationUserRepository->markAsClosed($user, $inAppCommunication);
+        $this->inAppCommunicationUserQuery->markAsClosed($user, $inAppCommunication);
 
         return new JsonResponse(['success' => true]);
     }
