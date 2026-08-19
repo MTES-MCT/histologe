@@ -14,9 +14,30 @@ class SignalementAddressUpdater
         private readonly AddressService $addressService,
         private readonly RnbService $rnbService,
         private readonly RialService $rialService,
+        private readonly ZipcodeProvider $zipcodeProvider,
+        private readonly PostalCodeHomeChecker $postalCodeHomeChecker,
         #[Autowire(env: 'RIAL_ENABLE')]
         private readonly string $rialEnable,
     ) {
+    }
+
+    public function canUpdateWithNewAddress(Signalement $signalement, string $newCodePostal, string $newInsee): bool
+    {
+        $currentTerritory = $signalement->getTerritory();
+
+        if (!empty($newInsee)) {
+            $newTerritory = $this->zipcodeProvider->getTerritoryByInseeCode($newInsee);
+            if ($this->postalCodeHomeChecker->isActiveByInseeCode($newInsee)) {
+                return $currentTerritory === $newTerritory;
+            }
+        } else {
+            $newTerritory = $this->zipcodeProvider->getTerritoryByPostalCode($newCodePostal);
+            if ($this->postalCodeHomeChecker->isActiveByPostalCode($newCodePostal)) {
+                return $currentTerritory === $newTerritory;
+            }
+        }
+
+        return false;
     }
 
     public function updateAddressOccupantFromBanData(Signalement $signalement, bool $updateRnbId = true): void

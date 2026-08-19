@@ -29,6 +29,7 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\MessageHelper;
+use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\SignalementAddressContentService;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -54,6 +55,7 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
         SignalementAddressContentService $signalementAddressContentService,
+        SignalementAddressUpdater $signalementAddressUpdater,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
@@ -78,6 +80,13 @@ class SignalementEditController extends AbstractController
 
             return $this->json($response, $response['code']);
         }
+
+        if (!$signalementAddressUpdater->canUpdateWithNewAddress($signalement, $adresseOccupantRequest->getCodePostal(), $adresseOccupantRequest->getInsee())) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'L\'adresse renseignée ne correspond pas au territoire d\'origine du signalement.'];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+
         $subscriptionCreated = $signalementManager->updateFromAdresseOccupantRequest($signalement, $adresseOccupantRequest);
         $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'L\'adresse du logement a bien été modifiée.'];
