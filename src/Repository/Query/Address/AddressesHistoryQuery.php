@@ -77,6 +77,7 @@ class AddressesHistoryQuery
                 's.closedAt',
                 's.reference',
                 's.statut',
+                's.profileDeclarant',
                 's.geoloc',
                 's.nomOccupant',
                 's.prenomOccupant',
