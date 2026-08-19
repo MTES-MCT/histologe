@@ -43,6 +43,7 @@
                     <a :href="`${signalement.url}`" class="fr-link"
                       ># {{ signalement.ref }}</a> - {{ signalement.usager }}
                     <p :class="getStatusLabel(signalement.statut)">{{ signalement.statut }}</p>
+                    <p class="fr-badge fr-badge--no-icon fr-badge--info fr-ml-1w">{{ signalement.declarant }}</p>
                   </li>
                 </ul>
                 <div v-else>
