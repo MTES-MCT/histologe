@@ -27,7 +27,6 @@ use App\Factory\Signalement\InformationComplementaireFactory;
 use App\Factory\Signalement\InformationProcedureFactory;
 use App\Factory\Signalement\SituationFoyerFactory;
 use App\Factory\Signalement\TypeCompositionLogementFactory;
-use App\Manager\AddressManager;
 use App\Manager\UserManager;
 use App\Repository\AddressRepository;
 use App\Repository\BailleurRepository;
@@ -65,7 +64,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         private readonly PersonalTagRepository $personalTagRepository,
         private readonly FileFactory $fileFactory,
         private readonly UserManager $userManager,
-        private readonly AddressManager $addressManager,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
         private readonly ParameterBagInterface $parameterBag,
         private readonly ReferenceGenerator $referenceGenerator,
@@ -231,7 +229,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         $manager->persist($signalement);
 
-        $this->addressManager->createOrUpdateFrom($signalement);
         $this->userManager->createUsagersFromSignalement($signalement);
 
         if (isset($row['qualifications'])) {
@@ -541,7 +538,6 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
 
         $manager->persist($signalement);
 
-        $this->addressManager->createOrUpdateFrom($signalement);
         $this->userManager->createUsagersFromSignalement($signalement);
     }
 
