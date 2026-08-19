@@ -191,7 +191,7 @@ class RialToolControllerTest extends WebTestCase
         $rialService = $this->createMock(RialService::class);
         $rialService->expects($this->exactly(4))
             ->method('searchLocauxByBanId')
-            ->willReturnCallback(function (string $banId) {
+            ->willReturnCallback(static function (string $banId) {
                 return [];
             });
 
@@ -237,6 +237,7 @@ class RialToolControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h4', 'Résultats TOPO DGFiP pour 63214_f9fzrv_00006');
         $this->assertStringNotContainsString('Résultats TOPO DGFiP pour 63214_f9fzrv_00005', $crawler->text());
     }
+
     public function testMultipleTopoSearchPreservesPreviousSearchesAndResults(): void
     {
         self::ensureKernelShutdown();
@@ -246,14 +247,14 @@ class RialToolControllerTest extends WebTestCase
         $rialService = $this->createMock(RialService::class);
         $rialService->expects($this->exactly(6))
             ->method('searchLocauxByBanId')
-            ->willReturnCallback(function (string $banId) {
+            ->willReturnCallback(static function (string $banId) {
                 return [];
             });
 
         $topoService = $this->createMock(TopoService::class);
         $topoService->expects($this->exactly(2))
             ->method('searchVoies')
-            ->willReturnCallback(function (string $codeDep, string $codeCommune, string $libelle) {
+            ->willReturnCallback(static function (string $codeDep, string $codeCommune, string $libelle) {
                 if ('LOUBRETTE' === $libelle) {
                     return [
                         [
