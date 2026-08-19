@@ -36,6 +36,7 @@ class Suivi implements EntityHistoryInterface
     public const int DEFAULT_PERIOD_INACTIVITY = 30;
     public const int DEFAULT_PERIOD_RELANCE = 45;
     public const int DEFAULT_PERIOD_BOUCLE = 90;
+    public const int NB_ASK_FEEDBACK_LOOP_THRESHOLD = 3;
 
     public const string DESCRIPTION_DELETED = 'Ce suivi a été supprimé par un administrateur le ';
 

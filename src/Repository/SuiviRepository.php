@@ -4,12 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
-use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Suivi;
-use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -47,6 +44,7 @@ class SuiviRepository extends ServiceEntityRepository
     ): array {
         // - dernier suivi public > 45 jours (Suivi::DEFAULT_PERIOD_RELANCE)
         // - zéro ASK_FEEDBACK_SENT depuis ce dernier suivi public
+        // - pas déjà en phase boucle 90 jours (< 3 ASK_FEEDBACK_SENT au total)
         // - statut actif
         // - non importé
         // - non vacant
@@ -57,6 +55,7 @@ class SuiviRepository extends ServiceEntityRepository
             'day_period' => $period,
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_active' => SignalementStatus::ACTIVE->value,
+            'nb_ask_feedback_loop_threshold' => Suivi::NB_ASK_FEEDBACK_LOOP_THRESHOLD,
         ];
         $sql = 'SELECT s.id, s.created_at
         FROM signalement s
@@ -67,13 +66,14 @@ class SuiviRepository extends ServiceEntityRepository
             GROUP BY signalement_id
         ) pub ON pub.signalement_id = s.id
         LEFT JOIN (
-            SELECT signalement_id, MAX(created_at) AS last_af
+            SELECT signalement_id, MAX(created_at) AS last_af, COUNT(*) AS total_af
             FROM suivi
             WHERE category = :category_ask_feedback
             GROUP BY signalement_id
         ) af ON af.signalement_id = s.id
         WHERE pub.last_public < DATE_SUB(NOW(), INTERVAL :day_period DAY)
         AND (af.last_af IS NULL OR af.last_af < pub.last_public)
+        AND COALESCE(af.total_af, 0) < :nb_ask_feedback_loop_threshold
         AND s.statut = :status_active
         AND s.is_imported != 1
         AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
@@ -93,6 +93,7 @@ class SuiviRepository extends ServiceEntityRepository
     ): array {
         // - dernier suivi public > 45 (Suivi::DEFAULT_PERIOD_RELANCE) + 30 (Suivi::DEFAULT_PERIOD_INACTIVITY) jours
         // - 1 et un seul ASK_FEEDBACK_SENT depuis ce dernier suivi public > 30 jours (Suivi::DEFAULT_PERIOD_INACTIVITY)
+        // - pas déjà en phase boucle 90 jours (< 3 ASK_FEEDBACK_SENT au total)
         // - statut actif
         // - non importé
         // - non vacant
@@ -103,6 +104,7 @@ class SuiviRepository extends ServiceEntityRepository
             'day_period' => $period,
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_active' => SignalementStatus::ACTIVE->value,
+            'nb_ask_feedback_loop_threshold' => Suivi::NB_ASK_FEEDBACK_LOOP_THRESHOLD,
         ];
         $sql = 'SELECT s.id
                 FROM signalement s
@@ -128,8 +130,15 @@ class SuiviRepository extends ServiceEntityRepository
                     GROUP BY su.signalement_id
                     HAVING nb_af = 1 AND last_af < DATE_SUB(NOW(), INTERVAL :day_period DAY)
                 ) af ON af.signalement_id = s.id
+                LEFT JOIN (
+                    SELECT signalement_id, COUNT(*) AS total_af
+                    FROM suivi
+                    WHERE category = :category_ask_feedback
+                    GROUP BY signalement_id
+                ) total_af ON total_af.signalement_id = s.id
                 WHERE s.statut = :status_active
                 AND s.is_imported != 1
+                AND COALESCE(total_af.total_af, 0) < :nb_ask_feedback_loop_threshold
                 AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
                 AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
                 LIMIT '.$this->limitDailyRelancesByRequest;
@@ -143,9 +152,10 @@ class SuiviRepository extends ServiceEntityRepository
      * @throws Exception
      */
     public function findSignalementsForThirdAskFeedbackRelance(
-        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
+        int $dayPeriod = Suivi::DEFAULT_PERIOD_INACTIVITY,
     ): array {
         // - 2 et seulement 2 ASK_FEEDBACK_SENT depuis le dernier suivi public (dont le dernier) > 30 jours (Suivi::DEFAULT_PERIOD_INACTIVITY)
+        // - pas déjà en phase boucle 90 jours (< 3 ASK_FEEDBACK_SENT au total)
         // - statut actif
         // - non importé
         // - non vacant
@@ -155,12 +165,44 @@ class SuiviRepository extends ServiceEntityRepository
         $parameters = [
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_active' => SignalementStatus::ACTIVE->value,
+            'nb_ask_feedback_loop_threshold' => Suivi::NB_ASK_FEEDBACK_LOOP_THRESHOLD,
         ];
 
-        $sql = $this->getSignalementsLastAskFeedbackSuivisQuery(
-            dayPeriod: $period,
-            exactCount: 2
-        );
+        $sql = 'SELECT s.id
+                FROM signalement s
+                INNER JOIN (
+                    SELECT signalement_id, MAX(created_at) AS max_date_suivi
+                    FROM suivi
+                    GROUP BY signalement_id
+                ) su ON s.id = su.signalement_id 
+                INNER JOIN (
+                    SELECT su.signalement_id, MIN(su.created_at) AS min_date
+                    FROM suivi su
+                    INNER JOIN signalement s2 ON s2.id = su.signalement_id
+                    WHERE su.category = :category_ask_feedback
+                    AND su.created_at > COALESCE(
+                        (SELECT MAX(created_at) FROM suivi WHERE signalement_id = su.signalement_id AND suivi.is_visible_for_usager = 1),
+                        s2.created_at
+                    )
+                    GROUP BY su.signalement_id
+                    HAVING COUNT(*) = 2
+                ) t1 ON s.id = t1.signalement_id
+                LEFT JOIN (
+                    SELECT signalement_id, COUNT(*) AS total_af
+                    FROM suivi
+                    WHERE category = :category_ask_feedback
+                    GROUP BY signalement_id
+                ) total_af ON total_af.signalement_id = s.id
+                LEFT JOIN suivi su2 ON s.id = su2.signalement_id
+                AND su2.created_at > t1.min_date
+                AND su2.category <> :category_ask_feedback
+                WHERE su2.signalement_id IS NULL
+                AND COALESCE(total_af.total_af, 0) < :nb_ask_feedback_loop_threshold
+                AND s.statut = :status_active
+                AND s.is_imported != 1 
+                AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
+                AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
+                AND su.max_date_suivi < DATE_SUB(NOW(), INTERVAL '.$dayPeriod.' DAY) ';
 
         $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
 
@@ -175,7 +217,9 @@ class SuiviRepository extends ServiceEntityRepository
     public function findSignalementsForLoopAskFeedbackRelance(
         int $loopDelay = Suivi::DEFAULT_PERIOD_BOUCLE,
     ): array {
-        // - au moins 3 ASK_FEEDBACK_SENT depuis le dernier suivi public (dont le dernier) > 90 jours (Suivi::DEFAULT_PERIOD_BOUCLE)
+        // - déjà en phase boucle 90 jours (>= 3 ASK_FEEDBACK_SENT au total, tout historique confondu)
+        // - dernier suivi du dossier (visible usager ou demande de feedback) > 90 jours (Suivi::DEFAULT_PERIOD_BOUCLE)
+        //   (un nouveau suivi, visible usager, redémarre ce délai mais ne fait pas sortir le dossier de la boucle)
         // - statut actif
         // - non importé
         // - non vacant
@@ -185,88 +229,33 @@ class SuiviRepository extends ServiceEntityRepository
         $parameters = [
             'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
             'status_active' => SignalementStatus::ACTIVE->value,
-            'nb_suivi_technical' => 3,
+            'nb_ask_feedback_loop_threshold' => Suivi::NB_ASK_FEEDBACK_LOOP_THRESHOLD,
         ];
 
-        $sql = $this->getSignalementsLastAskFeedbackSuivisQuery(
-            dayPeriod: $loopDelay
-        );
+        $sql = 'SELECT s.id
+                FROM signalement s
+                INNER JOIN (
+                    SELECT signalement_id, COUNT(*) AS total_af
+                    FROM suivi
+                    WHERE category = :category_ask_feedback
+                    GROUP BY signalement_id
+                    HAVING COUNT(*) >= :nb_ask_feedback_loop_threshold
+                ) total_af ON total_af.signalement_id = s.id
+                INNER JOIN (
+                    SELECT signalement_id, MAX(created_at) AS max_date_suivi
+                    FROM suivi
+                    WHERE is_visible_for_usager = 1 OR category = :category_ask_feedback
+                    GROUP BY signalement_id
+                ) su ON su.signalement_id = s.id
+                WHERE su.max_date_suivi < DATE_SUB(NOW(), INTERVAL '.$loopDelay.' DAY)
+                AND s.statut = :status_active
+                AND s.is_imported != 1
+                AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
+                AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)';
 
         $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
 
         return $connection->executeQuery($sql, $parameters)->fetchFirstColumn();
-    }
-
-    /**
-     * @param array<int, Territory>          $territories
-     * @param ?ArrayCollection<int, Partner> $partners
-     */
-    public function getSignalementsLastAskFeedbackSuivisQuery(
-        bool $excludeUsagerAbandonProcedure = true,
-        int $dayPeriod = 0,
-        ?ArrayCollection $partners = null,
-        array $territories = [],
-        ?int $exactCount = null,
-    ): string {
-        $joinMaxDateSuivi = $whereTerritory = $wherePartner = $innerPartnerJoin = $whereExcludeUsagerAbandonProcedure
-        = $whereLastSuiviDelay = '';
-
-        if (\count($territories)) {
-            $whereTerritory = 'AND s.territory_id IN (:territories) ';
-        }
-
-        if (null != $partners && !$partners->isEmpty()) {
-            $wherePartner = 'AND a.partner_id IN (:partners) ';
-            $innerPartnerJoin = 'INNER JOIN affectation a
-            ON a.signalement_id = su.signalement_id AND a.statut = :status_accepted ';
-        }
-
-        if ($excludeUsagerAbandonProcedure) {
-            $whereExcludeUsagerAbandonProcedure = 'AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)';
-        }
-        if ($dayPeriod > 0) {
-            $whereLastSuiviDelay = 'AND su.max_date_suivi < DATE_SUB(NOW(), INTERVAL '.$dayPeriod.' DAY) ';
-        }
-        if ($dayPeriod > 0 || (null != $partners && !$partners->isEmpty())) {
-            $joinMaxDateSuivi = '
-            INNER JOIN (
-                SELECT signalement_id, MAX(created_at) AS max_date_suivi
-                FROM suivi
-                GROUP BY signalement_id
-            ) su ON s.id = su.signalement_id ';
-        }
-
-        $havingClause = null !== $exactCount
-            ? 'HAVING COUNT(*) = '.$exactCount
-            : 'HAVING COUNT(*) >= :nb_suivi_technical';
-
-        return 'SELECT s.id
-                FROM signalement s
-                '.$joinMaxDateSuivi.'
-                '.$innerPartnerJoin.'
-                INNER JOIN (
-                    SELECT su.signalement_id, MIN(su.created_at) AS min_date
-                    FROM suivi su
-                    INNER JOIN signalement s2 ON s2.id = su.signalement_id
-                    WHERE su.category = :category_ask_feedback
-                    AND su.created_at > COALESCE(
-                        (SELECT MAX(created_at) FROM suivi WHERE signalement_id = su.signalement_id AND suivi.is_visible_for_usager = 1),
-                        s2.created_at
-                    )
-                    GROUP BY su.signalement_id
-                    '.$havingClause.'
-                ) t1 ON s.id = t1.signalement_id
-                LEFT JOIN suivi su2 ON s.id = su2.signalement_id
-                AND su2.created_at > t1.min_date
-                AND su2.category <> :category_ask_feedback
-                WHERE su2.signalement_id IS NULL
-                AND s.statut = :status_active
-                AND s.is_imported != 1 
-                AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)'
-                .$whereLastSuiviDelay
-                .$whereExcludeUsagerAbandonProcedure
-                .$whereTerritory
-                .$wherePartner;
     }
 
     /**
