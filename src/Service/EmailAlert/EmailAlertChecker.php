@@ -4,15 +4,15 @@ namespace App\Service\EmailAlert;
 
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Repository\Query\EmailAlert\PartnerQueryService;
-use App\Repository\Query\EmailAlert\UserQueryService;
+use App\Repository\Query\EmailAlert\PartnerQuery;
+use App\Repository\Query\EmailAlert\UserQuery;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class EmailAlertChecker implements RuntimeExtensionInterface
 {
     public function __construct(
-        private readonly PartnerQueryService $partnerQueryService,
-        private readonly UserQueryService $userQueryService,
+        private readonly PartnerQuery $partnerQuery,
+        private readonly UserQuery $userQuery,
     ) {
     }
 
@@ -27,7 +27,7 @@ class EmailAlertChecker implements RuntimeExtensionInterface
             $partner = $affectation->getPartner();
             $partnerId = $partner->getId();
 
-            $partnerEmailAlerts[(int) $partnerId] = $this->partnerQueryService->shouldDisplayAlertEmailIssue(
+            $partnerEmailAlerts[(int) $partnerId] = $this->partnerQuery->shouldDisplayAlertEmailIssue(
                 $signalement,
                 $partner
             );
@@ -36,10 +36,10 @@ class EmailAlertChecker implements RuntimeExtensionInterface
         return $partnerEmailAlerts;
     }
 
-    public function hasUsagerEmailAlert(string $typeUsager = UserQueryService::OCCUPANT, ?string $email = null): bool
+    public function hasUsagerEmailAlert(string $typeUsager = UserQuery::OCCUPANT, ?string $email = null): bool
     {
         if (null !== $email) {
-            return $this->userQueryService->shouldDisplayAlertEmailIssue($typeUsager, $email);
+            return $this->userQuery->shouldDisplayAlertEmailIssue($typeUsager, $email);
         }
 
         return false;
@@ -48,7 +48,7 @@ class EmailAlertChecker implements RuntimeExtensionInterface
     public function hasPartnerEmailAlert(?string $email = null): bool
     {
         if (null !== $email) {
-            return $this->partnerQueryService->shouldDisplayAlertEmailIssueByEmail($email);
+            return $this->partnerQuery->shouldDisplayAlertEmailIssueByEmail($email);
         }
 
         return false;
@@ -70,7 +70,7 @@ class EmailAlertChecker implements RuntimeExtensionInterface
             return [];
         }
 
-        $emailsWithIssue = $this->userQueryService->findEmailsWithIssue(array_keys($emails));
+        $emailsWithIssue = $this->userQuery->findEmailsWithIssue(array_keys($emails));
 
         return array_fill_keys($emailsWithIssue, true);
     }

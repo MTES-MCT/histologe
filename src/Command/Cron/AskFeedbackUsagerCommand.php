@@ -5,8 +5,8 @@ namespace App\Command\Cron;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Manager\SuiviManager;
+use App\Repository\Query\EmailAlert\AskFeedbackUsagerQuery;
 use App\Repository\SignalementRepository;
-use App\Repository\SuiviRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
@@ -37,7 +37,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
         private readonly SuiviManager $suiviManager,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
-        private readonly SuiviRepository $suiviRepository,
+        private readonly AskFeedbackUsagerQuery $askFeedbackUsagerQuery,
         private readonly SignalementRepository $signalementRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
@@ -121,7 +121,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     protected function processSignalementsLoopRelance(
         InputInterface $input,
     ): int {
-        $signalementsIds = $this->suiviRepository->findSignalementsForLoopAskFeedbackRelance();
+        $signalementsIds = $this->askFeedbackUsagerQuery->findSignalementsForLoopAskFeedbackRelance();
         $nbSignalements = $this->sendMailAndCreateSuiviIfNoDebug(
             $input,
             $signalementsIds,
@@ -143,7 +143,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     protected function processSignalementsThirdRelance(
         InputInterface $input,
     ): int {
-        $signalementsIds = $this->suiviRepository->findSignalementsForThirdAskFeedbackRelance();
+        $signalementsIds = $this->askFeedbackUsagerQuery->findSignalementsForThirdAskFeedbackRelance();
         $nbSignalements = $this->sendMailAndCreateSuiviIfNoDebug(
             $input,
             $signalementsIds,
@@ -165,7 +165,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     protected function processSignalementsSecondRelance(
         InputInterface $input,
     ): int {
-        $signalementsIds = $this->suiviRepository->findSignalementsForSecondAskFeedbackRelance();
+        $signalementsIds = $this->askFeedbackUsagerQuery->findSignalementsForSecondAskFeedbackRelance();
         $nbSignalements = $this->sendMailAndCreateSuiviIfNoDebug(
             $input,
             $signalementsIds,
@@ -187,7 +187,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
     protected function processSignalementsFirstRelance(
         InputInterface $input,
     ): int {
-        $signalementsIds = $this->suiviRepository->findSignalementsForFirstAskFeedbackRelance();
+        $signalementsIds = $this->askFeedbackUsagerQuery->findSignalementsForFirstAskFeedbackRelance();
         $nbSignalements = $this->sendMailAndCreateSuiviIfNoDebug(
             $input,
             $signalementsIds,

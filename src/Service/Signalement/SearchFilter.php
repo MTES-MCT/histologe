@@ -17,7 +17,7 @@ use App\Entity\Partner;
 use App\Entity\User;
 use App\Repository\AffectationRepository;
 use App\Repository\BailleurRepository;
-use App\Repository\EpciRepository;
+use App\Repository\Query\Commune\CommuneEpciQuery;
 use App\Repository\Query\Dashboard\DossiersActiviteRecenteQuery;
 use App\Repository\Query\Dashboard\DossiersSuivisUsagerQuery;
 use App\Repository\SignalementQualificationRepository;
@@ -39,7 +39,7 @@ class SearchFilter
         private AffectationRepository $affectationRepository,
         private EntityManagerInterface $entityManager,
         private SignalementQualificationRepository $signalementQualificationRepository,
-        private EpciRepository $epciRepository,
+        private CommuneEpciQuery $communeEpciQuery,
         private BailleurRepository $bailleurRepository,
         private DossiersActiviteRecenteQuery $dossiersActiviteRecenteQuery,
         private DossiersSuivisUsagerQuery $dossiersSuivisUsagerQuery,
@@ -669,7 +669,7 @@ class SearchFilter
      */
     private function addFilterEpci(QueryBuilder $qb, array $epcis): QueryBuilder
     {
-        $communes = $this->epciRepository->findCommunesByEpcis($epcis);
+        $communes = $this->communeEpciQuery->findCommunesByEpcis($epcis);
         $orX = $qb->expr()->orX();
         foreach ($communes as $key => $commune) {
             $orX->add($qb->expr()->andX(

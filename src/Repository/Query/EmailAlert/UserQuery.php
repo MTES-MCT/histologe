@@ -6,7 +6,7 @@ use App\Entity\EmailDeliveryIssue;
 use App\Entity\Signalement;
 use Doctrine\ORM\EntityManagerInterface;
 
-class UserQueryService
+class UserQuery
 {
     public const string OCCUPANT = 'occupant';
     public const string DECLARANT = 'declarant';

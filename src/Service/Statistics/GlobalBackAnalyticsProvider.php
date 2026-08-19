@@ -56,7 +56,7 @@ class GlobalBackAnalyticsProvider
      */
     private function getCountSignalementData(?Territory $territory, ArrayCollection $partners): int
     {
-        return $this->globalStatisticsQuery->countAll(territory: $territory, partners: $partners);
+        return $this->globalStatisticsQuery->countSignalements(territory: $territory, partners: $partners);
     }
 
     /**

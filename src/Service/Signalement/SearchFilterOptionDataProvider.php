@@ -6,9 +6,9 @@ use App\Entity\Enum\VisiteStatus;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\BailleurRepository;
-use App\Repository\CommuneRepository;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\Query\Commune\CommuneEpciQuery;
 use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
@@ -26,7 +26,6 @@ class SearchFilterOptionDataProvider
     public function __construct(
         private readonly CritereRepository $critereRepository,
         private readonly TerritoryRepository $territoryRepository,
-        private readonly CommuneRepository $communeRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly TagRepository $tagsRepository,
         private readonly SignalementRepository $signalementRepository,
@@ -35,6 +34,7 @@ class SearchFilterOptionDataProvider
         private readonly BailleurRepository $bailleurRepository,
         private readonly ZoneRepository $zoneRepository,
         private readonly CountStatisticsQuery $countStatisticsQuery,
+        private readonly CommuneEpciQuery $communeEpciQuery,
     ) {
     }
 
@@ -60,7 +60,7 @@ class SearchFilterOptionDataProvider
                     'criteres' => $this->critereRepository->findAllList(),
                     'territories' => $user->isSuperAdmin() ? $this->territoryRepository->findAllList(indexById: false) : $user->getPartnersTerritories(true),
                     'partners' => $this->partnerRepository->findAllList($territory, $user),
-                    'epcis' => $this->communeRepository->findEpciByCommuneTerritory($territory, $user),
+                    'epcis' => $this->communeEpciQuery->findEpciByCommuneTerritory($territory, $user),
                     'tags' => $this->tagsRepository->findAllActive($territory, $user),
                     'zones' => $this->zoneRepository->findForUserAndTerritory($user, $territory),
                     'cities' => $this->signalementRepository->findCities($user, $territory),

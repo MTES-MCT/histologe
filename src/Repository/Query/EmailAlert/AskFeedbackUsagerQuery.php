@@ -1,0 +1,257 @@
+<?php
+
+namespace App\Repository\Query\EmailAlert;
+
+use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\SuiviCategory;
+use App\Entity\Suivi;
+use Doctrine\DBAL\Exception;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+
+class AskFeedbackUsagerQuery
+{
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        #[Autowire(env: 'LIMIT_DAILY_RELANCES_BY_REQUEST')]
+        private int $limitDailyRelancesByRequest,
+    ) {
+    }
+
+    /**
+     * @return array<int, int|string>
+     *
+     * @throws Exception
+     */
+    public function findSignalementsForFirstAskFeedbackRelance(
+        int $period = Suivi::DEFAULT_PERIOD_RELANCE,
+    ): array {
+        // - dernier suivi public > 45 jours (Suivi::DEFAULT_PERIOD_RELANCE)
+        // - zéro ASK_FEEDBACK_SENT depuis ce dernier suivi public
+        // - pas déjà en phase boucle (cf getHasReachedLoopThresholdSql)
+        // - statut actif
+        // - non importé
+        // - non vacant
+        // - pas de demande d'abandon de procédure
+        $connection = $this->entityManager->getConnection();
+
+        $parameters = [
+            'day_period' => $period,
+            'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
+            'status_active' => SignalementStatus::ACTIVE->value,
+            'nb_ask_feedback_loop_threshold' => Suivi::NB_ASK_FEEDBACK_LOOP_THRESHOLD,
+        ];
+        $sql = 'SELECT s.id, s.created_at
+        FROM signalement s
+        JOIN (
+            SELECT signalement_id, MAX(created_at) AS last_public
+            FROM suivi
+            WHERE suivi.is_visible_for_usager = 1
+            GROUP BY signalement_id
+        ) pub ON pub.signalement_id = s.id
+        LEFT JOIN (
+            SELECT signalement_id, MAX(created_at) AS last_af
+            FROM suivi
+            WHERE category = :category_ask_feedback
+            GROUP BY signalement_id
+        ) af ON af.signalement_id = s.id
+        WHERE pub.last_public < DATE_SUB(NOW(), INTERVAL :day_period DAY)
+        AND (af.last_af IS NULL OR af.last_af < pub.last_public)
+        AND NOT EXISTS '.$this->getHasReachedLoopThresholdSql().'
+        AND s.statut = :status_active
+        AND s.is_imported != 1
+        AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
+        AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
+        LIMIT '.$this->limitDailyRelancesByRequest;
+
+        return $connection->executeQuery($sql, $parameters)->fetchFirstColumn();
+    }
+
+    /**
+     * @return array<int, int|string>
+     *
+     * @throws Exception
+     */
+    public function findSignalementsForSecondAskFeedbackRelance(
+        int $period = Suivi::DEFAULT_PERIOD_INACTIVITY,
+    ): array {
+        // - dernier suivi public > 45 (Suivi::DEFAULT_PERIOD_RELANCE) + 30 (Suivi::DEFAULT_PERIOD_INACTIVITY) jours
+        // - 1 et un seul ASK_FEEDBACK_SENT depuis ce dernier suivi public > 30 jours (Suivi::DEFAULT_PERIOD_INACTIVITY)
+        // - pas déjà en phase boucle (cf getHasReachedLoopThresholdSql())
+        // - statut actif
+        // - non importé
+        // - non vacant
+        // - pas de demande d'abandon de procédure
+        $connection = $this->entityManager->getConnection();
+
+        $parameters = [
+            'day_period' => $period,
+            'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
+            'status_active' => SignalementStatus::ACTIVE->value,
+            'nb_ask_feedback_loop_threshold' => Suivi::NB_ASK_FEEDBACK_LOOP_THRESHOLD,
+        ];
+        $sql = 'SELECT s.id
+                FROM signalement s
+                JOIN (
+                    -- dernier suivi public
+                    SELECT signalement_id, MAX(created_at) AS last_public
+                    FROM suivi
+                    WHERE suivi.is_visible_for_usager = 1
+                    GROUP BY signalement_id
+                ) pub ON pub.signalement_id = s.id
+                JOIN (
+                    -- compter le nombre de suivis ASK_FEEDBACK depuis le dernier public
+                    SELECT su.signalement_id, COUNT(*) AS nb_af, MAX(su.created_at) AS last_af
+                    FROM suivi su
+                    JOIN (
+                        SELECT signalement_id, MAX(created_at) AS last_public
+                        FROM suivi
+                        WHERE suivi.is_visible_for_usager = 1
+                        GROUP BY signalement_id
+                    ) pub2 ON pub2.signalement_id = su.signalement_id
+                    WHERE su.category = :category_ask_feedback
+                    AND su.created_at > pub2.last_public
+                    GROUP BY su.signalement_id
+                    HAVING nb_af = 1 AND last_af < DATE_SUB(NOW(), INTERVAL :day_period DAY)
+                ) af ON af.signalement_id = s.id
+                WHERE s.statut = :status_active
+                AND s.is_imported != 1
+                AND NOT EXISTS '.$this->getHasReachedLoopThresholdSql().'
+                AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
+                AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
+                LIMIT '.$this->limitDailyRelancesByRequest;
+
+        return $connection->executeQuery($sql, $parameters)->fetchFirstColumn();
+    }
+
+    /**
+     * @return array<int, int|string>
+     *
+     * @throws Exception
+     */
+    public function findSignalementsForThirdAskFeedbackRelance(
+        int $dayPeriod = Suivi::DEFAULT_PERIOD_INACTIVITY,
+    ): array {
+        // - 2 et seulement 2 ASK_FEEDBACK_SENT depuis le dernier suivi public (dont le dernier) > 30 jours (Suivi::DEFAULT_PERIOD_INACTIVITY)
+        // - pas déjà en phase boucle (cf getHasReachedLoopThresholdSql)
+        // - statut actif
+        // - non importé
+        // - non vacant
+        // - pas de demande d'abandon de procédure
+        $connection = $this->entityManager->getConnection();
+
+        $parameters = [
+            'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
+            'status_active' => SignalementStatus::ACTIVE->value,
+            'nb_ask_feedback_loop_threshold' => Suivi::NB_ASK_FEEDBACK_LOOP_THRESHOLD,
+        ];
+
+        $sql = 'SELECT s.id
+                FROM signalement s
+                INNER JOIN (
+                    SELECT signalement_id, MAX(created_at) AS max_date_suivi
+                    FROM suivi
+                    GROUP BY signalement_id
+                ) su ON s.id = su.signalement_id 
+                INNER JOIN (
+                    SELECT su.signalement_id, MIN(su.created_at) AS min_date
+                    FROM suivi su
+                    INNER JOIN signalement s2 ON s2.id = su.signalement_id
+                    WHERE su.category = :category_ask_feedback
+                    AND su.created_at > COALESCE(
+                        (SELECT MAX(created_at) FROM suivi WHERE signalement_id = su.signalement_id AND suivi.is_visible_for_usager = 1),
+                        s2.created_at
+                    )
+                    GROUP BY su.signalement_id
+                    HAVING COUNT(*) = 2
+                ) t1 ON s.id = t1.signalement_id
+                LEFT JOIN (
+                    SELECT signalement_id, COUNT(*) AS total_af
+                    FROM suivi
+                    WHERE category = :category_ask_feedback
+                    GROUP BY signalement_id
+                ) total_af ON total_af.signalement_id = s.id
+                LEFT JOIN suivi su2 ON s.id = su2.signalement_id
+                AND su2.created_at > t1.min_date
+                AND su2.category <> :category_ask_feedback
+                WHERE su2.signalement_id IS NULL
+                AND NOT EXISTS '.$this->getHasReachedLoopThresholdSql().'
+                AND s.statut = :status_active
+                AND s.is_imported != 1 
+                AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
+                AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
+                AND su.max_date_suivi < DATE_SUB(NOW(), INTERVAL '.$dayPeriod.' DAY) ';
+
+        $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
+
+        return $connection->executeQuery($sql, $parameters)->fetchFirstColumn();
+    }
+
+    /**
+     * @return array<int, int|string>
+     *
+     * @throws Exception
+     */
+    public function findSignalementsForLoopAskFeedbackRelance(
+        int $loopDelay = Suivi::DEFAULT_PERIOD_BOUCLE,
+    ): array {
+        // - peut entrer ou rester en phase boucle (cf getHasReachedLoopThresholdSql)
+        // - dernier suivi du dossier (visible usager ou demande de feedback) > 90 jours (Suivi::DEFAULT_PERIOD_BOUCLE)
+        //   (un nouveau suivi, visible usager, redémarre ce délai mais ne fait pas sortir le dossier de la boucle)
+        // - statut actif
+        // - non importé
+        // - non vacant
+        $connection = $this->entityManager->getConnection();
+
+        $parameters = [
+            'category_ask_feedback' => SuiviCategory::ASK_FEEDBACK_SENT->value,
+            'status_active' => SignalementStatus::ACTIVE->value,
+            'nb_ask_feedback_loop_threshold' => Suivi::NB_ASK_FEEDBACK_LOOP_THRESHOLD,
+        ];
+
+        $sql = 'SELECT s.id
+                FROM signalement s
+                INNER JOIN (
+                    SELECT signalement_id, MAX(created_at) AS max_date_suivi
+                    FROM suivi
+                    WHERE is_visible_for_usager = 1 OR category = :category_ask_feedback
+                    GROUP BY signalement_id
+                ) su ON su.signalement_id = s.id
+                WHERE su.max_date_suivi < DATE_SUB(NOW(), INTERVAL '.$loopDelay.' DAY)
+                AND EXISTS '.$this->getHasReachedLoopThresholdSql().'
+                AND s.statut = :status_active
+                AND s.is_imported != 1
+                AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
+                AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)';
+
+        $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
+
+        return $connection->executeQuery($sql, $parameters)->fetchFirstColumn();
+    }
+
+    /**
+     * Sous-requête (référence s.id de la requête appelante) permettant de détecter si,
+     * à un moment quelconque de l'historique du dossier, un cycle entre deux suivis visibles usager
+     * a accumulé au moins NB_ASK_FEEDBACK_LOOP_THRESHOLD suivis ASK_FEEDBACK_SENT d'affilée.
+     * Une fois vrai, ce statut est définitif : un nouveau suivi public ultérieur ne le remet
+     * pas à zéro (contrairement à la progression normale des relances 1/2/3).
+     */
+    private function getHasReachedLoopThresholdSql(): string
+    {
+        return '(
+            SELECT 1
+            FROM (
+                SELECT
+                    category,
+                    SUM(CASE WHEN is_visible_for_usager = 1 THEN 1 ELSE 0 END)
+                        OVER (ORDER BY created_at) AS cycle_number
+                FROM suivi
+                WHERE signalement_id = s.id
+                AND (is_visible_for_usager = 1 OR category = :category_ask_feedback)
+            ) cycles
+            WHERE category = :category_ask_feedback
+            GROUP BY cycle_number
+            HAVING COUNT(*) >= :nb_ask_feedback_loop_threshold
+        )';
+    }
+}

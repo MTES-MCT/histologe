@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 
-class PartnerQueryService
+class PartnerQuery
 {
     public function __construct(private readonly EntityManagerInterface $entityManager)
     {

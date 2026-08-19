@@ -3,8 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Commune;
-use App\Entity\Territory;
-use App\Entity\User;
 use App\Service\ListFilters\SearchCommune;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -18,26 +16,6 @@ class CommuneRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Commune::class);
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    public function findEpciByCommuneTerritory(?Territory $territory = null, ?User $user = null): array
-    {
-        $qb = $this->createQueryBuilder('c')
-            ->select('distinct e.code, e.nom')
-            ->join('c.epci', 'e');
-        if ($user && !$user->isSuperAdmin()) {
-            $qb->andWhere('c.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
-        }
-        if (null !== $territory) {
-            $qb
-                ->andWhere('c.territory = :territory')
-                ->setParameter('territory', $territory);
-        }
-
-        return $qb->getQuery()->getResult();
     }
 
     /**

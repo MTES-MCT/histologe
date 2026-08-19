@@ -3,9 +3,9 @@
 namespace App\Tests\Functional\Service\Signalement;
 
 use App\Repository\BailleurRepository;
-use App\Repository\CommuneRepository;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\Query\Commune\CommuneEpciQuery;
 use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
@@ -19,18 +19,18 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class SearchFilterOptionDataProviderTest extends KernelTestCase
 {
-    private SearchFilterOptionDataProvider $searchFilterOptionDataProvider;
-    private CritereRepository $critereRepository;
-    private TerritoryRepository $territoryRepository;
-    private CommuneRepository $communeRepository;
-    private PartnerRepository $partnerRepository;
-    private TagRepository $tagsRepository;
-    private SignalementRepository $signalementRepository;
-    private BailleurRepository $bailleurRepository;
-    private TagAwareCacheInterface $cache;
-    private QualificationStatusService $qualificationStatusService;
-    private ZoneRepository $zoneRepository;
-    private CountStatisticsQuery $countStatisticsQuery;
+    private readonly SearchFilterOptionDataProvider $searchFilterOptionDataProvider;
+    private readonly CritereRepository $critereRepository;
+    private readonly TerritoryRepository $territoryRepository;
+    private readonly PartnerRepository $partnerRepository;
+    private readonly TagRepository $tagsRepository;
+    private readonly SignalementRepository $signalementRepository;
+    private readonly BailleurRepository $bailleurRepository;
+    private readonly TagAwareCacheInterface $cache;
+    private readonly QualificationStatusService $qualificationStatusService;
+    private readonly ZoneRepository $zoneRepository;
+    private readonly CountStatisticsQuery $countStatisticsQuery;
+    private readonly CommuneEpciQuery $communeEpciQuery;
 
     protected function setUp(): void
     {
@@ -38,7 +38,6 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
 
         $this->critereRepository = static::getContainer()->get(CritereRepository::class);
         $this->territoryRepository = static::getContainer()->get(TerritoryRepository::class);
-        $this->communeRepository = static::getContainer()->get(CommuneRepository::class);
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->tagsRepository = static::getContainer()->get(TagRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
@@ -47,11 +46,10 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         $this->qualificationStatusService = static::getContainer()->get(QualificationStatusService::class);
         $this->zoneRepository = static::getContainer()->get(ZoneRepository::class);
         $this->countStatisticsQuery = static::getContainer()->get(CountStatisticsQuery::class);
-
+        $this->communeEpciQuery = static::getContainer()->get(CommuneEpciQuery::class);
         $this->searchFilterOptionDataProvider = new SearchFilterOptionDataProvider(
             $this->critereRepository,
             $this->territoryRepository,
-            $this->communeRepository,
             $this->partnerRepository,
             $this->tagsRepository,
             $this->signalementRepository,
@@ -60,6 +58,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
             $this->bailleurRepository,
             $this->zoneRepository,
             $this->countStatisticsQuery,
+            $this->communeEpciQuery,
         );
     }
 

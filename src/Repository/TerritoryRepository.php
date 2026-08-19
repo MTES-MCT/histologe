@@ -4,8 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Territory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -60,19 +58,6 @@ class TerritoryRepository extends ServiceEntityRepository
         return $qb->indexBy('t', 't.zip')
             ->getQuery()
             ->getResult();
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-    public function countAll(): int
-    {
-        $qb = $this->createQueryBuilder('t');
-        $qb->select('COUNT(t.id)')
-            ->where('t.isActive = 1');
-
-        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
