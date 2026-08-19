@@ -44,7 +44,7 @@ class SuiviRepository extends ServiceEntityRepository
     ): array {
         // - dernier suivi public > 45 jours (Suivi::DEFAULT_PERIOD_RELANCE)
         // - zéro ASK_FEEDBACK_SENT depuis ce dernier suivi public
-        // - pas déjà en phase boucle (cf getHasReachedLoopThresholdSql)
+        // - pas déjà en phase boucle 90 jours (< 3 ASK_FEEDBACK_SENT au total)
         // - statut actif
         // - non importé
         // - non vacant
@@ -66,14 +66,14 @@ class SuiviRepository extends ServiceEntityRepository
             GROUP BY signalement_id
         ) pub ON pub.signalement_id = s.id
         LEFT JOIN (
-            SELECT signalement_id, MAX(created_at) AS last_af
+            SELECT signalement_id, MAX(created_at) AS last_af, COUNT(*) AS total_af
             FROM suivi
             WHERE category = :category_ask_feedback
             GROUP BY signalement_id
         ) af ON af.signalement_id = s.id
         WHERE pub.last_public < DATE_SUB(NOW(), INTERVAL :day_period DAY)
         AND (af.last_af IS NULL OR af.last_af < pub.last_public)
-        AND NOT EXISTS '.$this->getHasReachedLoopThresholdSql().'
+        AND COALESCE(af.total_af, 0) < :nb_ask_feedback_loop_threshold
         AND s.statut = :status_active
         AND s.is_imported != 1
         AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
@@ -93,7 +93,7 @@ class SuiviRepository extends ServiceEntityRepository
     ): array {
         // - dernier suivi public > 45 (Suivi::DEFAULT_PERIOD_RELANCE) + 30 (Suivi::DEFAULT_PERIOD_INACTIVITY) jours
         // - 1 et un seul ASK_FEEDBACK_SENT depuis ce dernier suivi public > 30 jours (Suivi::DEFAULT_PERIOD_INACTIVITY)
-        // - pas déjà en phase boucle (cf getHasReachedLoopThresholdSql())
+        // - pas déjà en phase boucle 90 jours (< 3 ASK_FEEDBACK_SENT au total)
         // - statut actif
         // - non importé
         // - non vacant
@@ -130,9 +130,15 @@ class SuiviRepository extends ServiceEntityRepository
                     GROUP BY su.signalement_id
                     HAVING nb_af = 1 AND last_af < DATE_SUB(NOW(), INTERVAL :day_period DAY)
                 ) af ON af.signalement_id = s.id
+                LEFT JOIN (
+                    SELECT signalement_id, COUNT(*) AS total_af
+                    FROM suivi
+                    WHERE category = :category_ask_feedback
+                    GROUP BY signalement_id
+                ) total_af ON total_af.signalement_id = s.id
                 WHERE s.statut = :status_active
                 AND s.is_imported != 1
-                AND NOT EXISTS '.$this->getHasReachedLoopThresholdSql().'
+                AND COALESCE(total_af.total_af, 0) < :nb_ask_feedback_loop_threshold
                 AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
                 AND (s.is_usager_abandon_procedure != 1 OR s.is_usager_abandon_procedure IS NULL)
                 LIMIT '.$this->limitDailyRelancesByRequest;
@@ -149,7 +155,7 @@ class SuiviRepository extends ServiceEntityRepository
         int $dayPeriod = Suivi::DEFAULT_PERIOD_INACTIVITY,
     ): array {
         // - 2 et seulement 2 ASK_FEEDBACK_SENT depuis le dernier suivi public (dont le dernier) > 30 jours (Suivi::DEFAULT_PERIOD_INACTIVITY)
-        // - pas déjà en phase boucle (cf getHasReachedLoopThresholdSql)
+        // - pas déjà en phase boucle 90 jours (< 3 ASK_FEEDBACK_SENT au total)
         // - statut actif
         // - non importé
         // - non vacant
@@ -181,11 +187,17 @@ class SuiviRepository extends ServiceEntityRepository
                     GROUP BY su.signalement_id
                     HAVING COUNT(*) = 2
                 ) t1 ON s.id = t1.signalement_id
+                LEFT JOIN (
+                    SELECT signalement_id, COUNT(*) AS total_af
+                    FROM suivi
+                    WHERE category = :category_ask_feedback
+                    GROUP BY signalement_id
+                ) total_af ON total_af.signalement_id = s.id
                 LEFT JOIN suivi su2 ON s.id = su2.signalement_id
                 AND su2.created_at > t1.min_date
                 AND su2.category <> :category_ask_feedback
                 WHERE su2.signalement_id IS NULL
-                AND NOT EXISTS '.$this->getHasReachedLoopThresholdSql().'
+                AND COALESCE(total_af.total_af, 0) < :nb_ask_feedback_loop_threshold
                 AND s.statut = :status_active
                 AND s.is_imported != 1 
                 AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
@@ -205,7 +217,7 @@ class SuiviRepository extends ServiceEntityRepository
     public function findSignalementsForLoopAskFeedbackRelance(
         int $loopDelay = Suivi::DEFAULT_PERIOD_BOUCLE,
     ): array {
-        // - peut entrer ou rester en phase boucle (cf getHasReachedLoopThresholdSql)
+        // - déjà en phase boucle 90 jours (>= 3 ASK_FEEDBACK_SENT au total, tout historique confondu)
         // - dernier suivi du dossier (visible usager ou demande de feedback) > 90 jours (Suivi::DEFAULT_PERIOD_BOUCLE)
         //   (un nouveau suivi, visible usager, redémarre ce délai mais ne fait pas sortir le dossier de la boucle)
         // - statut actif
@@ -223,13 +235,19 @@ class SuiviRepository extends ServiceEntityRepository
         $sql = 'SELECT s.id
                 FROM signalement s
                 INNER JOIN (
+                    SELECT signalement_id, COUNT(*) AS total_af
+                    FROM suivi
+                    WHERE category = :category_ask_feedback
+                    GROUP BY signalement_id
+                    HAVING COUNT(*) >= :nb_ask_feedback_loop_threshold
+                ) total_af ON total_af.signalement_id = s.id
+                INNER JOIN (
                     SELECT signalement_id, MAX(created_at) AS max_date_suivi
                     FROM suivi
                     WHERE is_visible_for_usager = 1 OR category = :category_ask_feedback
                     GROUP BY signalement_id
                 ) su ON su.signalement_id = s.id
                 WHERE su.max_date_suivi < DATE_SUB(NOW(), INTERVAL '.$loopDelay.' DAY)
-                AND EXISTS '.$this->getHasReachedLoopThresholdSql().'
                 AND s.statut = :status_active
                 AND s.is_imported != 1
                 AND (s.is_logement_vacant IS NULL OR s.is_logement_vacant = 0)
@@ -238,32 +256,6 @@ class SuiviRepository extends ServiceEntityRepository
         $sql .= ' LIMIT '.$this->limitDailyRelancesByRequest;
 
         return $connection->executeQuery($sql, $parameters)->fetchFirstColumn();
-    }
-
-    /**
-     * Sous-requête (référence s.id de la requête appelante) permettant de détecter si,
-     * à un moment quelconque de l'historique du dossier, un cycle entre deux suivis visibles usager
-     * a accumulé au moins NB_ASK_FEEDBACK_LOOP_THRESHOLD suivis ASK_FEEDBACK_SENT d'affilée.
-     * Une fois vrai, ce statut est définitif : un nouveau suivi public ultérieur ne le remet
-     * pas à zéro (contrairement à la progression normale des relances 1/2/3).
-     */
-    private function getHasReachedLoopThresholdSql(): string
-    {
-        return '(
-            SELECT 1
-            FROM (
-                SELECT
-                    category,
-                    SUM(CASE WHEN is_visible_for_usager = 1 THEN 1 ELSE 0 END)
-                        OVER (ORDER BY created_at) AS cycle_number
-                FROM suivi
-                WHERE signalement_id = s.id
-                AND (is_visible_for_usager = 1 OR category = :category_ask_feedback)
-            ) cycles
-            WHERE category = :category_ask_feedback
-            GROUP BY cycle_number
-            HAVING COUNT(*) >= :nb_ask_feedback_loop_threshold
-        )';
     }
 
     /**

@@ -136,46 +136,6 @@ class SuiviRepositoryTest extends KernelTestCase
         $this->assertNotContains($signalement->getId(), array_map('intval', $firstResult));
     }
 
-    public function testFindSignalementsForLoopAskFeedbackRelanceDoesNotGraduateFromInterruptedCycles(): void
-    {
-        // 2 ASK_FEEDBACK_SENT dans un 1er cycle, puis un suivi public (reset), puis 1 seul
-        // ASK_FEEDBACK_SENT dans le 2ème cycle : le total cumulé atteint 3, mais aucun cycle
-        // n'a jamais atteint 3 relances d'affilée sans interruption. Le dossier ne doit donc
-        // pas être considéré comme en phase boucle.
-        $signalement = $this->getSignalementByReference('2023-19');
-        $this->addSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, new \DateTimeImmutable('-300 days'), isVisibleForUsager: true);
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-250 days'));
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-220 days'));
-        $this->addSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, new \DateTimeImmutable('-200 days'), isVisibleForUsager: true);
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-150 days'));
-
-        $loopResult = $this->suiviRepository->findSignalementsForLoopAskFeedbackRelance();
-        $this->assertNotContains($signalement->getId(), array_map('intval', $loopResult));
-
-        // le dossier doit continuer sa progression normale : 1 seul ASK_FEEDBACK_SENT depuis
-        // le suivi public de -200 jours, vieux de plus de 30 jours => 2ème relance
-        $secondResult = $this->suiviRepository->findSignalementsForSecondAskFeedbackRelance();
-        $this->assertContains($signalement->getId(), array_map('intval', $secondResult));
-    }
-
-    public function testFindSignalementsForLoopAskFeedbackRelanceGraduatesAsSoonAsOneCycleReachesThreshold(): void
-    {
-        // Le 1er cycle est interrompu à 2, mais le 2ème cycle atteint bien
-        // 3 ASK_FEEDBACK_SENT d'affilée : le dossier doit être en phase boucle, peu importe
-        // le cycle précédent avorté.
-        $signalement = $this->getSignalementByReference('2023-20');
-        $this->addSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, new \DateTimeImmutable('-300 days'), isVisibleForUsager: true);
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-250 days'));
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-220 days'));
-        $this->addSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, new \DateTimeImmutable('-200 days'), isVisibleForUsager: true);
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-150 days'));
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-120 days'));
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-95 days'));
-
-        $loopResult = $this->suiviRepository->findSignalementsForLoopAskFeedbackRelance();
-        $this->assertContains($signalement->getId(), array_map('intval', $loopResult));
-    }
-
     private function getSignalementByReference(string $reference): Signalement
     {
         /** @var SignalementRepository $signalementRepository */
