@@ -42,7 +42,10 @@
             <div class="fr-mb-5v">
                 {{ form_start(rialForm) }}
                     {{ form_row(rialForm.banIds) }}
-                    {{ form_widget(rialForm.submit) }}
+                    <div class="fr-grid-row fr-grid-row--middle">
+                        {{ form_widget(rialForm.submit) }}
+                        <a href="{{ path('back_tools_rial') }}" class="fr-link fr-link--icon-left fr-icon-close-circle-line fr-ml-3v">Réinitialiser les résultats</a>
+                    </div>
                 {{ form_end(rialForm) }}
             </div>
 
@@ -55,7 +58,37 @@
                         <p>La recherche RIAL ne peut pas utiliser ces pseudo-codes comme codes TOPO.</p>
                         <p>Vous pouvez effectuer une recherche manuelle dans le référentiel TOPO DGFiP pour chaque voie concernée.</p>
                     </div>
+                {% endif %}
 
+                <div class="fr-table fr-table--lg fr-table--bordered">
+                    <div class="fr-table__wrapper">
+                        <div class="fr-table__container">
+                            <div class="fr-table__content">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">BAN ID</th>
+                                        <th scope="col">Identifiant fiscal</th>
+                                        <th scope="col">Données locales</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for row in results %}
+                                        <tr>
+                                            <td class="fr-cell--top">{{ row.ban_id }}</td>
+                                            <td class="fr-cell--top">{{ row.identifiant_fiscal }}</td>
+                                            <td><pre style="white-space: pre-wrap;">{{ row.local_data }}</pre></td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if topoSearches|length > 0 %}
+                    <h2>Recherche TOPO DGFiP ({{ topoSearches|length }})</h2>
                     {% for banId, topoSearchData in topoSearches %}
                         {% set topoForm = topoForms[banId] %}
                         <div class="fr-card fr-card--no-border fr-mb-5v fr-p-4v" style="background-color: var(--background-alt-blue-france)">
@@ -72,14 +105,14 @@
                             {{ form_end(topoForm) }}
                         </div>
 
-                        {% if submittedBanId == banId and topoSearchData.searched is defined %}
+                        {% if topoSearchData.searched is defined and topoSearchData.searched %}
                             <h4>Résultats TOPO DGFiP pour {{ banId }}</h4>
                             <p>
                                 Département : <strong>{{ topoSearchData.code_dep }}</strong> |
                                 Commune : <strong>{{ topoSearchData.code_commune }}</strong> |
                                 Recherche : <strong>{{ topoSearchData.libelle }}</strong>
                             </p>
-                            {% if topoResults|length > 0 %}
+                            {% if topoSearchData.results|length > 0 %}
                                 <div class="fr-table fr-table--sm fr-table--bordered">
                                     <div class="fr-table__wrapper">
                                         <div class="fr-table__container">
@@ -94,7 +127,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {% for topoRow in topoResults %}
+                                                        {% for topoRow in topoSearchData.results %}
                                                             <tr>
                                                                 <td>{{ topoRow.code_voie }}</td>
                                                                 <td>{{ topoRow.nature_de_voie }}</td>
@@ -122,34 +155,6 @@
                         {% endif %}
                     {% endfor %}
                 {% endif %}
-
-                <div class="fr-table fr-table--lg fr-table--bordered">
-                    <div class="fr-table__wrapper">
-                        <div class="fr-table__container">
-                            <div class="fr-table__content">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">BAN ID</th>
-                                            <th scope="col">Identifiant fiscal</th>
-                                            <th scope="col">Données locales</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for row in results %}
-                                            <tr>
-                                                <td class="fr-cell--top">{{ row.ban_id }}</td>
-                                                <td class="fr-cell--top">{{ row.identifiant_fiscal }}</td>
-                                                <td><pre style="white-space: pre-wrap;">{{ row.local_data }}</pre></td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
             {% else %}
                 <img alt="BOOH!" src="{{ asset('img/easter/casper.png') }}">
             {% endif %}
