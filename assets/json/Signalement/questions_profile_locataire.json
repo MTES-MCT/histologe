@@ -119,7 +119,7 @@
       "body": [
         {
           "type": "SignalementFormInfo",
-          "label": "Dans le cadre de la procédure, le bailleur ou gestionnaire du logement pourrait être contacté",
+          "label": "Dans le cadre de la procédure, le bailleur ou gestionnaire du logement pourrait être contacté. Renseigner ces informations facilitera la prise en charge de votre dossier et le travail des services.",
           "slug": "coordonnees_bailleur_info"
         },
         {
