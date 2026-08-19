@@ -153,8 +153,7 @@ class Address
 
     public function setBanId(?string $banId): static
     {
-        // Convertir les chaînes vides en null pour éviter les doublons de contrainte unique
-        $this->banId = empty($banId) ? null : $banId;
+        $this->banId = $banId;
 
         return $this;
     }
