@@ -77,7 +77,6 @@ class SignalementManager
         private readonly SuiviManager $suiviManager,
         private readonly SuiviDelayedFactory $suiviDelayedFactory,
         private readonly UserManager $userManager,
-        private readonly AddressManager $addressManager,
         private readonly BailleurRepository $bailleurRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly SignalementRepository $signalementRepository,
