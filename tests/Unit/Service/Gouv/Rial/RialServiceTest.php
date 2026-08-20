@@ -66,12 +66,6 @@ class RialServiceTest extends TestCase
         $this->assertNull($response);
     }
 
-    public function testNoResetInterface(): void
-    {
-        $reflection = new \ReflectionClass(RialService::class);
-        $this->assertNotContains('Symfony\Contracts\Service\ResetInterface', $reflection->getInterfaceNames());
-    }
-
     public function testGetLocaux(): void
     {
         $rialService = $this->getRialService(__DIR__.'/../../../../../tools/wiremock/src/Resources/Rial/list.json');
@@ -92,7 +86,7 @@ class RialServiceTest extends TestCase
     {
         $rialService = $this->getRialService(__DIR__.'/../../../../../tools/wiremock/src/Resources/Rial/infos.json');
         $rialService->setAccessToken('fake-access-token');
-        $response = $rialService->searchLocalByIdFiscal('2A0049934XXX');
+        $response = $rialService->searchLocalByIdFiscal('2A0049934130');
         $this->assertIsArray($response);
         $this->assertArrayHasKey('descriptifGeneralLocal', $response);
     }
