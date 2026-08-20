@@ -72,6 +72,14 @@ class SignalementAddressUpdaterTest extends KernelTestCase
             'description' => 'Un signalement sur le territoire Bouches-du-Rhône peut être mis à jour avec un autre code postal/insee du 13',
         ];
 
+        yield 'Bouches-du-Rhône: ne peut pas mettre à jour avec un autre code postal autre territoire mais insee du 13' => [
+            'signalementReference' => '2022-1',
+            'newCodePostal' => '14004',
+            'newInsee' => '13203',
+            'expectedResult' => false,
+            'description' => 'Un signalement sur le territoire Bouches-du-Rhône ne peut pas être mis à jour avec le code postal d\'un autre territoire mais insee du 13',
+        ];
+
         yield 'Bouches-du-Rhône: ne peut pas mettre à jour avec le code postal/insee d\'un autre territoire' => [
             'signalementReference' => '2022-1',
             'newCodePostal' => '01170',
@@ -104,12 +112,20 @@ class SignalementAddressUpdaterTest extends KernelTestCase
             'description' => 'Un signalement sur le territoire Finistère peut être mis à jour de Quimper vers Brest',
         ];
 
-        yield 'Bouches-du-Rhône: peut mettre à jour avec code postal uniquement' => [
+        yield 'Bouches-du-Rhône: ne peut pas mettre à jour avec code postal uniquement' => [
             'signalementReference' => '2022-1',
             'newCodePostal' => '13004',
             'newInsee' => '',
-            'expectedResult' => true,
-            'description' => 'Un signalement peut être mis à jour avec seulement le code postal si celui-ci est actif',
+            'expectedResult' => false,
+            'description' => 'Un signalement ne peut pas être mis à jour avec seulement le code postal même si celui-ci est actif',
+        ];
+
+        yield 'Bouches-du-Rhône: ne peut pas mettre à jour avec code insee uniquement' => [
+            'signalementReference' => '2022-1',
+            'newCodePostal' => '',
+            'newInsee' => '13203',
+            'expectedResult' => false,
+            'description' => 'Un signalement ne peut pas être mis à jour avec seulement le code insee même si celui-ci est actif',
         ];
     }
 }

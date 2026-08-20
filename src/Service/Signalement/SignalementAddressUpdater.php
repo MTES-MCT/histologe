@@ -25,19 +25,20 @@ class SignalementAddressUpdater
     {
         $currentTerritory = $signalement->getTerritory();
 
+        $inseeOK = false;
+        $postalCodeOK = false;
+
         if (!empty($newInsee)) {
-            $newTerritory = $this->zipcodeProvider->getTerritoryByInseeCode($newInsee);
-            if ($this->postalCodeHomeChecker->isActiveByInseeCode($newInsee)) {
-                return $currentTerritory === $newTerritory;
-            }
-        } else {
-            $newTerritory = $this->zipcodeProvider->getTerritoryByPostalCode($newCodePostal);
-            if ($this->postalCodeHomeChecker->isActiveByPostalCode($newCodePostal)) {
-                return $currentTerritory === $newTerritory;
-            }
+            $newInseeTerritory = $this->zipcodeProvider->getTerritoryByInseeCode($newInsee);
+            $inseeOK = $this->postalCodeHomeChecker->isActiveByInseeCode($newInsee) && $newInseeTerritory === $currentTerritory;
         }
 
-        return false;
+        if (!empty($newCodePostal)) {
+            $newPostalCodeTerritory = $this->zipcodeProvider->getTerritoryByPostalCode($newCodePostal);
+            $postalCodeOK = $this->postalCodeHomeChecker->isActiveByPostalCode($newCodePostal) && ($newPostalCodeTerritory === $currentTerritory);
+        }
+
+        return $inseeOK && $postalCodeOK;
     }
 
     public function updateAddressOccupantFromBanData(Signalement $signalement, bool $updateRnbId = true): void
