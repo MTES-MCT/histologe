@@ -6,12 +6,10 @@ use App\Entity\Enum\MotifCloture;
 use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Repository\Query\Statistics\GlobalStatisticsQuery;
 use App\Repository\Query\Statistics\MotifClotureStatisticsQuery;
-use App\Repository\TerritoryRepository;
 
 class GlobalAnalyticsProvider
 {
     public function __construct(
-        private TerritoryRepository $territoryRepository,
         private GlobalStatisticsQuery $globalStatisticsQuery,
         private MotifClotureStatisticsQuery $motifClotureStatisticsQuery,
         private CountStatisticsQuery $countStatisticsQuery,
@@ -60,12 +58,12 @@ class GlobalAnalyticsProvider
 
     public function getCountSignalementData(): int
     {
-        return $this->globalStatisticsQuery->countAll(territory: null, partners: null);
+        return $this->globalStatisticsQuery->countSignalements(territory: null, partners: null);
     }
 
     public function getCountTerritoryData(): int
     {
-        return $this->territoryRepository->countAll();
+        return $this->globalStatisticsQuery->countActiveTerritories();
     }
 
     private function getValidatedData(): string|float

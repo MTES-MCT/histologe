@@ -33,147 +33,152 @@ class SuiviRepositoryTest extends KernelTestCase
         $this->suiviRepository = $this->entityManager->getRepository(Suivi::class);
     }
 
-    public function testFindSignalementsForFirstAskFeedbackRelance(): void
+    public function testFindSuiviByDescription(): void
     {
-        $result = $this->suiviRepository->findSignalementsForFirstAskFeedbackRelance();
-        $this->assertCount(6, $result);
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        for ($i = 0; $i < count($result); ++$i) {
-            $signalement = $signalementRepository->findOneBy(['id' => $result[$i]]);
-            $this->assertContains($signalement->getReference(), ['2023-13', '2023-19', '2023-20', '2023-120', '2024-01', '2024-02']);
+        $signalement = $this->getSignalementByReference('2023-15');
+
+        $result = $this->suiviRepository->findSuiviByDescription($signalement, 'premier suivi de partenaire');
+        $this->assertCount(1, $result);
+        $this->assertStringContainsString('Ceci est le premier suivi de partenaire 13-01', $result[0]->getDescription());
+    }
+
+    public function testFindSuiviByDescriptionMatchesMultipleResults(): void
+    {
+        $signalement = $this->getSignalementByReference('2023-15');
+
+        $result = $this->suiviRepository->findSuiviByDescription($signalement, 'suivi de partenaire 13-01');
+        $this->assertCount(2, $result);
+    }
+
+    public function testFindSuiviByDescriptionFiltersByCategory(): void
+    {
+        $signalement = $this->getSignalementByReference('2023-15');
+
+        $result = $this->suiviRepository->findSuiviByDescription($signalement, 'suivi de partenaire 13-01', SuiviCategory::MESSAGE_PARTNER);
+        $this->assertCount(2, $result);
+
+        $result = $this->suiviRepository->findSuiviByDescription($signalement, 'suivi de partenaire 13-01', SuiviCategory::MESSAGE_USAGER);
+        $this->assertCount(0, $result);
+    }
+
+    public function testFindSuiviByDescriptionReturnsEmptyForOtherSignalement(): void
+    {
+        $signalement = $this->getSignalementByReference('2022-3');
+
+        $result = $this->suiviRepository->findSuiviByDescription($signalement, 'suivi de partenaire 13-01');
+        $this->assertCount(0, $result);
+    }
+
+    public function testFindAllSuiviBy(): void
+    {
+        $signalement = $this->getSignalementByReference('2022-8');
+
+        $result = $this->suiviRepository->findAllSuiviBy($signalement, Suivi::TYPE_TECHNICAL);
+        $this->assertCount(3, $result);
+        foreach ($result as $suivi) {
+            $this->assertEquals(SuiviCategory::ASK_FEEDBACK_SENT, $suivi->getCategory());
         }
     }
 
-    public function testFindSignalementsForSecondAskFeedbackRelance(): void
+    public function testFindAllSuiviByOrdersByCreatedAtAsc(): void
     {
-        $result = $this->suiviRepository->findSignalementsForSecondAskFeedbackRelance();
-        $this->assertCount(1, $result);
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalement = $signalementRepository->findOneBy(['id' => $result[0]]);
-        $this->assertEquals('2023-14', $signalement->getReference());
+        $signalement = $this->getSignalementByReference('2023-15');
+
+        $result = $this->suiviRepository->findAllSuiviBy($signalement, Suivi::TYPE_PARTNER);
+        $this->assertCount(2, $result);
+        $this->assertLessThan($result[1]->getCreatedAt(), $result[0]->getCreatedAt());
+        $this->assertStringContainsString('premier suivi', $result[0]->getDescription());
+        $this->assertStringContainsString('dernier suivi', $result[1]->getDescription());
     }
 
-    public function testFindSignalementsForThirdAskFeedbackRelance(): void
+    public function testFindAllSuiviByReturnsEmptyWhenNoMatchingType(): void
     {
-        $result = $this->suiviRepository->findSignalementsForThirdAskFeedbackRelance();
-        $this->assertCount(1, $result);
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalement = $signalementRepository->findOneBy(['id' => $result[0]]);
-        $this->assertEquals('2023-15', $signalement->getReference());
+        $signalement = $this->getSignalementByReference('2022-4');
+
+        $result = $this->suiviRepository->findAllSuiviBy($signalement, Suivi::TYPE_TECHNICAL);
+        $this->assertCount(0, $result);
     }
 
-    public function testFindSignalementsForLoopAskFeedbackRelance(): void
-    {
-        $result = $this->suiviRepository->findSignalementsForLoopAskFeedbackRelance();
-        $this->assertCount(1, $result);
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $signalement = $signalementRepository->findOneBy(['id' => $result[0]]);
-        $this->assertEquals('2022-8', $signalement->getReference());
-    }
-
-    public function testFindSignalementsForFirstAskFeedbackRelanceExcludesSignalementAlreadyInLoop(): void
-    {
-        // 2022-8 a déjà 3 ASK_FEEDBACK_SENT (fixture) : il est déjà en phase boucle 90 jours.
-        // Un nouveau suivi public, même vieux de plus de 45 jours, ne doit plus le faire
-        // repasser par la 1ère relance.
-        $signalement = $this->getSignalementByReference('2022-8');
-        $this->addSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, new \DateTimeImmutable('-50 days'), isVisibleForUsager: true);
-
-        $result = $this->suiviRepository->findSignalementsForFirstAskFeedbackRelance();
-        $this->assertNotContains($signalement->getId(), array_map('intval', $result));
-    }
-
-    public function testFindSignalementsForSecondAskFeedbackRelanceExcludesSignalementAlreadyInLoop(): void
+    public function testFindExistingEventsForSCHS(): void
     {
         $signalement = $this->getSignalementByReference('2022-8');
-        $this->addSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, new \DateTimeImmutable('-80 days'), isVisibleForUsager: true);
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-35 days'));
+        $suivi = $this->createSuivi($signalement, SuiviCategory::MESSAGE_ESABORA_SCHS);
+        $suivi->setOriginalData(['keyDataList' => ['ignored', 'schs-event-key-1']]);
+        $this->entityManager->flush();
 
-        $result = $this->suiviRepository->findSignalementsForSecondAskFeedbackRelance();
-        $this->assertNotContains($signalement->getId(), array_map('intval', $result));
+        $result = $this->suiviRepository->findExistingEventsForSCHS();
+
+        $this->assertArrayHasKey('schs-event-key-1', $result);
+        $this->assertSame($suivi->getId(), $result['schs-event-key-1']->getId());
     }
 
-    public function testFindSignalementsForThirdAskFeedbackRelanceExcludesSignalementAlreadyInLoop(): void
+    public function testFindExistingEventsForSCHSIgnoresSuiviWithoutOriginalData(): void
     {
         $signalement = $this->getSignalementByReference('2022-8');
-        $this->addSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, new \DateTimeImmutable('-80 days'), isVisibleForUsager: true);
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-50 days'));
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-35 days'));
+        $this->createSuivi($signalement, SuiviCategory::MESSAGE_ESABORA_SCHS);
 
-        $result = $this->suiviRepository->findSignalementsForThirdAskFeedbackRelance();
-        $this->assertNotContains($signalement->getId(), array_map('intval', $result));
+        $result = $this->suiviRepository->findExistingEventsForSCHS();
+
+        foreach ($result as $suivi) {
+            $this->assertNotNull($suivi->getOriginalData());
+        }
     }
 
-    public function testFindSignalementsForLoopAskFeedbackRelanceStaysInLoopAfterNewPublicSuivi(): void
+    public function testFindLastPublicSuivi(): void
     {
-        // Le minuteur de 90 jours redémarre depuis le nouveau suivi public, mais le dossier
-        // reste en mode boucle : il ne doit plus jamais repasser par la 1ère relance.
+        $signalement = $this->getSignalementByReference('2023-15');
+
+        $result = $this->suiviRepository->findLastPublicSuivi($signalement);
+
+        $this->assertNotNull($result);
+        $this->assertStringContainsString('dernier suivi de partenaire 13-01', $result->getDescription());
+    }
+
+    public function testFindLastPublicSuiviExcludesMessageUsager(): void
+    {
+        // "2022-4" a un suivi public MESSAGE_USAGER plus récent que le suivi
+        // automatique SIGNALEMENT_IS_ACTIVE créé à l'ouverture du dossier : ce dernier
+        // doit rester le suivi public "pertinent" puisque MESSAGE_USAGER est exclu.
+        $signalement = $this->getSignalementByReference('2022-4');
+
+        $result = $this->suiviRepository->findLastPublicSuivi($signalement);
+
+        $this->assertNotNull($result);
+        $this->assertSame(SuiviCategory::SIGNALEMENT_IS_ACTIVE, $result->getCategory());
+    }
+
+    public function testFindLastPublicSuiviExcludesDeletedSuivi(): void
+    {
+        $signalement = $this->getSignalementByReference('2023-15');
+        $suivi = $this->createSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, isVisibleForUsager: true, createdAt: new \DateTimeImmutable('+1 day'));
+        /** @var \App\Repository\UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(\App\Entity\User::class);
+        $admin = $userRepository->findOneBy(['email' => self::USER_ADMIN]);
+        $suivi->setDeletedBy($admin);
+        $this->entityManager->flush();
+
+        $result = $this->suiviRepository->findLastPublicSuivi($signalement);
+
+        $this->assertNotNull($result);
+        $this->assertNotSame($suivi->getId(), $result->getId());
+    }
+
+    public function testFindWithWaitingNotificationAndExpiredDelay(): void
+    {
         $signalement = $this->getSignalementByReference('2022-8');
-        $this->addSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, new \DateTimeImmutable('-95 days'), isVisibleForUsager: true);
+        $expired = $this->createSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, createdAt: new \DateTimeImmutable('-1 year'));
+        $expired->setWaitingNotification(true);
+        $notExpired = $this->createSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, createdAt: new \DateTimeImmutable());
+        $notExpired->setWaitingNotification(true);
+        $notWaiting = $this->createSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, createdAt: new \DateTimeImmutable('-1 year'));
+        $this->entityManager->flush();
 
-        $loopResult = $this->suiviRepository->findSignalementsForLoopAskFeedbackRelance();
-        $this->assertContains($signalement->getId(), array_map('intval', $loopResult));
+        $result = $this->suiviRepository->findWithWaitingNotificationAndExpiredDelay();
+        $resultIds = array_map(static fn (Suivi $suivi) => $suivi->getId(), $result);
 
-        $firstResult = $this->suiviRepository->findSignalementsForFirstAskFeedbackRelance();
-        $this->assertNotContains($signalement->getId(), array_map('intval', $firstResult));
-    }
-
-    public function testFindSignalementsForLoopAskFeedbackRelanceNotYetEligibleAfterRecentPublicSuivi(): void
-    {
-        // Le nouveau suivi public a moins de 90 jours : le dossier ne doit pas encore
-        // redéclencher de mail, ni boucle, ni 1ère relance.
-        $signalement = $this->getSignalementByReference('2022-8');
-        $this->addSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, new \DateTimeImmutable('-10 days'), isVisibleForUsager: true);
-
-        $loopResult = $this->suiviRepository->findSignalementsForLoopAskFeedbackRelance();
-        $this->assertNotContains($signalement->getId(), array_map('intval', $loopResult));
-
-        $firstResult = $this->suiviRepository->findSignalementsForFirstAskFeedbackRelance();
-        $this->assertNotContains($signalement->getId(), array_map('intval', $firstResult));
-    }
-
-    public function testFindSignalementsForLoopAskFeedbackRelanceDoesNotGraduateFromInterruptedCycles(): void
-    {
-        // 2 ASK_FEEDBACK_SENT dans un 1er cycle, puis un suivi public (reset), puis 1 seul
-        // ASK_FEEDBACK_SENT dans le 2ème cycle : le total cumulé atteint 3, mais aucun cycle
-        // n'a jamais atteint 3 relances d'affilée sans interruption. Le dossier ne doit donc
-        // pas être considéré comme en phase boucle.
-        $signalement = $this->getSignalementByReference('2023-19');
-        $this->addSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, new \DateTimeImmutable('-300 days'), isVisibleForUsager: true);
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-250 days'));
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-220 days'));
-        $this->addSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, new \DateTimeImmutable('-200 days'), isVisibleForUsager: true);
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-150 days'));
-
-        $loopResult = $this->suiviRepository->findSignalementsForLoopAskFeedbackRelance();
-        $this->assertNotContains($signalement->getId(), array_map('intval', $loopResult));
-
-        // le dossier doit continuer sa progression normale : 1 seul ASK_FEEDBACK_SENT depuis
-        // le suivi public de -200 jours, vieux de plus de 30 jours => 2ème relance
-        $secondResult = $this->suiviRepository->findSignalementsForSecondAskFeedbackRelance();
-        $this->assertContains($signalement->getId(), array_map('intval', $secondResult));
-    }
-
-    public function testFindSignalementsForLoopAskFeedbackRelanceGraduatesAsSoonAsOneCycleReachesThreshold(): void
-    {
-        // Le 1er cycle est interrompu à 2, mais le 2ème cycle atteint bien
-        // 3 ASK_FEEDBACK_SENT d'affilée : le dossier doit être en phase boucle, peu importe
-        // le cycle précédent avorté.
-        $signalement = $this->getSignalementByReference('2023-20');
-        $this->addSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, new \DateTimeImmutable('-300 days'), isVisibleForUsager: true);
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-250 days'));
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-220 days'));
-        $this->addSuivi($signalement, SuiviCategory::MESSAGE_PARTNER, new \DateTimeImmutable('-200 days'), isVisibleForUsager: true);
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-150 days'));
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-120 days'));
-        $this->addSuivi($signalement, SuiviCategory::ASK_FEEDBACK_SENT, new \DateTimeImmutable('-95 days'));
-
-        $loopResult = $this->suiviRepository->findSignalementsForLoopAskFeedbackRelance();
-        $this->assertContains($signalement->getId(), array_map('intval', $loopResult));
+        $this->assertContains($expired->getId(), $resultIds);
+        $this->assertNotContains($notExpired->getId(), $resultIds);
+        $this->assertNotContains($notWaiting->getId(), $resultIds);
     }
 
     private function getSignalementByReference(string $reference): Signalement
@@ -186,20 +191,22 @@ class SuiviRepositoryTest extends KernelTestCase
         return $signalement;
     }
 
-    private function addSuivi(
+    private function createSuivi(
         Signalement $signalement,
         SuiviCategory $category,
-        \DateTimeImmutable $createdAt,
         bool $isVisibleForUsager = false,
-    ): void {
+        ?\DateTimeImmutable $createdAt = null,
+    ): Suivi {
         $suivi = (new Suivi())
             ->setSignalement($signalement)
             ->setDescription('')
             ->setCategory($category)
             ->setType(SuiviCategory::getSuiviTypeForSuiviCategory($category))
             ->setIsVisibleForUsager($isVisibleForUsager)
-            ->setCreatedAt($createdAt);
+            ->setCreatedAt($createdAt ?? new \DateTimeImmutable());
         $this->entityManager->persist($suivi);
         $this->entityManager->flush();
+
+        return $suivi;
     }
 }

@@ -24,7 +24,7 @@ class GlobalStatisticsQuery
     /**
      * @param ?ArrayCollection<int, Partner> $partners
      */
-    public function countAll(
+    public function countSignalements(
         ?Territory $territory,
         ?ArrayCollection $partners,
     ): int {
@@ -46,6 +46,20 @@ class GlobalStatisticsQuery
                 ->andWhere('partner IN (:partners)')
                 ->setParameter('partners', $partners);
         }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function countActiveTerritories(): int
+    {
+        $qb = $this->entityManager->createQueryBuilder()
+            ->from(Territory::class, 't');
+        $qb->select('COUNT(t.id)')
+            ->where('t.isActive = 1');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
     }

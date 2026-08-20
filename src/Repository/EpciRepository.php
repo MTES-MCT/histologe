@@ -23,22 +23,6 @@ class EpciRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<int, string> $epciCodes
-     *
-     * @return array<int, array<string, mixed>>
-     */
-    public function findCommunesByEpcis(array $epciCodes): array
-    {
-        $queryBuilder = $this->createQueryBuilder('e')
-            ->select('DISTINCT c.nom, c.codePostal')
-            ->innerJoin('e.communes', 'c')
-            ->where('e.code IN (:epci_codes)')
-            ->setParameter('epci_codes', $epciCodes);
-
-        return $queryBuilder->getQuery()->getArrayResult();
-    }
-
-    /**
      * @return array<int, Epci>
      */
     public function findAllByTerritory(Territory $territory): array

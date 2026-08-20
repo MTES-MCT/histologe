@@ -3,8 +3,8 @@
 namespace App\Tests\Unit\Service\EmailAlert;
 
 use App\Entity\User;
-use App\Repository\Query\EmailAlert\PartnerQueryService;
-use App\Repository\Query\EmailAlert\UserQueryService;
+use App\Repository\Query\EmailAlert\PartnerQuery;
+use App\Repository\Query\EmailAlert\UserQuery;
 use App\Service\EmailAlert\EmailAlertChecker;
 use PHPUnit\Framework\TestCase;
 
@@ -16,9 +16,9 @@ class EmailAlertCheckerTest extends TestCase
 
     public function testBuildUserEmailAlertReturnsTrueOnlyForEmailsWithIssue(): void
     {
-        $userQueryService = $this->createMock(UserQueryService::class);
-        $partnerQuery = $this->createMock(PartnerQueryService::class);
-        $emailAlertChecker = new EmailAlertChecker($partnerQuery, $userQueryService);
+        $userQuery = $this->createMock(UserQuery::class);
+        $partnerQuery = $this->createMock(PartnerQuery::class);
+        $emailAlertChecker = new EmailAlertChecker($partnerQuery, $userQuery);
 
         $user1 = $this->createConfiguredMock(User::class, ['getEmail' => self::USER_01]);
         $user2 = $this->createConfiguredMock(User::class, ['getEmail' => self::USER_02]);
@@ -26,7 +26,7 @@ class EmailAlertCheckerTest extends TestCase
 
         $users = [$user1, $user2, $user3];
 
-        $userQueryService
+        $userQuery
             ->expects($this->once())
             ->method('findEmailsWithIssue')
             ->with([self::USER_01, self::USER_02, self::USER_03])
