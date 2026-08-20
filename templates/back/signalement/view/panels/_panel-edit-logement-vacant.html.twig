@@ -1,0 +1,97 @@
+<dialog aria-labelledby="panel-edit-logement-vacant-title" id="panel-edit-logement-vacant" class="side-panel">
+    <div class="side-panel__inner">
+        <div class="side-panel__header">
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-logement-vacant" aria-controls="panel-edit-logement-vacant" aria-expanded="false">Fermer</button>
+        </div>
+        <div class="side-panel__content fr-mx-3w">
+            <form method="POST" id="form-edit-logement-vacant" enctype="application/json" action="{{ path('back_signalement_edit_logement_vacant',{uuid:signalement.uuid}) }}">
+                {% if signalement.isLogementVacant %}
+                    <h1 id="panel-edit-logement-vacant-title" class="fr-modal__title title-blue-france">Sortir du statut de logement vacant</h1>
+                    <div class="fr-alert fr-alert--warning fr-my-2v">
+                        <p>
+                            Si vous sortez le logement du statut de vacant, les usagers (occupant et tiers déclarant) recevront à nouveau des mises à jour sur le dossier,
+                            et vous pourrez à nouveau partager des suivis aux usagers.
+                        </p>
+                    </div>
+                    <input type="hidden" name="logementVacant" value="0">
+                {% elseif signalement.isLogementVacant is same as false %}
+                    <h1 id="panel-edit-logement-vacant-title" class="fr-modal__title title-blue-france">Enregistrer comme logement vacant</h1>
+                    <div class="fr-alert fr-alert--warning fr-my-2v">
+                        <p>
+                            Si vous indiquez que le logement est vacant, les usagers (occupant et tiers déclarant) ne recevront plus de mises à jour sur le dossier,
+                            et vous ne pourrez plus partager de suivis aux usagers. Vous pourrez toujours effectuer des actions sur le dossier.
+                            <br>
+                            Les usagers pourront continuer à accéder au dossier mais ne pourront plus interagir.
+                        </p>
+                    </div>
+                    {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
+                        <div class="fr-alert fr-alert--error fr-my-2v">
+                            <p>
+                                Le déclarant tiers bailleur ne recevra plus de mise à jour sur le dossier et ne pourra plus interagir avec le dossier.
+                            </p>
+                        </div>
+                    {% endif %}
+                    <input type="hidden" name="logementVacant" value="1">
+                {% else %}
+                    <h1 id="panel-edit-logement-vacant-title" class="fr-modal__title title-blue-france">Enregistrer l'occupation du logement</h1>
+                    <fieldset class="fr-fieldset fr-fieldset--inline fr-mb-2v" id="logement-vacant-fieldset" aria-labelledby="logement-vacant-fieldset-legend logement-vacant-fieldset-error">
+                        <legend class="fr-fieldset__legend fr-text--regular" id="logement-vacant-fieldset-legend">
+                            Le logement est-il actuellement occupé ou vacant ?
+                        </legend>
+                        <div class="fr-fieldset__element fr-fieldset__element--inline">
+                            <div class="fr-radio-group">
+                                <input type="radio" id="logement-occupe" name="logementVacant" value="0">
+                                <label for="logement-occupe">Logement occupé</label>
+                            </div>
+                        </div>
+                        <div class="fr-fieldset__element fr-fieldset__element--inline">
+                            <div class="fr-radio-group">
+                                <input type="radio" id="logement-vacant-radio" name="logementVacant" value="1">
+                                <label for="logement-vacant-radio">Logement vacant</label>
+                            </div>
+                        </div>
+                        <div class="fr-fieldset__element">
+                            <p id="logement-vacant-fieldset-error" class="fr-error-text fr-hidden">
+                                Veuillez préciser si le logement est occupé ou vacant.
+                            </p>
+                        </div>
+                    </fieldset>
+                    <div id="logement-vacant-warning" class="fr-alert fr-alert--warning fr-my-2v fr-hidden">
+                        <p>
+                            Si vous indiquez que le logement est vacant, les usagers (occupant et tiers déclarant) ne recevront plus de mises à jour sur le dossier,
+                            et vous ne pourrez plus partager de suivis aux usagers. Vous pourrez toujours effectuer des actions sur le dossier.
+                            <br>
+                            Les usagers pourront continuer à accéder au dossier mais ne pourront plus interagir.
+                        </p>
+                    </div>
+                    {% if signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
+                        <div id="logement-vacant-bailleur-warning" class="fr-alert fr-alert--error fr-my-2v fr-hidden">
+                            <p>
+                                Le déclarant tiers bailleur ne recevra plus de mise à jour sur le dossier et ne pourra plus interagir avec le dossier.
+                            </p>
+                        </div>
+                    {% endif %}
+                {% endif %}
+                <input type="hidden" name="_token" value="{{ csrf_token('signalement_switch_logement_vacant') }}">
+            </form>
+        </div>
+        <div class="side-panel__footer">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm fr-btns-group--icon-left">
+                <li>
+                    <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line" form="form-edit-logement-vacant"
+                        >{% if signalement.isLogementVacant %}
+                            Enregistrer comme logement occupé
+                        {% elseif signalement.isLogementVacant is same as false %}
+                            Enregistrer comme logement vacant
+                        {% else %}
+                            Enregistrer
+                        {% endif %}</button>
+                </li>
+                <li>
+                    <button class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel" data-panel="panel-edit-logement-vacant" aria-controls="panel-edit-logement-vacant" aria-expanded="false" type="button"
+                        >Annuler</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</dialog>

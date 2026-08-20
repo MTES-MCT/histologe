@@ -3,8 +3,11 @@ import 'leaflet.vectorgrid';
 import { buildingStyles, createRnbMapController } from './rnb-map-controller.js';
 
 const modalLocalisation = document.getElementById('fr-modal-localisation');
-const modalPickLocalisation = document.getElementById('fr-modal-pick-localisation');
-const modalPickLocalisationMessage = document.getElementById('fr-modal-pick-localisation-message');
+const buttonPanelContainerPickLocalisation = document.getElementById(
+  'button-panel-container-pick-localisation'
+);
+const modalPickLocalisation = document.getElementById('container-pick-localisation');
+const modalPickLocalisationMessage = document.getElementById('container-pick-localisation-message');
 
 if (modalLocalisation) {
   let map;
@@ -31,7 +34,17 @@ if (modalPickLocalisation) {
   let previousId;
   let rnbMapController = null;
 
+  if (buttonPanelContainerPickLocalisation) {
+    buttonPanelContainerPickLocalisation.addEventListener('click', () => {
+      initializePickLocalisationContainer();
+    });
+  }
+
   modalPickLocalisation.addEventListener('dsfr.disclose', () => {
+    initializePickLocalisationContainer();
+  });
+
+  function initializePickLocalisationContainer() {
     // Chercher les champs d'adresse dans la page pour mettre à jour les data-attributes
     // Essayer plusieurs sélecteurs pour différents contextes
     const addressInputSelectors = [
@@ -81,8 +94,8 @@ if (modalPickLocalisation) {
     }
 
     // Réinitialiser la sélection du bâtiment
-    const rnbIdField = document.getElementById('fr-modal-pick-localisation-rnb-id');
-    const submitButton = document.getElementById('fr-modal-pick-localisation-submit');
+    const rnbIdField = document.getElementById('container-pick-localisation-rnb-id');
+    const submitButton = document.getElementById('container-pick-localisation-submit');
     if (rnbIdField) {
       rnbIdField.value = '';
     }
@@ -91,8 +104,8 @@ if (modalPickLocalisation) {
     }
 
     // Nettoyer l'annonce du tour précédent
-    const mapContainer = document.getElementById('fr-modal-pick-localisation-map');
-    const announcementEl = document.getElementById('fr-modal-pick-localisation-announcement');
+    const mapContainer = document.getElementById('container-pick-localisation-map');
+    const announcementEl = document.getElementById('container-pick-localisation-announcement');
     if (announcementEl) announcementEl.textContent = '';
 
     // Nettoyer l'attribut _leaflet_id du conteneur
@@ -110,7 +123,7 @@ if (modalPickLocalisation) {
 
     // Récupérer les conteneurs de boutons
     const defaultButtonsContainer = document.querySelector(
-      '#fr-modal-pick-localisation .fr-modal__footer .fr-btns-group'
+      '#container-pick-localisation .fr-modal__footer .fr-btns-group'
     );
 
     // Réinitialiser l'affichage des boutons (afficher tous les boutons par défaut)
@@ -124,7 +137,7 @@ if (modalPickLocalisation) {
       requestAnimationFrame(() => {
         // keyboard: false désactive la navigation clavier native de Leaflet (flèches/zoom)
         // pour laisser notre propre handler gérer la navigation entre bâtiments
-        map = L.map('fr-modal-pick-localisation-map', { keyboard: false });
+        map = L.map('container-pick-localisation-map', { keyboard: false });
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
           attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -196,12 +209,12 @@ if (modalPickLocalisation) {
                   if (announcementEl) announcementEl.textContent = text;
                 },
                 onFocusSubmit: () => {
-                  document.getElementById('fr-modal-pick-localisation-submit')?.focus();
+                  document.getElementById('container-pick-localisation-submit')?.focus();
                 },
               });
             }, 100);
           });
       });
     });
-  });
+  }
 }

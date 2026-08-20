@@ -7,8 +7,10 @@
         <span class="fr-badge fr-badge--info">Occupation du logement non précisée</span>
     {% endif %}
     {% if is_granted('SIGN_SWITCH_LOGEMENT_VACANT', signalement) %}
-        <button data-fr-opened="false" aria-controls="fr-modal-edit-logement-vacant" class="fr-btn--icon-left fr-icon-edit-line fr-btn fr-btn--sm fr-btn--tertiary-no-outline">
-            Modifier
-        </button>
+        <button class="fr-btn--icon-left fr-icon-edit-line fr-btn fr-btn--sm fr-btn--tertiary-no-outline"
+            data-panel-open="panel-edit-logement-vacant"
+            aria-controls="panel-edit-logement-vacant"
+            data-fr-opened="false"
+            >Modifier</button>
     {% endif %}
 </div>
