@@ -49,6 +49,8 @@ class ArreteImportRow
     #[Assert\NotBlank(message: 'L\'identifiant parcellaire est obligatoire.')]
     private ?string $identifiantParcellaire = null;
 
+    private ?string $rnbId = null;
+
     private ?bool $addressToValidate = false;
 
     public function getAddress(): ?string
@@ -186,6 +188,18 @@ class ArreteImportRow
     public function setIdentifiantParcellaire(?string $identifiantParcellaire): self
     {
         $this->identifiantParcellaire = $identifiantParcellaire;
+
+        return $this;
+    }
+
+    public function getRnbId(): ?string
+    {
+        return $this->rnbId;
+    }
+
+    public function setRnbId(?string $rnbId): self
+    {
+        $this->rnbId = $rnbId;
 
         return $this;
     }

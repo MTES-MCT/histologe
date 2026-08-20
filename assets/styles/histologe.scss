@@ -278,6 +278,17 @@ pre {
             max-height: 200px;
             overflow-y: auto;
         }
+
+        .btn-pick-localisation,
+        [data-btn-pick-localisation] {
+            &:hover {
+                background-color: transparent;
+                --hover-tint: transparent;
+                --hover: transparent;
+                text-decoration: underline;
+                color: var(--text-action-high-blue-france);
+            }
+        }
     }
 }
 
@@ -1111,11 +1122,33 @@ ul + p {
 
 
 .pick-location-success {
-  color: var(--background-flat-success);
+    color: var(--background-flat-success);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.pick-location-error {
+  color: var(--background-flat-error);
   font-weight: 500;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 0.25rem;
+  width: fit-content;
+
+  [class^="fr-icon-"],
+  [class*=" fr-icon-"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &::before,
+    &::after {
+      vertical-align: middle;
+      margin: 0;
+    }
+  }
 }
 
 .notification-icon {

@@ -126,5 +126,17 @@ class ArreteImportRowTest extends KernelTestCase
                 ->setIdentifiantParcellaire('12345'),
             0,
         ];
+
+        yield 'Valid row with rnbId' => [
+            new ArreteImportRow()
+                ->setDateArrete('01/01/2023')
+                ->setClassificationArrete('Insalubrité')
+                ->setNomVoie('Rue de la Paix')
+                ->setCodePostal('75002')
+                ->setCommune('Paris')
+                ->setIdentifiantParcellaire('12345')
+                ->setRnbId('Y1QC6FM9XXGS'),
+            0,
+        ];
     }
 }

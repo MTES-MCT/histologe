@@ -8,6 +8,7 @@ use App\Entity\Enum\ArreteType;
 use App\Entity\User;
 use App\Repository\AddressRepository;
 use App\Service\Gouv\Ban\AddressService;
+use App\Service\Gouv\Rnb\RnbService;
 use App\Service\Import\Arrete\ArreteImportRow;
 use App\Service\Signalement\ZipcodeProvider;
 use LongitudeOne\Spatial\Exception\InvalidValueException;
@@ -19,6 +20,7 @@ class ArreteFactory
         private readonly AddressService $addressService,
         private readonly AddressRepository $addressRepository,
         private readonly ZipcodeProvider $zipcodeProvider,
+        private readonly RnbService $rnbService,
     ) {
     }
 
@@ -28,7 +30,26 @@ class ArreteFactory
     public function createInstanceFrom(ArreteImportRow $arreteImportRow, User $user): ?Arrete
     {
         $addressResponse = $this->addressService->getAddress($arreteImportRow->getAddress());
-        if ($addressResponse->getScore() < AddressService::SCORE_IF_BAN_ID_ACCEPTED) {
+        $hasValidBan = $addressResponse->getScore() >= AddressService::SCORE_IF_BAN_ID_ACCEPTED;
+        $rnbBuilding = !empty($arreteImportRow->getRnbId())
+            ? $this->rnbService->getBuilding($arreteImportRow->getRnbId())
+            : null;
+
+        if (!$hasValidBan && null === $rnbBuilding) {
+            return null;
+        }
+
+        $cityCode = $addressResponse->getInseeCode();
+        if (null === $cityCode) {
+            return null;
+        }
+
+        $territoryAddress = $this->zipcodeProvider->getTerritoryByInseeCode($cityCode);
+        if (null === $territoryAddress) {
+            return null;
+        }
+
+        if ($user->isTerritoryAdmin() && $territoryAddress->getId() !== $user->getFirstTerritory()?->getId()) {
             return null;
         }
 
@@ -36,17 +57,17 @@ class ArreteFactory
         $street = $addressResponse->getStreet(withHouseNumber: false) ?? $arreteImportRow->getNomVoie();
         $postCode = $addressResponse->getZipCode() ?? $arreteImportRow->getCodePostal();
         $city = $addressResponse->getCity() ?? $arreteImportRow->getCommune();
-        $cityCode = $addressResponse->getInseeCode();
         $banId = $addressResponse->getBanId();
-        $longitude = $addressResponse->getLongitude();
-        $latitude = $addressResponse->getLatitude();
-        $address = null;
 
-        if (null === $cityCode) {
-            return null;
+        if (null === $rnbBuilding) {
+            $longitude = $addressResponse->getLongitude();
+            $latitude = $addressResponse->getLatitude();
+        } else {
+            $longitude = $rnbBuilding->getLng();
+            $latitude = $rnbBuilding->getLat();
         }
-        $territoryAddress = $this->zipcodeProvider->getTerritoryByInseeCode($cityCode);
 
+        $address = null;
         if ($banId) {
             $address = $this->addressRepository->findOneBy(['banId' => $banId]);
         }
@@ -67,21 +88,12 @@ class ArreteFactory
                 ->setPostCode($postCode)
                 ->setCity($city)
                 ->setCityCode($cityCode)
-                ->setBanId($banId);
+                ->setBanId($banId)
+                ->setTerritory($territoryAddress);
 
             if ($longitude && $latitude) {
                 $address->setPoint(new Point($longitude, $latitude));
             }
-
-            if (null === $territoryAddress) {
-                return null;
-            }
-
-            $address->setTerritory($territoryAddress);
-        }
-
-        if ($user->isTerritoryAdmin() && $territoryAddress->getId() !== $user->getFirstTerritory()->getId()) {
-            return null;
         }
 
         $arrete = new Arrete()

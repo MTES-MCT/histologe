@@ -513,6 +513,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(nullable: true)]
     private ?array $synchroData = null;
 
+    /**
+     * Identifiant RNB du bâtiment occupé, déterminé automatiquement lorsqu’un
+     * seul bâtiment correspond à l'adresse, ou sélectionné par l’usager lorsque
+     * plusieurs bâtiments sont proposés.
+     */
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $rnbIdOccupant = null;
 

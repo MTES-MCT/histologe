@@ -1,7 +1,9 @@
 function openPanel(panelId) {
+  /** @type {HTMLDialogElement|null} */
   const panel = document.getElementById(panelId);
   if (!panel) return;
   panel.showModal();
+  panel.dispatchEvent(new CustomEvent('panel:open', { bubbles: true, detail: { panelId } }));
   document.querySelectorAll(`[data-panel-open="${panelId}"]`).forEach((btn) => {
     btn.setAttribute('aria-expanded', 'true');
   });
@@ -9,6 +11,9 @@ function openPanel(panelId) {
 
 function closePanel(panel) {
   panel.close();
+  panel.dispatchEvent(
+    new CustomEvent('panel:close', { bubbles: true, detail: { panelId: panel.id } })
+  );
   document.querySelectorAll(`[data-panel-open="${panel.id}"]`).forEach((btn) => {
     btn.setAttribute('aria-expanded', 'false');
   });

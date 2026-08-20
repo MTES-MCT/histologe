@@ -264,4 +264,38 @@ class ArreteImportLoaderTest extends WebTestCase
         $this->assertCount(1, $metadata['errors']);
         $this->assertStringContainsString('ne peut pas être importé', $metadata['errors'][0]);
     }
+
+    /**
+     * @throws InvalidValueException
+     */
+    public function testLoadWithLowBanScoreAndRnbId(): void
+    {
+        self::bootKernel();
+        $container = self::getContainer();
+        $addressServiceFake = new AddressServiceFake();
+        $container->set(AddressService::class, $addressServiceFake);
+
+        /** @var ArreteImportLoader $arreteImportLoader */
+        $arreteImportLoader = $container->get(ArreteImportLoader::class);
+
+        $entityManager = $container->get('doctrine.orm.entity_manager');
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+
+        $validRows = [
+            new ArreteImportRow()
+                ->setNomVoie('Chemin du grand méchant loup')
+                ->setCodePostal('30360')
+                ->setCommune('Vézénobres')
+                ->setIdentifiantParcellaire('ID-PARCELLE-RNB-1')
+                ->setClassificationArrete('Insalubrité')
+                ->setDateArrete(new \DateTimeImmutable('2024-03-01'))
+                ->setRnbId('Y1QC6FM9XXGS'),
+        ];
+
+        $arretes = $arreteImportLoader->load($validRows, $user);
+
+        $metadata = $arreteImportLoader->getMetadata();
+        $this->assertCount(1, $arretes);
+        $this->assertEquals(1, $metadata['countSuccess']);
+    }
 }
