@@ -27,7 +27,7 @@
 {% block content %}
     {% if is_granted('SIGN_EDIT_ADDRESS', signalement) %}
         <div data-ajax-form>
-            {% include 'back/signalement/view/edit-modals/edit-address.html.twig' %}
+            {% include 'back/signalement/view/panels/_panel-edit-address.html.twig' %}
         </div>
     {% endif %}
     {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
@@ -117,7 +117,7 @@
     {% endif %}
     {% if is_granted('ROLE_ADMIN') %}
         <div data-ajax-form>
-            {% include '_partials/_modal_send_lien_suivi.html.twig' %}
+            {% include 'back/signalement/view/panels/_panel-send-lien-suivi.html.twig' %}
         </div>
     {% endif %}
     {% if (is_granted('SIGN_INJONCTION_CLOSE', signalement)) %}
@@ -141,6 +141,10 @@
     
     {% if is_granted('AFFECTATION_REOPEN', affectation) %}
         {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
+    {% endif %}
+
+    {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
+        {% include 'back/signalement/view/panels/_panel-manage-tags.html.twig' %}
     {% endif %}
 
     {% set signalementInvalidClass = '' %}

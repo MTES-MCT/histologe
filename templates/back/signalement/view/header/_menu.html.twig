@@ -1,4 +1,4 @@
-<nav class="fr-translate menu-actions-signalement fr-nav">
+<nav class="fr-translate menu-actions-signalement fr-nav fr-mb-1w">
     <div class="fr-nav__item">
         <button aria-controls="header-menu" aria-expanded="false" type="button" class="fr-btn fr-btn--icon-left fr-btn--tertiary  fr-btn--icon-right fr-icon-arrow-down-s-line">
             Actions
@@ -111,9 +111,10 @@
                 {% if is_granted('ROLE_ADMIN') %}
                     <li>
                         <button
-                            class="fr-nav__link fr-btn--icon-left fr-icon-send-plane-fill" 
-                            aria-controls="send-lien-suivi-modal" 
-                            data-fr-opened="false" 
+                            class="fr-nav__link fr-btn--icon-left fr-icon-send-plane-fill"
+                            data-panel-open="panel-send-lien-suivi"
+                            aria-controls="panel-send-lien-suivi"
+                            data-fr-opened="false"
                             title="Envoyer le lien de suivi">
                             Envoyer le lien de suivi
                         </button>

@@ -25,7 +25,10 @@
             {% include 'back/signalement/view/header/_esabora_alert.html.twig' %}
             {% include 'back/signalement/view/header/_logement-vacant.html.twig' %}
             {% include 'back/signalement/view/header/_badges.html.twig' %}
-            {% include 'back/signalement/view/header/_tags-with-modal.html.twig' %}
+
+            <div id="signalement-tags-container">
+                {% include 'back/signalement/view/header/_tags.html.twig' %}
+            </div>
         </div>
     </div>
 </header>
