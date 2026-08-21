@@ -10,7 +10,11 @@
                 <p>
                     Validez les informations pour savoir si le logement dépasse le seuil de non décence énergétique ou non.
                     <br>
+<<<<<<< HEAD
                     Les champs marqués d'un astérisque (<span class="text-required">*</span>) sont obligatoires.
+=======
+                    Les champs marqués d'un astérisque sont obligatoires.
+>>>>>>> 19f205406 (panel for nde editing #6229)
                 </p>    
                 <p class="fr-mt-3v fr-alert fr-alert--warning">
                     Si le dernier bail a été établi avant 2023, le logement n'est pas concerné par 
@@ -27,7 +31,7 @@
                         </div>
                     </div>
                 </div>
-                <form method="POST" name="signalement-edit-nde" id="signalement-edit-nde-form" enctype="application/json"
+                <form method="POST" name="form-edit-nde" id="form-edit-nde" enctype="application/json"
                     action="{{ path('back_signalement_qualification_editer',{uuid:signalement.uuid, signalementQualification:signalementQualificationNDE.id}) }}"
                     >
 
