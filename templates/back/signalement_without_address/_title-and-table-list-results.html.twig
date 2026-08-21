@@ -43,7 +43,8 @@
                     {% if enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INCONSISTENT_TERRITORY in row.errors %}
                         <button type="button"
                             class="fr-btn fr-btn--secondary fr-icon-share-forward-line fr-btn--sm btn-change-territory"
-                            aria-controls="fr-modal-change-territory"
+                            aria-controls="fr-panel-change-territory"
+                            data-panel-open="fr-panel-change-territory"
                             data-fr-opened="false"
                             data-signalement-reference="{{ signalement.reference }}"
                             data-territory-zipAndName="{{ row.calculatedTerritory.zipAndName }}"
@@ -55,7 +56,8 @@
                     {% else %}
                         <button type="button"
                             class="fr-btn fr-btn--secondary fr-icon-map-pin-2-line fr-btn--sm btn-search-address"
-                            aria-controls="fr-modal-search-address"
+                            aria-controls="fr-panel-search-address"
+                            data-panel-open="fr-panel-search-address"
                             data-fr-opened="false"
                             data-signalement-reference="{{ signalement.reference }}"
                             data-search-url="{{ path('back_signalement_without_address_search',{uuid:signalement.uuid}) }}"

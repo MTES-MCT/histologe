@@ -1,15 +1,15 @@
 import { jsonResponseHandler } from '../../services/component/component_json_response_handler';
 
-const modalSearchAddress = document.getElementById('fr-modal-search-address');
-const modalChangeTerritory = document.getElementById('fr-modal-change-territory');
+const panelSearchAddress = document.getElementById('fr-panel-search-address');
+const panelChangeTerritory = document.getElementById('fr-panel-change-territory');
 
-if (modalSearchAddress) {
-  const resultsContainer = document.getElementById('fr-modal-search-address-results');
-  const referenceField = document.getElementById('fr-modal-search-address-reference');
-  const adresseField = document.getElementById('fr-modal-search-address-adresse');
-  const tokenField = document.getElementById('fr-modal-search-address-token');
-  const linkUrlField = document.getElementById('fr-modal-search-address-link-url');
-  const searchParamsField = document.getElementById('fr-modal-search-address-search-params');
+if (panelSearchAddress) {
+  const resultsContainer = document.getElementById('fr-panel-search-address-results');
+  const referenceField = document.getElementById('fr-panel-search-address-reference');
+  const adresseField = document.getElementById('fr-panel-search-address-adresse');
+  const tokenField = document.getElementById('fr-panel-search-address-token');
+  const linkUrlField = document.getElementById('fr-panel-search-address-link-url');
+  const searchParamsField = document.getElementById('fr-panel-search-address-search-params');
 
   document.addEventListener('click', (event) => {
     const button = event.target.closest('.btn-search-address');
@@ -74,12 +74,12 @@ if (modalSearchAddress) {
     });
   }
 }
-if (modalChangeTerritory) {
-  const referenceField = document.getElementById('fr-modal-change-territory-reference');
-  const zipAndNameField = document.getElementById('fr-modal-change-territory-zipAndName');
-  const tokenField = document.getElementById('fr-modal-change-territory-token');
-  const urlField = document.getElementById('fr-modal-change-territory-url');
-  const confirmButton = document.getElementById('fr-modal-change-territory-confirm');
+if (panelChangeTerritory) {
+  const referenceField = document.getElementById('fr-panel-change-territory-reference');
+  const zipAndNameField = document.getElementById('fr-panel-change-territory-zipAndName');
+  const tokenField = document.getElementById('fr-panel-change-territory-token');
+  const urlField = document.getElementById('fr-panel-change-territory-url');
+  const confirmButton = document.getElementById('fr-panel-change-territory-confirm');
 
   document.addEventListener('click', (event) => {
     const button = event.target.closest('.btn-change-territory');
