@@ -7,10 +7,11 @@
         </div>
         <div class="fr-col-12 fr-col-md-4 fr-text--right">
             {% if is_granted('SIGN_EDIT_NDE', signalement) %}
-                <button class="fr-btn fr-btn--secondary fr-fi-edit-line fr-btn--icon-left" data-fr-opened="false"
-                        aria-controls="fr-modal-edit-nde">
-                    Modifier
-                </button>
+                <button class="fr-btn fr-btn--secondary fr-fi-edit-line fr-btn--icon-left"
+                    data-fr-opened="false"
+                    aria-controls="panel-edit-nde"
+                    data-panel-open="panel-edit-nde"
+                    >Modifier</button>
             {% endif %}
         </div>
         <div class="fr-col-12 fr-col-md-6">
