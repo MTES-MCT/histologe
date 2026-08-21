@@ -100,6 +100,7 @@ readonly class MenuBuilder
             ->addChild(new MenuItem(label: 'Communes', route: 'back_commune_index', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Historique des modifications', route: 'back_history_entry_diff', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Outil RIAL par BAN ID', route: 'back_tools_rial', roleGranted: User::ROLE_ADMIN))
+            ->addChild(new MenuItem(label: 'Signalements sans relation adresse', route: 'back_signalement_without_address_index', roleGranted: User::ROLE_ADMIN))
         ;
         $techAdminToolsSubItem
             ->addChild(new MenuItem(route: 'back_territories_edit'))

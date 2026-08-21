@@ -1,0 +1,84 @@
+<section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
+    <div id="list-signalements">
+        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(total, 'signalement sans adresse trouvé', 'signalements sans adresse trouvés') }}</h2>
+        <div class="fr-skiplinks">
+            <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                >Accéder à la pagination</a>
+        </div>
+    </div>
+</section>
+
+<section class="fr-col-12" id="table-list-results">
+    {% set tableHead %}
+        <th scope="col" data-responsive-title="1">#Ref.</th>
+        <th scope="col">Adresse</th>
+        <th scope="col">Ville</th>
+        <th scope="col">Code postal</th>
+        <th scope="col">Code INSEE</th>
+        <th scope="col">Territoire</th>
+        <th scope="col">Territoire calculé</th>
+        <th scope="col">Erreur</th>
+        <th scope="col" class="fr-text--right">Actions</th>
+    {% endset %}
+
+    {% set tableBody %}
+        {% for row in rows %}
+            {% set signalement = row.signalement %}
+            <tr class="signalement-row">
+                <td>{{ signalement.reference }}</td>
+                <td>{{ signalement.adresseOccupant }}</td>
+                <td>{{ signalement.villeOccupant|upper }}</td>
+                <td>{{ signalement.cpOccupant }}</td>
+                <td>{{ signalement.inseeOccupant }}</td>
+                <td>{{ signalement.territory ? signalement.territory.zipAndName : 'aucun' }}</td>
+                <td>{{ row.calculatedTerritory ? row.calculatedTerritory.zipAndName : 'indéterminé' }}</td>
+                <td>
+                    {% for error in row.errors %}
+                        <span class="fr-badge fr-badge--error fr-badge--no-icon fr-ws-nowrap fr-my-1v fr-display-block">{{ error.label() }}</span>
+                    {% else %}
+                        <span class="fr-badge fr-badge--success fr-badge--no-icon fr-ws-nowrap">Aucune</span>
+                    {% endfor %}
+                </td>
+                <td class="fr-text--right fr-ws-nowrap">
+                    {% if enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INCONSISTENT_TERRITORY in row.errors %}
+                        <button type="button"
+                            class="fr-btn fr-btn--secondary fr-icon-share-forward-line fr-btn--sm btn-change-territory"
+                            aria-controls="fr-modal-change-territory"
+                            data-fr-opened="false"
+                            data-signalement-reference="{{ signalement.reference }}"
+                            data-territory-zipAndName="{{ row.calculatedTerritory.zipAndName }}"
+                            data-change-territory-url="{{ path('back_signalement_change_territory',{uuid:signalement.uuid}) }}"
+                            data-csrf-token="{{ csrf_token('signalement_change_territory_'~signalement.id) }}"
+                            aria-label="Changer le territoire du signalement #{{ signalement.reference }}"
+                            title="Changer le territoire du signalement #{{ signalement.reference }}"
+                            >Changer le territoire du signalement #{{ signalement.reference }}</button>
+                    {% else %}
+                        <button type="button"
+                            class="fr-btn fr-btn--secondary fr-icon-map-pin-2-line fr-btn--sm btn-search-address"
+                            aria-controls="fr-modal-search-address"
+                            data-fr-opened="false"
+                            data-signalement-reference="{{ signalement.reference }}"
+                            data-search-url="{{ path('back_signalement_without_address_search',{uuid:signalement.uuid}) }}"
+                            data-link-url="{{ path('back_signalement_without_address_link',{uuid:signalement.uuid}) }}"
+                            data-csrf-token="{{ csrf_token('signalement_link_address_'~signalement.id) }}"
+                            aria-label="Rechercher l'adresse du signalement #{{ signalement.reference }}"
+                            title="Rechercher l'adresse du signalement #{{ signalement.reference }}"
+                            >Rechercher l'adresse du signalement #{{ signalement.reference }}</button>
+                    {% endif %}
+                    <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
+                        class="fr-btn fr-fi-arrow-right-line fr-btn--sm"
+                        aria-label="Voir le signalement #{{ signalement.reference }}"
+                        title="Voir le signalement #{{ signalement.reference }}"
+                        ></a>
+                </td>
+            </tr>
+        {% endfor %}
+    {% endset %}
+
+    {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des signalements sans relation adresse', 'tableHead': tableHead, 'tableBody': tableBody } %}
+
+    <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" aria-label="Pagination de la liste des signalements">
+        {% import '_partials/macros.html.twig' as macros %}
+        {{ macros.customPagination(pages, searchSignalementWithoutAddress.page, 'back_signalement_without_address_index', searchSignalementWithoutAddress.urlParams) }}
+    </div>
+</section>

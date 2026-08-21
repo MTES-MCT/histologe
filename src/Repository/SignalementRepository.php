@@ -18,6 +18,7 @@ use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\ListFilters\SearchSignalementInjonction;
+use App\Service\ListFilters\SearchSignalementWithoutAddress;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Utils\Address\AddressParser;
 use App\Utils\Address\CommuneHelper;
@@ -378,6 +379,47 @@ class SignalementRepository extends ServiceEntityRepository
         }
 
         $firstResult = ($page - 1) * $maxResult;
+        $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($queryBuilder->getQuery(), false);
+    }
+
+    /**
+     * @return Paginator<Signalement>
+     */
+    public function findSignalementsWithoutAddressPaginated(
+        SearchSignalementWithoutAddress $searchSignalementWithoutAddress,
+        int $maxResult,
+    ): Paginator {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->where('s.address IS NULL');
+
+        if (!empty($searchSignalementWithoutAddress->getTerritory())) {
+            $queryBuilder
+                ->andWhere('s.territory = :territory')
+                ->setParameter('territory', $searchSignalementWithoutAddress->getTerritory());
+        }
+
+        if (!empty($searchSignalementWithoutAddress->getStatut())) {
+            $queryBuilder
+                ->andWhere('s.statut = :statut')
+                ->setParameter('statut', $searchSignalementWithoutAddress->getStatut());
+        }
+
+        if (null !== $searchSignalementWithoutAddress->getIsImported()) {
+            $queryBuilder
+                ->andWhere('s.isImported = :isImported')
+                ->setParameter('isImported', $searchSignalementWithoutAddress->getIsImported());
+        }
+
+        if (!empty($searchSignalementWithoutAddress->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchSignalementWithoutAddress->getOrderType());
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('s.createdAt', 'DESC');
+        }
+
+        $firstResult = ($searchSignalementWithoutAddress->getPage() - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);
