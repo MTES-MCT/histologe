@@ -101,7 +101,7 @@
         {% include 'back/signalement/view/panels/_panel-edit-nde.html.twig' %}
     {% endif %}
     {% if is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_CLOSED', signalement) or is_granted('SIGN_EDIT_INJONCTION', signalement) %}
-        {% include '_partials/_modal_upload_files.html.twig' with {'context': 'form-bo-edit'} %}
+        {% include '_partials/signalement/_panel-upload-files.html.twig' with {'context': 'form-bo-edit'} %}
     {% endif %}
     {% if is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_INJONCTION', signalement) %}
         <div data-ajax-form>
