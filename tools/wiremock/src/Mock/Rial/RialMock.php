@@ -32,13 +32,31 @@ class RialMock
             self::RESOURCES_DIR.'list.json'
         ));
         $wireMock->stubFor(
-            WireMock::get(WireMock::urlMatching('/rial/v1/locaux/adressetopographique'))
+            WireMock::get(WireMock::urlPathEqualTo('/rial/v1/locaux/adressetopographique'))
                 ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
+                ->withQueryParam('codeDepartementInsee', WireMock::equalTo('2A'))
+                ->withQueryParam('codeCommuneInsee', WireMock::equalTo('004'))
+                ->withQueryParam('codeVoieTopo', WireMock::equalTo('0820'))
+                ->withQueryParam('numeroVoirie', WireMock::equalTo('2'))
                 ->willReturn(
                     WireMock::aResponse()
                         ->withStatus(200)
                         ->withHeader('Content-Type', self::CONTENT_TYPE)
                         ->withBody(json_encode($responseList))
+                )
+        );
+
+        $responseInfos = json_decode(AppMock::getMockContent(
+            self::RESOURCES_DIR.'infos.json'
+        ));
+        $wireMock->stubFor(
+            WireMock::get(WireMock::urlMatching('/rial/v1/locaux/2A0049934130'))
+                ->withHeader('Authorization', WireMock::containing(self::REQUEST_AUTHORIZATION))
+                ->willReturn(
+                    WireMock::aResponse()
+                        ->withStatus(200)
+                        ->withHeader('Content-Type', self::CONTENT_TYPE)
+                        ->withBody(json_encode($responseInfos))
                 )
         );
     }

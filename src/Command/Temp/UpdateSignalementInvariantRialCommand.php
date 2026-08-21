@@ -88,7 +88,7 @@ class UpdateSignalementInvariantRialCommand extends Command
     {
         if (null !== $this->lastCallTime) {
             $elapsed = microtime(true) - $this->lastCallTime;
-            $minInterval = 0.33; // 200 calls / 60 seconds = 1 call / 0.3 seconds + margin
+            $minInterval = 0.5; // 200 calls / 60 seconds = 1 call / 0.3 seconds + margin
             if ($elapsed < $minInterval) {
                 usleep((int) (($minInterval - $elapsed) * 1000000));
             }
