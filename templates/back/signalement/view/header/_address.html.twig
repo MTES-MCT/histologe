@@ -3,7 +3,10 @@
     {% if signalement.complementAdresseOccupant %}- {{signalement.complementAdresseOccupant}}{% endif %},
     {{ signalement.cpOccupant ~' '~ signalement.villeOccupant|capitalize }}
     {% if is_granted('SIGN_EDIT_ADDRESS', signalement) %}
-        <button data-fr-opened="false" aria-controls="fr-modal-edit-address" class="fr-ml-6v fr-link--icon-left fr-icon-edit-line fr-a-edit"
+        <button class="fr-ml-6v fr-link--icon-left fr-icon-edit-line fr-a-edit"
+            data-panel-open="panel-edit-address"
+            aria-controls="panel-edit-address"
+            data-fr-opened="false"
             >Modifier</button>
     {% endif %}
     {% if feature_histo_address %}
@@ -18,9 +21,11 @@
                 >Localiser sur la carte</button>
         {% elseif is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_NEED_VALIDATION', signalement) %}
             <button
-                class="fr-ml-6v fr-link fr-link--icon-left fr-icon-map-pin-2-line fr-a-edit" 
-                data-fr-opened="false" 
-                aria-controls="fr-modal-pick-localisation"
+                class="fr-ml-6v fr-link fr-link--icon-left fr-icon-map-pin-2-line fr-a-edit"
+                data-fr-opened="false"
+                id="button-panel-container-pick-localisation"
+                data-panel-open="container-pick-localisation"
+                aria-controls="container-pick-localisation"
                 >Sélectionner le bâtiment sur la carte</button>
         {% endif %}
     {% endif %}
@@ -63,12 +68,11 @@
             {% elseif is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_NEED_VALIDATION', signalement) %}
                 <li>
                     <button 
-                        class="fr-btn fr-icon-map-pin-2-line" 
-                        data-fr-opened="false" 
-                        aria-controls="fr-modal-pick-localisation"
-                    >
-                        Sélectionner le bâtiment sur la carte
-                    </button>
+                        class="fr-btn fr-icon-map-pin-2-line"
+                        data-fr-opened="false"
+                        data-panel-open="container-pick-localisation"
+                        aria-controls="container-pick-localisation"
+                        >Sélectionner le bâtiment sur la carte</button>
                 </li>
             {% endif %}
             {% if signalementsOnSameAddress|length > 0 or arretesOnSameAddress|length > 0 %}

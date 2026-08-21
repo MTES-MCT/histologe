@@ -460,9 +460,9 @@ document.addEventListener('click', (event) => {
   });
 });
 
-const logementVacantModal = document.querySelector('#fr-modal-edit-logement-vacant');
+const logementVacantPanel = document.querySelector('#panel-edit-logement-vacant');
 
-logementVacantModal?.addEventListener('change', (event) => {
+logementVacantPanel?.addEventListener('change', (event) => {
   const radio = event.target.closest('input[name="logementVacant"]');
   if (!radio) return;
 
@@ -478,7 +478,7 @@ logementVacantModal?.addEventListener('change', (event) => {
   document.getElementById('logement-vacant-fieldset-error')?.classList.add('fr-hidden');
 });
 
-logementVacantModal?.querySelector('form')?.addEventListener('submit', (event) => {
+logementVacantPanel?.querySelector('form')?.addEventListener('submit', (event) => {
   const fieldset = document.getElementById('logement-vacant-fieldset');
   if (!fieldset) return;
 

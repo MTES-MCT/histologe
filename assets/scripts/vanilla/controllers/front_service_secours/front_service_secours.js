@@ -90,7 +90,7 @@ function initPickLocalisationButton() {
   const cpInput = document.querySelector('#service_secours_step2_cpOccupant');
   const formRnbIdInput = document.getElementById('service_secours_step2_rnbId');
   const pickButton = document.querySelector('.btn-pick-localisation');
-  const modal = document.querySelector('#fr-modal-pick-localisation');
+  const modal = document.querySelector('#container-pick-localisation');
   const pickLocationSuccess = document.getElementById('pick-location-success');
 
   if (!adresseInput || !cpInput || !pickButton || !modal) {
@@ -121,11 +121,11 @@ function initPickLocalisationButton() {
 
   updatePickButton();
 
-  const submitBtn = document.getElementById('fr-modal-pick-localisation-submit');
+  const submitBtn = document.getElementById('container-pick-localisation-submit');
   if (submitBtn) {
     submitBtn.addEventListener('click', () => {
-      const clickedBatRnbId = document.getElementById('fr-modal-pick-localisation-rnb-id').value;
-      const modalPickLocalisation = document.getElementById('fr-modal-pick-localisation');
+      const clickedBatRnbId = document.getElementById('container-pick-localisation-rnb-id').value;
+      const modalPickLocalisation = document.getElementById('container-pick-localisation');
 
       if (clickedBatRnbId && formRnbIdInput) {
         formRnbIdInput.value = clickedBatRnbId;
