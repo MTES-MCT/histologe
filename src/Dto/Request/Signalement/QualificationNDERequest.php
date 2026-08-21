@@ -13,11 +13,14 @@ class QualificationNDERequest implements RequestInterface
         private ?string $dateEntree = null,
         private ?string $dateDernierDPE = null,
         #[Assert\LessThan(value: 10000, message: 'La superficie ne doit pas dépasser 9999 m².')]
-        private ?float $superficie = null,
-        private ?int $consommationEnergie = null,
-        private ?bool $dpe = null,
+        private string|float|null $superficie = null,
+        private string|int|null $consommationEnergie = null,
+        private string|bool|null $dpe = null,
         private ?string $classeEnergetique = null,
     ) {
+        $this->setSuperficie($superficie);
+        $this->setConsommationEnergie($consommationEnergie);
+        $this->setDpe($dpe);
     }
 
     public function getDateEntree(): ?string
@@ -30,6 +33,15 @@ class QualificationNDERequest implements RequestInterface
         return $this->superficie;
     }
 
+    public function setSuperficie(string|float|null $superficie): void
+    {
+        if (is_string($superficie)) {
+            $this->superficie = '' !== $superficie ? (float) $superficie : null;
+        } else {
+            $this->superficie = $superficie;
+        }
+    }
+
     public function getDateDernierDPE(): ?string
     {
         return $this->dateDernierDPE;
@@ -40,9 +52,27 @@ class QualificationNDERequest implements RequestInterface
         return $this->consommationEnergie;
     }
 
+    public function setConsommationEnergie(string|int|null $consommationEnergie): void
+    {
+        if (is_string($consommationEnergie)) {
+            $this->consommationEnergie = '' !== $consommationEnergie ? (int) $consommationEnergie : null;
+        } else {
+            $this->consommationEnergie = $consommationEnergie;
+        }
+    }
+
     public function getDPE(): ?bool
     {
         return $this->dpe;
+    }
+
+    public function setDpe(string|bool|null $dpe): void
+    {
+        if (is_string($dpe)) {
+            $this->dpe = filter_var($dpe, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        } else {
+            $this->dpe = $dpe;
+        }
     }
 
     public function getClasseEnergetique(): ?string
