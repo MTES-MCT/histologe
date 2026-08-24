@@ -1,13 +1,17 @@
 {% if candidates|length == 0 %}
     <p class="fr-text--sm">Aucun signalement éligible sur cette page (adresse manquante avec un seul résultat non ambigu trouvé par la BAN).</p>
 {% else %}
-    <div class="fr-table fr-table--sm">
+    <div class="fr-mb-2v">
+        <button type="button" data-select-all-in-target=".bulk-link-candidates-container" class="fr-link">Tout désélectionner</button>
+    </div>
+    <div class="fr-table fr-table--sm bulk-link-candidates-container">
         <div class="fr-table__wrapper">
             <div class="fr-table__container">
                 <div class="fr-table__content">
                     <table>
                         <thead>
                             <tr>
+                                <th scope="col"><span class="fr-sr-only">Sélection</span></th>
                                 <th scope="col">Signalement</th>
                                 <th scope="col">Adresse recherchée</th>
                                 <th scope="col">Adresse trouvée par la BAN</th>
@@ -18,6 +22,12 @@
                                 <tr class="bulk-link-candidate"
                                     data-uuid="{{ candidate.signalement.uuid }}"
                                     data-feature="{{ candidate.feature|json_encode }}">
+                                    <td>
+                                        <div class="fr-checkbox-group fr-checkbox-group--sm">
+                                            <input type="checkbox" id="bulk-link-candidate-{{ candidate.signalement.id }}" class="bulk-link-candidate-checkbox" checked>
+                                            <label class="fr-label" for="bulk-link-candidate-{{ candidate.signalement.id }}">&nbsp;<span class="fr-sr-only">Sélectionner le signalement #{{ candidate.signalement.reference }}</span></label>
+                                        </div>
+                                    </td>
                                     <td>#{{ candidate.signalement.reference }}</td>
                                     <td>{{ candidate.query }} <br>(insee : {{ candidate.signalement.inseeOccupant }})</td>
                                     <td>{{ candidate.feature.properties.label }} <br>(insee : {{ candidate.feature.properties.citycode }})</td>

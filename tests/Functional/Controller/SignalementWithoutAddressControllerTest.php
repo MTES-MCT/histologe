@@ -51,6 +51,16 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h2#desc-table', $count.' '.$expectedLabel);
     }
 
+    public function testBulkLinkButtonPreviewUrlIncludesCurrentPage(): void
+    {
+        $route = $this->router->generate('back_signalement_without_address_index', ['page' => 2]);
+        $crawler = $this->client->request('GET', $route);
+
+        $this->assertResponseIsSuccessful();
+        $previewUrl = $crawler->filter('.btn-bulk-link-address')->attr('data-preview-url');
+        $this->assertStringContainsString('page=2', (string) $previewUrl);
+    }
+
     public function testSignalementWithoutAddressIndexIsRestrictedToAdmin(): void
     {
         $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
@@ -172,7 +182,10 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $responseData = json_decode((string) $this->client->getResponse()->getContent(), true);
 
-        $this->assertSame(1, $responseData['count']);
+        // au moins notre candidat ; d'autres signalements de fixtures déjà valides et assignés
+        // au même territoire peuvent aussi être éligibles (la condition n'exclut que
+        // INCONSISTENT_TERRITORY, pas seulement MISSING_CP_AND_INSEE), donc pas de count exact ici.
+        $this->assertGreaterThanOrEqual(1, $responseData['count']);
         $this->assertStringContainsString($signalement->getReference(), $responseData['html']);
         $this->assertStringContainsString('10 Rue de la Paix Paris', $responseData['html']);
     }

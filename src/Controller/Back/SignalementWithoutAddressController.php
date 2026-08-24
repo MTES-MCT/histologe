@@ -130,8 +130,7 @@ class SignalementWithoutAddressController extends AbstractController
 
         $candidates = [];
         foreach ($rows as $row) {
-            if (!\in_array(SignalementAddressAnomaly::MISSING_CP_AND_INSEE, $row['errors'], true)
-                && !\in_array(SignalementAddressAnomaly::INVALID_INSEE_FORMAT, $row['errors'], true)) {
+            if (\in_array(SignalementAddressAnomaly::INCONSISTENT_TERRITORY, $row['errors'], true)) {
                 continue;
             }
             $result = $this->searchBanCandidates($row['signalement'], $addressService);
@@ -182,22 +181,18 @@ class SignalementWithoutAddressController extends AbstractController
                 continue;
             }
 
-            $banAddress = new BanAddressResponse(['features' => [$candidate['feature']]]);
-            try {
-                $signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
-            } catch (TerritoryNotFoundForCityCodeException) {
-                continue;
-            }
-
-            $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
-                user: $adminUser,
-                signalement: $signalement,
-                type: SuiviDelayedType::BO_EDIT_ADDRESS,
-                category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            $linked = $this->linkSignalementToBanFeature(
+                $signalement,
+                $candidate['feature'],
+                $adminUser,
+                $signalementAddressUpdater,
+                $suiviDelayedFactory,
+                $entityManager,
             );
-            $entityManager->persist($suiviDelayed);
-            ++$linkedCount;
-            $entityManager->flush(); // on flushe pour chaque signalement car il peut y en avoir plusieurs à la même adresse dans un lot
+            if ($linked) {
+                ++$linkedCount;
+                $entityManager->flush(); // on flushe pour chaque signalement car il peut y en avoir plusieurs à la même adresse dans un lot
+            }
         }
 
         return $this->json([
@@ -254,28 +249,24 @@ class SignalementWithoutAddressController extends AbstractController
         }
 
         $rawFeature = json_decode((string) $request->request->get('feature', ''), true);
-        if (!\is_array($rawFeature) || empty($rawFeature['properties']['citycode']) || empty($rawFeature['properties']['postcode'])) {
+        if (!\is_array($rawFeature)) {
             return $this->json(['stayOnPage' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => 'Adresse invalide.']]]);
         }
 
-        $banAddress = new BanAddressResponse(['features' => [$rawFeature]]);
-
-        try {
-            $signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
-        } catch (TerritoryNotFoundForCityCodeException $exception) {
-            return $this->json(['stayOnPage' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => $exception->getMessage()]]]);
-        }
-        // TODO : changer l'adresse occupant dans l'entité signalement ?
-
         /** @var User $adminUser */
         $adminUser = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
-        $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
-            user: $adminUser,
-            signalement: $signalement,
-            type: SuiviDelayedType::BO_EDIT_ADDRESS,
-            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+
+        $linked = $this->linkSignalementToBanFeature(
+            $signalement,
+            $rawFeature,
+            $adminUser,
+            $signalementAddressUpdater,
+            $suiviDelayedFactory,
+            $entityManager,
         );
-        $entityManager->persist($suiviDelayed);
+        if (!$linked) {
+            return $this->json(['stayOnPage' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => 'Adresse invalide.']]]);
+        }
         $entityManager->flush();
 
         return $this->json([
@@ -284,6 +275,47 @@ class SignalementWithoutAddressController extends AbstractController
             'flashMessages' => [['type' => 'success', 'title' => 'Adresse liée', 'message' => 'L\'adresse a bien été renseignée pour ce signalement.']],
             'htmlTargetContents' => $this->getHtmlTargetContentsForList($request),
         ]);
+    }
+
+    /**
+     * Lie un signalement à l'adresse BAN sélectionnée (résultat brut de l'API), utilisé par le lien
+     * individuel et le lien en masse. Ne flush pas : à l'appelant de le faire.
+     *
+     * @param array<string, mixed> $rawFeature
+     */
+    private function linkSignalementToBanFeature(
+        Signalement $signalement,
+        array $rawFeature,
+        User $suiviUser,
+        SignalementAddressUpdater $signalementAddressUpdater,
+        SuiviDelayedFactory $suiviDelayedFactory,
+        EntityManagerInterface $entityManager,
+    ): bool {
+        if (empty($rawFeature['properties']['citycode']) || empty($rawFeature['properties']['postcode'])) {
+            return false;
+        }
+
+        $banAddress = new BanAddressResponse(['features' => [$rawFeature]]);
+        try {
+            $signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
+        } catch (TerritoryNotFoundForCityCodeException) {
+            return false;
+        }
+        // Passer à NULL plutôt ?
+        $signalement->setAdresseOccupant($banAddress->getStreet(true));
+        $signalement->setCpOccupant($banAddress->getZipCode());
+        $signalement->setVilleOccupant($banAddress->getCity());
+        $signalement->setInseeOccupant($banAddress->getInseeCode());
+
+        $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
+            user: $suiviUser,
+            signalement: $signalement,
+            type: SuiviDelayedType::BO_EDIT_ADDRESS,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+        );
+        $entityManager->persist($suiviDelayed);
+
+        return true;
     }
 
     /**

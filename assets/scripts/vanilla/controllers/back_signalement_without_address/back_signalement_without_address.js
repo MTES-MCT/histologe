@@ -124,38 +124,51 @@ if (panelBulkLinkAddress) {
   const searchParamsField = document.getElementById('fr-panel-bulk-link-address-search-params');
   const confirmButton = document.getElementById('fr-panel-bulk-link-address-confirm');
 
+  function checkedCandidates() {
+    return Array.from(document.querySelectorAll('.bulk-link-candidate')).filter(
+      (row) => row.querySelector('.bulk-link-candidate-checkbox')?.checked
+    );
+  }
+
+  function updateConfirmButton() {
+    const count = checkedCandidates().length;
+    confirmButton.disabled = count === 0;
+    confirmButton.textContent =
+      'Oui, lier ces ' + count + ' signalement' + (count > 1 ? 's' : '') + ' aux adresses envoyées par la BAN';
+  }
+
   document.addEventListener('click', (event) => {
     const button = event.target.closest('.btn-bulk-link-address');
-    if (!button) {
+    if (button) {
+      tokenField.value = button.getAttribute('data-csrf-token');
+      linkUrlField.value = button.getAttribute('data-link-url');
+      confirmButton.disabled = true;
+      confirmButton.textContent = 'Oui, lier ces signalements aux adresses envoyées par la BAN';
+      resultsContainer.innerHTML = '<p class="fr-text--sm">Recherche en cours…</p>';
+
+      fetch(button.getAttribute('data-preview-url'))
+        .then((response) => response.json())
+        .then((json) => {
+          resultsContainer.innerHTML = json.html;
+          updateConfirmButton();
+        })
+        .catch(() => {
+          resultsContainer.innerHTML =
+            '<p class="fr-text--sm fr-text-default--error">Erreur lors de la recherche des adresses.</p>';
+        });
       return;
     }
 
-    tokenField.value = button.getAttribute('data-csrf-token');
-    linkUrlField.value = button.getAttribute('data-link-url');
-    confirmButton.disabled = true;
-    confirmButton.textContent = 'Oui, lier ces signalements aux adresses envoyées par la BAN';
-    resultsContainer.innerHTML = '<p class="fr-text--sm">Recherche en cours…</p>';
-
-    fetch(button.getAttribute('data-preview-url'))
-      .then((response) => response.json())
-      .then((json) => {
-        resultsContainer.innerHTML = json.html;
-        confirmButton.disabled = json.count === 0;
-        confirmButton.textContent =
-          'Oui, lier ces '
-          + json.count
-          + ' signalement'
-          + (json.count > 1 ? 's' : '')
-          + ' aux adresses envoyées par la BAN';
-      })
-      .catch(() => {
-        resultsContainer.innerHTML =
-          '<p class="fr-text--sm fr-text-default--error">Erreur lors de la recherche des adresses.</p>';
-      });
+    // la case à cocher elle-même, ou le lien "Tout (dé)sélectionner" (déjà géré par
+    // component_select_all_checkbox.js) : dans les deux cas, l'état des cases a pu changer.
+    if (panelBulkLinkAddress.contains(event.target)
+      && (event.target.matches('.bulk-link-candidate-checkbox') || event.target.closest('[data-select-all-in-target]'))) {
+      updateConfirmButton();
+    }
   });
 
   confirmButton.addEventListener('click', () => {
-    const candidates = Array.from(document.querySelectorAll('.bulk-link-candidate')).map((row) => ({
+    const candidates = checkedCandidates().map((row) => ({
       uuid: row.getAttribute('data-uuid'),
       feature: JSON.parse(row.getAttribute('data-feature')),
     }));

@@ -413,6 +413,10 @@ class SignalementRepository extends ServiceEntityRepository
         } else {
             $queryBuilder->orderBy('s.createdAt', 'DESC');
         }
+        // départage les égalités du tri principal (ex: plusieurs signalements avec le même createdAt) :
+        // sans clé de tri secondaire, l'ordre des lignes à égalité n'est pas garanti stable entre deux
+        // exécutions de la requête, ce qui désynchronise la pagination entre la liste et l'aperçu bulk.
+        $queryBuilder->addOrderBy('s.id', 'ASC');
 
         return $queryBuilder;
     }

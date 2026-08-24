@@ -15,7 +15,7 @@
                 data-fr-opened="false"
                 {% if not searchSignalementWithoutAddress.territory %}disabled{% endif %}
                 {% if not searchSignalementWithoutAddress.territory %}aria-disabled="true"{% endif %}
-                data-preview-url="{{ path('back_signalement_without_address_bulk_link_preview', searchSignalementWithoutAddress.urlParams) }}"
+                data-preview-url="{{ path('back_signalement_without_address_bulk_link_preview', searchSignalementWithoutAddress.urlParams|merge({'page': searchSignalementWithoutAddress.page})) }}"
                 data-link-url="{{ path('back_signalement_without_address_bulk_link') }}"
                 data-csrf-token="{{ csrf_token('signalement_bulk_link_address') }}"
                 aria-label="Lier les signalements aux adresses non ambiguës trouvées par la BAN"
