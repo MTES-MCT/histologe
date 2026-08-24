@@ -31,6 +31,7 @@ enum SuiviDelayedType: string
     case BO_EDIT_DESCRIPTION_LOGEMENT = 'BO_EDIT_DESCRIPTION_LOGEMENT';
     case BO_EDIT_SITUATION_FOYER = 'BO_EDIT_SITUATION_FOYER';
     case BO_EDIT_PROCEDURE_DEMARCHES = 'BO_EDIT_PROCEDURE_DEMARCHES';
+    case BO_EDIT_TERRITORY = 'BO_EDIT_TERRITORY';
 
     /** @return array<string, string> */
     public static function getLabelList(): array
@@ -60,6 +61,7 @@ enum SuiviDelayedType: string
             self::BO_EDIT_DESCRIPTION_LOGEMENT->name => 'Édition de la description du logement',
             self::BO_EDIT_SITUATION_FOYER->name => 'Édition de la situation du foyer',
             self::BO_EDIT_PROCEDURE_DEMARCHES->name => 'Édition des procédures et démarches',
+            self::BO_EDIT_TERRITORY->name => 'Édition du territoire',
         ];
     }
 }

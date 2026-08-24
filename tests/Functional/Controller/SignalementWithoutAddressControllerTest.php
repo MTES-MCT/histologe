@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
@@ -157,6 +158,94 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $this->client->request('GET', $route);
 
         $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testBulkLinkAddressPreview(): void
+    {
+        $signalement = $this->prepareSignalementForParisSearch();
+
+        $route = $this->router->generate('back_signalement_without_address_bulk_link_preview', [
+            'territory' => $signalement->getTerritory()?->getId(),
+        ]);
+        $this->client->request('GET', $route);
+
+        $this->assertResponseIsSuccessful();
+        $responseData = json_decode((string) $this->client->getResponse()->getContent(), true);
+
+        $this->assertSame(1, $responseData['count']);
+        $this->assertStringContainsString($signalement->getReference(), $responseData['html']);
+        $this->assertStringContainsString('10 Rue de la Paix Paris', $responseData['html']);
+    }
+
+    public function testBulkLinkAddress(): void
+    {
+        $signalement = $this->prepareSignalementForParisSearch();
+
+        $candidates = [[
+            'uuid' => $signalement->getUuid(),
+            'feature' => [
+                'type' => 'Feature',
+                'properties' => [
+                    'label' => '10 Rue de la Paix 75002 Paris',
+                    'housenumber' => '10',
+                    'name' => '10 Rue de la Paix',
+                    'street' => 'Rue de la Paix',
+                    'postcode' => '75002',
+                    'citycode' => '75102',
+                    'city' => 'Paris',
+                    'id' => '75102_7060_00010',
+                ],
+                'geometry' => [
+                    'type' => 'Point',
+                    'coordinates' => [2.330, 48.869],
+                ],
+            ],
+        ]];
+
+        // Note : on filtre ici par statut (et non territoire) car TerritoryChoiceType ne liste que les
+        // territoires actifs ; soumettre un territoire inactif via search_params rendrait le formulaire
+        // invalide et réinitialiserait tous les filtres, ce qui n'est pas ce qu'on veut isoler ici.
+        $searchParams = http_build_query(['statut' => SignalementStatus::ACTIVE->value]);
+
+        $route = $this->router->generate('back_signalement_without_address_bulk_link');
+        $this->client->request('POST', $route, [
+            '_token' => $this->generateCsrfToken($this->client, 'signalement_bulk_link_address'),
+            'candidates' => json_encode($candidates),
+            'search_params' => $searchParams,
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $responseData = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertTrue($responseData['closeModal']);
+        $this->assertStringContainsString('1 signalement', $responseData['flashMessages'][0]['message']);
+
+        $this->assertNotNull($signalement->getAddress());
+        $this->assertSame('75102', $signalement->getAddress()->getCityCode());
+
+        // le fragment de liste renvoyé doit conserver le filtre de statut (régression : search_params manquant côté panneau)
+        $this->assertStringContainsString(
+            'statut=ACTIVE',
+            $responseData['htmlTargetContents'][0]['content']
+        );
+    }
+
+    public function testBulkLinkAddressWithInvalidCsrfToken(): void
+    {
+        $signalement = $this->prepareSignalementForParisSearch();
+
+        $candidates = [[
+            'uuid' => $signalement->getUuid(),
+            'feature' => ['properties' => ['postcode' => '75002', 'citycode' => '75102']],
+        ]];
+
+        $route = $this->router->generate('back_signalement_without_address_bulk_link');
+        $this->client->request('POST', $route, [
+            '_token' => 'invalid-token',
+            'candidates' => json_encode($candidates),
+        ]);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertNull($signalement->getAddress());
     }
 
     public function testFindSignalementsWithoutAddressIgnoresPagination(): void

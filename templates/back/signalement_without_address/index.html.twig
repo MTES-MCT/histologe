@@ -83,7 +83,18 @@
             </div>
             <div class="side-panel__content fr-mx-3w">
                 <h1 id="fr-panel-change-territory-title" class="fr-panel__title">Changer le territoire du signalement #<strong id="fr-panel-change-territory-reference"></strong></h1>
-                <p>Territoire de destination : <span id="fr-panel-change-territory-zipAndName"></span></p>
+                <div>
+                    <ul>
+                        <li><strong>Adresse actuelle du signalement :</strong> <span id="fr-panel-change-territory-adresse"></span></li>
+                        <li><strong>Territoire actuel :</strong> <span id="fr-panel-change-territory-actual-zipAndName"></span></li>
+                        <li><strong>Territoire de destination :</strong> <span id="fr-panel-change-territory-zipAndName"></span></li>
+                        <li><strong>Nombre d'affectations :</strong> <span id="fr-panel-change-territory-nb-affectations"></span></li>
+                        <li><strong>Nombre de suivis :</strong> <span id="fr-panel-change-territory-nb-suivis"></span></li>
+                    </ul>
+                </div>
+                <div class="fr-mb-2w">
+                    <a id="fr-panel-change-territory-see-signalement" href="#" class="fr-link fr-link--icon-left fr-icon-arrow-right-line" target="_blank" title="Voir le signalement - Ouvre une nouvelle fenêtre">Voir le signalement</a>
+                </div>
                 <div class="fr-col-12 fr-notice fr-notice--warning">
                     <div class="fr-container">
                         <div class="fr-notice__body">
@@ -96,6 +107,7 @@
                 </div>
                 <input type="hidden" id="fr-panel-change-territory-token">
                 <input type="hidden" id="fr-panel-change-territory-url">
+                <input type="hidden" id="fr-panel-change-territory-search-params" value="{{ app.request.query.all|url_encode }}">
             </div>
             <div class="side-panel__footer">
                 <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
@@ -106,6 +118,24 @@
         </div>
     </dialog>
 
-
-    
+    <dialog aria-labelledby="fr-panel-bulk-link-address-title" id="fr-panel-bulk-link-address" class="side-panel">
+        <div class="side-panel__inner">
+            <div class="side-panel__header">
+                <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="fr-panel-bulk-link-address" aria-controls="fr-panel-bulk-link-address" aria-expanded="false">Fermer</button>
+            </div>
+            <div class="side-panel__content fr-mx-3w">
+                <h1 id="fr-panel-bulk-link-address-title" class="fr-panel__title">Lier les signalements à leur adresse</h1>
+                <div id="fr-panel-bulk-link-address-results" aria-live="polite"></div>
+                <input type="hidden" id="fr-panel-bulk-link-address-token">
+                <input type="hidden" id="fr-panel-bulk-link-address-link-url">
+                <input type="hidden" id="fr-panel-bulk-link-address-search-params" value="{{ app.request.query.all|url_encode }}">
+            </div>
+            <div class="side-panel__footer">
+                <div class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
+                    <button class="fr-btn fr-icon-check-line" type="button" id="fr-panel-bulk-link-address-confirm" disabled>Oui, lier ces signalements aux adresses envoyées par la BAN</button>
+                    <button class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel" type="button" aria-controls="fr-panel-bulk-link-address">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
 {% endblock %}

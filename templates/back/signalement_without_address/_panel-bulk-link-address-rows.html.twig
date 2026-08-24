@@ -1,0 +1,32 @@
+{% if candidates|length == 0 %}
+    <p class="fr-text--sm">Aucun signalement éligible sur cette page (adresse manquante avec un seul résultat non ambigu trouvé par la BAN).</p>
+{% else %}
+    <div class="fr-table fr-table--sm">
+        <div class="fr-table__wrapper">
+            <div class="fr-table__container">
+                <div class="fr-table__content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Signalement</th>
+                                <th scope="col">Adresse recherchée</th>
+                                <th scope="col">Adresse trouvée par la BAN</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for candidate in candidates %}
+                                <tr class="bulk-link-candidate"
+                                    data-uuid="{{ candidate.signalement.uuid }}"
+                                    data-feature="{{ candidate.feature|json_encode }}">
+                                    <td>#{{ candidate.signalement.reference }}</td>
+                                    <td>{{ candidate.query }} <br>(insee : {{ candidate.signalement.inseeOccupant }})</td>
+                                    <td>{{ candidate.feature.properties.label }} <br>(insee : {{ candidate.feature.properties.citycode }})</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
