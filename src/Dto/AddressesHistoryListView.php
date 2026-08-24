@@ -144,5 +144,6 @@ class AddressesHistoryListView
     public function addBailleurName(string $bailleurName): void
     {
         $this->bailleurNames[] = $bailleurName;
+        $this->bailleurNames = array_unique($this->bailleurNames, \SORT_STRING);
     }
 }

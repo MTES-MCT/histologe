@@ -5,10 +5,10 @@ namespace App\Service\Signalement;
 use App\Entity\Enum\VisiteStatus;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Repository\AddressRepository;
 use App\Repository\BailleurRepository;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Repository\Query\Commune\CommuneEpciQuery;
 use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Repository\SignalementRepository;
@@ -27,10 +27,10 @@ class SearchFilterOptionDataProvider
     public function __construct(
         private readonly CritereRepository $critereRepository,
         private readonly TerritoryRepository $territoryRepository,
-        private readonly AddressRepository $addressRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly TagRepository $tagsRepository,
         private readonly SignalementRepository $signalementRepository,
+        private readonly AddressesHistoryQuery $addressesHistoryQuery,
         private readonly TagAwareCacheInterface $cache,
         private readonly QualificationStatusService $qualificationStatusService,
         private readonly BailleurRepository $bailleurRepository,
@@ -52,10 +52,12 @@ class SearchFilterOptionDataProvider
             function (ItemInterface $item) use ($territory, $user, $context) {
                 $item->expiresAfter(3600);
 
+                $contextTag = (empty($context) ? '' : '-'.$context);
+
                 if ($territory) {
-                    $item->tag([self::CACHE_TAG.$territory->getZip()]);
+                    $item->tag([self::CACHE_TAG.$contextTag.$territory->getZip()]);
                 } else {
-                    $item->tag([self::CACHE_TAG]);
+                    $item->tag([self::CACHE_TAG.$contextTag]);
                 }
 
                 $isAddressesHistoryContext = 'addresses-history' === $context;
@@ -63,7 +65,7 @@ class SearchFilterOptionDataProvider
                 return [
                     'criteres' => $this->critereRepository->findAllList(),
                     'territories' => $user->isSuperAdmin() ? $this->territoryRepository->findAllList(indexById: false) : $user->getPartnersTerritories(true),
-                    'addresses' => $isAddressesHistoryContext ? $this->addressRepository->findAllList($territory) : [],
+                    'addresses' => $isAddressesHistoryContext ? $this->addressesHistoryQuery->findAllList($territory) : [],
                     'partners' => $this->partnerRepository->findAllList($territory, $user),
                     'epcis' => $this->communeEpciQuery->findEpciByCommuneTerritory($territory, $user),
                     'tags' => $this->tagsRepository->findAllActive($territory, $user),
@@ -75,7 +77,7 @@ class SearchFilterOptionDataProvider
                     'hasSignalementsImported' => $user->isSuperAdmin() || $user->isTerritoryAdmin()
                         ? $this->countStatisticsQuery->countImported($territory) : $this->countStatisticsQuery->countImported($territory, $user),
                     'bailleursSociaux' => $isAddressesHistoryContext
-                        ? $this->signalementRepository->findBailleursAndSyndics($user, $territory)
+                        ? $this->addressesHistoryQuery->findBailleursAndSyndics($user, $territory)
                         : $this->bailleurRepository->findBailleursByTerritory($user, $territory),
                 ];
             }

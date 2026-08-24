@@ -111,6 +111,10 @@ class AddressesHistoryController extends AbstractController
 
                 if (!empty($row['bailleurName'])) {
                     $responseAddresses[$addressKey]->addBailleurName($row['bailleurName']);
+                } elseif (!empty($row['denominationProprio'])) {
+                    $responseAddresses[$addressKey]->addBailleurName($row['denominationProprio']);
+                } elseif (!empty($row['denominationSyndic'])) {
+                    $responseAddresses[$addressKey]->addBailleurName($row['denominationSyndic']);
                 }
 
                 // Fallback : si pas de point dans Address, on utilise geoloc du signalement

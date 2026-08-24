@@ -161,7 +161,6 @@ import { useAddressesHistoryFilters } from '../composables/useAddressesHistoryFi
 import { getActiveFilters, type ActiveFilter } from '../services/activeFiltersBuilder'
 import type { AddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'
 import HistoSelect from '../../common/HistoSelect.vue'
-import AppSearch from '../../common/AppSearch.vue'
 import AppAutoComplete from '../../common/AppAutoComplete.vue'
 import AppListCheckboxes from '../../common/AppListCheckboxes.vue'
 import type { CheckboxGroup } from '../../common/AppListCheckboxes.types'
