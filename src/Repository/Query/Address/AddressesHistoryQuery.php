@@ -15,6 +15,7 @@ use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Utils\Address\CommuneHelper;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -33,7 +34,7 @@ class AddressesHistoryQuery
     {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Address::class, 'a')
-            ->select('a.id, CONCAT_WS(a.housenumber, \' \', a.street) as address')
+            ->select('a.id, CONCAT_WS(\' \', a.housenumber, a.street) as address')
             ->orderBy('a.street', 'ASC')
             ->addOrderBy('a.housenumber', 'ASC');
 
@@ -328,56 +329,63 @@ class AddressesHistoryQuery
      */
     public function findBailleursAndSyndics(User $user, ?Territory $territory = null): array
     {
-        $qb = $this->entityManager->createQueryBuilder()
-            ->from(Signalement::class, 's')
-            ->leftJoin(Bailleur::class, 'b', 'WITH', 'b.id = s.bailleur')
-            ->select(
-                'b.name AS bailleurName',
-                's.denominationProprio',
-                's.denominationSyndic',
-                's.nomProprio',
-            )
-            ->where('s.statut NOT IN (:statutList)')
-            ->setParameter('statutList', SignalementStatus::excludedStatuses());
+        $conn = $this->entityManager->getConnection();
+
+        $whereConditions = ['s.statut NOT IN (:statutList)'];
+        $params = ['statutList' => array_map(fn ($status) => $status->value, SignalementStatus::excludedStatuses())];
+        $types = ['statutList' => ArrayParameterType::STRING];
 
         if (!$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
-            $qb->leftJoin('s.affectations', 'affectations')
-                ->leftJoin('affectations.partner', 'partner')
-                ->andWhere('partner IN (:partners)')
-                ->setParameter('partners', $user->getPartners());
+            $partnerIds = array_map(fn ($p) => $p->getId(), $user->getPartners()->toArray());
+            $whereConditions[] = 'EXISTS (
+                SELECT 1 FROM affectation a
+                WHERE a.signalement_id = s.id
+                AND a.partner_id IN (:partnerIds)
+            )';
+            $params['partnerIds'] = $partnerIds;
+            $types['partnerIds'] = ArrayParameterType::INTEGER;
         }
 
         if ($territory) {
-            $qb->andWhere('s.territory = :territory')
-                ->setParameter('territory', $territory);
+            $whereConditions[] = 's.territory_id = :territoryId';
+            $params['territoryId'] = $territory->getId();
         } elseif (!$user->isSuperAdmin()) {
-            $qb->andWhere('s.territory IN (:territories)')
-                ->setParameter('territories', $user->getPartnersTerritories());
+            $territoryIds = array_map(fn ($t) => $t->getId(), $user->getPartnersTerritories()->toArray());
+            $whereConditions[] = 's.territory_id IN (:territoryIds)';
+            $params['territoryIds'] = $territoryIds;
+            $types['territoryIds'] = ArrayParameterType::INTEGER;
         }
 
-        // Récupérer tous les noms uniques
-        $results = $qb->getQuery()->getResult();
-        $names = [];
+        $where = implode(' AND ', $whereConditions);
 
-        foreach ($results as $row) {
-            if (!empty($row['bailleurName'])) {
-                $names[] = $row['bailleurName'];
-            }
-            if (!empty($row['denominationProprio'])) {
-                $names[] = $row['denominationProprio'];
-            }
-            if (!empty($row['denominationSyndic'])) {
-                $names[] = $row['denominationSyndic'];
-            }
-            if (!empty($row['nomProprio'])) {
-                $names[] = $row['nomProprio'];
-            }
-        }
+        // Utiliser une CTE pour filtrer une seule fois les signalements
+        $sql = "
+            WITH filtered_signalements AS (
+                SELECT
+                    s.id,
+                    b.name as bailleur_name,
+                    s.denomination_proprio,
+                    s.denomination_syndic,
+                    s.nom_proprio
+                FROM signalement s
+                LEFT JOIN bailleur b ON s.bailleur_id = b.id
+                WHERE {$where}
+            )
+            SELECT DISTINCT unnested_name as name
+            FROM (
+                SELECT bailleur_name as unnested_name FROM filtered_signalements WHERE bailleur_name IS NOT NULL
+                UNION ALL
+                SELECT denomination_proprio FROM filtered_signalements WHERE denomination_proprio IS NOT NULL AND denomination_proprio != ''
+                UNION ALL
+                SELECT denomination_syndic FROM filtered_signalements WHERE denomination_syndic IS NOT NULL AND denomination_syndic != ''
+                UNION ALL
+                SELECT nom_proprio FROM filtered_signalements WHERE nom_proprio IS NOT NULL AND nom_proprio != ''
+            ) all_names
+            ORDER BY name ASC
+        ";
 
-        // Retourner les noms uniques triés
-        $names = array_unique($names);
-        sort($names);
+        $results = $conn->executeQuery($sql, $params, $types)->fetchAllAssociative();
 
-        return $names;
+        return array_column($results, 'name');
     }
 }
