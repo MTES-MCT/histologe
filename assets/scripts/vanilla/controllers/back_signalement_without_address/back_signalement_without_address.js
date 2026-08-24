@@ -3,6 +3,7 @@ import { jsonResponseHandler } from '../../services/component/component_json_res
 const panelSearchAddress = document.getElementById('fr-panel-search-address');
 const panelChangeTerritory = document.getElementById('fr-panel-change-territory');
 const panelBulkLinkAddress = document.getElementById('fr-panel-bulk-link-address');
+const listContainer = document.getElementById('title-and-table-list-results');
 
 if (panelSearchAddress) {
   const resultsContainer = document.getElementById('fr-panel-search-address-results');
@@ -12,19 +13,19 @@ if (panelSearchAddress) {
   const linkUrlField = document.getElementById('fr-panel-search-address-link-url');
   const searchParamsField = document.getElementById('fr-panel-search-address-search-params');
 
-  document.addEventListener('click', (event) => {
+  listContainer.addEventListener('click', (event) => {
     const button = event.target.closest('.btn-search-address');
     if (!button) {
       return;
     }
 
-    referenceField.textContent = button.getAttribute('data-signalement-reference');
-    tokenField.value = button.getAttribute('data-csrf-token');
-    linkUrlField.value = button.getAttribute('data-link-url');
+    referenceField.textContent = button.dataset.signalementReference;
+    tokenField.value = button.dataset.csrfToken;
+    linkUrlField.value = button.dataset.linkUrl;
     adresseField.textContent = '';
     resultsContainer.innerHTML = '<p class="fr-text--sm">Recherche en cours…</p>';
 
-    fetch(button.getAttribute('data-search-url'))
+    fetch(button.dataset.searchUrl)
       .then((response) => response.json())
       .then((json) => {
         adresseField.textContent = json.query || '';
@@ -88,21 +89,21 @@ if (panelChangeTerritory) {
   const searchParamsField = document.getElementById('fr-panel-change-territory-search-params');
   const confirmButton = document.getElementById('fr-panel-change-territory-confirm');
 
-  document.addEventListener('click', (event) => {
+  listContainer.addEventListener('click', (event) => {
     const button = event.target.closest('.btn-change-territory');
     if (!button) {
       return;
     }
 
-    referenceField.textContent = button.getAttribute('data-signalement-reference');
-    actualZipAndNameField.textContent = button.getAttribute('data-territory-actual-zipAndName');
-    zipAndNameField.textContent = button.getAttribute('data-territory-zipAndName');
-    nbAffectationsField.textContent = button.getAttribute('data-affectations-length');
-    nbSuivisField.textContent = button.getAttribute('data-suivis-length');
-    adresseField.textContent = button.getAttribute('data-adresse');
-    seeSignalementButton.href = button.getAttribute('data-signalement-link-url');
-    tokenField.value = button.getAttribute('data-csrf-token');
-    urlField.value = button.getAttribute('data-change-territory-url');
+    referenceField.textContent = button.dataset.signalementReference;
+    actualZipAndNameField.textContent = button.dataset.territoryActualZipAndName;
+    zipAndNameField.textContent = button.dataset.territoryZipAndName;
+    nbAffectationsField.textContent = button.dataset.affectationsLength;
+    nbSuivisField.textContent = button.dataset.suivisLength;
+    adresseField.textContent = button.dataset.adresse;
+    seeSignalementButton.href = button.dataset.signalementLinkUrl;
+    tokenField.value = button.dataset.csrfToken;
+    urlField.value = button.dataset.changeTerritoryUrl;
   });
 
   confirmButton.addEventListener('click', () => {
@@ -137,40 +138,42 @@ if (panelBulkLinkAddress) {
       'Oui, lier ces ' + count + ' signalement' + (count > 1 ? 's' : '') + ' aux adresses envoyées par la BAN';
   }
 
-  document.addEventListener('click', (event) => {
+  listContainer.addEventListener('click', (event) => {
     const button = event.target.closest('.btn-bulk-link-address');
-    if (button) {
-      tokenField.value = button.getAttribute('data-csrf-token');
-      linkUrlField.value = button.getAttribute('data-link-url');
-      confirmButton.disabled = true;
-      confirmButton.textContent = 'Oui, lier ces signalements aux adresses envoyées par la BAN';
-      resultsContainer.innerHTML = '<p class="fr-text--sm">Recherche en cours…</p>';
-
-      fetch(button.getAttribute('data-preview-url'))
-        .then((response) => response.json())
-        .then((json) => {
-          resultsContainer.innerHTML = json.html;
-          updateConfirmButton();
-        })
-        .catch(() => {
-          resultsContainer.innerHTML =
-            '<p class="fr-text--sm fr-text-default--error">Erreur lors de la recherche des adresses.</p>';
-        });
+    if (!button) {
       return;
     }
 
-    // la case à cocher elle-même, ou le lien "Tout (dé)sélectionner" (déjà géré par
-    // component_select_all_checkbox.js) : dans les deux cas, l'état des cases a pu changer.
-    if (panelBulkLinkAddress.contains(event.target)
-      && (event.target.matches('.bulk-link-candidate-checkbox') || event.target.closest('[data-select-all-in-target]'))) {
+    tokenField.value = button.dataset.csrfToken;
+    linkUrlField.value = button.dataset.linkUrl;
+    confirmButton.disabled = true;
+    confirmButton.textContent = 'Oui, lier ces signalements aux adresses envoyées par la BAN';
+    resultsContainer.innerHTML = '<p class="fr-text--sm">Recherche en cours…</p>';
+
+    fetch(button.dataset.previewUrl)
+      .then((response) => response.json())
+      .then((json) => {
+        resultsContainer.innerHTML = json.html;
+        updateConfirmButton();
+      })
+      .catch(() => {
+        resultsContainer.innerHTML =
+          '<p class="fr-text--sm fr-text-default--error">Erreur lors de la recherche des adresses.</p>';
+      });
+  });
+
+  // la case à cocher elle-même, ou le lien "Tout (dé)sélectionner" (déjà géré par
+  // component_select_all_checkbox.js) : dans les deux cas, l'état des cases a pu changer.
+  resultsContainer.addEventListener('click', (event) => {
+    if (event.target.matches('.bulk-link-candidate-checkbox') || event.target.closest('[data-select-all-in-target]')) {
       updateConfirmButton();
     }
   });
 
   confirmButton.addEventListener('click', () => {
     const candidates = checkedCandidates().map((row) => ({
-      uuid: row.getAttribute('data-uuid'),
-      feature: JSON.parse(row.getAttribute('data-feature')),
+      uuid: row.dataset.uuid,
+      feature: JSON.parse(row.dataset.feature),
     }));
 
     if (candidates.length === 0) {

@@ -18,6 +18,11 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
 {
     use SessionHelper;
 
+    private const string PARIS_ADDRESS_LABEL = '10 Rue de la Paix';
+    private const string PARIS_POSTAL_CODE = '75002';
+    private const string PARIS_INSEE_CODE = '75102';
+    private const string PARIS_BAN_ID = '75102_7060_00010';
+
     private ?KernelBrowser $client = null;
     private UserRepository $userRepository;
     private RouterInterface $router;
@@ -84,9 +89,9 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $responseData = json_decode((string) $this->client->getResponse()->getContent(), true);
 
-        $this->assertSame('10 Rue de la Paix Paris', $responseData['query']);
+        $this->assertSame(self::PARIS_ADDRESS_LABEL.' Paris', $responseData['query']);
         $this->assertCount(1, $responseData['results']);
-        $this->assertSame('75102', $responseData['results'][0]['properties']['citycode']);
+        $this->assertSame(self::PARIS_INSEE_CODE, $responseData['results'][0]['properties']['citycode']);
     }
 
     public function testLinkAddress(): void
@@ -97,23 +102,7 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
             'uuid' => $signalement->getUuid(),
         ]);
 
-        $feature = [
-            'type' => 'Feature',
-            'properties' => [
-                'label' => '10 Rue de la Paix 75002 Paris',
-                'housenumber' => '10',
-                'name' => '10 Rue de la Paix',
-                'street' => 'Rue de la Paix',
-                'postcode' => '75002',
-                'citycode' => '75102',
-                'city' => 'Paris',
-                'id' => '75102_7060_00010',
-            ],
-            'geometry' => [
-                'type' => 'Point',
-                'coordinates' => [2.330, 48.869],
-            ],
-        ];
+        $feature = $this->parisBanFeature();
 
         $this->client->request('POST', $route, [
             '_token' => $this->generateCsrfToken($this->client, 'signalement_link_address_'.$signalement->getId()),
@@ -125,9 +114,9 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $this->assertTrue($responseData['closeModal']);
 
         $this->assertNotNull($signalement->getAddress());
-        $this->assertSame('75002', $signalement->getAddress()->getPostCode());
-        $this->assertSame('75102', $signalement->getAddress()->getCityCode());
-        $this->assertSame('75102_7060_00010', $signalement->getAddress()->getBanId());
+        $this->assertSame(self::PARIS_POSTAL_CODE, $signalement->getAddress()->getPostCode());
+        $this->assertSame(self::PARIS_INSEE_CODE, $signalement->getAddress()->getCityCode());
+        $this->assertSame(self::PARIS_BAN_ID, $signalement->getAddress()->getBanId());
     }
 
     public function testLinkAddressWithInvalidCsrfToken(): void
@@ -141,7 +130,7 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
 
         $this->client->request('POST', $route, [
             '_token' => 'invalid-token',
-            'feature' => json_encode(['properties' => ['postcode' => '75002', 'citycode' => '75102']]),
+            'feature' => json_encode(['properties' => ['postcode' => self::PARIS_POSTAL_CODE, 'citycode' => self::PARIS_INSEE_CODE]]),
         ]);
 
         $this->assertResponseIsSuccessful();
@@ -187,7 +176,7 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         // INCONSISTENT_TERRITORY, pas seulement MISSING_CP_AND_INSEE), donc pas de count exact ici.
         $this->assertGreaterThanOrEqual(1, $responseData['count']);
         $this->assertStringContainsString($signalement->getReference(), $responseData['html']);
-        $this->assertStringContainsString('10 Rue de la Paix Paris', $responseData['html']);
+        $this->assertStringContainsString(self::PARIS_ADDRESS_LABEL.' Paris', $responseData['html']);
     }
 
     public function testBulkLinkAddress(): void
@@ -196,23 +185,7 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
 
         $candidates = [[
             'uuid' => $signalement->getUuid(),
-            'feature' => [
-                'type' => 'Feature',
-                'properties' => [
-                    'label' => '10 Rue de la Paix 75002 Paris',
-                    'housenumber' => '10',
-                    'name' => '10 Rue de la Paix',
-                    'street' => 'Rue de la Paix',
-                    'postcode' => '75002',
-                    'citycode' => '75102',
-                    'city' => 'Paris',
-                    'id' => '75102_7060_00010',
-                ],
-                'geometry' => [
-                    'type' => 'Point',
-                    'coordinates' => [2.330, 48.869],
-                ],
-            ],
+            'feature' => $this->parisBanFeature(),
         ]];
 
         // Note : on filtre ici par statut (et non territoire) car TerritoryChoiceType ne liste que les
@@ -233,7 +206,7 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $this->assertStringContainsString('1 signalement', $responseData['flashMessages'][0]['message']);
 
         $this->assertNotNull($signalement->getAddress());
-        $this->assertSame('75102', $signalement->getAddress()->getCityCode());
+        $this->assertSame(self::PARIS_INSEE_CODE, $signalement->getAddress()->getCityCode());
 
         // le fragment de liste renvoyé doit conserver le filtre de statut (régression : search_params manquant côté panneau)
         $this->assertStringContainsString(
@@ -248,7 +221,7 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
 
         $candidates = [[
             'uuid' => $signalement->getUuid(),
-            'feature' => ['properties' => ['postcode' => '75002', 'citycode' => '75102']],
+            'feature' => ['properties' => ['postcode' => self::PARIS_POSTAL_CODE, 'citycode' => self::PARIS_INSEE_CODE]],
         ]];
 
         $route = $this->router->generate('back_signalement_without_address_bulk_link');
@@ -285,7 +258,7 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $paris = $this->territoryRepository->findOneBy(['zip' => '75']);
 
         $signalement
-            ->setAdresseOccupant('10 Rue de la Paix')
+            ->setAdresseOccupant(self::PARIS_ADDRESS_LABEL)
             ->setVilleOccupant('Paris')
             ->setCpOccupant('')
             ->setInseeOccupant(null)
@@ -293,5 +266,29 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $this->entityManager->flush();
 
         return $signalement;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function parisBanFeature(): array
+    {
+        return [
+            'type' => 'Feature',
+            'properties' => [
+                'label' => self::PARIS_ADDRESS_LABEL.' '.self::PARIS_POSTAL_CODE.' Paris',
+                'housenumber' => '10',
+                'name' => self::PARIS_ADDRESS_LABEL,
+                'street' => 'Rue de la Paix',
+                'postcode' => self::PARIS_POSTAL_CODE,
+                'citycode' => self::PARIS_INSEE_CODE,
+                'city' => 'Paris',
+                'id' => self::PARIS_BAN_ID,
+            ],
+            'geometry' => [
+                'type' => 'Point',
+                'coordinates' => [2.330, 48.869],
+            ],
+        ];
     }
 }
