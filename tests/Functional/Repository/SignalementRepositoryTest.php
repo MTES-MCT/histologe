@@ -15,6 +15,7 @@ use App\Entity\Suivi;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\AffectationRepository;
+use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
@@ -770,8 +771,8 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function testFindBailleursAndSyndics(): void
     {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = $this->entityManager->getRepository(Signalement::class);
+        /** @var AddressesHistoryQuery $addressesHistoryQuery */
+        $addressesHistoryQuery = new AddressesHistoryQuery($this->entityManager);
         /** @var UserRepository $userRepository */
         $userRepository = $this->entityManager->getRepository(User::class);
         /** @var TerritoryRepository $territoryRepository */
@@ -779,7 +780,7 @@ class SignalementRepositoryTest extends KernelTestCase
 
         // Test SA
         $adminUser = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
-        $bailleurs = $signalementRepository->findBailleursAndSyndics($adminUser);
+        $bailleurs = $addressesHistoryQuery->findBailleursAndSyndics($adminUser);
 
         $this->assertIsArray($bailleurs);
         $this->assertNotEmpty($bailleurs);
@@ -789,7 +790,7 @@ class SignalementRepositoryTest extends KernelTestCase
 
         // Test avec un territoire spécifique
         $territory = $territoryRepository->findOneBy(['zip' => '13']);
-        $bailleursTerritory = $signalementRepository->findBailleursAndSyndics($adminUser, $territory);
+        $bailleursTerritory = $addressesHistoryQuery->findBailleursAndSyndics($adminUser, $territory);
 
         $this->assertIsArray($bailleursTerritory);
         $this->assertContains('13 Habitat', $bailleursTerritory);

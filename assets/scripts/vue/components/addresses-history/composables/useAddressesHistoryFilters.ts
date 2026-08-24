@@ -52,7 +52,6 @@ export function useAddressesHistoryFilters() {
     store.state.user.isAgent = ['Admin. partenaire', 'Agent'].includes(response.roleLabel || '')
     store.state.user.isMultiTerritoire = response.isMultiTerritoire === true
 
-    // Territories
     store.state.territories = []
     if (response.territories) {
       for (const id in response.territories) {
@@ -76,7 +75,6 @@ export function useAddressesHistoryFilters() {
       }
     }
 
-    // Zones
     store.state.zones = []
     if (response.zones) {
       Object.values(response.zones).forEach((zone) => {
@@ -87,7 +85,6 @@ export function useAddressesHistoryFilters() {
       })
     }
 
-    // Bailleurs et syndics
     store.state.bailleursAndSyndic = []
     if (response.bailleursSociaux) {
       for (const id in response.bailleursSociaux) {
@@ -96,7 +93,6 @@ export function useAddressesHistoryFilters() {
       }
     }
 
-    // Communes et EPCIs
     store.state.communes = []
     if (response.communes) {
       for (const id in response.communes) {
@@ -104,7 +100,7 @@ export function useAddressesHistoryFilters() {
         store.state.communes.push(commune)
       }
     }
-    // Ajouter les EPCIs avec un préfixe pour les différencier
+    // Ajout des EPCIs avec un préfixe pour les différencier
     if (response.epcis) {
       for (const id in response.epcis) {
         const epci = response.epcis[id]
@@ -114,7 +110,6 @@ export function useAddressesHistoryFilters() {
       }
     }
 
-    // Types d'arrêtés
     if (response.arreteTypes) {
       store.state.arreteTypesGroups = []
       for (const groupTitle in response.arreteTypes) {
@@ -181,17 +176,14 @@ export function useAddressesHistoryFilters() {
 
       abortController.value = new AbortController()
 
-      // Met à jour l'URL avec les paramètres
       updateUrlWithFilters()
 
-      // Lance la requête avec le composable API
       const response = await api.fetchAddresses({
         signal: abortController.value.signal
       })
 
       handleAddressesResponse(response)
     } catch (error: any) {
-      // Ignore les erreurs d'annulation
       if (error.name === 'AbortError' || error.message === 'Request cancelled') {
         return
       }
@@ -227,14 +219,12 @@ export function useAddressesHistoryFilters() {
       }
     }
 
-    // Ajoute le paramètre page si différent de 1
     const currentPage = store.state.addresses.pagination.current_page
     if (currentPage && currentPage > 1) {
       addQueryParameter('page', currentPage.toString())
       url.searchParams.set('page', currentPage.toString())
     }
 
-    // Ajoute le paramètre view (map ou list)
     if (store.state.viewMode) {
       addQueryParameter('view', store.state.viewMode)
       url.searchParams.set('view', store.state.viewMode)
@@ -278,50 +268,41 @@ export function useAddressesHistoryFilters() {
   const initFiltersFromUrl = (): void => {
     const urlParams = new URLSearchParams(window.location.search)
 
-    // Territoire
     if (urlParams.has('territoire')) {
       store.state.input.filters.territoire = urlParams.get('territoire') || undefined
     }
 
-    // Adresse
     if (urlParams.has('adresse')) {
       store.state.input.filters.adresse = urlParams.get('adresse') || undefined
     }
 
-    // Communes (tableau)
     const communes = urlParams.getAll('communes[]')
     if (communes.length > 0) {
       store.state.input.filters.communes = communes
     }
 
-    // Bailleurs/Syndics (tableau)
     const bailleurs = urlParams.getAll('bailleurOuSyndic[]')
     if (bailleurs.length > 0) {
       store.state.input.filters.bailleurOuSyndic = bailleurs
     }
 
-    // Zone
     if (urlParams.has('zone')) {
       store.state.input.filters.zone = urlParams.get('zone') || undefined
     }
 
-    // Nature du parc
     if (urlParams.has('natureParc')) {
       store.state.input.filters.natureParc = urlParams.get('natureParc') || undefined
     }
 
-    // Dossiers multiples
     if (urlParams.has('dossiersMultiples')) {
       store.state.input.filters.dossiersMultiples = urlParams.get('dossiersMultiples') || undefined
     }
 
-    // Types d'arrêtés (tableau)
     const arreteTypes = urlParams.getAll('arreteTypes[]')
     if (arreteTypes.length > 0) {
       store.state.input.filters.arreteTypes = arreteTypes
     }
 
-    // View mode
     if (urlParams.has('view')) {
       const viewMode = urlParams.get('view')
       if (viewMode === 'map') {

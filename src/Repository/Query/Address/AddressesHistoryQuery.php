@@ -12,6 +12,7 @@ use App\Entity\Bailleur;
 use App\Entity\Commune;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
+use App\Entity\Territory;
 use App\Entity\User;
 use App\Utils\Address\CommuneHelper;
 use Doctrine\DBAL\Exception;
@@ -23,6 +24,25 @@ class AddressesHistoryQuery
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
     ) {
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    public function findAllList(?Territory $territory = null): array
+    {
+        $qb = $this->entityManager->createQueryBuilder()
+            ->from(Address::class, 'a')
+            ->select('a.id, CONCAT_WS(a.housenumber, \' \', a.street) as address')
+            ->orderBy('a.street', 'ASC')
+            ->addOrderBy('a.housenumber', 'ASC');
+
+        if ($territory) {
+            $qb->andWhere('a.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getArrayResult();
     }
 
     /**
@@ -84,6 +104,8 @@ class AddressesHistoryQuery
                 's.nomProprio',
                 's.isLogementSocial',
                 'b.name AS bailleurName',
+                's.denominationProprio',
+                's.denominationSyndic',
                 'ar.id AS arreteId',
                 'ar.dateArrete',
                 'ar.arreteType',
@@ -299,5 +321,63 @@ class AddressesHistoryQuery
         }
 
         return $qb;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function findBailleursAndSyndics(User $user, ?Territory $territory = null): array
+    {
+        $qb = $this->entityManager->createQueryBuilder()
+            ->from(Signalement::class, 's')
+            ->leftJoin(Bailleur::class, 'b', 'WITH', 'b.id = s.bailleur')
+            ->select(
+                'b.name AS bailleurName',
+                's.denominationProprio',
+                's.denominationSyndic',
+                's.nomProprio',
+            )
+            ->where('s.statut NOT IN (:statutList)')
+            ->setParameter('statutList', SignalementStatus::excludedStatuses());
+
+        if (!$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
+            $qb->leftJoin('s.affectations', 'affectations')
+                ->leftJoin('affectations.partner', 'partner')
+                ->andWhere('partner IN (:partners)')
+                ->setParameter('partners', $user->getPartners());
+        }
+
+        if ($territory) {
+            $qb->andWhere('s.territory = :territory')
+                ->setParameter('territory', $territory);
+        } elseif (!$user->isSuperAdmin()) {
+            $qb->andWhere('s.territory IN (:territories)')
+                ->setParameter('territories', $user->getPartnersTerritories());
+        }
+
+        // Récupérer tous les noms uniques
+        $results = $qb->getQuery()->getResult();
+        $names = [];
+
+        foreach ($results as $row) {
+            if (!empty($row['bailleurName'])) {
+                $names[] = $row['bailleurName'];
+            }
+            if (!empty($row['denominationProprio'])) {
+                $names[] = $row['denominationProprio'];
+            }
+            if (!empty($row['denominationSyndic'])) {
+                $names[] = $row['denominationSyndic'];
+            }
+            if (!empty($row['nomProprio'])) {
+                $names[] = $row['nomProprio'];
+            }
+        }
+
+        // Retourner les noms uniques triés
+        $names = array_unique($names);
+        sort($names);
+
+        return $names;
     }
 }

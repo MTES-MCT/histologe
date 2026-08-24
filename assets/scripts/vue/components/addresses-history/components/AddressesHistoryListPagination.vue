@@ -37,7 +37,7 @@
         <li>
           <a :href="pagination.current_page !== pagination.total_pages ? `?page=${pagination.total_pages}` : null"
              @click.prevent="pagination.current_page < pagination.total_pages && $emit('changePage', pagination.total_pages)"
-             :aria-disabled="pagination.current_page === pagination.total_pages"
+             :aria-disabled="pagination.current_page >= pagination.total_pages"
              class="fr-pagination__link fr-pagination__link--last"
              :role="pagination.current_page === pagination.total_pages ? 'link' : null">
             Dernière page </a>

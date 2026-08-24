@@ -2,9 +2,8 @@
 
 namespace App\Tests\Functional\Repository;
 
-use App\Entity\Address;
 use App\Entity\Territory;
-use App\Repository\AddressRepository;
+use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -28,11 +27,11 @@ class AddressRepositoryTest extends KernelTestCase
 
     public function testFindAllList(): void
     {
-        /** @var AddressRepository $addressRepository */
-        $addressRepository = $this->entityManager->getRepository(Address::class);
+        /** @var AddressesHistoryQuery $addressesHistoryQuery */
+        $addressesHistoryQuery = new AddressesHistoryQuery($this->entityManager);
 
         // Test sans territoire - devrait retourner toutes les adresses
-        $allAddresses = $addressRepository->findAllList();
+        $allAddresses = $addressesHistoryQuery->findAllList();
 
         $this->assertIsArray($allAddresses);
         $this->assertNotEmpty($allAddresses);
@@ -53,15 +52,15 @@ class AddressRepositoryTest extends KernelTestCase
 
     public function testFindAllListWithTerritory(): void
     {
-        /** @var AddressRepository $addressRepository */
-        $addressRepository = $this->entityManager->getRepository(Address::class);
+        /** @var AddressesHistoryQuery $addressesHistoryQuery */
+        $addressesHistoryQuery = new AddressesHistoryQuery($this->entityManager);
         /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
 
         $territory = $territoryRepository->findOneBy(['zip' => '13']);
         $this->assertNotNull($territory, 'Territory with zip 13 should exist in fixtures');
 
-        $addressesForTerritory = $addressRepository->findAllList($territory);
+        $addressesForTerritory = $addressesHistoryQuery->findAllList($territory);
 
         $this->assertIsArray($addressesForTerritory);
         $this->assertCount(2, $addressesForTerritory); // TODO : ajuster quand fixtures adresses gérées dans la PR #6212

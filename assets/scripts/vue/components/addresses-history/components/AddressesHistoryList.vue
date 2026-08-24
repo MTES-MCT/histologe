@@ -11,7 +11,7 @@
             >Passer directement à la liste des adresses</a>
         </div>
       </div>
-      <AddressesHistoryListFilters @change="onChange" />
+      <AddressesHistoryListFilters @change="onFiltersChange" />
       <div id="list-addresses" class="fr-mt-2w">
         <h2 v-if="sharedState.addresses.pagination.total_items > 1"
           >{{ sharedState.addresses.pagination.total_items }} entrées trouvées</h2>
@@ -28,7 +28,7 @@
               <div class="fr-col-12 fr-col-md-4 fr-text--md-right">
                 <div>
                   <p class="fr-badge fr-badge--new fr-badge--no-icon" v-if="(item as any).hasLogementSocial">Parc public</p>
-                  <p class="fr-badge fr-badge--new fr-badge--no-icon" v-if="(item as any).hasLogementPrive">Parc privé</p>
+                  <p class="fr-badge fr-badge--new fr-badge--no-icon fr-ml-1w" v-if="(item as any).hasLogementPrive">Parc privé</p>
                 </div>
                 <div v-if="(item as any).bailleurNames && (item as any).bailleurNames.length > 0" class="fr-mt-1w">
                   Bailleur : {{ (item as any).bailleurNames.join(', ') }}
@@ -95,6 +95,11 @@ const sharedState = store.state
  */
 const onChange = (): void => {
   emit('change')
+}
+
+const onFiltersChange = (): void => {
+  sharedState.addresses.pagination.current_page = 1
+  onChange()
 }
 
 /**
