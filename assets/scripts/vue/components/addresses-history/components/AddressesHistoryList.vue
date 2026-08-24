@@ -13,55 +13,60 @@
       </div>
       <AddressesHistoryListFilters @change="onFiltersChange" />
       <div id="list-addresses" class="fr-mt-2w">
-        <h2 v-if="sharedState.addresses.pagination.total_items > 1"
-          >{{ sharedState.addresses.pagination.total_items }} entrées trouvées</h2>
-        <h2 v-else-if="sharedState.addresses.pagination.total_items === 1"
-          >1 entrée trouvée</h2>
-        <h2 v-else>Aucune entrée trouvée</h2>
+        <div v-if="sharedState.loadingList" class="fr-mt-2w">
+          <p>Mise à jour de la liste...</p>
+        </div>
+        <div v-else>
+          <h2 v-if="sharedState.addresses.pagination.total_items > 1"
+            >{{ sharedState.addresses.pagination.total_items }} entrées trouvées</h2>
+          <h2 v-else-if="sharedState.addresses.pagination.total_items === 1"
+            >1 entrée trouvée</h2>
+          <h2 v-else>Aucune entrée trouvée</h2>
 
-        <div class="fr-container--fluid">
-          <div class="fr-mb-2w" v-for="(item, index) in sharedState.addresses.list" :key="index">
-            <div class="fr-grid-row fr-border fr-p-2w">
-              <div class="fr-col-12 fr-col-md-8">
-                <h3 class="title-blue-france"><span class="fr-icon-map-pin-2-line" aria-hidden="true"></span> {{ (item as any).addressForHuman }}</h3>
-              </div>
-              <div class="fr-col-12 fr-col-md-4 fr-text--md-right">
-                <div>
-                  <p class="fr-badge fr-badge--new fr-badge--no-icon" v-if="(item as any).hasLogementSocial">Parc public</p>
-                  <p class="fr-badge fr-badge--new fr-badge--no-icon fr-ml-1w" v-if="(item as any).hasLogementPrive">Parc privé</p>
+          <div class="fr-container--fluid">
+            <div class="fr-mb-2w" v-for="(item, index) in sharedState.addresses.list" :key="index">
+              <div class="fr-grid-row fr-border fr-p-2w">
+                <div class="fr-col-12 fr-col-md-8">
+                  <h3 class="title-blue-france"><span class="fr-icon-map-pin-2-line" aria-hidden="true"></span> {{ (item as any).addressForHuman }}</h3>
                 </div>
-                <div v-if="(item as any).bailleurNames && (item as any).bailleurNames.length > 0" class="fr-mt-1w">
-                  Bailleur : {{ (item as any).bailleurNames.join(', ') }}
+                <div class="fr-col-12 fr-col-md-4 fr-text--md-right">
+                  <div>
+                    <p class="fr-badge fr-badge--new fr-badge--no-icon" v-if="(item as any).hasLogementSocial">Parc public</p>
+                    <p class="fr-badge fr-badge--new fr-badge--no-icon fr-ml-1w" v-if="(item as any).hasLogementPrive">Parc privé</p>
+                  </div>
+                  <div v-if="(item as any).bailleurNames && (item as any).bailleurNames.length > 0" class="fr-mt-1w">
+                    Bailleur : {{ (item as any).bailleurNames.join(', ') }}
+                  </div>
                 </div>
-              </div>
-              <div class="fr-col-12 fr-col-md-6">
-                <div class="fr-mb-1v">
-                  <strong>Dossiers à cette adresse</strong>
+                <div class="fr-col-12 fr-col-md-6">
+                  <div class="fr-mb-1v">
+                    <strong>Dossiers à cette adresse</strong>
+                  </div>
+                  <ul v-if="(item as any).signalements && (item as any).signalements.length > 0" class="list-unstyled">
+                    <li v-for="(signalement, index) in (item as any).signalements" :key="index" class="fr-mb-3v">
+                      <a :href="`${signalement.url}`" class="fr-link"
+                        ># {{ signalement.ref }}</a> - {{ signalement.usager }}
+                      <p :class="getStatusLabel(signalement.statut)">{{ signalement.statut }}</p>
+                      <p class="fr-badge fr-badge--no-icon fr-badge--info fr-ml-1w">{{ signalement.declarant }}</p>
+                    </li>
+                  </ul>
+                  <div v-else>
+                    Aucun dossier enregistré à cette adresse
+                  </div>
                 </div>
-                <ul v-if="(item as any).signalements && (item as any).signalements.length > 0" class="list-unstyled">
-                  <li v-for="(signalement, index) in (item as any).signalements" :key="index" class="fr-mb-3v">
-                    <a :href="`${signalement.url}`" class="fr-link"
-                      ># {{ signalement.ref }}</a> - {{ signalement.usager }}
-                    <p :class="getStatusLabel(signalement.statut)">{{ signalement.statut }}</p>
-                    <p class="fr-badge fr-badge--no-icon fr-badge--info fr-ml-1w">{{ signalement.declarant }}</p>
-                  </li>
-                </ul>
-                <div v-else>
-                  Aucun dossier enregistré à cette adresse
-                </div>
-              </div>
-              <div class="fr-col-12 fr-col-md-6">
-                <div class="fr-mb-1v">
-                  <strong>Arrêtés pris à cette adresse</strong>
-                </div>
-                <ul v-if="(item as any).arretes && (item as any).arretes.length > 0" class="list-unstyled">
-                  <li v-for="(arrete, index) in (item as any).arretes" :key="index">
-                    <div class="fr-mb-3v"><span :class="getArreteClass(arrete.arreteType)" aria-hidden="true"></span> {{ arrete.arreteTypeLabel }} - {{ arrete.dateArrete }}</div>
-                    <div v-if="arrete.dateMainLevee" class="fr-mb-3v"><span class="fr-icon-thumb-up-line fr-mr-2v" aria-hidden="true"></span> Main levée : {{ arrete.dateMainLevee }}</div>
-                  </li>
-                </ul>
-                <div v-else>
-                  Aucun arrêté trouvé à cette adresse
+                <div class="fr-col-12 fr-col-md-6">
+                  <div class="fr-mb-1v">
+                    <strong>Arrêtés pris à cette adresse</strong>
+                  </div>
+                  <ul v-if="(item as any).arretes && (item as any).arretes.length > 0" class="list-unstyled">
+                    <li v-for="(arrete, index) in (item as any).arretes" :key="index">
+                      <div class="fr-mb-3v"><span :class="getArreteClass(arrete.arreteType)" aria-hidden="true"></span> {{ arrete.arreteTypeLabel }} - {{ arrete.dateArrete }}</div>
+                      <div v-if="arrete.dateMainLevee" class="fr-mb-3v"><span class="fr-icon-thumb-up-line fr-mr-2v" aria-hidden="true"></span> Main levée : {{ arrete.dateMainLevee }}</div>
+                    </li>
+                  </ul>
+                  <div v-else>
+                    Aucun arrêté trouvé à cette adresse
+                  </div>
                 </div>
               </div>
             </div>
@@ -111,7 +116,7 @@ const onPageChange = (page: number): void => {
   // Scroll vers le haut de la liste
   const listElement = document.getElementById('list-addresses')
   if (listElement) {
-    listElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    listElement.scrollIntoView({ behavior: 'instant', block: 'start' })
   }
 
   onChange()

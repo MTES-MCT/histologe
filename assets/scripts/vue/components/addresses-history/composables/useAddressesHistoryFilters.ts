@@ -161,6 +161,7 @@ export function useAddressesHistoryFilters() {
 
     store.state.addresses.pagination = (response as any).pagination || store.state.addresses.pagination
     store.state.addresses.zoneAreas = (response as any).zoneAreas || []
+    store.state.loadingSettings = false
     store.state.loadingList = false
   }
 
@@ -172,7 +173,9 @@ export function useAddressesHistoryFilters() {
       // Annule la requête précédente si elle existe
       if (abortController.value) {
         abortController.value.abort()
-      }
+        }
+
+        store.state.loadingList = true
 
       abortController.value = new AbortController()
 
@@ -190,6 +193,7 @@ export function useAddressesHistoryFilters() {
 
       console.error('Error reloading addresses:', error)
       store.state.hasErrorLoading = true
+      store.state.loadingSettings = false
       store.state.loadingList = false
     }
   }
@@ -309,6 +313,13 @@ export function useAddressesHistoryFilters() {
         store.state.viewMode = 'map' as any
       } else if (viewMode === 'list') {
         store.state.viewMode = 'list' as any
+      }
+    }
+
+    if (urlParams.has('page')) {
+      const page = parseInt(urlParams.get('page') || '1', 10)
+      if (!isNaN(page) && page > 0) {
+        store.state.addresses.pagination.current_page = page
       }
     }
   }

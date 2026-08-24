@@ -81,6 +81,7 @@ export interface StoreState {
   currentTerritoryId: string
   currentCommunes: string
   viewMode: ViewMode
+  loadingSettings: boolean
   loadingList: boolean
   hasErrorLoading: boolean
   natureParcList: Array<{ Id: string; Text: string }>

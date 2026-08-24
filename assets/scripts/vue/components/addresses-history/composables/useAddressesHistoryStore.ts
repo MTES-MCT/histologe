@@ -57,7 +57,8 @@ const state = ref<StoreState>({
   currentTerritoryId: '',
   currentCommunes: '',
   viewMode: 'list' as ViewMode,
-  loadingList: true,
+  loadingSettings: true,
+  loadingList: false,
   hasErrorLoading: false,
   natureParcList: [
     { Id: NatureParc.Privee, Text: 'Parc privé' },
@@ -103,16 +104,12 @@ const isListView = computed(() => state.value.viewMode === 'list')
 const totalAddresses = computed(() => state.value.addresses.pagination.total_items)
 
 const canExport = computed(() =>
-  state.value.addresses.list.length > 0 && !state.value.loadingList
+  state.value.addresses.list.length > 0 && !state.value.loadingSettings
 )
 
 // Actions
 function setViewMode(mode: ViewMode): void {
   state.value.viewMode = mode
-}
-
-function setLoadingState(loading: boolean): void {
-  state.value.loadingList = loading
 }
 
 function setErrorState(hasError: boolean): void {
@@ -212,7 +209,6 @@ export const useAddressesHistoryStore = () => ({
 
   // Actions
   setViewMode,
-  setLoadingState,
   setErrorState,
   setAddresses,
   setFilters,
