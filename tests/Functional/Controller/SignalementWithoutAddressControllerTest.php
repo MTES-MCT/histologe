@@ -6,6 +6,7 @@ use App\Entity\Signalement;
 use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
+use App\Service\ListFilters\SearchSignalementWithoutAddress;
 use App\Tests\SessionHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -134,6 +135,45 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertNull($signalement->getAddress());
+    }
+
+    public function testExport(): void
+    {
+        $route = $this->router->generate('back_signalement_without_address_export');
+        $this->client->request('GET', $route);
+
+        $this->assertResponseIsSuccessful();
+        $response = $this->client->getResponse();
+        $this->assertStringContainsString('text/csv', (string) $response->headers->get('Content-Type'));
+        $this->assertStringContainsString('attachment; filename="signalements-sans-adresse_', (string) $response->headers->get('Content-Disposition'));
+    }
+
+    public function testExportIsRestrictedToAdmin(): void
+    {
+        $user = $this->userRepository->findOneBy(['email' => 'user-13-01@signal-logement.fr']);
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('back_signalement_without_address_export');
+        $this->client->request('GET', $route);
+
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    public function testFindSignalementsWithoutAddressIgnoresPagination(): void
+    {
+        $signalement = $this->prepareSignalementForParisSearch();
+
+        $search = new SearchSignalementWithoutAddress();
+        $search->setTerritory($signalement->getTerritory());
+
+        $results = $this->signalementRepository->findSignalementsWithoutAddress($search);
+
+        $this->assertNotEmpty($results);
+        $this->assertContainsEquals($signalement, $results);
+        foreach ($results as $result) {
+            $this->assertSame($signalement->getTerritory()?->getId(), $result->getTerritory()?->getId());
+            $this->assertNull($result->getAddress());
+        }
     }
 
     private function prepareSignalementForParisSearch(): Signalement

@@ -1,16 +1,26 @@
 <section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
-    <div id="list-signalements">
-        <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(total, 'signalement sans adresse trouvé', 'signalements sans adresse trouvés') }}</h2>
-        <div class="fr-skiplinks">
-            <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
-                >Accéder à la pagination</a>
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div id="list-signalements" class="fr-col-12 fr-col-md-6">
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(total, 'signalement sans adresse trouvé', 'signalements sans adresse trouvés') }}</h2>
+            <div class="fr-skiplinks">
+                <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                    >Accéder à la pagination</a>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-text--md-right">
+            <a
+                href="{% if total > 0 %}{{ path('back_signalement_without_address_export', searchSignalementWithoutAddress.urlParams) }}{% else %}#{% endif %}"
+                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill {% if total == 0 %}fr-label--disabled{% endif %} fr-btn--block fr-btn--md-inline"
+                aria-label="Exporter les résultats au format CSV"
+                title="Exporter les résultats"
+            >Exporter les résultats</a>
         </div>
     </div>
 </section>
 
 <section class="fr-col-12" id="table-list-results">
     {% set tableHead %}
-        <th scope="col" data-responsive-title="1">#Ref.</th>
+        <th scope="col" data-responsive-title="1">Référence</th>
         <th scope="col">Adresse</th>
         <th scope="col">Ville</th>
         <th scope="col">Code postal</th>
@@ -18,6 +28,8 @@
         <th scope="col">Territoire</th>
         <th scope="col">Territoire calculé</th>
         <th scope="col">Erreur</th>
+        <th scope="col">Statut</th>
+        <th scope="col">Importé ? </th>
         <th scope="col" class="fr-text--right">Actions</th>
     {% endset %}
 
@@ -25,7 +37,7 @@
         {% for row in rows %}
             {% set signalement = row.signalement %}
             <tr class="signalement-row">
-                <td>{{ signalement.reference }}</td>
+                <td>#{{ signalement.reference }}</td>
                 <td>{{ signalement.adresseOccupant }}</td>
                 <td>{{ signalement.villeOccupant|upper }}</td>
                 <td>{{ signalement.cpOccupant }}</td>
@@ -38,6 +50,22 @@
                     {% else %}
                         <span class="fr-badge fr-badge--success fr-badge--no-icon fr-ws-nowrap">Aucune</span>
                     {% endfor %}
+                </td>
+                <td>                
+                    {% if signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
+                        {% set classeCssStatut = 'fr-badge--warning' %}
+                    {% elseif signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}
+                        {% set classeCssStatut = 'fr-badge--success' %}
+                    {% elseif signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').CLOSED or
+                            signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').REFUSED %}
+                        {% set classeCssStatut = 'fr-badge--error' %}
+                    {% else %}                        
+                        {% set classeCssStatut = 'fr-badge--info' %}
+                    {% endif %}
+                    <span class="fr-badge fr-badge--no-icon {{ classeCssStatut }}">{{ signalement.statut.label() }}</span>
+                </td>
+                <td>
+                    <span class="fr-badge fr-badge--no-icon">{{ signalement.isImported ? 'Oui' : 'Non' }}</span>
                 </td>
                 <td class="fr-text--right fr-ws-nowrap">
                     {% if enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INCONSISTENT_TERRITORY in row.errors %}

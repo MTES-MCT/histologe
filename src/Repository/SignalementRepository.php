@@ -384,13 +384,8 @@ class SignalementRepository extends ServiceEntityRepository
         return new Paginator($queryBuilder->getQuery(), false);
     }
 
-    /**
-     * @return Paginator<Signalement>
-     */
-    public function findSignalementsWithoutAddressPaginated(
-        SearchSignalementWithoutAddress $searchSignalementWithoutAddress,
-        int $maxResult,
-    ): Paginator {
+    public function createSignalementsWithoutAddressQueryBuilder(SearchSignalementWithoutAddress $searchSignalementWithoutAddress): QueryBuilder
+    {
         $queryBuilder = $this->createQueryBuilder('s');
         $queryBuilder->where('s.address IS NULL');
 
@@ -419,10 +414,32 @@ class SignalementRepository extends ServiceEntityRepository
             $queryBuilder->orderBy('s.createdAt', 'DESC');
         }
 
+        return $queryBuilder;
+    }
+
+    /**
+     * @return Paginator<Signalement>
+     */
+    public function findSignalementsWithoutAddressPaginated(
+        SearchSignalementWithoutAddress $searchSignalementWithoutAddress,
+        int $maxResult,
+    ): Paginator {
+        $queryBuilder = $this->createSignalementsWithoutAddressQueryBuilder($searchSignalementWithoutAddress);
+
         $firstResult = ($searchSignalementWithoutAddress->getPage() - 1) * $maxResult;
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);
+    }
+
+    /**
+     * @return array<int, Signalement>
+     */
+    public function findSignalementsWithoutAddress(SearchSignalementWithoutAddress $searchSignalementWithoutAddress): array
+    {
+        return $this->createSignalementsWithoutAddressQueryBuilder($searchSignalementWithoutAddress)
+            ->getQuery()
+            ->getResult();
     }
 
     /**

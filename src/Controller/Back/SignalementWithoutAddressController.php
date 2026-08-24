@@ -16,15 +16,21 @@ use App\Service\ListFilters\SearchSignalementWithoutAddress;
 use App\Service\MessageHelper;
 use App\Service\Signalement\SignalementAddressAnomalyChecker;
 use App\Service\Signalement\SignalementAddressUpdater;
+use App\Utils\ExportFormat;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Writer\CSV\Options as CsvOptions;
+use OpenSpout\Writer\CSV\Writer as CsvWriter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements-sans-adresse')]
@@ -51,6 +57,59 @@ class SignalementWithoutAddressController extends AbstractController
             'total' => $total,
             'pages' => (int) ceil($total / $this->maxListPagination),
         ]);
+    }
+
+    #[Route('/export', name: 'back_signalement_without_address_export', methods: 'GET')]
+    public function export(Request $request): StreamedResponse
+    {
+        $searchSignalementWithoutAddress = new SearchSignalementWithoutAddress();
+        $form = $this->createForm(SearchSignalementWithoutAddressType::class, $searchSignalementWithoutAddress);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $searchSignalementWithoutAddress = new SearchSignalementWithoutAddress();
+        }
+
+        $signalements = $this->signalementRepository->findSignalementsWithoutAddress($searchSignalementWithoutAddress);
+
+        $response = new StreamedResponse(function () use ($signalements): void {
+            $writer = new CsvWriter(new CsvOptions(FIELD_DELIMITER: ExportFormat::CSV_SEPARATOR));
+            $writer->openToFile('php://output');
+            $writer->addRow(Row::fromValues([
+                'Territoire',
+                'Référence',
+                'Adresse',
+                'Code postal',
+                'Ville',
+                'Code INSEE',
+                'Territoire calculé',
+                'Erreur(s)',
+                'Statut',
+                'Importé ?',
+                'Lien vers la fiche signalement',
+            ]));
+            foreach ($signalements as $signalement) {
+                $calculatedTerritory = $this->signalementAddressAnomalyChecker->getCalculatedTerritory($signalement);
+                $errors = $this->signalementAddressAnomalyChecker->getErrors($signalement);
+                $writer->addRow(Row::fromValues([
+                    $signalement->getTerritory()?->getZipAndName(),
+                    $signalement->getReference(),
+                    $signalement->getAdresseOccupant(),
+                    $signalement->getCpOccupant(),
+                    $signalement->getVilleOccupant(),
+                    $signalement->getInseeOccupant(),
+                    $calculatedTerritory?->getZipAndName(),
+                    implode(', ', array_map(static fn ($error) => $error->label(), $errors)),
+                    $signalement->getStatut()?->label(),
+                    $signalement->getIsImported() ? 'Oui' : 'Non',
+                    $this->generateUrl('back_signalement_view', ['uuid' => $signalement->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL),
+                ]));
+            }
+            $writer->close();
+        });
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="signalements-sans-adresse_'.date('Y-m-d_H-i-s').'.csv"');
+
+        return $response;
     }
 
     #[Route('/{uuid:signalement}/rechercher-adresse', name: 'back_signalement_without_address_search', methods: 'GET')]
@@ -95,6 +154,7 @@ class SignalementWithoutAddressController extends AbstractController
 
         $signalement->setTerritory($calculatedTerritory);
         $entityManager->flush();
+        // TODO : faire un suivi ?
 
         return $this->json(['stayOnPage' => true, 'closeModal' => true, 'flashMessages' => [['type' => 'success', 'title' => 'Territoire changé', 'message' => 'Le territoire du signalement a bien été changé.']], 'htmlTargetContents' => $this->getHtmlTargetContentsForList($request)]);
     }
@@ -124,9 +184,10 @@ class SignalementWithoutAddressController extends AbstractController
         } catch (TerritoryNotFoundForCityCodeException $exception) {
             return $this->json(['stayOnPage' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => $exception->getMessage()]]]);
         }
+        // TODO : changer l'adresse occupant dans l'entité signalement ?
 
         /** @var User $user */
-        $user = $this->getUser();
+        $user = $this->getUser(); // TODO : mettre utilisateur système
         $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
             user: $user,
             signalement: $signalement,
