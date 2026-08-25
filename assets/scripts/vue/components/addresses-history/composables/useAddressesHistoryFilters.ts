@@ -28,9 +28,7 @@ export function useAddressesHistoryFilters() {
    */
   const reloadSettings = async (): Promise<void> => {
     try {
-      const territoryId = store.state.currentTerritoryId.length > 0
-        ? store.state.currentTerritoryId
-        : undefined
+      const territoryId = store.state.input.filters.territoire || undefined
 
       const response = await api.fetchSettings(territoryId)
       handleSettingsResponse(response)
@@ -119,6 +117,11 @@ export function useAddressesHistoryFilters() {
           options: arretes
         })
       }
+    }
+
+    // Si plusieurs territoires existent et qu'aucun n'est sélectionné, sélectionner le premier automatiquement
+    if (store.state.territories.length > 1 && !store.state.input.filters.territoire) {
+      store.state.input.filters.territoire = store.state.territories[0].Id
     }
   }
 
@@ -213,9 +216,9 @@ export function useAddressesHistoryFilters() {
             addQueryParameter(key + '[]', item)
             url.searchParams.append(key + '[]', item)
           })
-        } else if (typeof value === 'string') {
-          addQueryParameter(key, value)
-          url.searchParams.set(key, value)
+        } else if (typeof value === 'string' || typeof value === 'number') {
+          addQueryParameter(key, value.toString())
+          url.searchParams.set(key, value.toString())
         }
       } else {
         removeQueryParameter(key)
@@ -343,21 +346,20 @@ export function useAddressesHistoryFilters() {
    */
   const resetFilters = (): void => {
     store.state.input.filters = getDefaultFilters()
-    store.state.currentTerritoryId = ''
   }
 
   /**
    * Sauvegarde le territoire actuel (pour détecter les changements)
    */
   const saveCurrentTerritory = (): void => {
-    initialTerritoryId.value = store.state.currentTerritoryId
+    initialTerritoryId.value = store.state.input.filters.territoire || ''
   }
 
   /**
    * Vérifie si le territoire a changé
    */
   const hasTerritoryChanged = (): boolean => {
-    return initialTerritoryId.value !== store.state.currentTerritoryId
+    return initialTerritoryId.value !== (store.state.input.filters.territoire || '')
   }
 
   return {

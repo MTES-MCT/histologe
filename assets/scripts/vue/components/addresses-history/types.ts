@@ -78,7 +78,6 @@ export interface StoreState {
   communes: string[]
   bailleursAndSyndic: string[]
   zones: HistoInterfaceSelectOption[]
-  currentTerritoryId: string
   currentCommunes: string
   viewMode: ViewMode
   loadingSettings: boolean

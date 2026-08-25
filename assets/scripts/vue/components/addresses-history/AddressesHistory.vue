@@ -48,12 +48,16 @@ const onViewModeChange = async (viewMode: string): Promise<void> => {
 
   // Recharge les adresses sans filtres pour la carte, avec filtres pour la liste
   if (viewMode === 'map') {
-    // Pour la carte, on charge toutes les adresses sans filtres
+    // Pour la carte, on charge toutes les adresses sans filtres (sauf le territoire)
     const currentFilters = { ...sharedState.input.filters }
     // Sauvegarde temporaire des filtres
     const savedFilters = { ...currentFilters }
-    // Réinitialise les filtres
+    // Réinitialise les filtres (sauf le territoire)
     Object.keys(sharedState.input.filters).forEach(key => {
+      if (key === 'territoire') {
+        // Conserver le filtre territoire
+        return
+      }
       if (Array.isArray((sharedState.input.filters as any)[key])) {
         (sharedState.input.filters as any)[key] = []
       } else {
@@ -95,9 +99,14 @@ const init = async (): Promise<void> => {
 
   // Charge les adresses : sans filtres si mode carte, avec filtres si mode liste
   if (sharedState.viewMode === 'map') {
-    // Pour la carte, on charge toutes les adresses sans filtres
+    // Pour la carte, on charge toutes les adresses sans filtres (sauf le territoire)
     const savedFilters = { ...sharedState.input.filters }
+    const savedTerritory = sharedState.input.filters.territoire
     Object.keys(sharedState.input.filters).forEach(key => {
+      if (key === 'territoire') {
+        // Conserver le filtre territoire
+        return
+      }
       if (Array.isArray((sharedState.input.filters as any)[key])) {
         (sharedState.input.filters as any)[key] = []
       } else {

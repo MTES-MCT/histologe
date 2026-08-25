@@ -54,7 +54,6 @@ const state = ref<StoreState>({
   communes: [],
   bailleursAndSyndic: [],
   zones: [],
-  currentTerritoryId: '',
   currentCommunes: '',
   viewMode: 'list' as ViewMode,
   loadingSettings: true,
@@ -165,10 +164,6 @@ function setZones(zones: HistoInterfaceSelectOption[]): void {
   state.value.zones = zones
 }
 
-function setCurrentTerritoryId(id: string): void {
-  state.value.currentTerritoryId = id
-}
-
 function setCurrentCommunes(communes: string): void {
   state.value.currentCommunes = communes
 }
@@ -217,7 +212,6 @@ export const useAddressesHistoryStore = () => ({
   setCommunes,
   setBailleursAndSyndic,
   setZones,
-  setCurrentTerritoryId,
   setCurrentCommunes,
   setPagination,
   setProps,

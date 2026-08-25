@@ -64,7 +64,7 @@ class SearchFilterOptionDataProvider
 
                 return [
                     'criteres' => $this->critereRepository->findAllList(),
-                    'territories' => $user->isSuperAdmin() ? $this->territoryRepository->findAllList(indexById: false) : $user->getPartnersTerritories(true),
+                    'territories' => $this->getTerritories($user),
                     'addresses' => $isAddressesHistoryContext ? $this->addressesHistoryQuery->findAllList($territory) : [],
                     'partners' => $this->partnerRepository->findAllList($territory, $user),
                     'epcis' => $this->communeEpciQuery->findEpciByCommuneTerritory($territory, $user),
@@ -82,6 +82,14 @@ class SearchFilterOptionDataProvider
                 ];
             }
         );
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getTerritories(User $user): array
+    {
+        return $user->isSuperAdmin() ? $this->territoryRepository->findAllList(indexById: false) : $user->getPartnersTerritories(true);
     }
 
     private function getCacheKey(User $user, ?Territory $territory = null, ?string $context = null): string
