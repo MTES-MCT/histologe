@@ -346,7 +346,7 @@ class AddressesHistoryQuery
             $whereConditions[] = 's.territory_id = :territoryId';
             $params['territoryId'] = $territory->getId();
         } elseif (!$user->isSuperAdmin()) {
-            $territoryIds = array_map(static fn ($t) => $t->getId(), $user->getPartnersTerritories()->toArray());
+            $territoryIds = array_map(static fn ($t) => $t->getId(), $user->getPartnersTerritories());
             $whereConditions[] = 's.territory_id IN (:territoryIds)';
             $params['territoryIds'] = $territoryIds;
             $types['territoryIds'] = ArrayParameterType::INTEGER;
