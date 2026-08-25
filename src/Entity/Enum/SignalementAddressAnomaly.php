@@ -18,10 +18,10 @@ enum SignalementAddressAnomaly: string
     public static function getLabelList(): array
     {
         return [
-            self::MISSING_CP_AND_INSEE->name => 'Absence de code postal et de code INSEE',
+            self::MISSING_CP_AND_INSEE->name => 'Absence de codes postal et INSEE',
             self::INVALID_INSEE_FORMAT->name => 'Format du code INSEE invalide',
             self::INVALID_CP_FORMAT->name => 'Format du code postal invalide',
-            self::INCONSISTENT_CP_INSEE->name => 'Code postal et code INSEE incohérents entre eux',
+            self::INCONSISTENT_CP_INSEE->name => 'Codes postal et INSEE incohérents',
             self::INCONSISTENT_TERRITORY->name => 'Territoire incohérent',
         ];
     }

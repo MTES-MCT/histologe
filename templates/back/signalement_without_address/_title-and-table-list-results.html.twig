@@ -99,7 +99,12 @@
                             aria-label="Changer le territoire du signalement #{{ signalement.reference }}"
                             title="Changer le territoire du signalement #{{ signalement.reference }}"
                             >Changer le territoire du signalement #{{ signalement.reference }}</button>
-                    {% else %}
+                    {% endif %}
+                    {% if enum('App\\Entity\\Enum\\SignalementAddressAnomaly').MISSING_CP_AND_INSEE in row.errors
+                        or enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INVALID_CP_FORMAT in row.errors
+                        or enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INVALID_INSEE_FORMAT in row.errors
+                        or enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INCONSISTENT_CP_INSEE in row.errors
+                    %}
                         <button type="button"
                             class="fr-btn fr-btn--secondary fr-icon-map-pin-2-line fr-btn--sm btn-search-address"
                             aria-controls="fr-panel-search-address"

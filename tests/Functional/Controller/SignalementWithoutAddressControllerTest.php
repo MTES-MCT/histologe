@@ -56,6 +56,30 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $this->assertSelectorTextContains('h2#desc-table', $count.' '.$expectedLabel);
     }
 
+    public function testBothActionButtonsShowWhenTerritoryAndCpInseeAreBothInconsistent(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['address' => null]);
+        $loireAtlantique = $this->territoryRepository->findOneBy(['zip' => '44']);
+
+        // CP et INSEE valides individuellement mais incohérents entre eux (aucune commune 44/54 n'existe),
+        // et le territoire assigné (Loire-Atlantique) ne correspond pas au territoire calculé depuis
+        // l'INSEE (54 - Meurthe-et-Moselle) : les deux anomalies, et donc les deux actions, doivent apparaître.
+        $signalement
+            ->setCpOccupant('44420')
+            ->setInseeOccupant('54570')
+            ->setTerritory($loireAtlantique);
+        $this->entityManager->flush();
+
+        $route = $this->router->generate('back_signalement_without_address_index', ['territory' => $loireAtlantique->getId()]);
+        $crawler = $this->client->request('GET', $route);
+
+        $this->assertResponseIsSuccessful();
+        $row = $crawler->filter('tr:contains("#'.$signalement->getReference().'")');
+        $this->assertCount(1, $row->filter('.btn-change-territory'));
+        $this->assertCount(1, $row->filter('.btn-search-address'));
+    }
+
     public function testBulkLinkButtonPreviewUrlIncludesCurrentPage(): void
     {
         $route = $this->router->generate('back_signalement_without_address_index', ['page' => 2]);
