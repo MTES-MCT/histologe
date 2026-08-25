@@ -135,10 +135,13 @@ export function addFlashMessage(flashMessage) {
           </div>
       </div>
     `;
-  // Si il y a un side panel ouvert (classe .side-panel avec l'attribut open), on crée un élément avec la classe .flash-messages-live-subcontainer qui entoure ce message
-  // Sinon on ajoute au container principal avec id #flash-messages-live-container
+  /**
+   * Si c'est une erreur + il y a un side panel ouvert (classe .side-panel avec l'attribut open)
+   * => on crée un élément avec la classe .flash-messages-live-subcontainer qui entoure ce message
+   * Sinon on ajoute au container principal avec id #flash-messages-live-container
+   */
   const sidePanel = document.querySelector('.side-panel[open]');
-  if (sidePanel) {
+  if (sidePanel && flashMessage.type === 'alert') {
     let subContainer = sidePanel.querySelector('.flash-messages-live-subcontainer');
     if (!subContainer) {
       subContainer = document.createElement('div');
@@ -147,7 +150,10 @@ export function addFlashMessage(flashMessage) {
     }
     subContainer.appendChild(divElement);
   } else {
-    flashMessagesContainer.appendChild(divElement);
+    let subContainer = document.createElement('div');
+    subContainer.classList.add('flash-messages-live-subcontainer');
+    subContainer.appendChild(divElement);
+    flashMessagesContainer.appendChild(subContainer);
   }
 }
 
