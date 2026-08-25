@@ -28,6 +28,11 @@ class SettingsFactory
      */
     public function createInstanceFrom(User $user, ?Territory $territory = null, ?string $context = null): Settings
     {
+        if ('addresses-history' === $context && empty($territory)) {
+            $territories = $this->searchFilterOptionDataProvider->getTerritories($user);
+            $territory = $territories[array_key_first($territories)];
+        }
+
         $filterOptionData = $this->searchFilterOptionDataProvider->getData($user, $territory, $context);
 
         $isAddressesHistoryContext = 'addresses-history' === $context;

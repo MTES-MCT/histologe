@@ -207,7 +207,7 @@ const notifyChange = (): void => {
 const onTerritoryChange = async (value: string): Promise<void> => {
   sharedState.input.filters.communes = []
   sharedState.input.filters.zone = undefined
-  sharedState.currentTerritoryId = value
+  sharedState.input.filters.territoire = value
 
   await filtersComposable.reloadSettings()
 
@@ -240,9 +240,14 @@ const onRemoveFilter = async (key: keyof AddressesHistoryFilters): Promise<void>
   if (key === 'territoire') {
     const territoryHasChanged = filters.territoire !== undefined
     filters.territoire = undefined
-    sharedState.currentTerritoryId = ''
 
     if (territoryHasChanged) {
+      await filtersComposable.reloadSettings()
+    }
+
+    // Sélectionner le premier territoire si plusieurs territoires existent
+    if (sharedState.territories.length > 1) {
+      filters.territoire = sharedState.territories[0].Id
       await filtersComposable.reloadSettings()
     }
   }
