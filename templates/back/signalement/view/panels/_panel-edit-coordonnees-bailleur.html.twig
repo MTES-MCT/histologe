@@ -1,11 +1,11 @@
-<dialog aria-labelledby="panel-modal-edit-coordonnees-bailleur-title" id="panel-edit-coordonnees-bailleur" class="side-panel">
+<dialog aria-labelledby="panel-edit-coordonnees-bailleur-title" id="panel-edit-coordonnees-bailleur" class="side-panel">
     <div class="side-panel__inner">
         <div class="side-panel__header">
             <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-coordonnees-bailleur" aria-controls="panel-edit-coordonnees-bailleur" aria-expanded="false">Fermer</button>
         </div>
 
         <div class="side-panel__content fr-mx-3w">
-            <h1 id="panel-modal-edit-coordonnees-bailleur-title" class="fr-modal__title title-blue-france">Modifier les coordonnées du bailleur</h1>
+            <h1 id="panel-edit-coordonnees-bailleur-title" class="fr-modal__title title-blue-france">Modifier les coordonnées du bailleur</h1>
 
             <form method="POST" id="form-edit-coordonnees-bailleur" enctype="application/json" action="{{ path('back_signalement_edit_coordonnees_bailleur',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
