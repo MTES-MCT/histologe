@@ -135,7 +135,20 @@ export function addFlashMessage(flashMessage) {
           </div>
       </div>
     `;
-  flashMessagesContainer.appendChild(divElement);
+  // Si il y a un side panel ouvert (classe .side-panel avec l'attribut open), on crée un élément avec la classe .flash-messages-live-subcontainer qui entoure ce message
+  // Sinon on ajoute au container principal avec id #flash-messages-live-container
+  const sidePanel = document.querySelector('.side-panel[open]');
+  if (sidePanel) {
+    let subContainer = sidePanel.querySelector('.flash-messages-live-subcontainer');
+    if (!subContainer) {
+      subContainer = document.createElement('div');
+      subContainer.classList.add('flash-messages-live-subcontainer');
+      sidePanel.appendChild(subContainer);
+    }
+    subContainer.appendChild(divElement);
+  } else {
+    flashMessagesContainer.appendChild(divElement);
+  }
 }
 
 function sanitizeMessage(message) {
