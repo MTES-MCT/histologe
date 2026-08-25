@@ -100,7 +100,8 @@
                             title="Changer le territoire du signalement #{{ signalement.reference }}"
                             >Changer le territoire du signalement #{{ signalement.reference }}</button>
                     {% endif %}
-                    {% if enum('App\\Entity\\Enum\\SignalementAddressAnomaly').MISSING_CP_AND_INSEE in row.errors
+                    {% if row.errors is empty
+                        or enum('App\\Entity\\Enum\\SignalementAddressAnomaly').MISSING_CP_AND_INSEE in row.errors
                         or enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INVALID_CP_FORMAT in row.errors
                         or enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INVALID_INSEE_FORMAT in row.errors
                         or enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INCONSISTENT_CP_INSEE in row.errors

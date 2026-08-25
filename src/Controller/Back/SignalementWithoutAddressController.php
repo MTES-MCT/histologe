@@ -166,7 +166,7 @@ class SignalementWithoutAddressController extends AbstractController
 
         $rawCandidates = json_decode((string) $request->request->get('candidates', ''), true);
         if (!\is_array($rawCandidates) || empty($rawCandidates)) {
-            return $this->json(['stayOnPage' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => 'Aucun signalement à lier.']]]);
+            return $this->json(['stayOnPage' => true, 'closeModal' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => 'Aucun signalement à lier.']]]);
         }
 
         /** @var User $adminUser */
@@ -217,7 +217,7 @@ class SignalementWithoutAddressController extends AbstractController
 
         $calculatedTerritory = $this->signalementAddressAnomalyChecker->getCalculatedTerritory($signalement);
         if (null === $calculatedTerritory || !$calculatedTerritory->isIsActive()) {
-            return $this->json(['stayOnPage' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => 'Territoire invalide ou inactif.']]]);
+            return $this->json(['stayOnPage' => true, 'closeModal' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => 'Territoire invalide ou inactif.']]]);
         }
 
         $signalement->setTerritory($calculatedTerritory);
@@ -250,7 +250,7 @@ class SignalementWithoutAddressController extends AbstractController
 
         $rawFeature = json_decode((string) $request->request->get('feature', ''), true);
         if (!\is_array($rawFeature)) {
-            return $this->json(['stayOnPage' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => 'Adresse invalide.']]]);
+            return $this->json(['stayOnPage' => true, 'closeModal' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => 'Adresse invalide.']]]);
         }
 
         /** @var User $adminUser */
@@ -265,7 +265,7 @@ class SignalementWithoutAddressController extends AbstractController
             $entityManager,
         );
         if (!$linked) {
-            return $this->json(['stayOnPage' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => 'Adresse invalide.']]]);
+            return $this->json(['stayOnPage' => true, 'closeModal' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => 'Adresse invalide.']]]);
         }
         $entityManager->flush();
 

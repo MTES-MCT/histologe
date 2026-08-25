@@ -80,6 +80,30 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $this->assertCount(1, $row->filter('.btn-search-address'));
     }
 
+    public function testSearchAddressButtonShowsEvenWithoutAnyError(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['address' => null]);
+        $corseDuSud = $this->territoryRepository->findOneBy(['zip' => '2A']);
+
+        // CP et INSEE valides et cohérents entre eux (Ajaccio), territoire assigné cohérent avec le
+        // calcul : aucune anomalie. Le signalement n'a toujours pas d'Address liée, donc le bouton de
+        // recherche doit rester disponible pour permettre de le lier.
+        $signalement
+            ->setCpOccupant('20000')
+            ->setInseeOccupant('2A004')
+            ->setTerritory($corseDuSud);
+        $this->entityManager->flush();
+
+        $route = $this->router->generate('back_signalement_without_address_index', ['territory' => $corseDuSud->getId()]);
+        $crawler = $this->client->request('GET', $route);
+
+        $this->assertResponseIsSuccessful();
+        $row = $crawler->filter('tr:contains("#'.$signalement->getReference().'")');
+        $this->assertCount(0, $row->filter('.btn-change-territory'));
+        $this->assertCount(1, $row->filter('.btn-search-address'));
+    }
+
     public function testBulkLinkButtonPreviewUrlIncludesCurrentPage(): void
     {
         $route = $this->router->generate('back_signalement_without_address_index', ['page' => 2]);
