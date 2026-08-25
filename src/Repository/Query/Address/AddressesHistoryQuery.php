@@ -5,10 +5,6 @@ namespace App\Repository\Query\Address;
 use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\Address;
 use App\Entity\Arrete;
-<<<<<<< HEAD
-=======
-use App\Entity\Bailleur;
->>>>>>> 5c94a84c4 (fixes bailleurs and epcis #5949)
 use App\Entity\Commune;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
@@ -332,11 +328,11 @@ class AddressesHistoryQuery
         $conn = $this->entityManager->getConnection();
 
         $whereConditions = ['s.statut NOT IN (:statutList)'];
-        $params = ['statutList' => array_map(fn ($status) => $status->value, SignalementStatus::excludedStatuses())];
+        $params = ['statutList' => array_map(static fn ($status) => $status->value, SignalementStatus::excludedStatuses())];
         $types = ['statutList' => ArrayParameterType::STRING];
 
         if (!$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
-            $partnerIds = array_map(fn ($p) => $p->getId(), $user->getPartners()->toArray());
+            $partnerIds = array_map(static fn ($p) => $p->getId(), $user->getPartners()->toArray());
             $whereConditions[] = 'EXISTS (
                 SELECT 1 FROM affectation a
                 WHERE a.signalement_id = s.id
@@ -350,7 +346,7 @@ class AddressesHistoryQuery
             $whereConditions[] = 's.territory_id = :territoryId';
             $params['territoryId'] = $territory->getId();
         } elseif (!$user->isSuperAdmin()) {
-            $territoryIds = array_map(fn ($t) => $t->getId(), $user->getPartnersTerritories()->toArray());
+            $territoryIds = array_map(static fn ($t) => $t->getId(), $user->getPartnersTerritories()->toArray());
             $whereConditions[] = 's.territory_id IN (:territoryIds)';
             $params['territoryIds'] = $territoryIds;
             $types['territoryIds'] = ArrayParameterType::INTEGER;
