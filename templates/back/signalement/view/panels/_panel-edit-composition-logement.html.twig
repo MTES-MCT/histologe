@@ -1,11 +1,11 @@
-<dialog aria-labelledby="panel-modal-edit-composition-logement-title" id="panel-edit-composition-logement" class="side-panel">
+<dialog aria-labelledby="panel-edit-composition-logement-title" id="panel-edit-composition-logement" class="side-panel">
     <div class="side-panel__inner">
         <div class="side-panel__header">
             <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-composition-logement" aria-controls="panel-edit-composition-logement" aria-expanded="false">Fermer</button>
         </div>
 
         <div class="side-panel__content fr-mx-3w">
-            <h1 id="panel-modal-edit-composition-logement-title" class="fr-modal__title title-blue-france">Modifier la description du logement</h1>
+            <h1 id="panel-edit-composition-logement-title" class="fr-modal__title title-blue-france">Modifier la description du logement</h1>
     
             <form method="POST" id="form-edit-composition-logement" enctype="application/json" action="{{ path('back_signalement_edit_composition_logement',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
