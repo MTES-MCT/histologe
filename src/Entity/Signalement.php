@@ -430,8 +430,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[Assert\NotBlank(groups: ['close_signalement'], message: 'Veuillez préciser le motif de clôture.')]
     private ?MotifCloture $motifCloture = null;
 
-    #[ORM\Column(nullable: true, enumType: TravauxMiseEnConformite::class)]
+    #[ORM\Column(nullable: true, enumType: TravauxMiseEnConformite::class, length: 50)]
     private ?TravauxMiseEnConformite $travauxMiseEnConformite = null;
+
+    #[ORM\Column(nullable: true, enumType: TravauxMiseEnConformite::class, length: 50)]
+    private ?TravauxMiseEnConformite $travauxMiseEnConformiteUsager = null;
 
     #[ORM\Column(type: 'string', enumType: MotifClotureUsager::class, nullable: true, length: 50)]
     private ?MotifClotureUsager $motifClotureUsager = null;
@@ -2011,6 +2014,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setTravauxMiseEnConformite(?TravauxMiseEnConformite $travauxMiseEnConformite): static
     {
         $this->travauxMiseEnConformite = $travauxMiseEnConformite;
+
+        return $this;
+    }
+
+    public function getTravauxMiseEnConformiteUsager(): ?TravauxMiseEnConformite
+    {
+        return $this->travauxMiseEnConformiteUsager;
+    }
+
+    public function setTravauxMiseEnConformiteUsager(?TravauxMiseEnConformite $travauxMiseEnConformiteUsager): static
+    {
+        $this->travauxMiseEnConformiteUsager = $travauxMiseEnConformiteUsager;
 
         return $this;
     }

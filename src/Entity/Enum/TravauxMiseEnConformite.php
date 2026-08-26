@@ -21,4 +21,15 @@ enum TravauxMiseEnConformite: string
             self::EN_COURS->value => 'Ils sont en cours',
         ];
     }
+
+    public function labelForUsager(): string
+    {
+        $labels = [
+            self::OUI->value => 'Les travaux ont été faits',
+            self::NON->value => 'Il n\'y a pas eu de travaux',
+            self::EN_COURS->value => 'Les travaux sont en cours',
+        ];
+
+        return $labels[$this->name];
+    }
 }

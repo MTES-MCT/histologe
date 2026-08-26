@@ -15,6 +15,7 @@ use App\Entity\Enum\ProprioType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\TravauxMiseEnConformite;
 use App\Entity\Enum\UserStatus;
 use App\Entity\File;
 use App\Entity\Model\TypeCompositionLogement;
@@ -198,8 +199,11 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         if (SignalementStatus::CLOSED->value === $row['statut']) {
             $signalement
                 ->setMotifCloture(MotifCloture::tryFrom($row['motif_cloture']))
-                ->setClosedAt(new \DateTimeImmutable())
+                ->setClosedAt(isset($row['closed_at']) ? new \DateTimeImmutable($row['closed_at']) : new \DateTimeImmutable())
                 ->setClosedBy($this->userRepository->findOneBy(['statut' => UserStatus::ACTIVE]));
+            if (in_array($signalement->getMotifCloture(), MotifCloture::getListNeedTravauxPrecisions())) {
+                $signalement->setTravauxMiseEnConformite(TravauxMiseEnConformite::from($row['travaux_mise_en_conformite']));
+            }
         }
 
         if (SignalementStatus::REFUSED->value === $row['statut']) {
