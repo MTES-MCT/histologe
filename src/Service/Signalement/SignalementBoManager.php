@@ -61,6 +61,22 @@ class SignalementBoManager
         }
         $typeCompositionLogement->setCompositionLogementNombreEnfants($form->get('nbEnfantsDansLogement')->getData());
         $typeCompositionLogement->setCompositionLogementEnfants($form->get('enfantsDansLogementMoinsSixAns')->getData());
+
+        if ('appartement' === $signalement->getNatureLogement()) {
+            /** @var EtageType|null $appartementEtage */
+            $appartementEtage = $form->get('etageOccupant')->getData();
+            if (null !== $appartementEtage) {
+                $typeCompositionLogement->setTypeLogementAppartementEtage($appartementEtage->value);
+                $typeCompositionLogement->setTypeLogementRdc(EtageType::RDC === $appartementEtage ? 'oui' : 'non');
+                $typeCompositionLogement->setTypeLogementDernierEtage(EtageType::DERNIER_ETAGE === $appartementEtage ? 'oui' : 'non');
+                $signalement->setEtageOccupant(
+                    EtageType::AUTRE === $appartementEtage
+                        ? $form->get('etageOccupantPrecision')->getData()
+                        : $appartementEtage->label()
+                );
+            }
+        }
+
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
         $situationFoyer = $signalement->getSituationFoyer() ? clone $signalement->getSituationFoyer() : new SituationFoyer();
 
@@ -147,27 +163,16 @@ class SignalementBoManager
         $informationComplementaire = $signalement->getInformationComplementaire() ? clone $signalement->getInformationComplementaire() : new InformationComplementaire();
 
         if ('appartement' === $signalement->getNatureLogement()) {
-            /** @var EtageType $appartementEtage */
-            $appartementEtage = $form->get('appartementEtage')->getData();
-            if (!empty($appartementEtage)) {
-                $typeCompositionLogement->setTypeLogementAppartementEtage($appartementEtage->value);
-                if (EtageType::RDC === $form->get('appartementEtage')->getData()) {
-                    $typeCompositionLogement->setTypeLogementRdc('oui');
-                } else {
-                    $typeCompositionLogement->setTypeLogementRdc('non');
-                }
-            }
+            // L'étage lui-même (typeLogementAppartementEtage/Rdc/DernierEtage) est déjà déterminé
+            // à l'étape précédente (onglet Adresse) via SignalementBoManager::formAddressManager().
+            $appartementEtage = EtageType::tryFrom($typeCompositionLogement->getTypeLogementAppartementEtage() ?? '');
 
             $typeCompositionLogement->setTypeLogementAppartementAvecFenetres($form->get('appartementAvecFenetres')->getData());
 
             if (EtageType::DERNIER_ETAGE === $appartementEtage) {
-                $typeCompositionLogement->setTypeLogementDernierEtage('oui');
-                if ('non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()) {
-                    $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('oui');
-                }
-            } elseif (!empty($appartementEtage)) {
-                $typeCompositionLogement->setTypeLogementDernierEtage('non');
-                $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('non');
+                $typeCompositionLogement->setTypeLogementSousCombleSansFenetre(
+                    'non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres() ? 'oui' : 'non'
+                );
             }
 
             if (EtageType::SOUSSOL === $appartementEtage

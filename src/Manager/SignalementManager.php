@@ -766,6 +766,10 @@ class SignalementManager
             $typeCompositionLogement->setTypeLogementNatureAutrePrecision(null);
         }
 
+        if ('AUTRE' === $compositionLogementRequest->getEtage()) {
+            $signalement->setEtageOccupant($compositionLogementRequest->getEtagePrecision());
+        }
+
         $typeCompositionLogement
             ->setTypeLogementNature($compositionLogementRequest->getType())
             ->setCompositionLogementPieceUnique($compositionLogementRequest->getTypeCompositionLogement())

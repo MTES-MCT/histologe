@@ -3,7 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Enum\ChauffageType;
-use App\Entity\Enum\EtageType;
 use App\Entity\Signalement;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -28,21 +27,9 @@ class SignalementDraftLogementType extends AbstractType
         /** @var Signalement $signalement */
         $signalement = $builder->getData();
 
-        $appartementEtage = null;
         $appartementAvecFenetres = '';
         if ('appartement' === $signalement->getNatureLogement()) {
             if ($signalement->getTypeCompositionLogement()) {
-                if (!empty($signalement->getTypeCompositionLogement()->getTypeLogementAppartementEtage())) {
-                    $appartementEtage = EtageType::tryFrom($signalement->getTypeCompositionLogement()->getTypeLogementAppartementEtage());
-                // Not used at the moment, for future purpose
-                } elseif ('oui' == $signalement->getTypeCompositionLogement()->getTypeLogementRdc()) {
-                    $appartementEtage = EtageType::RDC;
-                } elseif ('oui' == $signalement->getTypeCompositionLogement()->getTypeLogementDernierEtage()) {
-                    $appartementEtage = EtageType::DERNIER_ETAGE;
-                } elseif ('oui' == $signalement->getTypeCompositionLogement()->getTypeLogementSousSolSansFenetre()) {
-                    $appartementEtage = EtageType::SOUSSOL;
-                }
-
                 if (!empty($signalement->getTypeCompositionLogement()->getTypeLogementAppartementAvecFenetres())) {
                     $appartementAvecFenetres = $signalement->getTypeCompositionLogement()->getTypeLogementAppartementAvecFenetres();
                 // Not used at the moment, for future purpose
@@ -80,19 +67,6 @@ class SignalementDraftLogementType extends AbstractType
         $typeChauffage = ChauffageType::tryFrom($typeChauffageLabel);
 
         $builder
-            ->add('appartementEtage', EnumType::class, [
-                'label' => 'Localisation de l\'appartement',
-                'class' => EtageType::class,
-                'choice_label' => static function ($choice) {
-                    return $choice->label();
-                },
-                'expanded' => true,
-                'multiple' => false,
-                'required' => false,
-                'placeholder' => false,
-                'mapped' => false,
-                'data' => $appartementEtage,
-            ])
             ->add('appartementAvecFenetres', ChoiceType::class, [
                 'label' => 'L\'appartement a-t-il des fenêtres ?',
                 'choices' => [

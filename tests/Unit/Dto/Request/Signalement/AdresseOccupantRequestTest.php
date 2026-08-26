@@ -52,7 +52,7 @@ class AdresseOccupantRequestTest extends KernelTestCase
             adresse: '',
             codePostal: '123',
             ville: '',
-            etage: 'EtageInvalide',
+            etage: str_repeat('E', 21),
             escalier: 'EscalierInvalide',
             numAppart: 'NumAppInvalide',
             autre: str_repeat('x', 256),

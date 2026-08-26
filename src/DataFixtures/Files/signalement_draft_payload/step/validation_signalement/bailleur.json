@@ -33,7 +33,7 @@
   "composition_logement_nb_pieces": "3",
   "logement_social_date_naissance": "1985-10-10",
   "composition_logement_superficie": "89",
-  "info_procedure_reponse_assurance": "En attente de réponse",
+  "info_procedure_reponse_assurance": "En attente de r\u00e9ponse",
   "type_logement_commodites_cuisine": "oui",
   "type_logement_commodites_piece_a_vivre_9m": "oui",
   "composition_logement_piece_unique": "plusieurs_pieces",
@@ -44,7 +44,7 @@
   "logement_social_montant_allocation": "200",
   "logement_social_numero_allocataire": "1234567",
   "travailleur_social_quitte_logement": "non",
-  "adresse_logement_adresse_suggestion": "78 rue de la république Marseille",
+  "adresse_logement_adresse_suggestion": "78 rue de la r\u00e9publique Marseille",
   "type_logement_commodites_wc_cuisine": "non",
   "type_logement_sous_sol_sans_fenetre": "non",
   "coordonnees_occupant_tel_countrycode": "FR:33",
@@ -58,8 +58,8 @@
   "signalement_concerne_profil_detail_tiers": "bailleur",
   "utilisation_service_ok_signalement_tiers": 1,
   "utilisation_service_ok_cgu": 1,
-  "adresse_logement_complement_adresse_autre": "Euroméditerranée",
-  "adresse_logement_complement_adresse_etage": "2",
+  "adresse_logement_complement_adresse_autre": "Eurom\u00e9diterran\u00e9e",
+  "adresse_logement_complement_adresse_etage": "AUTRE",
   "adresse_logement_adresse_detail_geoloc_lat": 43.301929,
   "adresse_logement_adresse_detail_geoloc_lng": 5.369711,
   "adresse_logement_adresse_detail_code_postal": "13002",
@@ -78,5 +78,6 @@
   "informations_complementaires_situation_bailleur_date_naissance": "1979-10-10",
   "informations_complementaires_situation_bailleur_beneficiaire_fsl": "non",
   "informations_complementaires_situation_bailleur_beneficiaire_rsa": "non",
-  "informations_complementaires_situation_bailleur_date_effet_bail": "1998-10-10"
+  "informations_complementaires_situation_bailleur_date_effet_bail": "1998-10-10",
+  "adresse_logement_complement_adresse_etage_precision": "2"
 }

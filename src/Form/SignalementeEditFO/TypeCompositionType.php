@@ -92,6 +92,34 @@ class TypeCompositionType extends AbstractType
                 'mapped' => false,
                 'data' => $appartementEtage,
             ])
+            ->add('appartementEtagePrecision', TextType::class, [
+                'label' => 'Précision sur l\'étage (si "Autre étage")',
+                'help' => 'Format attendu : texte (20 caractères maximum)',
+                'required' => false,
+                'mapped' => false,
+                'data' => EtageType::AUTRE === $appartementEtage ? $signalement->getEtageOccupant() : null,
+                'attr' => [
+                    'maxlength' => 20,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 20,
+                        maxMessage: 'La précision sur l\'étage doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $appartementEtage = $form->get('appartementEtage')->getData();
+
+                            if (EtageType::AUTRE === $appartementEtage && (null === $value || '' === $value)) {
+                                $context
+                                    ->buildViolation('Veuillez préciser l\'étage.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
+                ],
+            ])
             ->add('appartementAvecFenetres', ChoiceType::class, [
                 'label' => 'Avec fenêtres <span class="text-required">*</span>',
                 'label_html' => true,
