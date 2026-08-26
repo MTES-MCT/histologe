@@ -14,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 #[AsCommand(
-    name: 'app:ask-travaux-mise-en-conformite',
+    name: 'app:send-ask-travaux-mise-en-conformite',
     description: 'Sends ask travaux mise en conformité emails to users.',
 )]
 class SendAskTravauxMiseEnConformiteCommand extends AbstractCronCommand

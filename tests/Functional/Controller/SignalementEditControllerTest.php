@@ -6,14 +6,18 @@ use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\SuiviDelayedType;
+use App\Entity\Enum\TravauxMiseEnConformite;
 use App\Entity\Signalement;
+use App\Entity\Suivi;
 use App\Entity\SuiviDelayed;
 use App\Manager\UserManager;
 use App\Tests\SessionHelper;
 use App\Tests\UserHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Psr\Clock\ClockInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Clock\MockClock;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -527,5 +531,114 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertEquals(SuiviDelayedType::FO_EDIT_TYPE_COMPOSITION, $suiviDelayed->getSuiviDelayedType());
         $changes = $suiviDelayed->getChanges();
         $this->assertEquals(2, count($changes));
+    }
+
+    public function testCompleteTravauxMiseEnConformiteAccess(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        // Le kernel est rebooté entre chaque requête par défaut : sans désactiver
+        // ce comportement, le MockClock injecté serait perdu à la seconde requête.
+        $client->disableReboot();
+
+        $container = static::getContainer();
+        $mockClock = new MockClock();
+        $container->set(ClockInterface::class, $mockClock);
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-1']);
+        $signalementUser = $this->getSignalementUser($signalement, UserManager::DECLARANT);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_travaux_mise_en_conformite', ['code' => $signalement->getCodeSuivi()]);
+
+        $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        $mockClock->modify('-1 day');
+
+        $client->request('GET', $url);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testSubmitCompleteTravauxMiseEnConformiteOui(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-1']);
+        $signalementUser = $this->getSignalementUser($signalement, UserManager::DECLARANT);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_travaux_mise_en_conformite', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('Valider ma réponse')->form([
+            'travaux_mise_en_conformite[travauxMiseEnConformiteUsager]' => 'OUI',
+        ]);
+
+        $client->submit($form);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+        $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
+        $this->assertEquals(TravauxMiseEnConformite::OUI, $signalement->getTravauxMiseEnConformiteUsager());
+
+        $lastSuivi = $entityManager->getRepository(Suivi::class)->findOneBy(['signalement' => $signalement], ['createdAt' => 'DESC']);
+        $this->assertNotNull($lastSuivi);
+        $this->assertEquals(SuiviCategory::MESSAGE_USAGER, $lastSuivi->getCategory());
+        $this->assertEquals('L&#039;usager a indiqué que les travaux ont bien été faits.', $lastSuivi->getDescription());
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+    }
+
+    public function testSubmitCompleteTravauxMiseEnConformiteNon(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        /** @var Signalement $signalement */
+        $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-1']);
+        $signalementUser = $this->getSignalementUser($signalement, UserManager::DECLARANT);
+        $client->loginUser($signalementUser, 'code_suivi');
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $url = $router->generate('front_suivi_signalement_complete_travaux_mise_en_conformite', ['code' => $signalement->getCodeSuivi()]);
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseIsSuccessful();
+
+        $form = $crawler->selectButton('Valider ma réponse')->form([
+            'travaux_mise_en_conformite[travauxMiseEnConformiteUsager]' => 'NON',
+            'travaux_mise_en_conformite[travauxMiseEnConformiteUsagerCommentaire]' => 'Marre marre marre.',
+        ]);
+
+        $client->submit($form);
+
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
+        $signalement = $entityManager->getRepository(Signalement::class)->find($signalement->getId());
+        $this->assertEquals(TravauxMiseEnConformite::NON, $signalement->getTravauxMiseEnConformiteUsager());
+
+        $lastSuivi = $entityManager->getRepository(Suivi::class)->findOneBy(['signalement' => $signalement], ['createdAt' => 'DESC']);
+        $this->assertNotNull($lastSuivi);
+        $this->assertEquals(SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, $lastSuivi->getCategory());
+        $this->assertEquals('L&#039;usager a indiqué que les travaux n&#039;ont pas été faits : Marre marre marre.', $lastSuivi->getDescription());
+
+        $crawler = $client->request('GET', $url);
+        $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');
     }
 }
