@@ -2,7 +2,9 @@
 
 namespace App\Dto\Request\Signalement;
 
+use App\Entity\Enum\EtageType;
 use App\Validator as AppAssert;
+use App\Validator\Behaviour\EtageValidatorTrait;
 use App\Validator\Behaviour\MonthYearValidatorTrait;
 use App\Validator\DateNaissanceValidatorTrait;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -19,6 +21,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class SignalementDraftRequest
 {
     use DateNaissanceValidatorTrait;
+    use EtageValidatorTrait;
     use MonthYearValidatorTrait;
 
     /** @var string[] */
@@ -74,9 +77,11 @@ class SignalementDraftRequest
     private ?bool $adresseLogementAdresseDetailManual = null;
     #[Assert\Length(max: 3, maxMessage: 'L\'escalier ne doit pas dépasser {{ limit }} caractères')]
     private ?string $adresseLogementComplementAdresseEscalier = null;
-    // TODO mettre la précision de l'étage obligatoire si le logement est un appartement et mettre les différentes options possible
-    #[Assert\Length(max: 15, maxMessage: 'L\'étage ne doit pas dépasser {{ limit }} caractères')]
+    #[Assert\Choice(callback: [EtageType::class, 'values'])]
     private ?string $adresseLogementComplementAdresseEtage = null;
+    #[Assert\Length(max: 2, maxMessage: 'La précision de l\'étage ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Regex(pattern: '/^[0-9]{1,2}$/', message: 'La précision de l\'étage doit être composée de 1 ou 2 chiffres.')]
+    private ?string $adresseLogementComplementAdresseEtagePrecision = null;
     #[Assert\Length(max: 5, maxMessage: 'Le numéro d\'appartement ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $adresseLogementComplementAdresseNumeroAppartement = null;
     #[Assert\Length(max: 255)]
@@ -556,6 +561,8 @@ class SignalementDraftRequest
         $this->validateDateNaissance($this->informationsComplementairesSituationOccupantsDateNaissance, 'informationsComplementairesSituationOccupantsDateNaissance', $context);
         $this->validateDateNaissance($this->informationsComplementairesSituationBailleurDateNaissance, 'informationsComplementairesSituationBailleurDateNaissance', $context);
         $this->validateMonthYear($this->infoProcedureBailDate, 'infoProcedureBailDate', $context);
+
+        $this->validateEtage($this->typeLogementNature, $this->adresseLogementComplementAdresseEtage, 'adresseLogementComplementAdresseEtage', $this->adresseLogementComplementAdresseEtagePrecision, 'adresseLogementComplementAdresseEtagePrecision', $context);
     }
 
     public function getProfil(): ?string
@@ -686,6 +693,18 @@ class SignalementDraftRequest
     public function setAdresseLogementComplementAdresseEtage(?string $adresseLogementComplementAdresseEtage): self
     {
         $this->adresseLogementComplementAdresseEtage = $adresseLogementComplementAdresseEtage;
+
+        return $this;
+    }
+
+    public function getAdresseLogementComplementAdresseEtagePrecision(): ?string
+    {
+        return $this->adresseLogementComplementAdresseEtagePrecision;
+    }
+
+    public function setAdresseLogementComplementAdresseEtagePrecision(?string $adresseLogementComplementAdresseEtagePrecision): self
+    {
+        $this->adresseLogementComplementAdresseEtagePrecision = $adresseLogementComplementAdresseEtagePrecision;
 
         return $this;
     }

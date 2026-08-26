@@ -32,9 +32,8 @@ class DesordreBatimentIsolationInfiltrationEau implements DesordreTraitementInte
             $precision = $this->desordrePrecisionRepository->findOneBy(
                 ['desordrePrecisionSlug' => 'desordres_batiment_isolation_infiltration_eau_sous_sol']
             );
-        } elseif (
-            \array_key_exists('type_logement_rdc', $payload)
-            && 'oui' === $payload['type_logement_rdc']) {
+        } elseif (\array_key_exists('adresse_logement_complement_adresse_etage', $payload)
+            && 'RDC' === $payload['adresse_logement_complement_adresse_etage']) {
             $precision = $this->desordrePrecisionRepository->findOneBy(
                 ['desordrePrecisionSlug' => 'desordres_batiment_isolation_infiltration_eau_rdc']
             );
