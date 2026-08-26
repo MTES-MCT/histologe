@@ -84,8 +84,14 @@ document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
 
 openPhotoAlbumAddEventListeners();
 
+// Les boutons .open-photo-album sont recréés lors du rechargement AJAX des vignettes,
+// cette fonction doit donc être rappelée après chaque rechargement.
 export function openPhotoAlbumAddEventListeners() {
   document?.querySelectorAll('.open-photo-album')?.forEach((btn) => {
+    if (btn.dataset.albumBound) {
+      return;
+    }
+    btn.dataset.albumBound = '1';
     const swipeId = btn.getAttribute('data-id');
     btn.addEventListeners('click touchdown', () => {
       document?.querySelectorAll('.photos-album')?.forEach((element) => {
@@ -94,7 +100,13 @@ export function openPhotoAlbumAddEventListeners() {
       });
     });
   });
+}
 
+// L'album photo est généré une seule fois avec toutes les photos (allPhotosOrdered),
+// ses boutons internes ne sont jamais recréés : initialisation unique.
+initPhotoAlbumListeners();
+
+function initPhotoAlbumListeners() {
   /* global histoPhotoIds */
   document?.querySelectorAll('.photos-album-btn-close')?.forEach((btn) => {
     btn.addEventListeners('click touchdown', () => {
