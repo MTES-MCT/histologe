@@ -8,6 +8,7 @@ use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\History\HistoryEntryBuffer;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class HistoryEntryBufferTest extends KernelTestCase
@@ -21,9 +22,10 @@ class HistoryEntryBufferTest extends KernelTestCase
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $signalementRepository = $this->createMock(SignalementRepository::class);
         $userRepository = $this->createMock(UserRepository::class);
+        $logger = $this->createMock(LoggerInterface::class);
 
         $entityManager->expects($this->never())->method('clear');
-        $historyEntryBuffer = new HistoryEntryBuffer($entityManager, $signalementRepository, $userRepository);
+        $historyEntryBuffer = new HistoryEntryBuffer($entityManager, $signalementRepository, $userRepository, $logger);
 
         $historyEntryBuffer->flushPendingHistoryEntries();
     }
@@ -33,12 +35,14 @@ class HistoryEntryBufferTest extends KernelTestCase
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $signalementRepository = $this->createMock(SignalementRepository::class);
         $userRepository = $this->createMock(UserRepository::class);
+        $logger = $this->createMock(LoggerInterface::class);
 
+        $entityManager->method('isOpen')->willReturn(true);
         $entityManager->expects($this->once())->method('clear');
         $entityManager->expects($this->exactly(2))->method('persist');
         $entityManager->expects($this->once())->method('flush');
 
-        $historyEntryBuffer = new HistoryEntryBuffer($entityManager, $signalementRepository, $userRepository);
+        $historyEntryBuffer = new HistoryEntryBuffer($entityManager, $signalementRepository, $userRepository, $logger);
         $historyEntry1 = new HistoryEntry();
         $historyEntry1->setEntity(new User());
         $historyEntry2 = new HistoryEntry();
@@ -55,12 +59,14 @@ class HistoryEntryBufferTest extends KernelTestCase
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $signalementRepository = $this->createMock(SignalementRepository::class);
         $userRepository = $this->createMock(UserRepository::class);
+        $logger = $this->createMock(LoggerInterface::class);
 
+        $entityManager->method('isOpen')->willReturn(true);
         $entityManager->expects($this->once())->method('clear');
         $entityManager->expects($this->exactly(1))->method('persist');
         $entityManager->expects($this->once())->method('flush');
 
-        $historyEntryBuffer = new HistoryEntryBuffer($entityManager, $signalementRepository, $userRepository);
+        $historyEntryBuffer = new HistoryEntryBuffer($entityManager, $signalementRepository, $userRepository, $logger);
         $historyEntry1 = new HistoryEntry();
         $historyEntry1->setChanges(['key1' => 'value1']);
         $historyEntry1->setEntity(new User());

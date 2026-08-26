@@ -6,6 +6,7 @@ use App\Entity\HistoryEntry;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 class HistoryEntryBuffer
 {
@@ -18,6 +19,7 @@ class HistoryEntryBuffer
         private readonly EntityManagerInterface $entityManager,
         private readonly SignalementRepository $signalementRepository,
         private readonly UserRepository $userRepository,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -42,9 +44,26 @@ class HistoryEntryBuffer
 
     public function flushPendingHistoryEntries(): void
     {
-        if (empty($this->pendingHistoryEntries)/* || !$this->entityManager->isOpen() */) {
+        if (empty($this->pendingHistoryEntries)) {
             return;
         }
+        if (!$this->entityManager->isOpen()) {
+            $details = [];
+            foreach ($this->pendingHistoryEntries as $key => $entry) {
+                $details[] = [
+                    'key' => $key,
+                    'source' => $entry->getSource(),
+                    'changes' => $entry->getChanges(),
+                    'user_id' => $entry->getUser()?->getId(),
+                ];
+            }
+            $this->logger->error('HistoryEntryBuffer : EntityManager fermé, les entrées d\'historique en attente seront perdues.', [
+                'pendingHistoryEntries' => $details,
+            ]);
+
+            return;
+        }
+
         // for prevent flushing invalid entities
         $this->entityManager->clear();
         foreach ($this->pendingHistoryEntries as $entry) {
