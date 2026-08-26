@@ -74,7 +74,8 @@ class SignalementDraftRequest
     private ?bool $adresseLogementAdresseDetailManual = null;
     #[Assert\Length(max: 3, maxMessage: 'L\'escalier ne doit pas dépasser {{ limit }} caractères')]
     private ?string $adresseLogementComplementAdresseEscalier = null;
-    #[Assert\Length(max: 5, maxMessage: 'L\'étage ne doit pas dépasser {{ limit }} caractères')]
+    // TODO mettre la précision de l'étage obligatoire si le logement est un appartement et mettre les différentes options possible
+    #[Assert\Length(max: 15, maxMessage: 'L\'étage ne doit pas dépasser {{ limit }} caractères')]
     private ?string $adresseLogementComplementAdresseEtage = null;
     #[Assert\Length(max: 5, maxMessage: 'Le numéro d\'appartement ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $adresseLogementComplementAdresseNumeroAppartement = null;
