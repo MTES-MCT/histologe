@@ -148,6 +148,19 @@ if (natureLogementSelect) {
   refreshNatureAutrePrecision();
 }
 
+const fieldsetAppartementEtage = document?.querySelector('#type_composition_appartementEtage');
+if (fieldsetAppartementEtage) {
+  document
+    .querySelectorAll('#type_composition_appartementEtage input[type="radio"]')
+    .forEach((element) => {
+      element.addEventListener('change', () => {
+        refreshAppartementEtagePrecision();
+      });
+    });
+
+  refreshAppartementEtagePrecision();
+}
+
 const fieldsetPieceUnique = document?.querySelector('#type_composition_pieceUnique');
 if (fieldsetPieceUnique) {
   document
@@ -320,4 +333,20 @@ if (fieldsetTravauxMiseEnConformiteUsager) {
     }
   }
   refreshTravauxMiseEnConformiteUsagerCommentaire();
+}
+function refreshAppartementEtagePrecision() {
+  const containerAppartementEtagePrecision = document
+    .querySelector('#type_composition_appartementEtagePrecision')
+    ?.closest('.fr-fieldset__element');
+  if (containerAppartementEtagePrecision) {
+    const autreChecked = document.querySelector(
+      '#type_composition_appartementEtage input[value="AUTRE"]:checked'
+    );
+    if (autreChecked) {
+      containerAppartementEtagePrecision.classList.remove('fr-hidden');
+    } else {
+      containerAppartementEtagePrecision.querySelector('input').value = '';
+      containerAppartementEtagePrecision.classList.add('fr-hidden');
+    }
+  }
 }

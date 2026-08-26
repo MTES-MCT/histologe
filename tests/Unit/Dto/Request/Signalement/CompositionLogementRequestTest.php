@@ -19,6 +19,7 @@ class CompositionLogementRequestTest extends KernelTestCase
             compositionLogementNbPieces: '3',
             nombreEtages: '2',
             etage: EtageType::AUTRE->value,
+            etagePrecision: '3',
             avecFenetres: 'non',
             typeLogementCommoditesPieceAVivre9m: 'oui',
             typeLogementCommoditesCuisine: 'oui',
@@ -37,6 +38,7 @@ class CompositionLogementRequestTest extends KernelTestCase
         $this->assertSame('3', $compositionLogementRequest->getCompositionLogementNbPieces());
         $this->assertSame('2', $compositionLogementRequest->getNombreEtages());
         $this->assertSame(EtageType::AUTRE->value, $compositionLogementRequest->getEtage());
+        $this->assertSame('3', $compositionLogementRequest->getEtagePrecision());
         $this->assertSame('non', $compositionLogementRequest->getAvecFenetres());
         $this->assertSame('oui', $compositionLogementRequest->getTypeLogementCommoditesPieceAVivre9m());
         $this->assertSame('oui', $compositionLogementRequest->getTypeLogementCommoditesCuisine());

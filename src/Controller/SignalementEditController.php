@@ -479,6 +479,9 @@ class SignalementEditController extends AbstractController
                 /** @var EtageType $appartementEtage */
                 $appartementEtage = $form->get('appartementEtage')->getData();
                 $typeCompositionLogement->setTypeLogementAppartementEtage($appartementEtage->value);
+                if (EtageType::AUTRE === $appartementEtage) {
+                    $signalement->setEtageOccupant($form->get('appartementEtagePrecision')->getData());
+                }
                 if (EtageType::RDC === $appartementEtage) {
                     $typeCompositionLogement->setTypeLogementRdc('oui');
                 } else {
