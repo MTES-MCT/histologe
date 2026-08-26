@@ -288,12 +288,12 @@ class SignalementCreateController extends AbstractController
                 $url = '';
             }
 
-            $tabContent = $this->renderView('back/signalement_create/tabs/tab-logement.html.twig', ['formLogement' => $form]);
+            $tabContent = $this->renderView('back/signalement_create/tabs/tab-logement.html.twig', ['formLogement' => $form, 'signalement' => $signalement]);
 
             return $this->json(['redirect' => true, 'tabContent' => $tabContent, 'url' => $url]);
         }
 
-        $tabContent = $this->renderView('back/signalement_create/tabs/tab-logement.html.twig', ['formLogement' => $form]);
+        $tabContent = $this->renderView('back/signalement_create/tabs/tab-logement.html.twig', ['formLogement' => $form, 'signalement' => $signalement]);
 
         return $this->json(['tabContent' => $tabContent]);
     }

@@ -23,10 +23,10 @@ class AdresseLogementType extends AbstractType
         $builder
             ->add('etageOccupant', TextType::class, [
                 'label' => 'Étage',
-                'help' => 'Format attendu : 5 caractères maximum',
+                'help' => 'Format attendu : 20 caractères maximum',
                 'constraints' => [
                     new Assert\Length(
-                        max: 5,
+                        max: 20,
                         maxMessage: 'L\'étage doit contenir au maximum {{ limit }} caractères.',
                     ),
                 ],

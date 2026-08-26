@@ -10,9 +10,37 @@
             <legend>
                 <h3 class="fr-h5">Type de logement</h3>
             </legend>
-            <div class="fr-fieldset__element">
-                {{ form_row(formLogement.appartementEtage) }}
-            </div>
+            {% if signalement.natureLogement == 'appartement' %}
+                {% set typeLogementAppartementEtage = '' %}
+                {% if signalement.typeCompositionLogement %}
+                    {% if signalement.typeCompositionLogement.typeLogementAppartementEtage %}
+                        {% set typeLogementAppartementEtage = signalement.typeCompositionLogement.typeLogementAppartementEtage %}
+                    {% elseif signalement.typeCompositionLogement.typeLogementRdc is same as 'oui' %}
+                        {% set typeLogementAppartementEtage = enum('App\\Entity\\Enum\\EtageType').RDC.value %}
+                    {% elseif signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'oui' %}
+                        {% set typeLogementAppartementEtage = enum('App\\Entity\\Enum\\EtageType').DERNIER_ETAGE.value %}
+                    {% elseif signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' %}
+                        {% set typeLogementAppartementEtage = enum('App\\Entity\\Enum\\EtageType').SOUSSOL.value %}
+                    {% endif %}
+                {% endif %}
+                {% if typeLogementAppartementEtage %}
+                    <div class="fr-fieldset__element">
+                        <p class="fr-mb-0">
+                            Le logement est un appartement situé
+                            {% if typeLogementAppartementEtage == enum('App\\Entity\\Enum\\EtageType').RDC.value %}
+                                au rez-de-chaussée.
+                            {% elseif typeLogementAppartementEtage == enum('App\\Entity\\Enum\\EtageType').DERNIER_ETAGE.value %}
+                                au dernier étage.
+                            {% elseif typeLogementAppartementEtage == enum('App\\Entity\\Enum\\EtageType').SOUSSOL.value %}
+                                au sous-sol.
+                            {% else %}
+                                à un autre étage{% if signalement.etageOccupant %} ({{ signalement.etageOccupant }}){% endif %}.
+                            {% endif %}
+                            <span class="fr-hint-text">Modifiable sur l'onglet Adresse.</span>
+                        </p>
+                    </div>
+                {% endif %}
+            {% endif %}
             <div class="fr-fieldset__element">
                 {{ form_row(formLogement.appartementAvecFenetres) }}
             </div>

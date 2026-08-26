@@ -17,7 +17,7 @@ class AdresseOccupantRequest implements RequestInterface
         #[Assert\NotBlank(message: 'Merci de saisir une ville.')]
         #[Assert\Length(max: 100, maxMessage: 'La ville ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $ville = null,
-        #[Assert\Length(max: 5, maxMessage: 'L\'étage ne peut pas dépasser {{ limit }} caractères.')]
+        #[Assert\Length(max: 20, maxMessage: 'L\'étage ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $etage = null,
         #[Assert\Length(max: 3, maxMessage: 'L\'escalier ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $escalier = null,

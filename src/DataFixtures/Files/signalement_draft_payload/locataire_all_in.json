@@ -33,7 +33,7 @@
     "signalementReference": "",
     "type_logement_nature": "appartement",
     "uuidSignalementDraft": "83c27d4d-1d35-4a52-bacd-66fa855a1a50",
-    "message_administration": "Oui c'est vraiment tout pourri ce logement, mais ça permet de faire des tests",
+    "message_administration": "Oui c'est vraiment tout pourri ce logement, mais \u00e7a permet de faire des tests",
     "bail_dpe_etat_des_lieux": "non",
     "adresse_logement_adresse": "4 Rue du Mas Saint Joseph 13104 Arles",
     "coordonnees_bailleur_nom": "13 Habitarles",
@@ -108,7 +108,7 @@
     "utilisation_service_ok_cgu": 1,
     "vos_coordonnees_occupant_tel_countrycode": "FR:33",
     "adresse_logement_complement_adresse_autre": "La porte rouge",
-    "adresse_logement_complement_adresse_etage": "4",
+    "adresse_logement_complement_adresse_etage": "DERNIER_ETAGE",
     "desordres_batiment_proprete_photos_upload": [
         {
             "key": "documents",

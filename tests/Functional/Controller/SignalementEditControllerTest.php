@@ -153,14 +153,14 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('Enregistrer')->form([
-            'adresse_logement[etageOccupant]' => 'AAAAAA',
+            'adresse_logement[etageOccupant]' => 'AAAAAAAAAAAAAAAAAAAAA',
         ]);
 
         $client->submit($form);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertSelectorExists('.fr-error-text');
-        $this->assertSelectorTextContains('.fr-error-text', 'L\'étage doit contenir au maximum 5 caractères.');
+        $this->assertSelectorTextContains('.fr-error-text', 'L\'étage doit contenir au maximum 20 caractères.');
 
         $form = $crawler->selectButton('Enregistrer')->form([
             'adresse_logement[etageOccupant]' => '1',

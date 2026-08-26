@@ -92,6 +92,11 @@
                         <option value="{{ enum('App\\Entity\\Enum\\EtageType').AUTRE.value }}" {{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').AUTRE.value ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\EtageType').AUTRE.label }}</option>
                     </select>
                 </div>
+                
+                <div class="fr-input-group">
+                    <label class="fr-label" for="compositionLogementEtagePrecision">Précision (si étage "Autre")</label>
+                    <input class="fr-input" type="text" id="compositionLogementEtagePrecision" name="etagePrecision" value="{{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').AUTRE.value ? signalement.etageOccupant : '' }}" maxlength="20">
+                </div>
 
                 <div class="fr-select-group">
                     {% set typeLogementAppartementAvecFenetres = '' %}

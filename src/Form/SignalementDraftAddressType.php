@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\EtageType;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
@@ -12,6 +13,7 @@ use App\Form\Type\TerritoryChoiceType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -55,6 +57,19 @@ class SignalementDraftAddressType extends AbstractType
         }
         $nbEnfantsDansLogement = $signalement->getTypeCompositionLogement()?->getCompositionLogementNombreEnfants();
         $enfantsDansLogementMoinsSixAns = $signalement->getTypeCompositionLogement()?->getCompositionLogementEnfants();
+
+        $appartementEtage = null;
+        if ('appartement' === $signalement->getNatureLogement() && $signalement->getTypeCompositionLogement()) {
+            if (!empty($signalement->getTypeCompositionLogement()->getTypeLogementAppartementEtage())) {
+                $appartementEtage = EtageType::tryFrom($signalement->getTypeCompositionLogement()->getTypeLogementAppartementEtage());
+            } elseif ('oui' == $signalement->getTypeCompositionLogement()->getTypeLogementRdc()) {
+                $appartementEtage = EtageType::RDC;
+            } elseif ('oui' == $signalement->getTypeCompositionLogement()->getTypeLogementDernierEtage()) {
+                $appartementEtage = EtageType::DERNIER_ETAGE;
+            } elseif ('oui' == $signalement->getTypeCompositionLogement()->getTypeLogementSousSolSansFenetre()) {
+                $appartementEtage = EtageType::SOUSSOL;
+            }
+        }
 
         /** @var User $user */
         $user = $this->security->getUser();
@@ -150,16 +165,46 @@ class SignalementDraftAddressType extends AbstractType
                     ),
                 ],
             ])
-            ->add('etageOccupant', null, [
+            ->add('etageOccupant', EnumType::class, [
                 'label' => 'Étage',
-                'help' => 'Format attendu : 5 caractères maximum',
+                'class' => EtageType::class,
+                'choice_label' => static function ($choice) {
+                    return $choice->label();
+                },
+                'expanded' => true,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => false,
+                'mapped' => false,
+                'data' => $appartementEtage,
+            ])
+            ->add('etageOccupantPrecision', TextType::class, [
+                'label' => 'Précision sur l\'étage (si "Autre étage")',
+                'help' => 'Format attendu : 20 caractères maximum',
+                'required' => false,
+                'mapped' => false,
+                'data' => EtageType::AUTRE === $appartementEtage ? $signalement->getEtageOccupant() : null,
                 'attr' => [
-                    'maxlength' => 5,
+                    'maxlength' => 20,
                 ],
                 'constraints' => [
                     new Assert\Length(
-                        max: 5,
-                        maxMessage: 'L\'étage doit comporter au maximum {{ limit }} caractères.',
+                        max: 20,
+                        maxMessage: 'La précision sur l\'étage doit comporter au maximum {{ limit }} caractères.',
+                        groups: ['bo_step_address'],
+                    ),
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $etage = $form->get('etageOccupant')->getData();
+
+                            if (EtageType::AUTRE === $etage && (null === $value || '' === $value)) {
+                                $context
+                                    ->buildViolation('Veuillez préciser l\'étage.')
+                                    ->addViolation();
+                            }
+                        },
+                        groups: ['bo_step_address'],
                     ),
                 ],
             ])
