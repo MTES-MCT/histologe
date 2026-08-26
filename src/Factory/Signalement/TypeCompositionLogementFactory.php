@@ -3,6 +3,7 @@
 namespace App\Factory\Signalement;
 
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Entity\Enum\EtageType;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Serializer\SignalementDraftRequestSerializer;
 use App\Utils\DataPropertyArrayFilter;
@@ -23,7 +24,22 @@ readonly class TypeCompositionLogementFactory
             SignalementDraftRequest::PREFIX_PROPERTIES_TYPE_COMPOSITION
         );
 
-        return $this->serializer->deserialize(json_encode($data), TypeCompositionLogement::class, 'json');
+        /** @var TypeCompositionLogement $typeCompositionLogement */
+        $typeCompositionLogement = $this->serializer->deserialize(
+            json_encode($data),
+            TypeCompositionLogement::class,
+            'json'
+        );
+
+        $etage = EtageType::tryFrom((string) ($payload['adresse_logement_complement_adresse_etage'] ?? ''));
+        if (null !== $etage) {
+            $typeCompositionLogement
+                ->setTypeLogementAppartementEtage($etage->value)
+                ->setTypeLogementRdc(EtageType::RDC === $etage ? 'oui' : 'non')
+                ->setTypeLogementDernierEtage(EtageType::DERNIER_ETAGE === $etage ? 'oui' : 'non');
+        }
+
+        return $typeCompositionLogement;
     }
 
     /**
