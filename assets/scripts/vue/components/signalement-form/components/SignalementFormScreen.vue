@@ -7,7 +7,7 @@
       <img :src="icon.src" :alt="icon.alt">
     </div>
     <h1 v-if="formStore.currentScreen?.slug === 'introduction'" >{{ variablesReplacer.replace(label) }}</h1>
-    <h2 v-else-if="label !== ''">{{ label }}</h2>
+    <h2 v-else-if="label !== ''">{{ variablesReplacer.replace(label) }}</h2>
     <SignalementFormWarning
       v-if="formStore.data.errorMessage !== ''"
       id="form-screen-warning"

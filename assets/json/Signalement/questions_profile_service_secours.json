@@ -759,9 +759,22 @@
               {
                 "type": "SignalementFormButton",
                 "label": "C'est parti",
-                "slug": "ecran_intermediaire_type_composition_next",
+                "slug": "ecran_intermediaire_type_composition_next_type",
                 "action": "goto:type_logement",
-                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line"
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "conditional": {
+                  "show": "formStore.shouldDisplayTypeLogement()"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "C'est parti",
+                "slug": "ecran_intermediaire_type_composition_next_composition",
+                "action": "goto:composition_logement",
+                "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
+                "conditional": {
+                  "show": "!formStore.shouldDisplayTypeLogement()"
+                }
               },
               {
                 "type": "SignalementFormButton",
@@ -785,97 +798,23 @@
   },
   {
     "type": "SignalementFormScreen",
-    "label": "",
+    "label": "Précisions sur le logement",
     "slug": "type_logement",
     "screenCategory": "Type et composition",
     "components": {
       "body": [
         {
-          "type": "SignalementFormOnlyChoice",
-          "label": "Le logement est…",
-          "slug": "type_logement_nature",
-          "values": [
-            {
-              "label": "Un appartement",
-              "value": "appartement"
-            },
-            {
-              "label": "Une maison seule",
-              "value": "maison"
-            },
-            {
-              "label": "Autre",
-              "value": "autre"
-            }
-          ],
-          "validate": {
-            "message": "Veuillez sélectionner le type du logement."
-          },
-          "accessibility": {
-            "focus": true
-          }
-        },
-        {
-          "type": "SignalementFormTextfield",
-          "label": "Précisez le type :",
-          "slug": "type_logement_nature_autre_precision",
-          "conditional": {
-            "show": "formStore.data.type_logement_nature === 'autre'"
-          },
-          "description": "Format attendu : 15 caractères maximum",
-          "validate": {
-            "message": "Veuillez préciser le type de logement.",
-            "maxLength": 15
-          }
-        },
-        {
-          "type": "SignalementFormOnlyChoice",
-          "label": "Le logement est-il situé au RDC (rez-de-chaussée)",
-          "slug": "type_logement_rdc",
-          "conditional": {
-            "show": "formStore.data.type_logement_nature === 'appartement'"
-          },
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            }
-          ],
-          "validate": {
-            "message": "Veuillez indiquer si le logement se situe au RDC (rez-de-chaussée)."
-          }
-        },
-        {
-          "type": "SignalementFormOnlyChoice",
-          "label": "Le logement est-il situé au dernier étage",
-          "slug": "type_logement_dernier_etage",
-          "conditional": {
-            "show": "formStore.data.type_logement_nature === 'appartement' && formStore.data.type_logement_rdc === 'non'"
-          },
-          "values": [
-            {
-              "label": "Oui",
-              "value": "oui"
-            },
-            {
-              "label": "Non",
-              "value": "non"
-            }
-          ],
-          "validate": {
-            "message": "Veuillez indiquer si le logement est situé au dernier étage."
-          }
+          "type": "SignalementFormSubscreen",
+          "slug": "type_logement_description",
+          "customCss": "fr-mt-5v",
+          "description": "<p>Vous avez indiqué que le logement est un <strong>{{dictionaryStore:precisionTypeLogement::formStore.data.type_logement_nature}}</strong> et qu'il est situé <strong>{{dictionaryStore:precisionTypeLogement::formStore.data.adresse_logement_complement_adresse_etage}}</strong> .</p>"
         },
         {
           "type": "SignalementFormOnlyChoice",
           "label": "Le logement est-il sous les combles, sans fenêtre ?",
           "slug": "type_logement_sous_comble_sans_fenetre",
           "conditional": {
-            "show": "formStore.data.type_logement_nature === 'appartement' && formStore.data.type_logement_dernier_etage === 'oui'"
+            "show": "formStore.data.type_logement_nature === 'appartement' && formStore.data.adresse_logement_complement_adresse_etage === 'DERNIER_ETAGE'"
           },
           "values": [
             {
@@ -896,7 +835,7 @@
           "label": "Le logement est-il en sous-sol, sans fenêtre ?",
           "slug": "type_logement_sous_sol_sans_fenetre",
           "conditional": {
-            "show": "formStore.data.type_logement_nature === 'appartement' && formStore.data.type_logement_dernier_etage === 'non' && formStore.data.type_logement_rdc === 'non'"
+            "show": "formStore.data.type_logement_nature === 'appartement' && formStore.data.adresse_logement_complement_adresse_etage === 'SOUSSOL'"
           },
           "values": [
             {
@@ -1030,9 +969,22 @@
               {
                 "type": "SignalementFormButton",
                 "label": "Précédent",
-                "slug": "composition_logement_previous",
+                "slug": "composition_logement_previous_type",
                 "action": "goto:type_logement",
-                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
+                "conditional": {
+                  "show": "formStore.shouldDisplayTypeLogement()"
+                }
+              },
+              {
+                "type": "SignalementFormButton",
+                "label": "Précédent",
+                "slug": "composition_logement_previous_type",
+                "action": "goto:ecran_intermediaire_type_composition",
+                "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
+                "conditional": {
+                  "show": "!formStore.shouldDisplayTypeLogement()"
+                }
               }
             ]
           }

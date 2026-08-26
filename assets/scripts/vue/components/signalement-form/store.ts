@@ -269,6 +269,16 @@ const formStore: FormStore = reactive({
     }
     return true;
   },
+  shouldDisplayTypeLogement (): boolean {
+    console.log('shouldDisplayTypeLogement', formStore.data.type_logement_nature, formStore.data.adresse_logement_complement_adresse_etage)
+    if (formStore.data.type_logement_nature !== 'appartement') {
+      return false
+    }
+    if (formStore.data.adresse_logement_complement_adresse_etage === 'RDC' || formStore.data.adresse_logement_complement_adresse_etage === 'AUTRE') {
+      return false
+    }
+    return true;
+  },
   shouldInjonctionBailleurSuggested(): boolean {
       if (!this.props.injonctionBailleurDepts.includes(formStore.data.territoryCode)) {
         return false
