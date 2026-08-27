@@ -36,6 +36,7 @@ class SettingsFactory
             communes: $this->getCommunesAndZipCodes($filterOptionData, $territory),
             epcis: $filterOptionData['epcis'],
             tags: $filterOptionData['tags'],
+            personalTags: $user->getPersonalTags()->toArray(),
             zones: $filterOptionData['zones'],
             hasSignalementImported: $filterOptionData['hasSignalementsImported'] > 0,
             hasInjonction: $this->security->isGranted(InjonctionBailleurVoter::INJONCTION_BAILLEUR_SEE),

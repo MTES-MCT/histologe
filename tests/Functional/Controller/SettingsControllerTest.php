@@ -27,6 +27,11 @@ class SettingsControllerTest extends WebTestCase
         $this->assertArrayHasKey('lastname', $responseContent);
         $this->assertArrayHasKey('roleLabel', $responseContent);
         $this->assertArrayHasKey('territories', $responseContent);
+        $this->assertArrayHasKey('personalTags', $responseContent);
+        foreach ($responseContent['personalTags'] as $personalTag) {
+            $this->assertArrayHasKey('id', $personalTag);
+            $this->assertArrayHasKey('label', $personalTag);
+        }
         $this->assertArrayHasKey('hasSignalementImported', $responseContent);
         $this->assertTrue($responseContent['hasSignalementImported']);
     }

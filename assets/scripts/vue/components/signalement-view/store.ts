@@ -21,6 +21,7 @@ export const store = {
       filters: {
         territoire: undefined,
         etiquettes: new Array<string>(),
+        personalTags: new Array<string>(),
         zones: new Array<string>(),
         partenaires: new Array<string>(),
         communes: new Array<string>(),
@@ -73,6 +74,7 @@ export const store = {
     showOptions: false,
     territories: new Array<HistoInterfaceSelectOption>(),
     etiquettes: new Array<HistoInterfaceSelectOption>(),
+    personalTags: new Array<HistoInterfaceSelectOption>(),
     zones: new Array<HistoInterfaceSelectOption>(),
     partenaires: new Array<HistoInterfaceSelectOption>(),
     bailleursSociaux: new Array<HistoInterfaceSelectOption>(),

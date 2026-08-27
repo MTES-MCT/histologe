@@ -282,6 +282,13 @@ class SearchFilter
                 ->setParameter('tag', $filters['tags'])
                 ->andWhere('t.isArchive = 0');
         }
+        if (!empty($filters['personalTags'])) {
+            $qb->innerJoin('s.personalTags', 'personalTag');
+            $qb->andWhere('personalTag.id IN (:personalTags)')
+                ->andWhere('personalTag.user = :personalTagsUser')
+                ->setParameter('personalTags', $filters['personalTags'])
+                ->setParameter('personalTagsUser', $user); // permet de sécurisé que l'on ne filtre pas sur les tags d'un autre utilisateur
+        }
         if (!empty($filters['zones'])) {
             $connection = $this->entityManager->getConnection();
             $params = $zonesParams = [];
