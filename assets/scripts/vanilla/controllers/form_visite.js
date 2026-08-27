@@ -141,7 +141,7 @@ function histoCheckVisiteForms(formType, visiteForm) {
   return isValid;
 }
 
-const modalAddVisite = document?.querySelector('#add-visite-modal');
+const modalAddVisite = document?.querySelector('#panel-add-visite');
 if (modalAddVisite) {
   document.addEventListener(
     'change',
