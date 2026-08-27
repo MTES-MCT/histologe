@@ -29,6 +29,7 @@ use App\Manager\UserManager;
 use App\Repository\BailleurRepository;
 use App\Repository\CriticiteRepository;
 use App\Repository\DesordrePrecisionRepository;
+use App\Repository\PersonalTagRepository;
 use App\Repository\SignalementDraftRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
@@ -55,6 +56,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         private readonly SignalementDraftRepository $signalementDraftRepository,
         private readonly TagRepository $tagRepository,
         private readonly UserRepository $userRepository,
+        private readonly PersonalTagRepository $personalTagRepository,
         private readonly FileFactory $fileFactory,
         private readonly UserManager $userManager,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
@@ -513,6 +515,15 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
             $signalement->setCreatedBy($this->admin)
                 ->setCreationSource(CreationSource::FORM_PRO_BO);
         }
+
+        if (isset($row['personalTags'])) {
+            foreach ($row['personalTags'] as $personalTag) {
+                $user = $this->userRepository->findOneBy(['email' => $personalTag['user']]);
+                $tag = $this->personalTagRepository->findOneBy(['label' => $personalTag['label'], 'user' => $user]);
+                $tag->addSignalement($signalement);
+            }
+        }
+
         $manager->persist($signalement);
         $this->userManager->createUsagersFromSignalement($signalement);
     }

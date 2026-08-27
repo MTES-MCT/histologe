@@ -495,6 +495,11 @@ users:
     statut: "ACTIVE"
     is_mailing_active: 1
     phone: "0639984040"
+    personalTags:
+      - "Lundi"
+      - "Mardi"
+      - "Mercredi"
+      - "Jeudi"
   -
     email: admin-territoire-44-01@signal-logement.fr
     roles: "[\"ROLE_ADMIN_TERRITORY\"]"
@@ -548,3 +553,15 @@ users:
     email: nelson.monfort@yopmail.com
     roles: "[\"ROLE_USAGER\"]"
     statut: "ACTIVE"
+  -
+    email: admin-territoire-30-02@signal-logement.fr
+    roles: "[\"ROLE_ADMIN_TERRITORY\"]"
+    partners: 
+      - "CAF 30"
+    statut: "ACTIVE"
+    is_mailing_active: 1
+    phone: "0639984041"
+    personalTags:
+      - "Janvier"
+      - "Février"
+      - "Mars"

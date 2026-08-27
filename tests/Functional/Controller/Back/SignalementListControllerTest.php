@@ -113,6 +113,10 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search by Partner Ales agglo for agent CAF30' => [['partenaires' => ['86'], 'isImported' => 'oui'], 1, 'user-partenaire-30@signal-logement.fr'];
         yield 'Search by all for agent Partenaire 13-05' => [['isImported' => 'oui'], 6, 'user-13-05@signal-logement.fr'];
         yield 'Search by Partner 13-01 & 13-06 for agent Partenaire 13-05' => [['partenaires' => ['2', '7'], 'isImported' => 'oui'], 2, 'user-13-05@signal-logement.fr'];
+        yield 'Search by PersonalTags Lundi for RT 30' => [['personalTags' => [1], 'isImported' => 'oui'], 1, 'admin-territoire-30@signal-logement.fr'];
+        yield 'Search by PersonalTags Mardi for RT 30' => [['personalTags' => [2], 'isImported' => 'oui'], 2, 'admin-territoire-30@signal-logement.fr'];
+        yield 'Search by PersonalTags Lundi and Mardi for RT 30' => [['personalTags' => [1, 2], 'isImported' => 'oui'], 2, 'admin-territoire-30@signal-logement.fr'];
+        yield 'Search by PersonalTags Lundi for RT 30-02' => [['personalTags' => [1, 2], 'isImported' => 'oui'], 0, 'admin-territoire-30-02@signal-logement.fr'];
     }
 
     #[DataProvider('provideUserEmail')]
