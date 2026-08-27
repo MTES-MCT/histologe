@@ -25,6 +25,9 @@ class RialService
     private const string API_IPIFY = 'https://api.ipify.org';
     private const int ACCESS_TOKEN_EXPIRATION_DELAY = 3600;
 
+    public const float DEFAULT_MIN_REQUEST_INTERVAL = 0.5;
+    public const int DEFAULT_ERROR_RATE_LIMIT_SECONDS = 2;
+
     /**
      * @var array<string>
      *                    AP : appartement
@@ -36,6 +39,7 @@ class RialService
 
     private ?string $accessToken = null;
     private ?int $accessTokenExpiresAt = null;
+    private ?float $lastCallTime = null;
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -48,6 +52,8 @@ class RialService
         private readonly string $rialSecret,
         #[Autowire(env: 'RIAL_ENABLE')]
         private readonly string $rialEnable,
+        private readonly float $minRequestInterval = self::DEFAULT_MIN_REQUEST_INTERVAL,
+        private readonly int $errorRateLimitSeconds = self::DEFAULT_ERROR_RATE_LIMIT_SECONDS,
     ) {
     }
 
@@ -64,6 +70,7 @@ class RialService
                 return $this->accessToken;
             }
 
+            $this->waitBeforeNextApiCall();
             $url = $this->urlDgfip.self::URI_GENERATE_TOKEN;
             $headers = RialHeaders::getGenerateTokenHeaders($this->rialKey, $this->rialSecret);
             $params = [
@@ -94,6 +101,7 @@ class RialService
                     }
                 }
                 $this->logger->warning(\sprintf('Rial API access token failed (status %s)', $response->getStatusCode()), $context);
+                $this->waitAfterRateLimitOrServerError($response->getStatusCode());
             } catch (\Throwable $exception) {
                 $this->logger->error($exception->getMessage(), $context);
             }
@@ -167,6 +175,7 @@ class RialService
                 'correlation_id' => $correlationId,
             ];
             try {
+                $this->waitBeforeNextApiCall();
                 $response = $this->httpClient->request('GET', $url, [
                     'headers' => $headers,
                 ]);
@@ -193,6 +202,7 @@ class RialService
                         $response->getStatusCode()),
                     $context
                 );
+                $this->waitAfterRateLimitOrServerError($response->getStatusCode());
             } catch (\Throwable $exception) {
                 $this->logger->error($exception->getMessage(), $context);
             }
@@ -227,6 +237,7 @@ class RialService
                 'correlation_id' => $correlationId,
             ];
             try {
+                $this->waitBeforeNextApiCall();
                 $response = $this->httpClient->request('GET', $url, [
                     'headers' => $headers,
                 ]);
@@ -253,12 +264,32 @@ class RialService
                     $response->getStatusCode()),
                     $context
                 );
+                $this->waitAfterRateLimitOrServerError($response->getStatusCode());
             } catch (\Throwable $exception) {
                 $this->logger->error($exception->getMessage(), $context);
             }
         }
 
         return null;
+    }
+
+    private function waitBeforeNextApiCall(): void
+    {
+        if ($this->minRequestInterval > 0 && null !== $this->lastCallTime) {
+            $elapsed = microtime(true) - $this->lastCallTime;
+            if ($elapsed < $this->minRequestInterval) {
+                usleep((int) (($this->minRequestInterval - $elapsed) * 1_000_000));
+            }
+        }
+        $this->lastCallTime = microtime(true);
+    }
+
+    private function waitAfterRateLimitOrServerError(int $statusCode): void
+    {
+        if ($this->errorRateLimitSeconds > 0 && (Response::HTTP_TOO_MANY_REQUESTS === $statusCode || $statusCode >= Response::HTTP_INTERNAL_SERVER_ERROR)) {
+            sleep($this->errorRateLimitSeconds);
+            $this->lastCallTime = microtime(true);
+        }
     }
 
     private function hasValidAccessToken(): bool
