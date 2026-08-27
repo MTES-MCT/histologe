@@ -59,7 +59,9 @@ class RialServiceTest extends TestCase
             self::API_WIREMOCK_URL,
             'rialKey',
             'rialSecret',
-            '1'
+            '1',
+            0,
+            0
         );
 
         $response = $rialService->getAccessToken();
@@ -106,7 +108,9 @@ class RialServiceTest extends TestCase
             self::API_WIREMOCK_URL,
             'rialKey',
             'rialSecret',
-            '1'
+            '1',
+            0.5,
+            2
         );
     }
 }
