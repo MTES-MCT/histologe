@@ -92,6 +92,31 @@ class RnbServiceFake extends RnbService
 
     public function getBuilding(string $rnbId): ?RnbBuilding
     {
+        if ('INVALID_RNB_ID' === $rnbId || empty($rnbId)) {
+            return null;
+        }
+
+        $allBuildings = [
+            'XM37BZPW9TPW' => [3.887057368556204, 43.60053728208864],
+            'AJKTX1Y7THZE' => [3.887854585446229, 43.60121148421197],
+            '9MAZ2GAX8DYT' => [3.887156836861802, 43.60096522940157],
+            'NQKZ7YWG8ZEX' => [3.88783560657471, 43.60141893351633],
+            'RK47CCE5R68T' => [-1.410468591357994, 47.36078500836602],
+            'AN55H8K2BDXD' => [-1.410553517209974, 47.36068409968665],
+            'AZ57KYVASGD5' => [-2.429891290608717, 47.29410462047548],
+            'FQYN6F6WPEJ8' => [4.141756415466935, 44.05309187516625],
+            'Y1QC6FM9XXGS' => [4.141756415466935, 44.05309187516625],
+        ];
+
+        if (isset($allBuildings[$rnbId])) {
+            return new RnbBuilding([
+                'rnb_id' => $rnbId,
+                'point' => [
+                    'coordinates' => $allBuildings[$rnbId],
+                ],
+            ]);
+        }
+
         return null;
     }
 }

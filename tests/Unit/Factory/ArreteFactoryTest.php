@@ -9,9 +9,11 @@ use App\Entity\User;
 use App\Factory\ArreteFactory;
 use App\Repository\AddressRepository;
 use App\Service\Gouv\Ban\AddressService;
+use App\Service\Gouv\Rnb\RnbService;
 use App\Service\Import\Arrete\ArreteImportRow;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Tests\Fake\AddressServiceFake;
+use App\Tests\Fake\RnbServiceFake;
 use App\Tests\FixturesHelper;
 use LongitudeOne\Spatial\Exception\InvalidValueException;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
@@ -25,6 +27,7 @@ class ArreteFactoryTest extends TestCase
     use FixturesHelper;
 
     private AddressService $addressService;
+    private RnbService $rnbService;
     private MockObject|AddressRepository $addressRepository;
     private MockObject|ZipcodeProvider $zipcodeProvider;
     private ArreteFactory $arreteFactory;
@@ -32,13 +35,15 @@ class ArreteFactoryTest extends TestCase
     protected function setUp(): void
     {
         $this->addressService = new AddressServiceFake();
+        $this->rnbService = new RnbServiceFake();
         $this->addressRepository = $this->createMock(AddressRepository::class);
         $this->zipcodeProvider = $this->createMock(ZipcodeProvider::class);
 
         $this->arreteFactory = new ArreteFactory(
             $this->addressService,
             $this->addressRepository,
-            $this->zipcodeProvider
+            $this->zipcodeProvider,
+            $this->rnbService,
         );
     }
 
@@ -62,6 +67,11 @@ class ArreteFactoryTest extends TestCase
             $reflection = new \ReflectionClass($territory);
             $property = $reflection->getProperty('id');
             $property->setValue($territory, 44);
+        } elseif ('territory_30' === $territory) {
+            $territory = $this->getTerritory(name: 'Gard', zip: '30');
+            $reflection = new \ReflectionClass($territory);
+            $property = $reflection->getProperty('id');
+            $property->setValue($territory, 30);
         }
         /** @var User|null $currentUser */
         $currentUser = null;
@@ -81,7 +91,7 @@ class ArreteFactoryTest extends TestCase
 
         $addressResponse = $this->addressService->getAddress($arreteImportRow->getAddress());
 
-        if ($addressResponse->getScore() >= AddressService::SCORE_IF_BAN_ID_ACCEPTED) {
+        if ($addressResponse->getScore() >= AddressService::SCORE_IF_BAN_ID_ACCEPTED || !empty($arreteImportRow->getRnbId())) {
             /** @var MockObject&AddressRepository $addressRepository */
             $addressRepository = $this->addressRepository;
             $addressRepository->expects($this->any())->method('findOneBy')
@@ -93,12 +103,10 @@ class ArreteFactoryTest extends TestCase
                     return $existingAddressByCriteria;
                 });
 
-            if (!$existingAddressByBanId && !$existingAddressByCriteria) {
-                /** @var MockObject&ZipcodeProvider $zipcodeProvider */
-                $zipcodeProvider = $this->zipcodeProvider;
-                $zipcodeProvider->expects($this->any())->method('getTerritoryByInseeCode')
-                    ->willReturn($territory);
-            }
+            /** @var MockObject&ZipcodeProvider $zipcodeProvider */
+            $zipcodeProvider = $this->zipcodeProvider;
+            $zipcodeProvider->expects($this->any())->method('getTerritoryByInseeCode')
+                ->willReturn($territory);
         }
 
         $arrete = $this->arreteFactory->createInstanceFrom($arreteImportRow, $currentUser);
@@ -144,12 +152,27 @@ class ArreteFactoryTest extends TestCase
             false,
         ];
 
+        yield 'Score BAN trop faible avec rnbId' => [
+            (clone $importRow)
+                ->setNumeroVoie(null)
+                ->setNomVoie('Chemin du grand méchant loup')
+                ->setCodePostal('30360')
+                ->setCommune('Vézénobres')
+                ->setRnbId('Y1QC6FM9XXGS'),
+            (new User())->setRoles(['ROLE_ADMIN']),
+            null,
+            null,
+            'territory_30',
+            true,
+            'ARRETE_L_511_19_INSALUBRITE',
+        ];
+
         yield 'Adresse trouvée par banId' => [
             $importRow,
             new User(),
             new Address()->setBanId('2ac4d3cd-67ee-46d4-9b5f-207bc6143aab'),
             null,
-            null,
+            'territory_44',
             true,
             'ARRETE_L_511_19_INSALUBRITE',
         ];
@@ -159,7 +182,7 @@ class ArreteFactoryTest extends TestCase
             new User(),
             null,
             new Address()->setStreet('Rue de la tourmentinerie'),
-            null,
+            'territory_44',
             true,
             'ARRETE_L_511_19_INSALUBRITE',
         ];
@@ -200,7 +223,7 @@ class ArreteFactoryTest extends TestCase
             new User(),
             null,
             new Address()->setStreet('Rue de la tourmentinerie'),
-            null,
+            'territory_44',
             true,
             'ARRETE_L_511_19_INSALUBRITE',
         ];

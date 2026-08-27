@@ -164,6 +164,12 @@ export function createRnbMapController({
             return da - db;
           });
         refreshBuildings(sorted);
+        if (activePreviousRnbId) {
+          const prevBuilding = sorted.find((b) => b.rnb_id === activePreviousRnbId);
+          if (prevBuilding) {
+            onSelect(activePreviousRnbId, prevBuilding);
+          }
+        }
       })
       .catch(() => {});
   }
@@ -206,7 +212,7 @@ export function createRnbMapController({
     vectorTileLayer.setFeatureStyle(rnbId, buildingStyles.clicked);
     updateMarker(focusedIndex, 'selected');
     activePreviousRnbId = rnbId;
-    onSelect(rnbId);
+    onSelect(rnbId, building);
     if (onAnnounce) {
       onAnnounce(`Bâtiment ${focusedIndex + 1} sélectionné, identifiant ${rnbId}`);
     }
@@ -227,7 +233,8 @@ export function createRnbMapController({
     activePreviousRnbId = rnbId;
     const selIdx = currentBuildings.findIndex((b) => b.rnb_id === rnbId);
     if (selIdx >= 0) updateMarker(selIdx, 'selected');
-    onSelect(rnbId);
+    const building = currentBuildings.find((b) => b.rnb_id === rnbId);
+    onSelect(rnbId, building);
   });
 
   // Re-fetch des bâtiments à chaque fin de déplacement initié par l'utilisateur.

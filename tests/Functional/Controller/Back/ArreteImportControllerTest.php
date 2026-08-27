@@ -16,8 +16,10 @@ class ArreteImportControllerTest extends WebTestCase
     use FixturesHelper;
     use SessionHelper;
 
+    private const string ROUTE_IMPORT = '/bo/gerer-territoire/arretes/import';
     private const string ROUTE_IMPORT_UPLOAD = '/bo/gerer-territoire/arretes/import-upload';
     private const string ROUTE_IMPORT_CONFIRM = '/bo/gerer-territoire/arretes/confirm';
+    private const string NOTICE_SUCCESS = '.fr-notice--success';
 
     protected function setUp(): void
     {
@@ -221,9 +223,9 @@ class ArreteImportControllerTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
-        $client->request('GET', '/bo/gerer-territoire/arretes/import');
+        $client->request('GET', self::ROUTE_IMPORT);
 
-        $this->assertSelectorTextContains('.fr-notice--success', '2 arrêtés ont été importés');
+        $this->assertSelectorTextContains(self::NOTICE_SUCCESS, '2 arrêtés ont été importés');
     }
 
     public function testImportConfirmSuccessWithErrors(): void
@@ -275,10 +277,48 @@ class ArreteImportControllerTest extends WebTestCase
         $response = $client->getResponse();
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
 
-        $client->request('GET', '/bo/gerer-territoire/arretes/import');
+        $client->request('GET', self::ROUTE_IMPORT);
 
-        $this->assertSelectorTextContains('.fr-notice--success', '1 arrêté a été importé.');
+        $this->assertSelectorTextContains(self::NOTICE_SUCCESS, '1 arrêté a été importé.');
         $this->assertSelectorTextContains('.fr-notice--alert', 'a déjà été importé');
+    }
+
+    public function testImportConfirmSuccessWithRnbId(): void
+    {
+        $client = static::createClient();
+        $entityManager = self::getContainer()->get('doctrine.orm.entity_manager');
+        $user = $entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $client->loginUser($user);
+
+        $data = [
+            [
+                'nomVoie' => 'Chemin du grand méchant loup',
+                'codePostal' => '30360',
+                'commune' => 'Vézénobres',
+                'identifiantParcellaire' => 'ID-PARCELLE-RNB-CONFIRM',
+                'classificationArrete' => 'Insalubrité',
+                'dateArrete' => '01/05/2024',
+                'rnbId' => 'Y1QC6FM9XXGS',
+            ],
+        ];
+
+        $content = json_encode($data);
+        $this->assertNotFalse($content);
+        $client->request(
+            'POST',
+            self::ROUTE_IMPORT_CONFIRM,
+            [],
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest'],
+            $content
+        );
+
+        $response = $client->getResponse();
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+
+        $client->request('GET', self::ROUTE_IMPORT);
+
+        $this->assertSelectorTextContains(self::NOTICE_SUCCESS, '1 arrêté a été importé');
     }
 
     public static function provideArreteImportFileContraints(): \Generator
