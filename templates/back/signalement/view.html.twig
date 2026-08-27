@@ -49,7 +49,7 @@
             {% include 'back/signalement/view/panels/_panel-edit-coordonnees-agence.html.twig' %}
         </div>
         <div data-ajax-form>
-            {% include 'back/signalement/view/edit-modals/edit-coordonnees-syndic.html.twig' %}
+            {% include 'back/signalement/view/panels/_panel-edit-coordonnees-syndic.html.twig' %}
         </div>
         <div data-ajax-form>
             {% include 'back/signalement/view/edit-modals/edit-informations-logement.html.twig' %}
@@ -61,7 +61,7 @@
             {% include 'back/signalement/view/edit-modals/edit-situation-foyer.html.twig' %}
         </div>
         <div data-ajax-form>
-            {% include 'back/signalement/view/edit-modals/edit-procedure-demarches.html.twig' %}
+            {% include 'back/signalement/view/panels/_panel-edit-procedure-demarches.html.twig' %}
         </div>
     {% endif %}
     {% if signalementsOnSameAddress|length > 0 %}
