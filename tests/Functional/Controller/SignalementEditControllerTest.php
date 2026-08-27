@@ -178,7 +178,6 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertNotNull($suiviDelayed);
         $this->assertEquals(SuiviDelayedType::FO_EDIT_ADRESSE_LOGEMENT, $suiviDelayed->getSuiviDelayedType());
         $changes = $suiviDelayed->getChanges();
-        fwrite(STDERR, "\nDEBUG changes: ".print_r($changes, true)."\n");
         $this->assertEquals(4, count($changes));
         $this->assertArrayHasKey('Étage', $changes);
         $this->assertArrayHasKey('Escalier', $changes);
