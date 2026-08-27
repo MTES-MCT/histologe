@@ -10,7 +10,7 @@ export const componentValidator = {
     let regexPattern
     // s'il y a une valeur, on vérifie si un pattern est requis (ou si c'est un type email)
     if (variableTester.isNotEmpty(value) && component.type === 'SignalementFormEmailfield') {
-      regexPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      regexPattern = /^[^\s@]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
     } else if (variableTester.isNotEmpty(value) && component.validate?.pattern !== undefined) {
       regexPattern = new RegExp(component.validate.pattern)
     }
