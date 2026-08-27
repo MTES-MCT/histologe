@@ -11,7 +11,7 @@
     <div class="fr-col-12 fr-col-md-6">
         {% if is_granted('SIGN_ADD_VISITE', signalement) %}
             <div data-ajax-form>
-                {% include 'back/signalement/view/visites/modals/visites-modal-add.html.twig' %}
+                {% include 'back/signalement/view/visites/panels/_panel-add-visite.html.twig' %}
             </div>
             {% set displayAddVisiteButton = true %}
             {% set listPendingVisiteExternalOperatorNames = [] %}
@@ -35,9 +35,11 @@
                     </a>
                 {% endif %}
                 {% if displayAddVisiteButton %}
-                    <button class="fr-btn fr-fi-calendar-line fr-btn--icon-left" aria-controls="add-visite-modal" data-fr-opened="false">
-                        Ajouter une visite
-                    </button>
+                    <button class="fr-btn fr-fi-calendar-line fr-btn--icon-left"
+                        data-panel-open="panel-add-visite"
+                        aria-controls="panel-add-visite"
+                        data-fr-opened="false"
+                        >Ajouter une visite</button>
                 {% endif %}
             </div>
         {% endif %}
