@@ -17,7 +17,6 @@ use App\Service\Mailer\NotificationMailerType;
 use App\Service\Signalement\AutoAssigner;
 use App\Service\Signalement\Export\ServiceSecoursPdfGenerator;
 use App\Service\Signalement\ReferenceGenerator;
-use App\Service\Signalement\Suivi\HistoriqueEvenementsGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -56,7 +55,6 @@ class ServiceSecoursController extends AbstractController
         NotificationMailerRegistry $notificationMailerRegistry,
         ServiceSecoursPdfGenerator $serviceSecoursPdfGenerator,
         MessageBusInterface $messageBus,
-        HistoriqueEvenementsGenerator $historiqueEvenementsGenerator,
     ): Response {
         $serviceSecours = new FormServiceSecours();
         /** @var FormFlowInterface $flow */
@@ -78,7 +76,6 @@ class ServiceSecoursController extends AbstractController
             $entityManager->commit();
             $userManager->createUsagersFromSignalement($signalement);
             $autoAssigner->assignOrSendNewSignalementNotification($signalement);
-            $historiqueEvenementsGenerator->generate($signalement);
             $entityManager->flush();
             $pdfContent = $serviceSecoursPdfGenerator->generate($signalement);
             $notificationMailerRegistry->send(

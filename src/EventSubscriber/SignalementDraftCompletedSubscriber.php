@@ -179,7 +179,6 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
      *
      * @see SignalementDraftFileMessageHandler
      * @see SignalementAddressUpdateAndAutoAssignMessageHandler
-     * @see HistoriqueEvenementsMessageHandler
      */
     private function dispatchDraftProcessing(SignalementDraft $signalementDraft, Signalement $signalement): void
     {
