@@ -12,8 +12,12 @@
             </div>
         {% else %}
             {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
-                <button href="#" data-fr-opened="false" aria-controls="fr-modal-edit-invite-tiers"
-                        class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line fr-mt-3v">Inviter un tiers sur le dossier</button>
+                <button
+                    class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line fr-mt-3v"
+                    data-panel-open="panel-invite-tiers"
+                    aria-controls="panel-invite-tiers"
+                    data-fr-opened="false"
+                    >Inviter un tiers sur le dossier</button>
                         
             {% endif %}
         {% endif %}
@@ -24,8 +28,11 @@
 
         <div class="fr-col-12 fr-col-md-4 fr-text--right">
             {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
-            <button href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-tiers"
-                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line">Modifier</button>
+            <button class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line"
+                data-panel-open="panel-edit-coordonnees-tiers"
+                aria-controls="panel-edit-coordonnees-tiers"
+                data-fr-opened="false"
+                >Modifier</button>
             {% endif %}
         </div>
         
