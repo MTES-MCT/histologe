@@ -1178,6 +1178,7 @@ class SignalementRepository extends ServiceEntityRepository
         $qb->andWhere('s.closedAt >= :startDate AND s.closedAt < :endDate')->setParameter('startDate', $startDate)->setParameter('endDate', $endDate);
         $qb->andWhere('s.travauxMiseEnConformite = :travauxMiseEnConformite')->setParameter('travauxMiseEnConformite', TravauxMiseEnConformite::EN_COURS);
         $qb->andWhere('s.travauxMiseEnConformiteUsager IS NULL');
+        $qb->andWhere('s.isLogementVacant IS NULL OR s.isLogementVacant = :is_logement_vacant')->setParameter('is_logement_vacant', false);
 
         return $qb->getQuery()->getResult();
     }

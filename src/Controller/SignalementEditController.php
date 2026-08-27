@@ -567,7 +567,7 @@ class SignalementEditController extends AbstractController
         }
 
         if ($signalement->getTravauxMiseEnConformiteUsager()) {
-            $this->addFlash('alert', ['title' => 'Erreur', 'message' => 'Vous avez déjà soumis votre réponse.']);
+            $this->addFlash('alert', ['title' => 'Erreur', 'message' => 'Vous avez déjà soumis votre réponse concernant la réalisation des travaux dans votre logement.']);
 
             return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
         }
@@ -576,7 +576,7 @@ class SignalementEditController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $description = '';
-            $suiviCategory = SuiviCategory::MESSAGE_USAGER;
+            $suiviCategory = SuiviCategory::MESSAGE_USAGER_TRAVAUX_MISE_EN_CONFORMITE;
             switch ($signalement->getTravauxMiseEnConformiteUsager()) {
                 case TravauxMiseEnConformite::OUI:
                     $description = 'L\'usager a indiqué que les travaux ont bien été faits.';
@@ -585,7 +585,8 @@ class SignalementEditController extends AbstractController
                     $description = 'L\'usager a indiqué que les travaux sont en cours.';
                     break;
                 case TravauxMiseEnConformite::NON:
-                    $description = 'L\'usager a indiqué que les travaux n\'ont pas été faits : '.HtmlCleaner::cleanFrontEndEntry($form->get('travauxMiseEnConformiteUsagerCommentaire')->getData());
+                    $description = 'L\'usager a indiqué que les travaux n\'ont pas été faits';
+                    $description .= \PHP_EOL.'Commentaire : '.HtmlCleaner::cleanFrontEndEntry($form->get('travauxMiseEnConformiteUsagerCommentaire')->getData());
                     $suiviCategory = SuiviCategory::MESSAGE_USAGER_POST_CLOTURE;
                     break;
             }

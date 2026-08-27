@@ -596,7 +596,7 @@ class SignalementEditControllerTest extends WebTestCase
 
         $lastSuivi = $entityManager->getRepository(Suivi::class)->findOneBy(['signalement' => $signalement], ['createdAt' => 'DESC']);
         $this->assertNotNull($lastSuivi);
-        $this->assertEquals(SuiviCategory::MESSAGE_USAGER, $lastSuivi->getCategory());
+        $this->assertEquals(SuiviCategory::MESSAGE_USAGER_TRAVAUX_MISE_EN_CONFORMITE, $lastSuivi->getCategory());
         $this->assertEquals('L&#039;usager a indiqué que les travaux ont bien été faits.', $lastSuivi->getDescription());
 
         $crawler = $client->request('GET', $url);
@@ -636,7 +636,7 @@ class SignalementEditControllerTest extends WebTestCase
         $lastSuivi = $entityManager->getRepository(Suivi::class)->findOneBy(['signalement' => $signalement], ['createdAt' => 'DESC']);
         $this->assertNotNull($lastSuivi);
         $this->assertEquals(SuiviCategory::MESSAGE_USAGER_POST_CLOTURE, $lastSuivi->getCategory());
-        $this->assertEquals('L&#039;usager a indiqué que les travaux n&#039;ont pas été faits : Marre marre marre.', $lastSuivi->getDescription());
+        $this->assertEquals("L&#039;usager a indiqué que les travaux n&#039;ont pas été faits\nCommentaire : Marre marre marre.", $lastSuivi->getDescription());
 
         $crawler = $client->request('GET', $url);
         $this->assertResponseRedirects('/suivre-mon-signalement/'.$signalement->getCodeSuivi().'/dossier');

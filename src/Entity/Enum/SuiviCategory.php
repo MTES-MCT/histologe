@@ -39,6 +39,7 @@ enum SuiviCategory: string
     case MESSAGE_USAGER = 'MESSAGE_USAGER';
     case MESSAGE_BAILLEUR = 'MESSAGE_BAILLEUR';
     case MESSAGE_USAGER_POST_CLOTURE = 'MESSAGE_USAGER_POST_CLOTURE';
+    case MESSAGE_USAGER_TRAVAUX_MISE_EN_CONFORMITE = 'MESSAGE_USAGER_TRAVAUX_MISE_EN_CONFORMITE';
     case SIGNALEMENT_EDITED_FO = 'SIGNALEMENT_EDITED_FO';
     case DEMANDE_ABANDON_PROCEDURE = 'DEMANDE_ABANDON_PROCEDURE';
     case DEMANDE_POURSUITE_PROCEDURE = 'DEMANDE_POURSUITE_PROCEDURE';
@@ -114,6 +115,7 @@ enum SuiviCategory: string
             'MESSAGE_USAGER' => 'Message de l\'usager',
             'MESSAGE_BAILLEUR' => 'Message du bailleur',
             'MESSAGE_USAGER_POST_CLOTURE' => 'Message de l\'usager après clôture',
+            'MESSAGE_USAGER_TRAVAUX_MISE_EN_CONFORMITE' => 'Message de l\'usager concernant les travaux de mise en conformité',
             'SIGNALEMENT_EDITED_FO' => 'Édition du dossier par l\'usager',
             'DEMANDE_ABANDON_PROCEDURE' => 'Demande d\'abandon de procédure par l\'usager',
             'DEMANDE_POURSUITE_PROCEDURE' => 'Demande de poursuite de procédure par l\'usager',
@@ -171,6 +173,7 @@ enum SuiviCategory: string
         return [
             self::MESSAGE_USAGER,
             self::MESSAGE_USAGER_POST_CLOTURE,
+            self::MESSAGE_USAGER_TRAVAUX_MISE_EN_CONFORMITE,
             self::DEMANDE_POURSUITE_PROCEDURE,
             self::DEMANDE_ABANDON_PROCEDURE,
             self::SIGNALEMENT_EDITED_FO,
@@ -264,6 +267,7 @@ enum SuiviCategory: string
                 return Suivi::TYPE_TECHNICAL;
             case self::SIGNALEMENT_EDITED_FO:
             case self::MESSAGE_USAGER:
+            case self::MESSAGE_USAGER_TRAVAUX_MISE_EN_CONFORMITE:
             case self::INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER:
             case self::DEMANDE_ABANDON_PROCEDURE:
             case self::DEMANDE_POURSUITE_PROCEDURE:
@@ -316,6 +320,7 @@ enum SuiviCategory: string
     {
         return [
             SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
+            SuiviCategory::MESSAGE_USAGER_TRAVAUX_MISE_EN_CONFORMITE,
             SuiviCategory::MESSAGE_USAGER,
         ];
     }
