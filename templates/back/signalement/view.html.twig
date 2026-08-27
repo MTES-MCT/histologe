@@ -33,11 +33,11 @@
     {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
         {% if not signalement.isNotOccupant and not signalement.mailDeclarant and not tiersInvitation %}
             <div data-ajax-form>
-                {% include 'back/signalement/view/edit-modals/edit-invite-tiers.html.twig' %}
+                {% include 'back/signalement/view/panels/_panel-invite-tiers.html.twig' %}
             </div>
         {% endif %}
         <div data-ajax-form>
-            {% include 'back/signalement/view/edit-modals/edit-coordonnees-tiers.html.twig' %}
+            {% include 'back/signalement/view/panels/_panel-edit-coordonnees-tiers.html.twig' %}
         </div>
         <div data-ajax-form>
             {% include 'back/signalement/view/edit-modals/edit-coordonnees-foyer.html.twig' %}
