@@ -10,7 +10,6 @@ use App\Factory\AddressFactory;
 use App\Factory\ArreteFactory;
 use App\Repository\AddressRepository;
 use App\Service\Gouv\Ban\AddressService;
-use App\Service\Gouv\Rnb\RnbService;
 use App\Service\Import\Arrete\ArreteImportRow;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Tests\Fake\AddressServiceFake;
@@ -28,7 +27,7 @@ class ArreteFactoryTest extends TestCase
     use FixturesHelper;
 
     private AddressService $addressService;
-    private RnbService $rnbService;
+    private RnbServiceFake $rnbService;
     private MockObject|AddressRepository $addressRepository;
     private MockObject|ZipcodeProvider $zipcodeProvider;
     private ArreteFactory $arreteFactory;
@@ -45,6 +44,7 @@ class ArreteFactoryTest extends TestCase
         $this->arreteFactory = new ArreteFactory(
             $this->addressService,
             $this->addressRepository,
+            $this->rnbService,
             $this->addressFactory
         );
     }

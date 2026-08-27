@@ -57,6 +57,7 @@ class KpiQuery
     ): int {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
+            ->innerJoin('s.address', 'address')
             ->where('s.statut IN (:signalementStatusList)')
             ->setParameter('signalementStatusList', SignalementStatus::injonctionStatuses());
 

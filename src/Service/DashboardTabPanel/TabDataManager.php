@@ -493,7 +493,7 @@ class TabDataManager
                 nomOccupant: $suivi['nomOccupant'],
                 prenomOccupant: $suivi['prenomOccupant'],
                 reference: '#'.$suivi['reference'],
-                adresse: $suivi['adresse'],
+                adresse: $suivi['fullAddress'],
                 messageAt: new \DateTimeImmutable($suivi['messageAt']),
                 messageDaysAgo: $suivi['messageDaysAgo'],
                 messageSuiviByNom: $suivi['messageSuiviByNom'],

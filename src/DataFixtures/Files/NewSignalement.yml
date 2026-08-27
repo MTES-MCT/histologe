@@ -1092,6 +1092,7 @@ signalements:
     adresse_occupant: "6 Rue Arnavielle"
     cp_occupant: "30900"
     ville_occupant: "Nîmes"
+    etage_occupant: 2
     statut: "ACTIVE"
     geoloc: "[43.824055258862785, 4.351045421881567]"
     insee_occupant: "30189"

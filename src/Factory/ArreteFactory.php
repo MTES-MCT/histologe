@@ -17,6 +17,7 @@ class ArreteFactory
     public function __construct(
         private readonly AddressService $addressService,
         private readonly AddressRepository $addressRepository,
+        private readonly RnbService $rnbService,
         private readonly AddressFactory $addressFactory,
     ) {
     }
@@ -26,7 +27,16 @@ class ArreteFactory
      */
     public function createInstanceFrom(ArreteImportRow $arreteImportRow, User $user): ?Arrete
     {
-        if (!$addressResponse = $this->addressService->getAcceptableBanAddress($arreteImportRow->getAddress())) {
+        $rnbBuilding = !empty($arreteImportRow->getRnbId()) ? $this->rnbService->getBuilding($arreteImportRow->getRnbId()) : null;
+        $addressResponse = $this->addressService->getAddress($arreteImportRow->getAddress());
+        $hasValidBan = $addressResponse->getScore() >= AddressService::SCORE_IF_BAN_ID_ACCEPTED;
+
+        if (!$hasValidBan && null === $rnbBuilding) {
+            return null;
+        }
+
+        $cityCode = $addressResponse->getInseeCode();
+        if (null === $cityCode) {
             return null;
         }
 
@@ -45,11 +55,6 @@ class ArreteFactory
         }
 
         $address = null;
-
-        if (null === $cityCode) {
-            return null;
-        }
-
         if ($banId) {
             $address = $this->addressRepository->findOneBy(['banId' => $banId]);
         }
@@ -80,7 +85,7 @@ class ArreteFactory
             }
         }
 
-        if (!$user->isSuperAdmin() && $address->getTerritory()->getId() !== $user->getFirstTerritory()->getId()) {
+        if (!$user->isSuperAdmin() && $address->getTerritory()->getId() !== $user->getFirstTerritory()?->getId()) {
             return null;
         }
 
