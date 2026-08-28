@@ -222,7 +222,6 @@ if (modalAddVisite) {
       if (visiteForm) {
         const matchAdd = visiteForm.id.match(/form-add-visite/);
         const matchEdit = visiteForm.className.match(/form-(edit|reschedule|confirm)-visite/);
-
         if (!matchAdd && !matchEdit) return;
 
         let idIntervention = null;
