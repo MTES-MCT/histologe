@@ -47,13 +47,13 @@
         {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
             {% if s3_enable %}
                 <button
-                        class="fr-btn fr-btn--secondary fr-icon-camera-fill open-modal-upload-files-btn"
-                        data-fr-opened="false"
-                        aria-controls="visites-upload-files-{{intervention.id}}"
-                        data-document-type="PHOTO_VISITE"
-                        data-intervention-id="{{intervention.id}}">
-                    Ajouter les photos de la visite
-                </button>
+                    class="fr-btn fr-btn--secondary fr-icon-camera-fill open-modal-upload-files-btn"
+                    data-fr-opened="false"
+                    data-panel-open="panel-upload-files-visite-{{intervention.id}}"
+                    aria-controls="panel-upload-files-visite-{{intervention.id}}"
+                    data-document-type="PHOTO_VISITE"
+                    data-intervention-id="{{intervention.id}}"
+                    >Ajouter les photos de la visite</button>
             {% else %}
                 <button class="fr-btn fr-btn--secondary fr-icon-warning-fill" disabled title="Maintenance en cours">
                     Ajouter les photos de la visite
