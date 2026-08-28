@@ -29,13 +29,12 @@
             <div class="fr-my-5v fr-text--right">
                 {% if linkToVisitGrid %}
                     <a class="fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left matomo_download" 
-                    title="Télécharger la grille de visite {% if signalement.territory.grilleVisiteFilename %}du territoire{% endif %}"
-                    download href="{{ sign_url(linkToVisitGrid) }}">
-                        Grille de visite
-                    </a>
+                        title="Télécharger la grille de visite {% if signalement.territory.grilleVisiteFilename %}du territoire{% endif %}"
+                        download href="{{ sign_url(linkToVisitGrid) }}"
+                        >Grille de visite</a>
                 {% endif %}
                 {% if displayAddVisiteButton %}
-                    <button class="fr-btn fr-fi-calendar-line fr-btn--icon-left"
+                    <button class="fr-btn fr-fi-calendar-line fr-btn--icon-left button-add-visite"
                         data-panel-open="panel-add-visite"
                         aria-controls="panel-add-visite"
                         data-fr-opened="false"

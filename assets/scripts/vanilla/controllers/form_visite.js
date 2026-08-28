@@ -32,7 +32,7 @@ function updateOperatorExternFieldRequirement(partnerSelect) {
   }
 }
 
-function histoCheckVisiteForms(formType, visiteForm) {
+function histoCheckVisiteForms(formType, visiteForm, idIntervention = null) {
   if (!visiteForm) {
     console.warn('[histoCheckVisiteForms] form not provided for', formType);
     return true;
@@ -41,19 +41,19 @@ function histoCheckVisiteForms(formType, visiteForm) {
   let isValid = true;
 
   const listInputVisiteDoneError = visiteForm.querySelector(
-    '#signalement-confirm-visite-done-error'
+    '.signalement-confirm-visite-done-error'
   );
   const listInputOccupantPresentError = visiteForm.querySelector(
-    '#signalement-confirm-visite-occupant-present-error'
+    '.signalement-confirm-visite-occupant-present-error'
   );
   const listInputProprietairePresentError = visiteForm.querySelector(
-    '#signalement-confirm-visite-proprietaire-present-error'
+    '.signalement-confirm-visite-proprietaire-present-error'
   );
   const selectConcludeProcedureError = visiteForm.querySelector(
-    '#signalement-confirm-visite-procedure-error'
+    '.signalement-confirm-visite-procedure-error'
   );
   const textareaDetailsError = visiteForm.querySelector(
-    '#signalement-confirm-visite-details-error'
+    '.signalement-confirm-visite-details-error'
   );
 
   [
@@ -134,7 +134,8 @@ function histoCheckVisiteForms(formType, visiteForm) {
       isValid = false;
     }
 
-    const editor = tinymce.get(`visite-${formType}[details]`);
+    idIntervention = idIntervention ? '-' + idIntervention : '';
+    const editor = tinymce.get(`visite-${formType}[details]${idIntervention}`);
     const textContent = editor ? editor.getContent({ format: 'text' }).trim() : '';
     if (!textContent) {
       textareaDetailsError?.classList.remove('fr-hidden');
@@ -221,11 +222,17 @@ if (modalAddVisite) {
       if (visiteForm) {
         const matchAdd = visiteForm.id.match(/form-add-visite/);
         const matchEdit = visiteForm.className.match(/form-(edit|reschedule|confirm)-visite/);
+
         if (!matchAdd && !matchEdit) return;
+
+        let idIntervention = null;
+        if (matchEdit) {
+          idIntervention = visiteForm.dataset.interventionId;
+        }
 
         const formType = matchAdd ? 'add' : matchEdit[1];
 
-        if (!histoCheckVisiteForms(formType, visiteForm)) {
+        if (!histoCheckVisiteForms(formType, visiteForm, idIntervention)) {
           event.preventDefault();
           event.stopImmediatePropagation();
           return;
@@ -241,7 +248,7 @@ if (modalAddVisite) {
     },
     true
   );
-  modalAddVisite.addEventListener('dsfr.disclose', () => {
+  document.querySelector('.button-add-visite')?.addEventListener('click', () => {
     const form = modalAddVisite.querySelector('form');
     if (!form) return;
 
