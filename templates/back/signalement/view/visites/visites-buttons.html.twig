@@ -2,9 +2,11 @@
     {% if intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
         {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
             {% if workflow_can(intervention, 'cancel') %}
-                <button class="fr-btn fr-btn--danger fr-fi-close-line" aria-controls="cancel-visite-modal-{{intervention.id}}" data-fr-opened="false">
-                    Annuler la visite
-                </button>
+                <button class="fr-btn fr-btn--danger fr-fi-close-line"
+                    data-panel-open="panel-cancel-visite-{{intervention.id}}"
+                    aria-controls="panel-cancel-visite-{{intervention.id}}"
+                    data-fr-opened="false"
+                    >Annuler la visite</button>
             {% endif %}
             <button class="fr-btn fr-btn--secondary fr-fi-edit-line" aria-controls="reschedule-visite-modal-{{intervention.id}}" data-fr-opened="false">
                 Modifier la visite

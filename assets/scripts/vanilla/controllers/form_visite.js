@@ -188,7 +188,7 @@ if (modalAddVisite) {
   document.addEventListener(
     'submit',
     (event) => {
-      const cancelVisiteForm = event.target.closest('form[name="form-cancel-visite"]');
+      const cancelVisiteForm = event.target.closest('.form-cancel-visite');
       const visiteForm = event.target.closest(
         '#form-add-visite, .form-edit-visite, .form-reschedule-visite, .form-confirm-visite'
       );
@@ -199,7 +199,7 @@ if (modalAddVisite) {
 
       // ---- CANCEL VISITE ----
       if (cancelVisiteForm) {
-        const idIntervention = cancelVisiteForm.getAttribute('data-intervention-id');
+        const idIntervention = cancelVisiteForm.dataset.interventionId;
         const tinyMCE = tinymce.get('visite-cancel[details]-' + idIntervention);
         const textContent = tinyMCE ? tinyMCE.getContent() : '';
         const textareaDetailsError = cancelVisiteForm.querySelector(
