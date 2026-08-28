@@ -14,9 +14,11 @@
                 data-fr-opened="false"
                 >Modifier la visite</button>
             {% if workflow_can(intervention, 'confirm') %}
-                <button class="fr-btn fr-fi-check-line" aria-controls="confirm-visite-modal-{{intervention.id}}" data-fr-opened="false">
-                    Confirmer la visite
-                </button>
+                <button class="fr-btn fr-fi-check-line"
+                    data-panel-open="panel-confirm-visite-{{intervention.id}}"
+                    aria-controls="panel-confirm-visite-{{intervention.id}}"
+                    data-fr-opened="false"
+                    >Confirmer la visite</button>
             {% endif %}
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
