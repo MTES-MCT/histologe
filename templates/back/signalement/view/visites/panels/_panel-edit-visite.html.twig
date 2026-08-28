@@ -1,5 +1,5 @@
 {% if intervention.scheduledAt is not empty %}
-<dialog aria-labelledby="panel-edit-visite-title-{{intervention.id}}" id="panel-edit-visite-{{intervention.id}}" class="side-panel">
+<dialog aria-labelledby="panel-edit-visite-title-{{intervention.id}}" id="panel-edit-visite-{{intervention.id}}" data-panel-visite="true" class="side-panel">
     <div class="side-panel__inner">
         <div class="side-panel__header">
             <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-visite-{{intervention.id}}" aria-controls="panel-edit-visite-{{intervention.id}}" aria-expanded="false">Fermer</button>
@@ -10,8 +10,14 @@
                 >Edition de la visite du
                     {{ (intervention.scheduledAt.format('H')) > 0 ? intervention.scheduledAt|date('d/m/Y à H:i') : intervention.scheduledAt.format('d/m/Y') }}</h1>
 
-            <form method="POST" id="form-edit-visite-{{intervention.id}}" class="form-edit-visite" enctype="multipart/form-data" action="{{ path('back_signalement_visite_edit',{uuid:signalement.uuid}) }}">
-                <p>Les champs sont obligatoires sont suivis d'une étoile <span class="fr-text-default--error">*</span>.</p>
+            <form method="POST"
+                id="form-edit-visite-{{intervention.id}}"
+                data-intervention-id="{{intervention.id}}"
+                class="form-edit-visite"
+                enctype="multipart/form-data"
+                action="{{ path('back_signalement_visite_edit',{uuid:signalement.uuid}) }}"
+                >
+                <p>Les champs obligatoires sont suivis d'une étoile <span class="fr-text-default--error">*</span>.</p>
 
                 <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-my-3w">
                     <div class="fr-col-12 fr-mb-3v">
