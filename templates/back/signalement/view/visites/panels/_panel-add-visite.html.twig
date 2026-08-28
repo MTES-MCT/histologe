@@ -1,4 +1,4 @@
-<dialog aria-labelledby="panel-add-visite-title" id="panel-add-visite" class="side-panel">
+<dialog aria-labelledby="panel-add-visite-title" id="panel-add-visite" data-panel-visite="true" class="side-panel">
     <div class="side-panel__inner">
         <div class="side-panel__header">
             <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-add-visite" aria-controls="panel-add-visite" aria-expanded="false">Fermer</button>
@@ -8,7 +8,7 @@
             <h1 id="panel-add-visite-title" class="fr-modal__title title-blue-france">Définir une date de visite</h1>
 
             <form method="POST" id="form-add-visite" enctype="multipart/form-data" action="{{ path('back_signalement_visite_add',{uuid:signalement.uuid}) }}">
-                <p>Les champs sont obligatoires sont suivis d'une étoile <span class="fr-text-default--error">*</span>.</p>
+                <p>Les champs obligatoires sont suivis d'une étoile <span class="fr-text-default--error">*</span>.</p>
                 {% if linkToVisitGrid %}
                     <div class="fr-my-5v fr-text--right">
                         <a class="fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left matomo_download" 
