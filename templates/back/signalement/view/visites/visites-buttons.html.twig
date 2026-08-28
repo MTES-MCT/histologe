@@ -17,9 +17,11 @@
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
         {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
-            <button class="fr-btn fr-btn--secondary fr-fi-edit-line" aria-controls="edit-visite-modal-{{intervention.id}}" data-fr-opened="false">
-                Editer la conclusion
-            </button>
+            <button class="fr-btn fr-btn--secondary fr-fi-edit-line"
+                data-panel-open="panel-edit-visite-{{intervention.id}}"
+                aria-controls="panel-edit-visite-{{intervention.id}}"
+                data-fr-opened="false"
+                >Editer la conclusion</button>
         {% endif %}
         {% if intervention.rapportDeVisite %}
             {% if s3_enable %}

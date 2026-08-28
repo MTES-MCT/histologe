@@ -96,34 +96,38 @@ function histoCheckVisiteForms(formType, visiteForm) {
     let isVisiteDone = false;
     let hasCheckedVisiteDone = false;
 
-    visiteForm.querySelectorAll(`input[name="visite-${formType}[visiteDone]"]`).forEach((input) => {
-      if (input.checked) {
-        hasCheckedVisiteDone = true;
-        if (input.value === '1') {
-          isVisiteDone = true;
-        }
+    if ('edit' !== formType) {
+      visiteForm
+        .querySelectorAll(`input[name="visite-${formType}[visiteDone]"]`)
+        .forEach((input) => {
+          if (input.checked) {
+            hasCheckedVisiteDone = true;
+            if (input.value === '1') {
+              isVisiteDone = true;
+            }
+          }
+        });
+
+      if (!hasCheckedVisiteDone) {
+        listInputVisiteDoneError?.classList.remove('fr-hidden');
+        isValid = false;
       }
-    });
 
-    if (!hasCheckedVisiteDone) {
-      listInputVisiteDoneError?.classList.remove('fr-hidden');
-      isValid = false;
-    }
+      if (!visiteForm.querySelector(`input[name="visite-${formType}[occupantPresent]"]:checked`)) {
+        listInputOccupantPresentError?.classList.remove('fr-hidden');
+        isValid = false;
+      }
 
-    if (!visiteForm.querySelector(`input[name="visite-${formType}[occupantPresent]"]:checked`)) {
-      listInputOccupantPresentError?.classList.remove('fr-hidden');
-      isValid = false;
-    }
-
-    if (
-      !visiteForm.querySelector(`input[name="visite-${formType}[proprietairePresent]"]:checked`)
-    ) {
-      listInputProprietairePresentError?.classList.remove('fr-hidden');
-      isValid = false;
+      if (
+        !visiteForm.querySelector(`input[name="visite-${formType}[proprietairePresent]"]:checked`)
+      ) {
+        listInputProprietairePresentError?.classList.remove('fr-hidden');
+        isValid = false;
+      }
     }
 
     if (
-      isVisiteDone &&
+      (isVisiteDone || 'edit' === formType) &&
       !visiteForm.querySelector(`input[name="visite-${formType}[concludeProcedure][]"]:checked`)
     ) {
       selectConcludeProcedureError?.classList.remove('fr-hidden');
@@ -184,9 +188,9 @@ if (modalAddVisite) {
   document.addEventListener(
     'submit',
     (event) => {
-      const cancelVisiteForm = event.target.closest('form[name="signalement-cancel-visite"]');
+      const cancelVisiteForm = event.target.closest('form[name="form-cancel-visite"]');
       const visiteForm = event.target.closest(
-        '.signalement-add-visite, .signalement-reschedule-visite, .signalement-confirm-visite'
+        '#form-add-visite, .form-edit-visite, .form-reschedule-visite, .form-confirm-visite'
       );
 
       if (!cancelVisiteForm && !visiteForm) {
@@ -215,10 +219,11 @@ if (modalAddVisite) {
 
       // ---- VISITE FORMS ----
       if (visiteForm) {
-        const match = visiteForm.className.match(/signalement-(add|reschedule|confirm)-visite/);
-        if (!match) return;
+        const matchAdd = visiteForm.id.match(/form-add-visite/);
+        const matchEdit = visiteForm.className.match(/form-(edit|reschedule|confirm)-visite/);
+        if (!matchAdd && !matchEdit) return;
 
-        const formType = match[1];
+        const formType = matchAdd ? 'add' : matchEdit[1];
 
         if (!histoCheckVisiteForms(formType, visiteForm)) {
           event.preventDefault();
