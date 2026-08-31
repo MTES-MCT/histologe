@@ -353,65 +353,53 @@ document
             const modalContent = document.getElementById('fr-modal-historique-affectation-content');
             modalContent.innerHTML = '';
 
-            for (const [partner, events] of Object.entries(historyEntries)) {
-              const table = document.createElement('div');
-              table.classList.add('fr-table--sm');
-              table.classList.add('fr-table');
+            for (const [partner, partnerData] of Object.entries(historyEntries)) {
+              const partnerTitle = document.createElement('h3');
+              partnerTitle.classList.add('fr-h6');
+              partnerTitle.textContent = partner;
+              if (partnerData.statutLabel) {
+                const statutBadge = document.createElement('span');
+                statutBadge.classList.add(
+                  'fr-badge',
+                  'fr-badge--sm',
+                  'fr-badge--no-icon',
+                  'fr-ml-2v'
+                );
+                if (partnerData.badgeClass) {
+                  partnerData.badgeClass
+                    .split(' ')
+                    .forEach((cls) => statutBadge.classList.add(cls));
+                }
+                statutBadge.textContent = partnerData.statutLabel;
+                partnerTitle.appendChild(statutBadge);
+              }
+              modalContent.appendChild(partnerTitle);
 
-              const wrapper = document.createElement('div');
-              wrapper.classList.add('fr-table__wrapper');
-              table.appendChild(wrapper);
-
-              const container = document.createElement('div');
-              container.classList.add('fr-table__container');
-              wrapper.appendChild(container);
-
-              const tableContent = document.createElement('div');
-              tableContent.classList.add('fr-table__content');
-              container.appendChild(tableContent);
-
-              const tableContentTable = document.createElement('table');
-              tableContentTable.classList.add('fr-table__content');
-              tableContent.appendChild(tableContentTable);
-
-              const tableContentTitle = document.createElement('caption');
-              tableContentTitle.textContent = partner;
-              tableContentTable.appendChild(tableContentTitle);
-
-              const tableHeader = document.createElement('thead');
-              tableHeader.innerHTML = `
-                            <tr>
-                                <th class="fr-w-15">Date</th>
-                                <th>Action</th>
-                            </tr>
-                        `;
-              tableContentTable.appendChild(tableHeader);
-
-              const tableBody = document.createElement('tbody');
-              events.forEach((event) => {
-                const row = document.createElement('tr');
-                const dateCell = document.createElement('td');
-                const dateObj = new Date(event.Date);
-                const formattedDate =
-                  dateObj.toLocaleDateString('fr-FR', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                  }) +
-                  ' à ' +
-                  dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-                dateCell.textContent = formattedDate;
-                row.appendChild(dateCell);
-
-                const actionCell = document.createElement('td');
-                actionCell.textContent = event.Action;
-                row.appendChild(actionCell);
-
-                tableBody.appendChild(row);
+              const list = document.createElement('ul');
+              partnerData.events.forEach((event) => {
+                const item = document.createElement('li');
+                if (!event.Date) {
+                  item.textContent = event.Action;
+                } else {
+                  const dateObj = new Date(event.Date);
+                  const formattedDate =
+                    dateObj.toLocaleDateString('fr-FR', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                    }) +
+                    ' à ' +
+                    dateObj.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                  item.textContent = `${formattedDate} - ${event.Action}`;
+                }
+                list.appendChild(item);
               });
 
-              tableContentTable.appendChild(tableBody);
-              modalContent.appendChild(table);
+              modalContent.appendChild(list);
+
+              const separator = document.createElement('hr');
+              separator.classList.add('hr--blue-france', 'fr-mt-4v');
+              modalContent.appendChild(separator);
             }
           }
         } else {

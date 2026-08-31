@@ -30,6 +30,10 @@ use Doctrine\ORM\Events;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
+/**
+ * @phpstan-type HistoryEvent array{Date?: string, Action: string}
+ * @phpstan-type PartnerHistory array{statutLabel?: string, badgeClass?: string, events: array<HistoryEvent>}
+ */
 class HistoryEntryManager
 {
     use DoctrineListenerRemoverTrait;
@@ -81,7 +85,7 @@ class HistoryEntryManager
     }
 
     /**
-     * @return array<string, array<array<string, int|string|null>>>
+     * @return array<string, PartnerHistory>
      */
     public function getAffectationHistory(Signalement $signalement): array
     {
@@ -110,12 +114,30 @@ class HistoryEntryManager
             unset($formattedHistory['N/A']);
         }
         $formattedHistory = array_filter($formattedHistory, static function ($entry) {
-            return !empty($entry);
+            return !empty($entry['events']);
         });
 
         ksort($formattedHistory);
-        foreach ($formattedHistory as &$partnerEvents) {
-            usort($partnerEvents, static fn ($a, $b) => strcasecmp((string) $b['Date'], (string) $a['Date']));
+        foreach ($formattedHistory as &$partnerData) {
+            usort($partnerData['events'], static fn ($a, $b) => strcasecmp((string) ($a['Date'] ?? ''), (string) ($b['Date'] ?? '')));
+        }
+        unset($partnerData);
+
+        $userSubscribeds = [];
+        foreach ($signalement->getUserSignalementSubscriptions() as $userSubscription) {
+            $partnerName = $userSubscription->getUser()->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())?->getNom() ?? 'N/A';
+            $userSubscribeds[] = ['Action' => $userSubscription->getUser()->getNomComplet(true).' ('.$partnerName.')'];
+        }
+        if (!empty($userSubscribeds)) {
+            $formattedHistory = ['Agents abonnés au dossier' => ['events' => $userSubscribeds]] + $formattedHistory;
+        }
+
+        foreach ($signalement->getAffectations() as $affectation) {
+            $partnerName = $affectation->getPartner()->getNom();
+            if (isset($formattedHistory[$partnerName])) {
+                $formattedHistory[$partnerName]['statutLabel'] = $affectation->getStatut()->label();
+                $formattedHistory[$partnerName]['badgeClass'] = $affectation->getStatut()->badgeClass();
+            }
         }
 
         return $formattedHistory;
@@ -148,8 +170,10 @@ class HistoryEntryManager
     }
 
     /**
-     * @param array<string, array<array<string, int|string|null>>> $formattedHistory
-     * @param array<HistoryEntry>                                  $entries
+     * @param array<string, PartnerHistory> $formattedHistory
+     * @param array<HistoryEntry>           $entries
+     *
+     * @param-out array<string, PartnerHistory> $formattedHistory
      */
     private function formatEntries(array &$formattedHistory, array $entries, string $type, ?Signalement $signalement = null): void
     {
@@ -165,13 +189,11 @@ class HistoryEntryManager
             }
             $partnerName = $partner ? $partner->getNom() : 'N/A';
             $date = $entry->getCreatedAt()
-                ->setTimezone(
-                    new \DateTimeZone($partner?->getTerritory() ? $partner->getTerritory()->getTimezone() : TimezoneProvider::TIMEZONE_EUROPE_PARIS)
-                )
-                ->format(self::FORMAT_DATE_TIME);
+                    ->setTimezone(new \DateTimeZone($partner?->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS))
+                    ->format(self::FORMAT_DATE_TIME);
 
             if (!isset($formattedHistory[$partnerName])) {
-                $formattedHistory[$partnerName] = [];
+                $formattedHistory[$partnerName] = ['events' => []];
             }
 
             if ('affectation' === $type) {
@@ -180,7 +202,6 @@ class HistoryEntryManager
                 $partnerTarget = null;
             }
 
-            $id = $entry->getEntityId();
             switch ($type) {
                 case 'affectation':
                     $action = $this->getAffectationActionSummary($entry, $userName, $partnerTarget?->getNom() ?? 'N/A');
@@ -194,14 +215,13 @@ class HistoryEntryManager
             }
 
             if (null !== $action) {
-                $formattedEntry = [
-                    'Date' => $date,
-                    'Action' => $action,
-                    'Id' => 'affectation' === $type ? $id : '-',
-                ];
-                $formattedHistory[$partnerName][] = $formattedEntry;
+                $formattedEntry = ['Date' => $date, 'Action' => $action];
+                $formattedHistory[$partnerName]['events'][] = $formattedEntry;
                 if (null !== $partnerTarget && $partnerTarget->getNom() !== $partnerName) {
-                    $formattedHistory[$partnerTarget->getNom()][] = $formattedEntry;
+                    if (!isset($formattedHistory[$partnerTarget->getNom()])) {
+                        $formattedHistory[$partnerTarget->getNom()] = ['events' => []];
+                    }
+                    $formattedHistory[$partnerTarget->getNom()]['events'][] = $formattedEntry;
                 }
             }
         }
