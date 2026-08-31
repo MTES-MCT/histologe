@@ -171,6 +171,18 @@
           <template #label>Etiquettes</template>
         </HistoMultiSelect>
       </div>
+      <div :class="[defineCssBlocMultiTerritoire(3,3), 'grey-background']" v-if="sharedState.personalTags.length > 0">
+        <HistoMultiSelect
+          id="filter-personal-tags"
+          v-model="sharedState.input.filters.personalTags"
+          @update:modelValue="onChange(false)"
+          :option-items=sharedState.personalTags
+          title="Rechercher par étiquettes personnelles"
+          :active=true
+          >
+          <template #label>Étiquettes personnelles</template>
+        </HistoMultiSelect>
+      </div>
       <div :class="[defineCssBlocMultiTerritoire(3,3), 'grey-background']">
         <HistoDatePicker
           id="filter-date-depot"
@@ -608,6 +620,7 @@ export default defineComponent({
       this.sharedState.input.filters = {
         territoire: undefined,
         etiquettes: [],
+        personalTags: [],
         zones: [],
         partenaires: [],
         communes: [],

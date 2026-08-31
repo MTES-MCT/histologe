@@ -21,7 +21,7 @@
                 {% endif %}
             </button>
         </li>
-        {% if is_granted('ROLE_ADMIN') %}
+        {% if is_granted('ROLE_ADMIN_TERRITORY') %}
             <li role="presentation">
                 <button id="tabpanel-notes" class="fr-tabs__tab" tabindex="0" role="tab" aria-selected="false" aria-controls="tabpanel-notes-panel">Notes perso</button>
             </li>
@@ -39,7 +39,7 @@
     <div id="tabpanel-documents-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-documents" tabindex="0">
         {% include 'back/signalement/view/tabs/tab-documents.html.twig' %}
     </div>
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('ROLE_ADMIN_TERRITORY') %}
         <div id="tabpanel-notes-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-notes" tabindex="0">
             {% include 'back/signalement/view/tabs/tab-notes.html.twig' %}
         </div>

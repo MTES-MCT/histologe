@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/bo/signalements')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_ADMIN_TERRITORY')]
 class SignalementNoteController extends AbstractController
 {
     #[Route('/{uuid:signalement}/save-personal-tags', name: 'back_signalement_save_personal_tags', methods: 'POST')]

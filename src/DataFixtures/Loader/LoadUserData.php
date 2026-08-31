@@ -4,6 +4,7 @@ namespace App\DataFixtures\Loader;
 
 use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
+use App\Entity\PersonalTag;
 use App\Entity\User;
 use App\Entity\UserPartner;
 use App\EventListener\UserCreatedListener;
@@ -135,6 +136,16 @@ class LoadUserData extends Fixture implements OrderedFixtureInterface
 
         if (isset($row['phone'])) {
             $user->setPhone($row['phone']);
+        }
+
+        if (isset($row['personalTags'])) {
+            foreach ($row['personalTags'] as $personalTag) {
+                $personalTagEntity = new PersonalTag();
+                $personalTagEntity
+                    ->setLabel($personalTag)
+                    ->setUser($user);
+                $manager->persist($personalTagEntity);
+            }
         }
 
         $password = $this->hasher->hashPassword($user, self::APP_PLAIN_PASSWORD);

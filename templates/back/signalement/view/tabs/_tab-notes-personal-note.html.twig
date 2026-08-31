@@ -19,7 +19,7 @@
         <div class="single-ajax-form-container">
             <form method="POST" action="{{ path('back_signalement_save_personal_note', {uuid: signalement.uuid}) }}" data-submit-type="formData">
                 <div class="fr-input-group">
-                    <label class="fr-label" for="personal-note-content">Votre note personnelle</label>
+                    <label class="fr-label fr-mb-2v" for="personal-note-content">Votre note personnelle</label>
                     <textarea class="fr-input editor" id="personal-note-content" name="content" rows="8">{{ personalNote.content|raw }}</textarea>
                 </div>
                 <input type="hidden" name="_token" value="{{ csrf_token('signalement_save_personal_note') }}">
@@ -39,7 +39,7 @@
         <div class="single-ajax-form-container">
             <form method="POST" action="{{ path('back_signalement_save_personal_note', {uuid: signalement.uuid}) }}" data-submit-type="formData">
                 <div class="fr-input-group">
-                    <label class="fr-label" for="personal-note-content">Votre note personnelle</label>
+                    <label class="fr-label fr-mb-2v" for="personal-note-content">Votre note personnelle</label>
                     <textarea class="fr-input editor" id="personal-note-content" name="content" rows="8" placeholder="Saisissez votre note personnelle..."></textarea>
                 </div>
                 <input type="hidden" name="_token" value="{{ csrf_token('signalement_save_personal_note') }}">

@@ -8,6 +8,7 @@ use App\Repository\PersonalTagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: PersonalTagRepository::class)]
 #[ORM\UniqueConstraint(name: 'unique_label_user', columns: ['label', 'user_id'])]
@@ -16,9 +17,11 @@ class PersonalTag implements EntityHistoryInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['settings:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['settings:read'])]
     private string $label = '';
 
     #[ORM\ManyToOne(inversedBy: 'personalTags')]

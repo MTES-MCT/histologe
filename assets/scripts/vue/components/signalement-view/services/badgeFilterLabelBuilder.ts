@@ -13,7 +13,7 @@ export function buildBadge (key: string, value: any): string | undefined | null 
   if (key === 'bailleurSocial') {
     return store.state.bailleursSociaux.find(bailleurSocial => bailleurSocial.Id.toString() === value)?.Text
   }
-  if (key === 'etiquettes' || key === 'partenaires' || key === 'zones') {
+  if (key === 'etiquettes' || key === 'personalTags' || key === 'partenaires' || key === 'zones') {
     const matchedItems = store.state[key]
       .filter(item => item.Id !== '' && Array.from(value).includes(item.Id.toString()))
 
@@ -24,7 +24,11 @@ export function buildBadge (key: string, value: any): string | undefined | null 
       matchedItems.push(optionItem)
     }
     if (matchedItems.length > 0) {
-      const label = `${key.charAt(0).toUpperCase()}${key.slice(1)} : `
+      const labels: Record<string, string> = {
+        etiquettes: 'Étiquettes',
+        personalTags: 'Étiquettes personnelles'
+      }
+      const label = labels[key] ?? `${key.charAt(0).toUpperCase()}${key.slice(1)}`
       return `${label} ${matchedItems[0].Text}${matchedItems.length > 1
                 ? ` +${matchedItems.length - 1}`
                 : ''}`

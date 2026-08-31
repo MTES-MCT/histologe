@@ -15,6 +15,7 @@ class SignalementSearchQuery
      * @param array<mixed> $communes
      * @param array<mixed> $epcis
      * @param array<mixed> $etiquettes
+     * @param array<mixed> $personalTags
      * @param array<mixed> $zones
      * @param array<mixed> $partenaires
      */
@@ -26,6 +27,7 @@ class SignalementSearchQuery
         private readonly ?array $communes = null,
         private readonly ?array $epcis = null,
         private readonly ?array $etiquettes = null,
+        private readonly ?array $personalTags = null,
         private readonly ?array $zones = null,
         #[Assert\Date(message: 'La date de début n\'est pas une date valide')]
         private readonly ?string $dateDepotDebut = null,
@@ -179,6 +181,12 @@ class SignalementSearchQuery
     public function getEtiquettes(): ?array
     {
         return $this->etiquettes;
+    }
+
+    /** @return array<mixed> */
+    public function getPersonalTags(): ?array
+    {
+        return $this->personalTags;
     }
 
     /** @return array<mixed> */
@@ -409,6 +417,7 @@ class SignalementSearchQuery
             ];
         }
         $filters['tags'] = $this->getEtiquettes() ?? null;
+        $filters['personalTags'] = $this->getPersonalTags() ?? null;
         $filters['zones'] = $this->getZones() ?? null;
         $filters['typeDeclarant'] = $this->getTypeDeclarant();
         $filters['situation'] = $this->getSituation();
@@ -490,6 +499,7 @@ class SignalementSearchQuery
             communes: isset($params['communes']) && is_array($params['communes']) ? $params['communes'] : null,
             epcis: isset($params['epcis']) && is_array($params['epcis']) ? $params['epcis'] : null,
             etiquettes: isset($params['etiquettes']) && is_array($params['etiquettes']) ? $params['etiquettes'] : null,
+            personalTags: isset($params['personalTags']) && is_array($params['personalTags']) ? $params['personalTags'] : null,
             zones: isset($params['zones']) && is_array($params['zones']) ? $params['zones'] : null,
             dateDepotDebut: $params['dateDepotDebut'] ?? null,
             dateDepotFin: $params['dateDepotFin'] ?? null,

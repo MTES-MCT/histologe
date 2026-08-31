@@ -918,6 +918,13 @@ signalements:
     situation_foyer: "[]"
     information_procedure: "[]"
     information_complementaire: "[]"
+    personalTags:
+      - user: "admin-territoire-30@signal-logement.fr"
+        label: "Mardi"
+      - user: "admin-territoire-30@signal-logement.fr"
+        label: "Mercredi"
+      - user: "admin-territoire-30-02@signal-logement.fr"
+        label: "Février"
   -     
     territory: "Gers"
     uuid: "00000000-0000-0000-2025-000000000010"
@@ -1123,3 +1130,10 @@ signalements:
     situation_foyer: "[]"
     information_procedure: "[]"
     information_complementaire: "[]"
+    personalTags:
+      - user: "admin-territoire-30@signal-logement.fr"
+        label: "Lundi"
+      - user: "admin-territoire-30@signal-logement.fr"
+        label: "Mardi"
+      - user: "admin-territoire-30-02@signal-logement.fr"
+        label: "Janvier"

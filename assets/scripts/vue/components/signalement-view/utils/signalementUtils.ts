@@ -104,16 +104,23 @@ export function handleSettings (context: any, requestResponse: any): any {
   })
 
   context.sharedState.etiquettes = []
-  optionNoneItem.Id = ''
-  optionNoneItem.Text = ''
-  context.sharedState.etiquettes.push(optionNoneItem)
-  const tagsArray = Object.values(requestResponse.tags)
+  const tagsArray = Object.values(requestResponse.tags ?? [])
   tagsArray.sort((a: any, b: any) => (a.label.toLowerCase() > b.label.toLowerCase()) ? 1 : ((b.label.toLowerCase() > a.label.toLowerCase()) ? -1 : 0))
   tagsArray.forEach((tag: any) => {
     const optionItem = new HistoInterfaceSelectOption()
     optionItem.Id = tag.id.toString()
     optionItem.Text = tag.label
     context.sharedState.etiquettes.push(optionItem)
+  })
+
+  context.sharedState.personalTags = []
+  const personalTagsArray = Object.values(requestResponse.personalTags ?? [])
+  personalTagsArray.sort((a: any, b: any) => (a.label.toLowerCase() > b.label.toLowerCase()) ? 1 : ((b.label.toLowerCase() > a.label.toLowerCase()) ? -1 : 0))
+  personalTagsArray.forEach((tag: any) => {
+    const optionItem = new HistoInterfaceSelectOption()
+    optionItem.Id = tag.id.toString()
+    optionItem.Text = tag.label
+    context.sharedState.personalTags.push(optionItem)
   })
 
   context.sharedState.zones = []
@@ -212,7 +219,7 @@ export function handleFilters (context: any, ajaxurl: string): any {
         url.searchParams.set(`${key}Debut`, dateDebut)
         url.searchParams.set(`${key}Fin`, dateFin)
         url.searchParams.delete(key)
-      } else if (Array.isArray(value) && (['partenaires', 'communes', 'etiquettes', 'zones'].includes(key))) {
+      } else if (Array.isArray(value) && (['partenaires', 'communes', 'etiquettes', 'personalTags', 'zones'].includes(key))) {
         value.forEach((valueItem: any) => {
           addQueryParameter(context, `${key}[]`, valueItem)
           url.searchParams.append(`${key}[]`, valueItem)

@@ -37,8 +37,8 @@ class BackUserControllerTest extends WebTestCase
 
     public static function provideParamsUserList(): \Generator
     {
-        yield 'Search without params' => [[], 71];
-        yield 'Search with queryUser admin' => [['queryUser' => 'admin'], 23];
+        yield 'Search without params' => [[], 72];
+        yield 'Search with queryUser admin' => [['queryUser' => 'admin'], 24];
         yield 'Search with territory 13' => [['territory' => 13], 18];
         yield 'Search with territory 13 and partner 6 and 7' => [['territory' => 13, 'partners' => [6, 7]], 2];
         yield 'Search with status INACTIVE' => [['statut' => 'INACTIVE'], 11];
