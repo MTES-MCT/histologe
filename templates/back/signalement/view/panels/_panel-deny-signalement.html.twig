@@ -1,0 +1,39 @@
+<dialog aria-labelledby="panel-deny-signalement-title" id="panel-deny-signalement" data-panel-visite="true" class="side-panel">
+    <div class="side-panel__inner">
+        <div class="side-panel__header">
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-deny-signalement" aria-controls="panel-deny-signalement" aria-expanded="false">Fermer</button>
+        </div>
+
+        <div class="side-panel__content fr-mx-3w">
+            <h1 id="panel-deny-signalement-title" class="fr-modal__title title-blue-france"
+                >Refuser le signalement #{{ signalement.reference }}</h1>
+
+            <p>Les champs marqués d'un asterisque (*) sont obligatoires.</p>
+
+            {{ form_start(refusSignalementForm, {'attr': {'id': 'form-deny-signalement', 'data-submit-type':'formData'}}) }}
+            {{ form_errors(refusSignalementForm) }}
+            {{ form_row(refusSignalementForm.motifRefus) }}
+            {{ form_row(refusSignalementForm.description) }}
+            {{ form_row(refusSignalementForm.files) }}
+            {{ form_end(refusSignalementForm) }}
+        </div>
+        <div class="side-panel__footer">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm fr-btns-group--icon-left">
+                <li>
+                    <button type="submit"
+                        class="fr-btn fr-btn--icon-left fr-icon-check-line"
+                        form="form-deny-signalement"
+                        >Refuser le signalement</button>
+                </li>
+                <li>
+                    <button type="button"
+                        class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel"
+                        data-panel="panel-deny-signalement"
+                        aria-controls="panel-deny-signalement"
+                        aria-expanded="false"
+                        >Annuler</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</dialog>
