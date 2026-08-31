@@ -99,7 +99,7 @@ class SignalementControllerTest extends WebTestCase
         yield 'SA - Nouveau' => [
             'admin-01@signal-logement.fr',
             '00000000-0000-0000-2025-000000000001',
-            '#open-accept-signalement-modal',
+            '#open-accept-signalement-panel',
             'Valider le signalement',
         ];
         yield 'SA - En cours' => [
@@ -124,7 +124,7 @@ class SignalementControllerTest extends WebTestCase
         yield '13 - RT - Nouveau' => [
             'admin-territoire-13-01@signal-logement.fr',
             '00000000-0000-0000-2023-000000000017',
-            '#open-accept-signalement-modal',
+            '#open-accept-signalement-panel',
             'Valider le signalement',
         ];
         yield '13 - RT - En cours' => [

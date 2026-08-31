@@ -20,7 +20,7 @@
 {% endif %}
 {% if is_granted('SIGN_VALIDATE', signalement) and not isUniqueRtInCurrentPartner %}
     <div data-ajax-form>
-        {% include '_partials/_modal_accept_signalement.html.twig' %}
+        {% include 'back/signalement/view/panels/_panel-accept-signalement.html.twig' %}
     </div>
 {% endif %}
 {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
@@ -90,7 +90,7 @@
         </div>
     </div>
     <div data-ajax-form class="fr-display-inline">
-        {% include '_partials/_modal_refus_signalement.html.twig' %}
+        {% include 'back/signalement/view/panels/_panel-deny-signalement.html.twig' %}
     </div>
     <div class="admin-territory-validation">
         {% if isUniqueRtInCurrentPartner %}
@@ -101,17 +101,18 @@
                 <input type="hidden" name="_token" value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
             </form>
         {% else %}
-            <button 
-                class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success" 
-                id="open-accept-signalement-modal" 
-                data-fr-opened="false" 
-                aria-controls="accept-signalement-modal">
-                Valider le signalement
-            </button>
+            <button type="button"
+                class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success"
+                id="open-accept-signalement-panel"
+                data-panel-open="panel-accept-signalement"
+                aria-controls="panel-accept-signalement"
+                data-fr-opened="false"
+                >Valider le signalement</button>
         {% endif %}
-        <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-line fr-btn--danger"
-            aria-controls="refus-signalement-modal" data-fr-opened="false">
-            Refuser le signalement
-        </a>
+        <button type="button" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-line fr-btn--danger"
+            data-panel-open="panel-deny-signalement"
+            aria-controls="panel-deny-signalement"
+            data-fr-opened="false"
+            >Refuser le signalement</button>
     </div>
 {% endif %}
