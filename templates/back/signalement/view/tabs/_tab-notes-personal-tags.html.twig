@@ -11,7 +11,7 @@
             <form method="POST" action="{{ path('back_signalement_create_personal_tag', {uuid: signalement.uuid}) }}" class="fr-search-bar fr-search-bar-customized" data-submit-type="formData">
                 <label class="fr-label" for="personal-tag-filter-input">Recherche</label>
                 <input class="fr-input search-and-select-badges-search-input" placeholder="Rechercher" type="text" id="personal-tag-filter-input" name="label">
-                <button class="fr-btn fr-icon-arrow-left-line" type="submit" title="Rechercher">Rechercher</button>
+                <button class="fr-btn fr-icon-corner-down-left-line" type="submit" title="Rechercher">Rechercher</button>
                 <input type="hidden" name="_token" value="{{ csrf_token('signalement_create_personal_tag') }}">
             </form>
             <span class="fr-hidden" data-error-target="1"></span>
