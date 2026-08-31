@@ -29,20 +29,19 @@
                     <li>
                         <button
                             class="fr-nav__link fr-btn--icon-left fr-fi-lock-fill"
-                            aria-controls="reopen-all-signalement-modal" 
+                            data-panel-open="panel-reopen-all-signalement"
+                            aria-controls="panel-reopen-all-signalement" 
                             data-fr-opened="false"
-                            >
-                            Rouvrir pour tous
-                        </button>
+                            >Rouvrir pour tous</button>
                     </li>
                 {% elseif is_granted('AFFECTATION_REOPEN', affectation) %}
                     <li>
                         <button
                             class="fr-nav__link fr-btn--icon-left fr-fi-lock-fill"
-                            aria-controls="reopen-signalement-modal" 
-                            data-fr-opened="false">
-                            Rouvrir pour {{ currentPartner ? currentPartner.nom : 'N/A' }}
-                        </button>
+                            data-panel-open="panel-reopen-signalement"
+                            aria-controls="panel-reopen-signalement" 
+                            data-fr-opened="false"
+                            >Rouvrir pour {{ currentPartner ? currentPartner.nom : 'N/A' }}</button>
                     </li>
                 {% endif %}
                 {% if feature_cloture_v2 %}
@@ -90,12 +89,12 @@
                 {% if is_granted('SIGN_INJONCTION_CLOSE', signalement) %}
                     <li>
                         <button
-                            class="fr-nav__link fr-btn--icon-left fr-icon-close-line" 
-                            aria-controls="close-demarche-acceleree-modal" 
-                            data-fr-opened="false" 
-                            title="Clôturer la démarche accélérée">
-                            Clôturer la démarche accélérée
-                        </button>
+                            class="fr-nav__link fr-btn--icon-left fr-icon-close-line"
+                            data-fr-opened="false"
+                            data-panel-open="panel-close-demarche-acceleree"
+                            aria-controls="panel-close-demarche-acceleree"
+                            data-fr-opened="false"
+                            >Clôturer la démarche accélérée</button>
                     </li>
                 {% endif %}
                 {% if is_granted('SIGN_VIEW', signalement) %}

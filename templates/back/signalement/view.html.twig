@@ -122,7 +122,7 @@
     {% endif %}
     {% if (is_granted('SIGN_INJONCTION_CLOSE', signalement)) %}
         <div data-ajax-form>
-            {% include '_partials/_modal_close_demarche_acceleree.html.twig' %}
+            {% include 'back/signalement/view/panels/_panel-close-demarche-acceleree.html.twig' %}
         </div>
     {% endif %}
     {% include '_partials/_modal_file_delete.html.twig' %}
@@ -136,11 +136,11 @@
     {% include '_partials/_modal_historique_affectation.html.twig' %}
 
     {% if is_granted('SIGN_REOPEN', signalement) %}
-        {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}
+        {% include 'back/signalement/view/panels/_panel-reopen-signalement.html.twig' with { 'all': '1' } %}
     {% endif %}
     
     {% if is_granted('AFFECTATION_REOPEN', affectation) %}
-        {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
+        {% include 'back/signalement/view/panels/_panel-reopen-signalement.html.twig' with { 'all': '0' } %}
     {% endif %}
 
     {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
