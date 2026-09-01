@@ -105,7 +105,7 @@
     {% endif %}
     {% if is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_INJONCTION', signalement) %}
         <div data-ajax-form>
-            {% include '_partials/_modal_reinit_affectation.html.twig' %}
+            {% include 'back/signalement/view/panels/_panel-reinit-affectation.html.twig' %}
         </div>
     {% endif %}
     {# on intégre la modale affichant la map même si on à pas de coordonées afin de gérer l'affichage suite à la sélection de batiment (sans rechargement de page) #}

@@ -17,12 +17,12 @@
                                 <input type="hidden" name="_token" value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
                             </form>
                         {% else %}
-                            <button
-                                data-fr-opened="false" 
-                                aria-controls="accept-affectation-modal"
-                                class="fr-nav__link fr-btn--icon-left fr-icon-checkbox-circle-fill">
-                                Annuler le refus de l'affectation
-                            </button>
+                            <button type="button"
+                                class="fr-nav__link fr-btn--icon-left fr-icon-checkbox-circle-fill"
+                                aria-controls="panel-accept-affectation"
+                                data-panel-open="panel-accept-affectation"
+                                data-fr-opened="false"
+                                >Annuler le refus de l'affectation</button>
                         {% endif %}
                     </li>
                 {% elseif is_granted('SIGN_REOPEN', signalement) %}
@@ -144,30 +144,26 @@
                                 {% if isAloneInCurrentPartner and affectation %}
                                     <button 
                                         class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line disabled"
-                                        aria-disabled="true" tabindex="-1" title="Vous ne pouvez pas quitter le dossier, étant le seul agent de votre partenaire.">
-                                        Se retirer du dossier
-                                    </button>
+                                        aria-disabled="true" tabindex="-1" title="Vous ne pouvez pas quitter le dossier, étant le seul agent de votre partenaire."
+                                        >Se retirer du dossier</button>
                                 {% elseif subscriptionsInMyPartner|length > 1 or not affectation %}
                                     <a href="{{ path('back_signalement_unsubscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('unsubscribe') }}"
-                                        class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line">
-                                        Se retirer du dossier
-                                    </a>
+                                        class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line"
+                                        >Se retirer du dossier</a>
                                 {% else %}
                                     <button
                                         class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line"
-                                        aria-controls="transfer-subscription-modal" 
+                                        data-panel-open="panel-transfer-subscription"
+                                        aria-controls="panel-transfer-subscription"
                                         data-fr-opened="false"
-                                        >
-                                        Se retirer du dossier
-                                    </button>
+                                        >Se retirer du dossier</button>
                                 {% endif %}
                                     <button
                                         class="fr-nav__link fr-btn--icon-left fr-icon-user-add-line"
-                                        aria-controls="agents-subscription-modal" 
+                                        data-panel-open="panel-agents-subscription" 
+                                        aria-controls="panel-agents-subscription" 
                                         data-fr-opened="false"
-                                        >
-                                        Abonner un agent
-                                    </button>
+                                        >Abonner un agent</button>
                             </li>
                         {% elseif not is_granted('AFFECTATION_CANCEL_REFUSED', affectation) %}
                             <li>
