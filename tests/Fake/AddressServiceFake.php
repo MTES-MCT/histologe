@@ -270,7 +270,7 @@ class AddressServiceFake extends AddressService
                 ]);
                 break;
             case '34 Rue des Arawaks 97223 Le Diamant':
-                $response = new Address([
+                $response = new BanAddress([
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',

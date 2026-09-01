@@ -54,8 +54,8 @@ class SignalementAddressContentService
         if ($this->featureHistoAddress && $this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
             return $this->urlGenerator->generate('back_addresses_history_index', [
                 'view' => 'list',
-                'adresse' => trim($signalement->getAdresseOccupant()),
-                'communes[]' => $signalement->getVilleOccupant(),
+                'adresse' => trim($signalement->getAddress()->getHousenumberAndStreet()),
+                'communes[]' => $signalement->getAddress()->getCity(),
             ]);
         }
 
