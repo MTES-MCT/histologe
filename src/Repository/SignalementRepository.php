@@ -430,10 +430,18 @@ class SignalementRepository extends ServiceEntityRepository
         $limit = (int) $signalementListQueryParams->limit;
 
         $offset = ($page - 1) * $limit;
-        $qb = $this->findForAPIQueryBuilder($user);
+
+        // 1ère requête : ids distincts paginés
+        $partners = $this->partnerAuthorizedResolver->resolveBy($user);
+        $idsQb = $this->createQueryBuilder('s')
+            ->select('DISTINCT s.id AS id', 's.createdAt AS createdAt')
+            ->innerJoin('s.address', 'address')
+            ->leftJoin('s.affectations', 'affectations')
+            ->where('affectations.partner IN (:partners)')
+            ->setParameter('partners', $partners);
 
         if (!empty($signalementListQueryParams->dateAffectationDebut)) {
-            $qb->andWhere('affectations.createdAt >= :dateAffectationStart')
+            $idsQb->andWhere('affectations.createdAt >= :dateAffectationStart')
                 ->setParameter('dateAffectationStart', $signalementListQueryParams->dateAffectationDebut);
         }
 
@@ -441,20 +449,28 @@ class SignalementRepository extends ServiceEntityRepository
             $dateAffectationEnd = (new \DateTimeImmutable($signalementListQueryParams->dateAffectationFin))
                 ->modify('+1 day');
 
-            $qb->andWhere('affectations.createdAt <= :dateAffectationEnd')
+            $idsQb->andWhere('affectations.createdAt <= :dateAffectationEnd')
                 ->setParameter('dateAffectationEnd', $dateAffectationEnd);
         }
 
         if (!empty($signalementListQueryParams->codeInsee)) {
-            $qb->andWhere('address.cityCode = :codeInsee')
+            $idsQb->andWhere('address.cityCode = :codeInsee')
                 ->setParameter('codeInsee', $signalementListQueryParams->codeInsee);
         }
 
-        $qb->orderBy('s.createdAt', 'DESC')
-            ->setFirstResult($offset)
-            ->setMaxResults($limit);
+        $ids = array_column($idsQb->orderBy('s.createdAt', 'DESC')->setFirstResult($offset)->setMaxResults($limit)->getQuery()->getArrayResult(), 'id');
 
-        return $qb->getQuery()->getResult();
+        if (empty($ids)) {
+            return [];
+        }
+
+        // 2ème requête : hydratation complète sur les seuls ids de la page
+        return $this->findForAPIQueryBuilder($user)
+            ->andWhere('s.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->orderBy('s.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 
     public function findForAPIQueryBuilder(User $user, ?bool $includeCreatedByUser = false): QueryBuilder
@@ -463,9 +479,13 @@ class SignalementRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s')
             ->innerJoin('s.address', 'address');
 
-        $qb->select('DISTINCT s', 'address', 'territory')
+        $qb->select('DISTINCT s', 'address', 'territory', 'affectations', 'signalementUsager', 'intervention', 'file')
             ->leftJoin('address.territory', 'territory')
-            ->leftJoin('s.affectations', 'affectations');
+            ->leftJoin('s.affectations', 'affectations')
+            ->leftJoin('s.signalementUsager', 'signalementUsager')
+            ->leftJoin('s.interventions', 'intervention')
+            ->leftJoin('s.files', 'file')
+        ;
         if ($includeCreatedByUser) {
             return $qb->where('affectations.partner IN (:partners) OR s.createdBy = :user')
                 ->setParameter('partners', $partners)

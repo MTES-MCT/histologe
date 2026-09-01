@@ -7,6 +7,7 @@ use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
 use App\Entity\User;
 use App\Repository\PartnerRepository;
+use App\Repository\UserApiPermissionRepository;
 use App\Repository\UserRepository;
 use App\Service\MessageHelper;
 use App\Service\Security\PartnerAuthorizedResolver;
@@ -25,6 +26,7 @@ class PartnerControllerTest extends WebTestCase
     private ?KernelBrowser $client = null;
     private UserRepository $userRepository;
     private PartnerRepository $partnerRepository;
+    private UserApiPermissionRepository $userApiPermissionRepository;
     private RouterInterface $router;
     private Generator $faker;
 
@@ -33,6 +35,7 @@ class PartnerControllerTest extends WebTestCase
         self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
+        $this->userApiPermissionRepository = static::getContainer()->get(UserApiPermissionRepository::class);
         $this->router = static::getContainer()->get(RouterInterface::class);
         $this->faker = Factory::create();
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
@@ -388,7 +391,10 @@ class PartnerControllerTest extends WebTestCase
     {
         /** @var User $partnerUser */
         $partnerUser = $this->userRepository->findOneBy(['email' => 'api-02@signal-logement.fr']);
-        $partner = (new PartnerAuthorizedResolver($this->partnerRepository))->getUniquePartner($partnerUser);
+        $partner = (new PartnerAuthorizedResolver(
+            $this->partnerRepository,
+            $this->userApiPermissionRepository
+        ))->getUniquePartner($partnerUser);
 
         $route = $this->router->generate('back_partner_user_edit', ['partner' => $partner->getId(), 'user' => $partnerUser->getId()]);
         $this->client->request(

@@ -6,6 +6,7 @@ use App\Dto\Api\Request\SignalementListQueryParams;
 use App\Dto\Api\Response\SignalementResponse;
 use App\Entity\User;
 use App\Factory\Api\SignalementResponseFactory;
+use App\Repository\DesordreCategorieRepository;
 use App\Repository\SignalementRepository;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
@@ -90,10 +91,13 @@ class SignalementListController extends AbstractController
     )]
     public function getSignalementList(
         SignalementRepository $signalementRepository,
+        DesordreCategorieRepository $desordreCategorieRepository,
         SignalementResponseFactory $signalementResponseFactory,
         #[MapQueryString] ?SignalementListQueryParams $signalementListQueryParams = null,
     ): JsonResponse {
         $signalementListQueryParams ??= new SignalementListQueryParams();
+        // load desordres data to prevent n+1 queries
+        $desordreCategorieRepository->findAllWithRelations();
         /** @var User $user */
         $user = $this->getUser();
         $signalements = $signalementRepository->findAllForApi(

@@ -20,4 +20,17 @@ class DesordreCategorieRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, DesordreCategorie::class);
     }
+
+    /**
+     * @return DesordreCategorie[]
+     */
+    public function findAllWithRelations(): array
+    {
+        return $this->createQueryBuilder('dc')
+            ->select('dc', 'critere', 'precision')
+            ->leftJoin('dc.desordreCriteres', 'critere')
+            ->leftJoin('critere.desordrePrecisions', 'precision')
+            ->getQuery()
+            ->getResult();
+    }
 }

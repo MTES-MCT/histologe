@@ -7,12 +7,17 @@ use App\Entity\User;
 use App\Entity\UserApiPermission;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Repository\PartnerRepository;
+use App\Repository\UserApiPermissionRepository;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-readonly class PartnerAuthorizedResolver
+class PartnerAuthorizedResolver
 {
+    /** @var array<int, UserApiPermission[]> */
+    private array $permissionsByUser = [];
+
     public function __construct(
         private PartnerRepository $partnerRepository,
+        private UserApiPermissionRepository $userApiPermissionRepository,
     ) {
     }
 
@@ -21,12 +26,15 @@ readonly class PartnerAuthorizedResolver
      */
     public function resolveBy(User $user): array
     {
-        $permissions = $user->getUserApiPermissions();
+        if (!isset($this->permissionsByUser[$user->getId()])) {
+            $this->permissionsByUser[$user->getId()] = $this->userApiPermissionRepository->getUserPermissions($user);
+        }
+        $permissions = $this->permissionsByUser[$user->getId()];
         $listPartner = [];
         foreach ($permissions as $permission) {
             if (null !== $permission->getPartner()) {
-                if ($partner = $this->partnerRepository->findOneBy(['id' => $permission->getPartner()->getId(), 'isArchive' => false])) {
-                    $listPartner[$partner->getId()] = $partner;
+                if (!$permission->getPartner()->getIsArchive()) {
+                    $listPartner[$permission->getPartner()->getId()] = $permission->getPartner();
                 }
                 continue;
             }
