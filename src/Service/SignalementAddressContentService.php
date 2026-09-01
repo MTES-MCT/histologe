@@ -52,11 +52,16 @@ class SignalementAddressContentService
     public function getRouteForListOfSignalementOnAddress(Signalement $signalement): string
     {
         if ($this->featureHistoAddress && $this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
-            return $this->urlGenerator->generate('back_addresses_history_index', [
+            $urlParams = [
                 'view' => 'list',
                 'adresse' => trim($signalement->getAddress()->getHousenumberAndStreet()),
                 'communes[]' => $signalement->getAddress()->getCity(),
-            ]);
+            ];
+            if ($this->security->isGranted('ROLE_ADMIN')) {
+                $urlParams['territoire'] = $signalement->getAddress()->getTerritory()->getId();
+            }
+
+            return $this->urlGenerator->generate('back_addresses_history_index', $urlParams);
         }
 
         return $this->urlGenerator->generate('back_signalements_index', [
