@@ -66,6 +66,47 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $this->assertCount(6, $addressesForTerritory);
     }
 
+    public function testFindAllList(): void
+    {
+        /** @var AddressesHistoryQuery $addressesHistoryQuery */
+        $addressesHistoryQuery = new AddressesHistoryQuery($this->entityManager);
+
+        // Test sans territoire - devrait retourner toutes les adresses
+        $allAddresses = $addressesHistoryQuery->findAllList();
+
+        $this->assertIsArray($allAddresses);
+        $this->assertNotEmpty($allAddresses);
+        $this->assertCount(60, $allAddresses);
+
+        // Vérifie la structure des résultats
+        foreach ($allAddresses as $address) {
+            $this->assertArrayHasKey('id', $address);
+            $this->assertArrayHasKey('address', $address);
+            $this->assertIsString($address['address']);
+            $this->assertNotEmpty($address['address']);
+        }
+
+        // Vérifie qu'il n'y a pas de doublons d'IDs
+        $ids = array_column($allAddresses, 'id');
+        $this->assertEquals(count($ids), count(array_unique($ids)));
+    }
+
+    public function testFindAllListWithTerritory(): void
+    {
+        /** @var AddressesHistoryQuery $addressesHistoryQuery */
+        $addressesHistoryQuery = new AddressesHistoryQuery($this->entityManager);
+        /** @var TerritoryRepository $territoryRepository */
+        $territoryRepository = $this->entityManager->getRepository(Territory::class);
+
+        $territory = $territoryRepository->findOneBy(['zip' => '13']);
+        $this->assertNotNull($territory, 'Territory with zip 13 should exist in fixtures');
+
+        $addressesForTerritory = $addressesHistoryQuery->findAllList($territory);
+
+        $this->assertIsArray($addressesForTerritory);
+        $this->assertCount(21, $addressesForTerritory);
+    }
+
     public function testFindAddressesWithHistoryForSuperAdmin(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
@@ -390,7 +431,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
             $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
             $this->assertIsArray($results);
-            $this->assertCount(2, $results);
+            $this->assertCount(5, $results);
         }
     }
 }
