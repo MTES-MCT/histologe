@@ -54,36 +54,34 @@
                     {% endif %}
                     {% if affectation and is_granted('AFFECTATION_CLOSE', affectation) %}
                         <li>
-                            <button id="link-bouton-cloturer" class="fr-nav__link fr-btn--icon-left fr-icon-close-line" data-panel-open="panel-close-affectation" aria-controls="panel-close-affectation" aria-expanded="false">
+                            <button id="test-bouton-cloturer" class="fr-nav__link fr-btn--icon-left fr-icon-close-line" data-panel-open="panel-close-affectation" aria-controls="panel-close-affectation" aria-expanded="false"
+                                >
                                 {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                                     Fermer l'affectation
                                 {% else %}
                                     Fermer le dossier
-                                {% endif %}
-                            </button>
+                                {% endif %}</button>
                         </li>
                     {% endif %}
                 {% else %}
                     {% if is_granted('SIGN_CLOSE', signalement) %}
                         <li>
                             <button
-                                id="test-bouton-cloturer" 
+                                id="test-bouton-cloturer"
                                 class="fr-nav__link fr-btn--icon-left fr-icon-close-line"
-                                aria-controls="cloture-modal" 
-                                data-fr-opened="false">
-                                Clôturer
-                            </button>
+                                aria-controls="panel-cloture"
+                                data-fr-opened="false"
+                                >Clôturer</button>
                         </li>
                     {% elseif affectation and is_granted('AFFECTATION_CLOSE', affectation) %}
-                            <li>
-                                <button
-                                    id="link-bouton-cloturer"
-                                    class="fr-nav__link fr-btn--icon-left fr-icon-close-line"
-                                    aria-controls="cloture-modal" 
-                                    data-fr-opened="false">
-                                    Clôturer
-                                </button>
-                            </li>
+                        <li>
+                            <button
+                                id="test-bouton-cloturer"
+                                class="fr-nav__link fr-btn--icon-left fr-icon-close-line"
+                                aria-controls="panel-cloture"
+                                data-fr-opened="false"
+                                >Clôturer</button>
+                        </li>
                     {% endif %}
                 {% endif %}
                 {% if is_granted('SIGN_INJONCTION_CLOSE', signalement) %}
