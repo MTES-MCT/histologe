@@ -541,14 +541,20 @@ class SignalementEditControllerTest extends WebTestCase
         // ce comportement, le MockClock injecté serait perdu à la seconde requête.
         $client->disableReboot();
 
+        // On fige la date de clôture sur le 15 du mois : les dates manipulées ensuite tombent les 14/15, ce qui évite les débordements de fin de mois
+        $closedAt = (new \DateTimeImmutable('-6 months'))->modify('first day of this month')->modify('+14 days')->setTime(10, 0);
+
         $container = static::getContainer();
-        $mockClock = new MockClock();
+        $mockClock = new MockClock($closedAt->modify('+6 months'));
         $container->set(ClockInterface::class, $mockClock);
 
         /** @var EntityManagerInterface $entityManager */
-        $entityManager = static::getContainer()->get('doctrine')->getManager();
+        $entityManager = $container->get('doctrine')->getManager();
         /** @var Signalement $signalement */
         $signalement = $entityManager->getRepository(Signalement::class)->findOneBy(['reference' => '2023-1']);
+        $signalement->setClosedAt($closedAt);
+        $entityManager->flush();
+
         $signalementUser = $this->getSignalementUser($signalement, UserManager::DECLARANT);
         $client->loginUser($signalementUser, 'code_suivi');
 
@@ -556,11 +562,12 @@ class SignalementEditControllerTest extends WebTestCase
         $router = static::getContainer()->get(RouterInterface::class);
         $url = $router->generate('front_suivi_signalement_complete_travaux_mise_en_conformite', ['code' => $signalement->getCodeSuivi()]);
 
+        // Jour anniversaire des 6 mois : accessible
         $client->request('GET', $url);
         $this->assertResponseIsSuccessful();
 
+        // La veille : pas encore accessible
         $mockClock->modify('-1 day');
-
         $client->request('GET', $url);
         $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
