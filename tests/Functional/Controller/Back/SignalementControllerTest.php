@@ -198,7 +198,7 @@ class SignalementControllerTest extends WebTestCase
         $route = $generatorUrl->generate('back_signalement_view', ['uuid' => $uuid]);
 
         $signalement = static::getContainer()->get(SignalementRepository::class)->findOneBy(['uuid' => $uuid]);
-        $affectation = $signalement->getAffectationForPartner($user->getPartnerInTerritory($signalement->getTerritory()));
+        $affectation = $signalement->getAffectationForPartner($user->getPartnerInTerritory($signalement->getAddress()->getTerritory()));
 
         $client->loginUser($user);
         $client->request('GET', $route);
@@ -428,7 +428,7 @@ class SignalementControllerTest extends WebTestCase
 
         /** @var AffectationRepository $affectationRepository */
         $affectationRepository = static::getContainer()->get(AffectationRepository::class);
-        $affectation = $affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())]);
+        $affectation = $affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory())]);
         $this->assertEquals(AffectationStatus::CLOSED, $affectation->getStatut());
         $this->assertEquals('LOGEMENT_MIS_EN_CONFORMITE', $affectation->getMotifCloture()->value);
         $this->assertEquals('NON', $affectation->getTravauxMiseEnConformite()->value);

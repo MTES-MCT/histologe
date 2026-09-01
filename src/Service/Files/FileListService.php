@@ -61,7 +61,7 @@ class FileListService
             ->where('f.isStandalone = :isStandalone')
             ->andWhere('f.territory = :territory OR f.territory IS NULL')
             ->setParameter('isStandalone', true)
-            ->setParameter('territory', $signalement->getTerritory())
+            ->setParameter('territory', $signalement->getAddress()->getTerritory())
             ->orderBy('f.title', 'ASC')
             ->getQuery()
             ->getResult();

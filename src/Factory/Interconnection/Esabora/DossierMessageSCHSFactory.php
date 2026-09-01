@@ -8,7 +8,6 @@ use App\Messenger\Message\Esabora\DossierMessageSCHS;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Esabora\AttachmentsUtils;
 use App\Service\UploadHandlerService;
-use App\Utils\Address\AddressParser;
 use App\Utils\Address\EtageParser;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -40,7 +39,6 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
     {
         $signalement = $affectation->getSignalement();
         $partner = $affectation->getPartner();
-        $address = AddressParser::parse($signalement->getAdresseOccupant());
         $etage = $signalement->getEtageOccupant() ? EtageParser::parse($signalement->getEtageOccupant()) : null;
         $numeroAppartement = !empty($signalement->getNumAppartOccupant())
             ? substr($signalement->getNumAppartOccupant(), 0, 5)
@@ -69,12 +67,12 @@ class DossierMessageSCHSFactory extends AbstractDossierMessageFactory
             ->setPrenomUsager($prenomUsager)
             ->setMailUsager($signalement->getMailOccupant())
             ->setTelephoneUsager(ltrim($signalement->getTelOccupantDecoded(nationalIfFrench: true) ?? '', '+'))
-            ->setAdresseSignalement($address['street'])
-            ->setCodepostaleSignalement($signalement->getCpOccupant())
-            ->setVilleSignalement($signalement->getVilleOccupant())
+            ->setAdresseSignalement(ucfirst($signalement->getAddress()->getStreet()))
+            ->setCodepostaleSignalement($signalement->getAddress()->getPostCode())
+            ->setVilleSignalement($signalement->getAddress()->getCity())
             ->setEtageSignalement(!empty($etage) ? (string) $etage : null)
             ->setNumeroAppartementSignalement($numeroAppartement)
-            ->setNumeroAdresseSignalement($address['number'])
+            ->setNumeroAdresseSignalement($signalement->getAddress()->getHousenumber())
             ->setLatitudeSignalement($signalement->getGeoloc()['lat'] ?? 0)
             ->setLongitudeSignalement($signalement->getGeoloc()['lng'] ?? 0)
             ->setDateOuverture($signalement->getCreatedAt()->format('d/m/Y'))

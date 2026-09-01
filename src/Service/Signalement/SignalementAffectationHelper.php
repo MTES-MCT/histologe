@@ -3,6 +3,7 @@
 namespace App\Service\Signalement;
 
 use App\Dto\SignalementAffectationListView;
+use App\Entity\Address;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Signalement;
@@ -145,13 +146,14 @@ class SignalementAffectationHelper
     {
         $signalement = new Signalement();
         $territory = new Territory();
+        $address = new Address();
 
         $reflectionClass = new \ReflectionClass($territory);
         $property = $reflectionClass->getProperty('id');
-        $property->setAccessible(true);
         $property->setValue($territory, $data['territoryId']);
 
-        $signalement->setTerritory($territory);
+        $address->setTerritory($territory);
+        $signalement->setAddress($address);
         $signalement->setStatut($data['statut']);
 
         return $signalement;

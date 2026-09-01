@@ -2,19 +2,18 @@
 
 namespace App\Service\Gouv\Ban\Response;
 
-class Address
+class BanAddress
 {
     private ?string $label = null;
     private ?string $housenumber = null;
     private ?string $street = null;
-    private ?string $streetWithoutHouseNumber = null;
     private ?string $zipCode = null;
     private ?string $city = null;
     private ?string $inseeCode = null;
     private ?float $score = 0;
     private ?string $banId = null;
-    private ?string $longitude = null;
-    private ?string $latitude = null;
+    private ?float $longitude = null;
+    private ?float $latitude = null;
 
     /**
      * @param array<string, mixed> $data
@@ -25,8 +24,7 @@ class Address
             $properties = $data['features'][0]['properties'];
             $this->label = $properties['label'] ?? null;
             $this->housenumber = $properties['housenumber'] ?? null;
-            $this->street = $properties['name'] ?? null;
-            $this->streetWithoutHouseNumber = $properties['street'] ?? null;
+            $this->street = $properties['street'] ?? null;
             $this->zipCode = $properties['postcode'] ?? null;
             $this->city = $properties['city'] ?? null;
             $this->score = $properties['score'] ?? null;
@@ -36,14 +34,14 @@ class Address
 
         if (null !== $data && !empty($data['features'][0]['geometry']['coordinates'])) {
             $coordinates = $data['features'][0]['geometry']['coordinates'];
-            $this->longitude = $coordinates[0] ?? null;
-            $this->latitude = $coordinates[1] ?? null;
+            $this->longitude = isset($coordinates[0]) ? (float) $coordinates[0] : null;
+            $this->latitude = isset($coordinates[1]) ? (float) $coordinates[1] : null;
         }
     }
 
-    public function getStreet(bool $withHouseNumber = true): ?string
+    public function getStreet(): ?string
     {
-        return $withHouseNumber ? $this->street : $this->streetWithoutHouseNumber;
+        return $this->street;
     }
 
     public function getZipCode(): ?string
@@ -71,12 +69,12 @@ class Address
         return $this->banId;
     }
 
-    public function getLongitude(): ?string
+    public function getLongitude(): ?float
     {
         return $this->longitude;
     }
 
-    public function getLatitude(): ?string
+    public function getLatitude(): ?float
     {
         return $this->latitude;
     }
@@ -89,16 +87,5 @@ class Address
     public function getHousenumber(): ?string
     {
         return $this->housenumber;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public function getGeoloc(): array
-    {
-        return [
-            'lat' => $this->latitude,
-            'lng' => $this->longitude,
-        ];
     }
 }

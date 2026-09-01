@@ -195,7 +195,7 @@ npm-build: ## Build the dependencies in the local node_modules folder
 npm-watch: ## Watch files for changes
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm $(NPM) run watch
 
-clear-cache: ## Clear cache prod: make-clear-cache env=[dev|prod|test]
+clear-cache: ## Clear cache prod: make clear-cache env=[dev|prod|test]
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm $(SYMFONY) c:c --env=$(env)
 
 npm-newman-install: ## Install newman CLI

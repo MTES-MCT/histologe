@@ -180,8 +180,8 @@ class ServiceSecoursControllerTest extends WebTestCase
         $this->assertSame('BMPM', $signalement->getOrigineMissionServiceSecours());
         $this->assertSame('Ordre de mission', $signalement->getOrdreMissionServiceSecours());
         $this->assertSame('27/03/2026', $signalement->getDateMissionServiceSecours()->format('d/m/Y'));
-        $this->assertSame('44179', $signalement->getInseeOccupant());
-        $this->assertSame('44850', $signalement->getCpOccupant());
+        $this->assertSame('44179', $signalement->getAddress()->getCityCode());
+        $this->assertSame('44850', $signalement->getAddress()->getPostCode());
         $this->assertFalse($signalement->getIsLogementSocial());
         $this->assertSame('2', $signalement->getEtageOccupant());
         $this->assertSame('Martin', $signalement->getNomProprio());
@@ -239,10 +239,10 @@ class ServiceSecoursControllerTest extends WebTestCase
         string $typeEtageLogement = EtageType::AUTRE->value,
     ): Crawler {
         $form = $crawler->selectButton('Suivant')->form([
-            'service_secours[step2][adresseOccupant]' => '8 Rue de la tourmentinerie',
-            'service_secours[step2][cpOccupant]' => '44850',
-            'service_secours[step2][villeOccupant]' => 'Saint-Mars-du-Désert',
-            'service_secours[step2][inseeOccupant]' => '44179',
+            'service_secours[step2][addressAddress]' => '8 Rue de la tourmentinerie',
+            'service_secours[step2][addressPostcode]' => '44850',
+            'service_secours[step2][addressCity]' => 'Saint-Mars-du-Désert',
+            'service_secours[step2][addressCityCode]' => '44179',
             'service_secours[step2][rnbId]' => 'plop',
             'service_secours[step2][adresseAutreOccupant]' => 'Bâtiment A',
             'service_secours[step2][isLogementSocial]' => $isLogementSocial,

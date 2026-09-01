@@ -6,10 +6,10 @@ use App\Entity\Address;
 use App\Entity\Arrete;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Factory\AddressFactory;
 use App\Factory\ArreteFactory;
 use App\Repository\AddressRepository;
 use App\Service\Gouv\Ban\AddressService;
-use App\Service\Gouv\Rnb\RnbService;
 use App\Service\Import\Arrete\ArreteImportRow;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Tests\Fake\AddressServiceFake;
@@ -27,10 +27,11 @@ class ArreteFactoryTest extends TestCase
     use FixturesHelper;
 
     private AddressService $addressService;
-    private RnbService $rnbService;
+    private RnbServiceFake $rnbService;
     private MockObject|AddressRepository $addressRepository;
     private MockObject|ZipcodeProvider $zipcodeProvider;
     private ArreteFactory $arreteFactory;
+    private MockObject|AddressFactory $addressFactory;
 
     protected function setUp(): void
     {
@@ -38,12 +39,13 @@ class ArreteFactoryTest extends TestCase
         $this->rnbService = new RnbServiceFake();
         $this->addressRepository = $this->createMock(AddressRepository::class);
         $this->zipcodeProvider = $this->createMock(ZipcodeProvider::class);
+        $this->addressFactory = $this->createMock(AddressFactory::class);
 
         $this->arreteFactory = new ArreteFactory(
             $this->addressService,
             $this->addressRepository,
-            $this->zipcodeProvider,
             $this->rnbService,
+            $this->addressFactory
         );
     }
 
@@ -62,17 +64,12 @@ class ArreteFactoryTest extends TestCase
         bool $shouldReturnArrete,
         ?string $expectedType = null,
     ): void {
-        if ('territory_44' === $territory) {
-            $territory = $this->getTerritory(name: 'Loire-Atlantique', zip: '44');
-            $reflection = new \ReflectionClass($territory);
-            $property = $reflection->getProperty('id');
-            $property->setValue($territory, 44);
-        } elseif ('territory_30' === $territory) {
-            $territory = $this->getTerritory(name: 'Gard', zip: '30');
-            $reflection = new \ReflectionClass($territory);
-            $property = $reflection->getProperty('id');
-            $property->setValue($territory, 30);
-        }
+        $territory = $this->getTerritory(name: 'Loire-Atlantique', zip: '44');
+        $reflection = new \ReflectionClass($territory);
+        $property = $reflection->getProperty('id');
+        $property->setValue($territory, 44);
+        $existingAddressByBanId?->setTerritory($territory);
+        $existingAddressByCriteria?->setTerritory($territory);
         /** @var User|null $currentUser */
         $currentUser = null;
         if ('admin_user_diff_territory' === $user) {
@@ -89,9 +86,7 @@ class ArreteFactoryTest extends TestCase
             $currentUser = $user;
         }
 
-        $addressResponse = $this->addressService->getAddress($arreteImportRow->getAddress());
-
-        if ($addressResponse->getScore() >= AddressService::SCORE_IF_BAN_ID_ACCEPTED || !empty($arreteImportRow->getRnbId())) {
+        if ($this->addressService->getAcceptableBanAddress($arreteImportRow->getAddress())) {
             /** @var MockObject&AddressRepository $addressRepository */
             $addressRepository = $this->addressRepository;
             $addressRepository->expects($this->any())->method('findOneBy')
@@ -169,7 +164,7 @@ class ArreteFactoryTest extends TestCase
 
         yield 'Adresse trouvée par banId' => [
             $importRow,
-            new User(),
+            new User()->setRoles(['ROLE_ADMIN']),
             new Address()->setBanId('2ac4d3cd-67ee-46d4-9b5f-207bc6143aab'),
             null,
             'territory_44',
@@ -179,7 +174,7 @@ class ArreteFactoryTest extends TestCase
 
         yield 'Adresse trouvée par critères' => [
             $importRow,
-            new User(),
+            new User()->setRoles(['ROLE_ADMIN']),
             null,
             new Address()->setStreet('Rue de la tourmentinerie'),
             'territory_44',
@@ -197,15 +192,6 @@ class ArreteFactoryTest extends TestCase
             'ARRETE_L_511_19_INSALUBRITE',
         ];
 
-        yield 'Territoire non trouvé' => [
-            $importRow,
-            new User(),
-            null,
-            null,
-            null,
-            false,
-        ];
-
         yield 'Admin territoire différent' => [
             $importRow,
             'admin_user_diff_territory',
@@ -220,7 +206,7 @@ class ArreteFactoryTest extends TestCase
 
         yield 'Avec date de main levée' => [
             $importRowWithMainLevee,
-            new User(),
+            new User()->setRoles(['ROLE_ADMIN']),
             null,
             new Address()->setStreet('Rue de la tourmentinerie'),
             'territory_44',

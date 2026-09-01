@@ -36,13 +36,13 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
 
         $second = 1;
         foreach ($signalements as $signalement) {
-            $rt = $this->userRepository->findActiveTerritoryAdmins($signalement->getTerritory()->getId());
+            $rt = $this->userRepository->findActiveTerritoryAdmins($signalement->getAddress()->getTerritory()->getId());
             $user = $rt ? $rt[0] : $admin;
             $suivi = $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: '',
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
-                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
                 user: $user,
                 isVisibleForUsager: true,
             );
@@ -87,7 +87,7 @@ class LoadSuiviData extends Fixture implements OrderedFixtureInterface
             description: $row['description'],
             category: $category,
             sendMail: SuiviCategory::ASK_FEEDBACK_SENT !== $category,
-            partner: $createdBy?->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+            partner: $createdBy?->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
             user: $createdBy,
             isVisibleForUsager: $row['is_public'],
             isVisibleForBailleur: in_array($category, SuiviCategory::categoriesSubmittedByBailleur()),

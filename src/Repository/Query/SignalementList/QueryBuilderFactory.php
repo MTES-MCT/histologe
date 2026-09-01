@@ -39,6 +39,7 @@ readonly class QueryBuilderFactory
         $qb = $this->em->createQueryBuilder()->from(Signalement::class, 's');
 
         $qb->select('s.id');
+        $qb->innerJoin('s.address', 'address');
         $qb->leftJoin('s.affectations', 'a');
         $qb->groupBy('s.id');
         $qb->where('s.statut NOT IN (:statusList)');
@@ -50,14 +51,14 @@ readonly class QueryBuilderFactory
 
         if ($user->isTerritoryAdmin()) {
             if (empty($options['territories'])) {
-                $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+                $qb->andWhere('address.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
                 if (empty($filterTerritoryId) && 1 === \count($user->getPartnersTerritories())) {
                     $filterTerritoryId = $user->getFirstTerritory()->getId();
                 }
             }
         } elseif ($user->isUserPartner() || $user->isPartnerAdmin()) {
             if (empty($options['territories'])) {
-                $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+                $qb->andWhere('address.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
                 if (empty($filterTerritoryId) && 1 === \count($user->getPartnersTerritories())) {
                     $filterTerritoryId = $user->getFirstTerritory()->getId();
                 }
@@ -136,6 +137,7 @@ readonly class QueryBuilderFactory
         $qb = $this->em->createQueryBuilder()->from(Signalement::class, 's');
 
         $qb->select('s.id');
+        $qb->innerJoin('s.address', 'address');
         $qb->leftJoin('s.affectations', 'a');
         $qb->groupBy('s.id');
         $this->addDataSelect($qb);
@@ -155,9 +157,10 @@ readonly class QueryBuilderFactory
             s.referenceInjonction,
             s.nomOccupant,
             s.prenomOccupant,
-            s.adresseOccupant,
-            s.cpOccupant,
-            s.villeOccupant,
+            address.housenumber,
+            address.street,
+            address.postCode,
+            address.city,
             s.isLogementSocial,
             s.createdAt,
             s.profileDeclarant,
@@ -169,7 +172,7 @@ readonly class QueryBuilderFactory
             s.lastSuiviAt,
             s.lastSuiviIsVisibleForUsager,
             s.uuid,
-            IDENTITY(s.territory) as territoryId
+            IDENTITY(address.territory) as territoryId
             ');
         $qb->leftJoin('s.signalementQualifications', 'sq', 'WITH', 'sq.status LIKE \'%AVEREE%\' OR sq.status LIKE \'%CHECK%\'');
         $qb->leftJoin('s.interventions', 'i', 'WITH', 'i.type LIKE \'VISITE\' OR i.type LIKE \'ARRETE_PREFECTORAL\'');
@@ -199,8 +202,8 @@ readonly class QueryBuilderFactory
                 case 'lastSuiviAt':
                     $qb->orderBy('s.lastSuiviAt', $options['orderBy']);
                     break;
-                case 'villeOccupant':
-                    $qb->orderBy('s.villeOccupant', $options['orderBy']);
+                case 'addressCity':
+                    $qb->orderBy('address.city', $options['orderBy']);
                     break;
                 default:
                     $qb->orderBy('s.createdAt', 'DESC');

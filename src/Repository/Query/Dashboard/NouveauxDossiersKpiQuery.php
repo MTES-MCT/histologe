@@ -50,6 +50,7 @@ class NouveauxDossiersKpiQuery
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select($select)
+            ->innerJoin('s.address', 'address')
             ->leftJoin('s.affectations', 'a');
 
         if (null === $user) {
@@ -58,7 +59,7 @@ class NouveauxDossiersKpiQuery
         }
 
         if (!empty($territories)) {
-            $qb->andWhere('s.territory IN (:territories)')
+            $qb->andWhere('address.territory IN (:territories)')
                 ->setParameter('territories', $territories);
         }
 

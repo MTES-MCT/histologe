@@ -7,9 +7,16 @@ use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
+use App\Exception\Address\TerritoryInconsistentException;
+use App\Service\Signalement\SignalementAddressUpdater;
 
 class SignalementImportFactory
 {
+    public function __construct(
+        private readonly SignalementAddressUpdater $signalementAddressUpdater,
+    ) {
+    }
+
     /**
      * @param array<int|string, mixed> $data
      */
@@ -22,10 +29,9 @@ class SignalementImportFactory
             }
         }
 
-        return (new Signalement())
+        $signalement = (new Signalement())
             ->setIsImported(true)
             ->setCreationSource(CreationSource::IMPORT)
-            ->setTerritory($territory)
             ->setDetails($data['details'])
             ->setIsProprioAverti((bool) $data['isProprioAverti'])
             ->setNbAdultes($data['nbAdultes'])
@@ -55,9 +61,6 @@ class SignalementImportFactory
             ->setPrenomOccupant($data['prenomOccupant'])
             ->setTelOccupant($data['telOccupant'])
             ->setMailOccupant($data['mailOccupant'])
-            ->setAdresseOccupant($data['adresseOccupant'])
-            ->setCpOccupant($data['cpOccupant'])
-            ->setVilleOccupant($data['villeOccupant'])
             ->setIsCguAccepted((bool) $data['isCguAccepted'])
             ->setCreatedAt($data['createdAt'])
             ->setModifiedAt($data['modifiedAt'])
@@ -71,7 +74,6 @@ class SignalementImportFactory
             ->setEscalierOccupant($data['escalierOccupant'])
             ->setNumAppartOccupant($data['numAppartOccupant'])
             ->setAdresseAutreOccupant($data['adresseAutreOccupant'])
-            ->setInseeOccupant($data['inseeOccupant'])
             ->setLienDeclarantOccupant($data['lienDeclarantOccupant'])
             ->setIsRsa((bool) $data['isRsa'])
             ->setAnneeConstruction($data['anneeConstruction'])
@@ -87,5 +89,16 @@ class SignalementImportFactory
                     ? MotifCloture::tryFrom($data['motifCloture'])
                     : null)
             ->setClosedAt($data['closedAt']);
+
+        $this->signalementAddressUpdater->attachAddressToSignalement($signalement, $data['adresseOccupant'], $data['cpOccupant'], $data['villeOccupant']);
+
+        if ($signalement->getAddress()->getTerritory()->getId() !== $territory->getId()) {
+            throw new TerritoryInconsistentException($signalement->getAddress()->getTerritory(), $territory);
+        }
+
+        $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);
+        $this->signalementAddressUpdater->getRialDataForSignalement($signalement);
+
+        return $signalement;
     }
 }

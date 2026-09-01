@@ -2,8 +2,10 @@
 
 namespace App\Tests\Functional\Specification\Affectation;
 
+use App\Entity\Address;
 use App\Entity\Partner;
 use App\Entity\Signalement;
+use App\Entity\Territory;
 use App\Specification\Affectation\CodeInseeSpecification;
 use App\Specification\Context\PartnerSignalementContext;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -31,8 +33,11 @@ class CodeInseeSpecificationTest extends KernelTestCase
         $this->assertEquals($inseePartenaire, $partner->getInsee());
 
         $signalement = new Signalement();
-        $signalement->setInseeOccupant($inseeSignalement);
-        $this->assertEquals($inseeSignalement, $signalement->getInseeOccupant());
+        $address = (new Address())
+            ->setCityCode((string) $inseeSignalement)
+            ->setTerritory(new Territory());
+        $signalement->setAddress($address);
+        $this->assertEquals($inseeSignalement, $signalement->getAddress()->getCityCode());
 
         $specification = new CodeInseeSpecification($inseeToIncludeRule, $inseeToExcludeRule);
         $context = new PartnerSignalementContext($partner, $signalement);

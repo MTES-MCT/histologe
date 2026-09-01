@@ -22,6 +22,7 @@ use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader
 use App\Service\Signalement\DesordreTraitement\DesordreTraitementProcessor;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
+use App\Service\Signalement\SignalementAddressUpdater;
 use App\Service\Signalement\SignalementBuilder;
 use App\Service\Signalement\ZipcodeProvider;
 use App\Tests\FixturesHelper;
@@ -76,6 +77,7 @@ class SignalementBuilderTest extends KernelTestCase
         $desordreCompositionLogementLoader = static::getContainer()->get(DesordreCompositionLogementLoader::class);
         /** @var ZipcodeProvider $zipcodeProvider */
         $zipcodeProvider = static::getContainer()->get(ZipcodeProvider::class);
+        $signalementAddressUpdater = static::getContainer()->get(SignalementAddressUpdater::class);
 
         $this->signalementBuilder = new SignalementBuilder(
             $bailleurRepository,
@@ -93,6 +95,7 @@ class SignalementBuilderTest extends KernelTestCase
             $signalementQualificationUpdater,
             $desordreCompositionLogementLoader,
             $zipcodeProvider,
+            $signalementAddressUpdater,
             '["30","34","13"]',
         );
     }
@@ -128,7 +131,7 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertNotEmpty($signalement->getUuid());
         $this->assertNotEmpty($signalement->getReference());
         $this->assertNotEmpty($signalement->getCodeSuivi());
-        $this->assertEquals('13', $signalement->getTerritory()->getZip());
+        $this->assertEquals('13', $signalement->getAddress()->getTerritory()->getZip());
         $this->assertEquals(ProfileDeclarant::LOCATAIRE, $signalement->getProfileDeclarant());
         $this->assertEquals(ProfileOccupant::LOCATAIRE, $signalement->getProfileOccupant());
         $this->assertEquals(
@@ -156,9 +159,9 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertEquals('Locataire Prenom', $signalement->getPrenomOccupant());
         $this->assertEquals('locataire-01@signal-logement.fr', $signalement->getMailOccupant());
         $this->assertEquals('appartement', $signalement->getNatureLogement());
-        $this->assertEquals('33 Rue des phoceens', $signalement->getAdresseOccupant());
-        $this->assertEquals('13002', $signalement->getCpOccupant());
-        $this->assertEquals('Marseille', $signalement->getVilleOccupant());
+        $this->assertEquals('33 Rue des phoceens', $signalement->getAddress()->getHousenumberAndStreet());
+        $this->assertEquals('13002', $signalement->getAddress()->getPostCode());
+        $this->assertEquals('Marseille 2e Arrondissement', $signalement->getAddress()->getCity());
         $this->assertEquals('5', $signalement->getEtageOccupant());
         $this->assertEquals('A', $signalement->getEscalierOccupant());
 

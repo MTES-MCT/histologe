@@ -33,13 +33,12 @@ class SignalementConfirmReceptionMailer extends AbstractNotificationMailer
     public function getMailerParamsFromNotification(NotificationMail $notificationMail): array
     {
         $signalement = $notificationMail->getSignalement();
-        $toRecipient = $notificationMail->getTo();
         $attachment = $notificationMail->getAttachment();
 
         return [
-            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
-            'signalement_cpOccupant' => $signalement->getCpOccupant(),
-            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'signalement_addressHousenumberAndStreet' => $signalement->getAddress()->getHousenumberAndStreet(),
+            'signalement_addressPostCode' => $signalement->getAddress()->getPostCode(),
+            'signalement_addressCity' => $signalement->getAddress()->getCity(),
             'signalement_isProprioAverti' => $signalement->getIsProprioAverti(),
             'attach' => $attachment,
             'lien_suivi' => $this->urlGenerator->generate(

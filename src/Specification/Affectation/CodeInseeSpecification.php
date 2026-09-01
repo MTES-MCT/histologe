@@ -25,9 +25,12 @@ class CodeInseeSpecification implements SpecificationInterface
 
     private function isExcludedSignalement(Signalement $signalement): bool
     {
-        $insee = $signalement->getInseeOccupant();
+        $insee = $signalement->getAddress()->getCityCode();
+        if (!$insee) {
+            return true;
+        }
 
-        return null === $insee || '' === $insee || (!empty($this->inseeToExclude) && \in_array($insee, $this->inseeToExclude));
+        return !empty($this->inseeToExclude) && \in_array($insee, $this->inseeToExclude);
     }
 
     public function isSatisfiedBy(SpecificationContextInterface $context): bool
@@ -45,7 +48,7 @@ class CodeInseeSpecification implements SpecificationInterface
 
         return match ($this->inseeToInclude) {
             '' => true,
-            default => $this->isInseeIncluded($signalement->getInseeOccupant()),
+            default => $this->isInseeIncluded($signalement->getAddress()->getCityCode()),
         };
     }
 

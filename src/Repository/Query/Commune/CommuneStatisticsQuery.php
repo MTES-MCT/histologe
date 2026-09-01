@@ -17,8 +17,9 @@ class CommuneStatisticsQuery
     {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
+            ->innerJoin('s.address', 'a')
             ->select('COUNT(s.id)')
-            ->where('s.inseeOccupant = :insee')
+            ->where('a.cityCode = :insee')
             ->setParameter('insee', $commune->getCodeInsee());
 
         return (int) $qb->getQuery()->getSingleScalarResult();

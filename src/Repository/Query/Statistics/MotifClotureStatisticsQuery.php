@@ -24,6 +24,7 @@ class MotifClotureStatisticsQuery
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('COUNT(s.id) AS count, s.motifCloture')
+            ->innerJoin('s.address', 'address')
             ->where('s.motifCloture IS NOT NULL')
             ->andWhere('s.motifCloture != \'0\'')
             ->andWhere('s.closedAt IS NOT NULL')
@@ -35,7 +36,7 @@ class MotifClotureStatisticsQuery
         }
 
         if ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+            $qb->andWhere('address.territory = :territory')->setParameter('territory', $territory);
         }
 
         if ($year) {

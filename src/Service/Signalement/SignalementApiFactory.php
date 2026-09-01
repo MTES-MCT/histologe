@@ -24,7 +24,6 @@ class SignalementApiFactory
     public function __construct(
         private readonly Security $security,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
-        private readonly PostalCodeHomeChecker $postalCodeHomeChecker,
         private readonly DesordrePrecisionRepository $desordrePrecisionRepository,
         private readonly BailleurRepository $bailleurRepository,
     ) {
@@ -42,15 +41,10 @@ class SignalementApiFactory
         $informationComplementaire = new InformationComplementaire();
         $jsonContent = [];
 
-        $signalement->setAdresseOccupant($request->adresseOccupant);
-        $signalement->setCpOccupant($request->codePostalOccupant);
-        $signalement->setVilleOccupant($request->communeOccupant);
-        $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
-        if (!$signalement->getInseeOccupant()) {
-            return $signalement;
-        }
-        $territory = $this->postalCodeHomeChecker->getActiveTerritory($signalement->getInseeOccupant());
-        $signalement->setTerritory($territory);
+        $this->signalementAddressUpdater->attachAddressToSignalement($signalement, $request->adresseOccupant, $request->codePostalOccupant, $request->communeOccupant);
+        $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);
+        $this->signalementAddressUpdater->getRialDataForSignalement($signalement);
+
         $signalement->setEtageOccupant($request->etageOccupant);
         $signalement->setEscalierOccupant($request->escalierOccupant);
         $signalement->setNumAppartOccupant($request->numAppartOccupant);
@@ -248,7 +242,7 @@ class SignalementApiFactory
         if ($signalement->getIsLogementSocial() && $signalement->getNomProprio()) {
             $bailleur = $this->bailleurRepository->findOneBailleurBy(
                 name: $signalement->getNomProprio(),
-                territory: $signalement->getTerritory(),
+                territory: $signalement->getAddress()->getTerritory(),
                 bailleurSanitized: true
             );
             $signalement->setBailleur($bailleur);

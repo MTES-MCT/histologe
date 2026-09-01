@@ -169,9 +169,7 @@ class ArreteImportLoader
         ArreteImportRow $arreteImportRow,
         User $user,
     ): bool {
-        $address = $this->addressService->getAddress($arreteImportRow->getAddress());
-
-        if ($address->getScore() < AddressService::SCORE_IF_BAN_ID_ACCEPTED) {
+        if (!$address = $this->addressService->getAcceptableBanAddress($arreteImportRow->getAddress())) {
             return true;
         }
 

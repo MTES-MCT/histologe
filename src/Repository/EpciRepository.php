@@ -36,12 +36,8 @@ class EpciRepository extends ServiceEntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-    public function findOneByCommuneInseeAndPostalCode(?string $codeInsee, ?string $postalCode): ?Epci
+    public function findOneByCommuneInseeAndPostalCode(string $codeInsee, string $postalCode): ?Epci
     {
-        if (empty($codeInsee) || empty($postalCode)) {
-            return null;
-        }
-
         return $this->createQueryBuilder('e')
             ->innerJoin('e.communes', 'c')
             ->where('c.codeInsee = :codeInsee')

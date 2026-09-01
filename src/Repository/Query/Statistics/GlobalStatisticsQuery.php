@@ -30,7 +30,8 @@ class GlobalStatisticsQuery
     ): int {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
-            ->select('COUNT(s.id)');
+            ->select('COUNT(s.id)')
+            ->innerJoin('s.address', 'address');
 
         $qb->andWhere('s.statut NOT IN (:excludedStatuses)')
             ->setParameter('excludedStatuses', SignalementStatus::excludedStatuses());
@@ -38,7 +39,7 @@ class GlobalStatisticsQuery
         $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
 
         if ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+            $qb->andWhere('address.territory = :territory')->setParameter('territory', $territory);
         }
         if ($partners && $partners->count() > 0) {
             $qb->leftJoin('s.affectations', 'affectations')
@@ -85,7 +86,8 @@ class GlobalStatisticsQuery
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('COUNT(s.id) as count')
-            ->addSelect('s.statut');
+            ->addSelect('s.statut')
+            ->innerJoin('s.address', 'address');
 
         if ($keepArchivedSignalements) {
             $qb->andWhere('s.statut NOT IN (:statutList)')
@@ -100,7 +102,7 @@ class GlobalStatisticsQuery
         }
 
         if (\count($territories)) {
-            $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $territories);
+            $qb->andWhere('address.territory IN (:territories)')->setParameter('territories', $territories);
         }
         if ($partners && $partners->count() > 0) {
             $qb->leftJoin('s.affectations', 'affectations')
@@ -137,13 +139,14 @@ class GlobalStatisticsQuery
     ): ?float {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
-            ->select('AVG(s.score)');
+            ->select('AVG(s.score)')
+            ->innerJoin('s.address', 'address');
 
         $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
         $qb->andWhere('s.statut NOT IN (:excludedStatuses)')->setParameter('excludedStatuses', SignalementStatus::excludedStatuses());
 
         if ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+            $qb->andWhere('address.territory = :territory')->setParameter('territory', $territory);
         }
         if ($partners && $partners->count() > 0) {
             $qb->leftJoin('s.affectations', 'affectations')
@@ -194,14 +197,15 @@ class GlobalStatisticsQuery
     ): ?float {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
-            ->select('AVG(datediff(s.'.$field.', s.createdAt))');
+            ->select('AVG(datediff(s.'.$field.', s.createdAt))')
+            ->innerJoin('s.address', 'address');
 
         $qb->andWhere('s.'.$field.' IS NOT NULL');
         $qb->andWhere('s.statut NOT IN (:excludedStatuses)')->setParameter('excludedStatuses', SignalementStatus::excludedStatuses());
         $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
 
         if ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+            $qb->andWhere('address.territory = :territory')->setParameter('territory', $territory);
         }
         if ($partners && $partners->count() > 0) {
             $qb->leftJoin('s.affectations', 'affectations')

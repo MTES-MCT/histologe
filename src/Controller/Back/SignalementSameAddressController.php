@@ -49,24 +49,24 @@ class SignalementSameAddressController extends AbstractController
         $signalements = $sameAddressQuery->findSameAddressFiltered($user);
         $signalementsByAddress = [];
         foreach ($signalements as $signalement) {
-            $addressKey = strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant']));
+            $addressKey = mb_trim(strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['housenumber'].' '.$signalement['street'].' '.$signalement['postCode'].' '.$signalement['cityCode'])));
             if (!isset($signalementsByAddress[$addressKey])) {
                 $signalementsByAddress[$addressKey] = [
-                    'adresse' => $signalement['adresseOccupant'],
-                    'cp' => $signalement['cpOccupant'],
-                    'ville' => $signalement['villeOccupant'],
+                    'adresse' => mb_trim($signalement['housenumber'].' '.$signalement['street']),
+                    'cp' => $signalement['postCode'],
+                    'ville' => $signalement['city'],
                     'territoryId' => $signalement['territoryId'],
-                    'addressForHuman' => $signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant'],
-                    'communeForHuman' => $signalement['villeOccupant'].' '.$signalement['cpOccupant'],
+                    'addressForHuman' => mb_trim($signalement['housenumber'].' '.$signalement['street'].' '.$signalement['postCode'].' '.$signalement['city']),
+                    'communeForHuman' => mb_trim($signalement['city'].' '.$signalement['postCode']),
                     'lat' => null,
                     'lng' => null,
                     'signalements' => [],
                 ];
             }
             $signalementsByAddress[$addressKey]['signalements'][] = $signalement;
-            if ($signalement['geoloc']) {
-                $signalementsByAddress[$addressKey]['lat'] = $signalement['geoloc']['lat'];
-                $signalementsByAddress[$addressKey]['lng'] = $signalement['geoloc']['lng'];
+            if (!empty($signalement['point'])) {
+                $signalementsByAddress[$addressKey]['lat'] = (string) $signalement['point']->getY();
+                $signalementsByAddress[$addressKey]['lng'] = (string) $signalement['point']->getX();
             }
         }
 
@@ -112,11 +112,11 @@ class SignalementSameAddressController extends AbstractController
             if ($searchTerritoryId && $signalement['territoryId'] != $searchTerritoryId) {
                 continue;
             }
-            $addressKey = $this->normalizeStr($signalement['adresseOccupant'].' '.$signalement['cpOccupant'].' '.$signalement['villeOccupant']);
+            $addressKey = $this->normalizeStr($signalement['housenumber'].' '.$signalement['street'].' '.$signalement['postCode'].' '.$signalement['cityCode']);
             if ($searchAddress && $addressKey != $searchAddress) {
                 continue;
             }
-            $communeNormalized = $this->normalizeStr($signalement['villeOccupant'].' '.$signalement['cpOccupant']);
+            $communeNormalized = $this->normalizeStr($signalement['city'].' '.$signalement['postCode']);
             if ($searchCommune && $communeNormalized != $searchCommune) {
                 continue;
             }
@@ -162,9 +162,9 @@ class SignalementSameAddressController extends AbstractController
                     $isMultiTerritory ? $territories[$signalement['territoryId']]->getZipAndName() : null,
                     $signalement['reference'],
                     $signalement['nomOccupant'].' '.$signalement['prenomOccupant'],
-                    $signalement['adresseOccupant'],
-                    $signalement['cpOccupant'],
-                    $signalement['villeOccupant'],
+                    $signalement['housenumber'].' '.$signalement['street'],
+                    $signalement['postCode'],
+                    $signalement['city'],
                     $signalement['statut']->name,
                     $signalement['createdAt']->format('d/m/Y'),
                     $signalement['closedAt'] ? $signalement['closedAt']->format('d/m/Y') : null,

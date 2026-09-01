@@ -46,9 +46,9 @@ class SignalementInviteTiersMailer extends AbstractNotificationMailer
         return [
             'signalement_prenomOccupant' => $signalement->getPrenomOccupant(),
             'signalement_nomOccupant' => $signalement->getNomOccupant(),
-            'signalement_adresseOccupant' => $signalement->getAdresseOccupant(),
-            'signalement_cpOccupant' => $signalement->getCpOccupant(),
-            'signalement_villeOccupant' => $signalement->getVilleOccupant(),
+            'signalement_addressHousenumberAndStreet' => $signalement->getAddress()->getHousenumberAndStreet(),
+            'signalement_addressPostCode' => $signalement->getAddress()->getPostCode(),
+            'signalement_addressCity' => $signalement->getAddress()->getCity(),
             'lien_accepter_invitation' => $linkAccepter,
             'lien_refuser_invitation' => $linkRefuser,
             'nom_tiers' => $tiersInvitation->getFirstname().' '.$tiersInvitation->getLastname(),

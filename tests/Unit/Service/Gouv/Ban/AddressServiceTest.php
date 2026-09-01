@@ -38,12 +38,10 @@ class AddressServiceTest extends TestCase
     {
         $address = $this->addressService->getAddress(self::ADDRESS);
 
-        $addressComputed = \sprintf('%s %s %s', $address->getStreet(), $address->getZipCode(), $address->getCity());
+        $addressComputed = \sprintf('%s %s %s %s', $address->getHousenumber(), $address->getStreet(), $address->getZipCode(), $address->getCity());
         $this->assertNotSame($address->getInseeCode(), $address->getZipCode());
         $this->assertSame($address->getLabel(), $addressComputed);
         $this->assertNotEmpty($address->getLongitude());
         $this->assertNotEmpty($address->getLatitude());
-        $this->assertArrayHasKey('lat', $address->getGeoloc());
-        $this->assertArrayHasKey('lng', $address->getGeoloc());
     }
 }

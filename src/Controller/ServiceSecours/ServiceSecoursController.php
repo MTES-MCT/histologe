@@ -72,7 +72,7 @@ class ServiceSecoursController extends AbstractController
             $signalement = $signalementServiceSecoursFactory->create($flow->getData(), $serviceSecoursRoute);
 
             $entityManager->beginTransaction();
-            $signalement->setReference($referenceGenerator->generateReference($signalement->getTerritory()));
+            $signalement->setReference($referenceGenerator->generateReference($signalement->getAddress()->getTerritory()));
             $entityManager->persist($signalement);
             $entityManager->flush();
             $entityManager->commit();

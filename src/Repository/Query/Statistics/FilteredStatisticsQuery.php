@@ -54,6 +54,7 @@ class FilteredStatisticsQuery
 
     public function addFiltersToQueryBuilder(QueryBuilder $qb, StatisticsFilters $filters): QueryBuilder
     {
+        $qb->innerJoin('s.address', 'address');
         // Is the status defined?
         if ('' != $filters->getStatut() && 'all' != $filters->getStatut()) {
             $statutParameter = [];
@@ -127,7 +128,7 @@ class FilteredStatisticsQuery
         }
 
         if ($filters->getTerritory()) {
-            $qb->andWhere('s.territory = :territory')
+            $qb->andWhere('address.territory = :territory')
                 ->setParameter('territory', $filters->getTerritory());
         }
 
@@ -145,19 +146,20 @@ class FilteredStatisticsQuery
                     $communes = array_merge($communes, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$city]);
                 }
             }
-            $qb->andWhere('s.villeOccupant IN (:communes)')
-                ->setParameter('communes', $communes);
+            $qb->andWhere('address.city IN (:communes)')->setParameter('communes', $communes);
         }
 
         if ($filters->getEpcis()) {
             $subQuery = $qb->getEntityManager()->createQueryBuilder()
                 ->select('DISTINCT s2.id')
                 ->from(Signalement::class, 's2')
+                ->innerJoin('s2.address', 'address2')
+                // pour continuer dans la normalisation il faudrait un lien address->commune en DB
                 ->innerJoin(
                     Commune::class,
                     'c2',
                     'ON',
-                    's2.cpOccupant = c2.codePostal AND s2.inseeOccupant = c2.codeInsee AND c2.epci IN (:epcis)'
+                    'address2.postCode = c2.codePostal AND address2.cityCode = c2.codeInsee AND c2.epci IN (:epcis)'
                 );
             $qb->andWhere('s.id IN ('.$subQuery->getDQL().')')->setParameter('epcis', $filters->getEpcis());
         }

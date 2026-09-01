@@ -36,7 +36,8 @@ class DossiersQuery
         ?TabQueryParameters $tabQueryParameters = null,
     ): QueryBuilder {
         $qb = $this->entityManager->createQueryBuilder()
-            ->from(Signalement::class, 's');
+            ->from(Signalement::class, 's')
+            ->innerJoin('s.address', 'address');
 
         if (null !== $signalementStatus) {
             $qb
@@ -46,10 +47,10 @@ class DossiersQuery
 
         if ($tabQueryParameters?->territoireId) {
             $qb
-                ->andWhere('s.territory = :territoireId')
+                ->andWhere('address.territory = :territoireId')
                 ->setParameter('territoireId', $tabQueryParameters->territoireId);
         } elseif (!$user->isSuperAdmin()) {
-            $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+            $qb->andWhere('address.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
         }
 
         if ($tabQueryParameters->createdFrom) {
@@ -123,7 +124,8 @@ class DossiersQuery
                     s.nomOccupant,
                     s.prenomOccupant,
                     s.reference,
-                    CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)),                    s.createdAt,
+                    CONCAT_WS(\', \', CONCAT_WS(\' \', address.housenumber, address.street), CONCAT_WS(\' \', address.postCode, address.city)),
+                    s.createdAt,
                     %s
                     CASE
                         WHEN s.isLogementSocial = true THEN \'PUBLIC\'
@@ -218,7 +220,7 @@ class DossiersQuery
                     s.nomOccupant,
                     s.prenomOccupant,
                     s.reference,
-                    CONCAT_WS(\', \', s.adresseOccupant, CONCAT(s.cpOccupant, \' \', s.villeOccupant)),
+                    CONCAT_WS(\', \', CONCAT_WS(\' \', address.housenumber, address.street), CONCAT_WS(\' \', address.postCode, address.city)),
                     s.createdAt,'.
                     '\'\' , \'\' ,
                     CASE
@@ -314,11 +316,11 @@ class DossiersQuery
             s.nomOccupant,
             s.prenomOccupant,
             s.reference,
-            CONCAT_WS(', ', s.adresseOccupant, CONCAT(s.cpOccupant, ' ', s.villeOccupant)) AS fullAddress,
+            CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.postCode, address.city)) AS fullAddress,
             MAX(a.answeredAt) AS lastClosedAt
         ")
             ->innerJoin('s.affectations', 'a')
-            ->groupBy('s.uuid, s.nomOccupant, s.prenomOccupant, s.reference, s.adresseOccupant, s.cpOccupant, s.villeOccupant')
+            ->groupBy('s.uuid, s.nomOccupant, s.prenomOccupant, s.reference, address.housenumber, address.street, address.postCode, address.city')
             ->having('COUNT(a.id) = SUM(CASE WHEN a.statut = :closed THEN 1 ELSE 0 END)')
             ->setParameter('closed', AffectationStatus::CLOSED);
 
@@ -402,14 +404,14 @@ class DossiersQuery
             s.nomOccupant,
             s.prenomOccupant,
             s.reference,
-            CONCAT_WS(', ', s.adresseOccupant, CONCAT(s.cpOccupant, ' ', s.villeOccupant)) AS fullAddress,
+            CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.postCode, address.city)) AS fullAddress,
             MAX(a.answeredAt) AS lastClosedAt
         ")
             ->innerJoin('s.affectations', 'a')
             ->innerJoin('a.partner', 'p')
             ->andWhere('p.type = :partnerType')
             ->andWhere('a.statut = :closed')
-            ->groupBy('s.uuid, s.nomOccupant, s.prenomOccupant, s.reference, s.adresseOccupant, s.cpOccupant, s.villeOccupant')
+            ->groupBy('s.uuid, s.nomOccupant, s.prenomOccupant, s.reference, address.housenumber, address.street, address.postCode, address.city')
             ->setParameter('closed', AffectationStatus::CLOSED)
             ->setParameter('partnerType', PartnerType::COMMUNE_SCHS);
 
@@ -488,14 +490,14 @@ class DossiersQuery
             s.nomOccupant,
             s.prenomOccupant,
             s.reference,
-            CONCAT_WS(', ', s.adresseOccupant, CONCAT(s.cpOccupant, ' ', s.villeOccupant)) AS fullAddress,
+            CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.postCode, address.city)) AS fullAddress,
             MAX(su.createdAt) AS demandeFermetureUsagerAt,
             DATEDIFF(CURRENT_DATE(), MAX(su.createdAt)) AS demandeFermetureUsagerDaysAgo,
             CASE WHEN s.isNotOccupant = 1 THEN 'TIERS DÉCLARANT' ELSE 'OCCUPANT' END AS demandeFermetureUsagerProfileDeclarant
         ")
             ->innerJoin('s.suivis', 'su', 'WITH', 'su.category = :suivi_category_abandon_procedure')
             ->andWhere('s.isUsagerAbandonProcedure = 1')
-            ->groupBy('s.uuid, s.nomOccupant, s.prenomOccupant, s.reference, s.adresseOccupant, s.cpOccupant, s.villeOccupant, s.isNotOccupant')
+            ->groupBy('s.uuid, s.nomOccupant, s.prenomOccupant, s.reference, address.housenumber, address.street, address.postCode, address.city, s.isNotOccupant')
             ->orderBy('MAX(su.createdAt)', 'DESC')
             ->setParameter('suivi_category_abandon_procedure', SuiviCategory::DEMANDE_ABANDON_PROCEDURE);
 

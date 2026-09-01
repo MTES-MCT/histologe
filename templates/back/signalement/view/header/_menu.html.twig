@@ -5,7 +5,7 @@
         </button>
         <div class="fr-collapse fr-translate__menu fr-menu" id="header-menu">
             <ul class="fr-menu__list">
-                {% set currentPartner =  app.user.partnerInTerritoryOrFirstOne(signalement.territory) %}
+                {% set currentPartner =  app.user.partnerInTerritoryOrFirstOne(signalement.address.territory) %}
                 {% set isAloneInCurrentPartner = app.user.isAloneInPartner(currentPartner) %}
                 {% if is_granted('AFFECTATION_CANCEL_REFUSED', affectation) %}
                     <li>

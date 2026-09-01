@@ -83,7 +83,7 @@ class SignalementClosedSubscriberTest extends KernelTestCase
             ->setSubject('tous les partenaires');
         $signalementClosedEvent = new SignalementClosedEvent(
             $signalementAffectationClose,
-            $user->getPartnerInTerritoryOrFirstOne($signalementClosed->getTerritory())
+            $user->getPartnerInTerritoryOrFirstOne($signalementClosed->getAddress()->getTerritory())
         );
         $signalementClosed->setMotifCloture(MotifCloture::tryFrom('NON_DECENCE'));
 

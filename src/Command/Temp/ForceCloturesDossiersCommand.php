@@ -95,7 +95,7 @@ class ForceCloturesDossiersCommand extends Command
     {
         // Gestion volontaire dossier par dossier pour avoir le bilan à la fin à transmettre
         foreach ($refs as $ref) {
-            $signalement = $this->signalementRepository->findOneBy(['reference' => $ref, 'territory' => $this->territory]);
+            $signalement = $this->signalementRepository->findOneByWithAddressCriteria(['s.reference' => $ref, 'address.territory' => $this->territory]);
             if (!$signalement) {
                 $io->error("Aucun signalement dans le territoire {$this->territory->getZip()} avec la référence {$ref}.");
                 continue;

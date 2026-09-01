@@ -64,7 +64,7 @@ class InterventionUpdatedByEsaboraSubscriberTest extends KernelTestCase
             new InterventionUpdatedByEsaboraEvent(
                 $intervention,
                 $user,
-                $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getTerritory())
+                $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getAddress()->getTerritory())
             ),
             InterventionUpdatedByEsaboraEvent::NAME
         );

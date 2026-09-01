@@ -46,8 +46,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SignalementManagerTest extends WebTestCase
 {
-    public const int TERRITORY_13 = 13;
-
     private EntityManagerInterface $entityManager;
     private Security $security;
     private SignalementImportFactory $signalementImportFactory;
@@ -137,7 +135,7 @@ class SignalementManagerTest extends WebTestCase
     public function testFindAffectablePartnersAffectedAndNotAffectedBySignalementLocalization(): void
     {
         /** @var Signalement $signalement */
-        $signalement = $this->signalementRepository->findOneBy(['territory' => self::TERRITORY_13]);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
         $partners = $this->signalementManager->findAffectablePartners($signalement);
 
         $this->assertArrayHasKey('affected', $partners);
@@ -272,6 +270,7 @@ class SignalementManagerTest extends WebTestCase
         $signalement = $this->signalementManager->update(
             $signalementImportedClone,
             $this->getSignalementData(),
+            $this->zipcodeProvider->getTerritoryByInseeCode($this->getSignalementData()['inseeOccupant'])
         );
 
         $this->assertTrue($signalement->getIsImported());
@@ -423,9 +422,9 @@ class SignalementManagerTest extends WebTestCase
             'telOccupant' => $faker->phoneNumber(),
             'mailOccupant' => $faker->email(),
             'adresseOccupant' => $faker->address(),
-            'cpOccupant' => $faker->postcode(),
-            'villeOccupant' => $faker->city(),
-            'inseeOccupant' => $faker->postcode(),
+            'cpOccupant' => '01170',
+            'villeOccupant' => 'Gex',
+            'inseeOccupant' => '01173',
             'etageOccupant' => $faker->randomDigit(),
             'escalierOccupant' => $faker->randomDigit(),
             'numAppartOccupant' => $faker->randomDigit(),

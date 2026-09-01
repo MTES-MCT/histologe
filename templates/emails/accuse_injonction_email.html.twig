@@ -3,7 +3,7 @@
 {% block body %}
     <p>Bonjour,</p>
     <p>
-        Votre dossier concernant le logement situé <strong>{{ signalement_adresseOccupant~', '~signalement_cpOccupant~' '~signalement_villeOccupant|upper }}</strong> a été créé.<br>
+        Votre dossier concernant le logement situé <strong>{{ signalement_addressHousenumberAndStreet~', '~signalement_addressPostCode~' '~signalement_addressCity|upper }}</strong> a été créé.<br>
         Nous nous chargeons de contacter votre propriétaire. Il dispose de trois semaines pour répondre.<br>
         Sans réponse de sa part, le signalement sera transmis automatiquement aux services compétents.<br>
         Pour plus d’informations concernant la démarche, rendez-vous sur <a href="https://signal-logement.beta.gouv.fr/une-question/" target="_blank" rel="noopener">ce lien</a>

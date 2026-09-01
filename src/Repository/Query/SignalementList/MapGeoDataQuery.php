@@ -26,9 +26,11 @@ class MapGeoDataQuery
 
         $qb->addSelect('
             s.statut,
-            s.adresseOccupant,
-            s.cpOccupant,
-            s.villeOccupant,
+            address.housenumber,
+            address.street,
+            address.postCode,
+            address.city,
+            address.point,
             s.reference,
             s.score,
             s.nomOccupant,
@@ -36,10 +38,21 @@ class MapGeoDataQuery
             s.uuid,
             s.details, 
             s.geoloc')
-            ->andWhere("JSON_EXTRACT(s.geoloc,'$.lat') != ''")
-            ->andWhere("JSON_EXTRACT(s.geoloc,'$.lng') != ''")
+            ->andWhere("(JSON_EXTRACT(s.geoloc,'$.lat') != '' AND JSON_EXTRACT(s.geoloc,'$.lng') != '') OR address.point IS NOT NULL")
             ->setMaxResults(self::MARKERS_PAGE_SIZE);
 
-        return $qb->getQuery()->getArrayResult();
+        $signalements = $qb->getQuery()->getArrayResult();
+
+        foreach ($signalements as $key => $signalement) {
+            if (!empty($signalement['point']) && empty($signalement['geoloc'])) {
+                $signalement['geoloc'] = [
+                    'lat' => $signalement['point']->getY(),
+                    'lng' => $signalement['point']->getX(),
+                ];
+            }
+            $signalements[$key] = $signalement;
+        }
+
+        return $signalements;
     }
 }

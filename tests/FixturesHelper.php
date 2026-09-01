@@ -2,6 +2,7 @@
 
 namespace App\Tests;
 
+use App\Entity\Address;
 use App\Entity\Affectation;
 use App\Entity\Arrete;
 use App\Entity\AutoAffectationRule;
@@ -49,6 +50,10 @@ trait FixturesHelper
             )->setSignalement(
                 (new Signalement())
                     ->setUuid($faker->uuid())
+                    ->setAddress(
+                        (new Address())
+                            ->setTerritory($this->getTerritory())
+                    )
             );
     }
 
@@ -70,10 +75,7 @@ trait FixturesHelper
             ->setNbEnfantsP6((string) 1)
             ->setNbEnfantsM6((string) 1)
             ->setTelOccupant($faker->phoneNumber())
-            ->setAdresseOccupant('25 rue du test')
             ->setEtageOccupant('2')
-            ->setVilleOccupant('Calais')
-            ->setCpOccupant($codePostal ?? '62100')
             ->setNumAppartOccupant('2')
             ->setCiviliteOccupant('mme')
             ->setNomOccupant($nom ?? $faker->lastName())
@@ -85,13 +87,20 @@ trait FixturesHelper
             ->setAdresseProprio('27 rue de la république')
             ->setCodePostalProprio('13002')
             ->setVilleProprio('Marseille')
-            ->setTerritory($territory)
-            ->setInseeOccupant('62193')
             ->setProfileDeclarant($profileDeclarant ?? ProfileDeclarant::LOCATAIRE)
             ->setValidatedAt(new \DateTimeImmutable())
             ->setScore(1.46265448)
             ->setSuperficie(75.5)
             ->addSuivi($this->getSuiviPartner());
+
+        $address = new Address();
+        $address->setHousenumber('25');
+        $address->setStreet('rue du test');
+        $address->setPostCode($codePostal ?? '62100');
+        $address->setCity('Calais');
+        $address->setCityCode('62193');
+        $address->setTerritory($territory ?? $this->getTerritory());
+        $signalement->setAddress($address);
 
         if (null !== $profileDeclarant && ProfileDeclarant::LOCATAIRE !== $profileDeclarant) {
             $signalement
@@ -99,7 +108,7 @@ trait FixturesHelper
                 ->setPrenomDeclarant($prenom)
                 ->setNomDeclarant($nom)
                 ->setMailDeclarant($email)
-                ->setCpOccupant($codePostal);
+                ->getAddress()->setPostCode($codePostal);
         }
 
         if ($codeSuivi) {
@@ -130,20 +139,27 @@ trait FixturesHelper
 
         $signalements = [];
         for ($i = 0; $i < $count; ++$i) {
-            $signalements[] = (new Signalement())
+            $signalement = (new Signalement())
                 ->setCreationSource(CreationSource::FORM_USAGER_V1)
                 ->setIsProprioAverti(false)
                 ->setNbAdultes((string) 2)
                 ->setNbEnfantsP6((string) 1)
                 ->setNbEnfantsM6((string) 1)
                 ->setTelOccupant($faker->phoneNumber())
-                ->setAdresseOccupant('25 rue de l\'est')
                 ->setEtageOccupant('2')
-                ->setVilleOccupant('Bourg-en-Bresse')
+
                 ->setNumAppartOccupant('2')
                 ->setNomOccupant($faker->lastName())
                 ->setPrenomOccupant($faker->firstName())
                 ->addSuivi($this->getSuiviPartner());
+
+            $address = new Address();
+            $address->setHousenumber('25');
+            $address->setStreet('rue de l\'est');
+            $address->setCity('Bourg-en-Bresse');
+            $signalement->setAddress($address);
+
+            $signalements[] = $signalement;
         }
 
         return $signalements;

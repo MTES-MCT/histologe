@@ -5,6 +5,7 @@ namespace App\Repository\Query\Address;
 use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\Address;
 use App\Entity\Arrete;
+use App\Entity\Commune;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -27,23 +28,43 @@ class AddressesHistoryQuery
         User $user,
         ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
     ): array {
-        $statusList = [
-            SignalementStatus::ACTIVE,
-            SignalementStatus::NEED_VALIDATION,
-            SignalementStatus::CLOSED,
-        ];
+        $page = null !== $addressesHistorySearchQuery && null !== $addressesHistorySearchQuery->getPage()
+            ? $addressesHistorySearchQuery->getPage()
+            : 1;
+        $maxListPagination = AddressesHistorySearchQuery::MAX_LIST_PAGINATION;
+        $firstResult = (max($page, 1) - 1) * $maxListPagination;
 
+        $statusList = $this->getStatusList();
+
+        // Step 1: Get paginated distinct address IDs
+        $qbIds = $this->buildBaseQueryBuilder($user, $addressesHistorySearchQuery, $statusList);
+        $qbIds->select('a.id', 'a.street', 'a.postCode', 'a.city')
+            ->groupBy('a.id', 'a.street', 'a.postCode', 'a.city')
+            ->orderBy('a.street', 'ASC')
+            ->addOrderBy('a.postCode', 'ASC')
+            ->addOrderBy('a.city', 'ASC')
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxListPagination);
+
+        $addressIds = array_column($qbIds->getQuery()->getArrayResult(), 'id');
+
+        if (empty($addressIds)) {
+            return [];
+        }
+
+        // Step 2: Get all data for these addresses
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Address::class, 'a')
-            ->leftJoin(Signalement::class, 's', 'WITH',
-                's.adresseOccupant = CONCAT(a.housenumber, \' \', a.street) AND s.cpOccupant = a.postCode AND s.villeOccupant = a.city AND s.statut IN (:statusList)'
-            )
+            ->leftJoin('a.signalements', 's', 'WITH', 's.statut IN (:statusList)')
+            ->leftJoin('s.bailleur', 'b')
             ->leftJoin('a.arretes', 'ar')
             ->select(
                 'a.id AS addressId',
-                'CONCAT(a.housenumber, \' \', a.street) AS adresseOccupant',
-                'a.postCode AS cpOccupant',
-                'a.city AS villeOccupant',
+                'a.housenumber',
+                'a.street',
+                'a.postCode',
+                'a.city',
+                'a.cityCode',
                 'a.point',
                 'IDENTITY(a.territory) AS territoryId',
                 's.id',
@@ -56,11 +77,15 @@ class AddressesHistoryQuery
                 's.nomOccupant',
                 's.prenomOccupant',
                 's.nomProprio',
+                's.isLogementSocial',
+                'b.name AS bailleurName',
                 'ar.id AS arreteId',
                 'ar.dateArrete',
                 'ar.arreteType',
                 'ar.dateMainLevee'
             )
+            ->where('a.id IN (:addressIds)')
+            ->setParameter('addressIds', $addressIds)
             ->setParameter('statusList', $statusList)
             ->orderBy('a.street', 'ASC')
             ->addOrderBy('a.postCode', 'ASC')
@@ -68,13 +93,51 @@ class AddressesHistoryQuery
             ->addOrderBy('s.createdAt', 'ASC')
             ->addOrderBy('ar.dateArrete', 'ASC');
 
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    public function countAddressesWithHistory(
+        User $user,
+        ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
+    ): int {
+        $statusList = $this->getStatusList();
+        $qb = $this->buildBaseQueryBuilder($user, $addressesHistorySearchQuery, $statusList);
+        $qb->select('COUNT(DISTINCT a.id)');
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @return array<SignalementStatus>
+     */
+    private function getStatusList(): array
+    {
+        return [
+            SignalementStatus::ACTIVE,
+            SignalementStatus::NEED_VALIDATION,
+            SignalementStatus::CLOSED,
+        ];
+    }
+
+    /**
+     * @param array<SignalementStatus> $statusList
+     */
+    private function buildBaseQueryBuilder(
+        User $user,
+        ?AddressesHistorySearchQuery $addressesHistorySearchQuery,
+        array $statusList,
+    ): QueryBuilder {
+        $qb = $this->entityManager->createQueryBuilder()
+            ->from(Address::class, 'a')
+            ->leftJoin('a.signalements', 's', 'WITH', 's.statut IN (:statusList)')
+            ->leftJoin('a.arretes', 'ar')
+            ->setParameter('statusList', $statusList);
+
         // Ensure we have at least one signalement or one arrete
         $qb->andWhere('s.id IS NOT NULL OR ar.id IS NOT NULL');
 
         $queryDossiersMultiples = 'SELECT 1 FROM '.Signalement::class.' s2
-                WHERE s2.adresseOccupant = CONCAT(a.housenumber, \' \', a.street)
-                AND s2.cpOccupant = a.postCode
-                AND s2.villeOccupant = a.city
+                WHERE s2.address = a
                 AND s2.statut IN (:statusList)
                 AND s2.id != s.id';
         if (!empty($addressesHistorySearchQuery) && null !== $addressesHistorySearchQuery->getDossiersMultiples()) {
@@ -101,7 +164,7 @@ class AddressesHistoryQuery
             $qb = $this->applyFilters($qb, $addressesHistorySearchQuery);
         }
 
-        return $qb->getQuery()->getArrayResult();
+        return $qb;
     }
 
     /**
@@ -112,8 +175,8 @@ class AddressesHistoryQuery
         ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
     ): QueryBuilder {
         if (!empty($addressesHistorySearchQuery->getAdresse())) {
-            $qb->andWhere('LOWER(a.street) LIKE :adresse');
-            $qb->setParameter('adresse', '%'.$addressesHistorySearchQuery->getAdresse().'%');
+            $qb->andWhere("LOWER(CONCAT_WS(' ', a.housenumber, a.street)) LIKE :adresse");
+            $qb->setParameter('adresse', '%'.strtolower($addressesHistorySearchQuery->getAdresse()).'%');
         }
 
         if (!empty($addressesHistorySearchQuery->getZone())) {
@@ -123,6 +186,7 @@ class AddressesHistoryQuery
                 FROM address a2
                 JOIN zone z ON z.id = :zoneId
                 WHERE z.territory_id = a2.territory_id
+                AND a2.point IS NOT NULL
                 AND ST_Contains(
                     z.area,
                     a2.point
@@ -137,19 +201,54 @@ class AddressesHistoryQuery
                 $qb->andWhere('a.id IN (:zonesAddresses)')
                    ->setParameter('zonesAddresses', $addressIds);
             } else {
-                $qb->andWhere('a.id IS NULL');
+                // Aucune adresse trouvée dans cette zone, retourner aucun résultat
+                $qb->andWhere('1 = 0');
             }
         }
 
         if (!empty($addressesHistorySearchQuery->getCommunes())) {
-            $communes = $addressesHistorySearchQuery->getCommunes();
-            foreach ($addressesHistorySearchQuery->getCommunes() as $commune) {
-                if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$commune])) {
-                    $communes = array_merge($communes, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$commune]);
+            $communes = [];
+            $epcis = [];
+
+            foreach ($addressesHistorySearchQuery->getCommunes() as $communeOrEpci) {
+                // Vérifier si c'est un EPCI (préfixé par "EPCI: ")
+                if (str_starts_with($communeOrEpci, 'EPCI : ')) {
+                    $epcis[] = substr($communeOrEpci, 7); // Retirer le préfixe "EPCI : "
+                } else {
+                    $communes[] = $communeOrEpci;
+                    // Gérer les arrondissements
+                    if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$communeOrEpci])) {
+                        $communes = array_merge($communes, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$communeOrEpci]);
+                    }
                 }
             }
-            $qb->andWhere('a.city IN (:cities) OR a.postCode IN (:cities)')
-                ->setParameter('cities', $communes);
+
+            // Construire la condition de filtre
+            if (!empty($communes) && !empty($epcis)) {
+                // Si on a les deux, faire un OR entre communes et EPCIs
+                // Utiliser une sous-requête pour les EPCIs
+                $subQuery = 'SELECT DISTINCT a2.id FROM '.Address::class.' a2
+                    INNER JOIN '.Commune::class.' c2 WITH a2.postCode = c2.codePostal AND a2.cityCode = c2.codeInsee
+                    INNER JOIN c2.epci e2
+                    WHERE e2.nom IN (:epcis)';
+
+                $qb->andWhere('a.city IN (:cities) OR a.id IN ('.$subQuery.')')
+                   ->setParameter('cities', $communes)
+                   ->setParameter('epcis', $epcis);
+            } elseif (!empty($communes)) {
+                // Seulement des communes
+                $qb->andWhere('a.city IN (:cities)')
+                    ->setParameter('cities', $communes);
+            } elseif (!empty($epcis)) {
+                // Seulement des EPCIs - utiliser une sous-requête
+                $subQuery = 'SELECT DISTINCT a2.id FROM '.Address::class.' a2
+                    INNER JOIN '.Commune::class.' c2 WITH a2.postCode = c2.codePostal AND a2.cityCode = c2.codeInsee
+                    INNER JOIN c2.epci e2
+                    WHERE e2.nom IN (:epcis)';
+
+                $qb->andWhere('a.id IN ('.$subQuery.')')
+                   ->setParameter('epcis', $epcis);
+            }
         }
         if (!empty($addressesHistorySearchQuery->getTerritoire())) {
             $qb->andWhere('a.territory IN (:territories)')
@@ -171,16 +270,26 @@ class AddressesHistoryQuery
         }
 
         if (!empty($addressesHistorySearchQuery->getBailleurOuSyndic())) {
-            $qb
-                ->andWhere('s.nomProprio LIKE :bailleurOuSyndic
-                    OR s.denominationProprio LIKE :bailleurOuSyndic
-                    OR s.nomSyndic LIKE :bailleurOuSyndic
-                    OR s.denominationSyndic LIKE :bailleurOuSyndic')
-                ->setParameter('bailleurOuSyndic', '%'.$addressesHistorySearchQuery->getBailleurOuSyndic().'%');
+            $qb->leftJoin('s.bailleur', 'b');
+            $bailleurs = $addressesHistorySearchQuery->getBailleurOuSyndic();
+            $conditions = [];
+            foreach ($bailleurs as $index => $bailleur) {
+                $paramName = 'bailleur'.$index;
+                $conditions[] = "(s.nomProprio = :$paramName
+                    OR s.denominationProprio = :$paramName
+                    OR s.denominationSyndic = :$paramName
+                    OR b.name = :$paramName)";
+                $qb->setParameter($paramName, $bailleur);
+            }
+            $qb->andWhere(implode(' OR ', $conditions));
         }
 
         if (!empty($addressesHistorySearchQuery->getArreteTypes())) {
-            $qb->andWhere('ar.arreteType IN (:arreteTypes)')
+            // Utilise une sous-requête pour filtrer les adresses qui ont au moins un arrêté du type recherché
+            // tout en chargeant tous les arrêtés de ces adresses
+            $subQuery = 'SELECT IDENTITY(ar2.address) FROM '.Arrete::class.' ar2
+                         WHERE ar2.arreteType IN (:arreteTypes)';
+            $qb->andWhere('a.id IN ('.$subQuery.')')
                 ->setParameter('arreteTypes', $addressesHistorySearchQuery->getArreteTypes());
         }
 

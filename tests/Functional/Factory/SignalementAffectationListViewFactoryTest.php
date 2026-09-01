@@ -51,9 +51,10 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
             'statut' => SignalementStatus::ACTIVE,
             'nomOccupant' => $faker->lastName(),
             'prenomOccupant' => $faker->firstName(),
-            'adresseOccupant' => $faker->streetAddress(),
-            'villeOccupant' => $faker->city(),
-            'cpOccupant' => $faker->postcode(),
+            'housenumber' => $faker->buildingNumber(),
+            'street' => $faker->streetAddress(),
+            'city' => $faker->city(),
+            'postCode' => $faker->postcode(),
             'lastSuiviAt' => new \DateTimeImmutable(),
             'lastSuiviBy' => $faker->name(),
             'lastSuiviIsVisibleForUsager' => false,
@@ -93,9 +94,10 @@ class SignalementAffectationListViewFactoryTest extends KernelTestCase
         $this->assertEquals($dataSignalement['statut'], $signalementAffectationListView->getStatut());
         $this->assertEquals($dataSignalement['nomOccupant'], $signalementAffectationListView->getNomOccupant());
         $this->assertEquals($dataSignalement['prenomOccupant'], $signalementAffectationListView->getPrenomOccupant());
-        $this->assertEquals($dataSignalement['adresseOccupant'], $signalementAffectationListView->getAdresseOccupant());
-        $this->assertEquals($dataSignalement['villeOccupant'], $signalementAffectationListView->getVilleOccupant());
-        $this->assertEquals($dataSignalement['cpOccupant'], $signalementAffectationListView->getCodepostalOccupant());
+        $this->assertEquals($dataSignalement['housenumber'], $signalementAffectationListView->getAddressHousenumber());
+        $this->assertEquals($dataSignalement['street'], $signalementAffectationListView->getAddressStreet());
+        $this->assertEquals($dataSignalement['city'], $signalementAffectationListView->getAddressCity());
+        $this->assertEquals($dataSignalement['postCode'], $signalementAffectationListView->getAddressPostCode());
         $this->assertSame($dataSignalement['lastSuiviAt'], $signalementAffectationListView->getLastSuiviAt());
         $this->assertEquals($dataSignalement['lastSuiviBy'], $signalementAffectationListView->getLastSuiviBy());
         $this->assertEquals('Locataire', $signalementAffectationListView->getProfileDeclarant());

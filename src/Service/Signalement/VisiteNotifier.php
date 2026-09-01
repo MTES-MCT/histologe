@@ -45,7 +45,7 @@ class VisiteNotifier
                 new NotificationMail(
                     type: $notificationMailerType,
                     to: $toRecipient,
-                    territory: $intervention->getSignalement()->getTerritory(),
+                    territory: $intervention->getSignalement()->getAddress()->getTerritory(),
                     signalement: $intervention->getSignalement(),
                     intervention: $intervention,
                     previousVisiteDate: $previousDate,
@@ -134,7 +134,7 @@ class VisiteNotifier
                     new NotificationMail(
                         type: $notificationMailerType,
                         to: $user->getEmail(),
-                        territory: $intervention ? $intervention->getSignalement()->getTerritory() : $affectation->getSignalement()->getTerritory(),
+                        territory: $intervention ? $intervention->getSignalement()->getAddress()->getTerritory() : $affectation->getSignalement()->getAddress()->getTerritory(),
                         signalement: $intervention ? $intervention->getSignalement() : $affectation->getSignalement(),
                         intervention: $intervention,
                     )
@@ -156,7 +156,7 @@ class VisiteNotifier
     {
         $signalement = $intervention->getSignalement();
         $listUsersToNotify = $this->userRepository->findActiveTerritoryAdmins(
-            $signalement->getTerritory()->getId(), $signalement->getInseeOccupant()
+            $signalement->getAddress()->getTerritory()->getId(), $signalement->getAddress()->getCityCode()
         );
 
         foreach ($listUsersToNotify as $user) {
@@ -165,7 +165,7 @@ class VisiteNotifier
                     new NotificationMail(
                         type: NotificationMailerType::TYPE_VISITE_PAST_REMINDER_TO_PARTNER,
                         to: $user->getEmail(),
-                        territory: $signalement->getTerritory(),
+                        territory: $signalement->getAddress()->getTerritory(),
                         signalement: $signalement,
                         intervention: $intervention,
                     )

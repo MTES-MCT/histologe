@@ -72,7 +72,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 $this->logger->info(sprintf(
                     'Signalement saved with reference #%s in territory %s',
                     $signalement->getReference(),
-                    $signalement->getTerritory()->getName()
+                    $signalement->getAddress()->getTerritory()->getName()
                 ));
                 $this->sendNotifications($signalement);
                 $this->sendTiersInvitation($signalementDraft, $signalement);
@@ -103,7 +103,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 new NotificationMail(
                     type: $type,
                     to: $toRecipient,
-                    territory: $signalement->getTerritory(),
+                    territory: $signalement->getAddress()->getTerritory(),
                     signalement: $signalement,
                     attachment: $this->documentProvider->getModeleCourrierPourProprietaire($signalement),
                 )

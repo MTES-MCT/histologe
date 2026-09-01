@@ -46,7 +46,7 @@ class UpdateSignalementInvariantRialCommand extends Command
         $updatedRows = [];
         $io->progressStart(count($signalements));
         foreach ($signalements as $signalement) {
-            $banId = $signalement->getBanIdOccupant();
+            $banId = $signalement->getAddress()->getBanId();
             if (empty($banId)) {
                 $io->progressAdvance();
                 continue;

@@ -4,7 +4,7 @@
             <div class="fr-grid-row">
               <div class="fr-col-xl-9 fr-col-lg-6 fr-col-12">
                     <h3 class="fr-card__title fr-my-1v">#{{ signalement.reference }} - {{signalement.nomOccupant|upper}} {{signalement.prenomOccupant|capitalize}}</h3>
-                    <p class="fr-my-1v fr-text--bold fr-text--lg">{{signalement.adresseOccupant}}, {{signalement.cpOccupant}} {{signalement.villeOccupant}}</p>
+                    <p class="fr-my-1v fr-text--bold fr-text--lg">{{ signalement.address.full }}</p>
                 </div>
                 <div class="fr-col-xl-3 fr-col-lg-6 fr-col-12">
                     <p class="fr-my-1v fr-text--right">

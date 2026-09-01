@@ -65,7 +65,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
         $eventDispatcher->addSubscriber($interventionCreatedSubscriber);
 
         $intervention = $interventions[0];
-        $partner = $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getAddress()->getTerritory());
 
         $eventDispatcher->dispatch(
             new InterventionCreatedEvent($intervention, $user, $partner),
@@ -117,7 +117,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
             $intervention->getSignalement()->getTimezone()
         );
         $intervention->setScheduledAt($scheduledAt);
-        $partner = $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getAddress()->getTerritory());
 
         $eventDispatcher->dispatch(
             new InterventionCreatedEvent($intervention, $user, $partner),
@@ -180,7 +180,7 @@ class InterventionCreatedSubscriberTest extends KernelTestCase
 
         $intervention->setScheduledAt($date);
         $intervention->setType($type);
-        $partner = $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getAddress()->getTerritory());
 
         $eventDispatcher->dispatch(
             new InterventionCreatedEvent($intervention, $user, $partner),

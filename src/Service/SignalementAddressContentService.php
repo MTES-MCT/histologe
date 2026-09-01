@@ -33,7 +33,7 @@ class SignalementAddressContentService
     {
         $signalementsOnSameAddress = $this->signalementRepository->findOnSameAddress(signalement: $signalement, exclusiveStatus: [], excludedStatus: SignalementStatus::excludedStatuses());
 
-        $epciOccupant = $this->epciRepository->findOneByCommuneInseeAndPostalCode($signalement->getInseeOccupant(), $signalement->getCpOccupant());
+        $epciOccupant = $this->epciRepository->findOneByCommuneInseeAndPostalCode($signalement->getAddress()->getCityCode(), $signalement->getAddress()->getPostCode());
 
         return [
             [
@@ -58,8 +58,8 @@ class SignalementAddressContentService
 
         return $this->urlGenerator->generate('back_signalements_index', [
             'isImported' => 'oui',
-            'searchTerms' => trim($signalement->getAdresseOccupant()),
-            'communes[]' => $signalement->getCpOccupant(),
+            'searchTerms' => trim($signalement->getAddress()->getHousenumberAndStreet()),
+            'communes[]' => $signalement->getAddress()->getPostCode(),
         ]);
     }
 }

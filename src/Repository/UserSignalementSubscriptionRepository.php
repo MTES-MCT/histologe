@@ -73,13 +73,14 @@ class UserSignalementSubscriptionRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('sub')
             ->select('COUNT(sub.id)')
             ->innerJoin('sub.signalement', 's')
+            ->innerJoin('s.address', 'address')
             ->where('sub.user = :user')
             ->setParameter('user', $user)
             ->andWhere('s.statut = :statut')
             ->setParameter('statut', SignalementStatus::ACTIVE);
 
         if ($user->isTerritoryAdmin()) {
-            $qb->andWhere('s.territory IN (:territories)')
+            $qb->andWhere('address.territory IN (:territories)')
                 ->setParameter('territories', $user->getPartnersTerritories());
         } else {
             $qb->innerJoin('s.affectations', 'a')

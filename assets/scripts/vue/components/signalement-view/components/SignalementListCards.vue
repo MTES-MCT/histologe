@@ -12,7 +12,7 @@
                   - {{ (item.nomOccupant ? item.nomOccupant.toUpperCase() : '') + ' ' + (item.prenomOccupant !== null ? item.prenomOccupant : '') }}
                 </h3>
                 <p class="fr-my-1v">
-                  <span class="fr-text--bold fr-text--lg">{{ item.adresseOccupant }}, {{ item.codepostalOccupant }} {{ item.villeOccupant }}</span>
+                  <span class="fr-text--bold fr-text--lg">{{ item.addressHousenumber ? `${item.addressHousenumber} ` : '' }}{{ item.addressStreet }}, {{ item.addressPostCode }} {{ item.addressCity }}</span>
                   <span class="fr-text--sm">&nbsp;({{
                       item.isLogementSocial === null
                           ? 'parc non renseigné'

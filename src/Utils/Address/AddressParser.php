@@ -10,7 +10,8 @@ class AddressParser
      * @return array{
      *     number: string|null,
      *     suffix: string|null,
-     *     street: string
+     *     street: string,
+     *     numberAndSuffix: string|null
      * }
      */
     public static function parse(string $address): array
@@ -18,12 +19,14 @@ class AddressParser
         $number = null;
         $suffix = null;
         $address = str_replace(',', '', $address);
+        $numberAndSuffix = null;
 
         if (str_contains($address, '/')) {
             return [
                 'number' => $number,
                 'suffix' => $suffix,
                 'street' => $address,
+                'numberAndSuffix' => $numberAndSuffix,
             ];
         }
         // Match number and optional suffix at the beginning of the address
@@ -48,10 +51,16 @@ class AddressParser
             $street = $address;
         }
 
+        $numberAndSuffix = $number;
+        if ($number && $suffix) {
+            $numberAndSuffix = $number.' '.$suffix;
+        }
+
         return [
             'number' => $number,
             'suffix' => $suffix,
             'street' => ucfirst($street),
+            'numberAndSuffix' => $numberAndSuffix,
         ];
     }
 }

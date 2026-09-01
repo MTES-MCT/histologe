@@ -60,7 +60,7 @@ class SendSuiviWaitingNotificationAndDelayedCommandTest extends KernelTestCase
         $this->assertEquals($user2025_09, $suivi2025_09->getCreatedBy());
         $this->assertEquals($user2024_08, $suivi2024_08->getCreatedBy());
         $this->assertEquals($user2024_12, $suivi2024_12->getCreatedBy());
-        $this->assertEquals($user2024_12->getPartnerInTerritoryOrFirstOne($signalement2024_12->getTerritory()), $suivi2024_12->getPartner());
+        $this->assertEquals($user2024_12->getPartnerInTerritoryOrFirstOne($signalement2024_12->getAddress()->getTerritory()), $suivi2024_12->getPartner());
         $this->assertEquals(SuiviCategory::SIGNALEMENT_EDITED_FO, $suivi2025_09->getCategory());
         $this->assertEquals(SuiviCategory::SIGNALEMENT_EDITED_FO, $suivi2024_08->getCategory());
         $this->assertEquals(SuiviCategory::SIGNALEMENT_EDITED_BO, $suivi2024_12->getCategory());

@@ -39,11 +39,12 @@ class FileRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('f')
             ->select('f')
             ->innerJoin('f.signalement', 's')
+            ->innerJoin('s.address', 'address')
             ->where('f.extension IN :extensionsImage')
             ->andWhere('f.isVariantsGenerated = false')
             ->setParameter('extensionsImage', File::RESIZABLE_EXTENSION);
         if ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+            $qb->andWhere('address.territory = :territory')->setParameter('territory', $territory);
         }
 
         return $qb->getQuery()->getResult();

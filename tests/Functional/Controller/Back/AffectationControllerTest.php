@@ -106,7 +106,7 @@ class AffectationControllerTest extends WebTestCase
 
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-08']);
-        $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritory($signalement->getTerritory())]);
+        $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritory($signalement->getAddress()->getTerritory())]);
 
         $routeAffectationResponse = $this->router->generate('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
         $agents = $affectation->getPartner()->getUsers();
@@ -144,7 +144,7 @@ class AffectationControllerTest extends WebTestCase
 
         /** @var Signalement $signalement */
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-12']);
-        $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritory($signalement->getTerritory())]);
+        $affectation = $this->affectationRepository->findOneBy(['signalement' => $signalement, 'partner' => $user->getPartnerInTerritory($signalement->getAddress()->getTerritory())]);
 
         $routeAffectationResponse = $this->router->generate('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
         $agents = $affectation->getPartner()->getUsers();
@@ -181,12 +181,12 @@ class AffectationControllerTest extends WebTestCase
         $this->client->loginUser($user);
 
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-19']);
-        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
 
         $affectation = (new Affectation())->setPartner($partner)
             ->setSignalement($signalement)
             ->setStatut(AffectationStatus::WAIT)
-            ->setTerritory($signalement->getTerritory());
+            ->setTerritory($signalement->getAddress()->getTerritory());
 
         $signalement->addAffectation($affectation);
         $em = static::getContainer()->get('doctrine')->getManager();

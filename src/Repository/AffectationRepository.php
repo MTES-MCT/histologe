@@ -185,10 +185,11 @@ class AffectationRepository extends ServiceEntityRepository
             ->andWhere('uss2.signalement = a2.signalement');
 
         $qb = $this->createQueryBuilder('a');
-        $qb->select('a', 'p', 's', 't', 'su')
+        $qb->select('a', 'p', 's', 'address', 't', 'su')
             ->innerJoin('a.partner', 'p')
             ->innerJoin('a.signalement', 's')
-            ->innerJoin('s.territory', 't')
+            ->innerJoin('s.address', 'address')
+            ->innerJoin('address.territory', 't')
             ->leftJoin('s.signalementUsager', 'su')
             ->where('a.statut = :status')->setParameter('status', AffectationStatus::ACCEPTED)
             ->andWhere($qb->expr()->not($qb->expr()->in('a.id', $subQb->getDQL())));
@@ -201,7 +202,7 @@ class AffectationRepository extends ServiceEntityRepository
         }
 
         if (null !== $searchAffectation->getTerritory()) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $searchAffectation->getTerritory());
+            $qb->andWhere('address.territory = :territory')->setParameter('territory', $searchAffectation->getTerritory());
         }
 
         if (null !== $searchAffectation->getSignalementStatus()) {

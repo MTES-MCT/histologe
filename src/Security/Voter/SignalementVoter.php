@@ -129,7 +129,7 @@ class SignalementVoter extends Voter
     private function isAdminOrTerritoryAdmin(Signalement $signalement, User $user): bool
     {
         return $this->security->isGranted('ROLE_ADMIN')
-                || ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory()));
+                || ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getAddress()->getTerritory()));
     }
 
     private function canValidate(Signalement $signalement, User $user): bool
@@ -172,13 +172,13 @@ class SignalementVoter extends Voter
         if ($status !== $signalement->getStatut()) {
             return false;
         }
-        if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory())) {
+        if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getAddress()->getTerritory())) {
             return true;
         }
         if (!$checkAffectationAccepted) {
             return false;
         }
-        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
 
         return $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner?->getId() && AffectationStatus::ACCEPTED === $affectation->getStatut();
@@ -241,7 +241,7 @@ class SignalementVoter extends Voter
             return false;
         }
 
-        if (!$user->hasPartnerInTerritory($signalement->getTerritory())) {
+        if (!$user->hasPartnerInTerritory($signalement->getAddress()->getTerritory())) {
             return false;
         }
 
@@ -249,7 +249,7 @@ class SignalementVoter extends Voter
             return true;
         }
 
-        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
         if (!$partner) {
             return false;
         }
@@ -267,7 +267,7 @@ class SignalementVoter extends Voter
         if (SignalementStatus::INJONCTION_BAILLEUR !== $signalement->getStatut()) {
             return false;
         }
-        if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory())) {
+        if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getAddress()->getTerritory())) {
             return true;
         }
 
@@ -295,10 +295,10 @@ class SignalementVoter extends Voter
         if ($user->isSuperAdmin()) {
             return true;
         }
-        if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getTerritory())) {
+        if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getAddress()->getTerritory())) {
             return true;
         }
-        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
 
         return $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner->getId()
@@ -327,7 +327,7 @@ class SignalementVoter extends Voter
             return true;
         }
         foreach ($user->getPartners() as $partner) {
-            if ($signalement->getTerritory() !== $partner->getTerritory()) {
+            if ($signalement->getAddress()->getTerritory() !== $partner->getTerritory()) {
                 continue;
             }
             if (\in_array(Qualification::NON_DECENCE_ENERGETIQUE, $partner->getCompetence())) {
@@ -340,7 +340,7 @@ class SignalementVoter extends Voter
 
     private function canCreateSuivi(Signalement $signalement, User $user, ?Vote $vote = null): bool
     {
-        if (!$user->isSuperAdmin() && !$user->hasPartnerInTerritory($signalement->getTerritory())) {
+        if (!$user->isSuperAdmin() && !$user->hasPartnerInTerritory($signalement->getAddress()->getTerritory())) {
             $vote?->addReason('L\'utilisateur n\'a pas les droits suffisants dans le territoire demandé.');
 
             return false;
@@ -352,7 +352,7 @@ class SignalementVoter extends Voter
             return true;
         }
 
-        $partner = $user->getPartnerInTerritory($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
 
         return $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner()->getId() === $partner->getId() && AffectationStatus::ACCEPTED == $affectation->getStatut();
@@ -367,7 +367,7 @@ class SignalementVoter extends Voter
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
-        if (!$user->hasPartnerInTerritory($signalement->getTerritory())) {
+        if (!$user->hasPartnerInTerritory($signalement->getAddress()->getTerritory())) {
             return false;
         }
         if ($user->isTerritoryAdmin() || $user->hasPermissionAffectation()) {

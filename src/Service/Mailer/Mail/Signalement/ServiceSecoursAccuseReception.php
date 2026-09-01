@@ -36,7 +36,7 @@ class ServiceSecoursAccuseReception extends AbstractNotificationMailer
 
         return [
             'reference' => $signalement->getReference(),
-            'adresse_logement' => $signalement->getAddressCompleteOccupant(),
+            'adresse_logement' => $signalement->getAddress()->getFull(),
             'matricule_declarant' => $signalement->getMatriculeDeclarant(),
             'date_depot' => $signalement->getCreatedAt()->format('d/m/Y H:i'),
             'attachContent' => [

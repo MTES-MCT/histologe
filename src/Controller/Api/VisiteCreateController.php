@@ -14,7 +14,6 @@ use App\Factory\SignalementVisiteRequestFactory;
 use App\Manager\InterventionManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
 use App\Service\Security\PartnerAuthorizedResolver;
-use App\Service\TimezoneProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
@@ -211,7 +210,7 @@ class VisiteCreateController extends AbstractController
         );
         $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $signalementVisiteRequest, $partner);
 
-        $timezone = $signalement->getTerritory()?->getTimezone() ?? TimezoneProvider::TIMEZONE_EUROPE_PARIS;
+        $timezone = $signalement->getAddress()->getTerritory()->getTimezone();
         if ($this->isScheduledInFuture($intervention->getScheduledAt(), $timezone)) {
             $this->eventDispatcher->dispatch(
                 new InterventionCreatedEvent($intervention, $user, $partner),

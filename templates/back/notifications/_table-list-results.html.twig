@@ -21,7 +21,7 @@
             <td>
                 {{ notification.signalement.reference }}
                 <br>
-                ({{ notification.signalement.villeOccupant }})
+                ({{ notification.signalement.address.city }})
             </td>
             <td>{{ notification.createdAt|format_datetime(locale='fr', timezone=territory_timezone, pattern='d MMMM yyyy à HH:mm:ss') }}</td>
             <td class="word-wrap-anywhere">{{ notification.description ? notification.description : (notification.suivi ? transform_suivi_description(notification.suivi) : '')|raw }}</td>

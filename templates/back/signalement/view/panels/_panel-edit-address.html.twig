@@ -23,29 +23,28 @@
                                 data-form-id="form-edit-address" 
                                 data-form-lat="{% if signalement.geoloc.lat is defined %}{{ signalement.geoloc.lat }}{% endif %}" 
                                 data-form-lng="{% if signalement.geoloc.lng is defined %}{{ signalement.geoloc.lng }}{% endif %}" 
-                                {% if is_granted('ROLE_ADMIN') is not same as true %}data-form-limit="{{ signalement.territory.zip }}" {% endif %}>
+                                {% if is_granted('ROLE_ADMIN') is not same as true %}data-form-limit="{{ signalement.address.territory.zip }}" {% endif %}>
                             <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group-bo">
                             </div>
                         </div>
 
                         <div class="fr-input-group">
                             <label class="fr-label" for="form-edit-address-adresse">Numéro et voie</label>
-                            <input class="fr-input" id="form-edit-address-adresse" type="text" name="adresse" value="{{ signalement.adresseOccupant }}" data-autocomplete-addresse="true" maxlength="100">
+                            <input class="fr-input" id="form-edit-address-adresse" type="text" name="adresse" value="{{ signalement.address.housenumberAndStreet }}" data-autocomplete-addresse="true" maxlength="100">
                         </div>
 
                         <div class="fr-input-group">
                             <label class="fr-label" for="form-edit-address-codepostal">Code postal</label>
-                            <input class="fr-input" id="form-edit-address-codepostal" type="text" name="codePostal" value="{{ signalement.cpOccupant }}" data-autocomplete-codepostal="true" minlength="5" maxlength="5">
+                            <input class="fr-input" id="form-edit-address-codepostal" type="text" name="codePostal" value="{{ signalement.address.postCode }}" data-autocomplete-codepostal="true" minlength="5" maxlength="5">
                         </div>
 
                         <div class="fr-input-group">
                             <label class="fr-label" for="form-edit-address-ville">Commune</label>
-                            <input class="fr-input" id="form-edit-address-ville" type="text" name="ville" value="{{ signalement.villeOccupant }}" data-autocomplete-ville="true" maxlength="100">
+                            <input class="fr-input" id="form-edit-address-ville" type="text" name="ville" value="{{ signalement.address.city }}" data-autocomplete-ville="true" maxlength="100">
                         </div>
 
                         <input type="hidden" name="needResetInsee" value="0" data-autocomplete-need-reset-insee="true">
-                        <input type="hidden" name="manual" value="{{ signalement.manualAddressOccupant }}" data-autocomplete-manual="true">
-                        <input type="hidden" name="insee" value="{{ signalement.inseeOccupant }}" data-autocomplete-insee="true">
+                        <input type="hidden" name="insee" value="{{ signalement.address.cityCode }}" data-autocomplete-insee="true">
                     </div>
                     <div class="fr-col-12 fr-col-md-6">
                         <h2 class="fr-h5">Complément d'adresse (facultatif)</h2>

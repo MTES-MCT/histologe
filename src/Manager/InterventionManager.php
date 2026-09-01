@@ -59,7 +59,7 @@ class InterventionManager
             $partnerFound = $this->partnerManager->getPartnerIfQualification(
                 $visiteRequest->getPartner(),
                 Qualification::VISITES,
-                $signalement->getTerritory()
+                $signalement->getAddress()->getTerritory()
             );
             if (!$partnerFound) {
                 return null;
@@ -131,7 +131,7 @@ class InterventionManager
             $partnerFound = $this->partnerManager->getPartnerIfQualification(
                 $visiteRequest->getPartner(),
                 Qualification::VISITES,
-                $signalement->getTerritory()
+                $signalement->getAddress()->getTerritory()
             );
             if (!$partnerFound) {
                 return null;

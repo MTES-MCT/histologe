@@ -14,6 +14,7 @@ use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Service\Gouv\Ban\AddressService;
 use App\Service\Signalement\InputValue\SituationFoyerProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -27,6 +28,7 @@ class SignalementBoManager
     public function __construct(
         private readonly Security $security,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
+        private readonly AddressService $addressService,
         private readonly PostalCodeHomeChecker $postalCodeHomeChecker,
         private readonly ReferenceGenerator $referenceGenerator,
         private readonly SituationFoyerProcessor $situationFoyerProcessor,
@@ -70,27 +72,42 @@ class SignalementBoManager
         $signalement->setInformationProcedure($informationProcedure);
         $signalement->setInformationComplementaire($informationComplementaire);
 
+        $signalement->setAddress(null);
         $fieldAddress = 'adresseCompleteOccupant';
         if ($form->get('adresseCompleteOccupant')->getData()) {
-            $signalement->setAdresseOccupant($form->get('adresseCompleteOccupant')->getData());
-            $signalement->setCpOccupant(null);
-            $signalement->setVilleOccupant('');
-            $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
-            if (!$signalement->getBanIdOccupant()) {
-                $form->get('adresseCompleteOccupant')->addError(new FormError('Veuillez saisir l\'adresse manuellement.'));
+            $adresseComplete = $form->get('adresseCompleteOccupant')->getData();
+        } else {
+            $fieldAddress = 'adresseOccupant';
+            $adresseComplete = $form->get('addressAddress')->getData().' '.$form->get('addressPostCode')->getData().' '.$form->get('addressCity')->getData();
+        }
+        $banAddress = $this->addressService->getAcceptableBanAddress($adresseComplete);
+        if (!$banAddress && 'adresseCompleteOccupant' === $fieldAddress) {
+            $form->get('adresseCompleteOccupant')->addError(new FormError('Veuillez saisir l\'adresse manuellement.'));
+
+            return false;
+        }
+        if ($banAddress) {
+            $this->signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
+        } else {
+            if (!$this->signalementAddressUpdater->attachAddressToSignalementFromManualAddress(
+                $signalement,
+                $form->get('addressAddress')->getData(),
+                $form->get('addressPostCode')->getData(),
+                $form->get('addressCity')->getData()
+            )) {
+                $form->get('addressCity')->addError(new FormError('Commune introuvable.'));
 
                 return false;
             }
-        } else {
-            $fieldAddress = 'adresseOccupant';
-            $this->signalementAddressUpdater->updateAddressOccupantFromBanData($signalement);
         }
+        $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);
+        $this->signalementAddressUpdater->getRialDataForSignalement($signalement);
 
         if ('appartement' !== $signalement->getNatureLogement()) {
             $signalement->setAutresOccupantsDesordre(null);
         }
 
-        $territory = $this->postalCodeHomeChecker->getActiveTerritory((string) $signalement->getInseeOccupant());
+        $territory = $this->postalCodeHomeChecker->getActiveTerritory($signalement->getAddress()->getCityCode());
         if (!$territory) {
             $form->get($fieldAddress)->addError(new FormError('L\'adresse renseignée ne correspond pas à un territoire actif.'));
 
@@ -113,7 +130,6 @@ class SignalementBoManager
         $signalement->setStatut(SignalementStatus::DRAFT);
         $signalement->setCreatedBy($this->user);
         $signalement->setCreationSource(CreationSource::FORM_PRO_BO);
-        $signalement->setTerritory($territory);
         $signalement->setIsCguAccepted(true);
         if (!$signalement->getReference()) {
             $signalement->setReference($this->referenceGenerator->generateReference($territory, false));

@@ -52,11 +52,13 @@ class HistoriqueEvenementsGeneratorTest extends TestCase
     public function testGenerateWithSignalementsAndArretes(): void
     {
         $signalement = $this->getSignalement();
-        $signalement->setBanIdOccupant('13202_0001');
+        $address = $signalement->getAddress();
+        $address->setBanId('13202_0001');
 
         $signalementSameAddress = $this->getSignalement(nom: 'Nom Occupant');
-        $signalementSameAddress->setBanIdOccupant('13202_0001')
-            ->setReference('2024-01')
+        $addressSame = $signalementSameAddress->getAddress();
+        $addressSame->setBanId('13202_0001');
+        $signalementSameAddress->setReference('2024-01')
             ->setStatut(SignalementStatus::ACTIVE);
 
         $this->signalementRepository->expects($this->once())
@@ -104,11 +106,13 @@ class HistoriqueEvenementsGeneratorTest extends TestCase
     public function testGenerateWithOnlySignalements(): void
     {
         $signalement = $this->getSignalement();
-        $signalement->setBanIdOccupant('13202_0001');
+        $address = $signalement->getAddress();
+        $address->setBanId('13202_0001');
 
         $signalementSameAddress = $this->getSignalement(nom: 'Nom Occupant');
-        $signalementSameAddress->setBanIdOccupant('13202_0001')
-            ->setReference('2024-01')
+        $addressSame = $signalementSameAddress->getAddress();
+        $addressSame->setBanId('13202_0001');
+        $signalementSameAddress->setReference('2024-01')
             ->setStatut(SignalementStatus::ACTIVE);
 
         $this->signalementRepository->expects($this->once())
@@ -141,7 +145,8 @@ class HistoriqueEvenementsGeneratorTest extends TestCase
     public function testGenerateWithOnlyArretes(): void
     {
         $signalement = $this->getSignalement();
-        $signalement->setBanIdOccupant('13202_0001');
+        $address = $signalement->getAddress();
+        $address->setBanId('13202_0001');
 
         $this->signalementRepository->expects($this->once())
             ->method('findOnSameAddress')
@@ -180,7 +185,8 @@ class HistoriqueEvenementsGeneratorTest extends TestCase
     public function testGenerateWithNoSignalementAndNoArrete(): void
     {
         $signalement = $this->getSignalement();
-        $signalement->setBanIdOccupant('13202_0001');
+        $address = $signalement->getAddress();
+        $address->setBanId('13202_0001');
 
         $this->signalementRepository->expects($this->once())
             ->method('findOnSameAddress')

@@ -2,8 +2,8 @@
         aria-labelledby="container-pick-localisation-title"
         id="container-pick-localisation"
         class="side-panel"
-        data-address="{{ signalement is defined and signalement ? signalement.adresseOccupant : '' }}"
-        data-postcode="{{ signalement is defined and signalement ? signalement.cpOccupant : '' }}"
+        data-address="{{ signalement is defined and signalement ? signalement.address.housenumberAndStreet : '' }}"
+        data-postcode="{{ signalement is defined and signalement ? signalement.address.postCode : '' }}"
         {% if requireAddress is defined and requireAddress %}data-require-address="true"{% endif %}
         data-loaded="false"
 >

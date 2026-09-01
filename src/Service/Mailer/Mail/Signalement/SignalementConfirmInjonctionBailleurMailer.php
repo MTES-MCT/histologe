@@ -36,7 +36,7 @@ class SignalementConfirmInjonctionBailleurMailer extends AbstractNotificationMai
         $attachment = $notificationMail->getAttachment();
 
         return [
-            'ADRESSE_OCCUPANT' => $signalement->getAddressCompleteOccupant(),
+            'ADRESSE_OCCUPANT' => $signalement->getAddress()->getFull(),
             'NOM_COMPLET_DECLARANT' => $signalement->getPrenomOccupant().' '.$signalement->getNomOccupant(),
             'LINK_DOSSIER_BAILLEUR' => $this->urlGenerator->generate(
                 'app_login_bailleur',

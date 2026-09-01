@@ -84,7 +84,7 @@ class SuiviManagerTest extends KernelTestCase
             signalement : $signalement,
             description : SuiviManager::buildDescriptionClotureSignalement($params),
             category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
-            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
             user: $user,
             isVisibleForUsager: true
         );
@@ -129,7 +129,7 @@ class SuiviManagerTest extends KernelTestCase
             signalement : $signalement,
             description : 'prise en charge du signalement',
             category: SuiviCategory::MESSAGE_PARTNER,
-            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
             user : $user,
         );
         $this->entityManager->flush();
@@ -166,7 +166,7 @@ class SuiviManagerTest extends KernelTestCase
             signalement : $signalement,
             description : SuiviManager::buildDescriptionClotureSignalement($params),
             category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
-            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
             user: $user,
             isVisibleForUsager: true
         );

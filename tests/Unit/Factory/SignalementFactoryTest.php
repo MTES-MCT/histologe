@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Factory;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Territory;
 use App\Factory\SignalementImportFactory;
+use App\Service\Signalement\SignalementAddressUpdater;
 use Faker\Factory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -48,10 +49,10 @@ class SignalementFactoryTest extends KernelTestCase
             'prenomOccupant' => $faker->firstName(),
             'telOccupant' => $faker->phoneNumber(),
             'mailOccupant' => $faker->email(),
-            'adresseOccupant' => $faker->address(),
-            'cpOccupant' => $faker->postcode(),
-            'villeOccupant' => $faker->city(),
-            'inseeOccupant' => $faker->postcode(),
+            'adresseOccupant' => '22 Rue du test',
+            'cpOccupant' => '01170',
+            'villeOccupant' => 'Gex',
+            'inseeOccupant' => '01173',
             'etageOccupant' => $faker->randomDigit(),
             'escalierOccupant' => $faker->randomDigit(),
             'numAppartOccupant' => $faker->randomDigit(),
@@ -78,8 +79,11 @@ class SignalementFactoryTest extends KernelTestCase
             ->setName('Ain')
             ->setZip('01')
             ->setIsActive(true);
+        $reflection = new \ReflectionClass($territory);
+        $property = $reflection->getProperty('id');
+        $property->setValue($territory, 1);
 
-        $signalementImportFactory = new SignalementImportFactory();
+        $signalementImportFactory = new SignalementImportFactory($this->getContainer()->get(SignalementAddressUpdater::class));
         $signalement = $signalementImportFactory->create($territory, $data);
 
         $this->assertEquals($data['reference'], $signalement->getReference());
@@ -93,14 +97,13 @@ class SignalementFactoryTest extends KernelTestCase
         $this->assertEquals($data['nomOccupant'], $signalement->getNomOccupant());
         $this->assertEquals($data['telOccupant'], $signalement->getTelOccupant());
         $this->assertEquals($data['mailOccupant'], $signalement->getMailOccupant());
-        $this->assertEquals($data['adresseOccupant'], $signalement->getAdresseOccupant());
-        $this->assertEquals($data['cpOccupant'], $signalement->getCpOccupant());
-        $this->assertEquals($data['villeOccupant'], $signalement->getVilleOccupant());
-        $this->assertEquals($data['inseeOccupant'], $signalement->getInseeOccupant());
+        $this->assertEquals($data['adresseOccupant'], $signalement->getAddress()->getHousenumberAndStreet());
+        $this->assertEquals($data['cpOccupant'], $signalement->getAddress()->getPostCode());
+        $this->assertEquals($data['villeOccupant'], $signalement->getAddress()->getCity());
+        $this->assertEquals($data['inseeOccupant'], $signalement->getAddress()->getCityCode());
         $this->assertEquals($data['etageOccupant'], $signalement->getEtageOccupant());
         $this->assertEquals($data['escalierOccupant'], $signalement->getEscalierOccupant());
         $this->assertEquals($data['numAppartOccupant'], $signalement->getNumAppartOccupant());
-        $this->assertEquals($data['adresseOccupant'], $signalement->getAdresseOccupant());
         $this->assertEquals($data['naissanceOccupants'], $signalement->getNaissanceOccupants());
         $this->assertEquals($data['adresseAutreOccupant'], $signalement->getAdresseAutreOccupant());
 

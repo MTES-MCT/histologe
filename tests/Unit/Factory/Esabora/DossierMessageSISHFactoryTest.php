@@ -71,7 +71,7 @@ class DossierMessageSISHFactoryTest extends TestCase
         if ($file instanceof File) {
             $file->setTitle('un titre de fichier très long pour tester le tronquage à 100 caractères ce qui devrait donc donc le reste n\'apparait pas');
         }
-        $signalement->setInseeOccupant(null);
+        // $signalement->setInseeOccupant(null);
         $signalement->setNomOccupant('');
 
         $dossierMessage = $dossierMessageFactory->createInstance($affectation);

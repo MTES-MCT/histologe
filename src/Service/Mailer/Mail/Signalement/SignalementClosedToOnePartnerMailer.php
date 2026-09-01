@@ -41,7 +41,7 @@ class SignalementClosedToOnePartnerMailer extends AbstractNotificationMailer
 
         return [
             'ref_signalement' => $signalement->getReference(),
-            'partner_name' => $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())?->getNom(),
+            'partner_name' => $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory())?->getNom(),
             'link' => $this->generateLinkSignalementView($signalement->getUuid()),
         ];
     }
@@ -55,7 +55,7 @@ class SignalementClosedToOnePartnerMailer extends AbstractNotificationMailer
             self::MAILER_SUBJECT,
             $signalement->getReference(),
             $signalement->getNomOccupantOrDeclarant(),
-            $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())?->getNom(),
+            $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory())?->getNom(),
         );
     }
 }

@@ -25,6 +25,7 @@ class MonthStatisticsQuery
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
             ->select('COUNT(s.id) AS count, MONTH(s.createdAt) AS month, YEAR(s.createdAt) AS year')
+            ->innerJoin('s.address', 'address')
             ->where('s.statut NOT IN (:statutList)')
             ->setParameter('statutList', SignalementStatus::excludedStatuses());
 
@@ -32,11 +33,11 @@ class MonthStatisticsQuery
             $qb->andWhere('s.isImported IS NULL OR s.isImported = 0');
         }
         if ($territory && ZipcodeProvider::RHONE_CODE_DEPARTMENT_69 === $territory->getZip()) {
-            $qb->innerJoin('s.territory', 't')
+            $qb->innerJoin('address.territory', 't')
                 ->andWhere('t.zip IN (:zipcodes)')
                 ->setParameter('zipcodes', [ZipcodeProvider::RHONE_CODE_DEPARTMENT_69, ZipcodeProvider::METROPOLE_LYON_CODE_DEPARTMENT_69A]);
         } elseif ($territory) {
-            $qb->andWhere('s.territory = :territory')->setParameter('territory', $territory);
+            $qb->andWhere('address.territory = :territory')->setParameter('territory', $territory);
         }
         if ($year) {
             $qb->andWhere('YEAR(s.createdAt) = :year')->setParameter('year', $year);

@@ -16,7 +16,7 @@
             {% set displayAddVisiteButton = true %}
             {% set listPendingVisiteExternalOperatorNames = [] %}
             {% for pendingVisite in pendingVisites %}
-                {% set partner = app.user.partnerInTerritoryOrFirstOne(signalement.territory) %}
+                {% set partner = app.user.partnerInTerritoryOrFirstOne(signalement.address.territory) %}
                 {% if pendingVisite.partner and pendingVisite.partner.id is same as partner.id %}
                     {% set displayAddVisiteButton = false %}
                 {% endif %}
@@ -29,7 +29,7 @@
             <div class="fr-my-5v fr-text--right">
                 {% if linkToVisitGrid %}
                     <a class="fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left matomo_download" 
-                    title="Télécharger la grille de visite {% if signalement.territory.grilleVisiteFilename %}du territoire{% endif %}"
+                    title="Télécharger la grille de visite {% if signalement.address.territory.grilleVisiteFilename %}du territoire{% endif %}"
                     download href="{{ sign_url(linkToVisitGrid) }}">
                         Grille de visite
                     </a>

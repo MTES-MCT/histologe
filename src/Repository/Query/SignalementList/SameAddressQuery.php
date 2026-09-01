@@ -27,6 +27,7 @@ class SameAddressQuery
 
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Signalement::class, 's')
+            ->innerJoin('s.address', 'address')
             ->select(
                 's.id',
                 's.uuid',
@@ -34,26 +35,26 @@ class SameAddressQuery
                 's.closedAt',
                 's.reference',
                 's.statut',
-                's.adresseOccupant',
-                's.cpOccupant',
-                's.villeOccupant',
-                's.geoloc',
+                'address.housenumber',
+                'address.street',
+                'address.postCode',
+                'address.city',
+                'address.cityCode',
+                'address.point',
                 's.nomOccupant',
                 's.prenomOccupant',
                 's.nomProprio',
-                'IDENTITY(s.territory) AS territoryId',
+                'IDENTITY(address.territory) AS territoryId',
             )
             ->where('s.statut IN (:statusList)')
             ->setParameter('statusList', $statusList)
-            ->orderBy('s.adresseOccupant', 'ASC')
-            ->addOrderBy('s.cpOccupant', 'ASC')
-            ->addOrderBy('s.villeOccupant', 'ASC')
+            ->orderBy('address.housenumber', 'ASC')
+            ->addOrderBy('address.postCode', 'ASC')
+            ->addOrderBy('address.city', 'ASC')
             ->addOrderBy('s.createdAt', 'ASC');
 
         $queryDossiersMultiples = 'SELECT 1 FROM '.Signalement::class.' s2
-                WHERE s2.adresseOccupant = s.adresseOccupant
-                AND s2.cpOccupant = s.cpOccupant
-                AND s2.villeOccupant = s.villeOccupant
+                WHERE s2.address = s.address
                 AND s2.statut IN (:statusList)
                 AND s2.id != s.id';
         $qb->andWhere('EXISTS ('.$queryDossiersMultiples.')');
@@ -61,7 +62,7 @@ class SameAddressQuery
         if ($user->isSuperAdmin()) {
             // pas de restrictions pour les SA
         } elseif ($user->isTerritoryAdmin()) {
-            $qb->andWhere('s.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
+            $qb->andWhere('address.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
         } else {
             $qb->leftJoin('s.affectations', 'affectations')
                 ->leftJoin('affectations.partner', 'partner')

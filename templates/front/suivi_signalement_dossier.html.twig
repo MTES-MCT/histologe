@@ -56,7 +56,7 @@
 							>Compléter les informations</a>
 					{% endif %}
 				</div>
-				{{ signalement.adresseOccupant }} {{ signalement.cpOccupant }} {{ signalement.villeOccupant }}
+				{{ signalement.address.housenumberAndStreet }} {{ signalement.address.postCode }} {{ signalement.address.city }}
 				{% if signalement.complementAdresseOccupant %}
 					<div class="title-separator">Détails</div>
 					{{signalement.complementAdresseOccupant}}

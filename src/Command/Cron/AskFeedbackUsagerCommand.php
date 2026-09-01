@@ -225,7 +225,7 @@ class AskFeedbackUsagerCommand extends AbstractCronCommand
                         new NotificationMail(
                             type: $notificationMailerType,
                             to: $toRecipient,
-                            territory: $signalement->getTerritory(),
+                            territory: $signalement->getAddress()->getTerritory(),
                             signalement: $signalement,
                         )
                     );

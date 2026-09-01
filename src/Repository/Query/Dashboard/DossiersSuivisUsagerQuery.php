@@ -36,6 +36,7 @@ class DossiersSuivisUsagerQuery
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Suivi::class, 's')
             ->innerJoin('s.signalement', 'signalement')
+            ->innerJoin('signalement.address', 'address')
             ->where('s.category IN (:categories)')
             ->setParameter('categories', $categories);
 
@@ -49,11 +50,11 @@ class DossiersSuivisUsagerQuery
 
         if ($params?->territoireId) {
             $qb
-                ->andWhere('signalement.territory = :territoireId')
+                ->andWhere('address.territory = :territoireId')
                 ->setParameter('territoireId', $params->territoireId);
         } elseif (!$user->isSuperAdmin()) {
             $qb
-                ->andWhere('signalement.territory IN (:territories)')
+                ->andWhere('address.territory IN (:territories)')
                 ->setParameter('territories', $user->getPartnersTerritories());
         }
 
@@ -107,7 +108,7 @@ class DossiersSuivisUsagerQuery
             'signalement.nomOccupant AS nomOccupant',
             'signalement.prenomOccupant AS prenomOccupant',
             'signalement.reference AS reference',
-            "CONCAT_WS(', ', signalement.adresseOccupant, CONCAT(signalement.cpOccupant, ' ', signalement.villeOccupant)) AS adresse",
+            "CONCAT_WS(', ', CONCAT_WS(' ', address.housenumber, address.street), CONCAT_WS(' ', address.postCode, address.city)) AS fullAddress",
             'MAX(s.createdAt) AS messageAt',
             'DATE_DIFF(CURRENT_DATE(), MAX(s.createdAt)) AS messageDaysAgo',
             'signalement.closedAt AS clotureAt',

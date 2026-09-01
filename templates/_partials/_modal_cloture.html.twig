@@ -41,14 +41,14 @@
                                 {% if affectation and affectation.statut is same as constant('App\\Entity\\Enum\\AffectationStatus::ACCEPTED') %}
                                     <li>
                                         <button class="fr-btn fr-icon-check-line" form="cloture_form" type="submit" data-cloture-type="partner">
-                                            Clôturer pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}
+                                            Clôturer pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.address.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.address.territory).nom : 'N/A' }}
                                         </button>
                                     </li>
                                 {% endif %}
                             {% else %}
                                 <li>
                                     <button class="fr-btn fr-icon-check-line" form="cloture_form" data-cloture-type="partner" type="submit">
-                                        Clôturer pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}
+                                        Clôturer pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.address.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.address.territory).nom : 'N/A' }}
                                     </button>
                                 </li>
                             {% endif %}

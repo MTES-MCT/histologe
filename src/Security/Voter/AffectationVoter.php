@@ -57,7 +57,7 @@ class AffectationVoter extends Voter
 
     private function canAnswer(Affectation $affectation, User $user): bool
     {
-        $canAnswer = $affectation->getPartner() === $user->getPartnerInTerritory($affectation->getSignalement()->getTerritory())
+        $canAnswer = $affectation->getPartner() === $user->getPartnerInTerritory($affectation->getSignalement()->getAddress()->getTerritory())
             && in_array($affectation->getSignalement()->getStatut(), [SignalementStatus::INJONCTION_BAILLEUR, SignalementStatus::ACTIVE]);
 
         if (!$affectation->isSynchronizeWithEsabora()) {
@@ -98,7 +98,7 @@ class AffectationVoter extends Voter
         if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
-        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->hasPartnerInTerritory($affectation->getSignalement()->getTerritory())) {
+        if ($this->security->isGranted('ROLE_ADMIN_TERRITORY') && $user->hasPartnerInTerritory($affectation->getSignalement()->getAddress()->getTerritory())) {
             return true;
         }
 

@@ -34,7 +34,7 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
 
         $form = new FormServiceSecoursStep2();
         $form->adresseCompleteOccupant = '19 Quai de la Joliette, 13002 Marseille';
-        $form->inseeOccupant = '13055';
+        $form->addressCityCode = '13055';
 
         $this->zipcodeProvider
             ->expects($this->once())
@@ -61,11 +61,11 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
 
         $form = new FormServiceSecoursStep2();
         $form->adresseCompleteOccupant = '19 Quai de la Joliette, 13002 Marseille';
-        $form->adresseOccupant = '19 Quai de la Joliette';
-        $form->cpOccupant = '13002';
-        $form->villeOccupant = 'Marseille';
+        $form->addressAddress = '19 Quai de la Joliette';
+        $form->addressPostcode = '13002';
+        $form->addressCity = 'Marseille';
         $form->rnbId = '13055';
-        $form->inseeOccupant = '13055';
+        $form->addressCityCode = '13055';
 
         $this->zipcodeProvider
             ->expects($this->once())
@@ -94,7 +94,7 @@ class AdresseOccupantValidatorTest extends ConstraintValidatorTestCase
 
         $form = new FormServiceSecoursStep2();
         $form->adresseCompleteOccupant = '19 Quai de la Joliette, 13002 Marseille';
-        $form->inseeOccupant = '13055';
+        $form->addressCityCode = '13055';
         $form->territoryZip = '75001';
 
         $territory = $this->createMock(Territory::class);

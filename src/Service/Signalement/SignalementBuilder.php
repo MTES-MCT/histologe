@@ -63,6 +63,7 @@ class SignalementBuilder
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         private readonly DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
         private readonly ZipcodeProvider $zipcodeProvider,
+        private readonly SignalementAddressUpdater $signalementAddressUpdater,
         #[Autowire(env: 'INJONCTION_BAILLEUR_DEPTS')]
         private string $injonctionBailleurDepts = '',
     ) {
@@ -85,7 +86,6 @@ class SignalementBuilder
         $this->signalement = (new Signalement())
             ->setCreatedFrom($this->signalementDraft)
             ->setCreationSource(CreationSource::FORM_USAGER_V2)
-            ->setTerritory($this->territory)
             ->setIsCguAccepted(true)
             ->setDetails($this->signalementDraftRequest->getMessageAdministration())
             ->setProfileDeclarant(ProfileDeclarant::from(strtoupper($this->signalementDraftRequest->getProfil())));
@@ -390,7 +390,7 @@ class SignalementBuilder
             && !$this->signalement->getIsLogementSocial()
             && $this->signalement->getIsProprioAverti()
             && (!empty($this->signalement->getMailProprio()) || !empty($this->signalement->getAdresseProprio()))
-            && \in_array($this->signalement->getTerritory()->getZip(), $arrayDepts, true)
+            && \in_array($this->signalement->getAddress()->getTerritory()->getZip(), $arrayDepts, true)
         ) {
             return true;
         }
@@ -411,18 +411,19 @@ class SignalementBuilder
     {
         $this->signalement
             ->setIsLogementSocial($this->isLogementSocial())
-            ->setAdresseOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero())
-            ->setCpOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal())
-            ->setInseeOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailInsee())
-            ->setVilleOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune())
             ->setEtageOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseEtage())
             ->setEscalierOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseEscalier())
             ->setNumAppartOccupant(
                 $this->signalementDraftRequest->getAdresseLogementComplementAdresseNumeroAppartement()
             )
             ->setAdresseAutreOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseAutre())
-            ->setManualAddressOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailManual())
             ->setRnbIdOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailRnbId());
+        $this->signalementAddressUpdater->attachAddressToSignalement(
+            $this->signalement,
+            $this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
+            $this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
+            $this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune()
+        );
     }
 
     private function setOccupantDeclarantData(): void

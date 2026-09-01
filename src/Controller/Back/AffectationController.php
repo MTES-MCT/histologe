@@ -154,7 +154,7 @@ class AffectationController extends AbstractController
                     }
                 }
                 $this->affectationManager->removeAffectationsFrom($signalement, $postedPartner, $partnersIdToRemove);
-                $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$signalement->getTerritory()->getZip()]);
+                $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$signalement->getAddress()->getTerritory()->getZip()]);
             } else {
                 $this->affectationManager->removeAffectationsFrom($signalement);
             }
@@ -256,7 +256,7 @@ class AffectationController extends AbstractController
         $signalement = $affectation->getSignalement();
         /** @var User $user */
         $user = $this->getUser();
-        if (!$user->isAloneInPartner($user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()))) {
+        if (!$user->isAloneInPartner($user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()))) {
             $agentsSelection = (new AgentSelection())->setSignalement($signalement);
             $agentsSelectionFormRoute = $this->generateUrl('back_signalement_affectation_accept', ['affectation' => $affectation->getId()]);
             $form = $this->createForm(
@@ -282,7 +282,7 @@ class AffectationController extends AbstractController
                 affectation: $affectation,
                 user: $user,
                 status: AffectationStatus::ACCEPTED,
-                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory())
             );
             $this->addFlash('success', ['title' => 'Affectation acceptée', 'message' => 'L\'affectation a bien été acceptée.']);
 
@@ -295,7 +295,7 @@ class AffectationController extends AbstractController
                 affectation: $affectation,
                 user: $user,
                 status : AffectationStatus::ACCEPTED,
-                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())
+                partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory())
             );
             $userSignalementSubscriptionManager->createOrGet($user, $signalement, $user, $affectation);
             $entityManager->flush();
@@ -333,7 +333,7 @@ class AffectationController extends AbstractController
             affectation: $affectation,
             user: $user,
             status: AffectationStatus::REFUSED,
-            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory()),
+            partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
             motifRefus: $refusAffectation->getMotifRefus(),
             message: $refusAffectation->getDescription(),
             files: $refusAffectation->getFiles()
@@ -358,7 +358,7 @@ class AffectationController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
         $affectation = $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner() === $partner;
         })->first();

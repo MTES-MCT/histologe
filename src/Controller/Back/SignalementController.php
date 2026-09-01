@@ -131,7 +131,7 @@ class SignalementController extends AbstractController
             SignalementViewedEvent::NAME
         );
 
-        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
         $affectation = $signalement->getAffectationForPartner($partner);
         $canAnswerAffectation = $this->isGranted(AffectationVoter::AFFECTATION_ACCEPT_OR_REFUSE, $affectation);
         $canCancelRefusedAffectation = $this->isGranted(AffectationVoter::AFFECTATION_CANCEL_REFUSED, $affectation);
@@ -251,7 +251,7 @@ class SignalementController extends AbstractController
         $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
         $linkToVisitGrid = false;
         $existingVisitGrid = $fileRepository->findOneBy([
-            'territory' => $signalement->getTerritory(),
+            'territory' => $signalement->getAddress()->getTerritory(),
             'documentType' => DocumentType::GRILLE_DE_VISITE,
         ]);
         if ($existingVisitGrid) {
@@ -274,7 +274,7 @@ class SignalementController extends AbstractController
         $arretesOnSameAddress = $arreteFinder->find($signalement);
         $subscriptionsInMyPartner = $signalementSubscriptionRepository->findForSignalementAndPartner($signalement, $partner);
 
-        $epciOccupant = $epciRepository->findOneByCommuneInseeAndPostalCode($signalement->getInseeOccupant(), $signalement->getCpOccupant());
+        $epciOccupant = $epciRepository->findOneByCommuneInseeAndPostalCode($signalement->getAddress()->getCityCode(), $signalement->getAddress()->getPostCode());
 
         $personalNote = null;
         if ($this->isGranted('ROLE_ADMIN_TERRITORY')) {
@@ -313,7 +313,7 @@ class SignalementController extends AbstractController
             'refusAffectationForm' => $refusAffectationForm,
             'transferSubscriptionForm' => $transferSubscriptionForm,
             'agentsSubscriptionForm' => $agentsSubscriptionForm,
-            'tags' => $tagsRepository->findAllActive($signalement->getTerritory()),
+            'tags' => $tagsRepository->findAllActive($signalement->getAddress()->getTerritory()),
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
             'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
@@ -355,7 +355,7 @@ class SignalementController extends AbstractController
         }
         /** @var User $user */
         $user = $this->getUser();
-        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getTerritory());
+        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
         $affectation = $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
             return $affectation->getPartner() === $partner;
         })->first();
@@ -477,7 +477,7 @@ class SignalementController extends AbstractController
             foreach ($tagList as $tagId) {
                 $tag = $tagRepository->findBy([
                     'id' => $tagId,
-                    'territory' => $signalement->getTerritory(),
+                    'territory' => $signalement->getAddress()->getTerritory(),
                     'isArchive' => 0,
                 ]);
                 if (!empty($tag)) {
