@@ -17,32 +17,31 @@
                                 <input type="hidden" name="_token" value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
                             </form>
                         {% else %}
-                            <button
-                                data-fr-opened="false" 
-                                aria-controls="accept-affectation-modal"
-                                class="fr-nav__link fr-btn--icon-left fr-icon-checkbox-circle-fill">
-                                Annuler le refus de l'affectation
-                            </button>
+                            <button type="button"
+                                class="fr-nav__link fr-btn--icon-left fr-icon-checkbox-circle-fill"
+                                aria-controls="panel-accept-affectation"
+                                data-panel-open="panel-accept-affectation"
+                                data-fr-opened="false"
+                                >Annuler le refus de l'affectation</button>
                         {% endif %}
                     </li>
                 {% elseif is_granted('SIGN_REOPEN', signalement) %}
                     <li>
                         <button
                             class="fr-nav__link fr-btn--icon-left fr-fi-lock-fill"
-                            aria-controls="reopen-all-signalement-modal" 
+                            data-panel-open="panel-reopen-all-signalement"
+                            aria-controls="panel-reopen-all-signalement" 
                             data-fr-opened="false"
-                            >
-                            Rouvrir pour tous
-                        </button>
+                            >Rouvrir pour tous</button>
                     </li>
                 {% elseif is_granted('AFFECTATION_REOPEN', affectation) %}
                     <li>
                         <button
                             class="fr-nav__link fr-btn--icon-left fr-fi-lock-fill"
-                            aria-controls="reopen-signalement-modal" 
-                            data-fr-opened="false">
-                            Rouvrir pour {{ currentPartner ? currentPartner.nom : 'N/A' }}
-                        </button>
+                            data-panel-open="panel-reopen-signalement"
+                            aria-controls="panel-reopen-signalement" 
+                            data-fr-opened="false"
+                            >Rouvrir pour {{ currentPartner ? currentPartner.nom : 'N/A' }}</button>
                     </li>
                 {% endif %}
                 {% if feature_cloture_v2 %}
@@ -55,47 +54,45 @@
                     {% endif %}
                     {% if affectation and is_granted('AFFECTATION_CLOSE', affectation) %}
                         <li>
-                            <button id="link-bouton-cloturer" class="fr-nav__link fr-btn--icon-left fr-icon-close-line" data-panel-open="panel-close-affectation" aria-controls="panel-close-affectation" aria-expanded="false">
+                            <button id="test-bouton-cloturer" class="fr-nav__link fr-btn--icon-left fr-icon-close-line" data-panel-open="panel-close-affectation" aria-controls="panel-close-affectation" aria-expanded="false"
+                                >
                                 {% if is_granted('ROLE_ADMIN_TERRITORY') %}
                                     Fermer l'affectation
                                 {% else %}
                                     Fermer le dossier
-                                {% endif %}
-                            </button>
+                                {% endif %}</button>
                         </li>
                     {% endif %}
                 {% else %}
                     {% if is_granted('SIGN_CLOSE', signalement) %}
                         <li>
                             <button
-                                id="test-bouton-cloturer" 
+                                id="test-bouton-cloturer"
                                 class="fr-nav__link fr-btn--icon-left fr-icon-close-line"
-                                aria-controls="cloture-modal" 
-                                data-fr-opened="false">
-                                Clôturer
-                            </button>
+                                aria-controls="panel-cloture"
+                                data-fr-opened="false"
+                                >Clôturer</button>
                         </li>
                     {% elseif affectation and is_granted('AFFECTATION_CLOSE', affectation) %}
-                            <li>
-                                <button
-                                    id="link-bouton-cloturer"
-                                    class="fr-nav__link fr-btn--icon-left fr-icon-close-line"
-                                    aria-controls="cloture-modal" 
-                                    data-fr-opened="false">
-                                    Clôturer
-                                </button>
-                            </li>
+                        <li>
+                            <button
+                                id="test-bouton-cloturer"
+                                class="fr-nav__link fr-btn--icon-left fr-icon-close-line"
+                                aria-controls="panel-cloture"
+                                data-fr-opened="false"
+                                >Clôturer</button>
+                        </li>
                     {% endif %}
                 {% endif %}
                 {% if is_granted('SIGN_INJONCTION_CLOSE', signalement) %}
                     <li>
                         <button
-                            class="fr-nav__link fr-btn--icon-left fr-icon-close-line" 
-                            aria-controls="close-demarche-acceleree-modal" 
-                            data-fr-opened="false" 
-                            title="Clôturer la démarche accélérée">
-                            Clôturer la démarche accélérée
-                        </button>
+                            class="fr-nav__link fr-btn--icon-left fr-icon-close-line"
+                            data-fr-opened="false"
+                            data-panel-open="panel-close-demarche-acceleree"
+                            aria-controls="panel-close-demarche-acceleree"
+                            data-fr-opened="false"
+                            >Clôturer la démarche accélérée</button>
                     </li>
                 {% endif %}
                 {% if is_granted('SIGN_VIEW', signalement) %}
@@ -145,30 +142,26 @@
                                 {% if isAloneInCurrentPartner and affectation %}
                                     <button 
                                         class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line disabled"
-                                        aria-disabled="true" tabindex="-1" title="Vous ne pouvez pas quitter le dossier, étant le seul agent de votre partenaire.">
-                                        Se retirer du dossier
-                                    </button>
+                                        aria-disabled="true" tabindex="-1" title="Vous ne pouvez pas quitter le dossier, étant le seul agent de votre partenaire."
+                                        >Se retirer du dossier</button>
                                 {% elseif subscriptionsInMyPartner|length > 1 or not affectation %}
                                     <a href="{{ path('back_signalement_unsubscribe', {uuid: signalement.uuid}) }}?_token={{ csrf_token('unsubscribe') }}"
-                                        class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line">
-                                        Se retirer du dossier
-                                    </a>
+                                        class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line"
+                                        >Se retirer du dossier</a>
                                 {% else %}
                                     <button
                                         class="fr-nav__link fr-btn--icon-left fr-icon-eye-off-line"
-                                        aria-controls="transfer-subscription-modal" 
+                                        data-panel-open="panel-transfer-subscription"
+                                        aria-controls="panel-transfer-subscription"
                                         data-fr-opened="false"
-                                        >
-                                        Se retirer du dossier
-                                    </button>
+                                        >Se retirer du dossier</button>
                                 {% endif %}
                                     <button
                                         class="fr-nav__link fr-btn--icon-left fr-icon-user-add-line"
-                                        aria-controls="agents-subscription-modal" 
+                                        data-panel-open="panel-agents-subscription" 
+                                        aria-controls="panel-agents-subscription" 
                                         data-fr-opened="false"
-                                        >
-                                        Abonner un agent
-                                    </button>
+                                        >Abonner un agent</button>
                             </li>
                         {% elseif not is_granted('AFFECTATION_CANCEL_REFUSED', affectation) %}
                             <li>

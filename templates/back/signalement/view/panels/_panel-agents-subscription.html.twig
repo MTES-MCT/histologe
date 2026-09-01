@@ -1,0 +1,47 @@
+<dialog aria-labelledby="panel-agents-subscription-title" id="panel-agents-subscription" data-panel-visite="true" class="side-panel">
+    <div class="side-panel__inner">
+        <div class="side-panel__header">
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-agents-subscription" aria-controls="panel-agents-subscription" aria-expanded="false">Fermer</button>
+        </div>
+
+        <div class="side-panel__content fr-mx-3w">
+            <h1 id="panel-agents-subscription-title" class="fr-modal__title title-blue-france"
+                >Attribuer le dossier #{{ signalement.reference }}</h1>
+
+            {{ form_start(agentsSubscriptionForm, {'attr': {'id': 'form-agents-subscription', 'data-submit-type':'formData'}}) }}
+            <div class="fr-mb-2v">
+                <button id="select-all-agents-subscription" data-select-all-in-target=".agent-subscription-container"  class="fr-link">Tout sélectionner</button>
+            </div>
+            {{ form_errors(agentsSubscriptionForm) }}
+            <div class="fr-select-group agent-subscription-container">
+                {{ form_label(agentsSubscriptionForm.agents, null, {'label_attr': {'class': 'fr-mb-2v', 'name': 'agents_selection[agents]', 'data-error-target': '1'}}) }}
+                <div class="fr-grid-row">
+                    {% for agent in agentsSubscriptionForm.agents %}
+                        <div class="fr-checkbox-group fr-col-6">
+                            {{ form_row(agent, {'id': 'agents_subscription_' ~ agent.vars.value}) }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {{ form_end(agentsSubscriptionForm) }}
+        </div>
+        <div class="side-panel__footer">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm fr-btns-group--icon-left">
+                <li>
+                    <button type="submit"
+                        class="fr-btn fr-btn--icon-left fr-icon-check-line"
+                        form="form-agents-subscription"
+                        >Valider</button>
+                </li>
+                <li>
+                    <button type="button"
+                        class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel"
+                        data-panel="panel-agents-subscription"
+                        aria-controls="panel-agents-subscription"
+                        aria-expanded="false"
+                        >Annuler</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</dialog>
