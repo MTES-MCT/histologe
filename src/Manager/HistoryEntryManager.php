@@ -125,7 +125,7 @@ class HistoryEntryManager
 
         $subscribedUsers = [];
         foreach ($signalement->getUserSignalementSubscriptions() as $userSubscription) {
-            $partnerName = $userSubscription->getUser()->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())?->getNom() ?? 'N/A';
+            $partnerName = $userSubscription->getUser()->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory())?->getNom() ?? 'N/A';
             $subscribedUsers[] = ['Action' => $userSubscription->getUser()->getNomComplet(true).' ('.$partnerName.')'];
         }
         if (!empty($subscribedUsers)) {
