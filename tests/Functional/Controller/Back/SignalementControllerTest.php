@@ -130,7 +130,7 @@ class SignalementControllerTest extends WebTestCase
         yield '13 - RT - En cours' => [
             'admin-territoire-13-01@signal-logement.fr',
             '00000000-0000-0000-2022-000000000001',
-            '#open-accept-affectation-modal',
+            '#open-panel-accept-affectation',
             'Accepter',
         ];
 

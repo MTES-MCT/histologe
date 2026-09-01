@@ -81,15 +81,15 @@
                         </div>
                         <div class="fr-col-2 fr-text--right">
                             {% if is_granted('AFFECTATION_REINIT', partnerAffectation) %}
-                                <button 
-                                    title="Réaffecter le partenaire" 
-                                    class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-refresh-line open-modal-reinit-affectation"
-                                    data-fr-opened="false" 
-                                    aria-controls="fr-modal-reinit-affectation"
+                                <button type="button"
+                                    title="Réaffecter le partenaire"
+                                    class="fr-btn fr-btn--sm fr-btn--secondary fr-icon-refresh-line open-panel-reinit-affectation"
+                                    data-fr-opened="false"
+                                    aria-controls="panel-reinit-affectation"
+                                    data-panel-open="panel-reinit-affectation"
                                     data-partner-nom="{{ partnerAffectation.partner.nom }}"
                                     data-action="{{ path('back_signalement_affectation_reinit', {affectation: partnerAffectation.id}) }}"
-                                    >
-                                </button>
+                                    ></button>
                             {% endif %}
                             {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').CLOSED %}
                                 <button title="Désaffecter le partenaire"
