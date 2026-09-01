@@ -1206,10 +1206,24 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->adresseOccupant;
     }
 
+    public function setAdresseOccupantDeprecated(?string $adresseOccupant): static
+    {
+        $this->adresseOccupant = $adresseOccupant;
+
+        return $this;
+    }
+
     // TODO ADDRESS : A SUPPRIMER
     public function getCpOccupantDeprecated(): ?string
     {
         return $this->cpOccupant;
+    }
+
+    public function setCpOccupantDeprecated(?string $cpOccupant): static
+    {
+        $this->cpOccupant = $cpOccupant;
+
+        return $this;
     }
 
     // TODO ADDRESS : A SUPPRIMER
@@ -1218,10 +1232,38 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->villeOccupant;
     }
 
+    public function setVilleOccupantDeprecated(?string $villeOccupant): static
+    {
+        $this->villeOccupant = $villeOccupant;
+
+        return $this;
+    }
+
     // TODO ADDRESS : A SUPPRIMER
     public function getBanIdOccupantDeprecated(): ?string
     {
         return $this->banIdOccupant;
+    }
+
+    public function setBanIdOccupantDeprecated(?string $banIdOccupant): static
+    {
+        $this->banIdOccupant = $banIdOccupant;
+
+        return $this;
+    }
+
+    // TODO ADDRESS : A SUPPRIMER
+    public function getTerritoryDeprecated(): ?Territory
+    {
+        return $this->territory;
+    }
+
+    // TODO ADDRESS : A SUPPRIMER
+    public function setTerritoryDeprecated(?Territory $territory): static
+    {
+        $this->territory = $territory;
+
+        return $this;
     }
 
     public function hasInfosAgence(): bool
@@ -1749,6 +1791,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->inseeOccupant;
     }
 
+    public function setInseeOccupantDeprecated(?string $inseeOccupant): static
+    {
+        $this->inseeOccupant = $inseeOccupant;
+
+        return $this;
+    }
+
     public function getCodeSuivi(): ?string
     {
         return $this->codeSuivi;
@@ -2105,11 +2154,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
-    public function getAddress(): Address
+    public function getAddress(): ?Address
     {
-        if ($this->address) {
-            return $this->address;
-        }
+        // if ($this->address) {
+        //     return $this->address;
+        // }
         // fallback pour l'affichage des signalements sans addresse en attendant que les cas particuliers soient traités
         $address = new Address();
         $parsedAddress = AddressParser::parse($this->adresseOccupant);

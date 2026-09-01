@@ -66,9 +66,9 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         // et le territoire assigné (Loire-Atlantique) ne correspond pas au territoire calculé depuis
         // l'INSEE (54 - Meurthe-et-Moselle) : les deux anomalies, et donc les deux actions, doivent apparaître.
         $signalement
-            ->setCpOccupant('44420')
-            ->setInseeOccupant('54570')
-            ->setTerritory($loireAtlantique);
+            ->setCpOccupantDeprecated('44420')
+            ->setInseeOccupantDeprecated('54570')
+            ->setTerritoryDeprecated($loireAtlantique);
         $this->entityManager->flush();
 
         $route = $this->router->generate('back_signalement_without_address_index', ['territory' => $loireAtlantique->getId()]);
@@ -90,9 +90,9 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         // calcul : aucune anomalie. Le signalement n'a toujours pas d'Address liée, donc le bouton de
         // recherche doit rester disponible pour permettre de le lier.
         $signalement
-            ->setCpOccupant('20000')
-            ->setInseeOccupant('2A004')
-            ->setTerritory($corseDuSud);
+            ->setCpOccupantDeprecated('20000')
+            ->setInseeOccupantDeprecated('2A004')
+            ->setTerritoryDeprecated($corseDuSud);
         $this->entityManager->flush();
 
         $route = $this->router->generate('back_signalement_without_address_index', ['territory' => $corseDuSud->getId()]);
@@ -212,7 +212,7 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $signalement = $this->prepareSignalementForParisSearch();
 
         $route = $this->router->generate('back_signalement_without_address_bulk_link_preview', [
-            'territory' => $signalement->getTerritory()?->getId(),
+            'territory' => $signalement->getTerritoryDeprecated()?->getId(),
         ]);
         $this->client->request('GET', $route);
 
@@ -287,14 +287,14 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $signalement = $this->prepareSignalementForParisSearch();
 
         $search = new SearchSignalementWithoutAddress();
-        $search->setTerritory($signalement->getTerritory());
+        $search->setTerritory($signalement->getTerritoryDeprecated());
 
         $results = $this->signalementRepository->findSignalementsWithoutAddress($search);
 
         $this->assertNotEmpty($results);
         $this->assertContainsEquals($signalement, $results);
         foreach ($results as $result) {
-            $this->assertSame($signalement->getTerritory()?->getId(), $result->getTerritory()?->getId());
+            $this->assertSame($signalement->getTerritoryDeprecated()?->getId(), $result->getTerritoryDeprecated()?->getId());
             $this->assertNull($result->getAddress());
         }
     }
@@ -306,11 +306,11 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $paris = $this->territoryRepository->findOneBy(['zip' => '75']);
 
         $signalement
-            ->setAdresseOccupant(self::PARIS_ADDRESS_LABEL)
-            ->setVilleOccupant('Paris')
-            ->setCpOccupant('')
-            ->setInseeOccupant(null)
-            ->setTerritory($paris);
+            ->setAdresseOccupantDeprecated(self::PARIS_ADDRESS_LABEL)
+            ->setVilleOccupantDeprecated('Paris')
+            ->setCpOccupantDeprecated('')
+            ->setInseeOccupantDeprecated(null)
+            ->setTerritoryDeprecated($paris);
         $this->entityManager->flush();
 
         return $signalement;

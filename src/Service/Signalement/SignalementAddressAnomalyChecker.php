@@ -20,8 +20,8 @@ class SignalementAddressAnomalyChecker
 
     public function getCalculatedTerritory(Signalement $signalement): ?Territory
     {
-        $inseeOccupant = trim((string) $signalement->getInseeOccupant());
-        $cpOccupant = trim((string) $signalement->getCpOccupant());
+        $inseeOccupant = trim((string) $signalement->getInseeOccupantDeprecated());
+        $cpOccupant = trim((string) $signalement->getCpOccupantDeprecated());
 
         return $this->zipcodeProvider->getTerritoryByInseeCode($inseeOccupant)
             ?? $this->zipcodeProvider->getTerritoryByPostalCode($cpOccupant);
@@ -32,8 +32,8 @@ class SignalementAddressAnomalyChecker
      */
     public function getErrors(Signalement $signalement): array
     {
-        $inseeOccupant = trim((string) $signalement->getInseeOccupant());
-        $cpOccupant = trim((string) $signalement->getCpOccupant());
+        $inseeOccupant = trim((string) $signalement->getInseeOccupantDeprecated());
+        $cpOccupant = trim((string) $signalement->getCpOccupantDeprecated());
 
         $inseeMissing = !$inseeOccupant || '#N/D' === $inseeOccupant;
         $cpMissing = !$cpOccupant || '#N/D' === $cpOccupant;
@@ -64,7 +64,7 @@ class SignalementAddressAnomalyChecker
         }
 
         $calculatedTerritory = $this->getCalculatedTerritory($signalement);
-        if ($calculatedTerritory && $signalement->getTerritory() && $calculatedTerritory->getId() !== $signalement->getTerritory()->getId()) {
+        if ($calculatedTerritory && $signalement->getTerritoryDeprecated() && $calculatedTerritory->getId() !== $signalement->getTerritoryDeprecated()->getId()) {
             $errors[] = SignalementAddressAnomaly::INCONSISTENT_TERRITORY;
         }
 

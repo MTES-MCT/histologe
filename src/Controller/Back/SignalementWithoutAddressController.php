@@ -13,7 +13,7 @@ use App\Form\SearchSignalementWithoutAddressType;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Gouv\Ban\AddressService;
-use App\Service\Gouv\Ban\Response\Address as BanAddressResponse;
+use App\Service\Gouv\Ban\Response\BanAddress;
 use App\Service\ListFilters\SearchSignalementWithoutAddress;
 use App\Service\MessageHelper;
 use App\Service\Signalement\SignalementAddressAnomalyChecker;
@@ -96,12 +96,12 @@ class SignalementWithoutAddressController extends AbstractController
                 $calculatedTerritory = $this->signalementAddressAnomalyChecker->getCalculatedTerritory($signalement);
                 $errors = $this->signalementAddressAnomalyChecker->getErrors($signalement);
                 $writer->addRow(Row::fromValues([
-                    $signalement->getTerritory()?->getZipAndName(),
+                    $signalement->getTerritoryDeprecated()?->getZipAndName(),
                     $signalement->getReference(),
-                    $signalement->getAdresseOccupant(),
-                    $signalement->getCpOccupant(),
-                    $signalement->getVilleOccupant(),
-                    $signalement->getInseeOccupant(),
+                    $signalement->getAdresseOccupantDeprecated(),
+                    $signalement->getCpOccupantDeprecated(),
+                    $signalement->getVilleOccupantDeprecated(),
+                    $signalement->getInseeOccupantDeprecated(),
                     $calculatedTerritory?->getZipAndName(),
                     implode(', ', array_map(static fn ($error) => $error->label(), $errors)),
                     $signalement->getStatut()?->label(),
@@ -220,7 +220,7 @@ class SignalementWithoutAddressController extends AbstractController
             return $this->json(['stayOnPage' => true, 'closeModal' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => 'Territoire invalide ou inactif.']]]);
         }
 
-        $signalement->setTerritory($calculatedTerritory);
+        $signalement->setTerritoryDeprecated($calculatedTerritory);
         /** @var User $adminUser */
         $adminUser = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
         $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
@@ -295,17 +295,17 @@ class SignalementWithoutAddressController extends AbstractController
             return false;
         }
 
-        $banAddress = new BanAddressResponse(['features' => [$rawFeature]]);
+        $banAddress = new BanAddress(['features' => [$rawFeature]]);
         try {
             $signalementAddressUpdater->attachAddressToSignalementFromBanAddress($signalement, $banAddress);
         } catch (TerritoryNotFoundForCityCodeException) {
             return false;
         }
         // Passer à NULL plutôt ?
-        $signalement->setAdresseOccupant($banAddress->getStreet(true));
-        $signalement->setCpOccupant($banAddress->getZipCode());
-        $signalement->setVilleOccupant($banAddress->getCity());
-        $signalement->setInseeOccupant($banAddress->getInseeCode());
+        $signalement->setAdresseOccupantDeprecated($banAddress->getStreet());
+        $signalement->setCpOccupantDeprecated($banAddress->getZipCode());
+        $signalement->setVilleOccupantDeprecated($banAddress->getCity());
+        $signalement->setInseeOccupantDeprecated($banAddress->getInseeCode());
 
         $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
             user: $suiviUser,
@@ -323,8 +323,8 @@ class SignalementWithoutAddressController extends AbstractController
      */
     private function searchBanCandidates(Signalement $signalement, AddressService $addressService): array
     {
-        $adresseOccupant = str_replace(['-', '(s)', '(x)'], '', $signalement->getAdresseOccupant());
-        $villeOccupant = (!empty($signalement->getCpOccupant()) ? $signalement->getCpOccupant().' ' : '').$signalement->getVilleOccupant();
+        $adresseOccupant = str_replace(['-', '(s)', '(x)'], '', $signalement->getAdresseOccupantDeprecated());
+        $villeOccupant = (!empty($signalement->getCpOccupantDeprecated()) ? $signalement->getCpOccupantDeprecated().' ' : '').$signalement->getVilleOccupantDeprecated();
         $query = trim($adresseOccupant.' '.$villeOccupant);
         if ('' === $query) {
             return ['query' => '', 'results' => []];
@@ -333,7 +333,7 @@ class SignalementWithoutAddressController extends AbstractController
         $data = $addressService->searchAddress($query, 10);
         $features = $data['features'] ?? [];
 
-        $territoryZip = $signalement->getTerritory()?->getZip();
+        $territoryZip = $signalement->getTerritoryDeprecated()?->getZip();
         if ($territoryZip) {
             $features = array_values(array_filter(
                 $features,

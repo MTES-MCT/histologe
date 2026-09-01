@@ -24,7 +24,7 @@ class AddressServiceFake extends AddressService
 
     public function getAddress(string $address): BanAddress
     {
-        return new Address($this->resolveRawData($address));
+        return new BanAddress($this->resolveRawData($address));
     }
 
     /**
@@ -34,7 +34,7 @@ class AddressServiceFake extends AddressService
     {
         switch (trim($address)) {
             case '8 Rue de la tourmentinerie 44850 Saint-Mars-du-Désert':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [
                         [
@@ -59,8 +59,9 @@ class AddressServiceFake extends AddressService
                     ],
                     'query' => $address,
                 ];
+                break;
             case 'Route des Funeries 44850 Le Cellier':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -82,8 +83,9 @@ class AddressServiceFake extends AddressService
                     ]],
                     'query' => $address,
                 ];
+                break;
             case '5 Rue Basse 44350 Guérande':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -106,9 +108,10 @@ class AddressServiceFake extends AddressService
                     ]],
                     'query' => $address,
                 ];
+                break;
             case '5 Rue Basse 30360 Vézénobres':
             case '5 Rue basse 30360 Vézénobres':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -131,8 +134,9 @@ class AddressServiceFake extends AddressService
                     ]],
                     'query' => $address,
                 ];
+                break;
             case '151 Avenue du Pont Trinquat 34070 Montpellier':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -155,8 +159,9 @@ class AddressServiceFake extends AddressService
                     ]],
                     'query' => $address,
                 ];
+                break;
             case '10 Rue de la Paix 75002 Paris':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -179,8 +184,9 @@ class AddressServiceFake extends AddressService
                     ]],
                     'query' => $address,
                 ];
+                break;
             case 'Chemin du grand méchant loup 30360 Vézénobres':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -203,8 +209,9 @@ class AddressServiceFake extends AddressService
                     ]],
                     'query' => $address,
                 ];
+                break;
             case '30360 Vézénobres':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -223,8 +230,9 @@ class AddressServiceFake extends AddressService
                     ]],
                     'query' => $address,
                 ];
+                break;
             case '34300 Agde':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -243,8 +251,9 @@ class AddressServiceFake extends AddressService
                     ]],
                     'query' => $address,
                 ];
+                break;
             case '2 impasse de la peupleraie 44850 Saint-Mars-du-Désert':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -266,8 +275,9 @@ class AddressServiceFake extends AddressService
                     ]],
                     'query' => $address,
                 ];
+                break;
             case '29 Rue Désirée Clary 13002 Marseille':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -289,10 +299,10 @@ class AddressServiceFake extends AddressService
                         ],
                     ]],
                     'query' => $address,
-                ]);
+                ];
                 break;
             case '13002 Marseille':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -310,10 +320,10 @@ class AddressServiceFake extends AddressService
                         ],
                     ]],
                     'query' => $address,
-                ]);
+                ];
                 break;
             case '01170 Gex':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -331,10 +341,10 @@ class AddressServiceFake extends AddressService
                         ],
                     ]],
                     'query' => $address,
-                ]);
+                ];
                 break;
             case '13104 Arles':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -352,10 +362,10 @@ class AddressServiceFake extends AddressService
                         ],
                     ]],
                     'query' => $address,
-                ]);
+                ];
                 break;
             case '69001 Lyon':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -373,10 +383,10 @@ class AddressServiceFake extends AddressService
                         ],
                     ]],
                     'query' => $address,
-                ]);
+                ];
                 break;
             case '29100 Douarnenez':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -394,10 +404,10 @@ class AddressServiceFake extends AddressService
                         ],
                     ]],
                     'query' => $address,
-                ]);
+                ];
                 break;
             case '29200 Brest':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -415,11 +425,13 @@ class AddressServiceFake extends AddressService
                         ],
                     ]],
                     'query' => $address,
-                ]);
+                ];
                 break;
             default:
-                $response = new BanAddress();
+                $response = null;
         }
+
+        return $response;
     }
 
     public function getMunicipalityByCityCode(string $cityName, string $cityCode): ?Poi
