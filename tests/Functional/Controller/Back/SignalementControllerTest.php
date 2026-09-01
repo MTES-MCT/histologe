@@ -163,7 +163,7 @@ class SignalementControllerTest extends WebTestCase
         yield '13 - Agent - En cours' => [
             'user-13-01@signal-logement.fr',
             '00000000-0000-0000-2023-000000000006',
-            '#link-bouton-cloturer',
+            '#test-bouton-cloturer',
             'Fermer le dossier',
         ];
         yield '13 - Agent - En cours - abonné alone' => [

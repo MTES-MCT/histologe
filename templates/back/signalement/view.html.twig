@@ -93,7 +93,7 @@
     {% else %}
         {% if is_granted('SIGN_CLOSE', signalement) or (affectation and is_granted('AFFECTATION_CLOSE', affectation)) %}
             <div data-ajax-form>
-                {% include '_partials/_modal_cloture.html.twig' %}
+                {% include 'back/signalement/view/panels/_panel-cloture.html.twig' %}
             </div>
         {% endif %}
     {% endif %}
