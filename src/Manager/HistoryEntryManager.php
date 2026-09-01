@@ -123,13 +123,13 @@ class HistoryEntryManager
         }
         unset($partnerData);
 
-        $userSubscribeds = [];
+        $subscribedUsers = [];
         foreach ($signalement->getUserSignalementSubscriptions() as $userSubscription) {
             $partnerName = $userSubscription->getUser()->getPartnerInTerritoryOrFirstOne($signalement->getTerritory())?->getNom() ?? 'N/A';
-            $userSubscribeds[] = ['Action' => $userSubscription->getUser()->getNomComplet(true).' ('.$partnerName.')'];
+            $subscribedUsers[] = ['Action' => $userSubscription->getUser()->getNomComplet(true).' ('.$partnerName.')'];
         }
-        if (!empty($userSubscribeds)) {
-            $formattedHistory = ['Agents abonnés au dossier' => ['events' => $userSubscribeds]] + $formattedHistory;
+        if (!empty($subscribedUsers)) {
+            $formattedHistory = ['Agents abonnés au dossier' => ['events' => $subscribedUsers]] + $formattedHistory;
         }
 
         foreach ($signalement->getAffectations() as $affectation) {
