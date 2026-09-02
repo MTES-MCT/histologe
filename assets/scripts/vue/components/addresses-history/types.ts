@@ -38,6 +38,12 @@ export interface AddressesState {
   zoneAreas: string[]
 }
 
+export interface Params {
+  niveauxGris: boolean
+  limitesAdministratives: boolean
+  zonesTerritoire: boolean
+}
+
 export interface Filters {
   territoire?: string
   adresse?: string
@@ -53,6 +59,7 @@ export interface InputState {
   order: string
   queryParameters: QueryParameter[]
   filters: Filters
+  params: Params
 }
 
 export interface UserState {
