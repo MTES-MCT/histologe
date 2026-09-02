@@ -31,7 +31,6 @@ use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
 use App\Service\Signalement\ReferenceGenerator;
 use App\Service\Signalement\SignalementBoManager;
 use App\Service\Signalement\SignalementDesordresProcessor;
-use App\Service\Signalement\Suivi\HistoriqueEvenementsGenerator;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -57,7 +56,6 @@ class SignalementCreateController extends AbstractController
         private readonly InterconnectionBus $interconnectionBus,
         private readonly SignalementRepository $signalementRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly HistoriqueEvenementsGenerator $historiqueEventsGenerator,
     ) {
     }
 
@@ -556,7 +554,6 @@ class SignalementCreateController extends AbstractController
                 $this->interconnectionBus->dispatchAll($signalement);
             }
 
-            $this->historiqueEventsGenerator->generate($signalement);
             $this->entityManager->flush();
             $this->entityManager->commit();
 
