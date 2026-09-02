@@ -6,6 +6,7 @@ use App\Entity\Partner;
 use App\Entity\User;
 use App\EventListener\SecurityApiExceptionListener;
 use App\Repository\PartnerRepository;
+use App\Repository\UserApiPermissionRepository;
 use App\Service\Security\PartnerAuthorizedResolver;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,6 +18,7 @@ class PartnerAuthorizedResolverTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
     private PartnerRepository $partnerRepository;
+    private UserApiPermissionRepository $userApiPermissionRepository;
     private PartnerAuthorizedResolver $partnerAuthorizedResolver;
 
     protected function setUp(): void
@@ -30,7 +32,11 @@ class PartnerAuthorizedResolverTest extends KernelTestCase
 
         $this->entityManager = $entityManager;
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
-        $this->partnerAuthorizedResolver = new PartnerAuthorizedResolver($this->partnerRepository);
+        $this->userApiPermissionRepository = static::getContainer()->get(UserApiPermissionRepository::class);
+        $this->partnerAuthorizedResolver = new PartnerAuthorizedResolver(
+            $this->partnerRepository,
+            $this->userApiPermissionRepository
+        );
     }
 
     public function testGetUniquePartner(): void
