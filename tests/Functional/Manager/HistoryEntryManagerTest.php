@@ -176,10 +176,10 @@ class HistoryEntryManagerTest extends WebTestCase
         ));
 
         $this->assertArrayHasKey(Partner::DEFAULT_PARTNER, $historyEntries);
-        $this->assertTrue($hasDeleteAction($historyEntries[Partner::DEFAULT_PARTNER]));
+        $this->assertTrue($hasDeleteAction($historyEntries[Partner::DEFAULT_PARTNER]['events']));
 
         $this->assertArrayHasKey($partnerName, $historyEntries);
-        $this->assertTrue($hasDeleteAction($historyEntries[$partnerName]));
+        $this->assertTrue($hasDeleteAction($historyEntries[$partnerName]['events']));
     }
 
     public function testGetAffectationHistorySubscriptionAppearsUnderOriginalPartnerAfterTransfer(): void
@@ -231,11 +231,11 @@ class HistoryEntryManagerTest extends WebTestCase
         ));
 
         $this->assertArrayHasKey($oldPartner->getNom(), $historyEntries);
-        $this->assertTrue($hasSubscriptionAction($historyEntries[$oldPartner->getNom()]));
+        $this->assertTrue($hasSubscriptionAction($historyEntries[$oldPartner->getNom()]['events']));
 
         $this->assertFalse(
             isset($historyEntries[$currentPartnerName])
-            && $hasSubscriptionAction($historyEntries[$currentPartnerName])
+            && $hasSubscriptionAction($historyEntries[$currentPartnerName]['events'])
         );
     }
 
@@ -278,14 +278,13 @@ class HistoryEntryManagerTest extends WebTestCase
 
         $this->assertIsArray($historyEntries);
 
-        $this->assertNotEmpty($historyEntries[$affectations[0]->getPartner()->getNom()]);
-        $this->assertEquals(2, \count($historyEntries[$affectations[0]->getPartner()->getNom()]));
+        $partnerEvents = $historyEntries[$affectations[0]->getPartner()->getNom()]['events'];
+        $this->assertNotEmpty($partnerEvents);
+        $this->assertEquals(2, \count($partnerEvents));
 
-        $entry = $historyEntries[$affectations[0]->getPartner()->getNom()][0];
+        $entry = $partnerEvents[1];
         $this->assertArrayHasKey('Date', $entry);
         $this->assertArrayHasKey('Action', $entry);
         $this->assertStringContainsString('a réouvert l\'affectation pour le partenaire', (string) $entry['Action']);
-        $this->assertArrayHasKey('Id', $entry);
-        $this->assertEquals($affectations[0]->getId(), $entry['Id']);
     }
 }

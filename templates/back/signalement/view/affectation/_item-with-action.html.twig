@@ -36,11 +36,11 @@
                         <div class="fr-col-10 fr-col-lg-3">
                             <div>
                                 {% if partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').WAIT %}
-                                    <span class="fr-badge fr-badge--info fr-badge--sm">En attente</span>
+                                    <span class="fr-badge fr-badge--sm {{ partnerAffectation.statut.badgeClass }}">En attente</span>
                                 {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').ACCEPTED %}
-                                    <span class="fr-badge fr-badge--success fr-badge--sm">Acceptée</span>
+                                    <span class="fr-badge fr-badge--sm {{ partnerAffectation.statut.badgeClass }}">Acceptée</span>
                                 {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').REFUSED %}
-                                    <span class="fr-badge fr-badge--sm fr-text-label--red-marianne fr-background-contrast--red-marianne fr-fi-close-line">Refusée</span>
+                                    <span class="fr-badge fr-badge--sm fr-fi-close-line {{ partnerAffectation.statut.badgeClass }}">Refusée</span>
                                 {% elseif partnerAffectation.statut is same as enum('App\\Entity\\Enum\\AffectationStatus').CLOSED %}
                                     <span class="fr-badge fr-badge--sm fr-fi-close-circle-fill">Clôturée</span>
                                 {% endif %}

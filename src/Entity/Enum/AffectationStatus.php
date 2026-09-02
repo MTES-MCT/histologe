@@ -33,6 +33,16 @@ enum AffectationStatus: string
         };
     }
 
+    public function badgeClass(): string
+    {
+        return match ($this) {
+            self::WAIT => 'fr-badge--info',
+            self::ACCEPTED => 'fr-badge--success',
+            self::REFUSED => 'fr-text-label--red-marianne fr-background-contrast--red-marianne',
+            self::CLOSED => '',
+        };
+    }
+
     /** @return array<string, string> */
     public static function getLabelList(): array
     {
