@@ -1,10 +1,51 @@
 <template>
-  <section class="addresses-history-map-filters">
-    <div class="fr-grid-row fr-grid-row--gutters">
+  <section class="addresses-history-map-filters fr-m-5w">
+    <div class="fr-m-2w">
+      <div class="fr-notice fr-notice--info fr-mb-2w">
+          <div class="fr-container">
+              <div class="fr-notice__body">
+                  <p>
+                      <span class="fr-notice__title">Légende</span>
+                      <br>
+                      <span class="fr-notice__desc">Chaque forme correspond à un type de donnée. Quand plusieurs types de données sont présents à une adresse, on affiche un triange (<span class="fr-icon-triangle-fill fr-icon--sm" aria-hidden="true"></span>).</span>
+                  </p>
+                  <button title="Masquer le message" onclick="const notice = this.parentNode.parentNode.parentNode; notice.parentNode.removeChild(notice)" type="button" class="fr-btn--close fr-btn">Masquer le message</button>
+              </div>
+          </div>
+      </div>
+
+      <h2 class="fr-h4 fr-text-label--blue-france">Paramètres de la carte</h2>
+
+      <HistoToggle
+        id="toggle-map-niveaux-gris"
+        v-model="sharedState.input.params.niveauxGris"
+        containerClass="fr-mb-2w"
+      >
+        <template #label>Afficher la carte en niveaux de gris</template>
+      </HistoToggle>
+
+      <HistoToggle
+        id="toggle-map-limites-administratives"
+        v-model="sharedState.input.params.limitesAdministratives"
+        containerClass="fr-mb-2w"
+      >
+        <template #label>Afficher les limites administratives</template>
+      </HistoToggle>
+
+      <HistoToggle
+        id="toggle-map-zones-territoire"
+        v-model="sharedState.input.params.zonesTerritoire"
+        containerClass="fr-mb-2w"
+      >
+        <template #label>Afficher les zones du territoire</template>
+      </HistoToggle>
+
+      <h2 class="fr-h4 fr-mt-2w fr-text-label--blue-france">Rechercher un lieu</h2>
+
       <!-- Territoire -->
       <div
         v-if="(sharedState.user.isAdmin || sharedState.user.isMultiTerritoire) && sharedState.territories.length > 0"
-        class="fr-col-12 fr-mb-2w"
+        class="fr-mb-2w"
       >
         <HistoSelect
           id="filter-territoire"
@@ -19,7 +60,7 @@
       </div>
 
       <!-- Communes -->
-      <div class="fr-col-12 fr-mb-2w">
+      <div class="fr-mb-2w">
         <AppAutoComplete
           id="filter-communes"
           v-model="sharedState.input.filters.communes"
@@ -37,7 +78,7 @@
 
       <!-- Filtres actifs -->
       <!-- Je laisse pour l'instant pour voir les communes sélectionnées. A voir comment on fait dans la version finale -->
-      <div v-if="activeFilters.length > 0" class="fr-col-12 fr-mt-2w">
+      <div v-if="activeFilters.length > 0" class="fr-mt-2w">
         <ul class="fr-tags-group">
           <li v-for="filter in activeFilters" :key="filter.key">
             <button
@@ -61,6 +102,7 @@ import { useAddressesHistoryFilters } from '../composables/useAddressesHistoryFi
 import { getActiveFilters, type ActiveFilter } from '../services/activeFiltersBuilder'
 import type { AddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'
 import HistoSelect from '../../common/HistoSelect.vue'
+import HistoToggle from '../../common/HistoToggle.vue'
 // import HistoMultiSelect from '../../common/HistoMultiSelect.vue'
 // import AppSearch from '../../common/AppSearch.vue'
 import AppAutoComplete from '../../common/AppAutoComplete.vue'
@@ -79,14 +121,17 @@ const activeFilters = computed<ActiveFilter[]>(() => {
 
 /**
  * Quand le territoire change
- * - Pour la carte, filtre côté client sans recharger les données
- * - Met à jour le filtre dans le store (synchronisé avec la vue liste)
+ * - Réinitialise communes et zone
+ * - Recharge les settings
+ * - Recharge les adresses
  */
 const onTerritoryChange = async (value: string): Promise<void> => {
+  sharedState.input.filters.communes = []
+  sharedState.input.filters.zone = undefined
   sharedState.input.filters.territoire = value
 
-  // Le filtrage côté client se fait automatiquement via la computed property
-  // dans AddressesHistoryMap, pas besoin d'appeler l'API
+  await filtersComposable.reloadSettings()
+  await filtersComposable.reloadAddresses()
 }
 
 /**
@@ -129,12 +174,11 @@ onMounted(() => {
 <style>
 section.addresses-history-map-filters {
   position: absolute;
-  margin: 20px;
   z-index: 100;
   background-color: white;
-  max-width: 400px;
+  max-width: 450px;
   padding: 1rem;
   border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0px 6px rgba(0, 0, 0, 0.3);
 }
 </style>

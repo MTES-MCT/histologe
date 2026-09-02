@@ -8,6 +8,8 @@ use App\Factory\AddressesHistoryListViewFactory;
 use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Repository\Query\SignalementList\SameAddressQuery;
 use App\Repository\TerritoryRepository;
+use App\Repository\ZoneRepository;
+use App\Service\Geometry\GeometryFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -40,6 +42,8 @@ class AddressesHistoryController extends AbstractController
     public function list(
         AddressesHistoryQuery $addressesHistoryQuery,
         AddressesHistoryListViewFactory $addressesHistoryListViewFactory,
+        ZoneRepository $zoneRepository,
+        GeometryFactory $geometryFactory,
         #[MapQueryString] ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
     ): JsonResponse {
         /** @var User $user */
@@ -83,10 +87,10 @@ class AddressesHistoryController extends AbstractController
                 // Utilise le point de l'entité Address en priorité
                 if (!empty($row['point'])) {
                     // Le point est un objet LongitudeOne\Spatial\PHP\Types\Geometry\Point
-                    // x = latitude, y = longitude
+                    // x = longitude, y = latitude
                     $point = $row['point'];
-                    $responseAddresses[$addressKey]->setLat((string) $point->getX());
-                    $responseAddresses[$addressKey]->setLng((string) $point->getY());
+                    $responseAddresses[$addressKey]->setLng((string) $point->getX());
+                    $responseAddresses[$addressKey]->setLat((string) $point->getY());
                 }
             }
 
@@ -119,8 +123,8 @@ class AddressesHistoryController extends AbstractController
 
                 // Fallback : si pas de point dans Address, on utilise geoloc du signalement
                 if (!$responseAddresses[$addressKey]->getLat() && $row['geoloc'] && isset($row['geoloc']['lat'])) {
-                    $responseAddresses[$addressKey]->setLat($row['geoloc']['lat']);
                     $responseAddresses[$addressKey]->setLng($row['geoloc']['lng']);
+                    $responseAddresses[$addressKey]->setLat($row['geoloc']['lat']);
                 }
             }
 
@@ -137,6 +141,37 @@ class AddressesHistoryController extends AbstractController
             }
         }
 
+        // Récupération des zones
+        $zoneAreas = [];
+        if (!empty($filters['zone'])) {
+            $criteria = ['id' => $filters['zone']];
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                $criteria['territory'] = $user->getPartnersTerritories();
+            }
+            $zones = $zoneRepository->findBy($criteria);
+            foreach ($zones as $zone) {
+                $zoneAreas[] = $geometryFactory->toWkt($zone->getArea());
+            }
+        } elseif (!empty($filters['territories'])) {
+            $criteria = ['territory' => $filters['territories']];
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                $userTerritories = $user->getPartnersTerritories();
+                $criteria['territory'] = array_intersect($filters['territories'], array_map(static fn ($t) => $t->getId(), $userTerritories));
+            }
+            if (!empty($criteria['territory'])) {
+                $zones = $zoneRepository->findBy($criteria);
+                foreach ($zones as $zone) {
+                    $zoneAreas[] = $geometryFactory->toWkt($zone->getArea());
+                }
+            }
+        } elseif (!$this->isGranted('ROLE_ADMIN')) {
+            $criteria = ['territory' => $user->getPartnersTerritories()];
+            $zones = $zoneRepository->findBy($criteria);
+            foreach ($zones as $zone) {
+                $zoneAreas[] = $geometryFactory->toWkt($zone->getArea());
+            }
+        }
+
         $responseData = [
             'filters' => $filters,
             'list' => array_values($responseAddresses),
@@ -145,7 +180,7 @@ class AddressesHistoryController extends AbstractController
                 'total_pages' => $totalPages,
                 'total_items' => $totalAddresses,
             ],
-            'zoneAreas' => [],
+            'zoneAreas' => $zoneAreas,
         ];
 
         $response = $this->json(
