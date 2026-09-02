@@ -39,6 +39,11 @@ const state = ref<StoreState>({
       natureParc: undefined,
       dossiersMultiples: undefined,
       arreteTypes: [],
+    },
+    params: {
+      niveauxGris: false,
+      limitesAdministratives: false,
+      zonesTerritoire: false
     }
   },
   user: {
