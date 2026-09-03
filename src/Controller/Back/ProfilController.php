@@ -382,7 +382,7 @@ class ProfilController extends AbstractController
 
             $user = $userManager->resetPassword($user, $password);
             $payload['password'] = $payload['password-repeat'] = $payload['password-current'] = null;
-            $password = $passwordRepeat = $oldPassword = $passwordCurrent = null;
+            $password = $passwordRepeat = $passwordCurrent = null;
 
             $notificationMailerRegistry->send(
                 new NotificationMail(

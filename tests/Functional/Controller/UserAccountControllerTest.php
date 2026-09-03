@@ -28,7 +28,7 @@ class UserAccountControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = static::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('reset_password', ['uuid' => $user->getUuid(), 'token' => 'test-reset-token-valid']);
+        $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => 'test-reset-token-valid']);
         $client->request('GET', $route);
 
         $client->submitForm('Confirmer', [
@@ -37,6 +37,7 @@ class UserAccountControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseRedirects('/connexion');
+        $user = $userRepository->find($user->getId());
         $this->assertTrue(static::getContainer()->get('security.password_hasher')
             ->isPasswordValid($user, 'NewPassword!123'));
     }
@@ -58,7 +59,7 @@ class UserAccountControllerTest extends WebTestCase
 
         /** @var RouterInterface $router */
         $router = static::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('reset_password', ['uuid' => $user->getUuid(), 'token' => 'test-reset-token-same']);
+        $route = $router->generate('activate_account', ['uuid' => $user->getUuid(), 'token' => 'test-reset-token-same']);
         $client->request('GET', $route);
 
         $client->submitForm('Confirmer', [
