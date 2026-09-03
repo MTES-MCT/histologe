@@ -2157,21 +2157,22 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function getAddress(): ?Address
     {
         // if ($this->address) {
-        //     return $this->address;
+            return $this->address;
         // }
+        // TODO : pas de fallback pour l'affichage des signalements sans addresse en attendant que les cas particuliers soient traités
         // fallback pour l'affichage des signalements sans addresse en attendant que les cas particuliers soient traités
-        $address = new Address();
-        $parsedAddress = AddressParser::parse($this->adresseOccupant);
-        $houseNumber = $parsedAddress['numberAndSuffix'];
-        $address->setHouseNumber($houseNumber);
-        $address->setStreet((string) $parsedAddress['street']);
-        $address->setPostCode((string) $this->cpOccupant);
-        $address->setCity((string) $this->villeOccupant);
-        $address->setCityCode((string) $this->inseeOccupant);
-        $address->setBanId($this->banIdOccupant);
-        $address->setTerritory($this->territory);
+        // $address = new Address();
+        // $parsedAddress = AddressParser::parse($this->adresseOccupant);
+        // $houseNumber = $parsedAddress['numberAndSuffix'];
+        // $address->setHouseNumber($houseNumber);
+        // $address->setStreet((string) $parsedAddress['street']);
+        // $address->setPostCode((string) $this->cpOccupant);
+        // $address->setCity((string) $this->villeOccupant);
+        // $address->setCityCode((string) $this->inseeOccupant);
+        // $address->setBanId($this->banIdOccupant);
+        // $address->setTerritory($this->territory);
 
-        return $address;
+        // return $address;
     }
 
     public function setAddress(?Address $address): static
