@@ -2157,7 +2157,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function getAddress(): ?Address
     {
         // if ($this->address) {
-            return $this->address;
+        return $this->address;
         // }
         // TODO : pas de fallback pour l'affichage des signalements sans addresse en attendant que les cas particuliers soient traités
         // fallback pour l'affichage des signalements sans addresse en attendant que les cas particuliers soient traités
