@@ -351,8 +351,15 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         if (!$signalement instanceof Signalement) {
             $signalement = $this->signalementRepository->findOneBy([]);
             $this->assertInstanceOf(Signalement::class, $signalement, 'Aucun signalement en base pour ce test.');
-            $signalement->setAddress(null);
-            $this->entityManager->flush();
+            // On passe par du SQL brut plutôt que setAddress()+flush() : un flush() déclenche les
+            // listeners Doctrine (ex. DashboardKpiCacheInvalidationListener), qui peuvent appeler
+            // getAddress() sur ce signalement — dont le fallback plante si adresseOccupant est déjà
+            // null (cas réel en CI, absent des données locales).
+            $this->entityManager->getConnection()->executeStatement(
+                'UPDATE signalement SET address_id = NULL WHERE id = ?',
+                [$signalement->getId()]
+            );
+            $this->entityManager->refresh($signalement);
         }
 
         return $signalement;
