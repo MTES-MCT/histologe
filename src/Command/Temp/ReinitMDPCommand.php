@@ -8,8 +8,10 @@ use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -25,6 +27,7 @@ class ReinitMDPCommand extends Command
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
+        private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
     }
@@ -41,16 +44,33 @@ class ReinitMDPCommand extends Command
             ->getQuery()
             ->getResult();
 
-        $activedUsers = array_filter(
+        // Désactivation des utilisateurs actifs pour éviter qu'ils puissent se connecter avec leur ancien mot de passe
+        $activeUsers = array_filter(
+            $firstUsers,
+            static fn (User $user): bool => UserStatus::ACTIVE === $user->getStatut()
+        );
+        $io->info(sprintf('Users to inactive: %s', \count($activeUsers)));
+        $progressBar = new ProgressBar($output, \count($activeUsers));
+        $progressBar->start();
+        foreach ($activeUsers as $user) {
+            $user->setStatut(UserStatus::INACTIVE);
+            $this->entityManager->persist($user);
+            $progressBar->advance();
+        }
+        $progressBar->finish();
+        $this->entityManager->flush();
+
+        // Envoi des emails de réinitialisation de mot de passe aux utilisateurs inactifs n'ayant pas de mot de passe défini
+        $needEmailUsers = array_filter(
             $firstUsers,
             static fn (User $user): bool => UserStatus::ARCHIVE !== $user->getStatut() && null !== $user->getPassword()
         );
 
-        $io->info(sprintf('Users found: %s', \count($activedUsers)));
+        $io->info(sprintf('Users found: %s', \count($needEmailUsers)));
         $nbMails = 0;
-        foreach ($activedUsers as $user) {
-            $io->info(sprintf('Sending email to user: %s', $user->getEmail()));
-
+        $progressBar = new ProgressBar($output, \count($needEmailUsers));
+        $progressBar->start();
+        foreach ($needEmailUsers as $user) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(
                     type: NotificationMailerType::TYPE_TEMP_REINIT_MDP,
@@ -59,8 +79,9 @@ class ReinitMDPCommand extends Command
                 )
             );
             ++$nbMails;
+            $progressBar->advance();
         }
-
+        $progressBar->finish();
         $io->success(sprintf('Sent %d reinitialization emails.', $nbMails));
 
         return Command::SUCCESS;
