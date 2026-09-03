@@ -4,6 +4,7 @@ namespace App\Service\Mailer;
 
 enum NotificationMailerType
 {
+    case TYPE_TEMP_REGENERATED_CODE_SUIVI;
     case TYPE_ACCOUNT_ACTIVATION_FROM_BO;
     case TYPE_ACCOUNT_ACTIVATION_FROM_FO;
     case TYPE_ACCOUNT_ACTIVATION_REMINDER;
