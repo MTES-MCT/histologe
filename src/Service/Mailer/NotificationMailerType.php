@@ -72,4 +72,5 @@ enum NotificationMailerType
     case TYPE_SERVICE_SECOURS_ACCUSE_RECEPTION;
     case TYPE_CLUB_EVENT;
     case TYPE_CLUB_EVENT_REMINDER;
+    case TYPE_TEMP_REINIT_MDP;
 }
