@@ -140,10 +140,11 @@ class UserAccountController extends AbstractController
 
                 return $this->render('security/reset_password_new.html.twig', ['user' => $user]);
             }
-            $user->setPassword(RequestDataExtractor::getString($requestData, 'password'));
+            $user->setPlainPassword(RequestDataExtractor::getString($requestData, 'password'));
             $errors = $validator->validate($user, null, ['password']);
+            $user->eraseCredentials();
             if (\count($errors) > 0) {
-                $errorMessage = '<ul>';
+                $errorMessage = '<ul class="fr-pt-2w">';
                 foreach ($errors as $error) {
                     $errorMessage .= '<li>'.$error->getMessage().'</li>';
                 }

@@ -83,6 +83,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     private bool $hasPermissionAffectation = false;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $password = null;
+
     #[Assert\NotBlank(groups: ['password'])]
     #[Assert\Length(min: 12, max: 200, minMessage: 'Le mot de passe doit contenir au moins {{ limit }} caractères.', groups: ['password'])]
     #[Assert\Regex(pattern: '/[A-Z]/', message: 'Le mot de passe doit contenir au moins une lettre majuscule.', groups: ['password'])]
@@ -91,7 +93,8 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[Assert\Regex(pattern: '/[^a-zA-Z0-9]/', message: 'Le mot de passe doit contenir au moins un caractère spécial.', groups: ['password'])]
     #[Assert\NotCompromisedPassword(message: 'Ce mot de passe est compromis, veuillez en choisir un autre.', groups: ['password'])]
     #[Assert\NotEqualTo(propertyPath: 'email', message: 'Le mot de passe ne doit pas être votre e-mail.', groups: ['password'])]
-    private ?string $password = null;
+    #[AppAssert\DifferentFromCurrentPassword(groups: ['password'])]
+    private ?string $plainPassword = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $token = null;
@@ -323,13 +326,25 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this;
     }
 
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): static
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
+
     /**
      * @see UserInterface
      */
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
     /**

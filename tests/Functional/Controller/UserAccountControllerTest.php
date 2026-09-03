@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller;
 
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -10,6 +11,67 @@ use Symfony\Component\Routing\RouterInterface;
 
 class UserAccountControllerTest extends WebTestCase
 {
+    public function testResetPasswordSuccess(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $user->setToken('test-reset-token-valid');
+        $user->setTokenExpiredAt(new \DateTimeImmutable('+1 hour'));
+        $entityManager->flush();
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('reset_password', ['uuid' => $user->getUuid(), 'token' => 'test-reset-token-valid']);
+        $client->request('GET', $route);
+
+        $client->submitForm('Confirmer', [
+            'password' => 'NewPassword!123',
+            'password-repeat' => 'NewPassword!123',
+        ]);
+
+        $this->assertResponseRedirects('/connexion');
+        $this->assertTrue(static::getContainer()->get('security.password_hasher')
+            ->isPasswordValid($user, 'NewPassword!123'));
+    }
+
+    public function testResetPasswordWithSamePassword(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = static::getContainer()->get(EntityManagerInterface::class);
+        $user->setToken('test-reset-token-same');
+        $user->setTokenExpiredAt(new \DateTimeImmutable('+1 hour'));
+        $entityManager->flush();
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('reset_password', ['uuid' => $user->getUuid(), 'token' => 'test-reset-token-same']);
+        $client->request('GET', $route);
+
+        $client->submitForm('Confirmer', [
+            'password' => 'signallogement',
+            'password-repeat' => 'signallogement',
+        ]);
+
+        $this->assertSelectorTextContains(
+            '.fr-notice.fr-notice--alert',
+            'Votre nouveau mot de passe doit être différent de votre mot de passe actuel.'
+        );
+    }
+
     public function testActivationUserFormSubmit(): void
     {
         $faker = Factory::create();
