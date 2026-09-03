@@ -29,7 +29,7 @@ class UserTest extends KernelTestCase
         $validator = static::getContainer()->get(ValidatorInterface::class);
 
         $user = new User();
-        $user->setPassword($password);
+        $user->setPlainPassword($password);
 
         $errors = $validator->validate($user, null, ['password']);
 
@@ -44,7 +44,7 @@ class UserTest extends KernelTestCase
         $validator = static::getContainer()->get(ValidatorInterface::class);
 
         $user = new User();
-        $user->setPassword('histologe-H1');
+        $user->setPlainPassword('histologe-H1');
 
         $errors = $validator->validate($user, null, ['password']);
 

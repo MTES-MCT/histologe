@@ -364,13 +364,13 @@ class ProfilController extends AbstractController
                 $errorMessages['errors']['password']['errors'][] = 'Le mot de passe ne doit pas être votre e-mail.';
             }
 
-            $oldPassword = $user->getPassword();
-            $user->setPassword($password);
+            $user->setPlainPassword($password);
             $violations = $validator->validate($user, null, ['password']);
-            $user->setPassword($oldPassword);
-            if (\count($violations)) {
+            $user->eraseCredentials();
+            if (empty($errorMessages) && \count($violations)) {
                 foreach ($violations as $violation) {
-                    $errorMessages['errors'][$violation->getPropertyPath()]['errors'][] = $violation->getMessage();
+                    $field = 'plainPassword' === $violation->getPropertyPath() ? 'password' : $violation->getPropertyPath();
+                    $errorMessages['errors'][$field]['errors'][] = $violation->getMessage();
                 }
             }
             if (\count($errorMessages)) {
@@ -382,7 +382,7 @@ class ProfilController extends AbstractController
 
             $user = $userManager->resetPassword($user, $password);
             $payload['password'] = $payload['password-repeat'] = $payload['password-current'] = null;
-            $password = $passwordRepeat = $oldPassword = $passwordCurrent = null;
+            $password = $passwordRepeat = $passwordCurrent = null;
 
             $notificationMailerRegistry->send(
                 new NotificationMail(

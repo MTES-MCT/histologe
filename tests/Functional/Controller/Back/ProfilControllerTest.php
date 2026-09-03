@@ -550,6 +550,26 @@ class ProfilControllerTest extends WebTestCase
             ->isPasswordValid($this->user, 'NewPassword!123'));
     }
 
+    public function testEditPasswordDoesNotRevealPasswordReuseWithInvalidCurrentPassword(): void
+    {
+        $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_password');
+
+        $route = $this->router->generate('back_profil_edit_password');
+        $this->client->request('POST', $route, [
+            '_token' => $csrfToken,
+            'password-current' => 'signallogement',
+            'password' => 'signallogement',
+            'password-repeat' => 'signallogement',
+        ]);
+
+        $this->assertEmailCount(0);
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        // Ne pas donner d'indice sur son mot de passe actuel
+        // tant que l'utilisateur ne l'a pas saisi correctement
+        $this->assertEquals('Le mot de passe doit contenir au moins une lettre majuscule.', $response['errors']['password']['errors'][0]);
+    }
+
     public function testEditPasswordMismatch(): void
     {
         $csrfToken = $this->generateCsrfToken($this->client, 'profil_edit_password');
