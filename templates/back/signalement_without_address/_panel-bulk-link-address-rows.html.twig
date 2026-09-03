@@ -29,7 +29,7 @@
                                         </div>
                                     </td>
                                     <td>#{{ candidate.signalement.reference }}</td>
-                                    <td>{{ candidate.query }} <br>(insee : {{ candidate.signalement.inseeOccupant }})</td>
+                                    <td>{{ candidate.query }} <br>(insee : {{ candidate.signalement.inseeOccupantDeprecated }})</td>
                                     <td>{{ candidate.feature.properties.label }} <br>(insee : {{ candidate.feature.properties.citycode }})</td>
                                 </tr>
                             {% endfor %}

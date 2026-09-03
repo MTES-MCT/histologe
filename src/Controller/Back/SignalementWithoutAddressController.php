@@ -177,7 +177,7 @@ class SignalementWithoutAddressController extends AbstractController
                 continue;
             }
             $signalement = $this->signalementRepository->findOneBy(['uuid' => $candidate['uuid']]);
-            if (!$signalement instanceof Signalement || null !== $signalement->getAddress()) {
+            if (!$signalement instanceof Signalement) {
                 continue;
             }
 
@@ -220,7 +220,10 @@ class SignalementWithoutAddressController extends AbstractController
             return $this->json(['stayOnPage' => true, 'closeModal' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => 'Territoire invalide ou inactif.']]]);
         }
 
+        // on change le territoire du signalement pour que la liste des signalements sans adresse soit à jour
+        // et qu'on puisse ensuite attacher une adresse à ce signalement
         $signalement->setTerritoryDeprecated($calculatedTerritory);
+
         /** @var User $adminUser */
         $adminUser = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
         $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
@@ -301,11 +304,6 @@ class SignalementWithoutAddressController extends AbstractController
         } catch (TerritoryNotFoundForCityCodeException) {
             return false;
         }
-        // Passer à NULL plutôt ?
-        $signalement->setAdresseOccupantDeprecated($banAddress->getStreet());
-        $signalement->setCpOccupantDeprecated($banAddress->getZipCode());
-        $signalement->setVilleOccupantDeprecated($banAddress->getCity());
-        $signalement->setInseeOccupantDeprecated($banAddress->getInseeCode());
 
         $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
             user: $suiviUser,
@@ -332,6 +330,13 @@ class SignalementWithoutAddressController extends AbstractController
 
         $data = $addressService->searchAddress($query, 10);
         $features = $data['features'] ?? [];
+
+        // les résultats de type "municipality" (juste une ville, sans rue) n'ont pas de "street" :
+        // on ne peut pas les lier (AddressFactory exige une rue), donc on ne les propose pas.
+        $features = array_values(array_filter(
+            $features,
+            static fn (array $feature) => !empty($feature['properties']['street'] ?? null)
+        ));
 
         $territoryZip = $signalement->getTerritoryDeprecated()?->getZip();
         if ($territoryZip) {

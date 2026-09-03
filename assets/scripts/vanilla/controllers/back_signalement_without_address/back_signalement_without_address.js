@@ -38,6 +38,10 @@ if (panelSearchAddress) {
   });
 
   function renderResults(features) {
+    // les résultats de type "municipality" (juste une ville, sans rue) ne peuvent pas être liés
+    // (AddressFactory exige une rue) : on ne les propose pas.
+    features = features.filter((feature) => feature.properties?.street);
+
     if (features.length === 0) {
       resultsContainer.innerHTML =
         '<p class="fr-text--sm">Aucun résultat trouvé pour le territoire de ce signalement.</p>';

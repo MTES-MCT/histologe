@@ -19,7 +19,7 @@ class SignalementAddressAnomalyCheckerTest extends KernelTestCase
 
     public function testValidNumericInseeFormatRaisesNoError(): void
     {
-        $signalement = (new Signalement())->setInseeOccupantDeprecated('44179')->setCpOccupantDeprecated('44850');
+        $signalement = $this->signalementWithInseeAndCp('44179', '44850');
 
         $this->assertNotContains(SignalementAddressAnomaly::INVALID_INSEE_FORMAT, $this->checker->getErrors($signalement));
     }
@@ -27,7 +27,7 @@ class SignalementAddressAnomalyCheckerTest extends KernelTestCase
     public function testCorsicaInseeFormatRaisesNoError(): void
     {
         // la Corse utilise "2A"/"2B" comme préfixe de département, ce n'est pas 5 chiffres mais c'est valide
-        $signalement = (new Signalement())->setInseeOccupantDeprecated('2A004')->setCpOccupantDeprecated('20000');
+        $signalement = $this->signalementWithInseeAndCp('2A004', '20000');
 
         $this->assertNotContains(SignalementAddressAnomaly::INVALID_INSEE_FORMAT, $this->checker->getErrors($signalement));
     }
@@ -35,21 +35,21 @@ class SignalementAddressAnomalyCheckerTest extends KernelTestCase
     public function testNonNumericInseeFormatIsInvalid(): void
     {
         // 5 caractères mais pas 5 chiffres (ni la forme Corse valide) : doit être détecté
-        $signalement = (new Signalement())->setInseeOccupantDeprecated('4417X')->setCpOccupantDeprecated('44850');
+        $signalement = $this->signalementWithInseeAndCp('4417X', '44850');
 
         $this->assertContains(SignalementAddressAnomaly::INVALID_INSEE_FORMAT, $this->checker->getErrors($signalement));
     }
 
     public function testValidCpFormatRaisesNoError(): void
     {
-        $signalement = (new Signalement())->setInseeOccupantDeprecated('44179')->setCpOccupantDeprecated('44850');
+        $signalement = $this->signalementWithInseeAndCp('44179', '44850');
 
         $this->assertNotContains(SignalementAddressAnomaly::INVALID_CP_FORMAT, $this->checker->getErrors($signalement));
     }
 
     public function testNonNumericCpFormatIsInvalid(): void
     {
-        $signalement = (new Signalement())->setInseeOccupantDeprecated('44179')->setCpOccupantDeprecated('4485X');
+        $signalement = $this->signalementWithInseeAndCp('44179', '4485X');
 
         $this->assertContains(SignalementAddressAnomaly::INVALID_CP_FORMAT, $this->checker->getErrors($signalement));
     }
@@ -57,7 +57,7 @@ class SignalementAddressAnomalyCheckerTest extends KernelTestCase
     public function testMatchingCpAndInseeRaisesNoInconsistency(): void
     {
         // paire réelle présente dans la table commune (fixtures)
-        $signalement = (new Signalement())->setInseeOccupantDeprecated('2A004')->setCpOccupantDeprecated('20000');
+        $signalement = $this->signalementWithInseeAndCp('2A004', '20000');
 
         $this->assertNotContains(SignalementAddressAnomaly::INCONSISTENT_CP_INSEE, $this->checker->getErrors($signalement));
     }
@@ -65,7 +65,7 @@ class SignalementAddressAnomalyCheckerTest extends KernelTestCase
     public function testMismatchingCpAndInseeIsInconsistent(): void
     {
         // les deux formats sont valides individuellement mais la paire n'existe pas dans la table commune
-        $signalement = (new Signalement())->setInseeOccupantDeprecated('2A004')->setCpOccupantDeprecated('75002');
+        $signalement = $this->signalementWithInseeAndCp('2A004', '75002');
 
         $this->assertContains(SignalementAddressAnomaly::INCONSISTENT_CP_INSEE, $this->checker->getErrors($signalement));
     }
@@ -73,8 +73,22 @@ class SignalementAddressAnomalyCheckerTest extends KernelTestCase
     public function testInconsistentCpInseeIsNotRaisedWhenFormatIsAlreadyInvalid(): void
     {
         // pas d'erreur redondante : si le format est déjà invalide, on ne vérifie pas la cohérence de la paire
-        $signalement = (new Signalement())->setInseeOccupantDeprecated('4417X')->setCpOccupantDeprecated('75002');
+        $signalement = $this->signalementWithInseeAndCp('4417X', '75002');
 
         $this->assertNotContains(SignalementAddressAnomaly::INCONSISTENT_CP_INSEE, $this->checker->getErrors($signalement));
+    }
+
+    /**
+     * setInseeOccupantDeprecated()/setCpOccupantDeprecated() ont été retirés de l'entité (ces champs ne
+     * sont plus censés être modifiés que par les imports historiques) : pour un Signalement non persisté
+     * comme ici, on écrit directement les propriétés privées par réflexion.
+     */
+    private function signalementWithInseeAndCp(?string $insee, ?string $cp): Signalement
+    {
+        $signalement = new Signalement();
+        (new \ReflectionProperty(Signalement::class, 'inseeOccupant'))->setValue($signalement, $insee);
+        (new \ReflectionProperty(Signalement::class, 'cpOccupant'))->setValue($signalement, $cp);
+
+        return $signalement;
     }
 }

@@ -185,6 +185,32 @@ class AddressServiceFake extends AddressService
                     'query' => $address,
                 ];
                 break;
+            case 'Place Sans Rue Testville':
+                // résultat de type "municipality" : juste une ville, sans rue (ex. réel : premier
+                // résultat de https://data.geopf.fr/geocodage/search/?q=000%20sup%2039300%20Supt).
+                $response = [
+                    'type' => 'FeatureCollection',
+                    'features' => [[
+                        'type' => 'Feature',
+                        'properties' => [
+                            'label' => 'Testville',
+                            'score' => 0.5,
+                            'id' => '99999',
+                            'banId' => 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1',
+                            'name' => 'Testville',
+                            'postcode' => '99999',
+                            'citycode' => '99999',
+                            'city' => 'Testville',
+                            'type' => 'municipality',
+                        ],
+                        'geometry' => [
+                            'type' => 'Point',
+                            'coordinates' => [0, 0],
+                        ],
+                    ]],
+                    'query' => $address,
+                ];
+                break;
             case 'Chemin du grand méchant loup 30360 Vézénobres':
                 $response = [
                     'type' => 'FeatureCollection',
