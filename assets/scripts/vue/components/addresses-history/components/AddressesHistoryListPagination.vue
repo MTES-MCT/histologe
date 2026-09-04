@@ -7,15 +7,16 @@
              @click.prevent="pagination.current_page > 1 && $emit('changePage', 1)"
              :aria-disabled="pagination.current_page <= 1"
              class="fr-pagination__link fr-pagination__link--first"
-             :role="pagination.current_page <= 1 ? 'link' : null">Première page </a>
+             :role="pagination.current_page <= 1 ? 'link' : null"
+             >Première page</a>
         </li>
         <li>
           <a :href="pagination.current_page > 1 ? '?page=' +  (pagination.current_page - 1) : null"
              @click.prevent="pagination.current_page > 1 && $emit('changePage', pagination.current_page - 1)"
              class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
              :aria-disabled="pagination.current_page <= 1"
-             :role="pagination.current_page <= 1 ? 'link' : null"> Page précédente
-          </a>
+             :role="pagination.current_page <= 1 ? 'link' : null"
+             >Page précédente</a>
         </li>
         <li v-for="page in pageNumbers" :key="page">
           <a :href="page !== '…' ? `?page=${page}` : null"
@@ -23,15 +24,16 @@
              class="fr-pagination__link"
              :class="{ 'fr-pagination__link--active': typeof page === 'number' && page === pagination.current_page }"
              :title="`Page ${page}`"
-             :aria-current="typeof page === 'number' && page === pagination.current_page ? 'page' : null">{{ page }}</a>
+             :aria-current="typeof page === 'number' && page === pagination.current_page ? 'page' : null"
+             >{{ page }}</a>
         </li>
         <li>
           <a :href="pagination.current_page < pagination.total_pages ? '?page=' +  (pagination.current_page + 1) : null"
              @click.prevent="pagination.current_page < pagination.total_pages && $emit('changePage', pagination.current_page + 1)"
-             :aria-disabled="pagination.current_page < pagination.total_pages"
+             :aria-disabled="pagination.current_page >= pagination.total_pages"
              class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
-             :role="pagination.current_page === pagination.total_pages ? 'link' : null">
-            Page suivante </a>
+             :role="pagination.current_page === pagination.total_pages ? 'link' : null"
+             >Page suivante</a>
         </li>
 
         <li>
@@ -39,8 +41,8 @@
              @click.prevent="pagination.current_page < pagination.total_pages && $emit('changePage', pagination.total_pages)"
              :aria-disabled="pagination.current_page >= pagination.total_pages"
              class="fr-pagination__link fr-pagination__link--last"
-             :role="pagination.current_page === pagination.total_pages ? 'link' : null">
-            Dernière page </a>
+             :role="pagination.current_page === pagination.total_pages ? 'link' : null"
+             >Dernière page</a>
         </li>
       </ul>
     </nav>

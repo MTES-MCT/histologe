@@ -10,6 +10,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Repository\TerritoryRepository;
 use App\Utils\Address\CommuneHelper;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
@@ -20,6 +21,7 @@ class AddressesHistoryQuery
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly TerritoryRepository $territoryRepository,
     ) {
     }
 
@@ -160,20 +162,12 @@ class AddressesHistoryQuery
         // Ensure we have at least one signalement or one arrete
         $qb->andWhere('s.id IS NOT NULL OR ar.id IS NOT NULL');
 
-        $queryDossiersMultiples = 'SELECT 1 FROM '.Signalement::class.' s2
-                WHERE s2.address = a
-                AND s2.statut IN (:statusList)
-                AND s2.id != s.id';
-        if (!empty($addressesHistorySearchQuery) && null !== $addressesHistorySearchQuery->getDossiersMultiples()) {
-            if ('oui' === $addressesHistorySearchQuery->getDossiersMultiples()) {
-                $qb->andWhere('EXISTS ('.$queryDossiersMultiples.')');
-            } elseif ('non' === $addressesHistorySearchQuery->getDossiersMultiples()) {
-                $qb->andWhere('NOT EXISTS ('.$queryDossiersMultiples.')');
-            }
-        }
-
         if ($user->isSuperAdmin()) {
             // pas de restrictions pour les SA
+            if (!empty($addressesHistorySearchQuery->getTerritoire())) {
+                $qb->andWhere('a.territory IN (:territories)')
+                    ->setParameter('territories', $addressesHistorySearchQuery->getTerritoire());
+            }
         } elseif ($user->isTerritoryAdmin()) {
             $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
         } else {
@@ -182,6 +176,15 @@ class AddressesHistoryQuery
                 ->leftJoin('affectations.partner', 'partner')
                 ->andWhere('partner IN (:partners)')
                 ->setParameter('partners', $user->getPartners());
+
+            if (!empty($addressesHistorySearchQuery->getTerritoire())) {
+                $territory = $this->territoryRepository->find($addressesHistorySearchQuery->getTerritoire());
+
+                if ($user->hasPartnerInTerritory($territory)) {
+                    $qb->andWhere('a.territory IN (:territories)')
+                        ->setParameter('territories', $addressesHistorySearchQuery->getTerritoire());
+                }
+            }
         }
 
         if (!empty($addressesHistorySearchQuery)) {
@@ -201,6 +204,18 @@ class AddressesHistoryQuery
         if (!empty($addressesHistorySearchQuery->getAdresse())) {
             $qb->andWhere("LOWER(CONCAT_WS(' ', a.housenumber, a.street)) LIKE :adresse");
             $qb->setParameter('adresse', '%'.strtolower($addressesHistorySearchQuery->getAdresse()).'%');
+        }
+
+        $queryDossiersMultiples = 'SELECT 1 FROM '.Signalement::class.' s2
+                WHERE s2.address = a
+                AND s2.statut IN (:statusList)
+                AND s2.id != s.id';
+        if (!empty($addressesHistorySearchQuery) && null !== $addressesHistorySearchQuery->getDossiersMultiples()) {
+            if ('oui' === $addressesHistorySearchQuery->getDossiersMultiples()) {
+                $qb->andWhere('EXISTS ('.$queryDossiersMultiples.')');
+            } elseif ('non' === $addressesHistorySearchQuery->getDossiersMultiples()) {
+                $qb->andWhere('NOT EXISTS ('.$queryDossiersMultiples.')');
+            }
         }
 
         if (!empty($addressesHistorySearchQuery->getZone())) {
@@ -273,10 +288,6 @@ class AddressesHistoryQuery
                 $qb->andWhere('a.id IN ('.$subQuery.')')
                    ->setParameter('epcis', $epcis);
             }
-        }
-        if (!empty($addressesHistorySearchQuery->getTerritoire())) {
-            $qb->andWhere('a.territory IN (:territories)')
-                ->setParameter('territories', $addressesHistorySearchQuery->getTerritoire());
         }
 
         if (!empty($addressesHistorySearchQuery->getNatureParc())) {
