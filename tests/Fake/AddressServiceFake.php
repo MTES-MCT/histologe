@@ -304,7 +304,7 @@ class AddressServiceFake extends AddressService
                 ];
                 break;
             case '34 Rue des Arawaks 97223 Le Diamant':
-                $response = new BanAddress([
+                $response = [
                     'type' => 'FeatureCollection',
                     'features' => [[
                         'type' => 'Feature',
@@ -325,7 +325,7 @@ class AddressServiceFake extends AddressService
                         ],
                     ]],
                     'query' => $address,
-                ]);
+                ];
                 break;
             case '29 Rue Désirée Clary 13002 Marseille':
                 $response = [

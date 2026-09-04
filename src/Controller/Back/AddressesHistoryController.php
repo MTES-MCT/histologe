@@ -66,7 +66,7 @@ class AddressesHistoryController extends AbstractController
         $processedArretes = [];
 
         foreach ($addresses as $row) {
-            $addressKey = mb_trim(strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $row['housenumber'].' '.$row['street'].' '.$row['postCode'].' '.$row['cityCode'])));
+            $addressKey = $row['addressId'];
 
             if (!isset($responseAddresses[$addressKey])) {
                 $responseAddresses[$addressKey] = $addressesHistoryListViewFactory->createInstance(
