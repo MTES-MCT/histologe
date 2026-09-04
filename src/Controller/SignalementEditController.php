@@ -585,8 +585,8 @@ class SignalementEditController extends AbstractController
                     $description = 'L\'usager a indiqué que les travaux sont en cours.';
                     break;
                 case TravauxMiseEnConformite::NON:
-                    $description = 'L\'usager a indiqué que les travaux n\'ont pas été faits';
-                    $description .= \PHP_EOL.'Commentaire : '.HtmlCleaner::cleanFrontEndEntry($form->get('travauxMiseEnConformiteUsagerCommentaire')->getData());
+                    $description = 'L\'usager a indiqué que les travaux n\'ont pas été faits.<br>';
+                    $description .= 'Commentaire : '.HtmlCleaner::cleanFrontEndEntry($form->get('travauxMiseEnConformiteUsagerCommentaire')->getData());
                     $suiviCategory = SuiviCategory::MESSAGE_USAGER_POST_CLOTURE;
                     break;
             }
