@@ -19,38 +19,38 @@
     {
       "key": "documents",
       "file": "Capture-d-ecran-dpe-1.png",
-      "titre": "Capture d’écran DPE 1.png"
+      "titre": "Capture d\u2019\u00e9cran DPE 1.png"
     },
     {
       "key": "documents",
       "file": "Capture-d-ecran-dpe-2.png",
-      "titre": "Capture d’écran DPE 2.png"
+      "titre": "Capture d\u2019\u00e9cran DPE 2.png"
     }
   ],
   "bail_dpe_etat_des_lieux_upload": [
     {
       "key": "documents",
       "file": "Capture-d-ecran-dpe-3.png",
-      "titre": "Capture d’écran DPE 3.png"
+      "titre": "Capture d\u2019\u00e9cran DPE 3.png"
     }
   ],
   "bail_dpe_bail_upload": [
     {
       "key": "documents",
       "file": "Capture-d-ecran-bail-1.png",
-      "titre": "Capture d’écran BAIL 1.png"
+      "titre": "Capture d\u2019\u00e9cran BAIL 1.png"
     },
     {
       "key": "documents",
       "file": "Capture-d-ecran-bail-2.png",
-      "titre": "Capture d’écran BAIL 2.png"
+      "titre": "Capture d\u2019\u00e9cran BAIL 2.png"
     }
   ],
   "zone_concernee_zone": "batiment_logement",
   "type_logement_nature": "appartement",
   "uuidSignalementDraft": "00000000-0000-0000-2023-locataire001",
   "bail_dpe_etat_des_lieux": "oui",
-  "adresse_logement_adresse": "61 impasse jean cavalier 30360 Vézénobres",
+  "adresse_logement_adresse": "61 impasse jean cavalier 30360 V\u00e9z\u00e9nobres",
   "coordonnees_bailleur_nom": "Bargeton",
   "coordonnees_bailleur_prenom": "Sandrine",
   "coordonnees_bailleur_email": "sandrine@signal-logement.fr",
@@ -83,7 +83,7 @@
   "info_procedure_bailleur_prevenu": "oui",
   "info_procedure_bail_moyen": "courrier",
   "info_procedure_bail_date": "11/2024",
-  "info_procedure_bail_reponse": "Réponse du bailleur",
+  "info_procedure_bail_reponse": "R\u00e9ponse du bailleur",
   "info_procedure_bail_numero": "R-TR45",
   "injonction_bailleur_choice": "oui",
   "vos_coordonnees_occupant_prenom": "Locataire Prenom",
@@ -95,7 +95,7 @@
   "vos_coordonnees_occupant_civilite": "mme",
   "desordres_batiment_bruit_interieur": 1,
   "info_procedure_assurance_contactee": "oui",
-  "info_procedure_reponse_assurance" : "Dossier reçu",
+  "info_procedure_reponse_assurance": "Dossier re\u00e7u",
   "logement_social_demande_relogement": "oui",
   "logement_social_montant_allocation": "300",
   "logement_social_numero_allocataire": "12345678",
@@ -111,13 +111,13 @@
   "desordres_logement_nuisibles_punaises": 1,
   "adresse_logement_adresse_detail_numero": "61 impasse jean cavalier",
   "type_logement_commodites_salle_de_bain": "oui",
-  "adresse_logement_adresse_detail_commune": "Vézénobres",
+  "adresse_logement_adresse_detail_commune": "V\u00e9z\u00e9nobres",
   "utilisation_service_ok_demande_logement": 1,
   "vos_coordonnees_occupant_tel_secondaire": "3621161",
   "vos_coordonnees_occupant_tel_secondaire_countrycode": "KM:269",
   "utilisation_service_ok_prevenir_bailleur": 1,
   "utilisation_service_ok_cgu": 1,
-  "adresse_logement_complement_adresse_etage": "5",
+  "adresse_logement_complement_adresse_etage": "AUTRE",
   "adresse_logement_adresse_detail_geoloc_lat": 44.05452,
   "adresse_logement_adresse_detail_geoloc_lng": 4.138306,
   "adresse_logement_adresse_detail_code_postal": "30360",
@@ -132,7 +132,7 @@
   "informations_complementaires_logement_montant_loyer": "500",
   "informations_complementaires_logement_nombre_etages": "5",
   "adresse_logement_complement_adresse_numero_appartement": "124",
-  "message_administration": "En tant que locataire responsable, je tiens à garantir la sécurité et le bien-être de ma famille, y compris mon enfant en bas âge, qui est particulièrement vulnérable à ces problèmes.\n\nJ'ai déjà soumis une demande d'intervention pour résoudre ces problèmes, mais malheureusement, il semble que cela n'ait pas été traité dans les délais appropriés. Je tiens à rappeler que ces problèmes sont non seulement inconfortables mais aussi dangereux pour la sécurité et la santé de ma famille.\n\nJe vous implore de prendre des mesures immédiates pour résoudre ces problèmes en envoyant des professionnels qualifiés pour réparer les problèmes électriques et éliminer les infestations d'insectes. La sécurité et le bien-être de ma famille sont ma priorité absolue.\n\nJe vous remercie de votre attention à cette question urgente et j'attends une réponse et une action rapides de votre part. Je suis disposé à coopérer pleinement pour faciliter toute intervention nécessaire.",
+  "message_administration": "En tant que locataire responsable, je tiens \u00e0 garantir la s\u00e9curit\u00e9 et le bien-\u00eatre de ma famille, y compris mon enfant en bas \u00e2ge, qui est particuli\u00e8rement vuln\u00e9rable \u00e0 ces probl\u00e8mes.\n\nJ'ai d\u00e9j\u00e0 soumis une demande d'intervention pour r\u00e9soudre ces probl\u00e8mes, mais malheureusement, il semble que cela n'ait pas \u00e9t\u00e9 trait\u00e9 dans les d\u00e9lais appropri\u00e9s. Je tiens \u00e0 rappeler que ces probl\u00e8mes sont non seulement inconfortables mais aussi dangereux pour la s\u00e9curit\u00e9 et la sant\u00e9 de ma famille.\n\nJe vous implore de prendre des mesures imm\u00e9diates pour r\u00e9soudre ces probl\u00e8mes en envoyant des professionnels qualifi\u00e9s pour r\u00e9parer les probl\u00e8mes \u00e9lectriques et \u00e9liminer les infestations d'insectes. La s\u00e9curit\u00e9 et le bien-\u00eatre de ma famille sont ma priorit\u00e9 absolue.\n\nJe vous remercie de votre attention \u00e0 cette question urgente et j'attends une r\u00e9ponse et une action rapides de votre part. Je suis dispos\u00e9 \u00e0 coop\u00e9rer pleinement pour faciliter toute intervention n\u00e9cessaire.",
   "informations_complementaires_logement_annee_construction": "1970",
   "desordres_logement_electricite_manque_prises_details_pieces": 1,
   "informations_complementaires_situation_occupants_beneficiaire_fsl": "non",
@@ -144,13 +144,13 @@
     {
       "key": "photos",
       "file": "Capture-d-ecran-1-desordre.png",
-      "titre": "Capture écran 1.png"
+      "titre": "Capture \u00e9cran 1.png"
     },
     {
       "key": "photos",
       "file": "Capture-d-ecran-2-desordre.png",
-      "titre": "Capture écran 2.png"
+      "titre": "Capture \u00e9cran 2.png"
     }
-
-  ]
+  ],
+  "adresse_logement_complement_adresse_etage_precision": "5"
 }

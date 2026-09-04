@@ -81,6 +81,44 @@
     "components": {
       "body": [
         {
+          "type": "SignalementFormOnlyChoice",
+          "label": "Votre logement est…",
+          "slug": "type_logement_nature",
+          "values": [
+            {
+              "label": "Un appartement",
+              "value": "appartement"
+            },
+            {
+              "label": "Une maison seule",
+              "value": "maison"
+            },
+            {
+              "label": "Autre",
+              "value": "autre"
+            }
+          ],
+          "validate": {
+            "message": "Veuillez sélectionner le type du logement."
+          },
+          "accessibility": {
+            "focus": true
+          }
+        },
+        {
+          "type": "SignalementFormTextfield",
+          "label": "Précisez le type :",
+          "slug": "type_logement_nature_autre_precision",
+          "conditional": {
+            "show": "formStore.data.type_logement_nature === 'autre'"
+          },
+          "description": "Format attendu : texte (15 caractères maximum)",
+          "validate": {
+            "message": "Veuillez préciser le type de votre logement.",
+            "maxLength": 15
+          }
+        },
+        {
           "type": "SignalementFormAddress",
           "label": "Adresse du logement",
           "slug": "adresse_logement_adresse",
@@ -89,26 +127,65 @@
         },
         {
           "type": "SignalementFormSubscreen",
-          "label": "Complément d'adresse (facultatif)",
+          "label": "Complément d'adresse",
           "slug": "adresse_logement_complement_adresse",
           "customCss": "fr-mt-3v",
           "components": {
             "body": [
               {
-                "type": "SignalementFormTextfield",
+                "type": "SignalementFormSelect",
                 "label": "Etage",
                 "slug": "adresse_logement_complement_adresse_etage",
-                "description": "Format attendu : 5 caractères maximum",
+                "conditional": {
+                  "show": "formStore.data.type_logement_nature === 'appartement'"
+                },
                 "validate": {
-                  "required": false,
-                  "maxLength": 5
+                  "required": true,
+                  "message": "Veuillez indiquer l'étage du logement."
+                },
+                "values": [
+                  {
+                    "label": "Sous-sol",
+                    "value": "SOUSSOL"
+                  },
+                  {
+                    "label": "Rez-de-chaussée",
+                    "value": "RDC"
+                  },
+                  {
+                    "label": "Dernier étage",
+                    "value": "DERNIER_ETAGE"
+                  },
+                  {
+                    "label": "Autre",
+                    "value": "AUTRE"
+                  }
+                ]
+              },
+              {
+                "type": "SignalementFormCounter",
+                "label": "Etage",
+                "slug": "adresse_logement_complement_adresse_etage_precision",
+                "description": "Format attendu : 2 chiffres maximum",
+                "conditional": {
+                  "show": "formStore.data.type_logement_nature === 'appartement' && formStore.data.adresse_logement_complement_adresse_etage === 'AUTRE'"
+                },
+                "validate": {
+                  "required": true,
+                  "maxLength": 2,
+                  "message": "Veuillez préciser l'étage.",
+                  "pattern": "^[0-9]*$",
+                  "patternMessage": "Veuillez renseigner un étage valide."
                 }
               },
               {
                 "type": "SignalementFormTextfield",
-                "label": "Escalier",
+                "label": "Escalier (facultatif)",
                 "slug": "adresse_logement_complement_adresse_escalier",
                 "description": "Format attendu : 3 caractères maximum",
+                "conditional": {
+                  "show": "formStore.data.type_logement_nature === 'appartement'"
+                },
                 "validate": {
                   "required": false,
                   "maxLength": 3
@@ -116,9 +193,12 @@
               },
               {
                 "type": "SignalementFormTextfield",
-                "label": "Numéro d'appartement",
+                "label": "Numéro d'appartement (facultatif)",
                 "slug": "adresse_logement_complement_adresse_numero_appartement",
                 "description": "Format attendu : 5 caractères maximum",
+                "conditional": {
+                  "show": "formStore.data.type_logement_nature === 'appartement'"
+                },
                 "validate": {
                   "required": false,
                   "maxLength": 5
@@ -126,7 +206,7 @@
               },
               {
                 "type": "SignalementFormTextfield",
-                "label": "Autre",
+                "label": "Autre (facultatif)",
                 "placeholder": "résidence, lieu-dit…",
                 "slug": "adresse_logement_complement_adresse_autre",
                 "description": "Format attendu : 255 caractères maximum",

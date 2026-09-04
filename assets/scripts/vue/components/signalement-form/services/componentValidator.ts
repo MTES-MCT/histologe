@@ -6,7 +6,12 @@ export const componentValidator = {
   validate (component: any) {
     const componentSlug: string = component.slug
     const value = formStore.data[componentSlug]
-
+// console.log('componentValidator.validate', componentSlug, value, component)
+// console.log('shouldShowField', formStore.shouldShowField(component))
+    if (!formStore.shouldShowField(component)) {
+      console.log('componentValidator.validate: field is hidden, skipping validation', componentSlug)
+      return
+    }
     let regexPattern
     // s'il y a une valeur, on vérifie si un pattern est requis (ou si c'est un type email)
     if (variableTester.isNotEmpty(value) && component.type === 'SignalementFormEmailfield') {

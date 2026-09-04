@@ -34,9 +34,8 @@ class DesordreBatimentIsolationDernierEtageToit implements DesordreTraitementInt
             $precision = $this->desordrePrecisionRepository->findOneBy(
                 ['desordrePrecisionSlug' => 'desordres_batiment_isolation_dernier_etage_toit_sous_combles']
             );
-        } elseif (
-            \array_key_exists('type_logement_dernier_etage', $payload)
-            && 'oui' === $payload['type_logement_dernier_etage']) {
+        } elseif (\array_key_exists('adresse_logement_complement_adresse_etage', $payload)
+    && 'DERNIER_ETAGE' === $payload['adresse_logement_complement_adresse_etage']) {
             $precision = $this->desordrePrecisionRepository->findOneBy(
                 ['desordrePrecisionSlug' => 'desordres_batiment_isolation_dernier_etage_toit_dernier_etage']
             );
