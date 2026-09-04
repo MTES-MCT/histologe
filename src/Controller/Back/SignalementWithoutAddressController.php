@@ -203,41 +203,6 @@ class SignalementWithoutAddressController extends AbstractController
         ]);
     }
 
-    #[Route('/{uuid:signalement}/change-territoire', name: 'back_signalement_change_territory', methods: 'POST')]
-    public function changeTerritory(
-        Signalement $signalement,
-        Request $request,
-        SuiviDelayedFactory $suiviDelayedFactory,
-        EntityManagerInterface $entityManager,
-    ): JsonResponse {
-        $token = (string) $request->request->get('_token');
-        if (!$this->isCsrfTokenValid('signalement_change_territory_'.$signalement->getId(), $token)) {
-            return $this->json(['stayOnPage' => true, 'closeModal' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF]]]);
-        }
-
-        $calculatedTerritory = $this->signalementAddressAnomalyChecker->getCalculatedTerritory($signalement);
-        if (null === $calculatedTerritory || !$calculatedTerritory->isIsActive()) {
-            return $this->json(['stayOnPage' => true, 'closeModal' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => 'Territoire invalide ou inactif.']]]);
-        }
-
-        // on change le territoire du signalement pour que la liste des signalements sans adresse soit à jour
-        // et qu'on puisse ensuite attacher une adresse à ce signalement
-        $signalement->setTerritoryDeprecated($calculatedTerritory);
-
-        /** @var User $adminUser */
-        $adminUser = $this->userRepository->findOneBy(['email' => $this->parameterBag->get('user_system_email')]);
-        $suiviDelayed = $suiviDelayedFactory->createSuiviDelayed(
-            user: $adminUser,
-            signalement: $signalement,
-            type: SuiviDelayedType::BO_EDIT_TERRITORY,
-            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
-        );
-        $entityManager->persist($suiviDelayed);
-        $entityManager->flush();
-
-        return $this->json(['stayOnPage' => true, 'closeModal' => true, 'flashMessages' => [['type' => 'success', 'title' => 'Territoire changé', 'message' => 'Le territoire du signalement a bien été changé.']], 'htmlTargetContents' => $this->getHtmlTargetContentsForList($request)]);
-    }
-
     #[Route('/{uuid:signalement}/lier-adresse', name: 'back_signalement_without_address_link', methods: 'POST')]
     public function linkAddress(
         Signalement $signalement,

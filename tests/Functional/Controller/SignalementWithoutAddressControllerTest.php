@@ -72,7 +72,7 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $row = $crawler->filter('tr:contains("#'.$signalement->getReference().'")');
-        $this->assertCount(1, $row->filter('.btn-change-territory'));
+        $this->assertCount(1, $row->filter('.btn-infos-territory'));
         $this->assertCount(1, $row->filter('.btn-search-address'));
     }
 
@@ -91,7 +91,7 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $row = $crawler->filter('tr:contains("#'.$signalement->getReference().'")');
-        $this->assertCount(0, $row->filter('.btn-change-territory'));
+        $this->assertCount(0, $row->filter('.btn-infos-territory'));
         $this->assertCount(1, $row->filter('.btn-search-address'));
     }
 

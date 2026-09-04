@@ -83,9 +83,9 @@
                 <td class="fr-text--right fr-ws-nowrap">
                     {% if enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INCONSISTENT_TERRITORY in row.errors %}
                         <button type="button"
-                            class="fr-btn fr-btn--secondary fr-icon-share-forward-line fr-btn--sm btn-change-territory"
-                            aria-controls="fr-panel-change-territory"
-                            data-panel-open="fr-panel-change-territory"
+                            class="fr-btn fr-icon-information-line fr-btn--sm btn-infos-territory"
+                            aria-controls="fr-panel-infos-territory"
+                            data-panel-open="fr-panel-infos-territory"
                             data-fr-opened="false"
                             data-signalement-reference="{{ signalement.reference }}"
                             data-adresse="{{ signalement.adresseOccupantDeprecated }} {{ signalement.cpOccupantDeprecated }} {{ signalement.villeOccupantDeprecated }} (insee : {{ signalement.inseeOccupantDeprecated }})"
@@ -94,11 +94,9 @@
                             data-affectations-length="{{ signalement.affectations|length }}"
                             data-suivis-length="{{ signalement.suivis|length }}"
                             data-territory-zip-and-name="{{ row.calculatedTerritory.zipAndName }} {% if row.calculatedTerritory.isActive is same as false %} (territoire inactif){% endif %}"
-                            data-change-territory-url="{{ path('back_signalement_change_territory',{uuid:signalement.uuid}) }}"
-                            data-csrf-token="{{ csrf_token('signalement_change_territory_'~signalement.id) }}"
-                            aria-label="Changer le territoire du signalement #{{ signalement.reference }}"
-                            title="Changer le territoire du signalement #{{ signalement.reference }}"
-                            >Changer le territoire du signalement #{{ signalement.reference }}</button>
+                            aria-label="Plus d'infos sur le territoire du signalement #{{ signalement.reference }}"
+                            title="Plus d'infos sur le territoire du signalement #{{ signalement.reference }}"
+                            >Plus d'infos sur le territoire du signalement #{{ signalement.reference }}</button>
                     {% endif %}
                     {% if row.errors is empty
                         or enum('App\\Entity\\Enum\\SignalementAddressAnomaly').MISSING_CP_AND_INSEE in row.errors
@@ -107,7 +105,7 @@
                         or enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INCONSISTENT_CP_INSEE in row.errors
                     %}
                         <button type="button"
-                            class="fr-btn fr-btn--secondary fr-icon-map-pin-2-line fr-btn--sm btn-search-address"
+                            class="fr-btn fr-icon-map-pin-2-line fr-btn--sm btn-search-address"
                             aria-controls="fr-panel-search-address"
                             data-panel-open="fr-panel-search-address"
                             data-fr-opened="false"
@@ -120,7 +118,7 @@
                             >Rechercher l'adresse du signalement #{{ signalement.reference }}</button>
                     {% endif %}
                     <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
-                        class="fr-btn fr-fi-arrow-right-line fr-btn--sm"
+                        class="fr-btn fr-btn--secondary fr-fi-arrow-right-line fr-btn--sm"
                         aria-label="Voir le signalement #{{ signalement.reference }}"
                         title="Voir le signalement #{{ signalement.reference }}"
                         ></a>

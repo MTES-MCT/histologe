@@ -1,7 +1,7 @@
 import { jsonResponseHandler } from '../../services/component/component_json_response_handler';
 
 const panelSearchAddress = document.getElementById('fr-panel-search-address');
-const panelChangeTerritory = document.getElementById('fr-panel-change-territory');
+const panelChangeTerritory = document.getElementById('fr-panel-infos-territory');
 const panelBulkLinkAddress = document.getElementById('fr-panel-bulk-link-address');
 const listContainer = document.getElementById('title-and-table-list-results');
 
@@ -55,7 +55,7 @@ if (panelSearchAddress) {
       const resultButton = document.createElement('button');
       resultButton.type = 'button';
       resultButton.classList.add('fr-btn', 'fr-btn--secondary', 'fr-btn--sm', 'fr-width-full');
-      resultButton.textContent = feature.properties.label + ' ( insee : ' + feature.properties.citycode + ')';
+      resultButton.textContent = 'Appliquer l\'adresse : ' + feature.properties.label + ' (insee : ' + feature.properties.citycode + ')';
       resultButton.addEventListener('click', () => selectResult(feature));
       item.appendChild(resultButton);
       list.appendChild(item);
@@ -81,20 +81,16 @@ if (panelSearchAddress) {
   }
 }
 if (panelChangeTerritory) {
-  const referenceField = document.getElementById('fr-panel-change-territory-reference');
-  const actualZipAndNameField = document.getElementById('fr-panel-change-territory-actual-zipAndName');
-  const zipAndNameField = document.getElementById('fr-panel-change-territory-zipAndName');
-  const adresseField = document.getElementById('fr-panel-change-territory-adresse');
-  const seeSignalementButton = document.getElementById('fr-panel-change-territory-see-signalement');
-  const nbAffectationsField = document.getElementById('fr-panel-change-territory-nb-affectations');
-  const nbSuivisField = document.getElementById('fr-panel-change-territory-nb-suivis');
-  const tokenField = document.getElementById('fr-panel-change-territory-token');
-  const urlField = document.getElementById('fr-panel-change-territory-url');
-  const searchParamsField = document.getElementById('fr-panel-change-territory-search-params');
-  const confirmButton = document.getElementById('fr-panel-change-territory-confirm');
+  const referenceField = document.getElementById('fr-panel-infos-territory-reference');
+  const actualZipAndNameField = document.getElementById('fr-panel-infos-territory-actual-zipAndName');
+  const zipAndNameField = document.getElementById('fr-panel-infos-territory-zipAndName');
+  const adresseField = document.getElementById('fr-panel-infos-territory-adresse');
+  const seeSignalementButton = document.getElementById('fr-panel-infos-territory-see-signalement');
+  const nbAffectationsField = document.getElementById('fr-panel-infos-territory-nb-affectations');
+  const nbSuivisField = document.getElementById('fr-panel-infos-territory-nb-suivis');
 
   listContainer.addEventListener('click', (event) => {
-    const button = event.target.closest('.btn-change-territory');
+    const button = event.target.closest('.btn-infos-territory');
     if (!button) {
       return;
     }
@@ -106,20 +102,6 @@ if (panelChangeTerritory) {
     nbSuivisField.textContent = button.dataset.suivisLength;
     adresseField.textContent = button.dataset.adresse;
     seeSignalementButton.href = button.dataset.signalementLinkUrl;
-    tokenField.value = button.dataset.csrfToken;
-    urlField.value = button.dataset.changeTerritoryUrl;
-  });
-
-  confirmButton.addEventListener('click', () => {
-    const formData = new FormData();
-    formData.append('_token', tokenField.value);
-    formData.append('search_params', searchParamsField.value);
-
-    fetch(urlField.value, { method: 'POST', body: formData }).then((response) => {
-      if (response.ok) {
-        jsonResponseHandler(response);
-      }
-    });
   });
 }
 if (panelBulkLinkAddress) {

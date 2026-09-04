@@ -1230,14 +1230,6 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this->territory;
     }
 
-    // // TODO ADDRESS : A SUPPRIMER
-    public function setTerritoryDeprecated(?Territory $territory): static
-    {
-        $this->territory = $territory;
-
-        return $this;
-    }
-
     public function hasInfosAgence(): bool
     {
         return $this->nomAgence
