@@ -1,0 +1,136 @@
+<section class="fr-col-12 fr-py-5v" id="title-list-results" aria-labelledby="desc-table">
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div id="list-signalements" class="fr-col-12 fr-col-md-6">
+            <h2 class="fr-mb-0" id="desc-table">{{ singular_or_plural(total, 'signalement sans adresse trouvé', 'signalements sans adresse trouvés') }}</h2>
+            <div class="fr-skiplinks">
+                <a class="fr-link fr-link--icon-right fr-icon-arrow-down-line" href="#pagination" aria-label="Accéder à la pagination"
+                    >Accéder à la pagination</a>
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-text--md-right">
+            <button type="button"
+                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-link btn-bulk-link-address {% if not searchSignalementWithoutAddress.territory %}fr-label--disabled{% endif %}"
+                aria-controls="fr-panel-bulk-link-address"
+                data-panel-open="fr-panel-bulk-link-address"
+                data-fr-opened="false"
+                {% if not searchSignalementWithoutAddress.territory %}disabled{% endif %}
+                {% if not searchSignalementWithoutAddress.territory %}aria-disabled="true"{% endif %}
+                data-preview-url="{{ path('back_signalement_without_address_bulk_link_preview', searchSignalementWithoutAddress.urlParams|merge({'page': searchSignalementWithoutAddress.page})) }}"
+                data-link-url="{{ path('back_signalement_without_address_bulk_link') }}"
+                data-csrf-token="{{ csrf_token('signalement_bulk_link_address') }}"
+                aria-label="Lier les signalements aux adresses non ambiguës trouvées par la BAN"
+                title="Ce bouton permet de lier les signalements aux adresses quand elles sont non-ambiguës. Limité aux signalements filtrés sur cette page. Une étape de confirmation permet de s'assurer de la pertinence de l'action."
+            >Lier les signalements</button>
+            <a
+                href="{% if total > 0 %}{{ path('back_signalement_without_address_export', searchSignalementWithoutAddress.urlParams) }}{% else %}#{% endif %}"
+                class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-fill {% if total == 0 %}fr-label--disabled{% endif %} fr-btn--block fr-btn--md-inline"
+                aria-label="Exporter les résultats au format CSV"
+                title="Exporter les résultats"
+            >Exporter les résultats</a>
+        </div>
+    </div>
+</section>
+
+<section class="fr-col-12" id="table-list-results">
+    {% set tableHead %}
+        <th scope="col" data-responsive-title="1">Référence</th>
+        <th scope="col">Adresse</th>
+        <th scope="col">Ville</th>
+        <th scope="col">Code postal</th>
+        <th scope="col">Code INSEE</th>
+        <th scope="col">Territoire</th>
+        <th scope="col">Territoire calculé</th>
+        <th scope="col">Erreur</th>
+        <th scope="col">Statut</th>
+        <th scope="col">Importé ? </th>
+        <th scope="col" class="fr-text--right">Actions</th>
+    {% endset %}
+
+    {% set tableBody %}
+        {% for row in rows %}
+            {% set signalement = row.signalement %}
+            <tr class="signalement-row">
+                <td>#{{ signalement.reference }}</td>
+                <td>{{ signalement.adresseOccupantDeprecated }}</td>
+                <td>{{ signalement.villeOccupantDeprecated|upper }}</td>
+                <td>{{ signalement.cpOccupantDeprecated }}</td>
+                <td>{{ signalement.inseeOccupantDeprecated }}</td>
+                <td>{{ signalement.territoryDeprecated ? signalement.territoryDeprecated.zipAndName : 'aucun' }}</td>
+                <td>{{ row.calculatedTerritory ? row.calculatedTerritory.zipAndName : 'indéterminé' }}</td>
+                <td>
+                    {% for error in row.errors %}
+                        <span class="fr-badge fr-badge--error fr-badge--no-icon fr-ws-nowrap fr-my-1v fr-display-block">{{ error.label() }}</span>
+                    {% else %}
+                        <span class="fr-badge fr-badge--success fr-badge--no-icon fr-ws-nowrap">Aucune</span>
+                    {% endfor %}
+                </td>
+                <td>                
+                    {% if signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}
+                        {% set classeCssStatut = 'fr-badge--warning' %}
+                    {% elseif signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').ACTIVE %}
+                        {% set classeCssStatut = 'fr-badge--success' %}
+                    {% elseif signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').CLOSED or
+                            signalement.statut == enum('App\\Entity\\Enum\\SignalementStatus').REFUSED %}
+                        {% set classeCssStatut = 'fr-badge--error' %}
+                    {% else %}                        
+                        {% set classeCssStatut = 'fr-badge--info' %}
+                    {% endif %}
+                    <span class="fr-badge fr-badge--no-icon {{ classeCssStatut }}">{{ signalement.statut.label() }}</span>
+                </td>
+                <td>
+                    <span class="fr-badge fr-badge--no-icon">{{ signalement.isImported ? 'Oui' : 'Non' }}</span>
+                </td>
+                <td class="fr-text--right fr-ws-nowrap">
+                    {% if enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INCONSISTENT_TERRITORY in row.errors %}
+                        <button type="button"
+                            class="fr-btn fr-icon-information-line fr-btn--sm btn-infos-territory"
+                            aria-controls="fr-panel-infos-territory"
+                            data-panel-open="fr-panel-infos-territory"
+                            data-fr-opened="false"
+                            data-signalement-reference="{{ signalement.reference }}"
+                            data-adresse="{{ signalement.adresseOccupantDeprecated }} {{ signalement.cpOccupantDeprecated }} {{ signalement.villeOccupantDeprecated }} (insee : {{ signalement.inseeOccupantDeprecated }})"
+                            data-signalement-link-url="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
+                            data-territory-actual-zip-and-name="{{ signalement.territoryDeprecated.zipAndName }}"
+                            data-affectations-length="{{ signalement.affectations|length }}"
+                            data-suivis-length="{{ signalement.suivis|length }}"
+                            data-territory-zip-and-name="{{ row.calculatedTerritory.zipAndName }} {% if row.calculatedTerritory.isActive is same as false %} (territoire inactif){% endif %}"
+                            aria-label="Plus d'infos sur le territoire du signalement #{{ signalement.reference }}"
+                            title="Plus d'infos sur le territoire du signalement #{{ signalement.reference }}"
+                            >Plus d'infos sur le territoire du signalement #{{ signalement.reference }}</button>
+                    {% endif %}
+                    {% if row.errors is empty
+                        or enum('App\\Entity\\Enum\\SignalementAddressAnomaly').MISSING_CP_AND_INSEE in row.errors
+                        or enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INVALID_CP_FORMAT in row.errors
+                        or enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INVALID_INSEE_FORMAT in row.errors
+                        or enum('App\\Entity\\Enum\\SignalementAddressAnomaly').INCONSISTENT_CP_INSEE in row.errors
+                    %}
+                        <button type="button"
+                            class="fr-btn fr-icon-map-pin-2-line fr-btn--sm btn-search-address"
+                            aria-controls="fr-panel-search-address"
+                            data-panel-open="fr-panel-search-address"
+                            data-fr-opened="false"
+                            data-signalement-reference="{{ signalement.reference }}"
+                            data-search-url="{{ path('back_signalement_without_address_search',{uuid:signalement.uuid}) }}"
+                            data-link-url="{{ path('back_signalement_without_address_link',{uuid:signalement.uuid}) }}"
+                            data-csrf-token="{{ csrf_token('signalement_link_address_'~signalement.id) }}"
+                            aria-label="Rechercher l'adresse du signalement #{{ signalement.reference }}"
+                            title="Rechercher l'adresse du signalement #{{ signalement.reference }}"
+                            >Rechercher l'adresse du signalement #{{ signalement.reference }}</button>
+                    {% endif %}
+                    <a href="{{ path('back_signalement_view',{uuid:signalement.uuid}) }}"
+                        class="fr-btn fr-btn--secondary fr-fi-arrow-right-line fr-btn--sm"
+                        aria-label="Voir le signalement #{{ signalement.reference }}"
+                        title="Voir le signalement #{{ signalement.reference }}"
+                        ></a>
+                </td>
+            </tr>
+        {% endfor %}
+    {% endset %}
+
+    {% include '_partials/back/table.html.twig' with { 'tableLabel': 'Liste des signalements sans relation adresse', 'tableHead': tableHead, 'tableBody': tableBody } %}
+
+    <div class="fr-grid-row fr-mt-2v fr-grid-row--center" id="pagination" aria-label="Pagination de la liste des signalements">
+        {% import '_partials/macros.html.twig' as macros %}
+        {{ macros.customPagination(pages, searchSignalementWithoutAddress.page, 'back_signalement_without_address_index', searchSignalementWithoutAddress.urlParams) }}
+    </div>
+</section>

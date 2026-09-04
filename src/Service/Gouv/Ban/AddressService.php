@@ -23,10 +23,10 @@ class AddressService
     /**
      * @return array<string, mixed>|null
      */
-    public function searchAddress(string $query): ?array
+    public function searchAddress(string $query, int $limit = 1): ?array
     {
         try {
-            $url = self::API_URL.urlencode($query).self::API_PARAM_LIMIT;
+            $url = self::API_URL.urlencode($query).'&limit='.$limit;
             $response = $this->httpClient->request('GET', $url);
 
             if (Response::HTTP_OK === $response->getStatusCode()) {

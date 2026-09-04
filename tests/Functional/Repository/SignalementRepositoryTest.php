@@ -20,6 +20,7 @@ use App\Repository\SuiviRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\ListFilters\SearchSignalementInjonction;
+use App\Service\ListFilters\SearchSignalementWithoutAddress;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -762,5 +763,29 @@ class SignalementRepositoryTest extends KernelTestCase
             null
         );
         $this->assertEquals(1, $paginator->count());
+    }
+
+    public function testFindSignalementsWithoutAddressPaginatedOrderIsStableAcrossCalls(): void
+    {
+        /** @var SignalementRepository $repository */
+        $repository = $this->entityManager->getRepository(Signalement::class);
+
+        $search = new SearchSignalementWithoutAddress();
+
+        $firstCallIds = [];
+        foreach ($repository->findSignalementsWithoutAddressPaginated($search, 50) as $signalement) {
+            $firstCallIds[] = $signalement->getId();
+        }
+
+        // on vide l'identity map pour forcer une véritable nouvelle exécution de la requête,
+        // comme c'est le cas entre le chargement de la liste et l'appel à l'aperçu bulk
+        $this->entityManager->clear();
+
+        $secondCallIds = [];
+        foreach ($repository->findSignalementsWithoutAddressPaginated($search, 50) as $signalement) {
+            $secondCallIds[] = $signalement->getId();
+        }
+
+        $this->assertSame($firstCallIds, $secondCallIds);
     }
 }

@@ -19,6 +19,7 @@ use App\Service\Interconnection\Idoss\IdossService;
 use App\Service\ListFilters\SearchArchivedSignalement;
 use App\Service\ListFilters\SearchDraft;
 use App\Service\ListFilters\SearchSignalementInjonction;
+use App\Service\ListFilters\SearchSignalementWithoutAddress;
 use App\Service\Security\PartnerAuthorizedResolver;
 use App\Utils\Address\AddressParser;
 use App\Utils\Address\CommuneHelper;
@@ -384,6 +385,68 @@ class SignalementRepository extends ServiceEntityRepository
         $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
 
         return new Paginator($queryBuilder->getQuery(), false);
+    }
+
+    public function createSignalementsWithoutAddressQueryBuilder(SearchSignalementWithoutAddress $searchSignalementWithoutAddress): QueryBuilder
+    {
+        $queryBuilder = $this->createQueryBuilder('s');
+        $queryBuilder->where('s.address IS NULL');
+
+        if (!empty($searchSignalementWithoutAddress->getTerritory())) {
+            $queryBuilder
+                ->andWhere('s.territory = :territory')
+                ->setParameter('territory', $searchSignalementWithoutAddress->getTerritory());
+        }
+
+        if (!empty($searchSignalementWithoutAddress->getStatut())) {
+            $queryBuilder
+                ->andWhere('s.statut = :statut')
+                ->setParameter('statut', $searchSignalementWithoutAddress->getStatut());
+        }
+
+        if (null !== $searchSignalementWithoutAddress->getIsImported()) {
+            $queryBuilder
+                ->andWhere('s.isImported = :isImported')
+                ->setParameter('isImported', $searchSignalementWithoutAddress->getIsImported());
+        }
+
+        if (!empty($searchSignalementWithoutAddress->getOrderType())) {
+            [$orderField, $orderDirection] = explode('-', $searchSignalementWithoutAddress->getOrderType());
+            $queryBuilder->orderBy($orderField, $orderDirection);
+        } else {
+            $queryBuilder->orderBy('s.createdAt', 'DESC');
+        }
+        // départage les égalités du tri principal (ex: plusieurs signalements avec le même createdAt) :
+        // sans clé de tri secondaire, l'ordre des lignes à égalité n'est pas garanti stable entre deux
+        // exécutions de la requête, ce qui désynchronise la pagination entre la liste et l'aperçu bulk.
+        $queryBuilder->addOrderBy('s.id', 'ASC');
+
+        return $queryBuilder;
+    }
+
+    /**
+     * @return Paginator<Signalement>
+     */
+    public function findSignalementsWithoutAddressPaginated(
+        SearchSignalementWithoutAddress $searchSignalementWithoutAddress,
+        int $maxResult,
+    ): Paginator {
+        $queryBuilder = $this->createSignalementsWithoutAddressQueryBuilder($searchSignalementWithoutAddress);
+
+        $firstResult = ($searchSignalementWithoutAddress->getPage() - 1) * $maxResult;
+        $queryBuilder->setFirstResult($firstResult)->setMaxResults($maxResult);
+
+        return new Paginator($queryBuilder->getQuery(), false);
+    }
+
+    /**
+     * @return array<int, Signalement>
+     */
+    public function findSignalementsWithoutAddress(SearchSignalementWithoutAddress $searchSignalementWithoutAddress): array
+    {
+        return $this->createSignalementsWithoutAddressQueryBuilder($searchSignalementWithoutAddress)
+            ->getQuery()
+            ->getResult();
     }
 
     /**
