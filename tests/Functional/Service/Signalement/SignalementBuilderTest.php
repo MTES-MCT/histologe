@@ -194,7 +194,12 @@ class SignalementBuilderTest extends KernelTestCase
         $this->assertEquals(new \DateTimeImmutable('2020-10-01'), $signalement->getDateEntree());
 
         $typeCompositionLogement = array_filter($signalement->getTypeCompositionLogement()->toArray());
-        $this->assertEquals($this->getLocataireTypeComposition(), $typeCompositionLogement);
+        // type_logement_appartement_etage est dérivé par TypeCompositionLogementFactory à partir de
+        // adresse_logement_complement_adresse_etage, il n'existe pas dans le payload brut du fixture.
+        $this->assertEquals(
+            [...$this->getLocataireTypeComposition(), 'type_logement_appartement_etage' => 'AUTRE'],
+            $typeCompositionLogement
+        );
 
         $situationFoyer = array_filter($signalement->getSituationFoyer()->toArray());
         $this->assertEquals($this->getLocataireSituationFoyer(), $situationFoyer);
