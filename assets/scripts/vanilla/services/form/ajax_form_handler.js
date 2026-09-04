@@ -25,8 +25,11 @@ function clearErrors() {
       'fr-fieldset--error'
     );
   });
+  // Les erreurs statiques (marquées .static-error) sont conservées dans le DOM car elles sont gérées par des scripts dédiés.
   document.querySelectorAll('.fr-error-text').forEach((pErrorElement) => {
-    pErrorElement.remove();
+    if (!pErrorElement.classList.contains('static-error')) {
+      pErrorElement.remove();
+    }
   });
 }
 
