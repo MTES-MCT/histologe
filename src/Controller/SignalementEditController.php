@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Enum\EtageType;
+use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\TravauxMiseEnConformite;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\InformationProcedure;
 use App\Entity\Model\SituationFoyer;
 use App\Entity\Model\TypeCompositionLogement;
+use App\Entity\Signalement;
 use App\Form\SignalementeEditFO\AdresseLogementType;
 use App\Form\SignalementeEditFO\CoordonneesAgenceType;
 use App\Form\SignalementeEditFO\CoordonneesBailleurType;
@@ -14,8 +17,10 @@ use App\Form\SignalementeEditFO\CoordonneesOccupantType;
 use App\Form\SignalementeEditFO\CoordonneesSyndicType;
 use App\Form\SignalementeEditFO\InformationsGeneralesType;
 use App\Form\SignalementeEditFO\ProcedureAssuranceType;
+use App\Form\SignalementeEditFO\TravauxMiseEnConformiteType;
 use App\Form\SignalementeEditFO\TypeCompositionType;
 use App\Form\SignalementeEditFO\UsagerSituationFoyerType;
+use App\Manager\SuiviManager;
 use App\Repository\SignalementRepository;
 use App\Security\User\SignalementUser;
 use App\Security\Voter\SignalementFoVoter;
@@ -28,8 +33,10 @@ use App\Service\RequestDataExtractor;
 use App\Service\Security\CguTiersChecker;
 use App\Service\Signalement\InputValue\SituationFoyerProcessor;
 use App\Service\Signalement\SignalementUpdateService;
+use App\Utils\HtmlCleaner;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -537,6 +544,68 @@ class SignalementEditController extends AbstractController
         }
 
         return $this->render('front/edit-signalement/type-composition.html.twig', [
+            'signalement' => $signalement,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{code}/completer/travaux-mise-en-conformite', name: 'front_suivi_signalement_complete_travaux_mise_en_conformite', methods: ['GET', 'POST'])]
+    public function suiviSignalementCompleteTravauxMiseEnConformite(
+        #[MapEntity(expr: 'repository.findOneByCodeForPublic(code)')]
+        Signalement $signalement,
+        Request $request,
+        SuiviManager $suiviManager,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        $this->denyAccessUnlessGranted(SignalementFoVoter::SIGN_USAGER_COMPLETE_TRAVAUX_MISE_EN_CONFORMITE, $signalement);
+
+        /** @var SignalementUser $signalementUser */
+        $signalementUser = $this->getUser();
+
+        if ($redirect = $this->cguTiersChecker->redirectIfTiersNeedsToAcceptCgu($signalement, $signalementUser->getEmail())) {
+            return $redirect;
+        }
+
+        if ($signalement->getTravauxMiseEnConformiteUsager()) {
+            $this->addFlash('alert', ['title' => 'Erreur', 'message' => 'Vous avez déjà soumis votre réponse concernant la réalisation des travaux dans votre logement.']);
+
+            return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        $form = $this->createForm(TravauxMiseEnConformiteType::class, $signalement);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $description = '';
+            $suiviCategory = SuiviCategory::MESSAGE_USAGER_TRAVAUX_MISE_EN_CONFORMITE;
+            switch ($signalement->getTravauxMiseEnConformiteUsager()) {
+                case TravauxMiseEnConformite::OUI:
+                    $description = 'L\'usager a indiqué que les travaux ont bien été faits.';
+                    break;
+                case TravauxMiseEnConformite::EN_COURS:
+                    $description = 'L\'usager a indiqué que les travaux sont en cours.';
+                    break;
+                case TravauxMiseEnConformite::NON:
+                    $description = 'L\'usager a indiqué que les travaux n\'ont pas été faits.<br>';
+                    $description .= 'Commentaire : '.HtmlCleaner::cleanFrontEndEntry($form->get('travauxMiseEnConformiteUsagerCommentaire')->getData());
+                    $suiviCategory = SuiviCategory::MESSAGE_USAGER_POST_CLOTURE;
+                    break;
+            }
+
+            $suiviManager->createSuivi(
+                signalement: $signalement,
+                description: $description,
+                category: $suiviCategory,
+                user: $signalementUser->getUser(),
+                isVisibleForUsager: true,
+            );
+            $entityManager->flush();
+
+            $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Votre réponse a bien été enregistrée, merci.']);
+
+            return $this->redirectToRoute('front_suivi_signalement_dossier', ['code' => $signalement->getCodeSuivi()]);
+        }
+
+        return $this->render('front/edit-signalement/travaux-mise-en-conformite.html.twig', [
             'signalement' => $signalement,
             'form' => $form,
         ]);

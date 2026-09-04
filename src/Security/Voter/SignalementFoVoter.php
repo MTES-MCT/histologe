@@ -3,9 +3,11 @@
 namespace App\Security\Voter;
 
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Enum\TravauxMiseEnConformite;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Security\User\SignalementUser;
+use Psr\Clock\ClockInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -20,7 +22,13 @@ class SignalementFoVoter extends Voter
     public const string SIGN_USAGER_EDIT = 'SIGN_USAGER_EDIT';
     public const string SIGN_USAGER_BASCULE_PROCEDURE = 'SIGN_USAGER_BASCULE_PROCEDURE';
     public const string SIGN_USAGER_COMPLETE = 'SIGN_USAGER_COMPLETE';
+    public const string SIGN_USAGER_COMPLETE_TRAVAUX_MISE_EN_CONFORMITE = 'SIGN_USAGER_COMPLETE_TRAVAUX_MISE_EN_CONFORMITE';
     public const string SIGN_USAGER_EDIT_OFFLINE = 'SIGN_USAGER_EDIT_OFFLINE';
+
+    public function __construct(
+        private readonly ClockInterface $clock,
+    ) {
+    }
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -30,6 +38,7 @@ class SignalementFoVoter extends Voter
             self::SIGN_USAGER_EDIT,
             self::SIGN_USAGER_BASCULE_PROCEDURE,
             self::SIGN_USAGER_COMPLETE,
+            self::SIGN_USAGER_COMPLETE_TRAVAUX_MISE_EN_CONFORMITE,
             self::SIGN_USAGER_EDIT_OFFLINE,
         ])
             && ($subject instanceof Signalement);
@@ -55,6 +64,7 @@ class SignalementFoVoter extends Voter
             self::SIGN_USAGER_EDIT => $this->canUsagerEdit($subject),
             self::SIGN_USAGER_BASCULE_PROCEDURE => $this->canUsagerBasculeProcedure($subject, $user),
             self::SIGN_USAGER_COMPLETE => $this->canUsagerCompleteDossier($subject),
+            self::SIGN_USAGER_COMPLETE_TRAVAUX_MISE_EN_CONFORMITE => $this->canUsagerCompleteTravauxMiseEnConformite($subject),
             default => false,
         };
     }
@@ -120,5 +130,21 @@ class SignalementFoVoter extends Voter
     private function canUsagerCompleteDossier(Signalement $signalement): bool
     {
         return $this->canUsagerEdit($signalement);
+    }
+
+    private function canUsagerCompleteTravauxMiseEnConformite(Signalement $signalement): bool
+    {
+        if ($signalement->getIsLogementVacant()) {
+            return false;
+        }
+        $beforeDate = $this->clock->now()->modify('-6 month +1 day')->setTime(0, 0);
+        if (SignalementStatus::CLOSED === $signalement->getStatut()
+            && TravauxMiseEnConformite::EN_COURS === $signalement->getTravauxMiseEnConformite()
+            && $signalement->getClosedAt() <= $beforeDate
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }

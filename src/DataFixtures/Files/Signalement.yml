@@ -463,7 +463,9 @@ signalements:
     ville_occupant: "Gex"
     etage_occupant: "5"
     statut: "CLOSED"
-    motif_cloture: 'ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE'
+    motif_cloture: 'RELOGEMENT_OCCUPANT'
+    travaux_mise_en_conformite: 'EN_COURS'
+    closed_at: "-7 months"
     reference: "2022-13"
     geoloc: "{\"lat\":\"46.3343579\",\"lng\":\"6.0549235\"}"
     score: 5.420054200542
@@ -540,7 +542,9 @@ signalements:
     ville_occupant: "Gex"
     etage_occupant: "5"
     statut: "CLOSED"
-    motif_cloture: 'NON_DECENCE'
+    motif_cloture: 'LOGEMENT_MIS_EN_CONFORMITE'
+    travaux_mise_en_conformite: 'EN_COURS'
+    closed_at: "-6 months"
     reference: "2023-1"
     geoloc: "{\"lat\":\"46.3343579\",\"lng\":\"6.0549235\"}"
     score: 5.420054200542

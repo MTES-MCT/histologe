@@ -305,16 +305,16 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function testFindInjonctionBeforeDateWithoutAnswer(): void
     {
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
+
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
         $beforeDate = new \DateTimeImmutable('-3 weeks');
         $signalements = $signalementRepository->findInjonctionBeforeDateWithoutAnswer($beforeDate);
         $this->assertCount(0, $signalements);
-
-        $container = static::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
-        $container->set(ClockInterface::class, $mockClock);
 
         $beforeDate = $mockClock->now()->modify('-3 weeks');
         $signalements = $signalementRepository->findInjonctionBeforeDateWithoutAnswer($beforeDate);
@@ -323,16 +323,16 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function testFindInjonctionToRemindAnswerBailleur(): void
     {
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
+
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
         $beforeDate = new \DateTimeImmutable('-16 days');
         $signalements = $signalementRepository->findInjonctionToRemindAnswerBailleur($beforeDate);
         $this->assertCount(0, $signalements);
-
-        $container = static::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
-        $container->set(ClockInterface::class, $mockClock);
 
         $beforeDate = $mockClock->now();
         $signalements = $signalementRepository->findInjonctionToRemindAnswerBailleur($beforeDate);
@@ -341,16 +341,16 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function testFindInjonctionToRemindBailleur(): void
     {
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
+
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
         $beforeDate = new \DateTimeImmutable('-1 month');
         $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'bailleur');
         $this->assertCount(0, $signalements);
-
-        $container = static::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
-        $container->set(ClockInterface::class, $mockClock);
 
         $beforeDate = $mockClock->now()->modify('-1 month');
         $signalements = $signalementRepository->findInjonctionBeforeDateWithoutAnswer($beforeDate);
@@ -359,6 +359,10 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function testFindInjonctionToRemindBailleurAskedForCloture(): void
     {
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
+
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
@@ -366,11 +370,6 @@ class SignalementRepositoryTest extends KernelTestCase
         $beforeDate = new \DateTimeImmutable('-1 month');
         $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'bailleur');
         $this->assertCount(0, $signalements);
-
-        // MockClock doit être set avant flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
-        $container = static::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
-        $container->set(ClockInterface::class, $mockClock);
 
         // À beforeDate=now, le suivi bailleur fixture de 2025-000000000012 (créé avant now) ne bloque plus → 1 rappel
         $beforeDate = $mockClock->now()->modify('-1 month'); // = now
@@ -402,6 +401,10 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function testFindInjonctionToRemindUsagerAskedForCloture(): void
     {
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
+
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
@@ -409,11 +412,6 @@ class SignalementRepositoryTest extends KernelTestCase
         $beforeDate = new \DateTimeImmutable('-1 month');
         $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'usager');
         $this->assertCount(0, $signalements);
-
-        // MockClock doit être set avant flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
-        $container = static::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
-        $container->set(ClockInterface::class, $mockClock);
 
         // À beforeDate=now, le suivi fixture de 2025-000000000012 (créé avant now) ne bloque plus → 1 rappel
         $beforeDate = $mockClock->now()->modify('-1 month'); // = now
@@ -446,16 +444,16 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function testFindInjonctionToRemindUsager(): void
     {
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
+
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
         $beforeDate = new \DateTimeImmutable('-1 month');
         $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'usager');
         $this->assertCount(0, $signalements);
-
-        $container = static::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
-        $container->set(ClockInterface::class, $mockClock);
 
         $beforeDate = $mockClock->now()->modify('-1 month');
         $signalements = $signalementRepository->findInjonctionBeforeDateWithoutAnswer($beforeDate);
@@ -464,6 +462,10 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function testFindInjonctionToRemindBailleurWithMessage(): void
     {
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
+
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
@@ -471,11 +473,6 @@ class SignalementRepositoryTest extends KernelTestCase
         $beforeDate = new \DateTimeImmutable('-1 month');
         $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'bailleur');
         $this->assertCount(0, $signalements);
-
-        // MockClock doit être set avant flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
-        $container = static::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
-        $container->set(ClockInterface::class, $mockClock);
 
         // À beforeDate=now, le suivi bailleur fixture de 2025-000000000012 (créé avant now) ne bloque plus → 1 rappel
         $beforeDate = $mockClock->now()->modify('-1 month'); // = now
@@ -507,6 +504,10 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function testFindInjonctionToRemindUsagerWithMessage(): void
     {
+        $container = static::getContainer();
+        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
+        $container->set(ClockInterface::class, $mockClock);
+
         /** @var SignalementRepository $signalementRepository */
         $signalementRepository = $this->entityManager->getRepository(Signalement::class);
 
@@ -514,11 +515,6 @@ class SignalementRepositoryTest extends KernelTestCase
         $beforeDate = new \DateTimeImmutable('-1 month');
         $signalements = $signalementRepository->findInjonctionToRemind($beforeDate, 'usager');
         $this->assertCount(0, $signalements);
-
-        // MockClock doit être set avant flush() pour éviter l'initialisation de ClockInterface via EntityHistoryListener
-        $container = static::getContainer();
-        $mockClock = new MockClock(new \DateTimeImmutable('+1 month'));
-        $container->set(ClockInterface::class, $mockClock);
 
         // À beforeDate=now, le suivi fixture de 2025-000000000012 (créé avant now) ne bloque plus → 1 rappel attendu
         $beforeDate = $mockClock->now()->modify('-1 month'); // = now

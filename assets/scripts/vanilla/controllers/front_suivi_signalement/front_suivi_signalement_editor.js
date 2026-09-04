@@ -289,3 +289,35 @@ function refreshWcCuisine() {
     }
   }
 }
+
+const fieldsetTravauxMiseEnConformiteUsager = document?.querySelector(
+  '#travaux_mise_en_conformite_travauxMiseEnConformiteUsager'
+);
+if (fieldsetTravauxMiseEnConformiteUsager) {
+  document
+    .querySelectorAll(
+      '#travaux_mise_en_conformite_travauxMiseEnConformiteUsager input[type="radio"]'
+    )
+    .forEach((element) => {
+      element.addEventListener('change', () => {
+        refreshTravauxMiseEnConformiteUsagerCommentaire();
+      });
+    });
+
+  function refreshTravauxMiseEnConformiteUsagerCommentaire() {
+    const containerCommentaire = document
+      .querySelector('#travaux_mise_en_conformite_travauxMiseEnConformiteUsagerCommentaire')
+      .closest('.fr-input-group');
+    if (
+      document.querySelector('#travaux_mise_en_conformite_travauxMiseEnConformiteUsager_1').checked
+    ) {
+      containerCommentaire.classList.remove('fr-hidden');
+    } else {
+      containerCommentaire.classList.add('fr-hidden');
+      document.querySelector(
+        '#travaux_mise_en_conformite_travauxMiseEnConformiteUsagerCommentaire'
+      ).value = '';
+    }
+  }
+  refreshTravauxMiseEnConformiteUsagerCommentaire();
+}

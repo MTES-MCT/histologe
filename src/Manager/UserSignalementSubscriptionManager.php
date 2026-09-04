@@ -83,6 +83,7 @@ class UserSignalementSubscriptionManager
             SuiviCategory::AFFECTATION_IS_REFUSED,
             SuiviCategory::MESSAGE_USAGER,
             SuiviCategory::MESSAGE_USAGER_POST_CLOTURE,
+            SuiviCategory::MESSAGE_USAGER_TRAVAUX_MISE_EN_CONFORMITE,
             SuiviCategory::MESSAGE_BAILLEUR,
             SuiviCategory::DEMANDE_ABANDON_PROCEDURE,
             SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,

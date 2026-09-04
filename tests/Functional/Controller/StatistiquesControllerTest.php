@@ -25,7 +25,7 @@ class StatistiquesControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $expectedResponses = [
-            ['result' => 1, 'label' => 'count_signalement_resolus'],
+            ['result' => 2, 'label' => 'count_signalement_resolus'],
             ['result' => 52, 'label' => 'count_signalement'],
         ];
 

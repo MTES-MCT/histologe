@@ -13,7 +13,7 @@
       "command": "0 6 * * * php bin/console app:ask-feedback-usager"
     },
     {
-      "command": "0 5 * * * php bin/console app:notify-visits"
+      "command": "0 5 * * * php bin/console app:notify-visits ; php bin/console app:send-ask-travaux-mise-en-conformite"
     },
     {
       "command": "0 22 * * * php bin/console app:sync-idoss"

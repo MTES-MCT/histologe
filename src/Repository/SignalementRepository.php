@@ -7,6 +7,7 @@ use App\Entity\EmailDeliveryIssue;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
+use App\Entity\Enum\TravauxMiseEnConformite;
 use App\Entity\Notification;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -30,6 +31,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\TransactionRequiredException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Clock\ClockInterface;
 
 /**
  * @extends ServiceEntityRepository<Signalement>
@@ -44,6 +46,7 @@ class SignalementRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
+        private readonly ClockInterface $clock,
     ) {
         parent::__construct($registry, Signalement::class);
     }
@@ -1178,6 +1181,24 @@ class SignalementRepository extends ServiceEntityRepository
             ->setParameter('city', $city);
 
         $qb->orderBy('s.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return array<int, Signalement>
+     */
+    public function findSignalementsToAskTravauxMiseEnConformite(): array
+    {
+        $startDate = $this->clock->now()->modify('-6 month')->setTime(0, 0);
+        $endDate = $startDate->modify('+1 day');
+
+        $qb = $this->createQueryBuilder('s');
+        $qb->where('s.statut = :statut')->setParameter('statut', SignalementStatus::CLOSED);
+        $qb->andWhere('s.closedAt >= :startDate AND s.closedAt < :endDate')->setParameter('startDate', $startDate)->setParameter('endDate', $endDate);
+        $qb->andWhere('s.travauxMiseEnConformite = :travauxMiseEnConformite')->setParameter('travauxMiseEnConformite', TravauxMiseEnConformite::EN_COURS);
+        $qb->andWhere('s.travauxMiseEnConformiteUsager IS NULL');
+        $qb->andWhere('s.isLogementVacant IS NULL OR s.isLogementVacant = :is_logement_vacant')->setParameter('is_logement_vacant', false);
 
         return $qb->getQuery()->getResult();
     }
