@@ -101,7 +101,6 @@ const init = async (): Promise<void> => {
   if (sharedState.viewMode === 'map') {
     // Pour la carte, on charge toutes les adresses sans filtres (sauf le territoire)
     const savedFilters = { ...sharedState.input.filters }
-    const savedTerritory = sharedState.input.filters.territoire
     Object.keys(sharedState.input.filters).forEach(key => {
       if (key === 'territoire') {
         // Conserver le filtre territoire
