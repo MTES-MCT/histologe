@@ -55,7 +55,12 @@ if (panelSearchAddress) {
       const resultButton = document.createElement('button');
       resultButton.type = 'button';
       resultButton.classList.add('fr-btn', 'fr-btn--secondary', 'fr-btn--sm', 'fr-width-full');
-      resultButton.textContent = 'Appliquer l\'adresse : ' + feature.properties.label + ' (insee : ' + feature.properties.citycode + ')';
+      resultButton.textContent =
+        "Appliquer l'adresse : " +
+        feature.properties.label +
+        ' (insee : ' +
+        feature.properties.citycode +
+        ')';
       resultButton.addEventListener('click', () => selectResult(feature));
       item.appendChild(resultButton);
       list.appendChild(item);
@@ -82,7 +87,9 @@ if (panelSearchAddress) {
 }
 if (panelChangeTerritory) {
   const referenceField = document.getElementById('fr-panel-infos-territory-reference');
-  const actualZipAndNameField = document.getElementById('fr-panel-infos-territory-actual-zipAndName');
+  const actualZipAndNameField = document.getElementById(
+    'fr-panel-infos-territory-actual-zipAndName'
+  );
   const zipAndNameField = document.getElementById('fr-panel-infos-territory-zipAndName');
   const adresseField = document.getElementById('fr-panel-infos-territory-adresse');
   const seeSignalementButton = document.getElementById('fr-panel-infos-territory-see-signalement');
@@ -121,7 +128,11 @@ if (panelBulkLinkAddress) {
     const count = checkedCandidates().length;
     confirmButton.disabled = count === 0;
     confirmButton.textContent =
-      'Oui, lier ces ' + count + ' signalement' + (count > 1 ? 's' : '') + ' aux adresses envoyées par la BAN';
+      'Oui, lier ces ' +
+      count +
+      ' signalement' +
+      (count > 1 ? 's' : '') +
+      ' aux adresses envoyées par la BAN';
   }
 
   listContainer.addEventListener('click', (event) => {
@@ -151,7 +162,10 @@ if (panelBulkLinkAddress) {
   // la case à cocher elle-même, ou le lien "Tout (dé)sélectionner" (déjà géré par
   // component_select_all_checkbox.js) : dans les deux cas, l'état des cases a pu changer.
   resultsContainer.addEventListener('click', (event) => {
-    if (event.target.matches('.bulk-link-candidate-checkbox') || event.target.closest('[data-select-all-in-target]')) {
+    if (
+      event.target.matches('.bulk-link-candidate-checkbox') ||
+      event.target.closest('[data-select-all-in-target]')
+    ) {
       updateConfirmButton();
     }
   });
