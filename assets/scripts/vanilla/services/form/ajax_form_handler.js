@@ -17,7 +17,11 @@ modalElements.forEach((modalElement) => {
 });
 
 function clearErrors() {
-  const divErrorElements = document.querySelectorAll('.fr-input-group--error, .fr-fieldset--error');
+  // On supprime les erreurs des formulaires sauf celles qui sont dans les panels de visites, car elles sont gérées par le panel lui-même
+  // Un jour il faudra faire les panels de visites comme les autres panels :)
+  const divErrorElements = document.querySelectorAll(
+    '[data-ajax-form] dialog:not([data-panel-visite]) .fr-input-group--error, [data-ajax-form] dialog:not([data-panel-visite]) .fr-fieldset--error'
+  );
   divErrorElements.forEach((divErrorElement) => {
     divErrorElement.classList.remove(
       'fr-label--error',
@@ -25,7 +29,12 @@ function clearErrors() {
       'fr-fieldset--error'
     );
   });
-  document.querySelectorAll('.fr-error-text').forEach((pErrorElement) => {
+
+  // On supprime les messages d'erreur .fr-error-text qui ne sont pas dans des panels de visites, car elles sont gérées par le panel lui-même
+  const pErrorElements = document.querySelectorAll(
+    '[data-ajax-form] dialog:not([data-panel-visite]) .fr-error-text'
+  );
+  pErrorElements.forEach((pErrorElement) => {
     pErrorElement.remove();
   });
 }

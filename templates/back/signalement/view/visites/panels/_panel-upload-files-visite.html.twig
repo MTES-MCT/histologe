@@ -1,0 +1,78 @@
+<dialog 
+    aria-labelledby="panel-upload-files-visite-title-{{intervention.id}}" 
+    id="panel-upload-files-visite-{{intervention.id}}" 
+    class="side-panel panel-upload-files-visite" 
+    data-file-type="photos"
+    data-intervention-id="{{intervention.id}}"
+    data-has-changes="false"
+    data-validated="false"
+    data-add-file-route="{{ path('back_signalement_add_file',{uuid:signalement.uuid}) }}"
+    data-add-file-token="{{ csrf_token('signalement_add_file_'~signalement.id) }}"
+    data-edit-file-route="{{ path('back_signalement_edit_file',{uuid:signalement.uuid}) }}"
+    data-edit-file-token="{{ csrf_token('signalement_edit_file_'~signalement.id) }}"
+    data-delete-tmp-file-route="{{ path('back_signalement_delete_tmpfile',{id:'REPLACE'}) }}"
+    data-waiting-suivi-route="{{ path('back_signalement_file_waiting_suivi',{uuid:signalement.uuid}) }}"
+    data-accepted-type-mimes="{{ get_accepted_mime_type('photo') }}"
+    data-accepted-extensions="{{ get_accepted_extensions('photo') }}"
+    >
+    <div class="side-panel__inner">
+        <div class="side-panel__header">
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-upload-files-visite-{{intervention.id}}" aria-controls="panel-upload-files-visite-{{intervention.id}}" aria-expanded="false">Fermer</button>
+        </div>
+
+        <div class="side-panel__content fr-mx-3w">
+            <h1 id="panel-upload-files-visite-title-{{intervention.id}}" class="fr-modal__title title-blue-france"
+                >Ajout des photos de la visite</h1>
+
+            <form method="POST"
+                id="form-upload-files-visite-{{intervention.id}}"
+                data-intervention-id="{{intervention.id}}"
+                class="form-confirm-visite"
+                enctype="multipart/form-data"
+                action="{{ path('back_signalement_visite_confirm',{uuid:signalement.uuid}) }}"
+                >
+                <div class="type-conditional type-photo">
+                    <div>
+                        Ajouter une ou plusieurs photos au signalement. 
+                    </div>
+                    <div class="fr-alert fr-alert--warning fr-alert--sm fr-mt-1w ">
+                        <p>Les photos seront partagées à l'usager.</p>
+                    </div>
+                </div>
+                <div class="modal-upload-upload-container fr-mb-4w">
+                    <div class="modal-upload-drop-section">
+                        <span class="fr-icon-upload-2-line fr-icon--lg fr-text-label--blue-france"></span>
+                        <div class="modal-upload-drop-section-label fr-mt-1w">
+                            Faites glisser vos photos ici
+                        </div>
+                    </div>
+                    <p class="fr-mb-1w">ou</p>
+                    <button class="modal-upload-files-selector fr-btn fr-icon-search-line fr-btn--icon-left fr-btn--secondary">Parcourir les fichiers de l'appareil</button>
+                    <input type="file" class="modal-upload-files-selector-input" multiple accept={{ get_accepted_mime_type('photo')}}>
+                </div>
+                <div class="modal-upload-list-section" id="modal-upload-file-dynamic-content">
+                    <div class="modal-upload-list"></div>
+                </div>
+            </form>
+        </div>
+        <div class="side-panel__footer">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm fr-btns-group--icon-left">
+                <li>
+                    <button type="submit"
+                        id="btn-validate-modal-upload-files"
+                        class="fr-btn fr-btn--icon-left fr-icon-check-line"
+                        form="form-upload-files-visite-{{intervention.id}}"
+                        >Valider</button>
+                </li>
+                <li>
+                    <button type="button"
+                        class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel"
+                        data-panel="panel-upload-files-visite-{{intervention.id}}"
+                        aria-controls="panel-upload-files-visite-{{intervention.id}}"
+                        aria-expanded="false"
+                        >Annuler</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</dialog>
