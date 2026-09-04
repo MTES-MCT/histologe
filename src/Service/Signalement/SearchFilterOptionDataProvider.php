@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Repository\BailleurRepository;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Repository\Query\Commune\CommuneEpciQuery;
 use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Repository\SignalementRepository;
@@ -29,6 +30,7 @@ class SearchFilterOptionDataProvider
         private readonly PartnerRepository $partnerRepository,
         private readonly TagRepository $tagsRepository,
         private readonly SignalementRepository $signalementRepository,
+        private readonly AddressesHistoryQuery $addressesHistoryQuery,
         private readonly TagAwareCacheInterface $cache,
         private readonly QualificationStatusService $qualificationStatusService,
         private readonly BailleurRepository $bailleurRepository,
@@ -43,22 +45,27 @@ class SearchFilterOptionDataProvider
      *
      * @throws InvalidArgumentException
      */
-    public function getData(User $user, ?Territory $territory = null): array
+    public function getData(User $user, ?Territory $territory = null, ?string $context = null): array
     {
         return $this->cache->get(
-            $this->getCacheKey($user, $territory),
-            function (ItemInterface $item) use ($territory, $user) {
+            $this->getCacheKey($user, $territory, $context),
+            function (ItemInterface $item) use ($territory, $user, $context) {
                 $item->expiresAfter(3600);
 
+                $contextTag = (empty($context) ? '' : '-'.$context);
+
                 if ($territory) {
-                    $item->tag([self::CACHE_TAG.$territory->getZip()]);
+                    $item->tag([self::CACHE_TAG.$contextTag.$territory->getZip()]);
                 } else {
-                    $item->tag([self::CACHE_TAG]);
+                    $item->tag([self::CACHE_TAG.$contextTag]);
                 }
+
+                $isAddressesHistoryContext = 'addresses-history' === $context;
 
                 return [
                     'criteres' => $this->critereRepository->findAllList(),
-                    'territories' => $user->isSuperAdmin() ? $this->territoryRepository->findAllList(indexById: false) : $user->getPartnersTerritories(true),
+                    'territories' => $this->getTerritories($user),
+                    'addresses' => $isAddressesHistoryContext ? $this->addressesHistoryQuery->findAllList($territory) : [],
                     'partners' => $this->partnerRepository->findAllList($territory, $user),
                     'epcis' => $this->communeEpciQuery->findEpciByCommuneTerritory($territory, $user),
                     'tags' => $this->tagsRepository->findAllActive($territory, $user),
@@ -69,22 +76,32 @@ class SearchFilterOptionDataProvider
                     'listVisiteStatus' => VisiteStatus::getLabelList(),
                     'hasSignalementsImported' => $user->isSuperAdmin() || $user->isTerritoryAdmin()
                         ? $this->countStatisticsQuery->countImported($territory) : $this->countStatisticsQuery->countImported($territory, $user),
-                    'bailleursSociaux' => $this->bailleurRepository->findBailleursByTerritory($user, $territory),
+                    'bailleursSociaux' => $isAddressesHistoryContext
+                        ? $this->addressesHistoryQuery->findBailleursAndSyndics($user, $territory)
+                        : $this->bailleurRepository->findBailleursByTerritory($user, $territory),
                 ];
             }
         );
     }
 
-    private function getCacheKey(User $user, ?Territory $territory = null): string
+    /**
+     * @return array<mixed>
+     */
+    public function getTerritories(User $user): array
+    {
+        return $user->isSuperAdmin() ? $this->territoryRepository->findAllList(indexById: false) : $user->getPartnersTerritories(true);
+    }
+
+    private function getCacheKey(User $user, ?Territory $territory = null, ?string $context = null): string
     {
         $className = (new \ReflectionClass(__CLASS__))->getShortName();
 
         if ($user->isSuperAdmin()) {
-            return $className.User::ROLE_ADMIN.'-territory-'.$territory?->getZip();
+            return $className.User::ROLE_ADMIN.'-territory-'.$territory?->getZip().'-context-'.$context;
         }
         $role = $user->getRoles();
         $partnersIds = implode('-', $user->getPartners()->map(static fn ($partner) => $partner->getId())->toArray());
 
-        return $className.array_shift($role).'-partners-'.$partnersIds.'-territory-'.$territory?->getZip();
+        return $className.array_shift($role).'-partners-'.$partnersIds.'-territory-'.$territory?->getZip().'-context-'.$context;
     }
 }

@@ -8,8 +8,11 @@ use App\Entity\Arrete;
 use App\Entity\Commune;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
+use App\Entity\Territory;
 use App\Entity\User;
+use App\Repository\TerritoryRepository;
 use App\Utils\Address\CommuneHelper;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -18,7 +21,27 @@ class AddressesHistoryQuery
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly TerritoryRepository $territoryRepository,
     ) {
+    }
+
+    /**
+     * @return array<int, mixed>
+     */
+    public function findAllList(?Territory $territory = null): array
+    {
+        $qb = $this->entityManager->createQueryBuilder()
+            ->from(Address::class, 'a')
+            ->select('a.id, CONCAT_WS(\' \', a.housenumber, a.street) as address')
+            ->orderBy('a.street', 'ASC')
+            ->addOrderBy('a.housenumber', 'ASC');
+
+        if ($territory) {
+            $qb->andWhere('a.territory = :territory')
+                ->setParameter('territory', $territory);
+        }
+
+        return $qb->getQuery()->getArrayResult();
     }
 
     /**
@@ -73,12 +96,15 @@ class AddressesHistoryQuery
                 's.closedAt',
                 's.reference',
                 's.statut',
+                's.profileDeclarant',
                 's.geoloc',
                 's.nomOccupant',
                 's.prenomOccupant',
                 's.nomProprio',
                 's.isLogementSocial',
                 'b.name AS bailleurName',
+                's.denominationProprio',
+                's.denominationSyndic',
                 'ar.id AS arreteId',
                 'ar.dateArrete',
                 'ar.arreteType',
@@ -136,20 +162,12 @@ class AddressesHistoryQuery
         // Ensure we have at least one signalement or one arrete
         $qb->andWhere('s.id IS NOT NULL OR ar.id IS NOT NULL');
 
-        $queryDossiersMultiples = 'SELECT 1 FROM '.Signalement::class.' s2
-                WHERE s2.address = a
-                AND s2.statut IN (:statusList)
-                AND s2.id != s.id';
-        if (!empty($addressesHistorySearchQuery) && null !== $addressesHistorySearchQuery->getDossiersMultiples()) {
-            if ('oui' === $addressesHistorySearchQuery->getDossiersMultiples()) {
-                $qb->andWhere('EXISTS ('.$queryDossiersMultiples.')');
-            } elseif ('non' === $addressesHistorySearchQuery->getDossiersMultiples()) {
-                $qb->andWhere('NOT EXISTS ('.$queryDossiersMultiples.')');
-            }
-        }
-
         if ($user->isSuperAdmin()) {
             // pas de restrictions pour les SA
+            if (!empty($addressesHistorySearchQuery->getTerritoire())) {
+                $qb->andWhere('a.territory IN (:territories)')
+                    ->setParameter('territories', $addressesHistorySearchQuery->getTerritoire());
+            }
         } elseif ($user->isTerritoryAdmin()) {
             $qb->andWhere('a.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
         } else {
@@ -158,6 +176,15 @@ class AddressesHistoryQuery
                 ->leftJoin('affectations.partner', 'partner')
                 ->andWhere('partner IN (:partners)')
                 ->setParameter('partners', $user->getPartners());
+
+            if (!empty($addressesHistorySearchQuery->getTerritoire())) {
+                $territory = $this->territoryRepository->find($addressesHistorySearchQuery->getTerritoire());
+
+                if ($user->hasPartnerInTerritory($territory)) {
+                    $qb->andWhere('a.territory IN (:territories)')
+                        ->setParameter('territories', $addressesHistorySearchQuery->getTerritoire());
+                }
+            }
         }
 
         if (!empty($addressesHistorySearchQuery)) {
@@ -177,6 +204,18 @@ class AddressesHistoryQuery
         if (!empty($addressesHistorySearchQuery->getAdresse())) {
             $qb->andWhere("LOWER(CONCAT_WS(' ', a.housenumber, a.street)) LIKE :adresse");
             $qb->setParameter('adresse', '%'.strtolower($addressesHistorySearchQuery->getAdresse()).'%');
+        }
+
+        $queryDossiersMultiples = 'SELECT 1 FROM '.Signalement::class.' s2
+                WHERE s2.address = a
+                AND s2.statut IN (:statusList)
+                AND s2.id != s.id';
+        if (!empty($addressesHistorySearchQuery) && null !== $addressesHistorySearchQuery->getDossiersMultiples()) {
+            if ('oui' === $addressesHistorySearchQuery->getDossiersMultiples()) {
+                $qb->andWhere('EXISTS ('.$queryDossiersMultiples.')');
+            } elseif ('non' === $addressesHistorySearchQuery->getDossiersMultiples()) {
+                $qb->andWhere('NOT EXISTS ('.$queryDossiersMultiples.')');
+            }
         }
 
         if (!empty($addressesHistorySearchQuery->getZone())) {
@@ -250,10 +289,6 @@ class AddressesHistoryQuery
                    ->setParameter('epcis', $epcis);
             }
         }
-        if (!empty($addressesHistorySearchQuery->getTerritoire())) {
-            $qb->andWhere('a.territory IN (:territories)')
-                ->setParameter('territories', $addressesHistorySearchQuery->getTerritoire());
-        }
 
         if (!empty($addressesHistorySearchQuery->getNatureParc())) {
             if ('non_renseigne' === $addressesHistorySearchQuery->getNatureParc()) {
@@ -294,5 +329,70 @@ class AddressesHistoryQuery
         }
 
         return $qb;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function findBailleursAndSyndics(User $user, ?Territory $territory = null): array
+    {
+        $conn = $this->entityManager->getConnection();
+
+        $whereConditions = ['s.statut NOT IN (:statutList)'];
+        $params = ['statutList' => array_map(static fn ($status) => $status->value, SignalementStatus::excludedStatuses())];
+        $types = ['statutList' => ArrayParameterType::STRING];
+
+        if (!$user->isSuperAdmin() && !$user->isTerritoryAdmin()) {
+            $partnerIds = array_map(static fn ($p) => $p->getId(), $user->getPartners()->toArray());
+            $whereConditions[] = 'EXISTS (
+                SELECT 1 FROM affectation a
+                WHERE a.signalement_id = s.id
+                AND a.partner_id IN (:partnerIds)
+            )';
+            $params['partnerIds'] = $partnerIds;
+            $types['partnerIds'] = ArrayParameterType::INTEGER;
+        }
+
+        if ($territory) {
+            $whereConditions[] = 's.territory_id = :territoryId';
+            $params['territoryId'] = $territory->getId();
+        } elseif (!$user->isSuperAdmin()) {
+            $territoryIds = array_map(static fn ($t) => $t->getId(), $user->getPartnersTerritories());
+            $whereConditions[] = 's.territory_id IN (:territoryIds)';
+            $params['territoryIds'] = $territoryIds;
+            $types['territoryIds'] = ArrayParameterType::INTEGER;
+        }
+
+        $where = implode(' AND ', $whereConditions);
+
+        // Utiliser une CTE pour filtrer une seule fois les signalements
+        $sql = "
+            WITH filtered_signalements AS (
+                SELECT
+                    s.id,
+                    b.name as bailleur_name,
+                    s.denomination_proprio,
+                    s.denomination_syndic,
+                    s.nom_proprio
+                FROM signalement s
+                LEFT JOIN bailleur b ON s.bailleur_id = b.id
+                WHERE {$where}
+            )
+            SELECT DISTINCT unnested_name as name
+            FROM (
+                SELECT bailleur_name as unnested_name FROM filtered_signalements WHERE bailleur_name IS NOT NULL
+                UNION ALL
+                SELECT denomination_proprio FROM filtered_signalements WHERE denomination_proprio IS NOT NULL AND denomination_proprio != ''
+                UNION ALL
+                SELECT denomination_syndic FROM filtered_signalements WHERE denomination_syndic IS NOT NULL AND denomination_syndic != ''
+                UNION ALL
+                SELECT nom_proprio FROM filtered_signalements WHERE nom_proprio IS NOT NULL AND nom_proprio != ''
+            ) all_names
+            ORDER BY name ASC
+        ";
+
+        $results = $conn->executeQuery($sql, $params, $types)->fetchAllAssociative();
+
+        return array_column($results, 'name');
     }
 }

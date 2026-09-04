@@ -1,7 +1,8 @@
 <template>
   <div id="histo-app-addresses-history-view">
     <AddressesHistoryHeader @view-mode-change="onViewModeChange" />
-    <section v-if="sharedState.loadingList" class="loading fr-m-10w fr-text--center">
+    <hr class="fr-mt-4w">
+    <section v-if="sharedState.loadingSettings" class="loading fr-m-10w fr-text--center">
       <h2 class="fr-text--light" v-if="!sharedState.hasErrorLoading">Chargement de la liste...</h2>
       <h2 class="fr-text--light" v-if="sharedState.hasErrorLoading">Erreur lors du chargement de la liste.</h2>
       <p v-if="sharedState.hasErrorLoading">Veuillez recharger la page ou nous prévenir via le formulaire de contact.</p>
@@ -42,16 +43,21 @@ const onFiltersChange = async (): Promise<void> => {
  * Gère le changement de mode d'affichage (carte/liste)
  */
 const onViewModeChange = async (viewMode: string): Promise<void> => {
+  // Change le mode de vue (sera inclus dans l'URL lors du reload)
   sharedState.viewMode = viewMode as any
 
   // Recharge les adresses sans filtres pour la carte, avec filtres pour la liste
   if (viewMode === 'map') {
-    // Pour la carte, on charge toutes les adresses sans filtres
+    // Pour la carte, on charge toutes les adresses sans filtres (sauf le territoire)
     const currentFilters = { ...sharedState.input.filters }
     // Sauvegarde temporaire des filtres
     const savedFilters = { ...currentFilters }
-    // Réinitialise les filtres
+    // Réinitialise les filtres (sauf le territoire)
     Object.keys(sharedState.input.filters).forEach(key => {
+      if (key === 'territoire') {
+        // Conserver le filtre territoire
+        return
+      }
       if (Array.isArray((sharedState.input.filters as any)[key])) {
         (sharedState.input.filters as any)[key] = []
       } else {
@@ -85,14 +91,21 @@ const init = async (): Promise<void> => {
   sharedProps.ajaxurlExportCsv = initElements.dataset.ajaxurlExportCsv || ''
   sharedProps.platformName = initElements.dataset.platformName || ''
 
+  // Initialise les filtres depuis l'URL avant de charger les données
+  filtersComposable.initFiltersFromUrl()
+
   // Charge les settings et les données en parallèle
   await filtersComposable.reloadSettings()
 
   // Charge les adresses : sans filtres si mode carte, avec filtres si mode liste
   if (sharedState.viewMode === 'map') {
-    // Pour la carte, on charge toutes les adresses sans filtres
+    // Pour la carte, on charge toutes les adresses sans filtres (sauf le territoire)
     const savedFilters = { ...sharedState.input.filters }
     Object.keys(sharedState.input.filters).forEach(key => {
+      if (key === 'territoire') {
+        // Conserver le filtre territoire
+        return
+      }
       if (Array.isArray((sharedState.input.filters as any)[key])) {
         (sharedState.input.filters as any)[key] = []
       } else {

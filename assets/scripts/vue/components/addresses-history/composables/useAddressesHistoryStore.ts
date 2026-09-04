@@ -34,7 +34,7 @@ const state = ref<StoreState>({
       territoire: undefined,
       adresse: undefined,
       communes: [],
-      bailleurOuSyndic: undefined,
+      bailleurOuSyndic: [],
       zone: undefined,
       natureParc: undefined,
       dossiersMultiples: undefined,
@@ -50,13 +50,14 @@ const state = ref<StoreState>({
     partnerIds: []
   },
   territories: [],
+  addressesSuggestions: [],
   communes: [],
   bailleursAndSyndic: [],
   zones: [],
-  currentTerritoryId: '',
   currentCommunes: '',
-  viewMode: 'map' as ViewMode,
-  loadingList: true,
+  viewMode: 'list' as ViewMode,
+  loadingSettings: true,
+  loadingList: false,
   hasErrorLoading: false,
   natureParcList: [
     { Id: NatureParc.Privee, Text: 'Parc privé' },
@@ -68,10 +69,7 @@ const state = ref<StoreState>({
     { Id: DossiersMultiples.Avec, Text: 'Avec' },
     { Id: DossiersMultiples.Sans, Text: 'Sans' },
   ],
-  arreteTypes: [
-    { Id: ArreteType.MiseEnSecurite, Text: 'Mise en sécurité' },
-    { Id: ArreteType.ArreteL51111Impropre, Text: 'Arrêté L.511-11 IMPROPRE' },
-  ],
+  arreteTypesGroups: [],
   filtersApplyKey: 0
 })
 
@@ -105,16 +103,12 @@ const isListView = computed(() => state.value.viewMode === 'list')
 const totalAddresses = computed(() => state.value.addresses.pagination.total_items)
 
 const canExport = computed(() =>
-  state.value.addresses.list.length > 0 && !state.value.loadingList
+  state.value.addresses.list.length > 0 && !state.value.loadingSettings
 )
 
 // Actions
 function setViewMode(mode: ViewMode): void {
   state.value.viewMode = mode
-}
-
-function setLoadingState(loading: boolean): void {
-  state.value.loadingList = loading
 }
 
 function setErrorState(hasError: boolean): void {
@@ -145,7 +139,7 @@ function resetFilters(): void {
     territoire: undefined,
     adresse: undefined,
     communes: [],
-    bailleurOuSyndic: undefined,
+    bailleurOuSyndic: [],
     zone: undefined,
     natureParc: undefined,
     dossiersMultiples: undefined,
@@ -162,16 +156,12 @@ function setCommunes(communes: string[]): void {
   state.value.communes = communes
 }
 
-function setBailleursAndSyndic(bailleursAndSyndic: HistoInterfaceSelectOption[]): void {
+function setBailleursAndSyndic(bailleursAndSyndic: string[]): void {
   state.value.bailleursAndSyndic = bailleursAndSyndic
 }
 
 function setZones(zones: HistoInterfaceSelectOption[]): void {
   state.value.zones = zones
-}
-
-function setCurrentTerritoryId(id: string): void {
-  state.value.currentTerritoryId = id
 }
 
 function setCurrentCommunes(communes: string): void {
@@ -214,7 +204,6 @@ export const useAddressesHistoryStore = () => ({
 
   // Actions
   setViewMode,
-  setLoadingState,
   setErrorState,
   setAddresses,
   setFilters,
@@ -223,7 +212,6 @@ export const useAddressesHistoryStore = () => ({
   setCommunes,
   setBailleursAndSyndic,
   setZones,
-  setCurrentTerritoryId,
   setCurrentCommunes,
   setPagination,
   setProps,

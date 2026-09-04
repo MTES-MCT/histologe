@@ -5,6 +5,7 @@ namespace App\Tests\Functional\Service\Signalement;
 use App\Repository\BailleurRepository;
 use App\Repository\CritereRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Repository\Query\Commune\CommuneEpciQuery;
 use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Repository\SignalementRepository;
@@ -25,6 +26,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
     private readonly PartnerRepository $partnerRepository;
     private readonly TagRepository $tagsRepository;
     private readonly SignalementRepository $signalementRepository;
+    private readonly AddressesHistoryQuery $addressesHistoryQuery;
     private readonly BailleurRepository $bailleurRepository;
     private readonly TagAwareCacheInterface $cache;
     private readonly QualificationStatusService $qualificationStatusService;
@@ -41,6 +43,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         $this->partnerRepository = static::getContainer()->get(PartnerRepository::class);
         $this->tagsRepository = static::getContainer()->get(TagRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        $this->addressesHistoryQuery = static::getContainer()->get(AddressesHistoryQuery::class);
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $this->cache = static::getContainer()->get(TagAwareCacheInterface::class);
         $this->qualificationStatusService = static::getContainer()->get(QualificationStatusService::class);
@@ -53,6 +56,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
             $this->partnerRepository,
             $this->tagsRepository,
             $this->signalementRepository,
+            $this->addressesHistoryQuery,
             $this->cache,
             $this->qualificationStatusService,
             $this->bailleurRepository,
@@ -86,5 +90,27 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         $this->assertSameSize($expectedData['partners'], $actualData['partners']);
         $this->assertSameSize($expectedData['tags'], $actualData['tags']);
         $this->assertSameSize($expectedData['cities'], $actualData['cities']);
+    }
+
+    public function testGetDataWithContexts(): void
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+
+        // Test sans contexte
+        $dataWithoutContext = $this->searchFilterOptionDataProvider->getData($user, null, null);
+        $this->assertArrayHasKey('bailleursSociaux', $dataWithoutContext);
+        $this->assertNotEmpty($dataWithoutContext['bailleursSociaux']);
+        $this->assertArrayHasKey('addresses', $dataWithoutContext);
+        $this->assertEmpty($dataWithoutContext['addresses']);
+
+        // Test avec contexte addresses-history
+        $dataWithContext = $this->searchFilterOptionDataProvider->getData($user, null, 'addresses-history');
+        $this->assertArrayHasKey('bailleursSociaux', $dataWithContext);
+        $this->assertIsArray($dataWithContext['bailleursSociaux']);
+        $this->assertContains('Habitat 44', $dataWithContext['bailleursSociaux']);
+        $this->assertArrayHasKey('addresses', $dataWithContext);
+        $this->assertNotEmpty($dataWithContext['addresses']);
     }
 }

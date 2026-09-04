@@ -18,23 +18,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, type PropType } from 'vue'
 
 export default defineComponent({
   name: 'AppSearch',
   props: {
     id: { type: String, default: '' },
-    modelValue: { type: String, default: '' },
+    modelValue: { type: String as PropType<string | undefined>, default: '' },
     placeholder: { type: String, default: '' },
     minLengthSearch: { type: Number, default: 0 }
   },
   emits: ['update:modelValue'],
   methods: {
-    onInputEvent (e: any) {
-      if (e.target.value.length >= this.minLengthSearch) {
-        this.$emit('update:modelValue', e.target.value)
-      } else if (e.target.value.length === 0) {
-        this.$emit('update:modelValue', '')
+    onInputEvent (e: Event) {
+      const target = e.target as HTMLInputElement
+      if (target.value.length >= this.minLengthSearch) {
+        this.$emit('update:modelValue', target.value)
+      } else if (target.value.length === 0) {
+        this.$emit('update:modelValue', undefined)
       }
     }
   }

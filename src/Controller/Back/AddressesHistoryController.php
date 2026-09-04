@@ -66,7 +66,7 @@ class AddressesHistoryController extends AbstractController
         $processedArretes = [];
 
         foreach ($addresses as $row) {
-            $addressKey = mb_trim(strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $row['housenumber'].' '.$row['street'].' '.$row['postCode'].' '.$row['cityCode'])));
+            $addressKey = $row['addressId'];
 
             if (!isset($responseAddresses[$addressKey])) {
                 $responseAddresses[$addressKey] = $addressesHistoryListViewFactory->createInstance(
@@ -98,6 +98,7 @@ class AddressesHistoryController extends AbstractController
                     'prenomOccupant' => $row['prenomOccupant'],
                     'nomOccupant' => $row['nomOccupant'],
                     'statut' => $row['statut'],
+                    'declarant' => $row['profileDeclarant'],
                 ]);
                 $responseAddresses[$addressKey]->addSignalement($addressesHistorySignalement);
                 $processedSignalements[$addressKey][] = $row['id'];
@@ -110,6 +111,10 @@ class AddressesHistoryController extends AbstractController
 
                 if (!empty($row['bailleurName'])) {
                     $responseAddresses[$addressKey]->addBailleurName($row['bailleurName']);
+                } elseif (!empty($row['denominationProprio'])) {
+                    $responseAddresses[$addressKey]->addBailleurName($row['denominationProprio']);
+                } elseif (!empty($row['denominationSyndic'])) {
+                    $responseAddresses[$addressKey]->addBailleurName($row['denominationSyndic']);
                 }
 
                 // Fallback : si pas de point dans Address, on utilise geoloc du signalement
@@ -125,7 +130,7 @@ class AddressesHistoryController extends AbstractController
                     'id' => $row['arreteId'],
                     'dateArrete' => $row['dateArrete'] ? $row['dateArrete']->format('d/m/Y') : null,
                     'arreteType' => $row['arreteType'],
-                    'arreteTypeLabel' => $row['arreteType'] ? $row['arreteType']->label() : null,
+                    'arreteTypeLabel' => $row['arreteType'] ? $row['arreteType']->completeLabel() : null,
                     'dateMainLevee' => $row['dateMainLevee'] ? $row['dateMainLevee']->format('d/m/Y') : null,
                 ]);
                 $processedArretes[$addressKey][] = $row['arreteId'];
