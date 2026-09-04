@@ -162,10 +162,10 @@
 {% endif %}
 
 <div class="fr-input-group">
-    <label class="fr-label" for="visite-{{ formType }}[details]-{{ intervention is defined ? intervention.id : '' }}">
+    <label class="fr-label" for="visite-{{ formType }}[details]{{ intervention is defined ? '-' ~ intervention.id : '' }}">
         Commentaire de visite <span class="fr-text-default--error">*</span>
     </label>
-    <textarea class="fr-input fr-input--no-resize editor field-visite-details" id="visite-{{ formType }}[details]-{{ intervention is defined ? intervention.id : '' }}" name="visite-{{ formType }}[details]" minlength="10">{{
+    <textarea class="fr-input fr-input--no-resize editor field-visite-details" id="visite-{{ formType }}[details]{{ intervention is defined ? '-' ~ intervention.id : '' }}" name="visite-{{ formType }}[details]" minlength="10">{{
         intervention is defined and intervention.details ? intervention.details : ''
     }}</textarea>
     <p class="signalement-confirm-visite-details-error fr-error-text fr-messages-group fr-hidden">
