@@ -106,6 +106,9 @@ formBtn?.addEventListener('click', () => {
         formBtn.disabled = false;
         formBtn.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
       });
+  } else {
+    formBtn.disabled = false;
+    formBtn.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
   }
 });
 
