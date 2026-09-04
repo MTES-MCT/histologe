@@ -325,7 +325,7 @@ class AddressServiceFake extends AddressService
                         ],
                     ]],
                     'query' => $address,
-                ]);
+                ];
                 break;
             case '29 Rue Désirée Clary 13002 Marseille':
                 $response = [
