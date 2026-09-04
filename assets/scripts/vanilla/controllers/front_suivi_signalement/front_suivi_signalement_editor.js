@@ -144,8 +144,10 @@ if (natureLogementSelect) {
 
   natureLogementSelect.addEventListener('change', () => {
     refreshNatureAutrePrecision();
+    refreshAppartementEtagePrecision();
   });
   refreshNatureAutrePrecision();
+  refreshAppartementEtagePrecision();
 }
 
 const fieldsetAppartementEtage = document?.querySelector('#type_composition_appartementEtage');
@@ -342,7 +344,8 @@ function refreshAppartementEtagePrecision() {
     const autreChecked = document.querySelector(
       '#type_composition_appartementEtage input[value="AUTRE"]:checked'
     );
-    if (autreChecked) {
+    
+    if (autreChecked && natureLogementSelect.value === 'appartement') {
       containerAppartementEtagePrecision.classList.remove('fr-hidden');
     } else {
       containerAppartementEtagePrecision.querySelector('input').value = '';

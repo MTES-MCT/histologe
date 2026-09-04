@@ -550,7 +550,6 @@ trait FixturesHelper
             'bail_dpe_etat_des_lieux' => 'oui',
             'type_logement_commodites_wc' => 'oui',
             'type_logement_dernier_etage' => 'non',
-            'type_logement_appartement_etage' => 'AUTRE',
             'composition_logement_enfants' => 'oui',
             'composition_logement_nombre_enfants' => '1',
             'composition_logement_nb_pieces' => '2',
