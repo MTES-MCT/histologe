@@ -3,6 +3,9 @@ import { jsonResponseHandler } from '../services/component/component_json_respon
 const formBtn = document.querySelector('#signalement-edit-nde-form-submit');
 
 formBtn?.addEventListener('click', () => {
+  formBtn.disabled = true;
+  formBtn.classList.add('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
+
   // Check fields
   let postForm = true;
   if (!document.querySelector('#signalement-edit-nde-date-entree').value) {
@@ -95,10 +98,17 @@ formBtn?.addEventListener('click', () => {
               .classList.remove('fr-hidden');
           }
         }
+        formBtn.disabled = false;
+        formBtn.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
       })
       .catch((error) => {
         console.error('Error:', error);
+        formBtn.disabled = false;
+        formBtn.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
       });
+  } else {
+    formBtn.disabled = false;
+    formBtn.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
   }
 });
 

@@ -20,13 +20,12 @@
                         <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--right fr-btns-group--icon-left">
                             <li>
                                 <button
-                                class="fr-btn fr-btn--secondary fr-icon-file-add-line open-modal-upload-files-btn"
-                                data-fr-opened="false"
-                                aria-controls="fr-modal-upload-files"
-                                data-file-filter={{filesFilter}}
-                                >
-                                    Ajouter des documents sur la {{filesFilter}}
-                                </button>
+                                    class="fr-btn fr-btn--secondary fr-icon-file-add-line open-modal-upload-files-btn"
+                                    data-fr-opened="false"
+                                    aria-controls="panel-upload-files"
+                                    data-panel-open="panel-upload-files"
+                                    data-file-filter={{filesFilter}}
+                                    >Ajouter des documents sur la {{filesFilter}}</button>
                             </li>
                         </ul>
                     {% elseif filesFilter is same as 'situation'
@@ -151,7 +150,8 @@
                                     class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
                                     id="file_edit_{{ photo.id }}" 
                                     title="Editer la photo {{ photo.getDisplayFilename }}"
-                                    aria-controls="fr-modal-edit-file"
+                                    aria-controls="panel-edit-file"
+                                    data-panel-open="panel-edit-file"
                                     data-fr-opened="false"
                                     data-filename="{{ photo.getDisplayFilename }}"
                                     data-type="photo" 
@@ -231,7 +231,8 @@
                         <button class="fr-btn fr-btn--sm fr-btn--secondary fr-background--white fr-fi-edit-line btn-signalement-file-edit"
                             id="file_edit_{{ doc.id }}"
                             title="Editer le document {{ doc.getDisplayFilename }}"
-                            aria-controls="fr-modal-edit-file"
+                            aria-controls="panel-edit-file"
+                            data-panel-open="panel-edit-file"
                             data-fr-opened="false"
                             data-filename="{{ doc.getDisplayFilename }}"
                             data-type="document"

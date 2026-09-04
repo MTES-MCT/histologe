@@ -6,9 +6,11 @@
         </div>
         <div class="fr-col-12 fr-col-md-4 fr-text--right">
             {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
-                <button href="#" data-fr-opened="false" aria-controls="fr-modal-edit-coordonnees-bailleur" class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line">
-                    Modifier
-                </button>
+                <button class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line"
+                    data-panel-open="panel-edit-coordonnees-bailleur"
+                    aria-controls="panel-edit-coordonnees-bailleur"
+                    data-fr-opened="false"
+                    >Modifier</button>
             {% endif %}
         </div>
         <div class="fr-col-12 fr-col-md-12">

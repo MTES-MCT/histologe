@@ -4,7 +4,7 @@ import {
 } from '../../services/ui/modales_helper';
 
 export function initializeVisitesUploadFilesModal() {
-  initializeUploadModal('#fr-modal-upload-files', false);
+  initializeUploadModal('#panel-upload-files', false);
   document?.querySelectorAll('.fr-modal-visites-upload-files')?.forEach((modalVisiteUpload) => {
     initializeUploadModal('#' + modalVisiteUpload.id, true);
   });
@@ -28,6 +28,7 @@ function initializeUploadModal(modalSelector, isModalUploadVisite) {
   const editFileRoute = modal.dataset.editFileRoute;
   const editFileToken = modal.dataset.editFileToken;
   const btnValidate = modal.querySelector('#btn-validate-modal-upload-files');
+  const btnsClose = modal.querySelectorAll('.close-panel-upload-files');
   const ancre = modal.querySelector('#modal-upload-file-dynamic-content');
 
   let nbFilesProccessing = 0;
@@ -314,28 +315,6 @@ function initializeUploadModal(modalSelector, isModalUploadVisite) {
     });
   }
 
-  modal.addEventListener('dsfr.conceal', () => {
-    if (modal.dataset.validated === 'true' && modal.dataset.hasChanges === 'true') {
-      if (btnValidate.getAttribute('data-context') === 'form-bo-create') {
-        document.querySelector('#bo-create-file-list').innerHTML = 'Sauvegarde des fichiers...';
-      }
-
-      fetch(waitingSuiviRoute).then(() => {
-        if (btnValidate.getAttribute('data-context') === 'form-bo-create') {
-          window.dispatchEvent(new Event('refreshUploadedFileList'));
-        } else {
-          window.location.reload();
-          window.scrollTo(0, 0);
-        }
-      });
-      return true;
-    }
-    document.querySelectorAll('a.delete-tmp-file').forEach((button) => {
-      button.click();
-    });
-    modal.dataset.hasChanges = false;
-  });
-
   let fileFilter, documentType, interventionId;
 
   window.addEventListener('refreshUploadButtonEvent', () => {
@@ -344,34 +323,63 @@ function initializeUploadModal(modalSelector, isModalUploadVisite) {
         fileFilter = e.target.dataset.fileFilter ?? null;
         documentType = e.target.dataset.documentType ?? null;
         interventionId = e.target.dataset.interventionId ?? null;
+
+        nbFilesProccessing = 0;
+        enableHeaderAndFooterButtonOfModal(modal);
+        listContainer.innerHTML = '';
+        modal.dataset.hasChanges = false;
+        modal.querySelectorAll('.filter-conditional').forEach((type) => {
+          type.classList.add('fr-hidden');
+        });
+        modal.dataset.documentType = documentType;
+        modal.dataset.fileFilter = fileFilter;
+        modal.dataset.interventionId = interventionId;
+        if (fileFilter === 'procédure') {
+          modal.querySelector('.filter-procedure').classList.remove('fr-hidden');
+          modal.setAttribute('aria-labelledby', modal.querySelector('.filter-procedure h1').id);
+        } else if (fileFilter === 'situation') {
+          modal.querySelector('.filter-situation').classList.remove('fr-hidden');
+          modal.setAttribute('aria-labelledby', modal.querySelector('.filter-situation h1').id);
+        }
       });
     });
   });
 
   window.dispatchEvent(new Event('refreshUploadButtonEvent'));
 
-  modal.addEventListener('dsfr.disclose', () => {
-    nbFilesProccessing = 0;
-    enableHeaderAndFooterButtonOfModal(modal);
-    listContainer.innerHTML = '';
-    modal.dataset.validated = false;
-    modal.dataset.hasChanges = false;
-    modal.querySelectorAll('.filter-conditional').forEach((type) => {
-      type.classList.add('fr-hidden');
-    });
-    modal.dataset.documentType = documentType;
-    modal.dataset.fileFilter = fileFilter;
-    modal.dataset.interventionId = interventionId;
-    if (fileFilter === 'procédure') {
-      modal.querySelector('.filter-procedure').classList.remove('fr-hidden');
-      modal.setAttribute('aria-labelledby', modal.querySelector('.filter-procedure h1').id);
-    } else if (fileFilter === 'situation') {
-      modal.querySelector('.filter-situation').classList.remove('fr-hidden');
-      modal.setAttribute('aria-labelledby', modal.querySelector('.filter-situation h1').id);
+  btnValidate.addEventListener('click', () => {
+    if (modal.dataset.hasChanges === 'true') {
+      btnValidate.disabled = true;
+      btnValidate.classList.add('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
+
+      if (btnValidate.getAttribute('data-context') === 'form-bo-create') {
+        document.querySelector('#bo-create-file-list').innerHTML = 'Sauvegarde des fichiers...';
+      }
+
+      fetch(waitingSuiviRoute).then(() => {
+        if (btnValidate.getAttribute('data-context') === 'form-bo-create') {
+          window.dispatchEvent(new Event('refreshUploadedFileList'));
+          btnsClose[0].click();
+        } else {
+          window.location.reload();
+          window.scrollTo(0, 0);
+        }
+      });
     }
   });
 
-  btnValidate.addEventListener('click', () => {
-    modal.dataset.validated = true;
+  btnsClose.forEach((btnClose) => {
+    btnClose.addEventListener('click', () => {
+      document.querySelectorAll('a.delete-tmp-file').forEach((button) => {
+        button.click();
+      });
+    });
+    reinitializeModal();
   });
+
+  function reinitializeModal() {
+    btnValidate.disabled = false;
+    btnValidate.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
+    modal.dataset.hasChanges = false;
+  }
 }

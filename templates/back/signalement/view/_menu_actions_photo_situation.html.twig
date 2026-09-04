@@ -17,14 +17,13 @@
             <ul class="fr-menu__list">
                 <li>
                     <button
-                            type="button"
-                            class="fr-nav__link fr-btn--icon-left fr-icon-file-add-line open-modal-upload-files-btn"
-                            data-fr-opened="false"
-                            data-file-filter="situation"
-                            aria-controls="fr-modal-upload-files"
-                    >
-                        Ajouter des documents sur la situation
-                    </button>
+                        type="button"
+                        class="fr-nav__link fr-btn--icon-left fr-icon-file-add-line open-modal-upload-files-btn"
+                        data-fr-opened="false"
+                        data-file-filter="situation"
+                        aria-controls="panel-upload-files"
+                        data-panel-open="panel-upload-files"
+                        >Ajouter des documents sur la situation</button>
                 </li>
                 <li>
                     <a href="{{ path('back_signalement_generate_zip', {uuid: signalement.uuid}) }}"

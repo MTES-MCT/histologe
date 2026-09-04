@@ -1,0 +1,98 @@
+<dialog aria-labelledby="panel-edit-coordonnees-tiers-title" id="panel-edit-coordonnees-tiers" class="side-panel">
+    <div class="side-panel__inner">
+        <div class="side-panel__header">
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-coordonnees-tiers" aria-controls="panel-edit-coordonnees-tiers" aria-expanded="false">Fermer</button>
+        </div>
+
+        <div class="side-panel__content fr-mx-3w">
+            <h1 id="panel-edit-coordonnees-tiers-title" class="fr-modal__title title-blue-france">Modifier les coordonnées du tiers déclarant</h1>
+
+            <form method="POST" id="form-edit-coordonnees-tiers" enctype="application/json" action="{{ path('back_signalement_edit_coordonnees_tiers',{uuid:signalement.uuid}) }}">
+                <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
+
+                {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
+                <div class="fr-select-group">
+                    <label class="fr-label" for="coordonneesTiersTypeProprio">Type</label>
+                    <select class="fr-select" id="coordonneesTiersTypeProprio" name="typeProprio">
+                        <option value="" disabled hidden>Sélectionnez un choix</option>
+                        <option value="" {{ signalement.typeProprio is same as '' ? 'selected' : '' }}>N/C</option>
+                        <option value="{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE.label }}</option>
+                        <option value="{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.name }}" {{ signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').PARTICULIER ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\ProprioType').PARTICULIER.label }}</option>
+                    </select>
+                </div>
+                {% endif %}
+
+                <div class="fr-input-group">
+                    <label class="fr-label" for="coordonneesTiersNom">Nom</label>
+                    <input class="fr-input" type="text" id="coordonneesTiersNom" name="nom" value="{{ signalement.nomDeclarant }}" maxlength="50">
+                </div>
+
+                <div class="fr-input-group">
+                    <label class="fr-label" for="coordonneesTiersPrenom">Prénom</label>
+                    <input class="fr-input" type="text" id="coordonneesTiersPrenom" name="prenom" value="{{ signalement.prenomDeclarant }}" maxlength="50">
+                </div>
+
+                <div class="fr-input-group">
+                    <label class="fr-label" for="coordonneesTiersMatricule">Matricule (facultatif)</label>
+                    <input class="fr-input" type="text" id="coordonneesTiersMatricule" name="matricule" value="{{ signalement.matriculeDeclarant }}" maxlength="255">
+                </div>
+
+                <div class="fr-input-group">
+                    <label class="fr-label" for="coordonneesTiersMail">Courriel</label>
+                    <input class="fr-input" type="text" id="coordonneesTiersMail" name="mail" value="{{ signalement.mailDeclarant }}">
+                </div>
+
+                <div class="fr-input-group">
+                    <label class="fr-label" for="coordonneesTiersTelephone">Téléphone</label>
+                    <input class="fr-input" type="text" id="coordonneesTiersTelephone" name="telephone" value="{{ signalement.telDeclarantDecoded }}">
+                </div>
+
+                <div class="fr-select-group">
+                    <label class="fr-label" for="coordonneesTiersLien">Lien avec l'occupant (facultatif)</label>
+                    {% set OccupantLink = enum('\\App\\Entity\\Enum\\OccupantLink') %}
+                    <select class="fr-select" id="coordonneesTiersLien" name="lien">
+                        <option value="" {{ signalement.lienDeclarantOccupant not in OccupantLink.names() ? 'selected' : '' }}></option>
+                        <option value="PROCHE" {{ signalement.lienDeclarantOccupant is same as 'PROCHE' ? 'selected' : '' }}>Proche</option>
+                        <option value="VOISIN" {{ signalement.lienDeclarantOccupant is same as 'VOISIN' ? 'selected' : '' }}>Voisinage</option>
+                        <option value="SECOURS" {{ signalement.lienDeclarantOccupant is same as 'SECOURS' ? 'selected' : '' }}>Service de secours</option>
+                        <option value="BAILLEUR" {{ signalement.lienDeclarantOccupant is same as 'BAILLEUR' ? 'selected' : '' }}>Bailleur</option>
+                        <option value="PRO" {{ signalement.lienDeclarantOccupant is same as 'PRO' ? 'selected' : '' }}>Professionnel(le)</option>
+                        <option value="AUTRE" {{ signalement.lienDeclarantOccupant is same as 'AUTRE' ? 'selected' : '' }}>Autre</option>
+                    </select>
+                </div>
+
+                <div class="fr-input-group">
+                    <label class="fr-label" for="coordonneesTiersStructure">Structure (si lien avec l'occupant: professionnel(le) ou service de secours)</label>
+                    <input class="fr-input" type="text" id="coordonneesTiersStructure" name="structure" value="{{ signalement.structureDeclarant }}">
+                </div>
+
+                {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
+                <div class="fr-input-group">
+                    <label class="fr-label" for="coordonneesBailleurDateNaissance">Date de naissance (facultatif)</label>
+                    <input class="fr-input" type="date" id="coordonneesBailleurDateNaissance" name="dateNaissance" value="{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissance ?? '' }}">
+                </div>
+                {% endif %}
+
+                <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_coordonnees_tiers_'~signalement.id) }}">
+            </form>
+        </div>
+        <div class="side-panel__footer">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm fr-btns-group--icon-left">
+                <li>
+                    <button type="submit"
+                        class="fr-btn fr-btn--icon-left fr-icon-check-line"
+                        form="form-edit-coordonnees-tiers"
+                        >Valider</button>
+                </li>
+                <li>
+                    <button type="button"
+                        class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel"
+                        data-panel="panel-edit-coordonnees-tiers"
+                        aria-controls="panel-edit-coordonnees-tiers"
+                        aria-expanded="false"
+                        >Annuler</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</dialog>
