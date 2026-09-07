@@ -59,6 +59,7 @@ interface FormStore {
     updatedAt: string | null
   }
   lastButtonClicked: string
+  addressCorrectionMessage: string
   validationErrors: FormData
   inputComponents: string[]
   updateData: (key: string, value: any) => void
@@ -109,6 +110,7 @@ const formStore: FormStore = reactive({
     updatedAt: null
   },
   lastButtonClicked: '',
+  addressCorrectionMessage: '',
   inputComponents: [
     'SignalementFormTextfield',
     'SignalementFormTextarea',
