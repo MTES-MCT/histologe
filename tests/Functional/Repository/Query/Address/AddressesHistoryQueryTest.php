@@ -68,11 +68,8 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
     public function testFindAllList(): void
     {
-        /** @var AddressesHistoryQuery $addressesHistoryQuery */
-        $addressesHistoryQuery = new AddressesHistoryQuery($this->entityManager);
-
         // Test sans territoire - devrait retourner toutes les adresses
-        $allAddresses = $addressesHistoryQuery->findAllList();
+        $allAddresses = $this->addressesHistoryQuery->findAllList();
 
         $this->assertIsArray($allAddresses);
         $this->assertNotEmpty($allAddresses);
@@ -93,15 +90,13 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
     public function testFindAllListWithTerritory(): void
     {
-        /** @var AddressesHistoryQuery $addressesHistoryQuery */
-        $addressesHistoryQuery = new AddressesHistoryQuery($this->entityManager);
         /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
 
         $territory = $territoryRepository->findOneBy(['zip' => '13']);
         $this->assertNotNull($territory, 'Territory with zip 13 should exist in fixtures');
 
-        $addressesForTerritory = $addressesHistoryQuery->findAllList($territory);
+        $addressesForTerritory = $this->addressesHistoryQuery->findAllList($territory);
 
         $this->assertIsArray($addressesForTerritory);
         $this->assertCount(21, $addressesForTerritory);
