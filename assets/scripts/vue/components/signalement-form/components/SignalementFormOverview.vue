@@ -19,7 +19,11 @@
               >Editer</button>
           </div>
         </div>
-        <p v-html="getFormDataAdresse()"></p>
+        <p>
+          <template v-for="(line, index) in getFormDataAdresse()" :key="index">
+            {{ line }}<br>
+          </template>
+        </p>
       </div>
 
       <!-- VOS COORDONNES SI OCCUPANT -->
@@ -36,7 +40,11 @@
               >Editer</button>
           </div>
         </div>
-        <p v-html="getFormDataCoordonneesOccupant()"></p>
+        <p>
+          <template v-for="(line, index) in getFormDataCoordonneesOccupant()" :key="index">
+            {{ line }}<br>
+          </template>
+        </p>
       </div>
 
       <!-- VOS COORDONNEES SI TIERS -->
@@ -53,7 +61,11 @@
               >Editer</button>
           </div>
         </div>
-        <p v-html="getFormDataCoordonneesDeclarant()"></p>
+        <p>
+          <template v-for="(line, index) in getFormDataCoordonneesDeclarant()" :key="index">
+            {{ line }}<br>
+          </template>
+        </p>
       </div>
 
       <!-- LES COORDONNEES DU BAILLEUR -->
@@ -70,7 +82,11 @@
               >Editer</button>
           </div>
         </div>
-        <p v-html="getFormDataCoordonneesBailleur()"></p>
+        <p>
+          <template v-for="(line, index) in getFormDataCoordonneesBailleur()" :key="index">
+            {{ line }}<br>
+          </template>
+        </p>
       </div>
 
       <!-- LES COORDONNEES DU FOYER -->
@@ -86,7 +102,11 @@
               aria-label="Editer les coordonnées du foyer">Editer</button>
           </div>
         </div>
-        <p v-html="getFormDataCoordonneesOccupantSiTiers()"></p>
+        <p>
+          <template v-for="(line, index) in getFormDataCoordonneesOccupantSiTiers()" :key="index">
+            {{ line }}<br>
+          </template>
+        </p>
       </div>
 
       <!-- TYPE ET COMPOSITION DU LOGEMENT -->
@@ -112,7 +132,11 @@
               >Afficher les informations</button>
           </h5>
           <div class="fr-collapse" id="accordion-type-composition">
-            <p v-html="getFormDataTypeComposition()"></p>
+            <p>
+              <template v-for="(line, index) in getFormDataTypeComposition()" :key="index">
+                {{ line }}<br>
+              </template>
+            </p>
           </div>
         </section>
       </div>
@@ -141,7 +165,11 @@
               >Afficher les informations</button>
           </h5>
           <div class="fr-collapse" id="accordion-situation-occupant">
-            <p v-html="getFormDataSituationOccupant()"></p>
+            <p>
+              <template v-for="(line, index) in getFormDataSituationOccupant()" :key="index">
+                {{ line }}<br>
+              </template>
+            </p>
           </div>
         </section>
       </div>
@@ -169,7 +197,11 @@
           :icons="disorderIcons"
           :isValidationScreen="true"
           />
-        <p v-html="getFormDataInfosDesordres()"></p>
+        <p>
+          <template v-for="(line, index) in getFormDataInfosDesordres()" :key="index">
+            {{ line }}<br>
+          </template>
+        </p>
       </div>
 
       <!-- LA PROCEDURE  -->
@@ -190,7 +222,11 @@
             <button class="fr-accordion__btn" aria-expanded="false" aria-controls="accordion-procedure">Afficher les informations</button>
           </h5>
           <div class="fr-collapse" id="accordion-procedure">
-            <p v-html="getFormDataProcedure()"></p>
+            <p>
+              <template v-for="(line, index) in getFormDataProcedure()" :key="index">
+                {{ line }}<br>
+              </template>
+            </p>
           </div>
         </section>
       </div>
@@ -210,7 +246,11 @@
                 >Editer</button>
             </div>
           </div>
-          <p v-html="getFormDataInformationsComplementaires()"></p>
+          <p>
+            <template v-for="(line, index) in getFormDataInformationsComplementaires()" :key="index">
+              {{ line }}<br>
+            </template>
+          </p>
         </div>
         <div v-else>
           <h3 class="fr-h4 title-blue-france">Informations complémentaires</h3>
@@ -278,190 +318,196 @@ export default defineComponent({
     }
   },
   methods: {
-    getFormDataAdresse (): string {
-      let result = ''
-      result += this.formStore.data.adresse_logement_adresse + '<br>'
-      result += this.addLineIfNeeded('adresse_logement_complement_adresse_etage', 'Etage : ')
-      result += this.addLineIfNeeded('adresse_logement_complement_adresse_escalier', 'Escalier : ')
-      result += this.addLineIfNeeded('adresse_logement_complement_adresse_numero_appartement', 'Numéro d\'appartement : ')
-      result += this.addLineIfNeeded('adresse_logement_complement_adresse_autre', 'Autre : ')
+    getFormDataAdresse (): string[] {
+      const result: string[] = []
+      result.push(this.formStore.data.adresse_logement_adresse)
+      this.addLineIfNeeded(result, 'adresse_logement_complement_adresse_etage', 'Etage : ')
+      this.addLineIfNeeded(result, 'adresse_logement_complement_adresse_escalier', 'Escalier : ')
+      this.addLineIfNeeded(result, 'adresse_logement_complement_adresse_numero_appartement', 'Numéro d\'appartement : ')
+      this.addLineIfNeeded(result, 'adresse_logement_complement_adresse_autre', 'Autre : ')
       return result
     },
-    getFormDataCoordonneesOccupant (): string {
-      let result = ''
-      result += this.formStore.data.vos_coordonnees_occupant_civilite + ' '
-      result += this.formStore.data.vos_coordonnees_occupant_prenom + ' '
-      result += this.formStore.data.vos_coordonnees_occupant_nom + '<br>'
-      result += this.addLineIfNeeded('vos_coordonnees_occupant_email', 'Adresse email : ')
-      result += this.addLineIfNeeded('vos_coordonnees_occupant_tel', 'Numéro de téléphone : ')
+    getFormDataCoordonneesOccupant (): string[] {
+      const result: string[] = []
+      result.push(this.formStore.data.vos_coordonnees_occupant_civilite + ' ' + this.formStore.data.vos_coordonnees_occupant_prenom + ' ' + this.formStore.data.vos_coordonnees_occupant_nom)
+      this.addLineIfNeeded(result, 'vos_coordonnees_occupant_email', 'Adresse email : ')
+      this.addLineIfNeeded(result, 'vos_coordonnees_occupant_tel', 'Numéro de téléphone : ')
       return result
     },
-    getFormDataCoordonneesOccupantSiTiers (): string {
-      let result = ''
+    getFormDataCoordonneesOccupantSiTiers (): string[] {
+      const result: string[] = []
+      let nomPrenom = ''
       if (this.isFormDataSet('coordonnees_occupant_prenom')) {
-        result += this.formStore.data.coordonnees_occupant_prenom + ' '
+        nomPrenom += this.formStore.data.coordonnees_occupant_prenom + ' '
       }
       if (this.isFormDataSet('coordonnees_occupant_nom')) {
-        result += this.formStore.data.coordonnees_occupant_nom + '<br>'
+        nomPrenom += this.formStore.data.coordonnees_occupant_nom
       }
-      if (result === '') {
-        result = 'Nom et prénom non renseignés<br>'
+      if (nomPrenom === '') {
+        result.push('Nom et prénom non renseignés')
+      } else {
+        result.push(nomPrenom)
       }
-      result += this.addLineIfNeeded('coordonnees_occupant_email', 'Adresse email : ')
-      result += this.addLineIfNeeded('coordonnees_occupant_tel', 'Numéro de téléphone : ')
+      this.addLineIfNeeded(result, 'coordonnees_occupant_email', 'Adresse email : ')
+      this.addLineIfNeeded(result, 'coordonnees_occupant_tel', 'Numéro de téléphone : ')
       if (this.isFormDataSet('signalement_concerne_profil_detail_profil_occupant')) {
         if (this.formStore.data.signalement_concerne_profil_detail_profil_occupant === 'locataire') {
-          result += 'Locataire<br>'
+          result.push('Locataire')
         } else if (this.formStore.data.signalement_concerne_profil_detail_profil_occupant === 'bailleur_occupant') {
-          result += 'Propriétaire occupant<br>'
+          result.push('Propriétaire occupant')
         } else {
-          result += 'Profil d\'occupant non renseigné<br>'
+          result.push('Profil d\'occupant non renseigné')
         }
       }
       return result
     },
-    getFormDataCoordonneesDeclarant (): string {
-      let result = ''
-      result += this.addLineIfNeeded('vos_coordonnees_tiers_nom_organisme')
-      result += this.formStore.data.vos_coordonnees_tiers_prenom + ' '
-      result += this.formStore.data.vos_coordonnees_tiers_nom + '<br>'
-      result += this.addLineIfNeeded('vos_coordonnees_tiers_lien', 'Lien avec l\'occupant : ')
-      result += this.addLineIfNeeded('vos_coordonnees_tiers_email', 'Adresse email : ')
-      result += this.addLineIfNeeded('vos_coordonnees_tiers_tel', 'Numéro de téléphone : ')
-      result += this.addLineIfNeeded('vos_coordonnees_tiers_tel_secondaire', 'Numéro de téléphone secondaire : ')
+    getFormDataCoordonneesDeclarant (): string[] {
+      const result: string[] = []
+      this.addLineIfNeeded(result, 'vos_coordonnees_tiers_nom_organisme')
+      result.push(this.formStore.data.vos_coordonnees_tiers_prenom + ' ' + this.formStore.data.vos_coordonnees_tiers_nom)
+      this.addLineIfNeeded(result, 'vos_coordonnees_tiers_lien', 'Lien avec l\'occupant : ')
+      this.addLineIfNeeded(result, 'vos_coordonnees_tiers_email', 'Adresse email : ')
+      this.addLineIfNeeded(result, 'vos_coordonnees_tiers_tel', 'Numéro de téléphone : ')
+      this.addLineIfNeeded(result, 'vos_coordonnees_tiers_tel_secondaire', 'Numéro de téléphone secondaire : ')
       return result
     },
-    getFormDataCoordonneesBailleur (): string {
-      let result = ''
+    getFormDataCoordonneesBailleur (): string[] {
+      const result: string[] = []
+      let nomPrenom = ''
       if (this.isFormDataSet('coordonnees_bailleur_prenom')) {
-        result += this.formStore.data.coordonnees_bailleur_prenom + ' '
+        nomPrenom += this.formStore.data.coordonnees_bailleur_prenom + ' '
       }
-      result += this.addLineIfNeeded('coordonnees_bailleur_nom')
-      result += this.addLineIfNeeded('coordonnees_bailleur_email', 'Adresse email : ')
-      result += this.addLineIfNeeded('coordonnees_bailleur_tel', 'Numéro de téléphone : ')
-      result += this.addLineIfNeeded('coordonnees_bailleur_tel_secondaire', 'Numéro de téléphone secondaire : ')
-      result += this.addLineIfNeeded('coordonnees_bailleur_adresse', 'Adresse: ')
+      if (this.isFormDataSet('coordonnees_bailleur_nom')) {
+        nomPrenom += dictionaryManager.translate(this.formStore.data.coordonnees_bailleur_nom, 'default')
+      }
+      if (nomPrenom !== '') {
+        result.push(nomPrenom)
+      }
+      this.addLineIfNeeded(result, 'coordonnees_bailleur_email', 'Adresse email : ')
+      this.addLineIfNeeded(result, 'coordonnees_bailleur_tel', 'Numéro de téléphone : ')
+      this.addLineIfNeeded(result, 'coordonnees_bailleur_tel_secondaire', 'Numéro de téléphone secondaire : ')
+      this.addLineIfNeeded(result, 'coordonnees_bailleur_adresse', 'Adresse: ')
       return result
     },
-    getFormDataTypeComposition (): string {
-      let result = ''
-      result += this.addLineIfNeeded('type_logement_nature', 'Nature du logement  : ')
+    getFormDataTypeComposition (): string[] {
+      const result: string[] = []
+      this.addLineIfNeeded(result, 'type_logement_nature', 'Nature du logement  : ')
       if (this.formStore.data.type_logement_nature === 'appartement') {
-        result += this.addLineIfNeeded('type_logement_rdc', 'Au RDC ? ')
+        this.addLineIfNeeded(result, 'type_logement_rdc', 'Au RDC ? ')
         if (this.formStore.data.type_logement_rdc === 'non') {
-          result += this.addLineIfNeeded('type_logement_dernier_etage', 'Au dernier étage ? ')
+          this.addLineIfNeeded(result, 'type_logement_dernier_etage', 'Au dernier étage ? ')
           if (this.formStore.data.type_logement_dernier_etage === 'oui') {
-            result += this.addLineIfNeeded('type_logement_sous_comble_sans_fenetre', 'Sous les combles et sans fenêtre ? ')
+            this.addLineIfNeeded(result, 'type_logement_sous_comble_sans_fenetre', 'Sous les combles et sans fenêtre ? ')
           }
           if (this.formStore.data.type_logement_dernier_etage === 'non') {
-            result += this.addLineIfNeeded('type_logement_sous_sol_sans_fenetre', 'En sous-sol et sans fenêtre ? ')
+            this.addLineIfNeeded(result, 'type_logement_sous_sol_sans_fenetre', 'En sous-sol et sans fenêtre ? ')
           }
         }
       } else if (this.formStore.data.type_logement_nature === 'autre') {
-        result += this.addLineIfNeeded('type_logement_nature_autre_precision', 'De type : ')
+        this.addLineIfNeeded(result, 'type_logement_nature_autre_precision', 'De type : ')
       }
-      result += this.addLineIfNeeded('composition_logement_superficie', 'Superficie en m² : ')
-      result += this.addLineIfNeeded('composition_logement_piece_unique', 'Une seule ou plusieurs pièces ? ')
+      this.addLineIfNeeded(result, 'composition_logement_superficie', 'Superficie en m² : ')
+      this.addLineIfNeeded(result, 'composition_logement_piece_unique', 'Une seule ou plusieurs pièces ? ')
       if (this.formStore.data.composition_logement_piece_unique === 'plusieurs_pieces') {
-        result += this.addLineIfNeeded('composition_logement_nb_pieces', 'Nombre de pièces à vivre : ')
+        this.addLineIfNeeded(result, 'composition_logement_nb_pieces', 'Nombre de pièces à vivre : ')
       }
-      result += this.addLineIfNeeded('type_logement_commodites_piece_a_vivre_9m', 'Est-ce qu\'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ? ')
-      result += this.addLineIfNeeded('type_logement_commodites_cuisine', 'Cuisine ou coin cuisine ? ')
+      this.addLineIfNeeded(result, 'type_logement_commodites_piece_a_vivre_9m', 'Est-ce qu\'au moins une des pièces à vivre (salon, chambre) fait 9m² ou plus ? ')
+      this.addLineIfNeeded(result, 'type_logement_commodites_cuisine', 'Cuisine ou coin cuisine ? ')
       if (this.formStore.data.type_logement_commodites_cuisine === 'non') {
-        result += this.addLineIfNeeded('type_logement_commodites_cuisine_collective', 'Accès à une cuisine collective ? ')
+        this.addLineIfNeeded(result, 'type_logement_commodites_cuisine_collective', 'Accès à une cuisine collective ? ')
       }
-      result += this.addLineIfNeeded('type_logement_commodites_salle_de_bain', 'Salle de bain, salle d\'eau avec douche ou baignoire ? ')
+      this.addLineIfNeeded(result, 'type_logement_commodites_salle_de_bain', 'Salle de bain, salle d\'eau avec douche ou baignoire ? ')
       if (this.formStore.data.type_logement_commodites_salle_de_bain === 'non') {
-        result += this.addLineIfNeeded('type_logement_commodites_salle_de_bain_collective', 'Accès à une salle de bain ou des douches collectives ? ')
+        this.addLineIfNeeded(result, 'type_logement_commodites_salle_de_bain_collective', 'Accès à une salle de bain ou des douches collectives ? ')
       }
-      result += this.addLineIfNeeded('type_logement_commodites_wc', 'Toilettes (WC) ? ')
+      this.addLineIfNeeded(result, 'type_logement_commodites_wc', 'Toilettes (WC) ? ')
       if (this.formStore.data.type_logement_commodites_wc === 'non') {
-        result += this.addLineIfNeeded('type_logement_commodites_wc_collective', 'Accès à des toilettes (WC) collectives ? ')
+        this.addLineIfNeeded(result, 'type_logement_commodites_wc_collective', 'Accès à des toilettes (WC) collectives ? ')
       }
       if (this.formStore.data.type_logement_commodites_cuisine === 'oui' && this.formStore.data.type_logement_commodites_wc === 'oui') {
-        result += this.addLineIfNeeded('type_logement_commodites_wc_cuisine', 'Toilettes (WC) et cuisine dans la même pièce ? ')
+        this.addLineIfNeeded(result, 'type_logement_commodites_wc_cuisine', 'Toilettes (WC) et cuisine dans la même pièce ? ')
       }
-      result += this.addLineIfNeeded('composition_logement_nombre_personnes', 'Nombre de personnes : ')
-      result += this.addLineIfNeeded('composition_logement_nombre_enfants', 'Nombre d\'enfants :  ')
-      result += this.addLineIfNeeded('composition_logement_enfants', 'Enfants de moins de 6 ans ? ')
-      result += this.addLineIfNeeded('bail_dpe_bail', 'Bail établi ? ')
-      result += this.addLineIfNeeded('bail_dpe_invariant', 'Invariant fiscal : ')
-      result += this.addLineIfNeeded('bail_dpe_etat_des_lieux', 'Etat des lieux réalisé ? ')
-      result += this.addLineIfNeeded('bail_dpe_dpe', 'DPE réalisé ? ')
-      result += this.addLineIfNeeded('bail_dpe_classe_energetique', 'Classe énergétique du logement : ')
-      result += this.addLineIfNeeded('desordres_logement_chauffage_details_dpe_annee', 'Date du DPE : ')
+      this.addLineIfNeeded(result, 'composition_logement_nombre_personnes', 'Nombre de personnes : ')
+      this.addLineIfNeeded(result, 'composition_logement_nombre_enfants', 'Nombre d\'enfants :  ')
+      this.addLineIfNeeded(result, 'composition_logement_enfants', 'Enfants de moins de 6 ans ? ')
+      this.addLineIfNeeded(result, 'bail_dpe_bail', 'Bail établi ? ')
+      this.addLineIfNeeded(result, 'bail_dpe_invariant', 'Invariant fiscal : ')
+      this.addLineIfNeeded(result, 'bail_dpe_etat_des_lieux', 'Etat des lieux réalisé ? ')
+      this.addLineIfNeeded(result, 'bail_dpe_dpe', 'DPE réalisé ? ')
+      this.addLineIfNeeded(result, 'bail_dpe_classe_energetique', 'Classe énergétique du logement : ')
+      this.addLineIfNeeded(result, 'desordres_logement_chauffage_details_dpe_annee', 'Date du DPE : ')
       return result
     },
-    getFormDataSituationOccupant (): string {
-      let result = ''
-      result += this.addLineIfNeeded('logement_social_demande_relogement', 'Demande de relogement ? ')
-      result += this.addLineIfNeeded('logement_social_allocation', 'Aide ou allocation logement ? ')
+    getFormDataSituationOccupant (): string[] {
+      const result: string[] = []
+      this.addLineIfNeeded(result, 'logement_social_demande_relogement', 'Demande de relogement ? ')
+      this.addLineIfNeeded(result, 'logement_social_allocation', 'Aide ou allocation logement ? ')
       if (this.formStore.data.logement_social_allocation === 'oui') {
-        result += this.addLineIfNeeded('logement_social_allocation_caisse', 'Caisse : ')
-        result += this.addLineIfNeeded('logement_social_date_naissance', 'Date de naissance : ')
-        result += this.addLineIfNeeded('logement_social_numero_allocataire', 'Numéro allocataire : ')
-        result += this.addLineIfNeeded('logement_social_montant_allocation', 'Montant allocation : ', ' €')
+        this.addLineIfNeeded(result, 'logement_social_allocation_caisse', 'Caisse : ')
+        this.addLineIfNeeded(result, 'logement_social_date_naissance', 'Date de naissance : ')
+        this.addLineIfNeeded(result, 'logement_social_numero_allocataire', 'Numéro allocataire : ')
+        this.addLineIfNeeded(result, 'logement_social_montant_allocation', 'Montant allocation : ', ' €')
       }
-      result += this.addLineIfNeeded('travailleur_social_quitte_logement', 'Souhaite quitter le logement ? ')
+      this.addLineIfNeeded(result, 'travailleur_social_quitte_logement', 'Souhaite quitter le logement ? ')
       if (this.formStore.data.travailleur_social_quitte_logement === 'oui') {
-        result += this.addLineIfNeeded('travailleur_social_preavis_depart', 'Préavis de départ ? ')
+        this.addLineIfNeeded(result, 'travailleur_social_preavis_depart', 'Préavis de départ ? ')
       }
-      result += this.addLineIfNeeded('travailleur_social_accompagnement', 'Accompagnement par un ou une travailleuse sociale ? ')
+      this.addLineIfNeeded(result, 'travailleur_social_accompagnement', 'Accompagnement par un ou une travailleuse sociale ? ')
       if (this.formStore.data.travailleur_social_accompagnement === 'oui') {
-        result += this.addLineIfNeeded('travailleur_social_accompagnement_nom_structure', 'Nom de la structure : ')
-        result += this.addLineIfNeeded('travailleur_social_accompagnement_inviter_referent_comme_tiers', 'Inviter un référent à suivre le dossier : ')
+        this.addLineIfNeeded(result, 'travailleur_social_accompagnement_nom_structure', 'Nom de la structure : ')
+        this.addLineIfNeeded(result, 'travailleur_social_accompagnement_inviter_referent_comme_tiers', 'Inviter un référent à suivre le dossier : ')
         if (this.formStore.data.travailleur_social_accompagnement_inviter_referent_comme_tiers === 'oui') {
-          result += this.addLineIfNeeded('travailleur_social_accompagnement_inviter_referent_comme_tiers_nom', 'Nom du référent : ')
-          result += this.addLineIfNeeded('travailleur_social_accompagnement_inviter_referent_comme_tiers_prenom', 'Prénom du référent : ')
-          result += this.addLineIfNeeded('travailleur_social_accompagnement_inviter_referent_comme_tiers_email', 'E-mail du référent : ')
+          this.addLineIfNeeded(result, 'travailleur_social_accompagnement_inviter_referent_comme_tiers_nom', 'Nom du référent : ')
+          this.addLineIfNeeded(result, 'travailleur_social_accompagnement_inviter_referent_comme_tiers_prenom', 'Prénom du référent : ')
+          this.addLineIfNeeded(result, 'travailleur_social_accompagnement_inviter_referent_comme_tiers_email', 'E-mail du référent : ')
         } else {
-          result += this.addLineIfNeeded('travailleur_social_accompagnement_nom_referent', 'Nom du référent : ')
-          result += this.addLineIfNeeded('travailleur_social_accompagnement_prenom_referent', 'Prénom du référent : ')
+          this.addLineIfNeeded(result, 'travailleur_social_accompagnement_nom_referent', 'Nom du référent : ')
+          this.addLineIfNeeded(result, 'travailleur_social_accompagnement_prenom_referent', 'Prénom du référent : ')
         }
       }
       return result
     },
-    getFormDataInfosDesordres (): string {
-      let result = ''
-      result += this.addLineIfNeeded('zone_concernee_debut_desordres', 'Les désordres ont commencé il y a : ')
+    getFormDataInfosDesordres (): string[] {
+      const result: string[] = []
+      this.addLineIfNeeded(result, 'zone_concernee_debut_desordres', 'Les désordres ont commencé il y a : ')
       if (this.formStore.data.profil !== 'bailleur_occupant' && this.formStore.data.profil !== 'locataire') {
-        result += this.addLineIfNeeded('zone_concernee_constatation_desordres', 'Désordres constatés ? ')
+        this.addLineIfNeeded(result, 'zone_concernee_constatation_desordres', 'Désordres constatés ? ')
       }
       return result
     },
-    getFormDataProcedure (): string {
-      let result = ''
-      result += this.addLineIfNeeded('info_procedure_bailleur_prevenu', 'Bailleur (propriétaire) prévenu ? ')
+    getFormDataProcedure (): string[] {
+      const result: string[] = []
+      this.addLineIfNeeded(result, 'info_procedure_bailleur_prevenu', 'Bailleur (propriétaire) prévenu ? ')
       if (this.formStore.data.info_procedure_bailleur_prevenu === 'oui') {
-        result += this.addLineIfNeeded('info_procedure_bail_moyen', 'Moyen d\'information du bailleur : ')
-        result += this.addLineIfNeeded('info_procedure_bail_date', 'Date d\'information du bailleur : ')
-        result += this.addLineIfNeeded('info_procedure_bail_reponse', 'Réponse du bailleur : ')
-        result += this.addLineIfNeeded('info_procedure_bail_numero', 'Numéro de réclamation fourni par le bailleur : ')
+        this.addLineIfNeeded(result, 'info_procedure_bail_moyen', 'Moyen d\'information du bailleur : ')
+        this.addLineIfNeeded(result, 'info_procedure_bail_date', 'Date d\'information du bailleur : ')
+        this.addLineIfNeeded(result, 'info_procedure_bail_reponse', 'Réponse du bailleur : ')
+        this.addLineIfNeeded(result, 'info_procedure_bail_numero', 'Numéro de réclamation fourni par le bailleur : ')
       }
-      result += this.addLineIfNeeded('info_procedure_assurance_contactee', 'Assurance contactée ? ')
+      this.addLineIfNeeded(result, 'info_procedure_assurance_contactee', 'Assurance contactée ? ')
       if (this.formStore.data.info_procedure_assurance_contactee === 'oui') {
-        result += this.addLineIfNeeded('info_procedure_reponse_assurance', 'Réponse de l\'assurance : ')
+        this.addLineIfNeeded(result, 'info_procedure_reponse_assurance', 'Réponse de l\'assurance : ')
       }
-      result += this.addLineIfNeeded('info_procedure_depart_apres_travaux', 'Si des travaux sont faits, voulez-vous rester dans le logement ? ')
+      this.addLineIfNeeded(result, 'info_procedure_depart_apres_travaux', 'Si des travaux sont faits, voulez-vous rester dans le logement ? ')
       return result
     },
-    getFormDataInformationsComplementaires (): string {
-      let result = ''
-      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_beneficiaire_rsa', 'Bénéficiaire RSA : ')
-      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_beneficiaire_fsl', 'Bénéficiaire FSL : ')
-      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_revenu_fiscal', 'Revenu fiscal de référence : ', ' €')
-      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_date_naissance', 'Date de naissance : ')
-      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_loyers_payes', 'Paiement des loyers à jour : ')
-      result += this.addLineIfNeeded('informations_complementaires_logement_montant_loyer', 'Montant du loyer sans les charges : ', ' €')
-      result += this.addLineIfNeeded('informations_complementaires_logement_nombre_etages', 'Nombre d\'étages du logement : ')
-      result += this.addLineIfNeeded('informations_complementaires_logement_annee_construction', 'Année de construction du logement : ')
-      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_demande_relogement', 'Demande de relogement ou de logement social : ')
-      result += this.addLineIfNeeded('informations_complementaires_situation_occupants_date_emmenagement', 'Date d\'emménagement : ')
-      result += this.addLineIfNeeded('informations_complementaires_situation_bailleur_date_effet_bail', 'Date d\'effet du bail : ')
-      result += this.addLineIfNeeded('informations_complementaires_situation_bailleur_beneficiaire_rsa', 'Bénéficiaire RSA : ')
-      result += this.addLineIfNeeded('informations_complementaires_situation_bailleur_beneficiaire_fsl', 'Bénéficiaire FSL : ')
-      result += this.addLineIfNeeded('informations_complementaires_situation_bailleur_revenu_fiscal', 'Revenu fiscal de référence : ', ' €')
-      result += this.addLineIfNeeded('informations_complementaires_situation_bailleur_date_naissance', 'Date de naissance : ')
+    getFormDataInformationsComplementaires (): string[] {
+      const result: string[] = []
+      this.addLineIfNeeded(result, 'informations_complementaires_situation_occupants_beneficiaire_rsa', 'Bénéficiaire RSA : ')
+      this.addLineIfNeeded(result, 'informations_complementaires_situation_occupants_beneficiaire_fsl', 'Bénéficiaire FSL : ')
+      this.addLineIfNeeded(result, 'informations_complementaires_situation_occupants_revenu_fiscal', 'Revenu fiscal de référence : ', ' €')
+      this.addLineIfNeeded(result, 'informations_complementaires_situation_occupants_date_naissance', 'Date de naissance : ')
+      this.addLineIfNeeded(result, 'informations_complementaires_situation_occupants_loyers_payes', 'Paiement des loyers à jour : ')
+      this.addLineIfNeeded(result, 'informations_complementaires_logement_montant_loyer', 'Montant du loyer sans les charges : ', ' €')
+      this.addLineIfNeeded(result, 'informations_complementaires_logement_nombre_etages', 'Nombre d\'étages du logement : ')
+      this.addLineIfNeeded(result, 'informations_complementaires_logement_annee_construction', 'Année de construction du logement : ')
+      this.addLineIfNeeded(result, 'informations_complementaires_situation_occupants_demande_relogement', 'Demande de relogement ou de logement social : ')
+      this.addLineIfNeeded(result, 'informations_complementaires_situation_occupants_date_emmenagement', 'Date d\'emménagement : ')
+      this.addLineIfNeeded(result, 'informations_complementaires_situation_bailleur_date_effet_bail', 'Date d\'effet du bail : ')
+      this.addLineIfNeeded(result, 'informations_complementaires_situation_bailleur_beneficiaire_rsa', 'Bénéficiaire RSA : ')
+      this.addLineIfNeeded(result, 'informations_complementaires_situation_bailleur_beneficiaire_fsl', 'Bénéficiaire FSL : ')
+      this.addLineIfNeeded(result, 'informations_complementaires_situation_bailleur_revenu_fiscal', 'Revenu fiscal de référence : ', ' €')
+      this.addLineIfNeeded(result, 'informations_complementaires_situation_bailleur_date_naissance', 'Date de naissance : ')
       return result
     },
     hasInformationsComplementaires (): boolean {
@@ -488,19 +534,18 @@ export default defineComponent({
     isFormDataSet (formSlug: string) {
       return (this.formStore.data[formSlug] !== '' && this.formStore.data[formSlug] !== undefined && this.formStore.data[formSlug] !== null)
     },
-    addLineIfNeeded (formSlug: string, questionTitle?: string, suffixe?: string): string {
-      let result = ''
+    addLineIfNeeded (result: string[], formSlug: string, questionTitle?: string, suffixe?: string): void {
       if (this.isFormDataSet(formSlug)) {
+        let line = ''
         if (questionTitle !== null && questionTitle !== undefined) {
-          result += questionTitle
+          line += questionTitle
         }
-        result += dictionaryManager.translate(this.formStore.data[formSlug], 'default')
+        line += dictionaryManager.translate(this.formStore.data[formSlug], 'default')
         if (suffixe !== null && suffixe !== undefined) {
-          result += suffixe
+          line += suffixe
         }
-        result += '<br>'
+        result.push(line)
       }
-      return result
     },
     handleEdit (screenSlug: string) {
       if (this.clickEvent !== undefined) {
