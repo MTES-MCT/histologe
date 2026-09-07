@@ -47,7 +47,7 @@ export interface Params {
 export interface Filters {
   territoire?: string
   adresse?: string
-  communes: string[]
+  communeOuEpci?: string
   bailleurOuSyndic: string[]
   zone?: string
   natureParc?: string

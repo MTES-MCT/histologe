@@ -41,18 +41,12 @@ const filteredAddresses = computed(() => {
     })
   }
 
-  // Filtre par communes si sélectionnées
-  const communes = sharedState.input.filters.communes
-  if (communes && communes.length > 0) {
-    // Normalise en tableau si c'est une string
-    const communesArray = Array.isArray(communes) ? communes : [communes]
-
+  // Filtre par commune si sélectionnée
+  const communeOuEpci = sharedState.input.filters.communeOuEpci
+  if (communeOuEpci) {
     addresses = addresses.filter((address: any) => {
-      // Les communes peuvent être soit un nom de ville, soit un code postal
-      return communesArray.some((commune: string) => {
-        return address.ville?.toLowerCase().includes(commune.toLowerCase()) ||
-               address.cp?.includes(commune)
-      })
+      return address.ville?.toLowerCase().includes(communeOuEpci.toLowerCase()) ||
+             address.cp?.includes(communeOuEpci)
     })
   }
 

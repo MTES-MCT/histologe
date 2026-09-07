@@ -35,16 +35,16 @@
         </AppAutoComplete>
       </div>
 
-      <!-- Communes -->
+      <!-- Commune -->
       <div class="fr-col-12 fr-col-md-3 fr-mb-1v fr-mb-md-2w">
         <AppAutoComplete
-          id="filter-communes"
-          v-model="sharedState.input.filters.communes"
+          id="filter-commune"
+          v-model="sharedState.input.filters.communeOuEpci"
           :suggestions="sharedState.communes"
-          :initSelectedSuggestions="sharedState.input.filters.communes"
+          :initSelectedSuggestions="sharedState.input.filters.communeOuEpci"
           :placeholder="'Commune ou EPCI'"
           title="Commune ou EPCI"
-          :multiple="true"
+          :multiple="false"
           @update:modelValue="notifyChange"
           :reset="resetKey"
           :iconClass="'fr-icon-map-pin-2-line'"
@@ -205,7 +205,7 @@ const notifyChange = (): void => {
  * - Notifie le changement
  */
 const onTerritoryChange = async (value: string): Promise<void> => {
-  sharedState.input.filters.communes = []
+  sharedState.input.filters.communeOuEpci = undefined
   sharedState.input.filters.zone = undefined
   sharedState.input.filters.territoire = value
 

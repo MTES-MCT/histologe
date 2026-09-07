@@ -12,14 +12,13 @@ class AddressesHistorySearchQuery
     public const int MAX_LIST_PAGINATION = 25;
 
     /**
-     * @param array<mixed> $communes
      * @param array<mixed> $bailleurOuSyndic
      * @param array<mixed> $arreteTypes
      */
     public function __construct(
         private readonly ?string $territoire = null,
         private readonly ?string $adresse = null,
-        private readonly ?array $communes = null,
+        private readonly ?string $communeOuEpci = null,
         private readonly ?array $bailleurOuSyndic = null,
         private readonly ?string $zone = null,
         #[Assert\Choice(choices: ['privee', 'public', 'non_renseigne'], message: 'Nature du parc invalide')]
@@ -47,10 +46,9 @@ class AddressesHistorySearchQuery
         return $this->adresse;
     }
 
-    /** @return array<mixed> */
-    public function getCommunes(): ?array
+    public function getCommuneOuEpci(): ?string
     {
-        return $this->communes;
+        return $this->communeOuEpci;
     }
 
     /** @return array<mixed> */
@@ -105,7 +103,7 @@ class AddressesHistorySearchQuery
         $filters = [];
         $filters['territories'] = null !== $this->getTerritoire() ? [$this->getTerritoire()] : null;
         $filters['adresse'] = $this->getAdresse() ?? null;
-        $filters['cities'] = $this->getCommunes() ?? null;
+        $filters['cityOrEpci'] = $this->getCommuneOuEpci() ?? null;
         $filters['bailleurOrSyndic'] = $this->getBailleurOuSyndic() ?? null;
         $filters['zone'] = $this->getZone() ?? null;
         $filters['housetypes'] = match ($this->getNatureParc()) {
@@ -149,7 +147,7 @@ class AddressesHistorySearchQuery
         return new self(
             territoire: $params['territoire'] ?? null,
             adresse: $params['adresse'] ?? null,
-            communes: isset($params['communes']) && is_array($params['communes']) ? $params['communes'] : null,
+            communeOuEpci: $params['communeOuEpci'] ?? null,
             bailleurOuSyndic: isset($params['bailleurOuSyndic']) && is_array($params['bailleurOuSyndic']) ? $params['bailleurOuSyndic'] : null,
             zone: $params['zone'] ?? null,
             natureParc: $params['natureParc'] ?? null,

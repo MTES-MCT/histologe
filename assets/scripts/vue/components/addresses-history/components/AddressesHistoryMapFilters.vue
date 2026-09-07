@@ -59,20 +59,38 @@
         </HistoSelect>
       </div>
 
+      <!-- Adresse -->
+      <div class="fr-mb-2w">
+        <AppAutoComplete
+          id="filter-adresse"
+          v-model="sharedState.input.filters.adresse"
+          :suggestions="sharedState.addressesSuggestions"
+          :initSelectedSuggestions="sharedState.input.filters.adresse"
+          :placeholder="'Taper l\'adresse du logement'"
+          title="Adresse"
+          :iconClass="'fr-icon-map-pin-2-fill'"
+          :minLengthSearch="3"
+          :multiple="false"
+          :reset="resetKey"
+        >
+          <template #label>Adresse</template>
+        </AppAutoComplete>
+      </div>
+
       <!-- Communes -->
       <div class="fr-mb-2w">
         <AppAutoComplete
-          id="filter-communes"
-          v-model="sharedState.input.filters.communes"
+          id="filter-commune-or-epci"
+          v-model="sharedState.input.filters.communeOuEpci"
           :suggestions="sharedState.communes"
-          :initSelectedSuggestions="sharedState.input.filters.communes"
-          :placeholder="'Commune ou code postal'"
-          title="Commune ou code postal"
-          :iconClass="'fr-icon-map-pin-2-line'"
-          :multiple="true"
+          :initSelectedSuggestions="sharedState.input.filters.communeOuEpci"
+          :placeholder="'Commune ou EPCI'"
+          title="Commune ou EPCI"
+          :iconClass="'fr-icon-map-pin-2-fill'"
+          :multiple="false"
           :reset="resetKey"
         >
-          <template #label>Commune</template>
+          <template #label>Commune ou EPCI</template>
         </AppAutoComplete>
       </div>
 
@@ -126,7 +144,7 @@ const activeFilters = computed<ActiveFilter[]>(() => {
  * - Recharge les adresses
  */
 const onTerritoryChange = async (value: string): Promise<void> => {
-  sharedState.input.filters.communes = []
+  sharedState.input.filters.communeOuEpci = undefined
   sharedState.input.filters.zone = undefined
   sharedState.input.filters.territoire = value
 

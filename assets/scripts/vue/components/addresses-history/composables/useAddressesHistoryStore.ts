@@ -33,7 +33,7 @@ const state = ref<StoreState>({
     filters: {
       territoire: undefined,
       adresse: undefined,
-      communes: [],
+      communeOuEpci: undefined,
       bailleurOuSyndic: [],
       zone: undefined,
       natureParc: undefined,
@@ -93,7 +93,7 @@ const hasActiveFilters = computed(() => {
   return !!(
     filters.territoire ||
     filters.adresse ||
-    filters.communes.length > 0 ||
+    filters.communeOuEpci ||
     filters.bailleurOuSyndic ||
     filters.zone ||
     filters.natureParc ||
@@ -143,7 +143,7 @@ function resetFilters(): void {
   state.value.input.filters = {
     territoire: undefined,
     adresse: undefined,
-    communes: [],
+    communeOuEpci: undefined,
     bailleurOuSyndic: [],
     zone: undefined,
     natureParc: undefined,
