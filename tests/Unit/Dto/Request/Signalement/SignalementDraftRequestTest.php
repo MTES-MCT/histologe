@@ -217,6 +217,7 @@ class SignalementDraftRequestTest extends WebTestCase
             ->setAdresseLogementAdresseDetailCommune('Arles')
             ->setAdresseLogementAdresseDetailInsee('13004')
             ->setAdresseLogementAdresseDetailManual(true)
+            ->setAdresseLogementAdresseDetailRnbId('BDG-EXEMPLE-001')
             ->setAdresseLogementComplementAdresseEscalier('A')
             ->setAdresseLogementComplementAdresseEtage('SOUSSOL')
             ->setAdresseLogementComplementAdresseNumeroAppartement('42')
