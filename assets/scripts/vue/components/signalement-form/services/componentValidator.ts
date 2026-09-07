@@ -122,7 +122,11 @@ export const componentValidator = {
       }
 
       // sélection obligatoire du bâtiment si maison ou appartement
-      if (formStore.data.type_logement_nature !== 'autre' && !formStore.data[componentSlug + '_detail_rnb_id']) {
+      if (
+        formStore.data.type_logement_nature !== 'autre' &&
+        !formStore.data[componentSlug + '_detail_rnb_id'] &&
+        !formStore.data[componentSlug + '_detail_no_building_found']
+      ) {
         formStore.validationErrors[componentSlug + '_detail_rnb_id'] = 'Veuillez sélectionner le bâtiment correspondant au logement.'
       }
     }

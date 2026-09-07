@@ -528,6 +528,10 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     /**
      * L'usager a indiqué ne pas trouver son bâtiment dans le sélecteur RNB.
+     *
+     * TODO : ajouter un indicateur visible en back-office (ex. sur la fiche signalement,
+     * à côté du bouton "Sélectionner le bâtiment sur la carte") pour qu'un agent sache
+     * qu'il doit résoudre le bâtiment manuellement, sans avoir à vérifier chaque dossier.
      */
     #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $noBuildingFoundOccupant = null;

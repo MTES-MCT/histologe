@@ -56,6 +56,10 @@
       @update:modelValue="handleSubscreenModelUpdate"
     />
 
+    <p v-if="formStore.addressCorrectionMessage" class="fr-text--sm" role="status">
+      {{ formStore.addressCorrectionMessage }}
+    </p>
+
     <div v-if="displayPickLocationButton" class="pick-location-button-container">
       <button
         class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-map-pin-2-line"
@@ -67,6 +71,10 @@
       <span v-if="formStore.data[id + '_detail_rnb_id']" class="pick-location-success fr-ml-2v">
         <span class="fr-icon-check-line" aria-hidden="true"></span>
         Bâtiment sélectionné
+      </span>
+      <span v-else-if="formStore.data[id + '_detail_no_building_found']" class="pick-location-success fr-ml-2v">
+        <span class="fr-icon-check-line" aria-hidden="true"></span>
+        Bâtiment non trouvé, signalé
       </span>
       <div aria-live="polite" aria-atomic="true" class="fr-sr-only">{{ pickLocationRequiredAnnouncement }}</div>
     </div>
@@ -101,15 +109,28 @@
         :values="buildingChoices"
         v-model="selectedRnbIdModel"
       />
+      <p v-if="viewMode === 'list' && buildingsList.length > maxListItems" class="fr-hint-text">
+        Les {{ maxListItems }} bâtiments les plus proches sont affichés. Si le vôtre n'y figure pas, cochez "Je ne trouve pas mon bâtiment" ci-dessous.
+      </p>
+
+      <div class="fr-checkbox-group fr-checkbox-group--sm fr-mb-2v">
+        <input
+          type="checkbox"
+          :id="id + '_no_building_found'"
+          v-model="noBuildingFound"
+        >
+        <label class="fr-label" :for="id + '_no_building_found'">
+          Je ne trouve pas mon bâtiment
+        </label>
+      </div>
 
       <div class="pick-location-footer fr-mt-3v">
-        <!-- todo : ajouter un bouton "je ne trouve pas mon bâtiment" -->
         <button
           ref="pickLocationSubmit"
           class="fr-btn fr-icon-check-line"
           :id="id + '_pick_location_submit'"
-          :disabled="!selectedRnbId"
-          :title="selectedRnbId ? 'Valider la sélection du bâtiment' : 'Veuillez sélectionner un bâtiment sur la carte'"
+          :disabled="!selectedRnbId && !noBuildingFound"
+          :title="(selectedRnbId || noBuildingFound) ? 'Valider la sélection' : 'Veuillez sélectionner un bâtiment sur la carte'"
           @click="handleSubmitPickLocation"
           type="button">
           Valider la sélection
@@ -148,6 +169,7 @@ import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
 import L from 'leaflet'
 import 'leaflet.vectorgrid'
 import { buildingStyles, createRnbMapController } from '../../../../vanilla/services/component/rnb-map-controller.js'
+import { buildAddressCorrectionMessage } from '../services/addressCorrection'
 
 // Import des fichiers CSS nécessaires pour Leaflet
 import 'leaflet/dist/leaflet.css'
@@ -211,6 +233,9 @@ export default defineComponent({
       mapKey: 0,
       buildingsList: [] as any[],
       viewMode: 'map' as 'map' | 'list',
+      noBuildingFound: false,
+      geocodedCityData: null as { city: string; postcode: string; citycode: string } | null,
+      maxListItems: 20,
     }
   },
   created () {
@@ -311,10 +336,14 @@ export default defineComponent({
       return this.pickLocationRequired ? 'La sélection du bâtiment est obligatoire.' : ''
     },
     buildingChoices (): Array<{ label: string; value: string }> {
-      return this.buildingsList.map((b: any) => ({
-        label: this.formatBuildingLabel(b),
-        value: b.rnb_id
-      }))
+      // buildingsList est déjà trié par proximité (cf. rnb-map-controller.js) : on ne garde
+      // que les plus proches, une liste de 100 items rend la page inutilisable.
+      return this.buildingsList
+        .slice(0, this.maxListItems)
+        .map((b: any) => ({
+          label: this.formatBuildingLabel(b),
+          value: b.rnb_id
+        }))
     },
     selectedRnbIdModel: {
       get (): string | null {
@@ -324,6 +353,9 @@ export default defineComponent({
         this.selectedRnbId = value
         this.previousRnbId = value ?? undefined
         this.selectedBuilding = this.buildingsList.find((b: any) => b.rnb_id === value) ?? null
+        if (value) {
+          this.noBuildingFound = false
+        }
       }
     }
 
@@ -472,12 +504,18 @@ export default defineComponent({
         .then((response) => response.json())
         .then((json) => {
           if (json.features && json.features.length > 0) {
+            // Conservé comme repli pour un bâtiment RNB sans adresse connue (cf.
+            // handleSubmitPickLocation) : ce géocodage identifie déjà commune/CP/insee.
+            const props = json.features[0].properties
+            this.geocodedCityData = { city: props.city, postcode: props.postcode, citycode: props.citycode }
             this.setupMap([json.features[0].geometry.coordinates[1], json.features[0].geometry.coordinates[0]], 18)
           } else {
+            this.geocodedCityData = null
             this.setupMap(geolocParis, 13)
           }
         })
         .catch(() => {
+          this.geocodedCityData = null
           this.setupMap(geolocParis, 13)
         })
     },
@@ -541,6 +579,7 @@ export default defineComponent({
               this.selectedRnbId = rnbId
               this.previousRnbId = rnbId
               this.selectedBuilding = building
+              this.noBuildingFound = false
             },
             onAnnounce: (text: string) => {
               if (announcement) announcement.textContent = text
@@ -560,21 +599,46 @@ export default defineComponent({
       if (this.selectedRnbId) {
         // Stocker le RNB ID dans formStore
         this.formStore.data[this.id + '_detail_rnb_id'] = this.selectedRnbId
+        delete this.formStore.data[this.id + '_detail_no_building_found']
 
-        // Le bâtiment RNB porte une adresse officielle : on l'utilise pour fiabiliser
-        // commune/code postal/insee plutôt que d'exiger que la saisie manuelle
-        // corresponde exactement à un résultat de géocodage.
+        const oldCommune = this.formStore.data[this.id + '_detail_commune']
+        const oldCodePostal = this.formStore.data[this.id + '_detail_code_postal']
+
         const address = this.selectedBuilding?.addresses?.[0]
         if (address) {
+          // Le bâtiment RNB porte une adresse officielle : on l'utilise pour fiabiliser
+          // commune/code postal/insee et on recompose l'adresse affichée (le numéro
+          // tapé par l'usager est conservé).
           this.formStore.data[this.id + '_detail_commune'] = address.city_name
           this.formStore.data[this.id + '_detail_code_postal'] = address.city_zipcode
           this.formStore.data[this.id + '_detail_insee'] = address.city_insee_code
           this.formStore.data[this.id + '_detail_need_refresh_insee'] = false
           this.formStore.data[this.id] = this.formStore.data[this.id + '_detail_numero'] + ' ' + address.city_zipcode + ' ' + address.city_name
           this.formStore.data[this.id + '_suggestion'] = this.formStore.data[this.id]
+        } else if (this.geocodedCityData) {
+          // Bâtiment sans adresse connue au RNB : on ne touche ni au numéro ni à la rue
+          // tapés par l'usager, seulement commune/CP/insee, déjà fiabilisés par le
+          // géocodage qui a servi à centrer la carte.
+          this.formStore.data[this.id + '_detail_commune'] = this.geocodedCityData.city
+          this.formStore.data[this.id + '_detail_code_postal'] = this.geocodedCityData.postcode
+          this.formStore.data[this.id + '_detail_insee'] = this.geocodedCityData.citycode
+          this.formStore.data[this.id + '_detail_need_refresh_insee'] = false
         }
 
+        formStore.addressCorrectionMessage = buildAddressCorrectionMessage(
+          oldCodePostal,
+          oldCommune,
+          this.formStore.data[this.id + '_detail_code_postal'],
+          this.formStore.data[this.id + '_detail_commune']
+        )
+
         // Fermer le sélecteur
+        this.closePickLocation()
+      } else if (this.noBuildingFound) {
+        // L'usager indique ne pas trouver son bâtiment : on ne bloque pas le formulaire,
+        // mais on trace l'information pour qu'un agent puisse la résoudre plus tard.
+        delete this.formStore.data[this.id + '_detail_rnb_id']
+        this.formStore.data[this.id + '_detail_no_building_found'] = 1
         this.closePickLocation()
       }
     },

@@ -71,7 +71,7 @@ export const buildingStyles = {
  * @param {(rnbId: string, building: any) => void} options.onSelect - Appelé à chaque sélection (clic ou clavier)
  * @param {(text: string) => void} [options.onAnnounce] - Appelé pour les annonces aria-live
  * @param {() => void} [options.onFocusSubmit] - Appelé après sélection au clavier
- * @param {(buildings: any[]) => void} [options.onBuildingsUpdate] - Appelé après ...
+ * @param {(buildings: any[]) => void} [options.onBuildingsUpdate] - Appelé à chaque refreshBuildings
  * @returns {{ destroy: () => void }}
  */
 export function createRnbMapController({
