@@ -13,7 +13,7 @@
                     Voir l'historique des affectations
                 </button>
                  {% if is_granted('SIGN_AFFECTATION_TOGGLE', signalement) %}
-                    <button class="fr-btn fr-fi-add-line fr-btn--icon-left" data-fr-opened="false" aria-controls="fr-modal-affectation">
+                    <button class="fr-btn fr-fi-add-line fr-btn--icon-left" data-panel-open="panel-affectation" aria-controls="panel-affectation" aria-expanded="false">
                         Affecter des partenaires
                     </button>
                 {% endif %}

@@ -276,20 +276,6 @@ const rotatePhotoAlbumImage = (photoId, direction) => {
 
 loadWindowWithLocalStorage('click', '[data-filter-list-signalement]', 'back_link_signalement_view');
 
-const signalementAffectationFormRow = document.getElementById('signalement-affectation-form-row');
-signalementAffectationFormRow?.addEventListener('click', (e) => {
-  const t = e.target.closest('[data-fr-select-target]');
-  if (!t) return;
-  const source = document.querySelector('#' + t.getAttribute('data-fr-select-source'));
-  const target = document.querySelector('#' + t.getAttribute('data-fr-select-target'));
-  [...source.selectedOptions].forEach((s) => {
-    target.append(s);
-  });
-  document.querySelectorAll('#signalement-affectation-select-affecte option').forEach((o) => {
-    o.selected = true;
-  });
-});
-
 document.querySelectorAll('button[data-cloture-type]').forEach((button) => {
   button.addEventListener('click', (e) => {
     const element = e.target;

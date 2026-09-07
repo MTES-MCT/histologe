@@ -17,7 +17,7 @@ export function initSearchCheckboxWidgets() {
 
       searchCheckboxCompleteInputValue(element);
       const input = element.querySelector('input[type="text"]');
-      const badgesContainer = element.querySelector('.search-checkbox-badges');
+      const tagsContainer = element.querySelector('.search-checkbox-tags');
       const checkboxesContainer = element.querySelector('.search-checkbox');
       const closeBtn = element.querySelector('.fr-btn--close');
       // init values
@@ -43,8 +43,8 @@ export function initSearchCheckboxWidgets() {
         checkboxesContainer.scrollTop = 0;
         searchCheckboxOrderCheckboxes(element);
         input.value = '';
-        if (badgesContainer) {
-          badgesContainer.innerHTML = '';
+        if (tagsContainer) {
+          tagsContainer.innerHTML = '';
         }
         closeBtn.classList.remove('fr-hidden');
         // Rendre les checkboxes accessibles au clavier
@@ -200,10 +200,10 @@ function searchCheckboxCompleteInputValue(element) {
   const input = element.querySelector('input[type="text"]');
   const checkboxesContainer = element.querySelector('.search-checkbox');
   const checkedCheckboxes = checkboxesContainer.querySelectorAll('input[type="checkbox"]:checked');
-  const badgesContainer = element.querySelector('.search-checkbox-badges');
+  const tagsContainer = element.querySelector('.search-checkbox-tags');
 
-  if (badgesContainer) {
-    badgesContainer.innerHTML = '';
+  if (tagsContainer) {
+    tagsContainer.innerHTML = '';
   }
   input.value = '';
 
@@ -215,21 +215,19 @@ function searchCheckboxCompleteInputValue(element) {
 
   checkedCheckboxes.forEach((checkbox) => {
     const label = checkbox.closest('.fr-fieldset__element').querySelector('label').textContent;
-    const badge = document.createElement('span');
-    badge.className = 'fr-badge fr-badge--blue-ecume fr-m-1v search-and-select-badge-remove';
-    badge.setAttribute('aria-label', `Retirer ${label}`);
-    badge.textContent = label;
-    const closeIcon = document.createElement('span');
-    closeIcon.className = 'fr-icon-close-line fr-ml-1v';
-    closeIcon.setAttribute('aria-hidden', 'true');
-    badge.appendChild(closeIcon);
-    badge.addEventListener('click', () => {
+    const tag = document.createElement('button');
+    tag.className = 'fr-tag fr-tag--dismiss fr-mr-1v fr-mb-1v';
+    tag.setAttribute('aria-label', `Retirer ${label}`);
+    tag.setAttribute('type', 'button');
+    tag.textContent = label;
+
+    tag.addEventListener('click', () => {
       checkbox.checked = false;
       searchCheckboxCompleteInputValue(element);
     });
 
-    if (badgesContainer) {
-      badgesContainer.appendChild(badge);
+    if (tagsContainer) {
+      tagsContainer.appendChild(tag);
     }
   });
 }

@@ -21,7 +21,9 @@ class SearchCheckboxEnumType extends AbstractType
             'attr' => ['class' => 'search-checkbox'],
             'noselectionlabel' => '',
             'nochoiceslabel' => '',
-            'showSelectionAsBadges' => false,
+            'showSelectionAsTags' => false,
+            'showSelectionAsTagsLabel' => '',
+            'showSelectionAsTagsHelp' => '',
         ]);
     }
 
@@ -37,6 +39,8 @@ class SearchCheckboxEnumType extends AbstractType
     {
         $view->vars['noselectionlabel'] = $options['noselectionlabel'];
         $view->vars['nochoiceslabel'] = $options['nochoiceslabel'];
-        $view->vars['showSelectionAsBadges'] = $options['showSelectionAsBadges'];
+        $view->vars['showSelectionAsTags'] = $options['showSelectionAsTags'];
+        $view->vars['showSelectionAsTagsLabel'] = $options['showSelectionAsTagsLabel'];
+        $view->vars['showSelectionAsTagsHelp'] = $options['showSelectionAsTagsHelp'];
     }
 }

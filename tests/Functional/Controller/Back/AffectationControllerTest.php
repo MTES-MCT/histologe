@@ -301,7 +301,7 @@ class AffectationControllerTest extends WebTestCase
         ]);
 
         $crawler = $this->client->request('GET', $routeSignalementView);
-        $token = $crawler->filter('#signalement-affectation-form input[name=_token]')->attr('value');
+        $token = $crawler->filter('#signalement-affectation-form input[name="signalement-affectation[_token]"]')->attr('value');
 
         $routeAffectationResponse = $this->router->generate('back_signalement_toggle_affectation', [
             'uuid' => $signalement->getUuid(),
@@ -310,8 +310,8 @@ class AffectationControllerTest extends WebTestCase
         $this->client->request('POST', $routeAffectationResponse, [
             'signalement-affectation' => [
                 'partners' => [3, 4, 5],
+                '_token' => $token,
             ],
-            '_token' => $token,
         ]);
 
         $this->assertEmailCount(3);
@@ -338,7 +338,7 @@ class AffectationControllerTest extends WebTestCase
         ]);
 
         $crawler = $this->client->request('GET', $routeSignalementView);
-        $token = $crawler->filter('#signalement-affectation-form input[name=_token]')->attr('value');
+        $token = $crawler->filter('#signalement-affectation-form input[name="signalement-affectation[_token]"]')->attr('value');
 
         $routeAffectationResponse = $this->router->generate('back_signalement_toggle_affectation', [
             'uuid' => $signalement->getUuid(),
@@ -347,8 +347,8 @@ class AffectationControllerTest extends WebTestCase
         $this->client->request('POST', $routeAffectationResponse, [
             'signalement-affectation' => [
                 'partners' => [3, 10], // 10 is not notified
+                '_token' => $token,
             ],
-            '_token' => $token,
         ]);
         $this->assertEmailCount(1);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
@@ -411,7 +411,7 @@ class AffectationControllerTest extends WebTestCase
             'uuid' => $signalement->getUuid(),
         ]);
         $crawler = $this->client->request('GET', $routeSignalementView);
-        $token = $crawler->filter('#signalement-affectation-form input[name=_token]')->attr('value');
+        $token = $crawler->filter('#signalement-affectation-form input[name="signalement-affectation[_token]"]')->attr('value');
 
         // Try to affect a partner not already affectable
         $partner = $this->partnerRepository->findOneBy(['email' => 'partenaire-34-08@signal-logement.fr']);
@@ -421,13 +421,17 @@ class AffectationControllerTest extends WebTestCase
         $this->client->request('POST', $routeAffectationResponse, [
             'signalement-affectation' => [
                 'partners' => [$partner->getId(), $affectablePartners['affected'][0]['id']],
+                '_token' => $token,
             ],
-            '_token' => $token,
         ]);
 
+        $this->assertResponseStatusCodeSame(400);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('flashMessages', $response);
-        $this->assertEquals('success', $response['flashMessages'][0]['type']);
+        $this->assertArrayHasKey('errors', $response);
+        $this->assertStringContainsString(
+            'Le choix sélectionné est invalide.',
+            $response['errors']['signalement-affectation[partners]']['errors'][0]
+        );
         $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, true);
         $this->assertEquals(1, \count($affectablePartners['affected']));
         $this->assertEquals(0, \count($affectablePartners['not_affected']));
@@ -472,7 +476,7 @@ class AffectationControllerTest extends WebTestCase
             'uuid' => $signalement->getUuid(),
         ]);
         $crawler = $this->client->request('GET', $routeSignalementView);
-        $token = $crawler->filter('#signalement-affectation-form input[name=_token]')->attr('value');
+        $token = $crawler->filter('#signalement-affectation-form input[name="signalement-affectation[_token]"]')->attr('value');
 
         $routeAffectationResponse = $this->router->generate('back_signalement_toggle_affectation', [
             'uuid' => self::SIGNALEMENT_INJONCTION_BAILLEUR_UUID,
@@ -480,8 +484,8 @@ class AffectationControllerTest extends WebTestCase
         $this->client->request('POST', $routeAffectationResponse, [
             'signalement-affectation' => [
                 'partners' => [$partnerAffectedId],
+                '_token' => $token,
             ],
-            '_token' => $token,
         ]);
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('flashMessages', $response);
@@ -556,7 +560,7 @@ class AffectationControllerTest extends WebTestCase
         ]);
 
         $crawler = $this->client->request('GET', $routeSignalementView);
-        $token = $crawler->filter('#signalement-affectation-form input[name=_token]')->attr('value');
+        $token = $crawler->filter('#signalement-affectation-form input[name="signalement-affectation[_token]"]')->attr('value');
 
         $routeAffectationResponse = $this->router->generate('back_signalement_toggle_affectation', [
             'uuid' => $signalement->getUuid(),
@@ -565,8 +569,8 @@ class AffectationControllerTest extends WebTestCase
         $this->client->request('POST', $routeAffectationResponse, [
             'signalement-affectation' => [
                 'partners' => [7, 94],
+                '_token' => $token,
             ],
-            '_token' => $token,
         ]);
 
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
