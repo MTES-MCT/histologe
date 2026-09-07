@@ -59,13 +59,16 @@
     <div v-if="displayPickLocationButton" class="pick-location-button-container">
       <button
         class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-map-pin-2-line"
-        @click="togglePickLocation">
-          Sélectionner le bâtiment sur la carte
+        @click="togglePickLocation"
+        :aria-describedby="formStore.validationErrors[id + '_detail_rnb_id'] !== undefined ? id + '-_detail_rnb_id-error-desc-error' : undefined"
+        >
+          Sélectionner le bâtiment sur la carte{{ pickLocationRequired ? ' (obligatoire)' : '' }}
       </button>
       <span v-if="formStore.data[id + '_detail_rnb_id']" class="pick-location-success fr-ml-2v">
         <span class="fr-icon-check-line" aria-hidden="true"></span>
         Bâtiment sélectionné
       </span>
+      <div aria-live="polite" aria-atomic="true" class="fr-sr-only">{{ pickLocationRequiredAnnouncement }}</div>
     </div>
 
     <div v-if="showPickLocation" class="pick-location-container fr-mt-3v">
@@ -75,11 +78,32 @@
           Fermer
         </button>
       </div>
-      <p>Cliquez sur un bâtiment pour le sélectionner, ou utilisez les touches fléchées puis Entrée.</p>
-      <div ref="pickLocationMessage" class="fr-hidden fr-mb-2v">Chargement en cours</div>
-      <div :key="mapKey" ref="pickLocationMapContainer" :id="idPickLocationMap" class="pick-location-map"></div>
-      <div ref="pickLocationAnnouncement" aria-live="polite" aria-atomic="true" class="fr-sr-only"></div>
+      <div>
+        <button 
+          type="button" 
+          :class="['fr-btn fr-btn--icon-left fr-btn--tertiary-no-outline', { 'fr-icon-list-unordered': viewMode === 'map', 'fr-icon-map-pin-2-line': viewMode !== 'map' }]"
+          @click="toggleViewMode">
+          {{ viewMode === 'map' ? 'Afficher la liste' : 'Afficher la carte' }}
+        </button>
+      </div>
+
+      <div v-show="viewMode === 'map'">
+        <p>Cliquez sur un bâtiment pour le sélectionner, ou utilisez les touches fléchées puis Entrée.</p>
+        <div ref="pickLocationMessage" class="fr-hidden fr-mb-2v">Chargement en cours</div>
+        <div :key="mapKey" ref="pickLocationMapContainer" :id="idPickLocationMap" class="pick-location-map"></div>
+        <div ref="pickLocationAnnouncement" aria-live="polite" aria-atomic="true" class="fr-sr-only"></div>
+      </div>
+
+      <SignalementFormOnlyChoice
+        v-show="viewMode === 'list'"
+        :id="id + '_pick_location_list'"
+        label="Choisissez le bâtiment correspondant au logement"
+        :values="buildingChoices"
+        v-model="selectedRnbIdModel"
+      />
+
       <div class="pick-location-footer fr-mt-3v">
+        <!-- todo : ajouter un bouton "je ne trouve pas mon bâtiment" -->
         <button
           ref="pickLocationSubmit"
           class="fr-btn fr-icon-check-line"
@@ -99,6 +123,14 @@
         </button>
       </div>
     </div>
+    <div
+      :id="id + '-_detail_rnb_id-error-desc-error'"
+      class="fr-error-text"
+      role="alert"
+      v-if="formStore.validationErrors[id + '_detail_rnb_id'] !== undefined"
+      >
+      {{ formStore.validationErrors[id + '_detail_rnb_id'] }}
+    </div>
   </div>
 </template>
 
@@ -112,6 +144,7 @@ import subscreenData from './../address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
+import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
 import L from 'leaflet'
 import 'leaflet.vectorgrid'
 import { buildingStyles, createRnbMapController } from '../../../../vanilla/services/component/rnb-map-controller.js'
@@ -126,7 +159,8 @@ export default defineComponent({
   components: {
     SignalementFormTextfield,
     SignalementFormButton,
-    SignalementFormSubscreen
+    SignalementFormSubscreen,
+    SignalementFormOnlyChoice
   },
   props: {
     id: { type: String, default: null },
@@ -172,8 +206,11 @@ export default defineComponent({
       vectorTileLayer: null as any,
       previousRnbId: undefined as string | undefined,
       selectedRnbId: null as string | null,
+      selectedBuilding: null as any,
       rnbMapController: null as any,
-      mapKey: 0
+      mapKey: 0,
+      buildingsList: [] as any[],
+      viewMode: 'map' as 'map' | 'list',
     }
   },
   created () {
@@ -266,7 +303,30 @@ export default defineComponent({
         ...this.validate,
         maxLength: 200
       }
+    },
+    pickLocationRequired (): boolean {
+      return this.formStore.data.type_logement_nature !== 'autre'
+    },
+    pickLocationRequiredAnnouncement (): string {
+      return this.pickLocationRequired ? 'La sélection du bâtiment est obligatoire.' : ''
+    },
+    buildingChoices (): Array<{ label: string; value: string }> {
+      return this.buildingsList.map((b: any) => ({
+        label: this.formatBuildingLabel(b),
+        value: b.rnb_id
+      }))
+    },
+    selectedRnbIdModel: {
+      get (): string | null {
+        return this.selectedRnbId
+      },
+      set (value: string | null) {
+        this.selectedRnbId = value
+        this.previousRnbId = value ?? undefined
+        this.selectedBuilding = this.buildingsList.find((b: any) => b.rnb_id === value) ?? null
+      }
     }
+
   },
   methods: {
     updateValue (value: any) {
@@ -477,9 +537,10 @@ export default defineComponent({
             map: this.map,
             vectorTileLayer: this.vectorTileLayer,
             previousRnbId: this.previousRnbId,
-            onSelect: (rnbId: string) => {
+            onSelect: (rnbId: string, building: any) => {
               this.selectedRnbId = rnbId
               this.previousRnbId = rnbId
+              this.selectedBuilding = building
             },
             onAnnounce: (text: string) => {
               if (announcement) announcement.textContent = text
@@ -487,6 +548,9 @@ export default defineComponent({
             onFocusSubmit: () => {
               const btn = this.$refs.pickLocationSubmit as HTMLElement
               if (btn) btn.focus()
+            },
+            onBuildingsUpdate: (buildings: any[]) => {
+              this.buildingsList = buildings
             },
           })
         }, 100)
@@ -496,8 +560,37 @@ export default defineComponent({
       if (this.selectedRnbId) {
         // Stocker le RNB ID dans formStore
         this.formStore.data[this.id + '_detail_rnb_id'] = this.selectedRnbId
+
+        // Le bâtiment RNB porte une adresse officielle : on l'utilise pour fiabiliser
+        // commune/code postal/insee plutôt que d'exiger que la saisie manuelle
+        // corresponde exactement à un résultat de géocodage.
+        const address = this.selectedBuilding?.addresses?.[0]
+        if (address) {
+          this.formStore.data[this.id + '_detail_commune'] = address.city_name
+          this.formStore.data[this.id + '_detail_code_postal'] = address.city_zipcode
+          this.formStore.data[this.id + '_detail_insee'] = address.city_insee_code
+          this.formStore.data[this.id + '_detail_need_refresh_insee'] = false
+          this.formStore.data[this.id] = this.formStore.data[this.id + '_detail_numero'] + ' ' + address.city_zipcode + ' ' + address.city_name
+          this.formStore.data[this.id + '_suggestion'] = this.formStore.data[this.id]
+        }
+
         // Fermer le sélecteur
         this.closePickLocation()
+      }
+    },
+    formatBuildingLabel (building: any): string {
+      const address = building.addresses && building.addresses[0]
+      if (!address) {
+        return 'Bâtiment sans adresse connue'
+      }
+      return [address.street_number, address.street].filter(Boolean).join(' ')
+    },
+    toggleViewMode () {
+      this.viewMode = this.viewMode === 'map' ? 'list' : 'map'
+      if (this.viewMode === 'map' && this.map) {
+        this.$nextTick(() => {
+          setTimeout(() => this.map.invalidateSize(), 50)
+        })
       }
     }
   },

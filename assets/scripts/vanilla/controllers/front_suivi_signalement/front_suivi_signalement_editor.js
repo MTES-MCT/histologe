@@ -344,7 +344,7 @@ function refreshAppartementEtagePrecision() {
     const autreChecked = document.querySelector(
       '#type_composition_appartementEtage input[value="AUTRE"]:checked'
     );
-    
+
     if (autreChecked && natureLogementSelect.value === 'appartement') {
       containerAppartementEtagePrecision.classList.remove('fr-hidden');
     } else {
