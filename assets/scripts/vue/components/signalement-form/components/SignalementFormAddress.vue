@@ -60,35 +60,15 @@
       {{ formStore.addressCorrectionMessage }}
     </p>
 
-    <div v-if="displayPickLocationButton" class="pick-location-button-container">
-      <button
-        class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-map-pin-2-line"
-        @click="togglePickLocation"
-        :aria-describedby="formStore.validationErrors[id + '_detail_rnb_id'] !== undefined ? id + '-_detail_rnb_id-error-desc-error' : undefined"
-        >
-          Sélectionner le bâtiment sur la carte{{ pickLocationRequired ? ' (obligatoire)' : '' }}
-      </button>
-      <span v-if="formStore.data[id + '_detail_rnb_id']" class="pick-location-success fr-ml-2v">
-        <span class="fr-icon-check-line" aria-hidden="true"></span>
-        Bâtiment sélectionné
-      </span>
-      <span v-else-if="formStore.data[id + '_detail_no_building_found']" class="pick-location-success fr-ml-2v">
-        <span class="fr-icon-check-line" aria-hidden="true"></span>
-        Bâtiment non trouvé, signalé
-      </span>
-      <div aria-live="polite" aria-atomic="true" class="fr-sr-only">{{ pickLocationRequiredAnnouncement }}</div>
-    </div>
+    <div aria-live="polite" aria-atomic="true" class="fr-sr-only">{{ pickLocationAnnouncement }}</div>
 
     <div v-if="showPickLocation" class="pick-location-container fr-mt-3v">
       <div class="pick-location-header">
-        <h3>Sélectionner le bâtiment correspondant au logement</h3>
-        <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-icon-close-line" @click="closePickLocation">
-          Fermer
-        </button>
+        <h3>{{ pickLocationHeading }}</h3>
       </div>
       <div>
-        <button 
-          type="button" 
+        <button
+          type="button"
           :class="['fr-btn fr-btn--icon-left fr-btn--tertiary-no-outline', { 'fr-icon-list-unordered': viewMode === 'map', 'fr-icon-map-pin-2-line': viewMode !== 'map' }]"
           @click="toggleViewMode">
           {{ viewMode === 'map' ? 'Afficher la liste' : 'Afficher la carte' }}
@@ -97,7 +77,7 @@
 
       <div v-show="viewMode === 'map'">
         <p>Cliquez sur un bâtiment pour le sélectionner, ou utilisez les touches fléchées puis Entrée.</p>
-        <div ref="pickLocationMessage" class="fr-hidden fr-mb-2v">Chargement en cours</div>
+        <p v-if="isLoadingMap" class="fr-mb-2v" role="status">Chargement en cours…</p>
         <div :key="mapKey" ref="pickLocationMapContainer" :id="idPickLocationMap" class="pick-location-map"></div>
         <div ref="pickLocationAnnouncement" aria-live="polite" aria-atomic="true" class="fr-sr-only"></div>
       </div>
@@ -125,6 +105,14 @@
       </div>
 
       <div class="pick-location-footer fr-mt-3v">
+        <span v-if="formStore.data[id + '_detail_rnb_id']" class="pick-location-success fr-ml-2v">
+          <span class="fr-icon-check-line" aria-hidden="true"></span>
+          Bâtiment sélectionné
+        </span>
+        <span v-else-if="formStore.data[id + '_detail_no_building_found']" class="pick-location-success fr-ml-2v">
+          <span class="fr-icon-check-line" aria-hidden="true"></span>
+          Bâtiment non trouvé, signalé
+        </span>
         <button
           ref="pickLocationSubmit"
           class="fr-btn fr-icon-check-line"
@@ -134,13 +122,6 @@
           @click="handleSubmitPickLocation"
           type="button">
           Valider la sélection
-        </button>
-        <button
-          type="button"
-          class="fr-btn fr-btn--secondary fr-icon-close-line"
-          title="Fermer sans enregistrer"
-          @click="closePickLocation">
-          Annuler
         </button>
       </div>
     </div>
@@ -218,7 +199,6 @@ export default defineComponent({
       screens: { body: updatedSubscreenData },
       suggestions: [] as any[],
       canPickLocation: this.customCss.includes('can-pick-location'),
-      displayPickLocationButton: false,
       showPickLocation: false,
       formStore,
       // Avoids searching when an option is selected in the list
@@ -236,6 +216,9 @@ export default defineComponent({
       noBuildingFound: false,
       geocodedCityData: null as { city: string; postcode: string; citycode: string } | null,
       maxListItems: 20,
+      pickLocationInitialized: false,
+      addressFieldsDebounceTimeout: 0 as unknown as ReturnType<typeof setTimeout>,
+      isLoadingMap: false,
     }
   },
   created () {
@@ -332,8 +315,11 @@ export default defineComponent({
     pickLocationRequired (): boolean {
       return this.formStore.data.type_logement_nature !== 'autre'
     },
-    pickLocationRequiredAnnouncement (): string {
-      return this.pickLocationRequired ? 'La sélection du bâtiment est obligatoire.' : ''
+    pickLocationHeading (): string {
+      return 'Sélectionner le bâtiment correspondant au logement' + (this.pickLocationRequired ? ' (obligatoire)' : '')
+    },
+    pickLocationAnnouncement (): string {
+      return this.showPickLocation ? this.pickLocationHeading + '.' : ''
     },
     buildingChoices (): Array<{ label: string; value: string }> {
       // buildingsList est déjà trié par proximité (cf. rnb-map-controller.js) : on ne garde
@@ -366,26 +352,77 @@ export default defineComponent({
     },
     handleAddressFieldsEdited (changeCommune:Boolean) {
       this.formStore.data[this.id + '_detail_manual'] = 1
-      this.displayPickLocationButton = false
+      this.showPickLocation = false
       if (changeCommune) {
         formStore.data[this.id + '_detail_need_refresh_insee'] = true
       }
-      if (
+
+      const isEmpty =
         variableTester.isEmpty(this.formStore.data[this.id + '_detail_numero']) &&
         variableTester.isEmpty(this.formStore.data[this.id + '_detail_code_postal']) &&
         variableTester.isEmpty(this.formStore.data[this.id + '_detail_commune'])
-      ) {
-        if (this.validate !== null && this.validate.required === false) {
-          this.formStore.data[this.id + '_detail_manual'] = 0
-        }
-      }
-      if (
+      const isComplete =
         !variableTester.isEmpty(this.formStore.data[this.id + '_detail_numero']) &&
         !variableTester.isEmpty(this.formStore.data[this.id + '_detail_code_postal']) &&
         !variableTester.isEmpty(this.formStore.data[this.id + '_detail_commune'])
-      ) {
-        this.displayPickLocationButton = this.canPickLocation
+
+      if (isEmpty) {
+        if (this.validate !== null && this.validate.required === false) {
+          this.formStore.data[this.id + '_detail_manual'] = 0
+        }
+        this.pickLocationInitialized = false
+        clearTimeout(this.addressFieldsDebounceTimeout)
+        return
       }
+
+      if (!isComplete) {
+        clearTimeout(this.addressFieldsDebounceTimeout)
+        return
+      }
+
+      this.showPickLocation = this.canPickLocation
+
+      clearTimeout(this.addressFieldsDebounceTimeout)
+      this.addressFieldsDebounceTimeout = setTimeout(() => {
+        if (!this.pickLocationInitialized) {
+          this.selectedRnbId = this.previousRnbId || null
+          delete this.formStore.data[this.id + '_detail_rnb_id']
+          this.mapKey++
+          this.pickLocationInitialized = true
+          this.$nextTick(() => this.initMap())
+        } else {
+          this.recenterMap()
+        }
+      }, 400)
+    },
+
+    recenterMap () {
+      if (!this.map) return
+      this.isLoadingMap = true
+      this.geocodeAddress().then((result) => {
+        if (result) {
+          this.geocodedCityData = { city: result.city, postcode: result.postcode, citycode: result.citycode }
+          this.map.setView(result.coords, 18)
+        }
+        this.isLoadingMap = false
+      })
+    },
+    geocodeAddress (): Promise<{ coords: [number, number]; city: string; postcode: string; citycode: string } | null> {
+      const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
+      const address = this.formStore.data[this.id + '_detail_numero'] + ' ' + this.formStore.data[this.id + '_detail_commune']
+      const postCode = this.formStore.data[this.id + '_detail_code_postal']
+
+      return fetch(apiAdresse + address + '&postcode=' + postCode)
+        .then((response) => response.json())
+        .then((json) => {
+          if (json.features && json.features.length > 0) {
+            const props = json.features[0].properties
+            const coords: [number, number] = [json.features[0].geometry.coordinates[1], json.features[0].geometry.coordinates[0]]
+            return { coords, city: props.city, postcode: props.postcode, citycode: props.citycode }
+          }
+          return null
+        })
+        .catch(() => null)
     },
     handleClickButton (type:string, param:string, slugButton:string) {
       this.formStore.data[this.idShow] = 1
@@ -464,29 +501,6 @@ export default defineComponent({
       const urlParams = new URLSearchParams(queryString)
       return urlParams.get('cp') || ''
     },
-    togglePickLocation () {
-      this.showPickLocation = !this.showPickLocation
-
-      if (this.showPickLocation) {
-        // Conserver previousRnbId pour restaurer la sélection à la réouverture
-        this.selectedRnbId = this.previousRnbId || null
-        delete this.formStore.data[this.id + '_detail_rnb_id']
-
-        // Incrémenter la clé pour forcer Vue à recréer l'élément
-        this.mapKey++
-
-        this.$nextTick(() => {
-          this.initMap()
-        })
-      }
-    },
-    closePickLocation () {
-      if (this.rnbMapController) {
-        this.rnbMapController.destroy()
-        this.rnbMapController = null
-      }
-      this.showPickLocation = false
-    },
     initMap () {
       if (this.map) {
         this.map.remove()
@@ -494,30 +508,21 @@ export default defineComponent({
         this.vectorTileLayer = null
       }
 
-      // Géocoder l'adresse pour centrer la carte
-      const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
-      const address = this.formStore.data[this.id + '_detail_numero'] + ' ' + this.formStore.data[this.id + '_detail_commune']
-      const postCode = this.formStore.data[this.id + '_detail_code_postal']
       const geolocParis: [number, number] = [48.8566, 2.3522] // Coordonnées de Paris par défaut
 
-      fetch(apiAdresse + address + '&postcode=' + postCode)
-        .then((response) => response.json())
-        .then((json) => {
-          if (json.features && json.features.length > 0) {
-            // Conservé comme repli pour un bâtiment RNB sans adresse connue (cf.
-            // handleSubmitPickLocation) : ce géocodage identifie déjà commune/CP/insee.
-            const props = json.features[0].properties
-            this.geocodedCityData = { city: props.city, postcode: props.postcode, citycode: props.citycode }
-            this.setupMap([json.features[0].geometry.coordinates[1], json.features[0].geometry.coordinates[0]], 18)
-          } else {
-            this.geocodedCityData = null
-            this.setupMap(geolocParis, 13)
-          }
-        })
-        .catch(() => {
+      this.isLoadingMap = true
+      this.geocodeAddress().then((result) => {
+        if (result) {
+          // Conservé comme repli pour un bâtiment RNB sans adresse connue (cf.
+          // handleSubmitPickLocation) : ce géocodage identifie déjà commune/CP/insee.
+          this.geocodedCityData = { city: result.city, postcode: result.postcode, citycode: result.citycode }
+          this.setupMap(result.coords, 18)
+        } else {
           this.geocodedCityData = null
           this.setupMap(geolocParis, 13)
-        })
+        }
+        this.isLoadingMap = false
+      })
     },
     setupMap (center: [number, number], zoom: number) {
       this.$nextTick(() => {
@@ -632,14 +637,11 @@ export default defineComponent({
           this.formStore.data[this.id + '_detail_commune']
         )
 
-        // Fermer le sélecteur
-        this.closePickLocation()
       } else if (this.noBuildingFound) {
         // L'usager indique ne pas trouver son bâtiment : on ne bloque pas le formulaire,
         // mais on trace l'information pour qu'un agent puisse la résoudre plus tard.
         delete this.formStore.data[this.id + '_detail_rnb_id']
         this.formStore.data[this.id + '_detail_no_building_found'] = 1
-        this.closePickLocation()
       }
     },
     formatBuildingLabel (building: any): string {
