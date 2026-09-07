@@ -256,36 +256,24 @@ class AddressesHistoryQuery
             }
         }
 
-        if (!empty($addressesHistorySearchQuery->getCommunes())) {
+        if (!empty($addressesHistorySearchQuery->getCommuneOuEpci())) {
             $communes = [];
             $epcis = [];
 
-            foreach ($addressesHistorySearchQuery->getCommunes() as $communeOrEpci) {
-                // Vérifier si c'est un EPCI (préfixé par "EPCI: ")
-                if (str_starts_with($communeOrEpci, 'EPCI : ')) {
-                    $epcis[] = substr($communeOrEpci, 7); // Retirer le préfixe "EPCI : "
-                } else {
-                    $communes[] = $communeOrEpci;
-                    // Gérer les arrondissements
-                    if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$communeOrEpci])) {
-                        $communes = array_merge($communes, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$communeOrEpci]);
-                    }
+            $communeOuEpci = $addressesHistorySearchQuery->getCommuneOuEpci();
+            // Vérifier si c'est un EPCI (préfixé par "EPCI: ")
+            if (str_starts_with($communeOuEpci, 'EPCI : ')) {
+                $epcis[] = substr($communeOuEpci, 7); // Retirer le préfixe "EPCI : "
+            } else {
+                $communes[] = $communeOuEpci;
+                // Gérer les arrondissements
+                if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$communeOuEpci])) {
+                    $communes = array_merge($communes, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$communeOuEpci]);
                 }
             }
 
             // Construire la condition de filtre
-            if (!empty($communes) && !empty($epcis)) {
-                // Si on a les deux, faire un OR entre communes et EPCIs
-                // Utiliser une sous-requête pour les EPCIs
-                $subQuery = 'SELECT DISTINCT a2.id FROM '.Address::class.' a2
-                    INNER JOIN '.Commune::class.' c2 WITH a2.postCode = c2.codePostal AND a2.cityCode = c2.codeInsee
-                    INNER JOIN c2.epci e2
-                    WHERE e2.nom IN (:epcis)';
-
-                $qb->andWhere('a.city IN (:cities) OR a.id IN ('.$subQuery.')')
-                   ->setParameter('cities', $communes)
-                   ->setParameter('epcis', $epcis);
-            } elseif (!empty($communes)) {
+            if (!empty($communes)) {
                 // Seulement des communes
                 $qb->andWhere('a.city IN (:cities)')
                     ->setParameter('cities', $communes);
