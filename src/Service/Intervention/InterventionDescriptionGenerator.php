@@ -112,14 +112,14 @@ class InterventionDescriptionGenerator
 
         if ($oldDate !== $newDate && !empty($oldDate)) {
             $messages[] = \sprintf(
-                'La date de l\'arrêté dans %s a été modifiée ; La nouvelle date est %s',
+                'La date de l\'arrêté dans %s a été modifiée ; La nouvelle date est %s.',
                 EsaboraSISHService::NAME_SI,
                 $newDate
             );
         }
-        if ($oldNumero !== $newNumero && !empty($oldNumero)) {
+        if ($oldNumero !== $newNumero) {
             $messages[] = \sprintf(
-                'Le numéro de l\'arrêté dans %s a été modifié ; Le nouveau numéro est %s',
+                'Le numéro de l\'arrêté dans %s a été modifié ; Le nouveau numéro est %s.',
                 EsaboraSISHService::NAME_SI,
                 $newNumero
             );
@@ -133,19 +133,21 @@ class InterventionDescriptionGenerator
         if (!empty($newMLDate) && !empty($newMLNumero)) {
             if ($oldMLDate !== $newMLDate && !empty($oldMLDate)) {
                 $messages[] = \sprintf(
-                    'La date de la mainlevée dans %s a été modifiée ; La nouvelle date est %s',
+                    'La date de la mainlevée dans %s a été modifiée ; La nouvelle date est %s.',
                     EsaboraSISHService::NAME_SI,
                     $newMLDate
                 );
             }
             if ($oldMLNumero !== $newMLNumero && !empty($oldMLNumero)) {
                 $messages[] = \sprintf(
-                    'Le numéro de la mainlevée dans %s a été modifié ; Le nouveau numéro est %s',
+                    'Le numéro de la mainlevée dans %s a été modifié ; Le nouveau numéro est %s.',
                     EsaboraSISHService::NAME_SI,
                     $newMLNumero
                 );
             }
         }
+
+        $messages[] = \sprintf('Type arrêté: %s', $dossierArreteSISH->getArreteType());
 
         return implode('<br>', $messages);
     }
