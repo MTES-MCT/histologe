@@ -526,6 +526,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $rnbIdOccupant = null;
 
+    /**
+     * L'usager a indiqué ne pas trouver son bâtiment dans le sélecteur RNB.
+     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $noBuildingFoundOccupant = null;
+
     #[ORM\Column(type: 'string', length: 15, nullable: true, enumType: DebutDesordres::class)]
     private ?DebutDesordres $debutDesordres = null;
 
@@ -2788,6 +2794,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setRnbIdOccupant(?string $rnbIdOccupant): static
     {
         $this->rnbIdOccupant = $rnbIdOccupant;
+
+        return $this;
+    }
+
+    public function getNoBuildingFoundOccupant(): ?bool
+    {
+        return $this->noBuildingFoundOccupant;
+    }
+
+    public function setNoBuildingFoundOccupant(?bool $noBuildingFoundOccupant): static
+    {
+        $this->noBuildingFoundOccupant = $noBuildingFoundOccupant;
 
         return $this;
     }

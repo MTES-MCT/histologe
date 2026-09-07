@@ -6,6 +6,7 @@ use App\Entity\Enum\EtageType;
 use App\Validator as AppAssert;
 use App\Validator\Behaviour\EtageValidatorTrait;
 use App\Validator\Behaviour\MonthYearValidatorTrait;
+use App\Validator\Behaviour\RnbIdValidatorTrait;
 use App\Validator\DateNaissanceValidatorTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
@@ -23,6 +24,7 @@ class SignalementDraftRequest
     use DateNaissanceValidatorTrait;
     use EtageValidatorTrait;
     use MonthYearValidatorTrait;
+    use RnbIdValidatorTrait;
 
     /** @var string[] */
     public const array PREFIX_PROPERTIES_TYPE_COMPOSITION = ['type_logement', 'composition_logement', 'bail_dpe', 'desordres_logement_chauffage_details_dpe'];
@@ -75,6 +77,7 @@ class SignalementDraftRequest
     private ?string $adresseLogementAdresseDetailInsee = null;
     private ?string $adresseLogementAdresseDetailRnbId = null;
     private ?bool $adresseLogementAdresseDetailManual = null;
+    private ?bool $adresseLogementAdresseDetailNoBuildingFound = null;
     #[Assert\Length(max: 3, maxMessage: 'L\'escalier ne doit pas dépasser {{ limit }} caractères')]
     private ?string $adresseLogementComplementAdresseEscalier = null;
     #[Assert\Choice(callback: [EtageType::class, 'values'])]
@@ -562,7 +565,7 @@ class SignalementDraftRequest
         $this->validateDateNaissance($this->informationsComplementairesSituationBailleurDateNaissance, 'informationsComplementairesSituationBailleurDateNaissance', $context);
         $this->validateMonthYear($this->infoProcedureBailDate, 'infoProcedureBailDate', $context);
 
-        $this->validateEtage($this->typeLogementNature, $this->adresseLogementComplementAdresseEtage, 'adresseLogementComplementAdresseEtage', $this->adresseLogementComplementAdresseEtagePrecision, 'adresseLogementComplementAdresseEtagePrecision', $context);
+        $this->validateRnbId($this->typeLogementNature, $this->adresseLogementAdresseDetailManual, $this->adresseLogementAdresseDetailRnbId, $this->adresseLogementAdresseDetailNoBuildingFound, 'adresseLogementAdresseDetailRnbId', $context);
     }
 
     public function getProfil(): ?string
@@ -669,6 +672,18 @@ class SignalementDraftRequest
     public function setAdresseLogementAdresseDetailManual(?bool $adresseLogementAdresseDetailManual): self
     {
         $this->adresseLogementAdresseDetailManual = $adresseLogementAdresseDetailManual;
+
+        return $this;
+    }
+
+    public function getAdresseLogementAdresseDetailNoBuildingFound(): ?bool
+    {
+        return $this->adresseLogementAdresseDetailNoBuildingFound;
+    }
+
+    public function setAdresseLogementAdresseDetailNoBuildingFound(?bool $adresseLogementAdresseDetailNoBuildingFound): self
+    {
+        $this->adresseLogementAdresseDetailNoBuildingFound = $adresseLogementAdresseDetailNoBuildingFound;
 
         return $this;
     }

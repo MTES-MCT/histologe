@@ -270,7 +270,6 @@ const formStore: FormStore = reactive({
     return true;
   },
   shouldDisplayTypeLogement (): boolean {
-    console.log('shouldDisplayTypeLogement', formStore.data.type_logement_nature, formStore.data.adresse_logement_complement_adresse_etage)
     if (formStore.data.type_logement_nature !== 'appartement') {
       return false
     }

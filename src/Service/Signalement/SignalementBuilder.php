@@ -418,12 +418,14 @@ class SignalementBuilder
                 $this->signalementDraftRequest->getAdresseLogementComplementAdresseNumeroAppartement()
             )
             ->setAdresseAutreOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseAutre())
-            ->setRnbIdOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailRnbId());
+            ->setRnbIdOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailRnbId())
+            ->setNoBuildingFoundOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailNoBuildingFound());
         $this->signalementAddressUpdater->attachAddressToSignalement(
             $this->signalement,
             $this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
             $this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
-            $this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune()
+            $this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
+            $this->signalementDraftRequest->getAdresseLogementAdresseDetailRnbId()
         );
     }
 
