@@ -8,7 +8,7 @@ import type { AddressesResponse, SettingsResponse } from '../types'
 export interface AddressesHistoryFilters {
   territoire: string | undefined
   adresse: string | undefined
-  communes: string[]
+  communeOuEpci: string | undefined
   bailleurOuSyndic: string[]
   zone: string | undefined
   natureParc: string | undefined
@@ -133,12 +133,7 @@ export function useAddressesHistoryFilters() {
     store.state.addresses.filters = (response as any).filters || {}
     store.state.addresses.list = (response as any).list || []
 
-    // Normalise les filtres pour garantir que communes et arreteTypes sont des tableaux
-    if (!Array.isArray(store.state.input.filters.communes)) {
-      store.state.input.filters.communes = store.state.input.filters.communes
-        ? [store.state.input.filters.communes as any]
-        : []
-    }
+    // Normalise les filtres pour garantir que arreteTypes sont des tableaux
     if (!Array.isArray(store.state.input.filters.arreteTypes)) {
       store.state.input.filters.arreteTypes = store.state.input.filters.arreteTypes
         ? [store.state.input.filters.arreteTypes as any]
@@ -211,7 +206,7 @@ export function useAddressesHistoryFilters() {
 
     for (const [key, value] of Object.entries(store.state.input.filters)) {
       if (variableTester.isNotEmpty(value)) {
-        if (Array.isArray(value) && ['communes', 'bailleurOuSyndic', 'arreteTypes'].includes(key)) {
+        if (Array.isArray(value) && ['bailleurOuSyndic', 'arreteTypes'].includes(key)) {
           value.forEach((item: any) => {
             addQueryParameter(key + '[]', item)
             url.searchParams.append(key + '[]', item)
@@ -283,9 +278,8 @@ export function useAddressesHistoryFilters() {
       store.state.input.filters.adresse = urlParams.get('adresse') || undefined
     }
 
-    const communes = urlParams.getAll('communes[]')
-    if (communes.length > 0) {
-      store.state.input.filters.communes = communes
+    if (urlParams.has('communeOuEpci')) {
+      store.state.input.filters.communeOuEpci = urlParams.get('communeOuEpci') || undefined
     }
 
     const bailleurs = urlParams.getAll('bailleurOuSyndic[]')
@@ -333,7 +327,7 @@ export function useAddressesHistoryFilters() {
   const getDefaultFilters = (): AddressesHistoryFilters => ({
     territoire: undefined,
     adresse: undefined,
-    communes: [],
+    communeOuEpci: undefined,
     bailleurOuSyndic: [],
     zone: undefined,
     natureParc: undefined,
