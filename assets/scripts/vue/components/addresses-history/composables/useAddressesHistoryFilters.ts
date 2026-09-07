@@ -121,7 +121,7 @@ export function useAddressesHistoryFilters() {
 
     // Si plusieurs territoires existent et qu'aucun n'est sélectionné, sélectionner le premier automatiquement
     if (store.state.territories.length > 1 && !store.state.input.filters.territoire) {
-      store.state.input.filters.territoire = store.state.territories[0].Id
+      store.state.input.filters.territoire = store.state.territories[0].Id.toString()
     }
   }
 

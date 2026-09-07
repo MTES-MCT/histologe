@@ -34,7 +34,7 @@ class AddressesHistoryQuery
             ->from(Address::class, 'a')
             ->select('a.id, CONCAT_WS(\' \', a.housenumber, a.street) as address')
             ->orderBy('a.street', 'ASC')
-            ->addOrderBy('a.housenumber', 'ASC');
+            ->addOrderBy('CAST(a.housenumber AS UNSIGNED)', 'ASC');
 
         if ($territory) {
             $qb->andWhere('a.territory = :territory')
@@ -164,7 +164,7 @@ class AddressesHistoryQuery
 
         if ($user->isSuperAdmin()) {
             // pas de restrictions pour les SA
-            if (!empty($addressesHistorySearchQuery->getTerritoire())) {
+            if (null !== $addressesHistorySearchQuery && !empty($addressesHistorySearchQuery->getTerritoire())) {
                 $qb->andWhere('a.territory IN (:territories)')
                     ->setParameter('territories', $addressesHistorySearchQuery->getTerritoire());
             }

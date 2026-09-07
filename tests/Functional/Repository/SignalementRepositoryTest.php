@@ -792,12 +792,12 @@ class SignalementRepositoryTest extends KernelTestCase
 
     public function testFindBailleursAndSyndics(): void
     {
-        /** @var AddressesHistoryQuery $addressesHistoryQuery */
-        $addressesHistoryQuery = new AddressesHistoryQuery($this->entityManager);
-        /** @var UserRepository $userRepository */
-        $userRepository = $this->entityManager->getRepository(User::class);
         /** @var TerritoryRepository $territoryRepository */
         $territoryRepository = $this->entityManager->getRepository(Territory::class);
+        /** @var AddressesHistoryQuery $addressesHistoryQuery */
+        $addressesHistoryQuery = new AddressesHistoryQuery($this->entityManager, $territoryRepository);
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
 
         // Test SA
         $adminUser = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);

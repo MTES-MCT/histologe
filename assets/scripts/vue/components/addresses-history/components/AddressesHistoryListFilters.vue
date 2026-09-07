@@ -247,9 +247,14 @@ const onRemoveFilter = async (key: keyof AddressesHistoryFilters): Promise<void>
 
     // Sélectionner le premier territoire si plusieurs territoires existent
     if (sharedState.territories.length > 1) {
-      filters.territoire = sharedState.territories[0].Id
+      filters.territoire = sharedState.territories[0].Id.toString()
       await filtersComposable.reloadSettings()
     }
+
+    // Supprimer les clés pour commune, adresse et zone si elles existent
+    filters.communes = []
+    filters.adresse = undefined
+    filters.zone = undefined
   }
   // Si c'est un tableau, on le vide
   else if (Array.isArray(filters[key])) {
