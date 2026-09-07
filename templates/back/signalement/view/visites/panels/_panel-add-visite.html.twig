@@ -80,7 +80,7 @@
                                 <input type="text" id="visite-add-externalOperator" name="visite-add[externalOperator]" maxlength="255" class="fr-input visite-external-operator">
                             </div>
                         {% else %}
-                            <input type="hidden" name="visite-add[partner]" value="{{ app.user.partnerInTerritory(signalement.territory).id }}">
+                            <input type="hidden" name="visite-add[partner]" value="{{ app.user.partnerInTerritory(signalement.address.territory).id }}">
                         {% endif %}
 
                         <div class="fr-input-group" id="visite-add-future-date-complementary-fields">
