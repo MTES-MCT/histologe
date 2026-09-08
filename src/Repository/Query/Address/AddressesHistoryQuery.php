@@ -34,6 +34,7 @@ class AddressesHistoryQuery
             ->from(Address::class, 'a')
             ->leftJoin('a.arretes', 'ar')
             ->select('a.id, CONCAT_WS(\' \', a.housenumber, a.street) as address')
+            ->groupBy('a.id, a.street, a.housenumber')
             ->orderBy('a.street', 'ASC')
             ->addOrderBy('CAST(a.housenumber AS UNSIGNED)', 'ASC');
 

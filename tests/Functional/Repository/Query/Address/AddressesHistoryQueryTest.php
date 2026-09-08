@@ -35,7 +35,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         $this->assertIsArray($allAddresses);
         $this->assertNotEmpty($allAddresses);
-        $this->assertCount(60, $allAddresses);
+        $this->assertCount(15, $allAddresses);
 
         // Vérifie la structure des résultats
         foreach ($allAddresses as $address) {
@@ -61,7 +61,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $addressesForTerritory = $this->addressesHistoryQuery->findAllList($territory);
 
         $this->assertIsArray($addressesForTerritory);
-        $this->assertCount(21, $addressesForTerritory);
+        $this->assertCount(6, $addressesForTerritory);
     }
 
     public function testFindAddressesWithHistoryForSuperAdmin(): void
