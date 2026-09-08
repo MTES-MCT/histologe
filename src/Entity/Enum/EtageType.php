@@ -27,7 +27,7 @@ enum EtageType: string
 
     /**
      * Valeur à stocker dans Signalement::etageOccupant : le libellé de l'étage, ou la
-     * précision libre saisie par l'usager/l'agent quand l'étage est "Autre". 
+     * précision libre saisie par l'usager/l'agent quand l'étage est "Autre".
      */
     public static function resolveOccupantLabel(?self $etage, ?string $precision): ?string
     {
@@ -39,7 +39,7 @@ enum EtageType: string
     }
 
     /**
-     * Répercute un changement d'étage (et de la réponse "avec fenêtres") sur TypeCompositionLogement 
+     * Répercute un changement d'étage (et de la réponse "avec fenêtres") sur TypeCompositionLogement.
      */
     public static function applyToTypeCompositionLogement(
         TypeCompositionLogement $typeCompositionLogement,
