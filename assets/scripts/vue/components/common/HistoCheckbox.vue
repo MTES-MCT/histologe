@@ -8,7 +8,10 @@
         :checked="modelValue"
         @change="$emit('update:modelValue', $event.target.checked)"
         >
-      <label class="fr-label" :for="id"><slot name="label"></slot></label>
+      <label class="fr-label" :for="id">
+        <slot name="label"></slot>
+        <span class="fr-hint-text"><slot name="help"></slot></span>
+      </label>
     </div>
   </div>
 </template>

@@ -40,7 +40,9 @@
         <template #label>Afficher les zones du territoire</template>
       </HistoToggle>
 
-      <h2 class="fr-h4 fr-mt-2w fr-text-label--blue-france">Rechercher un lieu</h2>
+      <hr class="fr-mt-5w">
+
+      <h2 class="fr-h4 fr-text-label--blue-france">Rechercher un lieu</h2>
 
       <!-- Territoire -->
       <div
@@ -94,21 +96,36 @@
         </AppAutoComplete>
       </div>
 
-      <!-- Filtres actifs -->
-      <!-- Je laisse pour l'instant pour voir les communes sélectionnées. A voir comment on fait dans la version finale -->
-      <div v-if="activeFilters.length > 0" class="fr-mt-2w">
-        <ul class="fr-tags-group">
-          <li v-for="filter in activeFilters" :key="filter.key">
-            <button
-              class="fr-tag fr-tag--sm fr-tag--dismiss"
-              :aria-label="`Retirer le filtre ${filter.label}`"
-              @click="onRemoveFilter(filter.key)"
-            >
-              {{ filter.label }}
-            </button>
-          </li>
-        </ul>
-      </div>
+      <hr class="fr-mt-5w">
+
+      <h2 class="fr-h4 fr-text-label--blue-france">Affichage des données</h2>
+
+      <HistoToggle
+        id="toggle-map-dossiers-multiples"
+        :model-value="dossiersMultiplesToggleValue"
+        @update:model-value="onDossiersMultiplesToggle"
+        containerClass="fr-mb-2w"
+      >
+        <template #label>
+          <span class="badge-dossiers-multiples"></span>
+          Signalements multiples à l'adresse
+        </template>
+      </HistoToggle>
+
+      <h3 class="fr-h5 fr-mt-3w">Arrêtés</h3>
+
+      <HistoCheckbox
+        id="checkbox-map-arretes"
+        v-model="sharedState.input.params.mainLeveeUniquement"
+        containerClass="fr-mb-2w"
+      >
+        <template #label>
+          Main levée uniquement
+        </template>
+        <template #help>
+          <p>Afficher uniquement les arrêtés ayant fait l'objet d'une main levée.</p>
+        </template>
+      </HistoCheckbox>
     </div>
   </section>
 </template>
@@ -117,10 +134,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { store } from '../composables/useAddressesHistoryStore'
 import { useAddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'
-import { getActiveFilters, type ActiveFilter } from '../services/activeFiltersBuilder'
-import type { AddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'
 import HistoSelect from '../../common/HistoSelect.vue'
 import HistoToggle from '../../common/HistoToggle.vue'
+import HistoCheckbox from '../../common/HistoCheckbox.vue'
 // import HistoMultiSelect from '../../common/HistoMultiSelect.vue'
 // import AppSearch from '../../common/AppSearch.vue'
 import AppAutoComplete from '../../common/AppAutoComplete.vue'
@@ -131,11 +147,6 @@ const resetKey = ref(false)
 
 // Composable
 const filtersComposable = useAddressesHistoryFilters()
-
-// Filtres actifs
-const activeFilters = computed<ActiveFilter[]>(() => {
-  return getActiveFilters(sharedState.input.filters as AddressesHistoryFilters)
-})
 
 /**
  * Quand le territoire change
@@ -152,35 +163,17 @@ const onTerritoryChange = async (value: string): Promise<void> => {
   await filtersComposable.reloadAddresses()
 }
 
+// Computed pour gérer le toggle des dossiers multiples
+const dossiersMultiplesToggleValue = computed(() => {
+  return sharedState.input.filters.dossiersMultiples === 'oui'
+})
+
 /**
- * Supprime un filtre spécifique
-  Je laisse pour l'instant pour voir les communes sélectionnées. A voir comment on fait dans la version finale
+ * Gère le changement du toggle dossiers multiples
+ * Si activé : "oui", sinon : null
  */
-const onRemoveFilter = async (key: keyof AddressesHistoryFilters): Promise<void> => {
-  const filters = sharedState.input.filters
-
-  // Si c'est le territoire, on réinitialise
-  if (key === 'territoire') {
-    filters.territoire = undefined
-
-    // Sélectionner le premier territoire si plusieurs territoires existent
-    if (sharedState.territories.length > 1) {
-      filters.territoire = sharedState.territories[0].Id
-    }
-  }
-  // Si c'est un tableau, on le vide
-  else if (Array.isArray(filters[key])) {
-    (filters[key] as any[]) = []
-  }
-  // Sinon on met undefined
-  else {
-    filters[key] = undefined as any
-  }
-
-  // Toggle reset pour forcer la mise à jour des composants enfants
-  resetKey.value = !resetKey.value
-
-  // Le filtrage se fait automatiquement via la computed property
+const onDossiersMultiplesToggle = (value: boolean): void => {
+  sharedState.input.filters.dossiersMultiples = value ? 'oui' : undefined
 }
 
 // Au montage, sauvegarde le territoire initial
@@ -194,9 +187,21 @@ section.addresses-history-map-filters {
   position: absolute;
   z-index: 100;
   background-color: white;
-  max-width: 450px;
+  max-width: 460px;
+  max-height: 90vh;
+  overflow-y: auto;
   padding: 1rem;
   border-radius: 0.5rem;
   box-shadow: 2px 0px 6px rgba(0, 0, 0, 0.3);
+}
+
+.badge-dossiers-multiples {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  background-color: #EFB900;
+  border-radius: 50%;
+  margin-right: 8px;
+  margin-top: 4px;
 }
 </style>
