@@ -50,6 +50,21 @@ const filteredAddresses = computed(() => {
     })
   }
 
+  // Filtre par dossiers multiples si activé
+  if (sharedState.input.filters.dossiersMultiples === 'oui') {
+    addresses = addresses.filter((address: any) => {
+      const nbSignalements = address.signalements?.length || 0
+      return nbSignalements > 1
+    })
+  }
+
+  // Filtre pour main levée uniquement si activé
+  if (sharedState.input.params.mainLeveeUniquement) {
+    addresses = addresses.filter((address: any) => {
+      return address.arretes?.some((arrete: any) => arrete.dateMainLevee !== null)
+    })
+  }
+
   return addresses
 })
 
@@ -114,6 +129,9 @@ function buildGeoJson(): GeoJSON.FeatureCollection<GeoJSON.Point> {
 
   filteredAddresses.value.forEach((address: any, index: number) => {
     if (address.lat && address.lng) {
+      const nbSignalements = address.signalements?.length || 0
+      const hasMultipleSignalements = nbSignalements > 1
+
       features.push({
         type: 'Feature',
         geometry: {
@@ -124,8 +142,9 @@ function buildGeoJson(): GeoJSON.FeatureCollection<GeoJSON.Point> {
           addressId: index,
           addressForHuman: address.addressForHuman,
           communeForHuman: address.communeForHuman,
-          nbSignalements: address.signalements?.length || 0,
-          nbArretes: address.arretes?.length || 0
+          nbSignalements: nbSignalements,
+          nbArretes: address.arretes?.length || 0,
+          hasMultipleSignalements: hasMultipleSignalements
         }
       })
     }
@@ -340,10 +359,20 @@ function addMapLayers() {
     filter: ['!', ['has', 'point_count']],
     paint: {
       'circle-radius': 10,
-      'circle-color': '#FFF',
+      'circle-color': [
+        'case',
+        ['get', 'hasMultipleSignalements'],
+        '#EFB900', // Jaune si dossiers multiples
+        '#FFF'     // Blanc sinon
+      ],
       'circle-opacity': 0.8,
       'circle-stroke-width': 2,
-      'circle-stroke-color': '#000091'
+      'circle-stroke-color': [
+        'case',
+        ['get', 'hasMultipleSignalements'],
+        '#EFB900', // Jaune si dossiers multiples
+        '#000091'  // Bleu sinon
+      ]
     }
   })
 }
@@ -384,8 +413,10 @@ function addMapEvents() {
 
     const popupContent = `
       <div class="fr-p-2w">
-        <strong>${addressForHuman || 'Adresse inconnue'}</strong>
-        <p class="fr-text--sm fr-mb-1v">${communeForHuman || ''}</p>
+        <span class="fr-text--sm fr-mb-1v fr-text-label--blue-france"><strong>Evènement(s) à cette adresse</strong></span>
+        <br>
+        <p class="fr-text--sm"><span class="fr-icon-map-pin-2-line" aria-hidden="true"></span> ${addressForHuman || 'Adresse inconnue'}</p>
+        <hr>
         <p class="fr-text--sm fr-mb-0">
           ${nbSignalements || 0} signalement(s)<br/>
           ${nbArretes || 0} arrêté(s)
@@ -395,10 +426,19 @@ function addMapEvents() {
 
     const geometry = feature.geometry
     if (geometry.type === 'Point') {
-      currentPopup = new maplibregl.Popup({ offset: 12 })
+      currentPopup = new maplibregl.Popup({
+        offset: 12,
+        closeButton: true
+      })
         .setLngLat(geometry.coordinates as [number, number])
         .setHTML(popupContent)
         .addTo(map!)
+
+      // Ajouter le texte "Fermer" avant la croix
+      const closeButton = currentPopup.getElement()?.querySelector('.maplibregl-popup-close-button')
+      if (closeButton) {
+        closeButton.textContent = '× Fermer'
+      }
     }
   })
 
@@ -489,5 +529,20 @@ onUnmounted(() => {
 .container-addresses-history-map {
   width: 100%;
   height: 600px;
+}
+</style>
+
+<style>
+/* Style pour la popup */
+.maplibregl-popup-content {
+  min-width: 280px;
+}
+
+/* Style pour le bouton de fermeture de la popup */
+.maplibregl-popup-close-button {
+  color: var(--blue-france-sun-113-625);
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
+  font-size: 0.8rem;
 }
 </style>

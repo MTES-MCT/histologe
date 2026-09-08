@@ -252,7 +252,7 @@ const onRemoveFilter = async (key: keyof AddressesHistoryFilters): Promise<void>
     }
 
     // Supprimer les clés pour commune, adresse et zone si elles existent
-    filters.communes = []
+    filters.communeOuEpci = undefined
     filters.adresse = undefined
     filters.zone = undefined
   }

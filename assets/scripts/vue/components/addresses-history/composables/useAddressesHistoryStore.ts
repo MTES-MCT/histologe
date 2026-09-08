@@ -43,7 +43,8 @@ const state = ref<StoreState>({
     params: {
       niveauxGris: false,
       limitesAdministratives: false,
-      zonesTerritoire: false
+      zonesTerritoire: false,
+      mainLeveeUniquement: false
     }
   },
   user: {
