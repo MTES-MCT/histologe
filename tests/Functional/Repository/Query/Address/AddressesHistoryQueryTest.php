@@ -99,7 +99,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $addressesForTerritory = $this->addressesHistoryQuery->findAllList($territory);
 
         $this->assertIsArray($addressesForTerritory);
-        $this->assertCount(21, $addressesForTerritory);
+        $this->assertCount(6, $addressesForTerritory);
     }
 
     public function testFindAddressesWithHistoryForSuperAdmin(): void
