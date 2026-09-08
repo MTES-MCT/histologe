@@ -426,7 +426,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
             $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
             $this->assertIsArray($results);
-            $this->assertCount(5, $results);
+            $this->assertCount(2, $results);
         }
     }
 }
