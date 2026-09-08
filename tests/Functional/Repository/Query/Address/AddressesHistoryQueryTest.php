@@ -304,7 +304,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
         $this->assertIsArray($results);
-        $this->assertCount(2, $results);
+        $this->assertCount(0, $results);
 
         // Test avec plusieurs bailleurs
         $searchQuery = new AddressesHistorySearchQuery(
@@ -314,7 +314,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
         $this->assertIsArray($results);
-        $this->assertCount(6, $results);
+        $this->assertCount(4, $results);
     }
 
     public function testFindAddressesWithHistoryWithTypesArretesFilter(): void
@@ -359,7 +359,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
         $this->assertIsArray($results);
-        $this->assertCount(29, $results);
+        $this->assertCount(15, $results);
 
         // Test avec un mélange de commune et EPCI (préfixé par "EPCI : ")
         $searchQuery = new AddressesHistorySearchQuery(
@@ -369,7 +369,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
         $this->assertIsArray($results);
-        $this->assertCount(34, $results);
+        $this->assertCount(17, $results);
     }
 
     public function testFindAddressesWithHistoryWithZoneFilter(): void
@@ -388,7 +388,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
             $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
             $this->assertIsArray($results);
-            $this->assertCount(5, $results);
+            $this->assertCount(2, $results);
         }
     }
 }

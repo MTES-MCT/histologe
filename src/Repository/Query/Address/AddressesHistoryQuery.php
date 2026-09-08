@@ -159,8 +159,13 @@ class AddressesHistoryQuery
             ->leftJoin('a.arretes', 'ar')
             ->setParameter('statusList', $statusList);
 
-        // Ensure we have at least one signalement or one arrete
-        $qb->andWhere('s.id IS NOT NULL OR ar.id IS NOT NULL');
+        // Une adresse est renvoyée si il y a au moins 2 signalements ou au moins 1 arrêté
+        $qb->andWhere('ar.id IS NOT NULL OR EXISTS (
+            SELECT 1 FROM '.Signalement::class.' sMultiple
+            WHERE sMultiple.address = a
+            AND sMultiple.statut IN (:statusList)
+            HAVING COUNT(sMultiple.id) >= 2
+        )');
 
         if ($user->isSuperAdmin()) {
             // pas de restrictions pour les SA
