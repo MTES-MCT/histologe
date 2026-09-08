@@ -62,20 +62,25 @@ class SearchFilterOptionDataProvider
 
                 $isAddressesHistoryContext = 'addresses-history' === $context;
 
+                $hasSignalementImported = 0;
+                if (!$isAddressesHistoryContext) {
+                    $hasSignalementImported = $user->isSuperAdmin() || $user->isTerritoryAdmin()
+                        ? $this->countStatisticsQuery->countImported($territory) : $this->countStatisticsQuery->countImported($territory, $user);
+                }
+
                 return [
-                    'criteres' => $this->critereRepository->findAllList(),
+                    'criteres' => $isAddressesHistoryContext ? [] : $this->critereRepository->findAllList(),
                     'territories' => $this->getTerritories($user),
                     'addresses' => $isAddressesHistoryContext ? $this->addressesHistoryQuery->findAllList($territory) : [],
-                    'partners' => $this->partnerRepository->findAllList($territory, $user),
+                    'partners' => $isAddressesHistoryContext ? [] : $this->partnerRepository->findAllList($territory, $user),
                     'epcis' => $this->communeEpciQuery->findEpciByCommuneTerritory($territory, $user),
-                    'tags' => $this->tagsRepository->findAllActive($territory, $user),
+                    'tags' => $isAddressesHistoryContext ? [] : $this->tagsRepository->findAllActive($territory, $user),
                     'zones' => $this->zoneRepository->findForUserAndTerritory($user, $territory),
                     'cities' => $this->signalementRepository->findCities($user, $territory),
                     'zipcodes' => $this->signalementRepository->findZipcodes($user, $territory),
-                    'listQualificationStatus' => $this->qualificationStatusService->getList(),
-                    'listVisiteStatus' => VisiteStatus::getLabelList(),
-                    'hasSignalementsImported' => $user->isSuperAdmin() || $user->isTerritoryAdmin()
-                        ? $this->countStatisticsQuery->countImported($territory) : $this->countStatisticsQuery->countImported($territory, $user),
+                    'listQualificationStatus' => $isAddressesHistoryContext ? [] : $this->qualificationStatusService->getList(),
+                    'listVisiteStatus' => $isAddressesHistoryContext ? [] : VisiteStatus::getLabelList(),
+                    'hasSignalementsImported' => $hasSignalementImported,
                     'bailleursSociaux' => $isAddressesHistoryContext
                         ? $this->addressesHistoryQuery->findBailleursAndSyndics($user, $territory)
                         : $this->bailleurRepository->findBailleursByTerritory($user, $territory),

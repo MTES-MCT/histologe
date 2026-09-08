@@ -32,6 +32,7 @@ class AddressesHistoryQuery
     {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Address::class, 'a')
+            ->leftJoin('a.arretes', 'ar')
             ->select('a.id, CONCAT_WS(\' \', a.housenumber, a.street) as address')
             ->orderBy('a.street', 'ASC')
             ->addOrderBy('CAST(a.housenumber AS UNSIGNED)', 'ASC');
@@ -40,6 +41,15 @@ class AddressesHistoryQuery
             $qb->andWhere('a.territory = :territory')
                 ->setParameter('territory', $territory);
         }
+
+        // Une adresse est renvoyée si il y a au moins 2 signalements ou au moins 1 arrêté
+        $qb->andWhere('ar.id IS NOT NULL OR EXISTS (
+            SELECT 1 FROM '.Signalement::class.' sMultiple
+            WHERE sMultiple.address = a
+            AND sMultiple.statut IN (:statusList)
+            HAVING COUNT(sMultiple.id) >= 2
+        )');
+        $qb->setParameter('statusList', $this->getStatusList());
 
         return $qb->getQuery()->getArrayResult();
     }
@@ -57,10 +67,8 @@ class AddressesHistoryQuery
         $maxListPagination = AddressesHistorySearchQuery::MAX_LIST_PAGINATION;
         $firstResult = (max($page, 1) - 1) * $maxListPagination;
 
-        $statusList = $this->getStatusList();
-
         // Step 1: Get paginated distinct address IDs
-        $qbIds = $this->buildBaseQueryBuilder($user, $addressesHistorySearchQuery, $statusList);
+        $qbIds = $this->buildBaseQueryBuilder($user, $addressesHistorySearchQuery);
         $qbIds->select('a.id', 'a.street', 'a.postCode', 'a.city')
             ->groupBy('a.id', 'a.street', 'a.postCode', 'a.city')
             ->orderBy('a.street', 'ASC')
@@ -76,6 +84,7 @@ class AddressesHistoryQuery
         }
 
         // Step 2: Get all data for these addresses
+        $statusList = $this->getStatusList();
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Address::class, 'a')
             ->leftJoin('a.signalements', 's', 'WITH', 's.statut IN (:statusList)')
@@ -126,8 +135,7 @@ class AddressesHistoryQuery
         User $user,
         ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
     ): int {
-        $statusList = $this->getStatusList();
-        $qb = $this->buildBaseQueryBuilder($user, $addressesHistorySearchQuery, $statusList);
+        $qb = $this->buildBaseQueryBuilder($user, $addressesHistorySearchQuery);
         $qb->select('COUNT(DISTINCT a.id)');
 
         return (int) $qb->getQuery()->getSingleScalarResult();
@@ -145,14 +153,11 @@ class AddressesHistoryQuery
         ];
     }
 
-    /**
-     * @param array<SignalementStatus> $statusList
-     */
     private function buildBaseQueryBuilder(
         User $user,
         ?AddressesHistorySearchQuery $addressesHistorySearchQuery,
-        array $statusList,
     ): QueryBuilder {
+        $statusList = $this->getStatusList();
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Address::class, 'a')
             ->leftJoin('a.signalements', 's', 'WITH', 's.statut IN (:statusList)')
