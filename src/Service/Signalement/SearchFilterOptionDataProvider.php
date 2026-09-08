@@ -68,8 +68,6 @@ class SearchFilterOptionDataProvider
                         ? $this->countStatisticsQuery->countImported($territory) : $this->countStatisticsQuery->countImported($territory, $user);
                 }
 
-                $isAddressesHistoryContext = 'addresses-history' === $context;
-
                 return [
                     'criteres' => $isAddressesHistoryContext ? [] : $this->critereRepository->findAllList(),
                     'territories' => $this->getTerritories($user),
