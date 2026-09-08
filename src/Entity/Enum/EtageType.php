@@ -27,11 +27,7 @@ enum EtageType: string
 
     /**
      * Valeur à stocker dans Signalement::etageOccupant : le libellé de l'étage, ou la
-     * précision libre saisie par l'usager/l'agent quand l'étage est "Autre". Ce champ est
-     * réutilisé tel quel par les exports Esabora (EtageParser) et par l'API publique, il doit
-     * donc rester une chaîne lisible/parsable, pas juste la précision seule.
-     * Règle centralisée ici pour ne plus être dupliquée à chaque endroit qui édite l'étage
-     * (création usager, création BO, édition BO, édition FO).
+     * précision libre saisie par l'usager/l'agent quand l'étage est "Autre". 
      */
     public static function resolveOccupantLabel(?self $etage, ?string $precision): ?string
     {
@@ -43,13 +39,7 @@ enum EtageType: string
     }
 
     /**
-     * Répercute un changement d'étage (et de la réponse "avec fenêtres") sur
-     * TypeCompositionLogement : le champ canonique typeLogementAppartementEtage, ainsi que
-     * les booléens historiques typeLogementRdc/DernierEtage/SousCombleSansFenetre/SousSolSansFenetre
-     * encore lus directement par DesordreCompositionLogementLoader (suggestion de désordres) et
-     * par l'affichage "avec fenêtres" de la fiche signalement. On les recalcule tous les 4 à
-     * chaque appel (plutôt que de ne poser que le cas "oui") pour ne pas laisser une ancienne
-     * valeur traîner quand l'étage change (ex. Sous-sol -> RDC).
+     * Répercute un changement d'étage (et de la réponse "avec fenêtres") sur TypeCompositionLogement 
      */
     public static function applyToTypeCompositionLogement(
         TypeCompositionLogement $typeCompositionLogement,

@@ -9,6 +9,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\EtageType;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
@@ -1744,7 +1745,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     {
         $complement = '';
         if ($this->etageOccupant) {
-            $complement .= 'étage '.$this->etageOccupant.', ';
+            if ($this->etageOccupant === EtageType::RDC->label() || $this->etageOccupant === EtageType::SOUSSOL->label() || $this->etageOccupant === EtageType::DERNIER_ETAGE->label()) {
+                $complement .= $this->etageOccupant.', ';
+            } else {
+                $complement .= 'étage '.$this->etageOccupant.', ';
+            }
         }
         if ($this->escalierOccupant) {
             $complement .= 'escalier '.$this->escalierOccupant.', ';
