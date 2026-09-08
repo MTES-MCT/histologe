@@ -120,8 +120,13 @@ jobs:
           done
           echo "Application is ready in prod mode!"
 
+      - name: Install Lighthouse dependencies
+        working-directory: tools/lighthouse
+        run: npm ci
+
       - name: Run Lighthouse CI (public pages)
         id: lighthouse-public
+        working-directory: tools/lighthouse
         run: |
           export CHROME_PATH=$(find ~/.cache/ms-playwright -name chrome -type f 2>/dev/null | head -1)
           if [ -z "$CHROME_PATH" ]; then
@@ -129,11 +134,12 @@ jobs:
             export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
           fi
           echo "Using Chrome at: $CHROME_PATH"
-          npx lhci autorun --config=tests/lighthouse/lighthouserc.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
+          npx lhci autorun --config=lighthouserc.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
         continue-on-error: true
 
       - name: Run Lighthouse CI (authenticated pages)
         id: lighthouse-auth
+        working-directory: tools/lighthouse
         run: |
           export CHROME_PATH=$(find ~/.cache/ms-playwright -name chrome -type f 2>/dev/null | head -1)
           if [ -z "$CHROME_PATH" ]; then
@@ -141,11 +147,12 @@ jobs:
             export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
           fi
           echo "Using Chrome at: $CHROME_PATH"
-          npx lhci autorun --config=tests/lighthouse/lighthouserc.auth.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
+          npx lhci autorun --config=lighthouserc.auth.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
         continue-on-error: true
 
       - name: Display Lighthouse accessibility issues
         if: always()
+        working-directory: tools/lighthouse
         run: |
           echo "## Lighthouse Accessibility Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
