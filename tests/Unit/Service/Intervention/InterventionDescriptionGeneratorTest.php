@@ -81,7 +81,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         $dossierArreteSISH->method('getArreteMLNumero')->willReturn('2023-DD13-00172');
 
         $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
-        $this->assertEquals('La date de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 15/06/2023<br>Le numéro de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est 2023/DD13/00665', $description);
+        $this->assertEquals('La date de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 15/06/2023.<br>Le numéro de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est 2023/DD13/00665.<br>Type arrêté: ', $description);
 
         // Test modification date seule arrêté
         $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
@@ -91,7 +91,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         $dossierArreteSISH->method('getArreteMLNumero')->willReturn('2023-DD13-00172');
 
         $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
-        $this->assertEquals('La date de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 15/06/2023', $description);
+        $this->assertEquals('La date de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 15/06/2023.<br>Type arrêté: ', $description);
 
         // Test modification numéro seule arrêté
         $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
@@ -101,7 +101,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         $dossierArreteSISH->method('getArreteMLNumero')->willReturn('2023-DD13-00172');
 
         $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
-        $this->assertEquals('Le numéro de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est 2023/DD13/00665', $description);
+        $this->assertEquals('Le numéro de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est 2023/DD13/00665.<br>Type arrêté: ', $description);
 
         // Test modification date et numéro mainlevée
         $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
@@ -111,7 +111,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         $dossierArreteSISH->method('getArreteMLNumero')->willReturn('2023-DD13-00173');
 
         $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
-        $this->assertEquals('La date de la mainlevée dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 02/07/2023<br>Le numéro de la mainlevée dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est 2023-DD13-00173', $description);
+        $this->assertEquals('La date de la mainlevée dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 02/07/2023.<br>Le numéro de la mainlevée dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est 2023-DD13-00173.<br>Type arrêté: ', $description);
 
         // Test modification les deux (arrêté et mainlevée)
         $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
@@ -121,7 +121,7 @@ class InterventionDescriptionGeneratorTest extends TestCase
         $dossierArreteSISH->method('getArreteMLNumero')->willReturn('2023-DD13-00172');
 
         $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
-        $this->assertEquals('Le numéro de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est 2023/DD13/00665<br>La date de la mainlevée dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 02/07/2023', $description);
+        $this->assertEquals('Le numéro de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est 2023/DD13/00665.<br>La date de la mainlevée dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 02/07/2023.<br>Type arrêté: ', $description);
     }
 
     public function testArreteDescriptionOnMainLeveeCreated(): void
