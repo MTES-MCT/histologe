@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Dto\Request\Signalement;
 
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
+use App\Entity\Enum\EtageType;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -22,7 +23,7 @@ class AdresseOccupantRequestTest extends KernelTestCase
             adresse: '123 Rue de Exemple',
             codePostal: '75001',
             ville: 'Paris',
-            etage: '3',
+            etage: EtageType::RDC->value,
             escalier: 'A',
             numAppart: '42',
             autre: 'Proche de la boulangerie',
@@ -34,7 +35,8 @@ class AdresseOccupantRequestTest extends KernelTestCase
         $this->assertSame('123 Rue de Exemple', $adresseOccupantRequest->getAdresse());
         $this->assertSame('75001', $adresseOccupantRequest->getCodePostal());
         $this->assertSame('Paris', $adresseOccupantRequest->getVille());
-        $this->assertSame('3', $adresseOccupantRequest->getEtage());
+        $this->assertSame(EtageType::RDC->value, $adresseOccupantRequest->getEtage());
+        $this->assertNull($adresseOccupantRequest->getEtagePrecision());
         $this->assertSame('A', $adresseOccupantRequest->getEscalier());
         $this->assertSame('42', $adresseOccupantRequest->getNumAppart());
         $this->assertSame('Proche de la boulangerie', $adresseOccupantRequest->getAutre());
@@ -46,13 +48,44 @@ class AdresseOccupantRequestTest extends KernelTestCase
         $this->assertCount(0, $errors);
     }
 
+    public function testValidateSuccessEtageAutreAvecPrecision(): void
+    {
+        $adresseOccupantRequest = new AdresseOccupantRequest(
+            adresse: '123 Rue de Exemple',
+            codePostal: '75001',
+            ville: 'Paris',
+            etage: EtageType::AUTRE->value,
+            etagePrecision: 'Combles',
+        );
+
+        $this->assertSame(EtageType::AUTRE->value, $adresseOccupantRequest->getEtage());
+        $this->assertSame('Combles', $adresseOccupantRequest->getEtagePrecision());
+
+        $errors = $this->validator->validate($adresseOccupantRequest);
+        $this->assertCount(0, $errors);
+    }
+
+    public function testValidateErrorEtageAutreSansPrecision(): void
+    {
+        $adresseOccupantRequest = new AdresseOccupantRequest(
+            adresse: '123 Rue de Exemple',
+            codePostal: '75001',
+            ville: 'Paris',
+            etage: EtageType::AUTRE->value,
+        );
+
+        $errors = $this->validator->validate($adresseOccupantRequest);
+        $this->assertCount(1, $errors);
+    }
+
     public function testValidateError(): void
     {
         $adresseOccupantRequestInvalide = new AdresseOccupantRequest(
             adresse: '',
             codePostal: '123',
             ville: '',
-            etage: str_repeat('E', 21),
+            etage: 'invalid_choice',
+            etagePrecision: str_repeat('E', 21),
             escalier: 'EscalierInvalide',
             numAppart: 'NumAppInvalide',
             autre: str_repeat('x', 256),
@@ -62,6 +95,6 @@ class AdresseOccupantRequestTest extends KernelTestCase
         );
 
         $errors = $this->validator->validate($adresseOccupantRequestInvalide);
-        $this->assertCount(11, $errors);
+        $this->assertCount(12, $errors);
     }
 }

@@ -17,8 +17,19 @@ class AdresseOccupantRequest implements RequestInterface
         #[Assert\NotBlank(message: 'Merci de saisir une ville.')]
         #[Assert\Length(max: 100, maxMessage: 'La ville ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $ville = null,
-        #[Assert\Length(max: 20, maxMessage: 'L\'étage ne peut pas dépasser {{ limit }} caractères.')]
+        #[Assert\Choice(
+            choices: ['', 'RDC', 'DERNIER_ETAGE', 'SOUSSOL', 'AUTRE'],
+            message: 'Le champ "Etage" est incorrect.'
+        )]
         private readonly ?string $etage = null,
+        #[Assert\When(
+            expression: 'this.getEtage() == "AUTRE"',
+            constraints: [
+                new Assert\NotBlank(message: 'Merci de préciser l\'étage.'),
+            ],
+        )]
+        #[Assert\Length(max: 20, maxMessage: 'La précision de l\'étage ne doit pas dépasser {{ limit }} caractères.')]
+        private readonly ?string $etagePrecision = null,
         #[Assert\Length(max: 3, maxMessage: 'L\'escalier ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $escalier = null,
         #[Assert\Length(max: 5, maxMessage: 'Le numéro d\'appartement ne peut pas dépasser {{ limit }} caractères.')]
@@ -52,6 +63,11 @@ class AdresseOccupantRequest implements RequestInterface
     public function getEtage(): ?string
     {
         return $this->etage;
+    }
+
+    public function getEtagePrecision(): ?string
+    {
+        return $this->etagePrecision;
     }
 
     public function getEscalier(): ?string

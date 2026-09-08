@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Controller\Api;
 
+use App\Entity\Enum\EtageType;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
@@ -68,7 +69,9 @@ class SignalementCreateControllerTest extends WebTestCase
         $this->assertNotNull($signalement->getAddress()->getPoint());
         $this->assertNotEmpty($signalement->getAddress()->getBanId());
         // champs classiques
-        $this->assertEquals($signalement->getEtageOccupant(), $payload['etageOccupant']);
+        // etageAppartement (RDC) prime sur etageOccupant : le libellé de l'enum est stocké,
+        // etageOccupant n'est utilisé tel quel que si etageAppartement vaut "Autre".
+        $this->assertEquals(EtageType::RDC->label(), $signalement->getEtageOccupant());
         $this->assertEquals($signalement->getEscalierOccupant(), $payload['escalierOccupant']);
         $this->assertEquals($signalement->getNumAppartOccupant(), $payload['numAppartOccupant']);
         $this->assertEquals($signalement->getAdresseAutreOccupant(), $payload['adresseAutreOccupant']);

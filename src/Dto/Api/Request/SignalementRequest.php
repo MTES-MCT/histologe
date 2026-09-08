@@ -60,6 +60,7 @@ class SignalementRequest implements RequestInterface
         example: '2',
     )]
     #[Assert\Length(max: 5)]
+    // TODO : on peut limiter à 2 comme fait sur le form usager
     public ?string $etageOccupant = null;
 
     #[OA\Property(

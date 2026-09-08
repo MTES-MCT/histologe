@@ -353,7 +353,7 @@ class SignalementEditControllerTest extends WebTestCase
             'insee' => '13202',
             'geolocLat' => '43.301787',
             'geolocLng' => '5.364626',
-            'etage' => '8',
+            'etage' => 'RDC',
             'escalier' => '5',
             'numAppart' => '369',
             'autre' => 'Les essentielles',

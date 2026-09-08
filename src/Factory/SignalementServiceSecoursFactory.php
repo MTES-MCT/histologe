@@ -94,6 +94,12 @@ class SignalementServiceSecoursFactory
             /** @var EtageType $appartementEtage */
             $appartementEtage = $formServiceSecours->step2->typeEtageLogement;
             if (!empty($appartementEtage)) {
+                // Nécessaire pour que le panel BO "Modifier la description du logement"
+                // retrouve le bon étage : sans ce champ posé, son repli de rétro-compatibilité
+                // sur les anciens booléens ne sait pas reconnaître "Sous-sol" (il n'y a pas de
+                // booléen dédié, seulement typeLogementSousSolSansFenetre qu'on ne pose pas ici
+                // faute de question "avec fenêtres" dans ce formulaire) et retombait sur "Autre".
+                $typeCompositionLogement->setTypeLogementAppartementEtage($appartementEtage->value);
                 switch ($appartementEtage) {
                     case EtageType::RDC:
                         $typeCompositionLogement->setTypeLogementRdc('oui')
