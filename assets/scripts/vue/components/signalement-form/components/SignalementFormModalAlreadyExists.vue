@@ -25,8 +25,7 @@
                 Il semblerait que vous ayez déjà déposé un signalement pour le logement situé <strong>{{ formStore.data.adresse_logement_adresse }}</strong><div class=""></div>
                 <span v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire' && formStore.alreadyExists.signalements"
                   >
-                  Signalement déposé le {{ formatDate(formStore.alreadyExists.signalements[0].created_at) }} pour le compte de <strong>{{ getOccupantName(formStore.alreadyExists.signalements[0]) }}</strong>
-                  <span v-if="formStore.alreadyExists.signalements[0].complement_adresse_occupant"> ({{ formStore.alreadyExists.signalements[0].complement_adresse_occupant }})</span>.
+                  Signalement déposé le {{ formatDate(formStore.alreadyExists.signalements[0].created_at) }} pour le compte de <strong>{{ getOccupantName(formStore.alreadyExists.signalements[0]) }}</strong><span v-if="formStore.alreadyExists.signalements[0].complement_adresse_occupant"> ({{ formStore.alreadyExists.signalements[0].complement_adresse_occupant }})</span>.
                 </span>
                 Ce signalement est en cours de traitement.<br>
                 Vous pouvez le compléter depuis votre page de suivi ou créer un nouveau signalement.
@@ -53,8 +52,7 @@
                         class="fr-label"
                         :for="'selected-signalement-' + signalement.uuid"
                         >
-                        Signalement déposé le {{ formatDate(signalement.created_at) }} pour le compte de <strong>{{ getOccupantName(signalement) }}</strong>
-                        <span v-if="signalement.complement_adresse_occupant"> ({{ signalement.complement_adresse_occupant }})</span>.
+                        Signalement déposé le {{ formatDate(signalement.created_at) }} pour le compte de <strong>{{ getOccupantName(signalement) }}</strong><span v-if="signalement.complement_adresse_occupant"> ({{ signalement.complement_adresse_occupant }})</span>.
                       </label>
                     </div>
                   </div>
