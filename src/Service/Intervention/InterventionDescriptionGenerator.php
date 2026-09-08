@@ -84,7 +84,7 @@ class InterventionDescriptionGenerator
             $dossierArreteSISH->getDossNum(),
         );
 
-        $description .= \sprintf('Type arrêté: %s<br>', $dossierArreteSISH->getArreteType());
+        $description .= \sprintf('Type arrêté : %s<br>', $dossierArreteSISH->getArreteType());
 
         if ($dossierArreteSISH->getArreteMLDate()) {
             $description = \sprintf(
@@ -100,8 +100,9 @@ class InterventionDescriptionGenerator
         return $description;
     }
 
-    public static function buildDescriptionArreteUpdated(Intervention $intervention, DossierArreteSISH $dossierArreteSISH): string
+    public static function buildDescriptionArreteUpdated(Intervention $intervention, DossierArreteSISH $dossierArreteSISH): ?string
     {
+        $hasChanges = false;
         $messages = [];
         $oldAdditionalInformation = $intervention->getAdditionalInformation() ?? [];
 
@@ -116,6 +117,7 @@ class InterventionDescriptionGenerator
                 EsaboraSISHService::NAME_SI,
                 $newDate
             );
+            $hasChanges = true;
         }
         if ($oldNumero !== $newNumero) {
             $messages[] = \sprintf(
@@ -123,6 +125,7 @@ class InterventionDescriptionGenerator
                 EsaboraSISHService::NAME_SI,
                 $newNumero
             );
+            $hasChanges = true;
         }
 
         $oldMLDate = $oldAdditionalInformation['arrete_mainlevee_date'] ?? null;
@@ -137,6 +140,7 @@ class InterventionDescriptionGenerator
                     EsaboraSISHService::NAME_SI,
                     $newMLDate
                 );
+                $hasChanges = true;
             }
             if ($oldMLNumero !== $newMLNumero && !empty($oldMLNumero)) {
                 $messages[] = \sprintf(
@@ -144,12 +148,15 @@ class InterventionDescriptionGenerator
                     EsaboraSISHService::NAME_SI,
                     $newMLNumero
                 );
+                $hasChanges = true;
             }
         }
 
-        $messages[] = \sprintf('Type arrêté: %s', $dossierArreteSISH->getArreteType());
+        if ($hasChanges) {
+            $messages[] = \sprintf('Type arrêté : %s', $dossierArreteSISH->getArreteType());
+        }
 
-        return implode('<br>', $messages);
+        return empty($messages) ? null : implode('<br>', $messages);
     }
 
     public static function buildDescriptionArreteCreatedFromRequest(ArreteRequest $arreteRequest): string

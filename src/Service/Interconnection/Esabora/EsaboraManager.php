@@ -495,6 +495,10 @@ class EsaboraManager
                 $newDetails = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
             }
 
+            if (null === $newDetails) {
+                return false;
+            }
+
             $intervention->setDetails($this->htmlSanitizer->sanitize($newDetails));
             $intervention->setAdditionalInformation($mergedAdditionalInformation);
             $scheduledAt = DateParser::parse($mergedAdditionalInformationSorted['arrete_date']);
