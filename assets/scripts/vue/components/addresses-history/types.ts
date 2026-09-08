@@ -42,6 +42,7 @@ export interface Params {
   niveauxGris: boolean
   limitesAdministratives: boolean
   zonesTerritoire: boolean
+  mainLeveeUniquement: boolean
 }
 
 export interface Filters {
