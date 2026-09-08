@@ -49,11 +49,36 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <h2 class="fr-h5">Complément d'adresse (facultatif)</h2>
 
+                        <div class="fr-select-group">
+                            {% set typeLogementAppartementEtage = '' %}
+                            {% if signalement.typeCompositionLogement %}
+                                {% if signalement.typeCompositionLogement.typeLogementAppartementEtage %}
+                                    {% set typeLogementAppartementEtage = signalement.typeCompositionLogement.typeLogementAppartementEtage %}
+                                {% elseif signalement.typeCompositionLogement.typeLogementRdc is same as 'oui' %}
+                                    {% set typeLogementAppartementEtage = enum('App\\Entity\\Enum\\EtageType').RDC.value %}
+                                {% elseif signalement.typeCompositionLogement.typeLogementDernierEtage is same as 'oui' %}
+                                    {% set typeLogementAppartementEtage = enum('App\\Entity\\Enum\\EtageType').DERNIER_ETAGE.value %}
+                                {% elseif signalement.typeCompositionLogement.typeLogementSousSolSansFenetre is same as 'oui' %}
+                                    {% set typeLogementAppartementEtage = enum('App\\Entity\\Enum\\EtageType').SOUSSOL.value %}
+                                {% else %}
+                                    {% set typeLogementAppartementEtage = enum('App\\Entity\\Enum\\EtageType').AUTRE.value %}
+                                {% endif %}
+                            {% endif %}
+                            <label class="fr-label" for="adresseEtage">Etage</label>
+                            <select class="fr-select" id="adresseEtage" name="etage">
+                                <option value="" {{ typeLogementAppartementEtage not in [enum('App\\Entity\\Enum\\EtageType').RDC.value, enum('App\\Entity\\Enum\\EtageType').DERNIER_ETAGE.value, enum('App\\Entity\\Enum\\EtageType').SOUSSOL.value, enum('App\\Entity\\Enum\\EtageType').AUTRE.value] ? 'selected' : '' }}></option>
+                                <option value="{{ enum('App\\Entity\\Enum\\EtageType').RDC.value }}" {{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').RDC.value ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\EtageType').RDC.label }}</option>
+                                <option value="{{ enum('App\\Entity\\Enum\\EtageType').DERNIER_ETAGE.value }}" {{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').DERNIER_ETAGE.value ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\EtageType').DERNIER_ETAGE.label }}</option>
+                                <option value="{{ enum('App\\Entity\\Enum\\EtageType').SOUSSOL.value }}" {{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').SOUSSOL.value ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\EtageType').SOUSSOL.label }}</option>
+                                <option value="{{ enum('App\\Entity\\Enum\\EtageType').AUTRE.value }}" {{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').AUTRE.value ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\EtageType').AUTRE.label }}</option>
+                            </select>
+                        </div>
+
                         <div class="fr-input-group">
-                            <label class="fr-label" for="adresseEtage">Etage
+                            <label class="fr-label" for="adresseEtagePrecision">Précision (si étage "Autre")
                                 <span class="fr-hint-text">20 caractères maximum</span>
                             </label>
-                            <input class="fr-input" type="text" id="adresseEtage" name="etage" value="{{ signalement.etageOccupant }}" maxlength="20">
+                            <input class="fr-input" type="text" id="adresseEtagePrecision" name="etagePrecision" value="{{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').AUTRE.value ? signalement.etageOccupant : '' }}" maxlength="20">
                         </div>
 
                         <div class="fr-input-group">

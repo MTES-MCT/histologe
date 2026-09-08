@@ -66,13 +66,17 @@ class SignalementBoManager
             /** @var EtageType|null $appartementEtage */
             $appartementEtage = $form->get('etageOccupant')->getData();
             if (null !== $appartementEtage) {
-                $typeCompositionLogement->setTypeLogementAppartementEtage($appartementEtage->value);
-                $typeCompositionLogement->setTypeLogementRdc(EtageType::RDC === $appartementEtage ? 'oui' : 'non');
-                $typeCompositionLogement->setTypeLogementDernierEtage(EtageType::DERNIER_ETAGE === $appartementEtage ? 'oui' : 'non');
+                // "avec fenêtres" n'est pas encore connu à ce stade (demandé à l'étape
+                // suivante, onglet Logement) : applyToTypeCompositionLogement remet donc
+                // sous-combles/sous-sol à 'non' pour l'instant, formLogementManager les
+                // recalculera avec la vraie réponse une fois connue.
+                EtageType::applyToTypeCompositionLogement(
+                    $typeCompositionLogement,
+                    $appartementEtage,
+                    $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()
+                );
                 $signalement->setEtageOccupant(
-                    EtageType::AUTRE === $appartementEtage
-                        ? $form->get('etageOccupantPrecision')->getData()
-                        : $appartementEtage->label()
+                    EtageType::resolveOccupantLabel($appartementEtage, $form->get('etageOccupantPrecision')->getData())
                 );
             }
         }
@@ -168,17 +172,11 @@ class SignalementBoManager
             $appartementEtage = EtageType::tryFrom($typeCompositionLogement->getTypeLogementAppartementEtage() ?? '');
 
             $typeCompositionLogement->setTypeLogementAppartementAvecFenetres($form->get('appartementAvecFenetres')->getData());
-
-            if (EtageType::DERNIER_ETAGE === $appartementEtage) {
-                $typeCompositionLogement->setTypeLogementSousCombleSansFenetre(
-                    'non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres() ? 'oui' : 'non'
-                );
-            }
-
-            if (EtageType::SOUSSOL === $appartementEtage
-                    && 'non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()) {
-                $typeCompositionLogement->setTypeLogementSousSolSansFenetre('oui');
-            }
+            EtageType::applyToTypeCompositionLogement(
+                $typeCompositionLogement,
+                $appartementEtage,
+                $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()
+            );
             $signalement->setAutresOccupantsDesordre($form->get('autresOccupantsDesordre')->getData());
         }
 

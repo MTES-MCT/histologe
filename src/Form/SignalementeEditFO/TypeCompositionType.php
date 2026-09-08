@@ -30,7 +30,7 @@ class TypeCompositionType extends AbstractType
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
 
         $natureAutrePrecision = $typeCompositionLogement?->getTypeLogementNatureAutrePrecision();
-        $appartementEtage = EtageType::tryFrom($typeCompositionLogement?->getTypeLogementAppartementEtage());
+        $appartementEtage = EtageType::tryFrom($typeCompositionLogement?->getTypeLogementAppartementEtage() ?? '');
         $avecFenetres = $typeCompositionLogement?->getTypeLogementAppartementAvecFenetres();
         $pieceUnique = $typeCompositionLogement?->getCompositionLogementPieceUnique();
         $nbPieces = $typeCompositionLogement?->getCompositionLogementNbPieces();
