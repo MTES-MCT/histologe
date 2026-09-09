@@ -23,7 +23,10 @@
               </div>
               <div v-else-if="formStore.data.profil === 'bailleur_occupant' || formStore.data.profil === 'locataire' || formStore.alreadyExists.signalements?.length === 1">
                 Il semblerait que vous ayez déjà déposé un signalement pour le logement situé <strong>{{ formStore.data.adresse_logement_adresse }}</strong><div class=""></div>
-                <span v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire' && formStore.alreadyExists.signalements" v-html="signalementLabel(formStore.alreadyExists.signalements[0])"></span>
+                <span v-if="formStore.data.profil !== 'bailleur_occupant' && formStore.data.profil !== 'locataire' && formStore.alreadyExists.signalements"
+                  >
+                  Signalement déposé le {{ formatDate(formStore.alreadyExists.signalements[0].created_at) }} pour le compte de <strong>{{ getOccupantName(formStore.alreadyExists.signalements[0]) }}</strong><span v-if="formStore.alreadyExists.signalements[0].complement_adresse_occupant"> ({{ formStore.alreadyExists.signalements[0].complement_adresse_occupant }})</span>.
+                </span>
                 Ce signalement est en cours de traitement.<br>
                 Vous pouvez le compléter depuis votre page de suivi ou créer un nouveau signalement.
                 <br>
@@ -48,8 +51,8 @@
                       <label
                         class="fr-label"
                         :for="'selected-signalement-' + signalement.uuid"
-                      >
-                        <span v-html="signalementLabel(signalement)"></span>
+                        >
+                        Signalement déposé le {{ formatDate(signalement.created_at) }} pour le compte de <strong>{{ getOccupantName(signalement) }}</strong><span v-if="signalement.complement_adresse_occupant"> ({{ signalement.complement_adresse_occupant }})</span>.
                       </label>
                     </div>
                   </div>
@@ -240,20 +243,15 @@ export default defineComponent({
       }
       return ''
     },
-    signalementLabel (signalement: any) {
-      let label = 'Signalement déposé le ' + this.formatDate(signalement.created_at) + ' pour le compte de <strong>'
+    getOccupantName (signalement: any): string {
+      let name = ''
       if (signalement.prenom_occupant !== null) {
-        label += signalement.prenom_occupant + ' '
+        name += signalement.prenom_occupant + ' '
       }
       if (signalement.nom_occupant !== null) {
-        label += signalement.nom_occupant
+        name += signalement.nom_occupant
       }
-      label += '</strong>'
-      if (signalement.complement_adresse_occupant !== '') {
-        label += ' (' + signalement.complement_adresse_occupant + ')'
-      }
-      label += '.'
-      return label
+      return name.trim()
     }
   }
 })
