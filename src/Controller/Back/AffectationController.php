@@ -86,7 +86,7 @@ class AffectationController extends AbstractController
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
      */
-    #[Route('/{uuid:signalement}/affectation/toggle', name: 'back_signalement_toggle_affectation')]
+    #[Route('/{uuid:signalement}/affectation/toggle', name: 'back_signalement_toggle_affectation', methods: ['POST'])]
     #[IsGranted(SignalementVoter::SIGN_AFFECTATION_TOGGLE, subject: 'signalement')]
     public function toggleAffectationSignalement(
         Request $request,
@@ -396,10 +396,7 @@ class AffectationController extends AbstractController
 
         $form = $this->createForm(CloseAffectationType::class, $affectation, ['action' => $this->generateUrl('back_affectation_close', ['uuid' => $signalement->getUuid()])]);
         $form->handleRequest($request);
-        if (!$form->isSubmitted()) {
-            return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
-        }
-        if (!$form->isValid()) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
 
             return $this->json($response, $response['code']);
