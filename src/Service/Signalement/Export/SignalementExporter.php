@@ -102,7 +102,7 @@ readonly class SignalementExporter
             $searchSelectedCol = array_search($columnIndex, $selectedColumns);
             // Unchecked col: delete from list
             if (false === $searchSelectedCol) {
-                if ('s.geoloc' === $selectableColumn['export']) {
+                if ('GEOLOCALISATION' === $columnIndex) {
                     $lonIndex = $this->removeColFromHeaders('Longitude', $headers);
                     if (false !== $lonIndex) {
                         $keysToRemove[] = $lonIndex;

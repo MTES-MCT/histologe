@@ -51,7 +51,7 @@ class SignalementExportFactory
             'isLogementSocial', 'isPreavisDepart', 'isRelogement', 'isNotOccupant',
             'nomDeclarant', 'matriculeDeclarant', 'mailDeclarant', 'structureDeclarant',
             'lienDeclarantOccupant', 'interventionNbVisites', 'interventionConcludeProcedure',
-            'interventionDetails', 'comCloture', 'zones',
+            'interventionDetails', 'comCloture', 'zones', 'addressPoint',
         ], null);
 
         $createdAt = $data['createdAt'] instanceof \DateTimeImmutable
