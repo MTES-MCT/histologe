@@ -44,3 +44,7 @@ parameters:
 			# Faux positif : DTO passé aux templates Twig (propriétés publiques lues dynamiquement)
 			message: '#^(Unused|Thus|Property) .*#'
 			path: src/Service/DashboardTabPanel/TabDossier.php
+		-
+			# Faux positif : appelée dynamiquement par #[MapEntity] dans les contrôleurs
+			message: '#^Unused .*::findOneByCodeAndToken#'
+			path: src/Repository/TiersInvitationRepository.php
