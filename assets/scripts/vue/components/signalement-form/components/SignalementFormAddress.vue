@@ -15,7 +15,7 @@
       @keydown.down.prevent="handleDownSuggestion"
       @keydown.up.prevent="handleUpSuggestion"
       @keydown.enter.prevent="handleEnterSuggestion"
-      @keydown.escape.prevent="handleTabSuggestion"
+      @keydown.escape.prevent="handleEscapeSuggestion"
       @keydown.tab="handleTabSuggestion"
     />
 
@@ -188,11 +188,13 @@ export default defineComponent({
         this.idFetchTimeout = setTimeout(() => {
           this.isTyping = false
           this.selectedSuggestionIndex = -1
-          if (newValue.length > 10) {
+          if (newValue && newValue.length > 10) {
             const codePostal = this.idAddress === 'adresse_logement_adresse_suggestion'
               ? ' ' + this.getCodePostalFromQueryParam()
               : ''
             requests.validateAddress(newValue + codePostal, this.handleAddressFound)
+          } else {
+            this.clearSuggestions()
           }
         }, 200)
       }
@@ -225,7 +227,11 @@ export default defineComponent({
       }
     )
   },
+  mounted () {
+    document.addEventListener('click', this.handleClickOutside)
+  },
   beforeUnmount () {
+    document.removeEventListener('click', this.handleClickOutside)
     if (this.rnbMapController) {
       this.rnbMapController.destroy()
     }
@@ -334,9 +340,31 @@ export default defineComponent({
       }
     },
     handleTabSuggestion () {
+      this.clearSuggestions()
+    },
+    handleEscapeSuggestion () {
+      this.clearSuggestions()
+    },
+    clearSuggestions () {
       this.suggestions.length = 0
+      this.selectedSuggestionIndex = -1
+    },
+    handleClickOutside (event: MouseEvent) {
+      if (this.suggestions.length === 0) {
+        return
+      }
+      const target = event.target as HTMLElement
+      if (this.$el && !this.$el.contains(target)) {
+        this.clearSuggestions()
+      }
     },
     handleAddressFound (requestResponse: any) {
+      // Ignorer les réponses tardives si le champ a été vidé entre-temps
+      const currentValue = this.formStore.data[this.idAddress]
+      if (!currentValue || currentValue.length <= 10) {
+        this.clearSuggestions()
+        return
+      }
       this.suggestions = requestResponse.features
     },
     getCodePostalFromQueryParam () {
