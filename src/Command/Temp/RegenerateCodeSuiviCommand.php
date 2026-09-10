@@ -58,6 +58,7 @@ class RegenerateCodeSuiviCommand extends Command
                         type: NotificationMailerType::TYPE_TEMP_REGENERATED_CODE_SUIVI,
                         to: $emails,
                         signalement: $signalement,
+                        isRecipientVisible: false
                     )
                 );
                 ++$countMailSent;
