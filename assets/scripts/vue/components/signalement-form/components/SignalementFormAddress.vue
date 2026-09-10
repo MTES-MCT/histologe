@@ -113,6 +113,10 @@
           <span class="fr-icon-check-line" aria-hidden="true"></span>
           Bâtiment non trouvé, signalé
         </span>
+        <span v-else class="pick-location-warning fr-ml-2v">
+          <span class="fr-icon-check-line" aria-hidden="true"></span>
+          Bâtiment non sélectionné
+        </span>
         <button
           ref="pickLocationSubmit"
           class="fr-btn fr-icon-check-line"
@@ -681,6 +685,14 @@ export default defineComponent({
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.pick-location-warning {
+  color: #b34000;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .pick-location-success {
