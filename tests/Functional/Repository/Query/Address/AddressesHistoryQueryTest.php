@@ -6,8 +6,6 @@ use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\Address;
 use App\Entity\Enum\ArreteType;
 use App\Entity\Enum\SignalementStatus;
-use App\Entity\Enum\ArreteType;
-use App\Entity\Enum\SignalementStatus;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\Zone;
@@ -38,42 +36,6 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $this->assertIsArray($allAddresses);
         $this->assertNotEmpty($allAddresses);
         $this->assertCount(15, $allAddresses);
-
-        // Vérifie la structure des résultats
-        foreach ($allAddresses as $address) {
-            $this->assertArrayHasKey('id', $address);
-            $this->assertArrayHasKey('address', $address);
-            $this->assertIsString($address['address']);
-            $this->assertNotEmpty($address['address']);
-        }
-
-        // Vérifie qu'il n'y a pas de doublons d'IDs
-        $ids = array_column($allAddresses, 'id');
-        $this->assertEquals(count($ids), count(array_unique($ids)));
-    }
-
-    public function testFindAllListWithTerritory(): void
-    {
-        /** @var TerritoryRepository $territoryRepository */
-        $territoryRepository = $this->entityManager->getRepository(Territory::class);
-
-        $territory = $territoryRepository->findOneBy(['zip' => '13']);
-        $this->assertNotNull($territory, 'Territory with zip 13 should exist in fixtures');
-
-        $addressesForTerritory = $this->addressesHistoryQuery->findAllList($territory);
-
-        $this->assertIsArray($addressesForTerritory);
-        $this->assertCount(6, $addressesForTerritory);
-    }
-
-    public function testFindAllList(): void
-    {
-        // Test sans territoire - devrait retourner toutes les adresses
-        $allAddresses = $this->addressesHistoryQuery->findAllList();
-
-        $this->assertIsArray($allAddresses);
-        $this->assertNotEmpty($allAddresses);
-        $this->assertCount(60, $allAddresses);
 
         // Vérifie la structure des résultats
         foreach ($allAddresses as $address) {
@@ -177,7 +139,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $this->assertNotNull($address);
 
         $searchQuery = new AddressesHistorySearchQuery(
-            communes: [$address->getCity()]
+            communeOuEpci: $address->getCity()
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
@@ -391,7 +353,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec un mélange de commune et EPCI (préfixé par "EPCI : ")
         $searchQuery = new AddressesHistorySearchQuery(
-            communes: ['Marseille']
+            communeOuEpci: 'Marseille'
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
@@ -401,13 +363,13 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec un mélange de commune et EPCI (préfixé par "EPCI : ")
         $searchQuery = new AddressesHistorySearchQuery(
-            communes: ['Marseille', 'EPCI : CC d\'Erdre et Gesvres']
+            communeOuEpci: 'EPCI : CC d\'Erdre et Gesvres'
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
         $this->assertIsArray($results);
-        $this->assertCount(17, $results);
+        $this->assertCount(2, $results);
     }
 
     public function testFindAddressesWithHistoryWithZoneFilter(): void
