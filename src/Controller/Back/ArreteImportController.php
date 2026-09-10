@@ -54,7 +54,6 @@ class ArreteImportController extends AbstractController
     #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function importUploadCsv(
         Request $request,
-        TagAwareCacheInterface $cache,
     ): Response {
         if (!$request->isXmlHttpRequest()) {
             return $this->json(['message' => 'Requête invalide'], Response::HTTP_BAD_REQUEST);
@@ -71,8 +70,6 @@ class ArreteImportController extends AbstractController
             if (!empty($errors)) {
                 return $this->json(['errors' => $errors, 'data' => $data]);
             }
-
-            $this->invalidateCacheForImportedArretes($cache, $data);
 
             return $this->json(['data' => $data]);
         }
@@ -96,6 +93,7 @@ class ArreteImportController extends AbstractController
     #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function importConfirm(
         Request $request,
+        TagAwareCacheInterface $cache,
     ): Response {
         if (!$request->isXmlHttpRequest()) {
             return $this->json(['message' => 'Requête invalide'], Response::HTTP_BAD_REQUEST);
@@ -118,6 +116,8 @@ class ArreteImportController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $this->arreteImportLoader->load($arreteImportRows, $user);
+
+        $this->invalidateCacheForImportedArretes($cache, $arreteImportRows);
 
         $metadata = $this->arreteImportLoader->getMetadata();
         $errorsCount = isset($metadata['errors']) ? \count($metadata['errors']) : 0;
