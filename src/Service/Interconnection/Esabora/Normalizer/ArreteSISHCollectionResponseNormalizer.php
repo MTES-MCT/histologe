@@ -13,7 +13,7 @@ class ArreteSISHCollectionResponseNormalizer
         $normalizedCollection = [];
 
         foreach ($dossierArreteSISHCollectionResponse->getCollection() as $item) {
-            $hasArrete = null !== $item->getArreteNumero();
+            $hasArrete = null !== $item->getDossNum();
             $hasArreteMainLevee = null !== $item->getArreteMLNumero();
 
             // On ne fait rien si on n’a pas à la fois un arrêté et une mainlevée
