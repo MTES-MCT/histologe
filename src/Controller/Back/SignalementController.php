@@ -21,6 +21,7 @@ use App\Event\SignalementViewedEvent;
 use App\Factory\SignalementSearchQueryFactory;
 use App\Form\AddSuiviType;
 use App\Form\AdminCancelInjonctionProcedureType;
+use App\Form\AffectationToggleType;
 use App\Form\AgentSelectionType;
 use App\Form\CloseAffectationType;
 use App\Form\CloseSignalementType;
@@ -223,6 +224,11 @@ class SignalementController extends AbstractController
             signalement: $signalement,
             filterInjonctionBailleur: SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut()
         );
+        $affectationToggleForm = null;
+        if ($this->isGranted(SignalementVoter::SIGN_AFFECTATION_TOGGLE, $signalement)) {
+            $affectationToggleFormRoute = $this->generateUrl('back_signalement_toggle_affectation', ['uuid' => $signalement->getUuid()]);
+            $affectationToggleForm = $this->createForm(AffectationToggleType::class, $partners, ['action' => $affectationToggleFormRoute]);
+        }
 
         $listQualificationStatusesLabelsCheck = [];
         if (!$signalement->getSignalementQualifications()->isEmpty()) {
@@ -303,6 +309,7 @@ class SignalementController extends AbstractController
             'epciOccupant' => $epciOccupant,
             'partner' => $partner,
             'partners' => $partners,
+            'affectationToggleForm' => $affectationToggleForm,
             'clotureForm' => $clotureForm,
             'closeSignalementForm' => $closeSignalementForm,
             'closeAffectationForm' => $closeAffectationForm,

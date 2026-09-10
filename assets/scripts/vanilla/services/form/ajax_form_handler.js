@@ -204,18 +204,6 @@ function resetSubmitButton(submitElements) {
   });
 }
 
-function replaceAffectation(affectationId) {
-  // Prend l'option dans le select signalement-affectation-select-affecte et la place dans signalement-affectation-select-disponible
-  const selectAffecte = document.getElementById('signalement-affectation-select-affecte');
-  const selectDisponible = document.getElementById('signalement-affectation-select-disponible');
-
-  const optionToMove = selectAffecte.querySelector(`option[value="${affectationId}"]`);
-  if (optionToMove) {
-    selectAffecte.removeChild(optionToMove);
-    selectDisponible.appendChild(optionToMove);
-  }
-}
-
 //gère la suppression des affectations et des suivis
 document.addEventListener('click', (event) => {
   const actionBtn = event.target.closest('[data-delete]');
@@ -238,10 +226,6 @@ document.addEventListener('click', (event) => {
     }).then((r) => {
       if (r.ok) {
         jsonResponseHandler(r);
-        const affectationId = actionBtn.getAttribute('data-move-affectation-partner-id');
-        if (affectationId) {
-          replaceAffectation(affectationId);
-        }
       }
     });
   }

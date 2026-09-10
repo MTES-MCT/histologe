@@ -388,7 +388,8 @@ class PartnerRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('p', 'p.id')
             ->andWhere('p.id IN (:ids)')
-            ->setParameter('ids', $partnerIds);
+            ->setParameter('ids', $partnerIds)
+            ->orderBy('p.nom', 'ASC');
 
         if ([] !== $types) {
             $qb->andWhere('p.type IN (:types)')

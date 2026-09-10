@@ -10,6 +10,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\SignalementStatus;
+use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\Territory;
@@ -38,6 +39,7 @@ use App\Service\Signalement\ZipcodeProvider;
 use App\Specification\Signalement\SuroccupationSpecification;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
@@ -143,6 +145,35 @@ class SignalementManagerTest extends WebTestCase
 
         $this->assertCount(1, $partners['affected'], 'One partner should be affected');
         $this->assertCount(10, $partners['not_affected'], 'Nine partners should not be affected');
+    }
+
+    #[DataProvider('providePartnerNameForIsDisabled')]
+    public function testFindAffectablePartnersFlagsNotAffectablePartnerAsDisabled(string $partnerName, bool $isDisabled): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-10']);
+        /** @var Partner $partner */
+        $partner = $this->partnerRepository->findOneBy(['nom' => $partnerName]);
+
+        $partners = $this->signalementManager->findAffectablePartners($signalement);
+
+        $partnerItem = null;
+        foreach ($partners['not_affected'] as $item) {
+            if ($item['id'] === $partner->getId()) {
+                $partnerItem = $item;
+                break;
+            }
+        }
+
+        $this->assertNotNull($partnerItem, sprintf('Partner "%s" should be listed in not_affected', $partnerName));
+        $this->assertSame($isDisabled, $partnerItem['is_disabled'] ?? false);
+    }
+
+    public static function providePartnerNameForIsDisabled(): \Generator
+    {
+        yield 'PARTENAIRE SCHS VIA SANTÉ HABITAT (déjà envoyé à SISH)' => ['PARTENAIRE SCHS VIA SANTÉ HABITAT', true];
+        yield 'PARTENAIRE 13-05 ESABORA SCHS' => ['PARTENAIRE 13-05 ESABORA SCHS', false];
+        yield 'PARTENAIRE 13-01' => ['PARTENAIRE 13-01', false];
     }
 
     public function testCloseSignalementForAllPartners(): void

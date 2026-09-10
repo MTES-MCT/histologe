@@ -3,7 +3,6 @@
 namespace App\Tests\Functional\Service\Esabora;
 
 use App\Repository\PartnerRepository;
-use App\Repository\SignalementRepository;
 use App\Service\Interconnection\Esabora\AffectationEsaboraPolicy;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -24,20 +23,9 @@ class AffectationEsaboraPolicyTest extends KernelTestCase
     #[DataProvider('providePartnerIds')]
     public function testHasUrlConflict(array $partnerIds, bool $result): void
     {
-        $affectationEsaboraPolicy = new AffectationEsaboraPolicy($this->partnerRepository, true);
-        $this->assertSame($result, $affectationEsaboraPolicy->hasUrlConflict($partnerIds));
-    }
-
-    #[DataProvider('providePartnerName')]
-    public function testCanBeAffected(string $partnerName, bool $result): void
-    {
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
-        $signalement = $signalementRepository->findOneBy(['reference' => '2024-10']);
-        $partner = $this->partnerRepository->findOneBy(['nom' => $partnerName]);
-
-        $affectationEsaboraPolicy = new AffectationEsaboraPolicy($this->partnerRepository, true);
-        $this->assertSame($result, $affectationEsaboraPolicy->canBeAffected($signalement, $partner));
+        $affectationEsaboraPolicy = new AffectationEsaboraPolicy(true);
+        $partners = $this->partnerRepository->findByIds(array_values($partnerIds));
+        $this->assertSame($result, $affectationEsaboraPolicy->hasUrlConflict($partners));
     }
 
     public static function providePartnerIds(): \Generator
@@ -46,12 +34,5 @@ class AffectationEsaboraPolicyTest extends KernelTestCase
         yield 'Partners with different url' => [[6, 7], false];
         yield 'Partners with no url' => [[1, 2], false];
         yield 'Partners with empty array' => [[], false];
-    }
-
-    public static function providePartnerName(): \Generator
-    {
-        yield 'PARTENAIRE SCHS VIA SANTÉ HABITAT' => ['PARTENAIRE SCHS VIA SANTÉ HABITAT', false];
-        yield 'PARTENAIRE 13-05 ESABORA SCHS' => ['PARTENAIRE 13-05 ESABORA SCHS', true];
-        yield 'PARTENAIRE 13-01' => ['PARTENAIRE 13-01', true];
     }
 }

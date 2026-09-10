@@ -10,6 +10,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use App\Factory\SignalementSearchQueryFactory;
+use App\Form\AffectationToggleType;
 use App\Form\AgentSelectionType;
 use App\Form\CloseAffectationType;
 use App\Form\RefusAffectationType;
@@ -17,7 +18,6 @@ use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
-use App\Repository\PartnerRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\EmailAlert\EmailAlertChecker;
@@ -46,7 +46,6 @@ class AffectationController extends AbstractController
     public function __construct(
         private readonly SignalementManager $signalementManager,
         private readonly AffectationManager $affectationManager,
-        private readonly PartnerRepository $partnerRepository,
         private readonly AffectationEsaboraPolicy $affectationEsaboraPolicy,
         private readonly EmailAlertChecker $emailAlertChecker,
         #[Autowire(env: 'FEATURE_CLOTURE_V2')]
@@ -61,6 +60,8 @@ class AffectationController extends AbstractController
     {
         $filterInjonctionBailleur = (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut());
         $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, $filterInjonctionBailleur);
+        $affectationToggleFormRoute = $this->generateUrl('back_signalement_toggle_affectation', ['uuid' => $signalement->getUuid()]);
+        $affectationToggleForm = $this->createForm(AffectationToggleType::class, $affectablePartners, ['action' => $affectationToggleFormRoute]);
 
         return [
             [
@@ -73,9 +74,9 @@ class AffectationController extends AbstractController
             ],
             [
                 'target' => '#signalement-affectation-form-row',
-                'content' => $this->renderView('_partials/_modal_affectation_selects.html.twig', [
+                'content' => $this->renderView('_partials/signalement/_affectation_selects.html.twig', [
                     'signalement' => $signalement,
-                    'partners' => $affectablePartners,
+                    'affectationToggleForm' => $affectationToggleForm,
                 ]),
             ],
         ];
@@ -85,7 +86,7 @@ class AffectationController extends AbstractController
      * @throws ExceptionInterface
      * @throws InvalidArgumentException
      */
-    #[Route('/{uuid:signalement}/affectation/toggle', name: 'back_signalement_toggle_affectation')]
+    #[Route('/{uuid:signalement}/affectation/toggle', name: 'back_signalement_toggle_affectation', methods: ['POST'])]
     #[IsGranted(SignalementVoter::SIGN_AFFECTATION_TOGGLE, subject: 'signalement')]
     public function toggleAffectationSignalement(
         Request $request,
@@ -93,96 +94,111 @@ class AffectationController extends AbstractController
         TagAwareCacheInterface $cache,
         EntityManagerInterface $entityManager,
     ): RedirectResponse|JsonResponse {
+        $filterInjonctionBailleur = (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut());
+        $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, $filterInjonctionBailleur);
+        $affectationToggleFormRoute = $this->generateUrl('back_signalement_toggle_affectation', ['uuid' => $signalement->getUuid()]);
+        $form = $this->createForm(AffectationToggleType::class, $affectablePartners, ['action' => $affectationToggleFormRoute]);
+
+        $affected = [];
+        foreach ($affectablePartners['affected'] as $partnerAffectedItem) {
+            $affected[$partnerAffectedItem['id']] = $partnerAffectedItem['id'];
+        }
+        $disabled = [];
+        foreach ($affectablePartners['not_affected'] as $partnerNotAffectedItem) {
+            if (isset($partnerNotAffectedItem['is_disabled']) && $partnerNotAffectedItem['is_disabled']) {
+                $disabled[$partnerNotAffectedItem['id']] = $partnerNotAffectedItem['id'];
+            }
+        }
+
+        $form->handleRequest($request);
+
+        if (!$form->isSubmitted()) {
+            return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
+        }
+        if (!$form->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
+
+            return $this->json($response, $response['code']);
+        }
         $hasAffectPartnerError = false;
+        /** @var User $user */
+        $user = $this->getUser();
+        $unnotifiedPartners = [];
         $partnerNameNotAffected = '';
-        if ($this->isCsrfTokenValid('signalement_affectation_'.$signalement->getId(), (string) $request->request->get('_token'))) {
-            $unnotifiedPartners = [];
-            $requestData = $request->request->all();
-            $data = $requestData['signalement-affectation'] ?? null;
-            if (isset($data['partners'])) {
-                /** @var User $user */
-                $user = $this->getUser();
-                $postedPartner = $data['partners'];
-                $filterInjonctionBailleur = (SignalementStatus::INJONCTION_BAILLEUR === $signalement->getStatut());
-                $affectablePartners = $this->signalementManager->findAffectablePartners($signalement, $filterInjonctionBailleur);
-                $alreadyAffectedPartner = $affectablePartners['affected'];
-                $alreadyAffectedPartnersIds = array_map(static fn (array $partner) => $partner['id'], $alreadyAffectedPartner);
-                $partnersIdToAdd = array_diff($postedPartner, $alreadyAffectedPartnersIds);
-                $partnersIdToRemove = array_diff($alreadyAffectedPartnersIds, $postedPartner);
-                if ($this->affectationEsaboraPolicy->hasUrlConflict($partnersIdToAdd)) {
-                    $message = sprintf('Impossible d\'affecter simultanément des partenaires interconnectés %s avec les mêmes identifiants.
-                    Sélectionnez uniquement le partenaire d\'envoi, puis ajoutez le second après validation.', EsaboraSISHService::NAME_SI);
-
-                    $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => $message];
-                    $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($signalement);
-
-                    return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'htmlTargetContents' => $htmlTargetContents]);
-                }
-
-                foreach ($partnersIdToAdd as $partnerIdToAdd) {
-                    $canAffectPartner = false;
-                    foreach ($affectablePartners['not_affected'] as $affectablePartner) {
-                        if ($affectablePartner['id'] == $partnerIdToAdd) {
-                            $canAffectPartner = true;
-                            break;
-                        }
-                    }
-                    if (!$canAffectPartner) {
-                        continue;
-                    }
-                    $partner = $this->partnerRepository->find($partnerIdToAdd);
-                    if (!$partner) {
-                        continue;
-                    }
-
-                    $canAffectPartner = $this->affectationEsaboraPolicy->canBeAffected($signalement, $partner);
-                    if (!$canAffectPartner) {
-                        $hasAffectPartnerError = true;
-                        $partnerNameNotAffected = $partner->getNom();
-                        continue;
-                    }
-                    $affectation = $this->affectationManager->createAffectationFrom(
-                        $signalement,
-                        $partner,
-                        $user
-                    );
-                    if ($affectation instanceof Affectation) {
-                        $signalement->addAffectation($affectation);
-                        if (!$partner->receiveEmailNotifications()) {
-                            $unnotifiedPartners[] = $partner;
-                        }
-                    }
-                }
-                $this->affectationManager->removeAffectationsFrom($signalement, $postedPartner, $partnersIdToRemove);
-                $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$signalement->getAddress()->getTerritory()->getZip()]);
-            } else {
-                $this->affectationManager->removeAffectationsFrom($signalement);
+        $partnersToAdd = [];
+        $selectedPartnerIds = [];
+        foreach ($form->get('partners')->getData() as $partner) {
+            $selectedPartnerIds[$partner->getId()] = $partner->getId();
+            if (!isset($affected[$partner->getId()])) {
+                $partnersToAdd[$partner->getId()] = $partner;
             }
-            $entityManager->flush();
-            $successMessage = 'Les affectations ont bien été effectuées.';
-            if (!empty($unnotifiedPartners)) {
-                $successMessage .= '<br>Attention, certains partenaires affectés ont désactivé les notifications par e-mail : ';
-                $successMessage .= implode(', ', array_map(static fn ($partner) => $partner->getNom(), $unnotifiedPartners));
-            }
-            $flashMessage[] = ['type' => 'success', 'title' => 'Affectations enregistrées', 'message' => $successMessage];
-            if ($hasAffectPartnerError) {
-                $flashMessage[] = [
-                    'type' => 'alert',
-                    'title' => 'Affectation non enregistrée',
-                    'message' => sprintf(
-                        'Impossible d\'affecter le partenaire %s : le dossier a déjà été envoyé à %s.',
-                        $partnerNameNotAffected,
-                        EsaboraSISHService::NAME_SI
-                    ),
-                ];
-            }
+        }
+        $partnersIdToRemove = array_diff($affected, $selectedPartnerIds);
+
+        if ($this->affectationEsaboraPolicy->hasUrlConflict($partnersToAdd)) {
+            $message = sprintf('Impossible d\'affecter simultanément des partenaires interconnectés %s avec les mêmes identifiants.
+            Sélectionnez uniquement le partenaire d\'envoi, puis ajoutez le second après validation.', EsaboraSISHService::NAME_SI);
+
+            $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => $message];
             $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($signalement);
 
-            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessage, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
+            return $this->json([
+                'stayOnPage' => true,
+                'flashMessages' => [$flashMessage],
+                'htmlTargetContents' => $htmlTargetContents,
+                'functions' => [['name' => 'initSearchCheckboxWidgets']],
+            ]);
         }
-        $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
-        return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
+        foreach ($partnersToAdd as $partnerToAdd) {
+            if (isset($disabled[$partnerToAdd->getId()])) {
+                $hasAffectPartnerError = true;
+                $partnerNameNotAffected = $partnerToAdd->getNom();
+                continue;
+            }
+            $affectation = $this->affectationManager->createAffectationFrom(
+                $signalement,
+                $partnerToAdd,
+                $user
+            );
+            if ($affectation instanceof Affectation) {
+                $signalement->addAffectation($affectation);
+                if (!$partnerToAdd->receiveEmailNotifications()) {
+                    $unnotifiedPartners[] = $partnerToAdd;
+                }
+            }
+        }
+
+        $this->affectationManager->removeAffectationsFrom($signalement, array_keys($selectedPartnerIds), $partnersIdToRemove);
+        $cache->invalidateTags([SearchFilterOptionDataProvider::CACHE_TAG, SearchFilterOptionDataProvider::CACHE_TAG.$signalement->getAddress()->getTerritory()->getZip()]);
+
+        $entityManager->flush();
+        $successMessage = 'Les affectations ont bien été effectuées.';
+        if (!empty($unnotifiedPartners)) {
+            $successMessage .= '<br>Attention, certains partenaires affectés ont désactivé les notifications par e-mail : ';
+            $successMessage .= implode(', ', array_map(static fn ($partner) => $partner->getNom(), $unnotifiedPartners));
+        }
+        $flashMessage[] = ['type' => 'success', 'title' => 'Affectations enregistrées', 'message' => $successMessage];
+        if ($hasAffectPartnerError) {
+            $flashMessage[] = [
+                'type' => 'alert',
+                'title' => 'Affectation non enregistrée',
+                'message' => sprintf(
+                    'Impossible d\'affecter le partenaire %s : le dossier a déjà été envoyé à %s.',
+                    $partnerNameNotAffected,
+                    EsaboraSISHService::NAME_SI
+                ),
+            ];
+        }
+        $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($signalement);
+
+        return $this->json([
+            'stayOnPage' => true,
+            'flashMessages' => $flashMessage,
+            'closeModal' => true,
+            'htmlTargetContents' => $htmlTargetContents,
+            'functions' => [['name' => 'initSearchCheckboxWidgets']],
+        ]);
     }
 
     #[Route('/{uuid:signalement}/affectation/remove', name: 'back_signalement_remove_partner')]
@@ -208,7 +224,13 @@ class AffectationController extends AbstractController
             $flashMessage = ['type' => 'success', 'title' => 'Affectation supprimée', 'message' => 'L\'affectation du partenaire '.$affectation->getPartner()->getNom().' a bien été supprimée.'];
             $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($signalement);
 
-            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
+            return $this->json([
+                'stayOnPage' => true,
+                'flashMessages' => [$flashMessage],
+                'closeModal' => true,
+                'htmlTargetContents' => $htmlTargetContents,
+                'functions' => [['name' => 'initSearchCheckboxWidgets']],
+            ]);
         }
 
         $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
@@ -233,7 +255,13 @@ class AffectationController extends AbstractController
             $flashMessage = ['type' => 'success', 'title' => 'Affectation réinitialisée', 'message' => 'L\'affectation du partenaire '.$affectation->getPartner()->getNom().' a bien été réinitialisée.'];
             $htmlTargetContents = $this->getHtmlTargetContentsForAffectationWithActionItems($affectation->getSignalement());
 
-            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage], 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
+            return $this->json([
+                'stayOnPage' => true,
+                'flashMessages' => [$flashMessage],
+                'closeModal' => true,
+                'htmlTargetContents' => $htmlTargetContents,
+                'functions' => [['name' => 'initSearchCheckboxWidgets']],
+            ]);
         }
         $message = MessageHelper::ERROR_MESSAGE_CSRF;
 
@@ -368,10 +396,7 @@ class AffectationController extends AbstractController
 
         $form = $this->createForm(CloseAffectationType::class, $affectation, ['action' => $this->generateUrl('back_affectation_close', ['uuid' => $signalement->getUuid()])]);
         $form->handleRequest($request);
-        if (!$form->isSubmitted()) {
-            return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
-        }
-        if (!$form->isValid()) {
+        if (!$form->isSubmitted() || !$form->isValid()) {
             $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
 
             return $this->json($response, $response['code']);
