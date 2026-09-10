@@ -28,7 +28,8 @@ class AdresseOccupantRequest implements RequestInterface
                 new Assert\NotBlank(message: 'Merci de préciser l\'étage.'),
             ],
         )]
-        #[Assert\Length(max: 20, maxMessage: 'La précision de l\'étage ne doit pas dépasser {{ limit }} caractères.')]
+        #[Assert\Length(max: 2, maxMessage: 'La précision de l\'étage ne doit pas dépasser {{ limit }} caractères.')]
+        #[Assert\Regex(pattern: '/^[0-9]{1,2}$/', message: 'La précision de l\'étage doit être un numéro d\'étage à 1 ou 2 chiffres.')]
         private readonly ?string $etagePrecision = null,
         #[Assert\Length(max: 3, maxMessage: 'L\'escalier ne peut pas dépasser {{ limit }} caractères.')]
         private readonly ?string $escalier = null,

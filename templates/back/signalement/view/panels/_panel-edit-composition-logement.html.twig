@@ -94,8 +94,10 @@
                 </div>
                 
                 <div class="fr-input-group">
-                    <label class="fr-label" for="compositionLogementEtagePrecision">Précision (si étage "Autre")</label>
-                    <input class="fr-input" type="text" id="compositionLogementEtagePrecision" name="etagePrecision" value="{{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').AUTRE.value ? signalement.etageOccupant : '' }}" maxlength="20">
+                    <label class="fr-label" for="compositionLogementEtagePrecision">Précision (si étage "Autre")
+                        <span class="fr-hint-text">Numéro d'étage (1 ou 2 chiffres)</span>
+                    </label>
+                    <input class="fr-input" type="text" inputmode="numeric" id="compositionLogementEtagePrecision" name="etagePrecision" value="{{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').AUTRE.value ? signalement.etageOccupant : '' }}" maxlength="2">
                 </div>
 
                 <div class="fr-select-group">

@@ -367,8 +367,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(nullable: true)]
     private ?string $lastSuiviBy = null;
 
+    // Contient le libellé de l'étage (EtageType) hors cas "Autre", ou le numéro d'étage
+    // saisi (1-2 chiffres) quand l'étage est "Autre". La borne à 20 couvre le plus long
+    // libellé ("Rez-de-chaussée").
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Length(max: 5, groups: ['bo_step_address'])]
+    #[Assert\Length(max: 20, groups: ['bo_step_address'])]
     private ?string $etageOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]

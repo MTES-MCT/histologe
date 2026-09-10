@@ -4,9 +4,7 @@ namespace App\Dto\Request\Signalement;
 
 use App\Entity\Enum\EtageType;
 use App\Validator as AppAssert;
-use App\Validator\Behaviour\EtageValidatorTrait;
 use App\Validator\Behaviour\MonthYearValidatorTrait;
-use App\Validator\Behaviour\RnbIdValidatorTrait;
 use App\Validator\DateNaissanceValidatorTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Email;
@@ -22,9 +20,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class SignalementDraftRequest
 {
     use DateNaissanceValidatorTrait;
-    use EtageValidatorTrait;
     use MonthYearValidatorTrait;
-    use RnbIdValidatorTrait;
 
     /** @var string[] */
     public const array PREFIX_PROPERTIES_TYPE_COMPOSITION = ['type_logement', 'composition_logement', 'bail_dpe', 'desordres_logement_chauffage_details_dpe'];
@@ -564,8 +560,44 @@ class SignalementDraftRequest
         $this->validateDateNaissance($this->informationsComplementairesSituationOccupantsDateNaissance, 'informationsComplementairesSituationOccupantsDateNaissance', $context);
         $this->validateDateNaissance($this->informationsComplementairesSituationBailleurDateNaissance, 'informationsComplementairesSituationBailleurDateNaissance', $context);
         $this->validateMonthYear($this->infoProcedureBailDate, 'infoProcedureBailDate', $context);
+        $this->validateEtage($context);
+        $this->validateRnbId($context);
+    }
 
-        $this->validateRnbId($this->typeLogementNature, $this->adresseLogementAdresseDetailManual, $this->adresseLogementAdresseDetailRnbId, $this->adresseLogementAdresseDetailNoBuildingFound, 'adresseLogementAdresseDetailRnbId', $context);
+    private function validateEtage(ExecutionContextInterface $context): void
+    {
+        if (null === $this->typeLogementNature) {
+            return;
+        }
+
+        if ('appartement' === $this->typeLogementNature && null === $this->adresseLogementComplementAdresseEtage) {
+            $context
+                ->buildViolation('Le champ étage est obligatoire si le logement est un appartement.')
+                ->atPath('adresseLogementComplementAdresseEtage')
+                ->addViolation();
+        }
+
+        if ('AUTRE' === $this->adresseLogementComplementAdresseEtage && null === $this->adresseLogementComplementAdresseEtagePrecision) {
+            $context
+                ->buildViolation('Le champ précision de l\'étage est obligatoire si l\'étage est "AUTRE".')
+                ->atPath('adresseLogementComplementAdresseEtagePrecision')
+                ->addViolation();
+        }
+    }
+
+    private function validateRnbId(ExecutionContextInterface $context): void
+    {
+        if ('autre' === $this->typeLogementNature
+            || !$this->adresseLogementAdresseDetailManual
+            || $this->adresseLogementAdresseDetailNoBuildingFound
+        ) {
+            return;
+        }
+        if (null === $this->adresseLogementAdresseDetailRnbId) {
+            $context->buildViolation('Veuillez sélectionner le bâtiment correspondant au logement.')
+                ->atPath('adresseLogementAdresseDetailRnbId')
+                ->addViolation();
+        }
     }
 
     public function getProfil(): ?string

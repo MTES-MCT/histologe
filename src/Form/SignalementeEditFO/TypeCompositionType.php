@@ -94,17 +94,21 @@ class TypeCompositionType extends AbstractType
             ])
             ->add('appartementEtagePrecision', TextType::class, [
                 'label' => 'Précision sur l\'étage (si "Autre étage")',
-                'help' => 'Format attendu : texte (20 caractères maximum)',
+                'help' => 'Numéro d\'étage (1 ou 2 chiffres)',
                 'required' => false,
                 'mapped' => false,
                 'data' => EtageType::AUTRE === $appartementEtage ? $signalement->getEtageOccupant() : null,
                 'attr' => [
-                    'maxlength' => 20,
+                    'maxlength' => 2,
                 ],
                 'constraints' => [
                     new Assert\Length(
-                        max: 20,
+                        max: 2,
                         maxMessage: 'La précision sur l\'étage doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                    new Assert\Regex(
+                        pattern: '/^[0-9]{1,2}$/',
+                        message: 'La précision sur l\'étage doit être un numéro d\'étage à 1 ou 2 chiffres.',
                     ),
                     new Assert\Callback(
                         callback: static function ($value, $context) {

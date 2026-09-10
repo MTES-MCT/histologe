@@ -55,11 +55,11 @@ class AdresseOccupantRequestTest extends KernelTestCase
             codePostal: '75001',
             ville: 'Paris',
             etage: EtageType::AUTRE->value,
-            etagePrecision: 'Combles',
+            etagePrecision: '3',
         );
 
         $this->assertSame(EtageType::AUTRE->value, $adresseOccupantRequest->getEtage());
-        $this->assertSame('Combles', $adresseOccupantRequest->getEtagePrecision());
+        $this->assertSame('3', $adresseOccupantRequest->getEtagePrecision());
 
         $errors = $this->validator->validate($adresseOccupantRequest);
         $this->assertCount(0, $errors);
@@ -85,7 +85,7 @@ class AdresseOccupantRequestTest extends KernelTestCase
             codePostal: '123',
             ville: '',
             etage: 'invalid_choice',
-            etagePrecision: str_repeat('E', 21),
+            etagePrecision: 'abc',
             escalier: 'EscalierInvalide',
             numAppart: 'NumAppInvalide',
             autre: str_repeat('x', 256),
@@ -95,6 +95,6 @@ class AdresseOccupantRequestTest extends KernelTestCase
         );
 
         $errors = $this->validator->validate($adresseOccupantRequestInvalide);
-        $this->assertCount(12, $errors);
+        $this->assertCount(13, $errors);
     }
 }
