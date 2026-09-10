@@ -475,10 +475,16 @@ class EsaboraManager
         // Pour rappel, une seule intervention regroupe les deux arrêtés.
         // Un arrêté seul produit un tableau `$additionalInformation` avec des champs de main-levée à null,
         // tandis qu'un arrêté de main-levée produit un tableau `$additionalInformation` complet.
-        // On ignore donc ces valeurs null et on merge avec la dernière version enregistrée en base pour éviter qu'il soit
-        // systématiquement détecté comme modifié lors de la comparaison (présence de clé avec valeur null).
-        $additionalInformationNonNull = array_filter($additionalInformation);
-        $mergedAdditionalInformation = array_replace($currentAdditionalInformationSorted, $additionalInformationNonNull);
+        // Si les champs de mainlevée sont tous les deux null dans la réponse entrante (cas de l'arrêté seul issu du split),
+        // on conserve les informations de mainlevée existantes en base s'il y en a.
+        $mergedAdditionalInformation = array_replace($currentAdditionalInformationSorted, $additionalInformation);
+        if (null === $additionalInformation['arrete_mainlevee_date']
+            && null === $additionalInformation['arrete_mainlevee_numero']
+            && !empty($currentAdditionalInformationSorted['arrete_mainlevee_numero'])
+        ) {
+            $mergedAdditionalInformation['arrete_mainlevee_date'] = $currentAdditionalInformationSorted['arrete_mainlevee_date'];
+            $mergedAdditionalInformation['arrete_mainlevee_numero'] = $currentAdditionalInformationSorted['arrete_mainlevee_numero'];
+        }
         unset($mergedAdditionalInformation['arrete_date']);
         $mergedAdditionalInformationSorted = $mergedAdditionalInformation;
         $mergedAdditionalInformationSorted['arrete_date'] = $dossierArreteSISH->getArreteDate();
@@ -501,7 +507,7 @@ class EsaboraManager
 
             $intervention->setDetails($this->htmlSanitizer->sanitize($newDetails));
             $intervention->setAdditionalInformation($mergedAdditionalInformation);
-            $scheduledAt = DateParser::parse($mergedAdditionalInformationSorted['arrete_date']);
+            $scheduledAt = null !== $mergedAdditionalInformationSorted['arrete_date'] ? DateParser::parse($mergedAdditionalInformationSorted['arrete_date']) : null;
             if ($intervention->getScheduledAt() != $scheduledAt) {
                 $intervention->setScheduledAt($scheduledAt);
             }

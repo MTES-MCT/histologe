@@ -115,7 +115,7 @@ class InterventionDescriptionGenerator
             $messages[] = \sprintf(
                 'La date de l\'arrêté dans %s a été modifiée ; La nouvelle date est %s.',
                 EsaboraSISHService::NAME_SI,
-                $newDate
+                $newDate ?? 'non renseignée'
             );
             $hasChanges = true;
         }
@@ -123,7 +123,7 @@ class InterventionDescriptionGenerator
             $messages[] = \sprintf(
                 'Le numéro de l\'arrêté dans %s a été modifié ; Le nouveau numéro est %s.',
                 EsaboraSISHService::NAME_SI,
-                $newNumero
+                $newNumero ?? 'non renseigné'
             );
             $hasChanges = true;
         }
@@ -133,8 +133,8 @@ class InterventionDescriptionGenerator
         $oldMLNumero = $oldAdditionalInformation['arrete_mainlevee_numero'] ?? null;
         $newMLNumero = $dossierArreteSISH->getArreteMLNumero();
 
-        if (!empty($newMLDate) && !empty($newMLNumero)) {
-            if ($oldMLDate !== $newMLDate && !empty($oldMLDate)) {
+        if (!empty($newMLDate) || !empty($newMLNumero)) {
+            if ($oldMLDate !== $newMLDate && !empty($oldMLDate) && !empty($newMLDate)) {
                 $messages[] = \sprintf(
                     'La date de la mainlevée dans %s a été modifiée ; La nouvelle date est %s.',
                     EsaboraSISHService::NAME_SI,
@@ -142,11 +142,11 @@ class InterventionDescriptionGenerator
                 );
                 $hasChanges = true;
             }
-            if ($oldMLNumero !== $newMLNumero && !empty($oldMLNumero)) {
+            if ($oldMLNumero !== $newMLNumero) {
                 $messages[] = \sprintf(
                     'Le numéro de la mainlevée dans %s a été modifié ; Le nouveau numéro est %s.',
                     EsaboraSISHService::NAME_SI,
-                    $newMLNumero
+                    $newMLNumero ?? 'non renseigné'
                 );
                 $hasChanges = true;
             }

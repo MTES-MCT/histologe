@@ -122,6 +122,74 @@ class InterventionDescriptionGeneratorTest extends TestCase
 
         $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
         $this->assertEquals('Le numéro de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est 2023/DD13/00665.<br>La date de la mainlevée dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 02/07/2023.<br>Type arrêté : ', $description);
+
+        // Test modification numéro arrêté vers null (avec informations ML dans le dossier)
+        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH->method('getArreteNumero')->willReturn(null);
+        $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
+        $dossierArreteSISH->method('getArreteMLDate')->willReturn('01/07/2023');
+        $dossierArreteSISH->method('getArreteMLNumero')->willReturn('2023-DD13-00172');
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
+        $this->assertEquals('Le numéro de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est non renseigné.<br>Type arrêté : ', $description);
+
+        // Test modification numéro arrêté vers null avec champs ML null (cas du premier élément split)
+        $dossierArreteSISHSplit = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISHSplit->method('getArreteNumero')->willReturn(null);
+        $dossierArreteSISHSplit->method('getArreteDate')->willReturn('14/06/2023');
+        $dossierArreteSISHSplit->method('getArreteMLDate')->willReturn(null);
+        $dossierArreteSISHSplit->method('getArreteMLNumero')->willReturn(null);
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISHSplit);
+        $this->assertEquals('Le numéro de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est non renseigné.<br>Type arrêté : ', $description);
+
+        // Test modification numéro arrêté depuis null vers une valeur
+        $interventionWithNullNumero = new Intervention()
+            ->setScheduledAt(new \DateTimeImmutable('2023-06-14'))
+            ->setAdditionalInformation([
+                'arrete_numero' => null,
+                'arrete_type' => 'INSALUBRITE',
+                'arrete_mainlevee_date' => '01/07/2023',
+                'arrete_mainlevee_numero' => '2023-DD13-00172',
+            ]);
+
+        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH->method('getArreteNumero')->willReturn('AP45OL023');
+        $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
+        $dossierArreteSISH->method('getArreteMLDate')->willReturn('01/07/2023');
+        $dossierArreteSISH->method('getArreteMLNumero')->willReturn('2023-DD13-00172');
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($interventionWithNullNumero, $dossierArreteSISH);
+        $this->assertEquals('Le numéro de l\'arrêté dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est AP45OL023.<br>Type arrêté : ', $description);
+
+        // Test modification numéro mainlevée vers null
+        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
+        $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
+        $dossierArreteSISH->method('getArreteMLDate')->willReturn('01/07/2023');
+        $dossierArreteSISH->method('getArreteMLNumero')->willReturn(null);
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
+        $this->assertEquals('Le numéro de la mainlevée dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est non renseigné.<br>Type arrêté : ', $description);
+
+        // Test modification numéro mainlevée depuis null vers une valeur
+        $interventionWithNullMLNumero = new Intervention()
+            ->setScheduledAt(new \DateTimeImmutable('2023-06-14'))
+            ->setAdditionalInformation([
+                'arrete_numero' => '2023/DD13/00664',
+                'arrete_type' => 'INSALUBRITE',
+                'arrete_mainlevee_date' => '01/07/2023',
+                'arrete_mainlevee_numero' => null,
+            ]);
+
+        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
+        $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
+        $dossierArreteSISH->method('getArreteMLDate')->willReturn('01/07/2023');
+        $dossierArreteSISH->method('getArreteMLNumero')->willReturn('APML45K09O');
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($interventionWithNullMLNumero, $dossierArreteSISH);
+        $this->assertEquals('Le numéro de la mainlevée dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est APML45K09O.<br>Type arrêté : ', $description);
     }
 
     public function testArreteDescriptionOnMainLeveeCreated(): void
