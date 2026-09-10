@@ -13,8 +13,6 @@ final class DossierMessage implements DossierMessageInterface
     private const int DESCRIPTION_MAX_LENGTH = 250;
     private int $signalementId;
     private int $partnerId;
-    private ?PartnerType $partnerType;
-    private ?string $action;
     private string $signalementUuid;
     private string $reference;
     private string $dateDepotSignalement;
@@ -133,26 +131,12 @@ final class DossierMessage implements DossierMessageInterface
 
     public function getPartnerType(): ?PartnerType
     {
-        return $this->partnerType;
-    }
-
-    public function setPartnerType(?PartnerType $partnerType): self
-    {
-        $this->partnerType = $partnerType;
-
-        return $this;
+        return null;
     }
 
     public function getAction(): ?string
     {
-        return $this->action;
-    }
-
-    public function setAction(?string $action): self
-    {
-        $this->action = $action;
-
-        return $this;
+        return null;
     }
 
     public function getSignalementId(): int
