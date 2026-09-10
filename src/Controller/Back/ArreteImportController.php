@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Controller\Back;
 
 use App\Entity\User;
+use App\Factory\SettingsFactory;
 use App\Form\ImportArreteType;
 use App\Service\Import\Arrete\ArreteImportLoader;
 use App\Service\Import\Arrete\ArreteImportRow;
+use App\Service\Signalement\SearchFilterOptionDataProvider;
+use App\Service\Signalement\ZipcodeProvider;
 use LongitudeOne\Spatial\Exception\InvalidValueException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -18,6 +21,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 #[Route('/bo/gerer-territoire/arretes')]
 class ArreteImportController extends AbstractController
@@ -26,6 +30,7 @@ class ArreteImportController extends AbstractController
         private readonly ArreteImportLoader $arreteImportLoader,
         private readonly SerializerInterface $serializer,
         private readonly ValidatorInterface $validator,
+        private readonly ZipcodeProvider $zipcodeProvider,
         #[Autowire(env: 'FEATURE_HISTO_ADDRESS')]
         private readonly bool $featureHistoAddress,
     ) {
@@ -49,6 +54,7 @@ class ArreteImportController extends AbstractController
     #[IsGranted('ROLE_ADMIN_TERRITORY')]
     public function importUploadCsv(
         Request $request,
+        TagAwareCacheInterface $cache,
     ): Response {
         if (!$request->isXmlHttpRequest()) {
             return $this->json(['message' => 'Requête invalide'], Response::HTTP_BAD_REQUEST);
@@ -65,6 +71,8 @@ class ArreteImportController extends AbstractController
             if (!empty($errors)) {
                 return $this->json(['errors' => $errors, 'data' => $data]);
             }
+
+            $this->invalidateCacheForImportedArretes($cache, $data);
 
             return $this->json(['data' => $data]);
         }
@@ -146,5 +154,29 @@ class ArreteImportController extends AbstractController
         }
 
         return $this->json([]);
+    }
+
+    /**
+     * @param ArreteImportRow[] $arreteImportRows
+     */
+    private function invalidateCacheForImportedArretes(
+        TagAwareCacheInterface $cache,
+        array $arreteImportRows,
+    ): void {
+        $territoryZips = [];
+        foreach ($arreteImportRows as $row) {
+            $territory = $this->zipcodeProvider->getTerritoryByPostalCode($row->getCodePostal());
+            if ($territory) {
+                $territoryZips[] = $territory->getZip();
+            }
+        }
+        $territoryZips = array_unique($territoryZips);
+
+        $tagsToInvalidate = [SearchFilterOptionDataProvider::CACHE_TAG.'-'.SettingsFactory::CONTEXT_ADDRESSES_HISTORY];
+        foreach ($territoryZips as $zip) {
+            $tagsToInvalidate[] = SearchFilterOptionDataProvider::CACHE_TAG.'-'.SettingsFactory::CONTEXT_ADDRESSES_HISTORY.$zip;
+        }
+
+        $cache->invalidateTags($tagsToInvalidate);
     }
 }
