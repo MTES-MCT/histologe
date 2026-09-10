@@ -464,4 +464,312 @@ class EsaboraManagerTest extends KernelTestCase
         $this->assertEquals('01/01/2024', $additionalInformation['arrete_mainlevee_date']);
         $this->assertEquals('ML001', $additionalInformation['arrete_mainlevee_numero']);
     }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function testUpdateFromDossierArreteWithNumeroTransitionToNull(): void
+    {
+        $intervention = new Intervention();
+        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
+        $existingAdditionalInfo = [
+            'arrete_numero' => 'AP45OL023',
+            'arrete_type' => 'INSALUBRITE',
+            'arrete_mainlevee_date' => '01/01/2024',
+            'arrete_mainlevee_numero' => 'ML001',
+        ];
+        $intervention->setAdditionalInformation($existingAdditionalInfo);
+
+        $territory = $this->getTerritory();
+        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
+        $signalement = $this->getSignalement();
+        $signalement->setTerritory($territory);
+
+        $affectation = new Affectation();
+        $affectation->setSignalement($signalement);
+
+        // Données entrantes avec arrete_numero passant à null
+        $item = [
+            'keyDataList' => [null, 123],
+            'columnDataList' => [
+                'SISH',
+                'REF123',
+                'DOSS456',
+                '01/01/2024',
+                null, // arrete_numero passe à null
+                'INSALUBRITE',
+                null,
+                null,
+            ],
+        ];
+        $dossierArrete = new DossierArreteSISH($item);
+
+        $esaboraManager = new EsaboraManager(
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->suiviRepository,
+            $this->interventionRepository,
+            $this->interventionFactory,
+            $this->eventDispatcher,
+            $this->userManager,
+            $this->logger,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHandler,
+            $this->imageManipulationHandler,
+            $this->fileFactory,
+            $this->signalementQualificationUpdater,
+            $this->htmlSanitizer,
+            $this->workflow,
+            $this->userSignalementSubscriptionManager,
+            true,
+        );
+
+        $reflector = new \ReflectionClass($esaboraManager);
+        $method = $reflector->getMethod('updateFromDossierArrete');
+        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
+            'arrete_numero' => $dossierArrete->getArreteNumero(),
+            'arrete_type' => $dossierArrete->getArreteType(),
+            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
+            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
+        ]);
+
+        $this->assertTrue($result);
+        $additionalInformation = $intervention->getAdditionalInformation();
+        $this->assertNull($additionalInformation['arrete_numero']);
+        $this->assertEquals('01/01/2024', $additionalInformation['arrete_mainlevee_date']);
+        $this->assertEquals('ML001', $additionalInformation['arrete_mainlevee_numero']);
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function testUpdateFromDossierArreteWithNumeroTransitionFromNull(): void
+    {
+        $intervention = new Intervention();
+        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
+        $existingAdditionalInfo = [
+            'arrete_numero' => null,
+            'arrete_type' => 'INSALUBRITE',
+            'arrete_mainlevee_date' => '01/01/2024',
+            'arrete_mainlevee_numero' => 'ML001',
+        ];
+        $intervention->setAdditionalInformation($existingAdditionalInfo);
+
+        $territory = $this->getTerritory();
+        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
+        $signalement = $this->getSignalement();
+        $signalement->setTerritory($territory);
+
+        $affectation = new Affectation();
+        $affectation->setSignalement($signalement);
+
+        // Données entrantes avec arrete_numero passant de null à une valeur
+        $item = [
+            'keyDataList' => [null, 123],
+            'columnDataList' => [
+                'SISH',
+                'REF123',
+                'DOSS456',
+                '01/01/2024',
+                'AP45OL023',
+                'INSALUBRITE',
+                null,
+                null,
+            ],
+        ];
+        $dossierArrete = new DossierArreteSISH($item);
+
+        $esaboraManager = new EsaboraManager(
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->suiviRepository,
+            $this->interventionRepository,
+            $this->interventionFactory,
+            $this->eventDispatcher,
+            $this->userManager,
+            $this->logger,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHandler,
+            $this->imageManipulationHandler,
+            $this->fileFactory,
+            $this->signalementQualificationUpdater,
+            $this->htmlSanitizer,
+            $this->workflow,
+            $this->userSignalementSubscriptionManager,
+            true,
+        );
+
+        $reflector = new \ReflectionClass($esaboraManager);
+        $method = $reflector->getMethod('updateFromDossierArrete');
+        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
+            'arrete_numero' => $dossierArrete->getArreteNumero(),
+            'arrete_type' => $dossierArrete->getArreteType(),
+            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
+            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
+        ]);
+
+        $this->assertTrue($result);
+        $additionalInformation = $intervention->getAdditionalInformation();
+        $this->assertEquals('AP45OL023', $additionalInformation['arrete_numero']);
+        $this->assertEquals('01/01/2024', $additionalInformation['arrete_mainlevee_date']);
+        $this->assertEquals('ML001', $additionalInformation['arrete_mainlevee_numero']);
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function testUpdateFromDossierArreteWithMainLeveeNumeroTransitionToNull(): void
+    {
+        $intervention = new Intervention();
+        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
+        $existingAdditionalInfo = [
+            'arrete_numero' => 'AP45OL023',
+            'arrete_type' => 'INSALUBRITE',
+            'arrete_mainlevee_date' => '01/01/2024',
+            'arrete_mainlevee_numero' => 'APML45K09O',
+        ];
+        $intervention->setAdditionalInformation($existingAdditionalInfo);
+
+        $territory = $this->getTerritory();
+        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
+        $signalement = $this->getSignalement();
+        $signalement->setTerritory($territory);
+
+        $affectation = new Affectation();
+        $affectation->setSignalement($signalement);
+
+        // Données entrantes avec arrete_mainlevee_numero passant à null (avec une date de mainlevée présente)
+        $item = [
+            'keyDataList' => [null, 123],
+            'columnDataList' => [
+                'SISH',
+                'REF123',
+                'DOSS456',
+                '01/01/2024',
+                'AP45OL023',
+                'INSALUBRITE',
+                '01/01/2024',
+                null, // arrete_mainlevee_numero passe à null
+            ],
+        ];
+        $dossierArrete = new DossierArreteSISH($item);
+
+        $esaboraManager = new EsaboraManager(
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->suiviRepository,
+            $this->interventionRepository,
+            $this->interventionFactory,
+            $this->eventDispatcher,
+            $this->userManager,
+            $this->logger,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHandler,
+            $this->imageManipulationHandler,
+            $this->fileFactory,
+            $this->signalementQualificationUpdater,
+            $this->htmlSanitizer,
+            $this->workflow,
+            $this->userSignalementSubscriptionManager,
+            true,
+        );
+
+        $reflector = new \ReflectionClass($esaboraManager);
+        $method = $reflector->getMethod('updateFromDossierArrete');
+        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
+            'arrete_numero' => $dossierArrete->getArreteNumero(),
+            'arrete_type' => $dossierArrete->getArreteType(),
+            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
+            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
+        ]);
+
+        $this->assertTrue($result);
+        $additionalInformation = $intervention->getAdditionalInformation();
+        $this->assertEquals('AP45OL023', $additionalInformation['arrete_numero']);
+        $this->assertEquals('01/01/2024', $additionalInformation['arrete_mainlevee_date']);
+        $this->assertNull($additionalInformation['arrete_mainlevee_numero']);
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function testUpdateFromDossierArreteWithMainLeveeNumeroTransitionFromNull(): void
+    {
+        $intervention = new Intervention();
+        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
+        $existingAdditionalInfo = [
+            'arrete_numero' => 'AP45OL023',
+            'arrete_type' => 'INSALUBRITE',
+            'arrete_mainlevee_date' => '01/01/2024',
+            'arrete_mainlevee_numero' => null,
+        ];
+        $intervention->setAdditionalInformation($existingAdditionalInfo);
+
+        $territory = $this->getTerritory();
+        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
+        $signalement = $this->getSignalement();
+        $signalement->setTerritory($territory);
+
+        $affectation = new Affectation();
+        $affectation->setSignalement($signalement);
+
+        // Données entrantes avec arrete_mainlevee_numero passant de null à une valeur
+        $item = [
+            'keyDataList' => [null, 123],
+            'columnDataList' => [
+                'SISH',
+                'REF123',
+                'DOSS456',
+                '01/01/2024',
+                'AP45OL023',
+                'INSALUBRITE',
+                '01/01/2024',
+                'APML45K09O',
+            ],
+        ];
+        $dossierArrete = new DossierArreteSISH($item);
+
+        $esaboraManager = new EsaboraManager(
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->suiviRepository,
+            $this->interventionRepository,
+            $this->interventionFactory,
+            $this->eventDispatcher,
+            $this->userManager,
+            $this->logger,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHandler,
+            $this->imageManipulationHandler,
+            $this->fileFactory,
+            $this->signalementQualificationUpdater,
+            $this->htmlSanitizer,
+            $this->workflow,
+            $this->userSignalementSubscriptionManager,
+            true,
+        );
+
+        $reflector = new \ReflectionClass($esaboraManager);
+        $method = $reflector->getMethod('updateFromDossierArrete');
+        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
+            'arrete_numero' => $dossierArrete->getArreteNumero(),
+            'arrete_type' => $dossierArrete->getArreteType(),
+            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
+            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
+        ]);
+
+        $this->assertTrue($result);
+        $additionalInformation = $intervention->getAdditionalInformation();
+        $this->assertEquals('AP45OL023', $additionalInformation['arrete_numero']);
+        $this->assertEquals('01/01/2024', $additionalInformation['arrete_mainlevee_date']);
+        $this->assertEquals('APML45K09O', $additionalInformation['arrete_mainlevee_numero']);
+    }
 }
