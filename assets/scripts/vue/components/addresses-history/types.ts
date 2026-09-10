@@ -42,7 +42,7 @@ export interface Filters {
   territoire?: string
   adresse?: string
   communes: string[]
-  bailleurOuSyndic?: string
+  bailleurOuSyndic: string[]
   zone?: string
   natureParc?: string
   dossiersMultiples?: string
@@ -64,22 +64,28 @@ export interface UserState {
   partnerIds: string[]
 }
 
+export interface ArreteTypesGroup {
+  title: string
+  options: Array<{ Id: string; Text: string }>
+}
+
 export interface StoreState {
   addresses: AddressesState
   input: InputState
   user: UserState
   territories: HistoInterfaceSelectOption[]
+  addressesSuggestions: string[]
   communes: string[]
-  bailleursAndSyndic: HistoInterfaceSelectOption[]
+  bailleursAndSyndic: string[]
   zones: HistoInterfaceSelectOption[]
-  currentTerritoryId: string
   currentCommunes: string
   viewMode: ViewMode
+  loadingSettings: boolean
   loadingList: boolean
   hasErrorLoading: boolean
   natureParcList: Array<{ Id: string; Text: string }>
   dossiersMultiplesList: Array<{ Id: string; Text: string }>
-  arreteTypes: Array<{ Id: string; Text: string }>
+  arreteTypesGroups: ArreteTypesGroup[]
   filtersApplyKey: number
 }
 
@@ -111,7 +117,10 @@ export interface SettingsResponse {
   roleLabel?: string
   isMultiTerritoire?: boolean
   territories?: Record<string, { id: string; zip: string; name: string }>
+  addresses?: Record<string, { id: string; address: string; }>
   communes?: Record<string, string>
+  epcis?: Record<string, { code: string; nom: string }>
   zones?: Record<string, { id: number; name: string }>
-  bailleursSociaux?: Record<string, { id: number; name: string }>
+  bailleursSociaux?: Record<string, string>
+  arreteTypes?: Record<string, Array<{ Id: string; Text: string }>>
 }

@@ -83,7 +83,7 @@ const activeFilters = computed<ActiveFilter[]>(() => {
  * - Met à jour le filtre dans le store (synchronisé avec la vue liste)
  */
 const onTerritoryChange = async (value: string): Promise<void> => {
-  sharedState.currentTerritoryId = value
+  sharedState.input.filters.territoire = value
 
   // Le filtrage côté client se fait automatiquement via la computed property
   // dans AddressesHistoryMap, pas besoin d'appeler l'API
@@ -99,7 +99,11 @@ const onRemoveFilter = async (key: keyof AddressesHistoryFilters): Promise<void>
   // Si c'est le territoire, on réinitialise
   if (key === 'territoire') {
     filters.territoire = undefined
-    sharedState.currentTerritoryId = ''
+
+    // Sélectionner le premier territoire si plusieurs territoires existent
+    if (sharedState.territories.length > 1) {
+      filters.territoire = sharedState.territories[0].Id
+    }
   }
   // Si c'est un tableau, on le vide
   else if (Array.isArray(filters[key])) {

@@ -25,6 +25,7 @@ class SettingsController extends AbstractController
         TerritoryRepository $territoryRepository,
         Security $security,
         #[MapQueryParameter] ?int $territoryId = null,
+        #[MapQueryParameter] ?string $context = null,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
@@ -33,12 +34,12 @@ class SettingsController extends AbstractController
         $territory = null;
         if ($territoryId && ($security->isGranted('ROLE_ADMIN') || isset($authorizedTerritories[$territoryId]))) {
             $territory = $territoryRepository->find($territoryId);
-        } elseif (1 === count($authorizedTerritories)) {
+        } elseif (!empty($authorizedTerritories)) {
             $territory = $authorizedTerritories[array_key_first($authorizedTerritories)];
         }
 
         return $this->json(
-            $settingsFactory->createInstanceFrom($user, $territory),
+            $settingsFactory->createInstanceFrom($user, $territory, $context),
             Response::HTTP_OK,
             ['content-type' => 'application/json'],
             ['groups' => ['settings:read']]

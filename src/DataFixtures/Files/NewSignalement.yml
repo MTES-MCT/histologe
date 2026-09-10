@@ -216,7 +216,7 @@ signalements:
     tel_occupant: "+330240556677"
     phone_number: "+330240556677"
     mail_occupant: "nelson.monfort@yopmail.com"
-    adresse_occupant: "3 Rue de Lajudie, 30100 Alès"
+    adresse_occupant: "3 Rue de Lajudie"
     cp_occupant: "62100"
     ville_occupant: "Alès"
     statut: "ACTIVE"

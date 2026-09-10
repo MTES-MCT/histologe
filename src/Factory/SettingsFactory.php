@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Dto\Settings;
+use App\Entity\Enum\ArreteType;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Repository\UserSearchFilterRepository;
@@ -14,6 +15,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class SettingsFactory
 {
+    public const CONTEXT_ADDRESSES_HISTORY = 'addresses-history';
+
     public function __construct(
         private readonly SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
         private readonly UserAvatar $userAvatar,
@@ -25,15 +28,23 @@ class SettingsFactory
     /**
      * @throws InvalidArgumentException
      */
-    public function createInstanceFrom(User $user, ?Territory $territory = null): Settings
+    public function createInstanceFrom(User $user, ?Territory $territory = null, ?string $context = null): Settings
     {
-        $filterOptionData = $this->searchFilterOptionDataProvider->getData($user, $territory);
+        if (self::CONTEXT_ADDRESSES_HISTORY === $context && empty($territory)) {
+            $territories = $this->searchFilterOptionDataProvider->getTerritories($user);
+            $territory = $territories[array_key_first($territories)];
+        }
+
+        $filterOptionData = $this->searchFilterOptionDataProvider->getData($user, $territory, $context);
+
+        $isAddressesHistoryContext = self::CONTEXT_ADDRESSES_HISTORY === $context;
 
         return new Settings(
             user: $user,
             territories: $filterOptionData['territories'],
             partners: $filterOptionData['partners'],
-            communes: $this->getCommunesAndZipCodes($filterOptionData, $territory),
+            addresses: $filterOptionData['addresses'],
+            communes: $this->getCommunesAndZipCodes($filterOptionData, $territory, $isAddressesHistoryContext),
             epcis: $filterOptionData['epcis'],
             tags: $filterOptionData['tags'],
             personalTags: $user->getPersonalTags()->toArray(),
@@ -43,6 +54,7 @@ class SettingsFactory
             bailleursSociaux: $filterOptionData['bailleursSociaux'],
             avatarOrPlaceHolder: $this->userAvatar->userAvatarOrPlaceHolder($user, 80),
             savedSearches: $this->userSearchFilterRepository->findAllForUserArray($user),
+            arreteTypes: $this->getArreteTypesGrouped(),
         );
     }
 
@@ -51,7 +63,7 @@ class SettingsFactory
      *
      * @return array<int, string>
      */
-    private function getCommunesAndZipCodes(array $filterOptionData, ?Territory $territory = null): array
+    private function getCommunesAndZipCodes(array $filterOptionData, ?Territory $territory = null, bool $isAddressesHistoryContext = false): array
     {
         // If a territory is selected, only return its communes and zips
         if (!empty($territory)) {
@@ -59,7 +71,9 @@ class SettingsFactory
             $communes = $territory->getCommunes();
             foreach ($communes as $commune) {
                 $suggestionsCommuneZipCode[] = $commune->getNom();
-                $suggestionsCommuneZipCode[] = $commune->getCodePostal();
+                if (!$isAddressesHistoryContext) {
+                    $suggestionsCommuneZipCode[] = $commune->getCodePostal();
+                }
             }
             $suggestionsCommuneZipCode = array_unique($suggestionsCommuneZipCode);
 
@@ -67,13 +81,45 @@ class SettingsFactory
         }
 
         // Otherwise, return all available communes and zips from existing signalements
-        $suggestionsCommuneZipCode = [...$filterOptionData['cities'], ...$filterOptionData['zipcodes']];
+        if ($isAddressesHistoryContext) {
+            $suggestionsCommuneZipCode = [...$filterOptionData['cities']];
+        } else {
+            $suggestionsCommuneZipCode = [...$filterOptionData['cities'], ...$filterOptionData['zipcodes']];
+        }
 
-        $suggestionsCommuneZipCode = array_map(
-            static fn ($suggestion): string => $suggestion['city'] ?? $suggestion['zipcode'] ?? '',
-            $suggestionsCommuneZipCode
-        );
+        if ($isAddressesHistoryContext) {
+            $suggestionsCommuneZipCode = array_map(
+                static fn ($suggestion): string => $suggestion['city'] ?? '',
+                $suggestionsCommuneZipCode
+            );
+        } else {
+            $suggestionsCommuneZipCode = array_map(
+                static fn ($suggestion): string => $suggestion['city'] ?? $suggestion['zipcode'] ?? '',
+                $suggestionsCommuneZipCode
+            );
+        }
 
         return array_filter($suggestionsCommuneZipCode);
+    }
+
+    /**
+     * @return array<string, array<int, array<string, string>>>
+     */
+    private function getArreteTypesGrouped(): array
+    {
+        $choices = ArreteType::getChoices();
+        $result = [];
+
+        foreach ($choices as $groupTitle => $arretes) {
+            $result[$groupTitle] = array_map(
+                static fn (ArreteType $arrete): array => [
+                    'Id' => $arrete->value,
+                    'Text' => $arrete->completeLabel(),
+                ],
+                $arretes
+            );
+        }
+
+        return $result;
     }
 }

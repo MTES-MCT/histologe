@@ -46,8 +46,8 @@ class AddressesHistoryApi {
   ): Promise<SettingsResponse> {
     try {
       const url = territoryId
-        ? `${ajaxUrl}?territoryId=${encodeURIComponent(territoryId)}`
-        : ajaxUrl
+        ? `${ajaxUrl}?context=addresses-history&territoryId=${encodeURIComponent(territoryId)}`
+        : `${ajaxUrl}?context=addresses-history`
 
       const response = await axios.get<SettingsResponse>(url, this.baseConfig)
       return response.data

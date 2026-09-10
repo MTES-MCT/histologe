@@ -45,6 +45,7 @@ class AddressesHistoryListViewFactory
             ref: $data['reference'],
             usager: $data['prenomOccupant'].' '.$data['nomOccupant'],
             statut: $data['statut']->label(),
+            declarant: $data['declarant'] ? $data['declarant']->label() : null,
         );
     }
 }

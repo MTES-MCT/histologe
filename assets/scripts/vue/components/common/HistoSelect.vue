@@ -71,6 +71,14 @@ export default defineComponent({
   },
   mounted () {
     this.refreshDisplayedItems(this.modelValue)
+  },
+  watch: {
+    optionItems: {
+      handler () {
+        this.refreshDisplayedItems(this.modelValue)
+      },
+      deep: true
+    }
   }
 })
 </script>

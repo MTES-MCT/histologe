@@ -232,6 +232,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         }
 
         $manager->persist($signalement);
+
         $this->userManager->createUsagersFromSignalement($signalement);
 
         if (isset($row['qualifications'])) {
@@ -540,6 +541,7 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         }
 
         $manager->persist($signalement);
+
         $this->userManager->createUsagersFromSignalement($signalement);
     }
 
