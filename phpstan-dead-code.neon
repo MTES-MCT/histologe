@@ -15,3 +15,32 @@ parameters:
 		usageExcluders:
 			tests:
 				enabled: true
+	ignoreErrors:
+		-
+			# Esabora : contrat d'interface — méthodes volontairement présentes
+			message: '#^Unused .*::#'
+			path: src/Service/Interconnection/Esabora/Response/*
+		-
+			# Esabora : propriétés écrites mais jamais lues (pattern template method)
+			message: '#^Property .*AbstractDossierSISHHandler::\$.* is never read#'
+			path: src/Service/Interconnection/Esabora/Handler/AbstractDossierSISHHandler.php
+		-
+			# OAuth2Token : propriétés du contrat API non consommées
+			message: '#^Property .*OAuth2TokenResponse::\$.* is never read#'
+			path: src/Service/Gouv/ProConnect/Response/OAuth2TokenResponse.php
+		-
+			# Faux positif : interface avec #[AutoconfigureTag] appelée dynamiquement par le conteneur Symfony
+			message: '#^Unused .*::#'
+			path: src/Service/Interconnection/Esabora/Handler/InterventionSISHHandlerInterface.php
+		-
+			# Faux positif : DTO sérialisés (API JSON) ou passés aux templates Twig
+			message: '#^(Unused|Thus|Property) .*#'
+			path: src/Dto/*
+		-
+			# Faux positif : DTO sérialisé en JSON (getter appelé dynamiquement par le Serializer)
+			message: '#^Unused .*::#'
+			path: src/Service/Import/Arrete/ArreteImportRow.php
+		-
+			# Faux positif : DTO passé aux templates Twig (propriétés publiques lues dynamiquement)
+			message: '#^(Unused|Thus|Property) .*#'
+			path: src/Service/DashboardTabPanel/TabDossier.php

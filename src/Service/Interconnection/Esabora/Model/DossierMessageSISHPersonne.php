@@ -13,7 +13,6 @@ class DossierMessageSISHPersonne
     private ?string $lienOccupant = null;
     private ?string $structure = null;
     private ?string $adresse = null;
-    private ?string $representant = null;
 
     public function getType(): ?string
     {
@@ -119,18 +118,6 @@ class DossierMessageSISHPersonne
     public function setAdresse(?string $adresse): self
     {
         $this->adresse = $adresse;
-
-        return $this;
-    }
-
-    public function getRepresentant(): ?string
-    {
-        return $this->representant;
-    }
-
-    public function setRepresentant(?string $representant): self
-    {
-        $this->representant = $representant;
 
         return $this;
     }
