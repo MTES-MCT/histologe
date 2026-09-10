@@ -26,7 +26,7 @@
 
 {% block content %}
     {% if is_granted('SIGN_EDIT_ADDRESS', signalement) %}
-        <div data-ajax-form>
+        <div id="signalement-edit-address-container" data-ajax-form>
             {% include 'back/signalement/view/panels/_panel-edit-address.html.twig' %}
         </div>
     {% endif %}
@@ -54,7 +54,7 @@
         <div data-ajax-form>
             {% include 'back/signalement/view/panels/_panel-edit-informations-logement.html.twig' %}
         </div>
-        <div data-ajax-form>
+        <div id="signalement-edit-composition-container" data-ajax-form>
             {% include 'back/signalement/view/panels/_panel-edit-composition-logement.html.twig' %}
         </div>
         <div data-ajax-form>

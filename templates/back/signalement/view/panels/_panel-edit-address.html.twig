@@ -76,9 +76,9 @@
 
                         <div class="fr-input-group">
                             <label class="fr-label" for="adresseEtagePrecision">Précision (si étage "Autre")
-                                <span class="fr-hint-text">20 caractères maximum</span>
+                                <span class="fr-hint-text">Numéro d'étage (1 ou 2 chiffres)</span>
                             </label>
-                            <input class="fr-input" type="text" id="adresseEtagePrecision" name="etagePrecision" value="{{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').AUTRE.value ? signalement.etageOccupant : '' }}" maxlength="20">
+                            <input class="fr-input" type="text" inputmode="numeric" id="adresseEtagePrecision" name="etagePrecision" value="{{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').AUTRE.value ? signalement.etageOccupant : '' }}" maxlength="2">
                         </div>
 
                         <div class="fr-input-group">

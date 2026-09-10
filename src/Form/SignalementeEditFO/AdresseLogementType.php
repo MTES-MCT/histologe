@@ -21,17 +21,6 @@ class AdresseLogementType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('etageOccupant', TextType::class, [
-                'label' => 'Étage',
-                'help' => 'Format attendu : 20 caractères maximum',
-                'constraints' => [
-                    new Assert\Length(
-                        max: 20,
-                        maxMessage: 'L\'étage doit contenir au maximum {{ limit }} caractères.',
-                    ),
-                ],
-                'required' => false,
-            ])
             ->add('escalierOccupant', TextType::class, [
                 'label' => 'Escalier',
                 'help' => 'Format attendu : 3 caractères maximum',
