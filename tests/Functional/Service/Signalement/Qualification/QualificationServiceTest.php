@@ -19,7 +19,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class QualificationServiceTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
-    protected ManagerRegistry $managerRegistry;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
 
     protected function setUp(): void
@@ -32,7 +31,6 @@ class QualificationServiceTest extends KernelTestCase
         $entityManager = $doctrine->getManager();
 
         $this->entityManager = $entityManager;
-        $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
         $container = static::getContainer();
         $this->signalementQualificationUpdater = $container->get(SignalementQualificationUpdater::class);
     }

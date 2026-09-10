@@ -1,0 +1,17 @@
+includes:
+	- phpstan.neon
+
+parameters:
+	# On réactive la détection de code mort (désactivée dans phpstan.neon)
+	shipmonkDeadCode:
+		detect:
+			deadMethods: true
+			deadConstants: true
+			deadEnumCases: true
+			deadProperties:
+				neverRead: true
+				neverWritten: true
+		# Un membre utilisé uniquement depuis les tests sera tout de même signalé
+		usageExcluders:
+			tests:
+				enabled: true

@@ -260,6 +260,9 @@ playwright-install: ## Open Playwright
 stan: ## Run PHPStan
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer stan $(FILE) 
 
+dead-code: ## Run PHPStan dead-code detector
+	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer dead-code $(FILE)
+
 cs-check: ## Check source code with PHP-CS-Fixer
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm composer cs-check
 

@@ -18,8 +18,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SignalementDraftManagerTest extends WebTestCase
 {
-    public const TERRITORY_13 = 13;
-
     private EntityManagerInterface $entityManager;
     private ManagerRegistry $managerRegistry;
     private SignalementDraftFactory $signalementDraftFactory;

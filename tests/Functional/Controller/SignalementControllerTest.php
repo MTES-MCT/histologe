@@ -5,7 +5,6 @@ namespace App\Tests\Functional\Controller;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
-use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementDraftStatus;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
@@ -52,16 +51,6 @@ class SignalementControllerTest extends WebTestCase
         yield 'Brouillon de signalement' => [SignalementStatus::DRAFT_ARCHIVED->value];
         yield 'En médiation' => [SignalementStatus::INJONCTION_BAILLEUR->value];
         yield 'Injonction clôturée' => [SignalementStatus::INJONCTION_CLOSED->value];
-    }
-
-    public static function provideProfileDeclarant(): \Generator
-    {
-        yield 'LOCATAIRE' => [ProfileDeclarant::LOCATAIRE];
-        yield 'BAILLEUR' => [ProfileDeclarant::BAILLEUR];
-        yield 'BAILLEUR_OCCUPANT' => [ProfileDeclarant::BAILLEUR_OCCUPANT];
-        yield 'TIERS_PARTICULIER' => [ProfileDeclarant::TIERS_PARTICULIER];
-        yield 'TIERS_PRO' => [ProfileDeclarant::TIERS_PRO];
-        yield 'SERVICE_SECOURS' => [ProfileDeclarant::SERVICE_SECOURS];
     }
 
     #[DataProvider('provideStatusSignalement')]
