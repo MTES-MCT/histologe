@@ -283,10 +283,10 @@ es-js-check: ## Fix vanilla js source code with es-lint --fix-dry-run
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm npm run es-js-check
 
 lighthouse-install: ## Install Lighthouse dependencies
-	@cd tools/lighthouse && $(NPM) ci
+	@cd tools/lighthouse && $(NPM) ci --ignore-scripts
 
-lighthouse-run: ## Run Lighthouse on URL: make lighthouse-run URL=http://localhost:8000
-	@cd tools/lighthouse && $(NPX) lighthouse $(URL) --output-path=report/report.html --view
+lighthouse-run: ## Run Lighthouse on URL: make lighthouse-run URL=http://localhost:8080
+	@cd tools/lighthouse && $(NPX) --no-install lighthouse $(URL) --output-path=report/report.html --view
 
 ## Tools
 tools-build: ## [Tools] Install tools (Matomo, ...) local environement

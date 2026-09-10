@@ -122,7 +122,7 @@ jobs:
 
       - name: Install Lighthouse dependencies
         working-directory: tools/lighthouse
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Run Lighthouse CI (public pages)
         id: lighthouse-public
@@ -134,7 +134,7 @@ jobs:
             export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
           fi
           echo "Using Chrome at: $CHROME_PATH"
-          npx lhci autorun --config=lighthouserc.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
+          npx --no-install lhci autorun --config=lighthouserc.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
         continue-on-error: true
 
       - name: Run Lighthouse CI (authenticated pages)
@@ -147,7 +147,7 @@ jobs:
             export CHROME_PATH=$(which chromium-browser || which chromium || which google-chrome || echo "")
           fi
           echo "Using Chrome at: $CHROME_PATH"
-          npx lhci autorun --config=lighthouserc.auth.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
+          npx --no-install lhci autorun --config=lighthouserc.auth.json && echo "exit_code=0" >> $GITHUB_OUTPUT || echo "exit_code=1" >> $GITHUB_OUTPUT
         continue-on-error: true
 
       - name: Display Lighthouse accessibility issues
