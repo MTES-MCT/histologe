@@ -305,17 +305,12 @@ class AddressesHistoryQuery
 
         if (!empty($addressesHistorySearchQuery->getBailleurOuSyndic())) {
             $qb->leftJoin('s.bailleur', 'b');
-            $bailleurs = $addressesHistorySearchQuery->getBailleurOuSyndic();
-            $conditions = [];
-            foreach ($bailleurs as $index => $bailleur) {
-                $paramName = 'bailleur'.$index;
-                $conditions[] = "(s.nomProprio = :$paramName
-                    OR s.denominationProprio = :$paramName
-                    OR s.denominationSyndic = :$paramName
-                    OR b.name = :$paramName)";
-                $qb->setParameter($paramName, $bailleur);
-            }
-            $qb->andWhere(implode(' OR ', $conditions));
+            $qb->andWhere(' OR (s.nomProprio = :bailleur
+                OR s.denominationProprio = :bailleur
+                OR s.denominationSyndic = :bailleur
+                OR b.name = :bailleur)');
+            $bailleur = $addressesHistorySearchQuery->getBailleurOuSyndic();
+            $qb->setParameter('bailleur', $bailleur);
         }
 
         if (!empty($addressesHistorySearchQuery->getArreteTypes())) {

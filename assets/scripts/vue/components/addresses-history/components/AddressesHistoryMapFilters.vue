@@ -50,7 +50,7 @@
         class="fr-mb-2w"
       >
         <HistoSelect
-          id="filter-territoire"
+          id="filter-map-territoire"
           v-model="sharedState.input.filters.territoire"
           @update:modelValue="onTerritoryChange"
           title="Rechercher par territoire"
@@ -64,7 +64,7 @@
       <!-- Adresse -->
       <div class="fr-mb-2w">
         <AppAutoComplete
-          id="filter-adresse"
+          id="filter-map-adresse"
           v-model="sharedState.input.filters.adresse"
           :suggestions="sharedState.addressesSuggestions"
           :initSelectedSuggestions="sharedState.input.filters.adresse"
@@ -73,7 +73,6 @@
           :iconClass="'fr-icon-map-pin-2-fill'"
           :minLengthSearch="3"
           :multiple="false"
-          :reset="resetKey"
         >
           <template #label>Adresse</template>
         </AppAutoComplete>
@@ -82,7 +81,7 @@
       <!-- Communes -->
       <div class="fr-mb-2w">
         <AppAutoComplete
-          id="filter-commune-or-epci"
+          id="filter-map-commune-or-epci"
           v-model="sharedState.input.filters.communeOuEpci"
           :suggestions="sharedState.communes"
           :initSelectedSuggestions="sharedState.input.filters.communeOuEpci"
@@ -90,7 +89,6 @@
           title="Commune ou EPCI"
           :iconClass="'fr-icon-map-pin-2-fill'"
           :multiple="false"
-          :reset="resetKey"
         >
           <template #label>Commune ou EPCI</template>
         </AppAutoComplete>
@@ -161,8 +159,9 @@
 
       <h2 class="fr-h4 fr-text-label--blue-france">Filtres supplémentaires</h2>
 
+      <!-- select pour l'instant pour synchro avec vue liste -->
       <HistoSelect
-        id="filter-nature-parc"
+        id="filter-map-nature-parc"
         v-model="sharedState.input.filters.natureParc"
         :option-items="natureParcOptions"
         :placeholder="'Tous'"
@@ -170,6 +169,20 @@
       >
         <template #label>Nature du parc</template>
       </HistoSelect>
+
+      <AppAutoComplete
+        id="filter-map-bailleur-ou-syndic"
+        v-model="sharedState.input.filters.bailleurOuSyndic"
+        :suggestions="sharedState.bailleursAndSyndic"
+        :initSelectedSuggestions="sharedState.input.filters.bailleurOuSyndic"
+        :placeholder="'Nom du bailleur ou syndicat'"
+        title="Nom du bailleur ou syndicat"
+        :multiple="false"
+        :iconClass="'fr-icon-user-search-fill'"
+      >
+        <template #label>Bailleur ou syndicat gestionnaire</template>
+        <template #hint>Tapez le nom et sélectionnez-le dans la liste</template>
+      </AppAutoComplete>
     </div>
   </section>
 </template>
@@ -188,7 +201,6 @@ import type { ArreteTypesGroup } from '../types'
 
 // State
 const sharedState = store.state
-const resetKey = ref(false)
 
 // Composable
 const filtersComposable = useAddressesHistoryFilters()
