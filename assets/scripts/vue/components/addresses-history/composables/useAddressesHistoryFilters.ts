@@ -6,13 +6,13 @@ import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
 import type { AddressesResponse, SettingsResponse } from '../types'
 
 export interface AddressesHistoryFilters {
-  territoire: string | undefined
-  adresse: string | undefined
-  communeOuEpci: string | undefined
-  bailleurOuSyndic: string[]
-  zone: string | undefined
-  natureParc: string | undefined
-  dossiersMultiples: string | undefined
+  territoire?: string | undefined
+  adresse?: string | undefined
+  communeOuEpci?: string | undefined
+  bailleurOuSyndic?: string | undefined
+  zone?: string | undefined
+  natureParc?: string | undefined
+  dossiersMultiples?: string | undefined
   arreteTypes: string[]
 }
 
@@ -220,7 +220,7 @@ export function useAddressesHistoryFilters() {
 
     for (const [key, value] of Object.entries(store.state.input.filters)) {
       if (variableTester.isNotEmpty(value)) {
-        if (Array.isArray(value) && ['bailleurOuSyndic', 'arreteTypes'].includes(key)) {
+        if (Array.isArray(value) && 'arreteTypes' === key) {
           value.forEach((item: any) => {
             addQueryParameter(key + '[]', item)
             url.searchParams.append(key + '[]', item)
@@ -296,9 +296,8 @@ export function useAddressesHistoryFilters() {
       store.state.input.filters.communeOuEpci = urlParams.get('communeOuEpci') || undefined
     }
 
-    const bailleurs = urlParams.getAll('bailleurOuSyndic[]')
-    if (bailleurs.length > 0) {
-      store.state.input.filters.bailleurOuSyndic = bailleurs
+    if (urlParams.has('bailleurOuSyndic')) {
+      store.state.input.filters.bailleurOuSyndic = urlParams.get('bailleurOuSyndic') || undefined
     }
 
     if (urlParams.has('zone')) {
@@ -342,7 +341,7 @@ export function useAddressesHistoryFilters() {
     territoire: undefined,
     adresse: undefined,
     communeOuEpci: undefined,
-    bailleurOuSyndic: [],
+    bailleurOuSyndic: undefined,
     zone: undefined,
     natureParc: undefined,
     dossiersMultiples: undefined,

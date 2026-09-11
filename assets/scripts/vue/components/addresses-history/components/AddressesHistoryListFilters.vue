@@ -62,7 +62,7 @@
           :initSelectedSuggestions="sharedState.input.filters.bailleurOuSyndic"
           :placeholder="'Nom du bailleur ou syndicat'"
           title="Nom du bailleur ou syndicat"
-          :multiple="true"
+          :multiple="false"
           @update:modelValue="notifyChange"
           :reset="resetKey"
           :iconClass="'fr-icon-user-search-fill'"

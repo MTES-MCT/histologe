@@ -49,7 +49,7 @@ export interface Filters {
   territoire?: string
   adresse?: string
   communeOuEpci?: string
-  bailleurOuSyndic: string[]
+  bailleurOuSyndic?: string
   zone?: string
   natureParc?: string
   dossiersMultiples?: string
