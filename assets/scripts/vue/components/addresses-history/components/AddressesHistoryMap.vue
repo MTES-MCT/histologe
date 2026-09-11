@@ -14,6 +14,7 @@ import type { GeoJSONSource } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { mapStyles, Overlay, addOverlay, removeOverlay } from 'carte-facile'
 import 'carte-facile/carte-facile.css'
+import { AddressFilterService } from '../services/AddressFilterService'
 
 // State
 const sharedState = store.state
@@ -30,66 +31,15 @@ const ZONES_OUTLINE_LAYER_ID = 'zones-territory-outline'
 
 // Computed - Liste des adresses filtrées côté client
 const filteredAddresses = computed(() => {
-  let addresses = sharedState.addresses.allAddresses.length > 0
+  const addresses = sharedState.addresses.allAddresses.length > 0
     ? sharedState.addresses.allAddresses
     : sharedState.addresses.list
 
-  // Filtre par territoire si sélectionné
-  if (sharedState.input.filters.territoire) {
-    addresses = addresses.filter((address: any) => {
-      return address.territoryId?.toString() === sharedState.input.filters.territoire
-    })
-  }
-
-  // Filtre par commune si sélectionnée
-  const communeOuEpci = sharedState.input.filters.communeOuEpci
-  if (communeOuEpci) {
-    addresses = addresses.filter((address: any) => {
-      return address.ville?.toLowerCase().includes(communeOuEpci.toLowerCase()) ||
-             address.cp?.includes(communeOuEpci)
-    })
-  }
-
-  // Filtre par dossiers multiples si activé
-  if (sharedState.input.filters.dossiersMultiples === 'oui') {
-    addresses = addresses.filter((address: any) => {
-      const nbSignalements = address.signalements?.length || 0
-      return nbSignalements > 1
-    })
-  }
-
-  // Filtre pour main levée uniquement si activé
-  if (sharedState.input.params.mainLeveeUniquement) {
-    addresses = addresses.filter((address: any) => {
-      return address.arretes?.some((arrete: any) => arrete.dateMainLevee !== null)
-    })
-  }
-
-  // Filtre par types d'arrêtés si sélectionnés
-  if (sharedState.input.filters.arreteTypes.length > 0) {
-    addresses = addresses.filter((address: any) => {
-      return address.arretes?.some((arrete: any) =>
-        sharedState.input.filters.arreteTypes.includes(arrete.arreteType)
-      )
-    })
-  }
-
-  // Filtre par nature du parc si sélectionnée
-  if (sharedState.input.filters.natureParc) {
-    addresses = addresses.filter((address: any) => {
-      if (sharedState.input.filters.natureParc === 'public') {
-        return address.hasLogementSocial === true
-      }
-      if (sharedState.input.filters.natureParc === 'privee') {
-        return address.hasLogementPrive === true
-      }
-      if (sharedState.input.filters.natureParc === 'non_renseigne') {
-        return address.hasLogementNatureNonRenseigne === true
-      }
-    })
-  }
-
-  return addresses
+  return AddressFilterService.filterAddresses(
+    addresses,
+    sharedState.input.filters,
+    { mainLeveeUniquement: sharedState.input.params.mainLeveeUniquement }
+  )
 })
 
 watch (() => sharedState.input.params.niveauxGris, (newValue) => {
@@ -442,8 +392,10 @@ function addMapEvents() {
         <p class="fr-text--sm"><span class="fr-icon-map-pin-2-line" aria-hidden="true"></span> ${addressForHuman || 'Adresse inconnue'}</p>
         <hr>
         <p class="fr-text--sm fr-mb-0">
-          ${nbSignalements || 0} signalement(s)<br/>
           ${nbArretes || 0} arrêté(s)
+        </p>
+        <p class="fr-text--sm fr-mb-0">
+          ${nbSignalements || 0} signalement(s)
         </p>
       </div>
     `

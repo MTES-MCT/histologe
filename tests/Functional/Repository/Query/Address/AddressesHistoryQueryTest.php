@@ -298,7 +298,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec un bailleur connu dans les fixtures
         $searchQuery = new AddressesHistorySearchQuery(
-            bailleurOuSyndic: ['Habitat 44']
+            bailleurOuSyndic: 'Habitat 44'
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
@@ -308,7 +308,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec plusieurs bailleurs
         $searchQuery = new AddressesHistorySearchQuery(
-            bailleurOuSyndic: ['Habitat 44', 'Bailleur fatigué', '13 Habitat']
+            bailleurOuSyndic: '13 Habitat'
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
