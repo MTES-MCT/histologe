@@ -215,7 +215,6 @@ class SignalementManager
             $notAffectedPartners = $this->partnerRepository->findByIds($partnerIds, DossierMessageSISH::CAN_SYNC_SISH_ESABORA);
 
             foreach ($partners['not_affected'] as $key => $partnerNotAffectedItem) {
-                /* @var Partner $partnerNotAffected */
                 if (!isset($notAffectedPartners[$partnerNotAffectedItem['id']])) {
                     continue;
                 }

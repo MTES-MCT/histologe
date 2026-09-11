@@ -77,7 +77,6 @@ class MergePartnersCommandTest extends KernelTestCase
         $users = $sourcePartner->getUsers();
         $initialSubscriptionCounts = [];
         foreach ($users as $user) {
-            /* @var User $user */
             $initialSubscriptionCounts[$user->getId()] = $this->subscriptionRepository->count(['user' => $user]);
         }
 

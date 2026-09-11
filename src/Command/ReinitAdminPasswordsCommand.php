@@ -45,7 +45,6 @@ class ReinitAdminPasswordsCommand extends Command
         $users = $this->userRepository->findActiveAdmins();
 
         foreach ($users as $user) {
-            /* @var User $user */
             $user->setPassword('')->setStatut(UserStatus::INACTIVE);
             $this->userManager->loadUserTokenForUser($user, false);
 

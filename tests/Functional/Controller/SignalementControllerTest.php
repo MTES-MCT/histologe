@@ -398,7 +398,6 @@ class SignalementControllerTest extends WebTestCase
             ->getRepository(TiersInvitation::class)->findOneBy([
                 'signalement' => $signalementReloaded,
             ]);
-        /* @var TiersInvitation $invitation */
         $this->assertNotNull($invitation);
         $this->assertEquals($newMail, $invitation->getEmail());
         $this->assertNull($signalementReloaded->getMailDeclarant());

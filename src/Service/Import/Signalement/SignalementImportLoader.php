@@ -327,7 +327,6 @@ class SignalementImportLoader
             foreach ($dataMapped[$situation] as $critereLabel => $etat) {
                 $critereLabel = trim($critereLabel);
                 if (!array_key_exists($critereLabel, $this->indexedCriteres)) {
-                    /* @var Critere $critere */
                     $this->indexedCriteres[$critereLabel] = $this->critereRepository->findByLabel($critereLabel);
                 }
                 try {
