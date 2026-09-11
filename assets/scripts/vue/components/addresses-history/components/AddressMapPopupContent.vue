@@ -13,6 +13,7 @@
       <div v-for="(arrete, index) in arretes" :key="index">
         <hr>
         <p class="fr-text--sm fr-mb-2v fr-text-label--blue-france">
+          <span :class="getArretePictoClass(arrete.arreteType)" aria-hidden="true"></span>
           <strong>{{ arrete.arreteTypeLabel || 'Arrêté' }}</strong>
         </p>
         <p class="fr-text--sm" :class="arrete.dateMainLevee ? 'fr-mb-2v' : 'fr-mb-5v'">
@@ -47,9 +48,11 @@
 </template>
 
 <script setup lang="ts">
-import { getStatusBadgeFromLabel } from '../utils/badgeHelpers'
+import { getStatusBadgeFromLabel, getArretePictoClassFromId } from '../utils/displayHelpers'
+import { store } from '../composables/useAddressesHistoryStore'
 
 interface Arrete {
+  arreteType?: string
   arreteTypeLabel?: string
   dateArrete?: string
   dateMainLevee?: string
@@ -72,6 +75,11 @@ defineProps<Props>()
 
 function getStatusBadgeClass(status: string): string {
   return getStatusBadgeFromLabel(status)
+}
+
+function getArretePictoClass(arreteType?: string): string {
+  if (!arreteType) return ''
+  return 'fr-picto-arrete ' + getArretePictoClassFromId(arreteType, store.state.arreteTypesGroups)
 }
 </script>
 

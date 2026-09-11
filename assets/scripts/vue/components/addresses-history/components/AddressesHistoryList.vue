@@ -86,7 +86,7 @@
 import { store } from '../composables/useAddressesHistoryStore'
 import AddressesHistoryListFilters from './AddressesHistoryListFilters.vue'
 import AddressesHistoryListPagination from './AddressesHistoryListPagination.vue'
-import { getStatusBadgeFromLabel } from '../utils/badgeHelpers'
+import { getStatusBadgeFromLabel } from '../utils/displayHelpers'
 
 // Émissions
 const emit = defineEmits<{
