@@ -82,6 +82,11 @@ class MotifClotureStatisticProvider
                 'color' => '#18753C',
                 'count' => 0,
             ],
+            'LOGEMENT_MIS_EN_CONFORMITE' => [
+                'label' => 'Logement mis en conformité',
+                'color' => '#18753C',
+                'count' => 0,
+            ],
             'RELOGEMENT_OCCUPANT' => [
                 'label' => 'Relogement occupant',
                 'color' => '#27A658',
