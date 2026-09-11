@@ -45,3 +45,6 @@ metabase-data/*
 /test-results/
 /tests/e2e/test-results/
 /.lighthouseci/
+/tools/lighthouse/.lighthouseci/
+/tools/lighthouse/report/
+*.report.html
