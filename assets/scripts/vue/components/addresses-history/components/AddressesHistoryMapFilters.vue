@@ -105,7 +105,7 @@
         containerClass="fr-mb-2w"
       >
         <template #label>
-          <span class="picto-dossiers-multiples"></span>
+          <span class="fr-picto-dossiers-multiples"></span>
           Signalements multiples à l'adresse
         </template>
       </HistoToggle>
@@ -270,15 +270,5 @@ section.addresses-history-map-filters {
   padding: 1rem;
   border-radius: 0.5rem;
   box-shadow: 2px 0px 6px rgba(0, 0, 0, 0.3);
-}
-
-.picto-dossiers-multiples {
-  display: inline-block;
-  width: 15px;
-  height: 15px;
-  background-color: #EFB900;
-  border-radius: 50%;
-  margin-right: 8px;
-  margin-top: 4px;
 }
 </style>
