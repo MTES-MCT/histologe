@@ -6,13 +6,13 @@ import HistoInterfaceSelectOption from '../../common/HistoInterfaceSelectOption'
 import type { AddressesResponse, SettingsResponse } from '../types'
 
 export interface AddressesHistoryFilters {
-  territoire: string | undefined
-  adresse: string | undefined
-  communes: string[]
-  bailleurOuSyndic: string[]
-  zone: string | undefined
-  natureParc: string | undefined
-  dossiersMultiples: string | undefined
+  territoire?: string | undefined
+  adresse?: string | undefined
+  communeOuEpci?: string | undefined
+  bailleurOuSyndic?: string | undefined
+  zone?: string | undefined
+  natureParc?: string | undefined
+  dossiersMultiples?: string | undefined
   arreteTypes: string[]
 }
 
@@ -114,6 +114,7 @@ export function useAddressesHistoryFilters() {
         const arretes = response.arreteTypes[groupTitle]
         store.state.arreteTypesGroups.push({
           title: groupTitle,
+          titleInMapView: getTitleInMapViewForArreteType(groupTitle),
           options: arretes
         })
       }
@@ -125,6 +126,19 @@ export function useAddressesHistoryFilters() {
     }
   }
 
+  const getTitleInMapViewForArreteType = (groupTitle: string): string => {
+    switch (groupTitle) {
+      case 'Mise en sécurité':
+        return 'Arrêtés mise en sécurité'
+      case 'Insalubrité':
+        return 'Arrêtés insalubrité'
+      case 'Autres':
+        return 'Autres arrêtés'
+      default:
+        return groupTitle
+    }
+  }
+
   /**
    * Traite la réponse des adresses
    */
@@ -133,12 +147,7 @@ export function useAddressesHistoryFilters() {
     store.state.addresses.filters = (response as any).filters || {}
     store.state.addresses.list = (response as any).list || []
 
-    // Normalise les filtres pour garantir que communes et arreteTypes sont des tableaux
-    if (!Array.isArray(store.state.input.filters.communes)) {
-      store.state.input.filters.communes = store.state.input.filters.communes
-        ? [store.state.input.filters.communes as any]
-        : []
-    }
+    // Normalise les filtres pour garantir que arreteTypes sont des tableaux
     if (!Array.isArray(store.state.input.filters.arreteTypes)) {
       store.state.input.filters.arreteTypes = store.state.input.filters.arreteTypes
         ? [store.state.input.filters.arreteTypes as any]
@@ -211,7 +220,7 @@ export function useAddressesHistoryFilters() {
 
     for (const [key, value] of Object.entries(store.state.input.filters)) {
       if (variableTester.isNotEmpty(value)) {
-        if (Array.isArray(value) && ['communes', 'bailleurOuSyndic', 'arreteTypes'].includes(key)) {
+        if (Array.isArray(value) && 'arreteTypes' === key) {
           value.forEach((item: any) => {
             addQueryParameter(key + '[]', item)
             url.searchParams.append(key + '[]', item)
@@ -283,14 +292,12 @@ export function useAddressesHistoryFilters() {
       store.state.input.filters.adresse = urlParams.get('adresse') || undefined
     }
 
-    const communes = urlParams.getAll('communes[]')
-    if (communes.length > 0) {
-      store.state.input.filters.communes = communes
+    if (urlParams.has('communeOuEpci')) {
+      store.state.input.filters.communeOuEpci = urlParams.get('communeOuEpci') || undefined
     }
 
-    const bailleurs = urlParams.getAll('bailleurOuSyndic[]')
-    if (bailleurs.length > 0) {
-      store.state.input.filters.bailleurOuSyndic = bailleurs
+    if (urlParams.has('bailleurOuSyndic')) {
+      store.state.input.filters.bailleurOuSyndic = urlParams.get('bailleurOuSyndic') || undefined
     }
 
     if (urlParams.has('zone')) {
@@ -333,8 +340,8 @@ export function useAddressesHistoryFilters() {
   const getDefaultFilters = (): AddressesHistoryFilters => ({
     territoire: undefined,
     adresse: undefined,
-    communes: [],
-    bailleurOuSyndic: [],
+    communeOuEpci: undefined,
+    bailleurOuSyndic: undefined,
     zone: undefined,
     natureParc: undefined,
     dossiersMultiples: undefined,

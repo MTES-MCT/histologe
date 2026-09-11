@@ -139,7 +139,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $this->assertNotNull($address);
 
         $searchQuery = new AddressesHistorySearchQuery(
-            communes: [$address->getCity()]
+            communeOuEpci: $address->getCity()
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
@@ -298,7 +298,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec un bailleur connu dans les fixtures
         $searchQuery = new AddressesHistorySearchQuery(
-            bailleurOuSyndic: ['Habitat 44']
+            bailleurOuSyndic: 'Habitat 44'
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
@@ -308,7 +308,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec plusieurs bailleurs
         $searchQuery = new AddressesHistorySearchQuery(
-            bailleurOuSyndic: ['Habitat 44', 'Bailleur fatigué', '13 Habitat']
+            bailleurOuSyndic: '13 Habitat'
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
@@ -353,7 +353,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec un mélange de commune et EPCI (préfixé par "EPCI : ")
         $searchQuery = new AddressesHistorySearchQuery(
-            communes: ['Marseille']
+            communeOuEpci: 'Marseille'
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
@@ -363,13 +363,13 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec un mélange de commune et EPCI (préfixé par "EPCI : ")
         $searchQuery = new AddressesHistorySearchQuery(
-            communes: ['Marseille', 'EPCI : CC d\'Erdre et Gesvres']
+            communeOuEpci: 'EPCI : CC d\'Erdre et Gesvres'
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
         $this->assertIsArray($results);
-        $this->assertCount(17, $results);
+        $this->assertCount(2, $results);
     }
 
     public function testFindAddressesWithHistoryWithZoneFilter(): void

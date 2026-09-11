@@ -16,8 +16,8 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
         $query = new AddressesHistorySearchQuery(
             territoire: '13',
             adresse: 'rue de la paix',
-            communes: ['Marseille', 'Aix-en-Provence'],
-            bailleurOuSyndic: ['ACME'],
+            communeOuEpci: 'Marseille',
+            bailleurOuSyndic: 'ACME',
             zone: '5',
             natureParc: 'public',
             dossiersMultiples: 'oui',
@@ -28,7 +28,7 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
         $expectedFilters = [
             'territories' => ['13'],
             'adresse' => 'rue de la paix',
-            'cities' => ['Marseille', 'Aix-en-Provence'],
+            'cityOrEpci' => 'Marseille',
             'bailleurOrSyndic' => ['ACME'],
             'zone' => '5',
             'housetypes' => [1],
@@ -82,8 +82,8 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
         $query = new AddressesHistorySearchQuery(
             territoire: '13',
             adresse: 'rue de la paix',
-            communes: ['Marseille'],
-            bailleurOuSyndic: ['ACME'],
+            communeOuEpci: 'Marseille',
+            bailleurOuSyndic: 'ACME',
             zone: '5',
             natureParc: 'public',
             dossiersMultiples: 'oui',
@@ -93,8 +93,8 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
 
         static::assertSame('13', $query->getTerritoire());
         static::assertSame('rue de la paix', $query->getAdresse());
-        static::assertSame(['Marseille'], $query->getCommunes());
-        static::assertSame(['ACME'], $query->getBailleurOuSyndic());
+        static::assertSame('Marseille', $query->getCommuneOuEpci());
+        static::assertSame('ACME', $query->getBailleurOuSyndic());
         static::assertSame('5', $query->getZone());
         static::assertSame('public', $query->getNatureParc());
         static::assertSame('oui', $query->getDossiersMultiples());
@@ -107,8 +107,8 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
         $query = new AddressesHistorySearchQuery(
             territoire: '13',
             adresse: 'rue de la paix',
-            communes: ['Marseille'],
-            bailleurOuSyndic: ['ACME'],
+            communeOuEpci: 'Marseille',
+            bailleurOuSyndic: 'ACME',
             zone: '5',
             natureParc: 'public',
             dossiersMultiples: 'oui',
@@ -120,7 +120,7 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
 
         static::assertStringContainsString('territoire=13', $queryString);
         static::assertStringContainsString('adresse=rue+de+la+paix', $queryString);
-        static::assertStringContainsString('bailleurOuSyndic%5B%5D=ACME', $queryString);
+        static::assertStringContainsString('bailleurOuSyndic=ACME', $queryString);
         static::assertStringContainsString('zone=5', $queryString);
         static::assertStringContainsString('natureParc=public', $queryString);
         static::assertStringContainsString('dossiersMultiples=oui', $queryString);
@@ -154,8 +154,8 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
         $params = [
             'territoire' => '13',
             'adresse' => 'rue de la paix',
-            'communes' => ['Marseille'],
-            'bailleurOuSyndic' => ['ACME'],
+            'communeOuEpci' => 'Marseille',
+            'bailleurOuSyndic' => 'ACME',
             'zone' => '5',
             'natureParc' => 'public',
             'dossiersMultiples' => 'oui',
@@ -167,8 +167,8 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
 
         static::assertSame('13', $query->getTerritoire());
         static::assertSame('rue de la paix', $query->getAdresse());
-        static::assertSame(['Marseille'], $query->getCommunes());
-        static::assertSame(['ACME'], $query->getBailleurOuSyndic());
+        static::assertSame('Marseille', $query->getCommuneOuEpci());
+        static::assertSame('ACME', $query->getBailleurOuSyndic());
         static::assertSame('5', $query->getZone());
         static::assertSame('public', $query->getNatureParc());
         static::assertSame('oui', $query->getDossiersMultiples());
@@ -182,24 +182,13 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
 
         static::assertNull($query->getTerritoire());
         static::assertNull($query->getAdresse());
-        static::assertNull($query->getCommunes());
+        static::assertNull($query->getCommuneOuEpci());
         static::assertNull($query->getBailleurOuSyndic());
         static::assertNull($query->getZone());
         static::assertNull($query->getNatureParc());
         static::assertNull($query->getDossiersMultiples());
         static::assertNull($query->getArreteTypes());
         static::assertSame(1, $query->getPage());
-    }
-
-    public function testFromParamsIgnoresInvalidCommunesType(): void
-    {
-        $params = [
-            'communes' => 'not-an-array',
-        ];
-
-        $query = AddressesHistorySearchQuery::fromParams($params);
-
-        static::assertNull($query->getCommunes());
     }
 
     public function testValidationFailsWithInvalidNatureParc(): void

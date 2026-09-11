@@ -22,21 +22,15 @@ export function buildFilterLabel(key: keyof AddressesHistoryFilters, value: any)
     return `Adresse : ${value}`
   }
 
-  // Communes (tableau)
-  if (key === 'communes' && Array.isArray(value) && value.length > 0) {
-    const firstCommune = store.state.communes.find(c => c === value[0])
-    const count = value.length
-    return count > 1
-      ? `Communes : ${firstCommune} +${count - 1}`
-      : `Commune : ${firstCommune}`
+  // Commune (string)
+  if (key === 'communeOuEpci' && typeof value === 'string') {
+    const commune = store.state.communes.find(c => c === value)
+    return commune ? `Commune : ${commune}` : ''
   }
 
-  // Bailleur ou syndic (tableau)
-  if (key === 'bailleurOuSyndic' && Array.isArray(value) && value.length > 0) {
-    const count = value.length
-    return count > 1
-      ? `Bailleurs/Syndics : ${value[0]} +${count - 1}`
-      : `Bailleur/Syndic : ${value[0]}`
+  // Bailleur ou syndic (string)
+  if (key === 'bailleurOuSyndic' && typeof value === 'string') {
+    return `Bailleur/Syndic : ${value}`
   }
 
   // Zone (string)
