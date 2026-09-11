@@ -115,6 +115,8 @@ class AddressesHistoryController extends AbstractController
                     $responseAddresses[$addressKey]->setHasLogementSocial(true);
                 } elseif (false === $row['isLogementSocial']) {
                     $responseAddresses[$addressKey]->setHasLogementPrive(true);
+                } elseif (null === $row['isLogementSocial']) {
+                    $responseAddresses[$addressKey]->setHasLogementNatureNonRenseigne(true);
                 }
 
                 if (!empty($row['bailleurName'])) {

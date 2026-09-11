@@ -65,6 +65,30 @@ const filteredAddresses = computed(() => {
     })
   }
 
+  // Filtre par types d'arrêtés si sélectionnés
+  if (sharedState.input.filters.arreteTypes.length > 0) {
+    addresses = addresses.filter((address: any) => {
+      return address.arretes?.some((arrete: any) =>
+        sharedState.input.filters.arreteTypes.includes(arrete.arreteType)
+      )
+    })
+  }
+
+  // Filtre par nature du parc si sélectionnée
+  if (sharedState.input.filters.natureParc) {
+    addresses = addresses.filter((address: any) => {
+      if (sharedState.input.filters.natureParc === 'public') {
+        return address.hasLogementSocial === true
+      }
+      if (sharedState.input.filters.natureParc === 'privee') {
+        return address.hasLogementPrive === true
+      }
+      if (sharedState.input.filters.natureParc === 'non_renseigne') {
+        return address.hasLogementNatureNonRenseigne === true
+      }
+    })
+  }
+
   return addresses
 })
 
