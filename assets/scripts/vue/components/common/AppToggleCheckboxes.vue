@@ -1,12 +1,12 @@
 <template>
   <div class="app-toggle-checkboxes">
     <!-- Partie haute : HistoToggle -->
-    <div class="toggle-wrapper">
+    <div class="fr-grid-row fr-grid-row--gutters">
       <HistoToggle
         :id="`${id}-toggle`"
         v-model="toggleValue"
         @update:model-value="onToggleChange"
-        containerClass=""
+        containerClass="fr-col-11"
       >
         <template #label>
           <span v-if="labelPicto" :class="`${labelPicto}`" class="toggle-picto" aria-hidden="true"></span>
@@ -14,11 +14,13 @@
         </template>
       </HistoToggle>
 
-      <span
-        :class="['fr-icon-arrow-down-s-line', 'toggle-arrow', { 'toggle-arrow--open': isOpen }]"
-        aria-hidden="true"
-        @click.stop="toggleOpen"
-      ></span>
+      <div class="fr-col-1">
+        <span
+          :class="['fr-icon-arrow-down-s-line', 'toggle-arrow', { 'toggle-arrow--open': isOpen }]"
+          aria-hidden="true"
+          @click.stop="toggleOpen"
+        ></span>
+      </div>
     </div>
 
     <!-- Partie basse : Liste des HistoCheckbox -->
@@ -130,20 +132,8 @@ export default defineComponent({
   margin-bottom: 1rem;
 }
 
-.toggle-wrapper {
-  display: flex;
-  align-items: center;
-}
-
-.toggle-wrapper :deep(.histo-toggle) {
-  flex: 1;
-  margin-bottom: 0;
-}
-
 .toggle-arrow {
   position: absolute;
-  right: 0;
-  flex-shrink: 0;
   transition: transform 0.3s;
   cursor: pointer;
   pointer-events: auto;
