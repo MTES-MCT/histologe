@@ -114,6 +114,7 @@ export function useAddressesHistoryFilters() {
         const arretes = response.arreteTypes[groupTitle]
         store.state.arreteTypesGroups.push({
           title: groupTitle,
+          titleInMapView: getTitleInMapViewForArreteType(groupTitle),
           options: arretes
         })
       }
@@ -122,6 +123,19 @@ export function useAddressesHistoryFilters() {
     // Si plusieurs territoires existent et qu'aucun n'est sélectionné, sélectionner le premier automatiquement
     if (store.state.territories.length > 1 && !store.state.input.filters.territoire) {
       store.state.input.filters.territoire = store.state.territories[0].Id.toString()
+    }
+  }
+
+  const getTitleInMapViewForArreteType = (groupTitle: string): string => {
+    switch (groupTitle) {
+      case 'Mise en sécurité':
+        return 'Arrêtés mise en sécurité'
+      case 'Insalubrité':
+        return 'Arrêtés insalubrité'
+      case 'Autres':
+        return 'Autres arrêtés'
+      default:
+        return groupTitle
     }
   }
 

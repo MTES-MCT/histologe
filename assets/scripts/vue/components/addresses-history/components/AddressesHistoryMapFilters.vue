@@ -107,7 +107,7 @@
         containerClass="fr-mb-2w"
       >
         <template #label>
-          <span class="badge-dossiers-multiples"></span>
+          <span class="picto-dossiers-multiples"></span>
           Signalements multiples à l'adresse
         </template>
       </HistoToggle>
@@ -126,6 +126,50 @@
           <p>Afficher uniquement les arrêtés ayant fait l'objet d'une main levée.</p>
         </template>
       </HistoCheckbox>
+
+      <AppToggleCheckboxes
+        v-if="arreteTypesGroupsForMap[0]"
+        id="toggle-map-arretes-0"
+        labelPicto="purple-hexagon"
+        v-model="sharedState.input.filters.arreteTypes"
+        :option-groups="[arreteTypesGroupsForMap[0]]"
+      >
+        <template #label>{{ arreteTypesGroupsForMap[0].title }}</template>
+      </AppToggleCheckboxes>
+
+      <AppToggleCheckboxes
+        v-if="arreteTypesGroupsForMap[1]"
+        id="toggle-map-arretes-1"
+        labelPicto="blue-square"
+        v-model="sharedState.input.filters.arreteTypes"
+        :option-groups="[arreteTypesGroupsForMap[1]]"
+      >
+        <template #label>{{ arreteTypesGroupsForMap[1].title }}</template>
+      </AppToggleCheckboxes>
+
+      <AppToggleCheckboxes
+        v-if="arreteTypesGroupsForMap[2]"
+        id="toggle-map-arretes-2"
+        labelPicto="purple-diamond"
+        v-model="sharedState.input.filters.arreteTypes"
+        :option-groups="[arreteTypesGroupsForMap[2]]"
+      >
+        <template #label>{{ arreteTypesGroupsForMap[2].title }}</template>
+      </AppToggleCheckboxes>
+
+      <hr class="fr-mt-5w">
+
+      <h2 class="fr-h4 fr-text-label--blue-france">Filtres supplémentaires</h2>
+
+      <HistoSelect
+        id="filter-nature-parc"
+        v-model="sharedState.input.filters.natureParc"
+        :option-items="natureParcOptions"
+        :placeholder="'Tous'"
+        title="Rechercher par nature du parc"
+      >
+        <template #label>Nature du parc</template>
+      </HistoSelect>
     </div>
   </section>
 </template>
@@ -137,9 +181,10 @@ import { useAddressesHistoryFilters } from '../composables/useAddressesHistoryFi
 import HistoSelect from '../../common/HistoSelect.vue'
 import HistoToggle from '../../common/HistoToggle.vue'
 import HistoCheckbox from '../../common/HistoCheckbox.vue'
-// import HistoMultiSelect from '../../common/HistoMultiSelect.vue'
-// import AppSearch from '../../common/AppSearch.vue'
 import AppAutoComplete from '../../common/AppAutoComplete.vue'
+import AppToggleCheckboxes from '../../common/AppToggleCheckboxes.vue'
+import type { CheckboxGroup } from '../../common/AppListCheckboxes.types'
+import type { ArreteTypesGroup } from '../types'
 
 // State
 const sharedState = store.state
@@ -147,6 +192,25 @@ const resetKey = ref(false)
 
 // Composable
 const filtersComposable = useAddressesHistoryFilters()
+
+/**
+ * Convertit un ArreteTypesGroup en CheckboxGroup pour la vue carte
+ * Utilise TextInMapView au lieu de Text
+ */
+const convertToMapViewGroup = (group: ArreteTypesGroup): CheckboxGroup => {
+  return {
+    title: group.titleInMapView || group.title,
+    options: group.options.map(option => ({
+      Id: option.Id,
+      Text: option.TextInMapView || option.Text
+    }))
+  }
+}
+
+// Groupes convertis pour la vue carte
+const arreteTypesGroupsForMap = computed<CheckboxGroup[]>(() => {
+  return sharedState.arreteTypesGroups.map(convertToMapViewGroup)
+})
 
 /**
  * Quand le territoire change
@@ -167,6 +231,7 @@ const onTerritoryChange = async (value: string): Promise<void> => {
 const dossiersMultiplesToggleValue = computed(() => {
   return sharedState.input.filters.dossiersMultiples === 'oui'
 })
+const natureParcOptions = computed(() => store.state.natureParcList)
 
 /**
  * Gère le changement du toggle dossiers multiples
@@ -195,7 +260,7 @@ section.addresses-history-map-filters {
   box-shadow: 2px 0px 6px rgba(0, 0, 0, 0.3);
 }
 
-.badge-dossiers-multiples {
+.picto-dossiers-multiples {
   display: inline-block;
   width: 15px;
   height: 15px;
