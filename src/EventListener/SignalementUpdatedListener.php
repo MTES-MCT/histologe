@@ -25,7 +25,6 @@ class SignalementUpdatedListener
     public const array EDIT_SECTIONS = [
         SuiviDelayedType::FO_EDIT_ADRESSE_LOGEMENT->value => [
             'fields' => [
-                'etageOccupant' => 'Étage',
                 'escalierOccupant' => 'Escalier',
                 'numAppartOccupant' => 'Numéro d\'appartement',
                 'adresseAutreOccupant' => 'Autre',

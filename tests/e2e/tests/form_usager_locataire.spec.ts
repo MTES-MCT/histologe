@@ -33,6 +33,7 @@ test('signalement form for locataire', async ({page}) => {
     await page.getByRole('textbox', { name: 'Adresse du logement Format' }).click();
     await page.getByRole('textbox', { name: 'Adresse du logement Format' }).fill('3 rue de l\'école 13');
     await page.getByText('Rue de l\'ecole 13007 Marseille').click();
+    await page.getByText('Une maison seule', { exact: true }).click();
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Pour vous-même', { exact: true }).click();
     await page.locator('#signalement_concerne_profil_detail_occupant').getByText('Locataire du logement').click();
@@ -66,9 +67,6 @@ test('signalement form for locataire', async ({page}) => {
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByRole('heading', { name: 'Type et composition du' }).click();
     await page.getByRole('button', { name: 'C\'est parti' }).click();
-    await page.getByText('Votre logement est…').click();
-    await page.getByText('Une maison seule').click();
-    await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Votre logement est composé d\'').click();
     await page.getByText('Une pièce unique', { exact: true }).click();
     await page.getByRole('textbox', { name: 'Quelle est la superficie de' }).click();

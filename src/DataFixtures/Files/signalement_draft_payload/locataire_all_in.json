@@ -108,7 +108,7 @@
     "utilisation_service_ok_cgu": 1,
     "vos_coordonnees_occupant_tel_countrycode": "FR:33",
     "adresse_logement_complement_adresse_autre": "La porte rouge",
-    "adresse_logement_complement_adresse_etage": "4",
+    "adresse_logement_complement_adresse_etage": "DERNIER_ETAGE",
     "desordres_batiment_proprete_photos_upload": [
         {
             "key": "documents",

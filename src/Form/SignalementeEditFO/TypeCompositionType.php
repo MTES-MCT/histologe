@@ -30,7 +30,7 @@ class TypeCompositionType extends AbstractType
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
 
         $natureAutrePrecision = $typeCompositionLogement?->getTypeLogementNatureAutrePrecision();
-        $appartementEtage = EtageType::tryFrom($typeCompositionLogement?->getTypeLogementAppartementEtage());
+        $appartementEtage = EtageType::tryFrom($typeCompositionLogement?->getTypeLogementAppartementEtage() ?? '');
         $avecFenetres = $typeCompositionLogement?->getTypeLogementAppartementAvecFenetres();
         $pieceUnique = $typeCompositionLogement?->getCompositionLogementPieceUnique();
         $nbPieces = $typeCompositionLogement?->getCompositionLogementNbPieces();
@@ -91,6 +91,38 @@ class TypeCompositionType extends AbstractType
                 'placeholder' => false,
                 'mapped' => false,
                 'data' => $appartementEtage,
+            ])
+            ->add('appartementEtagePrecision', TextType::class, [
+                'label' => 'Précision sur l\'étage (si "Autre étage")',
+                'help' => 'Numéro d\'étage (1 ou 2 chiffres)',
+                'required' => false,
+                'mapped' => false,
+                'data' => EtageType::AUTRE === $appartementEtage ? $signalement->getEtageOccupant() : null,
+                'attr' => [
+                    'maxlength' => 2,
+                ],
+                'constraints' => [
+                    new Assert\Length(
+                        max: 2,
+                        maxMessage: 'La précision sur l\'étage doit comporter au maximum {{ limit }} caractères.',
+                    ),
+                    new Assert\Regex(
+                        pattern: '/^[0-9]{1,2}$/',
+                        message: 'La précision sur l\'étage doit être un numéro d\'étage à 1 ou 2 chiffres.',
+                    ),
+                    new Assert\Callback(
+                        callback: static function ($value, $context) {
+                            $form = $context->getRoot();
+                            $appartementEtage = $form->get('appartementEtage')->getData();
+
+                            if (EtageType::AUTRE === $appartementEtage && (null === $value || '' === $value)) {
+                                $context
+                                    ->buildViolation('Veuillez préciser l\'étage.')
+                                    ->addViolation();
+                            }
+                        },
+                    ),
+                ],
             ])
             ->add('appartementAvecFenetres', ChoiceType::class, [
                 'label' => 'Avec fenêtres <span class="text-required">*</span>',

@@ -9,6 +9,7 @@ use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\EtageType;
 use App\Entity\Enum\HistoryEntryEvent;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
@@ -366,8 +367,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     #[ORM\Column(nullable: true)]
     private ?string $lastSuiviBy = null;
 
+    // Contient le libellé de l'étage (EtageType) hors cas "Autre", ou le numéro d'étage
+    // saisi (1-2 chiffres) quand l'étage est "Autre". La borne à 20 couvre le plus long
+    // libellé ("Rez-de-chaussée").
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
-    #[Assert\Length(max: 5, groups: ['bo_step_address'])]
+    #[Assert\Length(max: 20, groups: ['bo_step_address'])]
     private ?string $etageOccupant = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -525,6 +529,16 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
      */
     #[ORM\Column(length: 20, nullable: true)]
     private ?string $rnbIdOccupant = null;
+
+    /**
+     * L'usager a indiqué ne pas trouver son bâtiment dans le sélecteur RNB.
+     *
+     * TODO : ajouter un indicateur visible en back-office (ex. sur la fiche signalement,
+     * à côté du bouton "Sélectionner le bâtiment sur la carte") pour qu'un agent sache
+     * qu'il doit résoudre le bâtiment manuellement, sans avoir à vérifier chaque dossier.
+     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $noBuildingFoundOccupant = null;
 
     #[ORM\Column(type: 'string', length: 15, nullable: true, enumType: DebutDesordres::class)]
     private ?DebutDesordres $debutDesordres = null;
@@ -1734,7 +1748,11 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     {
         $complement = '';
         if ($this->etageOccupant) {
-            $complement .= 'étage '.$this->etageOccupant.', ';
+            if ($this->etageOccupant === EtageType::RDC->label() || $this->etageOccupant === EtageType::SOUSSOL->label() || $this->etageOccupant === EtageType::DERNIER_ETAGE->label()) {
+                $complement .= $this->etageOccupant.', ';
+            } else {
+                $complement .= 'étage '.$this->etageOccupant.', ';
+            }
         }
         if ($this->escalierOccupant) {
             $complement .= 'escalier '.$this->escalierOccupant.', ';
@@ -2788,6 +2806,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function setRnbIdOccupant(?string $rnbIdOccupant): static
     {
         $this->rnbIdOccupant = $rnbIdOccupant;
+
+        return $this;
+    }
+
+    public function getNoBuildingFoundOccupant(): ?bool
+    {
+        return $this->noBuildingFoundOccupant;
+    }
+
+    public function setNoBuildingFoundOccupant(?bool $noBuildingFoundOccupant): static
+    {
+        $this->noBuildingFoundOccupant = $noBuildingFoundOccupant;
 
         return $this;
     }

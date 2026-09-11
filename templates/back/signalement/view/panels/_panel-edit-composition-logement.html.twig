@@ -1,4 +1,4 @@
-<dialog aria-labelledby="panel-edit-composition-logement-title" id="panel-edit-composition-logement" class="side-panel">
+<dialog aria-labelledby="panel-edit-composition-logement-title" id="panel-edit-composition-logement" class="side-panel" data-panel-reset-form>
     <div class="side-panel__inner">
         <div class="side-panel__header">
             <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-composition-logement" aria-controls="panel-edit-composition-logement" aria-expanded="false">Fermer</button>
@@ -91,6 +91,13 @@
                         <option value="{{ enum('App\\Entity\\Enum\\EtageType').SOUSSOL.value }}" {{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').SOUSSOL.value ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\EtageType').SOUSSOL.label }}</option>
                         <option value="{{ enum('App\\Entity\\Enum\\EtageType').AUTRE.value }}" {{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').AUTRE.value ? 'selected' : '' }}>{{ enum('App\\Entity\\Enum\\EtageType').AUTRE.label }}</option>
                     </select>
+                </div>
+                
+                <div class="fr-input-group">
+                    <label class="fr-label" for="compositionLogementEtagePrecision">Précision (si étage "Autre")
+                        <span class="fr-hint-text">Numéro d'étage (1 ou 2 chiffres)</span>
+                    </label>
+                    <input class="fr-input" type="text" inputmode="numeric" id="compositionLogementEtagePrecision" name="etagePrecision" value="{{ typeLogementAppartementEtage is same as enum('App\\Entity\\Enum\\EtageType').AUTRE.value ? signalement.etageOccupant : '' }}" maxlength="2">
                 </div>
 
                 <div class="fr-select-group">

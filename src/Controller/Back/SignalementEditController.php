@@ -108,7 +108,18 @@ class SignalementEditController extends AbstractController
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
         }
         $htmlTargetContents = $signalementAddressContentService->getHtmlTargetContentsForSignalementAddress($signalement);
-        $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
+        $htmlTargetContents[] = [
+            'target' => '#list-suivis',
+            'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement]),
+        ];
+        $htmlTargetContents[] = [
+            'target' => '#signalement-information-composition-container',
+            'content' => $this->renderView('back/signalement/view/information/information-composition.html.twig', ['signalement' => $signalement]),
+        ];
+        $htmlTargetContents[] = [
+            'target' => '#signalement-edit-composition-container',
+            'content' => $this->renderView('back/signalement/view/panels/_panel-edit-composition-logement.html.twig', ['signalement' => $signalement]),
+        ];
         $functions = [['name' => 'applyFilter']];
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
@@ -572,6 +583,7 @@ class SignalementEditController extends AbstractController
         SignalementManager $signalementManager,
         SignalementDraftRequestSerializer $serializer,
         ValidatorInterface $validator,
+        SignalementAddressContentService $signalementAddressContentService,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
@@ -609,12 +621,16 @@ class SignalementEditController extends AbstractController
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
         }
-        $htmlTargetContents = [
-            [
-                'target' => '#signalement-information-composition-container',
-                'content' => $this->renderView('back/signalement/view/information/information-composition.html.twig', ['signalement' => $signalement]),
-            ],
+        $htmlTargetContents = $signalementAddressContentService->getHtmlTargetContentsForSignalementAddress($signalement);
+        $htmlTargetContents[] = [
+            'target' => '#signalement-information-composition-container',
+            'content' => $this->renderView('back/signalement/view/information/information-composition.html.twig', ['signalement' => $signalement]),
         ];
+        $htmlTargetContents[] = [
+            'target' => '#signalement-edit-address-container',
+            'content' => $this->renderView('back/signalement/view/panels/_panel-edit-address.html.twig', ['signalement' => $signalement]),
+        ];
+
         $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
         $functions = [['name' => 'applyFilter']];
 

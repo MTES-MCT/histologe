@@ -31,11 +31,12 @@
   "adresse_logement_adresse_detail_numero": "31 Rue des phoceens",
   "adresse_logement_adresse_detail_commune": "Marseille",
   "signalement_concerne_profil_detail_tiers": "bailleur",
-  "adresse_logement_complement_adresse_etage": "",
+  "adresse_logement_complement_adresse_etage": "AUTRE",
   "adresse_logement_adresse_detail_geoloc_lat": 43.302225,
   "adresse_logement_adresse_detail_geoloc_lng": 5.367932,
   "adresse_logement_adresse_detail_code_postal": "13002",
   "adresse_logement_complement_adresse_escalier": "",
   "signalement_concerne_logement_social_autre_tiers": "oui",
-  "signalement_concerne_profil_detail_bailleur_bailleur": "organisme_societe"
+  "signalement_concerne_profil_detail_bailleur_bailleur": "organisme_societe",
+  "adresse_logement_complement_adresse_etage_precision": "1"
 }

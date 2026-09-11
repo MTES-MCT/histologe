@@ -2,6 +2,7 @@
 
 namespace App\Dto\Request\Signalement;
 
+use App\Entity\Enum\EtageType;
 use App\Validator as AppAssert;
 use App\Validator\Behaviour\MonthYearValidatorTrait;
 use App\Validator\DateNaissanceValidatorTrait;
@@ -72,10 +73,14 @@ class SignalementDraftRequest
     private ?string $adresseLogementAdresseDetailInsee = null;
     private ?string $adresseLogementAdresseDetailRnbId = null;
     private ?bool $adresseLogementAdresseDetailManual = null;
+    private ?bool $adresseLogementAdresseDetailNoBuildingFound = null;
     #[Assert\Length(max: 3, maxMessage: 'L\'escalier ne doit pas dépasser {{ limit }} caractères')]
     private ?string $adresseLogementComplementAdresseEscalier = null;
-    #[Assert\Length(max: 5, maxMessage: 'L\'étage ne doit pas dépasser {{ limit }} caractères')]
+    #[Assert\Choice(callback: [EtageType::class, 'values'])]
     private ?string $adresseLogementComplementAdresseEtage = null;
+    #[Assert\Length(max: 2, maxMessage: 'La précision de l\'étage ne doit pas dépasser {{ limit }} caractères.')]
+    #[Assert\Regex(pattern: '/^[0-9]{1,2}$/', message: 'La précision de l\'étage doit être composée de 1 ou 2 chiffres.')]
+    private ?string $adresseLogementComplementAdresseEtagePrecision = null;
     #[Assert\Length(max: 5, maxMessage: 'Le numéro d\'appartement ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $adresseLogementComplementAdresseNumeroAppartement = null;
     #[Assert\Length(max: 255)]
@@ -555,6 +560,44 @@ class SignalementDraftRequest
         $this->validateDateNaissance($this->informationsComplementairesSituationOccupantsDateNaissance, 'informationsComplementairesSituationOccupantsDateNaissance', $context);
         $this->validateDateNaissance($this->informationsComplementairesSituationBailleurDateNaissance, 'informationsComplementairesSituationBailleurDateNaissance', $context);
         $this->validateMonthYear($this->infoProcedureBailDate, 'infoProcedureBailDate', $context);
+        $this->validateEtage($context);
+        $this->validateRnbId($context);
+    }
+
+    private function validateEtage(ExecutionContextInterface $context): void
+    {
+        if (null === $this->typeLogementNature) {
+            return;
+        }
+
+        if ('appartement' === $this->typeLogementNature && null === $this->adresseLogementComplementAdresseEtage) {
+            $context
+                ->buildViolation('Le champ étage est obligatoire si le logement est un appartement.')
+                ->atPath('adresseLogementComplementAdresseEtage')
+                ->addViolation();
+        }
+
+        if ('AUTRE' === $this->adresseLogementComplementAdresseEtage && null === $this->adresseLogementComplementAdresseEtagePrecision) {
+            $context
+                ->buildViolation('Le champ précision de l\'étage est obligatoire si l\'étage est "AUTRE".')
+                ->atPath('adresseLogementComplementAdresseEtagePrecision')
+                ->addViolation();
+        }
+    }
+
+    private function validateRnbId(ExecutionContextInterface $context): void
+    {
+        if ('autre' === $this->typeLogementNature
+            || !$this->adresseLogementAdresseDetailManual
+            || $this->adresseLogementAdresseDetailNoBuildingFound
+        ) {
+            return;
+        }
+        if (null === $this->adresseLogementAdresseDetailRnbId) {
+            $context->buildViolation('Veuillez sélectionner le bâtiment correspondant au logement.')
+                ->atPath('adresseLogementAdresseDetailRnbId')
+                ->addViolation();
+        }
     }
 
     public function getProfil(): ?string
@@ -665,6 +708,18 @@ class SignalementDraftRequest
         return $this;
     }
 
+    public function getAdresseLogementAdresseDetailNoBuildingFound(): ?bool
+    {
+        return $this->adresseLogementAdresseDetailNoBuildingFound;
+    }
+
+    public function setAdresseLogementAdresseDetailNoBuildingFound(?bool $adresseLogementAdresseDetailNoBuildingFound): self
+    {
+        $this->adresseLogementAdresseDetailNoBuildingFound = $adresseLogementAdresseDetailNoBuildingFound;
+
+        return $this;
+    }
+
     public function getAdresseLogementComplementAdresseEscalier(): ?string
     {
         return $this->adresseLogementComplementAdresseEscalier;
@@ -685,6 +740,18 @@ class SignalementDraftRequest
     public function setAdresseLogementComplementAdresseEtage(?string $adresseLogementComplementAdresseEtage): self
     {
         $this->adresseLogementComplementAdresseEtage = $adresseLogementComplementAdresseEtage;
+
+        return $this;
+    }
+
+    public function getAdresseLogementComplementAdresseEtagePrecision(): ?string
+    {
+        return $this->adresseLogementComplementAdresseEtagePrecision;
+    }
+
+    public function setAdresseLogementComplementAdresseEtagePrecision(?string $adresseLogementComplementAdresseEtagePrecision): self
+    {
+        $this->adresseLogementComplementAdresseEtagePrecision = $adresseLogementComplementAdresseEtagePrecision;
 
         return $this;
     }

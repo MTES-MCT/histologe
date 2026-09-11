@@ -493,6 +493,7 @@ class SignalementActionController extends AbstractController
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         $signalement->setRnbIdOccupant($building->getRnbId());
+        $signalement->setNoBuildingFoundOccupant(false);
         $signalement->setGeoloc(['lat' => $building->getLat(), 'lng' => $building->getLng()]);
         $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Le bâtiment a bien été mis à jour.'];

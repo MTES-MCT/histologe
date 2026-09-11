@@ -6,7 +6,9 @@ export const componentValidator = {
   validate (component: any) {
     const componentSlug: string = component.slug
     const value = formStore.data[componentSlug]
-
+    if (!formStore.shouldShowField(component)) {
+      return
+    }
     let regexPattern
     // s'il y a une valeur, on vérifie si un pattern est requis (ou si c'est un type email)
     if (variableTester.isNotEmpty(value) && component.type === 'SignalementFormEmailfield') {
@@ -117,6 +119,15 @@ export const componentValidator = {
         if (addressDetailCommune.length > 95) {
           formStore.validationErrors[componentSlug + '_detail_commune'] = 'Veuillez renseigner une commune valide.'
         }
+      }
+
+      // sélection obligatoire du bâtiment si maison ou appartement
+      if (
+        formStore.data.type_logement_nature !== 'autre' &&
+        !formStore.data[componentSlug + '_detail_rnb_id'] &&
+        !formStore.data[componentSlug + '_detail_no_building_found']
+      ) {
+        formStore.validationErrors[componentSlug + '_detail_rnb_id'] = 'Veuillez sélectionner le bâtiment correspondant au logement.'
       }
     }
   }

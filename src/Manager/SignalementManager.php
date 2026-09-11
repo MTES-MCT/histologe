@@ -15,6 +15,7 @@ use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationClose;
 use App\Dto\SignalementAffectationListView;
+use App\Entity\Enum\EtageType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\ProfileDeclarant;
@@ -334,10 +335,17 @@ class SignalementManager
                 || $signalement->getAddress()->getCity() !== $adresseOccupantRequest->getVille()
                 || $signalement->getAddress()->getPostCode() !== $adresseOccupantRequest->getCodePostal();
 
-        $signalement->setEtageOccupant($adresseOccupantRequest->getEtage())
+        $typeCompositionLogement = $signalement->getTypeCompositionLogement() ? clone $signalement->getTypeCompositionLogement() : new TypeCompositionLogement();
+        $etage = EtageType::tryFrom($adresseOccupantRequest->getEtage() ?? '');
+        $signalement->setEtageOccupant(EtageType::resolveOccupantLabel($etage, $adresseOccupantRequest->getEtagePrecision()));
+        EtageType::applyToTypeCompositionLogement($typeCompositionLogement, $etage, $typeCompositionLogement->getTypeLogementAppartementAvecFenetres());
+
+        $signalement->setTypeCompositionLogement($typeCompositionLogement)
             ->setEscalierOccupant($adresseOccupantRequest->getEscalier())
             ->setNumAppartOccupant($adresseOccupantRequest->getNumAppart())
             ->setAdresseAutreOccupant($adresseOccupantRequest->getAutre());
+
+        $this->desordreCompositionLogementLoader->load($signalement, $typeCompositionLogement);
 
         if ($addressIsModified) {
             $srcTerritory = $signalement->getAddress()->getTerritory();
@@ -766,11 +774,14 @@ class SignalementManager
             $typeCompositionLogement->setTypeLogementNatureAutrePrecision(null);
         }
 
+        $etage = EtageType::tryFrom($compositionLogementRequest->getEtage() ?? '');
+        $signalement->setEtageOccupant(EtageType::resolveOccupantLabel($etage, $compositionLogementRequest->getEtagePrecision()));
+        EtageType::applyToTypeCompositionLogement($typeCompositionLogement, $etage, $compositionLogementRequest->getAvecFenetres());
+
         $typeCompositionLogement
             ->setTypeLogementNature($compositionLogementRequest->getType())
             ->setCompositionLogementPieceUnique($compositionLogementRequest->getTypeCompositionLogement())
             ->setCompositionLogementNbPieces($compositionLogementRequest->getCompositionLogementNbPieces())
-            ->setTypeLogementAppartementEtage($compositionLogementRequest->getEtage())
             ->setTypeLogementAppartementAvecFenetres($compositionLogementRequest->getAvecFenetres())
             ->setTypeLogementCommoditesPieceAVivre9m(
                 $compositionLogementRequest->getTypeLogementCommoditesPieceAVivre9m()

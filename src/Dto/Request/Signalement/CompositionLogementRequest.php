@@ -74,6 +74,21 @@ class CompositionLogementRequest implements RequestInterface
         )]
         private readonly ?string $etage = null,
         #[Assert\When(
+            expression: 'this.getEtage() == "AUTRE"',
+            constraints: [
+                new Assert\NotBlank(message: 'Merci de préciser l\'étage.'),
+            ],
+        )]
+        #[Assert\Length(
+            max: 2,
+            maxMessage: 'La précision de l\'étage ne doit pas dépasser {{ limit }} caractères.',
+        )]
+        #[Assert\Regex(
+            pattern: '/^[0-9]{1,2}$/',
+            message: 'La précision de l\'étage doit être un numéro d\'étage à 1 ou 2 chiffres.',
+        )]
+        private readonly ?string $etagePrecision = null,
+        #[Assert\When(
             expression: 'this.getType() == "appartement"',
             constraints: [
                 new Assert\NotBlank(message: 'Merci de préciser si le logement a des fenêtres.'),
@@ -202,6 +217,11 @@ class CompositionLogementRequest implements RequestInterface
     public function getEtage(): ?string
     {
         return $this->etage;
+    }
+
+    public function getEtagePrecision(): ?string
+    {
+        return $this->etagePrecision;
     }
 
     public function getAvecFenetres(): ?string

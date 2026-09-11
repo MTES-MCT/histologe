@@ -59,7 +59,7 @@
   "utilisation_service_ok_signalement_tiers": 1,
   "utilisation_service_ok_cgu": 1,
   "adresse_logement_complement_adresse_autre": "Euroméditerranée",
-  "adresse_logement_complement_adresse_etage": "2",
+  "adresse_logement_complement_adresse_etage": "AUTRE",
   "adresse_logement_adresse_detail_geoloc_lat": 43.301929,
   "adresse_logement_adresse_detail_geoloc_lng": 5.369711,
   "adresse_logement_adresse_detail_code_postal": "13002",
@@ -78,5 +78,6 @@
   "informations_complementaires_situation_bailleur_date_naissance": "1979-10-10",
   "informations_complementaires_situation_bailleur_beneficiaire_fsl": "non",
   "informations_complementaires_situation_bailleur_beneficiaire_rsa": "non",
-  "informations_complementaires_situation_bailleur_date_effet_bail": "1998-10-10"
+  "informations_complementaires_situation_bailleur_date_effet_bail": "1998-10-10",
+  "adresse_logement_complement_adresse_etage_precision": "2"
 }

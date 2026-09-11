@@ -59,6 +59,7 @@ interface FormStore {
     updatedAt: string | null
   }
   lastButtonClicked: string
+  addressCorrectionMessage: string
   validationErrors: FormData
   inputComponents: string[]
   updateData: (key: string, value: any) => void
@@ -109,6 +110,7 @@ const formStore: FormStore = reactive({
     updatedAt: null
   },
   lastButtonClicked: '',
+  addressCorrectionMessage: '',
   inputComponents: [
     'SignalementFormTextfield',
     'SignalementFormTextarea',
@@ -266,6 +268,15 @@ const formStore: FormStore = reactive({
       if (monthsSinceBailleurPrevenu === undefined || monthsSinceBailleurPrevenu >= 2) {
         return false
       }
+    }
+    return true;
+  },
+  shouldDisplayTypeLogement (): boolean {
+    if (formStore.data.type_logement_nature !== 'appartement') {
+      return false
+    }
+    if (formStore.data.adresse_logement_complement_adresse_etage === 'RDC' || formStore.data.adresse_logement_complement_adresse_etage === 'AUTRE') {
+      return false
     }
     return true;
   },

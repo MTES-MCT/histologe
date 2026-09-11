@@ -7,6 +7,7 @@ use App\Entity\DesordrePrecision;
 use App\Entity\Enum\ChauffageType;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\DebutDesordres;
+use App\Entity\Enum\EtageType;
 use App\Entity\Enum\OccupantLink;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProprioType;
@@ -411,19 +412,33 @@ class SignalementBuilder
     {
         $this->signalement
             ->setIsLogementSocial($this->isLogementSocial())
-            ->setEtageOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseEtage())
+            ->setEtageOccupant($this->resolveEtageOccupant())
             ->setEscalierOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseEscalier())
             ->setNumAppartOccupant(
                 $this->signalementDraftRequest->getAdresseLogementComplementAdresseNumeroAppartement()
             )
             ->setAdresseAutreOccupant($this->signalementDraftRequest->getAdresseLogementComplementAdresseAutre())
-            ->setRnbIdOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailRnbId());
+            ->setRnbIdOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailRnbId())
+            ->setNoBuildingFoundOccupant($this->signalementDraftRequest->getAdresseLogementAdresseDetailNoBuildingFound());
         $this->signalementAddressUpdater->attachAddressToSignalement(
             $this->signalement,
             $this->signalementDraftRequest->getAdresseLogementAdresseDetailNumero(),
             $this->signalementDraftRequest->getAdresseLogementAdresseDetailCodePostal(),
-            $this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune()
+            $this->signalementDraftRequest->getAdresseLogementAdresseDetailCommune(),
+            $this->signalementDraftRequest->getAdresseLogementAdresseDetailRnbId()
         );
+    }
+
+    private function resolveEtageOccupant(): ?string
+    {
+        $etage = EtageType::tryFrom($this->signalementDraftRequest->getAdresseLogementComplementAdresseEtage() ?? '');
+        if (!$etage) {
+            return null; // maison/autre : pas d'étage demandé
+        }
+
+        return EtageType::AUTRE === $etage
+            ? $this->signalementDraftRequest->getAdresseLogementComplementAdresseEtagePrecision()
+            : $etage->label(); // "Rez-de-chaussée" / "Dernier étage" / "Sous-sol"
     }
 
     private function setOccupantDeclarantData(): void

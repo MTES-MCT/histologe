@@ -31,6 +31,7 @@ use App\Service\Mailer\NotificationMailerType;
 use App\Service\MessageHelper;
 use App\Service\RequestDataExtractor;
 use App\Service\Security\CguTiersChecker;
+use App\Service\Signalement\DesordreTraitement\DesordreCompositionLogementLoader;
 use App\Service\Signalement\InputValue\SituationFoyerProcessor;
 use App\Service\Signalement\SignalementUpdateService;
 use App\Utils\HtmlCleaner;
@@ -51,6 +52,7 @@ class SignalementEditController extends AbstractController
     public function __construct(
         private readonly CguTiersChecker $cguTiersChecker,
         private readonly SignalementUpdateService $signalementUpdateService,
+        private readonly DesordreCompositionLogementLoader $desordreCompositionLogementLoader,
     ) {
     }
 
@@ -478,29 +480,13 @@ class SignalementEditController extends AbstractController
             if ('appartement' === $signalement->getNatureLogement()) {
                 /** @var EtageType $appartementEtage */
                 $appartementEtage = $form->get('appartementEtage')->getData();
-                $typeCompositionLogement->setTypeLogementAppartementEtage($appartementEtage->value);
-                if (EtageType::RDC === $appartementEtage) {
-                    $typeCompositionLogement->setTypeLogementRdc('oui');
-                } else {
-                    $typeCompositionLogement->setTypeLogementRdc('non');
-                }
+                $avecFenetres = $form->get('appartementAvecFenetres')->getData();
 
-                $typeCompositionLogement->setTypeLogementAppartementAvecFenetres($form->get('appartementAvecFenetres')->getData());
-
-                if (EtageType::DERNIER_ETAGE === $appartementEtage) {
-                    $typeCompositionLogement->setTypeLogementDernierEtage('oui');
-                    if ('non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()) {
-                        $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('oui');
-                    }
-                } elseif (!empty($appartementEtage)) {
-                    $typeCompositionLogement->setTypeLogementDernierEtage('non');
-                    $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('non');
-                }
-
-                if (EtageType::SOUSSOL === $appartementEtage
-                        && 'non' === $typeCompositionLogement->getTypeLogementAppartementAvecFenetres()) {
-                    $typeCompositionLogement->setTypeLogementSousSolSansFenetre('oui');
-                }
+                $signalement->setEtageOccupant(
+                    EtageType::resolveOccupantLabel($appartementEtage, $form->get('appartementEtagePrecision')->getData())
+                );
+                $typeCompositionLogement->setTypeLogementAppartementAvecFenetres($avecFenetres);
+                EtageType::applyToTypeCompositionLogement($typeCompositionLogement, $appartementEtage, $avecFenetres);
             } else {
                 $signalement->setAutresOccupantsDesordre(null);
             }
@@ -536,6 +522,7 @@ class SignalementEditController extends AbstractController
             }
 
             $signalement->setTypeCompositionLogement($typeCompositionLogement);
+            $this->desordreCompositionLogementLoader->load($signalement, $typeCompositionLogement);
 
             $this->signalementUpdateService->saveChangesAndCreateSuivi($signalement, $signalementUser);
             $this->addFlash('success', ['title' => self::SUCCESS_MESSAGE_TITLE, 'message' => 'Le type et la composition du logement ont bien été mis à jour.']);
