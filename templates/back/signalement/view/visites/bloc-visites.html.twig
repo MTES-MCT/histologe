@@ -11,7 +11,7 @@
     <div class="fr-col-12 fr-col-md-6">
         {% if is_granted('SIGN_ADD_VISITE', signalement) %}
             <div data-ajax-form>
-                {% include 'back/signalement/view/visites/modals/visites-modal-add.html.twig' %}
+                {% include 'back/signalement/view/visites/panels/_panel-add-visite.html.twig' %}
             </div>
             {% set displayAddVisiteButton = true %}
             {% set listPendingVisiteExternalOperatorNames = [] %}
@@ -29,15 +29,16 @@
             <div class="fr-my-5v fr-text--right">
                 {% if linkToVisitGrid %}
                     <a class="fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left matomo_download" 
-                    title="Télécharger la grille de visite {% if signalement.address.territory.grilleVisiteFilename %}du territoire{% endif %}"
-                    download href="{{ sign_url(linkToVisitGrid) }}">
-                        Grille de visite
-                    </a>
+                        title="Télécharger la grille de visite {% if signalement.address.territory.grilleVisiteFilename %}du territoire{% endif %}"
+                        download href="{{ sign_url(linkToVisitGrid) }}"
+                        >Grille de visite</a>
                 {% endif %}
                 {% if displayAddVisiteButton %}
-                    <button class="fr-btn fr-fi-calendar-line fr-btn--icon-left" aria-controls="add-visite-modal" data-fr-opened="false">
-                        Ajouter une visite
-                    </button>
+                    <button class="fr-btn fr-fi-calendar-line fr-btn--icon-left button-add-visite"
+                        data-panel-open="panel-add-visite"
+                        aria-controls="panel-add-visite"
+                        data-fr-opened="false"
+                        >Ajouter une visite</button>
                 {% endif %}
             </div>
         {% endif %}

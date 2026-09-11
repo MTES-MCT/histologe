@@ -15,7 +15,7 @@
                 <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-confirm-0">Visite non effectuée</label>
             </div>
         </div>
-        <p id="signalement-confirm-visite-done-error" class="fr-error-text fr-hidden fr-messages-group fr-mt-n1w">
+        <p class="signalement-confirm-visite-done-error fr-error-text fr-hidden fr-messages-group fr-mt-n1w">
             Veuillez préciser si la visite a eu lieu.
         </p>
     </fieldset>
@@ -35,7 +35,7 @@
                 <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-occupant-present-0">Non</label>
             </div>
         </div>
-        <p id="signalement-confirm-visite-occupant-present-error" class="fr-error-text fr-messages-group fr-hidden fr-mt-n1w">
+        <p class="signalement-confirm-visite-occupant-present-error fr-error-text fr-messages-group fr-hidden fr-mt-n1w">
             Veuillez préciser si l'occupant était présent.
         </p>
     </fieldset>
@@ -55,7 +55,7 @@
                 <label for="visite-{{ formType }}-{{ intervention is defined ? intervention.id : '' }}-proprietaire-present-0">Non</label>
             </div>
         </div>
-        <p id="signalement-confirm-visite-proprietaire-present-error" class="fr-error-text fr-messages-group fr-hidden fr-mt-n1w">
+        <p class="signalement-confirm-visite-proprietaire-present-error fr-error-text fr-messages-group fr-hidden fr-mt-n1w">
             Veuillez préciser si le propriétaire était présent.
         </p>
     </fieldset>
@@ -80,7 +80,7 @@
                 {% endfor %}
             </div>
         </div>
-        <p id="signalement-confirm-visite-procedure-error" class="fr-error-text fr-hidden fr-messages-group fr-mt-n1w">
+        <p class="signalement-confirm-visite-procedure-error fr-error-text fr-hidden fr-messages-group fr-mt-n1w">
             Veuillez préciser la conclusion de la visite.
         </p>
     </fieldset>
@@ -155,20 +155,20 @@
                 {% endfor %}
             </div>
         </div>
-        <p id="signalement-confirm-visite-procedure-error" class="fr-error-text fr-hidden fr-messages-group fr-mt-n1w">
+        <p class="signalement-confirm-visite-procedure-error fr-error-text fr-hidden fr-messages-group fr-mt-n1w">
             Veuillez préciser la conclusion de la visite.
         </p>
     </fieldset>
 {% endif %}
 
 <div class="fr-input-group">
-    <label class="fr-label" for="visite-{{ formType }}[details]">
+    <label class="fr-label" for="visite-{{ formType }}[details]{{ intervention is defined ? '-' ~ intervention.id : '' }}">
         Commentaire de visite <span class="fr-text-default--error">*</span>
     </label>
-    <textarea class="fr-input fr-input--no-resize editor field-visite-details" id="visite-{{ formType }}[details]" name="visite-{{ formType }}[details]" minlength="10">{{
+    <textarea class="fr-input fr-input--no-resize editor field-visite-details" id="visite-{{ formType }}[details]{{ intervention is defined ? '-' ~ intervention.id : '' }}" name="visite-{{ formType }}[details]" minlength="10">{{
         intervention is defined and intervention.details ? intervention.details : ''
     }}</textarea>
-    <p id="signalement-confirm-visite-details-error" class="fr-error-text fr-messages-group fr-hidden">
+    <p class="signalement-confirm-visite-details-error fr-error-text fr-messages-group fr-hidden">
         Veuillez saisir un commentaire pour la visite.
     </p>
 </div>

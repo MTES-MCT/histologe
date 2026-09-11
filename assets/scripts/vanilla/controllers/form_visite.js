@@ -32,7 +32,7 @@ function updateOperatorExternFieldRequirement(partnerSelect) {
   }
 }
 
-function histoCheckVisiteForms(formType, visiteForm) {
+function histoCheckVisiteForms(formType, visiteForm, idIntervention = null) {
   if (!visiteForm) {
     console.warn('[histoCheckVisiteForms] form not provided for', formType);
     return true;
@@ -41,19 +41,19 @@ function histoCheckVisiteForms(formType, visiteForm) {
   let isValid = true;
 
   const listInputVisiteDoneError = visiteForm.querySelector(
-    '#signalement-confirm-visite-done-error'
+    '.signalement-confirm-visite-done-error'
   );
   const listInputOccupantPresentError = visiteForm.querySelector(
-    '#signalement-confirm-visite-occupant-present-error'
+    '.signalement-confirm-visite-occupant-present-error'
   );
   const listInputProprietairePresentError = visiteForm.querySelector(
-    '#signalement-confirm-visite-proprietaire-present-error'
+    '.signalement-confirm-visite-proprietaire-present-error'
   );
   const selectConcludeProcedureError = visiteForm.querySelector(
-    '#signalement-confirm-visite-procedure-error'
+    '.signalement-confirm-visite-procedure-error'
   );
   const textareaDetailsError = visiteForm.querySelector(
-    '#signalement-confirm-visite-details-error'
+    '.signalement-confirm-visite-details-error'
   );
 
   [
@@ -96,41 +96,46 @@ function histoCheckVisiteForms(formType, visiteForm) {
     let isVisiteDone = false;
     let hasCheckedVisiteDone = false;
 
-    visiteForm.querySelectorAll(`input[name="visite-${formType}[visiteDone]"]`).forEach((input) => {
-      if (input.checked) {
-        hasCheckedVisiteDone = true;
-        if (input.value === '1') {
-          isVisiteDone = true;
-        }
+    if ('edit' !== formType) {
+      visiteForm
+        .querySelectorAll(`input[name="visite-${formType}[visiteDone]"]`)
+        .forEach((input) => {
+          if (input.checked) {
+            hasCheckedVisiteDone = true;
+            if (input.value === '1') {
+              isVisiteDone = true;
+            }
+          }
+        });
+
+      if (!hasCheckedVisiteDone) {
+        listInputVisiteDoneError?.classList.remove('fr-hidden');
+        isValid = false;
       }
-    });
 
-    if (!hasCheckedVisiteDone) {
-      listInputVisiteDoneError?.classList.remove('fr-hidden');
-      isValid = false;
-    }
+      if (!visiteForm.querySelector(`input[name="visite-${formType}[occupantPresent]"]:checked`)) {
+        listInputOccupantPresentError?.classList.remove('fr-hidden');
+        isValid = false;
+      }
 
-    if (!visiteForm.querySelector(`input[name="visite-${formType}[occupantPresent]"]:checked`)) {
-      listInputOccupantPresentError?.classList.remove('fr-hidden');
-      isValid = false;
-    }
-
-    if (
-      !visiteForm.querySelector(`input[name="visite-${formType}[proprietairePresent]"]:checked`)
-    ) {
-      listInputProprietairePresentError?.classList.remove('fr-hidden');
-      isValid = false;
+      if (
+        !visiteForm.querySelector(`input[name="visite-${formType}[proprietairePresent]"]:checked`)
+      ) {
+        listInputProprietairePresentError?.classList.remove('fr-hidden');
+        isValid = false;
+      }
     }
 
     if (
-      isVisiteDone &&
+      (isVisiteDone || 'edit' === formType) &&
       !visiteForm.querySelector(`input[name="visite-${formType}[concludeProcedure][]"]:checked`)
     ) {
       selectConcludeProcedureError?.classList.remove('fr-hidden');
       isValid = false;
     }
 
-    const editor = tinymce.get(`visite-${formType}[details]`);
+    idIntervention = idIntervention ? '-' + idIntervention : '';
+    const editor = tinymce.get(`visite-${formType}[details]${idIntervention}`);
     const textContent = editor ? editor.getContent({ format: 'text' }).trim() : '';
     if (!textContent) {
       textareaDetailsError?.classList.remove('fr-hidden');
@@ -141,7 +146,7 @@ function histoCheckVisiteForms(formType, visiteForm) {
   return isValid;
 }
 
-const modalAddVisite = document?.querySelector('#add-visite-modal');
+const modalAddVisite = document?.querySelector('#panel-add-visite');
 if (modalAddVisite) {
   document.addEventListener(
     'change',
@@ -184,9 +189,9 @@ if (modalAddVisite) {
   document.addEventListener(
     'submit',
     (event) => {
-      const cancelVisiteForm = event.target.closest('form[name="signalement-cancel-visite"]');
+      const cancelVisiteForm = event.target.closest('.form-cancel-visite');
       const visiteForm = event.target.closest(
-        '.signalement-add-visite, .signalement-reschedule-visite, .signalement-confirm-visite'
+        '#form-add-visite, .form-edit-visite, .form-reschedule-visite, .form-confirm-visite'
       );
 
       if (!cancelVisiteForm && !visiteForm) {
@@ -195,7 +200,7 @@ if (modalAddVisite) {
 
       // ---- CANCEL VISITE ----
       if (cancelVisiteForm) {
-        const idIntervention = cancelVisiteForm.getAttribute('data-intervention-id');
+        const idIntervention = cancelVisiteForm.dataset.interventionId;
         const tinyMCE = tinymce.get('visite-cancel[details]-' + idIntervention);
         const textContent = tinyMCE ? tinyMCE.getContent() : '';
         const textareaDetailsError = cancelVisiteForm.querySelector(
@@ -215,12 +220,19 @@ if (modalAddVisite) {
 
       // ---- VISITE FORMS ----
       if (visiteForm) {
-        const match = visiteForm.className.match(/signalement-(add|reschedule|confirm)-visite/);
-        if (!match) return;
+        const matchAdd = visiteForm.id.match(/form-add-visite/);
+        const matchEdit = visiteForm.className.match(/form-(edit|reschedule|confirm)-visite/);
 
-        const formType = match[1];
+        if (!matchAdd && !matchEdit) return;
 
-        if (!histoCheckVisiteForms(formType, visiteForm)) {
+        let idIntervention = null;
+        if (matchEdit) {
+          idIntervention = visiteForm.dataset.interventionId;
+        }
+
+        const formType = matchAdd ? 'add' : matchEdit[1];
+
+        if (!histoCheckVisiteForms(formType, visiteForm, idIntervention)) {
           event.preventDefault();
           event.stopImmediatePropagation();
           return;
@@ -236,7 +248,7 @@ if (modalAddVisite) {
     },
     true
   );
-  modalAddVisite.addEventListener('dsfr.disclose', () => {
+  document.querySelector('.button-add-visite')?.addEventListener('click', () => {
     const form = modalAddVisite.querySelector('form');
     if (!form) return;
 

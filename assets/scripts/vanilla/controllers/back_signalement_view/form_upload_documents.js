@@ -5,7 +5,7 @@ import {
 
 export function initializeVisitesUploadFilesModal() {
   initializeUploadModal('#panel-upload-files', false);
-  document?.querySelectorAll('.fr-modal-visites-upload-files')?.forEach((modalVisiteUpload) => {
+  document?.querySelectorAll('.panel-upload-files-visite')?.forEach((modalVisiteUpload) => {
     initializeUploadModal('#' + modalVisiteUpload.id, true);
   });
 }

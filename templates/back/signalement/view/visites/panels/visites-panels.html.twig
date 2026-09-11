@@ -2,24 +2,24 @@
     {% if intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
         {% if workflow_can(intervention, 'cancel') %}
             <div data-ajax-form>
-                {% include 'back/signalement/view/visites/modals/visites-modal-cancel.html.twig' %}
+                {% include 'back/signalement/view/visites/panels/_panel-cancel-visite.html.twig' %}
             </div>
         {% endif %}
         {% if workflow_can(intervention, 'confirm') %}
             <div data-ajax-form>
-                {% include 'back/signalement/view/visites/modals/visites-modal-confirm.html.twig' %}
+                {% include 'back/signalement/view/visites/panels/_panel-confirm-visite.html.twig' %}
             </div>
         {% endif %}
         <div data-ajax-form>
-            {% include 'back/signalement/view/visites/modals/visites-modal-reschedule.html.twig' %}
+            {% include 'back/signalement/view/visites/panels/_panel-reschedule-visite.html.twig' %}
         </div>
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
         <div data-ajax-form>
-            {% include 'back/signalement/view/visites/modals/visites-modal-edit.html.twig' %}
+            {% include 'back/signalement/view/visites/panels/_panel-edit-visite.html.twig' %}
         </div>
         {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
             <div data-ajax-form>
-                {% include 'back/signalement/view/visites/modals/visites-modal-upload-files.html.twig' %}
+                {% include 'back/signalement/view/visites/panels/_panel-upload-files-visite.html.twig' %}
             </div>
         {% endif %}
     {% endif %}
