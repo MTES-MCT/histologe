@@ -9,7 +9,9 @@
     "SISH_ArreteNumero",
     "SISH_ArreteType",
     "SISH_ArreteMLDate",
-    "SISH_ArreteMLNumero"
+    "SISH_ArreteMLNumero",
+    "SISH_ArreteModifDate",
+    "SISH_ArreteModifNumero"
   ],
   "keyList": [
     "i1.imdo_id",
