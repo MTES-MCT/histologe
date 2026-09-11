@@ -20,7 +20,6 @@ class TabQueryParametersTest extends KernelTestCase
     {
         $parameters = new TabQueryParameters(
             territoireId: 1,
-            communeCodePostal: '13001',
             partenairesId: [12, 14],
             partners: [12, 14],
             mesDossiersMessagesUsagers: 'oui',
@@ -40,7 +39,6 @@ class TabQueryParametersTest extends KernelTestCase
     {
         $parameters = new TabQueryParameters(
             territoireId: 1,
-            communeCodePostal: '13001',
             partenairesId: [12],
             partners: [12, 14],
             mesDossiersMessagesUsagers: 'oui',
@@ -61,7 +59,6 @@ class TabQueryParametersTest extends KernelTestCase
     {
         $parameters = new TabQueryParameters(
             territoireId: 1,
-            communeCodePostal: '13012',
             partenairesId: [55, 12],
             partners: [12, 14],
             mesDossiersMessagesUsagers: 'oui',
@@ -82,7 +79,6 @@ class TabQueryParametersTest extends KernelTestCase
     {
         $parameters = new TabQueryParameters(
             territoireId: null,
-            communeCodePostal: null,
             partenairesId: null,
             partners: null,
             mesDossiersMessagesUsagers: null,

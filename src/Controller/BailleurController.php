@@ -42,7 +42,6 @@ class BailleurController extends AbstractController
     private function sanitizeBailleurs(array $bailleurs, string $name): ArrayCollection
     {
         return (new ArrayCollection($bailleurs))
-            /* @var Bailleur $bailleurItem */
             ->filter(function ($bailleurItem) use ($name) {
                 if (str_starts_with($bailleurItem->getName(), Bailleur::BAILLEUR_RADIE)) {
                     $name = strtolower($name);

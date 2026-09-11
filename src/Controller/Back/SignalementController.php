@@ -395,7 +395,6 @@ class SignalementController extends AbstractController
             $eventDispatcher->dispatch(new SignalementClosedEvent($signalementAffectationClose, $partner), SignalementClosedEvent::NAME);
             // on cloture les affectation et supprime les abonnnement des agent aprés le dispatch de l'event pour qu'ils soient notifiés de l'action
             $affectationManager->closeBySignalement($signalement, $signalementAffectationClose->getMotifCloture(), $user, $partner);
-        /* @var Affectation $affectation */
         } elseif ($affectation) {
             $entity = $affectationManager->closeAffectation(
                 affectation: $affectation,

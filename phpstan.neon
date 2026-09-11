@@ -53,3 +53,13 @@ parameters:
 			identifier: empty.variable
 		-
 			identifier: argument.named
+
+	# dead-code detector désactivé ici
+	shipmonkDeadCode:
+		detect:
+			deadMethods: false
+			deadConstants: false
+			deadEnumCases: false
+			deadProperties:
+				neverRead: false
+				neverWritten: false

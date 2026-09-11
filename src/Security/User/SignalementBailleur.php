@@ -27,10 +27,6 @@ class SignalementBailleur implements UserInterface
         return ['ROLE_BAILLEUR_SIGNALEMENT'];
     }
 
-    public function eraseCredentials(): void
-    {
-    }
-
     public function getUser(): null
     {
         return null;

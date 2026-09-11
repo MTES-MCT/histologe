@@ -13,7 +13,6 @@ class InseeToIncludeValidator extends ConstraintValidator
         if (!$constraint instanceof InseeToInclude) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\InseeToInclude');
         }
-        /* @var InseeToInclude $constraint */
         if ('' === $value) {
             return;
         }

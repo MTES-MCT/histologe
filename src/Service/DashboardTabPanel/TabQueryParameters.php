@@ -9,7 +9,6 @@ class TabQueryParameters
 {
     public function __construct(
         public ?int $territoireId = null,
-        public ?string $communeCodePostal = null,
         #[Assert\Choice(choices: [
             CreationSource::CREATED_FROM_FORMULAIRE_USAGER,
             CreationSource::CREATED_FROM_FORMULAIRE_PRO,

@@ -15,7 +15,6 @@ use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -59,7 +58,6 @@ class NewSignalementCheckFileMessageHandler
         private readonly SuiviManager $suiviManager,
         private readonly ParameterBagInterface $parameterBag,
         private readonly EntityManagerInterface $entityManager,
-        protected Security $security,
     ) {
     }
 

@@ -4,11 +4,9 @@ namespace App\Tests;
 
 use App\Entity\Address;
 use App\Entity\Affectation;
-use App\Entity\Arrete;
 use App\Entity\AutoAffectationRule;
 use App\Entity\Critere;
 use App\Entity\Criticite;
-use App\Entity\Enum\ArreteType;
 use App\Entity\Enum\CreationSource;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\PartnerType;
@@ -128,41 +126,6 @@ trait FixturesHelper
             codeSuivi: '12345678',
             email: 'luc.martin@example.com'
         );
-    }
-
-    /**
-     * @return Signalement[]
-     */
-    public function getSignalements(int $count = 1): array
-    {
-        $faker = Factory::create('fr_FR');
-
-        $signalements = [];
-        for ($i = 0; $i < $count; ++$i) {
-            $signalement = (new Signalement())
-                ->setCreationSource(CreationSource::FORM_USAGER_V1)
-                ->setIsProprioAverti(false)
-                ->setNbAdultes((string) 2)
-                ->setNbEnfantsP6((string) 1)
-                ->setNbEnfantsM6((string) 1)
-                ->setTelOccupant($faker->phoneNumber())
-                ->setEtageOccupant('2')
-
-                ->setNumAppartOccupant('2')
-                ->setNomOccupant($faker->lastName())
-                ->setPrenomOccupant($faker->firstName())
-                ->addSuivi($this->getSuiviPartner());
-
-            $address = new Address();
-            $address->setHousenumber('25');
-            $address->setStreet('rue de l\'est');
-            $address->setCity('Bourg-en-Bresse');
-            $signalement->setAddress($address);
-
-            $signalements[] = $signalement;
-        }
-
-        return $signalements;
     }
 
     public function getSignalementAffectation(PartnerType $partnerType): Affectation
@@ -494,14 +457,6 @@ trait FixturesHelper
             ->setTimezone('Europe/Paris');
     }
 
-    public function getClosedTerritory(): Territory
-    {
-        return (new Territory())
-            ->setName('Gard')
-            ->setZip('30')
-            ->setIsActive((bool) 0);
-    }
-
     public function getDocumentFile(): File
     {
         return (new File())
@@ -652,15 +607,5 @@ trait FixturesHelper
             ->setInseeToExclude(null)
             ->setPartnerToExclude([])
             ->setStatus(AutoAffectationRule::STATUS_ACTIVE);
-    }
-
-    private function createArrete(ArreteType $type, \DateTimeImmutable $date, ?\DateTimeImmutable $dateMainLevee): Arrete
-    {
-        $arrete = new Arrete();
-        $arrete->setArreteType($type);
-        $arrete->setDateArrete($date);
-        $arrete->setDateMainLevee($dateMainLevee);
-
-        return $arrete;
     }
 }

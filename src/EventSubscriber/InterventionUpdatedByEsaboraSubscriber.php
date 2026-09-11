@@ -55,7 +55,6 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             isVisibleForUsager: !$signalement->isTiersDeclarant(),
             sendMail: false,
         );
-        $event->setSuivi($suivi);
         if (InterventionType::VISITE === $intervention->getType()
             && $intervention->getScheduledAt()->format('Y-m-d') >= (new \DateTimeImmutable())->format('Y-m-d')
             && $suivi->getIsVisibleForUsager()
