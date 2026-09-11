@@ -6,9 +6,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, createApp, h } from 'vue'
 import { store } from '../composables/useAddressesHistoryStore'
 import AddressesHistoryMapFilters from './AddressesHistoryMapFilters.vue'
+import AddressMapPopupContent from './AddressMapPopupContent.vue'
 import maplibregl from 'maplibre-gl'
 import type { GeoJSONSource } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -354,7 +355,6 @@ function addMapLayers() {
 function addMapEvents() {
   if (!map) return
 
-  // Événements
   map.on('click', 'clusters', (e: maplibregl.MapMouseEvent) => {
     const features = map!.queryRenderedFeatures(e.point, { layers: ['clusters'] })
     if (features.length === 0) return
@@ -379,26 +379,26 @@ function addMapEvents() {
     if (!features || features.length === 0) return
 
     const feature = features[0]
-    const { addressForHuman, communeForHuman, nbSignalements, nbArretes } = feature.properties || {}
+    const { addressId, addressForHuman } = feature.properties || {}
 
     if (currentPopup) {
       currentPopup.remove()
     }
 
-    const popupContent = `
-      <div class="fr-p-2w">
-        <span class="fr-text--sm fr-mb-1v fr-text-label--blue-france"><strong>Evènement(s) à cette adresse</strong></span>
-        <br>
-        <p class="fr-text--sm"><span class="fr-icon-map-pin-2-line" aria-hidden="true"></span> ${addressForHuman || 'Adresse inconnue'}</p>
-        <hr>
-        <p class="fr-text--sm fr-mb-0">
-          ${nbArretes || 0} arrêté(s)
-        </p>
-        <p class="fr-text--sm fr-mb-0">
-          ${nbSignalements || 0} signalement(s)
-        </p>
-      </div>
-    `
+    const address = filteredAddresses.value[addressId]
+    const arretes = address?.arretes || []
+    const signalements = address?.signalements || []
+
+    // Conteneur pour monter le composant Vue dynamiquement
+    const popupContainer = document.createElement('div')
+    const app = createApp({
+      render: () => h(AddressMapPopupContent, {
+        addressForHuman,
+        arretes,
+        signalements
+      })
+    })
+    app.mount(popupContainer)
 
     const geometry = feature.geometry
     if (geometry.type === 'Point') {
@@ -407,14 +407,19 @@ function addMapEvents() {
         closeButton: true
       })
         .setLngLat(geometry.coordinates as [number, number])
-        .setHTML(popupContent)
+        .setDOMContent(popupContainer)
         .addTo(map!)
 
-      // Ajouter le texte "Fermer" avant la croix
+      // Ajout artificiel du texte "Fermer" après la croix
       const closeButton = currentPopup.getElement()?.querySelector('.maplibregl-popup-close-button')
       if (closeButton) {
         closeButton.textContent = '× Fermer'
       }
+
+      // Et on supprime le composant Vue quand la popup est fermée
+      currentPopup.on('close', () => {
+        app.unmount()
+      })
     }
   })
 
@@ -445,7 +450,7 @@ function initMap() {
     addMapLayers()
     addMapEvents()
 
-    // Ajouter les zones si le toggle est activé
+    // Ajout des zones si le toggle est activé
     if (sharedState.input.params.zonesTerritoire) {
       addZonesToMap()
     }
@@ -509,12 +514,16 @@ onUnmounted(() => {
 </style>
 
 <style>
-/* Style pour la popup */
+/*
+Styles pour la popup et son bouton de fermeture
+Ils doivent être conservés ici plutôt que dans le composant créé dynamiquement
+*/
 .maplibregl-popup-content {
   min-width: 280px;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 16px -1px rgba(0, 0, 0, 0.3), 0 8px 16px -1px rgba(0, 0, 0, 0.3);
 }
 
-/* Style pour le bouton de fermeture de la popup */
 .maplibregl-popup-close-button {
   color: var(--blue-france-sun-113-625);
   margin-top: 0.5rem;

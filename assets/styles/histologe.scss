@@ -449,6 +449,16 @@ small {
     }
 }
 
+.fr-picto-dossiers-multiples {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  background-color: #EFB900;
+  border-radius: 50%;
+  margin-right: 8px;
+  margin-top: 4px;
+}
+
 button.fr-btn--danger,a[href].fr-btn--danger {
     background: var(--warning-425-625);
     &:hover {

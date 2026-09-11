@@ -46,7 +46,7 @@
                     <li v-for="(signalement, index) in (item as any).signalements" :key="index" class="fr-mb-3v">
                       <a :href="`${signalement.url}`" class="fr-link"
                         ># {{ signalement.ref }}</a> - {{ signalement.usager }}
-                      <p :class="getStatusLabel(signalement.statut)">{{ signalement.statut }}</p>
+                      <p :class="getStatusBadgeFromLabel(signalement.statut)">{{ signalement.statut }}</p>
                       <p class="fr-badge fr-badge--no-icon fr-badge--info fr-ml-1w">{{ signalement.declarant }}</p>
                     </li>
                   </ul>
@@ -86,6 +86,7 @@
 import { store } from '../composables/useAddressesHistoryStore'
 import AddressesHistoryListFilters from './AddressesHistoryListFilters.vue'
 import AddressesHistoryListPagination from './AddressesHistoryListPagination.vue'
+import { getStatusBadgeFromLabel } from '../utils/badgeHelpers'
 
 // Émissions
 const emit = defineEmits<{
@@ -120,23 +121,6 @@ const onPageChange = (page: number): void => {
   }
 
   onChange()
-}
-
-function getStatusLabel(status: string): string {
-  let className = 'fr-badge fr-badge--no-icon '
-  switch (status) {
-    case 'nouveau':
-      className += 'fr-badge--error'
-      break
-    case 'en cours':
-      className += 'fr-badge--success'
-      break
-    case 'fermé':
-      className += 'fr-badge-grey'
-      break
-  }
-
-  return className 
 }
 
 function getArreteClass(arreteType: string): string {
