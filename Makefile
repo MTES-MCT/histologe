@@ -195,6 +195,9 @@ npm-build: ## Build the dependencies in the local node_modules folder
 npm-watch: ## Watch files for changes
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm $(NPM) run watch
 
+npm-audit: ## Run npm audit on main project
+	@$(DOCKER_COMP) exec -it signal_logement_phpfpm $(NPM) audit
+
 clear-cache: ## Clear cache prod: make-clear-cache env=[dev|prod|test]
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm $(SYMFONY) c:c --env=$(env)
 
@@ -279,11 +282,11 @@ es-js-fix: ## Fix vanilla js source code with es-lint --fix
 es-js-check: ## Fix vanilla js source code with es-lint --fix-dry-run
 	@$(DOCKER_COMP) exec -it signal_logement_phpfpm npm run es-js-check
 
-lighthouse-install: ## Install Lighthouse globally
-	@npm install -g lighthouse
+lighthouse-install: ## Install Lighthouse dependencies
+	@cd tools/lighthouse && $(NPM) ci --ignore-scripts
 
-lighthouse-run: ## Run Lighthouse on URL: make lighthouse URL=http://localhost:8000
-	@lighthouse $(URL) --view
+lighthouse-run: ## Run Lighthouse on URL: make lighthouse-run URL=http://localhost:8080
+	@cd tools/lighthouse && $(NPX) --no-install lighthouse $(URL) --output-path=report/report.html --view
 
 ## Tools
 tools-build: ## [Tools] Install tools (Matomo, ...) local environement
