@@ -1,6 +1,6 @@
 <template>
   <div class="histo-checkbox">
-    <div class="fr-checkbox-group">
+    <div class="fr-checkbox-group" :class="containerClass">
       <input
         type="checkbox"
         :id="id"
@@ -24,6 +24,7 @@ export default defineComponent({
   props: {
     id: { type: String, default: null },
     modelValue: { type: Boolean, default: false },
+    containerClass: { type: String, default: '' },
     disabled: { type: Boolean, default: false },
     onChange: { type: Function }
   },

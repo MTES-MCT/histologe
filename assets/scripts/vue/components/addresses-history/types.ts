@@ -73,8 +73,9 @@ export interface UserState {
 }
 
 export interface ArreteTypesGroup {
-  title: string
-  options: Array<{ Id: string; Text: string }>
+  title: string,
+  titleInMapView: string,
+  options: Array<{ Id: string; Text: string, TextInMapView: string }>
 }
 
 export interface StoreState {
@@ -130,5 +131,5 @@ export interface SettingsResponse {
   epcis?: Record<string, { code: string; nom: string }>
   zones?: Record<string, { id: number; name: string }>
   bailleursSociaux?: Record<string, string>
-  arreteTypes?: Record<string, Array<{ Id: string; Text: string }>>
+  arreteTypes?: Record<string, Array<{ Id: string; Text: string, TextInMapView: string }>>
 }
