@@ -4,7 +4,6 @@ namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Enum\DocumentType;
-use App\Entity\Enum\Qualification;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
@@ -14,8 +13,11 @@ use App\Event\InterventionRescheduledEvent;
 use App\Exception\File\EmptyFileException;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
+use App\Form\AddAndRescheduleVisiteType;
+use App\Form\CancelVisiteType;
+use App\Form\ConfirmVisiteType;
+use App\Form\EditConclusionVisiteType;
 use App\Manager\InterventionManager;
-use App\Repository\AffectationRepository;
 use App\Repository\FileRepository;
 use App\Repository\InterventionRepository;
 use App\Security\Voter\InterventionVoter;
@@ -27,6 +29,7 @@ use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
+use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -34,6 +37,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/bo/signalements')]
@@ -87,7 +91,6 @@ class SignalementVisitesController extends AbstractController
     private function buildVisitesAjaxResponse(
         Intervention $intervention,
         InterventionRepository $interventionRepository,
-        AffectationRepository $affectationRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         FileRepository $fileRepository,
         UrlGeneratorInterface $urlGenerator,
@@ -96,8 +99,6 @@ class SignalementVisitesController extends AbstractController
     ): Response {
         $signalement = $intervention->getSignalement();
         $visites = $interventionRepository->getOrderedVisitesForSignalement($signalement);
-        $pendingVisites = $interventionRepository->getPendingVisitesForSignalement($signalement);
-        $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
         $linkToVisitGrid = false;
@@ -116,8 +117,6 @@ class SignalementVisitesController extends AbstractController
                     [
                         'signalement' => $signalement,
                         'visites' => $visites,
-                        'partnersCanVisite' => $partnerVisite,
-                        'pendingVisites' => $pendingVisites,
                         'criteres' => $infoDesordres['criteres'],
                         'linkToVisitGrid' => $linkToVisitGrid,
                     ]),
@@ -138,6 +137,7 @@ class SignalementVisitesController extends AbstractController
                 ),
             ],
         ];
+        // TODO : Refonte visites - On ne devrait plus avoir besoin de toutes ces fonctions
         $functions = [
             [
                 'name' => 'reloadTinyMCE',
@@ -151,9 +151,6 @@ class SignalementVisitesController extends AbstractController
             ],
             [
                 'name' => 'applyFilter',
-            ],
-            [
-                'name' => 'initializeVisitesUploadFilesModal',
             ],
             [
                 'name' => 'openPhotoAlbumAddEventListeners',
@@ -177,6 +174,30 @@ class SignalementVisitesController extends AbstractController
      * @throws \Exception
      */
     #[Route('/{uuid:signalement}/visites/ajouter', name: 'back_signalement_visite_add', methods: 'POST')]
+    #[IsGranted(SignalementVoter::SIGN_ADD_VISITE, subject: 'signalement')]
+    public function addVisite(
+        Signalement $signalement,
+        Request $request,
+    ): Response {
+        $intervention = (new Intervention())->setSignalement($signalement);
+        $addVisiteForm = $this->generateUrl('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
+        $addVisiteForm = $this->createForm(AddAndRescheduleVisiteType::class, $intervention, options: ['action' => $addVisiteForm]);
+
+        $addVisiteForm->handleRequest($request);
+
+        if (!$addVisiteForm->isSubmitted() || !$addVisiteForm->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $addVisiteForm, withPrefix: true)];
+
+            return $this->json($response, $response['code']);
+        }
+        // TODO
+        $flashMessages = [];
+        $flashMessages[] = ['type' => 'success', 'message' => 'La visite a été ajoutée avec succès.'];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
+    }
+
+    #[Route('/{uuid:signalement}/v1/visites/ajouter', name: 'back_signalement_visite_add_v1', methods: 'POST')]
     public function addVisiteToSignalement(
         Signalement $signalement,
         Request $request,
@@ -187,7 +208,6 @@ class SignalementVisitesController extends AbstractController
         ValidatorInterface $validator,
         TimezoneProvider $timezoneProvider,
         InterventionRepository $interventionRepository,
-        AffectationRepository $affectationRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         FileRepository $fileRepository,
         UrlGeneratorInterface $urlGenerator,
@@ -259,7 +279,6 @@ class SignalementVisitesController extends AbstractController
             return $this->buildVisitesAjaxResponse(
                 intervention: $intervention,
                 interventionRepository: $interventionRepository,
-                affectationRepository: $affectationRepository,
                 signalementDesordresProcessor: $signalementDesordresProcessor,
                 fileRepository: $fileRepository,
                 urlGenerator: $urlGenerator,
@@ -272,13 +291,31 @@ class SignalementVisitesController extends AbstractController
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
     }
 
-    #[Route('/{uuid:signalement}/visites/annuler', name: 'back_signalement_visite_cancel', methods: 'POST')]
+    #[Route('/{id}/visites/annuler', name: 'back_signalement_visite_cancel')]
+    #[IsGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, subject: 'intervention')]
+    public function cancelVisite(
+        Intervention $intervention,
+        Request $request,
+    ): Response {
+        // TODO : bloquer pour les statut != PLANNED (permet d'intégrer les VISITE_CONTROLE / ARRETE_PREFECTORAL) - faire un voter dédié
+
+        $cancelVisiteRoute = $this->generateUrl('back_signalement_visite_cancel', ['id' => $intervention->getId()]);
+        $cancelVisiteForm = $this->createForm(CancelVisiteType::class, $intervention, options: ['action' => $cancelVisiteRoute]);
+
+        $title = 'Annuler la visite du '.($intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y'));
+        $html = $this->renderView('back/signalement/view/visites/_cancel-visite-form.html.twig', [
+            'cancelVisiteForm' => $cancelVisiteForm,
+        ]);
+
+        return $this->json(['content' => $html, 'title' => $title]);
+    }
+
+    #[Route('/{uuid:signalement}/v1/visites/annuler', name: 'back_signalement_visite_cancel_v1', methods: 'POST')]
     public function cancelVisiteFromSignalement(
         Signalement $signalement,
         Request $request,
         InterventionManager $interventionManager,
         InterventionRepository $interventionRepository,
-        AffectationRepository $affectationRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         FileRepository $fileRepository,
         UrlGeneratorInterface $urlGenerator,
@@ -300,7 +337,6 @@ class SignalementVisitesController extends AbstractController
             return $this->buildVisitesAjaxResponse(
                 intervention: $intervention,
                 interventionRepository: $interventionRepository,
-                affectationRepository: $affectationRepository,
                 signalementDesordresProcessor: $signalementDesordresProcessor,
                 fileRepository: $fileRepository,
                 urlGenerator: $urlGenerator,
@@ -331,7 +367,6 @@ class SignalementVisitesController extends AbstractController
         return $this->buildVisitesAjaxResponse(
             intervention: $intervention,
             interventionRepository: $interventionRepository,
-            affectationRepository: $affectationRepository,
             signalementDesordresProcessor: $signalementDesordresProcessor,
             fileRepository: $fileRepository,
             urlGenerator: $urlGenerator,
@@ -342,7 +377,30 @@ class SignalementVisitesController extends AbstractController
     /**
      * @throws \Exception
      */
-    #[Route('/{uuid:signalement}/visites/reprogrammer', name: 'back_signalement_visite_reschedule', methods: 'POST')]
+    #[Route('/{id}/visites/reprogrammer', name: 'back_signalement_visite_reschedule')]
+    #[IsGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, subject: 'intervention')]
+    public function rescheduleVisite(
+        Intervention $intervention,
+        Request $request,
+    ): Response {
+        // TODO : bloquer pour les statut != PLANNED (permet d'intégrer les VISITE_CONTROLE / ARRETE_PREFECTORAL)  - faire un voter dédié
+
+        $recheduleVisiteRoute = $this->generateUrl('back_signalement_visite_reschedule', ['id' => $intervention->getId()]);
+        $rescheduleVisiteForm = $this->createForm(AddAndRescheduleVisiteType::class, $intervention, options: ['action' => $recheduleVisiteRoute]);
+
+        $title = 'Modifier la visite du '.($intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y'));
+        $html = $this->renderView('back/signalement/view/visites/_reschedule-visite-form.html.twig', [
+            'rescheduleVisiteForm' => $rescheduleVisiteForm,
+            'intervention' => $intervention,
+        ]);
+
+        return $this->json(['content' => $html, 'title' => $title]);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    #[Route('/{uuid:signalement}/v1/visites/reprogrammer', name: 'back_signalement_visite_reschedule_v1', methods: 'POST')]
     public function rescheduleVisiteFromSignalement(
         Signalement $signalement,
         Request $request,
@@ -353,7 +411,6 @@ class SignalementVisitesController extends AbstractController
         FilenameGenerator $filenameGenerator,
         ValidatorInterface $validator,
         TimezoneProvider $timezoneProvider,
-        AffectationRepository $affectationRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         FileRepository $fileRepository,
         UrlGeneratorInterface $urlGenerator,
@@ -386,7 +443,6 @@ class SignalementVisitesController extends AbstractController
             return $this->buildVisitesAjaxResponse(
                 intervention: $intervention,
                 interventionRepository: $interventionRepository,
-                affectationRepository: $affectationRepository,
                 signalementDesordresProcessor: $signalementDesordresProcessor,
                 fileRepository: $fileRepository,
                 urlGenerator: $urlGenerator,
@@ -439,7 +495,6 @@ class SignalementVisitesController extends AbstractController
         return $this->buildVisitesAjaxResponse(
             intervention: $intervention,
             interventionRepository: $interventionRepository,
-            affectationRepository: $affectationRepository,
             signalementDesordresProcessor: $signalementDesordresProcessor,
             fileRepository: $fileRepository,
             urlGenerator: $urlGenerator,
@@ -450,7 +505,30 @@ class SignalementVisitesController extends AbstractController
     /**
      * @throws \Exception
      */
-    #[Route('/{uuid:signalement}/visites/confirmer', name: 'back_signalement_visite_confirm', methods: 'POST')]
+    #[Route('/{id}/visites/confirmer', name: 'back_signalement_visite_confirm')]
+    #[IsGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, subject: 'intervention')]
+    public function confirmVisite(
+        Intervention $intervention,
+        Request $request,
+    ): Response {
+        // TODO : bloquer pour les statut != PLANNED (permet d'intégrer les VISITE_CONTROLE / ARRETE_PREFECTORAL)  - faire un voter dédié
+
+        $confirmVisiteRoute = $this->generateUrl('back_signalement_visite_confirm', ['id' => $intervention->getId()]);
+        $confirmVisiteForm = $this->createForm(ConfirmVisiteType::class, $intervention, options: ['action' => $confirmVisiteRoute]);
+
+        $title = 'Conclusion de la visite du '.($intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y'));
+        $html = $this->renderView('back/signalement/view/visites/_confirm-visite-form.html.twig', [
+            'confirmVisiteForm' => $confirmVisiteForm,
+            'intervention' => $intervention,
+        ]);
+
+        return $this->json(['content' => $html, 'title' => $title]);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    #[Route('/{uuid:signalement}/v1/visites/confirmer', name: 'back_signalement_visite_confirm_v1', methods: 'POST')]
     public function confirmVisiteFromSignalement(
         Signalement $signalement,
         Request $request,
@@ -458,7 +536,6 @@ class SignalementVisitesController extends AbstractController
         InterventionRepository $interventionRepository,
         UploadHandlerService $uploadHandler,
         FilenameGenerator $filenameGenerator,
-        AffectationRepository $affectationRepository,
         ValidatorInterface $validator,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         FileRepository $fileRepository,
@@ -490,7 +567,6 @@ class SignalementVisitesController extends AbstractController
             return $this->buildVisitesAjaxResponse(
                 intervention: $intervention,
                 interventionRepository: $interventionRepository,
-                affectationRepository: $affectationRepository,
                 signalementDesordresProcessor: $signalementDesordresProcessor,
                 fileRepository: $fileRepository,
                 urlGenerator: $urlGenerator,
@@ -526,7 +602,6 @@ class SignalementVisitesController extends AbstractController
             return $this->buildVisitesAjaxResponse(
                 intervention: $intervention,
                 interventionRepository: $interventionRepository,
-                affectationRepository: $affectationRepository,
                 signalementDesordresProcessor: $signalementDesordresProcessor,
                 fileRepository: $fileRepository,
                 urlGenerator: $urlGenerator,
@@ -538,7 +613,6 @@ class SignalementVisitesController extends AbstractController
         return $this->buildVisitesAjaxResponse(
             intervention: $intervention,
             interventionRepository: $interventionRepository,
-            affectationRepository: $affectationRepository,
             signalementDesordresProcessor: $signalementDesordresProcessor,
             fileRepository: $fileRepository,
             urlGenerator: $urlGenerator,
@@ -547,10 +621,30 @@ class SignalementVisitesController extends AbstractController
         );
     }
 
+    #[Route('/{id}/visites/editer-conclusion', name: 'back_signalement_visite_edit_conclusion')]
+    #[IsGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, subject: 'intervention')]
+    public function editConclusionVisite(
+        Intervention $intervention,
+        Request $request,
+    ): Response {
+        // TODO : bloquer pour les statut != PLANNED (permet d'intégrer les VISITE_CONTROLE / ARRETE_PREFECTORAL) - faire un voter dédié
+
+        $editConclusionVisiteRoute = $this->generateUrl('back_signalement_visite_edit_conclusion', ['id' => $intervention->getId()]);
+        $editConclusionVisiteForm = $this->createForm(EditConclusionVisiteType::class, $intervention, options: ['action' => $editConclusionVisiteRoute]);
+
+        $title = 'Edition de la visite du '.($intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y'));
+        $html = $this->renderView('back/signalement/view/visites/_edit-conclusion-visite-form.html.twig', [
+            'editConclusionVisiteForm' => $editConclusionVisiteForm,
+            'intervention' => $intervention,
+        ]);
+
+        return $this->json(['content' => $html, 'title' => $title]);
+    }
+
     /**
      * @throws \Exception
      */
-    #[Route('/{uuid:signalement}/visites/editer', name: 'back_signalement_visite_edit', methods: 'POST')]
+    #[Route('/{uuid:signalement}/v1/visites/editer', name: 'back_signalement_visite_edit_v1', methods: 'POST')]
     public function editVisiteFromSignalement(
         Signalement $signalement,
         Request $request,
@@ -559,7 +653,6 @@ class SignalementVisitesController extends AbstractController
         UploadHandlerService $uploadHandler,
         EventDispatcherInterface $eventDispatcher,
         FilenameGenerator $filenameGenerator,
-        AffectationRepository $affectationRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         FileRepository $fileRepository,
         UrlGeneratorInterface $urlGenerator,
@@ -592,7 +685,6 @@ class SignalementVisitesController extends AbstractController
             return $this->buildVisitesAjaxResponse(
                 intervention: $intervention,
                 interventionRepository: $interventionRepository,
-                affectationRepository: $affectationRepository,
                 signalementDesordresProcessor: $signalementDesordresProcessor,
                 fileRepository: $fileRepository,
                 urlGenerator: $urlGenerator,
@@ -629,7 +721,6 @@ class SignalementVisitesController extends AbstractController
             return $this->buildVisitesAjaxResponse(
                 intervention: $intervention,
                 interventionRepository: $interventionRepository,
-                affectationRepository: $affectationRepository,
                 signalementDesordresProcessor: $signalementDesordresProcessor,
                 fileRepository: $fileRepository,
                 urlGenerator: $urlGenerator,
@@ -641,7 +732,6 @@ class SignalementVisitesController extends AbstractController
         return $this->buildVisitesAjaxResponse(
             intervention: $intervention,
             interventionRepository: $interventionRepository,
-            affectationRepository: $affectationRepository,
             signalementDesordresProcessor: $signalementDesordresProcessor,
             fileRepository: $fileRepository,
             urlGenerator: $urlGenerator,
@@ -656,7 +746,6 @@ class SignalementVisitesController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         UploadHandlerService $uploadHandlerService,
-        AffectationRepository $affectationRepository,
         InterventionRepository $interventionRepository,
         SignalementDesordresProcessor $signalementDesordresProcessor,
         FileRepository $fileRepository,
@@ -685,7 +774,6 @@ class SignalementVisitesController extends AbstractController
         return $this->buildVisitesAjaxResponse(
             intervention: $intervention,
             interventionRepository: $interventionRepository,
-            affectationRepository: $affectationRepository,
             signalementDesordresProcessor: $signalementDesordresProcessor,
             fileRepository: $fileRepository,
             urlGenerator: $urlGenerator,

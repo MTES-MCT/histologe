@@ -1,0 +1,14 @@
+<div class="fr-alert fr-alert--warning">
+    <p>
+        Un suivi d'annulation sera envoyé à l'usager.
+    </p>
+</div>
+
+<p class="fr-mt-2w">Tous les champs sont obligatoires.</p>
+
+{{ form_start(cancelVisiteForm, {'attr': {'id': 'cancel-visite-form', 'data-submit-type':'formData'}}) }}
+    {{ form_errors(cancelVisiteForm) }}
+
+    {{ form_row(cancelVisiteForm.details) }}
+
+{{ form_end(cancelVisiteForm) }}

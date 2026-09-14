@@ -25,6 +25,14 @@
 {% endblock %}
 
 {% block content %}
+    {% if is_granted('SIGN_ADD_VISITE', signalement) %}
+        <div data-ajax-form>
+            {% include 'back/signalement/view/visites/panels/_panel-add-visite.html.twig' %}
+        </div>
+    {% endif %}
+    <div data-ajax-form>
+        {% include 'back/signalement/view/visites/panels/_panel-manage-visite.html.twig' %}
+    </div>
     {% if is_granted('SIGN_EDIT_ADDRESS', signalement) %}
         <div data-ajax-form>
             {% include 'back/signalement/view/panels/_panel-edit-address.html.twig' %}

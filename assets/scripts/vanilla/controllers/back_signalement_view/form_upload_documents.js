@@ -3,15 +3,9 @@ import {
   enableHeaderAndFooterButtonOfModal,
 } from '../../services/ui/modales_helper.js';
 
-export function initializeVisitesUploadFilesModal() {
-  initializeUploadModal('#panel-upload-files', false);
-  document?.querySelectorAll('.panel-upload-files-visite')?.forEach((modalVisiteUpload) => {
-    initializeUploadModal('#' + modalVisiteUpload.id, true);
-  });
-}
-initializeVisitesUploadFilesModal();
+initializeUploadModal('#panel-upload-files');
 
-function initializeUploadModal(modalSelector, isModalUploadVisite) {
+function initializeUploadModal(modalSelector) {
   const modal = document?.querySelector(modalSelector);
   if (!modal) return;
 
@@ -150,7 +144,7 @@ function initializeUploadModal(modalSelector, isModalUploadVisite) {
         const response = JSON.parse(this.response);
         if (this.status === 200) {
           modal.dataset.hasChanges = true;
-          if (!isModalUploadVisite) {
+          if (!modal.dataset.interventionId) {
             let clone;
             if (modal.dataset.fileFilter === 'situation') {
               clone = selectTypeSituationToClone.cloneNode(true);
@@ -168,6 +162,7 @@ function initializeUploadModal(modalSelector, isModalUploadVisite) {
           } else {
             const divFileId = div.querySelector('#file-id');
             divFileId.value = response.response;
+            // TODO : Refonte visites - pour faire propre il faudrait eviter ca et envoyer l'id intervention directement a l'ajout du fichier pour enregistrer l'asocciation et le type
             callEditFileRoute(div);
             addEventListenerDescription(divFileId);
           }
@@ -317,35 +312,47 @@ function initializeUploadModal(modalSelector, isModalUploadVisite) {
 
   let fileFilter, documentType, interventionId;
 
-  window.addEventListener('refreshUploadButtonEvent', () => {
-    document.querySelectorAll('.open-modal-upload-files-btn').forEach((button) => {
-      button.addEventListener('click', (e) => {
-        fileFilter = e.target.dataset.fileFilter ?? null;
-        documentType = e.target.dataset.documentType ?? null;
-        interventionId = e.target.dataset.interventionId ?? null;
+  document.addEventListener('click', (e) => {
+    const button = e.target.closest('.open-modal-upload-files-btn');
+    if (!button) return;
 
-        nbFilesProccessing = 0;
-        enableHeaderAndFooterButtonOfModal(modal);
-        listContainer.innerHTML = '';
-        modal.dataset.hasChanges = false;
-        modal.querySelectorAll('.filter-conditional').forEach((type) => {
-          type.classList.add('fr-hidden');
-        });
-        modal.dataset.documentType = documentType;
-        modal.dataset.fileFilter = fileFilter;
-        modal.dataset.interventionId = interventionId;
-        if (fileFilter === 'procédure') {
-          modal.querySelector('.filter-procedure').classList.remove('fr-hidden');
-          modal.setAttribute('aria-labelledby', modal.querySelector('.filter-procedure h1').id);
-        } else if (fileFilter === 'situation') {
-          modal.querySelector('.filter-situation').classList.remove('fr-hidden');
-          modal.setAttribute('aria-labelledby', modal.querySelector('.filter-situation h1').id);
-        }
-      });
+    fileFilter = button.dataset.fileFilter ?? null;
+    documentType = button.dataset.documentType ?? null;
+    interventionId = button.dataset.interventionId ?? null;
+
+    nbFilesProccessing = 0;
+    enableHeaderAndFooterButtonOfModal(modal);
+    listContainer.innerHTML = '';
+    modal.dataset.hasChanges = false;
+    modal.querySelectorAll('.filter-conditional').forEach((type) => {
+      type.classList.add('fr-hidden');
     });
+    if (documentType) {
+      modal.dataset.documentType = documentType;
+    } else {
+      delete modal.dataset.documentType;
+    }
+    if (fileFilter) {
+      modal.dataset.fileFilter = fileFilter;
+    } else {
+      delete modal.dataset.fileFilter;
+    }
+    if (interventionId) {
+      modal.dataset.interventionId = interventionId;
+    } else {
+      delete modal.dataset.interventionId;
+    }
+    if (fileFilter === 'procédure') {
+      modal.querySelector('.filter-procedure').classList.remove('fr-hidden');
+      modal.setAttribute('aria-labelledby', modal.querySelector('.filter-procedure h1').id);
+    } else if (fileFilter === 'situation') {
+      modal.querySelector('.filter-situation').classList.remove('fr-hidden');
+      modal.setAttribute('aria-labelledby', modal.querySelector('.filter-situation h1').id);
+    } else if (fileFilter === 'visite') {
+      modal.querySelector('.filter-visite').classList.remove('fr-hidden');
+      modal.setAttribute('aria-labelledby', modal.querySelector('.filter-visite h1').id);
+    }
   });
-
-  window.dispatchEvent(new Event('refreshUploadButtonEvent'));
 
   btnValidate.addEventListener('click', () => {
     if (modal.dataset.hasChanges === 'true') {

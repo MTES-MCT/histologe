@@ -2,31 +2,35 @@
     {% if intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
         {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
             {% if workflow_can(intervention, 'cancel') %}
-                <button class="fr-btn fr-btn--danger fr-fi-close-line"
-                    data-panel-open="panel-cancel-visite-{{intervention.id}}"
-                    aria-controls="panel-cancel-visite-{{intervention.id}}"
+                <button class="fr-btn fr-btn--danger fr-fi-close-line btn-manage-visite"
+                    data-panel-open="panel-manage-visite"
+                    aria-controls="panel-manage-visite"
                     data-fr-opened="false"
+                    data-url="{{ path('back_signalement_visite_cancel',{id:intervention.id}) }}"
                     >Annuler la visite</button>
             {% endif %}
-            <button class="fr-btn fr-btn--secondary fr-fi-edit-line"
-                data-panel-open="panel-reschedule-visite-{{intervention.id}}"
-                aria-controls="panel-reschedule-visite-{{intervention.id}}"
+            <button class="fr-btn fr-btn--secondary fr-fi-edit-line btn-manage-visite"
+                data-panel-open="panel-manage-visite"
+                aria-controls="panel-manage-visite"
                 data-fr-opened="false"
+                data-url="{{ path('back_signalement_visite_reschedule',{id:intervention.id}) }}"
                 >Modifier la visite</button>
             {% if workflow_can(intervention, 'confirm') %}
-                <button class="fr-btn fr-fi-check-line"
-                    data-panel-open="panel-confirm-visite-{{intervention.id}}"
-                    aria-controls="panel-confirm-visite-{{intervention.id}}"
+                <button class="fr-btn fr-fi-check-line btn-manage-visite"
+                    data-panel-open="panel-manage-visite"
+                    aria-controls="panel-manage-visite"
                     data-fr-opened="false"
+                    data-url="{{ path('back_signalement_visite_confirm',{id:intervention.id}) }}"
                     >Confirmer la visite</button>
             {% endif %}
         {% endif %}
     {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
         {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
-            <button class="fr-btn fr-btn--secondary fr-fi-edit-line"
-                data-panel-open="panel-edit-visite-{{intervention.id}}"
-                aria-controls="panel-edit-visite-{{intervention.id}}"
+            <button class="fr-btn fr-btn--secondary fr-fi-edit-line btn-manage-visite"
+                data-panel-open="panel-manage-visite"
+                aria-controls="panel-manage-visite"
                 data-fr-opened="false"
+                data-url="{{ path('back_signalement_visite_edit_conclusion',{id:intervention.id}) }}"
                 >Editer la conclusion</button>
         {% endif %}
         {% if intervention.rapportDeVisite %}
@@ -49,9 +53,10 @@
                 <button
                     class="fr-btn fr-btn--secondary fr-icon-camera-fill open-modal-upload-files-btn"
                     data-fr-opened="false"
-                    data-panel-open="panel-upload-files-visite-{{intervention.id}}"
-                    aria-controls="panel-upload-files-visite-{{intervention.id}}"
+                    data-panel-open="panel-upload-files"
+                    aria-controls="panel-upload-files"
                     data-document-type="PHOTO_VISITE"
+                    data-file-filter="visite"
                     data-intervention-id="{{intervention.id}}"
                     >Ajouter les photos de la visite</button>
             {% else %}
