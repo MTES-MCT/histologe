@@ -34,6 +34,7 @@ class SignalementVoter extends Voter
     public const string SIGN_VIEW_INJONCTION_COURRIER = 'SIGN_VIEW_INJONCTION_COURRIER';
     public const string SIGN_SEND_MAIL_BAILLEUR = 'SIGN_SEND_MAIL_BAILLEUR';
     public const string SIGN_SUBSCRIBE = 'SIGN_SUBSCRIBE';
+    public const string SIGN_SEE_VISITE_GRID = 'SIGN_SEE_VISITE_GRID';
     public const string SIGN_ADD_VISITE = 'SIGN_ADD_VISITE';
     // TODO à la suppression de FEATURE_ORIENTATION : supprimer SIGN_EDIT_NDE et SIGN_SEE_NDE s'ils ne sont plus utilisés
     public const string SIGN_EDIT_NDE = 'SIGN_EDIT_NDE';
@@ -67,6 +68,7 @@ class SignalementVoter extends Voter
                 self::SIGN_VALIDATE,
                 self::SIGN_CLOSE,
                 self::SIGN_REOPEN,
+                self::SIGN_SEE_VISITE_GRID,
                 self::SIGN_ADD_VISITE,
                 self::SIGN_EDIT_NDE,
                 self::SIGN_SEE_NDE,
@@ -89,10 +91,6 @@ class SignalementVoter extends Voter
             $vote?->addReason('L\'utilisateur n\'est pas authentifié.');
 
             return false;
-        }
-
-        if (in_array($attribute, [self::SIGN_ADD_VISITE])) {
-            return $this->canAddVisite($subject, $user);
         }
 
         if (in_array($attribute, [self::SIGN_EDIT_NDE, self::SIGN_SEE_NDE])) {
@@ -123,6 +121,8 @@ class SignalementVoter extends Voter
             self::SIGN_AFFECTATION_SEE => $this->canSeeAffectation($subject, $user),
             self::SIGN_SWITCH_LOGEMENT_VACANT => $this->canSwitchLogementVacant($subject, $user),
             self::SIGN_INJONCTION_CLOSE => $this->canCloseInjonction($subject, $user),
+            self::SIGN_SEE_VISITE_GRID => $this->canSeeVisitGrid($subject, $user),
+            self::SIGN_ADD_VISITE => $this->canAddVisite($subject, $user),
             default => false,
         };
     }
@@ -288,6 +288,22 @@ class SignalementVoter extends Voter
         return $this->canView($signalement, $user);
     }
 
+    public function canSeeVisitGrid(Signalement $signalement, User $user): bool
+    {
+        if ($user->isSuperAdmin()) {
+            return true;
+        }
+        if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getAddress()->getTerritory())) {
+            return true;
+        }
+        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
+        if (!$partner || !in_array(Qualification::VISITES, $partner->getCompetence())) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function canAddVisite(Signalement $signalement, User $user): bool
     {
         if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
@@ -300,12 +316,17 @@ class SignalementVoter extends Voter
             return true;
         }
         $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
+        if (!$partner || !in_array(Qualification::VISITES, $partner->getCompetence())) {
+            return false;
+        }
+        if (!$signalement->getAffectationForPartner($partner) || AffectationStatus::ACCEPTED !== $signalement->getAffectationForPartner($partner)->getStatut()) {
+            return false;
+        }
+        if ($signalement->hasVisitePlannedForPartner($partner)) {
+            return false;
+        }
 
-        return $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
-            return $affectation->getPartner()->getId() === $partner->getId()
-                && \in_array(Qualification::VISITES, $partner->getCompetence())
-                && AffectationStatus::ACCEPTED == $affectation->getStatut();
-        })->count() > 0;
+        return true;
     }
 
     private function canEditNDE(Signalement $signalement, User $user): bool

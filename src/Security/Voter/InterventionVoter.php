@@ -2,7 +2,6 @@
 
 namespace App\Security\Voter;
 
-use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
@@ -42,6 +41,9 @@ class InterventionVoter extends Voter
 
     public static function canEditVisite(Intervention $intervention, User $user): bool
     {
+        // TODO : Refonte visites
+        // - bloquer les édition des intervention de type ARRETE_PREFECTORAL
+
         $signalement = $intervention->getSignalement();
         if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
             return false;
@@ -49,19 +51,20 @@ class InterventionVoter extends Voter
         if ($user->isSuperAdmin()) {
             return true;
         }
-
+        if ($user->isTerritoryAdmin() && $user->hasPartnerInTerritory($signalement->getAddress()->getTerritory())) {
+            return true;
+        }
         $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
-        if (!$partner) {
+        if (!$intervention->getPartner()->getId() || $intervention->getPartner()->getId() != $partner->getId()) {
             return false;
         }
-        $isUserInAffectedPartnerWithQualificationVisite = $signalement->getAffectations()->filter(static function (Affectation $affectation) use ($partner) {
-            return $affectation->getPartner()->getId() === $partner->getId()
-                && \in_array(Qualification::VISITES, $partner->getCompetence())
-                && AffectationStatus::ACCEPTED == $affectation->getStatut();
-        })->count() > 0;
-        $isUserInPartnerAffectedToVisite = $partner === $intervention->getPartner() && $isUserInAffectedPartnerWithQualificationVisite;
-        $isUserTerritoryAdminOfSignalementTerritory = $user->isTerritoryAdmin();
+        if (!$partner || !in_array(Qualification::VISITES, $partner->getCompetence())) {
+            return false;
+        }
+        if (!$signalement->getAffectationForPartner($partner) || AffectationStatus::ACCEPTED !== $signalement->getAffectationForPartner($partner)->getStatut()) {
+            return false;
+        }
 
-        return $isUserInPartnerAffectedToVisite || $isUserTerritoryAdminOfSignalementTerritory;
+        return true;
     }
 }
