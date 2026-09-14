@@ -7,7 +7,6 @@ use App\Entity\Enum\NotificationType;
 use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Repository\Behaviour\EntityCleanerRepositoryInterface;
 use App\Service\ListFilters\SearchNotification;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -22,7 +21,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @method Notification[]    findAll()
  * @method Notification[]    findBy(array<string, mixed> $criteria, array<string, mixed>|null $orderBy = null, $limit = null, $offset = null)
  */
-class NotificationRepository extends ServiceEntityRepository implements EntityCleanerRepositoryInterface
+class NotificationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -81,83 +80,6 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
     }
 
     /**
-     * @throws \Exception
-     */
-    public function cleanOlderThan(string $period = Notification::EXPIRATION_PERIOD): int
-    {
-        return $this->createQueryBuilder('n')
-            ->delete()
-            ->andWhere('DATE(n.createdAt) <= :created_at')
-            ->andWhere('n.type NOT LIKE :notification_type')
-            ->setParameter('created_at', (new \DateTimeImmutable($period))->format('Y-m-d'))
-            ->setParameter('notification_type', NotificationType::SUIVI_USAGER)
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
-     * @param array<int, int|string> $ids
-     */
-    public function markUserNotificationsAsSeen(User $user, array $ids = []): void
-    {
-        $qb = $this->createQueryBuilder('n')
-            ->update()
-            ->set('n.isSeen', 1)
-            ->where('n.user = :user')
-            ->setParameter('user', $user)
-            ->andWhere('n.type IN (:nouveau_suivi, :nouvelle_mention, :cloture_signalement, :nouvel_abonnement, :demande_abandon_procedure)')
-            ->setParameter('nouveau_suivi', NotificationType::NOUVEAU_SUIVI)
-            ->setParameter('nouvelle_mention', NotificationType::NOUVELLE_MENTION)
-            ->setParameter('cloture_signalement', NotificationType::CLOTURE_SIGNALEMENT)
-            ->setParameter('nouvel_abonnement', NotificationType::NOUVEL_ABONNEMENT)
-            ->setParameter('demande_abandon_procedure', NotificationType::DEMANDE_ABANDON_PROCEDURE)
-            ->andWhere('n.deleted = :deleted')
-            ->setParameter('deleted', false);
-        if (\count($ids)) {
-            $qb->andWhere('n.id IN (:ids)')
-                ->setParameter('ids', $ids);
-        }
-
-        $qb->getQuery()->execute();
-    }
-
-    /**
-     * @param array<int, int|string> $ids
-     */
-    public function deleteUserNotifications(User $user, array $ids = []): void
-    {
-        $qb = $this->createQueryBuilder('n')
-            ->update()
-            ->set('n.deleted', 1)
-            ->where('n.user = :user')
-            ->setParameter('user', $user)
-            ->andWhere('n.deleted = :deleted')
-            ->setParameter('deleted', false)
-            ->andWhere('n.type IN (:nouveau_suivi, :nouvelle_mention, :cloture_signalement, :nouvel_abonnement, :demande_abandon_procedure)')
-            ->setParameter('nouveau_suivi', NotificationType::NOUVEAU_SUIVI)
-            ->setParameter('nouvelle_mention', NotificationType::NOUVELLE_MENTION)
-            ->setParameter('cloture_signalement', NotificationType::CLOTURE_SIGNALEMENT)
-            ->setParameter('nouvel_abonnement', NotificationType::NOUVEL_ABONNEMENT)
-            ->setParameter('demande_abandon_procedure', NotificationType::DEMANDE_ABANDON_PROCEDURE);
-        if (\count($ids)) {
-            $qb->andWhere('n.id IN (:ids)')
-                ->setParameter('ids', $ids);
-        }
-
-        $qb->getQuery()->execute();
-    }
-
-    public function deleteBySignalement(Signalement $signalement): void
-    {
-        $qb = $this->createQueryBuilder('n')
-            ->delete()
-            ->where('n.signalement = :signalement')
-            ->setParameter('signalement', $signalement);
-
-        $qb->getQuery()->execute();
-    }
-
-    /**
      * @return array<int, Notification>
      */
     public function findWaitingSummaryForUser(User $user): array
@@ -172,26 +94,6 @@ class NotificationRepository extends ServiceEntityRepository implements EntityCl
             ->addOrderBy('n.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
-    }
-
-    /**
-     * @param array<int, Notification> $notifications
-     * @param array<string, mixed>     $data
-     */
-    public function massUpdate(array $notifications, array $data): void
-    {
-        $qb = $this->createQueryBuilder('n')
-        ->update()
-        ->set('n.waitMailingSummary', ':waitMailingSummary')
-        ->setParameter('waitMailingSummary', $data['waitMailingSummary'])
-        ->where('n.id IN (:ids)')
-        ->setParameter('ids', array_map(static fn (Notification $notification) => $notification->getId(), $notifications));
-        if (isset($data['mailingSummarySentAt'])) {
-            $qb->set('n.mailingSummarySentAt', ':mailingSummarySentAt')
-                ->setParameter('mailingSummarySentAt', $data['mailingSummarySentAt']);
-        }
-
-        $qb->getQuery()->execute();
     }
 
     /**

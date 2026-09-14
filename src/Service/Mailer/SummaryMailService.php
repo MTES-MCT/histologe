@@ -4,12 +4,14 @@ namespace App\Service\Mailer;
 
 use App\Entity\Enum\NotificationType;
 use App\Entity\User;
+use App\Repository\Behaviour\NotificationUpdater;
 use App\Repository\NotificationRepository;
 
 class SummaryMailService
 {
     public function __construct(
         private readonly NotificationRepository $notificationRepository,
+        private readonly NotificationUpdater $notificationUpdater,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
     ) {
     }
@@ -19,7 +21,7 @@ class SummaryMailService
         $isNotifiable = $user->getIsMailingActive() && $user->getIsMailingSummary();
         $notifications = $this->notificationRepository->findWaitingSummaryForUser($user);
         if (!$isNotifiable) {
-            $this->notificationRepository->massUpdate($notifications, ['waitMailingSummary' => false]);
+            $this->notificationUpdater->massUpdate($notifications, ['waitMailingSummary' => false]);
 
             return 0;
         }
@@ -30,7 +32,7 @@ class SummaryMailService
             return 0;
         }
         $now = new \DateTimeImmutable();
-        $this->notificationRepository->massUpdate($notifications, ['waitMailingSummary' => false, 'mailingSummarySentAt' => $now]);
+        $this->notificationUpdater->massUpdate($notifications, ['waitMailingSummary' => false, 'mailingSummarySentAt' => $now]);
         $this->notificationMailerRegistry->send(
             new NotificationMail(
                 type: NotificationMailerType::TYPE_NOTIFICATIONS_SUMMARY,

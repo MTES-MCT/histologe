@@ -5,6 +5,8 @@ namespace App\Controller\Back;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\Form\SearchNotificationType;
+use App\Repository\Behaviour\NotificationDeleter;
+use App\Repository\Behaviour\NotificationUpdater;
 use App\Repository\NotificationRepository;
 use App\Service\ListFilters\SearchNotification;
 use App\Service\MessageHelper;
@@ -87,7 +89,7 @@ class NotificationController extends AbstractController
     #[Route('/notifications/lue', name: 'back_notifications_list_read')]
     public function read(
         Request $request,
-        NotificationRepository $notificationRepository,
+        NotificationUpdater $notificationUpdater,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
@@ -101,10 +103,10 @@ class NotificationController extends AbstractController
 
         $functions = [['name' => 'histoReinitNotification'], ['name' => 'histoRefreshNotificationButtons']];
         if ($request->request->get('selected_notifications')) {
-            $notificationRepository->markUserNotificationsAsSeen($user, explode(',', (string) $request->request->get('selected_notifications')));
+            $notificationUpdater->markAsSeenForUser($user, explode(',', (string) $request->request->get('selected_notifications')));
             $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les notifications sélectionnées ont bien été marquées comme lues.'];
         } else {
-            $notificationRepository->markUserNotificationsAsSeen($user);
+            $notificationUpdater->markAsSeenForUser($user);
             $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Toutes les notifications ont bien été marquées comme lues.'];
         }
         $htmlTargetContents = $this->getHtmlTargetContentsForNotificationAction($request);
@@ -115,7 +117,7 @@ class NotificationController extends AbstractController
     #[Route('/notifications/supprimer', name: 'back_notifications_list_delete')]
     public function delete(
         Request $request,
-        NotificationRepository $notificationRepository,
+        NotificationDeleter $notificationDeleter,
     ): JsonResponse {
         /** @var User $user */
         $user = $this->getUser();
@@ -128,10 +130,10 @@ class NotificationController extends AbstractController
         }
         $functions = [['name' => 'histoReinitNotification'], ['name' => 'histoRefreshNotificationButtons']];
         if ($request->request->get('selected_notifications')) {
-            $notificationRepository->deleteUserNotifications($user, explode(',', (string) $request->request->get('selected_notifications')));
+            $notificationDeleter->deleteForUser($user, explode(',', (string) $request->request->get('selected_notifications')));
             $flashMessages[] = ['type' => 'success', 'title' => 'Notifications supprimées', 'message' => 'Les notifications sélectionnées ont bien été supprimées.'];
         } else {
-            $notificationRepository->deleteUserNotifications($user);
+            $notificationDeleter->deleteForUser($user);
             $flashMessages[] = ['type' => 'success', 'title' => 'Notifications supprimées', 'message' => 'Toutes les notifications ont bien été supprimées.'];
         }
 
@@ -143,13 +145,13 @@ class NotificationController extends AbstractController
     #[Route('/notifications/{id}/supprimer', name: 'back_notifications_delete_notification')]
     public function deleteNotification(
         Notification $notification,
-        NotificationRepository $notificationRepository,
+        NotificationDeleter $notificationDeleter,
         Request $request,
     ): Response {
         /** @var User $user */
         $user = $this->getUser();
         if ($notification->getUser()->getId() === $user->getId() && $this->isCsrfTokenValid('back_delete_notification_'.$notification->getId(), (string) $request->request->get('csrf_token'))) {
-            $notificationRepository->deleteUserNotifications($user, [$notification->getId()]);
+            $notificationDeleter->deleteForUser($user, [$notification->getId()]);
             $htmlTargetContents = $this->getHtmlTargetContentsForNotificationAction($request);
 
             return $this->json(['stayOnPage' => true, 'htmlTargetContents' => $htmlTargetContents]);
