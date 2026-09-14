@@ -3,8 +3,6 @@
 namespace App\Tests\Functional\Command;
 
 use App\Entity\Affectation;
-use App\Entity\Partner;
-use App\Entity\User;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
