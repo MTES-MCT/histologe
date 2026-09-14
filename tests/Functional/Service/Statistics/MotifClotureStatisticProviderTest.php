@@ -16,7 +16,7 @@ class MotifClotureStatisticProviderTest extends KernelTestCase
         $motifClotureStatisticsQuery = static::getContainer()->get(MotifClotureStatisticsQuery::class);
         $data = (new MotifClotureStatisticProvider($motifClotureStatisticsQuery))->getData(null, null);
 
-        $this->assertEquals(15, \count($data));
+        $this->assertEquals(16, \count($data));
         $this->assertArrayHasKey('TRAVAUX_FAITS_OU_EN_COURS', $data);
         $this->assertArrayHasKey('color', $data['TRAVAUX_FAITS_OU_EN_COURS']);
         $this->assertArrayHasKey('label', $data['TRAVAUX_FAITS_OU_EN_COURS']);
