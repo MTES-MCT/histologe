@@ -26,6 +26,7 @@ use App\Form\AgentSelectionType;
 use App\Form\CloseAffectationType;
 use App\Form\CloseSignalementType;
 use App\Form\ClotureType;
+use App\Form\EditAddVisiteType;
 use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
 use App\Manager\AffectationManager;
@@ -254,7 +255,6 @@ class SignalementController extends AbstractController
             return $concludeProcedure->label();
         }, $listConcludeProcedures));
 
-        $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
         $linkToVisitGrid = false;
         $existingVisitGrid = $fileRepository->findOneBy([
             'territory' => $signalement->getAddress()->getTerritory(),
@@ -298,6 +298,13 @@ class SignalementController extends AbstractController
             $adminCancelInjonctionProcedureForm = $this->createForm(AdminCancelInjonctionProcedureType::class, options: ['action' => $adminCancelInjonctionProcedureFormRoute]);
         }
 
+        $addVisiteForm = null;
+        if ($this->isGranted(SignalementVoter::SIGN_ADD_VISITE, $signalement)) {
+            $intervention = (new Intervention())->setSignalement($signalement);
+            $addVisiteForm = $this->generateUrl('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
+            $addVisiteForm = $this->createForm(EditAddVisiteType::class, $intervention, options: ['action' => $addVisiteForm]);
+        }
+
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',
             'situations' => $infoDesordres['criticitesArranged'],
@@ -325,9 +332,10 @@ class SignalementController extends AbstractController
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
             'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
             'listConcludeProcedures' => $listConcludeProcedures,
-            'partnersCanVisite' => $partnerVisite,
             'visites' => $interventionRepository->getOrderedVisitesForSignalement($signalement),
-            'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
+            'partnersCanVisite' => $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement), // TODO : Refonte visites - A supprimer
+            'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement), // TODO : Refonte visites - A supprimer
+            'addVisiteForm' => $addVisiteForm,
             'linkToVisitGrid' => $linkToVisitGrid,
             'allPhotosOrdered' => $allPhotosOrdered,
             'zones' => $zoneRepository->findZonesBySignalement($signalement),

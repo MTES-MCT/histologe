@@ -10,9 +10,6 @@
     </div>
     <div class="fr-col-12 fr-col-md-6">
         {% if is_granted('SIGN_ADD_VISITE', signalement) %}
-            <div data-ajax-form>
-                {% include 'back/signalement/view/visites/panels/_panel-add-visite.html.twig' %}
-            </div>
             {% set displayAddVisiteButton = true %}
             {% set listPendingVisiteExternalOperatorNames = [] %}
             {% for pendingVisite in pendingVisites %}

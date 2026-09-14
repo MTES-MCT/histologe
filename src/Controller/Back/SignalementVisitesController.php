@@ -34,6 +34,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/bo/signalements')]
@@ -93,8 +94,6 @@ class SignalementVisitesController extends AbstractController
     ): Response {
         $signalement = $intervention->getSignalement();
         $visites = $interventionRepository->getOrderedVisitesForSignalement($signalement);
-        $pendingVisites = $interventionRepository->getPendingVisitesForSignalement($signalement);
-        $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
         $infoDesordres = $signalementDesordresProcessor->process($signalement);
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
         $linkToVisitGrid = false;
@@ -113,8 +112,8 @@ class SignalementVisitesController extends AbstractController
                     [
                         'signalement' => $signalement,
                         'visites' => $visites,
-                        'partnersCanVisite' => $partnerVisite,
-                        'pendingVisites' => $pendingVisites,
+                        'partnersCanVisite' => $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement), // TODO : Refonte visites - A supprimer
+                        'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement), // TODO : Refonte visites - A supprimer
                         'criteres' => $infoDesordres['criteres'],
                         'linkToVisitGrid' => $linkToVisitGrid,
                     ]),
@@ -174,6 +173,14 @@ class SignalementVisitesController extends AbstractController
      * @throws \Exception
      */
     #[Route('/{uuid:signalement}/visites/ajouter', name: 'back_signalement_visite_add', methods: 'POST')]
+    #[IsGranted(SignalementVoter::SIGN_ADD_VISITE, subject: 'signalement')]
+    public function addVisite(
+        Signalement $signalement,
+    ): Response {
+        throw new \Exception('Not implemented');
+    }
+
+    #[Route('/{uuid:signalement}/v1/visites/ajouter', name: 'back_signalement_visite_add_v1', methods: 'POST')]
     public function addVisiteToSignalement(
         Signalement $signalement,
         Request $request,

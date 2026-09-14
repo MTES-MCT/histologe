@@ -1,6 +1,4 @@
-/* global tinymce */
-
-const timezoneElement = document.querySelector('[data-territory-timezone]');
+/*const timezoneElement = document.querySelector('[data-territory-timezone]');
 const timezone = timezoneElement?.dataset.territoryTimezone;
 const todayDate = new Date();
 const options = { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -64,8 +62,6 @@ function histoCheckVisiteForms(formType, visiteForm, idIntervention = null) {
     textareaDetailsError,
   ].forEach((el) => el?.classList.add('fr-hidden'));
 
-  /* ---------- PARTENAIRE ---------- */
-
   const selectVisitePartner = visiteForm.querySelector('.visite-partner-select');
   if (selectVisitePartner) {
     const selectVisitePartnerError = visiteForm.querySelector(
@@ -88,8 +84,6 @@ function histoCheckVisiteForms(formType, visiteForm, idIntervention = null) {
       isValid = false;
     }
   }
-
-  /* ---------- DATE / VISITE ---------- */
 
   const dateField = visiteForm.querySelector('.add-fields-if-past-date');
   if (!dateField || dateField.value <= localDateString) {
@@ -287,3 +281,4 @@ document.querySelectorAll('.add-fields-if-past-date').forEach((dateField) => {
 document.querySelectorAll('.visite-partner-select').forEach((partnerSelect) => {
   partnerSelect.dispatchEvent(new Event('change'));
 });
+*/
