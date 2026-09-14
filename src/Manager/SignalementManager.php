@@ -42,7 +42,7 @@ use App\Factory\SuiviDelayedFactory;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
-use App\Repository\PartnerRepository;
+use App\Repository\Query\Partner\PartnerLocalizationQuery;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
 use App\Repository\Query\SignalementList\QueryBuilderFactory;
 use App\Repository\SignalementRepository;
@@ -78,7 +78,7 @@ class SignalementManager
         private readonly SuiviDelayedFactory $suiviDelayedFactory,
         private readonly UserManager $userManager,
         private readonly BailleurRepository $bailleurRepository,
-        private readonly PartnerRepository $partnerRepository,
+        private readonly PartnerLocalizationQuery $partnerLocalizationQuery,
         private readonly SignalementRepository $signalementRepository,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
         private readonly ZipcodeProvider $zipcodeProvider,
@@ -200,11 +200,11 @@ class SignalementManager
      */
     public function findAffectablePartners(Signalement $signalement, bool $filterInjonctionBailleur = false): array
     {
-        $partners['affected'] = $this->partnerRepository->findByLocalization(
+        $partners['affected'] = $this->partnerLocalizationQuery->findByLocalization(
             signalement: $signalement,
             filterInjonctionBailleur: $filterInjonctionBailleur,
         );
-        $partners['not_affected'] = $this->partnerRepository->findByLocalization(
+        $partners['not_affected'] = $this->partnerLocalizationQuery->findByLocalization(
             signalement: $signalement,
             affected: false,
             filterInjonctionBailleur: $filterInjonctionBailleur,
