@@ -12,7 +12,7 @@ use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\UserPartner;
-use App\Repository\EmailDeliveryIssueRepository;
+use App\Repository\Query\EmailDeliveryIssueExistsQuery;
 use App\Service\DashboardTabPanel\TabQueryParameters;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -21,7 +21,7 @@ class KpiQuery
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly EmailDeliveryIssueRepository $emailDeliveryIssueRepository,
+        private readonly EmailDeliveryIssueExistsQuery $emailDeliveryIssueExistsQuery,
     ) {
     }
 
@@ -115,7 +115,7 @@ class KpiQuery
             $qb->andWhere('p.territory IN (:territories)')->setParameter('territories', $user->getPartnersTerritories());
         }
 
-        $existsByEmailDql = $this->emailDeliveryIssueRepository->getExistsByEmailDql('u.email');
+        $existsByEmailDql = $this->emailDeliveryIssueExistsQuery->getExistsByEmailDql('u.email');
 
         $qb->andWhere($qb->expr()->exists($existsByEmailDql));
         $qb->select('COUNT(u.id)');
