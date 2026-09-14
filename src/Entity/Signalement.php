@@ -11,6 +11,7 @@ use App\Entity\Enum\DebutDesordres;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\HistoryEntryEvent;
+use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\MotifRefus;
@@ -2295,6 +2296,19 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function getInterventions(): Collection
     {
         return $this->interventions;
+    }
+
+    public function hasVisitePlannedForPartner(Partner $partner): bool
+    {
+        foreach ($this->interventions as $intervention) {
+            if ($intervention->getPartner()->getId() === $partner->getId()
+                && Intervention::STATUS_PLANNED === $intervention->getStatus()
+                && InterventionType::VISITE === $intervention->getType()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function addIntervention(Intervention $intervention): static
