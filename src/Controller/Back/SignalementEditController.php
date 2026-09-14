@@ -117,8 +117,8 @@ class SignalementEditController extends AbstractController
             'content' => $this->renderView('back/signalement/view/information/information-composition.html.twig', ['signalement' => $signalement]),
         ];
         $htmlTargetContents[] = [
-            'target' => '#signalement-edit-composition-container',
-            'content' => $this->renderView('back/signalement/view/panels/_panel-edit-composition-logement.html.twig', ['signalement' => $signalement]),
+            'target' => '#signalement-edit-composition-etage-container',
+            'content' => $this->renderView('back/signalement/view/panels/_panel-edit-composition-logement-etage.html.twig', ['signalement' => $signalement]),
         ];
         $functions = [['name' => 'applyFilter']];
 
@@ -627,8 +627,8 @@ class SignalementEditController extends AbstractController
             'content' => $this->renderView('back/signalement/view/information/information-composition.html.twig', ['signalement' => $signalement]),
         ];
         $htmlTargetContents[] = [
-            'target' => '#signalement-edit-address-container',
-            'content' => $this->renderView('back/signalement/view/panels/_panel-edit-address.html.twig', ['signalement' => $signalement]),
+            'target' => '#signalement-edit-address-etage-container',
+            'content' => $this->renderView('back/signalement/view/panels/_panel-edit-composition-logement-etage.html.twig', ['signalement' => $signalement]),
         ];
 
         $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];

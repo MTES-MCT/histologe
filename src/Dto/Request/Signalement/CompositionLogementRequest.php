@@ -69,12 +69,15 @@ class CompositionLogementRequest implements RequestInterface
             ],
         )]
         #[Assert\Choice(
-            choices: ['RDC', 'DERNIER_ETAGE', 'SOUSSOL', 'AUTRE'],
+            choices: ['', 'RDC', 'DERNIER_ETAGE', 'SOUSSOL', 'AUTRE'],
             message: 'Le champ "Etage" est incorrect.'
         )]
         private readonly ?string $etage = null,
         #[Assert\When(
-            expression: 'this.getEtage() == "AUTRE"',
+            // Restreint à "appartement" en plus de "Autre" : l'étage n'a de sens que pour un
+            // appartement, donc une précision ne doit jamais être exigée pour une maison même
+            // si le champ etage vaut "AUTRE" par erreur/donnée historique.
+            expression: 'this.getEtage() == "AUTRE" and this.getType() == "appartement"',
             constraints: [
                 new Assert\NotBlank(message: 'Merci de préciser l\'étage.'),
             ],
