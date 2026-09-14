@@ -20,7 +20,7 @@
     "libphonenumber-js": "1.12.26",
     "maplibre-gl": "5.24.0",
     "tinymce": "8.6.0",
-    "vue": "3.5.24",
+    "vue": "3.5.42",
     "vue-chartjs": "4.1.2",
     "vue-loader": "17.4.2",
     "wellknown": "0.5.0"
@@ -37,7 +37,7 @@
     "@vue/eslint-config-typescript": "14.7.0",
     "core-js": "3.46.0",
     "dotenv-webpack": "8.1.1",
-    "eslint": "9.39.4",
+    "eslint": "9.39.5",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-n": "17.24.0",
