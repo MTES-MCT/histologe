@@ -104,5 +104,4 @@ class DossierArreteSISH
     {
         return $this->arreteModificatifNumero;
     }
-
 }

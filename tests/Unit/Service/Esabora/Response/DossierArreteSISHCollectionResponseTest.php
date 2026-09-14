@@ -21,6 +21,10 @@ class DossierArreteSISHCollectionResponseTest extends TestCase
         $this->assertEquals('14/06/2023', $dossiersArreteSISH[0]->getArreteDate());
         $this->assertEquals('2023/DD13/00664', $dossiersArreteSISH[0]->getArreteNumero());
         $this->assertEquals('Arrêté L.511-11 - Suroccupation', $dossiersArreteSISH[0]->getArreteType());
+        $this->assertEquals('01/07/2023', $dossiersArreteSISH[0]->getArreteMLDate());
+        $this->assertEquals('2023-DD13-00172', $dossiersArreteSISH[0]->getArreteMLNumero());
+        $this->assertEquals('07/08/2023', $dossiersArreteSISH[0]->getArreteModificatifDate());
+        $this->assertEquals('AR 123456-0215', $dossiersArreteSISH[0]->getArreteModificatifNumero());
 
         $this->assertEquals(200, $dossierArreteSISHCollectionResponse->getStatusCode());
         $this->assertNull($dossierArreteSISHCollectionResponse->getErrorReason());

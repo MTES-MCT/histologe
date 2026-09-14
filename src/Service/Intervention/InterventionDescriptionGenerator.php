@@ -149,6 +149,30 @@ class InterventionDescriptionGenerator
             $hasChanges = true;
         }
 
+        $oldModificatifDate = $oldAdditionalInformation['arrete_modificatif_date'] ?? null;
+        $newModificatifDate = $dossierArreteSISH->getArreteModificatifDate();
+        $oldModificatifNumero = $oldAdditionalInformation['arrete_modificatif_numero'] ?? null;
+        $newModificatifNumero = $dossierArreteSISH->getArreteModificatifNumero();
+
+        if (!empty($newModificatifDate) || !empty($newModificatifNumero)) {
+            if ($oldModificatifDate !== $newModificatifDate && !empty($oldModificatifDate) && !empty($newModificatifDate)) {
+                $messages[] = \sprintf(
+                    'La date de l\'arrêté modificatif dans %s a été modifiée ; La nouvelle date est %s.',
+                    EsaboraSISHService::NAME_SI,
+                    $newModificatifDate
+                );
+                $hasChanges = true;
+            }
+            if ($oldModificatifNumero !== $newModificatifNumero) {
+                $messages[] = \sprintf(
+                    'Le numéro de l\'arrêté modificatif dans %s a été modifié ; Le nouveau numéro est %s.',
+                    EsaboraSISHService::NAME_SI,
+                    $newModificatifNumero ?? 'non renseigné'
+                );
+                $hasChanges = true;
+            }
+        }
+
         $oldMLDate = $oldAdditionalInformation['arrete_mainlevee_date'] ?? null;
         $newMLDate = $dossierArreteSISH->getArreteMLDate();
         $oldMLNumero = $oldAdditionalInformation['arrete_mainlevee_numero'] ?? null;

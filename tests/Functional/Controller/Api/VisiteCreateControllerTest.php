@@ -224,7 +224,7 @@ class VisiteCreateControllerTest extends WebTestCase
                 ],
                 'details' => 'lorem ipsum dolor sit <em>amet</em>',
             ],
-            6,
+            7,
         ];
         yield 'test create visite confirmed with no usager notification' => [
             'visite_confirmed',
@@ -241,7 +241,7 @@ class VisiteCreateControllerTest extends WebTestCase
                 ],
                 'details' => 'lorem ipsum dolor sit <em>amet</em>',
             ],
-            5,
+            6,
         ];
 
         yield 'test create visite planned' => [

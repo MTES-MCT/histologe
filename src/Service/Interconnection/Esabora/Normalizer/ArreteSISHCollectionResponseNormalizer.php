@@ -17,8 +17,8 @@ class ArreteSISHCollectionResponseNormalizer
             $hasArreteMainLevee = null !== $item->getArreteMLNumero();
             $hasArreteModificatif = null !== $item->getArreteModificatifNumero();
 
-            // Aucun split nécessaire s\'il n'y a pas d'arrêté,
-            // ou si l'arrêté n'a ni modificatif ni mainlevée.
+            // Aucun split nécessaire si l'arrêté n'a ni modificatif ni mainlevée.
+            // Sinon, on reconstruit les états successifs : arrêté => modificatif => mainlevée.
             if (!$hasArrete || (!$hasArreteModificatif && !$hasArreteMainLevee)) {
                 $normalizedCollection[] = $item;
                 continue;

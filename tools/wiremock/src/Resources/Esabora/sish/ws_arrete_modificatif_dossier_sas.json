@@ -1,5 +1,5 @@
 {
-  "searchId": 9066669,
+  "searchId": 9066670,
   "nbResults": 1,
   "columnList": [
     "Sas_LogicielProvenance",
@@ -9,7 +9,9 @@
     "SISH_ArreteNumero",
     "SISH_ArreteType",
     "SISH_ArreteMLDate",
-    "SISH_ArreteMLNumero"
+    "SISH_ArreteMLNumero",
+    "SISH_ArreteModifDate",
+    "SISH_ArreteModifNumero"
   ],
   "keyList": [
     "i1.imdo_id",
@@ -19,17 +21,19 @@
     {
       "columnDataList": [
         "Signal Logement",
-        "00000000-0000-0000-2023-000000000120",
-        "2026\/DD13\/00005",
-        "25\/01\/2026",
-        "AP45OL023",
+        "00000000-0000-0000-2023-000000000026",
+        "2026\/DD13\/00026",
+        "01\/09\/2026",
+        "AP18OL026",
         "Arr\u00eat\u00e9 L.511-11 - Impropre",
-        "27\/01\/2026",
-        "APML45K09O"
+        "14\/11\/2026",
+        "APMOD45K09O",
+        "14\/11\/2027",
+        "APMOD45K091"
       ],
       "keyDataList": [
-        9815,
-        1123970
+        9816,
+        1123971
       ]
     }
   ]

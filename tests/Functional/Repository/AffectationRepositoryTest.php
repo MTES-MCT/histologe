@@ -30,7 +30,7 @@ class AffectationRepositoryTest extends KernelTestCase
         /** @var AffectationRepository $affectationRepository */
         $affectationRepository = $this->entityManager->getRepository(Affectation::class);
         $affectationsSubscribedToEsabora = $affectationRepository->findAffectationSubscribedToEsabora(PartnerType::ARS);
-        $this->assertCount(5, $affectationsSubscribedToEsabora);
+        $this->assertCount(6, $affectationsSubscribedToEsabora);
         foreach ($affectationsSubscribedToEsabora as $row) {
             $affectationSubscribedToEsabora = $row['affectation'];
             $this->assertCount(2, $affectationSubscribedToEsabora->getPartner()->getEsaboraCredential());
@@ -70,6 +70,6 @@ class AffectationRepositoryTest extends KernelTestCase
             nbDaysBeforeDesync: 0
         );
 
-        $this->assertCount(5, $affectationsSubscribedToEsabora);
+        $this->assertCount(6, $affectationsSubscribedToEsabora);
     }
 }
