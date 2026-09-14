@@ -3,12 +3,12 @@
 namespace App\Service\Signalement\Suivi;
 
 use App\Entity\Signalement;
-use App\Repository\NotificationRepository;
+use App\Repository\Query\Notification\NotificationSuiviQuery;
 
 readonly class SuiviSeenMarker
 {
     public function __construct(
-        private NotificationRepository $notificationRepository,
+        private NotificationSuiviQuery $notificationSuiviQuery,
     ) {
     }
 
@@ -28,7 +28,7 @@ readonly class SuiviSeenMarker
 
     private function getLastSeenAt(Signalement $signalement): ?\DateTimeImmutable
     {
-        $notificationsSuiviUser = $this->notificationRepository->getNotificationsFrom($signalement);
+        $notificationsSuiviUser = $this->notificationSuiviQuery->getNotificationsFrom($signalement);
         foreach ($notificationsSuiviUser as $notificationSuiviUser) {
             if ($notificationSuiviUser->isSeen) {
                 return $notificationSuiviUser->seenAt;

@@ -28,7 +28,6 @@ class PartnerRepository extends ServiceEntityRepository
 {
     public function __construct(
         private readonly TerritoryRepository $territoryRepository,
-        private readonly AffectationRepository $affectationRepository,
         ManagerRegistry $registry,
     ) {
         parent::__construct($registry, Partner::class);
