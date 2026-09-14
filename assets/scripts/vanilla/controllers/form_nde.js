@@ -1,4 +1,4 @@
-import { jsonResponseHandler } from '../services/component/component_json_response_handler';
+import { jsonResponseHandler } from '../services/component/component_json_response_handler.js';
 
 const formBtn = document.querySelector('#signalement-edit-nde-form-submit');
 

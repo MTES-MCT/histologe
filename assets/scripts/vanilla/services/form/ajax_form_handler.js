@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/browser';
 import {
   jsonResponseHandler,
   addFlashMessage,
-} from '../../services/component/component_json_response_handler';
+} from '../../services/component/component_json_response_handler.js';
 
 const modalElements = document.querySelectorAll('[data-ajax-form] dialog');
 

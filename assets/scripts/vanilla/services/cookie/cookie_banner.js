@@ -1,5 +1,5 @@
-import { setCookie, getCookie, EXPIRATION_DAYS } from './cookie_utils';
-import { disableMatomoTracking, enableMatomoTracking } from './cookie_matomo_tracking';
+import { setCookie, getCookie, EXPIRATION_DAYS } from './cookie_utils.js';
+import { disableMatomoTracking, enableMatomoTracking } from './cookie_matomo_tracking.js';
 
 /* global dsfr */
 

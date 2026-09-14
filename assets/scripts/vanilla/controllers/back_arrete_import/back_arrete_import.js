@@ -1,4 +1,4 @@
-import { attacheAutocompleteAddressEvent } from '../../services/component/component_search_address';
+import { attacheAutocompleteAddressEvent } from '../../services/component/component_search_address.js';
 import * as Sentry from '@sentry/browser';
 
 const STORAGE_DATA_KEY = 'import_arrete_data';

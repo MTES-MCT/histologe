@@ -1,15 +1,9 @@
-const Encore = require('@symfony/webpack-encore');
-const Dotenv = require('dotenv-webpack');
-const webpack = require('webpack');
-const isDev = Encore.isDev();
-const path = require('path');
+import Encore from '@symfony/webpack-encore';
+import Dotenv from 'dotenv-webpack';
+import webpack from 'webpack';
+import path from 'path';
 
-
-// Manually configure the runtime environment if not already configured yet by the "encore" command.
-// It's useful when you use tools that rely on webpack.config.js file.
-if (!Encore.isRuntimeEnvironmentConfigured()) {
-    Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
-}
+const isDev = process.env.NODE_ENV !== 'production';
 
 Encore
     // directory where compiled assets will be stored
@@ -95,12 +89,6 @@ Encore.enableStimulusBridge('./assets/controllers.json')
     // enables hashed filenames (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
 
-    // enables @babel/preset-env polyfills
-    .configureBabelPresetEnv((config) => {
-        config.useBuiltIns = 'usage';
-        config.corejs = 3;
-    })
-
     .enableSassLoader()
 
     .enableTypeScriptLoader(function(tsConfig) {
@@ -127,4 +115,4 @@ Encore.enableStimulusBridge('./assets/controllers.json')
     }))
 ;
 
-module.exports = Encore.getWebpackConfig();
+export default await Encore.getWebpackConfig();

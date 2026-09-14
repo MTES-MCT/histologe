@@ -3,7 +3,7 @@ import {
   updateLocalStorageWithFormParams,
   updateLocalStorageWithPaginationParams,
   updateLocalStorageOnEvent,
-} from '../../services/ui/list_filter_helper';
+} from '../../services/ui/list_filter_helper.js';
 
 document.addEventListener('click', (evt) => {
   const target = evt.target.closest('.btn-delete-autoaffectationrule');

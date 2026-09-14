@@ -1,6 +1,6 @@
-import { initSearchAndSelectBadges } from '../../services/component/component_search_and_select_badges';
-import { attacheAutocompleteAddressEvents } from '../../services/component/component_search_address';
-import { addFlashMessage } from '../../services/component/component_json_response_handler';
+import { initSearchAndSelectBadges } from '../../services/component/component_search_and_select_badges.js';
+import { attacheAutocompleteAddressEvents } from '../../services/component/component_search_address.js';
+import { addFlashMessage } from '../../services/component/component_json_response_handler.js';
 
 let boFormSignalementCurrentTabIsDirty = false;
 let boFormNeedRefreshValidationTab = true;
@@ -499,7 +499,7 @@ function initBoFormSignalementDesordres() {
   updateSelectedCriteres(document.getElementById('fr-modal-desordres-logement-add'));
 }
 
-// TODO utiliser import { initComponentAddress } from '../../services/component/component_search_address';
+// TODO utiliser import { initComponentAddress } from '../../services/component/component_search_address.js';
 // nécessite de renommer certaines classes dans les templates et formType et de vérifier q'il n'y a pas des confusions
 function initComponentAddress(id) {
   const addressInput = document.querySelector(id);

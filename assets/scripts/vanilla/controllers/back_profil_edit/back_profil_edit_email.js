@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/browser';
-import { jsonResponseHandler } from '../../services/component/component_json_response_handler';
+import { jsonResponseHandler } from '../../services/component/component_json_response_handler.js';
 
 const modalEditEmail = document?.querySelector('#fr-modal-profil-edit-email');
 const modalEditEmailTitle = document?.querySelector('#fr-profil-edit-email-title');

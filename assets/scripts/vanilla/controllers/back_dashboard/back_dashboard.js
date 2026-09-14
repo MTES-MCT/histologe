@@ -1,5 +1,5 @@
-import initFilterHandler from './filter_handler';
-import initTabsLoader from './tabs_loader';
+import initFilterHandler from './filter_handler.js';
+import initTabsLoader from './tabs_loader.js';
 import * as Sentry from '@sentry/browser';
 
 document.addEventListener('DOMContentLoaded', () => {

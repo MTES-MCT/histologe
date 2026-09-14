@@ -1,4 +1,4 @@
-import { setCookie, getCookie } from './cookie/cookie_utils';
+import { setCookie, getCookie } from './cookie/cookie_utils.js';
 
 const maintenanceBannerElement = document.getElementById('maintenance-banner');
 if (maintenanceBannerElement !== null) {

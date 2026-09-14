@@ -1,7 +1,7 @@
 import {
   disableHeaderAndFooterButtonOfModal,
   enableHeaderAndFooterButtonOfModal,
-} from '../../services/ui/modales_helper';
+} from '../../services/ui/modales_helper.js';
 
 export function initializeVisitesUploadFilesModal() {
   initializeUploadModal('#panel-upload-files', false);

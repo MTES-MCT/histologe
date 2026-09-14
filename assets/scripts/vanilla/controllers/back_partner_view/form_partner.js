@@ -2,8 +2,8 @@ import {
   loadWindowWithLocalStorage,
   updateLocalStorageWithPaginationParams,
   updateLocalStorageOnEvent,
-} from '../../services/ui/list_filter_helper';
-import { jsonResponseProcess } from '../../services/component/component_json_response_handler';
+} from '../../services/ui/list_filter_helper.js';
+import { jsonResponseProcess } from '../../services/component/component_json_response_handler.js';
 
 function histoUpdateFieldsVisibility() {
   const partnerType = document.getElementById('partner_type');

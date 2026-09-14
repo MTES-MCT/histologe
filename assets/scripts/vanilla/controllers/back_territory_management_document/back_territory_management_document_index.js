@@ -1,7 +1,7 @@
 import {
   loadWindowWithLocalStorage,
   updateLocalStorageWithFormParams,
-} from '../../services/ui/list_filter_helper';
+} from '../../services/ui/list_filter_helper.js';
 
 const searchFilesForm = document.getElementById('search-territory-files-type-form');
 

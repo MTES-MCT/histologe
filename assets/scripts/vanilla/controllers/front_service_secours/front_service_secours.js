@@ -1,7 +1,7 @@
 import {
   attacheAutocompleteAddressEvent,
   initComponentAddress,
-} from '../../services/component/component_search_address';
+} from '../../services/component/component_search_address.js';
 
 import axios from 'axios';
 
