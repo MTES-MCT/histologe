@@ -1,3 +1,5 @@
+import { registerClickRoute } from '../../services/ui/click_dispatcher';
+
 const toggleWrapper = document?.querySelector('#toggle-hide-technical')?.closest('.fr-toggle');
 const toggle = document?.querySelector('#toggle-hide-technical');
 let expanded = false;
@@ -50,15 +52,11 @@ export function applyFilter() {
 
 applyFilter();
 
-toggle?.addEventListener('change', () => {
+toggle?.addEventListener('change', (event) => {
   applyFilter();
 });
 
-document.addEventListener('click', (e) => {
-  const target = e.target;
-  const btn = target.closest('#btn-display-all-suivis');
-  if (!btn) return;
-
+registerClickRoute('#btn-display-all-suivis', (btn, e) => {
   e.preventDefault();
   expanded = true;
   applyFilter();

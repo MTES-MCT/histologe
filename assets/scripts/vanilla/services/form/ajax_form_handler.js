@@ -3,6 +3,7 @@ import {
   jsonResponseHandler,
   addFlashMessage,
 } from '../../services/component/component_json_response_handler';
+import { registerClickRoute } from '../ui/click_dispatcher';
 
 const modalElements = document.querySelectorAll('[data-ajax-form] dialog');
 
@@ -213,11 +214,7 @@ function resetSubmitButton(submitElements) {
 }
 
 //gère la suppression des affectations et des suivis
-document.addEventListener('click', (event) => {
-  const actionBtn = event.target.closest('[data-delete]');
-
-  if (!actionBtn) return;
-
+registerClickRoute('[data-delete]', (actionBtn, event) => {
   event.preventDefault();
 
   let messageConfirmation = 'Voulez-vous vraiment supprimer cet élément ?';
@@ -239,11 +236,7 @@ document.addEventListener('click', (event) => {
   }
 });
 
-document.addEventListener('click', (event) => {
-  const link = event.target.closest('.simple-ajax-link');
-
-  if (!link) return;
-
+registerClickRoute('.simple-ajax-link', (link, event) => {
   event.preventDefault();
   fetch(link.href, { method: 'GET' }).then((response) => {
     if (response.ok) {

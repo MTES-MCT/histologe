@@ -1,8 +1,38 @@
+import { registerClickHandler } from '../ui/click_dispatcher';
+
 window.addEventListener('refreshSearchCheckboxContainerEvent', () => {
   initSearchCheckboxWidgets();
 });
 document.addEventListener('DOMContentLoaded', initSearchCheckboxWidgets);
+
+let isClickOutsideAttached = false;
+const widgetStateByContainer = new WeakMap();
+
+function attachClickOutsideOnce() {
+  if (isClickOutsideAttached) {
+    return;
+  }
+  isClickOutsideAttached = true;
+
+  // hide choices on click outside, for every initialized widget on the page
+  registerClickHandler(function (event) {
+    document
+      .querySelectorAll('.search-checkbox-container[data-search-checkbox-initialized="true"]')
+      .forEach((container) => {
+        const state = widgetStateByContainer.get(container);
+        if (!state) {
+          return;
+        }
+        const { input, checkboxesContainer, closeBtn, initialValues } = state;
+        if (!input.contains(event.target) && !checkboxesContainer.contains(event.target)) {
+          searchCheckboxHideChoices(container, checkboxesContainer, closeBtn, initialValues);
+        }
+      });
+  });
+}
+
 export function initSearchCheckboxWidgets() {
+  attachClickOutsideOnce();
   const all = document.querySelectorAll('.search-checkbox-container');
   Array.from(all).forEach((element, idx) => {
     // Vérifier si l'élément a déjà été initialisé
@@ -111,12 +141,8 @@ export function initSearchCheckboxWidgets() {
           mainGroup.style.display = mainGroupHasMatch ? '' : 'none';
         }
       });
-      // hide choices on click outside and on close button
-      document.addEventListener('click', function (event) {
-        if (!input.contains(event.target) && !checkboxesContainer.contains(event.target)) {
-          searchCheckboxHideChoices(element, checkboxesContainer, closeBtn, initialValues);
-        }
-      });
+      // register this widget's state so the single shared click-outside listener can find it
+      widgetStateByContainer.set(element, { input, checkboxesContainer, closeBtn, initialValues });
       element.addEventListener('click', function (event) {
         event.stopPropagation();
       });

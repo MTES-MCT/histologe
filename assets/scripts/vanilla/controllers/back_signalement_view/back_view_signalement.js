@@ -3,6 +3,7 @@ import { btnSignalementFileDeleteAddEventListeners } from '../../services/file/f
 import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_signalement_edit_file/back_signalement_edit_file';
 import { initTinyMCE } from '../../services/form/form_helper';
 import { initZipSelectionPhotos } from './zip_selection_photos';
+import { registerClickRoute } from '../../services/ui/click_dispatcher';
 
 /**
  * Réinitialise les tooltips DSFR dans un conteneur donné
@@ -35,13 +36,10 @@ if (document?.querySelector('.fr-breadcrumb.can-fix')) {
   };
 }
 
-document.addEventListener('click', (e) => {
-  if (e.target.closest('.open-modal-reinit-affectation')) {
-    document.querySelector('#fr-modal-reinit-affectation .partner-nom').textContent =
-      e.target.dataset.partnerNom;
-    document.querySelector('form#fr-modal-reinit-affectation-form').action =
-      e.target.dataset.action;
-  }
+registerClickRoute('.open-modal-reinit-affectation', (target, e) => {
+  document.querySelector('#fr-modal-reinit-affectation .partner-nom').textContent =
+    e.target.dataset.partnerNom;
+  document.querySelector('form#fr-modal-reinit-affectation-form').action = e.target.dataset.action;
 });
 
 document.querySelectorAll('.btn-list-all-photo-situation').forEach((button) => {
@@ -421,11 +419,7 @@ if (submitModalDuplicateAddresses) {
   });
 }
 
-document.addEventListener('click', (event) => {
-  const btn = event.target.closest('.btn-edit-suivi');
-  if (!btn) {
-    return;
-  }
+registerClickRoute('.btn-edit-suivi', (btn, event) => {
   const url = btn.dataset.url;
   document.querySelector('#panel-edit-suivi button[type="submit"]').disabled = true;
   document.querySelector('#panel-edit-suivi-form-container').innerHTML = 'Chargement en cours...';

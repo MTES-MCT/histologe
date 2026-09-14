@@ -1,10 +1,10 @@
+import { registerClickRoute } from '../../services/ui/click_dispatcher';
+
 const modalArreteDetails = document.getElementById('fr-modal-arrete-details');
 const modalArreteDelete = document.getElementById('fr-modal-arrete-delete');
 
 if (modalArreteDetails) {
-  document.addEventListener('click', (e) => {
-    const button = e.target.closest('.open-modal-arrete-details');
-    if (!button) return;
+  registerClickRoute('.open-modal-arrete-details', (button, e) => {
     document.getElementById('fr-modal-arrete-details-arrete-name').textContent =
       button.dataset.name;
     const items = document.querySelectorAll('.item-arrete-details');
@@ -19,9 +19,7 @@ if (modalArreteDetails) {
 }
 
 if (modalArreteDelete) {
-  document.addEventListener('click', (e) => {
-    const button = e.target.closest('.open-modal-arrete-delete');
-    if (!button) return;
+  registerClickRoute('.open-modal-arrete-delete', (button, e) => {
     document.getElementById('fr-modal-arrete-delete-arrete-name').textContent = button.dataset.name;
     document.getElementById('arrete_delete_form').action = button.dataset.url;
   });

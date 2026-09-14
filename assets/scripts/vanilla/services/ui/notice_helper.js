@@ -1,9 +1,8 @@
-document.addEventListener('click', (event) => {
-  const closeButton = event.target.closest(
-    '.fr-notice .fr-btn--close, .fr-notice .fr-icon-close-circle-fill'
-  );
+import { registerClickRoute } from './click_dispatcher';
 
-  if (closeButton) {
+registerClickRoute(
+  '.fr-notice .fr-btn--close, .fr-notice .fr-icon-close-circle-fill',
+  (closeButton, event) => {
     if (closeButton.dataset.closeUrl) {
       fetch(closeButton.dataset.closeUrl, { method: 'POST' }).catch(() => {});
     }
@@ -13,4 +12,4 @@ document.addEventListener('click', (event) => {
       notice.remove();
     }
   }
-});
+);
