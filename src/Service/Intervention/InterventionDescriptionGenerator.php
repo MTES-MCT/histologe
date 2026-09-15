@@ -77,17 +77,19 @@ class InterventionDescriptionGenerator
 
     public static function buildDescriptionArreteCreated(DossierArreteSISH $dossierArreteSISH): string
     {
-        $description = \sprintf(
-            'L\'arrêté %s du %s a été pris dans le dossier de n°%s.<br>',
-            $dossierArreteSISH->getArreteNumero(),
-            $dossierArreteSISH->getArreteDate(),
-            $dossierArreteSISH->getDossNum(),
-        );
-
-        $description .= \sprintf('Type arrêté : %s<br>', $dossierArreteSISH->getArreteType());
-
         if ($dossierArreteSISH->getArreteMLDate()) {
-            $description = \sprintf(
+            if ($dossierArreteSISH->getArreteModificatifNumero()) {
+                return \sprintf(
+                    'Un arrêté de mainlevée %s du %s a été pris pour l\'arrêté modificatif %s du %s dans le dossier de n°%s.',
+                    $dossierArreteSISH->getArreteMLNumero(),
+                    $dossierArreteSISH->getArreteMLDate(),
+                    $dossierArreteSISH->getArreteModificatifNumero(),
+                    $dossierArreteSISH->getArreteModificatifDate(),
+                    $dossierArreteSISH->getDossNum()
+                );
+            }
+
+            return \sprintf(
                 'Un arrêté de mainlevée %s du %s a été pris pour l\'arrêté %s du %s dans le dossier de n°%s.',
                 $dossierArreteSISH->getArreteMLNumero(),
                 $dossierArreteSISH->getArreteMLDate(),
@@ -96,6 +98,25 @@ class InterventionDescriptionGenerator
                 $dossierArreteSISH->getDossNum()
             );
         }
+
+        if ($dossierArreteSISH->getArreteModificatifNumero()) {
+            return \sprintf(
+                'Un arrêté modificatif %s en date du %s a été pris concernant l\'arrêté %s du %s.',
+                $dossierArreteSISH->getArreteModificatifNumero(),
+                $dossierArreteSISH->getArreteModificatifDate(),
+                $dossierArreteSISH->getArreteNumero(),
+                $dossierArreteSISH->getArreteDate()
+            );
+        }
+
+        $description = \sprintf(
+            'L\'arrêté %s du %s a été pris dans le dossier de n°%s.<br>',
+            $dossierArreteSISH->getArreteNumero(),
+            $dossierArreteSISH->getArreteDate(),
+            $dossierArreteSISH->getDossNum()
+        );
+
+        $description .= \sprintf('Type arrêté : %s<br>', $dossierArreteSISH->getArreteType());
 
         return $description;
     }
@@ -126,6 +147,30 @@ class InterventionDescriptionGenerator
                 $newNumero ?? 'non renseigné'
             );
             $hasChanges = true;
+        }
+
+        $oldModificatifDate = $oldAdditionalInformation['arrete_modificatif_date'] ?? null;
+        $newModificatifDate = $dossierArreteSISH->getArreteModificatifDate();
+        $oldModificatifNumero = $oldAdditionalInformation['arrete_modificatif_numero'] ?? null;
+        $newModificatifNumero = $dossierArreteSISH->getArreteModificatifNumero();
+
+        if (!empty($newModificatifDate) || !empty($newModificatifNumero)) {
+            if ($oldModificatifDate !== $newModificatifDate && !empty($oldModificatifDate) && !empty($newModificatifDate)) {
+                $messages[] = \sprintf(
+                    'La date de l\'arrêté modificatif dans %s a été modifiée ; La nouvelle date est %s.',
+                    EsaboraSISHService::NAME_SI,
+                    $newModificatifDate
+                );
+                $hasChanges = true;
+            }
+            if ($oldModificatifNumero !== $newModificatifNumero) {
+                $messages[] = \sprintf(
+                    'Le numéro de l\'arrêté modificatif dans %s a été modifié ; Le nouveau numéro est %s.',
+                    EsaboraSISHService::NAME_SI,
+                    $newModificatifNumero ?? 'non renseigné'
+                );
+                $hasChanges = true;
+            }
         }
 
         $oldMLDate = $oldAdditionalInformation['arrete_mainlevee_date'] ?? null;

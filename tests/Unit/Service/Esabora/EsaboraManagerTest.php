@@ -772,4 +772,186 @@ class EsaboraManagerTest extends KernelTestCase
         $this->assertEquals('01/01/2024', $additionalInformation['arrete_mainlevee_date']);
         $this->assertEquals('APML45K09O', $additionalInformation['arrete_mainlevee_numero']);
     }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function testUpdateFromDossierArreteDetectsNewArreteModificatif(): void
+    {
+        $intervention = new Intervention();
+        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
+        $existingAdditionalInfo = [
+            'arrete_numero' => 'AP45OL023',
+            'arrete_type' => 'INSALUBRITE',
+            'arrete_mainlevee_date' => null,
+            'arrete_mainlevee_numero' => null,
+            'arrete_modificatif_date' => null,
+            'arrete_modificatif_numero' => null,
+        ];
+        $intervention->setAdditionalInformation($existingAdditionalInfo);
+
+        $territory = $this->getTerritory();
+        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
+        $signalement = $this->getSignalement();
+        $signalement->getAddress()->setTerritory($territory);
+        $intervention->setSignalement($signalement);
+
+        $affectation = new Affectation();
+        $affectation->setSignalement($signalement);
+
+        // Données entrantes avec apparition d'un nouvel arrêté modificatif
+        $item = [
+            'keyDataList' => [null, 123],
+            'columnDataList' => [
+                'SISH',
+                'REF123',
+                'DOSS456',
+                '01/01/2024',
+                'AP45OL023',
+                'INSALUBRITE',
+                null,
+                null,
+                '01/07/2024',
+                'AM001',
+            ],
+        ];
+        $dossierArrete = new DossierArreteSISH($item);
+
+        $esaboraManager = new EsaboraManager(
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->suiviRepository,
+            $this->interventionRepository,
+            $this->interventionFactory,
+            $this->eventDispatcher,
+            $this->userManager,
+            $this->logger,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHandler,
+            $this->imageManipulationHandler,
+            $this->fileFactory,
+            $this->signalementQualificationUpdater,
+            $this->htmlSanitizer,
+            $this->workflow,
+            $this->userSignalementSubscriptionManager,
+            true,
+        );
+
+        $reflector = new \ReflectionClass($esaboraManager);
+        $method = $reflector->getMethod('updateFromDossierArrete');
+        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
+            'arrete_numero' => $dossierArrete->getArreteNumero(),
+            'arrete_type' => $dossierArrete->getArreteType(),
+            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
+            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
+            'arrete_modificatif_date' => $dossierArrete->getArreteModificatifDate(),
+            'arrete_modificatif_numero' => $dossierArrete->getArreteModificatifNumero(),
+        ]);
+
+        $this->assertTrue($result);
+        $this->assertEquals(
+            'Un arrêté modificatif AM001 en date du 01/07/2024 a été pris concernant l&#039;arrêté AP45OL023 du 01/01/2024.',
+            $intervention->getDetails()
+        );
+        $additionalInformation = $intervention->getAdditionalInformation();
+        $this->assertEquals('AP45OL023', $additionalInformation['arrete_numero']);
+        $this->assertEquals('01/07/2024', $additionalInformation['arrete_modificatif_date']);
+        $this->assertEquals('AM001', $additionalInformation['arrete_modificatif_numero']);
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public function testUpdateFromDossierArreteWithModificatifDateAndNumeroUpdated(): void
+    {
+        $intervention = new Intervention();
+        $intervention->setScheduledAt(new \DateTimeImmutable('2024-01-01'));
+        $existingAdditionalInfo = [
+            'arrete_numero' => 'AP45OL023',
+            'arrete_type' => 'INSALUBRITE',
+            'arrete_mainlevee_date' => null,
+            'arrete_mainlevee_numero' => null,
+            'arrete_modificatif_date' => '01/07/2024',
+            'arrete_modificatif_numero' => 'AM001',
+        ];
+        $intervention->setAdditionalInformation($existingAdditionalInfo);
+
+        $territory = $this->getTerritory();
+        $territory->setTimezone(TimezoneProvider::TIMEZONE_EUROPE_PARIS);
+        $signalement = $this->getSignalement();
+        $signalement->getAddress()->setTerritory($territory);
+        $intervention->setSignalement($signalement);
+
+        $affectation = new Affectation();
+        $affectation->setSignalement($signalement);
+
+        // Données entrantes avec modification de la date et du numéro de l'arrêté modificatif
+        $item = [
+            'keyDataList' => [null, 123],
+            'columnDataList' => [
+                'SISH',
+                'REF123',
+                'DOSS456',
+                '01/01/2024',
+                'AP45OL023',
+                'INSALUBRITE',
+                null,
+                null,
+                '02/07/2024',
+                'AM002',
+            ],
+        ];
+        $dossierArrete = new DossierArreteSISH($item);
+
+        $esaboraManager = new EsaboraManager(
+            $this->affectationManager,
+            $this->suiviManager,
+            $this->suiviRepository,
+            $this->interventionRepository,
+            $this->interventionFactory,
+            $this->eventDispatcher,
+            $this->userManager,
+            $this->logger,
+            $this->entityManager,
+            $this->zipHelper,
+            $this->fileScanner,
+            $this->uploadHandler,
+            $this->imageManipulationHandler,
+            $this->fileFactory,
+            $this->signalementQualificationUpdater,
+            $this->htmlSanitizer,
+            $this->workflow,
+            $this->userSignalementSubscriptionManager,
+            true,
+        );
+
+        $reflector = new \ReflectionClass($esaboraManager);
+        $method = $reflector->getMethod('updateFromDossierArrete');
+        $result = $method->invoke($esaboraManager, $intervention, $dossierArrete, [
+            'arrete_numero' => $dossierArrete->getArreteNumero(),
+            'arrete_type' => $dossierArrete->getArreteType(),
+            'arrete_mainlevee_date' => $dossierArrete->getArreteMLDate(),
+            'arrete_mainlevee_numero' => $dossierArrete->getArreteMLNumero(),
+            'arrete_modificatif_date' => $dossierArrete->getArreteModificatifDate(),
+            'arrete_modificatif_numero' => $dossierArrete->getArreteModificatifNumero(),
+        ]);
+
+        $this->assertTrue($result);
+        $this->assertStringContainsString(
+            'La date de l&#039;arrêté modificatif dans SI-Santé Habitat (SI-SH) a été modifiée ; La nouvelle date est 02/07/2024.',
+            (string) $intervention->getDetails(),
+            (string) $intervention->getDetails(),
+        );
+        $this->assertStringContainsString(
+            'Le numéro de l&#039;arrêté modificatif dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est AM002.',
+            (string) $intervention->getDetails(),
+            (string) $intervention->getDetails(),
+        );
+        $additionalInformation = $intervention->getAdditionalInformation();
+        $this->assertEquals('AP45OL023', $additionalInformation['arrete_numero']);
+        $this->assertEquals('02/07/2024', $additionalInformation['arrete_modificatif_date']);
+        $this->assertEquals('AM002', $additionalInformation['arrete_modificatif_numero']);
+    }
 }

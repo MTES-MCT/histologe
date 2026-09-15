@@ -176,6 +176,13 @@ class EsaboraSISHMock extends AbstractEsaboraMock
             'ws_arrete_main_levee_dossier_sas.json',
             '00000000-0000-0000-2023-000000000120'
         );
+
+        self::createMockIntervention(
+            $wiremock,
+            self::SISH_ARRETES_DOSSIER_SAS,
+            'ws_arrete_modificatif_dossier_sas.json',
+            '00000000-0000-0000-2023-000000000026'
+        );
     }
 
     protected static function createMockIntervention(

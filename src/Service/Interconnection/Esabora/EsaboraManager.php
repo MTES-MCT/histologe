@@ -284,6 +284,8 @@ class EsaboraManager
             'arrete_type' => $dossierArreteSISH->getArreteType(),
             'arrete_mainlevee_date' => $dossierArreteSISH->getArreteMLDate(),
             'arrete_mainlevee_numero' => $dossierArreteSISH->getArreteMLNumero(),
+            'arrete_modificatif_date' => $dossierArreteSISH->getArreteModificatifDate(),
+            'arrete_modificatif_numero' => $dossierArreteSISH->getArreteModificatifNumero(),
         ];
 
         if (null !== $intervention) {
@@ -458,7 +460,9 @@ class EsaboraManager
      *      arrete_numero: string|null,
      *      arrete_type: string|null,
      *      arrete_mainlevee_date: string|null,
-     *      arrete_mainlevee_numero: string|null
+     *      arrete_mainlevee_numero: string|null,
+     *      arrete_modificatif_date: string|null,
+     *      arrete_modificatif_numero: string|null
      *  } $additionalInformation
      *
      * @throws \Exception
@@ -472,18 +476,25 @@ class EsaboraManager
         $currentAdditionalInformationSorted = $intervention->getAdditionalInformation() ?? [];
         $currentAdditionalInformationSorted['arrete_date'] = $intervention->getScheduledAt()?->format(AbstractEsaboraService::FORMAT_DATE);
 
-        // Pour rappel, une seule intervention regroupe les deux arrêtés.
-        // Un arrêté seul produit un tableau `$additionalInformation` avec des champs de main-levée à null,
-        // tandis qu'un arrêté de main-levée produit un tableau `$additionalInformation` complet.
-        // Si les champs de mainlevée sont tous les deux null dans la réponse entrante (cas de l'arrêté seul issu du split),
-        // on conserve les informations de mainlevée existantes en base s'il y en a.
+        // Pour rappel, une seule intervention regroupe les arrêtés successifs.
+        // Un arrêté seul produit un tableau `$additionalInformation` avec des champs de main-levée et modificatif à null,
+        // tandis qu'un arrêté modificatif ou de main-levée produit un tableau `$additionalInformation` avec ces champs renseignés.
+        // Si les champs de mainlevée ou de modificatif sont tous les deux null dans la réponse entrante (cas d'un objet issu du split),
+        // on conserve les informations existantes en base s'il y en a.
         $mergedAdditionalInformation = array_replace($currentAdditionalInformationSorted, $additionalInformation);
         if (null === $additionalInformation['arrete_mainlevee_date']
             && null === $additionalInformation['arrete_mainlevee_numero']
-            && !empty($currentAdditionalInformationSorted['arrete_mainlevee_numero'])
+            && (!empty($currentAdditionalInformationSorted['arrete_mainlevee_numero']) || !empty($currentAdditionalInformationSorted['arrete_mainlevee_date']))
         ) {
-            $mergedAdditionalInformation['arrete_mainlevee_date'] = $currentAdditionalInformationSorted['arrete_mainlevee_date'];
-            $mergedAdditionalInformation['arrete_mainlevee_numero'] = $currentAdditionalInformationSorted['arrete_mainlevee_numero'];
+            $mergedAdditionalInformation['arrete_mainlevee_date'] = $currentAdditionalInformationSorted['arrete_mainlevee_date'] ?? null;
+            $mergedAdditionalInformation['arrete_mainlevee_numero'] = $currentAdditionalInformationSorted['arrete_mainlevee_numero'] ?? null;
+        }
+        if (null === $additionalInformation['arrete_modificatif_date']
+            && null === $additionalInformation['arrete_modificatif_numero']
+            && (!empty($currentAdditionalInformationSorted['arrete_modificatif_numero']) || !empty($currentAdditionalInformationSorted['arrete_modificatif_date']))
+        ) {
+            $mergedAdditionalInformation['arrete_modificatif_date'] = $currentAdditionalInformationSorted['arrete_modificatif_date'] ?? null;
+            $mergedAdditionalInformation['arrete_modificatif_numero'] = $currentAdditionalInformationSorted['arrete_modificatif_numero'] ?? null;
         }
         unset($mergedAdditionalInformation['arrete_date']);
         $mergedAdditionalInformationSorted = $mergedAdditionalInformation;
@@ -493,9 +504,10 @@ class EsaboraManager
 
         if ($currentAdditionalInformationSorted !== $mergedAdditionalInformationSorted) {
             $isNewMainLevee = $this->isNewMainLevee($currentAdditionalInformationSorted, $mergedAdditionalInformationSorted);
+            $isNewArreteModificatif = $this->isNewArreteModificatif($currentAdditionalInformationSorted, $mergedAdditionalInformationSorted);
             $hasNoChangesArrete = $this->hasNoChangesArrete($currentAdditionalInformationSorted, $mergedAdditionalInformationSorted);
 
-            if ($isNewMainLevee && $hasNoChangesArrete) {
+            if (($isNewMainLevee || $isNewArreteModificatif) && $hasNoChangesArrete) {
                 $newDetails = InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH);
             } else {
                 $newDetails = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($intervention, $dossierArreteSISH);
@@ -546,6 +558,16 @@ class EsaboraManager
     {
         return (empty($currentAdditionalInformation['arrete_mainlevee_date']) && !empty($mergedAdditionalInformation['arrete_mainlevee_date']))
             || (empty($currentAdditionalInformation['arrete_mainlevee_numero']) && !empty($mergedAdditionalInformation['arrete_mainlevee_numero']));
+    }
+
+    /**
+     * @param array<string, mixed> $currentAdditionalInformation
+     * @param array<string, mixed> $mergedAdditionalInformation
+     */
+    private function isNewArreteModificatif(array $currentAdditionalInformation, array $mergedAdditionalInformation): bool
+    {
+        return (empty($currentAdditionalInformation['arrete_modificatif_date']) && !empty($mergedAdditionalInformation['arrete_modificatif_date']))
+            || (empty($currentAdditionalInformation['arrete_modificatif_numero']) && !empty($mergedAdditionalInformation['arrete_modificatif_numero']));
     }
 
     /**
