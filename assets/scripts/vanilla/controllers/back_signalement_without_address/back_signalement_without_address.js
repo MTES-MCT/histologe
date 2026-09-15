@@ -1,4 +1,4 @@
-import { jsonResponseHandler } from '../../services/component/component_json_response_handler';
+import { jsonResponseHandler } from '../../services/component/component_json_response_handler.js';
 
 const panelSearchAddress = document.getElementById('fr-panel-search-address');
 const panelChangeTerritory = document.getElementById('fr-panel-infos-territory');

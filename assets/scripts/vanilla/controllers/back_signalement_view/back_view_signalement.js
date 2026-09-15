@@ -1,8 +1,8 @@
-import { loadWindowWithLocalStorage } from '../../services/ui/list_filter_helper';
-import { btnSignalementFileDeleteAddEventListeners } from '../../services/file/file_delete';
-import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_signalement_edit_file/back_signalement_edit_file';
-import { initTinyMCE } from '../../services/form/form_helper';
-import { initZipSelectionPhotos } from './zip_selection_photos';
+import { loadWindowWithLocalStorage } from '../../services/ui/list_filter_helper.js';
+import { btnSignalementFileDeleteAddEventListeners } from '../../services/file/file_delete.js';
+import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_signalement_edit_file/back_signalement_edit_file.js';
+import { initTinyMCE } from '../../services/form/form_helper.js';
+import { initZipSelectionPhotos } from './zip_selection_photos.js';
 
 /**
  * Réinitialise les tooltips DSFR dans un conteneur donné

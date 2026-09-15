@@ -1,5 +1,5 @@
-import { applyFilter } from '../../controllers/back_signalement_view/toggle-suivi-auto';
-import { reloadTinyMCE } from '../form/form_helper';
+import { applyFilter } from '../../controllers/back_signalement_view/toggle-suivi-auto.js';
+import { reloadTinyMCE } from '../form/form_helper.js';
 import { attachAjaxFormHandlers } from '../form/ajax_form_handler.js';
 import { initSearchCheckboxWidgets } from '../component/component_search_checkbox.js';
 import { initSearchAndSelectBadges } from '../component/component_search_and_select_badges.js';

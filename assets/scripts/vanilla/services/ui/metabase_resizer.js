@@ -1,4 +1,4 @@
-import 'iframe-resizer/js/iframeResizer';
+import iFrameResize from 'iframe-resizer';
 
 window.addEventListener('load', () => {
   const iframe = document.querySelector('iframe[data-type="metabase"]');

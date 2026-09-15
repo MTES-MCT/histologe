@@ -1,4 +1,4 @@
-import { initTinyMCE } from '../../services/form/form_helper';
+import { initTinyMCE } from '../../services/form/form_helper.js';
 
 const personalNoteContainerSelector = '#signalement-personal-note-container';
 

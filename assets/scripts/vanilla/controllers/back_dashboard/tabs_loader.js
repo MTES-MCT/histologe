@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser';
-import sortHandler from './sort_handler';
-import paginationHandler from './pagination_handler';
+import sortHandler from './sort_handler.js';
+import paginationHandler from './pagination_handler.js';
 
 export default function initTabsLoader() {
   let currentAbortController = null;

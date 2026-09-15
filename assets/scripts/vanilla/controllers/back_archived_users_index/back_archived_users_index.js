@@ -3,7 +3,7 @@ import {
   updateLocalStorageWithFormParams,
   updateLocalStorageWithPaginationParams,
   updateLocalStorageOnEvent,
-} from '../../services/ui/list_filter_helper';
+} from '../../services/ui/list_filter_helper.js';
 
 const searchArchivedUsersForm = document.getElementById('search-archived-users-form');
 if (searchArchivedUsersForm) {

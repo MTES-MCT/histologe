@@ -1,10 +1,10 @@
 import {
   disableHeaderAndFooterButtonOfModal,
   enableHeaderAndFooterButtonOfModal,
-} from '../../services/ui/modales_helper';
+} from '../../services/ui/modales_helper.js';
 
-import { attacheAutocompleteAddressEvents } from '../../services/component/component_search_address';
-import { initComponentAddress } from '../../services/component/component_search_address';
+import { attacheAutocompleteAddressEvents } from '../../services/component/component_search_address.js';
+import { initComponentAddress } from '../../services/component/component_search_address.js';
 attacheAutocompleteAddressEvents();
 if (document.querySelector('#coordonnees_bailleur_adresseCompleteProprio')) {
   initComponentAddress('#coordonnees_bailleur_adresseCompleteProprio');
