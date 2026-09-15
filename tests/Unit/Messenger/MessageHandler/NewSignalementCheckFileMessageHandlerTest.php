@@ -128,7 +128,6 @@ class NewSignalementCheckFileMessageHandlerTest extends KernelTestCase
             $suiviManager,
             $parameterBag,
             $this->entityManager,
-            $security,
         );
 
         return $handler;

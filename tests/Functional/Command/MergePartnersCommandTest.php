@@ -3,8 +3,6 @@
 namespace App\Tests\Functional\Command;
 
 use App\Entity\Affectation;
-use App\Entity\Partner;
-use App\Entity\User;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\UserRepository;
@@ -77,7 +75,6 @@ class MergePartnersCommandTest extends KernelTestCase
         $users = $sourcePartner->getUsers();
         $initialSubscriptionCounts = [];
         foreach ($users as $user) {
-            /* @var User $user */
             $initialSubscriptionCounts[$user->getId()] = $this->subscriptionRepository->count(['user' => $user]);
         }
 

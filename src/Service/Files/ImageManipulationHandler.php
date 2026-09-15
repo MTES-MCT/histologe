@@ -35,13 +35,6 @@ class ImageManipulationHandler
         return $this;
     }
 
-    public function setImagePath(string $path): self
-    {
-        $this->imagePath = $path;
-
-        return $this;
-    }
-
     /**
      * @throws \Throwable
      */

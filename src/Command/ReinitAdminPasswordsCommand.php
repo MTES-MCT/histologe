@@ -3,7 +3,6 @@
 namespace App\Command;
 
 use App\Entity\Enum\UserStatus;
-use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMail;
@@ -26,8 +25,6 @@ class ReinitAdminPasswordsCommand extends Command
 {
     private SymfonyStyle $io;
 
-    public const string ROLE_ADMIN = 'ROLE_ADMIN';
-
     public function __construct(
         private readonly UserManager $userManager,
         private readonly ValidatorInterface $validator,
@@ -48,7 +45,6 @@ class ReinitAdminPasswordsCommand extends Command
         $users = $this->userRepository->findActiveAdmins();
 
         foreach ($users as $user) {
-            /* @var User $user */
             $user->setPassword('')->setStatut(UserStatus::INACTIVE);
             $this->userManager->loadUserTokenForUser($user, false);
 

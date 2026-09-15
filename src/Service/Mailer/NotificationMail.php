@@ -19,8 +19,6 @@ class NotificationMail
     public function __construct(
         private readonly NotificationMailerType $type,
         private readonly array|string $to,
-        private readonly ?string $fromEmail = null,
-        private readonly ?string $fromFullname = null,
         private readonly ?string $message = null,
         private readonly ?Territory $territory = null,
         private readonly ?User $user = null,
@@ -128,16 +126,6 @@ class NotificationMail
     public function getMotif(): ?string
     {
         return $this->motif;
-    }
-
-    public function getFromEmail(): ?string
-    {
-        return $this->fromEmail;
-    }
-
-    public function getFromFullname(): ?string
-    {
-        return $this->fromFullname;
     }
 
     public function getMessage(): ?string

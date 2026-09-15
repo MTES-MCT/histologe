@@ -19,7 +19,6 @@ use App\Repository\Query\Dashboard\DossiersUndeliverableEmailQuery;
 use App\Repository\Query\Dashboard\KpiQuery;
 use App\Repository\Query\Dashboard\SignalementsSansAffectationAccepteeQuery;
 use App\Repository\Query\Interconnection\JobEventQuery;
-use App\Repository\SignalementRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use App\Service\DashboardTabPanel\Kpi\TabCountKpi;
@@ -39,7 +38,6 @@ class TabDataManagerTest extends WebTestCase
     protected MockObject&JobEventQuery $jobEventQuery;
     protected MockObject&TerritoryRepository $territoryRepository;
     protected MockObject&UserRepository $userRepository;
-    protected MockObject&SignalementRepository $signalementRepository;
     protected MockObject&TabCountKpiBuilder $tabCountKpiBuilder;
     protected MockObject&SignalementsSansAffectationAccepteeQuery $signalementsSansAffectationAccepteeQuery;
     protected MockObject&DossiersQuery $dossiersQuery;
@@ -56,7 +54,6 @@ class TabDataManagerTest extends WebTestCase
         $this->jobEventQuery = $this->createMock(JobEventQuery::class);
         $this->territoryRepository = $this->createMock(TerritoryRepository::class);
         $this->userRepository = $this->createMock(UserRepository::class);
-        $this->signalementRepository = $this->createMock(SignalementRepository::class);
         $this->tabCountKpiBuilder = $this->createMock(TabCountKpiBuilder::class);
         $this->signalementsSansAffectationAccepteeQuery = $this->createMock(SignalementsSansAffectationAccepteeQuery::class);
         $this->dossiersQuery = $this->createMock(DossiersQuery::class);

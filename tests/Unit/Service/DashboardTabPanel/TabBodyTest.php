@@ -18,7 +18,6 @@ class TabBodyTest extends TestCase
 
         $tabQueryParameters = new TabQueryParameters(
             territoireId: 1,
-            communeCodePostal: '13002',
             partenairesId: [123, 456],
             sortBy: 'createdAt',
             orderBy: 'ASC'

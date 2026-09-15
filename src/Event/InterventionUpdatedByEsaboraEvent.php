@@ -4,15 +4,12 @@ namespace App\Event;
 
 use App\Entity\Intervention;
 use App\Entity\Partner;
-use App\Entity\Suivi;
 use App\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class InterventionUpdatedByEsaboraEvent extends Event
 {
     public const string NAME = 'intervention.updated.esabora';
-
-    private ?Suivi $suivi = null;
 
     public function __construct(
         private readonly Intervention $intervention,
@@ -29,16 +26,6 @@ class InterventionUpdatedByEsaboraEvent extends Event
     public function getUser(): ?User
     {
         return $this->user;
-    }
-
-    public function getSuivi(): ?Suivi
-    {
-        return $this->suivi;
-    }
-
-    public function setSuivi(?Suivi $suivi): void
-    {
-        $this->suivi = $suivi;
     }
 
     public function getPartner(): ?Partner

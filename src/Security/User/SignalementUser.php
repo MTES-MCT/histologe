@@ -38,10 +38,6 @@ class SignalementUser implements UserInterface
         return $this->roles;
     }
 
-    public function eraseCredentials(): void
-    {
-    }
-
     public function getPassword(): ?string
     {
         return null;

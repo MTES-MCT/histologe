@@ -4,7 +4,6 @@ namespace App\Service\Import\AutoAffectationRule;
 
 class AutoAffectationRuleHeader
 {
-    public const string TERRITORY = 'Territoire';
     public const string STATUS = 'Statut';
     public const string PARTNER_TYPE = 'Type de partenaire';
     public const string PROFILE_DECLARANT = 'Profil déclarant';

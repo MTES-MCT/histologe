@@ -29,24 +29,6 @@ class GeometryCollection extends AbstractGeometry implements GeometryInterface
     }
 
     /**
-     * Get all geometries in this collection.
-     *
-     * @return GeometryInterface[]
-     */
-    public function getGeometries(): array
-    {
-        return $this->geometries;
-    }
-
-    /**
-     * Get a geometry at a specific index.
-     */
-    public function getGeometry(int $index): ?GeometryInterface
-    {
-        return $this->geometries[$index] ?? null;
-    }
-
-    /**
      * Get the number of geometries in this collection.
      */
     public function count(): int

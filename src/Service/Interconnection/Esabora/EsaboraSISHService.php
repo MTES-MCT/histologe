@@ -549,7 +549,7 @@ class EsaboraSISHService extends AbstractEsaboraService
             ],
             [
                 'fieldName' => 'Personne_Representant',
-                'fieldValue' => $dossierMessageSISHPersonne->getRepresentant(),
+                'fieldValue' => null,
             ],
         ];
     }

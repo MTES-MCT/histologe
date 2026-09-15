@@ -14,7 +14,6 @@ class ValidProfileDeclarantValidator extends ConstraintValidator
         if (!$constraint instanceof ValidProfileDeclarant) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\ValidProfileDeclarant');
         }
-        /* @var ValidProfileDeclarant $constraint */
         if (null === $value || '' === $value) {
             return;
         }

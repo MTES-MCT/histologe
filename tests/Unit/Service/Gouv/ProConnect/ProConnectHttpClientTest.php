@@ -19,7 +19,6 @@ class ProConnectHttpClientTest extends TestCase
 {
     public string $jwksFile;
     public string $discoveryFile;
-    public ProConnectHttpClient $proConnectHttpClient;
 
     protected function setUp(): void
     {

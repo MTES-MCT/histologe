@@ -16,7 +16,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class QualificationStatusServiceTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
-    protected ManagerRegistry $managerRegistry;
 
     protected function setUp(): void
     {
@@ -28,7 +27,6 @@ class QualificationStatusServiceTest extends KernelTestCase
         $entityManager = $doctrine->getManager();
 
         $this->entityManager = $entityManager;
-        $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
     }
 
     #[DataProvider('provideNDERequestAndStatus')]

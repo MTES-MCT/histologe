@@ -17,8 +17,6 @@ class AskFeedbackUsagerQueryTest extends KernelTestCase
 
     private EntityManagerInterface $entityManager;
 
-    public const USER_ADMIN = 'admin-01@signal-logement.fr';
-
     protected function setUp(): void
     {
         $kernel = self::bootKernel();

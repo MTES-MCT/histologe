@@ -449,22 +449,6 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * @return array<int, Signalement>
-     */
-    public function findSignalementsBetweenDates(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate): array
-    {
-        $qb = $this->createQueryBuilder('s');
-
-        return $qb
-            ->where('s.createdAt BETWEEN :startDate AND :endDate')
-            ->setParameter('startDate', $startDate)
-            ->setParameter('endDate', $endDate)
-            ->orderBy('s.createdAt', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
-
     public function findOneForApi(
         User $user,
         ?string $uuid = null,

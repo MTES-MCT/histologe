@@ -99,7 +99,6 @@ class ArreteImportController extends AbstractController
             return $this->json(['message' => 'Requête invalide'], Response::HTTP_BAD_REQUEST);
         }
 
-        /* @var ArreteImportRow[] $arreteImportRows */
         $arreteImportRows = $this->serializer->deserialize(
             $request->getContent(),
             ArreteImportRow::class.'[]',

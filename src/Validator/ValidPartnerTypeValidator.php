@@ -14,7 +14,6 @@ class ValidPartnerTypeValidator extends ConstraintValidator
         if (!$constraint instanceof ValidPartnerType) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\ValidPartnerType');
         }
-        /* @var ValidPartnerType $constraint */
         if (null === $value || '' === $value) {
             return;
         }

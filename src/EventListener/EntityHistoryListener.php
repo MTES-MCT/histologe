@@ -135,12 +135,10 @@ class EntityHistoryListener
         $fieldName = $collection->getMapping()['fieldName'];
         if ($ownerEntity instanceof EntityHistoryCollectionInterface && in_array($fieldName, $ownerEntity->getManyToManyFieldsToTrack())) {
             foreach ($collection->getInsertDiff() as $insertItem) {
-                /* @var EntityHistoryInterface $insertItem */
                 $changes[$fieldName]['new'][] = $insertItem->getId();
             }
 
             foreach ($collection->getDeleteDiff() as $deleteItem) {
-                /* @var EntityHistoryInterface $deleteItem */
                 $changes[$fieldName]['old'][] = $deleteItem->getId();
             }
             $this->saveEntityHistory($event, $ownerEntity, $changes); // @phpstan-ignore-line

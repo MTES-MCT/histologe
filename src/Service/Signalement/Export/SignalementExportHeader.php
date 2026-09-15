@@ -4,8 +4,6 @@ namespace App\Service\Signalement\Export;
 
 class SignalementExportHeader
 {
-    public const string SEPARATOR = ';';
-
     /**
      * @return array<string>
      *

@@ -13,7 +13,6 @@ class PartnerToExcludeValidator extends ConstraintValidator
         if (!$constraint instanceof PartnerToExclude) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\PartnerToExclude');
         }
-        /* @var PartnerToExclude $constraint */
         if (null === $value || '' === $value) {
             return;
         }

@@ -91,6 +91,7 @@
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
         "phpunit/phpunit": "^13.1",
+        "shipmonk/dead-code-detector": "^1.4",
         "symfony/browser-kit": "8.1.*",
         "symfony/css-selector": "8.1.*",
         "symfony/debug-bundle": "8.1.*",
@@ -147,6 +148,7 @@
         "cs-check": "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run -v",
         "cs-fix": "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix",
         "stan": "vendor/bin/phpstan analyse --memory-limit 1G",
+        "dead-code": "vendor/bin/phpstan analyse -c phpstan-dead-code.neon --memory-limit 1G",
         "check-quality": [
             "@composer cs-check",
             "@composer stan"

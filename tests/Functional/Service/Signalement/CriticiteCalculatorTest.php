@@ -12,7 +12,6 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class CriticiteCalculatorTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
-    protected ManagerRegistry $managerRegistry;
 
     protected function setUp(): void
     {
@@ -24,7 +23,6 @@ class CriticiteCalculatorTest extends KernelTestCase
         $entityManager = $doctrine->getManager();
 
         $this->entityManager = $entityManager;
-        $this->managerRegistry = static::getContainer()->get(ManagerRegistry::class);
     }
 
     public function testCalculateScoreOnOldSignalement(): void
