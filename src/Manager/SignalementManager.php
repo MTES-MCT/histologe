@@ -42,6 +42,7 @@ use App\Factory\SuiviDelayedFactory;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\BailleurRepository;
 use App\Repository\DesordrePrecisionRepository;
+use App\Repository\PartnerRepository;
 use App\Repository\Query\Partner\PartnerLocalizationQuery;
 use App\Repository\Query\SignalementList\ExportIterableQuery;
 use App\Repository\Query\SignalementList\QueryBuilderFactory;
@@ -78,6 +79,7 @@ class SignalementManager
         private readonly SuiviDelayedFactory $suiviDelayedFactory,
         private readonly UserManager $userManager,
         private readonly BailleurRepository $bailleurRepository,
+        private readonly PartnerRepository $partnerRepository,
         private readonly PartnerLocalizationQuery $partnerLocalizationQuery,
         private readonly SignalementRepository $signalementRepository,
         private readonly SignalementAddressUpdater $signalementAddressUpdater,
