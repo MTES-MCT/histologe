@@ -271,7 +271,7 @@ const formStore: FormStore = reactive({
     }
     return true;
   },
-  shouldDisplayTypeLogement (): boolean {
+  shouldDisplayPrecisionsAppartmentScreen (): boolean {
     if (formStore.data.type_logement_nature !== 'appartement') {
       return false
     }

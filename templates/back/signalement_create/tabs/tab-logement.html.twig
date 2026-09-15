@@ -10,7 +10,7 @@
             <legend>
                 <h3 class="fr-h5">Type de logement</h3>
             </legend>
-            {% if signalement.natureLogement == 'appartement' %}
+            {% if signalement.natureLogement is same as 'appartement' %}
                 {% set typeLogementAppartementEtage = '' %}
                 {% if signalement.typeCompositionLogement %}
                     {% if signalement.typeCompositionLogement.typeLogementAppartementEtage %}
@@ -34,7 +34,7 @@
                             {% elseif typeLogementAppartementEtage == enum('App\\Entity\\Enum\\EtageType').SOUSSOL.value %}
                                 au sous-sol.
                             {% else %}
-                                à un autre étage{% if signalement.etageOccupant %} ({{ signalement.etageOccupant }}){% endif %}.
+                                {% if signalement.etageOccupant %}à l'étage {{ signalement.etageOccupant }}{% else %}à un autre étage{% endif %}.
                             {% endif %}
                             <span class="fr-hint-text">Modifiable sur l'onglet Adresse.</span>
                         </p>

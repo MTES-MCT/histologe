@@ -757,7 +757,7 @@
                 "action": "goto:type_logement",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
-                  "show": "formStore.shouldDisplayTypeLogement()"
+                  "show": "formStore.shouldDisplayPrecisionsAppartmentScreen()"
                 }
               },
               {
@@ -767,7 +767,7 @@
                 "action": "goto:composition_logement",
                 "customCss": "fr-btn--icon-right fr-icon-arrow-right-line",
                 "conditional": {
-                  "show": "!formStore.shouldDisplayTypeLogement()"
+                  "show": "!formStore.shouldDisplayPrecisionsAppartmentScreen()"
                 }
               },
               {
@@ -967,17 +967,17 @@
                 "action": "goto:type_logement",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
                 "conditional": {
-                  "show": "formStore.shouldDisplayTypeLogement()"
+                  "show": "formStore.shouldDisplayPrecisionsAppartmentScreen()"
                 }
               },
               {
                 "type": "SignalementFormButton",
                 "label": "Précédent",
-                "slug": "composition_logement_previous_type",
+                "slug": "composition_logement_previous",
                 "action": "goto:ecran_intermediaire_type_composition",
                 "customCss": "fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line",
                 "conditional": {
-                  "show": "!formStore.shouldDisplayTypeLogement()"
+                  "show": "!formStore.shouldDisplayPrecisionsAppartmentScreen()"
                 }
               }
             ]

@@ -15,7 +15,7 @@
 
     {% if etage %}
         {% if etage == EtageType.AUTRE.value and signalement.etageOccupant %}
-            {{ EtageType.from(etage).label }} ({{ signalement.etageOccupant }})
+            {{ signalement.etageOccupant }}
         {% else %}
             {{ EtageType.from(etage).label }}
         {% endif %}
