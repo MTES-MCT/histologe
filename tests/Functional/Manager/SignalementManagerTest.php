@@ -124,6 +124,7 @@ class SignalementManagerTest extends WebTestCase
             $this->suiviDelayedFactory,
             $this->userManager,
             $this->bailleurRepository,
+            $this->partnerRepository,
             $this->partnerLocalizationQuery,
             $this->signalementRepository,
             $this->signalementAddressUpdater,
