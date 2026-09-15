@@ -1,16 +1,17 @@
 import * as Sentry from '@sentry/browser';
+import { registerClickHandler } from '../ui/click_dispatcher';
 
 const inputElement = document.querySelector('[data-autocomplete-bailleur-url]');
 let selectedSuggestionIndex = -1;
 let isAutocompleteOpen = false;
 
-document.addEventListener('click', function (event) {
-  if (!event.target.closest('.fr-autocomplete-list') && isAutocompleteOpen) {
-    closeSuggestions();
-  }
-});
-
 if (inputElement) {
+  registerClickHandler(function (event) {
+    if (!event.target.closest('.fr-autocomplete-list') && isAutocompleteOpen) {
+      closeSuggestions();
+    }
+  });
+
   inputElement.addEventListener('keyup', function (event) {
     event.preventDefault();
     const isNavigationKey = ['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key);

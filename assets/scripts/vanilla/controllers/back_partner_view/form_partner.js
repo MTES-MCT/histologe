@@ -4,6 +4,7 @@ import {
   updateLocalStorageOnEvent,
 } from '../../services/ui/list_filter_helper';
 import { jsonResponseProcess } from '../../services/component/component_json_response_handler';
+import { registerClickRoute } from '../../services/ui/click_dispatcher';
 
 function histoUpdateFieldsVisibility() {
   const partnerType = document.getElementById('partner_type');
@@ -118,19 +119,13 @@ function updateMailingSumaryState() {
   }
 }
 
-document.addEventListener('click', (evt) => {
-  const target = evt.target.closest('.btn-transfer-partner-user');
-  if (!target) return;
-
+registerClickRoute('.btn-transfer-partner-user', (target, evt) => {
   document.querySelector('#fr-modal-user-transfer_username').textContent =
     target.getAttribute('data-username');
   histoUpdateValueFromData('#fr-modal-user-transfer_userid', 'data-userid', target);
 });
 
-document.addEventListener('click', (evt) => {
-  const target = evt.target.closest('.btn-delete-partner-user');
-  if (!target) return;
-
+registerClickRoute('.btn-delete-partner-user', (target, evt) => {
   document.querySelectorAll('.fr-modal-user-delete_username').forEach((userItem) => {
     userItem.textContent = target.getAttribute('data-username');
   });
@@ -140,10 +135,7 @@ document.addEventListener('click', (evt) => {
   histoUpdateValueFromData('#fr-modal-user-delete_userid', 'data-userid', target);
 });
 
-document.addEventListener('click', (evt) => {
-  const target = evt.target.closest('.btn-delete-partner');
-  if (!target) return;
-
+registerClickRoute('.btn-delete-partner', (target, evt) => {
   document.querySelectorAll('.fr-modal-partner-delete_name').forEach((userItem) => {
     userItem.textContent = target.getAttribute('data-partnername');
   });
@@ -215,10 +207,7 @@ updateLocalStorageOnEvent('change', '#partner-filters-territories', 'back_link_p
 updateLocalStorageOnEvent('change', '#partner-filters-types', 'back_link_partners');
 updateLocalStorageWithPaginationParams('click', '#partner-pagination a', 'back_link_partners');
 
-document.addEventListener('click', (evt) => {
-  const target = evt.target.closest('.btn-edit-partner-user');
-  if (!target) return;
-
+registerClickRoute('.btn-edit-partner-user', (target, evt) => {
   const refreshUrl = target.dataset.refreshUrl;
   document.querySelector('#fr-modal-user-edit button[type="submit"]').disabled = true;
   document.querySelector('#fr-modal-user-edit-title').innerHTML = 'Chargement en cours...';

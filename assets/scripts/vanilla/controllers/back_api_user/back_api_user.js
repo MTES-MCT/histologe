@@ -1,24 +1,22 @@
-document.addEventListener('click', (event) => {
-  const btn = event.target.closest('.btn-delete-user-api-permission');
-  if (btn) {
-    document.querySelector('#user_api_permission_delete_form').action = btn.dataset.url;
-    document.querySelector('#fr-modal-user-api-permission-delete-description').innerHTML =
-      btn.dataset.description;
-  }
+import { registerClickRoute } from '../../services/ui/click_dispatcher';
 
-  const toggle = event.target.closest('.js-api-permission-toggle');
-  if (toggle) {
-    const cell = toggle.closest('td');
-    if (!cell) {
-      return;
-    }
-    const expanded = toggle.getAttribute('aria-expanded') === 'true';
-    cell.querySelectorAll('.js-api-permission-extra').forEach((row) => {
-      row.classList.toggle('fr-hidden', expanded);
-    });
-    toggle.setAttribute('aria-expanded', String(!expanded));
-    toggle.textContent = expanded ? toggle.dataset.showLabel : toggle.dataset.hideLabel;
+registerClickRoute('.btn-delete-user-api-permission', (btn, event) => {
+  document.querySelector('#user_api_permission_delete_form').action = btn.dataset.url;
+  document.querySelector('#fr-modal-user-api-permission-delete-description').innerHTML =
+    btn.dataset.description;
+});
+
+registerClickRoute('.js-api-permission-toggle', (toggle, event) => {
+  const cell = toggle.closest('td');
+  if (!cell) {
+    return;
   }
+  const expanded = toggle.getAttribute('aria-expanded') === 'true';
+  cell.querySelectorAll('.js-api-permission-extra').forEach((row) => {
+    row.classList.toggle('fr-hidden', expanded);
+  });
+  toggle.setAttribute('aria-expanded', String(!expanded));
+  toggle.textContent = expanded ? toggle.dataset.showLabel : toggle.dataset.hideLabel;
 });
 
 const partnerSelect = document.querySelector('#user_api_permission_partner');

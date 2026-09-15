@@ -2,6 +2,7 @@ import {
   loadWindowWithLocalStorage,
   updateLocalStorageWithFormParams,
 } from '../../services/ui/list_filter_helper';
+import { registerClickRoute } from '../../services/ui/click_dispatcher';
 
 const searchFilesForm = document.getElementById('search-territory-files-type-form');
 
@@ -25,37 +26,29 @@ if (searchFilesForm) {
     });
   });
 
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('.open-modal-document-view')) {
-      const button = e.target.closest('.open-modal-document-view');
-
-      document.getElementById('fr-modal-document-view-document-created-at').textContent =
-        button.dataset.createdat;
-      document.getElementById('fr-modal-document-view-document-created-by').textContent =
-        button.dataset.createdby;
-      document.getElementById('fr-modal-document-view-document-title').textContent =
-        button.dataset.title;
-      document.getElementById('fr-modal-document-view-document-description').innerText =
-        button.dataset.description;
-      document.getElementById('fr-modal-document-view-document-partner-type').innerHTML =
-        button.dataset.partnertype;
-      document.getElementById('fr-modal-document-view-document-partner-competence').innerHTML =
-        button.dataset.partnercompetence;
-      document.getElementById('fr-modal-document-edit-btn-submit').href = button.dataset.url;
-    }
+  registerClickRoute('.open-modal-document-view', (button, e) => {
+    document.getElementById('fr-modal-document-view-document-created-at').textContent =
+      button.dataset.createdat;
+    document.getElementById('fr-modal-document-view-document-created-by').textContent =
+      button.dataset.createdby;
+    document.getElementById('fr-modal-document-view-document-title').textContent =
+      button.dataset.title;
+    document.getElementById('fr-modal-document-view-document-description').innerText =
+      button.dataset.description;
+    document.getElementById('fr-modal-document-view-document-partner-type').innerHTML =
+      button.dataset.partnertype;
+    document.getElementById('fr-modal-document-view-document-partner-competence').innerHTML =
+      button.dataset.partnercompetence;
+    document.getElementById('fr-modal-document-edit-btn-submit').href = button.dataset.url;
   });
-  document.addEventListener('click', (e) => {
-    if (e.target.closest('.open-modal-document-delete')) {
-      const button = e.target.closest('.open-modal-document-delete');
-
-      document.getElementById('fr-modal-document-delete-document-title').textContent =
-        button.dataset.title;
-      document.getElementById('fr-modal-document-delete-document-territoire').textContent =
-        button.dataset.territoire;
-      document.getElementById('fr-modal-document-delete-document-title-reminder').textContent =
-        button.dataset.title;
-      document.getElementById('fr-modal-document-delete-form').action = button.dataset.url;
-    }
+  registerClickRoute('.open-modal-document-delete', (button, e) => {
+    document.getElementById('fr-modal-document-delete-document-title').textContent =
+      button.dataset.title;
+    document.getElementById('fr-modal-document-delete-document-territoire').textContent =
+      button.dataset.territoire;
+    document.getElementById('fr-modal-document-delete-document-title-reminder').textContent =
+      button.dataset.title;
+    document.getElementById('fr-modal-document-delete-form').action = button.dataset.url;
   });
   updateLocalStorageWithFormParams('search-territory-files-type-form');
 }

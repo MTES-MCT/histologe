@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/browser';
+import { registerClickRoute } from '../../services/ui/click_dispatcher';
 
 export default function paginationHandler(loadPanelContent) {
-  document.addEventListener('click', async function (e) {
-    const link = e.target.closest('.fr-pagination__link');
-    if (!link || link.getAttribute('aria-disabled')) return;
+  registerClickRoute('.fr-pagination__link', async (link, e) => {
+    if (link.getAttribute('aria-disabled')) return;
 
     e.preventDefault();
 

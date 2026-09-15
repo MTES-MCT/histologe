@@ -1,3 +1,5 @@
+import { registerClickHandler } from '../../services/ui/click_dispatcher';
+
 async function initAddressesHistory() {
   const [{ mapStyles }, { default: maplibregl }] = await Promise.all([
     import('carte-facile'),
@@ -530,7 +532,7 @@ async function initAddressesHistory() {
     });
   });
 
-  document.addEventListener('click', function (e) {
+  registerClickHandler(function (e) {
     if (!e.target.closest('.fr-input-wrap')) {
       searchForm.querySelectorAll('.fr-autocomplete-list').forEach(function (listEl) {
         listEl.innerHTML = '';

@@ -2,14 +2,12 @@ import {
   loadWindowWithLocalStorage,
   updateLocalStorageWithFormParams,
 } from '../../services/ui/list_filter_helper';
+import { registerClickRoute } from '../../services/ui/click_dispatcher';
 
 const searchTerritoryForm = document.getElementById('search-bailleur-form');
 
 if (searchTerritoryForm) {
-  document.addEventListener('click', (e) => {
-    const button = e.target.closest('.open-modal-bailleur-delete');
-    if (!button) return;
-
+  registerClickRoute('.open-modal-bailleur-delete', (button, e) => {
     document.getElementById('fr-modal-bailleur-delete-bailleur-name').textContent =
       button.dataset.name;
     document.getElementById('bailleur_delete_form').action = button.dataset.url;

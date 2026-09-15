@@ -1,7 +1,6 @@
-document.addEventListener('click', (e) => {
-  const link = e.target.closest('[data-select-all-in-target]');
-  if (!link) return;
+import { registerClickRoute } from '../ui/click_dispatcher';
 
+registerClickRoute('[data-select-all-in-target]', (link, e) => {
   e.preventDefault();
 
   const targetSelector = link.dataset.selectAllInTarget;

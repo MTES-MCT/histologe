@@ -1,3 +1,5 @@
+import { registerClickHandler } from '../ui/click_dispatcher';
+
 let isClickOutsideEventAttached = false;
 const autocompleteInputsByGroup = new WeakMap();
 
@@ -21,7 +23,7 @@ function attachAutocompleteClickOutsideEvent() {
   }
 
   isClickOutsideEventAttached = true;
-  document.addEventListener('click', function (event) {
+  registerClickHandler(function (event) {
     document
       ?.querySelectorAll('.fr-address-group, .fr-address-group-bo')
       .forEach((addressGroup) => {

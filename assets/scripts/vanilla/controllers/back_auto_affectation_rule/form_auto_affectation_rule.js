@@ -4,16 +4,14 @@ import {
   updateLocalStorageWithPaginationParams,
   updateLocalStorageOnEvent,
 } from '../../services/ui/list_filter_helper';
+import { registerClickRoute } from '../../services/ui/click_dispatcher';
 
-document.addEventListener('click', (evt) => {
-  const target = evt.target.closest('.btn-delete-autoaffectationrule');
-  if (target) {
-    document.querySelector('.fr-modal-autoaffectationrule-delete-description').textContent =
-      target.getAttribute('data-autoaffectationrule-description');
-    document.querySelector('#fr-modal-autoaffectationrule-delete-id').value = target.getAttribute(
-      'data-autoaffectationrule-id'
-    );
-  }
+registerClickRoute('.btn-delete-autoaffectationrule', (target, evt) => {
+  document.querySelector('.fr-modal-autoaffectationrule-delete-description').textContent =
+    target.getAttribute('data-autoaffectationrule-description');
+  document.querySelector('#fr-modal-autoaffectationrule-delete-id').value = target.getAttribute(
+    'data-autoaffectationrule-id'
+  );
 });
 
 const searchAutoAffectationRuleForm = document.getElementById('search-auto-affectation-rule-form');

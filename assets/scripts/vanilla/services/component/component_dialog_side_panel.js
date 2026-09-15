@@ -1,3 +1,5 @@
+import { registerClickHandler } from '../ui/click_dispatcher';
+
 function openPanel(panelId) {
   /** @type {HTMLDialogElement|null} */
   const panel = document.getElementById(panelId);
@@ -31,7 +33,7 @@ function resetPanelForms(panel) {
   }
 }
 
-document.addEventListener('click', (e) => {
+registerClickHandler((e) => {
   const openBtn = e.target.closest('[data-panel-open]');
   if (openBtn) {
     openPanel(openBtn.dataset.panelOpen);

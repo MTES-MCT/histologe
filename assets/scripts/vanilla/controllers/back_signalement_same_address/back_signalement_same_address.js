@@ -1,4 +1,5 @@
 import 'leaflet/dist/leaflet.css';
+import { registerClickHandler } from '../../services/ui/click_dispatcher';
 
 if (document.getElementById('map-same-address')) {
   const ITEMS_PER_PAGE = 5;
@@ -460,7 +461,7 @@ if (document.getElementById('map-same-address')) {
     });
   });
 
-  document.addEventListener('click', function (e) {
+  registerClickHandler(function (e) {
     if (!e.target.closest('.fr-input-wrap')) {
       searchForm.querySelectorAll('.fr-autocomplete-list').forEach(function (listEl) {
         listEl.innerHTML = '';
