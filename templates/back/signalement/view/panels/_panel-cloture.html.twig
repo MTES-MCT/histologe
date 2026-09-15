@@ -45,7 +45,7 @@
                                 class="fr-btn fr-btn--icon-left fr-icon-check-line"
                                 form="form-cloture"
                                 data-cloture-type="partner"
-                                >Clôturer pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}</button>
+                                >Clôturer pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.address.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.address.territory).nom : 'N/A' }}</button>
                         </li>
                     {% endif %}
                 {% else %}
@@ -54,7 +54,7 @@
                             class="fr-btn fr-btn--icon-left fr-icon-check-line"
                             form="form-cloture"
                             data-cloture-type="partner"
-                            >Clôturer pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}</button>
+                            >Clôturer pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.address.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.address.territory).nom : 'N/A' }}</button>
                     </li>
                 {% endif %}
                 <li>

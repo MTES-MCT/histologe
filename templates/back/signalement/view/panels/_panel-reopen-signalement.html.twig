@@ -9,7 +9,7 @@
                 >{% if all == '1' %}
                     Rouvrir le signalement pour tous
                 {% else %}
-                    Rouvrir pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}
+                    Rouvrir pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.address.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.address.territory).nom : 'N/A' }}
                 {% endif %}</h1>
 
             <form action="{{ path('back_signalement_reopen',{uuid:signalement.uuid}) }}" id="form-reopen{% if all == '1' %}-all{% endif %}-signalement" class="fr-mb-3v fr-w-100">
@@ -50,7 +50,7 @@
                         >{% if all == '1' %}
                             Rouvrir le signalement pour tous
                         {% else %}
-                            Rouvrir pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.territory).nom : 'N/A' }}
+                            Rouvrir pour {{ app.user.partnerInTerritoryOrFirstOne(signalement.address.territory) ? app.user.partnerInTerritoryOrFirstOne(signalement.address.territory).nom : 'N/A' }}
                         {% endif %}</button>
                 </li>
                 <li>
