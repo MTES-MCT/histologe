@@ -10,7 +10,7 @@ use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
-use App\Repository\PartnerRepository;
+use App\Repository\Query\Partner\PartnerLocalizationQuery;
 use App\Repository\UserRepository;
 use App\Service\Notification\NotificationAndMailSender;
 use App\Specification\Affectation\AllocataireSpecification;
@@ -37,7 +37,7 @@ class AutoAssigner
         private readonly SignalementManager $signalementManager,
         private readonly AffectationManager $affectationManager,
         private readonly UserManager $userManager,
-        private readonly PartnerRepository $partnerRepository,
+        private readonly PartnerLocalizationQuery $partnerLocalizationQuery,
         private readonly UserRepository $userRepository,
         private readonly UserSignalementSubscriptionManager $subscriptionManager,
         private readonly NotificationAndMailSender $notificationAndMailSender,
@@ -81,7 +81,7 @@ class AutoAssigner
             return [];
         }
         $adminUser = $this->userManager->getSystemUser();
-        $partners = $this->partnerRepository->findPartnersByLocalization($signalement, $simulation);
+        $partners = $this->partnerLocalizationQuery->findPartnersByLocalization($signalement, $simulation);
         $assignablePartners = [];
 
         /** @var AutoAffectationRule $rule */

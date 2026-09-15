@@ -31,13 +31,13 @@ use App\Form\RefusSignalementType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
+use App\Repository\Behaviour\NotificationDeleter;
 use App\Repository\CritereRepository;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
 use App\Repository\EpciRepository;
 use App\Repository\FileRepository;
 use App\Repository\InterventionRepository;
-use App\Repository\NotificationRepository;
 use App\Repository\PersonalNoteRepository;
 use App\Repository\Query\Interconnection\JobEventQuery;
 use App\Repository\SignalementRepository;
@@ -430,7 +430,7 @@ class SignalementController extends AbstractController
         Request $request,
         ManagerRegistry $doctrine,
         AffectationManager $affectationManager,
-        NotificationRepository $notificationRepository,
+        NotificationDeleter $notificationDeleter,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_DELETE, $signalement);
         if ($this->isCsrfTokenValid(
@@ -439,7 +439,7 @@ class SignalementController extends AbstractController
         )
         ) {
             $signalement->setStatut(SignalementStatus::ARCHIVED);
-            $notificationRepository->deleteBySignalement($signalement);
+            $notificationDeleter->deleteBySignalement($signalement);
             $affectationManager->removeAffectationsBySignalement($signalement, AffectationStatus::WAIT);
 
             $doctrine->getManager()->flush();

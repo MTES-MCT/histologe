@@ -5,7 +5,6 @@ namespace App\Tests\Unit\Service;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
-use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\User;
@@ -13,7 +12,7 @@ use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
-use App\Repository\PartnerRepository;
+use App\Repository\Query\Partner\PartnerLocalizationQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Notification\NotificationAndMailSender;
@@ -32,7 +31,7 @@ class AutoAssignerTest extends KernelTestCase
     private UserRepository $userRepository;
     private UserManager $userManager;
     private SignalementRepository $signalementRepository;
-    private PartnerRepository $partnerRepository;
+    private PartnerLocalizationQuery $partnerLocalizationQuery;
     private UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
     private NotificationAndMailSender $notificationAndMailSender;
 
@@ -52,7 +51,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->userSignalementSubscriptionManager = static::getContainer()->get(UserSignalementSubscriptionManager::class);
         $this->userRepository = $this->entityManager->getRepository(User::class);
         $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
-        $this->partnerRepository = $this->entityManager->getRepository(Partner::class);
+        $this->partnerLocalizationQuery = static::getContainer()->get(PartnerLocalizationQuery::class);
         $this->notificationAndMailSender = static::getContainer()->get(NotificationAndMailSender::class);
     }
 
@@ -245,7 +244,7 @@ class AutoAssignerTest extends KernelTestCase
             $this->signalementManager,
             $this->affectationManager,
             $this->userManager,
-            $this->partnerRepository,
+            $this->partnerLocalizationQuery,
             $this->userRepository,
             $this->userSignalementSubscriptionManager,
             $this->notificationAndMailSender,

@@ -8,6 +8,7 @@ use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
+use App\Repository\Query\EmailDeliveryIssueExistsQuery;
 use App\Service\Gouv\ProConnect\Model\ProConnectUser;
 use App\Service\ListFilters\SearchArchivedUser;
 use App\Service\ListFilters\SearchUser;
@@ -36,7 +37,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ManagerRegistry $registry,
         private readonly TerritoryRepository $territoryRepository,
         private readonly PartnerRepository $partnerRepository,
-        private readonly EmailDeliveryIssueRepository $emailDeliveryIssueRepository,
+        private readonly EmailDeliveryIssueExistsQuery $emailDeliveryIssueExistsQuery,
         private readonly ClockInterface $clock,
         #[Autowire(env: 'USER_SYSTEM_EMAIL')]
         private readonly string $userSystemEmail,
@@ -444,7 +445,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->setParameter('roleAdminTerritory', '"ROLE_ADMIN_TERRITORY"');
         }
         if (null !== $searchUser->getEmailDeliveryIssue()) {
-            $existsByEmailDql = $this->emailDeliveryIssueRepository->getExistsByEmailDql('u.email');
+            $existsByEmailDql = $this->emailDeliveryIssueExistsQuery->getExistsByEmailDql('u.email');
             if ('Oui' === $searchUser->getEmailDeliveryIssue()) {
                 $qb->andWhere($qb->expr()->exists($existsByEmailDql));
             } else {

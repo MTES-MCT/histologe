@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Service\Mailer;
 
+use App\Repository\Behaviour\NotificationUpdater;
 use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
@@ -12,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 class SummaryMailServiceTest extends KernelTestCase
 {
     private NotificationRepository $notificationRepository;
+    private NotificationUpdater $notificationUpdater;
     private SummaryMailService $summaryMailService;
     private NotificationMailerRegistry $notificationMailerRegistry;
     private UserRepository $userRepository;
@@ -21,9 +23,10 @@ class SummaryMailServiceTest extends KernelTestCase
         $this->notificationRepository = $this->getContainer()->get(NotificationRepository::class);
         $this->notificationMailerRegistry = $this->getContainer()->get(NotificationMailerRegistry::class);
         $this->userRepository = $this->getContainer()->get(UserRepository::class);
-
+        $this->notificationUpdater = $this->getContainer()->get(NotificationUpdater::class);
         $this->summaryMailService = new SummaryMailService(
             $this->notificationRepository,
+            $this->notificationUpdater,
             $this->notificationMailerRegistry,
         );
     }

@@ -6,6 +6,9 @@ use App\Entity\Enum\NotificationType;
 use App\Entity\Notification;
 use App\Entity\Signalement;
 use App\Entity\User;
+use App\Repository\Behaviour\NotificationCleaner;
+use App\Repository\Behaviour\NotificationDeleter;
+use App\Repository\Behaviour\NotificationUpdater;
 use App\Repository\NotificationRepository;
 use App\Service\ListFilters\SearchNotification;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,6 +22,9 @@ class NotificationRepositoryTest extends KernelTestCase
 
     private EntityManagerInterface $entityManager;
     private NotificationRepository $notificationRepository;
+    private NotificationCleaner $notificationCleaner;
+    private NotificationDeleter $notificationDeleter;
+    private NotificationUpdater $notificationUpdater;
     private User $user;
     private Signalement $signalement;
 
@@ -34,6 +40,9 @@ class NotificationRepositoryTest extends KernelTestCase
 
         $this->entityManager = $entityManager;
         $this->notificationRepository = $this->entityManager->getRepository(Notification::class);
+        $this->notificationCleaner = new NotificationCleaner($this->entityManager);
+        $this->notificationDeleter = new NotificationDeleter($this->entityManager);
+        $this->notificationUpdater = new NotificationUpdater($this->entityManager);
 
         /** @var User $user */
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => self::USER_EMAIL]);
@@ -88,7 +97,7 @@ class NotificationRepositoryTest extends KernelTestCase
         $usager = $this->createNotification(NotificationType::SUIVI_USAGER);
         $this->entityManager->flush();
 
-        $this->notificationRepository->markUserNotificationsAsSeen($this->user);
+        $this->notificationUpdater->markAsSeenForUser($this->user);
         $this->entityManager->refresh($mention);
         $this->entityManager->refresh($usager);
 
@@ -102,7 +111,7 @@ class NotificationRepositoryTest extends KernelTestCase
         $suivi = $this->createNotification(NotificationType::NOUVEAU_SUIVI);
         $this->entityManager->flush();
 
-        $this->notificationRepository->markUserNotificationsAsSeen($this->user, [$mention->getId()]);
+        $this->notificationUpdater->markAsSeenForUser($this->user, [$mention->getId()]);
         $this->entityManager->refresh($mention);
         $this->entityManager->refresh($suivi);
 
@@ -116,7 +125,7 @@ class NotificationRepositoryTest extends KernelTestCase
         $usager = $this->createNotification(NotificationType::SUIVI_USAGER);
         $this->entityManager->flush();
 
-        $this->notificationRepository->deleteUserNotifications($this->user);
+        $this->notificationDeleter->deleteForUser($this->user);
         $this->entityManager->refresh($mention);
         $this->entityManager->refresh($usager);
 
@@ -136,7 +145,7 @@ class NotificationRepositoryTest extends KernelTestCase
         $this->assertNotContains($notWaiting->getId(), $ids);
 
         $now = new \DateTimeImmutable();
-        $this->notificationRepository->massUpdate([$waiting], ['waitMailingSummary' => false, 'mailingSummarySentAt' => $now]);
+        $this->notificationUpdater->massUpdate([$waiting], ['waitMailingSummary' => false, 'mailingSummarySentAt' => $now]);
         $this->entityManager->refresh($waiting);
 
         $this->assertFalse($waiting->isWaitMailingSummary());
@@ -155,7 +164,7 @@ class NotificationRepositoryTest extends KernelTestCase
             ->execute();
         $this->entityManager->clear();
 
-        $this->notificationRepository->cleanOlderThan();
+        $this->notificationCleaner->cleanOlderThan();
         $this->entityManager->clear();
 
         $this->assertNull($this->notificationRepository->find($old->getId()));
@@ -167,7 +176,7 @@ class NotificationRepositoryTest extends KernelTestCase
         $notification = $this->createNotification(NotificationType::NOUVEAU_SUIVI, $this->signalement);
         $this->entityManager->flush();
 
-        $this->notificationRepository->deleteBySignalement($this->signalement);
+        $this->notificationDeleter->deleteBySignalement($this->signalement);
         $this->entityManager->clear();
 
         $this->assertNull($this->notificationRepository->find($notification->getId()));

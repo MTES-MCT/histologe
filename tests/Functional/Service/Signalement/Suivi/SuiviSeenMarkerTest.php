@@ -6,6 +6,7 @@ use App\Entity\Signalement;
 use App\Entity\Suivi;
 use App\Event\SuiviViewedEvent;
 use App\Repository\NotificationRepository;
+use App\Repository\Query\Notification\NotificationSuiviQuery;
 use App\Service\Signalement\Suivi\SuiviSeenMarker;
 use App\Tests\UserHelper;
 use Doctrine\Common\Collections\Collection;
@@ -34,7 +35,8 @@ class SuiviSeenMarkerTest extends KernelTestCase
 
         /** @var NotificationRepository $notificationRepository */
         $notificationRepository = $container->get(NotificationRepository::class);
-        $marker = new SuiviSeenMarker($notificationRepository);
+        $notificationSuiviQuery = new NotificationSuiviQuery($notificationRepository);
+        $marker = new SuiviSeenMarker($notificationSuiviQuery);
         $marker->markSeenByUsager($signalement);
         /** @var Collection<int, Suivi> $suivis */
         $suivis = $signalement->getSuivis();
