@@ -111,7 +111,7 @@
         </span>
         <span v-else-if="formStore.data[id + '_detail_no_building_found']" class="pick-location-success fr-ml-2v">
           <span class="fr-icon-check-line" aria-hidden="true"></span>
-          Bâtiment non trouvé, signalé
+          Je n'ai pas trouvé mon bâtiment
         </span>
         <span v-else class="pick-location-warning fr-ml-2v">
           <span class="fr-icon-check-line" aria-hidden="true"></span>
