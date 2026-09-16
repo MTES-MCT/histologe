@@ -5,7 +5,7 @@
  *
  * Utilisé à deux endroits qui font tous les deux ce type de correction :
  * - TheSignalementAppForm.vue::handleValidateAddress (géocodage BAN)
- * - SignalementFormAddress.vue::handleSubmitPickLocation (sélection RNB)
+ * - SignalementFormAddress.vue::applyBuildingSelection (sélection RNB)
  */
 export function buildAddressCorrectionMessage (
   oldCodePostal: string,

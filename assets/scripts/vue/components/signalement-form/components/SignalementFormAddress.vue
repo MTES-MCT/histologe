@@ -117,16 +117,6 @@
           <span class="fr-icon-check-line" aria-hidden="true"></span>
           Bâtiment non sélectionné
         </span>
-        <button
-          ref="pickLocationSubmit"
-          class="fr-btn fr-icon-check-line"
-          :id="id + '_pick_location_submit'"
-          :disabled="!selectedRnbId && !noBuildingFound"
-          :title="(selectedRnbId || noBuildingFound) ? 'Valider la sélection' : 'Veuillez sélectionner un bâtiment sur la carte'"
-          @click="handleSubmitPickLocation"
-          type="button">
-          Valider la sélection
-        </button>
       </div>
     </div>
     <div
@@ -283,6 +273,9 @@ export default defineComponent({
           this.selectedRnbId = null
           this.selectedBuilding = null
           this.previousRnbId = undefined
+          this.applyNoBuildingFound()
+        } else if (!this.selectedRnbId) {
+          delete this.formStore.data[this.id + '_detail_no_building_found']
         }
       }
     )
@@ -356,6 +349,7 @@ export default defineComponent({
         this.selectedBuilding = this.buildingsList.find((b: any) => b.rnb_id === value) ?? null
         if (value) {
           this.noBuildingFound = false
+          this.applyBuildingSelection()
         }
       }
     }
@@ -529,7 +523,7 @@ export default defineComponent({
       this.geocodeAddress().then((result) => {
         if (result) {
           // Conservé comme repli pour un bâtiment RNB sans adresse connue (cf.
-          // handleSubmitPickLocation) : ce géocodage identifie déjà commune/CP/insee.
+          // applyBuildingSelection) : ce géocodage identifie déjà commune/CP/insee.
           this.geocodedCityData = { city: result.city, postcode: result.postcode, citycode: result.citycode }
           this.setupMap(result.coords, 18)
         } else {
@@ -600,13 +594,10 @@ export default defineComponent({
               this.previousRnbId = rnbId
               this.selectedBuilding = building
               this.noBuildingFound = false
+              this.applyBuildingSelection()
             },
             onAnnounce: (text: string) => {
               if (announcement) announcement.textContent = text
-            },
-            onFocusSubmit: () => {
-              const btn = this.$refs.pickLocationSubmit as HTMLElement
-              if (btn) btn.focus()
             },
             onBuildingsUpdate: (buildings: any[]) => {
               this.buildingsList = buildings
@@ -615,49 +606,48 @@ export default defineComponent({
         }, 100)
       })
     },
-    handleSubmitPickLocation () {
-      if (this.selectedRnbId) {
-        // Stocker le RNB ID dans formStore
-        this.formStore.data[this.id + '_detail_rnb_id'] = this.selectedRnbId
-        delete this.formStore.data[this.id + '_detail_no_building_found']
+    applyBuildingSelection () {
+      if (!this.selectedRnbId) return
+      // Stocker le RNB ID dans formStore
+      this.formStore.data[this.id + '_detail_rnb_id'] = this.selectedRnbId
+      delete this.formStore.data[this.id + '_detail_no_building_found']
 
-        const oldCommune = this.formStore.data[this.id + '_detail_commune']
-        const oldCodePostal = this.formStore.data[this.id + '_detail_code_postal']
+      const oldCommune = this.formStore.data[this.id + '_detail_commune']
+      const oldCodePostal = this.formStore.data[this.id + '_detail_code_postal']
 
-        const address = this.selectedBuilding?.addresses?.[0]
-        if (address) {
-          // Le bâtiment RNB porte une adresse officielle : on l'utilise pour fiabiliser
-          // commune/code postal/insee et on recompose l'adresse affichée (le numéro
-          // tapé par l'usager est conservé).
-          this.formStore.data[this.id + '_detail_commune'] = address.city_name
-          this.formStore.data[this.id + '_detail_code_postal'] = address.city_zipcode
-          this.formStore.data[this.id + '_detail_insee'] = address.city_insee_code
-          this.formStore.data[this.id + '_detail_need_refresh_insee'] = false
-          this.formStore.data[this.id] = this.formStore.data[this.id + '_detail_numero'] + ' ' + address.city_zipcode + ' ' + address.city_name
-          this.formStore.data[this.id + '_suggestion'] = this.formStore.data[this.id]
-        } else if (this.geocodedCityData) {
-          // Bâtiment sans adresse connue au RNB : on ne touche ni au numéro ni à la rue
-          // tapés par l'usager, seulement commune/CP/insee, déjà fiabilisés par le
-          // géocodage qui a servi à centrer la carte.
-          this.formStore.data[this.id + '_detail_commune'] = this.geocodedCityData.city
-          this.formStore.data[this.id + '_detail_code_postal'] = this.geocodedCityData.postcode
-          this.formStore.data[this.id + '_detail_insee'] = this.geocodedCityData.citycode
-          this.formStore.data[this.id + '_detail_need_refresh_insee'] = false
-        }
-
-        formStore.addressCorrectionMessage = buildAddressCorrectionMessage(
-          oldCodePostal,
-          oldCommune,
-          this.formStore.data[this.id + '_detail_code_postal'],
-          this.formStore.data[this.id + '_detail_commune']
-        )
-
-      } else if (this.noBuildingFound) {
-        // L'usager indique ne pas trouver son bâtiment : on ne bloque pas le formulaire,
-        // mais on trace l'information pour qu'un agent puisse la résoudre plus tard.
-        delete this.formStore.data[this.id + '_detail_rnb_id']
-        this.formStore.data[this.id + '_detail_no_building_found'] = 1
+      const address = this.selectedBuilding?.addresses?.[0]
+      if (address) {
+        // Le bâtiment RNB porte une adresse officielle : on l'utilise pour fiabiliser
+        // commune/code postal/insee et on recompose l'adresse affichée (le numéro
+        // tapé par l'usager est conservé).
+        this.formStore.data[this.id + '_detail_commune'] = address.city_name
+        this.formStore.data[this.id + '_detail_code_postal'] = address.city_zipcode
+        this.formStore.data[this.id + '_detail_insee'] = address.city_insee_code
+        this.formStore.data[this.id + '_detail_need_refresh_insee'] = false
+        this.formStore.data[this.id] = this.formStore.data[this.id + '_detail_numero'] + ' ' + address.city_zipcode + ' ' + address.city_name
+        this.formStore.data[this.id + '_suggestion'] = this.formStore.data[this.id]
+      } else if (this.geocodedCityData) {
+        // Bâtiment sans adresse connue au RNB : on ne touche ni au numéro ni à la rue
+        // tapés par l'usager, seulement commune/CP/insee, déjà fiabilisés par le
+        // géocodage qui a servi à centrer la carte.
+        this.formStore.data[this.id + '_detail_commune'] = this.geocodedCityData.city
+        this.formStore.data[this.id + '_detail_code_postal'] = this.geocodedCityData.postcode
+        this.formStore.data[this.id + '_detail_insee'] = this.geocodedCityData.citycode
+        this.formStore.data[this.id + '_detail_need_refresh_insee'] = false
       }
+
+      formStore.addressCorrectionMessage = buildAddressCorrectionMessage(
+        oldCodePostal,
+        oldCommune,
+        this.formStore.data[this.id + '_detail_code_postal'],
+        this.formStore.data[this.id + '_detail_commune']
+      )
+    },
+    applyNoBuildingFound () {
+      // L'usager indique ne pas trouver son bâtiment : on ne bloque pas le formulaire,
+      // mais on trace l'information pour qu'un agent puisse la résoudre plus tard.
+      delete this.formStore.data[this.id + '_detail_rnb_id']
+      this.formStore.data[this.id + '_detail_no_building_found'] = 1
     },
     formatBuildingLabel (building: any): string {
       const address = building.addresses && building.addresses[0]
@@ -775,6 +765,5 @@ export default defineComponent({
 .pick-location-footer {
   display: flex;
   gap: 1rem;
-  justify-content: flex-end;
 }
 </style>
