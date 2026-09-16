@@ -110,4 +110,74 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
         $this->assertStringContainsString('Messenger queue "default" stalled', $display);
         $this->assertStringContainsString('anonymous', $display);
     }
+
+    public function testContinuesWhenOneMessageCannotBeSerialized(): void
+    {
+        $threshold = '6 HOUR';
+
+        $malformedRow = [
+            'id' => 1,
+            'queue_name' => 'default',
+            'body' => '{}',
+            'created_at' => '2025-10-01 10:00:00',
+        ];
+
+        $validRow = [
+            'id' => 2,
+            'queue_name' => 'default',
+            'body' => '{}',
+            'created_at' => '2025-10-01 10:01:00',
+        ];
+
+        $this->connection
+            ->method('fetchAllAssociative')
+            ->willReturn([$malformedRow, $validRow]);
+
+        $malformedMessage = new class {
+            public string $name = 'malformed-message';
+        };
+
+        $validMessage = new class {
+            public string $name = 'valid-message';
+        };
+
+        $this->messengerSerializer
+            ->method('decode')
+            ->willReturnOnConsecutiveCalls(
+                new Envelope($malformedMessage),
+                new Envelope($validMessage),
+            );
+
+        $this->serializer
+            ->method('serialize')
+            ->willReturnOnConsecutiveCalls(
+                $this->throwException(new \InvalidArgumentException('Malformed UTF-8 characters, possibly incorrectly encoded')),
+                '{"name":"valid-message"}',
+            );
+
+        $this->logger
+            ->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->stringContains('Unable to process stalled messenger message "1" from queue "default"'),
+                $this->arrayHasKey('exception'),
+            );
+
+        $command = new MonitorMessengerQueuesCommand(
+            $this->connection,
+            $this->messengerSerializer,
+            $this->serializer,
+            $this->logger,
+            $threshold
+        );
+
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute([]);
+        $display = $tester->getDisplay();
+
+        $this->assertSame(0, $exitCode);
+        $this->assertStringContainsString('Unable to process stalled messenger message "1"', $display);
+        $this->assertStringContainsString('Messenger queue "default" stalled', $display);
+    }
 }
