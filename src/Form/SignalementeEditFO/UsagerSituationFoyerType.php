@@ -44,7 +44,7 @@ class UsagerSituationFoyerType extends AbstractType
         } elseif (!empty($signalement->getIsAllocataire())) {
             $allocataire = 'oui';
         }
-        $caisseAllocation = ('caf' === $signalement->getIsAllocataire() || 'msa' === $signalement->getIsAllocataire()) ? $signalement->getIsAllocataire() : '';
+        $caisseAllocation = ('CAF' === $signalement->getIsAllocataire() || 'MSA' === $signalement->getIsAllocataire()) ? $signalement->getIsAllocataire() : '';
 
         $typeAllocation = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsTypeAllocation() : '';
         $montantAllocation = $signalement->getMontantAllocation();
@@ -116,8 +116,8 @@ class UsagerSituationFoyerType extends AbstractType
             ->add('caisseAllocation', ChoiceType::class, [
                 'label' => 'Caisse d\'allocation (facultatif)',
                 'choices' => [
-                    'CAF' => 'caf',
-                    'MSA' => 'msa',
+                    'CAF' => 'CAF',
+                    'MSA' => 'MSA',
                 ],
                 'expanded' => true,
                 'multiple' => false,
