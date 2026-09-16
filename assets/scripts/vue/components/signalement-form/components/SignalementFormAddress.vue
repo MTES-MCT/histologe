@@ -275,6 +275,17 @@ export default defineComponent({
         this.handleAddressFieldsEdited(true)
       }
     )
+    watch(
+      () => this.noBuildingFound,
+      (checked: boolean) => {
+        if (checked) {
+          this.rnbMapController?.clearSelection()
+          this.selectedRnbId = null
+          this.selectedBuilding = null
+          this.previousRnbId = undefined
+        }
+      }
+    )
   },
   mounted () {
     document.addEventListener('click', this.handleClickOutside)

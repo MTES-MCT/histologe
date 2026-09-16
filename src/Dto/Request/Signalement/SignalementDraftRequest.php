@@ -78,8 +78,14 @@ class SignalementDraftRequest
     private ?string $adresseLogementComplementAdresseEscalier = null;
     #[Assert\Choice(callback: [EtageType::class, 'values'])]
     private ?string $adresseLogementComplementAdresseEtage = null;
-    #[Assert\Length(max: 2, maxMessage: 'La précision de l\'étage ne doit pas dépasser {{ limit }} caractères.')]
-    #[Assert\Regex(pattern: '/^[0-9]{1,2}$/', message: 'La précision de l\'étage doit être composée de 1 ou 2 chiffres.')]
+    #[Assert\When(
+        expression: 'this.getAdresseLogementComplementAdresseEtage() == "AUTRE" and this.getTypeLogementNature() == "appartement"',
+        constraints: [
+            new Assert\NotBlank(message: 'Merci de préciser l\'étage.'),
+            new Assert\Length(max: 2, maxMessage: 'La précision de l\'étage ne doit pas dépasser {{ limit }} caractères.'),
+            new Assert\Regex(pattern: '/^[0-9]{1,2}$/', message: 'La précision de l\'étage doit être composée de 1 ou 2 chiffres.'),
+        ],
+    )]
     private ?string $adresseLogementComplementAdresseEtagePrecision = null;
     #[Assert\Length(max: 5, maxMessage: 'Le numéro d\'appartement ne doit pas dépasser {{ limit }} caractères.')]
     private ?string $adresseLogementComplementAdresseNumeroAppartement = null;

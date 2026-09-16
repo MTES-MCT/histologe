@@ -36,6 +36,11 @@
         Cette adresse a été éditée manuellement.
     </div>
 {% endif %}
+{% if signalement.noBuildingFoundOccupant %}
+    <div class="fr-alert fr-alert--info fr-alert--sm fr-mb-3v">
+        L'usager a indiqué ne pas trouver le bâtiment correspondant à son adresse.
+    </div>
+{% endif %}
 
 <div class="fr-mb-3v">
 {% if epciOccupant %}

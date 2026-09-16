@@ -853,7 +853,7 @@
           "type": "SignalementFormSubscreen",
           "slug": "type_logement_description",
           "customCss": "fr-mt-5v",
-          "description": "<p>Vous avez indiqué que le logement est un <strong>{{dictionaryStore:precisionTypeLogement::formStore.data.type_logement_nature}}</strong> et qu'il est situé <strong>{{dictionaryStore:precisionTypeLogement::formStore.data.adresse_logement_complement_adresse_etage}}</strong> .</p>"
+          "description": "<p>Vous avez indiqué que le logement est un <strong>{{dictionaryStore:precisionTypeLogement::formStore.data.type_logement_nature}}</strong> et qu'il est situé <strong>{{dictionaryStore:precisionTypeLogement::formStore.data.adresse_logement_complement_adresse_etage}}</strong>.</p>"
         },
         {
           "type": "SignalementFormOnlyChoice",
