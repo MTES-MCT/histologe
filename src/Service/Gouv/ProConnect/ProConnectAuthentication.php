@@ -76,10 +76,21 @@ class ProConnectAuthentication
             throw new ProConnectException('Le token reçu est invalide.');
         }
 
+        $issuer = $this->proConnectHttpClient->getDiscoveryEndpoints()->issuer;
+        if (!is_string($issuer) || '' === $issuer) {
+            throw new ProConnectException('L\'issuer ProConnect est introuvable.');
+        }
+
+        if (!is_string($this->proconnectClientId) || '' === $this->proconnectClientId) {
+            throw new ProConnectException('L\'identifiant client ProConnect est introuvable.');
+        }
+
         $isValid = $this->proConnectJwtValidator->validate(
             $jwks,
             $idToken,
-            $this->proConnectContext->getNonce()
+            $this->proConnectContext->getNonce(),
+            $issuer,
+            $this->proconnectClientId
         );
 
         if (!$isValid) {
@@ -87,6 +98,21 @@ class ProConnectAuthentication
         }
 
         $userDataJwt = $this->proConnectHttpClient->getUserDataJwt($tokenResponse->accessToken);
+
+        if (!is_string($userDataJwt) || '' === $userDataJwt) {
+            throw new ProConnectException('Le JWT userinfo reçu est invalide.');
+        }
+        $isUserDataJwtValid = $this->proConnectJwtValidator->validate(
+            jwks: $jwks,
+            idToken: $userDataJwt,
+            expectedNonce: null,
+            expectedIssuer: $issuer,
+            expectedAudience: $this->proconnectClientId,
+        );
+        if (!$isUserDataJwtValid) {
+            throw new ProConnectException('Le JWT userinfo reçu est invalide.');
+        }
+
         $proConnectUserData = $this->proConnectJwtParser->parse($userDataJwt);
 
         return new ProConnectUser($proConnectUserData);

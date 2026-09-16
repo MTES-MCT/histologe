@@ -40,7 +40,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8082/authorize?response_type=code&client_id=dummy&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fproconnect%2Fcallback&acr_values=eidas1&scope=openid+given_name+usual_name+email+uid&state=teststate&nonce=testnonce",
+					"raw": "http://localhost:8082/authorize?response_type=code&client_id=client_id&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fproconnect%2Fcallback&acr_values=eidas1&scope=openid+given_name+usual_name+email+uid&state=teststate&nonce=testnonce",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -56,7 +56,7 @@
 						},
 						{
 							"key": "client_id",
-							"value": "dummy"
+							"value": "client_id"
 						},
 						{
 							"key": "redirect_uri",
