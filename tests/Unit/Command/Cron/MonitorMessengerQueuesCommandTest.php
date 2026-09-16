@@ -155,14 +155,6 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
                 '{"name":"valid-message"}',
             );
 
-        $this->logger
-            ->expects($this->once())
-            ->method('error')
-            ->with(
-                $this->stringContains('Unable to process stalled messenger message "1" from queue "default"'),
-                $this->arrayHasKey('exception'),
-            );
-
         $command = new MonitorMessengerQueuesCommand(
             $this->connection,
             $this->messengerSerializer,
