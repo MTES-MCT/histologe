@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/browser'
 
 export const commonRequests = {
   doRequest (ajaxUrl: string, functionReturn: Function, options = {}) {
-    const defaultOptions = { timeout: 30000 }
+    const defaultOptions = { timeout: 60000 }
 
     axios
       .get(ajaxUrl, { ...defaultOptions, ...options })
