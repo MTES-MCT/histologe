@@ -6,6 +6,7 @@ use App\Command\Cron\MonitorMessengerQueuesCommand;
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface as MessengerSerializerInterface;
@@ -22,6 +23,9 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
     /** @var SerializerInterface&MockObject */
     private SerializerInterface $serializer;
 
+    /* @var LoggerInterface&MockObject */
+    private LoggerInterface $logger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -29,6 +33,7 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
         $this->connection = $this->createMock(Connection::class);
         $this->messengerSerializer = $this->createMock(MessengerSerializerInterface::class);
         $this->serializer = $this->createMock(SerializerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     public function testDisplaysOkMessageWhenNoOldMessagesFound(): void
@@ -43,6 +48,7 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
             $this->connection,
             $this->messengerSerializer,
             $this->serializer,
+            $this->logger,
             $threshold
         );
 
@@ -91,6 +97,7 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
             $this->connection,
             $this->messengerSerializer,
             $this->serializer,
+            $this->logger,
             $threshold
         );
 
