@@ -1,19 +1,16 @@
-const addVisitePanel = document.querySelector('#panel-add-visite');
-const addVisiteForm = addVisitePanel?.querySelector('#add-visite-form');
-
-if (addVisitePanel && addVisiteForm) {
+const initVisiteForm = (visiteForm) => {
   const timezone = document.querySelector('[data-territory-timezone]')?.dataset.territoryTimezone;
   const todayInTerritory = new Intl.DateTimeFormat('en-CA', {timeZone: timezone,year: 'numeric',month: '2-digit',day: '2-digit'}).format(new Date());
 
-  const dateField = addVisiteForm.querySelector('input[name$="[scheduledAt]"]');
-  const partnerSelect = addVisiteForm.querySelector('select[name$="[partnerChoice]"]');
-  const externalOperatorField = addVisiteForm.querySelector('input[name$="[externalOperator]"]');
+  const dateField = visiteForm.querySelector('input[name$="[scheduledAt]"]');
+  const partnerSelect = visiteForm.querySelector('select[name$="[partnerChoice]"]');
+  const externalOperatorField = visiteForm.querySelector('input[name$="[externalOperator]"]');
   const externalOperatorRow = externalOperatorField?.closest('.fr-input-group');
-  const visiteDoneRadios = addVisiteForm.querySelectorAll('input[name$="[visiteDone]"]');
-  const pastDateFields = addVisitePanel.querySelector('.visite-add-past-date-complementary-fields');
-  const futureDateFields = addVisitePanel.querySelector('.visite-add-future-date-complementary-fields');
-  const visiteConcludeProcedure = addVisitePanel.querySelector('.visite-conclude-procedure');
-  const partnerDoubleError = addVisitePanel.querySelector('.signalement-add-visite-partner-double-error');
+  const visiteDoneRadios = visiteForm.querySelectorAll('input[name$="[visiteDone]"]');
+  const pastDateFields = visiteForm.querySelector('.visite-past-date-complementary-fields');
+  const futureDateFields = visiteForm.querySelector('.visite-future-date-complementary-fields');
+  const visiteConcludeProcedure = visiteForm.querySelector('.visite-conclude-procedure');
+  const partnerDoubleError = visiteForm.querySelector('.signalement-visite-partner-double-error');
 
   // Réinitialise les champs du bloc "visite passée" lorsqu'il est masqué
   const resetPastDateFields = () => {
@@ -77,7 +74,7 @@ if (addVisitePanel && addVisiteForm) {
 
   // Affiche le fieldset "conclusion de la visite" uniquement si la visite est indiquée comme effectuée
   const syncVisiteDoneFields = () => {
-    const isVisiteDone = addVisiteForm.querySelector('input[name$="[visiteDone]"]:checked')?.value === '1';
+    const isVisiteDone = visiteForm.querySelector('input[name$="[visiteDone]"]:checked')?.value === '1';
     toggleElement(visiteConcludeProcedure, isVisiteDone);
     if (!isVisiteDone) {
       resetConcludeProcedure();
@@ -85,20 +82,55 @@ if (addVisitePanel && addVisiteForm) {
   };
 
   // Replace l'ensemble du formulaire dans une position cohérente
-  const syncAddVisiteFormState = () => {
+  const syncVisiteFormState = () => {
     syncDateDependantFields();
     syncPartnerFields();
     syncVisiteDoneFields();
   };
 
   // Champs réactifs : toute modification replace le formulaire dans un état cohérent
-  dateField?.addEventListener('change', syncAddVisiteFormState);
-  partnerSelect?.addEventListener('change', syncAddVisiteFormState);
-  externalOperatorField?.addEventListener('input', syncAddVisiteFormState);
+  dateField?.addEventListener('change', syncVisiteFormState);
+  partnerSelect?.addEventListener('change', syncVisiteFormState);
+  externalOperatorField?.addEventListener('input', syncVisiteFormState);
   visiteDoneRadios.forEach((radio) => {
-    radio.addEventListener('change', syncAddVisiteFormState);
+    radio.addEventListener('change', syncVisiteFormState);
   });
 
   // Position cohérente au chargement de la page
-  syncAddVisiteFormState();
+  syncVisiteFormState();
+};
+
+// Initialise le formulaire d'ajout de visite au chargement de la page
+const addVisiteForm = document.querySelector('#add-visite-form');
+if (addVisiteForm) {
+  initVisiteForm(addVisiteForm);
 }
+
+//TEST sur #panel-reschedule-visite mais on devrait probablement généraliser et rendre générique pour tous les panel visites (y compris ajout ?)
+document.addEventListener('click', (event) => {
+  const btn = event.target.closest('.btn-reschedule-visite');
+  if (!btn) {
+    return;
+  }
+  const url = btn.dataset.url;
+  document.querySelector('#panel-reschedule-visite button[type="submit"]').disabled = true;
+  document.querySelector('#panel-reschedule-visite-title').innerHTML = 'Chargement en cours...';
+  document.querySelector('#panel-reschedule-visite-content').innerHTML = 'Chargement en cours...';
+  fetch(url).then((response) => {
+    if (response.ok) {
+      response.json().then((response) => {
+        document.querySelector('#panel-reschedule-visite-title').innerHTML = response.title;
+        document.querySelector('#panel-reschedule-visite-content').innerHTML = response.content;
+        document.querySelector('#panel-reschedule-visite button[type="submit"]').disabled = false;
+        const rescheduleVisiteForm = document.querySelector('#reschedule-visite-form');
+        if (rescheduleVisiteForm) {
+          initVisiteForm(rescheduleVisiteForm);
+        }
+      });
+    } else {
+      const content =
+        '<div class="fr-notice fr-notice--alert"><div class="fr-container"><div class="fr-notice__body"><p><span class="fr-notice__title">Erreur</span><span class="fr-notice__desc">Une erreur s\'est produite. Veuillez actualiser la page.</span></p></div></div></div>';
+      document.querySelector('#panel-reschedule-visite-content').innerHTML = content;
+    }
+  });
+});

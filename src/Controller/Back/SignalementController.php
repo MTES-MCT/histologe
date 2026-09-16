@@ -9,7 +9,6 @@ use App\Dto\SignalementAffectationClose;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\DocumentType;
-use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Intervention;
@@ -333,8 +332,6 @@ class SignalementController extends AbstractController
             'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
             'listConcludeProcedures' => $listConcludeProcedures,
             'visites' => $interventionRepository->getOrderedVisitesForSignalement($signalement),
-            'partnersCanVisite' => $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement), // TODO : Refonte visites - A supprimer
-            'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement), // TODO : Refonte visites - A supprimer
             'addVisiteForm' => $addVisiteForm,
             'linkToVisitGrid' => $linkToVisitGrid,
             'allPhotosOrdered' => $allPhotosOrdered,

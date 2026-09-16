@@ -8,8 +8,8 @@ use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Form\Type\SearchCheckboxEnumType;
-use App\Repository\AffectationRepository;
 use App\Repository\InterventionRepository;
+use App\Repository\PartnerRepository;
 use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -37,7 +37,7 @@ class EditAddVisiteType extends AbstractType
 {
     public function __construct(
         private readonly Security $security,
-        private readonly AffectationRepository $affectationRepository,
+        private readonly PartnerRepository $partnerRepository,
         private readonly InterventionRepository $interventionRepository,
         private readonly TimezoneProvider $timezoneProvider,
         #[Autowire(env: 'S3_ENABLE')]
@@ -48,26 +48,22 @@ class EditAddVisiteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $intervention = $builder->getData();
-        // TODO : gérer les attributs (voir ci-dessous) pour la gestion des champs lié ou changer complètement le système ?
-        /*
-            class="fr-input add-fields-if-past-date"
-            data-displayfields="visite-add-past-date-complementary-fields"
-            data-hidefields="visite-add-future-date-complementary-fields"
-        */
+
         $builder->add('scheduledAt', DateType::class, [
             'label' => 'Date de la visite <span class="fr-text-default--error">*</span>',
             'label_html' => true,
             'required' => false,
             'constraints' => [new Assert\NotBlank(message: 'Veuillez indiquer la date de la visite.')],
         ]);
-        // même question qu'avec le champ précédent uniquement pour les attribut data)
         $builder->add('scheduledAtTime', TimeType::class, [
             'label' => 'Heure de la visite',
             'label_html' => true,
+            'required' => false,
             'mapped' => false,
+            'data' => $intervention->getScheduledAt(), // TODO : Refonte visites : gestion fiseau horaire (valeur diférente entre affichage visite et valeur du champs)
         ]);
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
-            $partners = $this->affectationRepository->findAffectationWithQualification(Qualification::VISITES, $intervention->getSignalement());
+            $partners = $this->partnerRepository->findPartnersWithQualificationAffectedOnSignalement(Qualification::VISITES, $intervention->getSignalement());
             $pendingVisites = $this->interventionRepository->getPendingVisitesForSignalement($intervention->getSignalement());
             $partnersWithPendingVisites = [];
             $externalOperatorsWithPendingVisites = [];
@@ -97,8 +93,8 @@ class EditAddVisiteType extends AbstractType
                         }
                     }),
                 ],
+                'data' => $intervention->getPartner(), // TODO : Refonte visites : tester avec opérateur externe + ne pas afficher l'erreur doublon pour le form en édition (san casser js)
             ]);
-            // rendre l'affichage conditionel
             $builder->add('externalOperator', TextType::class, [
                 'label' => 'Nom de l\'opérateur externe <span class="fr-text-default--error">*</span>',
                 'label_html' => true,
@@ -212,23 +208,25 @@ class EditAddVisiteType extends AbstractType
                 new Assert\Length(min: 16, minMessage: 'Le commentaire de visite doit contenir au moins 10 caractères.'),
             ],
         ]);
-        $builder->add('rapportDeVisite', FileType::class, [
-            'label' => 'Rapport de visite (facultatif)',
-            'help' => 'Formats supportés : '.UploadHandlerService::getAcceptedExtensions(),
-            'required' => false,
-            'attr' => [
-                'accept' => implode(',', File::DOCUMENT_MIME_TYPES),
-                'disabled' => !$this->s3Enable,
-            ],
-            'constraints' => [
-                new Assert\File(
-                    maxSize: '10M',
-                    mimeTypes: File::DOCUMENT_MIME_TYPES,
-                    mimeTypesMessage: 'Veuillez télécharger un fichier au format '.UploadHandlerService::getAcceptedExtensions().', et ne dépassant pas 10 Mo.'
-                ),
-            ],
-            'mapped' => false,
-        ]);
+        if (!$intervention->getRapportDeVisite()) {
+            $builder->add('rapportDeVisite', FileType::class, [
+                'label' => 'Rapport de visite (facultatif)',
+                'help' => 'Formats supportés : '.UploadHandlerService::getAcceptedExtensions(),
+                'required' => false,
+                'attr' => [
+                    'accept' => implode(',', File::DOCUMENT_MIME_TYPES),
+                    'disabled' => !$this->s3Enable,
+                ],
+                'constraints' => [
+                    new Assert\File(
+                        maxSize: '10M',
+                        mimeTypes: File::DOCUMENT_MIME_TYPES,
+                        mimeTypesMessage: 'Veuillez télécharger un fichier au format '.UploadHandlerService::getAcceptedExtensions().', et ne dépassant pas 10 Mo.'
+                    ),
+                ],
+                'mapped' => false,
+            ]);
+        }
         // Ajout des contraintes de validation en fonction de la date/heure soumise
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();

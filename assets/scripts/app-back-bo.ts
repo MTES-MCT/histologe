@@ -22,7 +22,6 @@ import './vanilla/services/ui/tabs_manager.js';
 import './vanilla/controllers/form_account.js';
 import './vanilla/controllers/form_nde.js';
 import './vanilla/controllers/form_notification.js';
-import './vanilla/controllers/form_visite.js';
 
 import './vanilla/controllers/back_archived_signalements/back_archived_signalements_reactiver.js'
 import './vanilla/controllers/back_archived_users_index/back_archived_users_index.js'

@@ -35,17 +35,17 @@
                         {{ form_label(addVisiteForm.partnerChoice) }}
                         {{ form_widget(addVisiteForm.partnerChoice) }}
                         {{ form_errors(addVisiteForm.partnerChoice) }}
-                        <p class="fr-error-text static-error fr-hidden signalement-add-visite-partner-double-error">
+                        <p class="fr-error-text static-error fr-hidden signalement-visite-partner-double-error">
                             Ce partenaire a déjà une visite en cours.
                             Veuillez terminer ou annuler la visite ou sélectionner un autre partenaire.
                         </p>
                     </div>
                     {{ form_row(addVisiteForm.externalOperator) }}
                 {% endif %}
-                <div class="visite-add-future-date-complementary-fields">
+                <div class="visite-future-date-complementary-fields">
                 {{ form_row(addVisiteForm.commentBeforeVisite) }}
                 </div>
-                <div class="visite-add-past-date-complementary-fields fr-hidden">
+                <div class="visite-past-date-complementary-fields fr-hidden">
                     {{ form_row(addVisiteForm.visiteDone) }}
                     {{ form_row(addVisiteForm.occupantPresent) }}
                     {{ form_row(addVisiteForm.proprietairePresent) }}
