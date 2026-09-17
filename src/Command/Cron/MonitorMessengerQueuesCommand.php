@@ -5,6 +5,7 @@ namespace App\Command\Cron;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Psr\Log\LoggerInterface;
 use Sentry\State\Scope;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -12,7 +13,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface as MessengerSerializerInterface;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(name: 'app:monitor-messenger-queues', description: 'Alerte si des messages restent trop longtemps en file d\'attente')]
@@ -24,6 +24,7 @@ class MonitorMessengerQueuesCommand extends Command
         private readonly Connection $connection,
         private readonly MessengerSerializerInterface $messengerSerialize,
         private readonly SerializerInterface $serializer,
+        private readonly LoggerInterface $logger,
         #[Autowire(env: 'MESSENGER_ALERT_THRESHOLD')]
         private readonly string $threshold,
     ) {
@@ -32,7 +33,6 @@ class MonitorMessengerQueuesCommand extends Command
 
     /**
      * @throws Exception
-     * @throws ExceptionInterface
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -61,29 +61,49 @@ class MonitorMessengerQueuesCommand extends Command
                 continue;
             }
 
-            $envelope = $this->messengerSerialize->decode([
-                'body' => $row['body'],
-            ]);
+            try {
+                $envelope = $this->messengerSerialize->decode([
+                    'body' => $row['body'],
+                ]);
 
-            $envelopeMessage = $envelope->getMessage();
-            $typeMessage = $envelopeMessage::class;
-            $jsonMessage = $this->serializer->serialize($envelopeMessage, 'json');
+                $envelopeMessage = $envelope->getMessage();
+                $typeMessage = $envelopeMessage::class;
+                $jsonMessage = $this->serializer->serialize($envelopeMessage, 'json');
 
-            \Sentry\configureScope(static function (Scope $scope) use ($row, $typeMessage, $jsonMessage): void {
-                $scope->setTag('type', $typeMessage);
-                $scope->setTag('queue_name', $row['queue_name']);
-                $scope->setExtra('message', $jsonMessage);
-            });
+                \Sentry\configureScope(static function (Scope $scope) use ($row, $typeMessage, $jsonMessage): void {
+                    $scope->setTag('type', $typeMessage);
+                    $scope->setTag('queue_name', $row['queue_name']);
+                    $scope->setExtra('message', $jsonMessage);
+                });
 
-            $message = sprintf(
-                'Messenger queue "%s" stalled: %s message older than %s(s) detected.',
-                $row['queue_name'],
-                $typeMessage,
-                strtolower($this->threshold),
-            );
+                $message = sprintf(
+                    'Messenger queue "%s" stalled: %s message older than %s(s) detected.',
+                    $row['queue_name'],
+                    $typeMessage,
+                    strtolower($this->threshold),
+                );
 
-            \Sentry\captureMessage($message);
-            $output->writeln($message);
+                \Sentry\captureMessage($message);
+                $output->writeln($message);
+            } catch (\Throwable $exception) {
+                $message = sprintf(
+                    'Unable to process stalled messenger message "%s" from queue "%s": %s',
+                    $row['id'] ?? 'unknown',
+                    $row['queue_name'] ?? 'unknown',
+                    $exception->getMessage(),
+                );
+
+                $this->logger->error($message, [
+                    'exception' => $exception,
+                    'messenger_message_id' => $row['id'] ?? null,
+                    'queue_name' => $row['queue_name'] ?? null,
+                ]);
+
+                \Sentry\captureMessage($message);
+                $output->writeln($message);
+
+                continue;
+            }
         }
 
         return Command::SUCCESS;
