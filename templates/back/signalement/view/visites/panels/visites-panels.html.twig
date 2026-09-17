@@ -1,26 +1,27 @@
+{# TODO : Refonte visites - supprimer et mettre un seul panel vierge (dans view.html.twig) qui chargera le formulaire en ajax à la demande (clic sur les bouton de visites-buttons.html.twig) #}
+
 {% if signalement.interventions is not empty %}
-    {% if intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
-        {% if workflow_can(intervention, 'cancel') %}
+    {% if is_granted('INTERVENTION_EDIT_VISITE', intervention) %}
+        {% if intervention.status is same as constant('App\\Entity\\Intervention::STATUS_PLANNED') %}
+            {% if workflow_can(intervention, 'cancel') %}
+                <div data-ajax-form>
+                    {% include 'back/signalement/view/visites/panels/_panel-cancel-visite.html.twig' %}
+                </div>
+            {% endif %}
+            {% if workflow_can(intervention, 'confirm') %}
+                <div data-ajax-form>
+                    {% include 'back/signalement/view/visites/panels/_panel-confirm-visite.html.twig' %}
+                </div>
+            {% endif %}
+        {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
             <div data-ajax-form>
-                {% include 'back/signalement/view/visites/panels/_panel-cancel-visite.html.twig' %}
+                {% include 'back/signalement/view/visites/panels/_panel-edit-visite.html.twig' %}
             </div>
-        {% endif %}
-        {% if workflow_can(intervention, 'confirm') %}
-            <div data-ajax-form>
-                {% include 'back/signalement/view/visites/panels/_panel-confirm-visite.html.twig' %}
-            </div>
-        {% endif %}
-        <div data-ajax-form>
-            {% include 'back/signalement/view/visites/panels/_panel-reschedule-visite.html.twig' %}
-        </div>
-    {% elseif intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
-        <div data-ajax-form>
-            {% include 'back/signalement/view/visites/panels/_panel-edit-visite.html.twig' %}
-        </div>
-        {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
-            <div data-ajax-form>
-                {% include 'back/signalement/view/visites/panels/_panel-upload-files-visite.html.twig' %}
-            </div>
+            {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+                <div data-ajax-form>
+                    {% include 'back/signalement/view/visites/panels/_panel-upload-files-visite.html.twig' %}
+                </div>
+            {% endif %}
         {% endif %}
     {% endif %}
 {% endif %}

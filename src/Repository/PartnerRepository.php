@@ -228,6 +228,21 @@ class PartnerRepository extends ServiceEntityRepository
     /**
      * @return array<string, Partner>
      */
+    public function findPartnersWithQualificationAffectedOnSignalement(Qualification $qualification, Signalement $signalement): array
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->select('DISTINCT p');
+        $qb->innerJoin('p.affectations', 'a', 'WITH', 'a.signalement = :signalement')
+            ->setParameter('signalement', $signalement);
+        $qb->andWhere('REGEXP(p.competence, :regexp) = true')
+            ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return array<string, Partner>
+     */
     public function findWithInsee(string $insee, ?Territory $territory = null): array
     {
         $qb = $this->createQueryBuilder('p');
