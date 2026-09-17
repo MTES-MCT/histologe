@@ -177,6 +177,7 @@
     <div class="fr-upload-group fr-mb-5v">
         <label class="fr-label" for="visite-{{ formType }}[rapport]">Rapport de visite (facultatif) 
             <span class="fr-hint-text">Formats supportés : {{ get_accepted_extensions()}}</span>
+            <span class="fr-hint-text">Taille maximale : 25MB</span>
         </label>
         {% if s3_enable %}
             <input class="fr-upload" type="file" accept={{ get_accepted_mime_type()}} name="visite-{{ formType }}[rapport]">
