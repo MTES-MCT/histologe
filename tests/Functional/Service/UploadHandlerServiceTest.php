@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\Service;
 
+use App\Entity\Enum\DocumentType;
 use App\Exception\File\EmptyFileException;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
@@ -117,8 +118,24 @@ class UploadHandlerServiceTest extends KernelTestCase
             ->willReturn(20 * 1024 * 1024);
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Le fichier dépasse 10 MB');
-        $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.png');
+        $this->expectExceptionMessageIs('Le fichier dépasse 10 MB');
+        $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.png', DocumentType::AUTRE);
+    }
+
+    public function testUploadBigFileRapportShouldThrowsException(): void
+    {
+        $uploadHandlerService = $this->getUploadHandlerService();
+
+        /** @var MockObject&UploadedFile $uploadedFileMock */
+        $uploadedFileMock = $this->createMock(UploadedFile::class);
+        $uploadedFileMock
+            ->expects($this->exactly(2))
+            ->method('getSize')
+            ->willReturn(50 * 1024 * 1024);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessageIs('Le fichier dépasse 25 MB');
+        $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.png', DocumentType::PROCEDURE_RAPPORT_DE_VISITE);
     }
 
     public function testUploadVideoFileShouldThrowsException(): void
@@ -137,7 +154,7 @@ class UploadHandlerServiceTest extends KernelTestCase
             ->willReturn('webm');
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Les fichiers de format video/webm ne sont pas pris en charge, merci de choisir un fichier au format '.UploadHandlerService::getAcceptedExtensions('document'));
+        $this->expectExceptionMessageIs('Les fichiers de format video/webm ne sont pas pris en charge, merci de choisir un fichier au format '.UploadHandlerService::getAcceptedExtensions('document'));
         $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.webm');
     }
 
