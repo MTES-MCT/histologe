@@ -1,3 +1,4 @@
+import '../bootstrap.js';
 import * as Sentry from '@sentry/browser';
 
 import {
