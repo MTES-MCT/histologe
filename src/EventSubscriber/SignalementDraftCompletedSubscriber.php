@@ -86,7 +86,7 @@ class SignalementDraftCompletedSubscriber implements EventSubscriberInterface
                 $this->entityManager->rollback();
             }
         } catch (\Throwable $exception) {
-            $this->logger->critical($exception->getMessage());
+            $this->logger->error($exception->getMessage());
             $this->entityManager->rollback();
             throw $exception;
         }

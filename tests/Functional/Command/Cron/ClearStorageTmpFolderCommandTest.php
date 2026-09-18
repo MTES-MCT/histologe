@@ -11,7 +11,6 @@ use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
 use PHPUnit\Framework\MockObject\MockObject;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -22,7 +21,6 @@ class ClearStorageTmpFolderCommandTest extends KernelTestCase
     private MockObject&FilesystemOperator $fileStorage;
     private ParameterBagInterface $parameterBag;
     private NotificationMailerRegistry $mailerRegistry;
-    private MockObject&LoggerInterface $logger;
     private FileRepository $fileRepository;
     private UploadHandlerService $uploadHandlerService;
 
@@ -31,7 +29,6 @@ class ClearStorageTmpFolderCommandTest extends KernelTestCase
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
         $this->parameterBag = static::getContainer()->get(ParameterBagInterface::class);
         $this->mailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
         $this->fileRepository = static::getContainer()->get(FileRepository::class);
         $this->uploadHandlerService = static::getContainer()->get(UploadHandlerService::class);
     }
@@ -59,7 +56,6 @@ class ClearStorageTmpFolderCommandTest extends KernelTestCase
             $this->fileStorage,
             $this->parameterBag,
             $this->mailerRegistry,
-            $this->logger,
             $this->fileRepository,
             $this->uploadHandlerService,
         );

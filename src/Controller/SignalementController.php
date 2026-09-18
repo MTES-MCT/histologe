@@ -144,7 +144,7 @@ class SignalementController extends AbstractController
                 ),
             ]);
         }
-        $logger->error('Erreur de validation du formulaire FO '.(string) $errors);
+        $logger->warning('Erreur de validation du formulaire FO '.(string) $errors);
 
         return $this->json($errors, Response::HTTP_BAD_REQUEST);
     }
@@ -194,7 +194,7 @@ class SignalementController extends AbstractController
 
             return $this->json($result);
         }
-        $logger->error('Erreur de validation du formulaire FO '.(string) $errors);
+        $logger->warning('Erreur de validation du formulaire FO '.(string) $errors);
 
         return $this->json($errors, Response::HTTP_BAD_REQUEST);
     }
@@ -231,7 +231,7 @@ class SignalementController extends AbstractController
 
             return $this->json($result);
         }
-        $logger->error('Erreur de validation du formulaire FO '.(string) $errors);
+        $logger->warning('Erreur de validation du formulaire FO '.(string) $errors);
 
         return $this->json($errors, Response::HTTP_BAD_REQUEST);
     }
@@ -484,7 +484,7 @@ class SignalementController extends AbstractController
                 return $this->json(['error' => $exception->getMessage()], Response::HTTP_BAD_REQUEST);
             }
         }
-        $logger->error('Un problème lors du téléversement est survenu');
+        $logger->warning('Un problème lors du téléversement est survenu');
 
         return $this->json(['error' => 'Aucun fichier n\'a été téléversé'], Response::HTTP_BAD_REQUEST);
     }
@@ -978,7 +978,7 @@ class SignalementController extends AbstractController
                 $entityManager->commit();
             } catch (\Exception $e) {
                 $entityManager->rollback();
-                $logger->critical($e->getMessage());
+                $logger->error($e->getMessage());
                 $this->addFlash('error', 'Une erreur est survenue veuillez réessayer.');
 
                 return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);
@@ -1096,7 +1096,7 @@ class SignalementController extends AbstractController
                 $entityManager->commit();
             } catch (\Exception $e) {
                 $entityManager->rollback();
-                $logger->critical($e->getMessage());
+                $logger->error($e->getMessage());
                 $this->addFlash('error', 'Une erreur est survenue veuillez réessayer.');
 
                 return $this->redirectToRoute('front_suivi_signalement', ['code' => $signalement->getCodeSuivi()]);

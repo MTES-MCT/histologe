@@ -75,8 +75,7 @@ class AutoAssigner
                 'No auto-affectation for signalement %s - Empty geolocation',
                 $signalement->getUuid(),
             );
-            $this->logger->info($logMessage);
-            \Sentry\captureMessage($logMessage);
+            $this->logger->warning($logMessage);
 
             return [];
         }

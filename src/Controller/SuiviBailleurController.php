@@ -114,7 +114,7 @@ class SuiviBailleurController extends AbstractController
 
                         return $this->redirectToRoute('front_dossier_bailleur');
                     } catch (\Exception $e) {
-                        $logger->critical($e->getMessage());
+                        $logger->error($e->getMessage());
                         $entityManager->rollback();
                         $this->addFlash('error', 'Une erreur est survenue veuillez réessayer.');
 
@@ -178,7 +178,7 @@ class SuiviBailleurController extends AbstractController
                     'message' => 'Votre réponse a été enregistrée avec succès.',
                 ]);
             } catch (\Exception $e) {
-                $logger->critical($e->getMessage());
+                $logger->error($e->getMessage());
                 $entityManager->rollback();
                 $this->addFlash('error', 'Une erreur est survenue veuillez réessayer.');
             }

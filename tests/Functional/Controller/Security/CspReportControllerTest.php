@@ -23,7 +23,7 @@ class CspReportControllerTest extends WebTestCase
         if ($shouldReport) {
             $loggerMock = $this->createMock(LoggerInterface::class);
             $loggerMock->expects($this->once())
-                ->method('warning')
+                ->method('info')
 
                 ->with($this->stringContains('CSP Violation'));
 
