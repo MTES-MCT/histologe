@@ -151,7 +151,6 @@ export function addFlashMessage(flashMessage) {
     subContainer.appendChild(divElement);
   } else {
     let subContainer = document.createElement('div');
-    subContainer.classList.add('flash-messages-live-subcontainer');
     subContainer.appendChild(divElement);
     flashMessagesContainer.appendChild(subContainer);
   }
