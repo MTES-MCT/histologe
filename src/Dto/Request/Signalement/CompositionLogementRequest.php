@@ -69,10 +69,28 @@ class CompositionLogementRequest implements RequestInterface
             ],
         )]
         #[Assert\Choice(
-            choices: ['RDC', 'DERNIER_ETAGE', 'SOUSSOL', 'AUTRE'],
+            choices: ['', 'RDC', 'DERNIER_ETAGE', 'SOUSSOL', 'AUTRE'],
             message: 'Le champ "Etage" est incorrect.'
         )]
         private readonly ?string $etage = null,
+        #[Assert\When(
+            // Restreint à "appartement" en plus de "Autre" : l'étage n'a de sens que pour un
+            // appartement, donc une précision ne doit jamais être exigée pour une maison même
+            // si le champ etage vaut "AUTRE" par erreur/donnée historique.
+            expression: 'this.getEtage() == "AUTRE" and this.getType() == "appartement"',
+            constraints: [
+                new Assert\NotBlank(message: 'Merci de préciser l\'étage.'),
+            ],
+        )]
+        #[Assert\Length(
+            max: 2,
+            maxMessage: 'La précision de l\'étage ne doit pas dépasser {{ limit }} caractères.',
+        )]
+        #[Assert\Regex(
+            pattern: '/^[0-9]{1,2}$/',
+            message: 'La précision de l\'étage doit être un numéro d\'étage à 1 ou 2 chiffres.',
+        )]
+        private readonly ?string $etagePrecision = null,
         #[Assert\When(
             expression: 'this.getType() == "appartement"',
             constraints: [
@@ -202,6 +220,11 @@ class CompositionLogementRequest implements RequestInterface
     public function getEtage(): ?string
     {
         return $this->etage;
+    }
+
+    public function getEtagePrecision(): ?string
+    {
+        return $this->etagePrecision;
     }
 
     public function getAvecFenetres(): ?string

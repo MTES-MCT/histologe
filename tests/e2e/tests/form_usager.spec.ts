@@ -23,6 +23,7 @@ test('bouton finir plus tard locataire', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Adresse du logement Format' }).click();
     await page.getByRole('textbox', { name: 'Adresse du logement Format' }).fill('8 La Bodini');
     await page.getByText('8 la bodiniere 44850 Saint-').click();
+    await page.getByText('Une maison seule', { exact: true }).click();
     await page.getByRole('button', { name: 'Suivant' }).click();
     await page.getByText('Pour vous-même', { exact: true }).click();
     await page.locator('#signalement_concerne_profil_detail_occupant').getByText('Locataire du logement').click();

@@ -1,4 +1,4 @@
-<dialog aria-labelledby="panel-edit-address-title" id="panel-edit-address" class="side-panel">
+<dialog aria-labelledby="panel-edit-address-title" id="panel-edit-address" class="side-panel" data-panel-reset-form>
     <div class="side-panel__inner">
         <div class="side-panel__header">
             <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-address" aria-controls="panel-edit-address" aria-expanded="false">Fermer</button>
@@ -49,11 +49,8 @@
                     <div class="fr-col-12 fr-col-md-6">
                         <h2 class="fr-h5">Complément d'adresse (facultatif)</h2>
 
-                        <div class="fr-input-group">
-                            <label class="fr-label" for="adresseEtage">Etage
-                                <span class="fr-hint-text">5 caractères maximum</span>
-                            </label>
-                            <input class="fr-input" type="text" id="adresseEtage" name="etage" value="{{ signalement.etageOccupant }}" maxlength="5">
+                        <div id="signalement-edit-address-etage-container">
+                            {% include 'back/signalement/view/panels/_panel-edit-composition-logement-etage.html.twig' %}
                         </div>
 
                         <div class="fr-input-group">

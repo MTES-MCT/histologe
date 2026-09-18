@@ -322,6 +322,9 @@ export default defineComponent({
       const result: string[] = []
       result.push(this.formStore.data.adresse_logement_adresse)
       this.addLineIfNeeded(result, 'adresse_logement_complement_adresse_etage', 'Etage : ')
+      if (this.formStore.data.adresse_logement_complement_adresse_etage === 'AUTRE') {
+        this.addLineIfNeeded(result, 'adresse_logement_complement_adresse_etage_precision', 'Précision étage : ')
+      }
       this.addLineIfNeeded(result, 'adresse_logement_complement_adresse_escalier', 'Escalier : ')
       this.addLineIfNeeded(result, 'adresse_logement_complement_adresse_numero_appartement', 'Numéro d\'appartement : ')
       this.addLineIfNeeded(result, 'adresse_logement_complement_adresse_autre', 'Autre : ')
@@ -393,15 +396,11 @@ export default defineComponent({
       const result: string[] = []
       this.addLineIfNeeded(result, 'type_logement_nature', 'Nature du logement  : ')
       if (this.formStore.data.type_logement_nature === 'appartement') {
-        this.addLineIfNeeded(result, 'type_logement_rdc', 'Au RDC ? ')
-        if (this.formStore.data.type_logement_rdc === 'non') {
-          this.addLineIfNeeded(result, 'type_logement_dernier_etage', 'Au dernier étage ? ')
-          if (this.formStore.data.type_logement_dernier_etage === 'oui') {
-            this.addLineIfNeeded(result, 'type_logement_sous_comble_sans_fenetre', 'Sous les combles et sans fenêtre ? ')
-          }
-          if (this.formStore.data.type_logement_dernier_etage === 'non') {
-            this.addLineIfNeeded(result, 'type_logement_sous_sol_sans_fenetre', 'En sous-sol et sans fenêtre ? ')
-          }
+        if (this.formStore.data.adresse_logement_complement_adresse_etage === 'DERNIER_ETAGE') {
+          this.addLineIfNeeded(result, 'type_logement_sous_comble_sans_fenetre', 'Sous les combles et sans fenêtre ? ')
+        }
+        if (this.formStore.data.adresse_logement_complement_adresse_etage === 'SOUSSOL') {
+          this.addLineIfNeeded(result, 'type_logement_sous_sol_sans_fenetre', 'En sous-sol et sans fenêtre ? ')
         }
       } else if (this.formStore.data.type_logement_nature === 'autre') {
         this.addLineIfNeeded(result, 'type_logement_nature_autre_precision', 'De type : ')

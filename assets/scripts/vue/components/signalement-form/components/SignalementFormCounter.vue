@@ -15,6 +15,8 @@
         :class="[ customCss, 'fr-input', {'fr-input--error' : hasError} ]"
         @input="updateValue($event)"
         :aria-describedby="hasError ? id + 'text-input-error-desc-error' : undefined"
+        :minlength="validate?.minLength"
+        :maxlength="validate?.maxLength"
         >
     <div
       :id="id + 'text-input-error-desc-error'"
