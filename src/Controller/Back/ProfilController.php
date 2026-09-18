@@ -164,7 +164,6 @@ class ProfilController extends AbstractController
                 $errorMessage['errors']['user_profil_info[avatar]']['errors'][] = 'Le fichier est infecté';
             } else {
                 try {
-                    // pas de DocumentType pour l'avatar, et la taille max (5 Mo) est gérée par le formType précédemment, donc on ne fait pas de vérification ici
                     $res = $uploadHandlerService->toTempFolder($avatarFile);
 
                     if (isset($res['error'])) {

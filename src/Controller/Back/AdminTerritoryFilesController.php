@@ -266,7 +266,7 @@ class AdminTerritoryFilesController extends AbstractController
             $form->get('file')->addError(new FormError('Le fichier est infecté'));
         } else {
             try {
-                $res = $uploadHandlerService->toTempFolder($uploadedFile, null, $file->getDocumentType() ?? DocumentType::AUTRE);
+                $res = $uploadHandlerService->toTempFolder($uploadedFile);
 
                 if (isset($res['error'])) {
                     throw new \Exception($res['error']);

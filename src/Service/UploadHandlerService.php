@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Entity\Enum\DocumentType;
 use App\Entity\File;
 use App\Exception\File\EmptyFileException;
 use App\Exception\File\MaxUploadSizeExceededException;
@@ -22,8 +21,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadHandlerService
 {
-    public const int MAX_FILESIZE = 10 * 1024 * 1024;
-    public const int MAX_FILESIZE_RAPPORT = 25 * 1024 * 1024;
+    public const int MAX_FILESIZE = 25 * 1024 * 1024;
+    public const int MAX_FILESIZE_FO = 10 * 1024 * 1024;
 
     /**
      * @var array<mixed>
@@ -52,8 +51,8 @@ class UploadHandlerService
     public function toTempFolder(
         UploadedFile $file,
         ?string $fileType = null,
-        ?DocumentType $documentType = DocumentType::AUTRE): array
-    {
+        ?int $maxFileSize = self::MAX_FILESIZE,
+    ): array {
         $originalFilename = pathinfo($file->getClientOriginalName(), \PATHINFO_FILENAME);
         if (empty($originalFilename) || !$file->isValid()) {
             return ['error' => 'Erreur lors du téléversement.', 'message' => 'Fichier vide', 'status' => 500];
@@ -61,7 +60,7 @@ class UploadHandlerService
         $newFilename = $this->filenameGenerator->generate($file);
         $titre = $this->filenameGenerator->getTitle();
 
-        $this->isFileSizeOk($file, $documentType);
+        $this->isFileSizeOk($file, $maxFileSize);
         if (!self::isAcceptedDocumentFormat($file, $fileType)) {
             throw new UnsupportedFileFormatException($file, $fileType);
         }
@@ -131,17 +130,13 @@ class UploadHandlerService
      */
     public function isFileSizeOk(
         UploadedFile $file,
-        ?DocumentType $documentType = DocumentType::AUTRE,
+        ?int $maxFileSize = self::MAX_FILESIZE,
     ): bool {
         if ($this->isFileEmpty($file)) {
             throw new EmptyFileException();
         }
-        $maxSize = match ($documentType) {
-            DocumentType::PROCEDURE_RAPPORT_DE_VISITE => self::MAX_FILESIZE_RAPPORT,
-            default => self::MAX_FILESIZE,
-        };
-        if ($file->getSize() > $maxSize) {
-            throw new MaxUploadSizeExceededException($maxSize);
+        if ($file->getSize() > $maxFileSize) {
+            throw new MaxUploadSizeExceededException($maxFileSize);
         }
 
         return true;
@@ -359,9 +354,8 @@ class UploadHandlerService
     public function uploadFromFile(
         UploadedFile $file,
         string $newFilename,
-        ?DocumentType $documentType = DocumentType::AUTRE,
     ): ?string {
-        $this->isFileSizeOk($file, $documentType);
+        $this->isFileSizeOk($file);
         if (!self::isAcceptedDocumentFormat($file)) {
             throw new UnsupportedFileFormatException($file);
         }

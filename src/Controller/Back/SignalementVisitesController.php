@@ -73,7 +73,7 @@ class SignalementVisitesController extends AbstractController
         $file = $files['rapport'];
         $newFilename = $filenameGenerator->generate($file);
         try {
-            $uploadedFilename = $uploadHandler->uploadFromFile($file, $newFilename, DocumentType::PROCEDURE_RAPPORT_DE_VISITE);
+            $uploadedFilename = $uploadHandler->uploadFromFile($file, $newFilename);
 
             return [true, $uploadedFilename];
         } catch (MaxUploadSizeExceededException|UnsupportedFileFormatException|EmptyFileException $exception) {

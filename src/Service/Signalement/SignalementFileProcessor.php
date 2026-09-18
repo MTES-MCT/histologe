@@ -79,7 +79,7 @@ class SignalementFileProcessor
                     continue;
                 }
                 try {
-                    $fileSizeOk = $this->uploadHandlerService->isFileSizeOk($file, $documentType);
+                    $fileSizeOk = $this->uploadHandlerService->isFileSizeOk($file);
                 } catch (MaxUploadSizeExceededException|EmptyFileException $exception) {
                     $this->errors[] = $exception->getMessage();
                     $this->logger->error($exception->getMessage());
@@ -97,7 +97,7 @@ class SignalementFileProcessor
                 } else {
                     try {
                         if ($file instanceof UploadedFile) {
-                            $filename = $this->uploadHandlerService->uploadFromFile($file, $this->filenameGenerator->generate($file), $documentType);
+                            $filename = $this->uploadHandlerService->uploadFromFile($file, $this->filenameGenerator->generate($file));
                             $title = $this->filenameGenerator->getTitle();
 
                             if (\in_array($file->getMimeType(), File::RESIZABLE_MIME_TYPES)) {

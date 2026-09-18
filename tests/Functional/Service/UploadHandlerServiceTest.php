@@ -2,7 +2,6 @@
 
 namespace App\Tests\Functional\Service;
 
-use App\Entity\Enum\DocumentType;
 use App\Exception\File\EmptyFileException;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
@@ -115,27 +114,11 @@ class UploadHandlerServiceTest extends KernelTestCase
         $uploadedFileMock
             ->expects($this->exactly(2))
             ->method('getSize')
-            ->willReturn(20 * 1024 * 1024);
-
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessageIs('Le fichier dépasse 10 MB');
-        $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.png', DocumentType::AUTRE);
-    }
-
-    public function testUploadBigFileRapportShouldThrowsException(): void
-    {
-        $uploadHandlerService = $this->getUploadHandlerService();
-
-        /** @var MockObject&UploadedFile $uploadedFileMock */
-        $uploadedFileMock = $this->createMock(UploadedFile::class);
-        $uploadedFileMock
-            ->expects($this->exactly(2))
-            ->method('getSize')
-            ->willReturn(50 * 1024 * 1024);
+            ->willReturn(30 * 1024 * 1024);
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessageIs('Le fichier dépasse 25 MB');
-        $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.png', DocumentType::PROCEDURE_RAPPORT_DE_VISITE);
+        $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.png');
     }
 
     public function testUploadVideoFileShouldThrowsException(): void
