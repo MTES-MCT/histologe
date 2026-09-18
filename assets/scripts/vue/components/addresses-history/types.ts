@@ -38,11 +38,18 @@ export interface AddressesState {
   zoneAreas: string[]
 }
 
+export interface Params {
+  niveauxGris: boolean
+  limitesAdministratives: boolean
+  zonesTerritoire: boolean
+  mainLeveeUniquement: boolean
+}
+
 export interface Filters {
   territoire?: string
   adresse?: string
-  communes: string[]
-  bailleurOuSyndic: string[]
+  communeOuEpci?: string
+  bailleurOuSyndic?: string
   zone?: string
   natureParc?: string
   dossiersMultiples?: string
@@ -53,6 +60,7 @@ export interface InputState {
   order: string
   queryParameters: QueryParameter[]
   filters: Filters
+  params: Params
 }
 
 export interface UserState {
@@ -65,8 +73,9 @@ export interface UserState {
 }
 
 export interface ArreteTypesGroup {
-  title: string
-  options: Array<{ Id: string; Text: string }>
+  title: string,
+  titleInMapView: string,
+  options: Array<{ Id: string; Text: string, TextInMapView: string }>
 }
 
 export interface StoreState {
@@ -122,5 +131,5 @@ export interface SettingsResponse {
   epcis?: Record<string, { code: string; nom: string }>
   zones?: Record<string, { id: number; name: string }>
   bailleursSociaux?: Record<string, string>
-  arreteTypes?: Record<string, Array<{ Id: string; Text: string }>>
+  arreteTypes?: Record<string, Array<{ Id: string; Text: string, TextInMapView: string }>>
 }

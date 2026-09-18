@@ -3,6 +3,7 @@
     <div class="fr-input-group">
       <label class="fr-label" :for="id">
         <slot name="label"></slot>
+        <span class="fr-hint-text"><slot name="hint"></slot></span>
       </label>
       <div
         :class="['fr-input-wrap', iconClass]"

@@ -28,6 +28,7 @@ class AddressesHistoryListView
         private ?string $lng = null,
         private bool $hasLogementSocial = false,
         private bool $hasLogementPrive = false,
+        private bool $hasLogementNatureNonRenseigne = false,
         private ?array $signalements = null,
         private ?array $arretes = null,
         private ?array $bailleurNames = [],
@@ -102,6 +103,16 @@ class AddressesHistoryListView
     public function setHasLogementPrive(bool $hasLogementPrive): void
     {
         $this->hasLogementPrive = $hasLogementPrive;
+    }
+
+    public function hasLogementNatureNonRenseigne(): bool
+    {
+        return $this->hasLogementNatureNonRenseigne;
+    }
+
+    public function setHasLogementNatureNonRenseigne(bool $hasLogementNatureNonRenseigne): void
+    {
+        $this->hasLogementNatureNonRenseigne = $hasLogementNatureNonRenseigne;
     }
 
     /** @return array<Signalement> */
