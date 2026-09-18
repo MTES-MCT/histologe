@@ -56,25 +56,28 @@ class SignalementVisitesController extends AbstractController
         return null;
     }
 
+    /**
+     * @return array{0: bool, 1: ?string}
+     */
     private function getUploadedFile(
         Request $request,
         string $inputName,
         UploadHandlerService $uploadHandler,
         FilenameGenerator $filenameGenerator,
-    ): ?string {
+    ): array {
         $files = $request->files->get($inputName);
         if (empty($files) || empty($files['rapport'])) {
-            return null;
+            return [true, null];
         }
 
         $file = $files['rapport'];
         $newFilename = $filenameGenerator->generate($file);
         try {
-            return $uploadHandler->uploadFromFile($file, $newFilename);
-        } catch (MaxUploadSizeExceededException|UnsupportedFileFormatException|EmptyFileException $exception) {
-            $this->addFlash('error', $exception->getMessage());
+            $uploadedFilename = $uploadHandler->uploadFromFile($file, $newFilename);
 
-            return null;
+            return [true, $uploadedFilename];
+        } catch (MaxUploadSizeExceededException|UnsupportedFileFormatException|EmptyFileException $exception) {
+            return [false, $exception->getMessage()];
         }
     }
 
@@ -200,7 +203,14 @@ class SignalementVisitesController extends AbstractController
             return $errorRedirect;
         }
 
-        $fileName = $this->getUploadedFile($request, 'visite-add', $uploadHandler, $filenameGenerator);
+        [$success, $fileNameOrError] = $this->getUploadedFile($request, 'visite-add', $uploadHandler, $filenameGenerator);
+        if (!$success) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
+        }
+
+        $fileName = $fileNameOrError;
 
         $requestData = $request->request->all();
         $requestAddData = RequestDataExtractor::getArray($requestData, 'visite-add');
@@ -369,7 +379,22 @@ class SignalementVisitesController extends AbstractController
         }
 
         $previousDate = $intervention->getScheduledAt();
-        $fileName = $this->getUploadedFile($request, 'visite-reschedule', $uploadHandler, $filenameGenerator);
+        [$success, $fileNameOrError] = $this->getUploadedFile($request, 'visite-reschedule', $uploadHandler, $filenameGenerator);
+        if (!$success) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
+
+            return $this->buildVisitesAjaxResponse(
+                intervention: $intervention,
+                interventionRepository: $interventionRepository,
+                affectationRepository: $affectationRepository,
+                signalementDesordresProcessor: $signalementDesordresProcessor,
+                fileRepository: $fileRepository,
+                urlGenerator: $urlGenerator,
+                flashMessages: $flashMessages,
+            );
+        }
+
+        $fileName = $fileNameOrError;
 
         $idPartner = 'extern' === $requestRescheduleData['partner'] ? null : $requestRescheduleData['partner'];
         $visiteRequest = new VisiteRequest(
@@ -458,7 +483,23 @@ class SignalementVisitesController extends AbstractController
             return $errorRedirect;
         }
 
-        $fileName = $this->getUploadedFile($request, 'visite-confirm', $uploadHandler, $filenameGenerator);
+        [$success, $fileNameOrError] = $this->getUploadedFile($request, 'visite-confirm', $uploadHandler, $filenameGenerator);
+        if (!$success) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
+
+            return $this->buildVisitesAjaxResponse(
+                intervention: $intervention,
+                interventionRepository: $interventionRepository,
+                affectationRepository: $affectationRepository,
+                signalementDesordresProcessor: $signalementDesordresProcessor,
+                fileRepository: $fileRepository,
+                urlGenerator: $urlGenerator,
+                flashMessages: $flashMessages,
+                closeModalAndReload: false,
+            );
+        }
+
+        $fileName = $fileNameOrError;
 
         $visiteRequest = new VisiteRequest(
             idIntervention: $requestConfirmData['intervention'],
@@ -544,9 +585,23 @@ class SignalementVisitesController extends AbstractController
         if ($errorRedirect) {
             return $errorRedirect;
         }
+        [$success, $fileNameOrError] = $this->getUploadedFile($request, 'visite-edit', $uploadHandler, $filenameGenerator);
+        if (!$success) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
 
-        $fileName = $this->getUploadedFile($request, 'visite-edit', $uploadHandler, $filenameGenerator);
+            return $this->buildVisitesAjaxResponse(
+                intervention: $intervention,
+                interventionRepository: $interventionRepository,
+                affectationRepository: $affectationRepository,
+                signalementDesordresProcessor: $signalementDesordresProcessor,
+                fileRepository: $fileRepository,
+                urlGenerator: $urlGenerator,
+                flashMessages: $flashMessages,
+                closeModalAndReload: false,
+            );
+        }
 
+        $fileName = $fileNameOrError;
         if (!isset($requestEditData['notifyUsager'])) {
             $requestEditData['notifyUsager'] = $intervention->getNotifyUsager();
         }
