@@ -5,22 +5,22 @@
 {% endif %}
 {% if (is_granted('AFFECTATION_ACCEPT_OR_REFUSE', affectation) or is_granted('AFFECTATION_CANCEL_REFUSED', affectation)) and not isAloneInCurrentPartner %}
     <div data-ajax-form class="fr-display-inline">
-        {% include '_partials/_modal_accept_affectation.html.twig' %}
+        {% include 'back/signalement/view/panels/_panel-accept-affectation.html.twig' %}
     </div>
 {% endif %}
 {% if isUserSubscribed and subscriptionsInMyPartner|length < 2 and affectation %}
     <div data-ajax-form class="fr-display-inline">
-        {% include '_partials/_modal_transfer_subscription.html.twig' %}
+        {% include 'back/signalement/view/panels/_panel-transfer-subscription.html.twig' %}
     </div>
 {% endif %}
 {% if is_granted('SIGN_SUBSCRIBE', signalement) and isUserSubscribed %}
     <div data-ajax-form class="fr-display-inline">
-        {% include '_partials/_modal_agents_subscription.html.twig' %}
+        {% include 'back/signalement/view/panels/_panel-agents-subscription.html.twig' %}
     </div>
 {% endif %}
 {% if is_granted('SIGN_VALIDATE', signalement) and not isUniqueRtInCurrentPartner %}
     <div data-ajax-form>
-        {% include '_partials/_modal_accept_signalement.html.twig' %}
+        {% include 'back/signalement/view/panels/_panel-accept-signalement.html.twig' %}
     </div>
 {% endif %}
 {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').INJONCTION_BAILLEUR %}
@@ -46,7 +46,7 @@
 {% endif %}
 {% if is_granted('AFFECTATION_ACCEPT_OR_REFUSE', affectation) %}
     <div data-ajax-form class="fr-display-inline">
-        {% include '_partials/_modal_refus_affectation.html.twig' %}
+        {% include 'back/signalement/view/panels/_panel-deny-affectation.html.twig' %}
     </div>
     <div class="fr-notice fr-notice--info fr-my-4v fr-text--left">
         <div class="fr-pl-3v">
@@ -65,20 +65,20 @@
             <input type="hidden" name="_token" value="{{ csrf_token('signalement_affectation_response_'~signalement.id) }}">
         </form>
     {% else %}
-        <button 
-            class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success" 
-            id="open-accept-affectation-modal" 
-            data-fr-opened="false" 
-            aria-controls="accept-affectation-modal">
-            Accepter l'affectation
-        </button>
+        <button type="button"
+            class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success"
+            id="open-panel-accept-affectation"
+            aria-controls="panel-accept-affectation"
+            data-panel-open="panel-accept-affectation"
+            data-fr-opened="false"
+            >Accepter l'affectation</button>
     {% endif %}
-    <a href="#" 
+    <button type="button"
         class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-close-circle-fill fr-btn--danger"
-        data-fr-opened="false" 
-        aria-controls="refus-affectation-modal">
-        Refuser l'affectation
-    </a>
+        aria-controls="panel-deny-affectation"
+        data-panel-open="panel-deny-affectation"
+        data-fr-opened="false"
+        >Refuser l'affectation</button>
 {% elseif is_granted('SIGN_VALIDATE', signalement) %}
     <div class="fr-notice fr-notice--info fr-my-4v fr-text--left">
         <div class="fr-pl-3v">
@@ -90,7 +90,7 @@
         </div>
     </div>
     <div data-ajax-form class="fr-display-inline">
-        {% include '_partials/_modal_refus_signalement.html.twig' %}
+        {% include 'back/signalement/view/panels/_panel-deny-signalement.html.twig' %}
     </div>
     <div class="admin-territory-validation">
         {% if isUniqueRtInCurrentPartner %}
@@ -101,17 +101,18 @@
                 <input type="hidden" name="_token" value="{{ csrf_token('signalement_validation_response_'~signalement.id) }}">
             </form>
         {% else %}
-            <button 
-                class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success" 
-                id="open-accept-signalement-modal" 
-                data-fr-opened="false" 
-                aria-controls="accept-signalement-modal">
-                Valider le signalement
-            </button>
+            <button type="button"
+                class="fr-btn fr-btn--sm fr-btn--icon-left fr-icon-checkbox-circle-fill fr-btn--success"
+                id="open-accept-signalement-panel"
+                data-panel-open="panel-accept-signalement"
+                aria-controls="panel-accept-signalement"
+                data-fr-opened="false"
+                >Valider le signalement</button>
         {% endif %}
-        <a href="#" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-line fr-btn--danger"
-            aria-controls="refus-signalement-modal" data-fr-opened="false">
-            Refuser le signalement
-        </a>
+        <button type="button" class="fr-btn fr-btn--sm fr-btn--icon-left fr-fi-close-line fr-btn--danger"
+            data-panel-open="panel-deny-signalement"
+            aria-controls="panel-deny-signalement"
+            data-fr-opened="false"
+            >Refuser le signalement</button>
     </div>
 {% endif %}

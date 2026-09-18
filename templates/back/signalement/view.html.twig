@@ -93,7 +93,7 @@
     {% else %}
         {% if is_granted('SIGN_CLOSE', signalement) or (affectation and is_granted('AFFECTATION_CLOSE', affectation)) %}
             <div data-ajax-form>
-                {% include '_partials/_modal_cloture.html.twig' %}
+                {% include 'back/signalement/view/panels/_panel-cloture.html.twig' %}
             </div>
         {% endif %}
     {% endif %}
@@ -105,7 +105,7 @@
     {% endif %}
     {% if is_granted('SIGN_EDIT_ACTIVE', signalement) or is_granted('SIGN_EDIT_INJONCTION', signalement) %}
         <div data-ajax-form>
-            {% include '_partials/_modal_reinit_affectation.html.twig' %}
+            {% include 'back/signalement/view/panels/_panel-reinit-affectation.html.twig' %}
         </div>
     {% endif %}
     {# on intégre la modale affichant la map même si on à pas de coordonées afin de gérer l'affichage suite à la sélection de batiment (sans rechargement de page) #}
@@ -122,7 +122,7 @@
     {% endif %}
     {% if (is_granted('SIGN_INJONCTION_CLOSE', signalement)) %}
         <div data-ajax-form>
-            {% include '_partials/_modal_close_demarche_acceleree.html.twig' %}
+            {% include 'back/signalement/view/panels/_panel-close-demarche-acceleree.html.twig' %}
         </div>
     {% endif %}
     {% include '_partials/_modal_file_delete.html.twig' %}
@@ -136,11 +136,11 @@
     {% include '_partials/_modal_historique_affectation.html.twig' %}
 
     {% if is_granted('SIGN_REOPEN', signalement) %}
-        {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '1' } %}
+        {% include 'back/signalement/view/panels/_panel-reopen-signalement.html.twig' with { 'all': '1' } %}
     {% endif %}
     
     {% if is_granted('AFFECTATION_REOPEN', affectation) %}
-        {% include '_partials/_modal_reopen_signalement.html.twig' with { 'all': '0' } %}
+        {% include 'back/signalement/view/panels/_panel-reopen-signalement.html.twig' with { 'all': '0' } %}
     {% endif %}
 
     {% if signalement.statut is not same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION %}

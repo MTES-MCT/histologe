@@ -36,11 +36,10 @@ if (document?.querySelector('.fr-breadcrumb.can-fix')) {
 }
 
 document.addEventListener('click', (e) => {
-  if (e.target.closest('.open-modal-reinit-affectation')) {
-    document.querySelector('#fr-modal-reinit-affectation .partner-nom').textContent =
+  if (e.target.closest('.open-panel-reinit-affectation')) {
+    document.querySelector('#panel-reinit-affectation .partner-nom').textContent =
       e.target.dataset.partnerNom;
-    document.querySelector('form#fr-modal-reinit-affectation-form').action =
-      e.target.dataset.action;
+    document.querySelector('form#form-reinit-affectation').action = e.target.dataset.action;
   }
 });
 
