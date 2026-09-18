@@ -16,7 +16,6 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Utils\TrimHelper;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Validator\Constraints\Email;
@@ -48,7 +47,6 @@ class GridAffectationLoader
         private readonly UserFactory $userFactory,
         private readonly UserRepository $userRepository,
         private readonly ValidatorInterface $validator,
-        private readonly LoggerInterface $logger,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly EntityManagerInterface $entityManager,
     ) {
@@ -305,7 +303,6 @@ class GridAffectationLoader
                 }
 
                 if (0 === $countNewUsers % self::FLUSH_COUNT) {
-                    $this->logger->info(\sprintf('in progress - %s users created or updated', $countNewUsers));
                     $this->entityManager->flush();
                 }
             }

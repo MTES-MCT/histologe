@@ -149,15 +149,11 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
                 if (false !== $content) {
                     $pieceJointe['documentContent'] = base64_encode($content);
                 } else {
-                    $this->logger->error('[Esabora] Impossible de lire le fichier temporaire', [
-                        'filepath' => $filepath,
-                    ]);
+                    $this->logger->error('[Esabora] Impossible de lire le fichier temporaire');
                     $pieceJointe['documentContent'] = null;
                 }
             } else {
-                $this->logger->error('[Esabora] Fichier temporaire manquant ou invalide', [
-                    'filepath' => $filepath,
-                ]);
+                $this->logger->error('[Esabora] Fichier temporaire manquant ou invalide');
                 $pieceJointe['documentContent'] = null;
             }
 

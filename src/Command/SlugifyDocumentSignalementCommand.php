@@ -38,6 +38,7 @@ class SlugifyDocumentSignalementCommand extends Command
     public const string IMPORT_SIGNALEMENT_COLUMN_PHOTOS = 'ref des photos';
     public const string IMPORT_SIGNALEMENT_COLUMN_DOCUMENTS = 'ref des documents';
 
+    private SymfonyStyle $io;
     private ?Territory $territory = null;
     private bool $isMappingFile;
     private ?string $filename = null;
@@ -72,16 +73,16 @@ class SlugifyDocumentSignalementCommand extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $this->io = new SymfonyStyle($input, $output);
         if ('prod' === $this->parameterBag->get('kernel.environment')) {
-            $io->warning('Watch out! This command is not allowed to be executed to production');
+            $this->io->warning('Watch out! This command is not allowed to be executed to production');
 
             return Command::FAILURE;
         }
 
         if (!$this->validate($input, $output)) {
-            $io->error($this->errors);
-            $io->writeln('Bye!');
+            $this->io->error($this->errors);
+            $this->io->writeln('Bye!');
 
             return Command::FAILURE;
         }
@@ -89,7 +90,7 @@ class SlugifyDocumentSignalementCommand extends Command
         $tmpDirectory = $this->parameterBag->get('uploads_tmp_dir');
         $this->uploadHandlerService->createTmpFileFromBucket($this->sourceFile, $this->destinationFile);
 
-        if ($this->isMappingFile && $this->hasMissingColumnLabel($io)) {
+        if ($this->isMappingFile && $this->hasMissingColumnLabel($this->io)) {
             return Command::FAILURE;
         }
 
@@ -125,7 +126,9 @@ class SlugifyDocumentSignalementCommand extends Command
                 try {
                     $csvWriter->writeRow($row);
                 } catch (\Throwable $exception) {
-                    $this->logger->error(\sprintf('CSV Write - row %s - error: %s', $index, $exception->getMessage()));
+                    $message = \sprintf('CSV Write - row %s - error: %s', $index, $exception->getMessage());
+                    $this->logger->error($message);
+                    $this->io->error($message);
                 }
             }
         }
@@ -137,8 +140,8 @@ class SlugifyDocumentSignalementCommand extends Command
         $command = 'make upload action=image zip='.$this->territory->getZip();
         if (is_array($file) && \count($file) > 1) {
             $this->uploadHandlerService->moveFromBucketTempFolder($filename, self::BASE_DIRECTORY_CSV);
-            $io->success(\sprintf('%s files have been slugified', $countFileSlugged));
-            $io->success(
+            $this->io->success(\sprintf('%s files have been slugified', $countFileSlugged));
+            $this->io->success(
                 \sprintf(
                     '%s has been pushed to S3 bucket storage, please send your images to S3 Bucket `%s`',
                     $filename,
@@ -146,9 +149,9 @@ class SlugifyDocumentSignalementCommand extends Command
                 )
             );
         } else {
-            $io->warning(\sprintf('%s files have been slugified', $countFileSlugged));
-            $io->warning(\sprintf('%s is empty, please check if your images have been already slugged', $filename));
-            $io->warning(\sprintf('You should send your images to S3 Bucket with`%s`', $command));
+            $this->io->warning(\sprintf('%s files have been slugified', $countFileSlugged));
+            $this->io->warning(\sprintf('%s is empty, please check if your images have been already slugged', $filename));
+            $this->io->warning(\sprintf('You should send your images to S3 Bucket with`%s`', $command));
 
             return Command::FAILURE;
         }
@@ -174,7 +177,9 @@ class SlugifyDocumentSignalementCommand extends Command
 
                 return 1;
             } catch (\Throwable $exception) {
-                $this->logger->error(\sprintf('CSV Write - N° %s ligne avec %s', $index, $exception->getMessage()));
+                $message = \sprintf('CSV Write - N° %s ligne avec %s', $index, $exception->getMessage());
+                $this->logger->error($message);
+                $this->io->error($message);
             }
         }
 
@@ -198,7 +203,9 @@ class SlugifyDocumentSignalementCommand extends Command
         $countFileList = \count($fileList);
         $countFileSlugged = \count($fileListSlugged);
         if ($countFileList != $countFileSlugged) {
-            $this->logger->error(\sprintf('Different count - row %s col %s - %s // %s', $index, $colName, $countFileSlugged, $countFileList));
+            $message = \sprintf('Different count - row %s col %s - %s // %s', $index, $colName, $countFileSlugged, $countFileList);
+            $this->logger->error($message);
+            $this->io->error($message);
 
             return null;
         }
@@ -228,7 +235,9 @@ class SlugifyDocumentSignalementCommand extends Command
 
             return $filenameSlugged;
         } catch (\Throwable $exception) {
-            $this->logger->error(\sprintf('File rename - row %s - error: %s', $index, $exception->getMessage()));
+            $message = \sprintf('File rename - row %s - error: %s', $index, $exception->getMessage());
+            $this->logger->error($message);
+            $this->io->error($message);
         }
 
         return null;

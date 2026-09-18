@@ -13,7 +13,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -39,7 +38,6 @@ class UpdateSignalementDocumentFieldsCommand extends Command
         #[Target('file.storage')] private readonly FilesystemOperator $fileStorage,
         private readonly UploadHandlerService $uploadHandlerService,
         private readonly FileManager $fileManager,
-        private readonly LoggerInterface $logger,
         private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
@@ -105,13 +103,8 @@ class UpdateSignalementDocumentFieldsCommand extends Command
                     }
                 }
             } catch (NonUniqueResultException $exception) {
-                $this->logger->warning(
-                    $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT]
-                    .':(Reference:'
-                    .$currentReference
-                    .') '
-                    .$exception->getMessage()
-                );
+                $message = $row[SignalementImportImageHeader::COLUMN_ID_ENREGISTREMENT].':(Reference:'.$currentReference.') '.$exception->getMessage();
+                $io->warning($message);
             }
         }
 

@@ -74,7 +74,6 @@ class ZipStreamBuilder
         try {
             $this->zipStream->addFileFromStream(basename($filename), $stream);
             ++$this->countFile;
-            $this->logger->info('Added file to ZIP archive', ['filename' => $filename]);
         } catch (\Throwable $exception) {
             $this->clear();
             $this->logger->error($exception->getMessage());

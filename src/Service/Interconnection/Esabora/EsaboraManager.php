@@ -390,7 +390,7 @@ class EsaboraManager
     private function addFileToSuivi(string $filePath, string $originalName, Suivi $suivi): bool
     {
         if (!$this->fileScanner->isClean($filePath, false)) {
-            $this->logger->error("'File '.$originalName.' from SCHS is infected'");
+            $this->logger->error("'File from SCHS is infected'");
 
             return false;
         }
