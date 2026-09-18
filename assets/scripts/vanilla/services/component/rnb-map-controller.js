@@ -143,7 +143,7 @@ export function createRnbMapController({
         keyboard: false, // empêche Leaflet de mettre tabIndex="0" sur l'élément DOM du marqueur
         zIndexOffset: 1000,
       });
-      marker.addTo(map);
+      marker.addTo(toRaw(map));
       buildingMarkers.push(marker);
     });
 

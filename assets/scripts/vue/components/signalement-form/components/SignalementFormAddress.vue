@@ -56,9 +56,9 @@
       @update:modelValue="handleSubscreenModelUpdate"
     />
 
-    <p v-if="formStore.addressCorrectionMessage" class="fr-text--sm" role="status">
-      {{ formStore.addressCorrectionMessage }}
-    </p>
+    <div v-if="formStore.addressCorrectionMessage && !showPickLocation" class="fr-alert fr-alert--info fr-alert--sm fr-mt-3v" role="status">
+      <p>{{ formStore.addressCorrectionMessage }}</p>
+    </div>
 
     <div aria-live="polite" aria-atomic="true" class="fr-sr-only">{{ pickLocationAnnouncement }}</div>
 
@@ -102,6 +102,10 @@
         <label class="fr-label" :for="id + '_no_building_found'">
           Je ne trouve pas mon bâtiment
         </label>
+      </div>
+
+      <div v-if="formStore.addressCorrectionMessage" class="fr-alert fr-alert--info fr-alert--sm fr-mt-3v" role="status">
+        <p>{{ formStore.addressCorrectionMessage }}</p>
       </div>
 
       <div class="pick-location-footer fr-mt-3v">
@@ -279,6 +283,21 @@ export default defineComponent({
         }
       }
     )
+    // Restaurer l'écran de sélection si on revient dessus avec une adresse déjà complète
+    const numero = this.formStore.data[this.id + '_detail_numero']
+    const codePostal = this.formStore.data[this.id + '_detail_code_postal']
+    const commune = this.formStore.data[this.id + '_detail_commune']
+    const isComplete = !variableTester.isEmpty(numero) &&
+      !variableTester.isEmpty(codePostal) &&
+      !variableTester.isEmpty(commune)
+
+    if (isComplete && this.canPickLocation) {
+      this.previousRnbId = this.formStore.data[this.id + '_detail_rnb_id'] || undefined
+      this.noBuildingFound = !!this.formStore.data[this.id + '_detail_no_building_found']
+      this.showPickLocation = true
+      this.pickLocationInitialized = true
+      this.$nextTick(() => this.initMap())
+    }
   },
   mounted () {
     document.addEventListener('click', this.handleClickOutside)
@@ -332,12 +351,16 @@ export default defineComponent({
     buildingChoices (): Array<{ label: string; value: string }> {
       // buildingsList est déjà trié par proximité (cf. rnb-map-controller.js) : on ne garde
       // que les plus proches, une liste de 100 items rend la page inutilisable.
-      return this.buildingsList
-        .slice(0, this.maxListItems)
-        .map((b: any) => ({
-          label: this.formatBuildingLabel(b),
-          value: b.rnb_id
-        }))
+      const buildings = this.buildingsList.slice(0, this.maxListItems)
+      // Le bâtiment sélectionné reste proposé même s'il est sorti des plus proches
+      // (carte déplacée depuis la sélection).
+      if (this.selectedBuilding && !buildings.some((b: any) => b.rnb_id === this.selectedBuilding.rnb_id)) {
+        buildings.unshift(this.selectedBuilding)
+      }
+      return buildings.map((b: any) => ({
+        label: this.formatBuildingLabel(b),
+        value: b.rnb_id
+      }))
     },
     selectedRnbIdModel: {
       get (): string | null {
@@ -608,18 +631,34 @@ export default defineComponent({
     },
     applyBuildingSelection () {
       if (!this.selectedRnbId) return
+      // rnb-map-controller rappelle onSelect à chaque déplacement de la carte : sans ce garde,
+      // le second appel (valeurs déjà corrigées) écraserait le message de correction par une chaîne vide.
+      if (this.formStore.data[this.id + '_detail_rnb_id'] === this.selectedRnbId) return
       // Stocker le RNB ID dans formStore
       this.formStore.data[this.id + '_detail_rnb_id'] = this.selectedRnbId
       delete this.formStore.data[this.id + '_detail_no_building_found']
 
+      const oldStreet = this.formStore.data[this.id + '_detail_numero']
       const oldCommune = this.formStore.data[this.id + '_detail_commune']
       const oldCodePostal = this.formStore.data[this.id + '_detail_code_postal']
 
-      const address = this.selectedBuilding?.addresses?.[0]
+      // Les écritures ci-dessous déclenchent les watchers d'adresse (mode manuel,
+      // recentrage, recherche de suggestions) : on les neutralise comme pour un clic
+      // sur une suggestion.
+      this.isSearchSkipped = true
+      setTimeout(() => {
+        this.isSearchSkipped = false
+      }, 200)
+
+      const address = this.pickBuildingAddress(this.selectedBuilding, oldStreet)
       if (address) {
-        // Le bâtiment RNB porte une adresse officielle : on l'utilise pour fiabiliser
-        // commune/code postal/insee et on recompose l'adresse affichée (le numéro
-        // tapé par l'usager est conservé).
+        // Le bâtiment RNB porte une adresse officielle : on l'utilise pour corriger
+        // numéro/rue, commune, code postal et insee, et on recompose l'adresse affichée.
+        // Si le RNB ne donne pas de rue, le numéro tapé par l'usager est conservé.
+        const street = [address.street_number, address.street_rep, address.street].filter(Boolean).join(' ')
+        if (address.street && street) {
+          this.formStore.data[this.id + '_detail_numero'] = street
+        }
         this.formStore.data[this.id + '_detail_commune'] = address.city_name
         this.formStore.data[this.id + '_detail_code_postal'] = address.city_zipcode
         this.formStore.data[this.id + '_detail_insee'] = address.city_insee_code
@@ -640,8 +679,22 @@ export default defineComponent({
         oldCodePostal,
         oldCommune,
         this.formStore.data[this.id + '_detail_code_postal'],
-        this.formStore.data[this.id + '_detail_commune']
+        this.formStore.data[this.id + '_detail_commune'],
+        oldStreet,
+        this.formStore.data[this.id + '_detail_numero']
       )
+    },
+    pickBuildingAddress (building: any, typedStreet: string | undefined): any {
+      // Un bâtiment peut porter plusieurs adresses : on privilégie celle dont le numéro
+      // correspond à celui tapé par l'usager, sinon la première.
+      const addresses = building?.addresses
+      if (!addresses || addresses.length === 0) return null
+      const typedNumber = /^\s*(\d+)/.exec(typedStreet ?? '')?.[1]
+      if (typedNumber) {
+        const match = addresses.find((a: any) => String(a.street_number) === typedNumber)
+        if (match) return match
+      }
+      return addresses[0]
     },
     applyNoBuildingFound () {
       // L'usager indique ne pas trouver son bâtiment : on ne bloque pas le formulaire,

@@ -11,10 +11,14 @@ export function buildAddressCorrectionMessage (
   oldCodePostal: string,
   oldCommune: string,
   newCodePostal: string,
-  newCommune: string
+  newCommune: string,
+  oldStreet: string = '',
+  newStreet: string = ''
 ): string {
-  if (oldCodePostal === newCodePostal && oldCommune === newCommune) {
+  if (oldCodePostal === newCodePostal && oldCommune === newCommune && oldStreet === newStreet) {
     return ''
   }
-  return `Adresse mise à jour : ${oldCodePostal} ${oldCommune} → ${newCodePostal} ${newCommune}`
+  const format = (street: string, codePostal: string, commune: string) =>
+    [street, `${codePostal} ${commune}`].filter(Boolean).join(' ')
+  return `Adresse mise à jour : ${format(oldStreet, oldCodePostal, oldCommune)} → ${format(newStreet, newCodePostal, newCommune)}`
 }
