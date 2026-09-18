@@ -114,10 +114,10 @@ class UploadHandlerServiceTest extends KernelTestCase
         $uploadedFileMock
             ->expects($this->exactly(2))
             ->method('getSize')
-            ->willReturn(20 * 1024 * 1024);
+            ->willReturn(30 * 1024 * 1024);
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Le fichier dépasse 10 MB');
+        $this->expectExceptionMessageIs('Le fichier dépasse 25 MB');
         $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.png');
     }
 
@@ -137,7 +137,7 @@ class UploadHandlerServiceTest extends KernelTestCase
             ->willReturn('webm');
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Les fichiers de format video/webm ne sont pas pris en charge, merci de choisir un fichier au format '.UploadHandlerService::getAcceptedExtensions('document'));
+        $this->expectExceptionMessageIs('Les fichiers de format video/webm ne sont pas pris en charge, merci de choisir un fichier au format '.UploadHandlerService::getAcceptedExtensions('document'));
         $uploadHandlerService->uploadFromFile($uploadedFileMock, 'test.webm');
     }
 

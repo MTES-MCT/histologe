@@ -468,7 +468,7 @@ class SignalementController extends AbstractController
                     if (!$fileScanner->isClean($file->getPathname()) && 'application/pdf' !== $file->getMimeType()) {
                         return $this->json(['error' => 'Le fichier est infecté par un virus.'], Response::HTTP_BAD_REQUEST);
                     }
-                    $res = $uploadHandlerService->toTempFolder($file, $fileType);
+                    $res = $uploadHandlerService->toTempFolder($file, $fileType, $uploadHandlerService::MAX_FILESIZE_FO);
                     if (isset($res['error'])) {
                         throw new \Exception($res['error']);
                     }
