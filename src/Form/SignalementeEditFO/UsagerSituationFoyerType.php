@@ -44,7 +44,7 @@ class UsagerSituationFoyerType extends AbstractType
         } elseif (!empty($signalement->getIsAllocataire())) {
             $allocataire = 'oui';
         }
-        $caisseAllocation = ('CAF' === $signalement->getIsAllocataire() || 'MSA' === $signalement->getIsAllocataire()) ? $signalement->getIsAllocataire() : '';
+        $caisseAllocation = ('CAF' === mb_strtoupper($signalement->getIsAllocataire()) || 'MSA' === mb_strtoupper($signalement->getIsAllocataire())) ? $signalement->getIsAllocataire() : '';
 
         $typeAllocation = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsTypeAllocation() : '';
         $montantAllocation = $signalement->getMontantAllocation();

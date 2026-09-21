@@ -32,11 +32,10 @@ class SituationFoyerProcessor
 
     public function processIsAllocataire(Signalement $signalement, ?string $isAllocataire, ?string $caisseAllocation = null): void
     {
-        $caisseAllocation = mb_strtolower($caisseAllocation ?? '');
         if ('non' === $isAllocataire) {
             $signalement->setIsAllocataire('0');
         } elseif (!empty($isAllocataire)) {
-            if (in_array($caisseAllocation, ['caf', 'msa'], true)) {
+            if (in_array($caisseAllocation, ['CAF', 'MSA'], true)) {
                 $signalement->setIsAllocataire($caisseAllocation);
             } else {
                 $signalement->setIsAllocataire('1');
