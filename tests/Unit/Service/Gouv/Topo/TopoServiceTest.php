@@ -56,6 +56,37 @@ class TopoServiceTest extends TestCase
         $this->assertStringContainsString('search(libelle%2C%22LOUBRETTE%22)', $url);
     }
 
+    public function testSearchVoiesEscapesLibelle(): void
+    {
+        $mockResponse = new MockResponse('{"results":[]}', [
+            'http_code' => 200,
+            'response_headers' => ['Content-Type' => 'application/json'],
+        ]);
+
+        $topoService = new TopoService(new MockHttpClient($mockResponse), $this->createStub(LoggerInterface::class));
+        $topoService->searchVoies('63', '214', 'A" OR code_dep<>"0\\');
+
+        parse_str((string) parse_url($mockResponse->getRequestUrl(), \PHP_URL_QUERY), $query);
+        $this->assertSame(
+            'code_dep="63" AND code_commune="214" AND search(libelle,"A\" OR code_dep<>\"0\\\\")',
+            $query['where']
+        );
+    }
+
+    public function testSearchVoiesRejectsInvalidCodes(): void
+    {
+        $httpClient = new MockHttpClient(function () {
+            $this->fail('The API must not be called with invalid codes.');
+        });
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->exactly(2))->method('warning');
+
+        $topoService = new TopoService($httpClient, $logger);
+
+        $this->assertSame([], $topoService->searchVoies('63" OR 1=1 --', '214', 'LOUBRETTE'));
+        $this->assertSame([], $topoService->searchVoies('63', '2"4', 'LOUBRETTE'));
+    }
+
     public function testSearchVoiesError(): void
     {
         $mockResponse = new MockResponse('Internal Server Error', [
