@@ -34,3 +34,9 @@ location ~* \.(css|js|jpg|jpeg|png|svg|webp|mp4|ico|woff2|woff|eot|ttf) {
     # See: https://symfony.com/doc/current/frontend/encore/versioning.html
     add_header Cache-Control "public, max-age=31536000";
 }
+
+# Nécessaire pour que nginx évite de transformer les .mjs en application/octet-stream (maplibre-gl)
+location ~ \.mjs$ {
+    default_type application/javascript;
+    add_header Cache-Control "public, max-age=31536000";
+}

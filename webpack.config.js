@@ -43,6 +43,12 @@ Encore
         from: './node_modules/leaflet/dist/images',
         to: 'images/leaflet/[name].[ext]'
     })
+    // Voir setWorkerUrl() dans vanilla/services/component/maplibre-worker.js.
+    .copyFiles({
+        from: './node_modules/maplibre-gl/dist/',
+        to: 'maplibre-gl/[name].[ext]',
+        pattern: /maplibre-gl-(worker|shared)\.mjs$/
+    })
 
     // public path used by the web server to access the output path
     .setPublicPath('/build')

@@ -1,7 +1,8 @@
 async function initAddressesHistory() {
-  const [{ mapStyles }, { default: maplibregl }] = await Promise.all([
+  const [{ mapStyles }, maplibregl] = await Promise.all([
     import('carte-facile'),
     import('maplibre-gl'),
+    import('../../services/component/maplibre-worker.js'),
     import('maplibre-gl/dist/maplibre-gl.css'),
     import('carte-facile/carte-facile.css'),
   ]);
