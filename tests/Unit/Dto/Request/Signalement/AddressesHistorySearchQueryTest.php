@@ -29,7 +29,7 @@ class AddressesHistorySearchQueryTest extends KernelTestCase
             'territories' => ['13'],
             'adresse' => 'rue de la paix',
             'cityOrEpci' => 'Marseille',
-            'bailleurOrSyndic' => ['ACME'],
+            'bailleurOrSyndic' => 'ACME',
             'zone' => '5',
             'housetypes' => [1],
             'dossiersMultiples' => 'oui',
