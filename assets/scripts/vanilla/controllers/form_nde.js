@@ -66,9 +66,9 @@ formBtn?.addEventListener('click', () => {
 
     const data = {
       _token: document.getElementById('signalement-edit-nde-token').value,
-      dateEntree: document.querySelector('input[name=dateEntree]')?.value,
+      dateEntree: document.getElementById('signalement-edit-nde-date-entree')?.value,
       dpe: stringToBoolean(document.querySelector('input[name=dpe]:checked')?.value),
-      classeEnergetique: document.querySelector('select[name=bailDpeClasseEnergetique]')?.value,
+      classeEnergetique: document.getElementById('signalement-edit-nde-classe-energetique')?.value,
       dateDernierDPE: document.querySelector('input[name=dateDernierDPE]:checked')?.value,
       consommationEnergie: inputValueToNumber(
         document.getElementById('signalement-edit-nde-conso-energie')?.value
