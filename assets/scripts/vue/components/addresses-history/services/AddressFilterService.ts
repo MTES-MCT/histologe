@@ -35,6 +35,7 @@ export class AddressFilterService {
     let filteredAddresses = [...addresses]
 
     filteredAddresses = this.filterByTerritoire(filteredAddresses, filters.territoire)
+    filteredAddresses = this.filterByAdresse(filteredAddresses, filters.adresse)
     filteredAddresses = this.filterByCommuneOuEpci(filteredAddresses, filters.communeOuEpci)
     filteredAddresses = this.filterByDossiersMultiples(filteredAddresses, filters.dossiersMultiples)
     filteredAddresses = this.filterByMainLevee(filteredAddresses, params.mainLeveeUniquement)
@@ -55,6 +56,21 @@ export class AddressFilterService {
 
     return addresses.filter((address) => {
       return address.territoryId?.toString() === territoire
+    })
+  }
+
+  /**
+   * Filtre par adresse (numéro et rue)
+   */
+  private static filterByAdresse(addresses: Address[], adresse?: string): Address[] {
+    if (!adresse) {
+      return addresses
+    }
+
+    const searchTerm = adresse.toLowerCase()
+
+    return addresses.filter((address) => {
+      return address.addressForHuman?.toLowerCase().includes(searchTerm)
     })
   }
 

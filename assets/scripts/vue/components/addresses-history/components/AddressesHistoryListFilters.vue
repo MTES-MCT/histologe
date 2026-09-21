@@ -23,7 +23,7 @@
         <AppAutoComplete
           id="filter-search-terms"
           v-model="sharedState.input.filters.adresse"
-          :suggestions="addressesSuggestionsForZone"
+          :suggestions="addressesSuggestions"
           :placeholder="'Taper l\'adresse'"
           title="Taper l'adresse"
           :minLengthSearch="3"
@@ -40,7 +40,7 @@
         <AppAutoComplete
           id="filter-commune"
           v-model="sharedState.input.filters.communeOuEpci"
-          :suggestions="communesForZone"
+          :suggestions="communesSuggestions"
           :initSelectedSuggestions="sharedState.input.filters.communeOuEpci"
           :placeholder="'Commune ou EPCI'"
           title="Commune ou EPCI"
@@ -158,6 +158,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { store } from '../composables/useAddressesHistoryStore'
 import { useAddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'
+import { useFilteredSuggestions } from '../composables/useFilteredSuggestions'
 import { getActiveFilters, type ActiveFilter } from '../services/activeFiltersBuilder'
 import type { AddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'
 import HistoSelect from '../../common/HistoSelect.vue'
@@ -186,22 +187,8 @@ const arreteTypesGroups = computed<CheckboxGroup[]>(() => {
   return sharedState.arreteTypesGroups
 })
 
-// Suggestions limitées à la zone sélectionnée (filtrage local, uniquement dans cette vue)
-const addressesInSelectedZone = computed(() => {
-  const zoneId = Number(sharedState.input.filters.zone)
-  return sharedState.addressesWithZones.filter((a) => a.zoneIds.includes(zoneId))
-})
-
-const addressesSuggestionsForZone = computed<string[]>(() => {
-  if (!sharedState.input.filters.zone) return sharedState.addressesSuggestions
-  return addressesInSelectedZone.value.map((a) => a.address)
-})
-
-const communesForZone = computed<string[]>(() => {
-  if (!sharedState.input.filters.zone) return sharedState.communes
-  const cities = addressesInSelectedZone.value.map((a) => a.city).filter((c): c is string => !!c)
-  return Array.from(new Set(cities)).sort((a, b) => a.localeCompare(b))
-})
+// Suggestions limitées par la zone et la commune sélectionnées (filtrage local)
+const { addressesSuggestions, communesSuggestions } = useFilteredSuggestions({ withZone: true })
 
 // Filtres actifs
 const activeFilters = computed<ActiveFilter[]>(() => {

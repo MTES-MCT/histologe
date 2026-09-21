@@ -85,11 +85,15 @@ export default defineComponent({
       } else {
         this.selectedSuggestions = newValue
       }
+      // En mode non-multiple, le champ reflète la valeur du modèle (ex. modifiée depuis l'autre vue)
+      if (!this.multiple) {
+        this.searchText = typeof newValue === 'string' ? newValue : ''
+      }
     }
   },
   data () {
     return {
-      searchText: '',
+      searchText: (!this.multiple && typeof this.modelValue === 'string') ? this.modelValue as unknown as string : '',
       selectedSuggestions: this.initSelectedSuggestions || [] as string[],
       suggestionFilteredList: [] as string[],
       selectedSuggestion: '',

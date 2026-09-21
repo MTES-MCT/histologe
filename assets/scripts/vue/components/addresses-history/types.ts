@@ -25,7 +25,7 @@ export enum ArreteType {
 
 export interface AddressWithZones {
   address: string
-  city?: string | null
+  commune?: string | null
   zoneIds: number[]
 }
 
@@ -133,7 +133,7 @@ export interface SettingsResponse {
   roleLabel?: string
   isMultiTerritoire?: boolean
   territories?: Record<string, { id: string; zip: string; name: string }>
-  addresses?: Record<string, { id: string; address: string; city?: string | null; zoneIds?: number[] }>
+  addresses?: Record<string, { id: string; address: string; commune?: string | null; zoneIds?: number[] }>
   communes?: Record<string, string>
   epcis?: Record<string, { code: string; nom: string }>
   zones?: Record<string, { id: number; name: string }>

@@ -72,7 +72,7 @@ export function useAddressesHistoryFilters() {
           store.state.addressesSuggestions.push(address.address)
           store.state.addressesWithZones.push({
             address: address.address,
-            city: address.city,
+            commune: address.commune,
             zoneIds: address.zoneIds ?? []
           })
         }

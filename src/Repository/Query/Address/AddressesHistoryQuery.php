@@ -26,10 +26,11 @@ class AddressesHistoryQuery
     }
 
     /**
-     * Retourne les adresses avec leur ville et les ids des zones qui les contiennent (`zoneIds`),
-     * afin que le front puisse filtrer les listes de suggestions selon la zone sélectionnée.
+     * Retourne les adresses avec leur commune (`commune`, arrondissements regroupés sous Paris/Lyon/Marseille)
+     * et les ids des zones qui les contiennent (`zoneIds`), afin que le front puisse filtrer
+     * les listes de suggestions selon la zone ou la commune sélectionnée.
      *
-     * @return array<int, array{id: int, address: string, city: string|null, zoneIds: array<int, int>}>
+     * @return array<int, array{id: int, address: string, commune: string|null, zoneIds: array<int, int>}>
      */
     public function findAllList(?Territory $territory = null): array
     {
@@ -60,6 +61,8 @@ class AddressesHistoryQuery
         $addresses = $qb->getQuery()->getArrayResult();
         $zoneIdsByAddress = $this->findZoneIdsByAddress($territory);
         foreach ($addresses as &$address) {
+            $address['commune'] = CommuneHelper::getCommuneFromArrondissement($address['city']);
+            unset($address['city']);
             $address['zoneIds'] = $zoneIdsByAddress[$address['id']] ?? [];
         }
         unset($address);
