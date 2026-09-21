@@ -6,6 +6,7 @@ use App\Command\Cron\MonitorMessengerQueuesCommand;
 use Doctrine\DBAL\Connection;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface as MessengerSerializerInterface;
@@ -22,6 +23,9 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
     /** @var SerializerInterface&MockObject */
     private SerializerInterface $serializer;
 
+    /* @var LoggerInterface&MockObject */
+    private LoggerInterface $logger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -29,6 +33,7 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
         $this->connection = $this->createMock(Connection::class);
         $this->messengerSerializer = $this->createMock(MessengerSerializerInterface::class);
         $this->serializer = $this->createMock(SerializerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     public function testDisplaysOkMessageWhenNoOldMessagesFound(): void
@@ -43,6 +48,7 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
             $this->connection,
             $this->messengerSerializer,
             $this->serializer,
+            $this->logger,
             $threshold
         );
 
@@ -91,6 +97,7 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
             $this->connection,
             $this->messengerSerializer,
             $this->serializer,
+            $this->logger,
             $threshold
         );
 
@@ -102,5 +109,67 @@ final class MonitorMessengerQueuesCommandTest extends TestCase
         $this->assertSame(0, $exitCode);
         $this->assertStringContainsString('Messenger queue "default" stalled', $display);
         $this->assertStringContainsString('anonymous', $display);
+    }
+
+    public function testContinuesWhenOneMessageCannotBeSerialized(): void
+    {
+        $threshold = '6 HOUR';
+
+        $malformedRow = [
+            'id' => 1,
+            'queue_name' => 'default',
+            'body' => '{}',
+            'created_at' => '2025-10-01 10:00:00',
+        ];
+
+        $validRow = [
+            'id' => 2,
+            'queue_name' => 'default',
+            'body' => '{}',
+            'created_at' => '2025-10-01 10:01:00',
+        ];
+
+        $this->connection
+            ->method('fetchAllAssociative')
+            ->willReturn([$malformedRow, $validRow]);
+
+        $malformedMessage = new class {
+            public string $name = 'malformed-message';
+        };
+
+        $validMessage = new class {
+            public string $name = 'valid-message';
+        };
+
+        $this->messengerSerializer
+            ->method('decode')
+            ->willReturnOnConsecutiveCalls(
+                new Envelope($malformedMessage),
+                new Envelope($validMessage),
+            );
+
+        $this->serializer
+            ->method('serialize')
+            ->willReturnOnConsecutiveCalls(
+                $this->throwException(new \InvalidArgumentException('Malformed UTF-8 characters, possibly incorrectly encoded')),
+                '{"name":"valid-message"}',
+            );
+
+        $command = new MonitorMessengerQueuesCommand(
+            $this->connection,
+            $this->messengerSerializer,
+            $this->serializer,
+            $this->logger,
+            $threshold
+        );
+
+        $tester = new CommandTester($command);
+
+        $exitCode = $tester->execute([]);
+        $display = $tester->getDisplay();
+
+        $this->assertSame(0, $exitCode);
+        $this->assertStringContainsString('Unable to process stalled messenger message "1"', $display);
+        $this->assertStringContainsString('Messenger queue "default" stalled', $display);
     }
 }
