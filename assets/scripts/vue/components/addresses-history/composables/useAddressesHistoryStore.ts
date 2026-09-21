@@ -62,7 +62,7 @@ const state = ref<StoreState>({
   bailleursAndSyndic: [],
   zones: [],
   currentCommunes: '',
-  viewMode: 'list' as ViewMode,
+  viewMode: 'map' as ViewMode,
   loadingSettings: true,
   loadingList: false,
   hasErrorLoading: false,
