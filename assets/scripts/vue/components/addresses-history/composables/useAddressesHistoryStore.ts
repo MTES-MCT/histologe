@@ -57,6 +57,7 @@ const state = ref<StoreState>({
   },
   territories: [],
   addressesSuggestions: [],
+  addressesWithZones: [],
   communes: [],
   bailleursAndSyndic: [],
   zones: [],

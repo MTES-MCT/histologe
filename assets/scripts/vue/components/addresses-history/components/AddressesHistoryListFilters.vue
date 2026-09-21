@@ -23,7 +23,7 @@
         <AppAutoComplete
           id="filter-search-terms"
           v-model="sharedState.input.filters.adresse"
-          :suggestions="sharedState.addressesSuggestions"
+          :suggestions="addressesSuggestionsForZone"
           :placeholder="'Taper l\'adresse'"
           title="Taper l'adresse"
           :minLengthSearch="3"
@@ -40,7 +40,7 @@
         <AppAutoComplete
           id="filter-commune"
           v-model="sharedState.input.filters.communeOuEpci"
-          :suggestions="sharedState.communes"
+          :suggestions="communesForZone"
           :initSelectedSuggestions="sharedState.input.filters.communeOuEpci"
           :placeholder="'Commune ou EPCI'"
           title="Commune ou EPCI"
@@ -79,7 +79,7 @@
         <HistoSelect
           id="filter-zones"
           v-model="sharedState.input.filters.zone"
-          @update:modelValue="notifyChange"
+          @update:modelValue="onZoneChange"
           :option-items="sharedState.zones"
           title="Rechercher par zones"
           :active="true"
@@ -186,6 +186,23 @@ const arreteTypesGroups = computed<CheckboxGroup[]>(() => {
   return sharedState.arreteTypesGroups
 })
 
+// Suggestions limitées à la zone sélectionnée (filtrage local, uniquement dans cette vue)
+const addressesInSelectedZone = computed(() => {
+  const zoneId = Number(sharedState.input.filters.zone)
+  return sharedState.addressesWithZones.filter((a) => a.zoneIds.includes(zoneId))
+})
+
+const addressesSuggestionsForZone = computed<string[]>(() => {
+  if (!sharedState.input.filters.zone) return sharedState.addressesSuggestions
+  return addressesInSelectedZone.value.map((a) => a.address)
+})
+
+const communesForZone = computed<string[]>(() => {
+  if (!sharedState.input.filters.zone) return sharedState.communes
+  const cities = addressesInSelectedZone.value.map((a) => a.city).filter((c): c is string => !!c)
+  return Array.from(new Set(cities)).sort((a, b) => a.localeCompare(b))
+})
+
 // Filtres actifs
 const activeFilters = computed<ActiveFilter[]>(() => {
   return getActiveFilters(sharedState.input.filters as AddressesHistoryFilters)
@@ -210,6 +227,20 @@ const onTerritoryChange = async (value: string): Promise<void> => {
   sharedState.input.filters.territoire = value
 
   await filtersComposable.reloadSettings()
+
+  notifyChange()
+}
+
+/**
+ * Quand la zone change
+ * - Réinitialise commune et adresse (leurs suggestions dépendent de la zone)
+ * - Notifie le changement (pas d'appel settings : le filtrage est local)
+ */
+const onZoneChange = (value: string | undefined): void => {
+  sharedState.input.filters.communeOuEpci = undefined
+  sharedState.input.filters.adresse = undefined
+  sharedState.input.filters.zone = value || undefined
+  resetKey.value = !resetKey.value
 
   notifyChange()
 }

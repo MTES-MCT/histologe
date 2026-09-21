@@ -26,14 +26,17 @@ class AddressesHistoryQuery
     }
 
     /**
-     * @return array<int, mixed>
+     * Retourne les adresses avec leur ville et les ids des zones qui les contiennent (`zoneIds`),
+     * afin que le front puisse filtrer les listes de suggestions selon la zone sélectionnée.
+     *
+     * @return array<int, array{id: int, address: string, city: string|null, zoneIds: array<int, int>}>
      */
     public function findAllList(?Territory $territory = null): array
     {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Address::class, 'a')
             ->leftJoin('a.arretes', 'ar')
-            ->select('a.id, CONCAT_WS(\' \', a.housenumber, a.street) as address')
+            ->select('a.id, CONCAT_WS(\' \', a.housenumber, a.street) as address, a.city')
             ->groupBy('a.id, a.street, a.housenumber')
             ->orderBy('a.street', 'ASC')
             ->addOrderBy('CAST(a.housenumber AS UNSIGNED)', 'ASC');
@@ -43,6 +46,7 @@ class AddressesHistoryQuery
                 ->setParameter('territory', $territory);
         }
 
+        /*
         // Une adresse est renvoyée si il y a au moins 2 signalements ou au moins 1 arrêté
         $qb->andWhere('ar.id IS NOT NULL OR EXISTS (
             SELECT 1 FROM '.Signalement::class.' sMultiple
@@ -51,8 +55,44 @@ class AddressesHistoryQuery
             HAVING COUNT(sMultiple.id) >= 2
         )');
         $qb->setParameter('statusList', $this->getStatusList());
+        */
 
-        return $qb->getQuery()->getArrayResult();
+        $addresses = $qb->getQuery()->getArrayResult();
+        $zoneIdsByAddress = $this->findZoneIdsByAddress($territory);
+        foreach ($addresses as &$address) {
+            $address['zoneIds'] = $zoneIdsByAddress[$address['id']] ?? [];
+        }
+        unset($address);
+
+        return $addresses;
+    }
+
+    /**
+     * @return array<int, array<int, int>> ids des zones indexés par id d'adresse
+     *
+     * @throws Exception
+     */
+    private function findZoneIdsByAddress(?Territory $territory): array
+    {
+        $sql = '
+            SELECT a.id AS address_id, z.id AS zone_id
+            FROM address a
+            JOIN zone z ON z.territory_id = a.territory_id
+            WHERE a.point IS NOT NULL
+            AND ST_Contains(z.area, a.point) = 1
+        ';
+        $params = [];
+        if ($territory) {
+            $sql .= ' AND a.territory_id = :territoryId';
+            $params['territoryId'] = $territory->getId();
+        }
+
+        $zoneIdsByAddress = [];
+        foreach ($this->entityManager->getConnection()->executeQuery($sql, $params)->fetchAllAssociative() as $row) {
+            $zoneIdsByAddress[(int) $row['address_id']][] = (int) $row['zone_id'];
+        }
+
+        return $zoneIdsByAddress;
     }
 
     /**

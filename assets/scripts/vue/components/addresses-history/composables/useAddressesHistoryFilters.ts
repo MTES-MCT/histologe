@@ -64,11 +64,17 @@ export function useAddressesHistoryFilters() {
     }
 
     store.state.addressesSuggestions = []
+    store.state.addressesWithZones = []
     if (response.addresses) {
       for (const id in response.addresses) {
         const address = response.addresses[id]
         if (variableTester.isNotEmpty(address) && address.address) {
           store.state.addressesSuggestions.push(address.address)
+          store.state.addressesWithZones.push({
+            address: address.address,
+            city: address.city,
+            zoneIds: address.zoneIds ?? []
+          })
         }
       }
     }

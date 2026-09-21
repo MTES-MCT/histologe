@@ -23,6 +23,12 @@ export enum ArreteType {
   ArreteL51111Impropre = 'ARRETE_L_511_11_IMPROPRE'
 }
 
+export interface AddressWithZones {
+  address: string
+  city?: string | null
+  zoneIds: number[]
+}
+
 export interface Pagination {
   current_page: number
   total_pages: number
@@ -84,6 +90,7 @@ export interface StoreState {
   user: UserState
   territories: HistoInterfaceSelectOption[]
   addressesSuggestions: string[]
+  addressesWithZones: AddressWithZones[]
   communes: string[]
   bailleursAndSyndic: string[]
   zones: HistoInterfaceSelectOption[]
@@ -126,7 +133,7 @@ export interface SettingsResponse {
   roleLabel?: string
   isMultiTerritoire?: boolean
   territories?: Record<string, { id: string; zip: string; name: string }>
-  addresses?: Record<string, { id: string; address: string; }>
+  addresses?: Record<string, { id: string; address: string; city?: string | null; zoneIds?: number[] }>
   communes?: Record<string, string>
   epcis?: Record<string, { code: string; nom: string }>
   zones?: Record<string, { id: number; name: string }>
