@@ -348,7 +348,7 @@ class AddressesHistoryQuery
 
         if (!empty($addressesHistorySearchQuery->getBailleurOuSyndic())) {
             $qb->leftJoin('s.bailleur', 'b');
-            $qb->andWhere(' OR (s.nomProprio = :bailleur
+            $qb->andWhere('(s.nomProprio = :bailleur
                 OR s.denominationProprio = :bailleur
                 OR s.denominationSyndic = :bailleur
                 OR b.name = :bailleur)');
