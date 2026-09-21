@@ -390,7 +390,8 @@ class SignalementEditControllerTest extends WebTestCase
             'usager_situation_foyer[isLogementSocial]' => '1',
             'usager_situation_foyer[isRelogement]' => '1',
             'usager_situation_foyer[numAllocataire]' => '11223344',
-            'usager_situation_foyer[allocataire]' => 'non',
+            'usager_situation_foyer[allocataire]' => 'oui',
+            'usager_situation_foyer[caisseAllocation]' => 'MSA',
             'usager_situation_foyer[montantAllocation]' => '555',
         ]);
 
