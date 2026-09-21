@@ -56,48 +56,80 @@
       @update:modelValue="handleSubscreenModelUpdate"
     />
 
-    <div v-if="displayPickLocationButton" class="pick-location-button-container">
-      <button
-        class="fr-btn fr-btn--icon-left fr-btn--secondary fr-icon-map-pin-2-line"
-        @click="togglePickLocation">
-          Sélectionner le bâtiment sur la carte
-      </button>
-      <span v-if="formStore.data[id + '_detail_rnb_id']" class="pick-location-success fr-ml-2v">
-        <span class="fr-icon-check-line" aria-hidden="true"></span>
-        Bâtiment sélectionné
-      </span>
+    <div v-if="formStore.addressCorrectionMessage && !showPickLocation" class="fr-alert fr-alert--info fr-alert--sm fr-mt-3v" role="status">
+      <p>{{ formStore.addressCorrectionMessage }}</p>
     </div>
+
+    <div aria-live="polite" aria-atomic="true" class="fr-sr-only">{{ pickLocationAnnouncement }}</div>
 
     <div v-if="showPickLocation" class="pick-location-container fr-mt-3v">
       <div class="pick-location-header">
-        <h3>Sélectionner le bâtiment correspondant au logement</h3>
-        <button type="button" class="fr-btn fr-btn--tertiary-no-outline fr-icon-close-line" @click="closePickLocation">
-          Fermer
-        </button>
+        <h3>{{ pickLocationHeading }}</h3>
       </div>
-      <p>Cliquez sur un bâtiment pour le sélectionner, ou utilisez les touches fléchées puis Entrée.</p>
-      <div ref="pickLocationMessage" class="fr-hidden fr-mb-2v">Chargement en cours</div>
-      <div :key="mapKey" ref="pickLocationMapContainer" :id="idPickLocationMap" class="pick-location-map"></div>
-      <div ref="pickLocationAnnouncement" aria-live="polite" aria-atomic="true" class="fr-sr-only"></div>
-      <div class="pick-location-footer fr-mt-3v">
-        <button
-          ref="pickLocationSubmit"
-          class="fr-btn fr-icon-check-line"
-          :id="id + '_pick_location_submit'"
-          :disabled="!selectedRnbId"
-          :title="selectedRnbId ? 'Valider la sélection du bâtiment' : 'Veuillez sélectionner un bâtiment sur la carte'"
-          @click="handleSubmitPickLocation"
-          type="button">
-          Valider la sélection
-        </button>
+      <div>
         <button
           type="button"
-          class="fr-btn fr-btn--secondary fr-icon-close-line"
-          title="Fermer sans enregistrer"
-          @click="closePickLocation">
-          Annuler
+          :class="['fr-btn fr-btn--icon-left fr-btn--tertiary-no-outline', { 'fr-icon-list-unordered': viewMode === 'map', 'fr-icon-map-pin-2-line': viewMode !== 'map' }]"
+          @click="toggleViewMode">
+          {{ viewMode === 'map' ? 'Afficher la liste' : 'Afficher la carte' }}
         </button>
       </div>
+
+      <div v-show="viewMode === 'map'">
+        <p>Cliquez sur un bâtiment pour le sélectionner, ou utilisez les touches fléchées puis Entrée.</p>
+        <p v-if="isLoadingMap" class="fr-mb-2v" role="status">Chargement en cours…</p>
+        <div :key="mapKey" ref="pickLocationMapContainer" :id="idPickLocationMap" class="pick-location-map"></div>
+        <div ref="pickLocationAnnouncement" aria-live="polite" aria-atomic="true" class="fr-sr-only"></div>
+      </div>
+
+      <SignalementFormOnlyChoice
+        v-show="viewMode === 'list'"
+        :id="id + '_pick_location_list'"
+        label="Choisissez le bâtiment correspondant au logement"
+        :values="buildingChoices"
+        v-model="selectedRnbIdModel"
+      />
+      <p v-if="viewMode === 'list' && buildingsList.length > maxListItems" class="fr-hint-text">
+        Les {{ maxListItems }} bâtiments les plus proches sont affichés. Si le vôtre n'y figure pas, cochez "Je ne trouve pas mon bâtiment" ci-dessous.
+      </p>
+
+      <div class="fr-checkbox-group fr-checkbox-group--sm fr-mb-2v">
+        <input
+          type="checkbox"
+          :id="id + '_no_building_found'"
+          v-model="noBuildingFound"
+        >
+        <label class="fr-label" :for="id + '_no_building_found'">
+          Je ne trouve pas mon bâtiment
+        </label>
+      </div>
+
+      <div v-if="formStore.addressCorrectionMessage" class="fr-alert fr-alert--info fr-alert--sm fr-mt-3v" role="status">
+        <p>{{ formStore.addressCorrectionMessage }}</p>
+      </div>
+
+      <div class="pick-location-footer fr-mt-3v">
+        <span v-if="formStore.data[id + '_detail_rnb_id']" class="pick-location-success fr-ml-2v">
+          <span class="fr-icon-check-line" aria-hidden="true"></span>
+          Bâtiment sélectionné
+        </span>
+        <span v-else-if="formStore.data[id + '_detail_no_building_found']" class="pick-location-success fr-ml-2v">
+          <span class="fr-icon-check-line" aria-hidden="true"></span>
+          Je n'ai pas trouvé mon bâtiment
+        </span>
+        <span v-else class="pick-location-warning fr-ml-2v">
+          <span class="fr-icon-check-line" aria-hidden="true"></span>
+          Bâtiment non sélectionné
+        </span>
+      </div>
+    </div>
+    <div
+      :id="id + '-_detail_rnb_id-error-desc-error'"
+      class="fr-error-text"
+      role="alert"
+      v-if="formStore.validationErrors[id + '_detail_rnb_id'] !== undefined"
+      >
+      {{ formStore.validationErrors[id + '_detail_rnb_id'] }}
     </div>
   </div>
 </template>
@@ -112,9 +144,11 @@ import subscreenData from './../address_subscreen.json'
 import SignalementFormTextfield from './SignalementFormTextfield.vue'
 import SignalementFormButton from './SignalementFormButton.vue'
 import SignalementFormSubscreen from './SignalementFormSubscreen.vue'
+import SignalementFormOnlyChoice from './SignalementFormOnlyChoice.vue'
 import L from 'leaflet'
 import 'leaflet.vectorgrid'
 import { buildingStyles, createRnbMapController } from '../../../../vanilla/services/component/rnb-map-controller.js'
+import { buildAddressCorrectionMessage } from '../services/addressCorrection'
 
 // Import des fichiers CSS nécessaires pour Leaflet
 import 'leaflet/dist/leaflet.css'
@@ -126,7 +160,8 @@ export default defineComponent({
   components: {
     SignalementFormTextfield,
     SignalementFormButton,
-    SignalementFormSubscreen
+    SignalementFormSubscreen,
+    SignalementFormOnlyChoice
   },
   props: {
     id: { type: String, default: null },
@@ -162,7 +197,6 @@ export default defineComponent({
       screens: { body: updatedSubscreenData },
       suggestions: [] as any[],
       canPickLocation: this.customCss.includes('can-pick-location'),
-      displayPickLocationButton: false,
       showPickLocation: false,
       formStore,
       // Avoids searching when an option is selected in the list
@@ -172,8 +206,17 @@ export default defineComponent({
       vectorTileLayer: null as any,
       previousRnbId: undefined as string | undefined,
       selectedRnbId: null as string | null,
+      selectedBuilding: null as any,
       rnbMapController: null as any,
-      mapKey: 0
+      mapKey: 0,
+      buildingsList: [] as any[],
+      viewMode: 'map' as 'map' | 'list',
+      noBuildingFound: false,
+      geocodedCityData: null as { city: string; postcode: string; citycode: string } | null,
+      maxListItems: 20,
+      pickLocationInitialized: false,
+      addressFieldsDebounceTimeout: 0 as unknown as ReturnType<typeof setTimeout>,
+      isLoadingMap: false,
     }
   },
   created () {
@@ -226,6 +269,35 @@ export default defineComponent({
         this.handleAddressFieldsEdited(true)
       }
     )
+    watch(
+      () => this.noBuildingFound,
+      (checked: boolean) => {
+        if (checked) {
+          this.rnbMapController?.clearSelection()
+          this.selectedRnbId = null
+          this.selectedBuilding = null
+          this.previousRnbId = undefined
+          this.applyNoBuildingFound()
+        } else if (!this.selectedRnbId) {
+          delete this.formStore.data[this.id + '_detail_no_building_found']
+        }
+      }
+    )
+    // Restaurer l'écran de sélection si on revient dessus avec une adresse déjà complète
+    const numero = this.formStore.data[this.id + '_detail_numero']
+    const codePostal = this.formStore.data[this.id + '_detail_code_postal']
+    const commune = this.formStore.data[this.id + '_detail_commune']
+    const isComplete = !variableTester.isEmpty(numero) &&
+      !variableTester.isEmpty(codePostal) &&
+      !variableTester.isEmpty(commune)
+
+    if (isComplete && this.canPickLocation) {
+      this.previousRnbId = this.formStore.data[this.id + '_detail_rnb_id'] || undefined
+      this.noBuildingFound = !!this.formStore.data[this.id + '_detail_no_building_found']
+      this.showPickLocation = true
+      this.pickLocationInitialized = true
+      this.$nextTick(() => this.initMap())
+    }
   },
   mounted () {
     document.addEventListener('click', this.handleClickOutside)
@@ -266,7 +338,45 @@ export default defineComponent({
         ...this.validate,
         maxLength: 200
       }
+    },
+    pickLocationRequired (): boolean {
+      return this.formStore.data.type_logement_nature !== 'autre'
+    },
+    pickLocationHeading (): string {
+      return 'Sélectionner le bâtiment correspondant au logement' + (this.pickLocationRequired ? ' (obligatoire)' : '')
+    },
+    pickLocationAnnouncement (): string {
+      return this.showPickLocation ? this.pickLocationHeading + '.' : ''
+    },
+    buildingChoices (): Array<{ label: string; value: string }> {
+      // buildingsList est déjà trié par proximité (cf. rnb-map-controller.js) : on ne garde
+      // que les plus proches, une liste de 100 items rend la page inutilisable.
+      const buildings = this.buildingsList.slice(0, this.maxListItems)
+      // Le bâtiment sélectionné reste proposé même s'il est sorti des plus proches
+      // (carte déplacée depuis la sélection).
+      if (this.selectedBuilding && !buildings.some((b: any) => b.rnb_id === this.selectedBuilding.rnb_id)) {
+        buildings.unshift(this.selectedBuilding)
+      }
+      return buildings.map((b: any) => ({
+        label: this.formatBuildingLabel(b),
+        value: b.rnb_id
+      }))
+    },
+    selectedRnbIdModel: {
+      get (): string | null {
+        return this.selectedRnbId
+      },
+      set (value: string | null) {
+        this.selectedRnbId = value
+        this.previousRnbId = value ?? undefined
+        this.selectedBuilding = this.buildingsList.find((b: any) => b.rnb_id === value) ?? null
+        if (value) {
+          this.noBuildingFound = false
+          this.applyBuildingSelection()
+        }
+      }
     }
+
   },
   methods: {
     updateValue (value: any) {
@@ -274,26 +384,77 @@ export default defineComponent({
     },
     handleAddressFieldsEdited (changeCommune:Boolean) {
       this.formStore.data[this.id + '_detail_manual'] = 1
-      this.displayPickLocationButton = false
+      this.showPickLocation = false
       if (changeCommune) {
         formStore.data[this.id + '_detail_need_refresh_insee'] = true
       }
-      if (
+
+      const isEmpty =
         variableTester.isEmpty(this.formStore.data[this.id + '_detail_numero']) &&
         variableTester.isEmpty(this.formStore.data[this.id + '_detail_code_postal']) &&
         variableTester.isEmpty(this.formStore.data[this.id + '_detail_commune'])
-      ) {
-        if (this.validate !== null && this.validate.required === false) {
-          this.formStore.data[this.id + '_detail_manual'] = 0
-        }
-      }
-      if (
+      const isComplete =
         !variableTester.isEmpty(this.formStore.data[this.id + '_detail_numero']) &&
         !variableTester.isEmpty(this.formStore.data[this.id + '_detail_code_postal']) &&
         !variableTester.isEmpty(this.formStore.data[this.id + '_detail_commune'])
-      ) {
-        this.displayPickLocationButton = this.canPickLocation
+
+      if (isEmpty) {
+        if (this.validate !== null && this.validate.required === false) {
+          this.formStore.data[this.id + '_detail_manual'] = 0
+        }
+        this.pickLocationInitialized = false
+        clearTimeout(this.addressFieldsDebounceTimeout)
+        return
       }
+
+      if (!isComplete) {
+        clearTimeout(this.addressFieldsDebounceTimeout)
+        return
+      }
+
+      this.showPickLocation = this.canPickLocation
+
+      clearTimeout(this.addressFieldsDebounceTimeout)
+      this.addressFieldsDebounceTimeout = setTimeout(() => {
+        if (!this.pickLocationInitialized) {
+          this.selectedRnbId = this.previousRnbId || null
+          delete this.formStore.data[this.id + '_detail_rnb_id']
+          this.mapKey++
+          this.pickLocationInitialized = true
+          this.$nextTick(() => this.initMap())
+        } else {
+          this.recenterMap()
+        }
+      }, 400)
+    },
+
+    recenterMap () {
+      if (!this.map) return
+      this.isLoadingMap = true
+      this.geocodeAddress().then((result) => {
+        if (result) {
+          this.geocodedCityData = { city: result.city, postcode: result.postcode, citycode: result.citycode }
+          this.map.setView(result.coords, 18)
+        }
+        this.isLoadingMap = false
+      })
+    },
+    geocodeAddress (): Promise<{ coords: [number, number]; city: string; postcode: string; citycode: string } | null> {
+      const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
+      const address = this.formStore.data[this.id + '_detail_numero'] + ' ' + this.formStore.data[this.id + '_detail_commune']
+      const postCode = this.formStore.data[this.id + '_detail_code_postal']
+
+      return fetch(apiAdresse + address + '&postcode=' + postCode)
+        .then((response) => response.json())
+        .then((json) => {
+          if (json.features && json.features.length > 0) {
+            const props = json.features[0].properties
+            const coords: [number, number] = [json.features[0].geometry.coordinates[1], json.features[0].geometry.coordinates[0]]
+            return { coords, city: props.city, postcode: props.postcode, citycode: props.citycode }
+          }
+          return null
+        })
+        .catch(() => null)
     },
     handleClickButton (type:string, param:string, slugButton:string) {
       this.formStore.data[this.idShow] = 1
@@ -372,29 +533,6 @@ export default defineComponent({
       const urlParams = new URLSearchParams(queryString)
       return urlParams.get('cp') || ''
     },
-    togglePickLocation () {
-      this.showPickLocation = !this.showPickLocation
-
-      if (this.showPickLocation) {
-        // Conserver previousRnbId pour restaurer la sélection à la réouverture
-        this.selectedRnbId = this.previousRnbId || null
-        delete this.formStore.data[this.id + '_detail_rnb_id']
-
-        // Incrémenter la clé pour forcer Vue à recréer l'élément
-        this.mapKey++
-
-        this.$nextTick(() => {
-          this.initMap()
-        })
-      }
-    },
-    closePickLocation () {
-      if (this.rnbMapController) {
-        this.rnbMapController.destroy()
-        this.rnbMapController = null
-      }
-      this.showPickLocation = false
-    },
     initMap () {
       if (this.map) {
         this.map.remove()
@@ -402,24 +540,21 @@ export default defineComponent({
         this.vectorTileLayer = null
       }
 
-      // Géocoder l'adresse pour centrer la carte
-      const apiAdresse = 'https://data.geopf.fr/geocodage/search/?q='
-      const address = this.formStore.data[this.id + '_detail_numero'] + ' ' + this.formStore.data[this.id + '_detail_commune']
-      const postCode = this.formStore.data[this.id + '_detail_code_postal']
       const geolocParis: [number, number] = [48.8566, 2.3522] // Coordonnées de Paris par défaut
 
-      fetch(apiAdresse + address + '&postcode=' + postCode)
-        .then((response) => response.json())
-        .then((json) => {
-          if (json.features && json.features.length > 0) {
-            this.setupMap([json.features[0].geometry.coordinates[1], json.features[0].geometry.coordinates[0]], 18)
-          } else {
-            this.setupMap(geolocParis, 13)
-          }
-        })
-        .catch(() => {
+      this.isLoadingMap = true
+      this.geocodeAddress().then((result) => {
+        if (result) {
+          // Conservé comme repli pour un bâtiment RNB sans adresse connue (cf.
+          // applyBuildingSelection) : ce géocodage identifie déjà commune/CP/insee.
+          this.geocodedCityData = { city: result.city, postcode: result.postcode, citycode: result.citycode }
+          this.setupMap(result.coords, 18)
+        } else {
+          this.geocodedCityData = null
           this.setupMap(geolocParis, 13)
-        })
+        }
+        this.isLoadingMap = false
+      })
     },
     setupMap (center: [number, number], zoom: number) {
       this.$nextTick(() => {
@@ -477,27 +612,109 @@ export default defineComponent({
             map: this.map,
             vectorTileLayer: this.vectorTileLayer,
             previousRnbId: this.previousRnbId,
-            onSelect: (rnbId: string) => {
+            onSelect: (rnbId: string, building: any) => {
               this.selectedRnbId = rnbId
               this.previousRnbId = rnbId
+              this.selectedBuilding = building
+              this.noBuildingFound = false
+              this.applyBuildingSelection()
             },
             onAnnounce: (text: string) => {
               if (announcement) announcement.textContent = text
             },
-            onFocusSubmit: () => {
-              const btn = this.$refs.pickLocationSubmit as HTMLElement
-              if (btn) btn.focus()
+            onBuildingsUpdate: (buildings: any[]) => {
+              this.buildingsList = buildings
             },
           })
         }, 100)
       })
     },
-    handleSubmitPickLocation () {
-      if (this.selectedRnbId) {
-        // Stocker le RNB ID dans formStore
-        this.formStore.data[this.id + '_detail_rnb_id'] = this.selectedRnbId
-        // Fermer le sélecteur
-        this.closePickLocation()
+    applyBuildingSelection () {
+      if (!this.selectedRnbId) return
+      // rnb-map-controller rappelle onSelect à chaque déplacement de la carte : sans ce garde,
+      // le second appel (valeurs déjà corrigées) écraserait le message de correction par une chaîne vide.
+      if (this.formStore.data[this.id + '_detail_rnb_id'] === this.selectedRnbId) return
+      // Stocker le RNB ID dans formStore
+      this.formStore.data[this.id + '_detail_rnb_id'] = this.selectedRnbId
+      delete this.formStore.data[this.id + '_detail_no_building_found']
+
+      const oldStreet = this.formStore.data[this.id + '_detail_numero']
+      const oldCommune = this.formStore.data[this.id + '_detail_commune']
+      const oldCodePostal = this.formStore.data[this.id + '_detail_code_postal']
+
+      // Les écritures ci-dessous déclenchent les watchers d'adresse (mode manuel,
+      // recentrage, recherche de suggestions) : on les neutralise comme pour un clic
+      // sur une suggestion.
+      this.isSearchSkipped = true
+      setTimeout(() => {
+        this.isSearchSkipped = false
+      }, 200)
+
+      const address = this.pickBuildingAddress(this.selectedBuilding, oldStreet)
+      if (address) {
+        // Le bâtiment RNB porte une adresse officielle : on l'utilise pour corriger
+        // numéro/rue, commune, code postal et insee, et on recompose l'adresse affichée.
+        // Si le RNB ne donne pas de rue, le numéro tapé par l'usager est conservé.
+        const street = [address.street_number, address.street_rep, address.street].filter(Boolean).join(' ')
+        if (address.street && street) {
+          this.formStore.data[this.id + '_detail_numero'] = street
+        }
+        this.formStore.data[this.id + '_detail_commune'] = address.city_name
+        this.formStore.data[this.id + '_detail_code_postal'] = address.city_zipcode
+        this.formStore.data[this.id + '_detail_insee'] = address.city_insee_code
+        this.formStore.data[this.id + '_detail_need_refresh_insee'] = false
+        this.formStore.data[this.id] = this.formStore.data[this.id + '_detail_numero'] + ' ' + address.city_zipcode + ' ' + address.city_name
+        this.formStore.data[this.id + '_suggestion'] = this.formStore.data[this.id]
+      } else if (this.geocodedCityData) {
+        // Bâtiment sans adresse connue au RNB : on ne touche ni au numéro ni à la rue
+        // tapés par l'usager, seulement commune/CP/insee, déjà fiabilisés par le
+        // géocodage qui a servi à centrer la carte.
+        this.formStore.data[this.id + '_detail_commune'] = this.geocodedCityData.city
+        this.formStore.data[this.id + '_detail_code_postal'] = this.geocodedCityData.postcode
+        this.formStore.data[this.id + '_detail_insee'] = this.geocodedCityData.citycode
+        this.formStore.data[this.id + '_detail_need_refresh_insee'] = false
+      }
+
+      formStore.addressCorrectionMessage = buildAddressCorrectionMessage(
+        oldCodePostal,
+        oldCommune,
+        this.formStore.data[this.id + '_detail_code_postal'],
+        this.formStore.data[this.id + '_detail_commune'],
+        oldStreet,
+        this.formStore.data[this.id + '_detail_numero']
+      )
+    },
+    pickBuildingAddress (building: any, typedStreet: string | undefined): any {
+      // Un bâtiment peut porter plusieurs adresses : on privilégie celle dont le numéro
+      // correspond à celui tapé par l'usager, sinon la première.
+      const addresses = building?.addresses
+      if (!addresses || addresses.length === 0) return null
+      const typedNumber = /^\s*(\d+)/.exec(typedStreet ?? '')?.[1]
+      if (typedNumber) {
+        const match = addresses.find((a: any) => String(a.street_number) === typedNumber)
+        if (match) return match
+      }
+      return addresses[0]
+    },
+    applyNoBuildingFound () {
+      // L'usager indique ne pas trouver son bâtiment : on ne bloque pas le formulaire,
+      // mais on trace l'information pour qu'un agent puisse la résoudre plus tard.
+      delete this.formStore.data[this.id + '_detail_rnb_id']
+      this.formStore.data[this.id + '_detail_no_building_found'] = 1
+    },
+    formatBuildingLabel (building: any): string {
+      const address = building.addresses && building.addresses[0]
+      if (!address) {
+        return 'Bâtiment sans adresse connue'
+      }
+      return [address.street_number, address.street].filter(Boolean).join(' ')
+    },
+    toggleViewMode () {
+      this.viewMode = this.viewMode === 'map' ? 'list' : 'map'
+      if (this.viewMode === 'map' && this.map) {
+        this.$nextTick(() => {
+          setTimeout(() => this.map.invalidateSize(), 50)
+        })
       }
     }
   },
@@ -522,6 +739,14 @@ export default defineComponent({
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.pick-location-warning {
+  color: #b34000;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .pick-location-success {
@@ -593,6 +818,5 @@ export default defineComponent({
 .pick-location-footer {
   display: flex;
   gap: 1rem;
-  justify-content: flex-end;
 }
 </style>

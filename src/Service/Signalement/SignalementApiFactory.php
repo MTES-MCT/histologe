@@ -45,7 +45,6 @@ class SignalementApiFactory
         $this->signalementAddressUpdater->getRnbDataForSignalement($signalement);
         $this->signalementAddressUpdater->getRialDataForSignalement($signalement);
 
-        $signalement->setEtageOccupant($request->etageOccupant);
         $signalement->setEscalierOccupant($request->escalierOccupant);
         $signalement->setNumAppartOccupant($request->numAppartOccupant);
         $signalement->setAdresseAutreOccupant($request->adresseAutreOccupant);
@@ -76,23 +75,23 @@ class SignalementApiFactory
             $signalement->setAutresOccupantsDesordre(self::convertBoolToString($request->autresOccupantsDesordre));
         }
 
-        if ($request->etageAppartement) {
-            $typeCompositionLogement->setTypeLogementDernierEtage('non');
-            $typeCompositionLogement->setTypeLogementRdc('non');
-            $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('non');
-            $typeCompositionLogement->setTypeLogementSousSolSansFenetre('non');
-
-            if (EtageType::RDC->value === $request->etageAppartement) {
-                $typeCompositionLogement->setTypeLogementRdc('oui');
-            } elseif (EtageType::DERNIER_ETAGE->value === $request->etageAppartement) {
-                $typeCompositionLogement->setTypeLogementDernierEtage('oui');
-                if ('non' === $apptAvecFenetre) {
-                    $typeCompositionLogement->setTypeLogementSousCombleSansFenetre('oui');
-                }
-            } elseif (EtageType::SOUSSOL->value === $request->etageAppartement && 'non' === $apptAvecFenetre) {
-                $typeCompositionLogement->setTypeLogementSousSolSansFenetre('oui');
-            }
+        $etageAppartement = EtageType::tryFrom($request->etageAppartement ?? '');
+        if (null !== $etageAppartement) {
+            // Pose aussi typeLogementAppartementEtage (les booléens Rdc/DernierEtage/SansFenetre
+            // seuls ne suffisent pas : cf. panel BO "Modifier la description du logement", qui le
+            // lit en priorité et ne retombe sur les booléens qu'en repli de rétro-compatibilité).
+            EtageType::applyToTypeCompositionLogement($typeCompositionLogement, $etageAppartement, $apptAvecFenetre);
         }
+        // Pour rester cohérent avec l'édition BO/FO : etageOccupant porte le libellé de
+        // l'étage, sauf si etageAppartement vaut "Autre" auquel cas on garde la précision
+        // libre envoyée par le partenaire. Si etageAppartement n'est pas renseigné du tout,
+        // on conserve etageOccupant tel quel (compatibilité avec les partenaires qui
+        // n'utilisent que cet ancien champ).
+        $signalement->setEtageOccupant(
+            null !== $etageAppartement
+                ? EtageType::resolveOccupantLabel($etageAppartement, $request->etageOccupant)
+                : $request->etageOccupant
+        );
 
         $informationComplementaire->setInformationsComplementairesLogementNombreEtages((string) $request->nombreEtages);
         $informationComplementaire->setInformationsComplementairesLogementAnneeConstruction((string) $request->anneeConstruction);

@@ -153,17 +153,16 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $form = $crawler->selectButton('Enregistrer')->form([
-            'adresse_logement[etageOccupant]' => 'AAAAAA',
+            'adresse_logement[escalierOccupant]' => 'AAAA',
         ]);
 
         $client->submit($form);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertSelectorExists('.fr-error-text');
-        $this->assertSelectorTextContains('.fr-error-text', 'L\'étage doit contenir au maximum 5 caractères.');
+        $this->assertSelectorTextContains('.fr-error-text', 'L\'escalier doit contenir au maximum 3 caractères.');
 
         $form = $crawler->selectButton('Enregistrer')->form([
-            'adresse_logement[etageOccupant]' => '1',
             'adresse_logement[escalierOccupant]' => 'A',
             'adresse_logement[numAppartOccupant]' => '42',
             'adresse_logement[adresseAutreOccupant]' => 'Lieu-dit de la Patate',
@@ -182,13 +181,11 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertNotNull($suiviDelayed);
         $this->assertEquals(SuiviDelayedType::FO_EDIT_ADRESSE_LOGEMENT, $suiviDelayed->getSuiviDelayedType());
         $changes = $suiviDelayed->getChanges();
-        $this->assertEquals(4, count($changes));
-        $this->assertArrayHasKey('Étage', $changes);
+        $this->assertEquals(3, count($changes));
         $this->assertArrayHasKey('Escalier', $changes);
         $this->assertArrayHasKey('Numéro d\'appartement', $changes);
         $this->assertArrayHasKey('Autre', $changes);
 
-        $this->assertEquals('1', $changes['Étage']);
         $this->assertEquals('A', $changes['Escalier']);
         $this->assertEquals('42', $changes['Numéro d\'appartement']);
         $this->assertEquals('Lieu-dit de la Patate', $changes['Autre']);

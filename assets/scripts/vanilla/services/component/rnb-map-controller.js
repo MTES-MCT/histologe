@@ -68,9 +68,10 @@ export const buildingStyles = {
  * @param {L.Map} options.map
  * @param {object} options.vectorTileLayer
  * @param {string|undefined} options.previousRnbId - RNB ID précédemment sélectionné (restauration)
- * @param {(rnbId: string) => void} options.onSelect - Appelé à chaque sélection (clic ou clavier)
+ * @param {(rnbId: string, building: any) => void} options.onSelect - Appelé à chaque sélection (clic ou clavier)
  * @param {(text: string) => void} [options.onAnnounce] - Appelé pour les annonces aria-live
  * @param {() => void} [options.onFocusSubmit] - Appelé après sélection au clavier
+ * @param {(buildings: any[]) => void} [options.onBuildingsUpdate] - Appelé à chaque refreshBuildings
  * @returns {{ destroy: () => void }}
  */
 export function createRnbMapController({
@@ -81,6 +82,7 @@ export function createRnbMapController({
   onSelect,
   onAnnounce,
   onFocusSubmit,
+  onBuildingsUpdate,
 }) {
   let currentBuildings = [];
   let buildingMarkers = [];
@@ -117,6 +119,16 @@ export function createRnbMapController({
     focusedIndex = -1;
     currentBuildings = buildings;
 
+    if (onBuildingsUpdate) {
+      onBuildingsUpdate(buildings);
+    }
+    if (buildings.length > 0) {
+      mapContainer.setAttribute(
+        'aria-label',
+        `Carte de sélection du bâtiment. ${buildings.length} bâtiment(s) sur la carte. Utilisez les touches fléchées pour naviguer entre les bâtiments, Entrée pour sélectionner.`
+      );
+    }
+
     buildings.forEach((building) => {
       const [bLng, bLat] = building.point.coordinates;
       const state = building.rnb_id === activePreviousRnbId ? 'selected' : 'default';
@@ -131,7 +143,7 @@ export function createRnbMapController({
         keyboard: false, // empêche Leaflet de mettre tabIndex="0" sur l'élément DOM du marqueur
         zIndexOffset: 1000,
       });
-      marker.addTo(map);
+      marker.addTo(toRaw(map));
       buildingMarkers.push(marker);
     });
 
@@ -300,6 +312,14 @@ export function createRnbMapController({
       buildingMarkers.forEach((m) => map.removeLayer(m));
       buildingMarkers = [];
       currentBuildings = [];
+    },
+    clearSelection() {
+      if (activePreviousRnbId !== undefined) {
+        vectorTileLayer.setFeatureStyle(activePreviousRnbId, buildingStyles.initial)
+        const idx = currentBuildings.findIndex((b) => b.rnb_id === activePreviousRnbId)
+        if (idx >= 0) updateMarker(idx, 'default')
+        activePreviousRnbId = undefined
+      }
     },
   };
 }

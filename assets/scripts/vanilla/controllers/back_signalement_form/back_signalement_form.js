@@ -641,6 +641,15 @@ function initBoFormSignalementAdresse() {
   const natureLogementInputs = boFormSignalementAdresse?.querySelectorAll(
     '#signalement_draft_address_natureLogement input'
   );
+  const etageOccupantInputs = boFormSignalementAdresse?.querySelectorAll(
+    '#signalement_draft_address_etageOccupant input'
+  );
+
+  etageOccupantInputs.forEach((etageOccupantInput) => {
+    etageOccupantInput.addEventListener('click', () => {
+      refreshFromEtageOccupant();
+    });
+  });
 
   natureLogementInputs.forEach((natureLogementInput) => {
     natureLogementInput.addEventListener('click', () => {
@@ -665,8 +674,20 @@ function initBoFormSignalementAdresse() {
     );
     refreshElementEnable(
       'enable',
-      'logement',
-      '#signalement_draft_logement_appartementEtage',
+      'adresse',
+      '#signalement_draft_address_etageOccupant',
+      natureLogementValue === 'appartement'
+    );
+    refreshElementEnable(
+      'enable',
+      'adresse',
+      '#signalement_draft_address_escalierOccupant',
+      natureLogementValue === 'appartement'
+    );
+    refreshElementEnable(
+      'enable',
+      'adresse',
+      '#signalement_draft_address_numAppartOccupant',
       natureLogementValue === 'appartement'
     );
     refreshElementEnable(
@@ -680,6 +701,24 @@ function initBoFormSignalementAdresse() {
       'logement',
       '#signalement_draft_logement_autresOccupantsDesordre',
       natureLogementValue === 'appartement'
+    );
+
+    refreshFromEtageOccupant();
+  }
+
+  function refreshFromEtageOccupant() {
+    let etageOccupantValue = '';
+    etageOccupantInputs.forEach((etageOccupantInput) => {
+      if (etageOccupantInput.checked) {
+        etageOccupantValue = etageOccupantInput.value;
+      }
+    });
+
+    refreshElementEnable(
+      'enable',
+      'adresse',
+      '#signalement_draft_address_etageOccupantPrecision',
+      etageOccupantValue === 'AUTRE'
     );
   }
 

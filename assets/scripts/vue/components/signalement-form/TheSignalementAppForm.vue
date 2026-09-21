@@ -59,6 +59,7 @@ import { matomo } from './matomo'
 import { requests } from './requests'
 import * as Sentry from '@sentry/browser'
 import { profileUpdater } from './services/profileUpdater'
+import { buildAddressCorrectionMessage } from './services/addressCorrection'
 import SignalementFormScreen from './components/SignalementFormScreen.vue'
 import SignalementFormBreadCrumbs from './components/SignalementFormBreadCrumbs.vue'
 import SignalementFormModal from './components/SignalementFormModal.vue'
@@ -263,19 +264,34 @@ export default defineComponent({
     },
     handleValidateAddress (requestResponse: any) {
       // Si le code postal / la commune ont été édités à la main, on valide l'ouverture du territoire
-      if (requestResponse.features !== undefined) {
-        const suggestions = requestResponse.features
-        if (suggestions[0] !== undefined) {
-          formStore.data.adresse_logement_adresse_detail_commune = suggestions[0].properties.city // Pas idéal : ça modifie la valeur saisie par l'utilisateur, ça peut faire des vraies variations, même si l'intention est de standardiser la saisie
-          formStore.data.adresse_logement_adresse_detail_insee = suggestions[0].properties.citycode
-          formStore.data.adresse_logement_adresse = formStore.data.adresse_logement_adresse_detail_numero + ' ' + formStore.data.adresse_logement_adresse_detail_code_postal + ' ' + formStore.data.adresse_logement_adresse_detail_commune
-          formStore.data.adresse_logement_adresse_suggestion = formStore.data.adresse_logement_adresse_detail_numero + ' ' + formStore.data.adresse_logement_adresse_detail_code_postal + ' ' + formStore.data.adresse_logement_adresse_detail_commune
+      const suggestion = requestResponse.features?.[0]
+      if (suggestion !== undefined) {
+        // Le géocodage peut renvoyer une commune différente de celle saisie (ex: le code postal
+        // ne correspond pas exactement au nom de commune tapé). On rend ça visible à l'usager
+        // (buildAddressCorrectionMessage) plutôt que de corriger silencieusement.
+        const oldCodePostal = formStore.data.adresse_logement_adresse_detail_code_postal
+        const oldCommune = formStore.data.adresse_logement_adresse_detail_commune
 
-          this.checkTerritory(
-            formStore.data.adresse_logement_adresse_detail_code_postal,
-            formStore.data.adresse_logement_adresse_detail_insee
-          )
-        }
+        formStore.data.adresse_logement_adresse_detail_commune = suggestion.properties.city
+        formStore.data.adresse_logement_adresse_detail_insee = suggestion.properties.citycode
+        formStore.data.adresse_logement_adresse = formStore.data.adresse_logement_adresse_detail_numero + ' ' + formStore.data.adresse_logement_adresse_detail_code_postal + ' ' + formStore.data.adresse_logement_adresse_detail_commune
+        formStore.data.adresse_logement_adresse_suggestion = formStore.data.adresse_logement_adresse_detail_numero + ' ' + formStore.data.adresse_logement_adresse_detail_code_postal + ' ' + formStore.data.adresse_logement_adresse_detail_commune
+
+        formStore.addressCorrectionMessage = buildAddressCorrectionMessage(
+          oldCodePostal,
+          oldCommune,
+          formStore.data.adresse_logement_adresse_detail_code_postal,
+          formStore.data.adresse_logement_adresse_detail_commune
+        )
+
+        this.checkTerritory(
+          formStore.data.adresse_logement_adresse_detail_code_postal,
+          formStore.data.adresse_logement_adresse_detail_insee
+        )
+      } else {
+        // Aucun résultat de géocodage : on ne bloque plus silencieusement le formulaire
+        formStore.lastButtonClicked = ''
+        formStore.validationErrors.adresse_logement_adresse_detail_commune = 'Adresse introuvable, merci de vérifier le code postal et la commune.'
       }
     },
     checkTerritory (postCode: any, cityCode: any) {

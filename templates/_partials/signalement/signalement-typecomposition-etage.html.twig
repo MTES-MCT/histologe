@@ -1,14 +1,23 @@
 {% if signalement.typeCompositionLogement %}
     {% set EtageType = enum('\\App\\Entity\\Enum\\EtageType') %}
-    {% set etage = signalement.typeCompositionLogement.typeLogementAppartementEtage ?? 
-        (signalement.typeCompositionLogement.typeLogementRdc == 'oui' ? EtageType.RDC.value : 
-        (signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' ? EtageType.DERNIER_ETAGE.value : 
-        (signalement.typeCompositionLogement.typeLogementSousSolSansFenetre == 'oui' ? EtageType.SOUSSOL.value : 
-        EtageType.AUTRE.value))) %}
+    {% set etage = null %}
+    {% if signalement.typeCompositionLogement.typeLogementAppartementEtage %}
+        {% set etage = signalement.typeCompositionLogement.typeLogementAppartementEtage %}
+    {% elseif signalement.typeCompositionLogement.typeLogementRdc == 'oui' %}
+        {% set etage = EtageType.RDC.value %}
+    {% elseif signalement.typeCompositionLogement.typeLogementDernierEtage == 'oui' %}
+        {% set etage = EtageType.DERNIER_ETAGE.value %}
+    {% elseif signalement.typeCompositionLogement.typeLogementSousSolSansFenetre == 'oui' %}
+        {% set etage = EtageType.SOUSSOL.value %}
+    {% elseif signalement.natureLogement == 'appartement' %}
+        {% set etage = EtageType.AUTRE.value %}
+    {% endif %}
 
-    {% if etage == EtageType.AUTRE.value and signalement.etageOccupant %}
-        {{ signalement.etageOccupant }}
-    {% else %}
-        {{ EtageType.from(etage).label }}
+    {% if etage %}
+        {% if etage == EtageType.AUTRE.value and signalement.etageOccupant %}
+            {{ signalement.etageOccupant }}
+        {% else %}
+            {{ EtageType.from(etage).label }}
+        {% endif %}
     {% endif %}
 {% endif %}

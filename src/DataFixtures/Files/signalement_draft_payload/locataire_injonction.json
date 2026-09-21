@@ -95,7 +95,7 @@
   "vos_coordonnees_occupant_civilite": "mme",
   "desordres_batiment_bruit_interieur": 1,
   "info_procedure_assurance_contactee": "oui",
-  "info_procedure_reponse_assurance" : "Dossier reçu",
+  "info_procedure_reponse_assurance": "Dossier reçu",
   "logement_social_demande_relogement": "oui",
   "logement_social_montant_allocation": "300",
   "logement_social_numero_allocataire": "12345678",
@@ -117,7 +117,7 @@
   "vos_coordonnees_occupant_tel_secondaire_countrycode": "KM:269",
   "utilisation_service_ok_prevenir_bailleur": 1,
   "utilisation_service_ok_cgu": 1,
-  "adresse_logement_complement_adresse_etage": "5",
+  "adresse_logement_complement_adresse_etage": "AUTRE",
   "adresse_logement_adresse_detail_geoloc_lat": 44.05452,
   "adresse_logement_adresse_detail_geoloc_lng": 4.138306,
   "adresse_logement_adresse_detail_code_postal": "30360",
@@ -151,6 +151,6 @@
       "file": "Capture-d-ecran-2-desordre.png",
       "titre": "Capture écran 2.png"
     }
-
-  ]
+  ],
+  "adresse_logement_complement_adresse_etage_precision": "5"
 }

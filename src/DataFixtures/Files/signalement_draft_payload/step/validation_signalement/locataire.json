@@ -9,7 +9,7 @@
   "adresse_logement_adresse_detail_insee": "13202",
   "adresse_logement_adresse_detail_geoloc_lng": 5.368984,
   "adresse_logement_adresse_detail_geoloc_lat": 43.30282,
-  "adresse_logement_complement_adresse_etage": "2",
+  "adresse_logement_complement_adresse_etage": "AUTRE",
   "adresse_logement_complement_adresse_escalier": "B2",
   "adresse_logement_complement_adresse_numero_appartement": "114",
   "adresse_logement_complement_adresse_autre": "Eurom\u00e9diterran\u00e9e",
@@ -98,5 +98,6 @@
   "informations_complementaires_logement_nombre_etages": "5",
   "informations_complementaires_situation_occupants_beneficiaire_rsa": "non",
   "informations_complementaires_situation_occupants_beneficiaire_fsl": "non",
-  "informations_complementaires_logement_annee_construction": "1980"
+  "informations_complementaires_logement_annee_construction": "1980",
+  "adresse_logement_complement_adresse_etage_precision": "2"
 }
