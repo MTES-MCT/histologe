@@ -66,7 +66,7 @@
         <AppAutoComplete
           id="filter-map-adresse"
           v-model="sharedState.input.filters.adresse"
-          :suggestions="sharedState.addressesSuggestions"
+          :suggestions="addressesSuggestions"
           :initSelectedSuggestions="sharedState.input.filters.adresse"
           :placeholder="'Taper l\'adresse du logement'"
           title="Adresse"
@@ -191,6 +191,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { store } from '../composables/useAddressesHistoryStore'
 import { useAddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'
+import { useFilteredSuggestions } from '../composables/useFilteredSuggestions'
 import HistoSelect from '../../common/HistoSelect.vue'
 import HistoToggle from '../../common/HistoToggle.vue'
 import HistoCheckbox from '../../common/HistoCheckbox.vue'
@@ -204,6 +205,9 @@ const sharedState = store.state
 
 // Composable
 const filtersComposable = useAddressesHistoryFilters()
+
+// Suggestions d'adresses limitées à la commune sélectionnée (pas de filtre zone dans cette vue)
+const { addressesSuggestions } = useFilteredSuggestions({ withZone: false })
 
 /**
  * Convertit un ArreteTypesGroup en CheckboxGroup pour la vue carte
