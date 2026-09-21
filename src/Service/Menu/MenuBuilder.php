@@ -74,7 +74,7 @@ readonly class MenuBuilder
         $mesOutilsSubMenu = (new MenuItem(label: 'Mes outils', roleGranted: User::ROLE_USER));
         $mesOutilsSubMenu->addChild(new MenuItem(label: 'Espace documentaire', route: 'back_territory_files_index', roleGranted: User::ROLE_USER));
         $mesOutilsSubMenu->addChild(new MenuItem(label: 'Annuaire des agents', route: 'back_annuaire_index', roleGranted: User::ROLE_USER));
-        $mesOutilsSubMenu->addChild(new MenuItem(label: 'Documentation', externalLink: 'https://documentation.signal-logement.beta.gouv.fr', roleGranted: User::ROLE_USER));
+        $mesOutilsSubMenu->addChild(new MenuItem(label: 'Besoin d\'aide ?', externalLink: 'https://documentation.signal-logement.beta.gouv.fr', roleGranted: User::ROLE_USER));
 
         $superAdminToolsSubItem = (new MenuItem(label: 'Best of', roleGranted: User::ROLE_ADMIN))
             ->addChild(new MenuItem(label: 'Partenaires archivés', route: 'back_archived_partner_index', roleGranted: User::ROLE_ADMIN))
