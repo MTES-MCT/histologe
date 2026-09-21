@@ -9,6 +9,7 @@ class DiscoveryEndpointsResponse
     public ?string $userInfoEndpoint = null;
     public ?string $endSessionEndpoint = null;
     public ?string $jwksUri = null;
+    public ?string $issuer = null;
 
     /**
      * @param array<string, mixed> $data
@@ -20,5 +21,6 @@ class DiscoveryEndpointsResponse
         $this->userInfoEndpoint = $data['userinfo_endpoint'] ?? null;
         $this->endSessionEndpoint = $data['end_session_endpoint'] ?? null;
         $this->jwksUri = $data['jwks_uri'] ?? null;
+        $this->issuer = $data['issuer'] ?? null;
     }
 }

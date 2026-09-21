@@ -9,6 +9,7 @@ use App\Service\Gouv\ProConnect\ProConnectJwtParser;
 use App\Service\Gouv\ProConnect\ProConnectJwtValidator;
 use App\Service\Gouv\ProConnect\Request\CallbackRequest;
 use App\Service\Gouv\ProConnect\Request\LogoutRequest;
+use App\Service\Gouv\ProConnect\Response\DiscoveryEndpointsResponse;
 use App\Service\Gouv\ProConnect\Response\JWKSResponse;
 use App\Service\Gouv\ProConnect\Response\OAuth2TokenResponse;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -60,8 +61,13 @@ class ProConnectAuthenticationTest extends KernelTestCase
             ->method('getJWKS')
             ->willReturn(new JWKSResponse((string) $jwksFile));
 
-        $jwtValidator
+        $httpClient
             ->expects($this->once())
+            ->method('getDiscoveryEndpoints')
+            ->willReturn(new DiscoveryEndpointsResponse(['issuer' => 'https://identite-sandbox.proconnect.gouv.fr']));
+
+        $jwtValidator
+            ->expects($this->exactly(2))
             ->method('validate')
             ->willReturn(true);
 
