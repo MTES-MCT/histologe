@@ -353,6 +353,7 @@ class SignalementControllerTest extends WebTestCase
                 'close_signalement[comCloture]' => 'un deux trois soleil',
                 'close_signalement[isVisibleForUsager]' => '1',
                 'close_signalement[procedures]' => [],
+                'close_signalement[withoutProcedure]' => '1',
             ]
         );
 
