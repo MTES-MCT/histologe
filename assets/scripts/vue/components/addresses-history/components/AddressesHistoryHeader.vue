@@ -12,9 +12,7 @@
           ]"
           type="button"
           @click="onViewModeChange('map')"
-        >
-          Carte
-        </button>
+          >Carte</button>
       </div>
       <div>
         <button
@@ -26,9 +24,7 @@
           ]"
           type="button"
           @click="onViewModeChange('list')"
-        >
-          Liste
-        </button>
+          >Liste</button>
       </div>
     </div>
     <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4 fr-mb-2v fr-mb-md-0 fr-text--right">
@@ -43,16 +39,13 @@
           'fr-btn--md-inline',
           { 'fr-label--disabled': !canExport }
         ]"
-      >
-        Exporter les résultats
-      </a>
+        >Exporter les résultats</a>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { store } from '../composables/useAddressesHistoryStore'
+import { store, useAddressesHistoryStore } from '../composables/useAddressesHistoryStore'
 
 // Émissions
 const emit = defineEmits<{
@@ -62,16 +55,7 @@ const emit = defineEmits<{
 // State
 const sharedState = store.state
 const sharedProps = store.props
-
-// Computed
-const canExport = computed(() => {
-  return false
-  /*
-  return Object.entries(sharedState.input.filters).some(
-    ([key, value]) => key !== 'isImported' && (value !== null && value !== undefined && !(Array.isArray(value) && value.length === 0))
-  ) && total.value > 0
-   */
-})
+const { canExport } = useAddressesHistoryStore()
 
 /**
  * Quand le mode d'affichage change (carte/liste)
