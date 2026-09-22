@@ -68,7 +68,6 @@ class AddressesHistoryQuery
         $maxListPagination = AddressesHistorySearchQuery::MAX_LIST_PAGINATION;
         $firstResult = (max($page, 1) - 1) * $maxListPagination;
 
-        // Step 1: Get paginated distinct address IDs
         $qbIds = $this->buildBaseQueryBuilder($user, $addressesHistorySearchQuery);
         $qbIds->select('a.id', 'a.street', 'a.postCode', 'a.city')
             ->groupBy('a.id', 'a.street', 'a.postCode', 'a.city')
@@ -80,11 +79,42 @@ class AddressesHistoryQuery
 
         $addressIds = array_column($qbIds->getQuery()->getArrayResult(), 'id');
 
+        return $this->getAddressesDataForIds($addressIds);
+    }
+
+    /**
+     * Comme findAddressesWithHistory(), mais sans pagination : utilisé pour les exports, qui doivent
+     * porter sur l'ensemble des adresses correspondant aux filtres, pas seulement la page courante.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function findAllAddressesWithHistory(
+        User $user,
+        ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
+    ): array {
+        $qbIds = $this->buildBaseQueryBuilder($user, $addressesHistorySearchQuery);
+        $qbIds->select('a.id', 'a.street', 'a.postCode', 'a.city')
+            ->groupBy('a.id', 'a.street', 'a.postCode', 'a.city')
+            ->orderBy('a.street', 'ASC')
+            ->addOrderBy('a.postCode', 'ASC')
+            ->addOrderBy('a.city', 'ASC');
+
+        $addressIds = array_column($qbIds->getQuery()->getArrayResult(), 'id');
+
+        return $this->getAddressesDataForIds($addressIds);
+    }
+
+    /**
+     * @param array<int, int> $addressIds
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function getAddressesDataForIds(array $addressIds): array
+    {
         if (empty($addressIds)) {
             return [];
         }
 
-        // Step 2: Get all data for these addresses
         $statusList = $this->getStatusList();
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Address::class, 'a')
@@ -111,6 +141,7 @@ class AddressesHistoryQuery
                 's.nomOccupant',
                 's.prenomOccupant',
                 's.nomProprio',
+                's.prenomProprio',
                 's.isLogementSocial',
                 'b.name AS bailleurName',
                 's.denominationProprio',

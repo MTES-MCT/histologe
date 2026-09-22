@@ -8,11 +8,15 @@ use App\Factory\AddressesHistoryListViewFactory;
 use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Repository\Query\SignalementList\SameAddressQuery;
 use App\Repository\TerritoryRepository;
+use App\Service\Signalement\Export\AddressesHistoryExporter;
+use App\Utils\ExportFormat;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -211,10 +215,35 @@ class AddressesHistoryController extends AbstractController
         ]);
     }
 
-    #[Route('/export', name: 'back_addresses_history_export')]
-    public function export(): Response
-    {
-        // TODO: implémenter l'export
-        return new Response('Export en cours de développement');
+    #[Route('/export', name: 'back_addresses_history_export', methods: ['GET'])]
+    public function export(
+        Request $request,
+        AddressesHistoryExporter $addressesHistoryExporter,
+        #[MapQueryString] ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
+    ): StreamedResponse {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $format = $request->query->get('format', ExportFormat::FORMAT_CSV);
+        if (!\in_array($format, [ExportFormat::FORMAT_CSV, ExportFormat::FORMAT_XLSX], true)) {
+            $format = ExportFormat::FORMAT_CSV;
+        }
+
+        $response = new StreamedResponse(
+            static function () use ($addressesHistoryExporter, $user, $format, $addressesHistorySearchQuery): void {
+                $addressesHistoryExporter->write($user, $format, 'php://output', $addressesHistorySearchQuery);
+            }
+        );
+
+        $contentType = ExportFormat::FORMAT_XLSX === $format
+            ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            : 'text/csv';
+        $response->headers->set('Content-Type', $contentType);
+        $response->headers->set(
+            'Content-Disposition',
+            'attachment; filename="adresses_'.date('Y-m-d_H-i-s').'.'.$format.'"'
+        );
+
+        return $response;
     }
 }
