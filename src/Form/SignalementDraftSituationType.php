@@ -40,7 +40,7 @@ class SignalementDraftSituationType extends AbstractType
         } elseif (!empty($signalement->getIsAllocataire())) {
             $allocataire = 'oui';
         }
-        $caisseAllocation = ('caf' === $signalement->getIsAllocataire() || 'msa' === $signalement->getIsAllocataire()) ? $signalement->getIsAllocataire() : '';
+        $caisseAllocation = ('CAF' === mb_strtoupper($signalement->getIsAllocataire()) || 'MSA' === mb_strtoupper($signalement->getIsAllocataire())) ? $signalement->getIsAllocataire() : '';
         $dateNaissanceAllocataire = $signalement->getDateNaissanceOccupant();
         $numeroAllocataire = $signalement->getNumAllocataire();
         $typeAllocation = $signalement->getInformationComplementaire() ? $signalement->getInformationComplementaire()->getInformationsComplementairesSituationOccupantsTypeAllocation() : '';
@@ -194,8 +194,8 @@ class SignalementDraftSituationType extends AbstractType
             ->add('caisseAllocation', ChoiceType::class, [
                 'label' => 'Caisse d\'allocation',
                 'choices' => [
-                    'CAF' => 'caf',
-                    'MSA' => 'msa',
+                    'CAF' => 'CAF',
+                    'MSA' => 'MSA',
                 ],
                 'expanded' => true,
                 'multiple' => false,
