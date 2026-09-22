@@ -221,6 +221,19 @@ class SignalementActionController extends AbstractController
         if (!$form->isSubmitted()) {
             return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
         }
+        // Validation d'une étape du formulaire : on ne retient que les erreurs des champs de l'étape, sans rien persister
+        if ($request->request->has('_validate_step')) {
+            $stepFields = $request->request->all('_validate_step');
+            $errors = array_intersect_key(
+                FormHelper::getErrorsFromForm(form: $form, withPrefix: true),
+                array_flip($stepFields)
+            );
+            if ($errors) {
+                return $this->json(['code' => Response::HTTP_BAD_REQUEST, 'errors' => $errors], Response::HTTP_BAD_REQUEST);
+            }
+
+            return $this->json(['code' => Response::HTTP_OK]);
+        }
         if (!$form->isValid()) {
             $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
 
