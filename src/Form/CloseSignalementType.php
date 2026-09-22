@@ -11,6 +11,9 @@ use App\Validator\EmailFormatValidator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -104,6 +107,21 @@ class CloseSignalementType extends AbstractType
             'mapped' => false,
             'required' => false,
         ]);
+
+        // Choix obligatoire et exclusif entre "procedures" et "withoutProcedure" :
+        // l'exclusivité (décocher/griser "procedures" quand "withoutProcedure" est coché) est gérée côté front
+        // (form_cloture_modal.js), il ne reste qu'à vérifier ici qu'un choix a bien été fait.
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
+            $form = $event->getForm();
+            if ($form->get('withoutProcedure')->getData()) {
+                return;
+            }
+            if (!$form->get('procedures')->getData()) {
+                $form->get('withoutProcedure')->addError(new FormError(
+                    'Sélectionnez au moins une procédure, ou cochez "Aucune procédure n’a été engagée sur le dossier".'
+                ));
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

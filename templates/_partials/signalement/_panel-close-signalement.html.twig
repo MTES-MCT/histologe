@@ -13,7 +13,7 @@
                 <p>
                     Expliquez ici les raisons de la fermeture du dossier et choisissez à qui ces informations seront transmises. 
                     A l'étape suivante, vous pourrez indiquer les procédures engagées sur le dossier.
-                </p> 
+                </p>
                 <p><i>Sauf mention contraire, tous les champs sont obligatoires.</i></p>
                 {{ form_row(closeSignalementForm.motifCloture) }}
                 <div id="close_signalement_travauxMiseEnConformite_container">
@@ -31,9 +31,10 @@
             </div>
             <div data-step="2">
                 <p>
-                    Vérifiez et / ou complétez les informations concernant les procédures engagées sur ce dossier. 
+                    Vérifiez et / ou complétez les informations concernant les procédures engagées sur ce dossier.
                     Les informations saisies à cette étape ne seront pas envoyées à l'usager.
                 </p>
+                <p><i>Tous les champs sont obligatoires.</i></p>
                 {{ form_row(closeSignalementForm.procedures) }}
                 {{ form_row(closeSignalementForm.withoutProcedure) }}
             </div>
