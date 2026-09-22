@@ -111,7 +111,7 @@ class CloseSignalementType extends AbstractType
         // Choix obligatoire et exclusif entre "procedures" et "withoutProcedure" :
         // l'exclusivité (décocher/griser "procedures" quand "withoutProcedure" est coché) est gérée côté front
         // (form_cloture_modal.js), il ne reste qu'à vérifier ici qu'un choix a bien été fait.
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event): void {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, static function (FormEvent $event): void {
             $form = $event->getForm();
             if ($form->get('withoutProcedure')->getData()) {
                 return;
