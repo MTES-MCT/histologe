@@ -10,11 +10,11 @@
             <form method="POST" id="form-add-visite" enctype="multipart/form-data" action="{{ path('back_signalement_visite_add',{uuid:signalement.uuid}) }}">
                 <p>Les champs obligatoires sont suivis d'une étoile <span class="fr-text-default--error">*</span>.</p>
                 {% if linkToVisitGrid %}
-                    <div class="fr-my-5v fr-text--right">
+                    <div class="fr-my-5v fr-text--left">
                         <a class="fr-btn fr-btn--secondary fr-icon-article-line fr-btn--icon-left matomo_download" 
                             title="Télécharger la grille de visite {% if signalement.address.territory.grilleVisiteFilename %}du territoire{% endif %}"
                             download href="{{ sign_url(linkToVisitGrid) }}"
-                            >Grille de visite</a>
+                            >Télécharger la grille de visite</a>
                     </div>
                 {% endif %}
                 {% if not signalement.isLogementVacant %}

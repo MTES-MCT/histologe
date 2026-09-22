@@ -38,7 +38,7 @@
                         {% endif %}
                         <label class="fr-label" for="signalement-edit-nde-date-entree">Entrée dans le logement <span class="text-required">*</span>
                         </label>
-                        <p id="signalement-edit-nde-date-entree-error" class="fr-error-text fr-hidden fr-my-3v">
+                        <p id="signalement-edit-nde-date-entree-error" class="fr-error-text static-error fr-hidden fr-my-3v">
                             Veuillez préciser la date d'entrée dans le logement.
                         </p>
                         <input class="fr-input"
@@ -52,7 +52,7 @@
                         <legend class="fr-fieldset__legend fr-text--regular" id='signalement-edit-nde-dpe-legend'>
                             DPE Disponible ? <span class="text-required">*</span>
                         </legend>
-                        <p id="signalement-edit-nde-dpe-error" class="fr-error-text fr-hidden fr-my-3v">
+                        <p id="signalement-edit-nde-dpe-error" class="fr-error-text static-error fr-hidden fr-my-3v">
                             Veuillez préciser la disponibilité du DPE.
                         </p>
                         <div class="fr-fieldset__content">
@@ -94,7 +94,7 @@
 
                     <div class="fr-select-group">
                         {% set bailDpeClasseEnergetique = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeClasseEnergetique : null %}
-                        <label class="fr-label" for="informationLogementBailDpeClasseEnergetique">Classe énergétique
+                        <label class="fr-label" for="signalement-edit-nde-classe-energetique">Classe énergétique
                             {{ show_label_facultatif(
                                 'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
                                 'bailDpeClasseEnergetique',
@@ -102,7 +102,7 @@
                                 signalement.isV2)
                             }}
                         </label>
-                        <select class="fr-select" id="informationLogementBailDpeClasseEnergetique" name="bailDpeClasseEnergetique">
+                        <select class="fr-select" id="signalement-edit-nde-classe-energetique" name="bailDpeClasseEnergetique">
                             <option value="" {{ bailDpeClasseEnergetique not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'nsp'] ? 'selected' : '' }}></option>
                             <option value="A" {{ bailDpeClasseEnergetique is same as 'A' ? 'selected' : '' }}>A</option>
                             <option value="B" {{ bailDpeClasseEnergetique is same as 'B' ? 'selected' : '' }}>B</option>
@@ -133,7 +133,7 @@
                                     Superficie du logement
                                 </label>
                                 <input class="fr-input fr-col-10 fr-display-inline" pattern="[0-9]*" type="number" id="signalement-edit-nde-superficie" name="superficie" value="{{signalement.superficie}}" max="9999"> m²
-                                <p id="signalement-edit-nde-superficie-error" class="fr-error-text fr-hidden">La superficie ne doit pas dépasser 9999 m².</p>
+                                <p id="signalement-edit-nde-superficie-error" class="fr-error-text static-error fr-hidden">La superficie ne doit pas dépasser 9999 m².</p>
                             </div>
                         </div>
                     </div>                            
@@ -143,7 +143,7 @@
             <div class="side-panel__footer">
                 <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm fr-btns-group--icon-left">
                     <li>
-                        <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line" form="form-edit-nde"
+                        <button type="button" class="fr-btn fr-btn--icon-left fr-icon-check-line" id="signalement-edit-nde-form-submit"
                             >Valider</button>
                     </li>
                     <li>
