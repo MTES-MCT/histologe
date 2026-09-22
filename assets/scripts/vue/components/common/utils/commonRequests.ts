@@ -1,9 +1,10 @@
 import axios from 'axios'
 import * as Sentry from '@sentry/browser'
+import { AXIOS_TIMEOUT } from '../../../../vanilla/controllers/environment'
 
 export const commonRequests = {
   doRequest (ajaxUrl: string, functionReturn: Function, options = {}) {
-    const defaultOptions = { timeout: 60000 }
+    const defaultOptions = { timeout: AXIOS_TIMEOUT }
 
     axios
       .get(ajaxUrl, { ...defaultOptions, ...options })
