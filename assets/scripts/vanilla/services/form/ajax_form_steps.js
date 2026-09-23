@@ -1,5 +1,3 @@
-import { clearErrors } from './ajax_form_errors.js';
-
 function initializeFormSteps(formElement) {
   const containerElement = formElement.closest('[data-form-steps]');
   const stepElements = Array.from(formElement.querySelectorAll('[data-step]'));
