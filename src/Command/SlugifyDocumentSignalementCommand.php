@@ -10,7 +10,6 @@ use App\Service\Import\Signalement\SignalementImportImageHeader;
 use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -51,7 +50,6 @@ class SlugifyDocumentSignalementCommand extends Command
     public function __construct(
         private ParameterBagInterface $parameterBag,
         private SluggerInterface $slugger,
-        private LoggerInterface $logger,
         #[Target('file.storage')] private FilesystemOperator $fileStorage,
         private UploadHandlerService $uploadHandlerService,
         private TerritoryRepository $territoryRepository,
@@ -127,7 +125,6 @@ class SlugifyDocumentSignalementCommand extends Command
                     $csvWriter->writeRow($row);
                 } catch (\Throwable $exception) {
                     $message = \sprintf('CSV Write - row %s - error: %s', $index, $exception->getMessage());
-                    $this->logger->error($message);
                     $this->io->error($message);
                 }
             }
@@ -178,7 +175,6 @@ class SlugifyDocumentSignalementCommand extends Command
                 return 1;
             } catch (\Throwable $exception) {
                 $message = \sprintf('CSV Write - N° %s ligne avec %s', $index, $exception->getMessage());
-                $this->logger->error($message);
                 $this->io->error($message);
             }
         }
@@ -204,7 +200,6 @@ class SlugifyDocumentSignalementCommand extends Command
         $countFileSlugged = \count($fileListSlugged);
         if ($countFileList != $countFileSlugged) {
             $message = \sprintf('Different count - row %s col %s - %s // %s', $index, $colName, $countFileSlugged, $countFileList);
-            $this->logger->error($message);
             $this->io->error($message);
 
             return null;
@@ -236,7 +231,6 @@ class SlugifyDocumentSignalementCommand extends Command
             return $filenameSlugged;
         } catch (\Throwable $exception) {
             $message = \sprintf('File rename - row %s - error: %s', $index, $exception->getMessage());
-            $this->logger->error($message);
             $this->io->error($message);
         }
 
