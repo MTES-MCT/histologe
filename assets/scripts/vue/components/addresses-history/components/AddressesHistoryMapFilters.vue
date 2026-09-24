@@ -262,13 +262,12 @@ const arreteTypesGroupsForMap = computed<CheckboxGroup[]>(() => {
 
 /**
  * Quand le territoire change
- * - Réinitialise communes et zone
+ * - Vide les filtres dépendant du territoire (adresse, commune, bailleur, zone)
  * - Recharge les settings
  * - Recharge les adresses
  */
 const onTerritoryChange = async (value: string): Promise<void> => {
-  sharedState.input.filters.communeOuEpci = undefined
-  sharedState.input.filters.zone = undefined
+  filtersComposable.clearTerritoryDependentFilters()
   sharedState.input.filters.territoire = value
 
   await filtersComposable.reloadSettings()
