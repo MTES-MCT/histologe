@@ -300,6 +300,8 @@ class SearchFilter
         }
         if (!empty($filters['zones'])) {
             $zoneIds = array_map('intval', $filters['zones']);
+            // On met en cache les signalements correspondant à la zone pour éviter de refaire la requête pour le compte et pour la liste d'id
+            // car cette requête peut être très longue si la zone est complexe
             $zonesSignalements = $this->cache->get(
                 'search_filter_zones-'.$user->getId().'-'.implode('-', $zoneIds),
                 function (ItemInterface $item) use ($zoneIds) {
