@@ -317,6 +317,9 @@ scalingo-update-cli: ## Install/Update Scalingo CLI
 run-concurrency-request: ## Run concurrency request based postman collection ex: make run-concurrency-request nb=5 envName=local|demo
 	@bash -l -c 'node ./tools/newman/run_concurrency_request.js nb=$(nb) envName=$(envName)'
 
+metabase-db:
+	@bash -l -c '$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) exec metabase_db psql -U metabase -d metabase'
+
 ## Job sync metabase
 scalingo-job-build: ## Build Scalingo sync job container
 	@echo "\033[33mBuilding Scalingo job image...\033[0m"
@@ -396,7 +399,7 @@ ovh-scw-sync-release: ## Tag and push image to Scaleway registry - make ovh-scw-
 
 .tools-setup:
 	@echo "\033[33mBuilding tools containers ...\033[0m"
-	@$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) build
+	@$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) pull
 	@echo "\033[32mContainers built!\033[0m"
 
 .sleep:
