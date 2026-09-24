@@ -100,7 +100,6 @@ class SignalementListController extends AbstractController
         $desordreCategorieRepository->findAllWithRelations();
         /** @var User $user */
         $user = $this->getUser();
-        // TODO : voir si on peut alléger la réponse en ne retournant que les données essentielles pour la liste des signalements, et laisser les détails pour l'endpoint de récupération d'un signalement par UUID.
         $signalements = $signalementRepository->findAllForApi(
             user: $user,
             signalementListQueryParams: $signalementListQueryParams
