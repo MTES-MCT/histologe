@@ -50,10 +50,11 @@ class SignalementListControllerTest extends WebTestCase
 
         foreach ($response as $signalement) {
             $this->assertIsArray($signalement['affectations']);
-            if ('2024-12' === $signalement['reference']) {
-                $this->assertCount(1, $signalement['files']);
-                $this->assertCount(1, haystack: $signalement['visites']);
-            }
+            $this->assertArrayNotHasKey('files', $signalement);
+            $this->assertArrayNotHasKey('visites', $signalement);
+            $this->assertArrayNotHasKey('personnes', $signalement);
+            $this->assertArrayNotHasKey('suivis', $signalement);
+            $this->assertArrayNotHasKey('qualifications', $signalement);
         }
         $this->assertCount(1, $response);
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
@@ -114,6 +115,15 @@ class SignalementListControllerTest extends WebTestCase
         $this->assertCount($nbDesordres, $response['desordres']);
         $this->assertCount($nbAffectations, $response['affectations']);
         $this->assertArrayHasKey('partenaireType', $response['affectations'][0]);
+        $this->assertArrayHasKey('files', $response);
+        $this->assertArrayHasKey('visites', $response);
+        $this->assertArrayHasKey('personnes', $response);
+        $this->assertArrayHasKey('suivis', $response);
+        $this->assertArrayHasKey('qualifications', $response);
+        if ('2024-12' === $response['reference']) {
+            $this->assertCount(1, $response['files']);
+            $this->assertCount(1, haystack: $response['visites']);
+        }
         $this->hasXrequestIdHeaderAndOneApiRequestLog($client);
     }
 

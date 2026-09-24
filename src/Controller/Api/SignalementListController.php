@@ -3,7 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Dto\Api\Request\SignalementListQueryParams;
-use App\Dto\Api\Response\SignalementResponse;
+use App\Dto\Api\Response\SignalementSummaryResponse;
 use App\Entity\User;
 use App\Factory\Api\SignalementResponseFactory;
 use App\Repository\DesordreCategorieRepository;
@@ -43,7 +43,7 @@ class SignalementListController extends AbstractController
         description: 'Une liste de signalements',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: SignalementResponse::class))
+            items: new OA\Items(ref: new Model(type: SignalementSummaryResponse::class))
         )
     )]
     #[OA\Response(
@@ -100,13 +100,14 @@ class SignalementListController extends AbstractController
         $desordreCategorieRepository->findAllWithRelations();
         /** @var User $user */
         $user = $this->getUser();
+        // TODO : voir si on peut alléger la réponse en ne retournant que les données essentielles pour la liste des signalements, et laisser les détails pour l'endpoint de récupération d'un signalement par UUID.
         $signalements = $signalementRepository->findAllForApi(
             user: $user,
             signalementListQueryParams: $signalementListQueryParams
         );
         $resources = [];
         foreach ($signalements as $signalement) {
-            $resources[] = $signalementResponseFactory->createFromSignalement($signalement);
+            $resources[] = $signalementResponseFactory->createFromSignalement(signalement: $signalement, summaryView: true);
         }
 
         return new JsonResponse($resources, Response::HTTP_OK);
