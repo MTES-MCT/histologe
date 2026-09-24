@@ -89,6 +89,14 @@ class ManageSignalementAndAddressRelationCommand extends Command
                     // on supprime en base l'ancienne adresse qui n'est plus utilisée les relations signalement->adresse seront mis jour au lancement suivant de la commande
                     $oldAddressKey = $addressKeysByBanId[$banId];
                     $addressToRemove = $existingAddresses[$oldAddressKey];
+
+                    // Réassigne les signalements qui pointent vers l'ancienne adresse
+                    foreach ($addressesToProcess as $processedRow) {
+                        if ($processedRow[0]->getAddress() === $addressToRemove) {
+                            $processedRow[0]->setAddress($existingAddresses[$addressKey]);
+                        }
+                    }
+
                     $this->entityManager->remove($addressToRemove);
                     unset($existingAddresses[$oldAddressKey]);
                     $addressKeysByBanId[$banId] = $addressKey;
