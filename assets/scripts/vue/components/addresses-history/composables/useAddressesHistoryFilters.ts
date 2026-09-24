@@ -362,6 +362,19 @@ export function useAddressesHistoryFilters() {
   }
 
   /**
+   * Vide les filtres dont les suggestions dépendent du territoire
+   * (adresse, commune ou EPCI, bailleur ou syndic, zone).
+   * À appeler avant de recharger les settings lors d'un changement de territoire.
+   */
+  const clearTerritoryDependentFilters = (): void => {
+    const filters = store.state.input.filters
+    filters.adresse = undefined
+    filters.communeOuEpci = undefined
+    filters.bailleurOuSyndic = undefined
+    filters.zone = undefined
+  }
+
+  /**
    * Sauvegarde le territoire actuel (pour détecter les changements)
    */
   const saveCurrentTerritory = (): void => {
@@ -381,6 +394,7 @@ export function useAddressesHistoryFilters() {
     resetFilters,
     initFiltersFromUrl,
     getDefaultFilters,
+    clearTerritoryDependentFilters,
     saveCurrentTerritory,
     hasTerritoryChanged,
     handleSettingsResponse,

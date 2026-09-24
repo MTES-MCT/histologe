@@ -17,6 +17,8 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import { mapStyles, Overlay, addOverlay, removeOverlay } from 'carte-facile'
 import 'carte-facile/carte-facile.css'
 import { AddressFilterService } from '../services/AddressFilterService'
+// @ts-ignore
+import { parse } from 'wellknown'
 
 // State
 const sharedState = store.state
@@ -153,7 +155,7 @@ function buildZonesGeoJson(): GeoJSON.FeatureCollection {
 
   sharedState.addresses.zoneAreas.forEach((wkt: string, index: number) => {
     try {
-      const geometry = wktToGeoJSON(wkt)
+      const geometry = parse(wkt)
       if (geometry) {
         features.push({
           type: 'Feature',
@@ -172,71 +174,6 @@ function buildZonesGeoJson(): GeoJSON.FeatureCollection {
     type: 'FeatureCollection',
     features
   }
-}
-
-/**
- * Convertit un WKT en GeoJSON geometry
- */
-function wktToGeoJSON(wkt: string): GeoJSON.Geometry | null {
-  if (!wkt) return null
-
-  // Supprime les espaces au début/fin
-  wkt = wkt.trim()
-
-  // POLYGON
-  if (wkt.startsWith('POLYGON')) {
-    const coords = wkt.match(/\(\(([^)]+)\)\)/)?.[1]
-    if (!coords) return null
-
-    const coordinates = coords.split(',').map(pair => {
-      const [lng, lat] = pair.trim().split(' ').map(Number)
-      return [lng, lat]
-    })
-
-    return {
-      type: 'Polygon',
-      coordinates: [coordinates]
-    }
-  }
-
-  // MULTIPOLYGON
-  if (wkt.startsWith('MULTIPOLYGON')) {
-    const match = wkt.match(/MULTIPOLYGON\s*\(\(\((.+)\)\)\)/)
-    if (!match) return null
-
-    // Parse les polygones
-    const polygons: number[][][][] = []
-    let depth = 0
-    let currentPolygon = ''
-
-    for (let i = 13; i < wkt.length; i++) {
-      const char = wkt[i]
-      if (char === '(') depth++
-      else if (char === ')') {
-        depth--
-        if (depth === 1) {
-          // Fin d'un polygone
-          const coordinates: number[][] = currentPolygon.trim().split(',').map(pair => {
-            const [lng, lat] = pair.trim().split(' ').map(Number)
-            return [lng, lat]
-          })
-          polygons.push([coordinates])
-          currentPolygon = ''
-        }
-      } else if (depth === 2) {
-        currentPolygon += char
-      }
-    }
-
-    if (polygons.length > 0) {
-      return {
-        type: 'MultiPolygon',
-        coordinates: polygons
-      }
-    }
-  }
-
-  return null
 }
 
 /**
