@@ -8,6 +8,7 @@ use App\Dto\Api\Model\Desordre;
 use App\Dto\Api\Model\Personne;
 use App\Dto\Api\Model\Suivi;
 use App\Dto\Api\Response\SignalementResponse;
+use App\Dto\Api\Response\SignalementSummaryResponse;
 use App\Entity\Affectation;
 use App\Entity\Enum\Api\PersonneType;
 use App\Entity\Enum\DesordreCritereZone;
@@ -44,7 +45,7 @@ readonly class SignalementResponseFactory
     ) {
     }
 
-    public function createFromSignalement(Signalement $signalement): SignalementResponse
+    public function createFromSignalement(Signalement $signalement, bool $summaryView = false): SignalementResponse|SignalementSummaryResponse
     {
         /** @var User $user */
         $user = $this->security->getUser();
@@ -60,7 +61,12 @@ readonly class SignalementResponseFactory
             $affectationResult = [];
         }
 
-        $signalementResponse = new SignalementResponse();
+        if ($summaryView) {
+            $signalementResponse = new SignalementSummaryResponse();
+        } else {
+            $signalementResponse = new SignalementResponse();
+        }
+
         // references, dates et statut
         $signalementResponse->uuid = $signalement->getUuid();
         $signalementResponse->reference = $signalement->getReference();
@@ -153,23 +159,30 @@ readonly class SignalementResponseFactory
         foreach ($signalement->getTags() as $tag) {
             $signalementResponse->tags[] = $tag->getLabel();
         }
-        foreach ($signalement->getSignalementQualifications() as $qualification) {
-            if (!$qualification->isPostVisite()) {
-                $signalementResponse->qualifications[] = $qualification->getStatus()?->value;
+        if ($signalementResponse instanceof SignalementResponse) {
+            foreach ($signalement->getSignalementQualifications() as $qualification) {
+                if (!$qualification->isPostVisite()) {
+                    $signalementResponse->qualifications[] = $qualification->getStatus()?->value;
+                }
             }
-        }
-        foreach ($signalement->getSuivis() as $suivi) {
-            $signalementResponse->suivis[] = new Suivi($suivi);
-        }
-        foreach ($signalement->getInterventions() as $intervention) {
-            if (InterventionType::ARRETE_PREFECTORAL !== $intervention->getType()) {
-                $signalementResponse->visites[] = $this->visiteFactory->createInstance($intervention);
+            foreach ($signalement->getSuivis() as $suivi) {
+                $signalementResponse->suivis[] = new Suivi($suivi);
             }
-        }
+            foreach ($signalement->getInterventions() as $intervention) {
+                if (InterventionType::ARRETE_PREFECTORAL !== $intervention->getType()) {
+                    $signalementResponse->visites[] = $this->visiteFactory->createInstance($intervention);
+                }
+            }
 
-        if ($this->s3Enable) {
-            foreach ($signalement->getFiles() as $file) {
-                $signalementResponse->files[] = $this->fileFactory->createFrom($file);
+            if ($this->s3Enable) {
+                foreach ($signalement->getFiles() as $file) {
+                    $signalementResponse->files[] = $this->fileFactory->createFrom($file);
+                }
+            }
+            foreach (self::PERSONNE_TYPES as $personneType) {
+                if (($personne = $this->createPersonne($signalement, $personneType)) !== null) {
+                    $signalementResponse->personnes[] = $personne;
+                }
             }
         }
         // divers
@@ -191,12 +204,6 @@ readonly class SignalementResponseFactory
             rnbId: $signalement->getRnbIdOccupant(),
             cleBanAdresse: $signalement->getAddress()->getBanId(),
         );
-
-        foreach (self::PERSONNE_TYPES as $personneType) {
-            if (($personne = $this->createPersonne($signalement, $personneType)) !== null) {
-                $signalementResponse->personnes[] = $personne;
-            }
-        }
 
         return $signalementResponse;
     }

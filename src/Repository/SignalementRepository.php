@@ -523,24 +523,29 @@ class SignalementRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findForAPIQueryBuilder(User $user, ?bool $includeCreatedByUser = false): QueryBuilder
+    public function findForAPIQueryBuilder(User $user, ?bool $completeView = false): QueryBuilder
     {
         $partners = $this->partnerAuthorizedResolver->resolveBy($user);
         $qb = $this->createQueryBuilder('s')
             ->innerJoin('s.address', 'address');
 
-        $qb->select('DISTINCT s', 'address', 'territory', 'affectations', 'signalementUsager', 'intervention', 'file')
-            ->leftJoin('address.territory', 'territory')
-            ->leftJoin('s.affectations', 'affectations')
-            ->leftJoin('s.signalementUsager', 'signalementUsager')
-            ->leftJoin('s.interventions', 'intervention')
-            ->leftJoin('s.files', 'file')
-        ;
-        if ($includeCreatedByUser) {
+        if ($completeView) {
+            $qb->select('DISTINCT s', 'address', 'territory', 'affectations', 'signalementUsager', 'intervention', 'file')
+                ->leftJoin('address.territory', 'territory')
+                ->leftJoin('s.affectations', 'affectations')
+                ->leftJoin('s.signalementUsager', 'signalementUsager')
+                ->leftJoin('s.interventions', 'intervention')
+                ->leftJoin('s.files', 'file')
+            ;
+
             return $qb->where('affectations.partner IN (:partners) OR s.createdBy = :user')
                 ->setParameter('partners', $partners)
                 ->setParameter('user', $user);
         }
+        $qb->select('DISTINCT s', 'address', 'territory', 'affectations')
+            ->leftJoin('address.territory', 'territory')
+            ->leftJoin('s.affectations', 'affectations')
+        ;
 
         return $qb->where('affectations.partner IN (:partners)')
             ->setParameter('partners', $partners);

@@ -3,7 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Dto\Api\Request\SignalementListQueryParams;
-use App\Dto\Api\Response\SignalementResponse;
+use App\Dto\Api\Response\SignalementSummaryResponse;
 use App\Entity\User;
 use App\Factory\Api\SignalementResponseFactory;
 use App\Repository\DesordreCategorieRepository;
@@ -43,7 +43,7 @@ class SignalementListController extends AbstractController
         description: 'Une liste de signalements',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: SignalementResponse::class))
+            items: new OA\Items(ref: new Model(type: SignalementSummaryResponse::class))
         )
     )]
     #[OA\Response(
@@ -106,7 +106,7 @@ class SignalementListController extends AbstractController
         );
         $resources = [];
         foreach ($signalements as $signalement) {
-            $resources[] = $signalementResponseFactory->createFromSignalement($signalement);
+            $resources[] = $signalementResponseFactory->createFromSignalement(signalement: $signalement, summaryView: true);
         }
 
         return new JsonResponse($resources, Response::HTTP_OK);
