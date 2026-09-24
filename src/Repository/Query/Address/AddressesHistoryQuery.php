@@ -55,6 +55,20 @@ class AddressesHistoryQuery
         return $qb->getQuery()->getArrayResult();
     }
 
+    private function buildAllAddressesQueryBuilder(
+        User $user,
+        ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
+    ): QueryBuilder {
+        $qbIds = $this->buildBaseQueryBuilder($user, $addressesHistorySearchQuery);
+        $qbIds->select('a.id', 'a.street', 'a.postCode', 'a.city')
+            ->groupBy('a.id', 'a.street', 'a.postCode', 'a.city')
+            ->orderBy('a.street', 'ASC')
+            ->addOrderBy('a.postCode', 'ASC')
+            ->addOrderBy('a.city', 'ASC');
+
+        return $qbIds;
+    }
+
     /**
      * @return array<int, array<string, mixed>>
      */
@@ -68,12 +82,8 @@ class AddressesHistoryQuery
         $maxListPagination = AddressesHistorySearchQuery::MAX_LIST_PAGINATION;
         $firstResult = (max($page, 1) - 1) * $maxListPagination;
 
-        $qbIds = $this->buildBaseQueryBuilder($user, $addressesHistorySearchQuery);
-        $qbIds->select('a.id', 'a.street', 'a.postCode', 'a.city')
-            ->groupBy('a.id', 'a.street', 'a.postCode', 'a.city')
-            ->orderBy('a.street', 'ASC')
-            ->addOrderBy('a.postCode', 'ASC')
-            ->addOrderBy('a.city', 'ASC')
+        $qbIds = $this->buildAllAddressesQueryBuilder($user, $addressesHistorySearchQuery);
+        $qbIds
             ->setFirstResult($firstResult)
             ->setMaxResults($maxListPagination);
 
@@ -92,12 +102,7 @@ class AddressesHistoryQuery
         User $user,
         ?AddressesHistorySearchQuery $addressesHistorySearchQuery = null,
     ): array {
-        $qbIds = $this->buildBaseQueryBuilder($user, $addressesHistorySearchQuery);
-        $qbIds->select('a.id', 'a.street', 'a.postCode', 'a.city')
-            ->groupBy('a.id', 'a.street', 'a.postCode', 'a.city')
-            ->orderBy('a.street', 'ASC')
-            ->addOrderBy('a.postCode', 'ASC')
-            ->addOrderBy('a.city', 'ASC');
+        $qbIds = $this->buildAllAddressesQueryBuilder($user, $addressesHistorySearchQuery);
 
         $addressIds = array_column($qbIds->getQuery()->getArrayResult(), 'id');
 
