@@ -67,6 +67,7 @@ const state = ref<StoreState>({
   loadingList: false,
   hasErrorLoading: false,
   natureParcList: [
+    { Id: '', Text: 'Toutes' },
     { Id: NatureParc.Privee, Text: 'Parc privé' },
     { Id: NatureParc.Public, Text: 'Parc public' },
     { Id: NatureParc.NonRenseigne, Text: 'Parc Non renseigné' }

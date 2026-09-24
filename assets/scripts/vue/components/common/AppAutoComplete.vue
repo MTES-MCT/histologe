@@ -6,6 +6,7 @@
         <span class="fr-hint-text"><slot name="hint"></slot></span>
       </label>
       <div
+        ref="inputWrap"
         :class="['fr-input-wrap', iconClass]"
         >
         <input
@@ -23,6 +24,8 @@
           />
       </div>
       <ul v-if="suggestionFilteredList.length > 0"
+          ref="suggestionList"
+          :style="dropdownStyle"
           class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-autocomplete-list" >
         <li
             class="fr-col-12 fr-p-3v fr-text-label--blue-france fr-autocomplete-suggestion"
@@ -35,6 +38,7 @@
         </li>
       </ul>
       <ul v-else-if="searchText.length >= 0 && showNoResultsMessage"
+          :style="dropdownStyle"
           class="fr-grid-row fr-background--white fr-text-label--red-marianne fr-autocomplete-list">
         <li class="fr-col-12 fr-p-3v fr-autocomplete-suggestion--disabled fr-text--xs">Aucun résultat trouvé</li>
       </ul>
@@ -98,13 +102,86 @@ export default defineComponent({
       suggestionFilteredList: [] as string[],
       selectedSuggestion: '',
       selectedSuggestionIndex: -1,
-      showNoResultsMessage: false
+      showNoResultsMessage: false,
+      dropdownStyle: {} as Record<string, string>
+    }
+  },
+  computed: {
+    isDropdownOpen (): boolean {
+      return this.suggestionFilteredList.length > 0 || this.showNoResultsMessage
     }
   },
   created () {
     document.addEventListener('click', this.closeAutocomplete)
   },
+  mounted () {
+    // capture: true pour capter aussi les scrolls des conteneurs internes
+    window.addEventListener('scroll', this.onWindowScroll, true)
+    window.addEventListener('resize', this.onWindowResize)
+  },
+  beforeUnmount () {
+    document.removeEventListener('click', this.closeAutocomplete)
+    window.removeEventListener('scroll', this.onWindowScroll, true)
+    window.removeEventListener('resize', this.onWindowResize)
+  },
   methods: {
+    /**
+     * La liste étant en position fixed, elle ne suit pas le champ quand on
+     * défile : on la ferme plutôt que de la laisser flotter au-dessus du
+     * contenu. Le défilement interne de la liste elle-même est ignoré.
+     */
+    onWindowScroll (event: Event) {
+      if (!this.isDropdownOpen) {
+        return
+      }
+
+      const target = event.target as HTMLElement | null
+      if (target?.closest?.('.fr-autocomplete-list')) {
+        return
+      }
+
+      this.closeSuggestions()
+    },
+    onWindowResize () {
+      if (this.isDropdownOpen) {
+        this.updateDropdownPosition()
+      }
+    },
+    closeSuggestions () {
+      this.suggestionFilteredList = []
+      this.selectedSuggestionIndex = -1
+      this.showNoResultsMessage = false
+    },
+    /**
+     * Positionne la liste de suggestions en `fixed` par rapport au champ.
+     * Cela lui permet de sortir des conteneurs scrollables (ex. panneau de
+     * filtres de la carte) qui la tronqueraient autrement.
+     * La liste s'ouvre vers le haut s'il n'y a pas assez de place en dessous.
+     */
+    updateDropdownPosition () {
+      const inputWrap = this.$refs.inputWrap as HTMLElement | undefined
+      if (!inputWrap) {
+        return
+      }
+
+      const MARGIN = 8
+      const MIN_HEIGHT = 120
+      const rect = inputWrap.getBoundingClientRect()
+      const spaceBelow = window.innerHeight - rect.bottom - MARGIN
+      const spaceAbove = rect.top - MARGIN
+      const openUpwards = spaceBelow < MIN_HEIGHT && spaceAbove > spaceBelow
+
+      this.dropdownStyle = {
+        position: 'fixed',
+        zIndex: '1000',
+        top: openUpwards ? 'auto' : `${rect.bottom}px`,
+        bottom: openUpwards ? `${window.innerHeight - rect.top}px` : 'auto',
+        left: `${rect.left}px`,
+        width: `${rect.width}px`,
+        maxHeight: `${Math.max(MIN_HEIGHT, openUpwards ? spaceAbove : spaceBelow)}px`,
+        overflowY: 'auto'
+      }
+    },
     selectSuggestion (index: number) {
       this.selectedSuggestionIndex = index
       if (this.multiple) {
@@ -119,6 +196,9 @@ export default defineComponent({
       this.$emit('update:modelValue', this.multiple ? this.selectedSuggestions : this.searchText)
     },
     updateSearch () {
+      // Calculé avant le rendu de la liste : la position ne dépend que du champ
+      this.updateDropdownPosition()
+
       if (this.searchText.length < 1) {
         this.suggestionFilteredList = []
         this.showNoResultsMessage = false
@@ -152,12 +232,25 @@ export default defineComponent({
     handleDownSuggestion () {
       if (this.selectedSuggestionIndex < this.suggestionFilteredList.length - 1) {
         this.selectedSuggestionIndex++
+        this.scrollHighlightedIntoView()
       }
     },
     handleUpSuggestion () {
       if (this.selectedSuggestionIndex > 0) {
         this.selectedSuggestionIndex--
+        this.scrollHighlightedIntoView()
       }
+    },
+    /**
+     * La liste pouvant défiler (hauteur limitée à l'espace disponible),
+     * on garde la suggestion surlignée visible lors de la navigation au clavier.
+     */
+    scrollHighlightedIntoView () {
+      this.$nextTick(() => {
+        const list = this.$refs.suggestionList as HTMLElement | undefined
+        const item = list?.children[this.selectedSuggestionIndex] as HTMLElement | undefined
+        item?.scrollIntoView({ block: 'nearest' })
+      })
     },
     handleEnterSuggestion () {
       if (this.selectedSuggestionIndex !== -1) {
@@ -168,9 +261,7 @@ export default defineComponent({
     closeAutocomplete (event: any) {
       const target = event.target as HTMLElement
       if (target && !event.target.closest('.fr-autocomplete-list')) {
-        this.suggestionFilteredList = []
-        this.selectedSuggestionIndex = -1
-        this.showNoResultsMessage = false
+        this.closeSuggestions()
         // Ne vider le champ qu'en mode multiple
         if (this.multiple) {
           this.searchText = ''

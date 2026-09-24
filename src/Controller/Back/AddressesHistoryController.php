@@ -119,6 +119,8 @@ class AddressesHistoryController extends AbstractController
                     $responseAddresses[$addressKey]->addBailleurName($row['bailleurName']);
                 } elseif (!empty($row['denominationProprio'])) {
                     $responseAddresses[$addressKey]->addBailleurName($row['denominationProprio']);
+                } elseif (!empty($row['nomProprio'])) {
+                    $responseAddresses[$addressKey]->addBailleurName($row['nomProprio']);
                 } elseif (!empty($row['denominationSyndic'])) {
                     $responseAddresses[$addressKey]->addBailleurName($row['denominationSyndic']);
                 }
