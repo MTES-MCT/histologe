@@ -110,18 +110,18 @@ class ConfirmVisiteType extends AbstractType
                 ],
                 'constraints' => [
                     new Assert\File(
-                        maxSize: '10M',
+                        maxSize: '25M',
                         mimeTypes: File::DOCUMENT_MIME_TYPES,
-                        mimeTypesMessage: 'Veuillez télécharger un fichier au format '.UploadHandlerService::getAcceptedExtensions().', et ne dépassant pas 10 Mo.'
+                        mimeTypesMessage: 'Veuillez télécharger un fichier au format '.UploadHandlerService::getAcceptedExtensions().', et ne dépassant pas 25 Mo.'
                     ),
                 ],
                 'mapped' => false,
             ]);
         }
         // Ajout des contraintes de validation en fonction de la date/heure soumise
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($intervention) {
             $form = $event->getForm();
-            $scheduledAt = $form->get('scheduledAt')->getData();
+            $scheduledAt = $intervention->getScheduledAt();
             $todayInTerritory = (new \DateTimeImmutable('today', $this->timezoneProvider->getDateTimezone()))->format('Y-m-d');
             $isPastDate = $scheduledAt instanceof \DateTimeInterface && $scheduledAt->format('Y-m-d') <= $todayInTerritory;
 
