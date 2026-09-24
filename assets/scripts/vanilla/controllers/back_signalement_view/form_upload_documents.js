@@ -162,7 +162,6 @@ function initializeUploadModal(modalSelector) {
           } else {
             const divFileId = div.querySelector('#file-id');
             divFileId.value = response.response;
-            // TODO : Refonte visites - pour faire propre il faudrait eviter ca et envoyer l'id intervention directement a l'ajout du fichier pour enregistrer l'asocciation et le type
             callEditFileRoute(div);
             addEventListenerDescription(divFileId);
           }

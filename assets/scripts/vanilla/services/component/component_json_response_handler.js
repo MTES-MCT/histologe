@@ -1,5 +1,4 @@
 import { applyFilter } from '../../controllers/back_signalement_view/toggle-suivi-auto.js';
-import { reloadTinyMCE } from '../form/form_helper.js';
 import { attachAjaxFormHandlers } from '../form/ajax_form_handler.js';
 import { initSearchCheckboxWidgets } from '../component/component_search_checkbox.js';
 import { initSearchAndSelectBadges } from '../component/component_search_and_select_badges.js';
@@ -74,9 +73,6 @@ export function jsonResponseProcess(response) {
             break;
           case 'updateBtnAddSuiviForm':
             updateBtnAddSuiviForm();
-            break;
-          case 'reloadTinyMCE':
-            reloadTinyMCE(fn.args[0]);
             break;
           case 'attachAjaxFormHandlers':
             attachAjaxFormHandlers();
