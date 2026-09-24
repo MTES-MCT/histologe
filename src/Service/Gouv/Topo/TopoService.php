@@ -9,6 +9,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class TopoService
 {
     private const string API_URL = 'https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/topo-fichier-des-entites-topographiques/records';
+    private const string CODE_PATTERN = '/^[0-9A-Za-z]{1,3}$/';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -30,6 +31,12 @@ class TopoService
         string $codeCommune,
         string $libelle,
     ): array {
+        if (!preg_match(self::CODE_PATTERN, $codeDepartement) || !preg_match(self::CODE_PATTERN, $codeCommune)) {
+            $this->logger->warning(sprintf('TOPO DGFiP API: invalid code_dep "%s" or code_commune "%s"', $codeDepartement, $codeCommune));
+
+            return [];
+        }
+
         try {
             $response = $this->httpClient->request('GET', self::API_URL, [
                 'query' => [
@@ -38,7 +45,7 @@ class TopoService
                         'code_dep="%s" AND code_commune="%s" AND search(libelle,"%s")',
                         $codeDepartement,
                         $codeCommune,
-                        $libelle,
+                        $this->escapeStringLiteral($libelle),
                     ),
                     'limit' => 20,
                 ],
@@ -60,5 +67,10 @@ class TopoService
 
             return [];
         }
+    }
+
+    private function escapeStringLiteral(string $value): string
+    {
+        return str_replace(['\\', '"'], ['\\\\', '\\"'], $value);
     }
 }
