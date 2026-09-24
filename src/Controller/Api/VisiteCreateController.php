@@ -8,17 +8,15 @@ use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Event\InterventionCreatedEvent;
 use App\Factory\Api\VisiteFactory;
-use App\Factory\SignalementVisiteRequestFactory;
 use App\Manager\InterventionManager;
 use App\Security\Voter\Api\ApiSignalementPartnerVoter;
 use App\Service\Security\PartnerAuthorizedResolver;
+use App\Service\Signalement\DescriptionFilesBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -30,13 +28,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class VisiteCreateController extends AbstractController
 {
     public function __construct(
-        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly InterventionManager $interventionManager,
         private readonly VisiteFactory $interventionFactory,
-        private readonly SignalementVisiteRequestFactory $signalementVisiteRequestFactory,
         private readonly ValidatorInterface $validator,
         private readonly PartnerAuthorizedResolver $partnerAuthorizedResolver,
         private readonly EntityManagerInterface $entityManager,
+        private readonly DescriptionFilesBuilder $descriptionFilesBuilder,
     ) {
     }
 
@@ -204,30 +201,23 @@ class VisiteCreateController extends AbstractController
             );
         }
 
-        $signalementVisiteRequest = $this->signalementVisiteRequestFactory->createFrom(
-            $visiteRequest,
-            $signalement->getAffectationForPartner($partner)
-        );
-        $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $signalementVisiteRequest, $partner);
+        $intervention = (new Intervention())
+        ->setSignalement($signalement)
+        ->setCommentBeforeVisite($visiteRequest->commentBeforeVisite)
+        ->setDetails($this->descriptionFilesBuilder->build($signalement, $visiteRequest))
+        ->setConcludeProcedure($visiteRequest->concludeProcedure);
 
-        $timezone = $signalement->getAddress()->getTerritory()->getTimezone();
-        if ($this->isScheduledInFuture($intervention->getScheduledAt(), $timezone)) {
-            $this->eventDispatcher->dispatch(
-                new InterventionCreatedEvent($intervention, $user, $partner),
-                InterventionCreatedEvent::NAME
-            );
-        }
+        $this->interventionManager->updateVisiteFromData(
+            intervention: $intervention,
+            scheduledAt: new \DateTimeImmutable($visiteRequest->date),
+            scheduledAtTime: new \DateTimeImmutable($visiteRequest->date.' '.$visiteRequest->time),
+            partnerChoice: $partner,
+            visiteDone: $visiteRequest->visiteEffectuee,
+        );
+
         $this->entityManager->flush();
 
         return $this->json($this->interventionFactory->createInstance($intervention), Response::HTTP_CREATED);
-    }
-
-    /**
-     * @throws \DateInvalidTimeZoneException
-     */
-    private function isScheduledInFuture(\DateTimeImmutable $scheduledAt, string $timezone): bool
-    {
-        return $scheduledAt->setTimezone(new \DateTimeZone($timezone))->format('Y-m-d') > (new \DateTimeImmutable())->format('Y-m-d');
     }
 
     private function getInterventionVisitePlanned(Signalement $signalement, Partner $partner): false|Intervention

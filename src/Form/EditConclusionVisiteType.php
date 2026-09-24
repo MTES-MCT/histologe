@@ -82,9 +82,9 @@ class EditConclusionVisiteType extends AbstractType
                 ],
                 'constraints' => [
                     new Assert\File(
-                        maxSize: '10M',
+                        maxSize: '25M',
                         mimeTypes: File::DOCUMENT_MIME_TYPES,
-                        mimeTypesMessage: 'Veuillez télécharger un fichier au format '.UploadHandlerService::getAcceptedExtensions().', et ne dépassant pas 10 Mo.'
+                        mimeTypesMessage: 'Veuillez télécharger un fichier au format '.UploadHandlerService::getAcceptedExtensions().', et ne dépassant pas 25 Mo.'
                     ),
                 ],
                 'mapped' => false,

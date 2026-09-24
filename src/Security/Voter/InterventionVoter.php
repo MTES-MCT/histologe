@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Intervention;
@@ -41,9 +42,9 @@ class InterventionVoter extends Voter
 
     public static function canEditVisite(Intervention $intervention, User $user): bool
     {
-        // TODO : Refonte visites
-        // - bloquer les édition des intervention de type ARRETE_PREFECTORAL
-
+        if (InterventionType::ARRETE_PREFECTORAL === $intervention->getType()) {
+            return false;
+        }
         $signalement = $intervention->getSignalement();
         if (SignalementStatus::ACTIVE !== $signalement->getStatut()) {
             return false;
