@@ -449,6 +449,40 @@ small {
     }
 }
 
+.fr-picto-dossiers-multiples {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  background-color: #EFB900;
+  border-radius: 50%;
+  margin-right: 8px;
+  margin-top: 4px;
+}
+
+// Pictos for arrêté types
+.fr-picto-arrete {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 8px;
+  vertical-align: middle;
+
+  &.purple-hexagon {
+    background-color: #6c63ff;
+    clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+    transform: rotate(90deg);
+  }
+
+  &.blue-square {
+    background-color: #2196f3;
+  }
+
+  &.purple-diamond {
+    background-color: #9c27b0;
+    transform: rotate(45deg);
+  }
+}
+
 button.fr-btn--danger,a[href].fr-btn--danger {
     background: var(--warning-425-625);
     &:hover {

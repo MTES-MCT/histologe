@@ -100,6 +100,10 @@
 - [ ] Lister les types de suivi disponibles
 - [ ] Documenter le workflow des visites (planification, confirmation, rapport)
 
+## Historique des adresses (filtres Vue.js)
+
+Pour modifier les filtres de l'écran « Historique des adresses » (suggestions d'adresses/communes dépendantes de la zone ou du territoire, route `/bo/settings`), consulter **[ADDRESSES_HISTORY_FILTRES.md](ADDRESSES_HISTORY_FILTRES.md)**.
+
 ## Ajouts de données
 
 Pour ajouter un nouveau champ dans l'entité Signalement, consulter le **[Guide d'ajout de données (AJOUT_DONNEES.md)](AJOUT_DONNEES.md)**.

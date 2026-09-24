@@ -1,17 +1,14 @@
 <template>
-  <div class="histo-checkbox">
-    <div class="fr-checkbox-group" :class="containerClass">
+  <div :class="`histo-toggle ${containerClass}`">
+    <div class="fr-toggle">
       <input
         type="checkbox"
+        class="fr-toggle__input"
         :id="id"
-        :name="id"
         :checked="modelValue"
         @change="$emit('update:modelValue', $event.target.checked)"
         >
-      <label class="fr-label" :for="id">
-        <slot name="label"></slot>
-        <span class="fr-hint-text"><slot name="help"></slot></span>
-      </label>
+      <label class="fr-toggle__label" :for="id" :data-fr-checked-label="checkedLabel" :data-fr-unchecked-label="uncheckedLabel"><slot name="label"></slot></label>
     </div>
   </div>
 </template>
@@ -20,12 +17,14 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'HistoCheckbox',
+  name: 'HistoToggle',
   props: {
     id: { type: String, default: null },
-    modelValue: { type: Boolean, default: false },
     containerClass: { type: String, default: '' },
+    modelValue: { type: Boolean, default: false },
     disabled: { type: Boolean, default: false },
+    checkedLabel: { type: String, default: 'Activé' },
+    uncheckedLabel: { type: String, default: 'Désactivé' },
     onChange: { type: Function }
   },
   emits: ['update:modelValue']
@@ -33,7 +32,7 @@ export default defineComponent({
 </script>
 
 <style>
-  .histo-checkbox input {
+  .histo-toggle input {
     background: #FFF;
   }
 </style>

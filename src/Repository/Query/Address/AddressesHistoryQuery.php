@@ -26,14 +26,18 @@ class AddressesHistoryQuery
     }
 
     /**
-     * @return array<int, mixed>
+     * Retourne les adresses avec leur commune (`commune`, arrondissements regroupés sous Paris/Lyon/Marseille)
+     * et les ids des zones qui les contiennent (`zoneIds`), afin que le front puisse filtrer
+     * les listes de suggestions selon la zone ou la commune sélectionnée.
+     *
+     * @return array<int, array{id: int, address: string, commune: string|null, zoneIds: array<int, int>}>
      */
     public function findAllList(?Territory $territory = null): array
     {
         $qb = $this->entityManager->createQueryBuilder()
             ->from(Address::class, 'a')
             ->leftJoin('a.arretes', 'ar')
-            ->select('a.id, CONCAT_WS(\' \', a.housenumber, a.street) as address')
+            ->select('a.id, CONCAT_WS(\' \', a.housenumber, a.street) as address, a.city')
             ->groupBy('a.id, a.street, a.housenumber')
             ->orderBy('a.street', 'ASC')
             ->addOrderBy('CAST(a.housenumber AS UNSIGNED)', 'ASC');
@@ -43,6 +47,7 @@ class AddressesHistoryQuery
                 ->setParameter('territory', $territory);
         }
 
+        /*
         // Une adresse est renvoyée si il y a au moins 2 signalements ou au moins 1 arrêté
         $qb->andWhere('ar.id IS NOT NULL OR EXISTS (
             SELECT 1 FROM '.Signalement::class.' sMultiple
@@ -51,8 +56,46 @@ class AddressesHistoryQuery
             HAVING COUNT(sMultiple.id) >= 2
         )');
         $qb->setParameter('statusList', $this->getStatusList());
+        */
 
-        return $qb->getQuery()->getArrayResult();
+        $addresses = $qb->getQuery()->getArrayResult();
+        $zoneIdsByAddress = $this->findZoneIdsByAddress($territory);
+        foreach ($addresses as &$address) {
+            $address['commune'] = CommuneHelper::getCommuneFromArrondissement($address['city']);
+            unset($address['city']);
+            $address['zoneIds'] = $zoneIdsByAddress[$address['id']] ?? [];
+        }
+        unset($address);
+
+        return $addresses;
+    }
+
+    /**
+     * @return array<int, array<int, int>> ids des zones indexés par id d'adresse
+     *
+     * @throws Exception
+     */
+    private function findZoneIdsByAddress(?Territory $territory): array
+    {
+        $sql = '
+            SELECT a.id AS address_id, z.id AS zone_id
+            FROM address a
+            JOIN zone z ON z.territory_id = a.territory_id
+            WHERE a.point IS NOT NULL
+            AND ST_Contains(z.area, a.point) = 1
+        ';
+        $params = [];
+        if ($territory) {
+            $sql .= ' AND a.territory_id = :territoryId';
+            $params['territoryId'] = $territory->getId();
+        }
+
+        $zoneIdsByAddress = [];
+        foreach ($this->entityManager->getConnection()->executeQuery($sql, $params)->fetchAllAssociative() as $row) {
+            $zoneIdsByAddress[(int) $row['address_id']][] = (int) $row['zone_id'];
+        }
+
+        return $zoneIdsByAddress;
     }
 
     /**
@@ -256,36 +299,24 @@ class AddressesHistoryQuery
             }
         }
 
-        if (!empty($addressesHistorySearchQuery->getCommunes())) {
+        if (!empty($addressesHistorySearchQuery->getCommuneOuEpci())) {
             $communes = [];
             $epcis = [];
 
-            foreach ($addressesHistorySearchQuery->getCommunes() as $communeOrEpci) {
-                // Vérifier si c'est un EPCI (préfixé par "EPCI: ")
-                if (str_starts_with($communeOrEpci, 'EPCI : ')) {
-                    $epcis[] = substr($communeOrEpci, 7); // Retirer le préfixe "EPCI : "
-                } else {
-                    $communes[] = $communeOrEpci;
-                    // Gérer les arrondissements
-                    if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$communeOrEpci])) {
-                        $communes = array_merge($communes, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$communeOrEpci]);
-                    }
+            $communeOuEpci = $addressesHistorySearchQuery->getCommuneOuEpci();
+            // Vérifier si c'est un EPCI (préfixé par "EPCI: ")
+            if (str_starts_with($communeOuEpci, 'EPCI : ')) {
+                $epcis[] = substr($communeOuEpci, 7); // Retirer le préfixe "EPCI : "
+            } else {
+                $communes[] = $communeOuEpci;
+                // Gérer les arrondissements
+                if (isset(CommuneHelper::COMMUNES_ARRONDISSEMENTS[$communeOuEpci])) {
+                    $communes = array_merge($communes, CommuneHelper::COMMUNES_ARRONDISSEMENTS[$communeOuEpci]);
                 }
             }
 
             // Construire la condition de filtre
-            if (!empty($communes) && !empty($epcis)) {
-                // Si on a les deux, faire un OR entre communes et EPCIs
-                // Utiliser une sous-requête pour les EPCIs
-                $subQuery = 'SELECT DISTINCT a2.id FROM '.Address::class.' a2
-                    INNER JOIN '.Commune::class.' c2 WITH a2.postCode = c2.codePostal AND a2.cityCode = c2.codeInsee
-                    INNER JOIN c2.epci e2
-                    WHERE e2.nom IN (:epcis)';
-
-                $qb->andWhere('a.city IN (:cities) OR a.id IN ('.$subQuery.')')
-                   ->setParameter('cities', $communes)
-                   ->setParameter('epcis', $epcis);
-            } elseif (!empty($communes)) {
+            if (!empty($communes)) {
                 // Seulement des communes
                 $qb->andWhere('a.city IN (:cities)')
                     ->setParameter('cities', $communes);
@@ -317,17 +348,12 @@ class AddressesHistoryQuery
 
         if (!empty($addressesHistorySearchQuery->getBailleurOuSyndic())) {
             $qb->leftJoin('s.bailleur', 'b');
-            $bailleurs = $addressesHistorySearchQuery->getBailleurOuSyndic();
-            $conditions = [];
-            foreach ($bailleurs as $index => $bailleur) {
-                $paramName = 'bailleur'.$index;
-                $conditions[] = "(s.nomProprio = :$paramName
-                    OR s.denominationProprio = :$paramName
-                    OR s.denominationSyndic = :$paramName
-                    OR b.name = :$paramName)";
-                $qb->setParameter($paramName, $bailleur);
-            }
-            $qb->andWhere(implode(' OR ', $conditions));
+            $qb->andWhere('(s.nomProprio = :bailleur
+                OR s.denominationProprio = :bailleur
+                OR s.denominationSyndic = :bailleur
+                OR b.name = :bailleur)');
+            $bailleur = $addressesHistorySearchQuery->getBailleurOuSyndic();
+            $qb->setParameter('bailleur', $bailleur);
         }
 
         if (!empty($addressesHistorySearchQuery->getArreteTypes())) {

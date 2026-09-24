@@ -23,6 +23,8 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 class SearchFilterOptionDataProvider
 {
     public const CACHE_TAG = 'search-filters';
+    // À incrémenter quand la structure des données mises en cache change (évite de servir l'ancien format)
+    private const CACHE_VERSION = 2;
 
     public function __construct(
         private readonly CritereRepository $critereRepository,
@@ -99,7 +101,7 @@ class SearchFilterOptionDataProvider
 
     private function getCacheKey(User $user, ?Territory $territory = null, ?string $context = null): string
     {
-        $className = (new \ReflectionClass(__CLASS__))->getShortName();
+        $className = (new \ReflectionClass(__CLASS__))->getShortName().'-v'.self::CACHE_VERSION;
 
         if ($user->isSuperAdmin()) {
             return $className.User::ROLE_ADMIN.'-territory-'.$territory?->getZip().'-context-'.$context;

@@ -48,3 +48,4 @@ metabase-data/*
 /tools/lighthouse/.lighthouseci/
 /tools/lighthouse/report/
 *.report.html
+/CLAUDE.md
