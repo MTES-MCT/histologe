@@ -322,6 +322,86 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEmailCount(1);
     }
 
+    public function testAdminSubmitClotureSignalementFailsWhenNoProcedureAndNotWithoutProcedure(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy([
+            'reference' => '2022-8',
+        ]);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+
+        $client->request('GET', $route);
+        $client->submitForm(
+            'Fermer le dossier',
+            [
+                'close_signalement[motifCloture]' => 'RELOGEMENT_OCCUPANT',
+                'close_signalement[travauxMiseEnConformite]' => 'NON',
+                'close_signalement[comCloture]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+            ]
+        );
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('errors', $response);
+        $this->assertArrayHasKey('close_signalement[withoutProcedure]', $response['errors']);
+        $this->assertStringContainsString('au moins une', $response['errors']['close_signalement[withoutProcedure]']['errors'][0]);
+    }
+
+    public function testAdminSubmitClotureSignalementFailsWhenProceduresAndWithoutProcedureAreBothSet(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+
+        /** @var SignalementRepository $signalementRepository */
+        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+        /** @var Signalement $signalement */
+        $signalement = $signalementRepository->findOneBy([
+            'reference' => '2022-8',
+        ]);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $client->loginUser($user);
+
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+
+        $client->request('GET', $route);
+        $client->submitForm(
+            'Fermer le dossier',
+            [
+                'close_signalement[motifCloture]' => 'RELOGEMENT_OCCUPANT',
+                'close_signalement[travauxMiseEnConformite]' => 'NON',
+                'close_signalement[comCloture]' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                'close_signalement[procedures][0]' => true, // NON_DECENCE
+                'close_signalement[withoutProcedure]' => true,
+            ]
+        );
+
+        $this->assertResponseHeaderSame('Content-Type', 'application/json');
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
+        $response = json_decode((string) $client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('errors', $response);
+        $this->assertArrayHasKey('close_signalement[withoutProcedure]', $response['errors']);
+        $this->assertStringContainsString('mais pas les deux', $response['errors']['close_signalement[withoutProcedure]']['errors'][0]);
+    }
+
     public function testAdminTerritorySubmitClotureSignalementWithEmailSentToPartnersAndUsagers(): void
     {
         self::ensureKernelShutdown();
@@ -353,6 +433,7 @@ class SignalementControllerTest extends WebTestCase
                 'close_signalement[comCloture]' => 'un deux trois soleil',
                 'close_signalement[isVisibleForUsager]' => '1',
                 'close_signalement[procedures]' => [],
+                'close_signalement[withoutProcedure]' => '1',
             ]
         );
 

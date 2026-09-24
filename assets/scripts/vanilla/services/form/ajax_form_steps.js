@@ -30,7 +30,7 @@ function initializeFormSteps(formElement) {
     }
   }
 
-  nextButton?.addEventListener('click', () => showStep(currentStepIndex + 1));
+  formElement.addEventListener('form-steps:validated', () => showStep(currentStepIndex + 1));
   previousButton?.addEventListener('click', () => showStep(currentStepIndex - 1));
   formElement.addEventListener('invalid', (event) => showStepContaining(event.target), true);
   const errorObserver = new MutationObserver((mutations) => {

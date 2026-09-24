@@ -9,11 +9,14 @@
             </h1>
             {{ form_start(closeSignalementForm, {'attr': {'id': 'close-signalement-form', 'data-submit-type':'formData', 'class': 'form-with-steps'}}) }}
             {{ form_errors(closeSignalementForm) }}
+            <div class="fr-input-group">
+                <span class="no-field-errors"></span>
+            </div>
             <div data-step="1">
                 <p>
                     Expliquez ici les raisons de la fermeture du dossier et choisissez à qui ces informations seront transmises. 
                     A l'étape suivante, vous pourrez indiquer les procédures engagées sur le dossier.
-                </p> 
+                </p>
                 <p><i>Sauf mention contraire, tous les champs sont obligatoires.</i></p>
                 {{ form_row(closeSignalementForm.motifCloture) }}
                 <div id="close_signalement_travauxMiseEnConformite_container">
@@ -31,9 +34,10 @@
             </div>
             <div data-step="2">
                 <p>
-                    Vérifiez et / ou complétez les informations concernant les procédures engagées sur ce dossier. 
+                    Vérifiez et / ou complétez les informations concernant les procédures engagées sur ce dossier.
                     Les informations saisies à cette étape ne seront pas envoyées à l'usager.
                 </p>
+                <p><i>Tous les champs sont obligatoires.</i></p>
                 {{ form_row(closeSignalementForm.procedures) }}
                 {{ form_row(closeSignalementForm.withoutProcedure) }}
             </div>
@@ -43,7 +47,7 @@
         <div class="side-panel__footer">
             <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm fr-btns-group--icon-left">
                 <li>
-                    <button type="button" class="fr-btn fr-icon-arrow-right-line fr-btn--icon-right" data-step-next>
+                    <button type="submit" class="fr-btn fr-icon-arrow-right-line fr-btn--icon-right" form="close-signalement-form" data-step-next>
                         Étape suivante
                     </button>
                 </li>
