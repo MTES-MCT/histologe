@@ -427,7 +427,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private Collection $affectations;
 
     #[ORM\Column(type: 'string', enumType: MotifCloture::class, nullable: true, length: 50)]
-    #[Assert\NotBlank(groups: ['close_signalement'], message: 'Veuillez préciser le motif de clôture.')]
+    #[Assert\NotBlank(groups: ['close_signalement', 'close_signalement_step_1'], message: 'Veuillez préciser le motif de clôture.')]
     private ?MotifCloture $motifCloture = null;
 
     #[ORM\Column(nullable: true, enumType: TravauxMiseEnConformite::class, length: 50)]
@@ -533,8 +533,8 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     private ?bool $hasSeenDesordres = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Assert\NotBlank(groups: ['close_signalement'], message: 'Veuillez commenter la clôture du signalement.')]
-    #[Assert\Length(min: 16, groups: ['close_signalement'], minMessage: 'La précision doit contenir au moins 10 caractères.')] // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
+    #[Assert\NotBlank(groups: ['close_signalement', 'close_signalement_step_1'], message: 'Veuillez commenter la clôture du signalement.')]
+    #[Assert\Length(min: 16, groups: ['close_signalement', 'close_signalement_step_1'], minMessage: 'La précision doit contenir au moins 10 caractères.')] // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
     private ?string $comCloture = null;
 
     #[ORM\OneToOne(mappedBy: 'signalement', targetEntity: SignalementUsager::class)]
@@ -637,7 +637,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         }
     }
 
-    #[Assert\Callback(groups: ['close_signalement'])]
+    #[Assert\Callback(groups: ['close_signalement', 'close_signalement_step_1'])]
     public function validateCloseSignalement(ExecutionContextInterface $context): void
     {
         if (!$this->travauxMiseEnConformite && in_array($this->motifCloture, MotifCloture::getListNeedTravauxPrecisions(), true)) {

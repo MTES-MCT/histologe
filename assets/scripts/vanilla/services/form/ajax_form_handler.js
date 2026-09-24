@@ -27,16 +27,21 @@ function handleSubmitForm(containerElement) {
       el.classList.add('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
     });
     clearErrors();
-    submitPayload(formElement);
+    submitPayload(formElement, event.submitter);
   });
 }
 
-async function submitPayload(formElement) {
+export async function submitPayload(formElement, submitter = null) {
   let response;
   try {
-    const formData = new FormData(formElement);
+    const formData = new FormData(formElement, submitter);
     const container = formElement.closest('dialog, .single-ajax-form-container');
     const submitElements = container?.querySelectorAll('[type="submit"]') || [];
+
+    if (submitter?.hasAttribute('data-step-next')) {
+      const currentStepElement = formElement.querySelector('[data-step]:not([hidden])');
+      formData.append('_validate_step', currentStepElement?.dataset.step ?? '');
+    }
 
     if (
       formElement.enctype === 'multipart/form-data' ||
@@ -68,10 +73,15 @@ async function submitPayload(formElement) {
     } else if (response.redirected) {
       window.location.href = response.url;
     } else if (response.ok) {
-      jsonResponseHandler(response);
-      setTimeout(() => {
+      if (submitter?.hasAttribute('data-step-next')) {
         resetSubmitButton(submitElements);
-      }, 500);
+        formElement.dispatchEvent(new CustomEvent('form-steps:validated'));
+      } else {
+        jsonResponseHandler(response);
+        setTimeout(() => {
+          resetSubmitButton(submitElements);
+        }, 500);
+      }
     } else if (response.status === 400) {
       const responseData = await response.json();
       displayFormErrors(container, formElement, responseData.errors);

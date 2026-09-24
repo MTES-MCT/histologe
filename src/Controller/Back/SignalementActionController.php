@@ -215,29 +215,25 @@ class SignalementActionController extends AbstractController
         if (!$this->isGranted(SignalementVoter::SIGN_CLOSE, $signalement)) {
             return $this->json(['code' => Response::HTTP_FORBIDDEN, 'message' => 'Vous n\'êtes pas autorisé à fermer ce signalement ou cette affectation.'], Response::HTTP_FORBIDDEN);
         }
-
-        $form = $this->createForm(CloseSignalementType::class, $signalement, ['action' => $this->generateUrl('back_signalement_close', ['uuid' => $signalement->getUuid()])]);
+        $validationGroup = 'close_signalement';
+        if ($request->request->has('_validate_step')) {
+            $validationGroup = 'close_signalement_step_'.$request->request->get('_validate_step');
+        }
+        $form = $this->createForm(CloseSignalementType::class, $signalement, [
+            'action' => $this->generateUrl('back_signalement_close', ['uuid' => $signalement->getUuid()]),
+            'validation_groups' => [$validationGroup],
+        ]);
         $form->handleRequest($request);
         if (!$form->isSubmitted()) {
             return $this->json(['code' => Response::HTTP_BAD_REQUEST]);
-        }
-        // Validation d'une étape du formulaire : on ne retient que les erreurs des champs de l'étape, sans rien persister
-        if ($request->request->has('_validate_step')) {
-            $stepFields = $request->request->all('_validate_step');
-            $errors = array_intersect_key(
-                FormHelper::getErrorsFromForm(form: $form, withPrefix: true),
-                array_flip($stepFields)
-            );
-            if ($errors) {
-                return $this->json(['code' => Response::HTTP_BAD_REQUEST, 'errors' => $errors], Response::HTTP_BAD_REQUEST);
-            }
-
-            return $this->json(['code' => Response::HTTP_OK]);
         }
         if (!$form->isValid()) {
             $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
 
             return $this->json($response, $response['code']);
+        }
+        if ($request->request->has('_validate_step')) {
+            return $this->json(['code' => Response::HTTP_OK]);
         }
         // persist procedures
         foreach ($signalement->getSignalementProcedures() as $signalementProcedure) {
