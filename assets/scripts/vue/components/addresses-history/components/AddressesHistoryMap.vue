@@ -1,7 +1,7 @@
 <template>
   <AddressesHistoryMapFilters />
   <section class="container-addresses-history-map">
-    <div id="map-addresses-history" ref="mapContainer" style="height: 600px; width: 100%;"></div>
+    <div id="map-addresses-history" ref="mapContainer"></div>
   </section>
 </template>
 
@@ -99,6 +99,19 @@ watch(filteredAddresses, () => {
     updateMapData()
   }
 }, { deep: true })
+
+// La popup ouverte porte sur une adresse qui peut disparaître de la carte :
+// on la ferme dès qu'un filtre ou un paramètre d'affichage change
+watch([() => sharedState.input.filters, () => sharedState.input.params], () => {
+  closePopup()
+}, { deep: true })
+
+function closePopup() {
+  if (currentPopup) {
+    currentPopup.remove()
+    currentPopup = null
+  }
+}
 
 function buildGeoJson(): GeoJSON.FeatureCollection<GeoJSON.Point> {
   const features: GeoJSON.Feature<GeoJSON.Point>[] = []
@@ -382,9 +395,7 @@ function addMapEvents() {
     const feature = features[0]
     const { addressId, addressForHuman } = feature.properties || {}
 
-    if (currentPopup) {
-      currentPopup.remove()
-    }
+    closePopup()
 
     const address = filteredAddresses.value[addressId]
     const arretes = address?.arretes || []
@@ -500,6 +511,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  closePopup()
   if (map) {
     map.remove()
     map = null
@@ -510,7 +522,7 @@ onUnmounted(() => {
 <style scoped>
 .container-addresses-history-map {
   width: 100%;
-  height: 600px;
+  height: 70vh;
 }
 </style>
 
@@ -519,10 +531,34 @@ onUnmounted(() => {
 Styles pour la popup et son bouton de fermeture
 Ils doivent être conservés ici plutôt que dans le composant créé dynamiquement
 */
+
+/*
+MapLibre applique `overflow: hidden` sur le conteneur de la carte, ce qui tronque
+les popups ancrées près des bords. On autorise le débordement pour qu'une popup
+puisse sortir de la carte plutôt que d'être masquée.
+*/
+#map-addresses-history.maplibregl-map {
+  overflow: visible;
+}
+
+/* Au-dessus du panneau de filtres (z-index: 100) quand la popup déborde de la carte */
+#map-addresses-history .maplibregl-popup {
+  z-index: 200;
+}
+
 .maplibregl-popup-content {
   min-width: 280px;
   border-radius: 0.5rem;
   box-shadow: 0 8px 16px -1px rgba(0, 0, 0, 0.3), 0 8px 16px -1px rgba(0, 0, 0, 0.3);
+}
+
+/*
+Le contenu monté dynamiquement défile au-delà d'une certaine hauteur : la popup
+reste ainsi dans la fenêtre même avec de nombreux arrêtés ou dossiers.
+*/
+#map-addresses-history .maplibregl-popup-content > div {
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .maplibregl-popup-close-button {
