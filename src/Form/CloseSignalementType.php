@@ -112,11 +112,16 @@ class CloseSignalementType extends AbstractType
             'constraints' => [
                 new Assert\Callback(
                     callback: static function (mixed $withoutProcedure, ExecutionContextInterface $context): void {
-                        if ($withoutProcedure) {
-                            return;
-                        }
                         /** @var FormInterface<mixed> $form */
                         $form = $context->getObject();
+                        if ($withoutProcedure) {
+                            if ($form->getParent()->get('procedures')->getData()) {
+                                $context->buildViolation('Sélectionnez soit une ou des procédure(s), soit "Aucune procédure n’a été engagée sur le dossier", mais pas les deux.')
+                                    ->addViolation();
+                            } else {
+                                return;
+                            }
+                        }
                         if (!$form->getParent()->get('procedures')->getData()) {
                             $context->buildViolation('Sélectionnez au moins une procédure, ou cochez "Aucune procédure n’a été engagée sur le dossier".')
                                 ->addViolation();
