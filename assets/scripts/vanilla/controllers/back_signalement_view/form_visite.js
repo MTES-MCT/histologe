@@ -2,7 +2,12 @@ import { initTinyMCE } from '../../services/form/form_helper.js';
 
 const initVisiteForm = (visiteForm) => {
   const timezone = document.querySelector('[data-territory-timezone]')?.dataset.territoryTimezone;
-  const todayInTerritory = new Intl.DateTimeFormat('en-CA', {timeZone: timezone,year: 'numeric',month: '2-digit',day: '2-digit'}).format(new Date());
+  const todayInTerritory = new Intl.DateTimeFormat('en-CA', {
+    timeZone: timezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
 
   const dateField = visiteForm.querySelector('input[name$="[scheduledAt]"]');
   const partnerSelect = visiteForm.querySelector('select[name$="[partnerChoice]"]');
@@ -16,9 +21,11 @@ const initVisiteForm = (visiteForm) => {
 
   // Réinitialise les champs du bloc "visite passée" lorsqu'il est masqué
   const resetPastDateFields = () => {
-    pastDateFields?.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked').forEach((input) => {
-      input.checked = false;
-    });
+    pastDateFields
+      ?.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked')
+      .forEach((input) => {
+        input.checked = false;
+      });
     const fileField = pastDateFields?.querySelector('input[type="file"]');
     if (fileField) {
       fileField.value = '';
@@ -33,9 +40,11 @@ const initVisiteForm = (visiteForm) => {
   // Réinitialise le bloc "conclusion de la visite" lorsqu'il est masqué
   const resetConcludeProcedure = () => {
     if (visiteConcludeProcedure) {
-      visiteConcludeProcedure.querySelectorAll('input[type="checkbox"]:checked').forEach((checkbox) => {
-        checkbox.checked = false;
-      });
+      visiteConcludeProcedure
+        .querySelectorAll('input[type="checkbox"]:checked')
+        .forEach((checkbox) => {
+          checkbox.checked = false;
+        });
       window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
     }
   };
@@ -65,18 +74,25 @@ const initVisiteForm = (visiteForm) => {
       externalOperatorField.value = '';
     }
 
-    const partnerHasPendingVisite = Boolean(partnerSelect.selectedOptions[0]?.classList.contains('alert-partner'));
+    const partnerHasPendingVisite = Boolean(
+      partnerSelect.selectedOptions[0]?.classList.contains('alert-partner')
+    );
     let externalOperatorHasPendingVisite = false;
     if (isExternalOperator && externalOperatorField?.value) {
-      const pendingOperators = JSON.parse(externalOperatorField.dataset.existingPendingExternalOperators || '[]');
-      externalOperatorHasPendingVisite = pendingOperators.map((name) => name.toLowerCase()).includes(externalOperatorField.value.trim().toLowerCase());
+      const pendingOperators = JSON.parse(
+        externalOperatorField.dataset.existingPendingExternalOperators || '[]'
+      );
+      externalOperatorHasPendingVisite = pendingOperators
+        .map((name) => name.toLowerCase())
+        .includes(externalOperatorField.value.trim().toLowerCase());
     }
     toggleElement(partnerDoubleError, partnerHasPendingVisite || externalOperatorHasPendingVisite);
   };
 
   // Affiche le fieldset "conclusion de la visite" uniquement si la visite est indiquée comme effectuée
   const syncVisiteDoneFields = () => {
-    const isVisiteDone = visiteForm.querySelector('input[name$="[visiteDone]"]:checked')?.value === '1';
+    const isVisiteDone =
+      visiteForm.querySelector('input[name$="[visiteDone]"]:checked')?.value === '1';
     toggleElement(visiteConcludeProcedure, isVisiteDone);
     if (!isVisiteDone) {
       resetConcludeProcedure();
@@ -124,9 +140,11 @@ document.addEventListener('click', (event) => {
         document.querySelector('#panel-manage-visite-title').innerHTML = response.title;
         document.querySelector('#panel-manage-visite-content').innerHTML = response.content;
         submitButton.disabled = false;
-        submitButton.setAttribute('form', document.querySelector('#panel-manage-visite-content form')?.id ?? '');
+        submitButton.setAttribute(
+          'form',
+          document.querySelector('#panel-manage-visite-content form')?.id ?? ''
+        );
 
-        //TODO : voir si on peux rendre générique les traitements d'initialisation
         const rescheduleVisiteForm = document.querySelector('#reschedule-visite-form');
         const cancelVisiteForm = document.querySelector('#cancel-visite-form');
         const confirmVisiteForm = document.querySelector('#confirm-visite-form');
@@ -134,12 +152,12 @@ document.addEventListener('click', (event) => {
         if (rescheduleVisiteForm) {
           initVisiteForm(rescheduleVisiteForm);
           initTinyMCE('#reschedule-visite-form textarea.editor');
-        }else if(cancelVisiteForm) {
+        } else if (cancelVisiteForm) {
           initTinyMCE('#cancel-visite-form textarea.editor');
-        }else if (confirmVisiteForm) {
+        } else if (confirmVisiteForm) {
           initVisiteForm(confirmVisiteForm);
           initTinyMCE('#confirm-visite-form textarea.editor');
-        }else if (editConclusionVisiteForm) {
+        } else if (editConclusionVisiteForm) {
           window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
           initTinyMCE('#edit-conclusion-visite-form textarea.editor');
         }

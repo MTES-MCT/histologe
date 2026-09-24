@@ -3,241 +3,138 @@
 namespace App\Manager;
 
 use App\Dto\Api\Request\ArreteRequest;
-use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Affectation;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\ProcedureType;
-use App\Entity\Enum\Qualification;
-use App\Entity\File;
 use App\Entity\Intervention;
 use App\Entity\Partner;
-use App\Entity\Signalement;
 use App\Entity\User;
+use App\Event\InterventionCreatedEvent;
+use App\Event\InterventionEditedEvent;
+use App\Event\InterventionRescheduledEvent;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Repository\InterventionRepository;
 use App\Service\Intervention\InterventionDescriptionGenerator;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
+use App\Service\TimezoneProvider;
+use App\Utils\DateHelper;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class InterventionManager
 {
     public function __construct(
         private readonly InterventionRepository $interventionRepository,
         private readonly InterventionFactory $interventionFactory,
-        private readonly PartnerManager $partnerManager,
         #[Target('interventionPlanningStateMachine')]
         private readonly WorkflowInterface $interventionPlanningStateMachine,
         private readonly SignalementQualificationUpdater $signalementQualificationUpdater,
         private readonly FileFactory $fileFactory,
         private readonly Security $security,
-        private readonly LoggerInterface $logger,
         private readonly EntityManagerInterface $entityManager,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
+        private readonly TimezoneProvider $timezoneProvider,
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function createVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest, Partner $createdByPartner): ?Intervention
-    {
-        if (!$visiteRequest->getDate()) {
-            return null;
-        }
-
-        $partnerFound = null;
-        if ($visiteRequest->getPartner()) {
-            $partnerFound = $this->partnerManager->getPartnerIfQualification(
-                $visiteRequest->getPartner(),
-                Qualification::VISITES,
-                $signalement->getAddress()->getTerritory()
-            );
-            if (!$partnerFound) {
-                return null;
-            }
-        }
-
-        $intervention = new Intervention();
-        $intervention->setSignalement($signalement)
-            ->setPartner($partnerFound)
-            ->setExternalOperator($visiteRequest->getExternalOperator())
-            ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTimeUTC()))
+    public function updateVisiteFromData(
+        Intervention $intervention,
+        \DateTimeImmutable $scheduledAt,
+        \DateTimeImmutable $scheduledAtTime,
+        string|Partner $partnerChoice,
+        ?bool $visiteDone = null,
+        ?string $fileName = null,
+        ?string $eventType = 'create',
+    ): void {
+        $intervention
             ->setType(InterventionType::VISITE)
-            ->setCommentBeforeVisite($visiteRequest->getCommentBeforeVisite())
-            ->setNotifyUsager($visiteRequest->isUsagerNotified())
             ->setStatus(Intervention::STATUS_PLANNED);
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $createdByPartner = $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getAddress()->getTerritory());
 
-        $this->entityManager->persist($intervention);
-        $this->entityManager->flush();
+        $previousDate = $intervention->getScheduledAt();
+        $scheduledAtUtc = DateHelper::getDateUTCFromLocalDateAndTime(
+            $scheduledAt,
+            $scheduledAtTime,
+            $this->timezoneProvider->getDateTimezone()
+        );
+        $intervention->setScheduledAt($scheduledAtUtc);
 
-        if ($intervention->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d')) {
-            $this->confirmVisiteFromRequest($visiteRequest, $createdByPartner, $intervention);
+        if ($partnerChoice instanceof Partner) {
+            $intervention->setPartner($partnerChoice);
         }
 
-        return $intervention;
-    }
+        $this->confirmOrAbortVisiteFromData($intervention, $createdByPartner, $visiteDone, $fileName);
 
-    public function cancelVisiteFromRequest(VisiteRequest $visiteRequest, ?Partner $createdByPartner = null): ?Intervention
-    {
-        if (!$visiteRequest->getIntervention() || !$visiteRequest->getDetails()) {
-            return null;
-        }
-
-        $intervention = $this->interventionRepository->find($visiteRequest->getIntervention());
-        if (!$intervention) {
-            return null;
-        }
-
-        $intervention->setDetails($visiteRequest->getDetails());
-        try {
-            $context['createdByPartner'] = $createdByPartner;
-            $this->interventionPlanningStateMachine->apply($intervention, 'cancel', $context);
-            $this->entityManager->persist($intervention);
-            $this->entityManager->flush();
-        } catch (\Exception $e) {
-            $this->logger->error($e->getMessage());
-
-            return null;
-        }
-
-        return $intervention;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function rescheduleVisiteFromRequest(Signalement $signalement, VisiteRequest $visiteRequest, ?Partner $createdByPartner = null): ?Intervention
-    {
-        if (!$visiteRequest->getIntervention() || !$visiteRequest->getDate()) {
-            return null;
-        }
-
-        $intervention = $this->interventionRepository->find($visiteRequest->getIntervention());
-        if (!$intervention) {
-            return null;
-        }
-
-        $partnerFound = null;
-        if ($visiteRequest->getPartner()) {
-            $partnerFound = $this->partnerManager->getPartnerIfQualification(
-                $visiteRequest->getPartner(),
-                Qualification::VISITES,
-                $signalement->getAddress()->getTerritory()
-            );
-            if (!$partnerFound) {
-                return null;
+        $todayDate = new \DateTimeImmutable();
+        if ($intervention->getScheduledAt()->format('Y-m-d') > $todayDate->format('Y-m-d')) {
+            if ('create' === $eventType) {
+                $this->eventDispatcher->dispatch(new InterventionCreatedEvent($intervention, $user, $createdByPartner), InterventionCreatedEvent::NAME);
+            } elseif ('reschedule' === $eventType) {
+                $this->eventDispatcher->dispatch(new InterventionRescheduledEvent($intervention, $user, $previousDate, $createdByPartner), InterventionRescheduledEvent::NAME);
             }
         }
-
-        $intervention
-            ->setPartner($partnerFound)
-            ->setExternalOperator($visiteRequest->getExternalOperator())
-            ->setScheduledAt(new \DateTimeImmutable($visiteRequest->getDateTimeUTC()))
-            ->setCommentBeforeVisite($visiteRequest->getCommentBeforeVisite());
-        $this->entityManager->persist($intervention);
-        $this->entityManager->flush();
-
-        if ($intervention->getScheduledAt()->format('Y-m-d') <= (new \DateTimeImmutable())->format('Y-m-d')) {
-            $this->confirmVisiteFromRequest($visiteRequest, $createdByPartner, $intervention);
-        }
-
-        return $intervention;
     }
 
-    public function confirmVisiteFromRequest(
-        VisiteRequest $visiteRequest,
+    public function confirmOrAbortVisiteFromData(
+        Intervention $intervention,
         ?Partner $createdByPartner = null,
-        ?Intervention $intervention = null,
-    ): ?Intervention {
-        if (!$visiteRequest->getDetails()) {
-            return null;
-        }
+        ?bool $visiteDone = null,
+        ?string $fileName = null,
+    ): void {
+        $this->attachRapportDeVisiteToIntervention($intervention, $createdByPartner, $fileName);
 
-        if (!$intervention && $visiteRequest->getIntervention()) {
-            $intervention = $this->interventionRepository->find($visiteRequest->getIntervention());
-        }
-        if (!$intervention) {
-            return null;
-        }
+        $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList($intervention->getSignalement(), $intervention->getConcludeProcedure());
 
-        $intervention
-            ->setDetails($visiteRequest->getDetails())
-            ->setOccupantPresent($visiteRequest->isOccupantPresent())
-            ->setProprietairePresent($visiteRequest->isProprietairePresent());
-
-        if ($visiteRequest->isVisiteDone() && $visiteRequest->getConcludeProcedure()) {
-            $procedures = [];
-            foreach ($visiteRequest->getConcludeProcedure() as $concludeProcedure) {
-                $procedures[] = ProcedureType::tryFrom($concludeProcedure);
-            }
-            $intervention->setConcludeProcedure($procedures);
-            $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList(
-                $intervention->getSignalement(),
-                $procedures
-            );
-        }
-
-        if ($visiteRequest->getDocument()) {
-            $document = $visiteRequest->getDocument();
-            $intervention->addFile($this->createFile($intervention, $document, $createdByPartner));
-        }
         $context['createdByPartner'] = $createdByPartner;
-        if ($visiteRequest->isVisiteDone()) {
-            $context['isUsagerNotified'] = $visiteRequest->isUsagerNotified();
+        if (true === $visiteDone) {
             $this->interventionPlanningStateMachine->apply($intervention, 'confirm', $context);
-        } else {
+        } elseif (false === $visiteDone) {
             $this->interventionPlanningStateMachine->apply($intervention, 'abort', $context);
         }
-
-        $this->entityManager->persist($intervention);
-        $this->entityManager->flush();
-
-        return $intervention;
     }
 
-    public function editVisiteFromRequest(VisiteRequest $visiteRequest, ?Partner $partner = null): ?Intervention
-    {
-        if (!$visiteRequest->getDetails()) {
-            return null;
+    public function editConclusionVisiteFromRequest(
+        Intervention $intervention,
+        ?Partner $createdByPartner = null,
+        ?string $fileName = null,
+    ): void {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $this->attachRapportDeVisiteToIntervention($intervention, $createdByPartner, $fileName);
+        $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList($intervention->getSignalement(), $intervention->getConcludeProcedure());
+        $this->eventDispatcher->dispatch(new InterventionEditedEvent($intervention, $user, $intervention->getNotifyUsager(), $createdByPartner), InterventionEditedEvent::NAME);
+    }
+
+    private function attachRapportDeVisiteToIntervention(
+        Intervention $intervention,
+        ?Partner $createdByPartner = null,
+        ?string $fileName = null,
+    ): void {
+        if ($fileName) {
+            /** @var User $user */
+            $user = $this->security->getUser();
+            $file = $this->fileFactory->createInstanceFrom(
+                filename: $fileName,
+                title: $fileName,
+                signalement: $intervention->getSignalement(),
+                partner: $createdByPartner,
+                user: $user,
+                documentType: DocumentType::PROCEDURE_RAPPORT_DE_VISITE
+            );
+            $intervention->addFile($file);
         }
-
-        $intervention = $visiteRequest->getIntervention()
-            ? $this->interventionRepository->find($visiteRequest->getIntervention())
-            : null;
-
-        if (!$intervention) {
-            return null;
-        }
-
-        $procedures = [];
-        foreach ($visiteRequest->getConcludeProcedure() as $concludeProcedure) {
-            $procedures[] = ProcedureType::tryFrom($concludeProcedure);
-        }
-        $intervention
-            ->setDetails($visiteRequest->getDetails())
-            ->setConcludeProcedure($procedures);
-
-        if ($visiteRequest->getDocument()) {
-            $document = $visiteRequest->getDocument();
-            $rapportDeVisite = $intervention->getRapportDeVisite();
-            if ($rapportDeVisite) {
-                $intervention->removeFile($rapportDeVisite);
-            }
-            $intervention->addFile($this->createFile($intervention, $document, $partner));
-        }
-        $this->entityManager->persist($intervention);
-        $this->entityManager->flush();
-
-        return $intervention;
     }
 
     /**
@@ -293,23 +190,5 @@ class InterventionManager
         $this->entityManager->flush();
 
         return $intervention;
-    }
-
-    private function createFile(
-        Intervention $intervention,
-        string $document,
-        ?Partner $partner = null,
-    ): File {
-        /** @var User $user */
-        $user = $this->security->getUser();
-
-        return $this->fileFactory->createInstanceFrom(
-            filename: $document,
-            title: $document,
-            signalement: $intervention->getSignalement(),
-            partner: $partner,
-            user: $user,
-            documentType: DocumentType::PROCEDURE_RAPPORT_DE_VISITE
-        );
     }
 }

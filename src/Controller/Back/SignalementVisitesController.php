@@ -2,14 +2,10 @@
 
 namespace App\Controller\Back;
 
-use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Intervention;
 use App\Entity\Signalement;
 use App\Entity\User;
-use App\Event\InterventionCreatedEvent;
-use App\Event\InterventionEditedEvent;
-use App\Event\InterventionRescheduledEvent;
 use App\Exception\File\EmptyFileException;
 use App\Exception\File\MaxUploadSizeExceededException;
 use App\Exception\File\UnsupportedFileFormatException;
@@ -23,22 +19,21 @@ use App\Repository\InterventionRepository;
 use App\Security\Voter\InterventionVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\Files\FilenameGenerator;
-use App\Service\MessageHelper;
-use App\Service\RequestDataExtractor;
 use App\Service\Signalement\PhotoHelper;
 use App\Service\Signalement\SignalementDesordresProcessor;
-use App\Service\TimezoneProvider;
 use App\Service\UploadHandlerService;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 #[Route('/bo/signalements')]
 class SignalementVisitesController extends AbstractController
@@ -46,38 +41,32 @@ class SignalementVisitesController extends AbstractController
     private const string SUCCESS_MSG_ADD = 'La date de visite a bien été définie.';
     private const string SUCCESS_MSG_CONFIRM = 'Les informations de la visite ont bien été enregistrées.';
 
-    private function getSecurityResponse(
-        Request $request,
-        string $tokenName,
-    ): ?Response {
-        $token = $request->request->get('_token') ?? $request->query->get('_token');
-        if (!$this->isCsrfTokenValid($tokenName, (string) $token)) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
-
-            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
-        }
-
-        return null;
+    public function __construct(
+        private readonly UploadHandlerService $uploadHandler,
+        private readonly FilenameGenerator $filenameGenerator,
+        private readonly InterventionRepository $interventionRepository,
+        private readonly SignalementDesordresProcessor $signalementDesordresProcessor,
+        private readonly FileRepository $fileRepository,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        #[Target('interventionPlanningStateMachine')]
+        private readonly WorkflowInterface $interventionPlanningStateMachine,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly InterventionManager $interventionManager,
+    ) {
     }
 
     /**
      * @return array{0: bool, 1: ?string}
      */
-    private function getUploadedFile(
-        Request $request,
-        string $inputName,
-        UploadHandlerService $uploadHandler,
-        FilenameGenerator $filenameGenerator,
-    ): array {
-        $files = $request->files->get($inputName);
-        if (empty($files) || empty($files['rapport'])) {
+    private function getUploadedFile(?UploadedFile $uploadedFile): array
+    {
+        if (null === $uploadedFile) {
             return [true, null];
         }
 
-        $file = $files['rapport'];
-        $newFilename = $filenameGenerator->generate($file);
+        $newFilename = $this->filenameGenerator->generate($uploadedFile);
         try {
-            $uploadedFilename = $uploadHandler->uploadFromFile($file, $newFilename);
+            $uploadedFilename = $this->uploadHandler->uploadFromFile($uploadedFile, $newFilename);
 
             return [true, $uploadedFilename];
         } catch (MaxUploadSizeExceededException|UnsupportedFileFormatException|EmptyFileException $exception) {
@@ -90,24 +79,20 @@ class SignalementVisitesController extends AbstractController
      */
     private function buildVisitesAjaxResponse(
         Intervention $intervention,
-        InterventionRepository $interventionRepository,
-        SignalementDesordresProcessor $signalementDesordresProcessor,
-        FileRepository $fileRepository,
-        UrlGeneratorInterface $urlGenerator,
         array $flashMessages,
         bool $closeModalAndReload = true,
     ): Response {
         $signalement = $intervention->getSignalement();
-        $visites = $interventionRepository->getOrderedVisitesForSignalement($signalement);
-        $infoDesordres = $signalementDesordresProcessor->process($signalement);
+        $visites = $this->interventionRepository->getOrderedVisitesForSignalement($signalement);
+        $infoDesordres = $this->signalementDesordresProcessor->process($signalement);
         $allPhotosOrdered = PhotoHelper::getSortedPhotos($signalement);
         $linkToVisitGrid = false;
-        $existingVisitGrid = $fileRepository->findOneBy([
+        $existingVisitGrid = $this->fileRepository->findOneBy([
             'territory' => $signalement->getAddress()->getTerritory(),
             'documentType' => DocumentType::GRILLE_DE_VISITE,
         ]);
         if ($existingVisitGrid) {
-            $linkToVisitGrid = $urlGenerator->generate('show_file', ['uuid' => $existingVisitGrid->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
+            $linkToVisitGrid = $this->urlGenerator->generate('show_file', ['uuid' => $existingVisitGrid->getUuid()], UrlGeneratorInterface::ABSOLUTE_URL);
         }
 
         $htmlTargetContents = [
@@ -137,30 +122,11 @@ class SignalementVisitesController extends AbstractController
                 ),
             ],
         ];
-        // TODO : Refonte visites - On ne devrait plus avoir besoin de toutes ces fonctions
         $functions = [
-            [
-                'name' => 'reloadTinyMCE',
-                'args' => ['textarea.editor'],
-            ],
-            [
-                'name' => 'attachAjaxFormHandlers',
-            ],
-            [
-                'name' => 'initSearchCheckboxWidgets',
-            ],
-            [
-                'name' => 'applyFilter',
-            ],
-            [
-                'name' => 'openPhotoAlbumAddEventListeners',
-            ],
-            [
-                'name' => 'btnSignalementFileEditAddEventListeners',
-            ],
-            [
-                'name' => 'btnSignalementFileDeleteAddEventListeners',
-            ],
+            ['name' => 'applyFilter'],
+            ['name' => 'openPhotoAlbumAddEventListeners'],
+            ['name' => 'btnSignalementFileEditAddEventListeners'],
+            ['name' => 'btnSignalementFileDeleteAddEventListeners'],
         ];
 
         if ($closeModalAndReload) {
@@ -190,105 +156,34 @@ class SignalementVisitesController extends AbstractController
 
             return $this->json($response, $response['code']);
         }
-        // TODO
-        $flashMessages = [];
-        $flashMessages[] = ['type' => 'success', 'message' => 'La visite a été ajoutée avec succès.'];
-
-        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
-    }
-
-    #[Route('/{uuid:signalement}/v1/visites/ajouter', name: 'back_signalement_visite_add_v1', methods: 'POST')]
-    public function addVisiteToSignalement(
-        Signalement $signalement,
-        Request $request,
-        InterventionManager $interventionManager,
-        UploadHandlerService $uploadHandler,
-        EventDispatcherInterface $eventDispatcher,
-        FilenameGenerator $filenameGenerator,
-        ValidatorInterface $validator,
-        TimezoneProvider $timezoneProvider,
-        InterventionRepository $interventionRepository,
-        SignalementDesordresProcessor $signalementDesordresProcessor,
-        FileRepository $fileRepository,
-        UrlGeneratorInterface $urlGenerator,
-        EntityManagerInterface $entityManager,
-    ): Response {
-        $this->denyAccessUnlessGranted(SignalementVoter::SIGN_ADD_VISITE, $signalement);
-
-        $errorRedirect = $this->getSecurityResponse(
-            $request,
-            'signalement_add_visit_'.$signalement->getId(),
-        );
-        if ($errorRedirect) {
-            return $errorRedirect;
-        }
-
-        [$success, $fileNameOrError] = $this->getUploadedFile($request, 'visite-add', $uploadHandler, $filenameGenerator);
+        $file = $addVisiteForm->get('rapportDeVisite')->getData();
+        [$success, $fileNameOrError] = $this->getUploadedFile($file);
         if (!$success) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
         }
 
-        $fileName = $fileNameOrError;
-
-        $requestData = $request->request->all();
-        $requestAddData = RequestDataExtractor::getArray($requestData, 'visite-add');
-        $idPartner = 'extern' === $requestAddData['partner'] ? null : $requestAddData['partner'];
-        $visiteRequest = new VisiteRequest(
-            idIntervention: $requestAddData['intervention'] ?? null,
-            date: $requestAddData['date'],
-            time: $requestAddData['time'],
-            timezone: $timezoneProvider->getTimezone(),
-            idPartner: $idPartner,
-            externalOperator: empty($idPartner) ? $requestAddData['externalOperator'] ?? null : null,
-            commentBeforeVisite: $requestAddData['commentBeforeVisite'] ?? null,
-            details: $requestAddData['details'] ?? null,
-            concludeProcedure: $requestAddData['concludeProcedure'] ?? null,
-            isVisiteDone: $requestAddData['visiteDone'] ?? null,
-            isOccupantPresent: $requestAddData['occupantPresent'] ?? null,
-            isProprietairePresent: $requestAddData['proprietairePresent'] ?? null,
-            isUsagerNotified: !empty($requestAddData['notifyUsager']),
-            document: $fileName,
+        $this->interventionManager->updateVisiteFromData(
+            intervention: $intervention,
+            scheduledAt: $addVisiteForm->get('scheduledAt')->getData(),
+            scheduledAtTime: $addVisiteForm->get('scheduledAtTime')->getData(),
+            partnerChoice: $addVisiteForm->get('partnerChoice')->getData(),
+            visiteDone: $addVisiteForm->get('visiteDone')->getData(),
+            fileName: $fileNameOrError,
         );
-        /** @var User $user */
-        $user = $this->getUser();
-        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
-        $errorMessage = $this->validateRequest($visiteRequest, $validator);
-        if ($errorMessage) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => \sprintf("Erreurs lors de l'enregistrement de la visite : %s, veuillez réessayer.", $errorMessage)];
-        } elseif ($intervention = $interventionManager->createVisiteFromRequest($signalement, $visiteRequest, $partner)) {
-            $todayDate = new \DateTimeImmutable();
-            if ($intervention->getScheduledAt()->format('Y-m-d') <= $todayDate->format('Y-m-d')) {
-                $flashMessages[] = ['type' => 'success', 'title' => 'Visite ajoutée', 'message' => self::SUCCESS_MSG_CONFIRM];
-            } else {
-                $flashMessages[] = ['type' => 'success', 'title' => 'Visite ajoutée', 'message' => self::SUCCESS_MSG_ADD];
-                /** @var User $user */
-                $user = $this->getUser();
-                $eventDispatcher->dispatch(
-                    new InterventionCreatedEvent(
-                        $intervention,
-                        $user,
-                        $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory())
-                    ),
-                    InterventionCreatedEvent::NAME
-                );
-                $entityManager->flush();
-            }
 
-            return $this->buildVisitesAjaxResponse(
-                intervention: $intervention,
-                interventionRepository: $interventionRepository,
-                signalementDesordresProcessor: $signalementDesordresProcessor,
-                fileRepository: $fileRepository,
-                urlGenerator: $urlGenerator,
-                flashMessages: $flashMessages,
-            );
+        $todayDate = new \DateTimeImmutable();
+        if ($intervention->getScheduledAt()->format('Y-m-d') <= $todayDate->format('Y-m-d')) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Visite ajoutée', 'message' => self::SUCCESS_MSG_CONFIRM];
         } else {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de l\'enregistrement de la visite, veuillez réessayer.'];
+            $flashMessages[] = ['type' => 'success', 'title' => 'Visite ajoutée', 'message' => self::SUCCESS_MSG_ADD];
         }
 
-        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
+        $this->entityManager->persist($intervention);
+        $this->entityManager->flush();
+
+        return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
     }
 
     #[Route('/{id}/visites/annuler', name: 'back_signalement_visite_cancel')]
@@ -297,10 +192,30 @@ class SignalementVisitesController extends AbstractController
         Intervention $intervention,
         Request $request,
     ): Response {
-        // TODO : bloquer pour les statut != PLANNED (permet d'intégrer les VISITE_CONTROLE / ARRETE_PREFECTORAL) - faire un voter dédié
+        if (!$this->interventionPlanningStateMachine->can($intervention, 'cancel')) {
+            throw $this->createAccessDeniedException();
+        }
 
         $cancelVisiteRoute = $this->generateUrl('back_signalement_visite_cancel', ['id' => $intervention->getId()]);
         $cancelVisiteForm = $this->createForm(CancelVisiteType::class, $intervention, options: ['action' => $cancelVisiteRoute]);
+
+        $cancelVisiteForm->handleRequest($request);
+
+        if ($cancelVisiteForm->isSubmitted() && !$cancelVisiteForm->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $cancelVisiteForm, withPrefix: true)];
+
+            return $this->json($response, $response['code']);
+        }
+        if ($cancelVisiteForm->isSubmitted() && $cancelVisiteForm->isValid()) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $context['createdByPartner'] = $user->getPartnerInTerritory($intervention->getSignalement()->getAddress()->getTerritory());
+            $this->interventionPlanningStateMachine->apply($intervention, 'cancel', $context);
+            $this->entityManager->flush();
+            $flashMessages[] = ['type' => 'success', 'title' => 'Visite annulée', 'message' => 'La visite a bien été annulée.'];
+
+            return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
+        }
 
         $title = 'Annuler la visite du '.($intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y'));
         $html = $this->renderView('back/signalement/view/visites/_cancel-visite-form.html.twig', [
@@ -308,70 +223,6 @@ class SignalementVisitesController extends AbstractController
         ]);
 
         return $this->json(['content' => $html, 'title' => $title]);
-    }
-
-    #[Route('/{uuid:signalement}/v1/visites/annuler', name: 'back_signalement_visite_cancel_v1', methods: 'POST')]
-    public function cancelVisiteFromSignalement(
-        Signalement $signalement,
-        Request $request,
-        InterventionManager $interventionManager,
-        InterventionRepository $interventionRepository,
-        SignalementDesordresProcessor $signalementDesordresProcessor,
-        FileRepository $fileRepository,
-        UrlGeneratorInterface $urlGenerator,
-    ): Response {
-        $requestData = $request->request->all();
-        $requestCancelData = RequestDataExtractor::getArray($requestData, 'visite-cancel');
-
-        $intervention = $interventionRepository->findOneBy(['id' => $requestCancelData['intervention'], 'signalement' => $signalement]);
-        if (!$intervention) {
-            $this->addFlash('error', "Cette visite n'existe pas.");
-
-            return $this->redirectToRoute('back_signalements_index');
-        }
-        $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
-
-        if ($intervention->hasScheduledDatePassed()) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Cette visite est déja passée et ne peut pas être annulée, merci de la noter comme non-effectuée.'];
-
-            return $this->buildVisitesAjaxResponse(
-                intervention: $intervention,
-                interventionRepository: $interventionRepository,
-                signalementDesordresProcessor: $signalementDesordresProcessor,
-                fileRepository: $fileRepository,
-                urlGenerator: $urlGenerator,
-                flashMessages: $flashMessages,
-            );
-        }
-
-        $errorRedirect = $this->getSecurityResponse(
-            $request,
-            'signalement_cancel_visit_'.$requestCancelData['intervention'],
-        );
-        if ($errorRedirect) {
-            return $errorRedirect;
-        }
-
-        $visiteRequest = new VisiteRequest(
-            idIntervention: $requestCancelData['intervention'],
-            details: $requestCancelData['details'],
-        );
-        /** @var User $user */
-        $user = $this->getUser();
-        if ($interventionManager->cancelVisiteFromRequest($visiteRequest, $user->getPartnerInTerritory($signalement->getAddress()->getTerritory()))) {
-            $flashMessages[] = ['type' => 'success', 'title' => 'Visite annulée', 'message' => 'La visite a bien été annulée.'];
-        } else {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de l\'annulation de la visite.'];
-        }
-
-        return $this->buildVisitesAjaxResponse(
-            intervention: $intervention,
-            interventionRepository: $interventionRepository,
-            signalementDesordresProcessor: $signalementDesordresProcessor,
-            fileRepository: $fileRepository,
-            urlGenerator: $urlGenerator,
-            flashMessages: $flashMessages,
-        );
     }
 
     /**
@@ -382,11 +233,46 @@ class SignalementVisitesController extends AbstractController
     public function rescheduleVisite(
         Intervention $intervention,
         Request $request,
+        FormFactoryInterface $formFactory,
     ): Response {
-        // TODO : bloquer pour les statut != PLANNED (permet d'intégrer les VISITE_CONTROLE / ARRETE_PREFECTORAL)  - faire un voter dédié
+        if (Intervention::STATUS_PLANNED !== $intervention->getStatus()) {
+            throw $this->createAccessDeniedException();
+        }
 
         $recheduleVisiteRoute = $this->generateUrl('back_signalement_visite_reschedule', ['id' => $intervention->getId()]);
-        $rescheduleVisiteForm = $this->createForm(AddAndRescheduleVisiteType::class, $intervention, options: ['action' => $recheduleVisiteRoute]);
+        $rescheduleVisiteForm = $formFactory->createNamed('reschedule_visite', AddAndRescheduleVisiteType::class, $intervention, ['action' => $recheduleVisiteRoute]);
+
+        $rescheduleVisiteForm->handleRequest($request);
+
+        if ($rescheduleVisiteForm->isSubmitted() && !$rescheduleVisiteForm->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $rescheduleVisiteForm, withPrefix: true)];
+
+            return $this->json($response, $response['code']);
+        }
+        if ($rescheduleVisiteForm->isSubmitted()) {
+            $file = $rescheduleVisiteForm->get('rapportDeVisite')->getData();
+            [$success, $fileNameOrError] = $this->getUploadedFile($file);
+            if (!$success) {
+                $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
+
+                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
+            }
+        }
+        if ($rescheduleVisiteForm->isSubmitted() && $rescheduleVisiteForm->isValid()) {
+            $this->interventionManager->updateVisiteFromData(
+                intervention: $intervention,
+                scheduledAt: $rescheduleVisiteForm->get('scheduledAt')->getData(),
+                scheduledAtTime: $rescheduleVisiteForm->get('scheduledAtTime')->getData(),
+                partnerChoice: $rescheduleVisiteForm->get('partnerChoice')->getData(),
+                visiteDone: $rescheduleVisiteForm->get('visiteDone')->getData(),
+                fileName: $fileNameOrError,
+                eventType: 'reschedule',
+            );
+            $this->entityManager->flush();
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM];
+
+            return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
+        }
 
         $title = 'Modifier la visite du '.($intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y'));
         $html = $this->renderView('back/signalement/view/visites/_reschedule-visite-form.html.twig', [
@@ -400,121 +286,45 @@ class SignalementVisitesController extends AbstractController
     /**
      * @throws \Exception
      */
-    #[Route('/{uuid:signalement}/v1/visites/reprogrammer', name: 'back_signalement_visite_reschedule_v1', methods: 'POST')]
-    public function rescheduleVisiteFromSignalement(
-        Signalement $signalement,
-        Request $request,
-        InterventionManager $interventionManager,
-        InterventionRepository $interventionRepository,
-        UploadHandlerService $uploadHandler,
-        EventDispatcherInterface $eventDispatcher,
-        FilenameGenerator $filenameGenerator,
-        ValidatorInterface $validator,
-        TimezoneProvider $timezoneProvider,
-        SignalementDesordresProcessor $signalementDesordresProcessor,
-        FileRepository $fileRepository,
-        UrlGeneratorInterface $urlGenerator,
-        EntityManagerInterface $entityManager,
-    ): Response {
-        $requestData = $request->request->all();
-        $requestRescheduleData = RequestDataExtractor::getArray($requestData, 'visite-reschedule');
-
-        $intervention = $interventionRepository->findOneBy(['id' => $requestRescheduleData['intervention'], 'signalement' => $signalement]);
-        if (!$intervention) {
-            $this->addFlash('error', "Cette visite n'existe pas.");
-
-            return $this->redirectToRoute('back_signalements_index');
-        }
-        $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
-
-        $errorRedirect = $this->getSecurityResponse(
-            $request,
-            'signalement_reschedule_visit_'.$requestRescheduleData['intervention'],
-        );
-        if ($errorRedirect) {
-            return $errorRedirect;
-        }
-
-        $previousDate = $intervention->getScheduledAt();
-        [$success, $fileNameOrError] = $this->getUploadedFile($request, 'visite-reschedule', $uploadHandler, $filenameGenerator);
-        if (!$success) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
-
-            return $this->buildVisitesAjaxResponse(
-                intervention: $intervention,
-                interventionRepository: $interventionRepository,
-                signalementDesordresProcessor: $signalementDesordresProcessor,
-                fileRepository: $fileRepository,
-                urlGenerator: $urlGenerator,
-                flashMessages: $flashMessages,
-            );
-        }
-
-        $fileName = $fileNameOrError;
-
-        $idPartner = 'extern' === $requestRescheduleData['partner'] ? null : $requestRescheduleData['partner'];
-        $visiteRequest = new VisiteRequest(
-            idIntervention: $requestRescheduleData['intervention'],
-            date: $requestRescheduleData['date'],
-            time: $requestRescheduleData['time'],
-            timezone: $timezoneProvider->getTimezone(),
-            idPartner: $idPartner,
-            externalOperator: empty($idPartner) ? $requestRescheduleData['externalOperator'] ?? null : null,
-            commentBeforeVisite: $requestRescheduleData['commentBeforeVisite'] ?? null,
-            details: $requestRescheduleData['details'] ?? null,
-            concludeProcedure: $requestRescheduleData['concludeProcedure'] ?? null,
-            isVisiteDone: $requestRescheduleData['visiteDone'] ?? null,
-            isOccupantPresent: $requestRescheduleData['occupantPresent'] ?? null,
-            isProprietairePresent: $requestRescheduleData['proprietairePresent'] ?? null,
-            isUsagerNotified: !empty($requestRescheduleData['notifyUsager']),
-            document: $fileName,
-        );
-        /** @var User $user */
-        $user = $this->getUser();
-        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
-        $errorMessage = $this->validateRequest($visiteRequest, $validator);
-        if ($errorMessage) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => \sprintf('Erreurs lors de la modification de la visite : %s, veuillez réessayer.', $errorMessage)];
-        } elseif ($intervention = $interventionManager->rescheduleVisiteFromRequest($signalement, $visiteRequest, $partner)) {
-            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM];
-            if ($intervention->getScheduledAt()->format('Y-m-d') > (new \DateTimeImmutable())->format('Y-m-d')) {
-                $eventDispatcher->dispatch(
-                    new InterventionRescheduledEvent(
-                        $intervention,
-                        $user,
-                        $previousDate,
-                        $partner
-                    ), InterventionRescheduledEvent::NAME
-                );
-                $entityManager->flush();
-            }
-        } else {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de la modification de la visite, veuillez réessayer.'];
-        }
-
-        return $this->buildVisitesAjaxResponse(
-            intervention: $intervention,
-            interventionRepository: $interventionRepository,
-            signalementDesordresProcessor: $signalementDesordresProcessor,
-            fileRepository: $fileRepository,
-            urlGenerator: $urlGenerator,
-            flashMessages: $flashMessages,
-        );
-    }
-
-    /**
-     * @throws \Exception
-     */
     #[Route('/{id}/visites/confirmer', name: 'back_signalement_visite_confirm')]
     #[IsGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, subject: 'intervention')]
     public function confirmVisite(
         Intervention $intervention,
         Request $request,
     ): Response {
-        // TODO : bloquer pour les statut != PLANNED (permet d'intégrer les VISITE_CONTROLE / ARRETE_PREFECTORAL)  - faire un voter dédié
+        if (!$this->interventionPlanningStateMachine->can($intervention, 'confirm')) {
+            throw $this->createAccessDeniedException();
+        }
 
         $confirmVisiteRoute = $this->generateUrl('back_signalement_visite_confirm', ['id' => $intervention->getId()]);
         $confirmVisiteForm = $this->createForm(ConfirmVisiteType::class, $intervention, options: ['action' => $confirmVisiteRoute]);
+
+        $confirmVisiteForm->handleRequest($request);
+
+        if ($confirmVisiteForm->isSubmitted() && !$confirmVisiteForm->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $confirmVisiteForm, withPrefix: true)];
+
+            return $this->json($response, $response['code']);
+        }
+        if ($confirmVisiteForm->isSubmitted()) {
+            $file = $confirmVisiteForm->get('rapportDeVisite')->getData();
+            [$success, $fileNameOrError] = $this->getUploadedFile($file);
+            if (!$success) {
+                $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
+
+                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
+            }
+        }
+        if ($confirmVisiteForm->isSubmitted() && $confirmVisiteForm->isValid()) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $createdByPartner = $user->getPartnerInTerritory($intervention->getSignalement()->getAddress()->getTerritory());
+            $this->interventionManager->confirmOrAbortVisiteFromData($intervention, $createdByPartner, $confirmVisiteForm->get('visiteDone')->getData(), $fileNameOrError);
+            $this->entityManager->flush();
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM];
+
+            return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
+        }
 
         $title = 'Conclusion de la visite du '.($intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y'));
         $html = $this->renderView('back/signalement/view/visites/_confirm-visite-form.html.twig', [
@@ -525,112 +335,46 @@ class SignalementVisitesController extends AbstractController
         return $this->json(['content' => $html, 'title' => $title]);
     }
 
-    /**
-     * @throws \Exception
-     */
-    #[Route('/{uuid:signalement}/v1/visites/confirmer', name: 'back_signalement_visite_confirm_v1', methods: 'POST')]
-    public function confirmVisiteFromSignalement(
-        Signalement $signalement,
-        Request $request,
-        InterventionManager $interventionManager,
-        InterventionRepository $interventionRepository,
-        UploadHandlerService $uploadHandler,
-        FilenameGenerator $filenameGenerator,
-        ValidatorInterface $validator,
-        SignalementDesordresProcessor $signalementDesordresProcessor,
-        FileRepository $fileRepository,
-        UrlGeneratorInterface $urlGenerator,
-    ): Response {
-        $requestData = $request->request->all();
-        $requestConfirmData = RequestDataExtractor::getArray($requestData, 'visite-confirm');
-
-        $intervention = $interventionRepository->findOneBy(['id' => $requestConfirmData['intervention'], 'signalement' => $signalement]);
-        if (!$intervention) {
-            $this->addFlash('error', "Cette visite n'existe pas.");
-
-            return $this->redirectToRoute('back_signalements_index');
-        }
-        $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
-
-        $errorRedirect = $this->getSecurityResponse(
-            $request,
-            'signalement_confirm_visit_'.$requestConfirmData['intervention'],
-        );
-        if ($errorRedirect) {
-            return $errorRedirect;
-        }
-
-        [$success, $fileNameOrError] = $this->getUploadedFile($request, 'visite-confirm', $uploadHandler, $filenameGenerator);
-        if (!$success) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
-
-            return $this->buildVisitesAjaxResponse(
-                intervention: $intervention,
-                interventionRepository: $interventionRepository,
-                signalementDesordresProcessor: $signalementDesordresProcessor,
-                fileRepository: $fileRepository,
-                urlGenerator: $urlGenerator,
-                flashMessages: $flashMessages,
-                closeModalAndReload: false,
-            );
-        }
-
-        $fileName = $fileNameOrError;
-
-        $visiteRequest = new VisiteRequest(
-            idIntervention: $requestConfirmData['intervention'],
-            date: $intervention->getScheduledAt()->format('Y-m-d'),
-            idPartner: $intervention->getPartner()?->getId(),
-            externalOperator: $intervention->getExternalOperator(),
-            details: $requestConfirmData['details'],
-            concludeProcedure: $requestConfirmData['concludeProcedure'] ?? null,
-            isVisiteDone: $requestConfirmData['visiteDone'] ?? null,
-            isOccupantPresent: $requestConfirmData['occupantPresent'] ?? null,
-            isProprietairePresent: $requestConfirmData['proprietairePresent'] ?? null,
-            document: $fileName,
-        );
-        /** @var User $user */
-        $user = $this->getUser();
-
-        $errorMessage = $this->validateRequest($visiteRequest, $validator);
-        if ($errorMessage) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => \sprintf('Erreurs lors de la conclusion de la visite : %s, veuillez réessayer.', $errorMessage)];
-        }
-        if ($interventionManager->confirmVisiteFromRequest($visiteRequest, $user->getPartnerInTerritory($signalement->getAddress()->getTerritory()))) {
-            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM];
-
-            return $this->buildVisitesAjaxResponse(
-                intervention: $intervention,
-                interventionRepository: $interventionRepository,
-                signalementDesordresProcessor: $signalementDesordresProcessor,
-                fileRepository: $fileRepository,
-                urlGenerator: $urlGenerator,
-                flashMessages: $flashMessages,
-            );
-        }
-        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de la conclusion de la visite, veuillez réessayer.'];
-
-        return $this->buildVisitesAjaxResponse(
-            intervention: $intervention,
-            interventionRepository: $interventionRepository,
-            signalementDesordresProcessor: $signalementDesordresProcessor,
-            fileRepository: $fileRepository,
-            urlGenerator: $urlGenerator,
-            flashMessages: $flashMessages,
-            closeModalAndReload: false,
-        );
-    }
-
     #[Route('/{id}/visites/editer-conclusion', name: 'back_signalement_visite_edit_conclusion')]
     #[IsGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, subject: 'intervention')]
     public function editConclusionVisite(
         Intervention $intervention,
         Request $request,
     ): Response {
-        // TODO : bloquer pour les statut != PLANNED (permet d'intégrer les VISITE_CONTROLE / ARRETE_PREFECTORAL) - faire un voter dédié
+        if (Intervention::STATUS_DONE !== $intervention->getStatus()) {
+            throw $this->createAccessDeniedException();
+        }
 
         $editConclusionVisiteRoute = $this->generateUrl('back_signalement_visite_edit_conclusion', ['id' => $intervention->getId()]);
         $editConclusionVisiteForm = $this->createForm(EditConclusionVisiteType::class, $intervention, options: ['action' => $editConclusionVisiteRoute]);
+
+        $editConclusionVisiteForm->handleRequest($request);
+
+        if ($editConclusionVisiteForm->isSubmitted() && !$editConclusionVisiteForm->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $editConclusionVisiteForm, withPrefix: true)];
+
+            return $this->json($response, $response['code']);
+        }
+        if ($editConclusionVisiteForm->isSubmitted()) {
+            $file = $editConclusionVisiteForm->get('rapportDeVisite')->getData();
+            [$success, $fileNameOrError] = $this->getUploadedFile($file);
+            if (!$success) {
+                $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
+
+                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
+            }
+        }
+        if ($editConclusionVisiteForm->isSubmitted() && $editConclusionVisiteForm->isValid()) {
+            /** @var User $user */
+            $user = $this->getUser();
+            $createdByPartner = $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getAddress()->getTerritory());
+            $this->interventionManager->editConclusionVisiteFromRequest($intervention, $createdByPartner, $fileNameOrError);
+
+            $this->entityManager->flush();
+            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM];
+
+            return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
+        }
 
         $title = 'Edition de la visite du '.($intervention->getScheduledAt()->format('H') > 0 ? $intervention->getScheduledAt()->format('d/m/Y à H:i') : $intervention->getScheduledAt()->format('d/m/Y'));
         $html = $this->renderView('back/signalement/view/visites/_edit-conclusion-visite-form.html.twig', [
@@ -641,115 +385,9 @@ class SignalementVisitesController extends AbstractController
         return $this->json(['content' => $html, 'title' => $title]);
     }
 
-    /**
-     * @throws \Exception
-     */
-    #[Route('/{uuid:signalement}/v1/visites/editer', name: 'back_signalement_visite_edit_v1', methods: 'POST')]
-    public function editVisiteFromSignalement(
-        Signalement $signalement,
-        Request $request,
-        InterventionManager $interventionManager,
-        InterventionRepository $interventionRepository,
-        UploadHandlerService $uploadHandler,
-        EventDispatcherInterface $eventDispatcher,
-        FilenameGenerator $filenameGenerator,
-        SignalementDesordresProcessor $signalementDesordresProcessor,
-        FileRepository $fileRepository,
-        UrlGeneratorInterface $urlGenerator,
-        EntityManagerInterface $entityManager,
-    ): Response {
-        $requestData = $request->request->all();
-        $requestEditData = RequestDataExtractor::getArray($requestData, 'visite-edit');
-
-        $intervention = !empty($requestEditData['intervention'])
-            ? $interventionRepository->findOneBy(['id' => $requestEditData['intervention'], 'signalement' => $signalement])
-            : null;
-        if (!$intervention) {
-            $this->addFlash('error', "Cette visite n'existe pas.");
-
-            return $this->redirectToRoute('back_signalements_index');
-        }
-        $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
-
-        $errorRedirect = $this->getSecurityResponse(
-            $request,
-            'signalement_edit_visit_'.$requestEditData['intervention'],
-        );
-        if ($errorRedirect) {
-            return $errorRedirect;
-        }
-        [$success, $fileNameOrError] = $this->getUploadedFile($request, 'visite-edit', $uploadHandler, $filenameGenerator);
-        if (!$success) {
-            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
-
-            return $this->buildVisitesAjaxResponse(
-                intervention: $intervention,
-                interventionRepository: $interventionRepository,
-                signalementDesordresProcessor: $signalementDesordresProcessor,
-                fileRepository: $fileRepository,
-                urlGenerator: $urlGenerator,
-                flashMessages: $flashMessages,
-                closeModalAndReload: false,
-            );
-        }
-
-        $fileName = $fileNameOrError;
-        if (!isset($requestEditData['notifyUsager'])) {
-            $requestEditData['notifyUsager'] = $intervention->getNotifyUsager();
-        }
-        $visiteRequest = new VisiteRequest(
-            idIntervention: $requestEditData['intervention'],
-            details: $requestEditData['details'],
-            concludeProcedure: $requestEditData['concludeProcedure'] ?? [],
-            isUsagerNotified: $requestEditData['notifyUsager'] ?? false,
-            document: $fileName,
-        );
-        /** @var User $user */
-        $user = $this->getUser();
-        $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
-
-        if ($interventionManager->editVisiteFromRequest($visiteRequest, $partner)) {
-            $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => self::SUCCESS_MSG_CONFIRM];
-            $eventDispatcher->dispatch(new InterventionEditedEvent(
-                $intervention,
-                $user,
-                $visiteRequest->isUsagerNotified(),
-                $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory())
-            ), InterventionEditedEvent::NAME);
-            $entityManager->flush();
-
-            return $this->buildVisitesAjaxResponse(
-                intervention: $intervention,
-                interventionRepository: $interventionRepository,
-                signalementDesordresProcessor: $signalementDesordresProcessor,
-                fileRepository: $fileRepository,
-                urlGenerator: $urlGenerator,
-                flashMessages: $flashMessages,
-            );
-        }
-        $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Erreur lors de la modification de la visite, veuillez réessayer.'];
-
-        return $this->buildVisitesAjaxResponse(
-            intervention: $intervention,
-            interventionRepository: $interventionRepository,
-            signalementDesordresProcessor: $signalementDesordresProcessor,
-            fileRepository: $fileRepository,
-            urlGenerator: $urlGenerator,
-            flashMessages: $flashMessages,
-            closeModalAndReload: false,
-        );
-    }
-
     #[Route('/visites/{intervention}/delete-rapport', name: 'back_signalement_visite_deleterapport')]
     public function deleteRapportVisiteFromSignalement(
         Intervention $intervention,
-        Request $request,
-        EntityManagerInterface $entityManager,
-        UploadHandlerService $uploadHandlerService,
-        InterventionRepository $interventionRepository,
-        SignalementDesordresProcessor $signalementDesordresProcessor,
-        FileRepository $fileRepository,
-        UrlGeneratorInterface $urlGenerator,
     ): Response {
         if (!$intervention->getRapportDeVisite()) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => "Ce rapport n'existe pas."];
@@ -757,42 +395,13 @@ class SignalementVisitesController extends AbstractController
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
         $this->denyAccessUnlessGranted(InterventionVoter::INTERVENTION_EDIT_VISITE, $intervention);
-        $errorRedirect = $this->getSecurityResponse(
-            $request,
-            'delete_rapport',
-        );
-        if ($errorRedirect) {
-            return $errorRedirect;
-        }
 
         $file = $intervention->getRapportDeVisite();
-        $uploadHandlerService->deleteFileInBucket($file);
-        $entityManager->remove($file);
-        $entityManager->flush();
+        $this->uploadHandler->deleteFileInBucket($file);
+        $this->entityManager->remove($file);
+        $this->entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Document supprimé', 'message' => 'Le rapport de visite a bien été supprimé.'];
 
-        return $this->buildVisitesAjaxResponse(
-            intervention: $intervention,
-            interventionRepository: $interventionRepository,
-            signalementDesordresProcessor: $signalementDesordresProcessor,
-            fileRepository: $fileRepository,
-            urlGenerator: $urlGenerator,
-            flashMessages: $flashMessages,
-        );
-    }
-
-    private function validateRequest(VisiteRequest $visiteRequest, ValidatorInterface $validator): string
-    {
-        $errorMessage = '';
-
-        $errors = $validator->validate($visiteRequest);
-        if (\count($errors) > 0) {
-            $errorMessage = '';
-            foreach ($errors as $error) {
-                $errorMessage .= $error->getMessage().' ';
-            }
-        }
-
-        return $errorMessage;
+        return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
     }
 }

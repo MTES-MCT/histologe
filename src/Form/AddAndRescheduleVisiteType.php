@@ -53,6 +53,7 @@ class AddAndRescheduleVisiteType extends AbstractType
             'label' => 'Date de la visite <span class="fr-text-default--error">*</span>',
             'label_html' => true,
             'required' => false,
+            'input' => 'datetime_immutable',
             'constraints' => [new Assert\NotBlank(message: 'Veuillez indiquer la date de la visite.')],
         ]);
         $builder->add('scheduledAtTime', TimeType::class, [
@@ -60,7 +61,8 @@ class AddAndRescheduleVisiteType extends AbstractType
             'label_html' => true,
             'required' => false,
             'mapped' => false,
-            'data' => $intervention->getScheduledAt(), // TODO : Refonte visites : gestion fuseau horaire (valeur diférente entre affichage visite et valeur du champs)
+            'input' => 'datetime_immutable',
+            'data' => $intervention->getScheduledAt(),
         ]);
         if ($this->security->isGranted('ROLE_ADMIN_TERRITORY')) {
             $partners = $this->partnerRepository->findPartnersWithQualificationAffectedOnSignalement(Qualification::VISITES, $intervention->getSignalement());
@@ -68,11 +70,20 @@ class AddAndRescheduleVisiteType extends AbstractType
             $partnersWithPendingVisites = [];
             $externalOperatorsWithPendingVisites = [];
             foreach ($pendingVisites as $pendingVisite) {
-                if ($pendingVisite->getPartner()?->getId() && $pendingVisite->getId() != $intervention->getId()) {
+                if ($pendingVisite->getId() === $intervention->getId()) {
+                    continue;
+                }
+                if ($pendingVisite->getPartner()?->getId()) {
                     $partnersWithPendingVisites[$pendingVisite->getPartner()->getId()] = $pendingVisite->getPartner();
                 } elseif ($pendingVisite->getExternalOperator()) {
                     $externalOperatorsWithPendingVisites[] = $pendingVisite->getExternalOperator();
                 }
+            }
+            $dataPartner = null;
+            if ($intervention->getPartner() && $intervention->getPartner()->getId()) {
+                $dataPartner = $intervention->getPartner();
+            } elseif ($intervention->getExternalOperator()) {
+                $dataPartner = 'extern';
             }
             $builder->add('partnerChoice', ChoiceType::class, [
                 'label' => 'Opérateur de visite <span class="fr-text-default--error">*</span>',
@@ -93,7 +104,7 @@ class AddAndRescheduleVisiteType extends AbstractType
                         }
                     }),
                 ],
-                'data' => $intervention->getPartner(), // TODO : Refonte visites : tester avec opérateur externe + ne pas afficher l'erreur doublon pour le form en édition (san casser js)
+                'data' => $dataPartner,
             ]);
             $builder->add('externalOperator', TextType::class, [
                 'label' => 'Nom de l\'opérateur externe <span class="fr-text-default--error">*</span>',
@@ -219,9 +230,9 @@ class AddAndRescheduleVisiteType extends AbstractType
                 ],
                 'constraints' => [
                     new Assert\File(
-                        maxSize: '10M',
+                        maxSize: '25M',
                         mimeTypes: File::DOCUMENT_MIME_TYPES,
-                        mimeTypesMessage: 'Veuillez télécharger un fichier au format '.UploadHandlerService::getAcceptedExtensions().', et ne dépassant pas 10 Mo.'
+                        mimeTypesMessage: 'Veuillez télécharger un fichier au format '.UploadHandlerService::getAcceptedExtensions().', et ne dépassant pas 25 Mo.'
                     ),
                 ],
                 'mapped' => false,
@@ -252,6 +263,34 @@ class AddAndRescheduleVisiteType extends AbstractType
                 if (!$form->get('details')->getData()) {
                     $form->get('details')->addError(new FormError('Veuillez saisir un commentaire pour la visite.'));
                 }
+            }
+        });
+
+        // Vide les champs de conclusion si la visite n'est pas encore passée
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $data = $event->getData();
+
+            if (!is_array($data) || !isset($data['scheduledAt']) || !is_string($data['scheduledAt'])) {
+                return;
+            }
+
+            $scheduledAt = \DateTimeImmutable::createFromFormat('Y-m-d', $data['scheduledAt']);
+            if (false === $scheduledAt) {
+                return;
+            }
+            $todayInTerritory = (new \DateTimeImmutable('today', $this->timezoneProvider->getDateTimezone()))->format('Y-m-d');
+            $isPastDate = $scheduledAt->format('Y-m-d') <= $todayInTerritory;
+
+            if (!$isPastDate) {
+                $data['visiteDone'] = null;
+                $data['occupantPresent'] = null;
+                $data['proprietairePresent'] = null;
+                $data['concludeProcedure'] = [];
+                $data['details'] = null;
+                $data['notifyUsager'] = false;
+                $data['rapportDeVisite'] = null;
+
+                $event->setData($data);
             }
         });
     }

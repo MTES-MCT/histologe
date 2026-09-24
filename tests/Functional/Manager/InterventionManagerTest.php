@@ -10,13 +10,13 @@ use App\Entity\Intervention;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\InterventionManager;
-use App\Manager\PartnerManager;
 use App\Repository\InterventionRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
+use App\Service\TimezoneProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
@@ -26,18 +26,17 @@ class InterventionManagerTest extends KernelTestCase
 {
     private InterventionRepository $interventionRepository;
     private InterventionFactory $interventionFactory;
-    private PartnerManager $partnerManager;
     private WorkflowInterface $workflow;
     private SignalementRepository $signalementRepository;
     private UserRepository $userRepository;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private FileFactory $fileFactory;
     private Security $security;
-    private LoggerInterface $logger;
     private EntityManagerInterface $entityManager;
     private HtmlSanitizerInterface $htmlSanitizer;
-
     private ?InterventionManager $interventionManager = null;
+    private TimezoneProvider $timezoneProvider;
+    private EventDispatcherInterface $eventDispatcher;
 
     /**
      * @throws \Exception
@@ -47,28 +46,28 @@ class InterventionManagerTest extends KernelTestCase
         self::bootKernel();
         $this->interventionRepository = static::getContainer()->get(InterventionRepository::class);
         $this->interventionFactory = static::getContainer()->get(InterventionFactory::class);
-        $this->partnerManager = static::getContainer()->get(PartnerManager::class);
         $this->workflow = static::getContainer()->get('state_machine.intervention_planning');
         $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
         $this->fileFactory = static::getContainer()->get(FileFactory::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->userRepository = static::getContainer()->get(UserRepository::class);
-        $this->logger = static::getContainer()->get(LoggerInterface::class);
         $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->htmlSanitizer = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->timezoneProvider = static::getContainer()->get(TimezoneProvider::class);
+        $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);
 
         $this->interventionManager = new InterventionManager(
             $this->interventionRepository,
             $this->interventionFactory,
-            $this->partnerManager,
             $this->workflow,
             $this->signalementQualificationUpdater,
             $this->fileFactory,
             $this->security,
-            $this->logger,
             $this->entityManager,
             $this->htmlSanitizer,
+            $this->timezoneProvider,
+            $this->eventDispatcher,
         );
     }
 
