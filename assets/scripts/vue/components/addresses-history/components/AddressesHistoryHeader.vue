@@ -12,9 +12,7 @@
           ]"
           type="button"
           @click="onViewModeChange('map')"
-        >
-          Carte
-        </button>
+          >Carte</button>
       </div>
       <div>
         <button
@@ -26,33 +24,45 @@
           ]"
           type="button"
           @click="onViewModeChange('list')"
-        >
-          Liste
-        </button>
+          >Liste</button>
       </div>
     </div>
     <div class="fr-col-12 fr-col-lg-6 fr-col-xl-4 fr-mb-2v fr-mb-md-0 fr-text--right">
-      <a
-        :href="canExport ? `${sharedProps.ajaxurlExportCsv}` : undefined"
-        :class="[
-          'fr-btn',
-          'fr-btn--secondary',
-          'fr-btn--icon-left',
-          'fr-icon-download-fill',
-          'fr-btn--block',
-          'fr-btn--md-inline',
-          { 'fr-label--disabled': !canExport }
-        ]"
-      >
-        Exporter les résultats
-      </a>
+        <nav class="fr-translate menu-actions-signalement align-right fr-nav">
+            <div class="fr-nav__item">
+                <button
+                  type="button"
+                  aria-controls="export-menu"
+                  aria-expanded="false"
+                  class="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-down-s-line"
+                  :class="{'fr-label--disabled': !canExport}"
+                  >Exporter les résultats</button>
+                <div class="fr-collapse fr-translate__menu fr-menu" id="export-menu">
+                    <ul class="fr-menu__list">
+                        <li>
+                            <button
+                              :class="['fr-nav__link', { 'fr-label--disabled': !canExport || isExporting }]"
+                              @click="onExport('xlsx')"
+                              >Télécharger au format Excel (.xlsx)</button>
+                        </li>
+                        <li>
+                            <button
+                              :class="['fr-nav__link', { 'fr-label--disabled': !canExport || isExporting }]"
+                              @click="onExport('csv')"
+                              >Télécharger au format .csv</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { store } from '../composables/useAddressesHistoryStore'
+import { ref } from 'vue'
+import { store, useAddressesHistoryStore } from '../composables/useAddressesHistoryStore'
+import { useAddressesHistoryApi } from '../api'
 
 // Émissions
 const emit = defineEmits<{
@@ -61,23 +71,34 @@ const emit = defineEmits<{
 
 // State
 const sharedState = store.state
-const sharedProps = store.props
+const { canExport } = useAddressesHistoryStore()
+const isExporting = ref(false)
 
-// Computed
-const canExport = computed(() => {
-  return false
-  /*
-  return Object.entries(sharedState.input.filters).some(
-    ([key, value]) => key !== 'isImported' && (value !== null && value !== undefined && !(Array.isArray(value) && value.length === 0))
-  ) && total.value > 0
-   */
-})
+const api = useAddressesHistoryApi(store.props)
 
 /**
  * Quand le mode d'affichage change (carte/liste)
  */
 const onViewModeChange = (viewMode: string): void => {
   emit('viewModeChange', viewMode)
+}
+
+/**
+ * Clic sur les boutons d'export avec la bonne extension
+ */
+const onExport = async (format: 'csv' | 'xlsx'): Promise<void> => {
+  if (!canExport.value || isExporting.value) {
+    return
+  }
+
+  isExporting.value = true
+  try {
+    await api.downloadList(format)
+  } catch (error) {
+    console.error('Error exporting addresses:', error)
+  } finally {
+    isExporting.value = false
+  }
 }
 </script>
 

@@ -372,6 +372,24 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $this->assertCount(17, $results);
     }
 
+    public function testFindAllAddressesWithHistoryIgnoresPagination(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $this->assertNotNull($user);
+
+        // Sur une page au-delà du nombre total d'adresses, la version paginée ne renvoie plus rien...
+        $searchQuery = new AddressesHistorySearchQuery(page: 2);
+        $paginatedResults = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
+        $this->assertSame([], $paginatedResults);
+
+        // ...alors que la version pour l'export ignore la pagination et renvoie toujours l'ensemble des résultats.
+        $allResults = $this->addressesHistoryQuery->findAllAddressesWithHistory($user, $searchQuery);
+        $this->assertNotEmpty($allResults);
+
+        $addressIds = array_unique(array_column($allResults, 'addressId'));
+        $this->assertGreaterThan(0, count($addressIds));
+    }
+
     public function testFindAddressesWithHistoryWithZoneFilter(): void
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
