@@ -15,6 +15,7 @@ use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationClose;
 use App\Dto\SignalementAffectationListView;
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\EtageType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
@@ -42,6 +43,7 @@ use App\Factory\SignalementImportFactory;
 use App\Factory\SuiviDelayedFactory;
 use App\Messenger\Message\Esabora\DossierMessageSISH;
 use App\Repository\BailleurRepository;
+use App\Repository\Behaviour\NotificationDeleter;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\Query\Partner\PartnerLocalizationQuery;
@@ -87,6 +89,8 @@ class SignalementManager
         private readonly ZipcodeProvider $zipcodeProvider,
         private readonly ExportIterableQuery $exportIterableQuery,
         private readonly QueryBuilderFactory $queryBuilderFactory,
+        private readonly AffectationManager $affectationManager,
+        private readonly NotificationDeleter $notificationDeleter,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
         #[Autowire(env: 'FEATURE_SCHS_DISPATCH_SISH_ENABLE')]
@@ -1102,5 +1106,12 @@ class SignalementManager
         );
 
         $this->entityManager->flush();
+    }
+
+    public function archive(Signalement $signalement): void
+    {
+        $signalement->setStatut(SignalementStatus::ARCHIVED);
+        $this->notificationDeleter->deleteBySignalement($signalement);
+        $this->affectationManager->removeAffectationsBySignalement($signalement, AffectationStatus::WAIT);
     }
 }

@@ -7,7 +7,6 @@ use App\Dto\RefusAffectation;
 use App\Dto\RefusSignalement;
 use App\Dto\SignalementAffectationClose;
 use App\Entity\Affectation;
-use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\DocumentType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
@@ -31,7 +30,6 @@ use App\Form\RefusSignalementType;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Repository\AffectationRepository;
-use App\Repository\Behaviour\NotificationDeleter;
 use App\Repository\CritereRepository;
 use App\Repository\DesordreCategorieRepository;
 use App\Repository\DesordreCritereRepository;
@@ -429,8 +427,7 @@ class SignalementController extends AbstractController
         Signalement $signalement,
         Request $request,
         ManagerRegistry $doctrine,
-        AffectationManager $affectationManager,
-        NotificationDeleter $notificationDeleter,
+        SignalementManager $signalementManager,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_DELETE, $signalement);
         if ($this->isCsrfTokenValid(
@@ -438,9 +435,7 @@ class SignalementController extends AbstractController
             (string) $request->getPayload()->get('_token')
         )
         ) {
-            $signalement->setStatut(SignalementStatus::ARCHIVED);
-            $notificationDeleter->deleteBySignalement($signalement);
-            $affectationManager->removeAffectationsBySignalement($signalement, AffectationStatus::WAIT);
+            $signalementManager->archive($signalement);
 
             $doctrine->getManager()->flush();
             $response = [

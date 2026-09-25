@@ -24,6 +24,7 @@ use App\Manager\SignalementManager;
 use App\Manager\SuiviManager;
 use App\Manager\UserManager;
 use App\Repository\BailleurRepository;
+use App\Repository\Behaviour\NotificationDeleter;
 use App\Repository\DesordrePrecisionRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\Query\Partner\PartnerLocalizationQuery;
@@ -131,6 +132,8 @@ class SignalementManagerTest extends WebTestCase
             $this->zipcodeProvider,
             $this->exportIterableQuery,
             $this->queryBuilderFactory,
+            $this->affectationManager,
+            static::getContainer()->get(NotificationDeleter::class),
             $this->htmlSanitizerInterface,
             true,
         );
@@ -376,6 +379,26 @@ class SignalementManagerTest extends WebTestCase
         /** @var ConstraintViolationList $errors */
         $errorsAsString = (string) $errors;
         $this->assertStringContainsString('Merci de définir le nombre de pièces à vivre', $errorsAsString);
+    }
+
+    public function testArchive(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
+        $countAffectationsWait = $signalement->getAffectations()->filter(
+            static fn (Affectation $affectation) => AffectationStatus::WAIT === $affectation->getStatut()
+        )->count();
+        $this->assertGreaterThan(0, $countAffectationsWait);
+        $countAffectations = $signalement->getAffectations()->count();
+
+        $this->signalementManager->archive($signalement);
+        $this->entityManager->flush();
+
+        $this->assertSame(SignalementStatus::ARCHIVED, $signalement->getStatut());
+        $this->assertCount($countAffectations - $countAffectationsWait, $signalement->getAffectations());
+        foreach ($signalement->getAffectations() as $affectation) {
+            $this->assertNotSame(AffectationStatus::WAIT, $affectation->getStatut());
+        }
     }
 
     public function testUpdateFromSignalementQualificationWithNdeRequest(): void
