@@ -123,11 +123,3 @@ export function initTinyMCE(selector) {
     });
   }
 }
-
-export function reloadTinyMCE(selector) {
-  if (window.tinymce) {
-    tinymce.remove();
-  }
-
-  initTinyMCE(selector);
-}

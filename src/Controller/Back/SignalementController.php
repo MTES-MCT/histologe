@@ -9,7 +9,6 @@ use App\Dto\SignalementAffectationClose;
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\DocumentType;
-use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\TiersInvitationStatus;
 use App\Entity\Intervention;
@@ -19,6 +18,7 @@ use App\Entity\User;
 use App\Event\SignalementClosedEvent;
 use App\Event\SignalementViewedEvent;
 use App\Factory\SignalementSearchQueryFactory;
+use App\Form\AddAndRescheduleVisiteType;
 use App\Form\AddSuiviType;
 use App\Form\AdminCancelInjonctionProcedureType;
 use App\Form\AffectationToggleType;
@@ -254,7 +254,6 @@ class SignalementController extends AbstractController
             return $concludeProcedure->label();
         }, $listConcludeProcedures));
 
-        $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
         $linkToVisitGrid = false;
         $existingVisitGrid = $fileRepository->findOneBy([
             'territory' => $signalement->getAddress()->getTerritory(),
@@ -298,6 +297,13 @@ class SignalementController extends AbstractController
             $adminCancelInjonctionProcedureForm = $this->createForm(AdminCancelInjonctionProcedureType::class, options: ['action' => $adminCancelInjonctionProcedureFormRoute]);
         }
 
+        $addVisiteForm = null;
+        if ($this->isGranted(SignalementVoter::SIGN_ADD_VISITE, $signalement)) {
+            $intervention = (new Intervention())->setSignalement($signalement);
+            $addVisiteForm = $this->generateUrl('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
+            $addVisiteForm = $this->createForm(AddAndRescheduleVisiteType::class, $intervention, options: ['action' => $addVisiteForm]);
+        }
+
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',
             'situations' => $infoDesordres['criticitesArranged'],
@@ -325,9 +331,8 @@ class SignalementController extends AbstractController
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
             'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
             'listConcludeProcedures' => $listConcludeProcedures,
-            'partnersCanVisite' => $partnerVisite,
             'visites' => $interventionRepository->getOrderedVisitesForSignalement($signalement),
-            'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
+            'addVisiteForm' => $addVisiteForm,
             'linkToVisitGrid' => $linkToVisitGrid,
             'allPhotosOrdered' => $allPhotosOrdered,
             'zones' => $zoneRepository->findZonesBySignalement($signalement),
