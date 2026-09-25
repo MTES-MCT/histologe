@@ -109,14 +109,14 @@ class SearchFilter
                     OR LOWER(address.city) LIKE :searchterms
                     OR LOWER(s.nomProprio) LIKE :searchterms
                     OR LOWER(s.nomDeclarant) LIKE :searchterms');
-                    $qb->setParameter('housenumber', '%'.mb_trim($houseNumber).'%');
+                    $qb->setParameter('housenumber', mb_trim($houseNumber).'%');
                     $qb->setParameter('street', '%'.mb_trim($street).'%');
                 } else {
                     $qb->andWhere('LOWER(s.nomOccupant) LIKE :searchterms
                     OR LOWER(s.prenomOccupant) LIKE :searchterms
                     OR LOWER(s.mailOccupant) LIKE :searchterms
                     OR LOWER(s.reference) LIKE :searchterms
-                    OR (address.housenumber IS NULL AND address.street LIKE :street)
+                    OR address.street LIKE :street
                     OR LOWER(address.city) LIKE :searchterms
                     OR LOWER(s.nomProprio) LIKE :searchterms
                     OR LOWER(s.nomDeclarant) LIKE :searchterms');
