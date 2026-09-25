@@ -2,10 +2,8 @@
 
 namespace App\Command;
 
-use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\SignalementStatus;
-use App\Manager\AffectationManager;
-use App\Repository\Behaviour\NotificationDeleter;
+use App\Manager\SignalementManager;
 use App\Repository\SignalementRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -23,8 +21,7 @@ class ArchiveSignalementCommand extends Command
 {
     public function __construct(
         private readonly SignalementRepository $signalementRepository,
-        private readonly AffectationManager $affectationManager,
-        private readonly NotificationDeleter $notificationDeleter,
+        private readonly SignalementManager $signalementManager,
         private readonly EntityManagerInterface $entityManager,
     ) {
         parent::__construct();
@@ -83,9 +80,7 @@ class ArchiveSignalementCommand extends Command
             return Command::SUCCESS;
         }
 
-        $signalement->setStatut(SignalementStatus::ARCHIVED);
-        $this->notificationDeleter->deleteBySignalement($signalement);
-        $this->affectationManager->removeAffectationsBySignalement($signalement, AffectationStatus::WAIT);
+        $this->signalementManager->archive($signalement);
         $this->entityManager->flush();
 
         $io->success(\sprintf('Le signalement #%s a bien été archivé.', $signalement->getReference()));
