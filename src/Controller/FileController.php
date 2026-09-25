@@ -34,11 +34,7 @@ class FileController extends AbstractController
         }
 
         if ($file->getIsSuspicious()) {
-            $logger->error(
-                'Tentative d\'accès à un fichier suspect', [
-                    'uuid' => $file->getUuid(),
-                    'filename' => $file->getFilename(),
-                ]);
+            $logger->warning('Tentative d\'accès à un fichier suspect', ['uuid' => $file->getUuid()]);
 
             return new BinaryFileResponse(
                 new SymfonyFile($this->getParameter('images_dir').'doc-file-403.png'),

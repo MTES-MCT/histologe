@@ -3,7 +3,6 @@
 namespace App\Controller\Security;
 
 use Psr\Log\LoggerInterface;
-use Sentry\State\Scope;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -29,24 +28,11 @@ readonly class CspReportController
                 return new Response('', Response::HTTP_NO_CONTENT);
             }
 
-            if (isset($report['violated-directive'])) {
-                \Sentry\configureScope(static function (Scope $scope) use ($report): void {
-                    $scope->setTag('violated-directive', $report['violated-directive']);
-                });
-            }
-
-            if (isset($report['document-uri'])) {
-                \Sentry\configureScope(static function (Scope $scope) use ($report): void {
-                    $scope->setTag('document-uri', $report['document-uri']);
-                });
-            }
-
-            $logMessage = sprintf(
-                'CSP Violation: violated-directive=%s',
+            $logMessage = sprintf('CSP Violation: violated-directive=%s document-uri=%s',
                 $report['violated-directive'] ?? 'N/A',
+                $report['document-uri'] ?? 'N/A',
             );
-            $this->logger->warning($logMessage);
-            \Sentry\captureMessage($logMessage);
+            $this->logger->info($logMessage);
         }
 
         return new Response('', Response::HTTP_NO_CONTENT);
