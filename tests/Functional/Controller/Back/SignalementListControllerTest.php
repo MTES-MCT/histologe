@@ -55,6 +55,11 @@ class SignalementListControllerTest extends WebTestCase
         yield 'Search Terms with Lastname Occupant' => [['searchTerms' => 'Nawell', 'isImported' => 'oui'], 2];
         yield 'Search Terms with Email Occupant' => [['searchTerms' => 'nawell.mapaire@yopmail.com', 'isImported' => 'oui'], 1];
         yield 'Search Terms with Email Occupant containing numbers' => [['searchTerms' => 'georges.brassens34300@yopmail.com', 'isImported' => 'oui'], 1];
+        yield 'Search Terms with street' => [['searchTerms' => 'chemin de la route', 'isImported' => 'oui'], 2];
+        yield 'Search Terms with partial street' => [['searchTerms' => 'route', 'isImported' => 'oui'], 3];
+        yield 'Search Terms with housenumber and street' => [['searchTerms' => '15 chemin de la route', 'isImported' => 'oui'], 2];
+        yield 'Search Terms with inexistant housenumber and street' => [['searchTerms' => '5 chemin de la route', 'isImported' => 'oui'], 0];
+
         yield 'Search by Territory 13' => [['territoire' => '13', 'isImported' => 'oui'], 26];
         yield 'Search by Commune' => [['communes' => ['gex', 'marseille'], 'isImported' => 'oui'], 31];
         yield 'Search by Commune code postal' => [['communes' => ['13002'], 'isImported' => 'oui'], 2];
