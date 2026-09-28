@@ -235,9 +235,7 @@ class AddressesHistoryController extends AbstractController
             }
         );
 
-        $contentType = ExportFormat::FORMAT_XLSX === $format
-            ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            : 'text/csv';
+        $contentType = ExportFormat::getContentTypeByFormat($format);
         $response->headers->set('Content-Type', $contentType);
         $response->headers->set(
             'Content-Disposition',

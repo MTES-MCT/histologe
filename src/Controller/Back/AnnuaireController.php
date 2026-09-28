@@ -76,9 +76,7 @@ class AnnuaireController extends AbstractController
 
             $filename = 'annuaire_'.date('Y-m-d_H-i-s').'.'.$format;
 
-            $contentType = ExportFormat::FORMAT_CSV === $format
-                ? 'text/csv'
-                : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+            $contentType = ExportFormat::getContentTypeByFormat($format);
 
             $response = new StreamedResponse(static function () use ($writer, $isMultiTerritory, $userPartners) {
                 $writer->openToFile('php://output');
