@@ -9,7 +9,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class UserSearchFilterParamsValidator extends ConstraintValidator
 {
-    public const MAX_FILTERS_PER_USER = 10;
+    public const MAX_FILTERS_PER_USER = 50;
 
     public function __construct(private UserSearchFilterRepository $repo)
     {
