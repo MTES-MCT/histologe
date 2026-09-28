@@ -295,12 +295,12 @@ class SignalementWithoutAddressController extends AbstractController
 
         $data = $addressService->searchAddress($query, 10);
         $features = $data['features'] ?? [];
-
-        // les résultats de type "municipality" (juste une ville, sans rue) n'ont pas de "street" :
-        // on ne peut pas les lier (AddressFactory exige une rue), donc on ne les propose pas.
+        // les résultats de type "municipality" (juste une ville, sans rue ni lieu-dit) ne peuvent pas
+        // être liés (AddressFactory exige une rue), donc on ne les propose pas. Les lieux-dits
+        // ("locality") n'ont pas de "street" mais un "name", repris comme rue par BanAddress.
         $features = array_values(array_filter(
             $features,
-            static fn (array $feature) => !empty($feature['properties']['street'] ?? null)
+            static fn (array $feature) => 'municipality' !== ($feature['properties']['type'] ?? null)
         ));
 
         $territoryZip = $signalement->getTerritoryDeprecated()?->getZip();

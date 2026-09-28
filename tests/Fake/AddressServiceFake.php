@@ -211,6 +211,39 @@ class AddressServiceFake extends AddressService
                     'query' => $address,
                 ];
                 break;
+            case 'Les Oches 38930 Chichilianne':
+                // résultat de type "locality" (lieu-dit) : pas de "street" ni de "housenumber",
+                // seulement un "name" (réponse réelle de la BAN).
+                $response = [
+                    'type' => 'FeatureCollection',
+                    'features' => [[
+                        'type' => 'Feature',
+                        'geometry' => [
+                            'type' => 'Point',
+                            'coordinates' => [5.581398, 44.811039],
+                        ],
+                        'properties' => [
+                            'label' => 'Les Oches 38930 Chichilianne',
+                            'score' => 0.93373,
+                            'type' => 'locality',
+                            'importance' => 0.27103,
+                            'id' => '38103_250h9v',
+                            'banId' => '64d90939-777c-443f-9ebb-062772dc6d8b',
+                            'name' => 'Les Oches',
+                            'postcode' => '38930',
+                            'citycode' => '38103',
+                            'x' => 904062.31,
+                            'y' => 6415767.31,
+                            'city' => 'Chichilianne',
+                            'context' => '38, Isère, Auvergne-Rhône-Alpes',
+                            'depcode' => '38',
+                            'locality' => 'Les Oches',
+                            '_type' => 'address',
+                        ],
+                    ]],
+                    'query' => $address,
+                ];
+                break;
             case 'Chemin du grand méchant loup 30360 Vézénobres':
                 $response = [
                     'type' => 'FeatureCollection',
