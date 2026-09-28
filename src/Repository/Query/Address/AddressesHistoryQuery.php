@@ -126,9 +126,11 @@ class AddressesHistoryQuery
         $firstResult = (max($page, 1) - 1) * $maxListPagination;
 
         $qbIds = $this->buildAllAddressesQueryBuilder($user, $addressesHistorySearchQuery);
-        $qbIds
-            ->setFirstResult($firstResult)
-            ->setMaxResults($maxListPagination);
+        if ('list' === $addressesHistorySearchQuery->getView()) {
+            $qbIds
+                ->setFirstResult($firstResult)
+                ->setMaxResults($maxListPagination);
+        }
 
         $addressIds = array_column($qbIds->getQuery()->getArrayResult(), 'id');
 

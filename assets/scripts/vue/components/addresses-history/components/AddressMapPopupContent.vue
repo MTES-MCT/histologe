@@ -37,7 +37,7 @@
       <ul class="list-unstyled fr-mb-0">
         <li v-for="signalement in signalements" :key="signalement.ref" class="fr-mb-2v">
           <a :href="signalement.url" class="fr-link fr-text--sm">#{{ signalement.ref }}</a>
-          <span class="fr-text--sm"> - {{ signalement.usager }}</span>
+          <span class="fr-text--sm fr-mr-2v"> - {{ signalement.usager }}</span>
           <p :class="getStatusBadgeClass(signalement.statut)" class="fr-text--xs">
             {{ signalement.statut }}
           </p>

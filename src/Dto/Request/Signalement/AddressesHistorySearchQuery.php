@@ -15,6 +15,7 @@ class AddressesHistorySearchQuery
      * @param array<mixed> $arreteTypes
      */
     public function __construct(
+        private readonly ?string $view = null,
         private readonly ?string $territoire = null,
         private readonly ?string $adresse = null,
         private readonly ?string $communeOuEpci = null,
@@ -33,6 +34,11 @@ class AddressesHistorySearchQuery
         private readonly string $direction = 'DESC',
         */
     ) {
+    }
+
+    public function getView(): ?string
+    {
+        return $this->view;
     }
 
     public function getTerritoire(): ?string
@@ -99,6 +105,7 @@ class AddressesHistorySearchQuery
     public function getFilters(): array
     {
         $filters = [];
+        $filters['view'] = $this->getView() ?? null;
         $filters['territories'] = null !== $this->getTerritoire() ? [$this->getTerritoire()] : null;
         $filters['adresse'] = $this->getAdresse() ?? null;
         $filters['cityOrEpci'] = $this->getCommuneOuEpci() ?? null;
@@ -143,6 +150,7 @@ class AddressesHistorySearchQuery
     public static function fromParams(array $params): self
     {
         return new self(
+            view: $params['view'] ?? null,
             territoire: $params['territoire'] ?? null,
             adresse: $params['adresse'] ?? null,
             communeOuEpci: $params['communeOuEpci'] ?? null,

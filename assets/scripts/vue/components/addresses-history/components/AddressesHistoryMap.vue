@@ -17,12 +17,12 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import { mapStyles, Overlay, addOverlay, removeOverlay } from 'carte-facile'
 import 'carte-facile/carte-facile.css'
 import { AddressFilterService } from '../services/AddressFilterService'
+import { getArretePictoClassFromId } from '../utils/displayHelpers'
 // @ts-ignore
 import { parse } from 'wellknown'
 
 // State
 const sharedState = store.state
-const sharedProps = store.props
 
 // Refs
 const mapContainer = ref<HTMLElement | null>(null)
@@ -32,6 +32,43 @@ const SOURCE_ID = 'addresses-history'
 const ZONES_SOURCE_ID = 'zones-territory'
 const ZONES_LAYER_ID = 'zones-territory-layer'
 const ZONES_OUTLINE_LAYER_ID = 'zones-territory-outline'
+
+// Couleurs des clusters selon leur taille (valeurs DSFR, les paints MapLibre
+// étant rendus sur un canvas WebGL, on ne peut pas y utiliser de var() CSS)
+const CLUSTER_COLOR_SMALL = '#efcb3a' // $yellow-tournesol-850, moins de 10 adresses
+const CLUSTER_COLOR_MEDIUM = '#fbb8f6' // $purple-glycine-850, de 10 à 99 adresses
+const CLUSTER_COLOR_LARGE = '#fcc0b0' // $orange-terre-battue-850, 100 adresses et plus
+
+// Constaté sur les fixtures, mais fallback pour les cas réels, au cas où... :
+// Rayon en mètres sur lequel on répartit les adresses partageant exactement les mêmes lat / lng
+const OVERLAPPING_ADDRESSES_OFFSET_METERS = 8
+const METERS_PER_DEGREE_LATITUDE = 111320
+
+// Icônes des points isolés avec picto d'arrêtés : générées en canvas (sinon on n'a que des cercles)
+const MARKER_ICON_SIZE = 24
+const MARKER_SHAPE_SIZE = 20
+const MARKER_ICON_DOSSIERS_MULTIPLES = 'marker-dossiers-multiples'
+const MARKER_ICON_DEFAULT = 'marker-adresse'
+const MARKER_ICON_ARRETE_PREFIX = 'marker-arrete-'
+
+/**
+ * Formes des pictos d'arrêtés en coordonnées relatives (0 → 1), reprises des
+ * `clip-path` de `.fr-picto-arrete`
+ */
+const ARRETE_MARKER_SHAPES: Record<string, { color: string, points: Array<[number, number]> }> = {
+  'purple-hexagon': {
+    color: '#6c63ff',
+    points: [[1, 0.3], [1, 0.7], [0.5, 1], [0, 0.7], [0, 0.3], [0.5, 0]]
+  },
+  'blue-square': {
+    color: '#2196f3',
+    points: [[0, 0], [1, 0], [1, 1], [0, 1]]
+  },
+  'purple-diamond': {
+    color: '#9c27b0',
+    points: [[0.5, 0], [1, 0.5], [0.5, 1], [0, 0.5]]
+  }
+}
 
 // Computed - Liste des adresses filtrées côté client
 const filteredAddresses = computed(() => {
@@ -102,8 +139,7 @@ watch(filteredAddresses, () => {
   }
 }, { deep: true })
 
-// La popup ouverte porte sur une adresse qui peut disparaître de la carte :
-// on la ferme dès qu'un filtre ou un paramètre d'affichage change
+// Fermeture de popup quand filtre change
 watch([() => sharedState.input.filters, () => sharedState.input.params], () => {
   closePopup()
 }, { deep: true })
@@ -115,11 +151,134 @@ function closePopup() {
   }
 }
 
+/**
+ * Répartit en cercle les adresses situées à des coordonnées identiques.
+ */
+function spreadOverlappingCoordinates(
+  lng: number,
+  lat: number,
+  positionInGroup: number,
+  groupSize: number
+): [number, number] {
+  if (groupSize < 2) {
+    return [lng, lat]
+  }
+
+  const angle = (2 * Math.PI * positionInGroup) / groupSize
+  const offsetLat = (OVERLAPPING_ADDRESSES_OFFSET_METERS * Math.sin(angle)) / METERS_PER_DEGREE_LATITUDE
+  const offsetLng = (OVERLAPPING_ADDRESSES_OFFSET_METERS * Math.cos(angle))
+    / (METERS_PER_DEGREE_LATITUDE * Math.cos((lat * Math.PI) / 180))
+
+  return [lng + offsetLng, lat + offsetLat]
+}
+
+/**
+ * Icône du point isolé :
+ * - jaune si dossiers multiples
+ * - sinon : picto du premier arrêté de l'adresse
+ */
+function getMarkerIcon(address: any, nbSignalements: number): string {
+  if (nbSignalements > 1) {
+    return MARKER_ICON_DOSSIERS_MULTIPLES
+  }
+
+  const firstArreteType = address.arretes?.[0]?.arreteType
+  if (firstArreteType) {
+    return MARKER_ICON_ARRETE_PREFIX + getArretePictoClassFromId(firstArreteType, sharedState.arreteTypesGroups)
+  }
+
+  return MARKER_ICON_DEFAULT
+}
+
+/**
+ * Dessine une icône sur un canvas et l'enregistre auprès de la carte.
+ * Les images sont perdues à chaque changement de style, d'où le garde `hasImage`.
+ */
+function registerMarkerImage(id: string, paint: (context: CanvasRenderingContext2D) => void) {
+  if (!map || map.hasImage(id)) return
+
+  const pixelRatio = Math.max(1, Math.round(window.devicePixelRatio || 1))
+  const canvas = document.createElement('canvas')
+  canvas.width = MARKER_ICON_SIZE * pixelRatio
+  canvas.height = MARKER_ICON_SIZE * pixelRatio
+
+  const context = canvas.getContext('2d')
+  if (!context) return
+
+  context.scale(pixelRatio, pixelRatio)
+  paint(context)
+
+  map.addImage(id, context.getImageData(0, 0, canvas.width, canvas.height), { pixelRatio })
+}
+
+function drawMarkerCircle(context: CanvasRenderingContext2D, fillColor: string, strokeColor: string) {
+  const center = MARKER_ICON_SIZE / 2
+
+  context.beginPath()
+  context.arc(center, center, 10, 0, 2 * Math.PI)
+  context.fillStyle = fillColor
+  context.fill()
+  context.lineWidth = 2
+  context.strokeStyle = strokeColor
+  context.stroke()
+}
+
+function drawMarkerShape(context: CanvasRenderingContext2D, color: string, points: Array<[number, number]>) {
+  const padding = (MARKER_ICON_SIZE - MARKER_SHAPE_SIZE) / 2
+
+  context.beginPath()
+  points.forEach(([x, y], index) => {
+    const pointX = padding + x * MARKER_SHAPE_SIZE
+    const pointY = padding + y * MARKER_SHAPE_SIZE
+    if (0 === index) {
+      context.moveTo(pointX, pointY)
+    } else {
+      context.lineTo(pointX, pointY)
+    }
+  })
+  context.closePath()
+  context.fillStyle = color
+  context.fill()
+}
+
+function addMarkerIcons() {
+  // Rond jaune plein : plusieurs dossiers à l'adresse
+  registerMarkerImage(MARKER_ICON_DOSSIERS_MULTIPLES, (context) => {
+    drawMarkerCircle(context, '#EFB900', '#EFB900')
+  })
+
+  // Rond blanc cerclé de bleu : ni dossiers multiples, ni arrêté
+  registerMarkerImage(MARKER_ICON_DEFAULT, (context) => {
+    drawMarkerCircle(context, '#FFFFFF', '#000091')
+  })
+
+  // Un picto par groupe de types d'arrêtés
+  Object.entries(ARRETE_MARKER_SHAPES).forEach(([picto, shape]) => {
+    registerMarkerImage(MARKER_ICON_ARRETE_PREFIX + picto, (context) => {
+      drawMarkerShape(context, shape.color, shape.points)
+    })
+  })
+}
+
 function buildGeoJson(): GeoJSON.FeatureCollection<GeoJSON.Point> {
   const features: GeoJSON.Feature<GeoJSON.Point>[] = []
 
+  // Regroupement préalable par coordonnée, pour repérer les adresses superposées
+  const addressesByCoordinates = new Map<string, Array<{ address: any, index: number }>>()
   filteredAddresses.value.forEach((address: any, index: number) => {
     if (address.lat && address.lng) {
+      const coordinatesKey = `${address.lng}|${address.lat}`
+      const group = addressesByCoordinates.get(coordinatesKey)
+      if (group) {
+        group.push({ address, index })
+      } else {
+        addressesByCoordinates.set(coordinatesKey, [{ address, index }])
+      }
+    }
+  })
+
+  addressesByCoordinates.forEach((group) => {
+    group.forEach(({ address, index }, positionInGroup) => {
       const nbSignalements = address.signalements?.length || 0
       const hasMultipleSignalements = nbSignalements > 1
 
@@ -127,7 +286,12 @@ function buildGeoJson(): GeoJSON.FeatureCollection<GeoJSON.Point> {
         type: 'Feature',
         geometry: {
           type: 'Point',
-          coordinates: [address.lng, address.lat]
+          coordinates: spreadOverlappingCoordinates(
+            Number(address.lng),
+            Number(address.lat),
+            positionInGroup,
+            group.length
+          )
         },
         properties: {
           addressId: index,
@@ -135,10 +299,11 @@ function buildGeoJson(): GeoJSON.FeatureCollection<GeoJSON.Point> {
           communeForHuman: address.communeForHuman,
           nbSignalements: nbSignalements,
           nbArretes: address.arretes?.length || 0,
-          hasMultipleSignalements: hasMultipleSignalements
+          hasMultipleSignalements: hasMultipleSignalements,
+          markerIcon: getMarkerIcon(address, nbSignalements)
         }
       })
-    }
+    })
   })
 
   return {
@@ -248,6 +413,8 @@ function updateZonesOnMap() {
 function addMapLayers() {
   if (!map) return
 
+  addMarkerIcons()
+
   // Clusters
   map.addLayer({
     id: 'clusters',
@@ -256,9 +423,14 @@ function addMapLayers() {
     filter: ['has', 'point_count'],
     paint: {
       'circle-radius': 14,
-      'circle-color': '#a9bfff',
-      'circle-stroke-width': 2,
-      'circle-stroke-color': '#0063cb'
+      'circle-color': [
+        'step',
+        ['get', 'point_count'],
+        CLUSTER_COLOR_SMALL,
+        10, CLUSTER_COLOR_MEDIUM,
+        100, CLUSTER_COLOR_LARGE
+      ],
+      'circle-opacity': 0.85
     }
   })
 
@@ -273,32 +445,21 @@ function addMapLayers() {
       'text-size': 11
     },
     paint: {
-      'text-color': '#0063cb'
+      'text-color': '#000000'
     }
   })
 
-  // Points isolés
+  // Points isolés : icône générée via getMarkerIcon
   map.addLayer({
     id: 'unclustered-point',
-    type: 'circle',
+    type: 'symbol',
     source: SOURCE_ID,
     filter: ['!', ['has', 'point_count']],
-    paint: {
-      'circle-radius': 10,
-      'circle-color': [
-        'case',
-        ['get', 'hasMultipleSignalements'],
-        '#EFB900', // Jaune si dossiers multiples
-        '#FFF'     // Blanc sinon
-      ],
-      'circle-opacity': 0.8,
-      'circle-stroke-width': 2,
-      'circle-stroke-color': [
-        'case',
-        ['get', 'hasMultipleSignalements'],
-        '#EFB900', // Jaune si dossiers multiples
-        '#000091'  // Bleu sinon
-      ]
+    layout: {
+      'icon-image': ['get', 'markerIcon'],
+      // Sans ça, MapLibre masque les icônes qui se chevauchent
+      'icon-allow-overlap': true,
+      'icon-ignore-placement': true
     }
   })
 }
