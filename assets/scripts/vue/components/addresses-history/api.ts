@@ -1,6 +1,7 @@
 import axios, { type AxiosRequestConfig } from 'axios'
 import * as Sentry from '@sentry/browser'
 import type { AddressesResponse, SettingsResponse } from './types'
+import { store } from './composables/useAddressesHistoryStore'
 
 /**
  * Configuration API pour les requêtes addresses-history
@@ -59,25 +60,49 @@ class AddressesHistoryApi {
   }
 
   /**
-   * Export CSV des adresses
-  async exportCsv(
+   * Export (CSV ou XLSX) des adresses correspondant aux filtres actuellement appliqués
+   */
+  async exportAddresses(
     ajaxUrl: string,
-    params: Record<string, unknown> = {}
-  ): Promise<Blob> {
+    format: string
+  ): Promise<{ blob: Blob; filename: string }> {
     try {
+      const filters = store.state.input.filters as Record<string, unknown>
+      const params: Record<string, unknown> = { format }
+      for (const [key, value] of Object.entries(filters)) {
+        if (Array.isArray(value)) {
+          if (value.length > 0) {
+            params[key] = value
+          }
+        } else if (value !== undefined && value !== null && value !== '') {
+          params[key] = value
+        }
+      }
+
       const response = await axios.get(ajaxUrl, {
         ...this.baseConfig,
         params,
         responseType: 'blob',
       })
-      return response.data
+
+      return {
+        blob: response.data,
+        filename: this.getFilenameFromResponse(response.headers['content-disposition'], format)
+      }
     } catch (error) {
-      console.error('Error exporting CSV:', error)
+      console.error('Error exporting addresses:', error)
       Sentry.captureException(error)
       throw error
     }
   }
+
+  /**
+   * Extrait le nom de fichier de l'en-tête Content-Disposition renvoyé par le serveur
    */
+  private getFilenameFromResponse(contentDisposition: string | undefined, format: string): string {
+    const match = contentDisposition?.match(/filename="?([^";]+)"?/)
+    return match?.[1] || `export-adresses.${format}`
+  }
 }
 
 // Instance singleton de l'API
@@ -117,36 +142,27 @@ export function useAddressesHistoryApi(props: {
   }
 
   /**
-   * Export CSV avec téléchargement automatique
-  const downloadCsv = async (
-    params: Record<string, unknown> = {},
-    filename = 'export-addresses.csv'
-  ): Promise<void> => {
-    try {
-      const blob = await addressesHistoryApi.exportCsv(
-        props.ajaxurlExportCsv,
-        params
-      )
-
-      // Créer un lien de téléchargement temporaire
-      const url = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = filename
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(url)
-    } catch (error) {
-      console.error('Error downloading CSV:', error)
-      throw error
-    }
-  }
+   * Exporte la liste des adresses (au format demandé) et déclenche son téléchargement
    */
+  const downloadList = async (format: 'csv' | 'xlsx'): Promise<void> => {
+    const { blob, filename } = await addressesHistoryApi.exportAddresses(
+      props.ajaxurlExportCsv,
+      format
+    )
+
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+  }
 
   return {
     fetchAddresses,
     fetchSettings,
-    // downloadCsv,
+    downloadList,
   }
 }

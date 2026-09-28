@@ -1328,6 +1328,10 @@ ul + p {
     }
 }
 
+.menu-actions-signalement button.fr-icon-arrow-down-s-line[aria-expanded="true"]::after {
+    transform: rotate(180deg);
+}
+
 .menu-actions-signalement a.fr-nav__link {
     color: #000091;
     justify-content: flex-start;
@@ -1337,13 +1341,17 @@ ul + p {
     justify-content: flex-start;
 }
 .menu-actions-signalement a.disabled {
-  pointer-events: none;
-  color: var(--text-disabled-grey);
-  opacity: 0.6;
+    pointer-events: none;
+    color: var(--text-disabled-grey);
+    opacity: 0.6;
 }
 .menu-actions-signalement button.disabled {
-  color: var(--text-disabled-grey);
-  opacity: 0.6;
+    color: var(--text-disabled-grey);
+    opacity: 0.6;
+}
+
+.menu-actions-signalement.align-right .fr-nav__item {
+    align-items: flex-end;
 }
 
 .territory-management-tiles .fr-tile__detail span {
