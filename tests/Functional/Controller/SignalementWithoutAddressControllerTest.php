@@ -151,6 +151,27 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $this->assertSame([], $responseData['results']);
     }
 
+    public function testSearchAddressIncludesLocalityResults(): void
+    {
+        // un résultat de type "locality" (lieu-dit) n'a pas de "street" mais un "name" : il doit
+        // être proposé, car BanAddress reprend le "name" comme rue.
+        $signalement = $this->getSignalementWithoutAddress();
+        $isere = $this->territoryRepository->findOneBy(['zip' => '38']);
+        $this->setDeprecatedOccupantFields($signalement, adresseOccupant: 'Les Oches', cpOccupant: '38930', villeOccupant: 'Chichilianne', inseeOccupant: null, territory: $isere);
+
+        $route = $this->router->generate('back_signalement_without_address_search', [
+            'uuid' => $signalement->getUuid(),
+        ]);
+        $this->client->request('GET', $route);
+
+        $this->assertResponseIsSuccessful();
+        $responseData = json_decode((string) $this->client->getResponse()->getContent(), true);
+
+        $this->assertSame('Les Oches 38930 Chichilianne', $responseData['query']);
+        $this->assertCount(1, $responseData['results']);
+        $this->assertSame('locality', $responseData['results'][0]['properties']['type']);
+    }
+
     public function testLinkAddress(): void
     {
         $signalement = $this->prepareSignalementForParisSearch();
@@ -174,6 +195,46 @@ class SignalementWithoutAddressControllerTest extends WebTestCase
         $this->assertSame(self::PARIS_POSTAL_CODE, $signalement->getAddress()->getPostCode());
         $this->assertSame(self::PARIS_INSEE_CODE, $signalement->getAddress()->getCityCode());
         $this->assertSame(self::PARIS_BAN_ID, $signalement->getAddress()->getBanId());
+    }
+
+    public function testLinkAddressWithLocalityWithoutStreet(): void
+    {
+        // résultat BAN réel de type "locality" (lieu-dit) : pas de "street" ni de "housenumber",
+        // seulement un "name". Le lien plantait car AddressFactory exige une rue.
+        $signalement = $this->getSignalementWithoutAddress();
+        $isere = $this->territoryRepository->findOneBy(['zip' => '38']);
+        $this->setDeprecatedOccupantFields($signalement, adresseOccupant: 'Les Oches', cpOccupant: '38930', villeOccupant: 'Chichilianne', inseeOccupant: null, territory: $isere);
+
+        $searchRoute = $this->router->generate('back_signalement_without_address_search', [
+            'uuid' => $signalement->getUuid(),
+        ]);
+        $this->client->request('GET', $searchRoute);
+
+        $this->assertResponseIsSuccessful();
+        $searchData = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertCount(1, $searchData['results']);
+        $feature = $searchData['results'][0];
+
+        $linkRoute = $this->router->generate('back_signalement_without_address_link', [
+            'uuid' => $signalement->getUuid(),
+        ]);
+        $this->client->request('POST', $linkRoute, [
+            '_token' => $this->generateCsrfToken($this->client, 'signalement_link_address_'.$signalement->getId()),
+            'feature' => json_encode($feature),
+        ]);
+        $signalement = static::getContainer()->get(SignalementRepository::class)->find($signalement->getId());
+
+        $this->assertResponseIsSuccessful();
+        $responseData = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertTrue($responseData['closeModal']);
+        $this->assertSame('success', $responseData['flashMessages'][0]['type']);
+
+        $address = $signalement->getAddress();
+        $this->assertNotNull($address);
+        $this->assertSame('Les Oches', $address->getStreet());
+        $this->assertSame('38930', $address->getPostCode());
+        $this->assertSame('38103', $address->getCityCode());
+        $this->assertSame('38103_250h9v', $address->getBanId());
     }
 
     public function testLinkAddressWithInvalidCsrfToken(): void

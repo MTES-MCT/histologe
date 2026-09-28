@@ -24,7 +24,7 @@ class BanAddress
             $properties = $data['features'][0]['properties'];
             $this->label = $properties['label'] ?? null;
             $this->housenumber = $properties['housenumber'] ?? null;
-            $this->street = $properties['street'] ?? null;
+            $this->street = $properties['street'] ?? $properties['name'] ?? null;
             $this->zipCode = $properties['postcode'] ?? null;
             $this->city = $properties['city'] ?? null;
             $this->score = $properties['score'] ?? null;
