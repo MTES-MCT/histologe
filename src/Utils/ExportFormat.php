@@ -10,7 +10,7 @@ final class ExportFormat
 
     public static function getContentTypeByFormat(string $format): string
     {
-        $contentType = ExportFormat::FORMAT_CSV === $format
+        $contentType = self::FORMAT_CSV === $format
             ? 'text/csv'
             : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
