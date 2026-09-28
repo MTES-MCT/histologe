@@ -120,7 +120,9 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $this->assertNotNull($address, 'Need at least one address in the database');
 
         $search = strtolower(substr($address->getStreet(), 0, 5)); // Use the first 5 characters of the street name for search
-        $searchQuery = new AddressesHistorySearchQuery($search);
+        $searchQuery = new AddressesHistorySearchQuery(
+            adresse: $search
+        );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
