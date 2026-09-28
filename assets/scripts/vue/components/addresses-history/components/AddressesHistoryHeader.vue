@@ -95,6 +95,7 @@ const onExport = async (format: 'csv' | 'xlsx'): Promise<void> => {
   try {
     await api.downloadList(format)
   } catch (error) {
+    alert('Erreur lors de l\'export. Veuillez réessayer. Si le problème se reproduit, merci de nous contacter.')
     console.error('Error exporting addresses:', error)
   } finally {
     isExporting.value = false
