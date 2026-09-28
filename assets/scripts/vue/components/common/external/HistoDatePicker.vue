@@ -6,7 +6,7 @@
     <VueDatePicker
       v-model="dates"
       @update:modelValue="handleDate"
-      locale="fr"
+      :locale="localeFr"
       range
       multi-calendars
       :enableTimePicker=false
@@ -22,6 +22,7 @@
 </template>
 
 <script lang="ts">
+import { fr } from 'date-fns/locale'
 import { defineComponent } from 'vue'
 import { VueDatePicker } from '@vuepic/vue-datepicker';
 
@@ -42,7 +43,8 @@ export default defineComponent({
   },
   data () {
     return {
-      dates: this.modelValue
+      dates: this.modelValue,
+      localeFr: fr
     }
   },
   emits: ['update:modelValue'],
