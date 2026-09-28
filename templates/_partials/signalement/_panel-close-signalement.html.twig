@@ -18,6 +18,7 @@
                     A l'étape suivante, vous pourrez indiquer les procédures engagées sur le dossier.
                 </p>
                 <p><i>Sauf mention contraire, tous les champs sont obligatoires.</i></p>
+                {% include "back/signalement/view/_destinataires-du-message.html.twig" with {'form': closeSignalementForm, 'signalement': signalement} %}
                 {{ form_row(closeSignalementForm.motifCloture) }}
                 <div id="close_signalement_travauxMiseEnConformite_container">
                     {{ form_row(closeSignalementForm.travauxMiseEnConformite) }}
@@ -30,7 +31,6 @@
                     </div>
                 </div>
                 {{ form_row(closeSignalementForm.comCloture) }}
-                {% include "back/signalement/view/_destinataires-du-message.html.twig" with {'form': closeSignalementForm, 'signalement': signalement} %}
             </div>
             <div data-step="2">
                 <p>
