@@ -82,11 +82,6 @@ class MotifClotureStatisticProvider
                 'color' => '#18753C',
                 'count' => 0,
             ],
-            'LOGEMENT_MIS_EN_CONFORMITE' => [
-                'label' => 'Logement mis en conformité',
-                'color' => '#18753C',
-                'count' => 0,
-            ],
             'RELOGEMENT_OCCUPANT' => [
                 'label' => 'Relogement occupant',
                 'color' => '#27A658',
@@ -151,6 +146,31 @@ class MotifClotureStatisticProvider
                 'label' => 'Doublon',
                 'color' => '#CECE00',
                 'count' => 0,
+            ],
+            'LOGEMENT_MIS_EN_CONFORMITE' => [
+                'label' => 'Logement mis en conformité',
+                'color' => '#18753C',
+                'count' => 1,
+            ],
+            'DEMANDE_FERMETURE_ABANDON_OCCUPANT' => [
+                'label' => 'Demande fermeture / abandon occupant',
+                'color' => '#FFA500',
+                'count' => 2,
+            ],
+            'ABSENCE_DE_REPONSE_OCCUPANT' => [
+                'label' => 'Absence de réponse occupant',
+                'color' => '#FFA07A',
+                'count' => 10,
+            ],
+            'GESTION_DU_DOSSIER_EXTERNE' => [
+                'label' => 'Gestion du dossier externe',
+                'color' => '#ADD8E6',
+                'count' => 5,
+            ],
+            'HORS_PERIMETRE_LHI' => [
+                'label' => 'Hors périmètre LHI',
+                'color' => '#D3D3D3',
+                'count' => 3,
             ],
             'AUTRE' => [
                 'label' => 'Autre',

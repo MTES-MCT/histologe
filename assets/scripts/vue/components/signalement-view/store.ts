@@ -191,6 +191,11 @@ export const store = {
       { Id: 'rsd', Text: 'RSD' },
       { Id: 'travaux_faits_ou_en_cours', Text: 'Travaux faits ou en cours' },
       { Id: 'doublon', Text: 'Doublon' },
+      { Id: 'logement_mis_en_conformite', Text: 'Logement mis en conformité' },
+      { Id: 'demande_fermeture_abandon_occupant', Text: 'Demande fermeture / abandon occupant' },
+      { Id: 'absence_de_reponse_occupant', Text: 'Absence de réponse occupant' },
+      { Id: 'gestion_du_dossier_externe', Text: 'Gestion du dossier externe' },
+      { Id: 'hors_perimetre_lhi', Text: 'Hors périmètre LHI' },
       { Id: 'autre', Text: 'Autre' }
     ],
     createdFromList: [
