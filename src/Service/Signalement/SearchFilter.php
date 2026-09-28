@@ -29,6 +29,10 @@ use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Psr\Cache\InvalidArgumentException;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use function Symfony\Component\String\u;
 
 class SearchFilter
@@ -43,6 +47,8 @@ class SearchFilter
         private BailleurRepository $bailleurRepository,
         private DossiersActiviteRecenteQuery $dossiersActiviteRecenteQuery,
         private DossiersSuivisUsagerQuery $dossiersSuivisUsagerQuery,
+        private TagAwareCacheInterface $cache,
+        private ParameterBagInterface $parameterBag,
     ) {
     }
 
@@ -82,6 +88,7 @@ class SearchFilter
      * @param array<mixed> $filters
      *
      * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function applyFilters(QueryBuilder $qb, array $filters, User $user): QueryBuilder
     {
@@ -289,39 +296,48 @@ class SearchFilter
             $qb->andWhere('personalTag.id IN (:personalTags)')
                 ->andWhere('personalTag.user = :personalTagsUser')
                 ->setParameter('personalTags', $filters['personalTags'])
-                ->setParameter('personalTagsUser', $user); // permet de sécurisé que l'on ne filtre pas sur les tags d'un autre utilisateur
+                ->setParameter('personalTagsUser', $user); // permet de sécuriser que l'on ne filtre pas sur les tags d'un autre utilisateur
         }
         if (!empty($filters['zones'])) {
-            $connection = $this->entityManager->getConnection();
-            $params = $zonesParams = [];
-            foreach ($filters['zones'] as $zoneId) {
-                $zoneId = (int) $zoneId;
-                $zonesParams[] = ':zone_'.$zoneId;
-                $params['zone_'.$zoneId] = $zoneId;
-            }
-            $sql = '
-                SELECT DISTINCT s2.id
-                FROM signalement s2
-                JOIN address address2 ON address2.id = s2.address_id
-                JOIN zone z ON z.id IN ('.implode(',', $zonesParams).')
-                WHERE z.territory_id = address2.territory_id
-                AND (
-                    (address2.point IS NOT NULL AND ST_Contains(z.area, address2.point) = 1)
-                    OR (ST_Contains(
-                        z.area,
-                        Point(
-                            JSON_EXTRACT(s2.geoloc, \'$.lng\'),
-                            JSON_EXTRACT(s2.geoloc, \'$.lat\')
-                        )
-                    ) = 1
-                ))
-            ';
-            $stmt = $connection->prepare($sql);
-            foreach ($params as $key => $value) {
-                $stmt->bindValue($key, $value);
-            }
+            $zoneIds = array_map('intval', $filters['zones']);
+            // On met en cache les signalements correspondant à la zone pour éviter de refaire la requête pour le compte et pour la liste d'id
+            // car cette requête peut être très longue si la zone est complexe
+            $zonesSignalements = $this->cache->get(
+                'search_filter_zones-'.$user->getId().'-'.implode('-', $zoneIds),
+                function (ItemInterface $item) use ($zoneIds) {
+                    $item->expiresAfter($this->parameterBag->get('search_filter_cache_expired_after'));
 
-            $zonesSignalements = $stmt->executeQuery()->fetchAllAssociative();
+                    $connection = $this->entityManager->getConnection();
+                    $params = $zonesParams = [];
+                    foreach ($zoneIds as $zoneId) {
+                        $zonesParams[] = ':zone_'.$zoneId;
+                        $params['zone_'.$zoneId] = $zoneId;
+                    }
+                    $sql = '
+                        SELECT DISTINCT s2.id
+                        FROM signalement s2
+                        JOIN address address2 ON address2.id = s2.address_id
+                        JOIN zone z ON z.id IN ('.implode(',', $zonesParams).')
+                        WHERE z.territory_id = address2.territory_id
+                        AND (
+                            (address2.point IS NOT NULL AND ST_Contains(z.area, address2.point) = 1)
+                            OR (ST_Contains(
+                                z.area,
+                                Point(
+                                    JSON_EXTRACT(s2.geoloc, \'$.lng\'),
+                                    JSON_EXTRACT(s2.geoloc, \'$.lat\')
+                                )
+                            ) = 1
+                        ))
+                    ';
+                    $stmt = $connection->prepare($sql);
+                    foreach ($params as $key => $value) {
+                        $stmt->bindValue($key, $value);
+                    }
+
+                    return $stmt->executeQuery()->fetchAllAssociative();
+                }
+            );
 
             if (!empty($zonesSignalements)) {
                 $qb->andWhere('s.id IN (:zonesSignalements)')
