@@ -115,6 +115,11 @@ class SignalementSearchQuery
             'rsd',
             'travaux_faits_ou_en_cours',
             'doublon',
+            'logement_mis_en_conformite',
+            'demande_fermeture_abandon_occupant',
+            'absence_de_reponse_occupant',
+            'gestion_du_dossier_externe',
+            'hors_perimetre_lhi',
             'autre',
         ], message: 'Motif de clôture invalide')]
         private readonly ?string $motifCloture = null,

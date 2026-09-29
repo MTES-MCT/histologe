@@ -108,7 +108,6 @@ enum MotifCloture: string
     {
         // getListForV2
         // moins GESTION_DU_DOSSIER_EXTERNE et HORS_PERIMETRE_LHI
-        // plus HORS_COMPETENCE
         // ordre différent
         return [
             self::LOGEMENT_MIS_EN_CONFORMITE,
@@ -143,7 +142,7 @@ enum MotifCloture: string
             self::LOGEMENT_VENDU,
             self::DOUBLON,
             self::GESTION_DU_DOSSIER_EXTERNE,
-            self::HORS_COMPETENCE,
+            self::HORS_PERIMETRE_LHI,
             self::LOGEMENT_DECENT,
             self::RESPONSABILITE_DE_L_OCCUPANT,
             self::AUTRE,

@@ -57,7 +57,7 @@
           </div>
 
           <div>
-            <HistoChartDoughnut :items=sharedState.stats.countSignalementPerMotifCloture>
+            <HistoChartDoughnut :items=sharedState.stats.countSignalementPerMotifCloture :height="800">
               <template #title>Motif de clôture</template>
             </HistoChartDoughnut>
           </div>

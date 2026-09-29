@@ -2,7 +2,6 @@
 
 namespace App\Service\Statistics;
 
-use App\Entity\Enum\MotifCloture;
 use App\Repository\Query\Statistics\CountStatisticsQuery;
 use App\Repository\Query\Statistics\GlobalStatisticsQuery;
 use App\Repository\Query\Statistics\MotifClotureStatisticsQuery;
@@ -35,25 +34,7 @@ class GlobalAnalyticsProvider
 
     public function getCountSignalementResoluData(): int
     {
-        $countPerMotifsCloture = $this->motifClotureStatisticsQuery->countByMotifCloture(
-            territory: null,
-            year: null,
-            removeImported: true
-        );
-        $countSignalementsResolus = 0;
-        foreach ($countPerMotifsCloture as $countPerMotifCloture) {
-            if ((MotifCloture::TRAVAUX_FAITS_OU_EN_COURS->value == $countPerMotifCloture['motifCloture']->value
-                || MotifCloture::RELOGEMENT_OCCUPANT->value == $countPerMotifCloture['motifCloture']->value
-                || MotifCloture::INSALUBRITE->value == $countPerMotifCloture['motifCloture']->value
-                || MotifCloture::RSD->value == $countPerMotifCloture['motifCloture']->value
-                || MotifCloture::PERIL->value == $countPerMotifCloture['motifCloture']->value)
-                && !empty($countPerMotifCloture['count'])
-            ) {
-                $countSignalementsResolus += $countPerMotifCloture['count'];
-            }
-        }
-
-        return $countSignalementsResolus;
+        return $this->motifClotureStatisticsQuery->countSignalementResolu();
     }
 
     public function getCountSignalementData(): int
