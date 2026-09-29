@@ -6,8 +6,8 @@ use App\Entity\File;
 use App\Entity\User;
 use App\Repository\FileRepository;
 use App\Repository\Query\Arrete\ArreteQuery;
+use App\Repository\Query\Zone\ZoneSignalementQuery;
 use App\Repository\TagRepository;
-use App\Repository\ZoneRepository;
 use App\Service\ListFilters\SearchTerritoryFiles;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,7 +23,7 @@ class TerritoryManagementController extends AbstractController
     #[Route('/', name: 'back_territory_management_index', methods: ['GET'])]
     public function index(
         TagRepository $tagRepository,
-        ZoneRepository $zoneRepository,
+        ZoneSignalementQuery $zoneSignalementQuery,
         FileRepository $fileRepository,
         ArreteQuery $arreteQuery,
         #[Autowire(param: 'standard_max_list_pagination')] int $maxListPagination,
@@ -31,7 +31,7 @@ class TerritoryManagementController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $allTags = $tagRepository->findAllActive(null, $user);
-        $allZones = $zoneRepository->findForUserAndTerritory($user, null);
+        $allZones = $zoneSignalementQuery->findForUserAndTerritory($user, null);
         $countArretes = $arreteQuery->countForUser($user);
 
         $searchTerritoryFiles = new SearchTerritoryFiles($user);

@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Repository;
 
 use App\Entity\User;
+use App\Repository\Query\User\UserAffectationQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,10 +31,10 @@ class UserRepositoryTest extends KernelTestCase
 
     public function testFindInactiveUserWithNbAffectations(): void
     {
-        /** @var UserRepository $userRepository */
-        $userRepository = $this->entityManager->getRepository(User::class);
+        /** @var UserAffectationQuery $userAffectationQueryQuery */
+        $userAffectationQueryQuery = static::getContainer()->get(UserAffectationQuery::class);
 
-        $users = $userRepository->findInactiveWithNbAffectationPending();
+        $users = $userAffectationQueryQuery->findInactiveWithNbAffectationPending();
 
         $this->assertIsArray($users);
         $this->assertCount(11, $users);

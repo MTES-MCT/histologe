@@ -12,6 +12,7 @@ use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\AffectationRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\Query\User\UserSubscriptionQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
@@ -69,7 +70,7 @@ class ProfilController extends AbstractController
     public function index(
         UserRepository $userRepository,
         SignalementRepository $signalementRepository,
-        UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        UserSubscriptionQuery $userSubscriptionQuery,
     ): Response {
         $activeTerritoryAdminsByTerritory = [];
         /** @var User $user */
@@ -85,8 +86,8 @@ class ProfilController extends AbstractController
 
         $nbActiveSignalements = $signalementRepository->getActiveSignalementsForUser(user: $user, count: true);
         $nbActiveSignalementsWithInteractions = $signalementRepository->getActiveSignalementsWithInteractionsForUser(user: $user, count: true);
-        $nbSubsOnActiveSignalements = $userSignalementSubscriptionRepository->countSubscriptionsOnActiveSignalementsForUser($user);
-        $nbSubsOnSignalementsWithoutInteractions = $userSignalementSubscriptionRepository->getSubscriptionsOnSignalementsWithoutInteractionsForUser(user: $user, count: true);
+        $nbSubsOnActiveSignalements = $userSubscriptionQuery->countSubscriptionsOnActiveSignalementsForUser($user);
+        $nbSubsOnSignalementsWithoutInteractions = $userSubscriptionQuery->getSubscriptionsOnSignalementsWithoutInteractionsForUser(user: $user, count: true);
 
         return $this->render('back/profil/index.html.twig', [
             'activeTerritoryAdminsByTerritory' => $activeTerritoryAdminsByTerritory,
@@ -420,6 +421,7 @@ class ProfilController extends AbstractController
         ManagerRegistry $managerRegistry,
         SignalementRepository $signalementRepository,
         UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
+        UserSubscriptionQuery $userSubscriptionQuery,
         AffectationRepository $affectationRepository,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
     ): Response {
@@ -433,7 +435,7 @@ class ProfilController extends AbstractController
         $user = $this->getUser();
         if ('unsubscribe' === $request->query->get('action')) {
             /** @var UserSignalementSubscription[] $subsOnInactiveSignalements */
-            $subsOnInactiveSignalements = $userSignalementSubscriptionRepository->getSubscriptionsOnSignalementsWithoutInteractionsForUser(user: $user);
+            $subsOnInactiveSignalements = $userSubscriptionQuery->getSubscriptionsOnSignalementsWithoutInteractionsForUser(user: $user);
             $lastUserOnSignalements = [];
             foreach ($subsOnInactiveSignalements as $sub) {
                 if (!$user->isSuperAdmin()) { // les SA peuvent toujours se désabonner

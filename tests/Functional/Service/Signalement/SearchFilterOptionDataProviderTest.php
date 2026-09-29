@@ -8,11 +8,11 @@ use App\Repository\PartnerRepository;
 use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Repository\Query\Commune\CommuneEpciQuery;
 use App\Repository\Query\Statistics\CountStatisticsQuery;
+use App\Repository\Query\Zone\ZoneSignalementQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
-use App\Repository\ZoneRepository;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -30,7 +30,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
     private readonly BailleurRepository $bailleurRepository;
     private readonly TagAwareCacheInterface $cache;
     private readonly QualificationStatusService $qualificationStatusService;
-    private readonly ZoneRepository $zoneRepository;
+    private readonly ZoneSignalementQuery $zoneSignalementQuery;
     private readonly CountStatisticsQuery $countStatisticsQuery;
     private readonly CommuneEpciQuery $communeEpciQuery;
 
@@ -47,7 +47,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
         $this->bailleurRepository = static::getContainer()->get(BailleurRepository::class);
         $this->cache = static::getContainer()->get(TagAwareCacheInterface::class);
         $this->qualificationStatusService = static::getContainer()->get(QualificationStatusService::class);
-        $this->zoneRepository = static::getContainer()->get(ZoneRepository::class);
+        $this->zoneSignalementQuery = static::getContainer()->get(ZoneSignalementQuery::class);
         $this->countStatisticsQuery = static::getContainer()->get(CountStatisticsQuery::class);
         $this->communeEpciQuery = static::getContainer()->get(CommuneEpciQuery::class);
         $this->searchFilterOptionDataProvider = new SearchFilterOptionDataProvider(
@@ -60,7 +60,7 @@ class SearchFilterOptionDataProviderTest extends KernelTestCase
             $this->cache,
             $this->qualificationStatusService,
             $this->bailleurRepository,
-            $this->zoneRepository,
+            $this->zoneSignalementQuery,
             $this->countStatisticsQuery,
             $this->communeEpciQuery,
         );

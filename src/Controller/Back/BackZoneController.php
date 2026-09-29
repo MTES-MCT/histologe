@@ -7,7 +7,7 @@ use App\Entity\Zone;
 use App\Form\SearchZoneType;
 use App\Form\ZoneType;
 use App\Repository\Query\Zone\ZonePaginatorQuery;
-use App\Repository\ZoneRepository;
+use App\Repository\Query\Zone\ZoneSignalementQuery;
 use App\Security\Voter\ZoneVoter;
 use App\Service\Geometry\GeometryFactory;
 use App\Service\Import\CsvParser;
@@ -155,11 +155,11 @@ class BackZoneController extends AbstractController
     }
 
     #[Route('/{zone}', name: 'back_territory_management_zone_show', methods: ['GET'])]
-    public function show(Zone $zone, ZoneRepository $zoneRepository): Response
+    public function show(Zone $zone, ZoneSignalementQuery $zoneSignalementQuery): Response
     {
         $this->denyAccessUnlessGranted(ZoneVoter::ZONE_MANAGE, $zone);
 
-        $signalements = $zoneRepository->findSignalementsByZone($zone);
+        $signalements = $zoneSignalementQuery->findSignalementsByZone($zone);
 
         return $this->render('back/zone/show.html.twig', [
             'zone' => $zone,

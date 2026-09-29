@@ -6,7 +6,7 @@ use App\Dto\Settings;
 use App\Entity\Enum\ArreteType;
 use App\Entity\Territory;
 use App\Entity\User;
-use App\Repository\UserSearchFilterRepository;
+use App\Repository\Query\User\UserSearchFilterQuery;
 use App\Security\Voter\InjonctionBailleurVoter;
 use App\Service\Files\UserAvatar;
 use App\Service\Signalement\SearchFilterOptionDataProvider;
@@ -20,7 +20,7 @@ class SettingsFactory
     public function __construct(
         private readonly SearchFilterOptionDataProvider $searchFilterOptionDataProvider,
         private readonly UserAvatar $userAvatar,
-        private readonly UserSearchFilterRepository $userSearchFilterRepository,
+        private readonly UserSearchFilterQuery $userSearchFilterQuery,
         private readonly Security $security,
     ) {
     }
@@ -53,7 +53,7 @@ class SettingsFactory
             hasInjonction: $this->security->isGranted(InjonctionBailleurVoter::INJONCTION_BAILLEUR_SEE),
             bailleursSociaux: $filterOptionData['bailleursSociaux'],
             avatarOrPlaceHolder: $this->userAvatar->userAvatarOrPlaceHolder($user, 80),
-            savedSearches: $this->userSearchFilterRepository->findAllForUserArray($user),
+            savedSearches: $this->userSearchFilterQuery->findAllForUserArray($user),
             arreteTypes: $this->getArreteTypesGrouped(),
         );
     }

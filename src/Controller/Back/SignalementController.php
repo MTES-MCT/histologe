@@ -38,13 +38,13 @@ use App\Repository\FileRepository;
 use App\Repository\InterventionRepository;
 use App\Repository\PersonalNoteRepository;
 use App\Repository\Query\Interconnection\JobEventQuery;
+use App\Repository\Query\Zone\ZoneSignalementQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\SituationRepository;
 use App\Repository\TagRepository;
 use App\Repository\TiersInvitationRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
-use App\Repository\ZoneRepository;
 use App\Security\Voter\AffectationVoter;
 use App\Security\Voter\SignalementVoter;
 use App\Service\EmailAlert\EmailAlertChecker;
@@ -95,7 +95,7 @@ class SignalementController extends AbstractController
         SignalementDesordresProcessor $signalementDesordresProcessor,
         DesordreCategorieRepository $desordreCategorieRepository,
         DesordreCritereRepository $desordreCritereRepository,
-        ZoneRepository $zoneRepository,
+        ZoneSignalementQuery $zoneSignalementQuery,
         SituationRepository $situationRepository,
         CritereRepository $critereRepository,
         FileRepository $fileRepository,
@@ -328,7 +328,7 @@ class SignalementController extends AbstractController
             'pendingVisites' => $interventionRepository->getPendingVisitesForSignalement($signalement),
             'linkToVisitGrid' => $linkToVisitGrid,
             'allPhotosOrdered' => $allPhotosOrdered,
-            'zones' => $zoneRepository->findZonesBySignalement($signalement),
+            'zones' => $zoneSignalementQuery->findZonesBySignalement($signalement),
             'signalementsOnSameAddress' => $signalementsOnSameAddress,
             'arretesOnSameAddress' => $arretesOnSameAddress,
             'routeForListOfSignalementOnAddress' => $signalementAddressContentService->getRouteForListOfSignalementOnAddress($signalement),

@@ -3,6 +3,7 @@
 namespace App\Validator;
 
 use App\Entity\UserSearchFilter;
+use App\Repository\Query\User\UserSearchFilterQuery;
 use App\Repository\UserSearchFilterRepository;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -11,8 +12,10 @@ class UserSearchFilterParamsValidator extends ConstraintValidator
 {
     public const MAX_FILTERS_PER_USER = 50;
 
-    public function __construct(private UserSearchFilterRepository $repo)
-    {
+    public function __construct(
+        private UserSearchFilterRepository $userSearchFilterRepository,
+        private UserSearchFilterQuery $userSearchFilterQuery,
+    ) {
     }
 
     /**
@@ -31,7 +34,7 @@ class UserSearchFilterParamsValidator extends ConstraintValidator
             return;
         }
 
-        $count = $this->repo->countForUser($user);
+        $count = $this->userSearchFilterQuery->countForUser($user);
         if (!$entity->getId() && $count >= self::MAX_FILTERS_PER_USER) {
             $this->context
                 ->buildViolation('Vous avez atteint la limite de '.self::MAX_FILTERS_PER_USER.' recherches enregistrées.')
@@ -40,7 +43,7 @@ class UserSearchFilterParamsValidator extends ConstraintValidator
 
         $normalizedNew = $this->normalizeParams($params);
 
-        $existingSearches = $this->repo->findBy(['user' => $user]);
+        $existingSearches = $this->userSearchFilterRepository->findBy(['user' => $user]);
 
         foreach ($existingSearches as $existing) {
             if ($existing->getId() === $entity->getId()) {
