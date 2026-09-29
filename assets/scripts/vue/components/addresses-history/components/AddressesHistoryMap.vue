@@ -38,6 +38,8 @@ const ZONES_OUTLINE_LAYER_ID = 'zones-territory-outline'
 const CLUSTER_COLOR_SMALL = '#efcb3a' // $yellow-tournesol-850, moins de 10 adresses
 const CLUSTER_COLOR_MEDIUM = '#fbb8f6' // $purple-glycine-850, de 10 à 99 adresses
 const CLUSTER_COLOR_LARGE = '#fcc0b0' // $orange-terre-battue-850, 100 adresses et plus
+const MARKER_DOSSIERS_MULTIPLES = 'EFB900' // jaune pour adresse avec dossiers multiples
+const MARKER_FALLBACK = '#000091' // bleu
 
 // Constaté sur les fixtures, mais fallback pour les cas réels, au cas où... :
 // Rayon en mètres sur lequel on répartit les adresses partageant exactement les mêmes lat / lng
@@ -244,12 +246,12 @@ function drawMarkerShape(context: CanvasRenderingContext2D, color: string, point
 function addMarkerIcons() {
   // Rond jaune plein : plusieurs dossiers à l'adresse
   registerMarkerImage(MARKER_ICON_DOSSIERS_MULTIPLES, (context) => {
-    drawMarkerCircle(context, '#EFB900', '#EFB900')
+    drawMarkerCircle(context, MARKER_DOSSIERS_MULTIPLES, MARKER_DOSSIERS_MULTIPLES)
   })
 
-  // Rond blanc cerclé de bleu : ni dossiers multiples, ni arrêté
+  // Rond bleu : ni dossiers multiples, ni arrêté (fallback - ne devrait pas arriver)
   registerMarkerImage(MARKER_ICON_DEFAULT, (context) => {
-    drawMarkerCircle(context, '#FFFFFF', '#000091')
+    drawMarkerCircle(context, MARKER_FALLBACK, MARKER_FALLBACK)
   })
 
   // Un picto par groupe de types d'arrêtés
