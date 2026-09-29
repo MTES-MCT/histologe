@@ -16,7 +16,7 @@ class UserSearchFilterQuery
 
     public function countForUser(User $user): int
     {
-        return (int) $this->entityManager->createQueryBuilder->from(Signalement::class, 's')
+        return (int) $this->entityManager->createQueryBuilder()->from(Signalement::class, 's')
             ->select('COUNT(s.id)')
             ->where('s.user = :user')
             ->setParameter('user', $user)
@@ -29,7 +29,7 @@ class UserSearchFilterQuery
      */
     public function findAllForUserArray(User $user): array
     {
-        $qb = $this->entityManager->createQueryBuilder->from(UserSearchFilter::class, 'uss')
+        $qb = $this->entityManager->createQueryBuilder()->from(UserSearchFilter::class, 'uss')
             ->select('uss.id, uss.name, uss.params, uss.createdAt, uss.updatedAt')
             ->where('uss.user = :user')
             ->setParameter('user', $user)
