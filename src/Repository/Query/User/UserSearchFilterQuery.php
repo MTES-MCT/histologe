@@ -2,7 +2,6 @@
 
 namespace App\Repository\Query\User;
 
-use App\Entity\Signalement;
 use App\Entity\User;
 use App\Entity\UserSearchFilter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,7 +15,7 @@ class UserSearchFilterQuery
 
     public function countForUser(User $user): int
     {
-        return (int) $this->entityManager->createQueryBuilder()->from(Signalement::class, 's')
+        return (int) $this->entityManager->createQueryBuilder()->from(UserSearchFilter::class, 's')
             ->select('COUNT(s.id)')
             ->where('s.user = :user')
             ->setParameter('user', $user)
