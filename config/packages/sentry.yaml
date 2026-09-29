@@ -6,6 +6,9 @@ when@prod:
             enabled: true # flushes Sentry messages at the end of each message handling
             capture_soft_fails: true # captures exceptions marked for retry too
         options:
+          ignore_exceptions:
+              - 'Symfony\Component\Security\Core\Exception\AccessDeniedException'
+              - 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException'
           environment: '%env(resolve:SENTRY_ENVIRONMENT)%' # prod|staging
           # Specify a fixed sample rate:
           traces_sample_rate: '%env(float:SENTRY_TRACES_SAMPLE_RATE)%' # Between 0 and 1
@@ -39,7 +42,7 @@ when@prod:
       Sentry\Monolog\Handler:
         arguments:
           $hub: '@Sentry\State\HubInterface'
-          $level: !php/const Monolog\Logger::ERROR
+          $level: !php/const Monolog\Logger::WARNING
           $bubble: false
 
       Sentry\SentryBundle\Monolog\LogsHandler:

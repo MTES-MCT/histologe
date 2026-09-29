@@ -67,15 +67,9 @@ class UploadHandlerService
 
         try {
             $distantFolder = $this->parameterBag->get('bucket_tmp_dir');
-            $this->logger->info('Téléversement du fichier vers le dossier temporaire du bucket.', [
-                'original_filename' => $file->getClientOriginalName(),
-                'new_filename' => $newFilename,
-                'file_type' => $fileType,
-                'target_path' => $distantFolder.$newFilename,
-            ]);
             $fileResource = fopen($file->getPathname(), 'r');
             if (false === $fileResource) {
-                throw new FileException(sprintf('Impossible d’ouvrir le fichier : %s', $file->getPathname()));
+                throw new FileException('Impossible d’ouvrir le fichier');
             }
             $this->fileStorage->writeStream($distantFolder.$newFilename, $fileResource);
             fclose($fileResource);
@@ -83,7 +77,6 @@ class UploadHandlerService
             $this->logger->error(
                 'Erreur lors du téléversement du fichier vers le dossier temporaire du bucket.',
                 [
-                    'new_filename' => $newFilename,
                     'exception' => $exception->getMessage(),
                 ]
             );
@@ -161,26 +154,19 @@ class UploadHandlerService
             $newPath = $dirname.$info['filename'].$ext;
 
             if ($this->fileStorage->fileExists($newPath)) {
-                $this->logger->info('Le fichier existe déjà à l’emplacement cible.', [
-                    'target_filepath' => $newPath,
-                ]);
+                $this->logger->info('Le fichier existe déjà à l’emplacement cible.');
 
                 return $newPath;
             }
 
             if ($this->fileStorage->fileExists($filePath)) {
                 $this->fileStorage->move($filePath, $newPath);
-                $this->logger->info('Déplacement du fichier.', [
-                    'from' => $filePath,
-                    'to' => $newPath,
-                ]);
 
                 return $newPath;
             }
         } catch (FilesystemException $exception) {
             $this->logger->error('Erreur lors du déplacement du fichier.', [
                 'exception' => $exception->getMessage(),
-                'filepath' => $filePath,
             ]);
         }
 
@@ -218,8 +204,6 @@ class UploadHandlerService
             $this->logger->error(
                 'Erreur lors de la copie du fichier avec un nouveau nom.',
                 [
-                    'filename' => $filename,
-                    'new_filename' => $newFilename,
                     'exception' => $exception->getMessage(),
                 ]
             );
@@ -256,7 +240,6 @@ class UploadHandlerService
         } catch (\Throwable $exception) {
             $this->logger->error('Erreur lors de la suppression du fichier.', [
                 'exception' => $exception->getMessage(),
-                'filename' => $file->getFilename() ?? '',
             ]);
 
             return false;
@@ -298,11 +281,6 @@ class UploadHandlerService
     {
         $fromFolder = $fromFolder ?? $this->parameterBag->get('uploads_tmp_dir');
         $tmpFilepath = $fromFolder.$filename;
-        $this->logger->info('Envoi du fichier vers le bucket depuis un chemin local.', [
-            'filename' => $filename,
-            'from_folder' => $fromFolder,
-            'tmp_filepath' => $tmpFilepath,
-        ]);
 
         $fileResource = null;
         try {
@@ -312,7 +290,7 @@ class UploadHandlerService
 
             $fileResource = fopen($tmpFilepath, 'r');
             if (false === $fileResource) {
-                throw new FileException(sprintf('Impossible d’ouvrir le fichier : %s', $tmpFilepath));
+                throw new FileException('Impossible d’ouvrir le fichier');
             }
             $this->fileStorage->writeStream($newFilename, $fileResource);
 
@@ -321,19 +299,14 @@ class UploadHandlerService
             $this->logger->error(
                 'Erreur lors de l\'envoi de fichier vers le bucket depuis un chemin local.',
                 [
-                    'filename' => $filename,
                     'from_folder' => $fromFolder,
-                    'tmp_filepath' => $tmpFilepath,
-                    'target_filename' => $newFilename,
                     'exception' => $exception->getMessage(),
                 ]
             );
         } catch (FileException $exception) {
             $this->logger->error('Impossible d\'ouvrir le fichier local.',
                 [
-                    'filename' => $filename,
                     'from_folder' => $fromFolder,
-                    'tmp_filepath' => $tmpFilepath,
                     'exception' => $exception->getMessage(),
                 ]
             );
@@ -361,14 +334,10 @@ class UploadHandlerService
         }
         try {
             $tmpFilepath = $file->getPathname();
-            $this->logger->info('Téléversement d\'un fichier vers le bucket.', [
-                'original_filename' => $file->getClientOriginalName(),
-                'target_filename' => $newFilename,
-            ]);
 
             $fileResource = fopen($tmpFilepath, 'r');
             if (false === $fileResource) {
-                throw new FileException(sprintf('Impossible d’ouvrir le fichier : %s', $file->getPathname()));
+                throw new FileException('Impossible d’ouvrir le fichier');
             }
             $this->fileStorage->writeStream($newFilename, $fileResource);
             fclose($fileResource);
@@ -378,7 +347,6 @@ class UploadHandlerService
             $this->logger->error(
                 'Erreur lors du téléversement du fichier vers le bucket.',
                 [
-                    'target_filename' => $newFilename,
                     'exception' => $exception->getMessage(),
                 ]
             );
@@ -401,9 +369,7 @@ class UploadHandlerService
 
             $content = file_get_contents($bucketFilepath);
             if (false === $content) {
-                $this->logger->error('Impossible de récupérer le contenu du fichier: ', [
-                    'filename' => $filename,
-                ]);
+                $this->logger->error('Impossible de récupérer le contenu du fichier');
 
                 return null;
             }
@@ -415,10 +381,6 @@ class UploadHandlerService
             $this->logger->error(
                 'Erreur lors de la création d\’une copie locale temporaire depuis le bucket.',
                 [
-                    'filename' => $filename,
-                    'resize_variant' => $fileResize,
-                    'tmp_filepath' => $tmpFilepath,
-                    'bucket_filepath' => $bucketFilepath,
                     'exception' => $exception->getMessage(),
                 ]
             );
@@ -447,7 +409,6 @@ class UploadHandlerService
             $this->logger->error(
                 'Impossible d’ouvrir un flux de lecture depuis le bucket.',
                 [
-                    'filename' => $filename,
                     'exception' => $exception->getMessage(),
                 ]
             );
@@ -462,19 +423,15 @@ class UploadHandlerService
     public function createTmpFileFromBucket(string $from, string $to): void
     {
         try {
-            $this->logger->info('Création d\'un fichier temporaire local depuis le bucket.', [
-                'from' => $from,
-                'to' => $to,
-            ]);
             $resourceBucket = $this->fileStorage->read($from);
             $resourceFileSystem = @fopen($to, 'w');
             if (false === $resourceFileSystem) {
-                throw new FileException(sprintf('Impossible de créer le fichier temporaire : %s', $to));
+                throw new FileException('Impossible de créer le fichier temporaire');
             }
 
             $bytesWritten = fwrite($resourceFileSystem, $resourceBucket);
             if (false === $bytesWritten) {
-                throw new FileException(sprintf('Erreur d’écriture dans le fichier temporaire : %s', $to));
+                throw new FileException('Erreur d’écriture dans le fichier temporaire');
             }
 
             fclose($resourceFileSystem);
@@ -483,8 +440,6 @@ class UploadHandlerService
             $this->logger->error(
                 $errorMessage,
                 [
-                    'from' => $from,
-                    'to' => $to,
                     'exception' => $exception->getMessage(),
                 ]
             );
@@ -502,8 +457,6 @@ class UploadHandlerService
             }
         } catch (\Throwable $exception) {
             $this->logger->error('Erreur lors de la récupération de la taille du fichier.', [
-                'filename' => $filename,
-                'filename_resized' => $fileResize ?? null,
                 'exception' => $exception->getMessage(),
             ]);
         }
@@ -522,9 +475,7 @@ class UploadHandlerService
             }
         } catch (\Throwable $exception) {
             $this->logger->error('Erreur lors de la vérification des variants de fichier.', [
-                'filename' => $filename,
                 'exception' => $exception->getMessage(),
-                'variant_names' => $variantNames ?? null,
             ]);
         }
 

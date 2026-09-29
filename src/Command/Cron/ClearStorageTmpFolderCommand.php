@@ -10,7 +10,6 @@ use App\Service\UploadHandlerService;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\StorageAttributes;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -30,7 +29,6 @@ class ClearStorageTmpFolderCommand extends AbstractCronCommand
         #[Target('file.storage')] private readonly FilesystemOperator $fileStorage,
         private readonly ParameterBagInterface $parameterBag,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
-        private readonly LoggerInterface $logger,
         private readonly FileRepository $fileRepository,
         private readonly UploadHandlerService $uploadHandlerService,
     ) {
@@ -84,11 +82,7 @@ class ClearStorageTmpFolderCommand extends AbstractCronCommand
                 continue;
             }
             $filePath = $file->path();
-            $filePathDate = date('Y-m-d H:i:s', $file->lastModified());
             $this->fileStorage->delete($filePath);
-            $this->logger->info(
-                sprintf('Fichier supprimé : %s modifié le %s', $filePath, $filePathDate)
-            );
             $progressBar->advance();
         }
         $progressBar->finish();
@@ -112,12 +106,7 @@ class ClearStorageTmpFolderCommand extends AbstractCronCommand
         $progressBar = new ProgressBar($output, $nbExports);
         $progressBar->start();
         foreach ($files as $file) {
-            if ($this->uploadHandlerService->deleteFile($file)) {
-                $filename = $file->getFilename();
-                $this->logger->info(
-                    sprintf('Fichier supprimé : %s', $filename)
-                );
-            }
+            $this->uploadHandlerService->deleteFile($file);
             $progressBar->advance();
         }
         $progressBar->finish();

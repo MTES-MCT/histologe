@@ -84,10 +84,8 @@ class JobEventHttpClient implements HttpClientInterface
                     'response_content' => $responseContent = $response->getContent(false),
                 ]);
             } else {
-                $this->logger->info('HTTP request completed', [
-                    'status_code' => $statusCode = $response->getStatusCode(),
-                    'response_content' => $content = $response->getContent(),
-                ]);
+                $statusCode = $response->getStatusCode();
+                $content = $response->getContent();
                 $responseContent = json_encode($this->filterResponse($content));
             }
         } catch (\Throwable $exception) {

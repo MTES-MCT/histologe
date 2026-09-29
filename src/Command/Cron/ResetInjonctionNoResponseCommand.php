@@ -67,7 +67,7 @@ class ResetInjonctionNoResponseCommand extends AbstractCronCommand
                 );
                 $this->entityManager->commit();
             } catch (\Exception $e) {
-                $this->logger->critical($e->getMessage());
+                $this->logger->error($e->getMessage());
                 $io->error($e->getMessage());
 
                 return Command::FAILURE;

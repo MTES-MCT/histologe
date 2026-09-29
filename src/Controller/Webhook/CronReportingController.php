@@ -38,7 +38,7 @@ class CronReportingController extends AbstractController
         $stats = $data['stats'] ?? 'N/A';
 
         if (isset($data['error'])) {
-            $logger->error('Cron job error: {job_title}', [
+            $logger->critical('Cron job error: {job_title}', [
                 'job_title' => $data['title'],
                 'error' => $data['error'],
                 'database' => $database,

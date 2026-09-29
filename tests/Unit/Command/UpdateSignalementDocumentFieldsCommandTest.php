@@ -16,7 +16,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
@@ -29,7 +28,6 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
     private MockObject&FilesystemOperator $fileStorage;
     private MockObject&UploadHandlerService $uploadHandlerService;
     private MockObject&FileManager $fileManager;
-    private MockObject&LoggerInterface $logger;
     private MockObject&EntityManagerInterface $entityManager;
     private Territory $territory;
 
@@ -42,7 +40,6 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
         $this->fileStorage = $this->createMock(FilesystemOperator::class);
         $this->uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $this->fileManager = $this->createMock(FileManager::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
         $this->territory = (new Territory())->setZip('01')->setName('Ain');
     }
@@ -126,7 +123,6 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             $this->fileStorage,
             $this->uploadHandlerService,
             $this->fileManager,
-            $this->logger,
             $this->entityManager,
         );
 
@@ -155,7 +151,6 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             $this->fileStorage,
             $this->uploadHandlerService,
             $this->fileManager,
-            $this->logger,
             $this->entityManager,
         );
         $commandTester = new CommandTester($command);
@@ -190,7 +185,6 @@ class UpdateSignalementDocumentFieldsCommandTest extends TestCase
             $this->fileStorage,
             $this->uploadHandlerService,
             $this->fileManager,
-            $this->logger,
             $this->entityManager,
         );
         $commandTester = new CommandTester($command);

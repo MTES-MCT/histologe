@@ -13,7 +13,6 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Faker\Factory;
-use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -50,7 +49,6 @@ class GridAffectationLoaderTest extends KernelTestCase
             static::getContainer()->get(UserFactory::class),
             static::getContainer()->get(UserRepository::class),
             static::getContainer()->get(ValidatorInterface::class),
-            static::getContainer()->get(LoggerInterface::class),
             static::getContainer()->get(NotificationMailerRegistry::class),
             $this->entityManager,
         );

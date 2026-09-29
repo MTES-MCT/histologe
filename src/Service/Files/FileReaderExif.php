@@ -20,7 +20,7 @@ class FileReaderExif
         try {
             $image = $this->imageManager->decode($this->imageVariantProvider->getFileVariant($file->getFilename()));
         } catch (\Exception $e) {
-            $this->logger->error('Impossible de décoder l\'image pour le fichier : '.$file->getFilename().'. Erreur : '.$e->getMessage());
+            $this->logger->error('Impossible de décoder l\'image pour le fichier. Erreur : '.$e->getMessage());
         }
         $datePriseDeVue = isset($image) ? $image->exif('EXIF.DateTimeOriginal') : null;
         if ($datePriseDeVue) {
@@ -34,7 +34,7 @@ class FileReaderExif
                     $file->setDatePriseDeVue($date);
                 }
             } catch (\Exception $e) {
-                $this->logger->error('Impossible de convertir la donnée EXIF DateTimeOriginal ("'.$datePriseDeVue.'") en DateTimeImmutable pour le fichier : '.$file->getFilename());
+                $this->logger->error('Impossible de convertir la donnée EXIF DateTimeOriginal ("'.$datePriseDeVue.'") en DateTimeImmutable pour le fichier. Erreur : '.$e->getMessage());
             }
         }
     }

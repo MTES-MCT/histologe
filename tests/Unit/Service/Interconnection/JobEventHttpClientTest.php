@@ -78,7 +78,7 @@ class JobEventHttpClientTest extends TestCase
 
         /** @var MockObject&LoggerInterface $loggerMock */
         $loggerMock = $this->createMock(LoggerInterface::class);
-        $loggerMock->expects($this->exactly(2))
+        $loggerMock->expects($this->exactly(1))
             ->method('info');
 
         /** @var MockObject&EntityManagerInterface $entityManagerMock */

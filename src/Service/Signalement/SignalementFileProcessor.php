@@ -91,7 +91,7 @@ class SignalementFileProcessor
             if ($fileSizeOk) {
                 if ($file instanceof UploadedFile && !UploadHandlerService::isAcceptedDocumentFormat($file)) {
                     $message = UnsupportedFileFormatException::getFileFormatErrorMessage($file);
-                    $fileInfo = ' ( Fichier : '.$file->__toString().' MimeType : '.$file->getMimeType().' )';
+                    $fileInfo = ' (MimeType : '.$file->getMimeType().' )';
                     $this->logger->error($message.$fileInfo);
                     $this->errors[] = $message;
                 } else {

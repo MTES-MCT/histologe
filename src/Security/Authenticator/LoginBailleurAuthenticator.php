@@ -67,11 +67,7 @@ class LoginBailleurAuthenticator extends AbstractLoginFormAuthenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
     {
         $reference = (string) $request->request->get('bailleur_reference', 'inconnu');
-        $code = (string) $request->request->get('bailleur_code', 'inconnu');
-        $this->logger->warning('Authentification failed for bailleur', [
-            'reference' => $reference,
-            'code' => $code,
-        ]);
+        $this->logger->notice('Authentification failed for bailleur', ['reference' => $reference]);
 
         return parent::onAuthenticationFailure($request, $exception);
     }

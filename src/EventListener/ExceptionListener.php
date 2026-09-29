@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
 readonly class ExceptionListener
@@ -26,6 +27,7 @@ readonly class ExceptionListener
         NotFoundHttpException::class,
         AccessDeniedHttpException::class,
         SuspiciousOperationException::class,
+        InsufficientAuthenticationException::class,
     ];
 
     public function __construct(

@@ -44,7 +44,6 @@ class FileScanner
         $scannedFile = $this->scanner->scan($copiedFilepath);
         if (!$scannedFile->isClean()) {
             $this->logger->error('Le fichier semble infecté', [
-                'filename' => $scannedFile->getFileName(),
                 'response' => $scannedFile->getRawResponse(),
                 'virus' => $scannedFile->getVirusName(),
                 'is_clean' => false,

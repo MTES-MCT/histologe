@@ -41,7 +41,6 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
         $logoutUrl = null;
 
         if ($user instanceof SignalementUser) {
-            $this->logger->info('App usager logout');
             $this->clearSession($session);
             $response = new RedirectResponse(
                 $this->urlGenerator->generate(
@@ -53,7 +52,6 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
             return;
         }
         if ($user instanceof SignalementBailleur) {
-            $this->logger->info('App bailleur logout');
             $this->clearSession($session);
             $response = new RedirectResponse($this->urlGenerator->generate('app_login_bailleur'));
             $event->setResponse($response);
@@ -66,7 +64,6 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
                 $logoutUrl = $this->proConnectAuthentication->getLogoutUrl();
                 $this->clearSession($session);
                 if ($logoutUrl) {
-                    $this->logger->info('ProConnect logout');
                     $event->setResponse(new RedirectResponse($logoutUrl));
 
                     return;
@@ -93,13 +90,11 @@ readonly class LogoutSubscriber implements EventSubscriberInterface
 
             return;
         }
-        $this->logger->info('App logout');
         $this->clearSession($session);
     }
 
     private function clearSession(SessionInterface $session): void
     {
-        $this->logger->info('Clearing session');
         $this->proConnectContext->clearSession();
         $session->invalidate();
     }
