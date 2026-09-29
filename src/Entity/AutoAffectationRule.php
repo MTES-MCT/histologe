@@ -85,6 +85,20 @@ class AutoAffectationRule implements EntityHistoryInterface
         message: 'Choisissez une option valide: all, non, oui, caf, msa ou nsp')]
     private string $allocataire;
 
+    #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, oui, non or nsp'])]
+    #[Assert\NotBlank(message: 'Merci de renseigner l\'accompagnement par un travailleur social.')]
+    #[Assert\Choice(
+        choices: ['all', 'oui', 'non', 'nsp'],
+        message: 'Choisissez une option valide: all, oui, non ou nsp')]
+    private string $accompagnementTravailleurSocial = 'all';
+
+    #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, oui, non or nsp'])]
+    #[Assert\NotBlank(message: 'Merci de renseigner la demande de logement social.')]
+    #[Assert\Choice(
+        choices: ['all', 'oui', 'non', 'nsp'],
+        message: 'Choisissez une option valide: all, oui, non ou nsp')]
+    private string $demandeLogementSocial = 'all';
+
     /** @var list<Qualification> $proceduresSuspectees */
     #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: Qualification::class)]
     private ?array $proceduresSuspectees = [];
@@ -213,6 +227,30 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this;
     }
 
+    public function getAccompagnementTravailleurSocial(): string
+    {
+        return $this->accompagnementTravailleurSocial;
+    }
+
+    public function setAccompagnementTravailleurSocial(string $accompagnementTravailleurSocial): static
+    {
+        $this->accompagnementTravailleurSocial = $accompagnementTravailleurSocial;
+
+        return $this;
+    }
+
+    public function getDemandeLogementSocial(): string
+    {
+        return $this->demandeLogementSocial;
+    }
+
+    public function setDemandeLogementSocial(string $demandeLogementSocial): static
+    {
+        $this->demandeLogementSocial = $demandeLogementSocial;
+
+        return $this;
+    }
+
     /** @return list<Qualification> */
     public function getProceduresSuspectees(): ?array
     {
@@ -298,6 +336,28 @@ class AutoAffectationRule implements EntityHistoryInterface
                 break;
             default:
                 $description .= 'allocataires et non-allocataires.';
+                break;
+        }
+        switch ($this->getAccompagnementTravailleurSocial()) {
+            case 'oui':
+                $description .= ' Elle concerne les foyers accompagnés par un travailleur social.';
+                break;
+            case 'non':
+                $description .= ' Elle concerne les foyers non accompagnés par un travailleur social.';
+                break;
+            case 'nsp':
+                $description .= ' Elle concerne les foyers dont on ne sait pas s\'ils sont accompagnés par un travailleur social.';
+                break;
+        }
+        switch ($this->getDemandeLogementSocial()) {
+            case 'oui':
+                $description .= ' Elle concerne les foyers ayant fait une demande de logement social.';
+                break;
+            case 'non':
+                $description .= ' Elle concerne les foyers n\'ayant pas fait de demande de logement social.';
+                break;
+            case 'nsp':
+                $description .= ' Elle concerne les foyers dont on ne sait pas s\'ils ont fait une demande de logement social.';
                 break;
         }
 

@@ -6,6 +6,8 @@
         <th scope="col">Profil déclarant</th>
         <th scope="col">Parc</th>
         <th scope="col">Allocataire</th>
+        <th scope="col">Accompagnement travailleur social</th>
+        <th scope="col">Demande logement social</th>
         <th scope="col">Code insee inclus</th>
         <th scope="col">Code insee exclus</th>
         <th scope="col">Id partenaires exclus</th>
@@ -29,6 +31,8 @@
                 <td>{{ autoaffectationrule.profileDeclarant }}</td>
                 <td>{{ autoaffectationrule.parc }}</td>
                 <td>{{ autoaffectationrule.allocataire }}</td>
+                <td>{{ autoaffectationrule.accompagnementTravailleurSocial }}</td>
+                <td>{{ autoaffectationrule.demandeLogementSocial }}</td>
                 <td>
                     {% if autoaffectationrule.inseeToInclude %}
                         {% for insee in autoaffectationrule.inseeToInclude|split(',') %}
@@ -90,7 +94,7 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="10">Aucune règle d'auto-affectation trouvée</td>
+                <td colspan="13">Aucune règle d'auto-affectation trouvée</td>
             </tr>
         {% endfor %}
     {% endset %}

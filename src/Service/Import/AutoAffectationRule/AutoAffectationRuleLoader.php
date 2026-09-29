@@ -19,6 +19,7 @@ class AutoAffectationRuleLoader
 
     private const array VALID_PARC = ['all', 'prive', 'public', 'non_renseigne'];
     private const array VALID_ALLOCATAIRE = ['all', 'oui', 'non', 'caf', 'msa', 'nsp'];
+    private const array VALID_OUI_NON_NSP = ['all', 'oui', 'non', 'nsp'];
 
     /**
      * @var array{nb_rules_created: int, nb_rules_archived: int}
@@ -65,6 +66,8 @@ class AutoAffectationRuleLoader
                 $parsed['profileDeclarant'],
                 $parsed['parc'],
                 $parsed['allocataire'],
+                $parsed['accompagnementTravailleurSocial'],
+                $parsed['demandeLogementSocial'],
                 $parsed['inseeToInclude'],
                 $parsed['inseeToExclude'],
                 $parsed['partnerToExclude'],
@@ -101,6 +104,8 @@ class AutoAffectationRuleLoader
             $rule->setProfileDeclarant(trim($row[AutoAffectationRuleHeader::PROFILE_DECLARANT]));
             $rule->setParc(trim($row[AutoAffectationRuleHeader::PARC]));
             $rule->setAllocataire(trim($row[AutoAffectationRuleHeader::ALLOCATAIRE]));
+            $rule->setAccompagnementTravailleurSocial(trim($row[AutoAffectationRuleHeader::ACCOMPAGNEMENT_TRAVAILLEUR_SOCIAL]));
+            $rule->setDemandeLogementSocial(trim($row[AutoAffectationRuleHeader::DEMANDE_LOGEMENT_SOCIAL]));
             $rule->setInseeToInclude(implode(',', $this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_INCLUDE]) ?? []));
             $rule->setInseeToExclude($this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_EXCLUDE]));
             $rule->setPartnerToExclude($this->parseArrayField($row[AutoAffectationRuleHeader::PARTNER_TO_EXCLUDE]));
@@ -137,7 +142,7 @@ class AutoAffectationRuleLoader
     /**
      * @param array<string, string> $row
      *
-     * @return array{status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string, inseeToInclude: ?array<string>, inseeToExclude: ?array<string>, partnerToExclude: ?array<string>, rawProcedures: string, proceduresSuspectees: ?list<Qualification>}
+     * @return array{status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string, accompagnementTravailleurSocial: string, demandeLogementSocial: string, inseeToInclude: ?array<string>, inseeToExclude: ?array<string>, partnerToExclude: ?array<string>, rawProcedures: string, proceduresSuspectees: ?list<Qualification>}
      */
     private function parseRow(array $row): array
     {
@@ -151,6 +156,8 @@ class AutoAffectationRuleLoader
             'profileDeclarant' => trim($row[AutoAffectationRuleHeader::PROFILE_DECLARANT] ?? ''),
             'parc' => trim($row[AutoAffectationRuleHeader::PARC] ?? ''),
             'allocataire' => trim($row[AutoAffectationRuleHeader::ALLOCATAIRE] ?? ''),
+            'accompagnementTravailleurSocial' => trim($row[AutoAffectationRuleHeader::ACCOMPAGNEMENT_TRAVAILLEUR_SOCIAL] ?? ''),
+            'demandeLogementSocial' => trim($row[AutoAffectationRuleHeader::DEMANDE_LOGEMENT_SOCIAL] ?? ''),
             'inseeToInclude' => $this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_INCLUDE] ?? ''),
             'inseeToExclude' => $this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_EXCLUDE] ?? ''),
             'partnerToExclude' => $this->parseArrayField($row[AutoAffectationRuleHeader::PARTNER_TO_EXCLUDE] ?? ''),
@@ -205,6 +212,12 @@ class AutoAffectationRuleLoader
         }
         if (!\in_array($parsed['allocataire'], self::VALID_ALLOCATAIRE)) {
             $errors .= sprintf('<li>Allocataire "%s" invalide (valeurs acceptées : %s)</li>', $parsed['allocataire'], implode(', ', self::VALID_ALLOCATAIRE));
+        }
+        if (!\in_array($parsed['accompagnementTravailleurSocial'], self::VALID_OUI_NON_NSP)) {
+            $errors .= sprintf('<li>Accompagnement travailleur social "%s" invalide (valeurs acceptées : %s)</li>', $parsed['accompagnementTravailleurSocial'], implode(', ', self::VALID_OUI_NON_NSP));
+        }
+        if (!\in_array($parsed['demandeLogementSocial'], self::VALID_OUI_NON_NSP)) {
+            $errors .= sprintf('<li>Demande logement social "%s" invalide (valeurs acceptées : %s)</li>', $parsed['demandeLogementSocial'], implode(', ', self::VALID_OUI_NON_NSP));
         }
 
         return $errors;
@@ -365,6 +378,8 @@ class AutoAffectationRuleLoader
         string $profileDeclarant,
         string $parc,
         string $allocataire,
+        string $accompagnementTravailleurSocial,
+        string $demandeLogementSocial,
         ?array $inseeToInclude,
         ?array $inseeToExclude,
         ?array $partnerToExclude,
@@ -388,6 +403,8 @@ class AutoAffectationRuleLoader
             $profileDeclarant,
             $parc,
             $allocataire,
+            $accompagnementTravailleurSocial,
+            $demandeLogementSocial,
             implode(',', $sortedInseeInclude),
             implode(',', $sortedInseeExclude),
             implode(',', $sortedPartnerExclude),

@@ -85,6 +85,32 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
         $this->assertStringContainsString('Allocataire "inconnu" invalide', $errors[0]);
     }
 
+    public function testValidateReturnsErrorForInvalidAccompagnementTravailleurSocial(): void
+    {
+        $errors = $this->loader->validate([$this->buildRow(accompagnementTravailleurSocial: 'inconnu')], $this->herault);
+
+        $this->assertCount(1, $errors);
+        $this->assertStringContainsString('Accompagnement travailleur social "inconnu" invalide', $errors[0]);
+    }
+
+    public function testValidateReturnsErrorForInvalidDemandeLogementSocial(): void
+    {
+        $errors = $this->loader->validate([$this->buildRow(demandeLogementSocial: '')], $this->herault);
+
+        $this->assertCount(1, $errors);
+        $this->assertStringContainsString('Demande logement social "" invalide', $errors[0]);
+    }
+
+    public function testValidateDoesNotDetectDuplicateWhenOnlyNewCriteriaDiffer(): void
+    {
+        $errors = $this->loader->validate(
+            [$this->buildRow(accompagnementTravailleurSocial: 'oui'), $this->buildRow(accompagnementTravailleurSocial: 'non')],
+            $this->herault,
+        );
+
+        $this->assertEmpty($errors);
+    }
+
     public function testValidateReturnsErrorForInseeCodesOutsideTerritory(): void
     {
         $errors = $this->loader->validate([$this->buildRow(inseeToInclude: '75056')], $this->herault);
@@ -178,6 +204,8 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
             profileDeclarant: 'LOCATAIRE',
             parc: 'public',
             allocataire: 'oui',
+            accompagnementTravailleurSocial: 'oui',
+            demandeLogementSocial: 'nsp',
             inseeToInclude: '34172,34173',
             inseeToExclude: '34001',
             partnerToExclude: '999',
@@ -197,6 +225,8 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
         $this->assertSame('34172,34173', $rule->getInseeToInclude());
         $this->assertSame(['34001'], $rule->getInseeToExclude());
         $this->assertSame(['999'], $rule->getPartnerToExclude());
+        $this->assertSame('oui', $rule->getAccompagnementTravailleurSocial());
+        $this->assertSame('nsp', $rule->getDemandeLogementSocial());
     }
 
     /**
@@ -219,6 +249,8 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
         string $profileDeclarant = 'all',
         string $parc = 'prive',
         string $allocataire = 'all',
+        string $accompagnementTravailleurSocial = 'all',
+        string $demandeLogementSocial = 'all',
         string $inseeToInclude = '/',
         string $inseeToExclude = '/',
         string $partnerToExclude = '/',
@@ -230,6 +262,8 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
             AutoAffectationRuleHeader::PROFILE_DECLARANT => $profileDeclarant,
             AutoAffectationRuleHeader::PARC => $parc,
             AutoAffectationRuleHeader::ALLOCATAIRE => $allocataire,
+            AutoAffectationRuleHeader::ACCOMPAGNEMENT_TRAVAILLEUR_SOCIAL => $accompagnementTravailleurSocial,
+            AutoAffectationRuleHeader::DEMANDE_LOGEMENT_SOCIAL => $demandeLogementSocial,
             AutoAffectationRuleHeader::INSEE_TO_INCLUDE => $inseeToInclude,
             AutoAffectationRuleHeader::INSEE_TO_EXCLUDE => $inseeToExclude,
             AutoAffectationRuleHeader::PARTNER_TO_EXCLUDE => $partnerToExclude,

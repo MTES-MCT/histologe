@@ -15,7 +15,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
     use SessionHelper;
 
     private const string ADMIN_EMAIL = 'admin-01@signal-logement.fr';
-    private const string CSV_HEADERS = "Statut;Type de partenaire;Profil déclarant;Parc;Allocataire;Code insee inclus;Code insee exclus;Id partenaires exclus;Procédures suspectées;Actions\n";
+    private const string CSV_HEADERS = "Statut;Type de partenaire;Profil déclarant;Parc;Allocataire;Accompagnement travailleur social;Demande logement social;Code insee inclus;Code insee exclus;Id partenaires exclus;Procédures suspectées;Actions\n";
     private const string CSS_SELECTOR_ERROR = '.fr-alert--error';
     private const string CSRF_TOKEN_ID = 'auto_affectation_rule_import';
 
@@ -67,7 +67,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
 
     public function testImportWithNoTerritoryShowsFormError(): void
     {
-        $uploadedFile = $this->createUploadedCsv(self::CSV_HEADERS.'ACTIVE;CAF / MSA;all;prive;nsp;/;/;/;/;');
+        $uploadedFile = $this->createUploadedCsv(self::CSV_HEADERS.'ACTIVE;CAF / MSA;all;prive;nsp;all;all;/;/;/;/;');
 
         $this->client->request('POST',
             $this->router->generate('back_auto_affectation_rule_import'),
@@ -83,8 +83,8 @@ class AutoAffectationRuleControllerTest extends WebTestCase
     {
         $territory = $this->territoryRepository->findOneBy(['zip' => '34', 'name' => 'Hérault']);
         $csvContent = self::CSV_HEADERS
-            ."STATUT_INVALIDE;CAF / MSA;all;prive;caf;/;/;/;/;\n"
-            ."ACTIVE;TYPE INVALIDE;all;prive;caf;/;/;/;/;\n";
+            ."STATUT_INVALIDE;CAF / MSA;all;prive;caf;all;all;/;/;/;/;\n"
+            ."ACTIVE;TYPE INVALIDE;all;prive;caf;all;all;/;/;/;/;\n";
 
         $uploadedFile = $this->createUploadedCsv($csvContent);
 
@@ -105,8 +105,8 @@ class AutoAffectationRuleControllerTest extends WebTestCase
         $territory = $this->territoryRepository->findOneBy(['zip' => '34', 'name' => 'Hérault']);
         // These rules do not exist in fixtures
         $csvContent = self::CSV_HEADERS
-            ."ACTIVE;CAF / MSA;all;prive;nsp;/;/;/;/;\n"
-            ."ACTIVE;CCAS;all;all;all;/;/;/;/;\n";
+            ."ACTIVE;CAF / MSA;all;prive;nsp;all;all;/;/;/;/;\n"
+            ."ACTIVE;CCAS;all;all;all;all;all;/;/;/;/;\n";
 
         $uploadedFile = $this->createUploadedCsv($csvContent);
 
@@ -126,7 +126,7 @@ class AutoAffectationRuleControllerTest extends WebTestCase
     public function testImportWithInvalidCsrfTokenShowsError(): void
     {
         $territory = $this->territoryRepository->findOneBy(['zip' => '34', 'name' => 'Hérault']);
-        $uploadedFile = $this->createUploadedCsv(self::CSV_HEADERS.'ACTIVE;CCAS;all;all;nsp;/;/;/;/;');
+        $uploadedFile = $this->createUploadedCsv(self::CSV_HEADERS.'ACTIVE;CCAS;all;all;nsp;all;all;/;/;/;/;');
 
         $this->client->request('POST',
             $this->router->generate('back_auto_affectation_rule_import'),

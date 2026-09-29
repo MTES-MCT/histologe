@@ -83,6 +83,26 @@ class AutoAffectationRuleType extends AbstractType
                     'Situation allocataire inconnue' => 'nsp',
                 ],
             ])
+            ->add('accompagnementTravailleurSocial', ChoiceType::class, [
+                'label' => 'Accompagnement par un travailleur social',
+                'choices' => [
+                    'Sélectionnez quelles situations d\'accompagnement sont concernées' => '',
+                    'Tous' => 'all',
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                    'Ne sait pas' => 'nsp',
+                ],
+            ])
+            ->add('demandeLogementSocial', ChoiceType::class, [
+                'label' => 'Demande de logement social',
+                'choices' => [
+                    'Sélectionnez quelles situations de demande de logement social sont concernées' => '',
+                    'Tous' => 'all',
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                    'Ne sait pas' => 'nsp',
+                ],
+            ])
             ->add('inseeToInclude', TextType::class, [
                 'label' => 'Code insee à inclure (facultatif)',
                 'required' => false,

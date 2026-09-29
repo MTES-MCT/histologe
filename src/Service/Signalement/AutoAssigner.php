@@ -13,8 +13,10 @@ use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\Query\Partner\PartnerLocalizationQuery;
 use App\Repository\UserRepository;
 use App\Service\Notification\NotificationAndMailSender;
+use App\Specification\Affectation\AccompagnementTravailleurSocialSpecification;
 use App\Specification\Affectation\AllocataireSpecification;
 use App\Specification\Affectation\CodeInseeSpecification;
+use App\Specification\Affectation\DemandeLogementSocialSpecification;
 use App\Specification\Affectation\ParcSpecification;
 use App\Specification\Affectation\PartnerExcludeSpecification;
 use App\Specification\Affectation\PartnerTypeSpecification;
@@ -93,6 +95,8 @@ class AutoAssigner
                 new ParcSpecification($rule->getParc()),
                 new AllocataireSpecification($rule->getAllocataire()),
                 new ProcedureSuspecteeSpecification($rule->getProceduresSuspectees()),
+                new AccompagnementTravailleurSocialSpecification($rule->getAccompagnementTravailleurSocial()),
+                new DemandeLogementSocialSpecification($rule->getDemandeLogementSocial()),
             );
 
             foreach ($partners as $partner) {
