@@ -37,7 +37,7 @@ class AutoAssignerSimulatorController extends AbstractController
         $criteria = ['address.territory' => $territory];
         $limit = $request->query->getInt('limit', 10);
         if ($uuid = $request->query->get('uuid')) {
-            $criteria['uuid'] = $uuid;
+            $criteria['s.uuid'] = $uuid;
         }
         $signalements = $signalementRepository->findByWithAddressCriteria($criteria, ['s.createdAt' => 'DESC'], $limit);
         foreach ($signalements as $signalement) {
