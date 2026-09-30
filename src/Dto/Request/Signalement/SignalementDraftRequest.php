@@ -599,7 +599,7 @@ class SignalementDraftRequest
         ) {
             return;
         }
-        if (null === $this->adresseLogementAdresseDetailRnbId) {
+        if (null === $this->adresseLogementAdresseDetailRnbId && 'validation_signalement' === $this->currentStep) {
             $context->buildViolation('Veuillez sélectionner le bâtiment correspondant au logement.')
                 ->atPath('adresseLogementAdresseDetailRnbId')
                 ->addViolation();
