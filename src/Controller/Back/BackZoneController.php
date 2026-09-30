@@ -2,6 +2,7 @@
 
 namespace App\Controller\Back;
 
+use App\Entity\AutoAffectationRule;
 use App\Entity\User;
 use App\Entity\Zone;
 use App\Form\SearchZoneType;
@@ -175,6 +176,27 @@ class BackZoneController extends AbstractController
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
+        }
+        $zoneId = $zone->getId();
+        $autoAffectationRules = $zone->getTerritory()->getAutoAffectationRules();
+        $isOnlyZoneIncluded = static fn (AutoAffectationRule $rule): bool => [$zoneId] === array_map('intval', array_values($rule->getZoneToInclude() ?? []));
+        foreach ($autoAffectationRules as $rule) {
+            if (AutoAffectationRule::STATUS_ACTIVE === $rule->getStatus() && $isOnlyZoneIncluded($rule)) {
+                $flashMessages[] = [
+                    'type' => 'alert',
+                    'title' => 'Suppression impossible',
+                    'message' => 'Cette zone ne peut pas être supprimée car elle est la seule zone d\'application d\'une règle d\'auto-affectation active. Merci de contacter les administrateurs pour faire modifier cette règle avant de supprimer la zone.',
+                ];
+
+                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
+            }
+        }
+        // Retire la zone supprimée des règles d'auto-affectation (sauf si c'est la seule zone incluse d'une règle archivée, pour ne pas élargir son périmètre)
+        foreach ($autoAffectationRules as $rule) {
+            if (!$isOnlyZoneIncluded($rule)) {
+                $rule->setZoneToInclude(array_values(array_filter($rule->getZoneToInclude() ?? [], static fn ($id): bool => (int) $id !== $zoneId)) ?: null);
+            }
+            $rule->setZoneToExclude(array_values(array_filter($rule->getZoneToExclude() ?? [], static fn ($id): bool => (int) $id !== $zoneId)) ?: null);
         }
         $entityManager->remove($zone);
         $entityManager->flush();

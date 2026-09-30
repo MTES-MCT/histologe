@@ -11,6 +11,7 @@ use App\Entity\Territory;
 use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\CommuneRepository;
 use App\Repository\PartnerRepository;
+use App\Repository\ZoneRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class AutoAffectationRuleLoader
@@ -33,6 +34,7 @@ class AutoAffectationRuleLoader
         private readonly AutoAffectationRuleRepository $autoAffectationRuleRepository,
         private readonly PartnerRepository $partnerRepository,
         private readonly CommuneRepository $communeRepository,
+        private readonly ZoneRepository $zoneRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -71,6 +73,8 @@ class AutoAffectationRuleLoader
                 $parsed['inseeToInclude'],
                 $parsed['inseeToExclude'],
                 $parsed['partnerToExclude'],
+                $parsed['zoneToInclude'],
+                $parsed['zoneToExclude'],
                 $parsed['proceduresSuspectees'],
             );
 
@@ -109,6 +113,8 @@ class AutoAffectationRuleLoader
             $rule->setInseeToInclude(implode(',', $this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_INCLUDE]) ?? []));
             $rule->setInseeToExclude($this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_EXCLUDE]));
             $rule->setPartnerToExclude($this->parseArrayField($row[AutoAffectationRuleHeader::PARTNER_TO_EXCLUDE]));
+            $rule->setZoneToInclude($this->parseArrayField($row[AutoAffectationRuleHeader::ZONE_TO_INCLUDE]));
+            $rule->setZoneToExclude($this->parseArrayField($row[AutoAffectationRuleHeader::ZONE_TO_EXCLUDE]));
             $rule->setProceduresSuspectees($this->parseProceduresSuspectees($row[AutoAffectationRuleHeader::PROCEDURES_SUSPECTEES]));
 
             $this->entityManager->persist($rule);
@@ -142,7 +148,7 @@ class AutoAffectationRuleLoader
     /**
      * @param array<string, string> $row
      *
-     * @return array{status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string, accompagnementTravailleurSocial: string, demandeLogementSocial: string, inseeToInclude: ?array<string>, inseeToExclude: ?array<string>, partnerToExclude: ?array<string>, rawProcedures: string, proceduresSuspectees: ?list<Qualification>}
+     * @return array{status: string, partnerTypeLabel: string, partnerType: ?PartnerType, profileDeclarant: string, parc: string, allocataire: string, accompagnementTravailleurSocial: string, demandeLogementSocial: string, inseeToInclude: ?array<string>, inseeToExclude: ?array<string>, partnerToExclude: ?array<string>, zoneToInclude: ?array<string>, zoneToExclude: ?array<string>, rawProcedures: string, proceduresSuspectees: ?list<Qualification>}
      */
     private function parseRow(array $row): array
     {
@@ -161,6 +167,8 @@ class AutoAffectationRuleLoader
             'inseeToInclude' => $this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_INCLUDE] ?? ''),
             'inseeToExclude' => $this->parseArrayField($row[AutoAffectationRuleHeader::INSEE_TO_EXCLUDE] ?? ''),
             'partnerToExclude' => $this->parseArrayField($row[AutoAffectationRuleHeader::PARTNER_TO_EXCLUDE] ?? ''),
+            'zoneToInclude' => $this->parseArrayField($row[AutoAffectationRuleHeader::ZONE_TO_INCLUDE] ?? ''),
+            'zoneToExclude' => $this->parseArrayField($row[AutoAffectationRuleHeader::ZONE_TO_EXCLUDE] ?? ''),
             'rawProcedures' => $rawProcedures,
             'proceduresSuspectees' => $this->parseProceduresSuspectees($rawProcedures),
         ];
@@ -177,6 +185,9 @@ class AutoAffectationRuleLoader
             .$this->validateInseeCodes($parsed['inseeToInclude'] ?? [], 'inclure', $territory, $territoryInseeCodes)
             .$this->validateInseeCodes($parsed['inseeToExclude'] ?? [], 'exclure', $territory, $territoryInseeCodes)
             .$this->validatePartnersToExclude($parsed['partnerToExclude'], $territory, $parsed['partnerType'])
+            .$this->validateZones($parsed['zoneToInclude'], 'inclure', $territory)
+            .$this->validateZones($parsed['zoneToExclude'], 'exclure', $territory)
+            .$this->validateZonesNotIncludedAndExcluded($parsed['zoneToInclude'], $parsed['zoneToExclude'])
             .$this->validateProceduresSuspectees($parsed['rawProcedures']);
     }
 
@@ -301,6 +312,56 @@ class AutoAffectationRuleLoader
         return '';
     }
 
+    /**
+     * @param array<string>|null $zoneIds
+     */
+    private function validateZones(?array $zoneIds, string $direction, Territory $territory): string
+    {
+        if (null === $zoneIds) {
+            return '';
+        }
+
+        $invalidIds = array_filter($zoneIds, static fn (string $id) => !preg_match('/^\d+$/', $id));
+        if (!empty($invalidIds)) {
+            return sprintf('<li>IDs zone à %s invalides : "%s" (entiers séparés par des virgules attendus)</li>', $direction, implode('", "', $invalidIds));
+        }
+
+        $errors = '';
+        foreach ($zoneIds as $zoneId) {
+            $errors .= $this->validateZone($zoneId, $direction, $territory);
+        }
+
+        return $errors;
+    }
+
+    private function validateZone(string $zoneId, string $direction, Territory $territory): string
+    {
+        $zone = $this->zoneRepository->findOneBy(['id' => (int) $zoneId]);
+
+        if (null === $zone) {
+            return sprintf('<li>Zone à %s ID %s introuvable</li>', $direction, $zoneId);
+        }
+        if ($zone->getTerritory()->getId() !== $territory->getId()) {
+            return sprintf('<li>Zone à %s ID %s n\'appartient pas au territoire "%s"</li>', $direction, $zoneId, $territory->getZipAndName());
+        }
+
+        return '';
+    }
+
+    /**
+     * @param array<string>|null $zoneToInclude
+     * @param array<string>|null $zoneToExclude
+     */
+    private function validateZonesNotIncludedAndExcluded(?array $zoneToInclude, ?array $zoneToExclude): string
+    {
+        $commonIds = array_intersect($zoneToInclude ?? [], $zoneToExclude ?? []);
+        if (empty($commonIds)) {
+            return '';
+        }
+
+        return sprintf('<li>Zones à la fois incluses et exclues : "%s"</li>', implode('", "', $commonIds));
+    }
+
     private function validateProceduresSuspectees(string $rawProcedures): string
     {
         if ('' === $rawProcedures || self::EMPTY_FIELD_MARKER === $rawProcedures) {
@@ -370,6 +431,8 @@ class AutoAffectationRuleLoader
      * @param array<string>|null       $inseeToInclude
      * @param array<string>|null       $inseeToExclude
      * @param array<string>|null       $partnerToExclude
+     * @param array<string>|null       $zoneToInclude
+     * @param array<string>|null       $zoneToExclude
      * @param list<Qualification>|null $proceduresSuspectees
      */
     private function buildRuleKey(
@@ -383,6 +446,8 @@ class AutoAffectationRuleLoader
         ?array $inseeToInclude,
         ?array $inseeToExclude,
         ?array $partnerToExclude,
+        ?array $zoneToInclude,
+        ?array $zoneToExclude,
         ?array $proceduresSuspectees,
     ): string {
         $sortedInseeInclude = $inseeToInclude ?? [];
@@ -393,6 +458,12 @@ class AutoAffectationRuleLoader
 
         $sortedPartnerExclude = $partnerToExclude ?? [];
         sort($sortedPartnerExclude);
+
+        $sortedZoneInclude = $zoneToInclude ?? [];
+        sort($sortedZoneInclude);
+
+        $sortedZoneExclude = $zoneToExclude ?? [];
+        sort($sortedZoneExclude);
 
         $sortedProcedures = array_map(static fn (Qualification $q) => $q->value, $proceduresSuspectees ?? []);
         sort($sortedProcedures);
@@ -408,6 +479,8 @@ class AutoAffectationRuleLoader
             implode(',', $sortedInseeInclude),
             implode(',', $sortedInseeExclude),
             implode(',', $sortedPartnerExclude),
+            implode(',', $sortedZoneInclude),
+            implode(',', $sortedZoneExclude),
             implode(',', $sortedProcedures),
         ]);
     }

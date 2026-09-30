@@ -14,6 +14,8 @@ class AutoAffectationRuleHeader
     public const string INSEE_TO_INCLUDE = 'Code insee inclus';
     public const string INSEE_TO_EXCLUDE = 'Code insee exclus';
     public const string PARTNER_TO_EXCLUDE = 'Id partenaires exclus';
+    public const string ZONE_TO_INCLUDE = 'Id zones incluses';
+    public const string ZONE_TO_EXCLUDE = 'Id zones exclues';
     public const string PROCEDURES_SUSPECTEES = 'Procédures suspectées';
 
     public const array REQUIRED_HEADERS = [
@@ -27,6 +29,8 @@ class AutoAffectationRuleHeader
         self::INSEE_TO_INCLUDE,
         self::INSEE_TO_EXCLUDE,
         self::PARTNER_TO_EXCLUDE,
+        self::ZONE_TO_INCLUDE,
+        self::ZONE_TO_EXCLUDE,
         self::PROCEDURES_SUSPECTEES,
     ];
 }

@@ -11,6 +11,8 @@
         <th scope="col">Code insee inclus</th>
         <th scope="col">Code insee exclus</th>
         <th scope="col">Id partenaires exclus</th>
+        <th scope="col">Id zones incluses</th>
+        <th scope="col">Id zones exclues</th>
         <th scope="col">Procédures suspectées</th>
         <th scope="col" class="fr-text--right">Actions</th>
     {% endset %}
@@ -61,6 +63,24 @@
                     {% endif %}
                 </td>
                 <td>
+                    {% if autoaffectationrule.zoneToInclude %}
+                        {% for idZone in autoaffectationrule.zoneToInclude %}
+                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ idZone }}</div>
+                        {% endfor %}
+                    {% else %}
+                        /
+                    {% endif %}
+                </td>
+                <td>
+                    {% if autoaffectationrule.zoneToExclude %}
+                        {% for idZone in autoaffectationrule.zoneToExclude %}
+                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ idZone }}</div>
+                        {% endfor %}
+                    {% else %}
+                        /
+                    {% endif %}
+                </td>
+                <td>
                     {% if autoaffectationrule.proceduresSuspectees %}
                         {% for proc in autoaffectationrule.proceduresSuspectees %}
                             <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ proc.label() }}</div>
@@ -94,7 +114,7 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="13">Aucune règle d'auto-affectation trouvée</td>
+                <td colspan="15">Aucune règle d'auto-affectation trouvée</td>
             </tr>
         {% endfor %}
     {% endset %}

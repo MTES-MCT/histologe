@@ -122,6 +122,16 @@ class AutoAffectationRuleType extends AbstractType
                 'required' => false,
                 'help' => 'Une liste d\'id de partenaires séparés par des virgules.',
             ])
+            ->add('zoneToInclude', TextType::class, [
+                'label' => 'IDs zone à inclure (facultatif)',
+                'required' => false,
+                'help' => 'Une liste d\'id de zones séparés par des virgules.',
+            ])
+            ->add('zoneToExclude', TextType::class, [
+                'label' => 'IDs zone à exclure (facultatif)',
+                'required' => false,
+                'help' => 'Une liste d\'id de zones séparés par des virgules.',
+            ])
             ->add('proceduresSuspectees', SearchCheckboxEnumType::class, [
                 'class' => Qualification::class,
                 'choice_filter' => ChoiceList::filter(
@@ -141,7 +151,14 @@ class AutoAffectationRuleType extends AbstractType
                 'required' => false,
             ])
         ;
-        $builder->get('inseeToExclude')->addModelTransformer(new CallbackTransformer(
+        foreach (['inseeToExclude', 'partnerToExclude', 'zoneToInclude', 'zoneToExclude'] as $field) {
+            $builder->get($field)->addModelTransformer($this->createCommaSeparatedListTransformer());
+        }
+    }
+
+    private function createCommaSeparatedListTransformer(): CallbackTransformer
+    {
+        return new CallbackTransformer(
             static function ($tagsAsArray) {
                 // transform the array to a string
                 return null !== $tagsAsArray ? implode(',', $tagsAsArray) : null;
@@ -152,19 +169,7 @@ class AutoAffectationRuleType extends AbstractType
 
                 return null !== $tagsAsString ? preg_split($pattern, $tagsAsString, -1, \PREG_SPLIT_NO_EMPTY) : [];
             }
-        ));
-        $builder->get('partnerToExclude')->addModelTransformer(new CallbackTransformer(
-            static function ($tagsAsArray) {
-                // transform the array to a string
-                return null !== $tagsAsArray ? implode(',', $tagsAsArray) : null;
-            },
-            static function ($tagsAsString) {
-                // transform the string back to an array
-                $pattern = '/\s*,\s*/';
-
-                return null !== $tagsAsString ? preg_split($pattern, $tagsAsString, -1, \PREG_SPLIT_NO_EMPTY) : [];
-            }
-        ));
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver): void

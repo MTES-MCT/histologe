@@ -3,22 +3,22 @@
 namespace App\Validator;
 
 use App\Entity\AutoAffectationRule;
-use App\Repository\PartnerRepository;
+use App\Repository\ZoneRepository;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-class PartnerToExcludeValidator extends ConstraintValidator
+class ZoneIdsValidator extends ConstraintValidator
 {
     public function __construct(
-        private readonly PartnerRepository $partnerRepository,
+        private readonly ZoneRepository $zoneRepository,
     ) {
     }
 
     public function validate(mixed $value, Constraint $constraint): void
     {
-        if (!$constraint instanceof PartnerToExclude) {
-            throw new UnexpectedTypeException($constraint, PartnerToExclude::class);
+        if (!$constraint instanceof ZoneIds) {
+            throw new UnexpectedTypeException($constraint, ZoneIds::class);
         }
         if (null === $value || '' === $value) {
             return;
@@ -40,24 +40,15 @@ class PartnerToExcludeValidator extends ConstraintValidator
         }
 
         foreach ($value as $id) {
-            $partner = $this->partnerRepository->find((int) $id);
-            if (null === $partner) {
+            $zone = $this->zoneRepository->find((int) $id);
+            if (null === $zone) {
                 $this->context->buildViolation($constraint->messageNotFound)
                     ->setParameter('{{ id }}', (string) $id)
                     ->addViolation();
-            } elseif ($partner->getIsArchive()) {
-                $this->context->buildViolation($constraint->messageArchived)
-                    ->setParameter('{{ id }}', (string) $id)
-                    ->addViolation();
-            } elseif ($partner->getTerritory()?->getId() !== $rule->getTerritory()->getId()) {
+            } elseif ($zone->getTerritory()->getId() !== $rule->getTerritory()->getId()) {
                 $this->context->buildViolation($constraint->messageWrongTerritory)
                     ->setParameter('{{ id }}', (string) $id)
                     ->setParameter('{{ territory }}', $rule->getTerritory()->getZipAndName())
-                    ->addViolation();
-            } elseif ($partner->getType() !== $rule->getPartnerType()) {
-                $this->context->buildViolation($constraint->messageWrongType)
-                    ->setParameter('{{ id }}', (string) $id)
-                    ->setParameter('{{ type }}', $rule->getPartnerType()->label())
                     ->addViolation();
             }
         }
