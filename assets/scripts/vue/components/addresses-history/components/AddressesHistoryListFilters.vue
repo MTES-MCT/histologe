@@ -23,7 +23,7 @@
         <AppAutoComplete
           id="filter-search-terms"
           v-model="sharedState.input.filters.adresse"
-          :suggestions="sharedState.addressesSuggestions"
+          :suggestions="addressesSuggestions"
           :placeholder="'Taper l\'adresse'"
           title="Taper l'adresse"
           :minLengthSearch="3"
@@ -35,16 +35,16 @@
         </AppAutoComplete>
       </div>
 
-      <!-- Communes -->
+      <!-- Commune -->
       <div class="fr-col-12 fr-col-md-3 fr-mb-1v fr-mb-md-2w">
         <AppAutoComplete
-          id="filter-communes"
-          v-model="sharedState.input.filters.communes"
-          :suggestions="sharedState.communes"
-          :initSelectedSuggestions="sharedState.input.filters.communes"
+          id="filter-commune"
+          v-model="sharedState.input.filters.communeOuEpci"
+          :suggestions="communesSuggestions"
+          :initSelectedSuggestions="sharedState.input.filters.communeOuEpci"
           :placeholder="'Commune ou EPCI'"
           title="Commune ou EPCI"
-          :multiple="true"
+          :multiple="false"
           @update:modelValue="notifyChange"
           :reset="resetKey"
           :iconClass="'fr-icon-map-pin-2-line'"
@@ -62,7 +62,7 @@
           :initSelectedSuggestions="sharedState.input.filters.bailleurOuSyndic"
           :placeholder="'Nom du bailleur ou syndicat'"
           title="Nom du bailleur ou syndicat"
-          :multiple="true"
+          :multiple="false"
           @update:modelValue="notifyChange"
           :reset="resetKey"
           :iconClass="'fr-icon-user-search-fill'"
@@ -79,7 +79,7 @@
         <HistoSelect
           id="filter-zones"
           v-model="sharedState.input.filters.zone"
-          @update:modelValue="notifyChange"
+          @update:modelValue="onZoneChange"
           :option-items="sharedState.zones"
           title="Rechercher par zones"
           :active="true"
@@ -158,6 +158,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { store } from '../composables/useAddressesHistoryStore'
 import { useAddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'
+import { useFilteredSuggestions } from '../composables/useFilteredSuggestions'
 import { getActiveFilters, type ActiveFilter } from '../services/activeFiltersBuilder'
 import type { AddressesHistoryFilters } from '../composables/useAddressesHistoryFilters'
 import HistoSelect from '../../common/HistoSelect.vue'
@@ -186,6 +187,9 @@ const arreteTypesGroups = computed<CheckboxGroup[]>(() => {
   return sharedState.arreteTypesGroups
 })
 
+// Suggestions limitées par la zone et la commune sélectionnées (filtrage local)
+const { addressesSuggestions, communesSuggestions } = useFilteredSuggestions({ withZone: true })
+
 // Filtres actifs
 const activeFilters = computed<ActiveFilter[]>(() => {
   return getActiveFilters(sharedState.input.filters as AddressesHistoryFilters)
@@ -200,16 +204,30 @@ const notifyChange = (): void => {
 
 /**
  * Quand le territoire change
- * - Réinitialise communes et zone
+ * - Vide les filtres dépendant du territoire (adresse, commune, bailleur, zone)
  * - Recharge les settings
  * - Notifie le changement
  */
 const onTerritoryChange = async (value: string): Promise<void> => {
-  sharedState.input.filters.communes = []
-  sharedState.input.filters.zone = undefined
+  filtersComposable.clearTerritoryDependentFilters()
   sharedState.input.filters.territoire = value
+  resetKey.value = !resetKey.value
 
   await filtersComposable.reloadSettings()
+
+  notifyChange()
+}
+
+/**
+ * Quand la zone change
+ * - Réinitialise commune et adresse (leurs suggestions dépendent de la zone)
+ * - Notifie le changement (pas d'appel settings : le filtrage est local)
+ */
+const onZoneChange = (value: string | undefined): void => {
+  sharedState.input.filters.communeOuEpci = undefined
+  sharedState.input.filters.adresse = undefined
+  sharedState.input.filters.zone = value || undefined
+  resetKey.value = !resetKey.value
 
   notifyChange()
 }
@@ -252,7 +270,7 @@ const onRemoveFilter = async (key: keyof AddressesHistoryFilters): Promise<void>
     }
 
     // Supprimer les clés pour commune, adresse et zone si elles existent
-    filters.communes = []
+    filters.communeOuEpci = undefined
     filters.adresse = undefined
     filters.zone = undefined
   }

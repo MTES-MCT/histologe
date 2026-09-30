@@ -35,7 +35,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         $this->assertIsArray($allAddresses);
         $this->assertNotEmpty($allAddresses);
-        $this->assertCount(15, $allAddresses);
+        $this->assertCount(60, $allAddresses);
 
         // Vérifie la structure des résultats
         foreach ($allAddresses as $address) {
@@ -61,7 +61,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $addressesForTerritory = $this->addressesHistoryQuery->findAllList($territory);
 
         $this->assertIsArray($addressesForTerritory);
-        $this->assertCount(6, $addressesForTerritory);
+        $this->assertCount(21, $addressesForTerritory);
     }
 
     public function testFindAddressesWithHistoryForSuperAdmin(): void
@@ -120,7 +120,9 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $this->assertNotNull($address, 'Need at least one address in the database');
 
         $search = strtolower(substr($address->getStreet(), 0, 5)); // Use the first 5 characters of the street name for search
-        $searchQuery = new AddressesHistorySearchQuery($search);
+        $searchQuery = new AddressesHistorySearchQuery(
+            adresse: $search
+        );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
@@ -139,7 +141,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $this->assertNotNull($address);
 
         $searchQuery = new AddressesHistorySearchQuery(
-            communes: [$address->getCity()]
+            communeOuEpci: $address->getCity()
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
@@ -298,7 +300,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec un bailleur connu dans les fixtures
         $searchQuery = new AddressesHistorySearchQuery(
-            bailleurOuSyndic: ['Habitat 44']
+            bailleurOuSyndic: 'Habitat 44'
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
@@ -308,7 +310,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec plusieurs bailleurs
         $searchQuery = new AddressesHistorySearchQuery(
-            bailleurOuSyndic: ['Habitat 44', 'Bailleur fatigué', '13 Habitat']
+            bailleurOuSyndic: '13 Habitat'
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
@@ -353,7 +355,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec un mélange de commune et EPCI (préfixé par "EPCI : ")
         $searchQuery = new AddressesHistorySearchQuery(
-            communes: ['Marseille']
+            communeOuEpci: 'Marseille'
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
@@ -363,13 +365,13 @@ class AddressesHistoryQueryTest extends KernelTestCase
 
         // Test avec un mélange de commune et EPCI (préfixé par "EPCI : ")
         $searchQuery = new AddressesHistorySearchQuery(
-            communes: ['Marseille', 'EPCI : CC d\'Erdre et Gesvres']
+            communeOuEpci: 'EPCI : CC d\'Erdre et Gesvres'
         );
 
         $results = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
 
         $this->assertIsArray($results);
-        $this->assertCount(17, $results);
+        $this->assertCount(2, $results);
     }
 
     public function testFindAllAddressesWithHistoryIgnoresPagination(): void
@@ -378,7 +380,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $this->assertNotNull($user);
 
         // Sur une page au-delà du nombre total d'adresses, la version paginée ne renvoie plus rien...
-        $searchQuery = new AddressesHistorySearchQuery(page: 2);
+        $searchQuery = new AddressesHistorySearchQuery(view: 'list', page: 2);
         $paginatedResults = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
         $this->assertSame([], $paginatedResults);
 

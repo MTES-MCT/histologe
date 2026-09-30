@@ -33,12 +33,18 @@ const state = ref<StoreState>({
     filters: {
       territoire: undefined,
       adresse: undefined,
-      communes: [],
-      bailleurOuSyndic: [],
+      communeOuEpci: undefined,
+      bailleurOuSyndic: undefined,
       zone: undefined,
       natureParc: undefined,
       dossiersMultiples: undefined,
       arreteTypes: [],
+    },
+    params: {
+      niveauxGris: false,
+      limitesAdministratives: false,
+      zonesTerritoire: false,
+      mainLeveeUniquement: false
     }
   },
   user: {
@@ -51,15 +57,17 @@ const state = ref<StoreState>({
   },
   territories: [],
   addressesSuggestions: [],
+  addressesWithZones: [],
   communes: [],
   bailleursAndSyndic: [],
   zones: [],
   currentCommunes: '',
-  viewMode: 'list' as ViewMode,
+  viewMode: 'map' as ViewMode,
   loadingSettings: true,
   loadingList: false,
   hasErrorLoading: false,
   natureParcList: [
+    { Id: '', Text: 'Toutes' },
     { Id: NatureParc.Privee, Text: 'Parc privé' },
     { Id: NatureParc.Public, Text: 'Parc public' },
     { Id: NatureParc.NonRenseigne, Text: 'Parc Non renseigné' }
@@ -88,7 +96,7 @@ const hasActiveFilters = computed(() => {
   return !!(
     filters.territoire ||
     filters.adresse ||
-    filters.communes.length > 0 ||
+    filters.communeOuEpci ||
     filters.bailleurOuSyndic ||
     filters.zone ||
     filters.natureParc ||
@@ -138,8 +146,8 @@ function resetFilters(): void {
   state.value.input.filters = {
     territoire: undefined,
     adresse: undefined,
-    communes: [],
-    bailleurOuSyndic: [],
+    communeOuEpci: undefined,
+    bailleurOuSyndic: undefined,
     zone: undefined,
     natureParc: undefined,
     dossiersMultiples: undefined,

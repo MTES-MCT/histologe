@@ -115,6 +115,7 @@ class SettingsFactory
                 static fn (ArreteType $arrete): array => [
                     'Id' => $arrete->value,
                     'Text' => $arrete->completeLabel(),
+                    'TextInMapView' => $arrete->completeLabelInMapView(),
                 ],
                 $arretes
             );

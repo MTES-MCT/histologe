@@ -447,7 +447,7 @@ export default defineComponent({
     viewType: {
       type: String,
       required: false,
-      default: 'list'
+      default: 'map'
     }
   },
   emits: ['changeTerritory', 'clickReset', 'change'],
