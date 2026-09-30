@@ -62,12 +62,12 @@ readonly class InterventionEditedSubscriber implements EventSubscriberInterface
                 category: SuiviCategory::INTERVENTION_HAS_CONCLUSION_EDITED,
                 partner: $event->getPartner(),
                 user: $currentUser,
-                isVisibleForUsager: $event->isUsagerNotified(),
+                isVisibleForUsager: $intervention->getNotifyUsager() ?? true,
                 sendMail: false,
                 files: $intervention->getFiles(),
             );
 
-            if ($event->isUsagerNotified()) {
+            if ($intervention->getNotifyUsager()) {
                 $this->visiteNotifier->notifyUsagers(
                     intervention: $intervention,
                     notificationMailerType: NotificationMailerType::TYPE_VISITE_EDITED_TO_USAGER,

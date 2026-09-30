@@ -52,7 +52,9 @@
                     <div class="visite-conclude-procedure fr-mb-6v fr-hidden">
                         {{ form_row(addVisiteForm.concludeProcedure)}}
                     </div>
-                    {{ form_row(addVisiteForm.notifyUsager) }}
+                    {% if addVisiteForm.notifyUsager is defined %}
+                        {{ form_row(addVisiteForm.notifyUsager) }}
+                    {% endif %}
                     {{ form_row(addVisiteForm.details) }}
                     {{ form_row(addVisiteForm.rapportDeVisite) }}
                     {% if not s3_enable %}

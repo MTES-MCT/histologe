@@ -164,6 +164,7 @@ class SignalementVisitesController extends AbstractController
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
         }
 
+        $this->entityManager->persist($intervention);
         $this->interventionManager->updateVisiteFromData(
             intervention: $intervention,
             scheduledAt: $addVisiteForm->get('scheduledAt')->getData(),
@@ -180,7 +181,6 @@ class SignalementVisitesController extends AbstractController
             $flashMessages[] = ['type' => 'success', 'title' => 'Visite ajoutée', 'message' => self::SUCCESS_MSG_ADD];
         }
 
-        $this->entityManager->persist($intervention);
         $this->entityManager->flush();
 
         return $this->buildVisitesAjaxResponse(intervention: $intervention, flashMessages: $flashMessages);
