@@ -1740,18 +1740,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     code_reuse_cache?: scalar|Param|null, // Default: null
  *     code_reuse_cache_duration?: int|Param, // Default: 60
  *     code_reuse_default_handler?: scalar|Param|null, // Default: null
- *     trusted_device?: bool|array{
- *         enabled?: scalar|Param|null, // Default: false
- *         manager?: scalar|Param|null, // Default: "scheb_two_factor.default_trusted_device_manager"
- *         lifetime?: int|Param, // Default: 5184000
- *         extend_lifetime?: bool|Param, // Default: false
- *         key?: scalar|Param|null, // Default: null
- *         cookie_name?: scalar|Param|null, // Default: "trusted_device"
- *         cookie_secure?: true|false|"auto"|Param, // Default: "auto"
- *         cookie_domain?: scalar|Param|null, // Default: null
- *         cookie_path?: scalar|Param|null, // Default: "/"
- *         cookie_same_site?: scalar|Param|null, // Default: "lax"
- *     },
  *     email?: bool|array{
  *         enabled?: scalar|Param|null, // Default: false
  *         mailer?: scalar|Param|null, // Default: null

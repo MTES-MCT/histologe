@@ -3,11 +3,10 @@
 {% block title %}Authentification à deux facteurs{% endblock %}
 
 {% block body %}
-	<main class="fr-container fr-py-5w" id="content">
-        <section class="fr-grid-row">
-
-            <div class="fr-col-md-12">
-                <h1>Authentification à deux facteurs</h1>
+    <main class="fr-container fr-py-5w" id="content">
+        <div class="fr-grid-row fr-grid-row--center">
+            <div class="fr-col-12 fr-col-md-8 fr-col-lg-6 fr-background-alt--blue-france fr-p-4w fr-radius--lg">
+                <h1 class="fr-text--center fr-mb-6v">Authentification à deux facteurs</h1>
                 {# Authentication errors #}
                 {% if authenticationError %}
                     <div class="fr-notice fr-notice--alert">
@@ -29,9 +28,7 @@
                         {% endfor %}
                     </p>
                 {% endif %}
-            </div>
-
-            <div class="fr-col-md-6">
+                
                 {# The form to enter the authentication code #}
                 <form class="form" action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}" method="post">
 
@@ -40,30 +37,25 @@
                         <input class="fr-input" id="_auth_code" type="text" name="{{ authCodeParameterName }}" autocomplete="one-time-code" autofocus inputmode="numeric" pattern="[0-9]*"/>
                     </div>
 
-                    {% if displayTrustedOption %}
-                        <div class="fr-checkbox-group fr-mb-3w">
-                            <input id="_trusted" type="checkbox" name="{{ trustedParameterName }}" aria-describedby="_trusted-hint"/>
-                            <label class="fr-label" for="_trusted">
-                                Faire confiance à cet appareil
-                                <span class="fr-hint-text" id="_trusted-hint">Le code ne vous sera plus demandé sur ce navigateur pendant 30 jours. Ne cochez pas cette case sur un ordinateur partagé.</span>
-                            </label>
-                        </div>
-                    {% endif %}
                     {% if isCsrfProtectionEnabled %}
                         <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
                     {% endif %}
-                    <div class="fr-form-group">
-                        <button type="submit" class="fr-btn fr-icon-checkbox-circle-fill fr-btn--icon-right">
-                            Connexion
-                        </button>
-                    </div>
+
+                    <ul class="fr-btns-group fr-mt-5v">
+                        <li>
+                            <button type="submit" class="fr-btn fr-btn--lg fr-btn--primary">
+                                Se connecter
+                            </button>
+                        </li>
+                    </ul>
+                    
                     {# The logout link gives the user a way out if they can't complete two-factor authentication #}
-                    <div class="fr-form-group fr-mt-5v">
+                    <div class="fr-text--center fr-form-group fr-mt-5v">
                         <a href="{{ logoutPath }}">{{ "cancel"|trans({}, 'SchebTwoFactorBundle') }}</a>
                     </div>
                 </form>
 
             </div>
-        </section>
+        </div>
 	</main>
 {% endblock %}

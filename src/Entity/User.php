@@ -907,7 +907,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
 
     public function isEmailAuthEnabled(): bool
     {
-        return $this->isUserPartner() || $this->isPartnerAdmin() || $this->isTerritoryAdmin() || $this->isSuperAdmin();
+        return ($this->isUserPartner() || $this->isPartnerAdmin() || $this->isTerritoryAdmin() || $this->isSuperAdmin()) && !$this->isAuthenticatedViaProConnect;
     }
 
     public function getEmailAuthRecipient(): string

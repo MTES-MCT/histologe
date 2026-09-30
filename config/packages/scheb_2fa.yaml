@@ -7,11 +7,3 @@ scheb_two_factor:
     email:
         enabled: true
         mailer: App\Service\Mailer\AuthCodeMailer
-    trusted_device:
-        key: "%env(TWO_FACTOR_TRUSTED_DEVICE_KEY)%"
-        enabled: true
-        lifetime: 2592000 # 30 jours, à garder cohérent avec le libellé du formulaire 2FA
-        extend_lifetime: false
-        cookie_name: trusted_device
-        cookie_secure: true
-        cookie_same_site: lax
