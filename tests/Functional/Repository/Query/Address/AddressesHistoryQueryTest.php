@@ -380,7 +380,7 @@ class AddressesHistoryQueryTest extends KernelTestCase
         $this->assertNotNull($user);
 
         // Sur une page au-delà du nombre total d'adresses, la version paginée ne renvoie plus rien...
-        $searchQuery = new AddressesHistorySearchQuery(page: 2);
+        $searchQuery = new AddressesHistorySearchQuery(view: 'list', page: 2);
         $paginatedResults = $this->addressesHistoryQuery->findAddressesWithHistory($user, $searchQuery);
         $this->assertSame([], $paginatedResults);
 
