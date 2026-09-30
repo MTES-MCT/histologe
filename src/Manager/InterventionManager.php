@@ -49,18 +49,24 @@ class InterventionManager
     public function updateVisiteFromData(
         Intervention $intervention,
         \DateTimeImmutable $scheduledAt,
-        \DateTimeImmutable $scheduledAtTime,
+        ?\DateTimeImmutable $scheduledAtTime,
         string|Partner $partnerChoice,
         ?bool $visiteDone = null,
         ?string $fileName = null,
         ?string $eventType = 'create',
+        ?Partner $createdByPartnerFromAPI = null,
     ): void {
         $intervention
             ->setType(InterventionType::VISITE)
             ->setStatus(Intervention::STATUS_PLANNED);
+
+        if ($intervention->getCommentBeforeVisite()) {
+            $intervention->setCommentBeforeVisite($this->htmlSanitizer->sanitize($intervention->getCommentBeforeVisite()));
+        }
+
         /** @var User $user */
         $user = $this->security->getUser();
-        $createdByPartner = $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getAddress()->getTerritory());
+        $createdByPartner = $createdByPartnerFromAPI ?: $user->getPartnerInTerritoryOrFirstOne($intervention->getSignalement()->getAddress()->getTerritory());
 
         $previousDate = $intervention->getScheduledAt();
         $scheduledAtUtc = DateHelper::getDateUTCFromLocalDateAndTime(
@@ -114,7 +120,7 @@ class InterventionManager
 
         $this->attachRapportDeVisiteToIntervention($intervention, $createdByPartner, $fileName);
         $this->signalementQualificationUpdater->updateQualificationFromVisiteProcedureList($intervention->getSignalement(), $intervention->getConcludeProcedure());
-        $this->eventDispatcher->dispatch(new InterventionEditedEvent($intervention, $user, $intervention->getNotifyUsager(), $createdByPartner), InterventionEditedEvent::NAME);
+        $this->eventDispatcher->dispatch(new InterventionEditedEvent($intervention, $user, $createdByPartner), InterventionEditedEvent::NAME);
     }
 
     private function attachRapportDeVisiteToIntervention(
