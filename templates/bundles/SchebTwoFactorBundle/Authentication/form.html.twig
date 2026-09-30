@@ -41,10 +41,13 @@
                     </div>
 
                     {% if displayTrustedOption %}
-                        <p class="widget">
-                            <label for="_trusted"><input id="_trusted" type="checkbox" name="{{ trustedParameterName }}"/>
-                                {{ "trusted"|trans({}, 'SchebTwoFactorBundle') }}</label>
-                        </p>
+                        <div class="fr-checkbox-group fr-mb-3w">
+                            <input id="_trusted" type="checkbox" name="{{ trustedParameterName }}" aria-describedby="_trusted-hint"/>
+                            <label class="fr-label" for="_trusted">
+                                Faire confiance à cet appareil
+                                <span class="fr-hint-text" id="_trusted-hint">Le code ne vous sera plus demandé sur ce navigateur pendant 30 jours. Ne cochez pas cette case sur un ordinateur partagé.</span>
+                            </label>
+                        </div>
                     {% endif %}
                     {% if isCsrfProtectionEnabled %}
                         <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
