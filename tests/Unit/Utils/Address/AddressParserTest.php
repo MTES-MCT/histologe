@@ -190,5 +190,19 @@ class AddressParserTest extends TestCase
             ExtensionAdresse::DECIES->name,
             'Parvis de la coupe',
         ];
+
+        yield '70bis Avenue du 8e Bcp' => [
+            '70bis Avenue du 8e Bcp',
+            '70',
+            ExtensionAdresse::BIS->name,
+            'Avenue du 8e Bcp',
+        ];
+
+        yield '70 bis Avenue du 8e Bcp' => [
+            '70 bis Avenue du 8e Bcp',
+            '70',
+            ExtensionAdresse::BIS->name,
+            'Avenue du 8e Bcp',
+        ];
     }
 }
