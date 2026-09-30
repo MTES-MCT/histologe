@@ -56,10 +56,10 @@ class InterventionVoter extends Voter
             return true;
         }
         $partner = $user->getPartnerInTerritory($signalement->getAddress()->getTerritory());
-        if (!$intervention->getPartner()->getId() || $intervention->getPartner()->getId() != $partner->getId()) {
+        if (!$partner || !in_array(Qualification::VISITES, $partner->getCompetence())) {
             return false;
         }
-        if (!$partner || !in_array(Qualification::VISITES, $partner->getCompetence())) {
+        if (!$intervention->getPartner()?->getId() || $intervention->getPartner()->getId() != $partner->getId()) {
             return false;
         }
         if (!$signalement->getAffectationForPartner($partner) || AffectationStatus::ACCEPTED !== $signalement->getAffectationForPartner($partner)->getStatut()) {

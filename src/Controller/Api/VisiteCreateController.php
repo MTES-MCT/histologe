@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Dto\Api\Model\Visite as InterventionModel;
 use App\Dto\Api\Request\VisiteRequest;
+use App\Entity\Enum\ProcedureType;
 use App\Entity\Intervention;
 use App\Entity\Partner;
 use App\Entity\Signalement;
@@ -203,16 +204,25 @@ class VisiteCreateController extends AbstractController
 
         $intervention = (new Intervention())
         ->setSignalement($signalement)
+        ->setOccupantPresent($visiteRequest->occupantPresent)
+        ->setProprietairePresent($visiteRequest->proprietairePresent)
+        ->setNotifyUsager($visiteRequest->notifyUsager)
         ->setCommentBeforeVisite($visiteRequest->commentBeforeVisite)
-        ->setDetails($this->descriptionFilesBuilder->build($signalement, $visiteRequest))
-        ->setConcludeProcedure($visiteRequest->concludeProcedure);
+        ->setDetails($this->descriptionFilesBuilder->build($signalement, $visiteRequest));
+        $procedures = [];
+        foreach ($visiteRequest->concludeProcedure as $procedure) {
+            $procedures[] = ProcedureType::from($procedure);
+        }
+        $intervention->setConcludeProcedure($procedures);
 
+        $this->entityManager->persist($intervention);
         $this->interventionManager->updateVisiteFromData(
             intervention: $intervention,
             scheduledAt: new \DateTimeImmutable($visiteRequest->date),
             scheduledAtTime: new \DateTimeImmutable($visiteRequest->date.' '.$visiteRequest->time),
             partnerChoice: $partner,
             visiteDone: $visiteRequest->visiteEffectuee,
+            createdByPartnerFromAPI: $partner,
         );
 
         $this->entityManager->flush();

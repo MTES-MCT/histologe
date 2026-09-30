@@ -91,7 +91,7 @@ class AddAndRescheduleVisiteType extends AbstractType
                 'mapped' => false,
                 'choices' => [...$partners, 'extern'],
                 'choice_label' => static fn ($choice) => $choice instanceof Partner ? mb_strtoupper($choice->getNom()) : 'Opérateur Externe',
-                'choice_value' => static fn ($choice) => $choice instanceof Partner ? (string) $choice->getId() : 'extern',
+                'choice_value' => static fn ($choice) => $choice instanceof Partner ? (string) $choice->getId() : ('extern' === $choice ? 'extern' : ''),
                 'choice_attr' => static fn ($choice) => $choice instanceof Partner && isset($partnersWithPendingVisites[$choice->getId()]) ? ['class' => 'alert-partner'] : [],
                 'required' => false,
                 'constraints' => [
@@ -268,6 +268,7 @@ class AddAndRescheduleVisiteType extends AbstractType
 
         // Vide les champs de conclusion si la visite n'est pas encore passée
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
             $data = $event->getData();
 
             if (!is_array($data) || !isset($data['scheduledAt']) || !is_string($data['scheduledAt'])) {
@@ -287,8 +288,12 @@ class AddAndRescheduleVisiteType extends AbstractType
                 $data['proprietairePresent'] = null;
                 $data['concludeProcedure'] = [];
                 $data['details'] = null;
-                $data['notifyUsager'] = false;
-                $data['rapportDeVisite'] = null;
+                if ($form->has('notifyUsager')) {
+                    $data['notifyUsager'] = false;
+                }
+                if ($form->has('rapportDeVisite')) {
+                    $data['rapportDeVisite'] = null;
+                }
 
                 $event->setData($data);
             }
