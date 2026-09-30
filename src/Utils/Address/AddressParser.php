@@ -53,7 +53,7 @@ class AddressParser
 
         $numberAndSuffix = $number;
         if ($number && $suffix) {
-            $numberAndSuffix = $number.' '.$suffix;
+            $numberAndSuffix = $number.$suffix;
         }
 
         return [
