@@ -23,8 +23,7 @@ use App\Specification\Affectation\PartnerExcludeSpecification;
 use App\Specification\Affectation\PartnerTypeSpecification;
 use App\Specification\Affectation\ProcedureSuspecteeSpecification;
 use App\Specification\Affectation\ProfilDeclarantSpecification;
-use App\Specification\Affectation\ZoneExcludeSpecification;
-use App\Specification\Affectation\ZoneIncludeSpecification;
+use App\Specification\Affectation\ZoneSpecification;
 use App\Specification\AndSpecification;
 use App\Specification\Context\PartnerSignalementContext;
 use Doctrine\DBAL\Exception;
@@ -109,8 +108,7 @@ class AutoAssigner
                 new ProcedureSuspecteeSpecification($rule->getProceduresSuspectees()),
                 new AccompagnementTravailleurSocialSpecification($rule->getAccompagnementTravailleurSocial()),
                 new DemandeLogementSocialSpecification($rule->getDemandeLogementSocial()),
-                new ZoneIncludeSpecification($rule->getZoneToInclude(), $signalementZoneIds ?? []),
-                new ZoneExcludeSpecification($rule->getZoneToExclude(), $signalementZoneIds ?? []),
+                new ZoneSpecification($rule->getZoneToInclude(), $rule->getZoneToExclude(), $signalementZoneIds ?? []),
             );
 
             foreach ($partners as $partner) {
