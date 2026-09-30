@@ -415,15 +415,4 @@ class SuiviManager
 
         return $value;
     }
-
-    public function hasSuiviPartnerNewerThan(Signalement $signalement, \DateTimeImmutable $date): bool
-    {
-        foreach ($signalement->getSuivis() as $suivi) {
-            if (SuiviCategory::MESSAGE_PARTNER === $suivi->getCategory() && $suivi->getCreatedAt() > $date) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

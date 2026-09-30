@@ -1169,22 +1169,6 @@ class SignalementRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<string, mixed> $criteria
-     */
-    public function findOneByWithAddressCriteria(array $criteria): ?Signalement
-    {
-        $qb = $this->createQueryBuilder('s');
-        $qb->select('s', 'address');
-        $qb->innerJoin('s.address', 'address');
-        foreach ($criteria as $field => $value) {
-            $parameter = str_replace('.', '_', $field);
-            $qb->andWhere($field.' = :'.$parameter)->setParameter($parameter, $value);
-        }
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    /**
      * @param array<string, mixed>       $criteria
      * @param array<string, string>|null $orderBy
      *

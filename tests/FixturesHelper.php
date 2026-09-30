@@ -403,16 +403,6 @@ trait FixturesHelper
     }
 
     /**
-     * @return array<mixed>
-     */
-    public function getDossierArreteAndArreteMainLeveeSISHResponse(): array
-    {
-        $filepath = __DIR__.'/../tools/wiremock/src/Resources/Esabora/sish/ws_arretes_dossier_sas.json';
-
-        return json_decode((string) file_get_contents((string) $filepath), true);
-    }
-
-    /**
      * @param array<mixed> $roles
      */
     public function getUser(array $roles): User
