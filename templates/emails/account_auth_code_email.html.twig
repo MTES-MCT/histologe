@@ -1,0 +1,19 @@
+{% extends 'emails/base_email.html.twig' %}
+
+{% block body %}
+    <p>Bonjour,</p>
+    <p>
+        Une connexion à votre compte {{ platform.name }} est en cours.
+        Voici le code de vérification à renseigner pour finaliser votre connexion :
+    </p>
+    <p><strong style="font-size: 18px;background-color:#ececfe;padding:10px;">{{ authCode }}</strong></p>
+    <p>
+        Ce code est personnel : ne le communiquez à personne.
+    </p>
+    <p>
+        Si vous n'êtes pas à l'origine de cette tentative de connexion, nous vous recommandons de modifier votre mot de passe
+        et de prévenir votre responsable de territoire.
+    </p>
+
+    <p>A bientôt sur {{ platform.name }} !</p>
+{% endblock %}

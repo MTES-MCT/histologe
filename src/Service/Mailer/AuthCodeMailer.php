@@ -2,35 +2,29 @@
 
 namespace App\Service\Mailer;
 
+use App\Entity\User;
 use Scheb\TwoFactorBundle\Mailer\AuthCodeMailerInterface;
 use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
 
 class AuthCodeMailer implements AuthCodeMailerInterface
 {
-    private MailerInterface $mailer;
-    protected ?string $subject = 'Code de vérification';
-    protected ?string $text = 'Votre code de vérification est : %authCode%';
-
     public function __construct(
-        MailerInterface $mailer,
-        #[Autowire(env: 'REPLY_TO_EMAIL')]
-        private string $fromEmail,
+        private readonly NotificationMailerRegistry $notificationMailerRegistry,
     ) {
-        $this->mailer = $mailer;
     }
 
     public function sendAuthCode(TwoFactorInterface $user): void
     {
-        $authCode = $user->getEmailAuthCode();
+        if (!$user instanceof User) {
+            throw new \LogicException(\sprintf('Expected instance of %s, got %s', User::class, $user::class));
+        }
 
-        $this->mailer->send((new Email())
-            ->from($this->fromEmail)
-            ->to($user->getEmailAuthRecipient())
-            ->subject($this->subject)
-            ->text(str_replace('%authCode%', $authCode, $this->text))
+        $this->notificationMailerRegistry->send(
+            new NotificationMail(
+                type: NotificationMailerType::TYPE_ACCOUNT_AUTH_CODE,
+                to: $user->getEmailAuthRecipient(),
+                user: $user,
+            )
         );
     }
 }
