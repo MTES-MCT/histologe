@@ -37,16 +37,6 @@ class TabCountKpiCacheHelper
         });
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
-    public function delete(string $kpiName, User $user, ?TabQueryParameters $params): bool
-    {
-        $key = $this->generateKey($kpiName, $user, $params);
-
-        return $this->cache->delete($key);
-    }
-
     private function generateKey(string $kpiName, User $user, ?TabQueryParameters $params): string
     {
         $roleKey = implode('-', array_filter($user->getRoles(), static fn ($role) => 'ROLE_USER' !== $role));
