@@ -577,15 +577,17 @@ class SignalementDraftRequest
         }
 
         if ('appartement' === $this->typeLogementNature && null === $this->adresseLogementComplementAdresseEtage) {
+            $locationPrecision = 'adresse_logement' === $this->currentStep ? '' : ' Veuillez vous rendre à l\'étape "Adresse et coordonnées".';
             $context
-                ->buildViolation('Le champ étage est obligatoire si le logement est un appartement.')
+                ->buildViolation('Le champ étage est obligatoire si le logement est un appartement.'.$locationPrecision)
                 ->atPath('adresseLogementComplementAdresseEtage')
                 ->addViolation();
         }
 
         if ('AUTRE' === $this->adresseLogementComplementAdresseEtage && null === $this->adresseLogementComplementAdresseEtagePrecision) {
+            $locationPrecision = 'adresse_logement' === $this->currentStep ? '' : ' Veuillez vous rendre à l\'étape "Adresse et coordonnées".';
             $context
-                ->buildViolation('Le champ précision de l\'étage est obligatoire si l\'étage est "AUTRE".')
+                ->buildViolation('Le champ précision de l\'étage est obligatoire si l\'étage est "AUTRE".'.$locationPrecision)
                 ->atPath('adresseLogementComplementAdresseEtagePrecision')
                 ->addViolation();
         }
@@ -600,7 +602,8 @@ class SignalementDraftRequest
             return;
         }
         if (null === $this->adresseLogementAdresseDetailRnbId) {
-            $context->buildViolation('Veuillez sélectionner le bâtiment correspondant au logement.')
+            $locationPrecision = 'adresse_logement' === $this->currentStep ? '' : ' en vous rendant à l\'étape "Adresse et coordonnées"';
+            $context->buildViolation('Veuillez sélectionner le bâtiment correspondant au logement'.$locationPrecision.'.')
                 ->atPath('adresseLogementAdresseDetailRnbId')
                 ->addViolation();
         }
