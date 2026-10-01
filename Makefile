@@ -6,6 +6,7 @@ DOCKER_COMP_FILE_TOOLS   = docker-compose.tools.yml
 DATABASE_USER = signal_logement
 DATABASE_NAME = signal_logement_db
 PATH_DUMP_SQL = data/dump.sql
+PATH_MB_DUMP_SQL = data/dump.pgsql
 PHPUNIT       = ./vendor/bin/phpunit
 SYMFONY       = php bin/console --profile
 NPX           = npx
@@ -319,6 +320,30 @@ run-concurrency-request: ## Run concurrency request based postman collection ex:
 
 metabase-db:
 	@bash -l -c '$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) exec metabase_db psql -U metabase -d metabase'
+
+metabase-db-restore-list:
+	@test -f "$(PATH_MB_DUMP_SQL)" || \
+		(echo "Fichier introuvable : $(PATH_MB_DUMP_SQL)" && \
+		echo "Déposez le dump Metabase à cet emplacement." && exit 1)
+	$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) exec -T metabase_db \
+		pg_restore --list \
+		< "$(PATH_MB_DUMP_SQL)"
+
+metabase-db-restore:
+	@test -f "$(PATH_MB_DUMP_SQL)" || \
+		(echo "Fichier introuvable : $(PATH_MB_DUMP_SQL)" && \
+		echo "Déposez le dump Metabase à cet emplacement." && exit 1)
+	$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) exec -T metabase_db \
+		pg_restore \
+		--clean \
+		--if-exists \
+		--no-owner \
+		--no-privileges \
+		--exit-on-error \
+		-U metabase \
+		-d metabase \
+		< "$(PATH_MB_DUMP_SQL)"
+
 
 ## Job sync metabase
 scalingo-job-build: ## Build Scalingo sync job container
