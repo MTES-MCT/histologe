@@ -61,7 +61,7 @@ export const requests = {
       .catch(error => {
         console.error(error)
         Sentry.captureException(new Error(error))
-        functionReturn('error')
+        functionReturn(error.response?.data ?? error)
       })
   },
 
