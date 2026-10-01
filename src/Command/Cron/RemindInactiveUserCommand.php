@@ -24,7 +24,7 @@ class RemindInactiveUserCommand extends AbstractCronCommand
 {
     public function __construct(
         private readonly UserRepository $userRepository,
-        private readonly UserAffectationQuery $userAffectationQueryQuery,
+        private readonly UserAffectationQuery $userAffectationQuery,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly ParameterBagInterface $parameterBag,
     ) {
@@ -54,7 +54,7 @@ class RemindInactiveUserCommand extends AbstractCronCommand
             return Command::FAILURE;
         }
 
-        $userList = $this->userAffectationQueryQuery->findInactiveWithNbAffectationPending();
+        $userList = $this->userAffectationQuery->findInactiveWithNbAffectationPending();
         $nbUsers = \count($userList);
         if ($input->getOption('debug')) {
             $io->info(\sprintf('%s users will be notified', $nbUsers));

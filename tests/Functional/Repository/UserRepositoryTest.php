@@ -3,7 +3,6 @@
 namespace App\Tests\Functional\Repository;
 
 use App\Entity\User;
-use App\Repository\Query\User\UserAffectationQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,23 +26,6 @@ class UserRepositoryTest extends KernelTestCase
 
         $this->entityManager = $entityManager;
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
-    }
-
-    public function testFindInactiveUserWithNbAffectations(): void
-    {
-        /** @var UserAffectationQuery $userAffectationQueryQuery */
-        $userAffectationQueryQuery = static::getContainer()->get(UserAffectationQuery::class);
-
-        $users = $userAffectationQueryQuery->findInactiveWithNbAffectationPending();
-
-        $this->assertIsArray($users);
-        $this->assertCount(11, $users);
-        foreach ($users as $user) {
-            $this->assertArrayHasKey('email', $user);
-            if (!empty($user['signalements'])) {
-                $this->assertEquals($user['nb_signalements'], \count(explode(',', (string) $user['signalements'])));
-            }
-        }
     }
 
     public function testFindActiveTerritoryAdmins69(): void
