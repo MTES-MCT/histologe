@@ -11,10 +11,10 @@ use App\Repository\PartnerRepository;
 use App\Repository\Query\Address\AddressesHistoryQuery;
 use App\Repository\Query\Commune\CommuneEpciQuery;
 use App\Repository\Query\Statistics\CountStatisticsQuery;
+use App\Repository\Query\Zone\ZoneSignalementQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\TagRepository;
 use App\Repository\TerritoryRepository;
-use App\Repository\ZoneRepository;
 use App\Service\Signalement\Qualification\QualificationStatusService;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -36,7 +36,7 @@ class SearchFilterOptionDataProvider
         private readonly TagAwareCacheInterface $cache,
         private readonly QualificationStatusService $qualificationStatusService,
         private readonly BailleurRepository $bailleurRepository,
-        private readonly ZoneRepository $zoneRepository,
+        private readonly ZoneSignalementQuery $zoneSignalementQuery,
         private readonly CountStatisticsQuery $countStatisticsQuery,
         private readonly CommuneEpciQuery $communeEpciQuery,
     ) {
@@ -77,7 +77,7 @@ class SearchFilterOptionDataProvider
                     'partners' => $isAddressesHistoryContext ? [] : $this->partnerRepository->findAllList($territory, $user),
                     'epcis' => $this->communeEpciQuery->findEpciByCommuneTerritory($territory, $user),
                     'tags' => $isAddressesHistoryContext ? [] : $this->tagsRepository->findAllActive($territory, $user),
-                    'zones' => $this->zoneRepository->findForUserAndTerritory($user, $territory),
+                    'zones' => $this->zoneSignalementQuery->findForUserAndTerritory($user, $territory),
                     'cities' => $this->signalementRepository->findCities($user, $territory),
                     'zipcodes' => $this->signalementRepository->findZipcodes($user, $territory),
                     'listQualificationStatus' => $isAddressesHistoryContext ? [] : $this->qualificationStatusService->getList(),

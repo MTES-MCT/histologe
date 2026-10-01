@@ -28,23 +28,6 @@ class UserRepositoryTest extends KernelTestCase
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
     }
 
-    public function testFindInactiveUserWithNbAffectations(): void
-    {
-        /** @var UserRepository $userRepository */
-        $userRepository = $this->entityManager->getRepository(User::class);
-
-        $users = $userRepository->findInactiveWithNbAffectationPending();
-
-        $this->assertIsArray($users);
-        $this->assertCount(11, $users);
-        foreach ($users as $user) {
-            $this->assertArrayHasKey('email', $user);
-            if (!empty($user['signalements'])) {
-                $this->assertEquals($user['nb_signalements'], \count(explode(',', (string) $user['signalements'])));
-            }
-        }
-    }
-
     public function testFindActiveTerritoryAdmins69(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000003']);

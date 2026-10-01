@@ -354,7 +354,7 @@ class ExportIterableQuery
     private function fetchZonesData(array $signalementIds): array
     {
         // On récupère le nom des zones dans lesquelles se trouvent les signalements
-        // Adaptation de ZoneRepository::findZonesBySignalement
+        // Adaptation de ZoneSignalementQuery::findZonesBySignalement
         $result = $this->em->getConnection()->executeQuery(
             '
             SELECT s.id as signalementId, GROUP_CONCAT(z.name SEPARATOR :sep) as zones
