@@ -121,4 +121,21 @@ class NotificationControllerTest extends WebTestCase
 
         return implode('', $notificationsId);
     }
+
+    public function testWithOrderByFilter(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        /** @var UrlGeneratorInterface $generatorUrl */
+        $generatorUrl = static::getContainer()->get(UrlGeneratorInterface::class);
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        $client->loginUser($user);
+        $route = $generatorUrl->generate('back_notifications_list', ['orderType' => 'address.city-ASC']);
+
+        $client->request('GET', $route);
+        $this->assertResponseIsSuccessful();
+    }
 }
