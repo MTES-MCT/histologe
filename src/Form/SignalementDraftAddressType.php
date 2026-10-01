@@ -80,7 +80,7 @@ class SignalementDraftAddressType extends AbstractType
                 'mapped' => false,
                 'attr' => [
                     'data-autocomplete-address-filter' => 'true',
-                    'data-filter' => $territory->getZip().'|'.$territory->getName(),
+                    'data-filter-dept' => $territory->getZip(),
                 ],
             ]);
         } else {
@@ -94,7 +94,7 @@ class SignalementDraftAddressType extends AbstractType
                     'data-autocomplete-address-filter' => 'true',
                 ],
                 'choice_attr' => static function (Territory $territory) {
-                    return ['data-filter' => $territory->getZip().'|'.$territory->getName()];
+                    return ['data-filter-dept' => $territory->getZip()];
                 },
                 'data' => $territory,
             ]);

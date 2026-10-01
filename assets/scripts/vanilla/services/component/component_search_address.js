@@ -73,21 +73,20 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
     }
 
     addressAbortController = new AbortController();
-    let zipFilterAddress = '';
+    let depcode = '';
     if (fieldFilterAddress) {
       if (fieldFilterAddress.tagName === 'SELECT') {
         const selectedOption = fieldFilterAddress.options[fieldFilterAddress.selectedIndex];
-        zipFilterAddress = selectedOption ? selectedOption.dataset.filter || '' : '';
+        depcode = selectedOption ? selectedOption.dataset.filterDept || '' : '';
       } else {
-        zipFilterAddress = fieldFilterAddress.dataset.filter || '';
+        depcode = fieldFilterAddress.dataset.filterDept || '';
       }
     }
     let query = apiAdresse + adresse;
     let limit = inputAdresse.getAttribute('data-form-limit');
-    if (zipFilterAddress !== '') {
-      const splitFilter = zipFilterAddress.split('|');
-      query += ' ' + splitFilter[1];
-      limit = splitFilter[0];
+    if (depcode !== '') {
+      query += '&depcode=' + encodeURIComponent(depcode);
+      limit = null;
     }
     if (inputAdresse.getAttribute('data-form-lat')) {
       query += '&lat=' + inputAdresse.getAttribute('data-form-lat');
