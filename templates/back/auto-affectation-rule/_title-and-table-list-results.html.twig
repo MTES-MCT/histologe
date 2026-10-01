@@ -8,11 +8,9 @@
         <th scope="col">Allocataire</th>
         <th scope="col">Accompagnement travailleur social</th>
         <th scope="col">Demande logement social</th>
-        <th scope="col">Code insee inclus</th>
-        <th scope="col">Code insee exclus</th>
+        <th scope="col">Code insee <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">inclus</span> <span class="fr-badge fr-badge--no-icon fr-badge--error fr-mb-1v">exclus</span></th>
         <th scope="col">Id partenaires exclus</th>
-        <th scope="col">Id zones incluses</th>
-        <th scope="col">Id zones exclues</th>
+        <th scope="col">Id zones <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">inclues</span> <span class="fr-badge fr-badge--no-icon fr-badge--error fr-mb-1v">exclues</span></th>
         <th scope="col">Procédures suspectées</th>
         <th scope="col" class="fr-text--right">Actions</th>
     {% endset %}
@@ -40,17 +38,11 @@
                         {% for insee in autoaffectationrule.inseeToInclude|split(',') %}
                             <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</div>
                         {% endfor %}
-                    {% else %}
-                        /
                     {% endif %}
-                </td>
-                <td>
                     {% if autoaffectationrule.inseeToExclude %}
                         {% for insee in autoaffectationrule.inseeToExclude %}
-                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</div>
+                            <div class="fr-badge fr-badge--no-icon fr-badge--error fr-mb-1v">{{ insee }}</div>
                         {% endfor %}
-                    {% else %}
-                        /
                     {% endif %}
                 </td>
                 <td>
@@ -58,8 +50,6 @@
                         {% for idPartner in autoaffectationrule.partnerToExclude %}
                             <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ idPartner }}</div>
                         {% endfor %}
-                    {% else %}
-                        /
                     {% endif %}
                 </td>
                 <td>
@@ -67,17 +57,11 @@
                         {% for idZone in autoaffectationrule.zoneToInclude %}
                             <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ idZone }}</div>
                         {% endfor %}
-                    {% else %}
-                        /
                     {% endif %}
-                </td>
-                <td>
                     {% if autoaffectationrule.zoneToExclude %}
                         {% for idZone in autoaffectationrule.zoneToExclude %}
-                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ idZone }}</div>
+                            <div class="fr-badge fr-badge--no-icon fr-badge--error fr-mb-1v">{{ idZone }}</div>
                         {% endfor %}
-                    {% else %}
-                        /
                     {% endif %}
                 </td>
                 <td>
@@ -85,8 +69,6 @@
                         {% for proc in autoaffectationrule.proceduresSuspectees %}
                             <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ proc.label() }}</div>
                         {% endfor %}
-                    {% else %}
-                        /
                     {% endif %}
                 </td>
                 <td class="fr-text--right">

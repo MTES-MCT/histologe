@@ -97,36 +97,50 @@ class BackZoneControllerTest extends WebTestCase
         $this->assertCount(0, $zone->getPartners());
     }
 
-    public function testZoneDeleteIsBlockedWhenOnlyZoneIncludedInActiveRule(): void
+    #[DataProvider('provideZoneUsage')]
+    public function testZoneDeleteIsBlockedWhenZoneIsUsedInActiveRule(string $usage): void
     {
         self::ensureKernelShutdown();
         $client = static::createClient();
         $zoneId = $this->getZoneId('La Bodinière');
+        $otherZoneId = $this->getZoneId('StMars');
         $rule = $this->getRules(AutoAffectationRule::STATUS_ACTIVE)[0];
-        $rule->setZoneToInclude([(string) $zoneId]);
+        if ('include' === $usage) {
+            $rule->setZoneToInclude([(string) $otherZoneId, (string) $zoneId]);
+        } else {
+            $rule->setZoneToExclude([(string) $zoneId]);
+        }
         static::getContainer()->get(EntityManagerInterface::class)->flush();
 
         $response = $this->requestZoneDelete($client, $zoneId);
 
         $this->assertSame('alert', $response['flashMessages'][0]['type']);
         $this->assertSame('Suppression impossible', $response['flashMessages'][0]['title']);
-        $this->assertStringContainsString('règle d\'auto-affectation active', $response['flashMessages'][0]['message']);
+        $this->assertSame(
+            'Cette zone ne peut pas être supprimée car elle est utilisée par une règle d\'auto-affectation active. Merci de contacter les administrateurs pour faire modifier cette règle avant de supprimer la zone.',
+            $response['flashMessages'][0]['message']
+        );
         static::getContainer()->get(EntityManagerInterface::class)->clear();
         $this->assertNotNull(static::getContainer()->get(ZoneRepository::class)->find($zoneId));
-        $this->assertSame([(string) $zoneId], $this->getRule($rule->getId())->getZoneToInclude());
     }
 
-    public function testZoneDeleteCleansAutoAffectationRules(): void
+    public static function provideZoneUsage(): \Generator
+    {
+        yield 'zone included' => ['include'];
+        yield 'zone excluded' => ['exclude'];
+    }
+
+    public function testZoneDeleteCleansArchivedAutoAffectationRules(): void
     {
         self::ensureKernelShutdown();
         $client = static::createClient();
         $zoneId = $this->getZoneId('La Bodinière');
         $otherZoneId = $this->getZoneId('StMars');
         [$ruleWithTwoZones, $ruleWithZoneExcluded] = $this->getRules(AutoAffectationRule::STATUS_ACTIVE);
-        $archivedRule = $this->getRules(AutoAffectationRule::STATUS_ARCHIVED)[0];
-        $ruleWithTwoZones->setZoneToInclude([(string) $otherZoneId, (string) $zoneId]);
-        $ruleWithZoneExcluded->setZoneToExclude([(string) $zoneId]);
-        $archivedRule->setZoneToInclude([(string) $zoneId]);
+        $ruleWithOnlyZoneIncluded = $this->getRules(AutoAffectationRule::STATUS_ARCHIVED)[0];
+        $ruleWithTwoZones->setStatus(AutoAffectationRule::STATUS_ARCHIVED)->setZoneToInclude([(string) $otherZoneId, (string) $zoneId]);
+        $ruleWithZoneExcluded->setStatus(AutoAffectationRule::STATUS_ARCHIVED)->setZoneToExclude([(string) $zoneId]);
+        $ruleWithOnlyZoneIncluded->setZoneToInclude([(string) $zoneId]);
         static::getContainer()->get(EntityManagerInterface::class)->flush();
 
         $response = $this->requestZoneDelete($client, $zoneId);
@@ -136,8 +150,30 @@ class BackZoneControllerTest extends WebTestCase
         $this->assertNull(static::getContainer()->get(ZoneRepository::class)->find($zoneId));
         $this->assertSame([(string) $otherZoneId], $this->getRule($ruleWithTwoZones->getId())->getZoneToInclude());
         $this->assertNull($this->getRule($ruleWithZoneExcluded->getId())->getZoneToExclude());
-        // la zone reste dans la règle archivée dont elle est la seule zone incluse, pour ne pas élargir son périmètre
-        $this->assertSame([(string) $zoneId], $this->getRule($archivedRule->getId())->getZoneToInclude());
+        $this->assertNull($this->getRule($ruleWithOnlyZoneIncluded->getId())->getZoneToInclude());
+    }
+
+    public function testZoneListDisablesDeleteButtonWhenZoneIsUsedInActiveRule(): void
+    {
+        self::ensureKernelShutdown();
+        $client = static::createClient();
+        $zoneId = $this->getZoneId('La Bodinière');
+        $this->getRules(AutoAffectationRule::STATUS_ACTIVE)[0]->setZoneToExclude([(string) $zoneId]);
+        static::getContainer()->get(EntityManagerInterface::class)->flush();
+
+        /** @var UserRepository $userRepository */
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $client->loginUser($userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']));
+        /** @var RouterInterface $router */
+        $router = static::getContainer()->get(RouterInterface::class);
+        $crawler = $client->request('GET', $router->generate('back_territory_management_zone_index'));
+
+        $this->assertCount(1, $crawler->filter('button[aria-label="Supprimer la zone La Bodinière"][disabled]'));
+        $this->assertSelectorTextSame(
+            '#tooltip_zone_delete_'.$zoneId,
+            'Cette zone ne peut pas être supprimée car elle est utilisée par une règle d\'auto-affectation active. Merci de contacter les administrateurs pour faire modifier cette règle avant de supprimer la zone.'
+        );
+        $this->assertCount(0, $crawler->filter('button[aria-label="Supprimer la zone StMars"][disabled]'));
     }
 
     /**

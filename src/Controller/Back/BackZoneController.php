@@ -2,7 +2,6 @@
 
 namespace App\Controller\Back;
 
-use App\Entity\AutoAffectationRule;
 use App\Entity\User;
 use App\Entity\Zone;
 use App\Form\SearchZoneType;
@@ -177,25 +176,15 @@ class BackZoneController extends AbstractController
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
         }
-        $zoneId = $zone->getId();
-        $autoAffectationRules = $zone->getTerritory()->getAutoAffectationRules();
-        $isOnlyZoneIncluded = static fn (AutoAffectationRule $rule): bool => [$zoneId] === array_map('intval', array_values($rule->getZoneToInclude() ?? []));
-        foreach ($autoAffectationRules as $rule) {
-            if (AutoAffectationRule::STATUS_ACTIVE === $rule->getStatus() && $isOnlyZoneIncluded($rule)) {
-                $flashMessages[] = [
-                    'type' => 'alert',
-                    'title' => 'Suppression impossible',
-                    'message' => 'Cette zone ne peut pas être supprimée car elle est la seule zone d\'application d\'une règle d\'auto-affectation active. Merci de contacter les administrateurs pour faire modifier cette règle avant de supprimer la zone.',
-                ];
+        if (!$this->isGranted(ZoneVoter::ZONE_DELETE, $zone)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Suppression impossible', 'message' => ZoneVoter::ZONE_DELETE_DENIED_MESSAGE];
 
-                return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
-            }
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
         }
-        // Retire la zone supprimée des règles d'auto-affectation (sauf si c'est la seule zone incluse d'une règle archivée, pour ne pas élargir son périmètre)
-        foreach ($autoAffectationRules as $rule) {
-            if (!$isOnlyZoneIncluded($rule)) {
-                $rule->setZoneToInclude(array_values(array_filter($rule->getZoneToInclude() ?? [], static fn ($id): bool => (int) $id !== $zoneId)) ?: null);
-            }
+        $zoneId = $zone->getId();
+        // Retire la zone des règles d'auto-affectation archivées
+        foreach ($zone->getTerritory()->getAutoAffectationRules() as $rule) {
+            $rule->setZoneToInclude(array_values(array_filter($rule->getZoneToInclude() ?? [], static fn ($id): bool => (int) $id !== $zoneId)) ?: null);
             $rule->setZoneToExclude(array_values(array_filter($rule->getZoneToExclude() ?? [], static fn ($id): bool => (int) $id !== $zoneId)) ?: null);
         }
         $entityManager->remove($zone);
