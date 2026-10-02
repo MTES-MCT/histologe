@@ -6,7 +6,7 @@
         :id="`${id}-toggle`"
         v-model="toggleValue"
         @update:model-value="onToggleChange"
-        containerClass="fr-col-11"
+        containerClass="fr-col-10"
       >
         <template #label>
           <span v-if="labelPicto" :class="`${labelPicto}`" class="toggle-picto" aria-hidden="true"></span>
@@ -14,7 +14,7 @@
         </template>
       </HistoToggle>
 
-      <div class="fr-col-1">
+      <div class="fr-col-2">
         <span
           :class="['fr-icon-arrow-down-s-line', 'toggle-arrow', { 'toggle-arrow--open': isOpen }]"
           aria-hidden="true"
@@ -133,7 +133,6 @@ export default defineComponent({
 }
 
 .toggle-arrow {
-  position: absolute;
   transition: transform 0.3s;
   cursor: pointer;
   pointer-events: auto;
