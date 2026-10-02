@@ -1,0 +1,97 @@
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+        <h4 class="fr-h6">Coordonnées du tiers déclarant</h4>
+    </div>
+
+    {% if not signalement.isNotOccupant and not signalement.mailDeclarant %}
+        Afin de faciliter les échanges avec l'usager, vous pouvez donner accès au dossier à un tiers (famille, travailleur social, association, etc.) en renseignant son adresse e-mail.
+        <br>
+        {% if tiersInvitation %}
+            <div class="alert alert-warning">
+                <span class="fr-text--medium">Invitation en attente pour {{ tiersInvitation.email }}</span>
+            </div>
+        {% else %}
+            {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+                <button
+                    class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line fr-mt-3v"
+                    data-panel-open="panel-invite-tiers"
+                    aria-controls="panel-invite-tiers"
+                    data-fr-opened="false"
+                    >Inviter un tiers sur le dossier</button>
+                        
+            {% endif %}
+        {% endif %}
+
+        <hr class="fr-mt-3w fr-hr">
+
+    {% else %}
+
+        <div class="fr-col-12 fr-col-md-4 fr-text--right">
+            {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+            <button class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line"
+                data-panel-open="panel-edit-coordonnees-tiers"
+                aria-controls="panel-edit-coordonnees-tiers"
+                data-fr-opened="false"
+                >Modifier</button>
+            {% endif %}
+        </div>
+        
+        {% if signalement.structureDeclarant %}
+            <div class="fr-col-12 fr-mb-2v">
+                <span class="fr-text--medium">Nom de la structure :</span> {{ signalement.structureDeclarant }}
+            </div>
+        {% endif %}
+        {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR  %}
+            <div class="fr-col-12 fr-mb-2v">
+                <span class="fr-text--medium">Type de déclarant :</span> {{ signalement.profileDeclarant.label }}
+            </div>
+            <div class="fr-col-12 fr-mb-2v">
+                <span class="fr-text--medium">Type de bailleur :</span> {{ signalement.typeProprio ? signalement.typeProprio.label}}
+            </div>
+        {% elseif signalement.lienDeclarantOccupant %}
+            <div class="fr-col-12 fr-mb-2v">
+                <span class="fr-text--medium">Lien :</span>
+                {{ signalement.lienDeclarantOccupant|signalement_lien_declarant_occupant }}
+                {% if signalement.situationFoyer and signalement.situationFoyer.travailleurSocialAccompagnementDeclarant %}
+                    (travailleur social accompagnant)
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Nom :</span> {{ signalement.nomDeclarant }}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Prénom :</span> {{ signalement.prenomDeclarant }}
+        </div>
+        {% if signalement.matriculeDeclarant %}
+            <div class="fr-col-12 fr-mb-2v">
+                <span class="fr-text--medium">Matricule :</span> {{ signalement.matriculeDeclarant }}
+            </div>
+        {% endif %}
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">E-mail :</span>
+            {% if signalement.mailDeclarant %}
+                <a href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
+                {% if show_email_alert(signalement.mailDeclarant) %}
+                    <p class="fr-badge fr-badge--error">Format non valide</p>
+                {% endif %}
+                {% if show_email_usager_alert_brevo('declarant', signalement.mailDeclarant) %}
+                    <p class="fr-badge fr-badge--warning">Problème d'e-mail non remis</p>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Tél. :</span> {{ signalement.telDeclarantDecoded|phone }}
+        </div>
+        {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR  %}
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Date de naissance :</span>
+            {% if signalement.informationComplementaire and signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissanceDate %}
+                {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissanceDate.format('d/m/Y') }}
+            {% endif %}
+        </div>
+        {% endif %}
+
+    {% endif %}
+</div>
