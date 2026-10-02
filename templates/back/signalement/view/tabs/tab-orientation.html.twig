@@ -29,6 +29,8 @@
                                     {% set typeBadge = 'warning' %}
                                 {% endif %}
                                 <small class="fr-badge fr-badge--{{typeBadge}} fr-badge--no-icon fr-mb-1v">{{ procedure.procedureType.label }}</small>
+                            {% else %}
+                                <i>Aucune procédure sélectionnée</i>
                             {% endfor %}
                         </div>
                         <div class="fr-col-lg-6 fr-col-12">
