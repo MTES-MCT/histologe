@@ -541,6 +541,33 @@ a.fr-btn.fr-btn--icon-left.fr-fi-file-pdf-fill.ignore-blank-style::before {
     resize: vertical;
 }
 
+.fr-header-bo {
+    .fr-header__logo .fr-logo::after {
+        display: none;
+    }
+}
+.fr-footer-bo {
+    .fr-footer__bottom {
+        margin-top: 0px;
+        box-shadow: none;
+
+        .cmsfr-footer__bottom-extra {
+            display: none;
+        }
+
+        .fr-footer__brand-link {
+            display: inline;
+            --underline-hover-width: 0%;
+            background-image: none;
+            background-color: transparent;
+
+            .fr-footer__logo {
+                vertical-align: bottom; /* L'idéal serait "middle", mais le logo a une trop grosse zone blanche sur le haut */
+            }
+        }
+    }
+}
+
 .signalement-form-only-choice .fr-fieldset__element {
     width: 100%;
     max-width: 500px;
