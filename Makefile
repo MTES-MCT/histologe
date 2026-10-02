@@ -7,6 +7,8 @@ DATABASE_USER = signal_logement
 DATABASE_NAME = signal_logement_db
 PATH_DUMP_SQL = data/dump.sql
 PATH_MB_DUMP_SQL = data/dump.pgsql
+PATH_MB_REPORT_SQL = .docker/metabase/resources-report.sql
+PATH_MB_INCIDENT_REPORT_SQL = .docker/metabase/incident-resources.sql
 PHPUNIT       = ./vendor/bin/phpunit
 SYMFONY       = php bin/console --profile
 NPX           = npx
@@ -320,6 +322,28 @@ run-concurrency-request: ## Run concurrency request based postman collection ex:
 
 metabase-db:
 	@bash -l -c '$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) exec metabase_db psql -U metabase -d metabase'
+
+metabase-db-report:
+	@test -f "$(PATH_MB_REPORT_SQL)" || \
+		(echo "Fichier introuvable : $(PATH_MB_REPORT_SQL)" && exit 1)
+	$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) exec -T metabase_db \
+		psql -v ON_ERROR_STOP=1 -U metabase -d metabase \
+		-f - < "$(PATH_MB_REPORT_SQL)"
+
+metabase-incident-report:
+	@test -n "$(METABASE_INCIDENT_DATE_FROM)" || \
+		(echo "Variable obligatoire : METABASE_INCIDENT_DATE_FROM" && exit 1)
+	@test -n "$(METABASE_INCIDENT_DATE_TO)" || \
+		(echo "Variable obligatoire : METABASE_INCIDENT_DATE_TO" && exit 1)
+	@test -f "$(PATH_MB_INCIDENT_REPORT_SQL)" || \
+		(echo "Fichier introuvable : $(PATH_MB_INCIDENT_REPORT_SQL)" && exit 1)
+	$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) exec -T metabase_db \
+		psql -v ON_ERROR_STOP=1 \
+		-U metabase \
+		-d metabase \
+		-v date_debut="$(METABASE_INCIDENT_DATE_FROM)" \
+		-v date_fin="$(METABASE_INCIDENT_DATE_TO)" \
+		-f - < "$(PATH_MB_INCIDENT_REPORT_SQL)"
 
 metabase-db-restore-list:
 	@test -f "$(PATH_MB_DUMP_SQL)" || \
