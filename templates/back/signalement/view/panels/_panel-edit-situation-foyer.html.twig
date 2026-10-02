@@ -171,6 +171,26 @@
                 </div>
                 {% endif %}
                 <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_situation_foyer_'~signalement.id) }}">
+
+                {# <div class="fr-input-group">
+                    {% set infoProcedureDepartApresTravaux = signalement.informationProcedure ? signalement.informationProcedure.infoProcedureDepartApresTravaux : null %}
+                    <label class="fr-label" for="procedureDemarchesInfoProcedureDepartApresTravaux">Souhaite garder le logement après travaux
+                        {{ show_label_facultatif(
+                            'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
+                            'infoProcedureDepartApresTravaux',
+                            signalement.profileDeclarant,
+                            signalement.isV2)
+                        }}
+                    </label>
+                    <select class="fr-select" id="procedureDemarchesInfoProcedureDepartApresTravaux" name="infoProcedureDepartApresTravaux">
+                        
+                        <option value="" {{ infoProcedureDepartApresTravaux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="non" {{ infoProcedureDepartApresTravaux is same as 'non' ? 'selected' : '' }}>Oui</option>
+                        <option value="oui" {{ infoProcedureDepartApresTravaux is same as 'oui' ? 'selected' : '' }}>Non</option>
+                        <option value="nsp" {{ infoProcedureDepartApresTravaux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                    </select>
+                </div> #}
+
             </form>
         </div>
         <div class="side-panel__footer">

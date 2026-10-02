@@ -1,0 +1,95 @@
+{# {% if is_granted('SIGN_SEE_NDE', signalement) %} #}
+
+    <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-md-8">
+            <h3 id="title-nde" class="fr-h6">Consommation énergétique</h3>
+        </div>
+        <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {# TODO : vérifier le voter  #}
+        {# TODO : vérifier si on a DPE dans le panel  #}
+            {% if is_granted('SIGN_EDIT_NDE', signalement) %}
+                <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-fi-edit-line fr-btn--icon-left"
+                    data-fr-opened="false"
+                    aria-controls="panel-edit-nde"
+                    data-panel-open="panel-edit-nde"
+                    >Modifier</button>
+            {% endif %}
+        </div>
+    </div>
+    <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-md-6">
+            <div class="fr-mb-2v">        
+                {% if signalementQualificationNDE %}      
+                    <span class="fr-text--medium">DPE :</span> {{ signalementQualificationNDE.details.DPE ? 'Oui' : (signalementQualificationNDE.details.DPE is same as null ? 'A vérifier' : 'Non') }} 
+                {% elseif signalement.typeCompositionLogement %}
+                    <span class="fr-text--medium">DPE :</span> {{ signalement.typeCompositionLogement.bailDpeDpe is same as 'oui' ? 'Oui' : (signalement.typeCompositionLogement.bailDpeDpe is same as null ? 'A vérifier' : 'Non')  }} 
+                {% else %}  
+                    <span class="fr-text--medium">DPE :</span> A vérifier            
+                {% endif %}
+            </div>
+            <div class="fr-mb-2v">
+                <span class="fr-text--medium">Classe énergétique :</span>
+                {% if signalement.typeCompositionLogement %}
+                    {{signalement.typeCompositionLogement.bailDpeClasseEnergetique(false)}}
+                {% endif %}
+            </div>
+            <div class="fr-mb-2v">  
+                {% if signalementQualificationNDE %}      
+                    <span class="fr-text--medium">Date dernier DPE :</span> {{ signalementQualificationNDE.details.date_dernier_dpe ? ( signalementQualificationNDE.details.date_dernier_dpe|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
+                {% elseif signalement.typeCompositionLogement %}
+                    <span class="fr-text--medium">Date dernier DPE :</span>
+                    {% if signalement.typeCompositionLogement.desordresLogementChauffageDetailsDpeAnnee %}
+                        {% if signalement.typeCompositionLogement.desordresLogementChauffageDetailsDpeAnnee is same as 'before2023' %}
+                            Avant 2023
+                        {% elseif signalement.typeCompositionLogement.desordresLogementChauffageDetailsDpeAnnee is same as 'post2023' %}
+                            A partir de 2023
+                        {% elseif signalement.typeCompositionLogement.desordresLogementChauffageDetailsDpeAnnee is same as 'nsp' %}
+                            Ne sait pas
+                        {% endif %}
+                    {% endif %}
+                {% else %}  
+                    <span class="fr-text--medium">Date dernier DPE :</span> A vérifier            
+                {% endif %}            
+            </div>
+            <div class="fr-mb-2v">
+                <span class="fr-text--medium">Entrée dans le logement :</span> {{ signalement.dateEntree  ? ( signalement.dateEntree|date('Y') < '2023' ? 'Avant 2023' : 'A partir de 2023' ) : ''}}
+            </div>
+        </div>
+        <div class="fr-col-12 fr-col-md-6">
+            {% if signalementQualificationNDE %}            
+                <div class="fr-mb-2v">                    
+                    <span class="fr-text--medium">Analyse :</span> <span class="{{ signalementQualificationNDE.status|status_to_css }}">{{ signalementQualificationNDE.status.label }}</span>
+                </div>
+            {% endif %}
+            <div class="fr-mb-2v">
+                <span class="fr-text--medium">Consommation d'énergie :</span> 
+                <span class="fr-badge fr-badge--info fr-badge--sm">
+                {% if signalementQualificationNDE is same as null or signalementQualificationNDE.details.DPE is same as null or signalementQualificationNDE.details.consommation_energie is same as null %}
+                    A renseigner
+                {% else %}
+                    {% if signalementQualificationNDE.details.date_dernier_dpe|date('Y') < '2023' and signalement.superficie is not null and signalement.superficie > 0 %}
+                        {% set calcul = signalementQualificationNDE.details.consommation_energie / signalement.superficie %}
+                    {% else %}
+                        {% set calcul = signalementQualificationNDE.details.consommation_energie %}
+                    {% endif %}
+                    {{calcul|round(2)}} kWh/m²/an
+                {% endif %} 
+                </span>
+            </div>
+            <div class="fr-mb-2v">
+                <span class="fr-text--medium">Désordre(s) concerné(s) :</span> 
+                <ul class="fr-list">
+                {% if signalement.isV2 %}
+                    {% for desordrePrecision in signalementQualificationNDECriticite %}
+                        <li> {{ desordrePrecision.desordreCritere.labelCritere}} : {{desordrePrecision.label|raw}}</li>
+                    {% endfor %}
+                {% else %}
+                    {% for criticite in signalementQualificationNDECriticite %}
+                        <li> {{ criticite.critere.label}} - Etat {{criticite.scoreLabel}} : {{criticite.label}}</li>
+                    {% endfor %}
+                {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{# {% endif %} #}

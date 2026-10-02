@@ -1,0 +1,113 @@
+<h2 class="fr-h4">Détails du dossier</h2>
+<p>Retrouvez ici la déclaration de l'usager et les informations sur le logement, l'usager et le bailleur.</p>
+
+<div class="fr-p-3w fr-frame--grey fr-mb-3w">
+    <h3 class="fr-h5 title-blue-france">Déclaration de l'usager</h3>
+    <p>La déclaration, les documents et les photos ajoutées par l'usager ne sont pas modifiables.</p>
+    {% include 'back/signalement/view/user-declaration.html.twig' %}
+</div>
+
+<div class="fr-p-3w fr-frame--white fr-mb-3w">
+    <div class="fr-grid-row fr-grid-row--middle fr-mb-3w">
+        <img src="{{ asset('build/dsfr/artwork/pictograms/digital/avatar.svg') }}" aria-hidden="true" class="fr-artwork fr-mr-2w" alt="" width="48" height="48">
+        <h3 class="fr-h5 title-blue-france fr-mb-0">Le foyer</h3>
+    </div>
+    <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-md-6 fr-pr-6v">
+            {% include 'back/signalement/view/details/coordonnees-foyer.html.twig' %}
+        </div>
+
+        <div class="fr-col-12 fr-col-md-6">
+            {% include 'back/signalement/view/details/coordonnees-tiers.html.twig' %}
+        </div>
+    </div>
+    <hr class="fr-mt-3w fr-hr">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            {% include 'back/signalement/view/details/situation-foyer.html.twig' %}
+        </div>
+    </div>
+</div>
+
+{% if signalement|display_signalement_info_bailleur %}
+    <div class="fr-p-3w fr-frame--white fr-mb-3w">
+        <div class="fr-grid-row fr-grid-row--middle fr-mb-3w">
+            <img src="{{ asset('build/dsfr/artwork/pictograms/document/contract.svg') }}" aria-hidden="true" class="fr-artwork fr-mr-2w" alt="" width="48" height="48">
+            <h3 class="fr-h5 title-blue-france fr-mb-0">Bailleur, agence et syndic</h3>
+        </div>
+        <div class="fr-grid-row">
+            <div class="fr-col-12 fr-col-md-6 fr-pr-6v">
+                {% include 'back/signalement/view/details/coordonnees-bailleur.html.twig' %}
+            </div>
+
+            <div class="fr-col-12 fr-col-md-6">
+                {% include 'back/signalement/view/details/informations-bailleur.html.twig' %}
+            </div>
+        </div>
+        <hr class="fr-mt-3w fr-hr">
+        <div class="fr-grid-row">
+            <div class="fr-col-12 fr-col-md-8">
+                <h4 class="fr-h6">Agence et syndic</h4>
+            </div>
+            <div class="fr-col-12 fr-col-md-4 fr-text--right">
+            {# todo : faire fonctionner ce bouton pour masquer la section #}
+                {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+                    <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-eye-off-line"
+                        data-panel-open="panel-edit-coordonnees-agence"
+                        aria-controls="panel-edit-coordonnees-agence"
+                        data-fr-opened="false"
+                        >Masquer la section</button>
+                {% endif %}
+            </div>
+            <div class="fr-col-12 fr-col-md-6 fr-pr-6v">
+                {% include 'back/signalement/view/details/coordonnees-agence.html.twig' %}
+            </div>
+
+            <div class="fr-col-12 fr-col-md-6">
+                {% include 'back/signalement/view/details/coordonnees-syndic.html.twig' %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<div class="fr-p-3w fr-frame--white fr-mb-3w">
+    <div class="fr-grid-row fr-grid-row--middle fr-mb-3w">
+        <div class="fr-col-12 fr-col-md-8 fr-grid-row fr-grid-row--middle">
+            <img src="{{ asset('build/dsfr/artwork/pictograms/digital/mail-send.svg') }}" aria-hidden="true" class="fr-artwork fr-mr-2w" alt="" width="48" height="48">
+            <h3 class="fr-h5 title-blue-france fr-mb-0">Démarches entreprises par l'usager</h3>
+        </div>
+        <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {# todo : enlever Souhaite garder le logement après travaux (facultatif)  du panel #}
+            {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+                <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-edit-line"
+                    data-panel-open="panel-edit-procedure-demarches"
+                    aria-controls="panel-edit-procedure-demarches"
+                    data-fr-opened="false"
+                    >Modifier</button>
+            {% endif %}
+        </div>
+    </div>
+    {% include 'back/signalement/view/details/demarches-usager.html.twig' %}
+</div>
+
+<div class="fr-p-3w fr-frame--white fr-mb-3w">
+    <div class="fr-grid-row fr-grid-row--middle fr-mb-3w">
+        <img src="{{ asset('img/picto-dsfr/logement.svg') }}" aria-hidden="true" class="fr-artwork fr-mr-2w" alt="" width="48" height="48">
+        <h3 class="fr-h5 title-blue-france fr-mb-0">Le logement</h3>
+    </div>
+    <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-md-6 fr-pr-6v">
+            {% include 'back/signalement/view/details/description-logement.html.twig' %}
+        </div>
+
+        <div class="fr-col-12 fr-col-md-6">
+            {% include 'back/signalement/view/details/occupation-logement.html.twig' %}
+        </div>
+    </div>
+    <hr class="fr-mt-3w fr-hr">
+    <div class="fr-grid-row">
+        <div class="fr-col-12">
+            {% include 'back/signalement/view/details/consommation-energetique.html.twig' %}
+        </div>
+    </div>
+</div>

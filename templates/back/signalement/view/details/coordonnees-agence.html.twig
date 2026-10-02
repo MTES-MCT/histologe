@@ -1,0 +1,68 @@
+
+    {% set hasCoordonnees = signalement.denominationAgence or signalement.nomAgence or signalement.prenomAgence or signalement.mailAgence or signalement.telAgence or signalement.telAgenceSecondaire or signalement.adresseAgence or signalement.codePostalAgence or signalement.villeAgence %}
+    <div class="fr-grid-row">
+        {% if hasCoordonnees %}
+            <div class="fr-col-12 fr-col-md-8">
+                <h5 class="fr-h6">Agence de gestion</h5>
+            </div>
+            <div class="fr-col-12 fr-col-md-4 fr-text--right">
+                {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+                    <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-edit-line"
+                        data-panel-open="panel-edit-coordonnees-agence"
+                        aria-controls="panel-edit-coordonnees-agence"
+                        data-fr-opened="false"
+                        >Modifier</button>
+                {% endif %}
+            </div>
+            <div class="fr-col-12 fr-mb-2v">
+                <span class="fr-text--medium">Dénomination :</span> {{ signalement.denominationAgence }}
+            </div>
+            <div class="fr-col-12 fr-mb-2v">
+                <span class="fr-text--medium">Nom :</span> {{ signalement.nomAgence }}
+            </div>
+            <div class="fr-col-12 fr-mb-2v">
+                <span class="fr-text--medium">Prénom :</span> {{ signalement.prenomAgence }}
+            </div>
+            <div class="fr-col-12 fr-mb-2v">
+                <span class="fr-text--medium">E-mail :</span>
+                {% if signalement.mailAgence %}
+                    <a href="mailto:{{ signalement.mailAgence }}">{{ signalement.mailAgence }}</a>
+                    {% if show_email_alert(signalement.mailAgence) %}
+                        <p class="fr-badge fr-badge--error">Format non valide</p>
+                    {% endif %}
+                    {% if show_email_usager_alert_brevo('agence', signalement.mailAgence) %}
+                        <p class="fr-badge fr-badge--warning">Problème d'e-mail non remis</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="fr-col-12 fr-mb-2v">
+                <span class="fr-text--medium">Tél. :</span>
+                {% if signalement.telAgence %}
+                    <a href="mailto:{{ signalement.telAgenceDecoded }}">{{ signalement.telAgenceDecoded|phone }}</a>
+                {% endif %}
+            </div>
+            <div class="fr-col-12 fr-mb-2v">
+                <span class="fr-text--medium">Tél. sec. :</span>
+                {% if signalement.telAgenceSecondaire %}
+                    <a href="mailto:{{ signalement.telAgenceSecondaireDecoded }}">{{ signalement.telAgenceSecondaireDecoded|phone }}</a>
+                {% endif %}
+            </div>
+            <div class="fr-col-12 fr-mb-2v">
+                <span class="fr-text--medium">Adresse :</span> {{ signalement.adresseAgence ? signalement.adresseAgence ~ ', ' ~ signalement.codePostalAgence ~ ' ' ~ signalement.villeAgence}}
+            </div>
+        {% else %}
+            <div class="fr-col-12">
+                <div class="fr-callout">
+                    <p class="fr-callout__title">Agence de gestion</p>
+                    <p class="fr-callout__text">Si le logement est géré par une agence immobilière, vous pouvez renseigner ses coordonnées.</p>
+                    {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+                        <button class="fr-btn"
+                            data-panel-open="panel-edit-coordonnees-agence"
+                            aria-controls="panel-edit-coordonnees-agence"
+                            data-fr-opened="false"
+                            >Ajouter les coordonnées</button>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
