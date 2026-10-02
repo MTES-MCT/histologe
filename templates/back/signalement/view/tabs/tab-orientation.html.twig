@@ -1,0 +1,147 @@
+<h2 class="fr-h4">Orientation du dossier</h2>
+<p>Retrouvez les observations générales, les conclusions de visite et indiquez les procédures à engager sur le dossier.</p>
+
+{# Procédures retenues #}
+{% if signalement.statut == constant('App\\Entity\\Enum\\SignalementStatus::CLOSED') %}
+    <div class="card-container fr-mb-8v">
+        <div class="title-blue-france fr-mb-2v">
+            <span class="fr-icon-calendar-event-fill"></span>
+            <strong>{{signalement.closedAt|date('d/m/Y') }}</strong>
+        </div>
+
+        <div class="fr-card fr-card--grey">
+            <div class="fr-card__body">
+                <div class="fr-card__content fr-p-4v">
+                    <div class="fr-grid-row">
+                        <div class="fr-col-12 fr-mb-4v">
+                            <div class="title-blue-france">
+                                <strong>Procédure(s) retenue(s)</strong>
+                            </div>
+                            <p class="fr-my-2v">Retrouvez les procédures retenues sur le dossier telles qu’indiquées à la fermeture du dossier.</p>
+                        </div>
+                        <div class="fr-col-lg-6 fr-col-12">
+                            <div class="fr-mb-2v"><strong>Procédure(s) retenue(s)</strong></div>
+                            {% for procedure in signalement.signalementProcedures %}
+                                {% set typeBadge = 'info' %}
+                                {% if procedure.procedureType is same as enum('App\\Entity\\Enum\\ProcedureType').MISE_EN_SECURITE_PERIL %}
+                                    {% set typeBadge = 'error' %}
+                                {% elseif procedure.procedureType is same as enum('App\\Entity\\Enum\\ProcedureType').INSALUBRITE %}
+                                    {% set typeBadge = 'warning' %}
+                                {% endif %}
+                                <small class="fr-badge fr-badge--{{typeBadge}} fr-badge--no-icon fr-mb-1v">{{ procedure.procedureType.label }}</small>
+                            {% else %}
+                                <i>Aucune procédure sélectionnée</i>
+                            {% endfor %}
+                        </div>
+                        <div class="fr-col-lg-6 fr-col-12">
+                            <div class="fr-mb-2v"><strong>Commentaire</strong></div>
+                            <div class="fr-highlight fr-ml-1v">{{ signalement.comCloture|raw }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+
+{# TODO #6381 bloc procédures à engager #}
+
+{# Conclusion de visites #}
+{% for intervention in visites %}
+    {% if intervention.status is same as constant('App\\Entity\\Intervention::STATUS_DONE') %}
+        <div class="card-container fr-mb-8v">
+            <div class="title-blue-france fr-mb-2v">
+                <span class="fr-icon-calendar-event-fill"></span>
+                <strong>
+                    {{intervention.scheduledAt|date('d/m/Y') }}{% if intervention.partner %} : Visite faite par {{ intervention.partner.nom }}{% endif %}
+                </strong>
+            </div>
+
+            <div class="fr-card">
+                <div class="fr-card__body">
+                    <div class="fr-card__content fr-p-4v">
+                        <div class="fr-grid-row">
+                            <div class="fr-col-12 fr-mb-4v">
+                                <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
+                                    <div class="fr-col title-blue-france">
+                                        <strong>Situation(s) observée(s) après visite</strong>
+                                    </div>
+                                    <div class="fr-col-auto">
+                                        <a href="{{ path('back_signalement_view', {uuid: signalement.uuid}) }}" class="fr-btn fr-btn--secondary">
+                                            Aller au détail des visites <span aria-hidden="true" class="fr-icon-arrow-right-line fr-icon--sm"></span> 
+                                        </a>
+                                    </div>
+                                </div>
+                                <p class="fr-my-2v">Retrouvez les conclusions de la visite renseignées dans le dossier.</p>
+                            </div>
+                            <div class="fr-col-lg-6 fr-col-12">
+                                <div class="fr-mb-2v"><strong>Analyse de la situation</strong></div>
+                                {% for procedure in intervention.concludeProcedure %}
+                                    {% include '_partials/signalement/conclude-procedure.html.twig' %}
+                                {% endfor %}
+                            </div>
+                                {% if intervention.rapportDeVisite %}
+                                    <div class="fr-col-lg-6 fr-col-12">
+                                        <div class="fr-mb-2v"><strong>Rapport de visite</strong></div>
+                                        {% if s3_enable %}
+                                            <a href="{{ sign_url(path('show_file', {uuid: intervention.rapportDeVisite.uuid})) }}"
+                                            class="fr-link"
+                                            title="Voir le rapport de visite"
+                                            rel="noopener"
+                                            target="_blank">
+                                                Rapport de visite
+                                            </a>
+                                        {% else %}
+                                            <button class="fr-btn fr-btn--secondary fr-icon-warning-fill" disabled title="Maintenance en cours">
+                                                Rapport de visite
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endfor %}
+
+{# Pré-évaluation automatique #}
+<div class="card-container">
+    <div class="title-blue-france fr-mb-2v">
+        <span class="fr-icon-calendar-event-fill"></span>
+        <strong>{{signalement.createdAt|date('d/m/Y') }}</strong>
+    </div>
+
+    <div class="fr-card fr-card--grey">
+        <div class="fr-card__body">
+            <div class="fr-card__content fr-p-4v">
+                <div class="fr-grid-row">
+                    <div class="fr-col-12 fr-mb-4v">
+                        <div class="title-blue-france">
+                            <strong>Pré-évaluation automatique</strong>
+                        </div>
+                        <p class="fr-my-2v">Cette évaluation automatique se base sur les informations renseignées par le déclarant. Vous ne pouvez pas la modifier.</p>
+                    </div>
+                    <div class="fr-col-lg-6 fr-col-12">
+                        <div class="fr-mb-2v"><strong>Criticité du signalement : {{ signalement.score|round(2) }} %</strong></div>
+                        {% if signalement.isV2 %}
+                            <div class="fr-mb-2v">(Score bâtiment : {{ signalement.scoreBatiment|round(2) }} % - Score logement : {{ signalement.scoreLogement|round(2) }} %)</div>
+                        {% endif %}
+                        <a class="fr-link"
+                            href="https://documentation.signal-logement.beta.gouv.fr/partenaires/premiers-pas-sur-histologe/presentation-de-linterface#score-de-criticite-et-prequalification-comment-ca-marche"
+                            target="_blank" rel="noreferrer noopener"
+                            title="En savoir plus - Ouvre une nouvelle fenêtre">En savoir plus</a>
+                    </div>
+                    <div class="fr-col-lg-6 fr-col-12">
+                        <div class="fr-mb-2v"><strong>Situation(s) suspectée(s)</strong></div>
+                        {% for qualificationStatusLabel in listQualificationStatusesLabelsCheck %}
+                            {% include '_partials/signalement/qualification.html.twig' %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
