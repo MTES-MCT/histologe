@@ -59,6 +59,8 @@ dump.pgsql: PostgreSQL custom database dump - v1.14-0
 - [ ] Examiner le contenu du dump sans le restaurer : `make metabase-db-restore-list`
 - [ ] Restaurer la base dans l'instance PostgreSQL locale : `make metabase-db-restore`
 
+---
+
 ## 🔍 Analyse de l'ancienne instance
 - [ ] Construire l'instance metabase si nécéssaire `make tools-build`
 - [ ] Démarrer Metabase localement sur la base restaurée `make tools-run`
@@ -119,6 +121,8 @@ ORDER BY nombre_executions DESC;
 
 - [ ] Identifier les ressources archivées ou placées dans la corbeille. (ne pas les importer)
 
+---
+
 ## 🆕 Installation d'une nouvelle instance Metabase
 - [ ] Déployer une nouvelle instance Metabase v0.63.x.
 - [ ] Créer une nouvelle base PostgreSQL dédiée à Metabase.
@@ -156,7 +160,7 @@ Cette clé signe les sessions stockées dans la base applicative. Elle empêche 
 - [ ] Utiliser une valeur différente de MB_ENCRYPTION_SECRET_KEY.
   L'ajout ou la modification de `MB_SESSION_SECRET_KEY` invalide toutes les sessions actives. Les utilisateurs devront se reconnecter.
 
-
+---
 
 ## 🔁 Migration des ressources
 
@@ -303,7 +307,9 @@ metabase-import \
 2>&1 | tee import-collection-8.log
 ```
 
-Exécuter la requête .docker/metabase/resources-report.sql sur l'instance cible afin de comparer les résultats et de vérifier que toutes les ressources ont bien été importées.
+Exécuter la requête .`docker/metabase/resources-report.sql` sur l'instance cible afin de comparer les résultats et de vérifier que toutes les ressources ont bien été importées.
+
+---
 
 ## 🔐 Protection de l'instance
 L'accès à Metabase est protégé avec :
