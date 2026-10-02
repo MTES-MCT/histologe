@@ -13,13 +13,19 @@ class AddressesHistorySignalementViewTest extends TestCase
             url: 'https://example.com/signalement/abc123',
             ref: '2024-001',
             usager: 'John Doe',
-            statut: 'Nouveau'
+            statut: 'Nouveau',
+            isLogementSocial: true,
+            declarant: 'Locataire',
+            bailleurName: 'Bailleur Test'
         );
 
         $this->assertSame('https://example.com/signalement/abc123', $signalement->getUrl());
         $this->assertSame('2024-001', $signalement->getRef());
         $this->assertSame('John Doe', $signalement->getUsager());
         $this->assertSame('Nouveau', $signalement->getStatut());
+        $this->assertTrue($signalement->getIsLogementSocial());
+        $this->assertSame('Locataire', $signalement->getDeclarant());
+        $this->assertSame('Bailleur Test', $signalement->getBailleurName());
     }
 
     public function testConstructorWithNullValues(): void
@@ -30,6 +36,9 @@ class AddressesHistorySignalementViewTest extends TestCase
         $this->assertNull($signalement->getRef());
         $this->assertNull($signalement->getUsager());
         $this->assertNull($signalement->getStatut());
+        $this->assertNull($signalement->getBailleurName());
+        $this->assertNull($signalement->getDeclarant());
+        $this->assertNull($signalement->getIsLogementSocial());
     }
 
     public function testConstructorWithPartialData(): void
@@ -43,21 +52,8 @@ class AddressesHistorySignalementViewTest extends TestCase
         $this->assertSame('2024-001', $signalement->getRef());
         $this->assertNull($signalement->getUsager());
         $this->assertSame('En cours', $signalement->getStatut());
-    }
-
-    public function testImmutability(): void
-    {
-        $signalement = new AddressesHistorySignalementView(
-            url: 'https://example.com/signalement/abc123',
-            ref: '2024-001',
-            usager: 'John Doe',
-            statut: 'Nouveau'
-        );
-
-        // Verify that all properties remain the same
-        $this->assertSame('https://example.com/signalement/abc123', $signalement->getUrl());
-        $this->assertSame('2024-001', $signalement->getRef());
-        $this->assertSame('John Doe', $signalement->getUsager());
-        $this->assertSame('Nouveau', $signalement->getStatut());
+        $this->assertNull($signalement->getBailleurName());
+        $this->assertNull($signalement->getDeclarant());
+        $this->assertNull($signalement->getIsLogementSocial());
     }
 }

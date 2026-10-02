@@ -12,8 +12,9 @@ class AddressesHistorySignalementView
         private readonly ?string $ref = null,
         private readonly ?string $usager = null,
         private readonly ?string $statut = null,
-        private readonly ?string $logementSocial = null,
+        private readonly ?bool $isLogementSocial = null,
         private readonly ?string $declarant = null,
+        private readonly ?string $bailleurName = null,
     ) {
     }
 
@@ -37,13 +38,18 @@ class AddressesHistorySignalementView
         return $this->statut;
     }
 
-    public function getLogementSocial(): ?string
+    public function getIsLogementSocial(): ?bool
     {
-        return $this->logementSocial;
+        return $this->isLogementSocial;
     }
 
     public function getDeclarant(): ?string
     {
         return $this->declarant;
+    }
+
+    public function getBailleurName(): ?string
+    {
+        return $this->bailleurName;
     }
 }

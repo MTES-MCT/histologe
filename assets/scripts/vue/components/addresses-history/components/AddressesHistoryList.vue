@@ -26,35 +26,38 @@
           <div class="fr-container--fluid">
             <div class="fr-mb-2w" v-for="(item, index) in sharedState.addresses.list" :key="index">
               <div class="fr-grid-row fr-border fr-p-2w">
+                <div class="fr-col-12 fr-col-md-12">
+                  <h3 class="title-blue-france fr-h6"><span class="fr-icon-map-pin-2-line" aria-hidden="true"></span> {{ (item as any).addressForHuman }}</h3>
+                </div>
                 <div class="fr-col-12 fr-col-md-8">
-                  <h3 class="title-blue-france"><span class="fr-icon-map-pin-2-line" aria-hidden="true"></span> {{ (item as any).addressForHuman }}</h3>
-                </div>
-                <div class="fr-col-12 fr-col-md-4 fr-text--md-right">
-                  <div>
-                    <p class="fr-badge fr-badge--new fr-badge--no-icon" v-if="(item as any).hasLogementSocial">Parc public</p>
-                    <p class="fr-badge fr-badge--new fr-badge--no-icon fr-ml-1w" v-if="(item as any).hasLogementPrive">Parc privé</p>
-                  </div>
-                  <div v-if="(item as any).bailleurNames && (item as any).bailleurNames.length > 0" class="fr-mt-1w">
-                    Bailleur : {{ (item as any).bailleurNames.join(', ') }}
-                  </div>
-                </div>
-                <div class="fr-col-12 fr-col-md-6">
                   <div class="fr-mb-1v">
-                    <strong>Dossiers à cette adresse</strong>
+                    <strong>Dossiers à cette adresse ({{ (item as any).signalements?.length ?? 0 }})</strong>
                   </div>
                   <ul v-if="(item as any).signalements && (item as any).signalements.length > 0" class="list-unstyled">
-                    <li v-for="(signalement, index) in (item as any).signalements" :key="index" class="fr-mb-3v">
-                      <a :href="`${signalement.url}`" class="fr-link"
-                        ># {{ signalement.ref }}</a> - {{ signalement.usager }}
-                      <p :class="getStatusBadgeFromLabel(signalement.statut)">{{ signalement.statut }}</p>
-                      <p class="fr-badge fr-badge--no-icon fr-badge--info fr-ml-1w">{{ signalement.declarant }}</p>
+                    <li v-for="(signalement, signalementIndex) in getDisplayedSignalements(item, index)" :key="signalementIndex" class="fr-mb-3v">
+                      <div>
+                        <a :href="`${signalement.url}`" class="fr-link"
+                          ># {{ signalement.ref }}</a> - {{ signalement.usager }}
+                        <p :class="[getStatusBadgeFromLabel(signalement.statut), 'fr-badge--sm']">{{ signalement.statut }}</p>
+                        <p class="fr-badge fr-badge--no-icon fr-badge--info fr-badge--sm fr-ml-1w">{{ signalement.declarant }}</p>
+                      </div>
+                      <div class="fr-mt-1v">
+                        Bailleur : {{signalement.bailleurName ? signalement.bailleurName : 'Non renseigné'}}
+                        <p class="fr-badge fr-badge--new fr-badge--no-icon fr-badge--sm ">Parc {{ signalement.isLogementSocial === null ? 'non renseigné' : (signalement.isLogementSocial ? 'public' : 'privé') }}</p>
+                      </div>
                     </li>
                   </ul>
-                  <div v-else>
+                  <button
+                    v-if="(item as any).signalements?.length > MAX_SIGNALEMENTS_DISPLAYED"
+                    type="button"
+                    class="fr-link"
+                    @click="toggleSignalements(index)"
+                    >{{ expandedAddresses.has(index) ? 'Voir moins' : 'Voir tous les dossiers' }}</button>
+                  <div v-else-if="!(item as any).signalements || (item as any).signalements.length === 0">
                     Aucun dossier enregistré à cette adresse
                   </div>
                 </div>
-                <div class="fr-col-12 fr-col-md-6">
+                <div class="fr-col-12 fr-col-md-4">
                   <div class="fr-mb-1v">
                     <strong>Arrêtés pris à cette adresse</strong>
                   </div>
@@ -83,6 +86,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { store } from '../composables/useAddressesHistoryStore'
 import AddressesHistoryListFilters from './AddressesHistoryListFilters.vue'
 import AddressesHistoryListPagination from './AddressesHistoryListPagination.vue'
@@ -93,8 +97,43 @@ const emit = defineEmits<{
   change: []
 }>()
 
+// Constantes
+const MAX_SIGNALEMENTS_DISPLAYED = 5
+
 // State
 const sharedState = store.state
+const expandedAddresses = ref<Set<number>>(new Set())
+
+/**
+ * Réinitialise les adresses dépliées lorsque la liste change (pagination, filtres)
+ */
+watch(() => sharedState.addresses.list, () => {
+  expandedAddresses.value = new Set()
+})
+
+/**
+ * Retourne les dossiers à afficher pour une adresse (limités sauf si l'adresse est dépliée)
+ */
+const getDisplayedSignalements = (item: any, index: number): any[] => {
+  const signalements = item.signalements ?? []
+  if (expandedAddresses.value.has(index)) {
+    return signalements
+  }
+  return signalements.slice(0, MAX_SIGNALEMENTS_DISPLAYED)
+}
+
+/**
+ * Affiche tous les dossiers d'une adresse ou revient à l'affichage limité
+ */
+const toggleSignalements = (index: number): void => {
+  const expanded = new Set(expandedAddresses.value)
+  if (expanded.has(index)) {
+    expanded.delete(index)
+  } else {
+    expanded.add(index)
+  }
+  expandedAddresses.value = expanded
+}
 
 /**
  * Propage le changement au parent
