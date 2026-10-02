@@ -6,8 +6,6 @@ use App\Dto\Request\Signalement\AddressesHistorySearchQuery;
 use App\Entity\User;
 use App\Factory\AddressesHistoryListViewFactory;
 use App\Repository\Query\Address\AddressesHistoryQuery;
-use App\Repository\Query\SignalementList\SameAddressQuery;
-use App\Repository\TerritoryRepository;
 use App\Repository\ZoneRepository;
 use App\Service\Geometry\GeometryFactory;
 use App\Service\Signalement\Export\AddressesHistoryExporter;
@@ -209,49 +207,6 @@ class AddressesHistoryController extends AbstractController
         $response->headers->setCookie($cookie);
 
         return $response;
-    }
-
-    #[Route('/proto-carte-facile', name: 'back_addresses_history_carte_facile')]
-    public function carteFacile(
-        SameAddressQuery $sameAddressQuery,
-        TerritoryRepository $territoryRepository,
-    ): Response {
-        /** @var User $user */
-        $user = $this->getUser();
-        $territories = $user->getPartnersTerritories();
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $territories = $territoryRepository->findAllList();
-        }
-
-        $signalements = $sameAddressQuery->findSameAddressFiltered($user);
-        $signalementsByAddress = [];
-        foreach ($signalements as $signalement) {
-            $addressKey = mb_trim(strtolower((string) iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $signalement['housenumber'].' '.$signalement['street'].' '.$signalement['postCode'].' '.$signalement['cityCode'])));
-            if (!isset($signalementsByAddress[$addressKey])) {
-                $signalementsByAddress[$addressKey] = [
-                    'adresse' => mb_trim($signalement['housenumber'].' '.$signalement['street']),
-                    'cp' => $signalement['postCode'],
-                    'ville' => $signalement['city'],
-                    'territoryId' => $signalement['territoryId'],
-                    'addressForHuman' => mb_trim($signalement['housenumber'].' '.$signalement['street'].' '.$signalement['postCode'].' '.$signalement['city']),
-                    'communeForHuman' => mb_trim($signalement['city'].' '.$signalement['postCode']),
-                    'lat' => null,
-                    'lng' => null,
-                    'signalements' => [],
-                ];
-            }
-            $signalementsByAddress[$addressKey]['signalements'][] = $signalement;
-            if (!empty($signalement['point'])) {
-                $signalementsByAddress[$addressKey]['lat'] = (string) $signalement['point']->getY();
-                $signalementsByAddress[$addressKey]['lng'] = (string) $signalement['point']->getX();
-            }
-        }
-
-        return $this->render('back/addresses-history/carte-facile.html.twig', [
-            'nbSignalements' => count($signalements),
-            'signalementsByAddress' => $signalementsByAddress,
-            'territories' => $territories,
-        ]);
     }
 
     #[Route('/export', name: 'back_addresses_history_export', methods: ['GET'])]
