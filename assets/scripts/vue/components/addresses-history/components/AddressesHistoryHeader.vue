@@ -102,7 +102,7 @@ const onExport = async (format: 'csv' | 'xlsx'): Promise<void> => {
     });
   } catch (error) {
     addFlashMessage({
-      type: 'error',
+      type: 'alert',
       title: 'Erreur lors de l\'export',
       message: 'Une erreur est survenue lors de l\'export. Veuillez réessayer. Si le problème se reproduit, merci de nous contacter.',
     });
