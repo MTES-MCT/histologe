@@ -34,7 +34,7 @@ class SearchArreteType extends AbstractType
                     'data-autocomplete-address-filter' => 'true',
                 ],
                 'choice_attr' => static function (Territory $territory) {
-                    return ['data-filter' => $territory->getZip().'|'.$territory->getName()];
+                    return ['data-filter-dept' => $territory->getZip()];
                 },
             ]);
         } else {
@@ -44,7 +44,7 @@ class SearchArreteType extends AbstractType
                 'mapped' => false,
                 'attr' => [
                     'data-autocomplete-address-filter' => 'true',
-                    'data-filter' => $territory ? $territory->getZip().'|'.$territory->getName() : '',
+                    'data-filter-dept' => $territory ? $territory->getZip() : '',
                 ],
             ]);
         }
