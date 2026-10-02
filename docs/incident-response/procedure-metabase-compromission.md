@@ -43,7 +43,7 @@ Une activité suspecte a été détectée sur l'instance Metabase : utilisation 
 
 ---
 
-## 🗃️ Conservation et restauration de l'ancienne base Metabase
+## 🗃️ Restauration de l'ancienne base Metabase
 
 La base PostgreSQL Metabase contient sa configuration interne : utilisateurs, collections, questions, tableaux de bord, permissions et historique d'exécution. 
 Elle est distincte de la base MySQL métier interrogée par Metabase.
