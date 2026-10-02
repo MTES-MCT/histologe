@@ -71,7 +71,7 @@
                         {% endfor %}
                     {% endif %}
                 </td>
-                <td class="fr-text--right">
+                <td class="fr-text--right fr-ws-nowrap">
                     <a class="fr-btn fr-btn--sm fr-fi-edit-line" href="{{ path('back_auto_affectation_rule_edit', {'id': autoaffectationrule.id}) }}"
                         aria-label="Éditer la règle {{ autoaffectationrule.id }}"
                         title="Éditer la règle {{ autoaffectationrule.id }}"></a>
@@ -82,7 +82,7 @@
                             aria-label="Supprimer la règle {{ autoaffectationrule.id }}"
                             title="Supprimer la règle {{ autoaffectationrule.id }}"></button>
                     {% else %}
-                        <form action="{{ path('back_auto_affectation_rule_reactive', {'id': autoaffectationrule.id}) }}" method="POST" class="simple-ajax-form" >
+                        <form action="{{ path('back_auto_affectation_rule_reactive', {'id': autoaffectationrule.id}) }}" method="POST" class="simple-ajax-form fr-display-inline-block" >
                             <input type="hidden" name="search_params" value="{{ app.request.query.all|url_encode }}">
                             <button
                                 class="fr-btn fr-icon-flashlight-fill fr-btn--sm fr-mt-3v"
