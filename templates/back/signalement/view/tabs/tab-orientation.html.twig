@@ -51,7 +51,9 @@
         <div class="card-container fr-mb-8v">
             <div class="title-blue-france fr-mb-2v">
                 <span class="fr-icon-calendar-event-fill"></span>
-                <strong>{{intervention.scheduledAt|date('d/m/Y') }}</strong>
+                <strong>
+                    {{intervention.scheduledAt|date('d/m/Y') }}{% if intervention.partner %} : Visite faite par {{ intervention.partner.nom }}{% endif %}
+                </strong>
             </div>
 
             <div class="fr-card">
@@ -69,7 +71,7 @@
                                         </a>
                                     </div>
                                 </div>
-                                <p class="fr-my-2v">Retrouvez les conclusions des visites renseignées dans le dossier.</p>
+                                <p class="fr-my-2v">Retrouvez les conclusions de la visite renseignées dans le dossier.</p>
                             </div>
                             <div class="fr-col-lg-6 fr-col-12">
                                 <div class="fr-mb-2v"><strong>Analyse de la situation</strong></div>
