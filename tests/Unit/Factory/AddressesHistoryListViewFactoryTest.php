@@ -63,7 +63,7 @@ class AddressesHistoryListViewFactoryTest extends KernelTestCase
             'statut' => SignalementStatus::ACTIVE,
             'isLogementSocial' => true,
             'declarant' => ProfileDeclarant::LOCATAIRE,
-            'bailleurName' => 'Bailleur Test'
+            'bailleurName' => 'Bailleur Test',
         ];
 
         $result = $this->factory->createSignalementInstanceFromSignalementData($data);
@@ -89,7 +89,7 @@ class AddressesHistoryListViewFactoryTest extends KernelTestCase
             'statut' => SignalementStatus::CLOSED,
             'isLogementSocial' => true,
             'declarant' => ProfileDeclarant::LOCATAIRE,
-            'bailleurName' => 'Bailleur Test'
+            'bailleurName' => 'Bailleur Test',
         ];
 
         $result = $this->factory->createSignalementInstanceFromSignalementData($data);
@@ -107,7 +107,7 @@ class AddressesHistoryListViewFactoryTest extends KernelTestCase
             'statut' => SignalementStatus::NEED_VALIDATION,
             'isLogementSocial' => true,
             'declarant' => ProfileDeclarant::LOCATAIRE,
-            'bailleurName' => 'Bailleur Test'
+            'bailleurName' => 'Bailleur Test',
         ];
 
         $result = $this->factory->createSignalementInstanceFromSignalementData($data);
@@ -126,7 +126,7 @@ class AddressesHistoryListViewFactoryTest extends KernelTestCase
             'statut' => SignalementStatus::ACTIVE,
             'isLogementSocial' => true,
             'declarant' => ProfileDeclarant::LOCATAIRE,
-            'bailleurName' => 'Bailleur Test'
+            'bailleurName' => 'Bailleur Test',
         ];
 
         $result = $this->factory->createSignalementInstanceFromSignalementData($data);
@@ -150,7 +150,7 @@ class AddressesHistoryListViewFactoryTest extends KernelTestCase
             'statut' => SignalementStatus::ACTIVE,
             'isLogementSocial' => true,
             'declarant' => ProfileDeclarant::LOCATAIRE,
-            'bailleurName' => 'Bailleur Test'
+            'bailleurName' => 'Bailleur Test',
         ];
 
         $result = $this->factory->createSignalementInstanceFromSignalementData($data);
