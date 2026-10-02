@@ -1,0 +1,172 @@
+{% import 'back/signalement/view/_static_picto.html.twig' as picto %}
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+        <h4 class="fr-h6">Situation du foyer</h4>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+            <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-edit-line"
+                data-panel-open="panel-edit-situation-foyer"
+                aria-controls="panel-edit-situation-foyer"
+                data-fr-opened="false"
+                >Modifier</button>
+        {% endif %}
+    </div>
+</div>
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-6">
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Type de logement :</span>
+            {% if signalement.isLogementSocial is null %}
+                Ne sait pas
+            {% elseif signalement.isLogementSocial %}
+                <p class="fr-badge fr-badge--new fr-badge--no-icon">Logement social</p>
+            {% else %}
+                <p class="fr-badge fr-badge--new fr-badge--no-icon">Parc privé</p>
+            {% endif %}
+        </div>
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Allocataire :</span>
+            {% if signalement.isAllocataire in [null, ''] %}
+            {% elseif signalement.isAllocataire in ['oui', '1'] %}
+                {{ picto.picto_yes() }}
+            {% elseif signalement.isAllocataire in ['non', '0'] %}
+                {{ picto.picto_no() }}
+            {% elseif signalement.isAllocataire %}
+                <p class="fr-badge fr-badge--info fr-badge--no-icon">{{ signalement.isAllocataire }}</p>
+            {% endif %}
+        </div>
+        {% if signalement.isAllocataire and signalement.isAllocataire not in ['non', '0'] %}
+            <div class="fr-mb-2v">
+                <span class="fr-text--medium">N° allocataire :</span>
+                {{ signalement.numAllocataire }}
+            </div>
+            <div class="fr-mb-2v">
+                <span class="fr-text--medium">Montant allocation :</span>
+                {% if signalement.situationFoyer and signalement.situationFoyer.logementSocialMontantAllocation %}
+                    {{ signalement.situationFoyer.logementSocialMontantAllocation }} €
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Date de naissance :</span>
+            {% if (signalement.dateNaissanceOccupant) %}
+                {{ signalement.dateNaissanceOccupant.format('d/m/Y') }}
+            {% else %}
+                {{ signalement.naissanceOccupants}}
+            {% endif %}
+        </div>
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Demande logement social / relogement / mutation :</span>
+            {% if signalement.isRelogement is same as true %}
+                {{ picto.picto_yes() }}
+            {% elseif signalement.isRelogement is same as false %}
+                {{ picto.picto_no() }}
+            {% endif %}
+        </div>
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Souhaite quitter le logement :</span>
+            {% if signalement.situationFoyer %}
+                {% if signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'oui' %}
+                    {{ picto.picto_yes() }}
+                {% elseif signalement.situationFoyer.travailleurSocialQuitteLogement is same as 'non' %}
+                    {{ picto.picto_no() }}
+                {% else %}
+                    {{signalement.situationFoyer.travailleurSocialQuitteLogement(false)}}
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Préavis de départ :</span>
+            {% set travailleurSocialPreavisDepart = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialPreavisDepart : null %}
+            {% if travailleurSocialPreavisDepart is same as null %}
+                {% if signalement.isPreavisDepart is same as true %}
+                    {% set travailleurSocialPreavisDepart = 'oui' %}
+                {% elseif signalement.isPreavisDepart is same as false %}
+                    {% set travailleurSocialPreavisDepart = 'non' %}
+                {% endif %}
+            {% endif %}
+            {% if travailleurSocialPreavisDepart is same as 'oui' %}
+                {{ picto.picto_yes() }}
+            {% elseif travailleurSocialPreavisDepart is same as 'non' %}
+                {{ picto.picto_no() }}
+            {% elseif travailleurSocialPreavisDepart is same as 'nsp' %}
+                Ne sait pas
+            {% endif %}
+        </div>
+        {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
+            <div class="fr-mb-2v">
+                <span class="fr-text--medium">Revenu fiscal de référence :</span>
+                {% if signalement.informationComplementaire %}
+                    {{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ~ ' €'}}
+                {% endif %}
+            </div>
+        {% endif %}
+        {# todo : info transfuge, modifier panel et controleur (ou nouveau panel) #}
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Souhaite garder le logement après travaux :</span>
+            {% if signalement.informationProcedure %}
+                {# Careful : reversed regarding the question in the form #}
+                {% if signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'oui' %}
+                    {{ picto.picto_no() }}
+                {% elseif signalement.informationProcedure.infoProcedureDepartApresTravaux is same as 'non' %}
+                    {{ picto.picto_yes() }}
+                {% else %}
+                    {{signalement.informationProcedure.infoProcedureDepartApresTravaux(false)}}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        {% set structureAccompagnement = signalement.situationFoyer and signalement.situationFoyer.travailleurSocialAccompagnement is same as 'oui' %}
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Accompagnement par un ou une travailleuse sociale :</span>
+            {% if signalement.situationFoyer %}
+                {% if signalement.situationFoyer.travailleurSocialAccompagnement is same as 'oui' %}
+                    {{ picto.picto_yes() }}
+                {% elseif signalement.situationFoyer.travailleurSocialAccompagnement is same as 'non' %}
+                    {{ picto.picto_no() }}
+                {% else %}
+                    {{signalement.situationFoyer.travailleurSocialAccompagnement(false)}}
+                {% endif %}
+            {% endif %}
+            {% if structureAccompagnement %}
+                <ul class="fr-mt-1w">
+                    <li>
+                        <span class="fr-text--medium">Nom :</span>{{ signalement.situationFoyer.travailleurSocialAccompagnementNomReferent }}
+                    </li>
+                    <li>
+                        <span class="fr-text--medium">Prénom :</span>{{ signalement.situationFoyer.travailleurSocialAccompagnementPrenomReferent }}
+                    </li>
+                    <li>
+                        <span class="fr-text--medium">Structure d'accompagnement :</span>{{ signalement.situationFoyer.travailleurSocialAccompagnementNomStructure }}
+                    </li>
+                </ul>
+            {% endif %}
+        </div>
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Bénéficiaire RSA :</span>
+            {% if signalement.informationComplementaire %}
+                {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa is same as 'oui' %}
+                    {{ picto.picto_yes() }}
+                {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa is same as 'non' %}
+                    {{ picto.picto_no() }}
+                {% else %}
+                    {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireRsa}}
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Bénéficiaire FSL :</span>
+            {% if signalement.informationComplementaire %}
+                {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl is same as 'oui' %}
+                    {{ picto.picto_yes() }}
+                {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl is same as 'non' %}
+                    {{ picto.picto_no() }}
+                {% else %}
+                    {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsBeneficiaireFsl}}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
