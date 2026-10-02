@@ -840,8 +840,6 @@ function initBoFormSignalementSituation() {
     '#signalement_draft_situation_accompagnementTravailleurSocialNomReferent',
     '#signalement_draft_situation_accompagnementTravailleurSocialPrenomReferent',
   ]);
-  window.dispatchEvent(new Event('refreshUploadButtonEvent'));
-
   reloadDeleteFileList();
 }
 

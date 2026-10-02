@@ -2,7 +2,6 @@
 
 namespace App\Tests\Functional\Manager;
 
-use App\Dto\Request\Signalement\VisiteRequest;
 use App\Entity\Affectation;
 use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\Qualification;
@@ -10,34 +9,33 @@ use App\Entity\Intervention;
 use App\Factory\FileFactory;
 use App\Factory\InterventionFactory;
 use App\Manager\InterventionManager;
-use App\Manager\PartnerManager;
 use App\Repository\InterventionRepository;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Signalement\Qualification\SignalementQualificationUpdater;
+use App\Service\TimezoneProvider;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 class InterventionManagerTest extends KernelTestCase
 {
     private InterventionRepository $interventionRepository;
     private InterventionFactory $interventionFactory;
-    private PartnerManager $partnerManager;
     private WorkflowInterface $workflow;
     private SignalementRepository $signalementRepository;
-    private UserRepository $userRepository;
     private SignalementQualificationUpdater $signalementQualificationUpdater;
     private FileFactory $fileFactory;
     private Security $security;
-    private LoggerInterface $logger;
     private EntityManagerInterface $entityManager;
     private HtmlSanitizerInterface $htmlSanitizer;
-
     private ?InterventionManager $interventionManager = null;
+    private TimezoneProvider $timezoneProvider;
+    private EventDispatcherInterface $eventDispatcher;
 
     /**
      * @throws \Exception
@@ -47,28 +45,30 @@ class InterventionManagerTest extends KernelTestCase
         self::bootKernel();
         $this->interventionRepository = static::getContainer()->get(InterventionRepository::class);
         $this->interventionFactory = static::getContainer()->get(InterventionFactory::class);
-        $this->partnerManager = static::getContainer()->get(PartnerManager::class);
         $this->workflow = static::getContainer()->get('state_machine.intervention_planning');
         $this->signalementQualificationUpdater = static::getContainer()->get(SignalementQualificationUpdater::class);
         $this->fileFactory = static::getContainer()->get(FileFactory::class);
         $this->security = static::getContainer()->get('security.helper');
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
-        $this->userRepository = static::getContainer()->get(UserRepository::class);
-        $this->logger = static::getContainer()->get(LoggerInterface::class);
         $this->entityManager = static::getContainer()->get(EntityManagerInterface::class);
         $this->htmlSanitizer = static::getContainer()->get('html_sanitizer.sanitizer.app.message_sanitizer');
+        $this->timezoneProvider = static::getContainer()->get(TimezoneProvider::class);
+        $this->eventDispatcher = static::getContainer()->get(EventDispatcherInterface::class);
+
+        $user = static::getContainer()->get(UserRepository::class)->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+        static::getContainer()->get('security.token_storage')->setToken(new UsernamePasswordToken($user, 'main', $user->getRoles()));
 
         $this->interventionManager = new InterventionManager(
             $this->interventionRepository,
             $this->interventionFactory,
-            $this->partnerManager,
             $this->workflow,
             $this->signalementQualificationUpdater,
             $this->fileFactory,
             $this->security,
-            $this->logger,
             $this->entityManager,
             $this->htmlSanitizer,
+            $this->timezoneProvider,
+            $this->eventDispatcher,
         );
     }
 
@@ -83,20 +83,24 @@ class InterventionManagerTest extends KernelTestCase
             return $affectation->getPartner()->hasCompetence(Qualification::VISITES);
         })->get(0);
 
-        $visiteRequest = new VisiteRequest(
-            date: '2023-01-10',
-            time: '10:00',
-            idPartner: $affectation?->getPartner()->getId(),
-            details: 'Transmission du dossier effectué',
-            concludeProcedure: ['MISE_EN_SECURITE_PERIL'],
-            isVisiteDone: true,
-            isOccupantPresent: true,
-            isProprietairePresent: false,
-            isUsagerNotified: true,
-            document: 'blank.pdf',
-        );
+        $intervention = (new Intervention())
+            ->setSignalement($signalement)
+            ->setDetails('Transmission du dossier effectué')
+            ->setConcludeProcedure([ProcedureType::MISE_EN_SECURITE_PERIL])
+            ->setOccupantPresent(true)
+            ->setProprietairePresent(false)
+            ->setNotifyUsager(true)
+        ;
+        $this->entityManager->persist($intervention);
 
-        $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $visiteRequest, $affectation->getPartner());
+        $this->interventionManager->updateVisiteFromData(
+            intervention: $intervention,
+            scheduledAt: new \DateTimeImmutable('2023-01-10 00:00'),
+            scheduledAtTime: new \DateTimeImmutable('1970-01-01 10:00'),
+            partnerChoice: $affectation->getPartner(),
+            visiteDone: true,
+            fileName: 'blank.pdf',
+        );
 
         $this->assertInstanceOf(Intervention::class, $intervention);
         $this->assertTrue($intervention->getPartner()->hasCompetence(Qualification::VISITES));
@@ -127,18 +131,20 @@ class InterventionManagerTest extends KernelTestCase
             return $affectation->getPartner()->hasCompetence(Qualification::VISITES);
         })->get(0);
 
-        $visiteRequest = new VisiteRequest(
-            date: (new \DateTimeImmutable())->modify('+ 1 month')->format('Y-m-d'),
-            time: '10:00',
-            idPartner: $affectation?->getPartner()->getId(),
+        $intervention = (new Intervention())->setSignalement($signalement);
+
+        $this->interventionManager->updateVisiteFromData(
+            intervention: $intervention,
+            scheduledAt: (new \DateTimeImmutable())->modify('+ 1 month'),
+            scheduledAtTime: new \DateTimeImmutable('1970-01-01 10:00'),
+            partnerChoice: $affectation->getPartner(),
         );
 
-        $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $visiteRequest, $affectation->getPartner());
         $this->assertInstanceOf(Intervention::class, $intervention);
         $this->assertEquals(Intervention::STATUS_PLANNED, $intervention->getStatus());
         $this->assertTrue($intervention->getScheduledAt() > new \DateTimeImmutable());
         $this->assertTrue($intervention->getPartner()->hasCompetence(Qualification::VISITES));
-        $this->assertEmailCount(0);
+        $this->assertEmailCount(1);
     }
 
     /**
@@ -147,16 +153,19 @@ class InterventionManagerTest extends KernelTestCase
     public function testCreateFutureVisiteFromRequestOnExternalOperator(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-10']);
-        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-13-01@signal-logement.fr']);
-        $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
 
-        $visiteRequest = new VisiteRequest(
-            date: (new \DateTimeImmutable())->modify('+ 1 month')->format('Y-m-d'),
-            time: '10:00',
-            externalOperator: 'Lala la',
+        $intervention = (new Intervention())
+            ->setSignalement($signalement)
+            ->setExternalOperator('Lala la')
+        ;
+
+        $this->interventionManager->updateVisiteFromData(
+            intervention: $intervention,
+            scheduledAt: (new \DateTimeImmutable())->modify('+ 1 month'),
+            scheduledAtTime: new \DateTimeImmutable('1970-01-01 10:00'),
+            partnerChoice: 'extern',
         );
 
-        $intervention = $this->interventionManager->createVisiteFromRequest($signalement, $visiteRequest, $partner);
         $this->assertInstanceOf(Intervention::class, $intervention);
         $this->assertEquals(Intervention::STATUS_PLANNED, $intervention->getStatus());
         $this->assertTrue($intervention->getScheduledAt() > new \DateTimeImmutable());
@@ -164,26 +173,28 @@ class InterventionManagerTest extends KernelTestCase
         $this->assertNull($intervention->getPartner()->getId());
         $this->assertEquals('OPERATEUR_VISITES_ET_TRAVAUX', $intervention->getPartner()->getType()->name);
         $this->assertEquals('Lala la', $intervention->getExternalOperator());
-        $this->assertEmailCount(0);
+        $this->assertEmailCount(1);
     }
 
     /**
      * @throws \Exception
      */
-    public function testCancelVisiteFromRequest(): void
+    public function testAbortVisiteFromRequest(): void
     {
-        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-9']);
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-6']);
         /** @var Intervention $intervention */
         $intervention = $signalement->getInterventions()->current();
 
-        $visiteRequest = new VisiteRequest(
-            idIntervention: $intervention->getId(),
-            details: 'Suppression de la visite'
+        $intervention->setDetails('Suppression de la visite');
+
+        $this->interventionManager->confirmOrAbortVisiteFromData(
+            intervention: $intervention,
+            createdByPartner: $intervention->getPartner(),
+            visiteDone: false
         );
 
-        $intervention = $this->interventionManager->cancelVisiteFromRequest($visiteRequest, $intervention->getPartner());
         $this->assertInstanceOf(Intervention::class, $intervention);
-        $this->assertEquals(Intervention::STATUS_CANCELED, $intervention->getStatus());
+        $this->assertEquals(Intervention::STATUS_NOT_DONE, $intervention->getStatus());
         $this->assertEquals('Suppression de la visite', $intervention->getDetails());
     }
 
@@ -196,19 +207,14 @@ class InterventionManagerTest extends KernelTestCase
         /** @var Intervention $intervention */
         $intervention = $signalement->getInterventions()->current();
 
-        $visiteRequest = new VisiteRequest(
-            idIntervention: $intervention->getId(),
-            date: (new \DateTimeImmutable())->modify('+2 months')->format('Y-m-d'),
-            time: '20:00',
-            idPartner: $intervention->getPartner()->getId(),
-            details: '',
+        $this->interventionManager->updateVisiteFromData(
+            intervention: $intervention,
+            scheduledAt: (new \DateTimeImmutable())->modify('+2 months'),
+            scheduledAtTime: new \DateTimeImmutable('1970-01-01 20:00:00'),
+            partnerChoice: $intervention->getPartner(),
+            eventType: 'reschedule'
         );
 
-        $intervention = $this->interventionManager->rescheduleVisiteFromRequest(
-            signalement: $signalement,
-            createdByPartner: $intervention->getPartner(),
-            visiteRequest: $visiteRequest
-        );
         $this->assertInstanceOf(Intervention::class, $intervention);
         $this->assertEquals(Intervention::STATUS_PLANNED, $intervention->getStatus());
         $this->assertTrue($intervention->getScheduledAt() > new \DateTimeImmutable());
@@ -219,15 +225,15 @@ class InterventionManagerTest extends KernelTestCase
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-10']);
         /** @var Intervention $intervention */
         $intervention = $signalement->getInterventions()->current();
-        $visiteRequest = new VisiteRequest(
-            idIntervention: $intervention->getId(),
-            details: 'Dossier envoyé au service compétent',
-            isUsagerNotified: true,
-        );
 
-        $intervention = $this->interventionManager->editVisiteFromRequest(
-            visiteRequest: $visiteRequest,
-            partner: $intervention->getPartner()
+        $intervention
+            ->setDetails('Dossier envoyé au service compétent')
+            ->setNotifyUsager(true)
+        ;
+
+        $this->interventionManager->editConclusionVisiteFromRequest(
+            intervention: $intervention,
+            createdByPartner: $intervention->getPartner()
         );
 
         $this->assertEquals(Intervention::STATUS_DONE, $intervention->getStatus());
