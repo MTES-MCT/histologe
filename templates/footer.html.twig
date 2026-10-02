@@ -1,5 +1,6 @@
-<footer class="fr-footer" id="footer">
+<footer class="fr-footer {% if isBO %}fr-footer-bo{% endif %}" id="footer">
     <div class="fr-container">
+        {% if not isBO %}
         <div class="fr-footer__body">
             <div class="fr-footer__brand fr-enlarge-link">
                 <p class="fr-logo" title="Ministère de l'Aménagement du territoire et de la Décentralisation">
@@ -27,8 +28,16 @@
                 </ul>
             </div>
         </div>
+        {% endif %}
         <div class="fr-footer__bottom">
             <ul class="fr-footer__bottom-list">
+                {% if isBO %}
+                <li class="fr-footer__bottom-item">
+                    <a class="fr-footer__brand-link" href="{{ sites_faciles_url }}" title="Retourner à l’accueil - Logo {{ platform.name }} - Ministère de l'Aménagement du territoire et de la Décentralisation">
+                        <img class="fr-footer__logo" src="{{ asset('img/logo-signal-logement-small.original.svg') }}" alt="Logo {{ platform.name }}">
+                    </a>
+                </li>
+                {% endif %}
                 <li class="fr-footer__bottom-item">
                     <a href="{{ sites_faciles_url }}mentions-legales/" class="fr-footer__bottom-link" target="_self">Mentions légales</a>
                 </li>
