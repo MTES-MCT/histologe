@@ -63,6 +63,7 @@
 import { ref } from 'vue'
 import { store, useAddressesHistoryStore } from '../composables/useAddressesHistoryStore'
 import { useAddressesHistoryApi } from '../api'
+import { addFlashMessage } from '../../../../vanilla/services/component/component_json_response_handler.js';
 
 // Émissions
 const emit = defineEmits<{
@@ -94,8 +95,17 @@ const onExport = async (format: 'csv' | 'xlsx'): Promise<void> => {
   isExporting.value = true
   try {
     await api.downloadList(format)
+    addFlashMessage({
+      type: 'success',
+      title: 'Fichier téléchargé',
+      message: 'L\'export a bien été téléchargé sur votre appareil.',
+    });
   } catch (error) {
-    alert('Erreur lors de l\'export. Veuillez réessayer. Si le problème se reproduit, merci de nous contacter.')
+    addFlashMessage({
+      type: 'alert',
+      title: 'Erreur lors de l\'export',
+      message: 'Une erreur est survenue lors de l\'export. Veuillez réessayer. Si le problème se reproduit, merci de nous contacter.',
+    });
     console.error('Error exporting addresses:', error)
   } finally {
     isExporting.value = false
