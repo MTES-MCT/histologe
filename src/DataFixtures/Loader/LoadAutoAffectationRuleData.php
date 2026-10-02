@@ -42,6 +42,10 @@ class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInter
             ->setPartnerToExclude($row['partner_to_exclude'] ?? [])
             ->setParc($row['parc'])
             ->setAllocataire($row['allocataire'])
+            ->setAccompagnementTravailleurSocial($row['accompagnement_travailleur_social'] ?? 'all')
+            ->setDemandeLogementSocial($row['demande_logement_social'] ?? 'all')
+            ->setZoneToInclude($row['zone_to_include'] ?? null)
+            ->setZoneToExclude($row['zone_to_exclude'] ?? null)
         ;
 
         if (isset($row['procedures_suspectees'])) {

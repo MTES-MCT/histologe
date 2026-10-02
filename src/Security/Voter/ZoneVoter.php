@@ -2,6 +2,7 @@
 
 namespace App\Security\Voter;
 
+use App\Entity\AutoAffectationRule;
 use App\Entity\User;
 use App\Entity\Zone;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -15,6 +16,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class ZoneVoter extends Voter
 {
     public const string ZONE_MANAGE = 'ZONE_MANAGE';
+    public const string ZONE_DELETE = 'ZONE_DELETE';
+    public const string ZONE_DELETE_DENIED_MESSAGE = 'Cette zone ne peut pas être supprimée car elle est utilisée par une règle d\'auto-affectation active. Merci de contacter les administrateurs pour faire modifier cette règle avant de supprimer la zone.';
 
     public function __construct(private readonly Security $security)
     {
@@ -22,7 +25,7 @@ class ZoneVoter extends Voter
 
     protected function supports(string $attribute, $subject): bool
     {
-        return \in_array($attribute, [self::ZONE_MANAGE]) && ($subject instanceof Zone);
+        return \in_array($attribute, [self::ZONE_MANAGE, self::ZONE_DELETE]) && ($subject instanceof Zone);
     }
 
     /**
@@ -40,6 +43,7 @@ class ZoneVoter extends Voter
 
         return match ($attribute) {
             self::ZONE_MANAGE => $this->canManage($subject, $user),
+            self::ZONE_DELETE => $this->canDelete($subject, $user, $vote),
             default => false,
         };
     }
@@ -54,5 +58,25 @@ class ZoneVoter extends Voter
         }
 
         return false;
+    }
+
+    private function canDelete(Zone $zone, User $user, ?Vote $vote): bool
+    {
+        if (!$this->canManage($zone, $user)) {
+            return false;
+        }
+        foreach ($zone->getTerritory()->getAutoAffectationRules() as $rule) {
+            if (AutoAffectationRule::STATUS_ACTIVE !== $rule->getStatus()) {
+                continue;
+            }
+            $ruleZoneIds = array_map('intval', array_merge($rule->getZoneToInclude() ?? [], $rule->getZoneToExclude() ?? []));
+            if (\in_array($zone->getId(), $ruleZoneIds, true)) {
+                $vote?->addReason(self::ZONE_DELETE_DENIED_MESSAGE);
+
+                return false;
+            }
+        }
+
+        return true;
     }
 }

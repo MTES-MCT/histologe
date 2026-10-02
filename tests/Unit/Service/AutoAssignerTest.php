@@ -2,17 +2,20 @@
 
 namespace App\Tests\Unit\Service;
 
+use App\Entity\AutoAffectationRule;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\SignalementQualification;
 use App\Entity\User;
+use App\Entity\Zone;
 use App\Manager\AffectationManager;
 use App\Manager\SignalementManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\Query\Partner\PartnerLocalizationQuery;
+use App\Repository\Query\Zone\ZoneLocalizationQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Service\Notification\NotificationAndMailSender;
@@ -32,6 +35,7 @@ class AutoAssignerTest extends KernelTestCase
     private UserManager $userManager;
     private SignalementRepository $signalementRepository;
     private PartnerLocalizationQuery $partnerLocalizationQuery;
+    private ZoneLocalizationQuery $zoneLocalizationQuery;
     private UserSignalementSubscriptionManager $userSignalementSubscriptionManager;
     private NotificationAndMailSender $notificationAndMailSender;
 
@@ -52,6 +56,7 @@ class AutoAssignerTest extends KernelTestCase
         $this->userRepository = $this->entityManager->getRepository(User::class);
         $this->signalementRepository = $this->entityManager->getRepository(Signalement::class);
         $this->partnerLocalizationQuery = static::getContainer()->get(PartnerLocalizationQuery::class);
+        $this->zoneLocalizationQuery = static::getContainer()->get(ZoneLocalizationQuery::class);
         $this->notificationAndMailSender = static::getContainer()->get(NotificationAndMailSender::class);
     }
 
@@ -229,6 +234,71 @@ class AutoAssignerTest extends KernelTestCase
         $this->assertcount(1, $signalement->getUserSignalementSubscriptions());
     }
 
+    public function testAutoAssignmentZoneIncludedWithSignalementInZone(): void
+    {
+        // signalement 2024-09 à La Bodinière : les règles limitées à cette zone s'appliquent
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-09']);
+        $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
+        $signalement->addSignalementQualification((new SignalementQualification())->setQualification(
+            Qualification::DANGER
+        ));
+        $this->setZonesOnActiveRules($signalement, zoneToInclude: [$this->getZoneId('La Bodinière')]);
+        $this->testHelper($signalement, 4, ['Mairie de Saint-Mars du Désert', 'SDIS 44', 'Cocoland', 'Tiers-Lieu']);
+        $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
+    }
+
+    public function testAutoAssignmentZoneIncludedWithSignalementOutsideZone(): void
+    {
+        // signalement 2024-11 à Saint-Mars du Désert, hors de La Bodinière : aucune règle ne s'applique
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-11']);
+        $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
+        $this->setZonesOnActiveRules($signalement, zoneToInclude: [$this->getZoneId('La Bodinière')]);
+        $this->testHelper($signalement, 0, []);
+        $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
+    }
+
+    public function testAutoAssignmentZoneExcludedWithSignalementInZone(): void
+    {
+        // signalement 2024-09 à La Bodinière : les règles excluant cette zone ne s'appliquent pas
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-09']);
+        $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
+        $this->setZonesOnActiveRules($signalement, zoneToExclude: [$this->getZoneId('La Bodinière')]);
+        $this->testHelper($signalement, 0, []);
+        $this->assertEquals(SignalementStatus::NEED_VALIDATION, $signalement->getStatut());
+    }
+
+    public function testAutoAssignmentZoneExcludedWithSignalementOutsideZone(): void
+    {
+        // signalement 2024-11 à Saint-Mars du Désert, hors de La Bodinière : les règles s'appliquent normalement
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-11']);
+        $signalement->setStatut(SignalementStatus::NEED_VALIDATION);
+        $this->setZonesOnActiveRules($signalement, zoneToExclude: [$this->getZoneId('La Bodinière')]);
+        $this->testHelper($signalement, 3, ['Mairie de Saint-Mars du Désert', 'Partner Habitat 44', 'Tiers-Lieu']);
+        $this->assertEquals(SignalementStatus::ACTIVE, $signalement->getStatut());
+    }
+
+    private function getZoneId(string $name): string
+    {
+        return (string) $this->entityManager->getRepository(Zone::class)->findOneBy(['name' => $name])->getId();
+    }
+
+    /**
+     * @param ?array<string> $zoneToInclude
+     * @param ?array<string> $zoneToExclude
+     */
+    private function setZonesOnActiveRules(Signalement $signalement, ?array $zoneToInclude = null, ?array $zoneToExclude = null): void
+    {
+        foreach ($signalement->getAddress()->getTerritory()->getAutoAffectationRules() as $rule) {
+            if (AutoAffectationRule::STATUS_ACTIVE === $rule->getStatus()) {
+                $rule->setZoneToInclude($zoneToInclude)->setZoneToExclude($zoneToExclude);
+            }
+        }
+    }
+
     /**
      * @param ?array<string> $expectedPartnerNames
      */
@@ -245,6 +315,7 @@ class AutoAssignerTest extends KernelTestCase
             $this->affectationManager,
             $this->userManager,
             $this->partnerLocalizationQuery,
+            $this->zoneLocalizationQuery,
             $this->userRepository,
             $this->userSignalementSubscriptionManager,
             $this->notificationAndMailSender,

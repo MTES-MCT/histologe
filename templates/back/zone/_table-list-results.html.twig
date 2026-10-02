@@ -38,15 +38,28 @@
                     aria-label="Éditer la zone {{ item.name }}"
                     title="Éditer la zone {{ item.name }}"
                     >Éditer la zone {{ item.name }}</a>
-                <button
-                    class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-zone-delete"
-                    aria-label="Supprimer la zone {{ item.name }}"
-                    title="Supprimer la zone {{ item.name }}"
-                    data-fr-opened="false"
-                    aria-controls="fr-modal-zone-delete"
-                    data-url="{{path('back_zone_delete', {zone: item.id})}}?_token={{ csrf_token('zone_delete') }}"
-                    data-name="{{item.name}}"
-                    >Supprimer la zone {{ item.name }}</button>
+                {% if is_granted('ZONE_DELETE', item) %}
+                    <button
+                        class="fr-btn fr-btn--secondary fr-icon-delete-line open-modal-zone-delete"
+                        aria-label="Supprimer la zone {{ item.name }}"
+                        title="Supprimer la zone {{ item.name }}"
+                        data-fr-opened="false"
+                        aria-controls="fr-modal-zone-delete"
+                        data-url="{{path('back_zone_delete', {zone: item.id})}}?_token={{ csrf_token('zone_delete') }}"
+                        data-name="{{item.name}}"
+                        >Supprimer la zone {{ item.name }}</button>
+                {% else %}
+                    <span class="fr-display-inline-block" tabindex="0" aria-describedby="tooltip_zone_delete_{{ item.id }}">
+                        <button
+                            class="fr-btn fr-btn--secondary fr-icon-delete-line"
+                            aria-label="Supprimer la zone {{ item.name }}"
+                            disabled
+                            >Supprimer la zone {{ item.name }}</button>
+                    </span>
+                    <span class="fr-tooltip fr-placement" id="tooltip_zone_delete_{{ item.id }}" role="tooltip">
+                        {{ constant('App\\Security\\Voter\\ZoneVoter::ZONE_DELETE_DENIED_MESSAGE') }}
+                    </span>
+                {% endif %}
             </td>
         </tr>
     {% endfor %}

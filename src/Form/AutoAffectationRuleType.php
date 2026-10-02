@@ -83,6 +83,26 @@ class AutoAffectationRuleType extends AbstractType
                     'Situation allocataire inconnue' => 'nsp',
                 ],
             ])
+            ->add('accompagnementTravailleurSocial', ChoiceType::class, [
+                'label' => 'Accompagnement par un travailleur social',
+                'choices' => [
+                    'Sélectionnez quelles situations d\'accompagnement sont concernées' => '',
+                    'Tous' => 'all',
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                    'Ne sait pas' => 'nsp',
+                ],
+            ])
+            ->add('demandeLogementSocial', ChoiceType::class, [
+                'label' => 'Demande de logement social',
+                'choices' => [
+                    'Sélectionnez quelles situations de demande de logement social sont concernées' => '',
+                    'Tous' => 'all',
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                    'Ne sait pas' => 'nsp',
+                ],
+            ])
             ->add('inseeToInclude', TextType::class, [
                 'label' => 'Code insee à inclure (facultatif)',
                 'required' => false,
@@ -101,6 +121,16 @@ class AutoAffectationRuleType extends AbstractType
                 'label' => 'IDs partenaire à exclure (facultatif)',
                 'required' => false,
                 'help' => 'Une liste d\'id de partenaires séparés par des virgules.',
+            ])
+            ->add('zoneToInclude', TextType::class, [
+                'label' => 'IDs zone à inclure (facultatif)',
+                'required' => false,
+                'help' => 'Une liste d\'id de zones séparés par des virgules.',
+            ])
+            ->add('zoneToExclude', TextType::class, [
+                'label' => 'IDs zone à exclure (facultatif)',
+                'required' => false,
+                'help' => 'Une liste d\'id de zones séparés par des virgules.',
             ])
             ->add('proceduresSuspectees', SearchCheckboxEnumType::class, [
                 'class' => Qualification::class,
@@ -121,7 +151,14 @@ class AutoAffectationRuleType extends AbstractType
                 'required' => false,
             ])
         ;
-        $builder->get('inseeToExclude')->addModelTransformer(new CallbackTransformer(
+        foreach (['inseeToExclude', 'partnerToExclude', 'zoneToInclude', 'zoneToExclude'] as $field) {
+            $builder->get($field)->addModelTransformer($this->createCommaSeparatedListTransformer());
+        }
+    }
+
+    private function createCommaSeparatedListTransformer(): CallbackTransformer
+    {
+        return new CallbackTransformer(
             static function ($tagsAsArray) {
                 // transform the array to a string
                 return null !== $tagsAsArray ? implode(',', $tagsAsArray) : null;
@@ -132,19 +169,7 @@ class AutoAffectationRuleType extends AbstractType
 
                 return null !== $tagsAsString ? preg_split($pattern, $tagsAsString, -1, \PREG_SPLIT_NO_EMPTY) : [];
             }
-        ));
-        $builder->get('partnerToExclude')->addModelTransformer(new CallbackTransformer(
-            static function ($tagsAsArray) {
-                // transform the array to a string
-                return null !== $tagsAsArray ? implode(',', $tagsAsArray) : null;
-            },
-            static function ($tagsAsString) {
-                // transform the string back to an array
-                $pattern = '/\s*,\s*/';
-
-                return null !== $tagsAsString ? preg_split($pattern, $tagsAsString, -1, \PREG_SPLIT_NO_EMPTY) : [];
-            }
-        ));
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver): void
