@@ -83,10 +83,12 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
       }
     }
     let query = apiAdresse + adresse;
-    let limit = inputAdresse.getAttribute('data-form-limit');
     if (depcode !== '') {
+      //exception pour le departement virtuel de la métropole de Lyon, code "69A", fallback sur le code "69"
+      if (depcode === '69A') {
+        depcode = '69';
+      }
       query += '&depcode=' + encodeURIComponent(depcode);
-      limit = null;
     }
     if (inputAdresse.getAttribute('data-form-lat')) {
       query += '&lat=' + inputAdresse.getAttribute('data-form-lat');
@@ -99,18 +101,16 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
       .then((json) => {
         addressGroup.innerHTML = '';
         json.features.forEach((feature) => {
-          if (limit === null || feature.properties.citycode.startsWith(limit)) {
-            const suggestion = document.createElement('div');
-            suggestion.classList.add(
-              'fr-col-12',
-              'fr-p-3v',
-              'fr-text-label--blue-france',
-              'fr-adresse-suggestion'
-            );
-            suggestion.innerHTML = feature.properties.label;
-            attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix);
-            addressGroup.appendChild(suggestion);
-          }
+          const suggestion = document.createElement('div');
+          suggestion.classList.add(
+            'fr-col-12',
+            'fr-p-3v',
+            'fr-text-label--blue-france',
+            'fr-adresse-suggestion'
+          );
+          suggestion.innerHTML = feature.properties.label;
+          attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix);
+          addressGroup.appendChild(suggestion);
         });
       })
       .catch((error) => {

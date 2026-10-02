@@ -22,8 +22,8 @@
                                 data-autocomplete-query-selector="#form-edit-address .fr-address-group-bo"
                                 data-form-id="form-edit-address" 
                                 data-form-lat="{% if signalement.geoloc.lat is defined %}{{ signalement.geoloc.lat }}{% endif %}" 
-                                data-form-lng="{% if signalement.geoloc.lng is defined %}{{ signalement.geoloc.lng }}{% endif %}" 
-                                {% if is_granted('ROLE_ADMIN') is not same as true %}data-form-limit="{{ signalement.address.territory.zip }}" {% endif %}>
+                                data-form-lng="{% if signalement.geoloc.lng is defined %}{{ signalement.geoloc.lng }}{% endif %}" >
+                            <input type="hidden" data-autocomplete-address-filter data-filter-dept="{{ signalement.address.territory.zip }}">
                             <div class="fr-grid-row fr-background-alt--blue-france fr-text-label--blue-france fr-address-group-bo">
                             </div>
                         </div>
