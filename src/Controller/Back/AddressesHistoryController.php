@@ -105,6 +105,8 @@ class AddressesHistoryController extends AbstractController
                     'nomOccupant' => $row['nomOccupant'],
                     'statut' => $row['statut'],
                     'declarant' => $row['profileDeclarant'],
+                    'isLogementSocial' => $row['isLogementSocial'],
+                    'bailleurName' => $row['bailleurName'] ?: $row['denominationProprio'] ?: $row['nomProprio'] ?: $row['denominationSyndic'] ?: null,
                 ]);
                 $responseAddresses[$addressKey]->addSignalement($addressesHistorySignalement);
                 $processedSignalements[$addressKey][] = $row['id'];

@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Factory;
 
 use App\Dto\AddressesHistoryListView;
 use App\Dto\AddressesHistorySignalementView;
+use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\SignalementStatus;
 use App\Factory\AddressesHistoryListViewFactory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -60,6 +61,9 @@ class AddressesHistoryListViewFactoryTest extends KernelTestCase
             'prenomOccupant' => 'John',
             'nomOccupant' => 'Doe',
             'statut' => SignalementStatus::ACTIVE,
+            'isLogementSocial' => true,
+            'declarant' => ProfileDeclarant::LOCATAIRE,
+            'bailleurName' => 'Bailleur Test'
         ];
 
         $result = $this->factory->createSignalementInstanceFromSignalementData($data);
@@ -70,6 +74,9 @@ class AddressesHistoryListViewFactoryTest extends KernelTestCase
         $this->assertSame('2024-001', $result->getRef());
         $this->assertSame('John Doe', $result->getUsager());
         $this->assertSame('en cours', $result->getStatut());
+        $this->assertTrue($result->getIsLogementSocial());
+        $this->assertSame('Locataire', $result->getDeclarant());
+        $this->assertSame('Bailleur Test', $result->getBailleurName());
     }
 
     public function testCreateSignalementInstanceWithDifferentStatut(): void
@@ -80,6 +87,9 @@ class AddressesHistoryListViewFactoryTest extends KernelTestCase
             'prenomOccupant' => 'Jane',
             'nomOccupant' => 'Smith',
             'statut' => SignalementStatus::CLOSED,
+            'isLogementSocial' => true,
+            'declarant' => ProfileDeclarant::LOCATAIRE,
+            'bailleurName' => 'Bailleur Test'
         ];
 
         $result = $this->factory->createSignalementInstanceFromSignalementData($data);
@@ -95,6 +105,9 @@ class AddressesHistoryListViewFactoryTest extends KernelTestCase
             'prenomOccupant' => 'Pierre',
             'nomOccupant' => 'Martin',
             'statut' => SignalementStatus::NEED_VALIDATION,
+            'isLogementSocial' => true,
+            'declarant' => ProfileDeclarant::LOCATAIRE,
+            'bailleurName' => 'Bailleur Test'
         ];
 
         $result = $this->factory->createSignalementInstanceFromSignalementData($data);
@@ -111,6 +124,9 @@ class AddressesHistoryListViewFactoryTest extends KernelTestCase
             'prenomOccupant' => 'Alice',
             'nomOccupant' => 'Dupont',
             'statut' => SignalementStatus::ACTIVE,
+            'isLogementSocial' => true,
+            'declarant' => ProfileDeclarant::LOCATAIRE,
+            'bailleurName' => 'Bailleur Test'
         ];
 
         $result = $this->factory->createSignalementInstanceFromSignalementData($data);
@@ -132,6 +148,9 @@ class AddressesHistoryListViewFactoryTest extends KernelTestCase
             'prenomOccupant' => 'Marie-Claire',
             'nomOccupant' => 'De La Fontaine',
             'statut' => SignalementStatus::ACTIVE,
+            'isLogementSocial' => true,
+            'declarant' => ProfileDeclarant::LOCATAIRE,
+            'bailleurName' => 'Bailleur Test'
         ];
 
         $result = $this->factory->createSignalementInstanceFromSignalementData($data);
