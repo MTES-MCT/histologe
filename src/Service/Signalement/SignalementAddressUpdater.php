@@ -74,7 +74,7 @@ class SignalementAddressUpdater
 
     public function attachAddressToSignalementFromManualAddress(Signalement $signalement, string $numberAndStreet, string $postCode, string $city): bool
     {
-        $addressResult = $this->addressService->getAddress($postCode.' '.$city);
+        $addressResult = $this->addressService->getAddressForCityAndPostCode(city: $city, postcode: $postCode);
         if (!$addressResult->getCity() || $addressResult->getZipCode() !== $postCode) {
             return false;
         }

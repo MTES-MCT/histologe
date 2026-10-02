@@ -64,6 +64,20 @@ class AddressService
         return new BanAddress($this->searchAddress($address));
     }
 
+    public function getAddressForCityAndPostCode(string $city, string $postcode): BanAddress
+    {
+        $query = $postcode.' '.$city;
+        $results = $this->searchAddress($query, 10);
+
+        foreach ($results['features'] ?? [] as $feature) {
+            if (($feature['properties']['postcode'] ?? null) === $postcode) {
+                return new BanAddress(['features' => [$feature]]);
+            }
+        }
+
+        return new BanAddress($results);
+    }
+
     public function getAcceptableBanAddress(string $address): ?BanAddress
     {
         $addressResult = $this->getAddress($address);
