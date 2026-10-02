@@ -38,7 +38,8 @@ const ZONES_OUTLINE_LAYER_ID = 'zones-territory-outline'
 const CLUSTER_COLOR_SMALL = '#efcb3a' // $yellow-tournesol-850, moins de 10 adresses
 const CLUSTER_COLOR_MEDIUM = '#fbb8f6' // $purple-glycine-850, de 10 à 99 adresses
 const CLUSTER_COLOR_LARGE = '#fcc0b0' // $orange-terre-battue-850, 100 adresses et plus
-const MARKER_DOSSIERS_MULTIPLES = 'EFB900' // jaune pour adresse avec dossiers multiples
+const MARKER_DOSSIERS_MULTIPLES = '#298641' // jaune pour adresse avec dossiers multiples
+const MARKER_MULTIPLE_EVENTS = '#E91719' // rouge pour adresse avec événements multiples
 const MARKER_FALLBACK = '#000091' // bleu
 
 // Constaté sur les fixtures, mais fallback pour les cas réels, au cas où... :
@@ -50,8 +51,12 @@ const METERS_PER_DEGREE_LATITUDE = 111320
 const MARKER_ICON_SIZE = 24
 const MARKER_SHAPE_SIZE = 20
 const MARKER_ICON_DOSSIERS_MULTIPLES = 'marker-dossiers-multiples'
+const MARKER_ICON_MULTIPLE_EVENTS = 'marker-multiple-events'
 const MARKER_ICON_DEFAULT = 'marker-adresse'
 const MARKER_ICON_ARRETE_PREFIX = 'marker-arrete-'
+
+// Triangle pointe en haut, comme le `fr-icon-triangle-fill` de la légende
+const MULTIPLE_EVENTS_MARKER_POINTS: Array<[number, number]> = [[0.5, 0], [1, 1], [0, 1]]
 
 /**
  * Formes des pictos d'arrêtés en coordonnées relatives (0 → 1), reprises des
@@ -175,21 +180,40 @@ function spreadOverlappingCoordinates(
 }
 
 /**
+ * Types de données présents à l'adresse, dans l'ordre de la légende : dossiers
+ * multiples, puis un type par groupe d'arrêtés rencontré (sans doublon).
+ */
+function getMarkerTypes(address: any, nbSignalements: number): string[] {
+  const types: string[] = []
+
+  if (nbSignalements > 1) {
+    types.push(MARKER_ICON_DOSSIERS_MULTIPLES)
+  }
+
+  const arretePictos = new Set<string>()
+  address.arretes?.forEach((arrete: any) => {
+    if (arrete.arreteType) {
+      arretePictos.add(getArretePictoClassFromId(arrete.arreteType, sharedState.arreteTypesGroups))
+    }
+  })
+  arretePictos.forEach((picto) => types.push(MARKER_ICON_ARRETE_PREFIX + picto))
+
+  return types
+}
+
+/**
  * Icône du point isolé :
- * - jaune si dossiers multiples
- * - sinon : picto du premier arrêté de l'adresse
+ * - triangle si plusieurs types de données coexistent à l'adresse
+ * - sinon le picto de l'unique type présent (rond dossiers multiples, ou picto d'arrêté)
  */
 function getMarkerIcon(address: any, nbSignalements: number): string {
-  if (nbSignalements > 1) {
-    return MARKER_ICON_DOSSIERS_MULTIPLES
+  const types = getMarkerTypes(address, nbSignalements)
+
+  if (types.length > 1) {
+    return MARKER_ICON_MULTIPLE_EVENTS
   }
 
-  const firstArreteType = address.arretes?.[0]?.arreteType
-  if (firstArreteType) {
-    return MARKER_ICON_ARRETE_PREFIX + getArretePictoClassFromId(firstArreteType, sharedState.arreteTypesGroups)
-  }
-
-  return MARKER_ICON_DEFAULT
+  return types[0] ?? MARKER_ICON_DEFAULT
 }
 
 /**
@@ -247,6 +271,11 @@ function addMarkerIcons() {
   // Rond jaune plein : plusieurs dossiers à l'adresse
   registerMarkerImage(MARKER_ICON_DOSSIERS_MULTIPLES, (context) => {
     drawMarkerCircle(context, MARKER_DOSSIERS_MULTIPLES, MARKER_DOSSIERS_MULTIPLES)
+  })
+
+  // Triangle : plusieurs types de données à l'adresse
+  registerMarkerImage(MARKER_ICON_MULTIPLE_EVENTS, (context) => {
+    drawMarkerShape(context, MARKER_MULTIPLE_EVENTS, MULTIPLE_EVENTS_MARKER_POINTS)
   })
 
   // Rond bleu : ni dossiers multiples, ni arrêté (fallback - ne devrait pas arriver)
