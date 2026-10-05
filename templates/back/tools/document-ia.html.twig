@@ -47,9 +47,61 @@
             </header>
             
             {% if results %}
+                {% import _self as documentIA %}
                 <div class="fr-my-5v">
                     <h2>Résultats :</h2>
-                    <p>{{ results|json_encode }}</p>
+                    <p>
+                        Exécution <strong>{{ results.id ?? '-' }}</strong>
+                        {% if results.status == 'SUCCESS' %}
+                            <span class="fr-badge fr-badge--success">Succès</span>
+                        {% elseif results.status == 'FAILED' %}
+                            <span class="fr-badge fr-badge--error">Échec</span>
+                        {% else %}
+                            <span class="fr-badge fr-badge--info">{{ results.status ?? 'Inconnu' }}</span>
+                        {% endif %}
+                        {% if results.data.total_processing_time_ms is defined %}
+                            - traitée en {{ (results.data.total_processing_time_ms / 1000)|number_format(1, ',') }} s
+                        {% endif %}
+                    </p>
+
+                    {% if results.status == 'FAILED' %}
+                        <div class="fr-alert fr-alert--error fr-mb-3v">
+                            <p><strong>{{ results.data.error_type ?? 'Erreur' }}</strong> : {{ results.data.error_message ?? '' }}</p>
+                            {% if results.data.failed_step ?? null %}
+                                <p>Étape en échec : {{ results.data.failed_step }}</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% set result = results.data.result ?? null %}
+
+                    {% if result.classification ?? null %}
+                        <h3>Classification</h3>
+                        <ul>
+                            <li>Type de document : <strong>{{ result.classification.document_type }}</strong></li>
+                            <li>Confiance : {{ (result.classification.confidence * 100)|round }} %</li>
+                            <li>Explication : {{ result.classification.explanation }}</li>
+                        </ul>
+                    {% endif %}
+
+                    {% if result.extraction ?? null %}
+                        <h3>Données extraites ({{ result.extraction.type }})</h3>
+                        {% if result.extraction.properties is not empty %}
+                            {{ documentIA.properties(result.extraction.properties) }}
+                        {% else %}
+                            <p>Aucune donnée extraite.</p>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if (result.barcodes ?? []) is not empty %}
+                        <h3>Codes-barres détectés ({{ result.barcodes|length }})</h3>
+                        <pre>{{ result.barcodes|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES')) }}</pre>
+                    {% endif %}
+
+                    <details class="fr-mt-3v">
+                        <summary>Réponse brute (JSON)</summary>
+                        <pre>{{ results|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES')) }}</pre>
+                    </details>
                 </div>
             {% endif %}
             
@@ -73,3 +125,44 @@
         {% endif %}
     </section>
 {% endblock %} 
+
+{# Affiche récursivement une liste de GenericProperty {name, value, type} renvoyée par Document IA #}
+{% macro properties(properties) %}
+    {% import _self as documentIA %}
+    <div class="fr-table fr-table--sm fr-mb-2v">
+        <div class="fr-table__wrapper">
+            <div class="fr-table__container">
+                <div class="fr-table__content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Champ</th>
+                                <th scope="col">Valeur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for property in properties %}
+                                <tr>
+                                    <td>{{ property.name|replace({'_': ' '})|capitalize }}</td>
+                                    <td>
+                                        {% if property.value is iterable and property.value is not empty and (property.value|first).name is defined %}
+                                            {{ documentIA.properties(property.value) }}
+                                        {% elseif property.value is iterable %}
+                                            {{ property.value|join(', ') }}
+                                        {% elseif property.value is same as(true) %}
+                                            Oui
+                                        {% elseif property.value is same as(false) %}
+                                            Non
+                                        {% else %}
+                                            {{ property.value ?? '-' }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
