@@ -1,0 +1,75 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Outil de tests Document IA{% endblock %}
+
+{% block content %}
+    <section class="fr-pt-4v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Outil de tests Document IA',
+            'level3Link': path('back_tools_document_ia'),
+        } %}
+        {% if document_ia_enable %}
+            <div class="fr-alert fr-alert--info fr-mb-5v">
+                <p>
+                    Plus d'informations sur l'API Document IA sur le site du service :
+                    <a href="https://guides.ia.numerique.gouv.fr/socle-interministerielle-dintelligence-artificielle-generative/documentia-votre-pipeline-danalyse-documentaire" target="_blank" rel="noopener">
+                        https://guides.ia.numerique.gouv.fr/socle-interministerielle-dintelligence-artificielle-generative/documentia-votre-pipeline-danalyse-documentaire
+                    </a>
+                </p>
+                <hr>
+                <p class="fr-mb-1v">Types de fichiers acceptés par la plateforme : PDF, JPG, PNG, max 25MB</p>
+            </div>
+
+            <header>
+                <div class="fr-grid-row">
+                    <div class="fr-col-12">
+                        <h1>Outil de tests Document IA</h1>
+                        <p>
+                            Uploadez un document PDF, JPG ou PNG (max 25MB) pour effectuer une analyse.
+                        </p>
+                    </div>
+                    <div class="fr-col-12">
+                        {% if documentIAWorkflows %}
+                            <h2>Workflows disponibles :</h2>
+                            <ul>
+                                {% for workflow in documentIAWorkflows %}
+                                    <li><strong>ID : {{ workflow.id }}</strong> : {{ workflow.name }} - {{ workflow.description }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>La liste des workflows est vide. Problème de connexion ?</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </header>
+            
+            {% if results %}
+                <div class="fr-my-5v">
+                    <h2>Résultats :</h2>
+                    <p>{{ results|json_encode }}</p>
+                </div>
+            {% endif %}
+            
+            {% if documentIAWorkflows %}
+            <div class="fr-my-5v">
+                <h2>Analyser un fichier :</h2>
+                {{ form_start(documentIAForm) }}
+                    {{ form_row(documentIAForm.workflowId) }}
+                    {{ form_row(documentIAForm.file) }}
+                    <div class="fr-grid-row fr-grid-row--middle">
+                        {{ form_widget(documentIAForm.submit) }}
+                    </div>
+                {{ form_end(documentIAForm) }}
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="fr-alert fr-alert--warning fr-my-5v">
+                <p>L'outil Document IA est désactivé.</p>
+            </div>
+            <img alt="BOOH!" src="{{ asset('img/easter/casper.png') }}">
+        {% endif %}
+    </section>
+{% endblock %} 
