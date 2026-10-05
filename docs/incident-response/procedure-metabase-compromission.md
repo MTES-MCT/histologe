@@ -150,6 +150,13 @@ java --add-opens java.base/java.nio=ALL-UNNAMED \
 -jar metabase.jar enable-encryption`
 ```
 
+#### Configurer la clé de chiffrement en local
+Lors de la restauration d'un dump Metabase en local, il est donc nécessaire d'utiliser la même clé de chiffrement que celle utilisée par l'instance ayant généré le dump.
+
+`export MB_ENCRYPTION_SECRET_KEY=.......`
+
+`make tools-build`
+
 ### Protection de l'intégrité des sessions
 
 `MB_SESSION_SECRET_KEY`
