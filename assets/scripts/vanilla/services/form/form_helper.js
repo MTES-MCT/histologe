@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 export function initTinyMCE(selector) {
   const editor = document.querySelector(selector);
   if (editor !== null) {
-    let toolbar = 'undo redo | styleselect | bold italic | numlist bullist';
+    let toolbar = 'undo redo | styleselect | bold italic | numlist bullist | link';
     if (editor.dataset.mentionPartners) {
       toolbar += ' | partnersButton';
     }
@@ -38,12 +38,56 @@ export function initTinyMCE(selector) {
       selector: selector,
       browser_spellcheck: true,
       license_key: 'gpl',
-      plugins: 'lists',
+      language: 'fr-FR',
+      plugins: 'lists link',
+      link_title: false,
+      link_target_list: false,
+      link_default_target: '_blank',
       toolbar: toolbar,
       ui_mode: 'split', // on attache le menu de suggestions à l'éditeur
       menubar: false,
       height: 320,
       setup: (ed) => {
+        //modification des classes des boutons et champs de texte dans la fenêtre de dialogue pour etre sur le theme DSFR (concerne la fenêtre du bouton lien)
+        ed.on('OpenWindow', () => {
+          const dialogContainer = ed.theme.getSinkElement('dialog');
+          dialogContainer.querySelectorAll('.tox-dialog__footer .tox-button').forEach((button) => {
+            const isSecondary = button.classList.contains('tox-button--secondary');
+            button.classList.remove('tox-button', 'tox-button--secondary');
+            button.classList.add('fr-btn');
+            if (isSecondary) {
+              button.classList.add('fr-btn--secondary');
+            }
+          });
+          dialogContainer.querySelectorAll('.tox-dialog input.tox-textfield').forEach((input) => {
+            input.classList.remove('tox-textfield');
+            input.classList.add('fr-input');
+            const group = input.closest('.tox-form__group');
+            group?.classList.add('fr-input-group');
+            const label = group?.querySelector('label.tox-label');
+            if (label) {
+              label.classList.remove('tox-label');
+              label.classList.add('fr-label');
+              if (label.nextElementSibling !== input && label.nextElementSibling?.contains(input)) {
+                label.nextElementSibling.classList.add('fr-input-wrap');
+              }
+            }
+          });
+        });
+        //Les fenêtres doivent rester dans le dialog natif (side-panel), au-dessus de son backdrop. (concerne la fenêtre du bouton lien)
+        ed.on('init', () => {
+          const panel = ed.getElement().closest('dialog.side-panel');
+          if (panel) {
+            panel.appendChild(ed.theme.getSinkElement('dialog'));
+            const closeEditorDialog = () => ed.windowManager.close();
+            panel.addEventListener('panel:close', closeEditorDialog);
+            panel.addEventListener('close', closeEditorDialog);
+            ed.on('remove', () => {
+              panel.removeEventListener('panel:close', closeEditorDialog);
+              panel.removeEventListener('close', closeEditorDialog);
+            });
+          }
+        });
         // les mentions ne concernent que les éditeurs qui portent data-mention-partners (suivis), lu par instance
         const partnersData = ed.getElement().dataset.mentionPartners;
         if (!partnersData) return;

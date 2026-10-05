@@ -38,6 +38,11 @@ Encore
         from: './node_modules/tinymce/',
         to: 'tinymce/[path][name].[ext]'
     })
+    .copyFiles({
+        from: './node_modules/tinymce-i18n/langs8/',
+        to: 'tinymce/langs/[name].[ext]',
+        pattern: /fr-FR\.js$/
+    })
 
     .copyFiles({
         from: './node_modules/leaflet/dist/images',
