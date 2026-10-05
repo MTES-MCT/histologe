@@ -125,7 +125,7 @@
 
 {% block body %}{% endblock %}
 {% if 'back_cartographie' not in app.request.attributes.get('_route') %}
-    {% include "footer.html.twig" %}
+    {% include "footer.html.twig" with {'isBO': 'back_' in app.request.attributes.get('_route')} %}
 {% endif %}
 
 <script type="module" src="{{ asset('build/dsfr/dsfr.module.min.js') }}"></script>
