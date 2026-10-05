@@ -28,7 +28,7 @@ services:
       - 8083:80
 
   metabase_db:
-    image: postgres:14
+    image: postgres:17
     restart: always
     environment:
       POSTGRES_DB: metabase
@@ -49,6 +49,7 @@ services:
       MB_DB_USER: metabase
       MB_DB_PASS: metabase-local
       MB_DB_HOST: metabase_db
+      MB_ENCRYPTION_SECRET_KEY: ${MB_ENCRYPTION_SECRET_KEY}
     ports:
       - "127.0.0.1:3007:3000"
 
