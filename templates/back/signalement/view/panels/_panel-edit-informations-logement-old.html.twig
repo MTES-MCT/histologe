@@ -1,13 +1,14 @@
-<dialog aria-labelledby="panel-edit-informations-logement-title" id="panel-edit-informations-logement" class="side-panel">
+{# TODO à la suppression de FEATURE_ORIENTATION : supprimer ce panel #}
+<dialog aria-labelledby="panel-edit-informations-logement-old-title" id="panel-edit-informations-logement-old" class="side-panel">
     <div class="side-panel__inner">
         <div class="side-panel__header">
-            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-informations-logement" aria-controls="panel-edit-informations-logement" aria-expanded="false">Fermer</button>
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-informations-logement-old" aria-controls="panel-edit-informations-logement-old" aria-expanded="false">Fermer</button>
         </div>
 
         <div class="side-panel__content fr-mx-3w">
-            <h1 id="panel-edit-informations-logement-title" class="fr-modal__title title-blue-france">Modifier les informations du logement</h1>
+            <h1 id="panel-edit-informations-logement-old-title" class="fr-modal__title title-blue-france">Modifier les informations du logement</h1>
 
-            <form method="POST" id="form-edit-informations-logement" enctype="application/json" action="{{ path('back_signalement_edit_informations_logement',{uuid:signalement.uuid}) }}">
+            <form method="POST" id="form-edit-informations-logement-old" enctype="application/json" action="{{ path('back_signalement_edit_informations_logement_old',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
                 
                 <div class="fr-input-group">
@@ -19,7 +20,7 @@
                     {% endif %}
                     <label class="fr-label" for="informationLogementNombrePersonnes">Nb. personnes
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
+                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
                             'nombrePersonnes',
                             signalement.profileDeclarant)
                         }}
@@ -36,7 +37,7 @@
                     {% endif %}
                     <label class="fr-label" for="informationLogementCompositionLogementNombreEnfants">Dont nb. enfants
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
+                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
                             'compositionLogementNombreEnfants',
                             signalement.profileDeclarant,
                             signalement.isV2)
@@ -58,7 +59,7 @@
                     {% endif %}
                     <label class="fr-label" for="informationLogementCompositionLogementEnfants">Enfants -6 ans
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
+                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
                             'compositionLogementEnfants',
                             signalement.profileDeclarant,
                             signalement.isV2)
@@ -87,7 +88,7 @@
                     {% endif %}
                     <label class="fr-label" for="informationLogementDateEntree">Date arrivée
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
+                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
                             'dateEntree',
                             signalement.profileDeclarant,
                             signalement.isV2)
@@ -109,7 +110,7 @@
                     {% set bailDpeBail = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeBail : null %}
                     <label class="fr-label" for="informationLogementBailDpeBail">Bail
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
+                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
                             'bailDpeBail',
                             signalement.profileDeclarant,
                             signalement.isV2)
@@ -133,7 +134,7 @@
                     {% set bailDpeEtatDesLieux = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeEtatDesLieux : null %}
                     <label class="fr-label" for="informationLogementBailDpeEtatDesLieux">Etat des lieux
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
+                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
                             'bailDpeEtatDesLieux',
                             signalement.profileDeclarant,
                             signalement.isV2)
@@ -144,6 +145,47 @@
                         <option value="oui" {{ bailDpeEtatDesLieux == 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ bailDpeEtatDesLieux == 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ bailDpeEtatDesLieux == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                    </select>
+                </div>
+
+                <div class="fr-select-group">
+                    {% set bailDpeDpe = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeDpe : null %}
+                    <label class="fr-label" for="informationLogementBailDpeDpe">DPE
+                        {{ show_label_facultatif(
+                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
+                            'bailDpeDpe',
+                            signalement.profileDeclarant,
+                            signalement.isV2)
+                        }}
+                    </label>
+                    <select class="fr-select" id="informationLogementBailDpeDpe" name="bailDpeDpe">
+                        <option value="" {{ bailDpeDpe not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="oui" {{ bailDpeDpe == 'oui' ? 'selected' : '' }}>Oui</option>
+                        <option value="non" {{ bailDpeDpe == 'non' ? 'selected' : '' }}>Non</option>
+                        <option value="nsp" {{ bailDpeDpe == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                    </select>
+                </div>
+
+                <div class="fr-select-group">
+                    {% set bailDpeClasseEnergetique = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeClasseEnergetique : null %}
+                    <label class="fr-label" for="informationLogementBailDpeClasseEnergetique">Classe énergétique
+                        {{ show_label_facultatif(
+                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
+                            'bailDpeClasseEnergetique',
+                            signalement.profileDeclarant,
+                            signalement.isV2)
+                        }}
+                    </label>
+                    <select class="fr-select" id="informationLogementBailDpeClasseEnergetique" name="bailDpeClasseEnergetique">
+                        <option value="" {{ bailDpeClasseEnergetique not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="A" {{ bailDpeClasseEnergetique is same as 'A' ? 'selected' : '' }}>A</option>
+                        <option value="B" {{ bailDpeClasseEnergetique is same as 'B' ? 'selected' : '' }}>B</option>
+                        <option value="C" {{ bailDpeClasseEnergetique is same as 'C' ? 'selected' : '' }}>C</option>
+                        <option value="D" {{ bailDpeClasseEnergetique is same as 'D' ? 'selected' : '' }}>D</option>
+                        <option value="E" {{ bailDpeClasseEnergetique is same as 'E' ? 'selected' : '' }}>E</option>
+                        <option value="F" {{ bailDpeClasseEnergetique is same as 'F' ? 'selected' : '' }}>F</option>
+                        <option value="G" {{ bailDpeClasseEnergetique is same as 'G' ? 'selected' : '' }}>G</option>
+                        <option value="nsp" {{ bailDpeClasseEnergetique is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                     </select>
                 </div>
 
@@ -185,7 +227,7 @@
                 </div>
                 {% endif %}
 
-                <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_informations_logement_'~signalement.id) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_informations_logement_old_'~signalement.id) }}">
             </form>
         </div>
         <div class="side-panel__footer">
@@ -193,14 +235,14 @@
                 <li>
                     <button type="submit"
                         class="fr-btn fr-btn--icon-left fr-icon-check-line"
-                        form="form-edit-informations-logement"
+                        form="form-edit-informations-logement-old"
                         >Valider</button>
                 </li>
                 <li>
                     <button type="button"
                         class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel"
-                        data-panel="panel-edit-informations-logement"
-                        aria-controls="panel-edit-informations-logement"
+                        data-panel="panel-edit-informations-logement-old"
+                        aria-controls="panel-edit-informations-logement-old"
                         aria-expanded="false"
                         >Annuler</button>
                 </li>

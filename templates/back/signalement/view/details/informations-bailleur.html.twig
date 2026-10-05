@@ -3,12 +3,11 @@
     <div class="fr-col-12 fr-col-md-8">
         <h4 class="fr-h6">Informations complémentaires sur le bailleur</h4>
     </div>
-        {# todo : faire un nouveau panel et modif controleur #}
     <div class="fr-col-12 fr-col-md-4 fr-text--right">
         {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
             <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-edit-line"
-                data-panel-open="panel-edit-coordonnees-bailleur"
-                aria-controls="panel-edit-coordonnees-bailleur"
+                data-panel-open="panel-edit-informations-bailleur"
+                aria-controls="panel-edit-informations-bailleur"
                 data-fr-opened="false"
                 >Modifier</button>
         {% endif %}

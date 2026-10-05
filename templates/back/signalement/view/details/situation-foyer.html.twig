@@ -94,15 +94,6 @@
                 Ne sait pas
             {% endif %}
         </div>
-        {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
-            <div class="fr-mb-2v">
-                <span class="fr-text--medium">Revenu fiscal de référence :</span>
-                {% if signalement.informationComplementaire %}
-                    {{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ~ ' €'}}
-                {% endif %}
-            </div>
-        {% endif %}
-        {# todo : info transfuge, modifier panel et controleur (ou nouveau panel) #}
         <div class="fr-mb-2v">
             <span class="fr-text--medium">Souhaite garder le logement après travaux :</span>
             {% if signalement.informationProcedure %}
@@ -116,6 +107,14 @@
                 {% endif %}
             {% endif %}
         </div>
+        {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
+            <div class="fr-mb-2v">
+                <span class="fr-text--medium">Revenu fiscal de référence :</span>
+                {% if signalement.informationComplementaire %}
+                    {{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ~ ' €'}}
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
     <div class="fr-col-12 fr-col-md-6">
         {% set structureAccompagnement = signalement.situationFoyer and signalement.situationFoyer.travailleurSocialAccompagnement is same as 'oui' %}

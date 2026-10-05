@@ -5,13 +5,18 @@ namespace App\Controller\Back;
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
 use App\Dto\Request\Signalement\CompositionLogementRequest;
 use App\Dto\Request\Signalement\CoordonneesAgenceRequest;
+use App\Dto\Request\Signalement\CoordonneesBailleurOldRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesSyndicRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
+use App\Dto\Request\Signalement\InformationsBailleurRequest;
+use App\Dto\Request\Signalement\InformationsLogementOldRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
 use App\Dto\Request\Signalement\InviteTiersRequest;
+use App\Dto\Request\Signalement\ProcedureDemarchesOldRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
+use App\Dto\Request\Signalement\SituationFoyerOldRequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Enum\SuiviDelayedType;
@@ -37,6 +42,7 @@ use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,6 +55,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/bo/signalements')]
 class SignalementEditController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_ORIENTATION')]
+        private readonly bool $featureOrientation,
+    ) {
+    }
+
     #[Route('/{uuid:signalement}/edit-address', name: 'back_signalement_edit_address', methods: 'POST')]
     #[IsGranted(SignalementVoter::SIGN_EDIT_ADDRESS, subject: 'signalement')]
     public function editAddress(
@@ -112,10 +124,18 @@ class SignalementEditController extends AbstractController
             'target' => '#list-suivis',
             'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement]),
         ];
-        $htmlTargetContents[] = [
-            'target' => '#signalement-information-composition-container',
-            'content' => $this->renderView('back/signalement/view/information/information-composition.html.twig', ['signalement' => $signalement]),
-        ];
+        // TODO à la suppression de FEATURE_ORIENTATION : ne garder que la cible du nouvel onglet
+        if ($this->featureOrientation) {
+            $htmlTargetContents[] = [
+                'target' => '#signalement-description-logement-container',
+                'content' => $this->renderView('back/signalement/view/details/description-logement.html.twig', ['signalement' => $signalement]),
+            ];
+        } else {
+            $htmlTargetContents[] = [
+                'target' => '#signalement-information-composition-container',
+                'content' => $this->renderView('back/signalement/view/information/information-composition.html.twig', ['signalement' => $signalement]),
+            ];
+        }
         $htmlTargetContents[] = [
             'target' => '#signalement-edit-composition-etage-container',
             'content' => $this->renderView('back/signalement/view/panels/_panel-edit-composition-logement-etage.html.twig', ['signalement' => $signalement]),
@@ -173,15 +193,28 @@ class SignalementEditController extends AbstractController
             'signalement' => $signalement,
             'status' => TiersInvitationStatus::WAITING,
         ]);
-        $htmlTargetContents = [
-            [
-                'target' => '#signalement-information-tiers-container',
-                'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', [
-                    'signalement' => $signalement,
-                    'tiersInvitation' => $tiersInvitation,
-                ]),
-            ],
-        ];
+        // TODO à la suppression de FEATURE_ORIENTATION : ne garder que la cible du nouvel onglet
+        if ($this->featureOrientation) {
+            $htmlTargetContents = [
+                [
+                    'target' => '#signalement-coordonnees-tiers-container',
+                    'content' => $this->renderView('back/signalement/view/details/coordonnees-tiers.html.twig', [
+                        'signalement' => $signalement,
+                        'tiersInvitation' => $tiersInvitation,
+                    ]),
+                ],
+            ];
+        } else {
+            $htmlTargetContents = [
+                [
+                    'target' => '#signalement-information-tiers-container',
+                    'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', [
+                        'signalement' => $signalement,
+                        'tiersInvitation' => $tiersInvitation,
+                    ]),
+                ],
+            ];
+        }
         $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
         $functions = [['name' => 'applyFilter']];
 
@@ -261,14 +294,26 @@ class SignalementEditController extends AbstractController
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
         }
-        $htmlTargetContents = [
-            [
-                'target' => '#signalement-information-tiers-container',
-                'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', [
-                    'signalement' => $signalement, 'tiersInvitation' => $invitation,
-                ]),
-            ],
-        ];
+        // TODO à la suppression de FEATURE_ORIENTATION : ne garder que la cible du nouvel onglet
+        if ($this->featureOrientation) {
+            $htmlTargetContents = [
+                [
+                    'target' => '#signalement-coordonnees-tiers-container',
+                    'content' => $this->renderView('back/signalement/view/details/coordonnees-tiers.html.twig', [
+                        'signalement' => $signalement, 'tiersInvitation' => $invitation,
+                    ]),
+                ],
+            ];
+        } else {
+            $htmlTargetContents = [
+                [
+                    'target' => '#signalement-information-tiers-container',
+                    'content' => $this->renderView('back/signalement/view/information/information-tiers.html.twig', [
+                        'signalement' => $signalement, 'tiersInvitation' => $invitation,
+                    ]),
+                ],
+            ];
+        }
         $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
         $functions = [['name' => 'applyFilter']];
 
@@ -323,19 +368,31 @@ class SignalementEditController extends AbstractController
                 'target' => '#signalement-title-container',
                 'content' => $this->renderView('back/signalement/view/header/_title.html.twig', ['signalement' => $signalement]),
             ],
-            [
+        ];
+        // TODO à la suppression de FEATURE_ORIENTATION : ne garder que les cibles du nouvel onglet
+        if ($this->featureOrientation) {
+            $htmlTargetContents[] = [
+                'target' => '#signalement-coordonnees-foyer-container',
+                'content' => $this->renderView('back/signalement/view/details/coordonnees-foyer.html.twig', ['signalement' => $signalement]),
+            ];
+            $htmlTargetContents[] = [
+                'target' => '#signalement-bailleur-agence-syndic-container',
+                'content' => $this->renderView('back/signalement/view/details/bailleur-agence-syndic.html.twig', ['signalement' => $signalement]),
+            ];
+        } else {
+            $htmlTargetContents[] = [
                 'target' => '#signalement-information-foyer-container',
                 'content' => $this->renderView('back/signalement/view/information/information-foyer.html.twig', ['signalement' => $signalement]),
-            ],
-            [
+            ];
+            $htmlTargetContents[] = [
                 'target' => '#signalement-information-bailleur-container',
                 'content' => $this->renderView('back/signalement/view/information/information-bailleur.html.twig', ['signalement' => $signalement]),
-            ],
-            [
+            ];
+            $htmlTargetContents[] = [
                 'target' => '#signalement-information-agence-container',
                 'content' => $this->renderView('back/signalement/view/information/information-agence.html.twig', ['signalement' => $signalement]),
-            ],
-        ];
+            ];
+        }
         $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
         $functions = [['name' => 'applyFilter']];
 
@@ -352,6 +409,10 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce contrôle
+        if (!$this->featureOrientation) {
+            throw $this->createNotFoundException();
+        }
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
@@ -390,8 +451,131 @@ class SignalementEditController extends AbstractController
         }
         $htmlTargetContents = [
             [
+                'target' => '#signalement-coordonnees-bailleur-container',
+                'content' => $this->renderView('back/signalement/view/details/coordonnees-bailleur.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+        $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
+        $functions = [['name' => 'applyFilter']];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
+    }
+
+    // TODO à la suppression de FEATURE_ORIENTATION :
+    // - supprimer cette route, son DTO CoordonneesBailleurOldRequest et la méthode SignalementManager::updateFromCoordonneesBailleurOldRequest
+    // - supprimer le panel _panel-edit-coordonnees-bailleur-old.html.twig et les tests associés
+    #[Route('/{uuid:signalement}/edit-coordonnees-bailleur-old', name: 'back_signalement_edit_coordonnees_bailleur_old', methods: 'POST')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
+    public function editCoordonneesBailleurOld(
+        Signalement $signalement,
+        Request $request,
+        SignalementManager $signalementManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        /** @var array<string, mixed> $payload */
+        $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
+        if (!$this->isCsrfTokenValid('signalement_edit_coordonnees_bailleur_old_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+        /** @var CoordonneesBailleurOldRequest $coordonneesBailleurOldRequest */
+        $coordonneesBailleurOldRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            CoordonneesBailleurOldRequest::class,
+            'json'
+        );
+        $validationGroups = ['Default'];
+        if ($signalement->getProfileDeclarant()) {
+            $validationGroups[] = $signalement->getProfileDeclarant()->value;
+        }
+        $errorMessage = FormHelper::getErrorsFromRequest(
+            $validator,
+            $coordonneesBailleurOldRequest,
+            $validationGroups
+        );
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromCoordonneesBailleurOldRequest($signalement, $coordonneesBailleurOldRequest);
+        $entityManager->flush();
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les coordonnées du bailleur ont bien été modifiées.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
                 'target' => '#signalement-information-bailleur-container',
                 'content' => $this->renderView('back/signalement/view/information/information-bailleur.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+        $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
+        $functions = [['name' => 'applyFilter']];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
+    }
+
+    #[Route('/{uuid:signalement}/edit-informations-bailleur', name: 'back_signalement_edit_informations_bailleur', methods: 'POST')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
+    public function editInformationsBailleur(
+        Signalement $signalement,
+        Request $request,
+        SignalementManager $signalementManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce contrôle
+        if (!$this->featureOrientation) {
+            throw $this->createNotFoundException();
+        }
+        /** @var array<string, mixed> $payload */
+        $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
+        if (!$this->isCsrfTokenValid('signalement_edit_informations_bailleur_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+        /** @var InformationsBailleurRequest $informationsBailleurRequest */
+        $informationsBailleurRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            InformationsBailleurRequest::class,
+            'json'
+        );
+        $validationGroups = ['Default'];
+        if ($signalement->getProfileDeclarant()) {
+            $validationGroups[] = $signalement->getProfileDeclarant()->value;
+        }
+        $errorMessage = FormHelper::getErrorsFromRequest(
+            $validator,
+            $informationsBailleurRequest,
+            $validationGroups
+        );
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromInformationsBailleurRequest($signalement, $informationsBailleurRequest);
+        $entityManager->flush();
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les informations du bailleur ont bien été modifiées.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-informations-bailleur-container',
+                'content' => $this->renderView('back/signalement/view/details/informations-bailleur.html.twig', ['signalement' => $signalement]),
             ],
         ];
         $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
@@ -447,12 +631,22 @@ class SignalementEditController extends AbstractController
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
         }
-        $htmlTargetContents = [
-            [
-                'target' => '#signalement-information-agence-container',
-                'content' => $this->renderView('back/signalement/view/information/information-agence.html.twig', ['signalement' => $signalement]),
-            ],
-        ];
+        // TODO à la suppression de FEATURE_ORIENTATION : ne garder que la cible du nouvel onglet
+        if ($this->featureOrientation) {
+            $htmlTargetContents = [
+                [
+                    'target' => '#signalement-coordonnees-agence-container',
+                    'content' => $this->renderView('back/signalement/view/details/coordonnees-agence.html.twig', ['signalement' => $signalement]),
+                ],
+            ];
+        } else {
+            $htmlTargetContents = [
+                [
+                    'target' => '#signalement-information-agence-container',
+                    'content' => $this->renderView('back/signalement/view/information/information-agence.html.twig', ['signalement' => $signalement]),
+                ],
+            ];
+        }
         $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
         $functions = [['name' => 'applyFilter']];
 
@@ -506,12 +700,22 @@ class SignalementEditController extends AbstractController
         if ($subscriptionCreated) {
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
         }
-        $htmlTargetContents = [
-            [
-                'target' => '#signalement-information-syndic-container',
-                'content' => $this->renderView('back/signalement/view/information/information-syndic.html.twig', ['signalement' => $signalement]),
-            ],
-        ];
+        // TODO à la suppression de FEATURE_ORIENTATION : ne garder que la cible du nouvel onglet
+        if ($this->featureOrientation) {
+            $htmlTargetContents = [
+                [
+                    'target' => '#signalement-coordonnees-syndic-container',
+                    'content' => $this->renderView('back/signalement/view/details/coordonnees-syndic.html.twig', ['signalement' => $signalement]),
+                ],
+            ];
+        } else {
+            $htmlTargetContents = [
+                [
+                    'target' => '#signalement-information-syndic-container',
+                    'content' => $this->renderView('back/signalement/view/information/information-syndic.html.twig', ['signalement' => $signalement]),
+                ],
+            ];
+        }
         $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
         $functions = [['name' => 'applyFilter']];
 
@@ -528,6 +732,10 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce contrôle
+        if (!$this->featureOrientation) {
+            throw $this->createNotFoundException();
+        }
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
@@ -558,6 +766,67 @@ class SignalementEditController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $subscriptionCreated = $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
+        $entityManager->flush();
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les informations du logement ont bien été modifiées.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-occupation-logement-container',
+                'content' => $this->renderView('back/signalement/view/details/occupation-logement.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+        // TODO bloc Consommation énergétique : recharger aussi ce bloc (il affiche la date d'entrée dans le logement)
+        $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
+        $functions = [['name' => 'applyFilter']];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
+    }
+
+    // TODO à la suppression de FEATURE_ORIENTATION :
+    // - supprimer cette route, son DTO InformationsLogementOldRequest et la méthode SignalementManager::updateFromInformationsLogementOldRequest
+    // - supprimer le panel _panel-edit-informations-logement-old.html.twig et les tests associés
+    #[Route('/{uuid:signalement}/edit-informations-logement-old', name: 'back_signalement_edit_informations_logement_old', methods: 'POST')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
+    public function editInformationsLogementOld(
+        Signalement $signalement,
+        Request $request,
+        SignalementManager $signalementManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        /** @var array<string, mixed> $payload */
+        $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
+        if (!$this->isCsrfTokenValid('signalement_edit_informations_logement_old_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+        /** @var InformationsLogementOldRequest $informationsLogementOldRequest */
+        $informationsLogementOldRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            InformationsLogementOldRequest::class,
+            'json'
+        );
+        $validationGroups = ['Default'];
+        $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
+
+        $errorMessage = FormHelper::getErrorsFromRequest(
+            $validator,
+            $informationsLogementOldRequest,
+            $validationGroups
+        );
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromInformationsLogementOldRequest($signalement, $informationsLogementOldRequest);
         $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les informations du logement ont bien été modifiées.'];
         if ($subscriptionCreated) {
@@ -622,10 +891,18 @@ class SignalementEditController extends AbstractController
             $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
         }
         $htmlTargetContents = $signalementAddressContentService->getHtmlTargetContentsForSignalementAddress($signalement);
-        $htmlTargetContents[] = [
-            'target' => '#signalement-information-composition-container',
-            'content' => $this->renderView('back/signalement/view/information/information-composition.html.twig', ['signalement' => $signalement]),
-        ];
+        // TODO à la suppression de FEATURE_ORIENTATION : ne garder que la cible du nouvel onglet
+        if ($this->featureOrientation) {
+            $htmlTargetContents[] = [
+                'target' => '#signalement-description-logement-container',
+                'content' => $this->renderView('back/signalement/view/details/description-logement.html.twig', ['signalement' => $signalement]),
+            ];
+        } else {
+            $htmlTargetContents[] = [
+                'target' => '#signalement-information-composition-container',
+                'content' => $this->renderView('back/signalement/view/information/information-composition.html.twig', ['signalement' => $signalement]),
+            ];
+        }
         $htmlTargetContents[] = [
             'target' => '#signalement-edit-address-etage-container',
             'content' => $this->renderView('back/signalement/view/panels/_panel-edit-composition-logement-etage.html.twig', ['signalement' => $signalement]),
@@ -650,6 +927,10 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce contrôle
+        if (!$this->featureOrientation) {
+            throw $this->createNotFoundException();
+        }
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
@@ -684,6 +965,63 @@ class SignalementEditController extends AbstractController
         }
         $htmlTargetContents = [
             [
+                'target' => '#signalement-situation-foyer-container',
+                'content' => $this->renderView('back/signalement/view/details/situation-foyer.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+        $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
+        $functions = [['name' => 'applyFilter']];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
+    }
+
+    // TODO à la suppression de FEATURE_ORIENTATION :
+    // - supprimer cette route, son DTO SituationFoyerOldRequest et la méthode SignalementManager::updateFromSituationFoyerOldRequest
+    // - supprimer le panel _panel-edit-situation-foyer-old.html.twig et les tests associés
+    #[Route('/{uuid:signalement}/edit-situation-foyer-old', name: 'back_signalement_edit_situation_foyer_old', methods: 'POST')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
+    public function editSituationFoyerOld(
+        Signalement $signalement,
+        Request $request,
+        SignalementManager $signalementManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        /** @var array<string, mixed> $payload */
+        $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
+        if (!$this->isCsrfTokenValid('signalement_edit_situation_foyer_old_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+        /** @var SituationFoyerOldRequest $situationFoyerOldRequest */
+        $situationFoyerOldRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            SituationFoyerOldRequest::class,
+            'json'
+        );
+
+        $validationGroups = ['Default'];
+        $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
+
+        $errorMessage = FormHelper::getErrorsFromRequest($validator, $situationFoyerOldRequest, $validationGroups);
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromSituationFoyerOldRequest($signalement, $situationFoyerOldRequest);
+        $entityManager->flush();
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'La situation du foyer a bien été modifiée.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
                 'target' => '#signalement-information-situation-foyer-container',
                 'content' => $this->renderView('back/signalement/view/information/information-situation-foyer.html.twig', ['signalement' => $signalement]),
             ],
@@ -704,6 +1042,10 @@ class SignalementEditController extends AbstractController
         ValidatorInterface $validator,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce contrôle
+        if (!$this->featureOrientation) {
+            throw $this->createNotFoundException();
+        }
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
@@ -730,6 +1072,62 @@ class SignalementEditController extends AbstractController
             return $this->json($response, $response['code']);
         }
         $subscriptionCreated = $signalementManager->updateFromProcedureDemarchesRequest($signalement, $procedureDemarchesRequest);
+        $entityManager->flush();
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les procédures et démarches ont bien été modifiées.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-demarches-usager-container',
+                'content' => $this->renderView('back/signalement/view/details/demarches-usager.html.twig', ['signalement' => $signalement]),
+            ],
+        ];
+        $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
+        $functions = [['name' => 'applyFilter']];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
+    }
+
+    // TODO à la suppression de FEATURE_ORIENTATION :
+    // - supprimer cette route, son DTO ProcedureDemarchesOldRequest et la méthode SignalementManager::updateFromProcedureDemarchesOldRequest
+    // - supprimer le panel _panel-edit-procedure-demarches-old.html.twig et les tests associés
+    #[Route('/{uuid:signalement}/edit-procedure-demarches-old', name: 'back_signalement_edit_procedure_demarches_old', methods: 'POST')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
+    public function editProcedureDemarchesOld(
+        Signalement $signalement,
+        Request $request,
+        SignalementManager $signalementManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
+    ): JsonResponse {
+        /** @var array<string, mixed> $payload */
+        $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
+        if (!$this->isCsrfTokenValid('signalement_edit_procedure_demarches_old_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+        /** @var ProcedureDemarchesOldRequest $procedureDemarchesOldRequest */
+        $procedureDemarchesOldRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            ProcedureDemarchesOldRequest::class,
+            'json'
+        );
+        $validationGroups = ['Default'];
+        $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
+
+        $errorMessage = FormHelper::getErrorsFromRequest($validator, $procedureDemarchesOldRequest, $validationGroups);
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromProcedureDemarchesOldRequest($signalement, $procedureDemarchesOldRequest);
         $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les procédures et démarches ont bien été modifiées.'];
         if ($subscriptionCreated) {

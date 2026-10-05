@@ -1,3 +1,4 @@
+{# TODO : comment rendre éditable même si on n'a pas encore de signalementQualification nde  #}
 <div data-ajax-form>
     <dialog aria-labelledby="panel-edit-nde-title" id="panel-edit-nde" class="side-panel">
         <div class="side-panel__inner">
@@ -94,9 +95,10 @@
 
                     <div class="fr-select-group">
                         {% set bailDpeClasseEnergetique = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeClasseEnergetique : null %}
+                        {# TODO bloc Consommation énergétique : pointer show_label_facultatif vers le DTO qui portera bailDpeClasseEnergetique #}
                         <label class="fr-label" for="signalement-edit-nde-classe-energetique">Classe énergétique
                             {{ show_label_facultatif(
-                                'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
+                                'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
                                 'bailDpeClasseEnergetique',
                                 signalement.profileDeclarant,
                                 signalement.isV2)

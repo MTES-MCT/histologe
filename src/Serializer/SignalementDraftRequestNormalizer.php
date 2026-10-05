@@ -4,13 +4,18 @@ namespace App\Serializer;
 
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
 use App\Dto\Request\Signalement\CompositionLogementRequest;
+use App\Dto\Request\Signalement\CoordonneesBailleurOldRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
+use App\Dto\Request\Signalement\InformationsBailleurRequest;
+use App\Dto\Request\Signalement\InformationsLogementOldRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
+use App\Dto\Request\Signalement\ProcedureDemarchesOldRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\RequestInterface;
 use App\Dto\Request\Signalement\SignalementDraftRequest;
+use App\Dto\Request\Signalement\SituationFoyerOldRequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Entity\Model\InformationComplementaire;
 use App\Entity\Model\TypeCompositionLogement;
@@ -107,12 +112,17 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
             SignalementDraftRequest::class,
             CompositionLogementRequest::class,
             CoordonneesBailleurRequest::class,
+            CoordonneesBailleurOldRequest::class, // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette ligne
+            InformationsBailleurRequest::class,
             CoordonneesTiersRequest::class,
             AdresseOccupantRequest::class,
             SituationFoyerRequest::class,
+            SituationFoyerOldRequest::class, // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette ligne
             CoordonneesFoyerRequest::class,
             ProcedureDemarchesRequest::class,
+            ProcedureDemarchesOldRequest::class, // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette ligne
             InformationsLogementRequest::class,
+            InformationsLogementOldRequest::class, // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette ligne
             TypeCompositionLogement::class,
         ]);
     }

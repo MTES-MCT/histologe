@@ -1,13 +1,14 @@
-<dialog aria-labelledby="panel-edit-procedure-demarches-title" id="panel-edit-procedure-demarches" class="side-panel">
+{# TODO à la suppression de FEATURE_ORIENTATION : supprimer ce panel #}
+<dialog aria-labelledby="panel-edit-procedure-demarches-old-title" id="panel-edit-procedure-demarches-old" class="side-panel">
     <div class="side-panel__inner">
         <div class="side-panel__header">
-            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-procedure-demarches" aria-controls="panel-edit-procedure-demarches" aria-expanded="false">Fermer</button>
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-procedure-demarches-old" aria-controls="panel-edit-procedure-demarches-old" aria-expanded="false">Fermer</button>
         </div>
 
         <div class="side-panel__content fr-mx-3w">
-            <h1 id="panel-edit-procedure-demarches-title" class="fr-modal__title title-blue-france">Modifier procédure et démarches</h1>
+            <h1 id="panel-edit-procedure-demarches-old-title" class="fr-modal__title title-blue-france">Modifier procédure et démarches</h1>
 
-            <form method="POST" id="form-edit-procedure-demarches" enctype="application/json" action="{{ path('back_signalement_edit_procedure_demarches',{uuid:signalement.uuid}) }}">
+            <form method="POST" id="form-edit-procedure-demarches-old" enctype="application/json" action="{{ path('back_signalement_edit_procedure_demarches_old',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
 
                 <div class="fr-select-group">
@@ -32,7 +33,7 @@
                     <label class="fr-label" for="procedureDemarchesinfoProcedureBailMoyen">
                         Moyen de contact du bailleur (si bailleur contacté)
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
+                            'App\\Dto\\Request\\Signalement\\ProcedureDemarchesOldRequest',
                             'infoProcedureBailMoyen',
                             signalement.profileDeclarant,
                             signalement.isV2)
@@ -53,7 +54,7 @@
                 <div class="fr-input-group">
                     <label class="fr-label" for="procedureDemarchesinfoProcedureBailDate">Date de contact bailleur (si bailleur contacté)
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
+                            'App\\Dto\\Request\\Signalement\\ProcedureDemarchesOldRequest',
                             'infoProcedureBailMoyen',
                             signalement.profileDeclarant,
                             signalement.isV2)
@@ -66,7 +67,7 @@
                 <div class="fr-input-group">
                     <label class="fr-label" for="procedureDemarchesinfoProcedureBailReponse">Réponse bailleur (si bailleur contacté)
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
+                            'App\\Dto\\Request\\Signalement\\ProcedureDemarchesOldRequest',
                             'infoProcedureBailMoyen',
                             signalement.profileDeclarant,
                             signalement.isV2)
@@ -84,7 +85,7 @@
                     <label class="fr-label" for="procedureDemarchesInfoProcedureAssuranceContactee">
                         Contact assurance
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
+                            'App\\Dto\\Request\\Signalement\\ProcedureDemarchesOldRequest',
                             'infoProcedureAssuranceContactee',
                             signalement.profileDeclarant,
                             signalement.isV2)
@@ -103,6 +104,24 @@
                     <textarea class="fr-input fr-input--no-resize" id="procedureDemarchesInfoProcedureReponseAssurance" name="infoProcedureReponseAssurance">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureReponseAssurance ? signalement.informationProcedure.infoProcedureReponseAssurance : '' }}</textarea>
                 </div>
 
+                <div class="fr-input-group">
+                    {% set infoProcedureDepartApresTravaux = signalement.informationProcedure ? signalement.informationProcedure.infoProcedureDepartApresTravaux : null %}
+                    <label class="fr-label" for="procedureDemarchesInfoProcedureDepartApresTravaux">Souhaite garder le logement après travaux
+                        {{ show_label_facultatif(
+                            'App\\Dto\\Request\\Signalement\\ProcedureDemarchesOldRequest',
+                            'infoProcedureDepartApresTravaux',
+                            signalement.profileDeclarant,
+                            signalement.isV2)
+                        }}
+                    </label>
+                    <select class="fr-select" id="procedureDemarchesInfoProcedureDepartApresTravaux" name="infoProcedureDepartApresTravaux">
+                        {# Careful : reversed regarding the question in the form #}
+                        <option value="" {{ infoProcedureDepartApresTravaux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="non" {{ infoProcedureDepartApresTravaux is same as 'non' ? 'selected' : '' }}>Oui</option>
+                        <option value="oui" {{ infoProcedureDepartApresTravaux is same as 'oui' ? 'selected' : '' }}>Non</option>
+                        <option value="nsp" {{ infoProcedureDepartApresTravaux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                    </select>
+                </div>
                 {% if signalement.serviceSecours %}
                     <div class="fr-input-group">
                         <label class="fr-label" for="procedureDemarchesDateMissionServiceSecours">Date de la mission du service de secours (facultatif)
@@ -121,7 +140,7 @@
                         <input class="fr-input" type="text" id="procedureDemarchesOrdreMissionServiceSecours" name="ordreMissionServiceSecours" maxlength="255" value="{{ signalement.ordreMissionServiceSecours ?? '' }}">
                     </div>
                 {% endif %}
-                <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_procedure_demarches_'~signalement.id) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_procedure_demarches_old_'~signalement.id) }}">
             </form>
         </div>
         <div class="side-panel__footer">
@@ -129,14 +148,14 @@
                 <li>
                     <button type="submit"
                         class="fr-btn fr-btn--icon-left fr-icon-check-line"
-                        form="form-edit-procedure-demarches"
+                        form="form-edit-procedure-demarches-old"
                         >Valider</button>
                 </li>
                 <li>
                     <button type="button"
                         class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel"
-                        data-panel="panel-edit-procedure-demarches"
-                        aria-controls="panel-edit-procedure-demarches"
+                        data-panel="panel-edit-procedure-demarches-old"
+                        aria-controls="panel-edit-procedure-demarches-old"
                         aria-expanded="false"
                         >Annuler</button>
                 </li>

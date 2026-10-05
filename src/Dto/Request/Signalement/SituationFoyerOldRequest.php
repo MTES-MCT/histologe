@@ -6,7 +6,8 @@ use App\Validator\DateNaissanceValidatorTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-readonly class SituationFoyerRequest implements RequestInterface
+// TODO à la suppression de FEATURE_ORIENTATION : supprimer ce DTO (remplacé par SituationFoyerRequest)
+readonly class SituationFoyerOldRequest implements RequestInterface
 {
     use DateNaissanceValidatorTrait;
 
@@ -94,14 +95,6 @@ readonly class SituationFoyerRequest implements RequestInterface
         private ?string $beneficiaireFsl = null,
         #[Assert\Length(max: 50)]
         private ?string $revenuFiscal = null,
-        #[Assert\NotBlank(
-            message : 'Merci d\'indiquer si l\'occupant souhaite garder son logement après travaux.',
-            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
-        #[Assert\Choice(
-            choices: ['oui', 'non', 'nsp'],
-            message: 'Le champ "Souhaite garder le logement après travaux" est incorrect.',
-        )]
-        private ?string $infoProcedureDepartApresTravaux = null,
     ) {
     }
 
@@ -189,10 +182,5 @@ readonly class SituationFoyerRequest implements RequestInterface
     public function getRevenuFiscal(): ?string
     {
         return $this->revenuFiscal;
-    }
-
-    public function getInfoProcedureDepartApresTravaux(): ?string
-    {
-        return $this->infoProcedureDepartApresTravaux;
     }
 }

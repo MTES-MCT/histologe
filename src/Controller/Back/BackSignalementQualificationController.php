@@ -11,6 +11,7 @@ use App\Service\MessageHelper;
 use App\Service\Signalement\SignalementQualificationNde;
 use App\Utils\FormHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,6 +22,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/bo/signalements')]
 class BackSignalementQualificationController extends AbstractController
 {
+    public function __construct(
+        #[Autowire(env: 'FEATURE_ORIENTATION')]
+        private readonly bool $featureOrientation,
+    ) {
+    }
+
     #[Route(
         '/{uuid:signalement}/qualification/{signalementQualification}/editer',
         name: 'back_signalement_qualification_editer',
@@ -67,13 +74,21 @@ class BackSignalementQualificationController extends AbstractController
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
         ]);
-        $composition = $this->renderView('back/signalement/view/information/information-composition.html.twig', [
-            'signalement' => $signalement,
-        ]);
         $htmlTargetContents = [
             ['target' => '#signalement-bo-nde-container', 'content' => $nde],
-            ['target' => '#signalement-information-composition-container', 'content' => $composition],
         ];
+        // TODO à la suppression de FEATURE_ORIENTATION : ne garder que la cible du nouvel onglet
+        if ($this->featureOrientation) {
+            $htmlTargetContents[] = [
+                'target' => '#signalement-description-logement-container',
+                'content' => $this->renderView('back/signalement/view/details/description-logement.html.twig', ['signalement' => $signalement]),
+            ];
+        } else {
+            $htmlTargetContents[] = [
+                'target' => '#signalement-information-composition-container',
+                'content' => $this->renderView('back/signalement/view/information/information-composition.html.twig', ['signalement' => $signalement]),
+            ];
+        }
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);
     }

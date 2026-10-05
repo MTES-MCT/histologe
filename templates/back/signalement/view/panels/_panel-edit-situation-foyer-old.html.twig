@@ -1,13 +1,14 @@
-<dialog aria-labelledby="panel-edit-situation-foyer-title" id="panel-edit-situation-foyer" class="side-panel">
+{# TODO à la suppression de FEATURE_ORIENTATION : supprimer ce panel #}
+<dialog aria-labelledby="panel-edit-situation-foyer-old-title" id="panel-edit-situation-foyer-old" class="side-panel">
     <div class="side-panel__inner">
         <div class="side-panel__header">
-            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-situation-foyer" aria-controls="panel-edit-situation-foyer" aria-expanded="false">Fermer</button>
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-situation-foyer-old" aria-controls="panel-edit-situation-foyer-old" aria-expanded="false">Fermer</button>
         </div>
 
         <div class="side-panel__content fr-mx-3w">
-            <h1 id="panel-edit-situation-foyer-title" class="fr-modal__title title-blue-france">Modifier la situation du foyer</h1>
+            <h1 id="panel-edit-situation-foyer-old-title" class="fr-modal__title title-blue-france">Modifier la situation du foyer</h1>
 
-            <form method="POST" id="form-edit-situation-foyer" enctype="application/json" action="{{ path('back_signalement_edit_situation_foyer',{uuid:signalement.uuid}) }}">
+            <form method="POST" id="form-edit-situation-foyer-old" enctype="application/json" action="{{ path('back_signalement_edit_situation_foyer_old',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
                 
                 <div class="fr-select-group">
@@ -23,7 +24,7 @@
                 <div class="fr-select-group">
                     <label class="fr-label" for="situationFoyerIsRelogement">Demande logement social / relogement / mutation
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
+                            'App\\Dto\\Request\\Signalement\\SituationFoyerOldRequest',
                             'isRelogement',
                             signalement.profileDeclarant,
                             signalement.isV2)
@@ -40,7 +41,7 @@
                     {% set isAllocataire = signalement.isAllocataire %}
                     <label class="fr-label" for="situationFoyerIsAllocataire">Allocataire
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
+                            'App\\Dto\\Request\\Signalement\\SituationFoyerOldRequest',
                             'isAllocataire',
                             signalement.profileDeclarant,
                             signalement.isV2)
@@ -78,7 +79,7 @@
                     {% set travailleurSocialQuitteLogement = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialQuitteLogement : null %}
                     <label class="fr-label" for="situationFoyerTravailleurSocialQuitteLogement">Souhaite quitter le logement
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
+                            'App\\Dto\\Request\\Signalement\\SituationFoyerOldRequest',
                             'travailleurSocialQuitteLogement',
                             signalement.profileDeclarant,
                             signalement.isV2)
@@ -111,30 +112,11 @@
                 </div>
 
                 <div class="fr-select-group">
-                    {% set infoProcedureDepartApresTravaux = signalement.informationProcedure ? signalement.informationProcedure.infoProcedureDepartApresTravaux : null %}
-                    <label class="fr-label" for="situationFoyerInfoProcedureDepartApresTravaux">Souhaite garder le logement après travaux
-                        {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
-                            'infoProcedureDepartApresTravaux',
-                            signalement.profileDeclarant,
-                            signalement.isV2)
-                        }}
-                    </label>
-                    {# Attention : la question est inversée par rapport à la donnée enregistrée (départ après travaux) #}
-                    <select class="fr-select" id="situationFoyerInfoProcedureDepartApresTravaux" name="infoProcedureDepartApresTravaux">
-                        <option value="" {{ infoProcedureDepartApresTravaux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
-                        <option value="non" {{ infoProcedureDepartApresTravaux is same as 'non' ? 'selected' : '' }}>Oui</option>
-                        <option value="oui" {{ infoProcedureDepartApresTravaux is same as 'oui' ? 'selected' : '' }}>Non</option>
-                        <option value="nsp" {{ infoProcedureDepartApresTravaux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
-                    </select>
-                </div>
-
-                <div class="fr-select-group">
                     {% set travailleurSocialAccompagnement = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialAccompagnement : null %}
                     <label class="fr-label" for="situationFoyerTravailleurSocialAccompagnement">
                         Accompagnement par un ou une travailleuse sociale
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
+                            'App\\Dto\\Request\\Signalement\\SituationFoyerOldRequest',
                             'travailleurSocialAccompagnement',
                             signalement.profileDeclarant,
                             signalement.isV2)
@@ -189,7 +171,7 @@
                     <input class="fr-input" type="text" id="situationFoyerRevenuFiscal" name="revenuFiscal" value="{{ signalement.informationComplementaire.informationsComplementairesSituationOccupantsRevenuFiscal ?? '0' }}" maxlength="50">
                 </div>
                 {% endif %}
-                <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_situation_foyer_'~signalement.id) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_situation_foyer_old_'~signalement.id) }}">
 
             </form>
         </div>
@@ -198,14 +180,14 @@
                 <li>
                     <button type="submit"
                         class="fr-btn fr-btn--icon-left fr-icon-check-line"
-                        form="form-edit-situation-foyer"
+                        form="form-edit-situation-foyer-old"
                         >Valider</button>
                 </li>
                 <li>
                     <button type="button"
                         class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel"
-                        data-panel="panel-edit-situation-foyer"
-                        aria-controls="panel-edit-situation-foyer"
+                        data-panel="panel-edit-situation-foyer-old"
+                        aria-controls="panel-edit-situation-foyer-old"
                         aria-expanded="false"
                         >Annuler</button>
                 </li>

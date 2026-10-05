@@ -56,7 +56,7 @@
         <span class="fr-text--medium">Avec fenêtres :</span>
 		{% include '_partials/signalement/signalement-typecomposition-fenetres.html.twig' %}
     </div>
-{# TODO : Changement de l'affichage des éléments de composition du logement (SDB, WC etc.) -> on ne met plus une liste à puce mais on met directement le type après l'élément. #}
+
     {% if signalement.typeCompositionLogement %}
         <div class="fr-col-12 fr-mb-2v">
             <span class="fr-text--medium">Au moins une des pièces à vivre > 9m² :</span>
@@ -65,69 +65,33 @@
         </div>
     {% endif %}
 
-    <div class="fr-col-12 fr-mb-2v">
-        <span class="fr-text--medium">Cuisine / coin cuisine :</span>
-        {% if signalement.typeCompositionLogement %}
-            <br>
-            <ul>
-                <li>
-                    Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisine }}
-                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'non' } %}
-                </li>
-                {% if signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'non' %}
-                    <li>
-                        Collective : {{ signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective }}
-                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective is same as 'non' } %}
-                    </li>
-                {% endif %}
-            </ul>
-        {% endif %}
-    </div>
-    
-    <div class="fr-col-12 fr-mb-2v">
-        <span class="fr-text--medium">SDB (baignoire ou douche) :</span>
-        {% if signalement.typeCompositionLogement %}
-            <br>
-            <ul>
-                <li>
-                    Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain}}
-                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' } %}
-                </li>
-                {% if signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain is same as 'non' %}
-                    <li>
-                        Collective : {{ signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective }}
-                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective is same as 'non' } %}
-                    </li>
-                {% endif %}
-            </ul>
-        {% endif %}
-    </div>
+    {% include 'back/signalement/view/details/_commodite.html.twig' with {
+        label: 'Cuisine / coin cuisine',
+        dansLogement: signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesCuisine : null,
+        collective: signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective : null,
+    } %}
 
-    <div class="fr-col-12 fr-mb-2v">
-        <span class="fr-text--medium">WC :</span>
-        {% if signalement.typeCompositionLogement %}
-            <br>
-            <ul>
-                <li>
-                    Dans le logement : {{ signalement.typeCompositionLogement.typeLogementCommoditesWc }}
-                    {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'non' } %}
-                </li>
-                {% if signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'non' %}
-                    <li>
-                        Collectifs : {{ signalement.typeCompositionLogement.typeLogementCommoditesWcCollective }}
-                        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWcCollective is same as 'non' } %}
-                    </li>
-                {% endif %}
-            </ul>
-        {% endif %}
-    </div>
+    {% include 'back/signalement/view/details/_commodite.html.twig' with {
+        label: 'SDB (baignoire ou douche)',
+        dansLogement: signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain : null,
+        collective: signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective : null,
+    } %}
+
+    {% include 'back/signalement/view/details/_commodite.html.twig' with {
+        label: 'WC',
+        dansLogement: signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesWc : null,
+        collective: signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesWcCollective : null,
+        collectiveLabel: 'collectifs',
+    } %}
 
     {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'oui' and signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'oui' %}
     <div class="fr-col-12 fr-mb-2v">
-    {# todo : La valeur de l'élément WC et cuisine dans la même pièce devient un badge avertissement avec icône si OUI #}
         <span class="fr-text--medium">WC et cuisine dans la même pièce :</span>
-        {{ signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine }}
-        {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine is same as 'oui' } %}
+        {% if signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine is same as 'oui' %}
+            <p class="fr-badge fr-badge--warning fr-badge--sm">{{ signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine }}</p>
+        {% else %}
+            {{ signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine }}
+        {% endif %}
     </div>
     {% endif %}
 

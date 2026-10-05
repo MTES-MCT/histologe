@@ -7,13 +7,17 @@
         <div class="fr-col-12 fr-col-md-4 fr-text--right">
         {# TODO : vérifier le voter  #}
         {# TODO : vérifier si on a DPE dans le panel  #}
-            {% if is_granted('SIGN_EDIT_NDE', signalement) %}
+        {# TODO : DPE (bailDpeDpe) et classe énergétique (bailDpeClasseEnergetique) ont été retirés du panel "Informations sur le logement" :
+             - les rendre éditables ici (panel NDE ou nouveau panel), y compris sans qualification NDE
+             - reprendre la mise à jour de la qualification NDE à partir du DPE (cf. SignalementManager::updateFromInformationsLogementOldRequest)
+             - ajouter un id de conteneur dans tab-details pour recharger ce bloc, aussi depuis editInformationsLogement (date d'entrée) #}
+            {# {% if is_granted('SIGN_EDIT_NDE', signalement) %} #}
                 <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-fi-edit-line fr-btn--icon-left"
                     data-fr-opened="false"
                     aria-controls="panel-edit-nde"
                     data-panel-open="panel-edit-nde"
                     >Modifier</button>
-            {% endif %}
+            {# {% endif %} #}
         </div>
     </div>
     <div class="fr-grid-row">

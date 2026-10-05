@@ -42,27 +42,58 @@
         <div data-ajax-form>
             {% include 'back/signalement/view/panels/_panel-edit-coordonnees-foyer.html.twig' %}
         </div>
-        <div data-ajax-form>
-            {% include 'back/signalement/view/panels/_panel-edit-coordonnees-bailleur.html.twig' %}
-        </div>
+        {% if feature_orientation %}
+            <div data-ajax-form>
+                {% include 'back/signalement/view/panels/_panel-edit-coordonnees-bailleur.html.twig' %}
+            </div>
+            <div data-ajax-form>
+                {% include 'back/signalement/view/panels/_panel-edit-informations-bailleur.html.twig' %}
+            </div>
+        {% else %}
+            {# TODO à la suppression de FEATURE_ORIENTATION : supprimer ce bloc else #}
+            <div data-ajax-form>
+                {% include 'back/signalement/view/panels/_panel-edit-coordonnees-bailleur-old.html.twig' %}
+            </div>
+        {% endif %}
         <div data-ajax-form>
             {% include 'back/signalement/view/panels/_panel-edit-coordonnees-agence.html.twig' %}
         </div>
         <div data-ajax-form>
             {% include 'back/signalement/view/panels/_panel-edit-coordonnees-syndic.html.twig' %}
         </div>
-        <div data-ajax-form>
-            {% include 'back/signalement/view/panels/_panel-edit-informations-logement.html.twig' %}
-        </div>
+        {% if feature_orientation %}
+            <div data-ajax-form>
+                {% include 'back/signalement/view/panels/_panel-edit-informations-logement.html.twig' %}
+            </div>
+        {% else %}
+            {# TODO à la suppression de FEATURE_ORIENTATION : supprimer ce bloc else #}
+            <div data-ajax-form>
+                {% include 'back/signalement/view/panels/_panel-edit-informations-logement-old.html.twig' %}
+            </div>
+        {% endif %}
         <div data-ajax-form>
             {% include 'back/signalement/view/panels/_panel-edit-composition-logement.html.twig' %}
         </div>
-        <div data-ajax-form>
-            {% include 'back/signalement/view/panels/_panel-edit-situation-foyer.html.twig' %}
-        </div>
-        <div data-ajax-form>
-            {% include 'back/signalement/view/panels/_panel-edit-procedure-demarches.html.twig' %}
-        </div>
+        {% if feature_orientation %}
+            <div data-ajax-form>
+                {% include 'back/signalement/view/panels/_panel-edit-situation-foyer.html.twig' %}
+            </div>
+        {% else %}
+            {# TODO à la suppression de FEATURE_ORIENTATION : supprimer ce bloc else #}
+            <div data-ajax-form>
+                {% include 'back/signalement/view/panels/_panel-edit-situation-foyer-old.html.twig' %}
+            </div>
+        {% endif %}
+        {% if feature_orientation %}
+            <div data-ajax-form>
+                {% include 'back/signalement/view/panels/_panel-edit-procedure-demarches.html.twig' %}
+            </div>
+        {% else %}
+            {# TODO à la suppression de FEATURE_ORIENTATION : supprimer ce bloc else #}
+            <div data-ajax-form>
+                {% include 'back/signalement/view/panels/_panel-edit-procedure-demarches-old.html.twig' %}
+            </div>
+        {% endif %}
     {% endif %}
     {% if signalementsOnSameAddress|length > 0 %}
         {% if is_granted('ROLE_ADMIN_TERRITORY') or app.user.isDuplicateModalDismissed %}

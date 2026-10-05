@@ -134,36 +134,6 @@
                     <label class="fr-label" for="form-edit-coordonnees-bailleur-ville">Commune</label>
                     <input class="fr-input" id="form-edit-coordonnees-bailleur-ville" type="text" name="ville" value="{{ signalement.villeProprio }}" data-autocomplete-ville="true">
                 </div>
-
-                <div class="fr-select-group">
-                    {% set bailleurBeneficiaireRsa = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa : null %}
-                    <label class="fr-label" for="coordonneesBailleurBeneficiaireRsa">Bénéficiaire RSA (facultatif)</label>
-                    <select class="fr-select" id="coordonneesBailleurBeneficiaireRsa" name="beneficiaireRsa">
-                        <option value="" {{ bailleurBeneficiaireRsa not in ['oui', 'non'] ? 'selected' : '' }}></option>
-                        <option value="oui" {{ bailleurBeneficiaireRsa is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                        <option value="non" {{ bailleurBeneficiaireRsa is same as 'non' ? 'selected' : '' }}>Non</option>
-                    </select>
-                </div>
-
-                <div class="fr-select-group">
-                    {% set bailleurBeneficiaireFsl = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl : null %}
-                    <label class="fr-label" for="coordonneesBailleurBeneficiaireFsl">Bénéficiaire FSL (facultatif)</label>
-                    <select class="fr-select" id="coordonneesBailleurBeneficiaireFsl" name="beneficiaireFsl">
-                        <option value="" {{ bailleurBeneficiaireFsl not in ['oui', 'non'] ? 'selected' : '' }}></option>
-                        <option value="oui" {{ bailleurBeneficiaireFsl is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                        <option value="non" {{ bailleurBeneficiaireFsl is same as 'non' ? 'selected' : '' }}>Non</option>
-                    </select>
-                </div>
-
-                <div class="fr-input-group">
-                    <label class="fr-label" for="coordonneesBailleurRevenuFiscal">Revenu fiscal de référence (facultatif)</label>
-                    <input class="fr-input" type="text" id="coordonneesBailleurRevenuFiscal" name="revenuFiscal" value="{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal ?? '0' }}" maxlength="50">
-                </div>
-
-                <div class="fr-input-group">
-                    <label class="fr-label" for="coordonneesBailleurDateNaissance">Date de naissance (facultatif)</label>
-                    <input class="fr-input" type="date" id="coordonneesBailleurDateNaissance" name="dateNaissance" value="{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissance ?? '' }}">
-                </div>
                 <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_coordonnees_bailleur_'~signalement.id) }}">
             </form>
         </div>

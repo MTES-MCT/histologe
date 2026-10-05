@@ -42,16 +42,17 @@ class SignalementEditControllerTest extends WebTestCase
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000004']);
     }
 
-    public function testEditCoordonneesBailleurWithBailleur(): void
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce test
+    public function testEditCoordonneesBailleurOldWithBailleur(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
 
         $route = $this->router->generate(
-            'back_signalement_edit_coordonnees_bailleur',
+            'back_signalement_edit_coordonnees_bailleur_old',
             ['uuid' => $signalement->getUuid()]
         );
 
-        $payload = $this->getPayloadCoordonneesBailleur('13 habitat', $signalement->getId());
+        $payload = $this->getPayloadCoordonneesBailleurOld('13 habitat', $signalement->getId());
         $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
 
         $this->assertResponseIsSuccessful();
@@ -60,21 +61,91 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertEquals('13 HABITAT', $signalement->getDenominationProprio());
     }
 
-    public function testEditCoordonneesBailleurWithCustomBailleur(): void
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce test
+    public function testEditCoordonneesBailleurOldWithCustomBailleur(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000004']);
         $route = $this->router->generate(
-            'back_signalement_edit_coordonnees_bailleur',
+            'back_signalement_edit_coordonnees_bailleur_old',
             ['uuid' => $signalement->getUuid()]
         );
 
-        $payload = $this->getPayloadCoordonneesBailleur('Habitat Social Solidaire', $signalement->getId());
+        $payload = $this->getPayloadCoordonneesBailleurOld('Habitat Social Solidaire', $signalement->getId());
         $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
 
         $this->assertResponseIsSuccessful();
         $this->assertNull($signalement->getBailleur());
         $this->assertEquals('Habitat Social Solidaire', $signalement->getDenominationProprio());
     }
+
+    // TODO à la suppression de FEATURE_ORIENTATION : décommenter les tests ci-dessous
+    // (ils nécessitent FEATURE_ORIENTATION=1, sinon les routes renvoient une 404)
+    // public function testEditCoordonneesBailleurWithBailleur(): void
+    // {
+    //     $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
+    //     $route = $this->router->generate(
+    //         'back_signalement_edit_coordonnees_bailleur',
+    //         ['uuid' => $signalement->getUuid()]
+    //     );
+    //
+    //     $payload = $this->getPayloadCoordonneesBailleur('13 habitat', $signalement->getId());
+    //     $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+    //
+    //     $this->assertResponseIsSuccessful();
+    //     $this->assertEquals('13 HABITAT', $signalement->getBailleur()->getName());
+    //     $this->assertEquals('13 HABITAT', $signalement->getDenominationProprio());
+    // }
+    //
+    // public function testEditCoordonneesBailleurWithCustomBailleur(): void
+    // {
+    //     $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000004']);
+    //     $route = $this->router->generate(
+    //         'back_signalement_edit_coordonnees_bailleur',
+    //         ['uuid' => $signalement->getUuid()]
+    //     );
+    //
+    //     $payload = $this->getPayloadCoordonneesBailleur('Habitat Social Solidaire', $signalement->getId());
+    //     $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+    //
+    //     $this->assertResponseIsSuccessful();
+    //     $this->assertNull($signalement->getBailleur());
+    //     $this->assertEquals('Habitat Social Solidaire', $signalement->getDenominationProprio());
+    // }
+    //
+    // public function testEditCoordonneesBailleurDoesNotOverwriteInformationsBailleur(): void
+    // {
+    //     $this->client->disableReboot();
+    //     $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
+    //
+    //     $route = $this->router->generate('back_signalement_edit_informations_bailleur', ['uuid' => $signalement->getUuid()]);
+    //     $payload = $this->getPayloadInformationsBailleur('oui', 'non', $signalement->getId());
+    //     $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+    //     $this->assertResponseIsSuccessful();
+    //
+    //     $route = $this->router->generate('back_signalement_edit_coordonnees_bailleur', ['uuid' => $signalement->getUuid()]);
+    //     $payload = $this->getPayloadCoordonneesBailleur('13 habitat', $signalement->getId());
+    //     $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+    //     $this->assertResponseIsSuccessful();
+    //
+    //     $informationComplementaire = $signalement->getInformationComplementaire();
+    //     $this->assertEquals('oui', $informationComplementaire->getInformationsComplementairesSituationBailleurBeneficiaireRsa());
+    //     $this->assertEquals('non', $informationComplementaire->getInformationsComplementairesSituationBailleurBeneficiaireFsl());
+    // }
+    //
+    // public function testEditInformationsBailleurWithEmptyValues(): void
+    // {
+    //     $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
+    //     $route = $this->router->generate('back_signalement_edit_informations_bailleur', ['uuid' => $signalement->getUuid()]);
+    //
+    //     $payload = $this->getPayloadInformationsBailleur('', '', $signalement->getId());
+    //     $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+    //
+    //     $this->assertResponseIsSuccessful();
+    //     $informationComplementaire = $signalement->getInformationComplementaire();
+    //     $this->assertNull($informationComplementaire->getInformationsComplementairesSituationBailleurBeneficiaireRsa());
+    //     $this->assertNull($informationComplementaire->getInformationsComplementairesSituationBailleurBeneficiaireFsl());
+    //     $this->assertNull($informationComplementaire->getInformationsComplementairesSituationBailleurRevenuFiscal());
+    // }
 
     public function testInviteTiers(): void
     {
@@ -220,10 +291,11 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertEquals(['title' => 'Modifications enregistrées', 'message' => 'Le statut d\'occupation du logement a bien été modifié.'], $successMessages[0]);
     }
 
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette méthode
     /**
      * @return array<string>
      */
-    private function getPayloadCoordonneesBailleur(string $bailleurName, int $signalementId): array
+    private function getPayloadCoordonneesBailleurOld(string $bailleurName, int $signalementId): array
     {
         return [
             'denomination' => $bailleurName,
@@ -236,9 +308,40 @@ class SignalementEditControllerTest extends WebTestCase
             'beneficiaireFsl' => '',
             'revenuFiscal' => '',
             'dateNaissance' => '',
-            '_token' => $this->getCsrfToken('signalement_edit_coordonnees_bailleur_', $signalementId),
+            '_token' => $this->getCsrfToken('signalement_edit_coordonnees_bailleur_old_', $signalementId),
         ];
     }
+
+    // TODO à la suppression de FEATURE_ORIENTATION : décommenter les méthodes ci-dessous
+    // /**
+    //  * @return array<string>
+    //  */
+    // private function getPayloadCoordonneesBailleur(string $bailleurName, int $signalementId): array
+    // {
+    //     return [
+    //         'denomination' => $bailleurName,
+    //         'nom' => 'Bernard',
+    //         'prenom' => '',
+    //         'mail' => 'contact@13habitat.fr',
+    //         'telephone' => '0611000000',
+    //         'ville' => 'Marseille',
+    //         '_token' => $this->getCsrfToken('signalement_edit_coordonnees_bailleur_', $signalementId),
+    //     ];
+    // }
+    //
+    // /**
+    //  * @return array<string>
+    //  */
+    // private function getPayloadInformationsBailleur(string $beneficiaireRsa, string $beneficiaireFsl, int $signalementId): array
+    // {
+    //     return [
+    //         'beneficiaireRsa' => $beneficiaireRsa,
+    //         'beneficiaireFsl' => $beneficiaireFsl,
+    //         'revenuFiscal' => '',
+    //         'dateNaissance' => '',
+    //         '_token' => $this->getCsrfToken('signalement_edit_informations_bailleur_', $signalementId),
+    //     ];
+    // }
 
     /**
      * @return array<string>
@@ -375,6 +478,36 @@ class SignalementEditControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string>
+     */
+    private static function getStaticPayloadCoordonneesAgence(): array
+    {
+        return [
+            'denomination' => 'Agence du Vieux Port',
+            'nom' => 'Martin',
+            'prenom' => 'Claire',
+            'mail' => 'contact@agence-vieux-port.fr',
+            'telephone' => '0491000000',
+            'adresse' => '1 quai du Port',
+            'codePostal' => '13002',
+            'ville' => 'Marseille',
+        ];
+    }
+
+    /**
+     * @return array<string>
+     */
+    private static function getStaticPayloadCoordonneesSyndic(): array
+    {
+        return [
+            'denomination' => 'Syndic de la Canebière',
+            'nom' => 'Durand',
+            'mail' => 'contact@syndic-canebiere.fr',
+            'telephone' => '0491000001',
+        ];
+    }
+
     public static function provideEditSignalementRoutes(): \Generator
     {
         yield 'Edition Adresse logement' => [
@@ -395,28 +528,61 @@ class SignalementEditControllerTest extends WebTestCase
             'signalement_edit_coordonnees_tiers_',
         ];
 
-        yield 'Edition Informations sur le logement' => [
-            'back_signalement_edit_informations_logement',
-            self::getStaticPayloadInformationLogement(),
-            'signalement_edit_informations_logement_',
+        yield 'Edition Coordonnées Agence' => [
+            'back_signalement_edit_coordonnees_agence',
+            self::getStaticPayloadCoordonneesAgence(),
+            'signalement_edit_coordonnees_agence_',
         ];
+
+        yield 'Edition Coordonnées Syndic' => [
+            'back_signalement_edit_coordonnees_syndic',
+            self::getStaticPayloadCoordonneesSyndic(),
+            'signalement_edit_coordonnees_syndic_',
+        ];
+
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce cas
+        yield 'Edition Informations sur le logement (old)' => [
+            'back_signalement_edit_informations_logement_old',
+            self::getStaticPayloadInformationLogement(),
+            'signalement_edit_informations_logement_old_',
+        ];
+        // TODO à la suppression de FEATURE_ORIENTATION : décommenter ce cas (nécessite FEATURE_ORIENTATION=1)
+        // yield 'Edition Informations sur le logement' => [
+        //     'back_signalement_edit_informations_logement',
+        //     array_diff_key(self::getStaticPayloadInformationLogement(), ['bailDpeDpe' => null, 'bailDpeClasseEnergetique' => null]),
+        //     'signalement_edit_informations_logement_',
+        // ];
 
         yield 'Edition Description du logement' => [
             'back_signalement_edit_composition_logement',
             self::getStaticPayloadCompositionLogement(),
             'signalement_edit_composition_logement_',
         ];
-        yield 'Edition Situation du foyer' => [
-            'back_signalement_edit_situation_foyer',
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce cas
+        yield 'Edition Situation du foyer (old)' => [
+            'back_signalement_edit_situation_foyer_old',
             self::getStaticPayloadSituationFoyer(),
-            'signalement_edit_situation_foyer_',
+            'signalement_edit_situation_foyer_old_',
         ];
+        // TODO à la suppression de FEATURE_ORIENTATION : décommenter ce cas (nécessite FEATURE_ORIENTATION=1)
+        // yield 'Edition Situation du foyer' => [
+        //     'back_signalement_edit_situation_foyer',
+        //     [...self::getStaticPayloadSituationFoyer(), 'infoProcedureDepartApresTravaux' => 'non'],
+        //     'signalement_edit_situation_foyer_',
+        // ];
 
-        yield 'Edition Procédure et démarches' => [
-            'back_signalement_edit_procedure_demarches',
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce cas
+        yield 'Edition Procédure et démarches (old)' => [
+            'back_signalement_edit_procedure_demarches_old',
             self::getStaticPayloadProcedureDemarches(),
-            'signalement_edit_procedure_demarches_',
+            'signalement_edit_procedure_demarches_old_',
         ];
+        // TODO à la suppression de FEATURE_ORIENTATION : décommenter ce cas (nécessite FEATURE_ORIENTATION=1)
+        // yield 'Edition Procédure et démarches' => [
+        //     'back_signalement_edit_procedure_demarches',
+        //     array_diff_key(self::getStaticPayloadProcedureDemarches(), ['infoProcedureDepartApresTravaux' => null]),
+        //     'signalement_edit_procedure_demarches_',
+        // ];
     }
 
     private function getCsrfToken(string $tokenId, int $signalementId): string

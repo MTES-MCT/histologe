@@ -4,7 +4,6 @@
         <h4 class="fr-h6">Informations sur le logement</h4>
     </div>
     <div class="fr-col-12 fr-col-md-4 fr-text--right">
-    {# todo : faire un nouveau panel et modif controleur (dpe et classe énergétique) #}
         {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
             <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-edit-line"
                 data-panel-open="panel-edit-informations-logement"
@@ -14,21 +13,23 @@
         {% endif %}
     </div>
     <div class="fr-col-12 fr-mb-2v">
-    {# todo : On rassemble le nombre de personnes et enfants sur la même ligne (exemple : Nbr. de personnes : 5 dont 4 enfants) #}
-        <span class="fr-text--medium">Nb. personnes :</span>
+        <span class="fr-text--medium">Nbr. de personnes :</span>
         {% if signalement.typeCompositionLogement %}
             {{ signalement.nbOccupantsLogement }}
             {% if signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
-                <br><span class="fr-text--medium">- dont nb. enfants : </span>{{ signalement.typeCompositionLogement.compositionLogementNombreEnfants }}
+                <span class="fr-text--medium"> dont {{ signalement.typeCompositionLogement.compositionLogementNombreEnfants }} enfant(s) </span>
             {% endif %}
         {% else %}
-            {{ signalement.nbPersonsDeprecated }} :
-            {{ signalement.nbAdultes }} {{ signalement.nbAdultes > 1 ? 'adultes' : 'adulte' }}
+            {% set nbEnfants = 0 %}
             {% if signalement.nbEnfantsP6 %}
-                - {{ signalement.nbEnfantsP6 ?? '0' }} enfant(s) de plus de 6 ans
+                {% set nbEnfants = nbEnfants + (signalement.nbEnfantsP6 ?? 0) %}
             {% endif %}
             {% if signalement.nbEnfantsM6 %}
-                - {{ signalement.nbEnfantsM6 ?? '0' }} enfant(s) de moins de 6 ans
+                {% set nbEnfants = nbEnfants + (signalement.nbEnfantsM6 ?? 0) %}
+            {% endif %}
+            {{ signalement.nbPersonsDeprecated }} 
+            {% if nbEnfants > 0 %}
+                <span class="fr-text--medium"> dont {{ nbEnfants }} enfant(s) </span>
             {% endif %}
         {% endif %}
     </div>
@@ -93,24 +94,6 @@
             {% endif %}
         {% endif %}
     </div>
-    {# <div class="fr-col-12 fr-mb-2v">
-        <span class="fr-text--medium">DPE :</span>
-        {% if signalement.typeCompositionLogement %}
-            {% if signalement.typeCompositionLogement.bailDpeDpe is same as 'oui' %}
-                {{ picto.picto_yes() }}
-            {% elseif signalement.typeCompositionLogement.bailDpeDpe is same as 'non' %}
-                {{ picto.picto_no() }}
-            {% else %}
-                {{signalement.typeCompositionLogement.bailDpeDpe(false)}}
-            {% endif %}
-        {% endif %}
-    </div>
-    <div class="fr-col-12 fr-mb-2v">
-        <span class="fr-text--medium">Classe énergétique :</span>
-        {% if signalement.typeCompositionLogement %}
-            {{signalement.typeCompositionLogement.bailDpeClasseEnergetique(false)}}
-        {% endif %}
-    </div> #}
     <div class="fr-col-12 fr-mb-2v">
         <span class="fr-text--medium">Montant du loyer :</span> {{ signalement.loyer ? signalement.loyer ~ ' €'}}
     </div>
