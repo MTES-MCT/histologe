@@ -73,21 +73,22 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
     }
 
     addressAbortController = new AbortController();
-    let zipFilterAddress = '';
+    let depcode = '';
     if (fieldFilterAddress) {
       if (fieldFilterAddress.tagName === 'SELECT') {
         const selectedOption = fieldFilterAddress.options[fieldFilterAddress.selectedIndex];
-        zipFilterAddress = selectedOption ? selectedOption.dataset.filter || '' : '';
+        depcode = selectedOption ? selectedOption.dataset.filterDept || '' : '';
       } else {
-        zipFilterAddress = fieldFilterAddress.dataset.filter || '';
+        depcode = fieldFilterAddress.dataset.filterDept || '';
       }
     }
     let query = apiAdresse + adresse;
-    let limit = inputAdresse.getAttribute('data-form-limit');
-    if (zipFilterAddress !== '') {
-      const splitFilter = zipFilterAddress.split('|');
-      query += ' ' + splitFilter[1];
-      limit = splitFilter[0];
+    if (depcode !== '') {
+      //exception pour le departement virtuel de la métropole de Lyon, code "69A", fallback sur le code "69"
+      if (depcode === '69A') {
+        depcode = '69';
+      }
+      query += '&depcode=' + encodeURIComponent(depcode);
     }
     if (inputAdresse.getAttribute('data-form-lat')) {
       query += '&lat=' + inputAdresse.getAttribute('data-form-lat');
@@ -100,18 +101,16 @@ export function attacheAutocompleteAddressEvent(inputAdresse) {
       .then((json) => {
         addressGroup.innerHTML = '';
         json.features.forEach((feature) => {
-          if (limit === null || feature.properties.citycode.startsWith(limit)) {
-            const suggestion = document.createElement('div');
-            suggestion.classList.add(
-              'fr-col-12',
-              'fr-p-3v',
-              'fr-text-label--blue-france',
-              'fr-adresse-suggestion'
-            );
-            suggestion.innerHTML = feature.properties.label;
-            attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix);
-            addressGroup.appendChild(suggestion);
-          }
+          const suggestion = document.createElement('div');
+          suggestion.classList.add(
+            'fr-col-12',
+            'fr-p-3v',
+            'fr-text-label--blue-france',
+            'fr-adresse-suggestion'
+          );
+          suggestion.innerHTML = feature.properties.label;
+          attachAddressSuggestionEvent(inputAdresse, suggestion, feature, suffix);
+          addressGroup.appendChild(suggestion);
         });
       })
       .catch((error) => {

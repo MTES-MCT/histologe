@@ -44,7 +44,7 @@
                         <input type="hidden" data-autocomplete-addresse>
                         <input type="hidden" data-autocomplete-codepostal>
                         <input type="hidden" data-autocomplete-ville>
-                        <input type="hidden" data-autocomplete-address-filter data-filter="|{{ app.user.getFirstTerritory() ? app.user.getFirstTerritory().name : '' }}">
+                        <input type="hidden" data-autocomplete-address-filter data-filter-dept="{{ app.user.getFirstTerritory() ? app.user.getFirstTerritory().zip : '' }}">
                         <input type="hidden" data-arrete-rnb-id-input>
                         <div class="fr-address-group fr-grid-row fr-grid-row--gutters" data-arrete-adresse-suggestions></div>
                     </div>
