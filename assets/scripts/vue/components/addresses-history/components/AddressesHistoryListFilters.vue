@@ -28,7 +28,6 @@
           title="Taper l'adresse"
           :minLengthSearch="3"
           @update:modelValue="notifyChange"
-          :reset="resetKey"
           :iconClass="'fr-icon-search-line'"
         >
           <template #label>Adresse</template>
@@ -46,7 +45,6 @@
           title="Commune ou EPCI"
           :multiple="false"
           @update:modelValue="notifyChange"
-          :reset="resetKey"
           :iconClass="'fr-icon-map-pin-2-line'"
         >
           <template #label>Commune ou EPCI</template>
@@ -64,7 +62,6 @@
           title="Nom du bailleur ou syndicat"
           :multiple="false"
           @update:modelValue="notifyChange"
-          :reset="resetKey"
           :iconClass="'fr-icon-user-search-fill'"
         >
           <template #label>Bailleur ou syndicat gestionnaire</template>
@@ -124,7 +121,6 @@
           v-model="sharedState.input.filters.arreteTypes"
           @update:modelValue="notifyChange"
           :option-groups="arreteTypesGroups"
-          :reset="resetKey"
         >
           <template #label>Types d'arrêtés</template>
         </AppListCheckboxes>
