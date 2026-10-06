@@ -32,7 +32,7 @@ class DocumentIAToolController extends AbstractController
         $documentIAForm->handleRequest($request);
         $results = [];
 
-        if ($documentIAForm->isSubmitted()) {
+        if ($workflows && $documentIAForm->isSubmitted()) {
             if ($documentIAForm->isValid()) {
                 $workflowId = $documentIAForm->get('workflowId')->getData();
                 $file = $documentIAForm->get('file')->getData();

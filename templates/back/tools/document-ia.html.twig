@@ -40,7 +40,10 @@
                                 {% endfor %}
                             </ul>
                         {% else %}
-                            <p>La liste des workflows est vide. Problème de connexion ?</p>
+                            <div class="fr-alert fr-alert--error">
+                                <h3 class="fr-alert__title">La liste des workflows est vide</h3>
+                                <p>Problème de connexion ?</p>
+                            </div>
                         {% endif %}
                     </div>
                 </div>
