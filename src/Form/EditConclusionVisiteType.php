@@ -68,6 +68,7 @@ class EditConclusionVisiteType extends AbstractType
                 'class' => 'editor',
             ],
             'constraints' => [
+                new Assert\NotBlank(message: 'Le commentaire de visite ne peut pas être vide.'),
                 new Assert\Length(min: 16, minMessage: 'Le commentaire de visite doit contenir au moins 10 caractères.'),
             ],
         ]);
