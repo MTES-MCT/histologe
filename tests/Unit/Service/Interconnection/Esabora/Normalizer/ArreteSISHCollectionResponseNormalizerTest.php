@@ -221,7 +221,7 @@ class ArreteSISHCollectionResponseNormalizerTest extends TestCase
         $this->assertEquals(600, $result->getArreteId());
         $this->assertEquals('AP45OL023', $result->getArreteNumero());
         $this->assertEquals('25/01/2026', $result->getArreteDate());
-        $this->assertNull($result->getArreteModificatifNumero());
+        $this->assertEquals('APMOD45K08N', $result->getArreteModificatifNumero());
         $this->assertNull($result->getArreteModificatifDate());
         $this->assertNull($result->getArreteMLNumero());
         $this->assertNull($result->getArreteMLDate());
@@ -268,7 +268,7 @@ class ArreteSISHCollectionResponseNormalizerTest extends TestCase
         $this->assertEquals(600, $mainLevee->getArreteId());
         $this->assertEquals('AP45OL023', $mainLevee->getArreteNumero());
         $this->assertEquals('25/01/2026', $mainLevee->getArreteDate());
-        $this->assertNull($mainLevee->getArreteModificatifNumero());
+        $this->assertEquals('APMOD45K08N', $mainLevee->getArreteModificatifNumero());
         $this->assertNull($mainLevee->getArreteModificatifDate());
         $this->assertEquals('APML45K09O', $mainLevee->getArreteMLNumero());
         $this->assertEquals('27/01/2026', $mainLevee->getArreteMLDate());
