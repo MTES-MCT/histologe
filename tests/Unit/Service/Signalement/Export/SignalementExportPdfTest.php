@@ -33,7 +33,6 @@ class SignalementExportPdfTest extends KernelTestCase
             'listConcludeProcedures' => [],
             'signalement' => $signalement,
             'situations' => [],
-            'listQualificationStatusesLabelsCheck' => [],
             'visites' => $visites,
             'isForUsager' => false,
         ]);

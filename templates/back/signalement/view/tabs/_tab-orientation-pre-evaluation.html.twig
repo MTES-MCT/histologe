@@ -1,0 +1,37 @@
+<div class="card-container fr-mb-8v">
+    <div class="title-blue-france fr-mb-2v">
+        <span class="fr-icon-calendar-event-fill"></span>
+        <strong>{{tabOrientationItem.date|date('d/m/Y') }}</strong>
+    </div>
+
+    <div class="fr-card fr-card--grey">
+        <div class="fr-card__body">
+            <div class="fr-card__content fr-p-4v">
+                <div class="fr-grid-row">
+                    <div class="fr-col-12 fr-mb-4v">
+                        <div class="title-blue-france">
+                            <strong>Pré-évaluation automatique</strong>
+                        </div>
+                        <p class="fr-my-2v">Cette évaluation automatique se base sur les informations renseignées par le déclarant. Vous ne pouvez pas la modifier.</p>
+                    </div>
+                    <div class="fr-col-lg-6 fr-col-12">
+                        <div class="fr-mb-2v"><strong>Criticité du signalement : {{ tabOrientationItem.signalement.score|round(2) }} %</strong></div>
+                        {% if tabOrientationItem.signalement.isV2 %}
+                            <div class="fr-mb-2v">(Score bâtiment : {{ tabOrientationItem.signalement.scoreBatiment|round(2) }} % - Score logement : {{ tabOrientationItem.signalement.scoreLogement|round(2) }} %)</div>
+                        {% endif %}
+                        <a class="fr-link"
+                            href="https://documentation.signal-logement.beta.gouv.fr/partenaires/premiers-pas-sur-histologe/presentation-de-linterface#score-de-criticite-et-prequalification-comment-ca-marche"
+                            target="_blank" rel="noreferrer noopener"
+                            title="En savoir plus - Ouvre une nouvelle fenêtre">En savoir plus</a>
+                    </div>
+                    <div class="fr-col-lg-6 fr-col-12">
+                        <div class="fr-mb-2v"><strong>Situation(s) suspectée(s)</strong></div>
+                        {% for qualification in tabOrientationItem.signalement.signalementQualifications(excludePostVisite: true) %}
+                            {% include '_partials/signalement/qualification.html.twig' %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

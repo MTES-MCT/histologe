@@ -1,0 +1,13 @@
+signalement_procedures:
+  -
+    signalement: "2024-12"
+    procedure_type: "NON_DECENCE"
+    procedure_category: "PROCEDURE_ENGAGEE"
+  -
+    signalement: "2024-12"
+    procedure_type: "RSD"
+    procedure_category: "PROCEDURE_ENGAGEE"
+  - 
+    signalement: "2024-12"
+    procedure_type: "INSALUBRITE"
+    procedure_category: "PROCEDURE_ENGAGEE"

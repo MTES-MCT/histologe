@@ -1,0 +1,7 @@
+{% set typeBadge = 'info' %}
+{% if procedure is same as enum('App\\Entity\\Enum\\ProcedureType').MISE_EN_SECURITE_PERIL %}
+    {% set typeBadge = 'error' %}
+{% elseif procedure is same as enum('App\\Entity\\Enum\\ProcedureType').INSALUBRITE %}
+    {% set typeBadge = 'warning' %}
+{% endif %}
+<small class="fr-badge fr-badge--{{typeBadge}} fr-badge--no-icon fr-mb-1v">{{ procedure.label }}</small>

@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\Affectation;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\File;
 use App\Entity\Suivi;
@@ -76,7 +77,6 @@ class SignalementActionControllerTest extends WebTestCase
     public function testValidationResponseAcceptSignalementErrorChoiceRT(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2023-000000000016']);
-        $route = $this->router->generate('back_signalement_accept', ['uuid' => $signalement->getUuid()]);
         $route = $this->router->generate('back_signalement_accept', ['uuid' => $signalement->getUuid()]);
         $this->client->request(
             'GET',
@@ -688,5 +688,172 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertNotNull($this->userSignalementSubscriptionRepository->findOneBy(['user' => $userToSubscribe, 'signalement' => $signalement]));
+    }
+
+    public function testAddProcedureEngageeForRT(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2025-04']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-30@signal-logement.fr']);
+
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('back_signalement_edit_procedure_engagee', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('POST', $route, [
+            'procedure_engagee' => [
+                'procedureEngagees' => [
+                    ProcedureType::NON_DECENCE->value,
+                    ProcedureType::RSD->value,
+                    ProcedureType::AUTRE->value,
+                ],
+                'commentaire' => 'Commentaire de test ajout de procédure.',
+                '_token' => $this->generateCsrfToken($this->client, 'procedure_engagee'),
+            ],
+        ]);
+
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertArrayHasKey('functions', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'Les procédures à engager ont bien été définies.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
+        $this->assertEmailCount(0);
+
+        $existingSuivi = $this->suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::ADD_OR_EDIT_PROCEDURE_ENGAGEE]);
+        $this->assertNotNull($existingSuivi);
+        $this->assertStringContainsString('a défini les procédures suivantes à engager sur le dossier', $existingSuivi->getDescription());
+        $this->assertStringContainsString('Commentaire de test ajout de procédure.', $existingSuivi->getDescription());
+    }
+
+    public function testAddProcedureEngageeForRTOnSignalementClosed(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2025-07']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-30@signal-logement.fr']);
+
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('back_signalement_edit_procedure_engagee', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('POST', $route, [
+            'procedure_engagee' => [
+                'procedureEngagees' => [
+                    ProcedureType::NON_DECENCE->value,
+                    ProcedureType::RSD->value,
+                    ProcedureType::AUTRE->value,
+                ],
+                'commentaire' => 'Commentaire de test ajout de procédure.',
+                '_token' => $this->generateCsrfToken($this->client, 'procedure_engagee'),
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testEditProcedureEngageeForRT(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-12']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-30@signal-logement.fr']);
+
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('back_signalement_edit_procedure_engagee', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('POST', $route, [
+            'procedure_engagee' => [
+                'procedureEngagees' => [
+                    ProcedureType::NON_DECENCE->value,
+                    ProcedureType::RSD->value,
+                    ProcedureType::AUTRE->value,
+                ],
+                'commentaire' => 'Commentaire de test édition de procédure.',
+                '_token' => $this->generateCsrfToken($this->client, 'procedure_engagee'),
+            ],
+        ]);
+
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertArrayHasKey('functions', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'Les procédures à engager ont bien été modifiées.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
+        $this->assertEmailCount(1);
+
+        $existingSuivi = $this->suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::ADD_OR_EDIT_PROCEDURE_ENGAGEE]);
+        $this->assertNotNull($existingSuivi);
+        $this->assertStringContainsString('a mis à jour les procédures à engager sur le dossier', $existingSuivi->getDescription());
+        $this->assertStringContainsString('Commentaire de test édition de procédure.', $existingSuivi->getDescription());
+    }
+
+    public function testEditProcedureEngageeForAgent(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-12']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-30@signal-logement.fr']);
+
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('back_signalement_edit_procedure_engagee', ['uuid' => $signalement->getUuid()]);
+        $this->client->request('POST', $route, [
+            'procedure_engagee' => [
+                'procedureEngagees' => [
+                    ProcedureType::NON_DECENCE->value,
+                    ProcedureType::RSD->value,
+                    ProcedureType::AUTRE->value,
+                ],
+                'commentaire' => 'Commentaire de test ajout de procédure.',
+                '_token' => $this->generateCsrfToken($this->client, 'procedure_engagee'),
+            ],
+        ]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+    }
+
+    public function testDeleteProcedureEngageeForRT(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-12']);
+        $user = $this->userRepository->findOneBy(['email' => 'admin-territoire-30@signal-logement.fr']);
+
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('back_signalement_delete_procedure_engagee', ['uuid' => $signalement->getUuid()]);
+
+        $this->client->request('POST', $route, [
+            '_token' => $this->generateCsrfToken($this->client, 'delete-procedure-engagee'.$signalement->getUuid()),
+        ]);
+
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('stayOnPage', $response);
+        $this->assertArrayHasKey('flashMessages', $response);
+        $this->assertArrayHasKey('closeModal', $response);
+        $this->assertArrayHasKey('htmlTargetContents', $response);
+        $this->assertArrayHasKey('functions', $response);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertTrue($response['closeModal']);
+        $msgFlash = 'Les procédures à engager ont bien été supprimées.';
+        $this->assertEquals($msgFlash, $response['flashMessages'][0]['message']);
+        $this->assertEmailCount(1);
+
+        $existingSuivi = $this->suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::DELETE_PROCEDURE_ENGAGEE]);
+        $this->assertNotNull($existingSuivi);
+    }
+
+    public function testDeleteProcedureEngageeForAgent(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-12']);
+        $user = $this->userRepository->findOneBy(['email' => 'user-partenaire-30@signal-logement.fr']);
+
+        $this->client->loginUser($user);
+
+        $route = $this->router->generate('back_signalement_delete_procedure_engagee', ['uuid' => $signalement->getUuid()]);
+
+        $this->client->request('POST', $route, [
+            '_token' => $this->generateCsrfToken($this->client, 'delete-procedure-engagee'.$signalement->getUuid()),
+        ]);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 }
