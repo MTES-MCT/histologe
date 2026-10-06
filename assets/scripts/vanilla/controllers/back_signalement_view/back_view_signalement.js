@@ -474,3 +474,61 @@ logementVacantPanel?.querySelector('form')?.addEventListener('submit', (event) =
     document.getElementById('logement-vacant-fieldset-error')?.classList.remove('fr-hidden');
   }
 });
+
+// Afficher / masquer une section (choix mémorisé par navigateur)
+const getHiddenSectionStorageKey = (sectionId) => `hidden-section-${sectionId}`;
+
+function applySectionVisibility(button, isHidden) {
+  const section = document.getElementById(button.dataset.toggleSection);
+  if (!section) return;
+
+  section.classList.toggle('fr-hidden', isHidden);
+  button.setAttribute('aria-expanded', String(!isHidden));
+  button.textContent = isHidden ? 'Afficher la section' : 'Masquer la section';
+  button.classList.toggle('fr-icon-eye-off-line', !isHidden);
+  button.classList.toggle('fr-icon-eye-line', isHidden);
+}
+
+function initToggleSections() {
+  document.querySelectorAll('[data-toggle-section]').forEach((button) => {
+    let isHidden = false;
+    try {
+      isHidden =
+        localStorage.getItem(getHiddenSectionStorageKey(button.dataset.toggleSection)) === '1';
+    } catch {
+      isHidden = false;
+    }
+    applySectionVisibility(button, isHidden);
+  });
+}
+
+document.addEventListener('click', (event) => {
+  const button = event.target.closest('[data-toggle-section]');
+  if (!button) return;
+
+  const isHidden = button.getAttribute('aria-expanded') === 'true';
+  applySectionVisibility(button, isHidden);
+  try {
+    const storageKey = getHiddenSectionStorageKey(button.dataset.toggleSection);
+    if (isHidden) {
+      localStorage.setItem(storageKey, '1');
+    } else {
+      localStorage.removeItem(storageKey);
+    }
+  } catch {
+    // localStorage indisponible : le choix ne sera simplement pas mémorisé
+  }
+});
+
+initToggleSections();
+
+// Le cadre "Bailleur, agence et syndic" est rechargé après l'édition des coordonnées du foyer :
+// on réapplique alors l'état mémorisé
+const bailleurAgenceSyndicContainer = document.getElementById(
+  'signalement-bailleur-agence-syndic-container'
+);
+if (bailleurAgenceSyndicContainer) {
+  new MutationObserver(initToggleSections).observe(bailleurAgenceSyndicContainer, {
+    childList: true,
+  });
+}

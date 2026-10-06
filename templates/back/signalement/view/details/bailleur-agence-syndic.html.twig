@@ -19,21 +19,23 @@
                 <h4 class="fr-h6">Agence et syndic</h4>
             </div>
             <div class="fr-col-12 fr-col-md-4 fr-text--right">
-            {# todo : faire fonctionner ce bouton pour masquer la section #}
-                {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
-                    <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-eye-off-line"
-                        data-panel-open="panel-edit-coordonnees-agence"
-                        aria-controls="panel-edit-coordonnees-agence"
-                        data-fr-opened="false"
-                        >Masquer la section</button>
-                {% endif %}
+                <button type="button"
+                    class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-eye-off-line"
+                    data-toggle-section="signalement-agence-syndic-section"
+                    aria-controls="signalement-agence-syndic-section"
+                    aria-expanded="true"
+                    >Masquer la section</button>
             </div>
-            <div class="fr-col-12 fr-col-md-6 fr-pr-6v" id="signalement-coordonnees-agence-container">
-                {% include 'back/signalement/view/details/coordonnees-agence.html.twig' %}
-            </div>
+            <div class="fr-col-12" id="signalement-agence-syndic-section">
+                <div class="fr-grid-row">
+                    <div class="fr-col-12 fr-col-md-6 fr-pr-6v" id="signalement-coordonnees-agence-container">
+                        {% include 'back/signalement/view/details/coordonnees-agence.html.twig' %}
+                    </div>
 
-            <div class="fr-col-12 fr-col-md-6" id="signalement-coordonnees-syndic-container">
-                {% include 'back/signalement/view/details/coordonnees-syndic.html.twig' %}
+                    <div class="fr-col-12 fr-col-md-6" id="signalement-coordonnees-syndic-container">
+                        {% include 'back/signalement/view/details/coordonnees-syndic.html.twig' %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
