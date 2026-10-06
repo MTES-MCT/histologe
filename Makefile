@@ -6,6 +6,9 @@ DOCKER_COMP_FILE_TOOLS   = docker-compose.tools.yml
 DATABASE_USER = signal_logement
 DATABASE_NAME = signal_logement_db
 PATH_DUMP_SQL = data/dump.sql
+PATH_MB_DUMP_SQL = data/dump.pgsql
+PATH_MB_REPORT_SQL = .docker/metabase/resources-report.sql
+PATH_MB_INCIDENT_REPORT_SQL = .docker/metabase/incident-resources.sql
 PHPUNIT       = ./vendor/bin/phpunit
 SYMFONY       = php bin/console --profile
 NPX           = npx
@@ -317,6 +320,55 @@ scalingo-update-cli: ## Install/Update Scalingo CLI
 run-concurrency-request: ## Run concurrency request based postman collection ex: make run-concurrency-request nb=5 envName=local|demo
 	@bash -l -c 'node ./tools/newman/run_concurrency_request.js nb=$(nb) envName=$(envName)'
 
+metabase-db:
+	@bash -l -c '$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) exec metabase_db psql -U metabase -d metabase'
+
+metabase-db-report:
+	@test -f "$(PATH_MB_REPORT_SQL)" || \
+		(echo "Fichier introuvable : $(PATH_MB_REPORT_SQL)" && exit 1)
+	$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) exec -T metabase_db \
+		psql -v ON_ERROR_STOP=1 -U metabase -d metabase \
+		-f - < "$(PATH_MB_REPORT_SQL)"
+
+metabase-incident-report:
+	@test -n "$(METABASE_INCIDENT_DATE_FROM)" || \
+		(echo "Variable obligatoire : METABASE_INCIDENT_DATE_FROM" && exit 1)
+	@test -n "$(METABASE_INCIDENT_DATE_TO)" || \
+		(echo "Variable obligatoire : METABASE_INCIDENT_DATE_TO" && exit 1)
+	@test -f "$(PATH_MB_INCIDENT_REPORT_SQL)" || \
+		(echo "Fichier introuvable : $(PATH_MB_INCIDENT_REPORT_SQL)" && exit 1)
+	$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) exec -T metabase_db \
+		psql -v ON_ERROR_STOP=1 \
+		-U metabase \
+		-d metabase \
+		-v date_debut="$(METABASE_INCIDENT_DATE_FROM)" \
+		-v date_fin="$(METABASE_INCIDENT_DATE_TO)" \
+		-f - < "$(PATH_MB_INCIDENT_REPORT_SQL)"
+
+metabase-db-restore-list:
+	@test -f "$(PATH_MB_DUMP_SQL)" || \
+		(echo "Fichier introuvable : $(PATH_MB_DUMP_SQL)" && \
+		echo "Déposez le dump Metabase à cet emplacement." && exit 1)
+	$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) exec -T metabase_db \
+		pg_restore --list \
+		< "$(PATH_MB_DUMP_SQL)"
+
+metabase-db-restore:
+	@test -f "$(PATH_MB_DUMP_SQL)" || \
+		(echo "Fichier introuvable : $(PATH_MB_DUMP_SQL)" && \
+		echo "Déposez le dump Metabase à cet emplacement." && exit 1)
+	$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) exec -T metabase_db \
+		pg_restore \
+		--clean \
+		--if-exists \
+		--no-owner \
+		--no-privileges \
+		--exit-on-error \
+		-U metabase \
+		-d metabase \
+		< "$(PATH_MB_DUMP_SQL)"
+
+
 ## Job sync metabase
 scalingo-job-build: ## Build Scalingo sync job container
 	@echo "\033[33mBuilding Scalingo job image...\033[0m"
@@ -396,7 +448,7 @@ ovh-scw-sync-release: ## Tag and push image to Scaleway registry - make ovh-scw-
 
 .tools-setup:
 	@echo "\033[33mBuilding tools containers ...\033[0m"
-	@$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) build
+	@$(DOCKER_COMP) -f $(DOCKER_COMP_FILE_TOOLS) pull
 	@echo "\033[32mContainers built!\033[0m"
 
 .sleep:
