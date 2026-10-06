@@ -38,7 +38,7 @@ class DocumentIAType extends AbstractType
     {
         $resolver->setDefaults([
             'allow_extra_fields' => true,
-            'csrf_protection' => false,
+            'csrf_token_id' => 'document_ia_form',
         ]);
     }
 }

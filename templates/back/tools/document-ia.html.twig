@@ -114,6 +114,7 @@
                     <div class="fr-grid-row fr-grid-row--middle">
                         {{ form_widget(documentIAForm.submit) }}
                     </div>
+                    {{ form_row(documentIAForm._token) }}
                 {{ form_end(documentIAForm) }}
             </div>
             {% endif %}
