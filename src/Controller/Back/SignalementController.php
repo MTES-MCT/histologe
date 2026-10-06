@@ -298,8 +298,8 @@ class SignalementController extends AbstractController
         $addVisiteForm = null;
         if ($this->isGranted(SignalementVoter::SIGN_ADD_VISITE, $signalement)) {
             $intervention = (new Intervention())->setSignalement($signalement);
-            $addVisiteForm = $this->generateUrl('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
-            $addVisiteForm = $this->createForm(AddAndRescheduleVisiteType::class, $intervention, options: ['action' => $addVisiteForm]);
+            $addVisiteFormRoute = $this->generateUrl('back_signalement_visite_add', ['uuid' => $signalement->getUuid()]);
+            $addVisiteForm = $this->createForm(AddAndRescheduleVisiteType::class, $intervention, options: ['action' => $addVisiteFormRoute]);
         }
 
         $twigParams = [

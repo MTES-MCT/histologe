@@ -2,6 +2,7 @@ import { initTinyMCE } from '../../services/form/form_helper.js';
 
 const initVisiteForm = (visiteForm) => {
   const timezone = document.querySelector('[data-territory-timezone]')?.dataset.territoryTimezone;
+  // Le locale en-CA formate la date en YYYY-MM-DD, comme la valeur d'un champ date.
   const todayInTerritory = new Intl.DateTimeFormat('en-CA', {
     timeZone: timezone,
     year: 'numeric',
@@ -130,20 +131,21 @@ document.addEventListener('click', (event) => {
     return;
   }
   const url = btn.dataset.url;
+  const panelContent = document.querySelector('#panel-manage-visite-content');
+  panelContent.querySelectorAll('textarea.editor').forEach((textarea) => {
+    window.tinymce?.get(textarea.id)?.remove();
+  });
   const submitButton = document.querySelector('#panel-manage-visite button[type="submit"]');
   submitButton.disabled = true;
   document.querySelector('#panel-manage-visite-title').innerHTML = 'Chargement en cours...';
-  document.querySelector('#panel-manage-visite-content').innerHTML = 'Chargement en cours...';
+  panelContent.innerHTML = 'Chargement en cours...';
   fetch(url).then((response) => {
     if (response.ok) {
       response.json().then((response) => {
         document.querySelector('#panel-manage-visite-title').innerHTML = response.title;
-        document.querySelector('#panel-manage-visite-content').innerHTML = response.content;
+        panelContent.innerHTML = response.content;
         submitButton.disabled = false;
-        submitButton.setAttribute(
-          'form',
-          document.querySelector('#panel-manage-visite-content form')?.id ?? ''
-        );
+        submitButton.setAttribute('form', panelContent.querySelector('form')?.id ?? '');
 
         const rescheduleVisiteForm = document.querySelector('#reschedule-visite-form');
         const cancelVisiteForm = document.querySelector('#cancel-visite-form');
