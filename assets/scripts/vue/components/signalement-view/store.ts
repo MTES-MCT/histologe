@@ -137,7 +137,7 @@ export const store = {
     ],
     procedureConstateeList: [
       { Id: 'non_decence', Text: 'Non décence' },
-      { Id: 'rsd', Text: 'Infraction RSD' },
+      { Id: 'rsd', Text: 'Infraction RSHS/RSD' },
       { Id: 'insalubrite', Text: 'Insalubrité' },
       { Id: 'suspicion_insalubre', Text: 'Suspicion d\'insalubrité' },
       { Id: 'mise_en_securite_peril', Text: 'Mise en sécurité / Péril' },

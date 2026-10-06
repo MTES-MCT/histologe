@@ -148,7 +148,7 @@ class InterventionEditedListenerTest extends TestCase
         $this->assertNotEmpty($intervention->getChangesForMail());
 
         $expectedOld = 'Insalubrité';
-        $expectedNew = 'Infraction RSD, Insalubrité';
+        $expectedNew = 'Infraction RSHS/RSD, Insalubrité';
         $changes = $intervention->getChangesForMail();
         $this->assertSame($expectedOld, $changes['concludeProcedure']['old']);
         $this->assertSame($expectedNew, $changes['concludeProcedure']['new']);
