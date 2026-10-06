@@ -1,0 +1,54 @@
+<div class="card-container fr-mb-8v">
+    <div class="title-blue-france fr-mb-2v">
+        <span class="fr-icon-calendar-event-fill"></span>
+        <strong>
+            {{tabOrientationItem.date|date('d/m/Y') }}{% if tabOrientationItem.intervention.partner %} : Visite faite par {{ tabOrientationItem.intervention.partner.nom }}{% endif %}
+        </strong>
+    </div>
+
+    <div class="fr-card">
+        <div class="fr-card__body">
+            <div class="fr-card__content fr-p-4v">
+                <div class="fr-grid-row">
+                    <div class="fr-col-12 fr-mb-4v">
+                        <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
+                            <div class="fr-col title-blue-france">
+                                <strong>Situation(s) observée(s) après visite</strong>
+                            </div>
+                            <div class="fr-col-auto">
+                                <a href="{{ path('back_signalement_view', {uuid: tabOrientationItem.signalement.uuid}) }}" class="fr-btn fr-btn--secondary">
+                                    Aller au détail des visites <span aria-hidden="true" class="fr-icon-arrow-right-line fr-icon--sm"></span> 
+                                </a>
+                            </div>
+                        </div>
+                        <p class="fr-my-2v">Retrouvez les conclusions de la visite renseignées dans le dossier.</p>
+                    </div>
+                    <div class="fr-col-lg-6 fr-col-12">
+                        <div class="fr-mb-2v"><strong>Analyse de la situation</strong></div>
+                        {% for procedure in tabOrientationItem.intervention.concludeProcedure %}
+                            {% include '_partials/signalement/conclude-procedure.html.twig' %}
+                        {% endfor %}
+                    </div>
+                        {% if tabOrientationItem.intervention.rapportDeVisite %}
+                            <div class="fr-col-lg-6 fr-col-12">
+                                <div class="fr-mb-2v"><strong>Rapport de visite</strong></div>
+                                {% if s3_enable %}
+                                    <a href="{{ sign_url(path('show_file', {uuid: tabOrientationItem.intervention.rapportDeVisite.uuid})) }}"
+                                    class="fr-link"
+                                    title="Voir le rapport de visite"
+                                    rel="noopener"
+                                    target="_blank">
+                                        Rapport de visite
+                                    </a>
+                                {% else %}
+                                    <button class="fr-btn fr-btn--secondary fr-icon-warning-fill" disabled title="Maintenance en cours">
+                                        Rapport de visite
+                                    </button>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

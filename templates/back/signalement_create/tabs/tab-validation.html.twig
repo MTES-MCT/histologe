@@ -82,7 +82,7 @@
             <strong>Situation(s) suspectée(s)</strong>
             <br>
             {% for qualification in signalement.signalementQualifications %}
-                {% include '_partials/signalement/qualification.html.twig' with { 'qualificationStatusLabel': qualification.status.label } %}
+                {% include '_partials/signalement/qualification.html.twig' %}
             {% endfor %}
         </div>             
     </div>

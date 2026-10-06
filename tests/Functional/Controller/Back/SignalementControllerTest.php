@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Controller\Back;
 
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\ProcedureCategory;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\Tag;
@@ -307,7 +308,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals('RELOGEMENT_OCCUPANT', $signalement->getMotifCloture()->value);
         $this->assertEquals('NON', $signalement->getTravauxMiseEnConformite()->value);
         $this->assertEquals('Lorem ipsum dolor sit amet, consectetur adipiscing elit', $signalement->getComCloture());
-        $this->assertCount(2, $signalement->getSignalementProcedures());
+        $this->assertCount(2, $signalement->getSignalementProcedures(ProcedureCategory::PROCEDURE_RETENUE));
 
         $suiviRepository = static::getContainer()->get(SuiviRepository::class);
         $suivi = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => 'SIGNALEMENT_IS_CLOSED']);
@@ -450,7 +451,7 @@ class SignalementControllerTest extends WebTestCase
         $this->assertEquals('RELOGEMENT_OCCUPANT', $signalement->getMotifCloture()->value);
         $this->assertEquals('OUI', $signalement->getTravauxMiseEnConformite()->value);
         $this->assertEquals('un deux trois soleil', $signalement->getComCloture());
-        $this->assertCount(0, $signalement->getSignalementProcedures());
+        $this->assertCount(0, $signalement->getSignalementProcedures(ProcedureCategory::PROCEDURE_RETENUE));
 
         $suiviRepository = static::getContainer()->get(SuiviRepository::class);
         $suivi = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => 'SIGNALEMENT_IS_CLOSED']);

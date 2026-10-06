@@ -15,6 +15,7 @@ use App\Entity\Enum\InterventionType;
 use App\Entity\Enum\MotifCloture;
 use App\Entity\Enum\MotifClotureUsager;
 use App\Entity\Enum\MotifRefus;
+use App\Entity\Enum\ProcedureCategory;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Entity\Enum\ProfileOccupant;
 use App\Entity\Enum\ProprioType;
@@ -2203,8 +2204,12 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     /**
      * @return Collection<int, SignalementQualification>
      */
-    public function getSignalementQualifications(): Collection
+    public function getSignalementQualifications(bool $excludePostVisite = false): Collection
     {
+        if ($excludePostVisite) {
+            return $this->signalementQualifications->filter(static fn ($qualification) => !$qualification->isPostVisite());
+        }
+
         return $this->signalementQualifications;
     }
 
@@ -2762,6 +2767,18 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
         return $this;
     }
 
+    /**
+     * @return Collection<int, Suivi>
+     */
+    public function getSuivisWithCategory(SuiviCategory $category): Collection
+    {
+        $suiviWithCategory = $this->getSuivis()->filter(static function (Suivi $suivi) use ($category) {
+            return $category === $suivi->getCategory();
+        });
+
+        return $suiviWithCategory;
+    }
+
     public function hasSuiviWithCategory(SuiviCategory $category): bool
     {
         $suiviWithCategory = $this->getSuivis()->filter(static function (Suivi $suivi) use ($category) {
@@ -3110,9 +3127,13 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     /**
      * @return Collection<int, SignalementProcedure>
      */
-    public function getSignalementProcedures(): Collection
+    public function getSignalementProcedures(?ProcedureCategory $procedureCategory = null): Collection
     {
-        return $this->signalementProcedures;
+        if (!$procedureCategory) {
+            return $this->signalementProcedures;
+        }
+
+        return $this->signalementProcedures->filter(static fn (SignalementProcedure $sp) => $sp->getProcedureCategory() === $procedureCategory);
     }
 
     public function addSignalementProcedure(SignalementProcedure $signalementProcedure): static

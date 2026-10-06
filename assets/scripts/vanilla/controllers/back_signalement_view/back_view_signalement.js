@@ -475,6 +475,19 @@ logementVacantPanel?.querySelector('form')?.addEventListener('submit', (event) =
   }
 });
 
+export function clearProcedureEngageeForm() {
+  const form = document.querySelector('#panel-add-procedure-engagee form');
+  form.querySelectorAll('.search-checkbox-container input[type="checkbox"]').forEach((checkbox) => {
+    checkbox.checked = false;
+  });
+
+  window.dispatchEvent(new Event('refreshSearchCheckboxContainerEvent'));
+
+  const textarea = form.querySelector('textarea');
+  textarea.value = '';
+  tinymce.get(textarea.id)?.setContent('');
+}
+
 // Afficher / masquer une section (choix mémorisé par navigateur)
 const getHiddenSectionStorageKey = (sectionId) => `hidden-section-${sectionId}`;
 

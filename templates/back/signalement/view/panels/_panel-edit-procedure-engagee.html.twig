@@ -1,0 +1,41 @@
+<dialog aria-labelledby="panel-edit-procedure-engagee-title" id="panel-edit-procedure-engagee" class="side-panel">
+    <div class="side-panel__inner">
+        <div class="side-panel__header">
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-procedure-engagee" aria-controls="panel-edit-procedure-engagee" aria-expanded="false">Fermer</button>
+        </div>
+        <div class="side-panel__content fr-mx-3w">
+            <h1 id="panel-edit-procedure-engagee-title" class="fr-modal__title title-blue-france">Procédure(s) à engager</h1>
+            <p>
+                Indiquez les procédures à engager sur le dossier. Cette information sera visible par tous les partenaires intervenant sur le dossier.
+                <br>
+                Vous pouvez ajouter un commentaire pour donner plus de contexte ou d’informations sur les procédures.
+            </p>
+            {{ form_start(procedureEngageeForm, {'attr': {'id': 'panel-edit-procedure-engagee-form', 'data-submit-type':'formData'}}) }}
+                <div class="fr-input-group">
+                    <span class="no-field-errors"></span>
+                </div>
+                {{ form_errors(procedureEngageeForm) }}
+                <div class="fr-mb-3w">
+                    {{ form_row(procedureEngageeForm.procedureEngagees) }}
+                </div>
+                <div class="fr-mb-3w">
+                    {{ form_row(procedureEngageeForm.commentaire) }}
+                </div>
+            {{ form_end(procedureEngageeForm) }}
+        </div>
+        <div class="side-panel__footer">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm fr-btns-group--icon-left">
+                <li>
+                    <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line" form="panel-edit-procedure-engagee-form">
+                        Valider
+                    </button>
+                </li>
+                <li>
+                    <button class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel" data-panel="panel-edit-procedure-engagee" aria-controls="panel-edit-procedure-engagee" aria-expanded="false" type="button">
+                        Annuler
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</dialog>

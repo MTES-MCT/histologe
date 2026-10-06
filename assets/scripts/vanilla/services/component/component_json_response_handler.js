@@ -6,6 +6,7 @@ import { reloadPersonalNoteEditor } from '../../controllers/back_signalement_vie
 import {
   openPhotoAlbumAddEventListeners,
   updateBtnAddSuiviForm,
+  clearProcedureEngageeForm,
 } from '../../controllers/back_signalement_view/back_view_signalement.js';
 import { btnSignalementFileEditAddEventListeners } from '../../controllers/back_signalement_edit_file/back_signalement_edit_file.js';
 import { btnSignalementFileDeleteAddEventListeners } from '../file/file_delete.js';
@@ -100,6 +101,9 @@ export function jsonResponseProcess(response) {
             break;
           case 'histoRefreshNotificationButtons':
             histoRefreshNotificationButtons();
+            break;
+          case 'clearProcedureEngageeForm':
+            clearProcedureEngageeForm();
             break;
           default:
             console.warn(`Unknown function name: ${fn.name}`);
