@@ -23,12 +23,14 @@ readonly class DemandeLogementSocialSpecification implements SpecificationInterf
         /** @var Signalement $signalement */
         $signalement = $context->getSignalement();
 
-        $demandeLogementSocial = strtolower((string) $signalement->getSituationFoyer()?->getLogementSocialDemandeRelogement());
+        $demandeLogementSocial = match ($signalement->getIsRelogement()) {
+            true => 'oui',
+            false => 'non',
+            null => 'nsp',
+        };
         switch ($this->ruleDemandeLogementSocial) {
             case 'all':
                 return true;
-            case 'nsp':
-                return \in_array($demandeLogementSocial, ['', 'nsp']);
             default:
                 return $demandeLogementSocial === $this->ruleDemandeLogementSocial;
         }

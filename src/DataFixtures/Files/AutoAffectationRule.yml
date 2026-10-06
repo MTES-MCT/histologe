@@ -63,6 +63,12 @@ auto_affectation_rules:
     insee_to_exclude: null
     parc: "all"
     allocataire: "all"
+    accompagnement_travailleur_social: "oui"
+    demande_logement_social: "nsp"
+    zone_to_include:
+      - "StMars"
+    zone_to_exclude:
+      - "La Bodinière"
   -
     territory: "Loire-Atlantique"
     status: "ACTIVE"

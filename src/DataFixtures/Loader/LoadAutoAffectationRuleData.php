@@ -6,6 +6,7 @@ use App\Entity\AutoAffectationRule;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Repository\TerritoryRepository;
+use App\Repository\ZoneRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -15,6 +16,7 @@ class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInter
 {
     public function __construct(
         private TerritoryRepository $territoryRepository,
+        private ZoneRepository $zoneRepository,
     ) {
     }
 
@@ -44,8 +46,8 @@ class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInter
             ->setAllocataire($row['allocataire'])
             ->setAccompagnementTravailleurSocial($row['accompagnement_travailleur_social'] ?? 'all')
             ->setDemandeLogementSocial($row['demande_logement_social'] ?? 'all')
-            ->setZoneToInclude($row['zone_to_include'] ?? null)
-            ->setZoneToExclude($row['zone_to_exclude'] ?? null)
+            ->setZoneToInclude($this->getZoneIds($row['zone_to_include'] ?? null))
+            ->setZoneToExclude($this->getZoneIds($row['zone_to_exclude'] ?? null))
         ;
 
         if (isset($row['procedures_suspectees'])) {
@@ -61,6 +63,20 @@ class LoadAutoAffectationRuleData extends Fixture implements OrderedFixtureInter
         }
 
         $manager->persist($affectation);
+    }
+
+    /**
+     * @param ?array<string> $zoneNames
+     *
+     * @return ?array<string>
+     */
+    private function getZoneIds(?array $zoneNames): ?array
+    {
+        if (null === $zoneNames) {
+            return null;
+        }
+
+        return array_map(fn (string $name): string => (string) $this->zoneRepository->findOneBy(['name' => $name])->getId(), $zoneNames);
     }
 
     public function getOrder(): int

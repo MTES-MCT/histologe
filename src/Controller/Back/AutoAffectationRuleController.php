@@ -25,6 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/bo/auto-affectation')]
 #[IsGranted('ROLE_ADMIN')]
@@ -117,10 +118,27 @@ class AutoAffectationRuleController extends AbstractController
     public function reactiveAutoAffectationRule(
         AutoAffectationRule $autoAffectationRule,
         EntityManagerInterface $entityManager,
+        ValidatorInterface $validator,
         Request $request,
     ): JsonResponse {
         if (AutoAffectationRule::STATUS_ACTIVE === $autoAffectationRule->getStatus()) {
             $flashMessage = ['type' => 'alert', 'title' => 'Erreur', 'message' => 'Cette règle est déjà active.'];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
+        }
+        // Les partenaires et zones de la règle ont pu être archivés, supprimés ou déplacés depuis son archivage
+        $errors = [];
+        foreach (['partnerToExclude', 'zoneToInclude', 'zoneToExclude'] as $property) {
+            foreach ($validator->validateProperty($autoAffectationRule, $property) as $violation) {
+                $errors[] = $violation->getMessage();
+            }
+        }
+        if (!empty($errors)) {
+            $flashMessage = [
+                'type' => 'alert',
+                'title' => 'Réactivation impossible',
+                'message' => 'Merci de modifier la règle avant de la réactiver : '.implode(' ', $errors),
+            ];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => [$flashMessage]]);
         }

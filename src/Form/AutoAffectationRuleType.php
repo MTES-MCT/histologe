@@ -59,7 +59,6 @@ class AutoAffectationRuleType extends AbstractType
                     'Règle archivée' => 'ARCHIVED',
                 ],
                 'disabled' => true,
-                'data' => 'ACTIVE',
             ])
             ->add('parc', ChoiceType::class, [
                 'label' => 'Parc de logements concerné',
