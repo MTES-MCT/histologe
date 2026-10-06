@@ -8,6 +8,7 @@ use App\Repository\AutoAffectationRuleRepository;
 use App\Repository\CommuneRepository;
 use App\Repository\PartnerRepository;
 use App\Repository\TerritoryRepository;
+use App\Repository\ZoneRepository;
 use App\Service\Import\AutoAffectationRule\AutoAffectationRuleHeader;
 use App\Service\Import\AutoAffectationRule\AutoAffectationRuleLoader;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,6 +35,7 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
             static::getContainer()->get(AutoAffectationRuleRepository::class),
             static::getContainer()->get(PartnerRepository::class),
             static::getContainer()->get(CommuneRepository::class),
+            static::getContainer()->get(ZoneRepository::class),
             $this->entityManager,
         );
     }
@@ -83,6 +85,87 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
 
         $this->assertCount(1, $errors);
         $this->assertStringContainsString('Allocataire "inconnu" invalide', $errors[0]);
+    }
+
+    public function testValidateReturnsErrorForInvalidAccompagnementTravailleurSocial(): void
+    {
+        $errors = $this->loader->validate([$this->buildRow(accompagnementTravailleurSocial: 'inconnu')], $this->herault);
+
+        $this->assertCount(1, $errors);
+        $this->assertStringContainsString('Accompagnement travailleur social "inconnu" invalide', $errors[0]);
+    }
+
+    public function testValidateReturnsErrorForInvalidDemandeLogementSocial(): void
+    {
+        $errors = $this->loader->validate([$this->buildRow(demandeLogementSocial: '')], $this->herault);
+
+        $this->assertCount(1, $errors);
+        $this->assertStringContainsString('Demande logement social "" invalide', $errors[0]);
+    }
+
+    public function testValidateDoesNotDetectDuplicateWhenOnlyNewCriteriaDiffer(): void
+    {
+        $errors = $this->loader->validate(
+            [$this->buildRow(accompagnementTravailleurSocial: 'oui'), $this->buildRow(accompagnementTravailleurSocial: 'non')],
+            $this->herault,
+        );
+
+        $this->assertEmpty($errors);
+    }
+
+    public function testValidateReturnsNoErrorForZonesOfTerritory(): void
+    {
+        $zoneId = (string) $this->getZoneId('Permis louer Agde');
+
+        $this->assertEmpty($this->loader->validate([$this->buildRow(zoneToInclude: $zoneId)], $this->herault));
+        $this->assertEmpty($this->loader->validate([$this->buildRow(zoneToExclude: $zoneId)], $this->herault));
+    }
+
+    public function testValidateReturnsErrorForNonNumericZoneIds(): void
+    {
+        $errors = $this->loader->validate([$this->buildRow(zoneToInclude: 'abc', zoneToExclude: '1;2')], $this->herault);
+
+        $this->assertCount(1, $errors);
+        $this->assertStringContainsString('IDs zone à inclure invalides : "abc"', $errors[0]);
+        $this->assertStringContainsString('IDs zone à exclure invalides : "1;2"', $errors[0]);
+    }
+
+    public function testValidateReturnsErrorForUnknownZone(): void
+    {
+        $errors = $this->loader->validate([$this->buildRow(zoneToInclude: '999999', zoneToExclude: '999998')], $this->herault);
+
+        $this->assertCount(1, $errors);
+        $this->assertStringContainsString('Zone à inclure ID 999999 introuvable', $errors[0]);
+        $this->assertStringContainsString('Zone à exclure ID 999998 introuvable', $errors[0]);
+    }
+
+    public function testValidateReturnsErrorForZoneOutsideTerritory(): void
+    {
+        $zoneId = $this->getZoneId('StMars');
+        $errors = $this->loader->validate([$this->buildRow(zoneToInclude: (string) $zoneId)], $this->herault);
+
+        $this->assertCount(1, $errors);
+        $this->assertStringContainsString('Zone à inclure ID '.$zoneId.' n\'appartient pas au territoire "34 - Hérault"', $errors[0]);
+    }
+
+    public function testValidateReturnsErrorForZoneIncludedAndExcluded(): void
+    {
+        $zoneId = (string) $this->getZoneId('Permis louer Agde');
+        $errors = $this->loader->validate([$this->buildRow(zoneToInclude: $zoneId, zoneToExclude: $zoneId)], $this->herault);
+
+        $this->assertCount(1, $errors);
+        $this->assertStringContainsString('Zones à la fois incluses et exclues : "'.$zoneId.'"', $errors[0]);
+    }
+
+    public function testValidateDoesNotDetectDuplicateWhenOnlyZonesDiffer(): void
+    {
+        $zoneId = (string) $this->getZoneId('Permis louer Agde');
+        $errors = $this->loader->validate(
+            [$this->buildRow(), $this->buildRow(zoneToInclude: $zoneId), $this->buildRow(zoneToExclude: $zoneId)],
+            $this->herault,
+        );
+
+        $this->assertEmpty($errors);
     }
 
     public function testValidateReturnsErrorForInseeCodesOutsideTerritory(): void
@@ -178,9 +261,13 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
             profileDeclarant: 'LOCATAIRE',
             parc: 'public',
             allocataire: 'oui',
+            accompagnementTravailleurSocial: 'oui',
+            demandeLogementSocial: 'nsp',
             inseeToInclude: '34172,34173',
             inseeToExclude: '34001',
             partnerToExclude: '999',
+            zoneToInclude: '12,13',
+            zoneToExclude: '14',
         );
 
         $this->loader->load([$row], $this->herault);
@@ -197,6 +284,15 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
         $this->assertSame('34172,34173', $rule->getInseeToInclude());
         $this->assertSame(['34001'], $rule->getInseeToExclude());
         $this->assertSame(['999'], $rule->getPartnerToExclude());
+        $this->assertSame(['12', '13'], $rule->getZoneToInclude());
+        $this->assertSame(['14'], $rule->getZoneToExclude());
+        $this->assertSame('oui', $rule->getAccompagnementTravailleurSocial());
+        $this->assertSame('nsp', $rule->getDemandeLogementSocial());
+    }
+
+    private function getZoneId(string $name): int
+    {
+        return static::getContainer()->get(ZoneRepository::class)->findOneBy(['name' => $name])->getId();
     }
 
     /**
@@ -219,9 +315,13 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
         string $profileDeclarant = 'all',
         string $parc = 'prive',
         string $allocataire = 'all',
+        string $accompagnementTravailleurSocial = 'all',
+        string $demandeLogementSocial = 'all',
         string $inseeToInclude = '/',
         string $inseeToExclude = '/',
         string $partnerToExclude = '/',
+        string $zoneToInclude = '/',
+        string $zoneToExclude = '/',
         string $proceduresSuspectees = '/',
     ): array {
         return [
@@ -230,9 +330,13 @@ class AutoAffectationRuleLoaderTest extends KernelTestCase
             AutoAffectationRuleHeader::PROFILE_DECLARANT => $profileDeclarant,
             AutoAffectationRuleHeader::PARC => $parc,
             AutoAffectationRuleHeader::ALLOCATAIRE => $allocataire,
+            AutoAffectationRuleHeader::ACCOMPAGNEMENT_TRAVAILLEUR_SOCIAL => $accompagnementTravailleurSocial,
+            AutoAffectationRuleHeader::DEMANDE_LOGEMENT_SOCIAL => $demandeLogementSocial,
             AutoAffectationRuleHeader::INSEE_TO_INCLUDE => $inseeToInclude,
             AutoAffectationRuleHeader::INSEE_TO_EXCLUDE => $inseeToExclude,
             AutoAffectationRuleHeader::PARTNER_TO_EXCLUDE => $partnerToExclude,
+            AutoAffectationRuleHeader::ZONE_TO_INCLUDE => $zoneToInclude,
+            AutoAffectationRuleHeader::ZONE_TO_EXCLUDE => $zoneToExclude,
             AutoAffectationRuleHeader::PROCEDURES_SUSPECTEES => $proceduresSuspectees,
         ];
     }

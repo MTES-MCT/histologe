@@ -2,9 +2,9 @@
 
 namespace App\Validator;
 
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class InseeToIncludeValidator extends ConstraintValidator
 {

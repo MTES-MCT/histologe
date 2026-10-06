@@ -11,15 +11,19 @@ use App\Manager\SignalementManager;
 use App\Manager\UserManager;
 use App\Manager\UserSignalementSubscriptionManager;
 use App\Repository\Query\Partner\PartnerLocalizationQuery;
+use App\Repository\Query\Zone\ZoneLocalizationQuery;
 use App\Repository\UserRepository;
 use App\Service\Notification\NotificationAndMailSender;
+use App\Specification\Affectation\AccompagnementTravailleurSocialSpecification;
 use App\Specification\Affectation\AllocataireSpecification;
 use App\Specification\Affectation\CodeInseeSpecification;
+use App\Specification\Affectation\DemandeLogementSocialSpecification;
 use App\Specification\Affectation\ParcSpecification;
 use App\Specification\Affectation\PartnerExcludeSpecification;
 use App\Specification\Affectation\PartnerTypeSpecification;
 use App\Specification\Affectation\ProcedureSuspecteeSpecification;
 use App\Specification\Affectation\ProfilDeclarantSpecification;
+use App\Specification\Affectation\ZoneSpecification;
 use App\Specification\AndSpecification;
 use App\Specification\Context\PartnerSignalementContext;
 use Doctrine\DBAL\Exception;
@@ -38,6 +42,7 @@ class AutoAssigner
         private readonly AffectationManager $affectationManager,
         private readonly UserManager $userManager,
         private readonly PartnerLocalizationQuery $partnerLocalizationQuery,
+        private readonly ZoneLocalizationQuery $zoneLocalizationQuery,
         private readonly UserRepository $userRepository,
         private readonly UserSignalementSubscriptionManager $subscriptionManager,
         private readonly NotificationAndMailSender $notificationAndMailSender,
@@ -82,9 +87,17 @@ class AutoAssigner
         $adminUser = $this->userManager->getSystemUser();
         $partners = $this->partnerLocalizationQuery->findPartnersByLocalization($signalement, $simulation);
         $assignablePartners = [];
+        $signalementZoneIds = null;
 
         /** @var AutoAffectationRule $rule */
         foreach ($autoAffectationRules as $rule) {
+            if (null === $signalementZoneIds && (!empty($rule->getZoneToInclude()) || !empty($rule->getZoneToExclude()))) {
+                $signalementZoneIds = $this->zoneLocalizationQuery->findZoneIdsContainingPoint(
+                    $signalement->getAddress()->getTerritory(),
+                    (float) $signalement->getGeoloc()['lng'],
+                    (float) $signalement->getGeoloc()['lat'],
+                );
+            }
             $specification = new AndSpecification(
                 new ProfilDeclarantSpecification($rule->getProfileDeclarant()),
                 new PartnerTypeSpecification($rule->getPartnerType()),
@@ -93,6 +106,9 @@ class AutoAssigner
                 new ParcSpecification($rule->getParc()),
                 new AllocataireSpecification($rule->getAllocataire()),
                 new ProcedureSuspecteeSpecification($rule->getProceduresSuspectees()),
+                new AccompagnementTravailleurSocialSpecification($rule->getAccompagnementTravailleurSocial()),
+                new DemandeLogementSocialSpecification($rule->getDemandeLogementSocial()),
+                new ZoneSpecification($rule->getZoneToInclude(), $rule->getZoneToExclude(), $signalementZoneIds ?? []),
             );
 
             foreach ($partners as $partner) {

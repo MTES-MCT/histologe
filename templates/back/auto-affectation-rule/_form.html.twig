@@ -29,6 +29,15 @@
 
 <div class="fr-grid-row fr-grid-row--gutters">
 	<div class="fr-col-6">
+		{{ form_row(form.accompagnementTravailleurSocial,{}) }}
+	</div>
+	<div class="fr-col-6">
+		{{ form_row(form.demandeLogementSocial,{}) }}
+	</div>
+</div>
+
+<div class="fr-grid-row fr-grid-row--gutters">
+	<div class="fr-col-6">
 		{{ form_row(form.inseeToInclude,{}) }}
 	</div>
 	<div class="fr-col-6">
@@ -42,6 +51,15 @@
 	</div>
 	<div class="fr-col-6">
 		{{ form_row(form.proceduresSuspectees,{}) }}
+	</div>
+</div>
+
+<div class="fr-grid-row fr-grid-row--gutters">
+	<div class="fr-col-6">
+		{{ form_row(form.zoneToInclude,{}) }}
+	</div>
+	<div class="fr-col-6">
+		{{ form_row(form.zoneToExclude,{}) }}
 	</div>
 </div>
 

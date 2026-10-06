@@ -176,6 +176,17 @@ class BackZoneController extends AbstractController
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => false]);
         }
+        if (!$this->isGranted(ZoneVoter::ZONE_DELETE, $zone)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Suppression impossible', 'message' => ZoneVoter::ZONE_DELETE_DENIED_MESSAGE];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true]);
+        }
+        $zoneId = $zone->getId();
+        // Retire la zone des règles d'auto-affectation archivées
+        foreach ($zone->getTerritory()->getAutoAffectationRules() as $rule) {
+            $rule->setZoneToInclude(array_values(array_filter($rule->getZoneToInclude() ?? [], static fn ($id): bool => (int) $id !== $zoneId)) ?: null);
+            $rule->setZoneToExclude(array_values(array_filter($rule->getZoneToExclude() ?? [], static fn ($id): bool => (int) $id !== $zoneId)) ?: null);
+        }
         $entityManager->remove($zone);
         $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Zone supprimée', 'message' => 'La zone a bien été supprimée.'];

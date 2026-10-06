@@ -6,9 +6,11 @@
         <th scope="col">Profil déclarant</th>
         <th scope="col">Parc</th>
         <th scope="col">Allocataire</th>
-        <th scope="col">Code insee inclus</th>
-        <th scope="col">Code insee exclus</th>
+        <th scope="col">Accompagnement travailleur social</th>
+        <th scope="col">Demande logement social</th>
+        <th scope="col">Code insee <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">inclus</span> <span class="fr-badge fr-badge--no-icon fr-badge--error fr-mb-1v">exclus</span></th>
         <th scope="col">Id partenaires exclus</th>
+        <th scope="col">Id zones <span class="fr-badge fr-badge--blue-ecume fr-mb-1v">inclues</span> <span class="fr-badge fr-badge--no-icon fr-badge--error fr-mb-1v">exclues</span></th>
         <th scope="col">Procédures suspectées</th>
         <th scope="col" class="fr-text--right">Actions</th>
     {% endset %}
@@ -29,22 +31,18 @@
                 <td>{{ autoaffectationrule.profileDeclarant }}</td>
                 <td>{{ autoaffectationrule.parc }}</td>
                 <td>{{ autoaffectationrule.allocataire }}</td>
+                <td>{{ autoaffectationrule.accompagnementTravailleurSocial }}</td>
+                <td>{{ autoaffectationrule.demandeLogementSocial }}</td>
                 <td>
                     {% if autoaffectationrule.inseeToInclude %}
                         {% for insee in autoaffectationrule.inseeToInclude|split(',') %}
                             <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</div>
                         {% endfor %}
-                    {% else %}
-                        /
                     {% endif %}
-                </td>
-                <td>
                     {% if autoaffectationrule.inseeToExclude %}
                         {% for insee in autoaffectationrule.inseeToExclude %}
-                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ insee }}</div>
+                            <div class="fr-badge fr-badge--no-icon fr-badge--error fr-mb-1v">{{ insee }}</div>
                         {% endfor %}
-                    {% else %}
-                        /
                     {% endif %}
                 </td>
                 <td>
@@ -52,8 +50,18 @@
                         {% for idPartner in autoaffectationrule.partnerToExclude %}
                             <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ idPartner }}</div>
                         {% endfor %}
-                    {% else %}
-                        /
+                    {% endif %}
+                </td>
+                <td>
+                    {% if autoaffectationrule.zoneToInclude %}
+                        {% for idZone in autoaffectationrule.zoneToInclude %}
+                            <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ idZone }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if autoaffectationrule.zoneToExclude %}
+                        {% for idZone in autoaffectationrule.zoneToExclude %}
+                            <div class="fr-badge fr-badge--no-icon fr-badge--error fr-mb-1v">{{ idZone }}</div>
+                        {% endfor %}
                     {% endif %}
                 </td>
                 <td>
@@ -61,11 +69,9 @@
                         {% for proc in autoaffectationrule.proceduresSuspectees %}
                             <div class="fr-badge fr-badge--blue-ecume fr-mb-1v">{{ proc.label() }}</div>
                         {% endfor %}
-                    {% else %}
-                        /
                     {% endif %}
                 </td>
-                <td class="fr-text--right">
+                <td class="fr-text--right fr-ws-nowrap">
                     <a class="fr-btn fr-btn--sm fr-fi-edit-line" href="{{ path('back_auto_affectation_rule_edit', {'id': autoaffectationrule.id}) }}"
                         aria-label="Éditer la règle {{ autoaffectationrule.id }}"
                         title="Éditer la règle {{ autoaffectationrule.id }}"></a>
@@ -76,7 +82,7 @@
                             aria-label="Supprimer la règle {{ autoaffectationrule.id }}"
                             title="Supprimer la règle {{ autoaffectationrule.id }}"></button>
                     {% else %}
-                        <form action="{{ path('back_auto_affectation_rule_reactive', {'id': autoaffectationrule.id}) }}" method="POST" class="simple-ajax-form" >
+                        <form action="{{ path('back_auto_affectation_rule_reactive', {'id': autoaffectationrule.id}) }}" method="POST" class="simple-ajax-form fr-display-inline-block" >
                             <input type="hidden" name="search_params" value="{{ app.request.query.all|url_encode }}">
                             <button
                                 class="fr-btn fr-icon-flashlight-fill fr-btn--sm fr-mt-3v"
@@ -90,7 +96,7 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="10">Aucune règle d'auto-affectation trouvée</td>
+                <td colspan="15">Aucune règle d'auto-affectation trouvée</td>
             </tr>
         {% endfor %}
     {% endset %}

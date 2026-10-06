@@ -147,7 +147,7 @@ class SignalementManager
             ->setMailProprio($data['mailProprio'])
             ->setIsLogementSocial((bool) $data['isLogementSocial'])
             ->setIsPreavisDepart((bool) $data['isPreavisDepart'])
-            ->setIsRelogement((bool) $data['isRelogement'])
+            ->setIsRelogement($data['isRelogement'])
             ->setIsNotOccupant((bool) $data['isNotOccupant'])
             ->setNomDeclarant($data['nomDeclarant'])
             ->setPrenomDeclarant($data['prenomDeclarant'])

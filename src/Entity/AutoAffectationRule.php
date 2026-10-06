@@ -13,6 +13,7 @@ use App\Validator as AppAssert;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: AutoAffectationRuleRepository::class)]
 class AutoAffectationRule implements EntityHistoryInterface
@@ -84,6 +85,30 @@ class AutoAffectationRule implements EntityHistoryInterface
         choices: ['all', 'non', 'oui', 'caf', 'msa', 'nsp'],
         message: 'Choisissez une option valide: all, non, oui, caf, msa ou nsp')]
     private string $allocataire;
+
+    #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, oui, non or nsp'])]
+    #[Assert\NotBlank(message: 'Merci de renseigner l\'accompagnement par un travailleur social.')]
+    #[Assert\Choice(
+        choices: ['all', 'oui', 'non', 'nsp'],
+        message: 'Choisissez une option valide: all, oui, non ou nsp')]
+    private string $accompagnementTravailleurSocial = 'all';
+
+    #[ORM\Column(length: 32, options: ['comment' => 'Value possible all, oui, non or nsp'])]
+    #[Assert\NotBlank(message: 'Merci de renseigner la demande de logement social.')]
+    #[Assert\Choice(
+        choices: ['all', 'oui', 'non', 'nsp'],
+        message: 'Choisissez une option valide: all, oui, non ou nsp')]
+    private string $demandeLogementSocial = 'all';
+
+    /** @var array<string> $zoneToInclude */
+    #[ORM\Column(nullable: true, options: ['comment' => 'Value possible null or an array of zone ids'])]
+    #[AppAssert\ZoneIds()]
+    private ?array $zoneToInclude = null;
+
+    /** @var array<string> $zoneToExclude */
+    #[ORM\Column(nullable: true, options: ['comment' => 'Value possible null or an array of zone ids'])]
+    #[AppAssert\ZoneIds()]
+    private ?array $zoneToExclude = null;
 
     /** @var list<Qualification> $proceduresSuspectees */
     #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true, enumType: Qualification::class)]
@@ -213,6 +238,69 @@ class AutoAffectationRule implements EntityHistoryInterface
         return $this;
     }
 
+    public function getAccompagnementTravailleurSocial(): string
+    {
+        return $this->accompagnementTravailleurSocial;
+    }
+
+    public function setAccompagnementTravailleurSocial(string $accompagnementTravailleurSocial): static
+    {
+        $this->accompagnementTravailleurSocial = $accompagnementTravailleurSocial;
+
+        return $this;
+    }
+
+    public function getDemandeLogementSocial(): string
+    {
+        return $this->demandeLogementSocial;
+    }
+
+    public function setDemandeLogementSocial(string $demandeLogementSocial): static
+    {
+        $this->demandeLogementSocial = $demandeLogementSocial;
+
+        return $this;
+    }
+
+    /** @return array<string> */
+    public function getZoneToInclude(): ?array
+    {
+        return $this->zoneToInclude;
+    }
+
+    /** @param array<string> $zoneToInclude */
+    public function setZoneToInclude(?array $zoneToInclude): static
+    {
+        $this->zoneToInclude = $zoneToInclude;
+
+        return $this;
+    }
+
+    /** @return array<string> */
+    public function getZoneToExclude(): ?array
+    {
+        return $this->zoneToExclude;
+    }
+
+    /** @param array<string> $zoneToExclude */
+    public function setZoneToExclude(?array $zoneToExclude): static
+    {
+        $this->zoneToExclude = $zoneToExclude;
+
+        return $this;
+    }
+
+    #[Assert\Callback]
+    public function validateZonesNotIncludedAndExcluded(ExecutionContextInterface $context): void
+    {
+        foreach (array_intersect($this->zoneToExclude ?? [], $this->zoneToInclude ?? []) as $zoneId) {
+            $context->buildViolation('La zone ID {{ id }} ne peut pas être à la fois incluse et exclue.')
+                ->setParameter('{{ id }}', (string) $zoneId)
+                ->atPath('zoneToExclude')
+                ->addViolation();
+        }
+    }
+
     /** @return list<Qualification> */
     public function getProceduresSuspectees(): ?array
     {
@@ -300,6 +388,28 @@ class AutoAffectationRule implements EntityHistoryInterface
                 $description .= 'allocataires et non-allocataires.';
                 break;
         }
+        switch ($this->getAccompagnementTravailleurSocial()) {
+            case 'oui':
+                $description .= ' Elle concerne les foyers accompagnés par un travailleur social.';
+                break;
+            case 'non':
+                $description .= ' Elle concerne les foyers non accompagnés par un travailleur social.';
+                break;
+            case 'nsp':
+                $description .= ' Elle concerne les foyers dont on ne sait pas s\'ils sont accompagnés par un travailleur social.';
+                break;
+        }
+        switch ($this->getDemandeLogementSocial()) {
+            case 'oui':
+                $description .= ' Elle concerne les foyers ayant fait une demande de logement social.';
+                break;
+            case 'non':
+                $description .= ' Elle concerne les foyers n\'ayant pas fait de demande de logement social.';
+                break;
+            case 'nsp':
+                $description .= ' Elle concerne les foyers dont on ne sait pas s\'ils ont fait une demande de logement social.';
+                break;
+        }
 
         $description .= ' Elle s\'applique ';
         switch ($this->getInseeToInclude()) {
@@ -310,6 +420,14 @@ class AutoAffectationRule implements EntityHistoryInterface
             default:
                 $description .= 'aux logements situés dans le périmètre géographique du partenaire (codes insee et/ou zones), limités aux codes insee suivants : '.$this->getInseeToInclude();
                 break;
+        }
+        if ($this->getZoneToInclude()) {
+            $description .= ', limités aux zones suivantes : '
+            .implode(',', $this->getZoneToInclude());
+        }
+        if ($this->getZoneToExclude()) {
+            $description .= ' à l\'exclusion des logements situés dans les zones suivantes : '
+            .implode(',', $this->getZoneToExclude());
         }
         if ($this->getInseeToExclude()) {
             $description .= ' à l\'exclusion des logements situés dans les communes aux codes insee suivants : '
