@@ -1,3 +1,5 @@
+@use 'sass:meta';
+
 html, body {
     scroll-behavior: smooth !important;
 }
@@ -691,6 +693,28 @@ form.inline-form {
 
 .tox-tinymce-aux {
     z-index: 6000 !important;
+}
+
+.tox .tox-dialog {
+    // Renforce les styles DSFR face au reset CSS de TinyMCE, sans les dupliquer.
+    @include meta.load-css('../../node_modules/@gouvfr/dsfr/dist/component/button/button.css');
+    @include meta.load-css('../../node_modules/@gouvfr/dsfr/dist/component/form/form.css');
+    @include meta.load-css('../../node_modules/@gouvfr/dsfr/dist/component/input/input.css');
+
+    .fr-btn,
+    .fr-input,
+    .fr-label {
+        box-sizing: border-box;
+        font-family: 'Marianne', sans-serif;
+    }
+
+    .fr-btn,
+    .fr-input {
+        &:focus-visible {
+            outline: 2px solid #0a76f6;
+            outline-offset: 2px;
+        }
+    }
 }
 
 .tox-statusbar__branding {
@@ -1729,6 +1753,22 @@ dialog.side-panel {
 
   &::backdrop {
     background: rgba(0, 0, 0, 0.5);
+  }
+
+  > .tox-tinymce-aux {
+    position: absolute !important;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .tox-dialog-wrap {
+    pointer-events: auto;
+  }
+
+  .tox-dialog-wrap,
+  .tox-dialog-wrap__backdrop {
+    position: absolute;
+    inset: 0;
   }
 
   .side-panel__inner {

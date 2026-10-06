@@ -20,6 +20,7 @@
     "libphonenumber-js": "1.12.26",
     "maplibre-gl": "6.10.0",
     "tinymce": "8.6.0",
+    "tinymce-i18n": "26.9.28",
     "vue": "3.5.42",
     "vue-chartjs": "4.1.2",
     "vue-loader": "17.4.2",
