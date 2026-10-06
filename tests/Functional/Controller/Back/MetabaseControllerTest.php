@@ -10,7 +10,6 @@ use App\Repository\TerritoryRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
 class MetabaseControllerTest extends WebTestCase
@@ -32,7 +31,6 @@ class MetabaseControllerTest extends WebTestCase
         $this->territoryRepository = static::getContainer()->get(TerritoryRepository::class);
         $this->router = static::getContainer()->get(RouterInterface::class);
     }
-
 
     public function testMetabaseStatsIndexAsAdminWithoutFilter(): void
     {
