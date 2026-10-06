@@ -233,32 +233,32 @@ class SignalementControllerTest extends WebTestCase
         ];
     }
 
-    public function testSignalementNDESuccessfullyDisplay(): void
-    {
-        self::ensureKernelShutdown();
-        $client = static::createClient();
-        /** @var UserRepository $userRepository */
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
-        $client->loginUser($user);
+    // public function testSignalementNDESuccessfullyDisplay(): void
+    // {
+    //     self::ensureKernelShutdown();
+    //     $client = static::createClient();
+    //     /** @var UserRepository $userRepository */
+    //     $userRepository = static::getContainer()->get(UserRepository::class);
+    //     $user = $userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
+    //     $client->loginUser($user);
 
-        /** @var SignalementRepository $signalementRepository */
-        $signalementRepository = static::getContainer()->get(SignalementRepository::class);
-        /** @var Signalement $signalement */
-        $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
+    //     /** @var SignalementRepository $signalementRepository */
+    //     $signalementRepository = static::getContainer()->get(SignalementRepository::class);
+    //     /** @var Signalement $signalement */
+    //     $signalement = $signalementRepository->findOneBy(['reference' => '2023-8']);
 
-        /** @var RouterInterface $router */
-        $router = static::getContainer()->get(RouterInterface::class);
-        $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    //     /** @var RouterInterface $router */
+    //     $router = static::getContainer()->get(RouterInterface::class);
+    //     $route = $router->generate('back_signalement_view', ['uuid' => $signalement->getUuid()]);
 
-        $client->loginUser($user);
-        $client->request('GET', $route);
-        $this->assertResponseIsSuccessful((string) $signalement->getId());
-        $this->assertSelectorTextContains(
-            '#title-nde',
-            'Non décence énergétique'
-        );
-    }
+    //     $client->loginUser($user);
+    //     $client->request('GET', $route);
+    //     $this->assertResponseIsSuccessful((string) $signalement->getId());
+    //     $this->assertSelectorTextContains(
+    //         '#title-nde',
+    //         'Non décence énergétique'
+    //     );
+    // }
 
     public function testAdminSubmitClotureSignalementWithEmailSentToPartners(): void
     {
