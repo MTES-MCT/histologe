@@ -99,6 +99,8 @@ class DocumentIAService
      * Le statut de la réponse peut être SUCCESS (data.result), FAILED (data.error_message) ou STARTED.
      *
      * @return ?array<mixed>
+     *
+     * @throws \Throwable si l'API répond avec un statut différent de 200 ou en cas d'erreur de transport
      */
     public function executeWorkflow(string $workflowId, UploadedFile $file): ?array
     {
@@ -140,27 +142,21 @@ class DocumentIAService
 
                     return $result;
                 }
-                if (Response::HTTP_UNAUTHORIZED === $response->getStatusCode()
-                    || Response::HTTP_FORBIDDEN === $response->getStatusCode()
-                    || Response::HTTP_BAD_REQUEST === $response->getStatusCode()
-                ) {
-                    $this->logger->error(\sprintf(
-                        'Document IA API workflow execution failed for: %s (status %s)',
-                        $url,
-                        $response->getStatusCode()),
-                        $context
-                    );
-                } else {
-                    $this->logger->warning(\sprintf(
-                        'Document IA API workflow execution failed for: %s (status %s)',
-                        $url,
-                        $response->getStatusCode()),
-                        $context
-                    );
-                }
+                $statusCode = $response->getStatusCode();
             } catch (\Throwable $exception) {
                 $this->logger->error($exception->getMessage(), $context);
+
+                throw $exception;
             }
+
+            $this->logger->error(\sprintf(
+                'Document IA API workflow execution failed for: %s (status %s)',
+                $url,
+                $statusCode),
+                $context
+            );
+
+            throw new \RuntimeException(\sprintf('%s (code %d)', Response::$statusTexts[$statusCode] ?? 'Erreur inconnue', $statusCode));
         }
 
         return null;

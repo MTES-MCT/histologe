@@ -155,31 +155,33 @@ class DocumentIAServiceTest extends TestCase
         $this->assertSame('FAILED', $result['status']);
     }
 
-    public function testExecuteWorkflowBadRequestLogsError(): void
+    public function testExecuteWorkflowBadRequestLogsErrorAndThrows(): void
     {
         $mockHttpClient = new MockHttpClient(new MockResponse('{}', ['http_code' => 400]));
 
         $this->logger->expects($this->once())->method('error');
         $this->logger->expects($this->never())->method('warning');
 
-        $this->assertNull(
-            $this->createService($mockHttpClient)->executeWorkflow(self::WORKFLOW_ID, $this->getUploadedFile())
-        );
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Bad Request (code 400)');
+
+        $this->createService($mockHttpClient)->executeWorkflow(self::WORKFLOW_ID, $this->getUploadedFile());
     }
 
-    public function testExecuteWorkflowTimeoutLogsWarning(): void
+    public function testExecuteWorkflowTimeoutLogsErrorAndThrows(): void
     {
         $mockHttpClient = new MockHttpClient(new MockResponse('{}', ['http_code' => 408]));
 
-        $this->logger->expects($this->once())->method('warning');
-        $this->logger->expects($this->never())->method('error');
+        $this->logger->expects($this->once())->method('error');
+        $this->logger->expects($this->never())->method('warning');
 
-        $this->assertNull(
-            $this->createService($mockHttpClient)->executeWorkflow(self::WORKFLOW_ID, $this->getUploadedFile())
-        );
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Request Timeout (code 408)');
+
+        $this->createService($mockHttpClient)->executeWorkflow(self::WORKFLOW_ID, $this->getUploadedFile());
     }
 
-    public function testExecuteWorkflowTransportExceptionLogsError(): void
+    public function testExecuteWorkflowTransportExceptionLogsErrorAndThrows(): void
     {
         $mockHttpClient = new MockHttpClient(static function (): MockResponse {
             throw new TransportException('Connection refused');
@@ -188,9 +190,10 @@ class DocumentIAServiceTest extends TestCase
         $this->logger->expects($this->once())->method('error')
             ->with('Connection refused', $this->arrayHasKey('workflow_id'));
 
-        $this->assertNull(
-            $this->createService($mockHttpClient)->executeWorkflow(self::WORKFLOW_ID, $this->getUploadedFile())
-        );
+        $this->expectException(TransportException::class);
+        $this->expectExceptionMessage('Connection refused');
+
+        $this->createService($mockHttpClient)->executeWorkflow(self::WORKFLOW_ID, $this->getUploadedFile());
     }
 
     public function testExecuteWorkflowDisabledDoesNotCallApi(): void
