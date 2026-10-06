@@ -279,13 +279,14 @@ class EsaboraManager
     {
         $signalement = $affectation->getSignalement();
         $intervention = $this->interventionRepository->findOneBy(['providerId' => $dossierArreteSISH->getArreteId()]);
+        $hasArreteModificatif = null !== $dossierArreteSISH->getArreteModificatifDate();
         $additionalInformation = [
             'arrete_numero' => $dossierArreteSISH->getArreteNumero(),
             'arrete_type' => $dossierArreteSISH->getArreteType(),
             'arrete_mainlevee_date' => $dossierArreteSISH->getArreteMLDate(),
             'arrete_mainlevee_numero' => $dossierArreteSISH->getArreteMLNumero(),
-            'arrete_modificatif_date' => $dossierArreteSISH->getArreteModificatifDate(),
-            'arrete_modificatif_numero' => $dossierArreteSISH->getArreteModificatifNumero(),
+            'arrete_modificatif_date' => $hasArreteModificatif ? $dossierArreteSISH->getArreteModificatifDate() : null,
+            'arrete_modificatif_numero' => $hasArreteModificatif ? $dossierArreteSISH->getArreteModificatifNumero() : null,
         ];
 
         if (null !== $intervention) {
@@ -566,8 +567,7 @@ class EsaboraManager
      */
     private function isNewArreteModificatif(array $currentAdditionalInformation, array $mergedAdditionalInformation): bool
     {
-        return (empty($currentAdditionalInformation['arrete_modificatif_date']) && !empty($mergedAdditionalInformation['arrete_modificatif_date']))
-            || (empty($currentAdditionalInformation['arrete_modificatif_numero']) && !empty($mergedAdditionalInformation['arrete_modificatif_numero']));
+        return empty($currentAdditionalInformation['arrete_modificatif_date']) && !empty($mergedAdditionalInformation['arrete_modificatif_date']);
     }
 
     /**

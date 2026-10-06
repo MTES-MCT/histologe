@@ -78,7 +78,7 @@ class InterventionDescriptionGenerator
     public static function buildDescriptionArreteCreated(DossierArreteSISH $dossierArreteSISH): string
     {
         if ($dossierArreteSISH->getArreteMLDate()) {
-            if ($dossierArreteSISH->getArreteModificatifNumero()) {
+            if ($dossierArreteSISH->getArreteModificatifDate()) {
                 return \sprintf(
                     'Un arrêté de mainlevée %s du %s a été pris pour l\'arrêté modificatif %s du %s dans le dossier de n°%s.',
                     $dossierArreteSISH->getArreteMLNumero(),
@@ -99,7 +99,7 @@ class InterventionDescriptionGenerator
             );
         }
 
-        if ($dossierArreteSISH->getArreteModificatifNumero()) {
+        if ($dossierArreteSISH->getArreteModificatifDate()) {
             return \sprintf(
                 'Un arrêté modificatif %s en date du %s a été pris concernant l\'arrêté %s du %s.',
                 $dossierArreteSISH->getArreteModificatifNumero(),
@@ -154,8 +154,8 @@ class InterventionDescriptionGenerator
         $oldModificatifNumero = $oldAdditionalInformation['arrete_modificatif_numero'] ?? null;
         $newModificatifNumero = $dossierArreteSISH->getArreteModificatifNumero();
 
-        if (!empty($newModificatifDate) || !empty($newModificatifNumero)) {
-            if ($oldModificatifDate !== $newModificatifDate && !empty($oldModificatifDate) && !empty($newModificatifDate)) {
+        if (!empty($newModificatifDate)) {
+            if ($oldModificatifDate !== $newModificatifDate && !empty($oldModificatifDate)) {
                 $messages[] = \sprintf(
                     'La date de l\'arrêté modificatif dans %s a été modifiée ; La nouvelle date est %s.',
                     EsaboraSISHService::NAME_SI,
