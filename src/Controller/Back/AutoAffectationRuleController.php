@@ -128,10 +128,8 @@ class AutoAffectationRuleController extends AbstractController
         }
         // Les partenaires et zones de la règle ont pu être archivés, supprimés ou déplacés depuis son archivage
         $errors = [];
-        foreach (['partnerToExclude', 'zoneToInclude', 'zoneToExclude'] as $property) {
-            foreach ($validator->validateProperty($autoAffectationRule, $property) as $violation) {
-                $errors[] = $violation->getMessage();
-            }
+        foreach ($validator->validate($autoAffectationRule) as $violation) {
+            $errors[] = $violation->getMessage();
         }
         if (!empty($errors)) {
             $flashMessage = [
