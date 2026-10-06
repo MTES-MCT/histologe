@@ -171,3 +171,4 @@ jobs:
           MAINTENANCE_ENABLE: 0
           CLAMAV_STRATEGY: 'clamd_network'
           CLAMAV_HOST: 127.0.0.1
+          METABASE_SECRET_KEY: ${{ secrets.METABASE_SECRET_KEY }}
