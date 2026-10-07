@@ -2301,7 +2301,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
     public function hasVisitePlannedForPartner(Partner $partner): bool
     {
         foreach ($this->interventions as $intervention) {
-            if ($intervention->getPartner()->getId() === $partner->getId()
+            if ($intervention->getPartner()?->getId() === $partner->getId()
                 && Intervention::STATUS_PLANNED === $intervention->getStatus()
                 && InterventionType::VISITE === $intervention->getType()) {
                 return true;
