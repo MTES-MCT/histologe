@@ -220,7 +220,7 @@ class PartnerRepository extends ServiceEntityRepository
             ->setParameter('signalement', $signalement);
         $qb->andWhere('REGEXP(p.competence, :regexp) = true')
             ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
-        $qb->andWhere('a.status IN (:statuses)')
+        $qb->andWhere('a.statut IN (:statuses)')
             ->setParameter('statuses', [AffectationStatus::WAIT, AffectationStatus::ACCEPTED]);
 
         return $qb->getQuery()->getResult();
