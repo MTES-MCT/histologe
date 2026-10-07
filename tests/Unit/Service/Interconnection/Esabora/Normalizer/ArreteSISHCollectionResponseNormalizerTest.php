@@ -191,4 +191,86 @@ class ArreteSISHCollectionResponseNormalizerTest extends TestCase
         $this->assertEquals('ML001', $arreteMainLevee->getArreteMLNumero());
         $this->assertEquals('07/08/2023', $arreteMainLevee->getArreteMLDate());
     }
+
+    public function testNormalizeDoesNotSplitWhenArreteWithModificatifNumeroWithoutDate(): void
+    {
+        $item = new DossierArreteSISH([
+            'keyDataList' => [null, 600],
+            'columnDataList' => [
+                'Histologe',
+                '00000000-0000-0000-2023-000000000010',
+                '2023/DD13/0010',
+                '25/01/2026',
+                'AP45OL023',
+                'Arrêté L.511-11 - Suroccupation',
+                null,
+                null,
+                null,
+                'APMOD45K08N',
+            ],
+        ]);
+
+        $response = $this->createMock(DossierArreteSISHCollectionResponse::class);
+        $response->method('getCollection')->willReturn([$item]);
+
+        $normalizer = new ArreteSISHCollectionResponseNormalizer();
+        $normalizedResponse = $normalizer->normalize($response);
+
+        $this->assertCount(1, $normalizedResponse->getCollection());
+        $result = $normalizedResponse->getCollection()[0];
+        $this->assertEquals(600, $result->getArreteId());
+        $this->assertEquals('AP45OL023', $result->getArreteNumero());
+        $this->assertEquals('25/01/2026', $result->getArreteDate());
+        $this->assertEquals('APMOD45K08N', $result->getArreteModificatifNumero());
+        $this->assertNull($result->getArreteModificatifDate());
+        $this->assertNull($result->getArreteMLNumero());
+        $this->assertNull($result->getArreteMLDate());
+    }
+
+    public function testNormalizeSplitsWhenArreteAndMainLeveeWithIncompleteModificatif(): void
+    {
+        $item = new DossierArreteSISH([
+            'keyDataList' => [null, 600],
+            'columnDataList' => [
+                'Histologe',
+                '00000000-0000-0000-2023-000000000010',
+                '2023/DD13/0010',
+                '25/01/2026',
+                'AP45OL023',
+                'Arrêté L.511-11 - Suroccupation',
+                '27/01/2026',
+                'APML45K09O',
+                null,
+                'APMOD45K08N',
+            ],
+        ]);
+
+        $response = $this->createMock(DossierArreteSISHCollectionResponse::class);
+        $response->method('getCollection')->willReturn([$item]);
+
+        $normalizer = new ArreteSISHCollectionResponseNormalizer();
+        $normalizedResponse = $normalizer->normalize($response);
+
+        $this->assertCount(2, $normalizedResponse->getCollection());
+
+        [$arreteOnly, $mainLevee] = $normalizedResponse->getCollection();
+
+        // État 1 : Arrêté initial
+        $this->assertEquals(600, $arreteOnly->getArreteId());
+        $this->assertEquals('AP45OL023', $arreteOnly->getArreteNumero());
+        $this->assertEquals('25/01/2026', $arreteOnly->getArreteDate());
+        $this->assertNull($arreteOnly->getArreteModificatifNumero());
+        $this->assertNull($arreteOnly->getArreteModificatifDate());
+        $this->assertNull($arreteOnly->getArreteMLNumero());
+        $this->assertNull($arreteOnly->getArreteMLDate());
+
+        // État 2 : Arrêté + mainlevée (sans modificatif)
+        $this->assertEquals(600, $mainLevee->getArreteId());
+        $this->assertEquals('AP45OL023', $mainLevee->getArreteNumero());
+        $this->assertEquals('25/01/2026', $mainLevee->getArreteDate());
+        $this->assertEquals('APMOD45K08N', $mainLevee->getArreteModificatifNumero());
+        $this->assertNull($mainLevee->getArreteModificatifDate());
+        $this->assertEquals('APML45K09O', $mainLevee->getArreteMLNumero());
+        $this->assertEquals('27/01/2026', $mainLevee->getArreteMLDate());
+    }
 }

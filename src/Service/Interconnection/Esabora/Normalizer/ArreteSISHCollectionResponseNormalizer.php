@@ -15,7 +15,7 @@ class ArreteSISHCollectionResponseNormalizer
         foreach ($dossierArreteSISHCollectionResponse->getCollection() as $item) {
             $hasArrete = null !== $item->getDossNum();
             $hasArreteMainLevee = null !== $item->getArreteMLNumero();
-            $hasArreteModificatif = null !== $item->getArreteModificatifNumero();
+            $hasArreteModificatif = null !== $item->getArreteModificatifDate();
 
             // Aucun split nécessaire si l'arrêté n'a ni modificatif ni mainlevée.
             // Sinon, on reconstruit les états successifs : arrêté => modificatif => mainlevée.

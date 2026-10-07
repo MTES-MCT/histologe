@@ -118,6 +118,37 @@ class InterventionDescriptionGeneratorTest extends TestCase
         $this->assertEquals("Un arrêté de mainlevée ML001 du 07/08/2023 a été pris pour l'arrêté modificatif AM001 du 01/07/2023 dans le dossier de n°2023/DD13/0010.", $description);
     }
 
+    public function testArreteInitialWithModificatifNumeroWithoutDateDescriptionOnInterventionCreated(): void
+    {
+        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
+        $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
+        $dossierArreteSISH->method('getDossNum')->willReturn('2023/DD13/0010');
+        $dossierArreteSISH->method('getArreteType')->willReturn('Arrêté L.511-11 - Suroccupation');
+        $dossierArreteSISH->method('getArreteMLDate')->willReturn(null);
+        $dossierArreteSISH->method('getArreteMLNumero')->willReturn(null);
+        $dossierArreteSISH->method('getArreteModificatifNumero')->willReturn('AM001');
+        $dossierArreteSISH->method('getArreteModificatifDate')->willReturn(null);
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH);
+        $this->assertEquals("L'arrêté 2023/DD13/00664 du 14/06/2023 a été pris dans le dossier de n°2023/DD13/0010.<br>Type arrêté : Arrêté L.511-11 - Suroccupation<br>", $description);
+    }
+
+    public function testArreteMainLeveeAvecModificatifNumeroSansDateDescriptionOnInterventionCreated(): void
+    {
+        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
+        $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
+        $dossierArreteSISH->method('getArreteModificatifNumero')->willReturn('AM001');
+        $dossierArreteSISH->method('getArreteModificatifDate')->willReturn(null);
+        $dossierArreteSISH->method('getArreteMLDate')->willReturn('07/08/2023');
+        $dossierArreteSISH->method('getArreteMLNumero')->willReturn('ML001');
+        $dossierArreteSISH->method('getDossNum')->willReturn('2023/DD13/0010');
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteCreated($dossierArreteSISH);
+        $this->assertEquals("Un arrêté de mainlevée ML001 du 07/08/2023 a été pris pour l'arrêté 2023/DD13/00664 du 14/06/2023 dans le dossier de n°2023/DD13/0010.", $description);
+    }
+
     public function testArreteDescriptionOnInterventionUpdated(): void
     {
         $oldAdditionalInformation = [
@@ -315,6 +346,25 @@ class InterventionDescriptionGeneratorTest extends TestCase
 
         $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($interventionWithNullModifNumero, $dossierArreteSISH);
         $this->assertEquals('Le numéro de l\'arrêté modificatif dans SI-Santé Habitat (SI-SH) a été modifié ; Le nouveau numéro est AM001.<br>Type arrêté : ', $description);
+
+        // Test modificatif avec numéro mais sans date : ignoré, ne génère aucune modification
+        $interventionWithoutModif = new Intervention()
+            ->setScheduledAt(new \DateTimeImmutable('2023-06-14'))
+            ->setAdditionalInformation([
+                'arrete_numero' => '2023/DD13/00664',
+                'arrete_type' => 'INSALUBRITE',
+                'arrete_modificatif_date' => null,
+                'arrete_modificatif_numero' => null,
+            ]);
+
+        $dossierArreteSISH = $this->createMock(DossierArreteSISH::class);
+        $dossierArreteSISH->method('getArreteNumero')->willReturn('2023/DD13/00664');
+        $dossierArreteSISH->method('getArreteDate')->willReturn('14/06/2023');
+        $dossierArreteSISH->method('getArreteModificatifDate')->willReturn(null);
+        $dossierArreteSISH->method('getArreteModificatifNumero')->willReturn('AM001');
+
+        $description = InterventionDescriptionGenerator::buildDescriptionArreteUpdated($interventionWithoutModif, $dossierArreteSISH);
+        $this->assertNull($description);
     }
 
     public function testArreteDescriptionOnMainLeveeCreated(): void
