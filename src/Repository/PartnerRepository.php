@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\UserStatus;
@@ -219,6 +220,8 @@ class PartnerRepository extends ServiceEntityRepository
             ->setParameter('signalement', $signalement);
         $qb->andWhere('REGEXP(p.competence, :regexp) = true')
             ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
+        $qb->andWhere('a.status IN (:statuses)')
+            ->setParameter('statuses', [AffectationStatus::WAIT, AffectationStatus::ACCEPTED]);
 
         return $qb->getQuery()->getResult();
     }
