@@ -1,0 +1,172 @@
+{% extends 'back/base_bo.html.twig' %}
+
+{% block title %}Outil de tests Document IA{% endblock %}
+
+{% block content %}
+    <section class="fr-pt-4v">
+        {% include 'back/breadcrumb_bo.html.twig' with {
+            'level2Title': 'Outils SA',
+            'level2Link': '',
+            'level2Label': '',
+            'level3Title': 'Outil de tests Document IA',
+            'level3Link': path('back_tools_document_ia'),
+        } %}
+        {% if document_ia_enable %}
+            <div class="fr-alert fr-alert--info fr-mb-5v">
+                <p>
+                    Plus d'informations sur l'API Document IA sur le site du service :
+                    <a href="https://guides.ia.numerique.gouv.fr/socle-interministerielle-dintelligence-artificielle-generative/documentia-votre-pipeline-danalyse-documentaire" target="_blank" rel="noopener">
+                        https://guides.ia.numerique.gouv.fr/socle-interministerielle-dintelligence-artificielle-generative/documentia-votre-pipeline-danalyse-documentaire
+                    </a>
+                </p>
+                <hr>
+                <p class="fr-mb-1v">Types de fichiers acceptés par la plateforme : PDF, JPG, PNG, max 25MB</p>
+            </div>
+
+            <header>
+                <div class="fr-grid-row">
+                    <div class="fr-col-12">
+                        <h1>Outil de tests Document IA</h1>
+                        <p>
+                            Uploadez un document PDF, JPG ou PNG (max 25MB) pour effectuer une analyse.
+                        </p>
+                    </div>
+                    <div class="fr-col-12">
+                        {% if documentIAWorkflows %}
+                            <h2>Workflows disponibles :</h2>
+                            <ul>
+                                {% for workflow in documentIAWorkflows %}
+                                    <li><strong>ID : {{ workflow.id }}</strong> : {{ workflow.name }} - {{ workflow.description }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <div class="fr-alert fr-alert--error">
+                                <h3 class="fr-alert__title">La liste des workflows est vide</h3>
+                                <p>Problème de connexion ?</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </header>
+            
+            {% if results %}
+                {% import _self as documentIA %}
+                <div class="fr-my-5v">
+                    <h2>Résultats :</h2>
+                    <p>
+                        Exécution <strong>{{ results.id ?? '-' }}</strong>
+                        {% if results.status == 'SUCCESS' %}
+                            <span class="fr-badge fr-badge--success">Succès</span>
+                        {% elseif results.status == 'FAILED' %}
+                            <span class="fr-badge fr-badge--error">Échec</span>
+                        {% else %}
+                            <span class="fr-badge fr-badge--info">{{ results.status ?? 'Inconnu' }}</span>
+                        {% endif %}
+                        {% if results.data.total_processing_time_ms is defined %}
+                            - traitée en {{ (results.data.total_processing_time_ms / 1000)|number_format(1, ',') }} s
+                        {% endif %}
+                    </p>
+
+                    {% if results.status == 'FAILED' %}
+                        <div class="fr-alert fr-alert--error fr-mb-3v">
+                            <p><strong>{{ results.data.error_type ?? 'Erreur' }}</strong> : {{ results.data.error_message ?? '' }}</p>
+                            {% if results.data.failed_step ?? null %}
+                                <p>Étape en échec : {{ results.data.failed_step }}</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% set result = results.data.result ?? null %}
+
+                    {% if result.classification ?? null %}
+                        <h3>Classification</h3>
+                        <ul>
+                            <li>Type de document : <strong>{{ result.classification.document_type }}</strong></li>
+                            <li>Confiance : {{ (result.classification.confidence * 100)|round }} %</li>
+                            <li>Explication : {{ result.classification.explanation }}</li>
+                        </ul>
+                    {% endif %}
+
+                    {% if result.extraction ?? null %}
+                        <h3>Données extraites ({{ result.extraction.type }})</h3>
+                        {% if result.extraction.properties is not empty %}
+                            {{ documentIA.properties(result.extraction.properties) }}
+                        {% else %}
+                            <p>Aucune donnée extraite.</p>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if (result.barcodes ?? []) is not empty %}
+                        <h3>Codes-barres détectés ({{ result.barcodes|length }})</h3>
+                        <pre>{{ result.barcodes|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES')) }}</pre>
+                    {% endif %}
+
+                    <details class="fr-mt-3v">
+                        <summary>Réponse brute (JSON)</summary>
+                        <pre>{{ results|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_UNICODE') b-or constant('JSON_UNESCAPED_SLASHES')) }}</pre>
+                    </details>
+                </div>
+            {% endif %}
+            
+            {% if documentIAWorkflows %}
+            <div class="fr-my-5v">
+                <h2>Analyser un fichier :</h2>
+                {{ form_start(documentIAForm) }}
+                    {{ form_row(documentIAForm.workflowId) }}
+                    {{ form_row(documentIAForm.file) }}
+                    <div class="fr-grid-row fr-grid-row--middle">
+                        {{ form_widget(documentIAForm.submit) }}
+                    </div>
+                    {{ form_row(documentIAForm._token) }}
+                {{ form_end(documentIAForm) }}
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="fr-alert fr-alert--warning fr-my-5v">
+                <p>L'outil Document IA est désactivé.</p>
+            </div>
+            <img alt="BOOH!" src="{{ asset('img/easter/casper.png') }}">
+        {% endif %}
+    </section>
+{% endblock %} 
+
+{# Affiche récursivement une liste de GenericProperty {name, value, type} renvoyée par Document IA #}
+{% macro properties(properties) %}
+    {% import _self as documentIA %}
+    <div class="fr-table fr-table--sm fr-mb-2v">
+        <div class="fr-table__wrapper">
+            <div class="fr-table__container">
+                <div class="fr-table__content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Champ</th>
+                                <th scope="col">Valeur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for property in properties %}
+                                <tr>
+                                    <td>{{ property.name|replace({'_': ' '})|capitalize }}</td>
+                                    <td>
+                                        {% if property.value is iterable and property.value is not empty and (property.value|first).name is defined %}
+                                            {{ documentIA.properties(property.value) }}
+                                        {% elseif property.value is iterable %}
+                                            {{ property.value|join(', ') }}
+                                        {% elseif property.value is same as(true) %}
+                                            Oui
+                                        {% elseif property.value is same as(false) %}
+                                            Non
+                                        {% else %}
+                                            {{ property.value ?? '-' }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
