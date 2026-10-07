@@ -315,10 +315,10 @@ export function createRnbMapController({
     },
     clearSelection() {
       if (activePreviousRnbId !== undefined) {
-        vectorTileLayer.setFeatureStyle(activePreviousRnbId, buildingStyles.initial)
-        const idx = currentBuildings.findIndex((b) => b.rnb_id === activePreviousRnbId)
-        if (idx >= 0) updateMarker(idx, 'default')
-        activePreviousRnbId = undefined
+        vectorTileLayer.setFeatureStyle(activePreviousRnbId, buildingStyles.initial);
+        const idx = currentBuildings.findIndex((b) => b.rnb_id === activePreviousRnbId);
+        if (idx >= 0) updateMarker(idx, 'default');
+        activePreviousRnbId = undefined;
       }
     },
   };

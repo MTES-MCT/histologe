@@ -80,7 +80,8 @@
                     <textarea class="fr-input fr-input--no-resize" id="informationLogementAutreSituationVulnerabilite" name="autreSituationVulnerabilite">{{ signalement.autreSituationVulnerabilite }}</textarea>
                 </div>
 
-                <div class="fr-input-group">
+                <div class="fr-input-group" id="informationLogementDateEntree-container">
+                    {% block date_entree_field %}
                     {% set dateEntree = '' %}
                     {% if signalement.dateEntree %}
                         {% set dateEntree = signalement.dateEntree.format('Y-m-d') %}
@@ -94,6 +95,7 @@
                         }}
                     </label>
                     <input class="fr-input" type="date" id="informationLogementDateEntree" name="dateEntree" value="{{ dateEntree }}">
+                    {% endblock %}
                 </div>
 
                 <div class="fr-input-group">
@@ -121,12 +123,6 @@
                         <option value="non" {{ bailDpeBail == 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ bailDpeBail == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                     </select>
-                </div>
-
-                <div class="fr-input-group">
-                    {% set bailDpeInvariant = signalement.numeroInvariant %}
-                    <label class="fr-label" for="informationLogementBailDpeInvariant">Invariant fiscal (facultatif)</label>
-                    <input class="fr-input" type="text" id="informationLogementBailDpeInvariant" name="bailDpeInvariant"  maxlength="12" value="{{ bailDpeInvariant }}">
                 </div>
 
                 <div class="fr-select-group">
@@ -171,6 +167,8 @@
                     <input class="fr-input" type="number" id="informationLogementAnneeConstruction" name="anneeConstruction" value="{{ anneeConstruction }}" maxlength="4">
                 </div>
                 
+                <div id="autresOccupantsDesordre-container">
+                {% block autres_occupants_desordre_field %}
                 {% if signalement.natureLogement == 'appartement' %}
                 <div class="fr-select-group">
                     {% set autresOccupantsDesordre = signalement.autresOccupantsDesordre %}
@@ -184,6 +182,14 @@
                     </select>
                 </div>
                 {% endif %}
+                {% endblock %}
+                </div>
+
+                <div class="fr-input-group">
+                    {% set bailDpeInvariant = signalement.numeroInvariant %}
+                    <label class="fr-label" for="informationLogementBailDpeInvariant">Invariant fiscal (facultatif)</label>
+                    <input class="fr-input" type="text" id="informationLogementBailDpeInvariant" name="bailDpeInvariant"  maxlength="12" value="{{ bailDpeInvariant }}">
+                </div>
 
                 <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_informations_logement_'~signalement.id) }}">
             </form>

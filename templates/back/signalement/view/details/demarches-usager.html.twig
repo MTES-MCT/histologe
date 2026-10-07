@@ -24,15 +24,6 @@
                 {{ signalement.proprioAvertiAt|date('m/Y') }}
             {% endif %}
         </div>
-        <div class="fr-mb-2v">
-        <span class="fr-text--medium">Réponse du bailleur :</span>
-            {% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailReponse %}
-                <br>
-                <div class="fr-callout">
-                    <p class="fr-callout__text">{{ signalement.informationProcedure.infoProcedureBailReponse | nl2br  }}</p>
-                </div>
-            {% endif %}
-        </div>
         {% if signalement.isLogementSocial %}
             <div class="fr-mb-2v">
                 <span class="fr-text--medium">Numéro de réclamation :</span>
@@ -41,6 +32,15 @@
                 {% endif %}
             </div>        
         {% endif %}
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Réponse du bailleur :</span>
+            {% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailReponse %}
+                <br>
+                <div class="fr-callout">
+                    <p class="fr-callout__text">{{ signalement.informationProcedure.infoProcedureBailReponse | nl2br  }}</p>
+                </div>
+            {% endif %}
+        </div>
     </div>
     <div class="fr-col-12 fr-col-md-6">
         <h4 class="fr-h6">Auprès de l'assurance</h4>

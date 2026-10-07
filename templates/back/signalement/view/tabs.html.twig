@@ -5,6 +5,7 @@
                 {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION or is_granted('AFFECTATION_ACCEPT_OR_REFUSE', affectation) %}aria-selected="false"{% else %}aria-selected="true"{% endif %}
                 aria-controls="tabpanel-activite-panel">Activité PDLHI ({{ signalement.suivis|length }})</button>
         </li>
+        {# TODO à la suppression de FEATURE_ORIENTATION : ne garder que les onglets Orientation et Détails du dossier #}
         {% if feature_orientation %}
             <li role="presentation">
                 <button id="tabpanel-orientation" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-orientation-panel">Orientation</button>
@@ -39,6 +40,9 @@
     <div id="tabpanel-activite-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-activite" tabindex="0">
         {% include 'back/signalement/view/tabs/tab-activite.html.twig' %}
     </div>
+    {# TODO à la suppression de FEATURE_ORIENTATION : ne garder que les onglets Orientation et Détails du dossier, et supprimer les templates de l'ancien affichage :
+       tabs/tab-situation.html.twig, tabs/tab-foyer.html.twig, criticite-qualifications.html.twig, nde.html.twig
+       et information/information-*.html.twig (user-declaration.html.twig est conservé, utilisé par tab-details) #}
     {% if feature_orientation %}
         <div id="tabpanel-orientation-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-orientation" tabindex="0">
             {% include 'back/signalement/view/tabs/tab-orientation.html.twig' %}

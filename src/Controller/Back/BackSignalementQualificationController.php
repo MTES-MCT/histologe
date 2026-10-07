@@ -19,6 +19,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+// TODO à la suppression de FEATURE_ORIENTATION : supprimer ce contrôleur (route remplacée par SignalementEditController::editConsommationEnergertique)
+// ainsi que _panel-edit-nde.html.twig, nde.html.twig, form_nde.js, SignalementManager::updateFromSignalementQualification
+// et les tests associés (BackSignalementQualificationControllerTest, SignalementManagerTest)
 #[Route('/bo/signalements')]
 class BackSignalementQualificationController extends AbstractController
 {
@@ -77,7 +80,6 @@ class BackSignalementQualificationController extends AbstractController
         $htmlTargetContents = [
             ['target' => '#signalement-bo-nde-container', 'content' => $nde],
         ];
-        // TODO à la suppression de FEATURE_ORIENTATION : ne garder que la cible du nouvel onglet
         if ($this->featureOrientation) {
             $htmlTargetContents[] = [
                 'target' => '#signalement-description-logement-container',

@@ -64,6 +64,11 @@
                 </div>
 
                 <div class="fr-input-group">
+                    <label class="fr-label" for="procedureDemarchesinfoProcedureBailNumero">Numéro de réclamation (si bailleur contacté et logement social) (facultatif)</label>
+                    <textarea class="fr-input fr-input--no-resize" id="procedureDemarchesinfoProcedureBailNumero" name="infoProcedureBailNumero">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailNumero ? signalement.informationProcedure.infoProcedureBailNumero : '' }}</textarea>
+                </div>
+
+                <div class="fr-input-group">
                     <label class="fr-label" for="procedureDemarchesinfoProcedureBailReponse">Réponse bailleur (si bailleur contacté)
                         {{ show_label_facultatif(
                             'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
@@ -72,11 +77,6 @@
                             signalement.isV2)
                         }}</label>
                     <textarea class="fr-input fr-input--no-resize" id="procedureDemarchesinfoProcedureBailReponse" name="infoProcedureBailReponse">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailReponse ? signalement.informationProcedure.infoProcedureBailReponse : '' }}</textarea>
-                </div>
-
-                <div class="fr-input-group">
-                    <label class="fr-label" for="procedureDemarchesinfoProcedureBailNumero">Numéro de réclamation (si bailleur contacté et logement social) (facultatif)</label>
-                    <textarea class="fr-input fr-input--no-resize" id="procedureDemarchesinfoProcedureBailNumero" name="infoProcedureBailNumero">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailNumero ? signalement.informationProcedure.infoProcedureBailNumero : '' }}</textarea>
                 </div>
 
                 <div class="fr-select-group">

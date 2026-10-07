@@ -1,3 +1,4 @@
+// TODO à la suppression de FEATURE_ORIENTATION : supprimer ce fichier et son import dans app-back-bo.ts (remplacé par form_consommation_energetique.js)
 import { jsonResponseHandler } from '../services/component/component_json_response_handler.js';
 
 const formBtn = document.querySelector('#signalement-edit-nde-form-submit');

@@ -228,6 +228,8 @@ class SignalementController extends AbstractController
             $affectationToggleForm = $this->createForm(AffectationToggleType::class, $partners, ['action' => $affectationToggleFormRoute]);
         }
 
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer le calcul de listQualificationStatusesLabelsCheck et listConcludeProcedures, et leur passage au template
+        // (utilisés uniquement par criticite-qualifications.html.twig de l'ancien onglet Situation)
         $listQualificationStatusesLabelsCheck = [];
         if (!$signalement->getSignalementQualifications()->isEmpty()) {
             foreach ($signalement->getSignalementQualifications() as $qualification) {

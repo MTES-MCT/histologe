@@ -20,16 +20,6 @@
                     </select>
                 </div>
 
-                <div class="fr-select-group">
-                    {% set bailleurBeneficiaireFsl = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl : null %}
-                    <label class="fr-label" for="coordonneesBailleurBeneficiaireFsl">Bénéficiaire FSL (facultatif)</label>
-                    <select class="fr-select" id="coordonneesBailleurBeneficiaireFsl" name="beneficiaireFsl">
-                        <option value="" {{ bailleurBeneficiaireFsl not in ['oui', 'non'] ? 'selected' : '' }}></option>
-                        <option value="oui" {{ bailleurBeneficiaireFsl is same as 'oui' ? 'selected' : '' }}>Oui</option>
-                        <option value="non" {{ bailleurBeneficiaireFsl is same as 'non' ? 'selected' : '' }}>Non</option>
-                    </select>
-                </div>
-
                 <div class="fr-input-group">
                     <label class="fr-label" for="coordonneesBailleurRevenuFiscal">Revenu fiscal de référence (facultatif)</label>
                     <input class="fr-input" type="text" id="coordonneesBailleurRevenuFiscal" name="revenuFiscal" value="{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal ?? '0' }}" maxlength="50">
@@ -38,6 +28,16 @@
                 <div class="fr-input-group">
                     <label class="fr-label" for="coordonneesBailleurDateNaissance">Date de naissance (facultatif)</label>
                     <input class="fr-input" type="date" id="coordonneesBailleurDateNaissance" name="dateNaissance" value="{{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissance ?? '' }}">
+                </div>
+
+                <div class="fr-select-group">
+                    {% set bailleurBeneficiaireFsl = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl : null %}
+                    <label class="fr-label" for="coordonneesBailleurBeneficiaireFsl">Bénéficiaire FSL (facultatif)</label>
+                    <select class="fr-select" id="coordonneesBailleurBeneficiaireFsl" name="beneficiaireFsl">
+                        <option value="" {{ bailleurBeneficiaireFsl not in ['oui', 'non'] ? 'selected' : '' }}></option>
+                        <option value="oui" {{ bailleurBeneficiaireFsl is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                        <option value="non" {{ bailleurBeneficiaireFsl is same as 'non' ? 'selected' : '' }}>Non</option>
+                    </select>
                 </div>
                 <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_informations_bailleur_'~signalement.id) }}">
             </form>

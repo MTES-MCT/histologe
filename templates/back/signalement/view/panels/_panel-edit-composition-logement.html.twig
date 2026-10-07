@@ -46,7 +46,8 @@
                     </select>
                 </div>
 
-                <div class="fr-input-group">
+                <div class="fr-input-group" id="compositionLogementSuperficie-container">
+                    {% block superficie_field %}
                     <label class="fr-label" for="compositionLogementSuperficie">Superficie totale (m²)
                         {{ show_label_facultatif(
                             'App\\Dto\\Request\\Signalement\\CompositionLogementRequest',
@@ -56,6 +57,7 @@
                         }}
                     </label>
                     <input class="fr-input" type="number" id="compositionLogementSuperficie" name="superficie" value="{{ signalement.superficie }}" max="9999">
+                    {% endblock %}
                 </div>
 
                 <div class="fr-input-group">

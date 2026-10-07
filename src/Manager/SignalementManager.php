@@ -4,6 +4,7 @@ namespace App\Manager;
 
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
 use App\Dto\Request\Signalement\CompositionLogementRequest;
+use App\Dto\Request\Signalement\ConsommationEnergetiqueRequest;
 use App\Dto\Request\Signalement\CoordonneesAgenceRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurOldRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
@@ -277,6 +278,7 @@ class SignalementManager
         return $signalement;
     }
 
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette méthode (remplacée par updateFromConsommationEnergetiqueRequest)
     /**
      * @throws \DateMalformedStringException
      */
@@ -748,10 +750,6 @@ class SignalementManager
         if ('appartement' === $signalement->getNatureLogement()) {
             $signalement->setAutresOccupantsDesordre($informationsLogementRequest->getAutresOccupantsDesordre());
         }
-
-        // TODO bloc Consommation énergétique : DPE et classe énergétique ne sont plus modifiables ici.
-        // La mise à jour des détails / du statut de la qualification NDE à partir du DPE
-        // (cf. updateFromInformationsLogementOldRequest) doit être reprise là où ils seront édités.
 
         $informationComplementaire = new InformationComplementaire();
         if (!empty($signalement->getInformationComplementaire())) {
@@ -1360,6 +1358,103 @@ class SignalementManager
             $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         }
 
+        $this->entityManager->persist($signalement);
+
+        $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $user,
+            signalement: $signalement,
+            type: SuiviDelayedType::BO_EDIT_PROCEDURE_DEMARCHES,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
+        );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function updateFromConsommationEnergetiqueRequest(
+        Signalement $signalement,
+        ConsommationEnergetiqueRequest $consommationEnergetiqueRequest,
+    ): bool {
+        // mise à jour du signalement
+        if ($consommationEnergetiqueRequest->getDateEntree() || $consommationEnergetiqueRequest->getClasseEnergetique()) {
+            $typeCompositionLogement = new TypeCompositionLogement();
+            if (!empty($signalement->getTypeCompositionLogement())) {
+                $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
+            }
+            if ($consommationEnergetiqueRequest->getDateEntree()) {
+                $signalement->setDateEntree(new \DateTimeImmutable($consommationEnergetiqueRequest->getDateEntree()));
+            }
+            if ($consommationEnergetiqueRequest->getClasseEnergetique()) {
+                $typeCompositionLogement
+                    ->setBailDpeClasseEnergetique($consommationEnergetiqueRequest->getClasseEnergetique());
+            }
+            $signalement->setTypeCompositionLogement($typeCompositionLogement);
+        }
+
+        $isSuperficieUpdated = false;
+        if (null !== $consommationEnergetiqueRequest->getSuperficie()
+            && $signalement->getSuperficie() !== $consommationEnergetiqueRequest->getSuperficie()
+        ) {
+            $signalement->setSuperficie($consommationEnergetiqueRequest->getSuperficie());
+            $isSuperficieUpdated = true;
+        }
+
+        $typeCompositionLogement = new TypeCompositionLogement();
+        if (!empty($signalement->getTypeCompositionLogement())) {
+            $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
+        }
+        switch ($consommationEnergetiqueRequest->getDetails()['DPE']) {
+            case true:
+                $typeCompositionLogement->setBailDpeDpe('oui');
+                break;
+            case false:
+                $typeCompositionLogement->setBailDpeDpe('non');
+                break;
+            default:
+                $typeCompositionLogement->setBailDpeDpe('nsp');
+                break;
+        }
+        // DPE avant 2023 : consommation annuelle (kWh/an), sinon consommation en kWh/m²/an
+        $consommationEnergie = $consommationEnergetiqueRequest->getConsommationEnergie();
+        switch ($consommationEnergetiqueRequest->getDateDernierDPE()) {
+            case ConsommationEnergetiqueRequest::RADIO_VALUE_BEFORE_2023:
+                $typeCompositionLogement
+                    ->setDesordresLogementChauffageDetailsDpeAnnee('before2023')
+                    ->setDesordresLogementChauffageDetailsDpeConso(null !== $consommationEnergie ? (string) $consommationEnergie : null);
+                break;
+            case ConsommationEnergetiqueRequest::RADIO_VALUE_AFTER_2023:
+                $typeCompositionLogement
+                    ->setDesordresLogementChauffageDetailsDpeAnnee('post2023')
+                    ->setDesordresLogementChauffageDetailsDpeConsoFinale(null !== $consommationEnergie ? (string) $consommationEnergie : null);
+                break;
+        }
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+        // La superficie est aussi modifiable depuis ce panel : on recalcule les désordres qui en dépendent
+        // - "pièce unique de moins de 9 m²" (via le loader des désordres de composition du logement)
+        // - suroccupation (nombre d'occupants rapporté à la superficie), avec recalcul du score
+        if ($isSuperficieUpdated) {
+            $this->desordreCompositionLogementLoader->load($signalement, $typeCompositionLogement);
+            $this->updateDesordresAndScoreWithSuroccupationChanges($signalement);
+        }
+
+        // Mise à jour des détails de la qualification NDE existante (le statut est recalculé ci-dessous)
+        $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(static function ($qualification) {
+            return Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification();
+        })->first();
+        if ($signalementQualificationNDE) {
+            $signalementQualificationNDE->setDetails($consommationEnergetiqueRequest->getDetails());
+        }
+
+        // Recalcul des qualifications : création / suppression / statut de la NDE selon les règles existantes
+        $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $this->entityManager->persist($signalement);
 
         $subscriptionCreated = false;

@@ -21,22 +21,6 @@
                 </div>
 
                 <div class="fr-select-group">
-                    <label class="fr-label" for="situationFoyerIsRelogement">Demande logement social / relogement / mutation
-                        {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
-                            'isRelogement',
-                            signalement.profileDeclarant,
-                            signalement.isV2)
-                        }}
-                    </label>
-                    <select class="fr-select" id="situationFoyerIsRelogement" name="isRelogement">
-                        <option value=""></option>
-                        <option value="oui" {{ signalement.isRelogement is same as true ? 'selected' : '' }}>Oui</option>
-                        <option value="non" {{ signalement.isRelogement is same as false ? 'selected' : '' }}>Non</option>
-                    </select>
-                </div>
-
-                <div class="fr-select-group">
                     {% set isAllocataire = signalement.isAllocataire %}
                     <label class="fr-label" for="situationFoyerIsAllocataire">Allocataire
                         {{ show_label_facultatif(
@@ -72,6 +56,22 @@
                     {% endif %}
                     <label class="fr-label" for="situationFoyerLogementSocialMontantAllocation">Montant allocation (€) (facultatif)</label>
                     <input class="fr-input" type="text" id="situationFoyerLogementSocialMontantAllocation" name="logementSocialMontantAllocation" value="{{ logementSocialMontantAllocation }}">
+                </div>
+
+                <div class="fr-select-group">
+                    <label class="fr-label" for="situationFoyerIsRelogement">Demande logement social / relogement / mutation
+                        {{ show_label_facultatif(
+                            'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
+                            'isRelogement',
+                            signalement.profileDeclarant,
+                            signalement.isV2)
+                        }}
+                    </label>
+                    <select class="fr-select" id="situationFoyerIsRelogement" name="isRelogement">
+                        <option value=""></option>
+                        <option value="oui" {{ signalement.isRelogement is same as true ? 'selected' : '' }}>Oui</option>
+                        <option value="non" {{ signalement.isRelogement is same as false ? 'selected' : '' }}>Non</option>
+                    </select>
                 </div>
 
                 <div class="fr-select-group">

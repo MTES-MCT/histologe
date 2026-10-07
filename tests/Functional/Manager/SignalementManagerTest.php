@@ -3,6 +3,7 @@
 namespace App\Tests\Functional\Manager;
 
 use App\Dto\Request\Signalement\CompositionLogementRequest;
+use App\Dto\Request\Signalement\ConsommationEnergetiqueRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
 use App\Dto\SignalementAffectationClose;
 use App\Entity\Affectation;
@@ -381,6 +382,94 @@ class SignalementManagerTest extends WebTestCase
         $this->assertStringContainsString('Merci de définir le nombre de pièces à vivre', $errorsAsString);
     }
 
+    public function testUpdateFromConsommationEnergetiqueRequestWithDpeBefore2023(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-02']);
+        $consommationEnergetiqueRequest = new ConsommationEnergetiqueRequest(
+            dateEntree: '2021-05-01',
+            dateDernierDPE: ConsommationEnergetiqueRequest::RADIO_VALUE_BEFORE_2023,
+            superficie: 50,
+            consommationEnergie: 30000,
+            dpe: true,
+            classeEnergetique: 'F',
+        );
+
+        $this->signalementManager->updateFromConsommationEnergetiqueRequest($signalement, $consommationEnergetiqueRequest);
+
+        $typeCompositionLogement = $signalement->getTypeCompositionLogement();
+        $this->assertEquals('oui', $typeCompositionLogement->getBailDpeDpe());
+        $this->assertEquals('F', $typeCompositionLogement->getBailDpeClasseEnergetique());
+        $this->assertEquals('before2023', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeAnnee());
+        $this->assertEquals('30000', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeConso());
+        $this->assertEquals(50, $signalement->getSuperficie());
+        $this->assertEquals('2021-05-01', $signalement->getDateEntree()->format('Y-m-d'));
+    }
+
+    public function testUpdateFromConsommationEnergetiqueRequestWithDpeAfter2023(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-02']);
+        $consommationEnergetiqueRequest = new ConsommationEnergetiqueRequest(
+            dateDernierDPE: ConsommationEnergetiqueRequest::RADIO_VALUE_AFTER_2023,
+            consommationEnergie: 300,
+            dpe: false,
+        );
+
+        $this->signalementManager->updateFromConsommationEnergetiqueRequest($signalement, $consommationEnergetiqueRequest);
+
+        $typeCompositionLogement = $signalement->getTypeCompositionLogement();
+        $this->assertEquals('non', $typeCompositionLogement->getBailDpeDpe());
+        $this->assertEquals('post2023', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeAnnee());
+        $this->assertEquals('300', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeConsoFinale());
+    }
+
+    public function testUpdateFromConsommationEnergetiqueRequestWithoutDateDernierDpe(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-02']);
+        $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
+        $typeCompositionLogement
+            ->setDesordresLogementChauffageDetailsDpeAnnee('post2023')
+            ->setDesordresLogementChauffageDetailsDpeConsoFinale('200');
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+        $consommationEnergetiqueRequest = new ConsommationEnergetiqueRequest(
+            consommationEnergie: 999,
+            dpe: null,
+        );
+
+        $this->signalementManager->updateFromConsommationEnergetiqueRequest($signalement, $consommationEnergetiqueRequest);
+
+        $typeCompositionLogement = $signalement->getTypeCompositionLogement();
+        $this->assertEquals('nsp', $typeCompositionLogement->getBailDpeDpe());
+        $this->assertEquals('post2023', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeAnnee());
+        $this->assertEquals('200', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeConsoFinale());
+        $this->assertNull($typeCompositionLogement->getDesordresLogementChauffageDetailsDpeConso());
+    }
+
+    public function testUpdateFromConsommationEnergetiqueRequestWithSuperficieUpdatesDesordres(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-02']);
+        $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
+        $typeCompositionLogement->setCompositionLogementPieceUnique('piece_unique');
+        $signalement
+            ->setTypeCompositionLogement($typeCompositionLogement)
+            ->setSuperficie(20);
+        $desordrePrecision = $this->desordrePrecisionRepository->findOneBy(
+            ['desordrePrecisionSlug' => 'desordres_type_composition_logement_piece_unique_superficie']
+        );
+        $this->assertFalse($signalement->hasDesordrePrecision($desordrePrecision));
+
+        $consommationEnergetiqueRequest = new ConsommationEnergetiqueRequest(superficie: 8);
+
+        $this->signalementManager->updateFromConsommationEnergetiqueRequest($signalement, $consommationEnergetiqueRequest);
+
+        $this->assertEquals(8, $signalement->getSuperficie());
+        $this->assertTrue($signalement->hasDesordrePrecision($desordrePrecision));
+    }
+
     public function testArchive(): void
     {
         /** @var Signalement $signalement */
@@ -401,6 +490,7 @@ class SignalementManagerTest extends WebTestCase
         }
     }
 
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce test (méthode updateFromSignalementQualification supprimée)
     public function testUpdateFromSignalementQualificationWithNdeRequest(): void
     {
         /** @var Signalement $signalement */
@@ -419,6 +509,7 @@ class SignalementManagerTest extends WebTestCase
         $this->assertEquals(50, $signalement->getSuperficie());
     }
 
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce test (méthode updateFromSignalementQualification supprimée)
     public function testUpdateFromSignalementQualificationWithNullNdeRequest(): void
     {
         /** @var Signalement $signalement */

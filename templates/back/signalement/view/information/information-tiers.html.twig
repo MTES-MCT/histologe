@@ -70,7 +70,7 @@
             </div>
         {% endif %}
         <div class="fr-col-12">
-            <strong>Courriel :</strong>
+            <strong>E-mail :</strong>
             {% if signalement.mailDeclarant %}
                 <a href="mailto:{{ signalement.mailDeclarant }}">{{ signalement.mailDeclarant }}</a>
                 {% if show_email_alert(signalement.mailDeclarant) %}

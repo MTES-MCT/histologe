@@ -4,6 +4,7 @@ namespace App\Controller\Back;
 
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
 use App\Dto\Request\Signalement\CompositionLogementRequest;
+use App\Dto\Request\Signalement\ConsommationEnergetiqueRequest;
 use App\Dto\Request\Signalement\CoordonneesAgenceRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurOldRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
@@ -37,6 +38,7 @@ use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\MessageHelper;
 use App\Service\Signalement\PostalCodeHomeChecker;
+use App\Service\Signalement\SignalementQualificationNde;
 use App\Service\SignalementAddressContentService;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -731,6 +733,7 @@ class SignalementEditController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
         EntityManagerInterface $entityManager,
+        SignalementQualificationNde $signalementQualificationNdeService,
     ): JsonResponse {
         // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce contrôle
         if (!$this->featureOrientation) {
@@ -777,7 +780,30 @@ class SignalementEditController extends AbstractController
                 'content' => $this->renderView('back/signalement/view/details/occupation-logement.html.twig', ['signalement' => $signalement]),
             ],
         ];
-        // TODO bloc Consommation énergétique : recharger aussi ce bloc (il affiche la date d'entrée dans le logement)
+        // on met à jour le panel consommation énergétique qui affiche également la date d'entrée dans le logement
+        [$signalementQualificationNDE, $signalementQualificationNDECriticites] = $signalementQualificationNdeService->getSignalementQualificationNdeAndCriticites($signalement);
+        $htmlTargetContents[] = [
+            'target' => '#signalement-consommation-energetique-container',
+            'content' => $this->renderView('back/signalement/view/details/consommation-energetique.html.twig', [
+                'signalement' => $signalement,
+                'signalementQualificationNDE' => $signalementQualificationNDE,
+                'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
+            ]),
+        ];
+        // on met à jour le champ date d'entrée du panel d'édition de la consommation énergétique
+        $htmlTargetContents[] = [
+            'target' => '#signalement-edit-consommation-energetique-date-entree-container',
+            'content' => $this->renderBlockView(
+                'back/signalement/view/panels/_panel-edit-consommation-energetique.html.twig',
+                'date_entree_field',
+                ['signalement' => $signalement]
+            ),
+        ];
+        // on met à jour la pré-évaluation automatique (score et qualifications recalculés) de l'onglet orientation
+        $htmlTargetContents[] = [
+            'target' => '#signalement-pre-evaluation-container',
+            'content' => $this->renderView('back/signalement/view/orientation/pre-evaluation.html.twig', ['signalement' => $signalement]),
+        ];
         $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
         $functions = [['name' => 'applyFilter']];
 
@@ -853,6 +879,7 @@ class SignalementEditController extends AbstractController
         SignalementDraftRequestSerializer $serializer,
         ValidatorInterface $validator,
         SignalementAddressContentService $signalementAddressContentService,
+        SignalementQualificationNde $signalementQualificationNdeService,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         /** @var array<string, mixed> $payload */
@@ -896,6 +923,44 @@ class SignalementEditController extends AbstractController
             $htmlTargetContents[] = [
                 'target' => '#signalement-description-logement-container',
                 'content' => $this->renderView('back/signalement/view/details/description-logement.html.twig', ['signalement' => $signalement]),
+            ];
+            // on met à jour le bloc occupation du logement qui affiche les désordres des autres occupants pour un appartement
+            $htmlTargetContents[] = [
+                'target' => '#signalement-occupation-logement-container',
+                'content' => $this->renderView('back/signalement/view/details/occupation-logement.html.twig', ['signalement' => $signalement]),
+            ];
+            // on met à jour le bloc consommation énergétique dont le calcul dépend de la superficie du logement
+            [$signalementQualificationNDE, $signalementQualificationNDECriticites] = $signalementQualificationNdeService->getSignalementQualificationNdeAndCriticites($signalement);
+            $htmlTargetContents[] = [
+                'target' => '#signalement-consommation-energetique-container',
+                'content' => $this->renderView('back/signalement/view/details/consommation-energetique.html.twig', [
+                    'signalement' => $signalement,
+                    'signalementQualificationNDE' => $signalementQualificationNDE,
+                    'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
+                ]),
+            ];
+            // on met à jour le champ superficie du panel d'édition de la consommation énergétique
+            $htmlTargetContents[] = [
+                'target' => '#signalement-edit-consommation-energetique-superficie-container',
+                'content' => $this->renderBlockView(
+                    'back/signalement/view/panels/_panel-edit-consommation-energetique.html.twig',
+                    'superficie_field',
+                    ['signalement' => $signalement]
+                ),
+            ];
+            // on met à jour le champ autres occupants du panel d'édition des informations du logement (affiché pour un appartement)
+            $htmlTargetContents[] = [
+                'target' => '#autresOccupantsDesordre-container',
+                'content' => $this->renderBlockView(
+                    'back/signalement/view/panels/_panel-edit-informations-logement.html.twig',
+                    'autres_occupants_desordre_field',
+                    ['signalement' => $signalement]
+                ),
+            ];
+            // on met à jour la pré-évaluation automatique (score et qualifications recalculés) de l'onglet orientation
+            $htmlTargetContents[] = [
+                'target' => '#signalement-pre-evaluation-container',
+                'content' => $this->renderView('back/signalement/view/orientation/pre-evaluation.html.twig', ['signalement' => $signalement]),
             ];
         } else {
             $htmlTargetContents[] = [
@@ -968,6 +1033,16 @@ class SignalementEditController extends AbstractController
                 'target' => '#signalement-situation-foyer-container',
                 'content' => $this->renderView('back/signalement/view/details/situation-foyer.html.twig', ['signalement' => $signalement]),
             ],
+        ];
+        // on met à jour le bloc démarches de l'usager dont le numéro de réclamation dépend du logement social
+        $htmlTargetContents[] = [
+            'target' => '#signalement-demarches-usager-container',
+            'content' => $this->renderView('back/signalement/view/details/demarches-usager.html.twig', ['signalement' => $signalement]),
+        ];
+        // on met à jour la pré-évaluation automatique (score et qualifications recalculés) de l'onglet orientation
+        $htmlTargetContents[] = [
+            'target' => '#signalement-pre-evaluation-container',
+            'content' => $this->renderView('back/signalement/view/orientation/pre-evaluation.html.twig', ['signalement' => $signalement]),
         ];
         $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
         $functions = [['name' => 'applyFilter']];
@@ -1083,6 +1158,11 @@ class SignalementEditController extends AbstractController
                 'content' => $this->renderView('back/signalement/view/details/demarches-usager.html.twig', ['signalement' => $signalement]),
             ],
         ];
+        // on met à jour la pré-évaluation automatique (score et qualifications recalculés) de l'onglet orientation
+        $htmlTargetContents[] = [
+            'target' => '#signalement-pre-evaluation-container',
+            'content' => $this->renderView('back/signalement/view/orientation/pre-evaluation.html.twig', ['signalement' => $signalement]),
+        ];
         $htmlTargetContents[] = ['target' => '#list-suivis', 'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement])];
         $functions = [['name' => 'applyFilter']];
 
@@ -1177,5 +1257,115 @@ class SignalementEditController extends AbstractController
         }
 
         return $this->redirectToRoute('back_signalement_view', ['uuid' => $signalement->getUuid()]);
+    }
+
+    #[Route('/{uuid:signalement}/edit-consommation-energetique', name: 'back_signalement_edit_consommation_energetique', methods: 'POST')]
+    #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
+    public function editConsommationEnergertique(
+        Signalement $signalement,
+        Request $request,
+        SignalementManager $signalementManager,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
+        SignalementQualificationNde $signalementQualificationNdeService,
+    ): JsonResponse {
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce contrôle
+        if (!$this->featureOrientation) {
+            throw $this->createNotFoundException();
+        }
+        /** @var array<string, mixed> $payload */
+        $payload = $request->getPayload()->all();
+        $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
+        if (!$this->isCsrfTokenValid('signalement_edit_consommation_energetique_'.$signalement->getId(), $token)) {
+            $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
+
+            return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
+        }
+        /** @var ConsommationEnergetiqueRequest $consommationEnergetiqueRequest */
+        $consommationEnergetiqueRequest = $serializer->deserialize(
+            json_encode($request->getPayload()->all()),
+            ConsommationEnergetiqueRequest::class,
+            'json'
+        );
+        $validationGroups = ['Default'];
+        $validationGroups[] = $signalement->isV2() ? $signalement->getProfileDeclarant()->value : 'EDIT_'.$signalement->getProfileDeclarant()->value;
+
+        $errorMessage = FormHelper::getErrorsFromRequest(
+            $validator,
+            $consommationEnergetiqueRequest,
+            $validationGroups
+        );
+
+        if (!empty($errorMessage)) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST];
+            $response = [...$response, ...$errorMessage];
+
+            return $this->json($response, $response['code']);
+        }
+        $subscriptionCreated = $signalementManager->updateFromConsommationEnergetiqueRequest($signalement, $consommationEnergetiqueRequest);
+        $entityManager->flush();
+        $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'La consommation énergétique a été modifiée.'];
+        if ($subscriptionCreated) {
+            $flashMessages[] = ['type' => 'success', 'title' => 'Abonnement au dossier', 'message' => User::MSG_SUBSCRIPTION_CREATED];
+        }
+        [$signalementQualificationNDE, $signalementQualificationNDECriticites] = $signalementQualificationNdeService->getSignalementQualificationNdeAndCriticites($signalement);
+        $htmlTargetContents = [
+            [
+                'target' => '#signalement-consommation-energetique-container',
+                'content' => $this->renderView('back/signalement/view/details/consommation-energetique.html.twig', [
+                    'signalement' => $signalement,
+                    'signalementQualificationNDE' => $signalementQualificationNDE,
+                    'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
+                ]),
+            ],
+        ];
+
+        // on met à jour le panel occupation-logement qui affiche également la date d'entrée dans le logement
+        $htmlTargetContents[] = [
+            'target' => '#signalement-occupation-logement-container',
+            'content' => $this->renderView('back/signalement/view/details/occupation-logement.html.twig', [
+                'signalement' => $signalement,
+            ]),
+        ];
+
+        // on met à jour le panel description-logement qui affiche également la superficie du logement
+        $htmlTargetContents[] = [
+            'target' => '#signalement-description-logement-container',
+            'content' => $this->renderView('back/signalement/view/details/description-logement.html.twig', [
+                'signalement' => $signalement,
+            ]),
+        ];
+        // on met à jour le champ date d'entrée du panel d'édition des informations du logement
+        $htmlTargetContents[] = [
+            'target' => '#informationLogementDateEntree-container',
+            'content' => $this->renderBlockView(
+                'back/signalement/view/panels/_panel-edit-informations-logement.html.twig',
+                'date_entree_field',
+                ['signalement' => $signalement]
+            ),
+        ];
+        // on met à jour le champ superficie du panel d'édition de la description du logement
+        $htmlTargetContents[] = [
+            'target' => '#compositionLogementSuperficie-container',
+            'content' => $this->renderBlockView(
+                'back/signalement/view/panels/_panel-edit-composition-logement.html.twig',
+                'superficie_field',
+                ['signalement' => $signalement]
+            ),
+        ];
+        // on met à jour la pré-évaluation automatique (score et qualifications recalculés) de l'onglet orientation
+        $htmlTargetContents[] = [
+            'target' => '#signalement-pre-evaluation-container',
+            'content' => $this->renderView('back/signalement/view/orientation/pre-evaluation.html.twig', ['signalement' => $signalement]),
+        ];
+        $htmlTargetContents[] = [
+            'target' => '#list-suivis',
+            'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement]),
+        ];
+
+        $functions = [['name' => 'applyFilter']];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
     }
 }
