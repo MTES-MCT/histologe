@@ -576,6 +576,9 @@ class SignalementEditController extends AbstractController
                     $description .= 'Commentaire : '.HtmlCleaner::cleanFrontEndEntry($form->get('travauxMiseEnConformiteUsagerCommentaire')->getData());
                     $suiviCategory = SuiviCategory::MESSAGE_USAGER_POST_CLOTURE;
                     break;
+                case TravauxMiseEnConformite::NE_SAIT_PAS:
+                    $description = 'L\'usager a indiqué qu\'il ne sait pas si les travaux ont été faits.';
+                    break;
             }
 
             $suiviManager->createSuivi(

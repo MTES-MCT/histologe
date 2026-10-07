@@ -22,7 +22,7 @@ enum ProcedureType: string
     {
         return [
             'NON_DECENCE' => 'Non décence',
-            'RSD' => 'Infraction RSD',
+            'RSD' => 'Infraction RSHS/RSD',
             'INSALUBRITE' => 'Insalubrité',
             'SUSPICION_INSALUBRE' => 'Suspicion d\'insalubrité',
             'MISE_EN_SECURITE_PERIL' => 'Mise en sécurité / Péril',
