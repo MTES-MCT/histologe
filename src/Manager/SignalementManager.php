@@ -322,17 +322,11 @@ class SignalementManager
         if (!empty($signalement->getTypeCompositionLogement())) {
             $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
         }
-        switch ($qualificationNDERequest->getDetails()['DPE']) {
-            case true:
-                $typeCompositionLogement->setBailDpeDpe('oui');
-                break;
-            case false:
-                $typeCompositionLogement->setBailDpeDpe('non');
-                break;
-            default:
-                $typeCompositionLogement->setBailDpeDpe('nsp');
-                break;
-        }
+        $typeCompositionLogement->setBailDpeDpe(match ($qualificationNDERequest->getDPE()) {
+            true => 'oui',
+            false => 'non',
+            default => 'nsp',
+        });
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
         $this->entityManager->persist($signalement);
 
@@ -1410,17 +1404,12 @@ class SignalementManager
         if (!empty($signalement->getTypeCompositionLogement())) {
             $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
         }
-        switch ($consommationEnergetiqueRequest->getDetails()['DPE']) {
-            case true:
-                $typeCompositionLogement->setBailDpeDpe('oui');
-                break;
-            case false:
-                $typeCompositionLogement->setBailDpeDpe('non');
-                break;
-            default:
-                $typeCompositionLogement->setBailDpeDpe('nsp');
-                break;
-        }
+        // match (comparaison stricte) : avec un switch, null (« Ne sait pas ») serait égal à false
+        $typeCompositionLogement->setBailDpeDpe(match ($consommationEnergetiqueRequest->getDPE()) {
+            true => 'oui',
+            false => 'non',
+            default => 'nsp',
+        });
         // DPE avant 2023 : consommation annuelle (kWh/an), sinon consommation en kWh/m²/an
         $consommationEnergie = $consommationEnergetiqueRequest->getConsommationEnergie();
         switch ($consommationEnergetiqueRequest->getDateDernierDPE()) {
