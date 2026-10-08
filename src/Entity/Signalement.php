@@ -1963,12 +1963,7 @@ class Signalement implements EntityHistoryInterface, EntityHistoryCollectionInte
 
     public function removeAffectation(Affectation $affectation): static
     {
-        if ($this->affectations->removeElement($affectation)) {
-            // set the owning side to null (unless already changed)
-            if ($affectation->getSignalement() === $this) {
-                $affectation->setSignalement(null);
-            }
-        }
+        $this->affectations->removeElement($affectation);
 
         return $this;
     }
