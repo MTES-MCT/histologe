@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Bailleur;
+use App\Entity\Enum\InterconnectionAuthType;
 use App\Entity\Enum\PartnerType as EnumPartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
@@ -67,6 +68,8 @@ class PartnerType extends AbstractType
         $partner = $builder->getData();
         $territory = $options['data']->getTerritory();
 
+        $isOAuth2 = $partner instanceof Partner && InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS === $partner->getAuthenticationType();
+
         $builder
             ->add('nom', null, [
                 'label' => 'Nom du partenaire',
@@ -127,6 +130,7 @@ class PartnerType extends AbstractType
                 'showSelectionAsTags' => true,
             ])
             ->add('isEsaboraActive', CheckboxType::class, [
+                'label' => 'Synchronisation Esabora (facultatif)',
                 'attr' => [
                     'class' => 'fr-toggle__input',
                 ],
@@ -134,22 +138,47 @@ class PartnerType extends AbstractType
                 'disabled' => !$this->isAdminTerritory,
             ])
             ->add('esaboraUrl', UrlType::class, [
+                'label' => 'URL Esabora (facultatif)',
                 'required' => false,
                 'disabled' => !$this->isAdmin,
                 'default_protocol' => null,
             ])
+            ->add('isOAuth2', CheckboxType::class, [
+                'label' => 'Connexion OAuth2 (facultatif)',
+                'mapped' => false,
+                'data' => $isOAuth2,
+                'required' => false,
+                'attr' => [
+                    'class' => 'fr-toggle__input',
+                ],
+                'disabled' => !$this->isAdmin,
+            ])
             ->add('esaboraToken', TextType::class, [
+                'label' => 'Token Esabora (facultatif)',
+                'required' => false,
+                'disabled' => !$this->isAdmin,
+            ])
+            ->add('oauth2TokenUrl', UrlType::class, [
+                'label' => 'URL du token OAuth2 (facultatif)',
+                'required' => false,
+                'disabled' => !$this->isAdmin,
+                'default_protocol' => null,
+            ])
+            ->add('oauth2ClientId', TextType::class, [
+                'label' => 'Client ID (facultatif)',
                 'required' => false,
                 'disabled' => !$this->isAdmin,
             ]);
         if ($this->isAdmin) {
             $builder->add('isIdossActive', CheckboxType::class, [
+                'label' => 'Synchronisation iDoss (facultatif)',
                 'attr' => [
                     'class' => 'fr-toggle__input',
                 ],
                 'required' => false,
             ])
             ->add('idossUrl', UrlType::class, [
+                'label' => 'URL Idoss (facultatif)',
                 'required' => false,
                 'default_protocol' => null,
             ]);
@@ -165,6 +194,26 @@ class PartnerType extends AbstractType
         $this->addBailleurSocialField($builder, $territory?->getZip(), $partner);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, fn (FormEvent $event) => $this->handleTerritoryChange($event));
         $builder->addEventListener(FormEvents::PRE_SET_DATA, fn (FormEvent $event) => $this->handleTerritoryChange($event, true));
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+            /** @var Partner $partner */
+            $partner = $event->getData();
+            $form = $event->getForm();
+
+            if ($this->isAdmin && $form->has('isOAuth2')) {
+                $isOAuth2 = (bool) $form->get('isOAuth2')->getData();
+                if ($isOAuth2) {
+                    $partner->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS);
+                } else {
+                    $partner->setAuthenticationType(
+                        !empty($partner->getEsaboraToken())
+                            ? InterconnectionAuthType::STATIC_TOKEN
+                            : null
+                    );
+                    $partner->setOauth2TokenUrl(null);
+                    $partner->setOauth2ClientId(null);
+                }
+            }
+        });
     }
 
     private function handleTerritoryChange(FormEvent $event, bool $isPreSetData = false): void
@@ -209,6 +258,9 @@ class PartnerType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Partner::class,
+            'attr' => [
+                'novalidate' => 'novalidate',
+            ],
             'constraints' => [
                 new Assert\Callback([
                     $this,
@@ -245,12 +297,34 @@ class PartnerType extends AbstractType
     public function validateEsaboraAndIdoss(mixed $value, ExecutionContextInterface $context): void
     {
         if ($value instanceof Partner) {
+            // OAuth2
+            if (InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS === $value->getAuthenticationType()) {
+                if (empty($value->getOauth2TokenUrl())) {
+                    $context->buildViolation('Pour activer la connexion OAuth2, l’URL du token doit être renseignée.')
+                        ->atPath('oauth2TokenUrl')
+                        ->addViolation();
+                }
+                if (empty($value->getOauth2ClientId())) {
+                    $context->buildViolation('Pour activer la connexion OAuth2, le Client ID doit être renseigné.')
+                        ->atPath('oauth2ClientId')
+                        ->addViolation();
+                }
+            }
+
             // Esabora
             if ($value->isEsaboraActive()) {
-                if (empty($value->getEsaboraUrl()) || empty($value->getEsaboraToken())) {
-                    $context->buildViolation('Pour activer Esabora, l’URL et le token doivent être renseignés.')
-                        ->atPath('isEsaboraActive')
-                        ->addViolation();
+                if (InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS === $value->getAuthenticationType()) {
+                    if (empty($value->getEsaboraUrl())) {
+                        $context->buildViolation('Pour activer Esabora, l’URL doit être renseignée.')
+                            ->atPath('isEsaboraActive')
+                            ->addViolation();
+                    }
+                } else {
+                    if (empty($value->getEsaboraUrl()) || empty($value->getEsaboraToken())) {
+                        $context->buildViolation('Pour activer Esabora, l’URL et le token doivent être renseignés.')
+                            ->atPath('isEsaboraActive')
+                            ->addViolation();
+                    }
                 }
             }
             // Idoss

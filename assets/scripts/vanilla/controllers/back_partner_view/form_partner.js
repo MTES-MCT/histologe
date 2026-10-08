@@ -47,6 +47,35 @@ function histoUpdateFieldsVisibility() {
   }
 }
 
+function histoUpdateEsaboraAuthVisibility() {
+  const isOAuth2Toggle = document.querySelector('#partner_isOAuth2');
+  const esaboraTokenGroup = document.querySelector('#partner_esabora_token_group');
+  const oauth2TokenUrlGroup = document.querySelector('#partner_oauth2_token_url_group');
+  const oauth2ClientIdGroup = document.querySelector('#partner_oauth2_client_id_group');
+
+  if (!isOAuth2Toggle) {
+    return;
+  }
+
+  if (isOAuth2Toggle.checked) {
+    esaboraTokenGroup?.classList.add('fr-hidden');
+    oauth2TokenUrlGroup?.classList.remove('fr-hidden');
+    oauth2ClientIdGroup?.classList.remove('fr-hidden');
+  } else {
+    esaboraTokenGroup?.classList.remove('fr-hidden');
+    oauth2TokenUrlGroup?.classList.add('fr-hidden');
+    oauth2ClientIdGroup?.classList.add('fr-hidden');
+    const oauth2TokenUrlInput = document.querySelector('#partner_oauth2TokenUrl');
+    const oauth2ClientIdInput = document.querySelector('#partner_oauth2ClientId');
+    if (oauth2TokenUrlInput) {
+      oauth2TokenUrlInput.value = '';
+    }
+    if (oauth2ClientIdInput) {
+      oauth2ClientIdInput.value = '';
+    }
+  }
+}
+
 function histoUpdateCompetencesFromPartnerType() {
   const partnerTypeSelect = document.getElementById('partner_type');
   const competenceContainer = document.getElementById('partner_competence');
@@ -160,6 +189,14 @@ if (document.querySelector('#partner_type')) {
     if (isCreateMode) {
       histoUpdateCompetencesFromPartnerType();
     }
+  });
+}
+
+const isOAuth2Toggle = document.querySelector('#partner_isOAuth2');
+if (isOAuth2Toggle) {
+  histoUpdateEsaboraAuthVisibility();
+  isOAuth2Toggle.addEventListener('change', () => {
+    histoUpdateEsaboraAuthVisibility();
   });
 }
 

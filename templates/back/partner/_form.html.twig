@@ -1,4 +1,4 @@
-{{ form_start(form, {'attr': {'data-mode': create ? 'create' : 'edit'}}) }}
+{{ form_start(form, {'attr': {'data-mode': create ? 'create' : 'edit', 'novalidate': 'novalidate'}}) }}
 
 <div class="fr-grid-row fr-grid-row--gutters">
 	<div class="fr-col-12">
@@ -43,12 +43,10 @@
 							Synchronisation iDoss (facultatif)
 						</label>
 					</div>
+					{{ form_errors(form.isIdossActive) }}
 				</div>
 				<div class="fr-fieldset__element">
-					<div class="fr-input-group">
-						<label for="{{ form.idossUrl.vars.id }}" class="fr-label">URL Idoss (facultatif)</label>
-						{{ form_widget(form.idossUrl) }}
-					</div>
+					{{ form_row(form.idossUrl) }}
 				</div>
 			</fieldset>
 		</div>
@@ -63,21 +61,31 @@
 						Synchronisation Esabora (facultatif)
 					</label>
 				</div>
+				{{ form_errors(form.isEsaboraActive) }}
 			</div>
 			<div class="fr-fieldset__element">
-				<div class="fr-input-group">
-					<label for="{{ form.esaboraUrl.vars.id }}" class="fr-label">URL Esabora (facultatif)</label>
-					{{ form_widget(form.esaboraUrl) }}
-				</div>
+				{{ form_row(form.esaboraUrl) }}
 			</div>
 			<div class="fr-fieldset__element">
-				<div class="fr-input-group">
-					<label for="{{ form.esaboraToken.vars.id }}" class="fr-label">Token Esabora (facultatif)</label>
-					{{ form_widget(form.esaboraToken) }}
+				<div class="fr-toggle">
+					{{ form_widget(form.isOAuth2) }}
+					<label class="fr-toggle__label" for="{{ form.isOAuth2.vars.id }}" data-fr-checked-label="Activée" data-fr-unchecked-label="Désactivée">
+						Connexion OAuth2 (facultatif)
+					</label>
 				</div>
+				{{ form_errors(form.isOAuth2) }}
+			</div>
+			<div class="fr-fieldset__element{% if form.isOAuth2.vars.checked %} fr-hidden{% endif %}" id="partner_esabora_token_group">
+				{{ form_row(form.esaboraToken) }}
+			</div>
+			<div class="fr-fieldset__element{% if not form.isOAuth2.vars.checked %} fr-hidden{% endif %}" id="partner_oauth2_token_url_group">
+				{{ form_row(form.oauth2TokenUrl) }}
+			</div>
+			<div class="fr-fieldset__element{% if not form.isOAuth2.vars.checked %} fr-hidden{% endif %}" id="partner_oauth2_client_id_group">
+				{{ form_row(form.oauth2ClientId) }}
 			</div>
 		</fieldset>
-	</div>	
+	</div>
 	<div class="fr-col-12">
 		<ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline fr-btns-group--icon-left">
 			<li>

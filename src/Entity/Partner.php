@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Entity\Behaviour\EntityHistoryInterface;
 use App\Entity\Behaviour\TimestampableTrait;
 use App\Entity\Enum\HistoryEntryEvent;
+use App\Entity\Enum\InterconnectionAuthType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\UserStatus;
@@ -92,7 +93,7 @@ class Partner implements EntityHistoryInterface
     private ?bool $isEsaboraActive = null;
 
     /** @var Collection<int, Intervention> $interventions */
-    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: Intervention::class)]
+    #[ORM\OneToMany(targetEntity: Intervention::class, mappedBy: 'partner')]
     private Collection $interventions;
 
     #[ORM\Column]
@@ -107,6 +108,23 @@ class Partner implements EntityHistoryInterface
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $idossTokenExpirationDate = null;
+
+    #[ORM\Column(
+        type: 'string',
+        nullable: true,
+        enumType: InterconnectionAuthType::class,
+    )]
+    private ?InterconnectionAuthType $authenticationType = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Url]
+    private ?string $oauth2TokenUrl = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $oauth2ClientId = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $oauth2ClientSecret = null;
 
     #[ORM\ManyToOne(targetEntity: Bailleur::class, inversedBy: 'partners')]
     #[ORM\JoinColumn(nullable: true)]
@@ -128,7 +146,7 @@ class Partner implements EntityHistoryInterface
     /**
      * @var Collection<int, UserPartner>
      */
-    #[ORM\OneToMany(mappedBy: 'partner', targetEntity: UserPartner::class, orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: UserPartner::class, mappedBy: 'partner', orphanRemoval: true)]
     private Collection $userPartners;
 
     /**
@@ -414,9 +432,19 @@ class Partner implements EntityHistoryInterface
 
     public function canSyncWithEsabora(): bool
     {
-        return $this->esaboraToken
-            && $this->esaboraUrl
-            && $this->isEsaboraActive;
+        if (!$this->isEsaboraActive || !$this->esaboraUrl) {
+            return false;
+        }
+
+        return match ($this->authenticationType) {
+            InterconnectionAuthType::STATIC_TOKEN => (bool) $this->esaboraToken,
+
+            InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS => $this->oauth2TokenUrl
+                && $this->oauth2ClientId
+                && $this->oauth2ClientSecret,
+
+            null => false,
+        };
     }
 
     public function isConnectedToSanteHabitat(): bool
@@ -589,6 +617,54 @@ class Partner implements EntityHistoryInterface
     public function removeEpci(Epci $epci): static
     {
         $this->epcis->removeElement($epci);
+
+        return $this;
+    }
+
+    public function getOauth2ClientSecret(): ?string
+    {
+        return $this->oauth2ClientSecret;
+    }
+
+    public function setOauth2ClientSecret(?string $oauth2ClientSecret): static
+    {
+        $this->oauth2ClientSecret = $oauth2ClientSecret;
+
+        return $this;
+    }
+
+    public function getOauth2ClientId(): ?string
+    {
+        return $this->oauth2ClientId;
+    }
+
+    public function setOauth2ClientId(?string $oauth2ClientId): static
+    {
+        $this->oauth2ClientId = $oauth2ClientId;
+
+        return $this;
+    }
+
+    public function getOauth2TokenUrl(): ?string
+    {
+        return $this->oauth2TokenUrl;
+    }
+
+    public function setOauth2TokenUrl(?string $oauth2TokenUrl): static
+    {
+        $this->oauth2TokenUrl = $oauth2TokenUrl;
+
+        return $this;
+    }
+
+    public function getAuthenticationType(): ?InterconnectionAuthType
+    {
+        return $this->authenticationType;
+    }
+
+    public function setAuthenticationType(?InterconnectionAuthType $authenticationType): static
+    {
+        $this->authenticationType = $authenticationType;
 
         return $this;
     }
