@@ -1,6 +1,4 @@
 monolog:
-    channels:
-        - api
     handlers:
         main:
             type: stream
