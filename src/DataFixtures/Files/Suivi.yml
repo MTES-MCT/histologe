@@ -121,7 +121,7 @@ suivis:
   category: "MESSAGE_PARTNER"
 - 
   created_by: null
-  description: "Le bailleur s'engage à résoudre les désordres signalés."
+  description: ""
   is_public: 1
   signalement: "00000000-0000-0000-2025-000000000012"
   category: "INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE"
