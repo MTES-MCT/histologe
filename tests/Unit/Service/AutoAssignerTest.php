@@ -18,6 +18,7 @@ use App\Repository\Query\Partner\PartnerLocalizationQuery;
 use App\Repository\Query\Zone\ZoneLocalizationQuery;
 use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
+use App\Service\Interconnection\Esabora\EsaboraTokenProvider;
 use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\AutoAssigner;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,6 +43,13 @@ class AutoAssignerTest extends KernelTestCase
     protected function setUp(): void
     {
         $kernel = self::bootKernel();
+
+        $tokenJsonPath = __DIR__.'/../../../tools/wiremock/src/Resources/Oauth2/token.json';
+        $tokenData = json_decode((string) file_get_contents($tokenJsonPath), true);
+        $esaboraTokenProviderMock = $this->createMock(EsaboraTokenProvider::class);
+        $esaboraTokenProviderMock->method('getToken')->willReturn($tokenData['access_token']);
+        static::getContainer()->set(EsaboraTokenProvider::class, $esaboraTokenProviderMock);
+
         /** @var ManagerRegistry $doctrine */
         $doctrine = $kernel->getContainer()->get('doctrine');
 

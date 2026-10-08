@@ -126,7 +126,9 @@
                             </div>
                         </div>
                         <div class="fr-col-6">
-                            <div><b>Token ESABORA :</b> {{ partner.esaboraToken }}</div>
+                            <div>
+                                <b>Authentification ESABORA :</b> {{ partner.authenticationType ? partner.authenticationType.label : '-' }}
+                            </div>
                         </div>
                         <div class="fr-col-6">
                             <div><b>Dernière synchro : </b>{{ last_job_date ? last_job_date|date('d/m/Y à H:i') : '-' }}</div>
