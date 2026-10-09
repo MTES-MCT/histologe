@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Dto\AgentSelection;
 use App\Dto\RefusSignalement;
 use App\Entity\Enum\AffectationStatus;
+use App\Entity\Enum\ProcedureCategory;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
@@ -16,6 +17,7 @@ use App\Factory\SignalementSearchQueryFactory;
 use App\Form\AddSuiviType;
 use App\Form\AgentSelectionType;
 use App\Form\CloseSignalementType;
+use App\Form\ProcedureEngageeType;
 use App\Form\RefusSignalementType;
 use App\Manager\AffectationManager;
 use App\Manager\SuiviManager;
@@ -30,6 +32,8 @@ use App\Security\Voter\SuiviVoter;
 use App\Service\Gouv\Rnb\RnbService;
 use App\Service\MessageHelper;
 use App\Service\RequestDataExtractor;
+use App\Service\Signalement\ProcedureEngageeService;
+use App\Service\Signalement\TabOrientation\TabOrientationService;
 use App\Service\SignalementAddressContentService;
 use App\Utils\FormHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -50,6 +54,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class SignalementActionController extends AbstractController
 {
     public function __construct(
+        private readonly SuiviManager $suiviManager,
         #[Autowire(service: 'html_sanitizer.sanitizer.app.message_sanitizer')]
         private readonly HtmlSanitizerInterface $htmlSanitizer,
         #[Autowire(env: 'EDITION_SUIVI_ENABLE')]
@@ -66,7 +71,6 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         Request $request,
         UserSignalementSubscriptionManager $userSignalementSubscriptionManager,
-        SuiviManager $suiviManager,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VALIDATE, $signalement);
@@ -93,7 +97,7 @@ class SignalementActionController extends AbstractController
         }
         $signalement->setValidatedAt(new \DateTimeImmutable());
         $signalement->setStatut(SignalementStatus::ACTIVE);
-        $suiviManager->createSuivi(
+        $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: '',
             category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
@@ -114,7 +118,6 @@ class SignalementActionController extends AbstractController
     public function validationResponseSignalement(
         Signalement $signalement,
         Request $request,
-        SuiviManager $suiviManager,
         UserRepository $userRepository,
         EntityManagerInterface $entityManager,
     ): Response {
@@ -131,7 +134,7 @@ class SignalementActionController extends AbstractController
             $signalement->setValidatedAt(new \DateTimeImmutable());
             $signalement->setStatut(SignalementStatus::ACTIVE);
             $subscriptionCreated = false;
-            $suiviManager->createSuivi(
+            $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: '',
                 category: SuiviCategory::SIGNALEMENT_IS_ACTIVE,
@@ -156,7 +159,6 @@ class SignalementActionController extends AbstractController
     public function validationResponseDenySignalement(
         Signalement $signalement,
         Request $request,
-        SuiviManager $suiviManager,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_VALIDATE, $signalement);
@@ -179,7 +181,7 @@ class SignalementActionController extends AbstractController
         $user = $this->getUser();
         $signalement->setStatut(SignalementStatus::REFUSED);
         $subscriptionCreated = false;
-        $suiviManager->createSuivi(
+        $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: $description,
             category: SuiviCategory::SIGNALEMENT_IS_REFUSED,
@@ -205,7 +207,6 @@ class SignalementActionController extends AbstractController
         Signalement $signalement,
         Request $request,
         AffectationManager $affectationManager,
-        SuiviManager $suiviManager,
         SignalementSearchQueryFactory $signalementSearchQueryFactory,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
@@ -236,12 +237,12 @@ class SignalementActionController extends AbstractController
             return $this->json(['code' => Response::HTTP_OK]);
         }
         // persist procedures
-        foreach ($signalement->getSignalementProcedures() as $signalementProcedure) {
+        foreach ($signalement->getSignalementProcedures(ProcedureCategory::PROCEDURE_RETENUE) as $signalementProcedure) {
             $entityManager->remove($signalementProcedure);
         }
         $entityManager->flush();
         foreach ($form->get('procedures')->getData() as $procedure) {
-            $signalementProcedure = (new SignalementProcedure())->setSignalement($signalement)->setProcedureType($procedure);
+            $signalementProcedure = (new SignalementProcedure())->setSignalement($signalement)->setProcedureType($procedure)->setProcedureCategory(ProcedureCategory::PROCEDURE_RETENUE);
             $signalement->addSignalementProcedure($signalementProcedure);
             $entityManager->persist($signalementProcedure);
         }
@@ -258,9 +259,9 @@ class SignalementActionController extends AbstractController
             'subject' => 'tous les partenaires',
             'motif_cloture' => $signalement->getMotifCloture(),
             'motif_suivi' => $signalement->getComCloture(),
-            'procedures' => $signalement->getSignalementProcedures(),
+            'procedures' => $signalement->getSignalementProcedures(ProcedureCategory::PROCEDURE_RETENUE),
         ]);
-        $suiviManager->createSuivi(
+        $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: $description,
             category: SuiviCategory::SIGNALEMENT_IS_CLOSED,
@@ -286,7 +287,6 @@ class SignalementActionController extends AbstractController
     public function addSuiviSignalement(
         Signalement $signalement,
         Request $request,
-        SuiviManager $suiviManager,
         LoggerInterface $logger,
         EntityManagerInterface $entityManager,
     ): JsonResponse {
@@ -306,7 +306,7 @@ class SignalementActionController extends AbstractController
             /** @var User $user */
             $user = $this->getUser();
             $subscriptionCreated = false;
-            $suivi = $suiviManager->createSuivi(
+            $suivi = $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: $suivi->getDescription(raw: true),
                 category: SuiviCategory::MESSAGE_PARTNER,
@@ -420,7 +420,6 @@ class SignalementActionController extends AbstractController
     public function reopenSignalement(
         Signalement $signalement,
         Request $request,
-        SuiviManager $suiviManager,
         AffectationUpdater $affectationUpdater,
         EntityManagerInterface $entityManager,
     ): RedirectResponse|JsonResponse {
@@ -450,7 +449,7 @@ class SignalementActionController extends AbstractController
                 $signalement->setStatut(SignalementStatus::ACTIVE);
             }
             $subscriptionCreated = false;
-            $suiviManager->createSuivi(
+            $this->suiviManager->createSuivi(
                 signalement: $signalement,
                 description: 'Signalement rouvert pour '.$reopenFor,
                 category: SuiviCategory::SIGNALEMENT_IS_REOPENED,
@@ -675,5 +674,95 @@ class SignalementActionController extends AbstractController
         if ($subscription) {
             $entityManager->remove($subscription);
         }
+    }
+
+    #[Route('/{uuid:signalement}/edit-procedure-engagee', name: 'back_signalement_edit_procedure_engagee', methods: 'POST')]
+    #[IsGranted(SignalementVoter::SIGN_MANAGE_PROCEDURE_ENGAGEE, subject: 'signalement')]
+    public function editProcedureEngagee(
+        Request $request,
+        Signalement $signalement,
+        EntityManagerInterface $entityManager,
+        ProcedureEngageeService $procedureEngageeService,
+        TabOrientationService $tabOrientationService,
+    ): Response {
+        $procedureEngageeFormRoute = $this->generateUrl('back_signalement_edit_procedure_engagee', ['uuid' => $signalement->getUuid()]);
+        $form = $this->createForm(ProcedureEngageeType::class, $signalement, options: ['action' => $procedureEngageeFormRoute]);
+
+        $form->handleRequest($request);
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            $response = ['code' => Response::HTTP_BAD_REQUEST, 'errors' => FormHelper::getErrorsFromForm(form: $form, withPrefix: true)];
+
+            return $this->json($response, $response['code']);
+        }
+
+        $isEdition = false;
+        $procedureEngageeService->updateProcedureEngageeForSignalement($signalement, $form, $isEdition);
+
+        $entityManager->flush();
+        $flashMessages = [['type' => 'success', 'title' => 'Procédures modifiées', 'message' => $isEdition ? 'Les procédures à engager ont bien été modifiées.' : 'Les procédures à engager ont bien été définies.']];
+        $entityManager->refresh($signalement);
+        $htmlTargetContents[] = [
+            'target' => '#list-suivis',
+            'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement]),
+        ];
+        $htmlTargetContents[] = [
+            'target' => '#tabpanel-orientation-panel',
+            'content' => $this->renderView('back/signalement/view/tabs/tab-orientation.html.twig', ['tabOrientationItems' => $tabOrientationService->getTabOrientationItems($signalement)]),
+        ];
+        $functions = [['name' => 'applyFilter']];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
+    }
+
+    #[Route('/{uuid:signalement}/delete-procedure-engagee', name: 'back_signalement_delete_procedure_engagee', methods: 'POST')]
+    #[IsGranted(SignalementVoter::SIGN_MANAGE_PROCEDURE_ENGAGEE, subject: 'signalement')]
+    public function deleteProcedureEngagee(
+        Request $request,
+        Signalement $signalement,
+        EntityManagerInterface $entityManager,
+        TabOrientationService $tabOrientationService,
+    ): Response {
+        $token = (string) $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('delete-procedure-engagee'.$signalement->getUuid(), $token)) {
+            return $this->json(['stayOnPage' => true, 'flashMessages' => [['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF]]], 403);
+        }
+
+        if ($signalement->getSignalementProcedures(ProcedureCategory::PROCEDURE_ENGAGEE)->count()) {
+            foreach ($signalement->getSignalementProcedures(ProcedureCategory::PROCEDURE_ENGAGEE) as $signalementProcedure) {
+                $entityManager->remove($signalementProcedure);
+            }
+
+            /**
+             * @var User
+             */
+            $user = $this->getUser();
+            $partner = $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory());
+            $this->suiviManager->createSuivi(
+                signalement: $signalement,
+                description: $this->renderView('suivi/back_signalement_delete_procedure_engagees.html.twig', ['user' => $user, 'partner' => $partner]),
+                category: SuiviCategory::DELETE_PROCEDURE_ENGAGEE,
+                partner: $partner,
+                user: $user,
+            );
+
+            $entityManager->flush();
+        }
+
+        $flashMessages = [['type' => 'success', 'title' => 'Procédures supprimées', 'message' => 'Les procédures à engager ont bien été supprimées.']];
+        $entityManager->refresh($signalement);
+        $htmlTargetContents[] = [
+            'target' => '#list-suivis',
+            'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement]),
+        ];
+        $htmlTargetContents[] = [
+            'target' => '#tabpanel-orientation-panel',
+            'content' => $this->renderView('back/signalement/view/tabs/tab-orientation.html.twig', ['tabOrientationItems' => $tabOrientationService->getTabOrientationItems($signalement)]),
+        ];
+        $functions = [
+            ['name' => 'applyFilter'],
+            ['name' => 'clearProcedureEngageeForm'],
+        ];
+
+        return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
     }
 }

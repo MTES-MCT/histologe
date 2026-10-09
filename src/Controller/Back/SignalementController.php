@@ -25,6 +25,7 @@ use App\Form\AgentSelectionType;
 use App\Form\CloseAffectationType;
 use App\Form\CloseSignalementType;
 use App\Form\ClotureType;
+use App\Form\ProcedureEngageeType;
 use App\Form\RefusAffectationType;
 use App\Form\RefusSignalementType;
 use App\Manager\AffectationManager;
@@ -55,6 +56,7 @@ use App\Service\Signalement\SignalementDesordresProcessor;
 use App\Service\Signalement\SignalementQualificationNde;
 use App\Service\Signalement\SignalementSameAddressArreteFinder;
 use App\Service\Signalement\Suivi\SuiviSeenMarker;
+use App\Service\Signalement\TabOrientation\TabOrientationService;
 use App\Service\SignalementAddressContentService;
 use App\Utils\FormHelper;
 use Doctrine\DBAL\Exception;
@@ -76,6 +78,8 @@ class SignalementController extends AbstractController
         private EmailAlertChecker $emailAlertChecker,
         #[Autowire(env: 'FEATURE_CLOTURE_V2')]
         private readonly bool $featureClotureV2,
+        #[Autowire(env: 'FEATURE_ORIENTATION')]
+        private readonly bool $featureOrientation,
     ) {
     }
 
@@ -110,6 +114,7 @@ class SignalementController extends AbstractController
         SignalementAddressContentService $signalementAddressContentService,
         PersonalNoteRepository $personalNoteRepository,
         JobEventQuery $jobEventQuery,
+        TabOrientationService $tabOrientationService,
     ): Response {
         // load desordres data to prevent n+1 queries
         $desordreCategorieRepository->findAll();
@@ -228,29 +233,14 @@ class SignalementController extends AbstractController
             $affectationToggleForm = $this->createForm(AffectationToggleType::class, $partners, ['action' => $affectationToggleFormRoute]);
         }
 
-        $listQualificationStatusesLabelsCheck = [];
-        if (!$signalement->getSignalementQualifications()->isEmpty()) {
-            foreach ($signalement->getSignalementQualifications() as $qualification) {
-                if (!$qualification->isPostVisite()) {
-                    $listQualificationStatusesLabelsCheck[] = $qualification->getStatus()->label();
-                }
-            }
-        }
-
         $listConcludeProcedures = [];
-        if (!$signalement->getInterventions()->isEmpty()) {
-            foreach ($signalement->getInterventions() as $intervention) {
-                if (Intervention::STATUS_DONE == $intervention->getStatus()) {
-                    $listConcludeProcedures = array_merge(
-                        $listConcludeProcedures,
-                        $intervention->getConcludeProcedure()
-                    );
+        foreach ($signalement->getInterventions() as $intervention) {
+            if (Intervention::STATUS_DONE === $intervention->getStatus()) {
+                foreach ($intervention->getConcludeProcedure() as $procedure) {
+                    $listConcludeProcedures[$procedure->label()] = $procedure;
                 }
             }
         }
-        $listConcludeProcedures = array_unique(array_map(static function ($concludeProcedure) {
-            return $concludeProcedure->label();
-        }, $listConcludeProcedures));
 
         $partnerVisite = $affectationRepository->findAffectationWithQualification(Qualification::VISITES, $signalement);
         $linkToVisitGrid = false;
@@ -296,6 +286,12 @@ class SignalementController extends AbstractController
             $adminCancelInjonctionProcedureForm = $this->createForm(AdminCancelInjonctionProcedureType::class, options: ['action' => $adminCancelInjonctionProcedureFormRoute]);
         }
 
+        $procedureEngageeForm = null;
+        if ($this->isGranted(SignalementVoter::SIGN_MANAGE_PROCEDURE_ENGAGEE, $signalement)) {
+            $procedureEngageeFormRoute = $this->generateUrl('back_signalement_edit_procedure_engagee', ['uuid' => $signalement->getUuid()]);
+            $procedureEngageeForm = $this->createForm(ProcedureEngageeType::class, $signalement, options: ['action' => $procedureEngageeFormRoute]);
+        }
+
         $twigParams = [
             'title' => '#'.$signalement->getReference().' Signalement',
             'situations' => $infoDesordres['criticitesArranged'],
@@ -321,7 +317,6 @@ class SignalementController extends AbstractController
             'tags' => $tagsRepository->findAllActive($signalement->getAddress()->getTerritory()),
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
-            'listQualificationStatusesLabelsCheck' => $listQualificationStatusesLabelsCheck,
             'listConcludeProcedures' => $listConcludeProcedures,
             'partnersCanVisite' => $partnerVisite,
             'visites' => $interventionRepository->getOrderedVisitesForSignalement($signalement),
@@ -340,6 +335,8 @@ class SignalementController extends AbstractController
             'personalNote' => $personalNote,
             'syncStatuses' => $syncStatuses,
             'adminCancelInjonctionProcedureForm' => $adminCancelInjonctionProcedureForm,
+            'procedureEngageeForm' => $procedureEngageeForm,
+            'tabOrientationItems' => $this->featureOrientation ? $tabOrientationService->getTabOrientationItems($signalement) : [],
         ];
 
         return $this->render('back/signalement/view.html.twig', $twigParams);

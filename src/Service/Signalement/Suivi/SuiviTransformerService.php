@@ -4,6 +4,7 @@ namespace App\Service\Signalement\Suivi;
 
 use App\Controller\FileController;
 use App\Entity\Enum\DocumentType;
+use App\Entity\Enum\SuiviCategory;
 use App\Entity\Suivi;
 use App\Entity\SuiviFile;
 use App\Repository\DesordreCritereRepository;
@@ -35,6 +36,7 @@ class SuiviTransformerService
         }
         $description = $this->replaceStaticLinkToFiles($description);
         $description .= $this->addLinkToFiles($suivi->getSuiviFiles());
+        $description .= $this->addDynamicDataFromSuivi($suivi);
 
         return $description;
     }
@@ -102,5 +104,14 @@ class SuiviTransformerService
         $description .= '</div>';
 
         return $description;
+    }
+
+    private function addDynamicDataFromSuivi(Suivi $suivi): string
+    {
+        if (SuiviCategory::ADD_OR_EDIT_PROCEDURE_ENGAGEE === $suivi->getCategory()) {
+            return '<br><p>Rendez-vous dans l\'onglet <a href="#orientation" aria-controls="tabpanel-orientation-panel">Orientation</a> pour voir le détail.</p>';
+        }
+
+        return '';
     }
 }

@@ -147,6 +147,15 @@
         {% include 'back/signalement/view/panels/_panel-manage-tags.html.twig' %}
     {% endif %}
 
+    {% if is_granted('SIGN_MANAGE_PROCEDURE_ENGAGEE', signalement) %}
+        <div data-ajax-form>
+            {% include 'back/signalement/view/panels/_panel-edit-procedure-engagee.html.twig' %}
+        </div>
+        <div data-ajax-form>
+            {% include 'back/signalement/view/panels/_panel-delete-procedure-engagee.html.twig' %}
+        </div>
+    {% endif %}
+
     {% set signalementInvalidClass = '' %}
     {% 
        if signalement.statut in [enum('App\\Entity\\Enum\\SignalementStatus').CLOSED, enum('App\\Entity\\Enum\\SignalementStatus').REFUSED] 

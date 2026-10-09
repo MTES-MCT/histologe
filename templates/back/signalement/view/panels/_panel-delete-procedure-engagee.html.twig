@@ -1,0 +1,35 @@
+<dialog aria-labelledby="panel-delete-procedure-engagee-title" id="panel-delete-procedure-engagee" class="side-panel">
+    <div class="side-panel__inner">
+        <div class="side-panel__header">
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-delete-procedure-engagee" aria-controls="panel-delete-procedure-engagee" aria-expanded="false">Fermer</button>
+        </div>
+        <div class="side-panel__content fr-mx-3w">
+            <h1 id="panel-delete-procedure-engagee-title" class="fr-modal__title title-blue-france">Suppression des procédure(s) à engager</h1>
+            <p>
+                Vous êtes sur le point de supprimer les procédures à engager du dossier <strong>{{signalement.reference}}</strong>. 
+                <br><br>
+                Une fois supprimées, les procédures ne seront plus visibles dans le dossier. 
+                <br>
+                Un suivi sera créé pour prévenir les partenaires du dossier. 
+                Vous pourrez toujours définir de nouvelles procédures à engager pour ce dossier.
+            </p>
+            <form id="panel-delete-procedure-engagee-form" method="post" action="{{ path('back_signalement_delete_procedure_engagee', {'uuid': signalement.uuid}) }}" data-submit-type="formData">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete-procedure-engagee' ~ signalement.uuid) }}">
+            </form>
+        </div>
+        <div class="side-panel__footer">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm fr-btns-group--icon-left">
+                <li>
+                    <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-check-line" form="panel-delete-procedure-engagee-form">
+                        Oui, supprimer
+                    </button>
+                </li>
+                <li>
+                    <button class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel" data-panel="panel-delete-procedure-engagee" aria-controls="panel-delete-procedure-engagee" aria-expanded="false" type="button">
+                        Non, annuler
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</dialog>

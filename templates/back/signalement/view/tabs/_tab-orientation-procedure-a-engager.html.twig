@@ -1,0 +1,59 @@
+<div class="card-container fr-mb-8v">
+    <div class="title-blue-france fr-mb-2v">
+        <span class="fr-icon-calendar-event-fill"></span>
+        <strong>{{ tabOrientationItem.date|date('d/m/Y') }}</strong>
+    </div>
+
+    <div class="fr-card {% if not is_granted('ROLE_ADMIN_TERRITORY') %}fr-card--grey{% endif %}">
+        <div class="fr-card__body">
+            <div class="fr-card__content fr-p-4v">
+                <div class="fr-grid-row">
+                    <div class="fr-col-12 fr-mb-4v">
+                        <div class="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
+                            <div class="fr-col title-blue-france">
+                                <strong>Procédure(s) à engager</strong>
+                            </div>
+                            <div class="fr-col-auto">
+                                {% if is_granted('SIGN_MANAGE_PROCEDURE_ENGAGEE', tabOrientationItem.signalement) %}
+                                    {% if tabOrientationItem.signalement.signalementProcedures(enum('App\\Entity\\Enum\\ProcedureCategory').PROCEDURE_ENGAGEE)|length == 0 %}
+                                        <button class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line" data-panel-open="panel-edit-procedure-engagee" aria-controls="panel-edit-procedure-engagee" aria-expanded="false">
+                                            Ajouter
+                                        </button>
+                                    {% else %}
+                                        <button class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-delete-bin-line" data-panel-open="panel-delete-procedure-engagee" aria-controls="panel-delete-procedure-engagee" aria-expanded="false">
+                                            Supprimer
+                                        </button>
+                                        <button class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line" data-panel-open="panel-edit-procedure-engagee" aria-controls="panel-edit-procedure-engagee" aria-expanded="false">
+                                            Modifier
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <p class="fr-my-2v">Indiquez les procédures engagées ou à engager sur le dossier.</p>
+                    </div>
+                    <div class="fr-col-lg-6 fr-col-12">
+                        <div class="fr-mb-2v"><strong>Procédure(s) à engager</strong></div>
+                        {% for signalementProcedure in tabOrientationItem.signalement.signalementProcedures(enum('App\\Entity\\Enum\\ProcedureCategory').PROCEDURE_ENGAGEE) %}
+                            {% include '_partials/signalement/procedure.html.twig' with {'procedure': signalementProcedure.procedureType} %}
+                        {% else %}
+                            <i>Aucune procédure sélectionnée</i>
+                        {% endfor %}
+                    </div>
+                    <div class="fr-col-lg-6 fr-col-12">
+                        <div class="fr-mb-2v"><strong>Commentaire</strong></div>
+                        {% if tabOrientationItem.signalement.signalementProcedures(enum('App\\Entity\\Enum\\ProcedureCategory').PROCEDURE_ENGAGEE)|length > 0 %}
+                            {% set lastSuivi = tabOrientationItem.signalement.getSuivisWithCategory(constant('App\\Entity\\Enum\\SuiviCategory::ADD_OR_EDIT_PROCEDURE_ENGAGEE')).last() %}
+                            {% set commentaire = lastSuivi ? (lastSuivi.getOriginalData()['commentaire']) : null %}
+                            {% if commentaire %}
+                                <div class="fr-highlight fr-ml-1v">
+                                    {{ commentaire|raw }}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

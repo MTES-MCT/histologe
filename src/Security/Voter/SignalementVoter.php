@@ -10,6 +10,7 @@ use App\Entity\Enum\SignalementStatus;
 use App\Entity\Signalement;
 use App\Entity\User;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -42,9 +43,12 @@ class SignalementVoter extends Voter
     public const string SIGN_AFFECTATION_SEE = 'SIGN_AFFECTATION_SEE';
     public const string SIGN_SWITCH_LOGEMENT_VACANT = 'SIGN_SWITCH_LOGEMENT_VACANT';
     public const string SIGN_INJONCTION_CLOSE = 'SIGN_INJONCTION_CLOSE';
+    public const string SIGN_MANAGE_PROCEDURE_ENGAGEE = 'SIGN_MANAGE_PROCEDURE_ENGAGEE';
 
     public function __construct(
         private readonly Security $security,
+        #[Autowire(env: 'FEATURE_ORIENTATION')]
+        private readonly bool $featureOrientation,
     ) {
     }
 
@@ -75,6 +79,7 @@ class SignalementVoter extends Voter
                 self::SIGN_AFFECTATION_SEE,
                 self::SIGN_SWITCH_LOGEMENT_VACANT,
                 self::SIGN_INJONCTION_CLOSE,
+                self::SIGN_MANAGE_PROCEDURE_ENGAGEE,
             ])
             && ($subject instanceof Signalement);
     }
@@ -122,6 +127,7 @@ class SignalementVoter extends Voter
             self::SIGN_AFFECTATION_SEE => $this->canSeeAffectation($subject, $user),
             self::SIGN_SWITCH_LOGEMENT_VACANT => $this->canSwitchLogementVacant($subject, $user),
             self::SIGN_INJONCTION_CLOSE => $this->canCloseInjonction($subject, $user),
+            self::SIGN_MANAGE_PROCEDURE_ENGAGEE => $this->canManageProcedureEngagee($subject, $user),
             default => false,
         };
     }
@@ -405,5 +411,17 @@ class SignalementVoter extends Voter
         }
 
         return $this->security->isGranted('ROLE_ADMIN');
+    }
+
+    private function canManageProcedureEngagee(Signalement $signalement, User $user): bool
+    {
+        if (!$this->featureOrientation) {
+            return false;
+        }
+        if (!in_array($signalement->getStatut(), [SignalementStatus::ACTIVE])) {
+            return false;
+        }
+
+        return $this->isAdminOrTerritoryAdmin($signalement, $user);
     }
 }

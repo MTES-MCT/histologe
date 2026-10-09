@@ -1,0 +1,10 @@
+{{user.nomComplet(true)}} ({{partner.nom}}) {% if isEdition %}a mis à jour les procédures{% else %}a défini les procédures suivantes{% endif %} à engager sur le dossier : 
+<ul>
+    {% for procedure in signalement.signalementProcedures(enum('App\\Entity\\Enum\\ProcedureCategory').PROCEDURE_ENGAGEE) %}
+        <li>{{ procedure.getProcedureType().label }}</li>
+    {% endfor %}
+</ul>
+
+Commentaire : 
+<br>
+{{ commentaire|raw }}

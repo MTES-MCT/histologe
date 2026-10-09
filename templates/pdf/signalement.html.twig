@@ -23,21 +23,15 @@
 
             {% if isForUsager is same as false %}
                 <h3 style="text-align: left">Situation(s) suspectée(s) à la déclaration usager</h3>
-                {% for qualificationStatusLabel in listQualificationStatusesLabelsCheck %}
-                    {% include '_partials/signalement/qualification.html.twig' %}
+                {% for signalementQualification in signalement.signalementQualifications %}
+                    {% include '_partials/signalement/qualification.html.twig' with {'qualification': signalementQualification} %}
                 {% endfor %}                
             {% endif %}
 
             {% if listConcludeProcedures %}
                 <h3 style="text-align: left">Situation(s) observée(s) après visite</h3>
-                {% for concludeProcedure in listConcludeProcedures %}
-                    {% set typeBadge = 'info' %}
-                    {% if concludeProcedure is same as 'Mise en sécurité / Péril' %}
-                        {% set typeBadge = 'error' %}
-                    {% elseif concludeProcedure is same as 'Insalubrité' %}
-                        {% set typeBadge = 'warning' %}
-                    {% endif %}
-                    <small class="fr-badge fr-badge--{{typeBadge}} fr-badge--no-icon fr-mb-1v">{{ concludeProcedure }}</small>
+                {% for procedure in listConcludeProcedures %}
+                    {% include '_partials/signalement/procedure.html.twig' %}
                 {% endfor %}
             {% endif %}
 

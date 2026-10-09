@@ -94,4 +94,22 @@ class InterventionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return array<int, Intervention>
+     */
+    public function getVisitesDoneForSignalement(Signalement $signalement): array
+    {
+        $queryBuilder = $this->createQueryBuilder('i');
+
+        return $queryBuilder
+            ->andWhere('i.type IN (:visiteTypes)')
+            ->setParameter('visiteTypes', [InterventionType::VISITE->name, InterventionType::VISITE_CONTROLE->name])
+            ->andWhere('i.signalement = :signalement')
+            ->setParameter('signalement', $signalement)
+            ->andWhere('i.status = :done')
+            ->setParameter('done', Intervention::STATUS_DONE)
+            ->getQuery()
+            ->getResult();
+    }
 }

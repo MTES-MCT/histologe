@@ -45,6 +45,8 @@ enum SuiviCategory: string
     case DEMANDE_POURSUITE_PROCEDURE = 'DEMANDE_POURSUITE_PROCEDURE';
     case MESSAGE_ESABORA_SCHS = 'MESSAGE_ESABORA_SCHS';
     case MESSAGE_PARTNER = 'MESSAGE_PARTNER';
+    case ADD_OR_EDIT_PROCEDURE_ENGAGEE = 'ADD_OR_EDIT_PROCEDURE_ENGAGEE';
+    case DELETE_PROCEDURE_ENGAGEE = 'DELETE_PROCEDURE_ENGAGEE';
 
     // cas liés à l'injonction bailleur
     case INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR = 'INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR';
@@ -120,6 +122,8 @@ enum SuiviCategory: string
             'DEMANDE_POURSUITE_PROCEDURE' => 'Demande de poursuite de procédure par l\'usager',
             'MESSAGE_ESABORA_SCHS' => 'Message Esabora SCHS',
             'MESSAGE_PARTNER' => 'Suivi du partenaire',
+            'ADD_OR_EDIT_PROCEDURE_ENGAGEE' => 'Ajout ou édition des procédures à engager',
+            'DELETE_PROCEDURE_ENGAGEE' => 'Suppression des procédures à engager',
             'INJONCTION_BAILLEUR_REPONSE_OUI' => 'Réponse du bailleur : Oui',
             'INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE' => 'Réponse du bailleur : Oui avec aide',
             'INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES' => 'Réponse du bailleur : Oui, les démarches ont commencé',
@@ -242,6 +246,8 @@ enum SuiviCategory: string
             case self::INTERVENTION_IS_RESCHEDULED:
             case self::INTERVENTION_CONTROLE_IS_RESCHEDULED:
             case self::INTERVENTION_ARRETE_IS_RESCHEDULED:
+            case self::ADD_OR_EDIT_PROCEDURE_ENGAGEE:
+            case self::DELETE_PROCEDURE_ENGAGEE:
             case self::SIGNALEMENT_IS_INJONCTION:
             case self::INJONCTION_BAILLEUR_REPONSE_OUI:
             case self::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE:
