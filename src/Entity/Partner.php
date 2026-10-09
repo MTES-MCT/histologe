@@ -126,6 +126,9 @@ class Partner implements EntityHistoryInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $oauth2ClientSecret = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $oauth2Scope = null;
+
     #[ORM\ManyToOne(targetEntity: Bailleur::class, inversedBy: 'partners')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Bailleur $bailleur = null;
@@ -653,6 +656,18 @@ class Partner implements EntityHistoryInterface
     public function setOauth2TokenUrl(?string $oauth2TokenUrl): static
     {
         $this->oauth2TokenUrl = $oauth2TokenUrl;
+
+        return $this;
+    }
+
+    public function getOauth2Scope(): ?string
+    {
+        return $this->oauth2Scope;
+    }
+
+    public function setOauth2Scope(?string $oauth2Scope): static
+    {
+        $this->oauth2Scope = $oauth2Scope;
 
         return $this;
     }

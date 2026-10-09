@@ -168,6 +168,11 @@ class PartnerType extends AbstractType
                 'label' => 'Client ID (facultatif)',
                 'required' => false,
                 'disabled' => !$this->isAdmin,
+            ])
+            ->add('oauth2Scope', TextType::class, [
+                'label' => 'Scope OAuth2 (facultatif)',
+                'required' => false,
+                'disabled' => !$this->isAdmin,
             ]);
         if ($this->isAdmin) {
             $builder->add('isIdossActive', CheckboxType::class, [
@@ -211,6 +216,7 @@ class PartnerType extends AbstractType
                     );
                     $partner->setOauth2TokenUrl(null);
                     $partner->setOauth2ClientId(null);
+                    $partner->setOauth2Scope(null);
                 }
             }
         });

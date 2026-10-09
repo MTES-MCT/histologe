@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Service\Esabora;
 use App\Entity\Enum\PartnerType;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
+use App\Service\Interconnection\Esabora\EsaboraTokenProvider;
 use App\Service\UploadHandlerService;
 use App\Tests\FileHelper;
 use App\Tests\FixturesHelper;
@@ -24,6 +25,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
 
     private MockObject&UploadHandlerService $uploadHandlerService;
     private MockObject&LoggerInterface $logger;
+    private MockObject&EsaboraTokenProvider $esaboraTokenProvider;
     private string $tempFilepath;
 
     protected function setUp(): void
@@ -31,6 +33,8 @@ class EsaboraSISHServiceTest extends KernelTestCase
         $this->tempFilepath = $this->getTempFilepath();
         $this->uploadHandlerService = $this->createMock(UploadHandlerService::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->esaboraTokenProvider = $this->createMock(EsaboraTokenProvider::class);
+        $this->esaboraTokenProvider->method('getToken')->willReturn('test-token');
     }
 
     public function testPushDossierAddressToEsaboraSasSuccess(): void
@@ -71,7 +75,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
         $mockResponse = new MockResponse((string) file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
-        $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService, $this->esaboraTokenProvider);
         $affectation = $this->getAffectation(PartnerType::ARS);
         $dossierStateSISHResponse = $esaboraService->getStateDossier($affectation, $affectation->getSignalement()->getUuid());
 
@@ -85,7 +89,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
         $mockResponse = new MockResponse((string) file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
-        $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService, $this->esaboraTokenProvider);
         $affectation = $this->getAffectation(PartnerType::ARS);
         $dossierVisiteSISHCollectionResponse = $esaboraService->getVisiteDossier($affectation, $affectation->getSignalement()->getUuid());
 
@@ -100,7 +104,7 @@ class EsaboraSISHServiceTest extends KernelTestCase
         $mockResponse = new MockResponse((string) file_get_contents($filepath));
 
         $mockHttpClient = new MockHttpClient($mockResponse);
-        $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService);
+        $esaboraService = new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService, $this->esaboraTokenProvider);
         $affectation = $this->getAffectation(PartnerType::ARS);
         $dossierArreteSISHCollectionResponse = $esaboraService->getArreteDossier($affectation, $affectation->getSignalement()->getUuid());
 
@@ -118,6 +122,6 @@ class EsaboraSISHServiceTest extends KernelTestCase
             ->method('getTmpFilepath')
             ->willReturn($this->tempFilepath);
 
-        return new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService, true);
+        return new EsaboraSISHService($mockHttpClient, $this->logger, $this->uploadHandlerService, $this->esaboraTokenProvider, true);
     }
 }

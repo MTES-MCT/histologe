@@ -52,6 +52,7 @@ function histoUpdateEsaboraAuthVisibility() {
   const esaboraTokenGroup = document.querySelector('#partner_esabora_token_group');
   const oauth2TokenUrlGroup = document.querySelector('#partner_oauth2_token_url_group');
   const oauth2ClientIdGroup = document.querySelector('#partner_oauth2_client_id_group');
+  const oauth2ScopeGroup = document.querySelector('#partner_oauth2_scope_group');
 
   if (!isOAuth2Toggle) {
     return;
@@ -61,17 +62,23 @@ function histoUpdateEsaboraAuthVisibility() {
     esaboraTokenGroup?.classList.add('fr-hidden');
     oauth2TokenUrlGroup?.classList.remove('fr-hidden');
     oauth2ClientIdGroup?.classList.remove('fr-hidden');
+    oauth2ScopeGroup?.classList.remove('fr-hidden');
   } else {
     esaboraTokenGroup?.classList.remove('fr-hidden');
     oauth2TokenUrlGroup?.classList.add('fr-hidden');
     oauth2ClientIdGroup?.classList.add('fr-hidden');
+    oauth2ScopeGroup?.classList.add('fr-hidden');
     const oauth2TokenUrlInput = document.querySelector('#partner_oauth2TokenUrl');
     const oauth2ClientIdInput = document.querySelector('#partner_oauth2ClientId');
+    const oauth2ScopeInput = document.querySelector('#partner_oauth2Scope');
     if (oauth2TokenUrlInput) {
       oauth2TokenUrlInput.value = '';
     }
     if (oauth2ClientIdInput) {
       oauth2ClientIdInput.value = '';
+    }
+    if (oauth2ScopeInput) {
+      oauth2ScopeInput.value = '';
     }
   }
 }

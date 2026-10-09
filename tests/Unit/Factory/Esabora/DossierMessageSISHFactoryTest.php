@@ -7,6 +7,7 @@ use App\Entity\File;
 use App\Factory\Interconnection\Esabora\DossierMessageSISHFactory;
 use App\Repository\SuiviRepository;
 use App\Service\Interconnection\Esabora\AbstractEsaboraService;
+use App\Service\Interconnection\Esabora\EsaboraTokenProvider;
 use App\Service\UploadHandlerService;
 use App\Tests\FixturesHelper;
 use Doctrine\ORM\NonUniqueResultException;
@@ -58,11 +59,18 @@ class DossierMessageSISHFactoryTest extends TestCase
             ->with('back_signalement_view')
             ->willReturn('/bo/signalements/00000000-0000-0000-2022-000000000001');
 
+        $esaboraTokenProviderMock = $this->createMock(EsaboraTokenProvider::class);
+        $esaboraTokenProviderMock
+            ->expects($this->once())
+            ->method('getToken')
+            ->willReturn('test-token');
+
         $dossierMessageFactory = new DossierMessageSISHFactory(
             $suiviRepositoryMock,
             $uploadHandlerServiceMock,
             $parameterBagMock,
             $urlGeneratorMock,
+            $esaboraTokenProviderMock,
             true
         );
 

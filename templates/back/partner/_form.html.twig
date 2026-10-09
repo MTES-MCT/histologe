@@ -84,6 +84,9 @@
 			<div class="fr-fieldset__element{% if not form.isOAuth2.vars.checked %} fr-hidden{% endif %}" id="partner_oauth2_client_id_group">
 				{{ form_row(form.oauth2ClientId) }}
 			</div>
+			<div class="fr-fieldset__element{% if not form.isOAuth2.vars.checked %} fr-hidden{% endif %}" id="partner_oauth2_scope_group">
+				{{ form_row(form.oauth2Scope) }}
+			</div>
 		</fieldset>
 	</div>
 	<div class="fr-col-12">

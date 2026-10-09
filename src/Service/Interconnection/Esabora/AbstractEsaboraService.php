@@ -35,6 +35,7 @@ abstract class AbstractEsaboraService implements EsaboraServiceInterface
         protected readonly HttpClientInterface $client,
         protected readonly LoggerInterface $logger,
         protected readonly UploadHandlerService $uploadHandlerService,
+        protected readonly EsaboraTokenProvider $esaboraTokenProvider,
     ) {
     }
 
