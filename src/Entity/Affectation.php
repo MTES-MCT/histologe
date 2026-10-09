@@ -32,8 +32,8 @@ class Affectation implements EntityHistoryInterface
     private string $uuid;
 
     #[ORM\ManyToOne(targetEntity: Signalement::class, inversedBy: 'affectations')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Signalement $signalement = null;
+    #[ORM\JoinColumn(nullable: false)]
+    private Signalement $signalement;
 
     #[ORM\ManyToOne(targetEntity: Partner::class, inversedBy: 'affectations')]
     #[ORM\JoinColumn(nullable: false)]
@@ -116,12 +116,12 @@ class Affectation implements EntityHistoryInterface
         return $this->uuid;
     }
 
-    public function getSignalement(): ?Signalement
+    public function getSignalement(): Signalement
     {
         return $this->signalement;
     }
 
-    public function setSignalement(?Signalement $signalement): static
+    public function setSignalement(Signalement $signalement): static
     {
         $this->signalement = $signalement;
 

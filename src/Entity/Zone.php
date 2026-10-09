@@ -17,6 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ZoneRepository::class)]
 #[ORM\HasLifecycleCallbacks()]
+#[ORM\Index(name: 'idx_area_spatial', columns: ['area'], flags: ['SPATIAL'])]
 #[ORM\UniqueConstraint(columns: ['name', 'territory_id'])]
 #[UniqueEntity(
     fields: ['name', 'territory'],

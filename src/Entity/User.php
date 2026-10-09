@@ -69,11 +69,11 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
     #[ORM\Column(length: 255, unique: true, nullable: true)]
     private ?string $proConnectUserId = null;
 
-    #[ORM\Column(type: 'string', length: 180, unique: true, nullable: true)]
+    #[ORM\Column(type: 'string', length: 180, unique: true)]
     #[Email(mode: Email::VALIDATION_MODE_STRICT, groups: ['registration', 'Default'])]
     #[Assert\NotBlank(message: 'Merci de saisir une adresse e-mail.')]
     #[Assert\Length(max: 255, groups: ['user_partner', 'Default'])]
-    private ?string $email = null;
+    private string $email = '';
 
     /** @var array<mixed> $roles */
     #[ORM\Column(type: 'json')]
@@ -276,7 +276,7 @@ class User implements UserInterface, EntityHistoryInterface, PasswordAuthenticat
         return $this->proConnectUserId;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
