@@ -134,7 +134,7 @@ class SignalementInjonctionController extends AbstractController
             partner: null
         );
 
-        $description = $suiviDescriptionHelper->buildStoredDescription(
+        $description = $suiviDescriptionHelper->buildDescriptionForCreation(
             SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN,
             ['motif' => $motif->labelForAdmin(), 'details' => $details]
         );
