@@ -10,8 +10,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class ApiRequestIdSubscriber implements EventSubscriberInterface
 {
-    public const REQUEST_API_ID_KEY = 'api_request_id';
-    public const REQUEST_START_TIME = 'api_request_start_time';
+    public const string REQUEST_API_ID_KEY = 'api_request_id';
+    public const string REQUEST_START_TIME = 'api_request_start_time';
 
     public function __construct(
         private readonly ApiLogger $apiLogger,
@@ -33,7 +33,10 @@ class ApiRequestIdSubscriber implements EventSubscriberInterface
         }
 
         $request = $event->getRequest();
-        if (!str_starts_with($request->getPathInfo(), '/api') || str_starts_with($request->getPathInfo(), '/api/doc')) {
+        if (!str_starts_with($request->getPathInfo(), '/api')
+            || str_starts_with($request->getPathInfo(), '/api/doc')
+            || null === $request->attributes->get('_route')
+        ) {
             return;
         }
 
@@ -49,7 +52,10 @@ class ApiRequestIdSubscriber implements EventSubscriberInterface
         }
 
         $request = $event->getRequest();
-        if (!str_starts_with($request->getPathInfo(), '/api') || str_starts_with($request->getPathInfo(), '/api/doc')) {
+        if (!str_starts_with($request->getPathInfo(), '/api')
+            || str_starts_with($request->getPathInfo(), '/api/doc')
+            || null === $request->attributes->get('_route')
+        ) {
             return;
         }
 

@@ -4,12 +4,14 @@ namespace App\Service;
 
 use App\Entity\User;
 use App\EventSubscriber\ApiRequestIdSubscriber;
+use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+#[WithMonologChannel('api')]
 class ApiLogger
 {
     public function __construct(
@@ -20,6 +22,7 @@ class ApiLogger
 
     public function logApiCall(Request $request, Response $response): void
     {
+        $route = $request->attributes->get('_route');
         $requestId = $request->attributes->get(ApiRequestIdSubscriber::REQUEST_API_ID_KEY);
         $startTime = $request->attributes->get(ApiRequestIdSubscriber::REQUEST_START_TIME);
         $executionTime = round(microtime(true) - $startTime, 2);
@@ -33,6 +36,7 @@ class ApiLogger
             'request_id' => $requestId,
             'execution_time' => $executionTime,
             'user_id' => $userId,
+            'route' => $route,
             'method' => $method,
             'path_info' => $pathInfo,
             'query' => $request->query->all(),
