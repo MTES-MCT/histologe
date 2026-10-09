@@ -10,7 +10,11 @@ class SuiviDescriptionHelper
     public const string DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été clôturé pour %s avec le motif suivant :';
     public const string DESCRIPTION_TRAVAUX_MISE_EN_CONFORMITE = 'Travaux de mise en conformité réalisés ? ';
 
-    private const array SPECIFIC_TEMPLATES = [
+    /**
+     * Textes fixes (sans variable), calculés à chaque affichage : la description en base est vide et ignorée.
+     * Ne jamais y mettre un template avec variables : elles seraient vides à l'affichage.
+     */
+    private const array DISPLAY_TEMPLATES = [
         SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI->value => [
             SuiviRecipient::DEFAULT->value => 'suivi/injonction_bailleur_reponse_oui.html.twig',
         ],
@@ -47,7 +51,11 @@ class SuiviDescriptionHelper
         ],
     ];
 
-    private const array STORED_DESCRIPTION_TEMPLATES = [
+    /**
+     * Textes avec variables, générés une seule fois à la création du suivi puis enregistrés en base.
+     * Jamais lus à l'affichage : c'est la description en base qui fait foi.
+     */
+    private const array CREATION_TEMPLATES = [
         SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE->value => 'suivi/injonction_bailleur_relance_usager_cloture.html.twig',
         SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN->value => 'suivi/injonction_bailleur_cloture_par_admin.html.twig',
     ];
@@ -80,9 +88,12 @@ class SuiviDescriptionHelper
     ) {
     }
 
-    public function getDescription(SuiviCategory $category, SuiviRecipient $recipient): ?string
+    /**
+     * Description calculée à l'affichage, ou null si la catégorie utilise la description enregistrée en base.
+     */
+    public function getDisplayDescription(SuiviCategory $category, SuiviRecipient $recipient): ?string
     {
-        $template = self::SPECIFIC_TEMPLATES[$category->value][$recipient->value] ?? self::SPECIFIC_TEMPLATES[$category->value][SuiviRecipient::DEFAULT->value] ?? null;
+        $template = self::DISPLAY_TEMPLATES[$category->value][$recipient->value] ?? self::DISPLAY_TEMPLATES[$category->value][SuiviRecipient::DEFAULT->value] ?? null;
         if (null !== $template) {
             return trim($this->twig->render($template));
         }
@@ -96,11 +107,11 @@ class SuiviDescriptionHelper
      *
      * @param array<string, mixed> $params
      */
-    public function buildStoredDescription(SuiviCategory $category, array $params = []): string
+    public function buildDescriptionForCreation(SuiviCategory $category, array $params = []): string
     {
-        $template = self::STORED_DESCRIPTION_TEMPLATES[$category->value] ?? null;
+        $template = self::CREATION_TEMPLATES[$category->value] ?? null;
         if (null === $template) {
-            throw new \LogicException(\sprintf('No stored description template for suivi category %s', $category->value));
+            throw new \LogicException(\sprintf('No creation template for suivi category %s', $category->value));
         }
 
         return trim($this->twig->render($template, $params));

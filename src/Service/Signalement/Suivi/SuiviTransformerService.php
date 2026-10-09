@@ -25,7 +25,7 @@ class SuiviTransformerService
 
     public function transformDescription(Suivi $suivi, bool $transformHtml, SuiviRecipient $recipient): string
     {
-        $calculatedDescription = $this->suiviDescriptionHelper->getDescription($suivi->getCategory(), $recipient);
+        $calculatedDescription = $this->suiviDescriptionHelper->getDisplayDescription($suivi->getCategory(), $recipient);
         if ($calculatedDescription) {
             return $calculatedDescription;
         }

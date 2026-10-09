@@ -201,7 +201,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
 
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: $this->suiviDescriptionHelper->buildStoredDescription(
+                description: $this->suiviDescriptionHelper->buildDescriptionForCreation(
                     SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE,
                     ['threshold' => $usagerClotureThresholdFR]
                 ),
@@ -308,7 +308,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
     {
         $beforeDate = $this->clock->now()->modify('-'.$this->reminderSuiviTravauxThreshold); // 1 MOIS
         $signalements = $this->signalementRepository->findInjonctionToCloseWithoutActivity($beforeDate);
-        $comCloture = (string) $this->suiviDescriptionHelper->getDescription(SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_SANS_ACTIVITE, SuiviRecipient::DEFAULT);
+        $comCloture = (string) $this->suiviDescriptionHelper->getDisplayDescription(SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_SANS_ACTIVITE, SuiviRecipient::DEFAULT);
         foreach ($signalements as $signalement) {
             $this->notificationAndMailSender->sendSignalementClosedToBailleurAndUsager($signalement);
             $output->writeln(sprintf('#%s bailleur reminded to answer', $signalement->getUuid()));
