@@ -59,9 +59,6 @@ final class Version20261008125242 extends AbstractMigration
         $this->addSql('ALTER TABLE arrete CHANGE date_arrete date_arrete DATE NOT NULL COMMENT \'(DC2Type:date_immutable)\', CHANGE date_main_levee date_main_levee DATE DEFAULT NULL COMMENT \'(DC2Type:date_immutable)\', CHANGE imported_at imported_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE auto_affectation_rule CHANGE procedures_suspectees procedures_suspectees LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:simple_array)\', CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE club_event CHANGE date_event date_event DATETIME NOT NULL');
-        $this->addSql('ALTER TABLE commune RENAME INDEX idx_e2e2d1ee46f1b564 TO FK_COMMUNE_MERGED_INTO');
-        $this->addSql('ALTER TABLE commune DROP FOREIGN KEY FK_E2E2D1EE46F1B564');
-        $this->addSql('ALTER TABLE commune ADD CONSTRAINT `FK_COMMUNE_MERGED_INTO` FOREIGN KEY (commune_merged_into_id) REFERENCES commune (id) ON UPDATE NO ACTION ON DELETE SET NULL');
         $this->addSql('ALTER TABLE critere CHANGE created_at created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE modified_at modified_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE criticite CHANGE created_at created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE modified_at modified_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE desordre_categorie CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
@@ -90,6 +87,5 @@ final class Version20261008125242 extends AbstractMigration
         $this->addSql('ALTER TABLE user_search_filter CHANGE created_at created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE user_search_filter RENAME INDEX idx_48a89d52a76ed395 TO IDX_503ADCBEA76ED395');
         $this->addSql('ALTER TABLE user_signalement_subscription CHANGE created_at created_at DATETIME NOT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('ALTER TABLE zone CHANGE area area GEOMETRY DEFAULT \'st_geomfromtext(_utf8mb4\\\\\'\'POINT(0 0)\\\\\'\')\' NOT NULL, CHANGE created_at created_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\', CHANGE updated_at updated_at DATETIME DEFAULT NULL COMMENT \'(DC2Type:datetime_immutable)\'');
     }
 }

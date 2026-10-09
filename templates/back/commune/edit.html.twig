@@ -93,7 +93,7 @@
                     </p>
                 </div>
             {% endif %}
-            {% if countSignalementsWithInsee > 0
+            {% if countAddressesWithInsee > 0
                 or countWithAutoAffectationRulesWithInseeToInclude > 0
                 or countWithAutoAffectationRulesWithInseeToExclude > 0
                 or countWithPartenairesWithInsee > 0
@@ -104,8 +104,8 @@
                         Attention : pour le code INSEE actuel de la commune ({{ commune.codeInsee }}), il y a :
                     </p>
                     <ul class="fr-mt-2v">
-                        {% if countSignalementsWithInsee > 0 %}
-                            <li>{{ countSignalementsWithInsee }} signalement(s)</li>
+                        {% if countAddressesWithInsee > 0 %}
+                            <li>{{ countAddressesWithInsee }} adresse(s) avec ce code INSEE</li>
                         {% endif %}
                         {% if countWithAutoAffectationRulesWithInseeToInclude > 0 %}
                             <li>{{ countWithAutoAffectationRulesWithInseeToInclude }} règle(s) d'auto-affectation avec ce code INSEE dans les critères d'inclusion</li>
