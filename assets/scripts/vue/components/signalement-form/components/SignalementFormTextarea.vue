@@ -14,7 +14,7 @@
         @input="updateValue($event)"
         :aria-describedby="hasError ? id + '-text-input-error-desc-error' : undefined"
         :disabled="disabled"
-        :maxlength="maxlength"
+        :maxlength="maxlength ?? validate?.maxLength"
       >
       </textarea>
     </div>

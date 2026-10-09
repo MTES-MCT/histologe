@@ -301,8 +301,11 @@ class SignalementDraftRequest
     )]
     private ?string $compositionLogementSuperficie = null;
 
-    #[Assert\NotBlank(
-        message: 'Merci de définir le nombre de pièces à vivre.',
+    #[Assert\When(
+        expression: 'this.getCompositionLogementPieceUnique() != "piece_unique"',
+        constraints: [
+            new Assert\NotBlank(message: 'Merci de définir le nombre de pièces à vivre.'),
+        ],
         groups: [
             'PUT_LOCATAIRE',
             'PUT_BAILLEUR_OCCUPANT',
@@ -310,13 +313,18 @@ class SignalementDraftRequest
             'PUT_TIERS_PARTICULIER',
             'PUT_TIERS_PRO',
             'PUT_SERVICE_SECOURS',
-        ]
+        ],
     )]
-    #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs nombre de pièces à vivre.')]
-    #[Assert\Type(type: 'numeric', message: 'Le nombre de pièces à vivre doit être un nombre.')]
-    #[Assert\LessThan(
-        value: 1000,
-        message: 'Merci de saisir un nombre de pièces inférieur à 1000.',
+    #[Assert\When(
+        expression: 'this.getCompositionLogementPieceUnique() != "piece_unique"',
+        constraints: [
+            new Assert\Positive(message: 'Merci de saisir une information numérique dans le champs nombre de pièces à vivre.'),
+            new Assert\Type(type: 'numeric', message: 'Le nombre de pièces à vivre doit être un nombre.'),
+            new Assert\LessThan(
+                value: 1000,
+                message: 'Merci de saisir un nombre de pièces inférieur à 1000.',
+            ),
+        ],
     )]
     private ?string $compositionLogementNbPieces = null;
 

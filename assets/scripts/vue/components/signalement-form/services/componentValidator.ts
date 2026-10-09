@@ -3,7 +3,7 @@ import { isValidPhoneNumber } from 'libphonenumber-js'
 import { variableTester } from '../../common/utils/variableTester'
 
 export const componentValidator = {
-  validate (component: any) {
+  validate (component: any, checkRequired: boolean = true) {
     const componentSlug: string = component.slug
     const value = formStore.data[componentSlug]
     if (!formStore.shouldShowField(component)) {
@@ -12,7 +12,9 @@ export const componentValidator = {
     let regexPattern
     // s'il y a une valeur, on vérifie si un pattern est requis (ou si c'est un type email)
     if (variableTester.isNotEmpty(value) && component.type === 'SignalementFormEmailfield') {
-      regexPattern = /^[^\s@]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
+      // proche du mode strict du back : pas de ':' (ex : "mailto:"), pas de point en début/fin ou doublé,
+      // labels de domaine ne commençant ni ne finissant par '-' ou '.' (ex : "@.gmail.com")
+      regexPattern = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@([A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/
     } else if (variableTester.isNotEmpty(value) && component.validate?.pattern !== undefined) {
       regexPattern = new RegExp(component.validate.pattern)
     }
@@ -37,7 +39,8 @@ export const componentValidator = {
       }
     }
 
-    if (component.type === 'SignalementFormAddress') {
+    // la validation d'adresse contrôle surtout des champs requis
+    if (checkRequired && component.type === 'SignalementFormAddress') {
       this.validateAddress(component)
     }
 
