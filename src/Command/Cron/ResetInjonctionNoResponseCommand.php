@@ -60,7 +60,7 @@ class ResetInjonctionNoResponseCommand extends AbstractCronCommand
                 $this->injonctionBailleurService->switchFromInjonctionToProcedure($signalement);
                 $this->suiviManager->createSuivi(
                     signalement: $signalement,
-                    description: 'La procédure d’injonction a expiré pour le bailleur. Le signalement est désormais en attente de validation.',
+                    description: '',
                     category: SuiviCategory::INJONCTION_BAILLEUR_EXPIREE,
                     user: $this->userManager->getSystemUser(),
                     isVisibleForUsager: true
