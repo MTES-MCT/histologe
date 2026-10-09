@@ -98,6 +98,7 @@ class SignalementInjonctionController extends AbstractController
         EntityManagerInterface $entityManager,
         SignalementManager $signalementManager,
         AffectationManager $affectationManager,
+        SuiviDescriptionHelper $suiviDescriptionHelper,
     ): JsonResponse {
         $this->denyAccessUnlessGranted(SignalementVoter::SIGN_INJONCTION_CLOSE, $signalement);
 
@@ -133,7 +134,10 @@ class SignalementInjonctionController extends AbstractController
             partner: null
         );
 
-        $description = \sprintf(SuiviDescriptionHelper::DESCRIPTION_MOTIF_CLOTURE_INJONCTION_ADMIN, $motif->labelForAdmin(), $details);
+        $description = $suiviDescriptionHelper->buildDescriptionForCreation(
+            SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN,
+            ['motif' => $motif->labelForAdmin(), 'details' => $details]
+        );
         $suiviManager->createSuivi(
             signalement: $signalement,
             description: $description,

@@ -14,6 +14,8 @@ use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
 use App\Service\Notification\NotificationAndMailSender;
+use App\Service\Signalement\Suivi\SuiviDescriptionHelper;
+use App\Service\Signalement\Suivi\SuiviRecipient;
 use App\Utils\DateHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Clock\ClockInterface;
@@ -31,9 +33,7 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
     description: 'Every month, remind bailleurs and usagers to give news about injonction signalements')]
 class RemindInjonctionSignalementCommand extends AbstractCronCommand
 {
-    private const string REMIND_USAGER_FOR_CLOTURE_SUIVI = 'Relance envoyée à l\'usager pour lui demander de confirmer la réalisation des travaux déclarée par le bailleur il y a %s.';
     private const string CLOSE_INJONCTION_SUIVI = 'En l\'absence de réponse ou d\'opposition du déclarant dans le délai imparti, le dossier est clôturé et réputé résolu.';
-    private const string CLOSE_INJONCTION_WITHOUT_SUIVI_TRAVAUX = 'Sans suivi des parties, locataire et bailleur, nous procédons à la clôture du dossier';
 
     private User $adminUser;
 
@@ -54,6 +54,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         private readonly SignalementManager $signalementManager,
         private readonly AffectationManager $affectationManager,
         private readonly UserRepository $userRepository,
+        private readonly SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
         parent::__construct($this->parameterBag);
     }
@@ -88,10 +89,9 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                 $output->writeln(sprintf('#%s bailleur reminded to answer', $signalement->getUuid()));
 
                 // On crée un suivi pour l'usager
-                $description = 'Le bailleur du logement a été relancé pour répondre à l\'injonction.';
                 $this->suiviManager->createSuivi(
                     signalement: $signalement,
-                    description: $description,
+                    description: '',
                     category: SuiviCategory::INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR,
                 );
             }
@@ -130,10 +130,9 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                 $this->notificationAndMailSender->sendReminderToBailleur($signalement);
             }
 
-            $description = 'Relance envoyée au bailleur pour demander un suivi sur les travaux.';
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: $description,
+                description: '',
                 category: SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_BAILLEUR,
             );
 
@@ -142,11 +141,9 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
         $signalementsLastMessageUsager = $this->signalementRepository->findInjonctionToRemind($beforeDate, 'usager');
         foreach ($signalementsLastMessageUsager as $signalement) {
             // Pour l'usager, on crée un suivi
-            $description = 'Important - Point d\'avancement mensuel : ';
-            $description .= 'Merci d\'indiquer si des démarches ont été entamées par votre bailleur (devis reçus, rdv artisans, travaux débutés, aucune avancée...).';
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: $description,
+                description: '',
                 category: SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER,
                 isVisibleForUsager: true
             );
@@ -204,7 +201,10 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
 
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: sprintf(self::REMIND_USAGER_FOR_CLOTURE_SUIVI, $usagerClotureThresholdFR),
+                description: $this->suiviDescriptionHelper->buildDescriptionForCreation(
+                    SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE,
+                    ['threshold' => $usagerClotureThresholdFR]
+                ),
                 category: SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE,
                 sendMail: false,
             );
@@ -308,13 +308,14 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
     {
         $beforeDate = $this->clock->now()->modify('-'.$this->reminderSuiviTravauxThreshold); // 1 MOIS
         $signalements = $this->signalementRepository->findInjonctionToCloseWithoutActivity($beforeDate);
+        $comCloture = (string) $this->suiviDescriptionHelper->getDisplayDescription(SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_SANS_ACTIVITE, SuiviRecipient::DEFAULT);
         foreach ($signalements as $signalement) {
             $this->notificationAndMailSender->sendSignalementClosedToBailleurAndUsager($signalement);
             $output->writeln(sprintf('#%s bailleur reminded to answer', $signalement->getUuid()));
 
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: self::CLOSE_INJONCTION_WITHOUT_SUIVI_TRAVAUX,
+                description: '',
                 isVisibleForBailleur: true,
                 isVisibleForUsager: true,
                 category: SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_SANS_ACTIVITE,
@@ -326,7 +327,7 @@ class RemindInjonctionSignalementCommand extends AbstractCronCommand
                 signalement: $signalement,
                 closedBy: $this->adminUser,
                 motifCloture: MotifCloture::ABANDON_DE_PROCEDURE_ABSENCE_DE_REPONSE,
-                description: self::CLOSE_INJONCTION_WITHOUT_SUIVI_TRAVAUX,
+                description: $comCloture,
             );
             $this->affectationManager->closeBySignalement(
                 signalement: $signalement,
