@@ -2,8 +2,11 @@
 
 namespace App\Tests\Functional\Controller\Back;
 
+use App\Entity\Enum\Qualification;
+use App\Entity\Enum\QualificationStatus;
 use App\Entity\Enum\SuiviDelayedType;
 use App\Entity\Signalement;
+use App\Entity\SignalementQualification;
 use App\Repository\SignalementRepository;
 use App\Repository\SuiviDelayedRepository;
 use App\Repository\UserRepository;
@@ -28,10 +31,14 @@ class SignalementEditControllerTest extends WebTestCase
     private SuiviDelayedRepository $suiviDelayedRepository;
     private RouterInterface $router;
     private ?Signalement $signalement = null;
+    private ?string $featureOrientation = null;
 
     protected function setUp(): void
     {
         self::ensureKernelShutdown();
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer le forçage du flag (ici et dans tearDown)
+        $this->featureOrientation = $_ENV['FEATURE_ORIENTATION'] ?? null;
+        $_ENV['FEATURE_ORIENTATION'] = '1';
         $this->client = static::createClient();
         $this->userRepository = static::getContainer()->get(UserRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
@@ -42,10 +49,55 @@ class SignalementEditControllerTest extends WebTestCase
         $this->signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000004']);
     }
 
-    public function testEditCoordonneesBailleurWithBailleur(): void
+    protected function tearDown(): void
+    {
+        if (null === $this->featureOrientation) {
+            unset($_ENV['FEATURE_ORIENTATION']);
+        } else {
+            $_ENV['FEATURE_ORIENTATION'] = $this->featureOrientation;
+        }
+        parent::tearDown();
+    }
+
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce test
+    public function testEditCoordonneesBailleurOldWithBailleur(): void
     {
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
 
+        $route = $this->router->generate(
+            'back_signalement_edit_coordonnees_bailleur_old',
+            ['uuid' => $signalement->getUuid()]
+        );
+
+        $payload = $this->getPayloadCoordonneesBailleurOld('13 habitat', $signalement->getId());
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+
+        $this->assertResponseIsSuccessful();
+
+        $this->assertEquals('13 HABITAT', $signalement->getBailleur()->getName());
+        $this->assertEquals('13 HABITAT', $signalement->getDenominationProprio());
+    }
+
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce test
+    public function testEditCoordonneesBailleurOldWithCustomBailleur(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['uuid' => '00000000-0000-0000-2024-000000000004']);
+        $route = $this->router->generate(
+            'back_signalement_edit_coordonnees_bailleur_old',
+            ['uuid' => $signalement->getUuid()]
+        );
+
+        $payload = $this->getPayloadCoordonneesBailleurOld('Habitat Social Solidaire', $signalement->getId());
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+
+        $this->assertResponseIsSuccessful();
+        $this->assertNull($signalement->getBailleur());
+        $this->assertEquals('Habitat Social Solidaire', $signalement->getDenominationProprio());
+    }
+
+    public function testEditCoordonneesBailleurWithBailleur(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
         $route = $this->router->generate(
             'back_signalement_edit_coordonnees_bailleur',
             ['uuid' => $signalement->getUuid()]
@@ -55,7 +107,6 @@ class SignalementEditControllerTest extends WebTestCase
         $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
 
         $this->assertResponseIsSuccessful();
-
         $this->assertEquals('13 HABITAT', $signalement->getBailleur()->getName());
         $this->assertEquals('13 HABITAT', $signalement->getDenominationProprio());
     }
@@ -74,6 +125,41 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertNull($signalement->getBailleur());
         $this->assertEquals('Habitat Social Solidaire', $signalement->getDenominationProprio());
+    }
+
+    public function testEditCoordonneesBailleurDoesNotOverwriteInformationsBailleur(): void
+    {
+        $this->client->disableReboot();
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
+
+        $route = $this->router->generate('back_signalement_edit_informations_bailleur', ['uuid' => $signalement->getUuid()]);
+        $payload = $this->getPayloadInformationsBailleur('oui', 'non', $signalement->getId());
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+        $this->assertResponseIsSuccessful();
+
+        $route = $this->router->generate('back_signalement_edit_coordonnees_bailleur', ['uuid' => $signalement->getUuid()]);
+        $payload = $this->getPayloadCoordonneesBailleur('13 habitat', $signalement->getId());
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+        $this->assertResponseIsSuccessful();
+
+        $informationComplementaire = $signalement->getInformationComplementaire();
+        $this->assertEquals('oui', $informationComplementaire->getInformationsComplementairesSituationBailleurBeneficiaireRsa());
+        $this->assertEquals('non', $informationComplementaire->getInformationsComplementairesSituationBailleurBeneficiaireFsl());
+    }
+
+    public function testEditInformationsBailleurWithEmptyValues(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2022-1']);
+        $route = $this->router->generate('back_signalement_edit_informations_bailleur', ['uuid' => $signalement->getUuid()]);
+
+        $payload = $this->getPayloadInformationsBailleur('', '', $signalement->getId());
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+
+        $this->assertResponseIsSuccessful();
+        $informationComplementaire = $signalement->getInformationComplementaire();
+        $this->assertNull($informationComplementaire->getInformationsComplementairesSituationBailleurBeneficiaireRsa());
+        $this->assertNull($informationComplementaire->getInformationsComplementairesSituationBailleurBeneficiaireFsl());
+        $this->assertNull($informationComplementaire->getInformationsComplementairesSituationBailleurRevenuFiscal());
     }
 
     public function testInviteTiers(): void
@@ -220,10 +306,167 @@ class SignalementEditControllerTest extends WebTestCase
         $this->assertEquals(['title' => 'Modifications enregistrées', 'message' => 'Le statut d\'occupation du logement a bien été modifié.'], $successMessages[0]);
     }
 
+    public function testEditConsommationEnergetiqueBefore2023(): void
+    {
+        $route = $this->router->generate(
+            'back_signalement_edit_consommation_energetique',
+            ['uuid' => $this->signalement->getUuid()]
+        );
+
+        $payload = [
+            ...self::getStaticPayloadConsommationEnergetique(),
+            'dateDernierDPE' => '1970-01-01',
+            'consommationEnergie' => '30000',
+            'superficie' => '60',
+            '_token' => $this->getCsrfToken('signalement_edit_consommation_energetique_', $this->signalement->getId()),
+        ];
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+
+        $this->assertResponseIsSuccessful();
+        $typeCompositionLogement = $this->signalement->getTypeCompositionLogement();
+        $this->assertEquals('oui', $typeCompositionLogement->getBailDpeDpe());
+        $this->assertEquals('F', $typeCompositionLogement->getBailDpeClasseEnergetique());
+        $this->assertEquals('before2023', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeAnnee());
+        $this->assertEquals('30000', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeConso());
+        $this->assertEquals(60, $this->signalement->getSuperficie());
+        $this->assertEquals('2021-05-01', $this->signalement->getDateEntree()->format('Y-m-d'));
+    }
+
+    public function testEditConsommationEnergetiqueUpdatesQualificationNde(): void
+    {
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2023-8']);
+        $route = $this->router->generate(
+            'back_signalement_edit_consommation_energetique',
+            ['uuid' => $signalement->getUuid()]
+        );
+
+        $payload = [
+            ...self::getStaticPayloadConsommationEnergetique(),
+            'dateDernierDPE' => '2023-01-02',
+            'consommationEnergie' => '500',
+            '_token' => $this->getCsrfToken('signalement_edit_consommation_energetique_', $signalement->getId()),
+        ];
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+
+        $this->assertResponseIsSuccessful();
+        $this->assertEquals('post2023', $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeAnnee());
+        $this->assertEquals('500', $signalement->getTypeCompositionLogement()->getDesordresLogementChauffageDetailsDpeConsoFinale());
+
+        $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(
+            static fn (SignalementQualification $qualification) => Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification()
+        )->first();
+        $this->assertInstanceOf(SignalementQualification::class, $signalementQualificationNDE);
+        $this->assertEquals(500, $signalementQualificationNDE->getDetails()['consommation_energie']);
+        $this->assertEquals(QualificationStatus::NDE_AVEREE, $signalementQualificationNDE->getStatus());
+    }
+
+    public function testEditConsommationEnergetiqueUnauthorization(): void
+    {
+        $route = $this->router->generate(
+            'back_signalement_edit_consommation_energetique',
+            ['uuid' => $this->signalement->getUuid()]
+        );
+
+        $payload = [...self::getStaticPayloadConsommationEnergetique(), '_token' => '1234'];
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertTrue($response['stayOnPage']);
+        $this->assertEquals(MessageHelper::ERROR_MESSAGE_CSRF, $response['flashMessages'][0]['message']);
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     * @param array<string>        $expectedTargets
+     */
+    #[DataProvider('provideEditSignalementRoutesWithLinkedTargets')]
+    public function testEditSignalementReloadsLinkedTargets(string $routeName, array $payload, string $token, array $expectedTargets): void
+    {
+        $route = $this->router->generate(
+            $routeName,
+            ['uuid' => $this->signalement->getUuid()]
+        );
+
+        $payload['_token'] = $this->getCsrfToken($token, $this->signalement->getId());
+        $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
+
+        $this->assertResponseIsSuccessful();
+        $response = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $targets = array_column($response['htmlTargetContents'], 'target');
+        foreach ($expectedTargets as $expectedTarget) {
+            $this->assertContains($expectedTarget, $targets);
+        }
+    }
+
+    public static function provideEditSignalementRoutesWithLinkedTargets(): \Generator
+    {
+        yield 'Edition Consommation énergétique' => [
+            'back_signalement_edit_consommation_energetique',
+            self::getStaticPayloadConsommationEnergetique(),
+            'signalement_edit_consommation_energetique_',
+            [
+                '#signalement-consommation-energetique-container',
+                '#signalement-occupation-logement-container',
+                '#signalement-description-logement-container',
+                '#occupationLogementDateEntree-container',
+                '#compositionLogementSuperficie-container',
+                '#signalement-pre-evaluation-container',
+            ],
+        ];
+
+        yield 'Edition Occupation du logement' => [
+            'back_signalement_edit_occupation_logement',
+            array_diff_key(self::getStaticPayloadInformationLogement(), ['bailDpeDpe' => null, 'bailDpeClasseEnergetique' => null]),
+            'signalement_edit_occupation_logement_',
+            [
+                '#signalement-occupation-logement-container',
+                '#signalement-consommation-energetique-container',
+                '#signalement-edit-consommation-energetique-date-entree-container',
+                '#signalement-pre-evaluation-container',
+            ],
+        ];
+
+        yield 'Edition Description du logement' => [
+            'back_signalement_edit_composition_logement',
+            [...self::getStaticPayloadCompositionLogement(), 'type' => 'appartement'],
+            'signalement_edit_composition_logement_',
+            [
+                '#signalement-description-logement-container',
+                '#signalement-occupation-logement-container',
+                '#autresOccupantsDesordre-container',
+                '#signalement-consommation-energetique-container',
+                '#signalement-edit-consommation-energetique-superficie-container',
+                '#signalement-pre-evaluation-container',
+            ],
+        ];
+
+        yield 'Edition Situation du foyer' => [
+            'back_signalement_edit_situation_foyer',
+            [...self::getStaticPayloadSituationFoyer(), 'infoProcedureDepartApresTravaux' => 'non'],
+            'signalement_edit_situation_foyer_',
+            [
+                '#signalement-situation-foyer-container',
+                '#signalement-demarches-usager-container',
+                '#signalement-pre-evaluation-container',
+            ],
+        ];
+
+        yield 'Edition Procédure et démarches' => [
+            'back_signalement_edit_procedure_demarches',
+            array_diff_key(self::getStaticPayloadProcedureDemarches(), ['infoProcedureDepartApresTravaux' => null]),
+            'signalement_edit_procedure_demarches_',
+            [
+                '#signalement-demarches-usager-container',
+                '#signalement-pre-evaluation-container',
+            ],
+        ];
+    }
+
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette méthode
     /**
      * @return array<string>
      */
-    private function getPayloadCoordonneesBailleur(string $bailleurName, int $signalementId): array
+    private function getPayloadCoordonneesBailleurOld(string $bailleurName, int $signalementId): array
     {
         return [
             'denomination' => $bailleurName,
@@ -236,7 +479,37 @@ class SignalementEditControllerTest extends WebTestCase
             'beneficiaireFsl' => '',
             'revenuFiscal' => '',
             'dateNaissance' => '',
+            '_token' => $this->getCsrfToken('signalement_edit_coordonnees_bailleur_old_', $signalementId),
+        ];
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function getPayloadCoordonneesBailleur(string $bailleurName, int $signalementId): array
+    {
+        return [
+            'denomination' => $bailleurName,
+            'nom' => 'Bernard',
+            'prenom' => '',
+            'mail' => 'contact@13habitat.fr',
+            'telephone' => '0611000000',
+            'ville' => 'Marseille',
             '_token' => $this->getCsrfToken('signalement_edit_coordonnees_bailleur_', $signalementId),
+        ];
+    }
+
+    /**
+     * @return array<string>
+     */
+    private function getPayloadInformationsBailleur(string $beneficiaireRsa, string $beneficiaireFsl, int $signalementId): array
+    {
+        return [
+            'beneficiaireRsa' => $beneficiaireRsa,
+            'beneficiaireFsl' => $beneficiaireFsl,
+            'revenuFiscal' => '',
+            'dateNaissance' => '',
+            '_token' => $this->getCsrfToken('signalement_edit_informations_bailleur_', $signalementId),
         ];
     }
 
@@ -342,6 +615,21 @@ class SignalementEditControllerTest extends WebTestCase
     /**
      * @return array<string>
      */
+    private static function getStaticPayloadConsommationEnergetique(): array
+    {
+        return [
+            'dateEntree' => '2021-05-01',
+            'dpe' => 'oui',
+            'classeEnergetique' => 'F',
+            'dateDernierDPE' => '2023-01-02',
+            'consommationEnergie' => '300',
+            'superficie' => '100',
+        ];
+    }
+
+    /**
+     * @return array<string>
+     */
     private static function getStaticPayloadAddress(): array
     {
         return [
@@ -375,6 +663,36 @@ class SignalementEditControllerTest extends WebTestCase
         ];
     }
 
+    /**
+     * @return array<string>
+     */
+    private static function getStaticPayloadCoordonneesAgence(): array
+    {
+        return [
+            'denomination' => 'Agence du Vieux Port',
+            'nom' => 'Martin',
+            'prenom' => 'Claire',
+            'mail' => 'contact@agence-vieux-port.fr',
+            'telephone' => '0491000000',
+            'adresse' => '1 quai du Port',
+            'codePostal' => '13002',
+            'ville' => 'Marseille',
+        ];
+    }
+
+    /**
+     * @return array<string>
+     */
+    private static function getStaticPayloadCoordonneesSyndic(): array
+    {
+        return [
+            'denomination' => 'Syndic de la Canebière',
+            'nom' => 'Durand',
+            'mail' => 'contact@syndic-canebiere.fr',
+            'telephone' => '0491000001',
+        ];
+    }
+
     public static function provideEditSignalementRoutes(): \Generator
     {
         yield 'Edition Adresse logement' => [
@@ -395,10 +713,28 @@ class SignalementEditControllerTest extends WebTestCase
             'signalement_edit_coordonnees_tiers_',
         ];
 
-        yield 'Edition Informations sur le logement' => [
+        yield 'Edition Coordonnées Agence' => [
+            'back_signalement_edit_coordonnees_agence',
+            self::getStaticPayloadCoordonneesAgence(),
+            'signalement_edit_coordonnees_agence_',
+        ];
+
+        yield 'Edition Coordonnées Syndic' => [
+            'back_signalement_edit_coordonnees_syndic',
+            self::getStaticPayloadCoordonneesSyndic(),
+            'signalement_edit_coordonnees_syndic_',
+        ];
+
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce cas
+        yield 'Edition Informations sur le logement (ancien onglet)' => [
             'back_signalement_edit_informations_logement',
             self::getStaticPayloadInformationLogement(),
             'signalement_edit_informations_logement_',
+        ];
+        yield 'Edition Occupation du logement' => [
+            'back_signalement_edit_occupation_logement',
+            array_diff_key(self::getStaticPayloadInformationLogement(), ['bailDpeDpe' => null, 'bailDpeClasseEnergetique' => null]),
+            'signalement_edit_occupation_logement_',
         ];
 
         yield 'Edition Description du logement' => [
@@ -406,15 +742,27 @@ class SignalementEditControllerTest extends WebTestCase
             self::getStaticPayloadCompositionLogement(),
             'signalement_edit_composition_logement_',
         ];
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce cas
+        yield 'Edition Situation du foyer (old)' => [
+            'back_signalement_edit_situation_foyer_old',
+            self::getStaticPayloadSituationFoyer(),
+            'signalement_edit_situation_foyer_old_',
+        ];
         yield 'Edition Situation du foyer' => [
             'back_signalement_edit_situation_foyer',
-            self::getStaticPayloadSituationFoyer(),
+            [...self::getStaticPayloadSituationFoyer(), 'infoProcedureDepartApresTravaux' => 'non'],
             'signalement_edit_situation_foyer_',
         ];
 
+        // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce cas
+        yield 'Edition Procédure et démarches (old)' => [
+            'back_signalement_edit_procedure_demarches_old',
+            self::getStaticPayloadProcedureDemarches(),
+            'signalement_edit_procedure_demarches_old_',
+        ];
         yield 'Edition Procédure et démarches' => [
             'back_signalement_edit_procedure_demarches',
-            self::getStaticPayloadProcedureDemarches(),
+            array_diff_key(self::getStaticPayloadProcedureDemarches(), ['infoProcedureDepartApresTravaux' => null]),
             'signalement_edit_procedure_demarches_',
         ];
     }

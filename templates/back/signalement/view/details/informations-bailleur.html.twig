@@ -1,0 +1,51 @@
+{% import 'back/signalement/view/_static_picto.html.twig' as picto %}
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+        <h4 class="fr-h6">Informations complémentaires sur le bailleur</h4>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+            <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-edit-line"
+                data-panel-open="panel-edit-informations-bailleur"
+                aria-controls="panel-edit-informations-bailleur"
+                data-fr-opened="false"
+                >Modifier</button>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Bénéficiaire RSA :</span>
+        {% if signalement.informationComplementaire %}
+            {% if signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa is same as 'oui' %}
+                {{ picto.picto_yes() }}
+            {% elseif signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa is same as 'non' %}
+                {{ picto.picto_no() }}
+            {% else %}
+                {{signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireRsa}}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Revenu fiscal de référence :</span>
+        {% if signalement.informationComplementaire %}
+            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurRevenuFiscal }} €
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Date de naissance :</span>
+        {% if signalement.informationComplementaire %}
+            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateNaissance}}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Bénéficiaire FSL :</span>
+        {% if signalement.informationComplementaire %}
+            {% if signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl is same as 'oui' %}
+                {{ picto.picto_yes() }}
+            {% elseif signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl is same as 'non' %}
+                {{ picto.picto_no() }}
+            {% else %}
+                {{signalement.informationComplementaire.informationsComplementairesSituationBailleurBeneficiaireFsl}}
+            {% endif %}
+        {% endif %}
+    </div>
+</div>

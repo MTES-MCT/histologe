@@ -64,6 +64,11 @@
                 </div>
 
                 <div class="fr-input-group">
+                    <label class="fr-label" for="procedureDemarchesinfoProcedureBailNumero">Numéro de réclamation (si bailleur contacté et logement social) (facultatif)</label>
+                    <textarea class="fr-input fr-input--no-resize" id="procedureDemarchesinfoProcedureBailNumero" name="infoProcedureBailNumero">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailNumero ? signalement.informationProcedure.infoProcedureBailNumero : '' }}</textarea>
+                </div>
+
+                <div class="fr-input-group">
                     <label class="fr-label" for="procedureDemarchesinfoProcedureBailReponse">Réponse bailleur (si bailleur contacté)
                         {{ show_label_facultatif(
                             'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
@@ -72,11 +77,6 @@
                             signalement.isV2)
                         }}</label>
                     <textarea class="fr-input fr-input--no-resize" id="procedureDemarchesinfoProcedureBailReponse" name="infoProcedureBailReponse">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailReponse ? signalement.informationProcedure.infoProcedureBailReponse : '' }}</textarea>
-                </div>
-
-                <div class="fr-input-group">
-                    <label class="fr-label" for="procedureDemarchesinfoProcedureBailNumero">Numéro de réclamation (si bailleur contacté et logement social) (facultatif)</label>
-                    <textarea class="fr-input fr-input--no-resize" id="procedureDemarchesinfoProcedureBailNumero" name="infoProcedureBailNumero">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailNumero ? signalement.informationProcedure.infoProcedureBailNumero : '' }}</textarea>
                 </div>
 
                 <div class="fr-select-group">
@@ -103,24 +103,6 @@
                     <textarea class="fr-input fr-input--no-resize" id="procedureDemarchesInfoProcedureReponseAssurance" name="infoProcedureReponseAssurance">{{ signalement.informationProcedure and signalement.informationProcedure.infoProcedureReponseAssurance ? signalement.informationProcedure.infoProcedureReponseAssurance : '' }}</textarea>
                 </div>
 
-                <div class="fr-input-group">
-                    {% set infoProcedureDepartApresTravaux = signalement.informationProcedure ? signalement.informationProcedure.infoProcedureDepartApresTravaux : null %}
-                    <label class="fr-label" for="procedureDemarchesInfoProcedureDepartApresTravaux">Souhaite garder le logement après travaux
-                        {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\ProcedureDemarchesRequest',
-                            'infoProcedureDepartApresTravaux',
-                            signalement.profileDeclarant,
-                            signalement.isV2)
-                        }}
-                    </label>
-                    <select class="fr-select" id="procedureDemarchesInfoProcedureDepartApresTravaux" name="infoProcedureDepartApresTravaux">
-                        {# Careful : reversed regarding the question in the form #}
-                        <option value="" {{ infoProcedureDepartApresTravaux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
-                        <option value="non" {{ infoProcedureDepartApresTravaux is same as 'non' ? 'selected' : '' }}>Oui</option>
-                        <option value="oui" {{ infoProcedureDepartApresTravaux is same as 'oui' ? 'selected' : '' }}>Non</option>
-                        <option value="nsp" {{ infoProcedureDepartApresTravaux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
-                    </select>
-                </div>
                 {% if signalement.serviceSecours %}
                     <div class="fr-input-group">
                         <label class="fr-label" for="procedureDemarchesDateMissionServiceSecours">Date de la mission du service de secours (facultatif)

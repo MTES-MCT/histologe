@@ -14,8 +14,28 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 
+// TODO à la suppression de FEATURE_ORIENTATION : supprimer ce test (route back_signalement_qualification_editer supprimée)
 class BackSignalementQualificationControllerTest extends WebTestCase
 {
+    private ?string $featureOrientation = null;
+
+    protected function setUp(): void
+    {
+        // le formulaire NDE n'est affiché qu'avec l'ancien onglet Situation
+        $this->featureOrientation = $_ENV['FEATURE_ORIENTATION'] ?? null;
+        $_ENV['FEATURE_ORIENTATION'] = '0';
+    }
+
+    protected function tearDown(): void
+    {
+        if (null === $this->featureOrientation) {
+            unset($_ENV['FEATURE_ORIENTATION']);
+        } else {
+            $_ENV['FEATURE_ORIENTATION'] = $this->featureOrientation;
+        }
+        parent::tearDown();
+    }
+
     /**
      * @param array<mixed> $payload
      */

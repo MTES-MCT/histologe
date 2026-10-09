@@ -10,6 +10,11 @@
             <form method="POST" id="form-edit-coordonnees-tiers" enctype="application/json" action="{{ path('back_signalement_edit_coordonnees_tiers',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
 
+                <div class="fr-input-group">
+                    <label class="fr-label" for="coordonneesTiersStructure">Structure (si lien avec l'occupant: professionnel(le) ou service de secours)</label>
+                    <input class="fr-input" type="text" id="coordonneesTiersStructure" name="structure" value="{{ signalement.structureDeclarant }}">
+                </div>
+
                 {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}
                 <div class="fr-select-group">
                     <label class="fr-label" for="coordonneesTiersTypeProprio">Type</label>
@@ -21,6 +26,20 @@
                     </select>
                 </div>
                 {% endif %}
+
+                <div class="fr-select-group">
+                    <label class="fr-label" for="coordonneesTiersLien">Lien avec l'occupant (facultatif)</label>
+                    {% set OccupantLink = enum('\\App\\Entity\\Enum\\OccupantLink') %}
+                    <select class="fr-select" id="coordonneesTiersLien" name="lien">
+                        <option value="" {{ signalement.lienDeclarantOccupant not in OccupantLink.names() ? 'selected' : '' }}></option>
+                        <option value="PROCHE" {{ signalement.lienDeclarantOccupant is same as 'PROCHE' ? 'selected' : '' }}>Proche</option>
+                        <option value="VOISIN" {{ signalement.lienDeclarantOccupant is same as 'VOISIN' ? 'selected' : '' }}>Voisinage</option>
+                        <option value="SECOURS" {{ signalement.lienDeclarantOccupant is same as 'SECOURS' ? 'selected' : '' }}>Service de secours</option>
+                        <option value="BAILLEUR" {{ signalement.lienDeclarantOccupant is same as 'BAILLEUR' ? 'selected' : '' }}>Bailleur</option>
+                        <option value="PRO" {{ signalement.lienDeclarantOccupant is same as 'PRO' ? 'selected' : '' }}>Professionnel(le)</option>
+                        <option value="AUTRE" {{ signalement.lienDeclarantOccupant is same as 'AUTRE' ? 'selected' : '' }}>Autre</option>
+                    </select>
+                </div>
 
                 <div class="fr-input-group">
                     <label class="fr-label" for="coordonneesTiersNom">Nom</label>
@@ -38,32 +57,13 @@
                 </div>
 
                 <div class="fr-input-group">
-                    <label class="fr-label" for="coordonneesTiersMail">Courriel</label>
+                    <label class="fr-label" for="coordonneesTiersMail">E-mail</label>
                     <input class="fr-input" type="text" id="coordonneesTiersMail" name="mail" value="{{ signalement.mailDeclarant }}">
                 </div>
 
                 <div class="fr-input-group">
                     <label class="fr-label" for="coordonneesTiersTelephone">Téléphone</label>
                     <input class="fr-input" type="text" id="coordonneesTiersTelephone" name="telephone" value="{{ signalement.telDeclarantDecoded }}">
-                </div>
-
-                <div class="fr-select-group">
-                    <label class="fr-label" for="coordonneesTiersLien">Lien avec l'occupant (facultatif)</label>
-                    {% set OccupantLink = enum('\\App\\Entity\\Enum\\OccupantLink') %}
-                    <select class="fr-select" id="coordonneesTiersLien" name="lien">
-                        <option value="" {{ signalement.lienDeclarantOccupant not in OccupantLink.names() ? 'selected' : '' }}></option>
-                        <option value="PROCHE" {{ signalement.lienDeclarantOccupant is same as 'PROCHE' ? 'selected' : '' }}>Proche</option>
-                        <option value="VOISIN" {{ signalement.lienDeclarantOccupant is same as 'VOISIN' ? 'selected' : '' }}>Voisinage</option>
-                        <option value="SECOURS" {{ signalement.lienDeclarantOccupant is same as 'SECOURS' ? 'selected' : '' }}>Service de secours</option>
-                        <option value="BAILLEUR" {{ signalement.lienDeclarantOccupant is same as 'BAILLEUR' ? 'selected' : '' }}>Bailleur</option>
-                        <option value="PRO" {{ signalement.lienDeclarantOccupant is same as 'PRO' ? 'selected' : '' }}>Professionnel(le)</option>
-                        <option value="AUTRE" {{ signalement.lienDeclarantOccupant is same as 'AUTRE' ? 'selected' : '' }}>Autre</option>
-                    </select>
-                </div>
-
-                <div class="fr-input-group">
-                    <label class="fr-label" for="coordonneesTiersStructure">Structure (si lien avec l'occupant: professionnel(le) ou service de secours)</label>
-                    <input class="fr-input" type="text" id="coordonneesTiersStructure" name="structure" value="{{ signalement.structureDeclarant }}">
                 </div>
 
                 {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR %}

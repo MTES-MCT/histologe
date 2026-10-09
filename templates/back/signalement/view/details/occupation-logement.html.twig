@@ -1,0 +1,132 @@
+{% import 'back/signalement/view/_static_picto.html.twig' as picto %}
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+        <h4 class="fr-h6">Occupation du logement</h4>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+            <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-edit-line"
+                data-panel-open="panel-edit-occupation-logement"
+                aria-controls="panel-edit-occupation-logement"
+                data-fr-opened="false"
+                >Modifier</button>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Nbr. de personnes :</span>
+        {% if signalement.typeCompositionLogement %}
+            {{ signalement.nbOccupantsLogement }}
+            {% if signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
+                <span class="fr-text--medium"> dont {{ signalement.typeCompositionLogement.compositionLogementNombreEnfants }} enfant(s) </span>
+            {% endif %}
+        {% else %}
+            {% set nbEnfants = 0 %}
+            {% if signalement.nbEnfantsP6 %}
+                {% set nbEnfants = nbEnfants + (signalement.nbEnfantsP6 ?? 0) %}
+            {% endif %}
+            {% if signalement.nbEnfantsM6 %}
+                {% set nbEnfants = nbEnfants + (signalement.nbEnfantsM6 ?? 0) %}
+            {% endif %}
+            {{ signalement.nbPersonsDeprecated }} 
+            {% if nbEnfants > 0 %}
+                <span class="fr-text--medium"> dont {{ nbEnfants }} enfant(s) </span>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Enfants -6 ans :</span>
+        {% if signalement.typeCompositionLogement %}
+            {% if signalement.typeCompositionLogement.compositionLogementEnfants is same as 'oui' %}
+                {{ picto.picto_yes() }}
+            {% elseif signalement.typeCompositionLogement.compositionLogementEnfants is same as 'non' %}
+                {{ picto.picto_no() }}
+            {% else %}
+                {{signalement.typeCompositionLogement.compositionLogementEnfants(false)}}
+            {% endif %}
+        {% else %}
+            {% if signalement.nbEnfantsM6 > 0 %}
+                {{ picto.picto_yes() }}
+            {% else %}
+                {{ picto.picto_no() }}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Autre situation de vulnérabilité :</span>
+        {% if signalement.autreSituationVulnerabilite %}
+            <br>
+            {{ signalement.autreSituationVulnerabilite|nl2br }}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Date arrivée :</span>
+        {% if signalement.dateEntree %}
+            {{ signalement.dateEntree.format('d/m/Y')}}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Date d'effet du bail :</span>
+        {% if signalement.informationComplementaire %}
+            {{ signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail|date('d/m/Y')}}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Bail :</span>
+        {% if signalement.typeCompositionLogement %}
+            {% if signalement.typeCompositionLogement.bailDpeBail is same as 'oui' %}
+                {{ picto.picto_yes() }}
+            {% elseif signalement.typeCompositionLogement.bailDpeBail is same as 'non' %}
+                {{ picto.picto_no() }}
+            {% else %}
+                {{signalement.typeCompositionLogement.bailDpeBail(false)}}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Etat des lieux :</span>
+        {% if signalement.typeCompositionLogement %}
+            {% if signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'oui' %}
+                {{ picto.picto_yes() }}
+            {% elseif signalement.typeCompositionLogement.bailDpeEtatDesLieux is same as 'non' %}
+                {{ picto.picto_no() }}
+            {% else %}
+                {{signalement.typeCompositionLogement.bailDpeEtatDesLieux(false)}}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Montant du loyer :</span> {{ signalement.loyer ? signalement.loyer ~ ' €'}}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Paiement loyers à jour :</span>
+        {% if signalement.informationComplementaire %}
+            {% if signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes is same as 'oui' %}
+                {{ picto.picto_yes() }}
+            {% elseif signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes is same as 'non' %}
+                {{ picto.picto_no() }}
+            {% else %}
+                {{signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes}}
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Année de construction :</span>
+        {% if signalement.informationComplementaire %}
+            {{ signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction }}
+        {% endif %}
+    </div>
+    {% if signalement.natureLogement is same as 'appartement' %}
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">D'autres occupants de l'immeuble ont rencontré des désordres :</span>
+            {{ signalement.autresOccupantsDesordre|format_answer }}
+        </div>
+    {% endif %}
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Invariant fiscal saisi par l'usager :</span>
+        {{ signalement.numeroInvariant}}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Invariant fiscal récupéré (base DGFIP) :</span>
+        {{ signalement.numeroInvariantRial}}
+    </div>
+</div>

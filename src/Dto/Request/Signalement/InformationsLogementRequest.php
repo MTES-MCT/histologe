@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     otherProperty: 'nombrePersonnes',
     message: "Le nombre d'enfants ne peut pas dépasser le nombre de personnes."
 )]
+// TODO à la suppression de FEATURE_ORIENTATION : supprimer ce DTO (remplacé par OccupationLogementRequest)
 class InformationsLogementRequest implements RequestInterface
 {
     public function __construct(

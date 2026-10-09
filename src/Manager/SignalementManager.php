@@ -4,14 +4,20 @@ namespace App\Manager;
 
 use App\Dto\Request\Signalement\AdresseOccupantRequest;
 use App\Dto\Request\Signalement\CompositionLogementRequest;
+use App\Dto\Request\Signalement\ConsommationEnergetiqueRequest;
 use App\Dto\Request\Signalement\CoordonneesAgenceRequest;
+use App\Dto\Request\Signalement\CoordonneesBailleurOldRequest;
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesSyndicRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
+use App\Dto\Request\Signalement\InformationsBailleurRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
+use App\Dto\Request\Signalement\OccupationLogementRequest;
+use App\Dto\Request\Signalement\ProcedureDemarchesOldRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
+use App\Dto\Request\Signalement\SituationFoyerOldRequest;
 use App\Dto\Request\Signalement\SituationFoyerRequest;
 use App\Dto\SignalementAffectationClose;
 use App\Dto\SignalementAffectationListView;
@@ -272,6 +278,7 @@ class SignalementManager
         return $signalement;
     }
 
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette méthode (remplacée par updateFromConsommationEnergetiqueRequest)
     /**
      * @throws \DateMalformedStringException
      */
@@ -315,17 +322,11 @@ class SignalementManager
         if (!empty($signalement->getTypeCompositionLogement())) {
             $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
         }
-        switch ($qualificationNDERequest->getDetails()['DPE']) {
-            case true:
-                $typeCompositionLogement->setBailDpeDpe('oui');
-                break;
-            case false:
-                $typeCompositionLogement->setBailDpeDpe('non');
-                break;
-            default:
-                $typeCompositionLogement->setBailDpeDpe('nsp');
-                break;
-        }
+        $typeCompositionLogement->setBailDpeDpe(match ($qualificationNDERequest->getDPE()) {
+            true => 'oui',
+            false => 'non',
+            default => 'nsp',
+        });
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
         $this->entityManager->persist($signalement);
 
@@ -523,6 +524,52 @@ class SignalementManager
             ->setCodePostalProprio($coordonneesBailleurRequest->getCodePostal())
             ->setVilleProprio($coordonneesBailleurRequest->getVille());
 
+        $this->entityManager->persist($signalement);
+
+        $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $user,
+            signalement: $signalement,
+            type: SuiviDelayedType::BO_EDIT_COORDONNEES_BAILLEUR,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
+        );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
+    }
+
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette méthode (remplacée par updateFromCoordonneesBailleurRequest + updateFromInformationsBailleurRequest)
+    public function updateFromCoordonneesBailleurOldRequest(
+        Signalement $signalement,
+        CoordonneesBailleurOldRequest $coordonneesBailleurRequest,
+    ): bool {
+        $bailleur = null;
+        if ($signalement->getIsLogementSocial() && $coordonneesBailleurRequest->getDenomination()) {
+            $bailleur = $this->bailleurRepository->findOneBailleurBy(
+                $coordonneesBailleurRequest->getDenomination(),
+                $this->zipcodeProvider->getTerritoryByInseeCode($signalement->getAddress()->getCityCode())
+            );
+        }
+
+        $signalement->setBailleur($bailleur)
+            ->setTypeProprio(
+                $coordonneesBailleurRequest->getTypeProprio()
+                ? ProprioType::from($coordonneesBailleurRequest->getTypeProprio())
+                : null
+            )
+            ->setDenominationProprio($coordonneesBailleurRequest->getDenomination())
+            ->setNomProprio($coordonneesBailleurRequest->getNom())
+            ->setPrenomProprio($coordonneesBailleurRequest->getPrenom())
+            ->setMailProprio($coordonneesBailleurRequest->getMail())
+            ->setTelProprio($coordonneesBailleurRequest->getTelephone())
+            ->setTelProprioSecondaire($coordonneesBailleurRequest->getTelephoneBis())
+            ->setAdresseProprio($coordonneesBailleurRequest->getAdresse())
+            ->setCodePostalProprio($coordonneesBailleurRequest->getCodePostal())
+            ->setVilleProprio($coordonneesBailleurRequest->getVille());
+
         $informationComplementaire = new InformationComplementaire();
         if (!empty($signalement->getInformationComplementaire())) {
             $informationComplementaire = clone $signalement->getInformationComplementaire();
@@ -553,6 +600,48 @@ class SignalementManager
             user: $user,
             signalement: $signalement,
             type: SuiviDelayedType::BO_EDIT_COORDONNEES_BAILLEUR,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
+        );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
+    }
+
+    public function updateFromInformationsBailleurRequest(
+        Signalement $signalement,
+        InformationsBailleurRequest $informationsBailleurRequest,
+    ): bool {
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        $informationComplementaire
+            ->setInformationsComplementairesSituationBailleurBeneficiaireRsa(
+                $informationsBailleurRequest->getBeneficiaireRsa()
+            )
+            ->setInformationsComplementairesSituationBailleurBeneficiaireFsl(
+                $informationsBailleurRequest->getBeneficiaireFsl()
+            )
+            ->setInformationsComplementairesSituationBailleurRevenuFiscal(
+                $informationsBailleurRequest->getRevenuFiscal()
+            );
+        if ($informationsBailleurRequest->getDateNaissance()) {
+            $informationComplementaire->setInformationsComplementairesSituationBailleurDateNaissance(
+                $informationsBailleurRequest->getDateNaissance()
+            );
+        }
+        $signalement->setInformationComplementaire($informationComplementaire);
+
+        $this->entityManager->persist($signalement);
+
+        $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $user,
+            signalement: $signalement,
+            type: SuiviDelayedType::BO_EDIT_INFORMATIONS_BAILLEUR,
             category: SuiviCategory::SIGNALEMENT_EDITED_BO,
             subscriptionCreated: $subscriptionCreated
         );
@@ -621,6 +710,81 @@ class SignalementManager
         return $subscriptionCreated;
     }
 
+    public function updateFromOccupationLogementRequest(
+        Signalement $signalement,
+        OccupationLogementRequest $occupationLogementRequest,
+    ): bool {
+        if (is_numeric($occupationLogementRequest->getNombrePersonnes())) {
+            $signalement->setNbOccupantsLogement((int) $occupationLogementRequest->getNombrePersonnes());
+        }
+        if (is_numeric($occupationLogementRequest->getLoyer())) {
+            $signalement->setLoyer((float) $occupationLogementRequest->getLoyer());
+        }
+        if (!empty($occupationLogementRequest->getDateEntree())) {
+            $signalement->setDateEntree(new \DateTimeImmutable($occupationLogementRequest->getDateEntree()));
+        } else {
+            $signalement->setDateEntree(null);
+        }
+
+        $typeCompositionLogement = new TypeCompositionLogement();
+        if (!empty($signalement->getTypeCompositionLogement())) {
+            $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
+        }
+
+        $typeCompositionLogement
+            ->setCompositionLogementNombreEnfants($occupationLogementRequest->getCompositionLogementNombreEnfants())
+            ->setCompositionLogementEnfants($occupationLogementRequest->getCompositionLogementEnfants())
+            ->setBailDpeBail($occupationLogementRequest->getBailDpeBail())
+            ->setBailDpeEtatDesLieux($occupationLogementRequest->getBailDpeEtatDesLieux());
+
+        $signalement->setTypeCompositionLogement($typeCompositionLogement)
+            ->setNumeroInvariant($occupationLogementRequest->getBailDpeInvariant())
+            ->setAutreSituationVulnerabilite($occupationLogementRequest->getAutreSituationVulnerabilite());
+
+        if ('appartement' === $signalement->getNatureLogement()) {
+            $signalement->setAutresOccupantsDesordre($occupationLogementRequest->getAutresOccupantsDesordre());
+        }
+
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        $informationComplementaire
+            ->setInformationsComplementairesSituationOccupantsLoyersPayes(
+                $occupationLogementRequest->getLoyersPayes()
+            )
+            ->setInformationsComplementairesLogementAnneeConstruction(
+                $occupationLogementRequest->getAnneeConstruction()
+            )
+            ->setInformationsComplementairesSituationBailleurDateEffetBail(
+                !empty($occupationLogementRequest->getBailleurDateEffetBail())
+                ? $occupationLogementRequest->getBailleurDateEffetBail()
+                : null
+            );
+
+        $signalement->setInformationComplementaire($informationComplementaire);
+
+        $this->updateDesordresAndScoreWithSuroccupationChanges($signalement);
+        $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
+
+        $this->entityManager->persist($signalement);
+
+        $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $user,
+            signalement: $signalement,
+            type: SuiviDelayedType::BO_EDIT_INFORMATIONS_LOGEMENT,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
+        );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
+    }
+
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette méthode (remplacée par updateFromOccupationLogementRequest)
     public function updateFromInformationsLogementRequest(
         Signalement $signalement,
         InformationsLogementRequest $informationsLogementRequest,
@@ -938,6 +1102,128 @@ class SignalementManager
         }
         $signalement->setInformationComplementaire($informationComplementaire);
 
+        $informationProcedure = new InformationProcedure();
+        if (!empty($signalement->getInformationProcedure())) {
+            $informationProcedure = clone $signalement->getInformationProcedure();
+        }
+        $informationProcedure->setInfoProcedureDepartApresTravaux($situationFoyerRequest->getInfoProcedureDepartApresTravaux());
+        $signalement->setInformationProcedure($informationProcedure);
+
+        $this->updateDesordresAndScoreWithSuroccupationChanges($signalement);
+        $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
+        $this->entityManager->persist($signalement);
+
+        $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $user,
+            signalement: $signalement,
+            type: SuiviDelayedType::BO_EDIT_SITUATION_FOYER,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
+        );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
+    }
+
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette méthode (remplacée par updateFromSituationFoyerRequest)
+    public function updateFromSituationFoyerOldRequest(
+        Signalement $signalement,
+        SituationFoyerOldRequest $situationFoyerRequest,
+    ): bool {
+        $signalement
+            ->setIsLogementSocial(
+                SignalementInputValueMapper::map(
+                    $situationFoyerRequest->getIsLogementSocial()
+                )
+            )
+            ->setIsRelogement(
+                SignalementInputValueMapper::map(
+                    $situationFoyerRequest->getIsRelogement()
+                )
+            )
+            ->setIsAllocataire($situationFoyerRequest->getIsAllocataire())
+            ->setNumAllocataire($situationFoyerRequest->getNumAllocataire());
+
+        if (!empty($situationFoyerRequest->getDateNaissanceOccupant())) {
+            $dateNaissance = new \DateTimeImmutable($situationFoyerRequest->getDateNaissanceOccupant());
+            $signalement->setDateNaissanceOccupant($dateNaissance);
+        }
+
+        $situationFoyer = new SituationFoyer();
+        if (!empty($signalement->getSituationFoyer())) {
+            $situationFoyer = clone $signalement->getSituationFoyer();
+        }
+        $situationFoyer
+            ->setLogementSocialNumeroAllocataire($situationFoyerRequest->getNumAllocataire())
+            ->setLogementSocialDateNaissance($situationFoyerRequest->getDateNaissanceOccupant())
+            ->setLogementSocialMontantAllocation($situationFoyerRequest->getLogementSocialMontantAllocation())
+            ->setTravailleurSocialQuitteLogement($situationFoyerRequest->getTravailleurSocialQuitteLogement())
+            ->setTravailleurSocialPreavisDepart($situationFoyerRequest->getTravailleurSocialPreavisDepart())
+            ->setTravailleurSocialAccompagnement(
+                $situationFoyerRequest->getTravailleurSocialAccompagnement()
+            )
+            ->setLogementSocialAllocationCaisse($situationFoyerRequest->getIsAllocataire())
+            ->setTravailleurSocialAccompagnementNomStructure(
+                $situationFoyerRequest->getTravailleurSocialAccompagnementNomStructure()
+            )
+             ->setTravailleurSocialAccompagnementNomReferent(
+                 $situationFoyerRequest->getTravailleurSocialAccompagnementNomReferent()
+             )
+             ->setTravailleurSocialAccompagnementPrenomReferent(
+                 $situationFoyerRequest->getTravailleurSocialAccompagnementPrenomReferent()
+             );
+
+        if ('non' === $situationFoyerRequest->getTravailleurSocialPreavisDepart()) {
+            $signalement->setIsPreavisDepart(false);
+        } elseif ('oui' === $situationFoyerRequest->getTravailleurSocialPreavisDepart()) {
+            $signalement->setIsPreavisDepart(true);
+        } else {
+            $signalement->setIsPreavisDepart(null);
+        }
+
+        if ('non' === $situationFoyerRequest->getIsLogementSocial()) {
+            $situationFoyer->setLogementSocialAllocation('non');
+        } elseif ('nsp' === $situationFoyerRequest->getIsLogementSocial()) {
+            $situationFoyer->setLogementSocialAllocation(null);
+        } else {
+            $situationFoyer->setLogementSocialAllocation('oui');
+        }
+        if (!$signalement->getIsNotOccupant()) {
+            $situationFoyer
+                ->setLogementSocialDemandeRelogement(
+                    $situationFoyerRequest->getIsRelogement()
+                );
+        }
+        $signalement->setSituationFoyer($situationFoyer);
+
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        $informationComplementaire
+            ->setInformationsComplementairesSituationOccupantsBeneficiaireRsa(
+                $situationFoyerRequest->getBeneficiaireRsa()
+            )
+            ->setInformationsComplementairesSituationOccupantsBeneficiaireFsl(
+                $situationFoyerRequest->getBeneficiaireFsl()
+            );
+        if ($signalement->getIsNotOccupant()) {
+            $informationComplementaire
+                ->setInformationsComplementairesSituationOccupantsDemandeRelogement(
+                    $situationFoyerRequest->getIsRelogement()
+                );
+        }
+        if ($situationFoyerRequest->getRevenuFiscal()) {
+            $informationComplementaire
+                ->setInformationsComplementairesSituationOccupantsRevenuFiscal(
+                    $situationFoyerRequest->getRevenuFiscal()
+                );
+        }
+        $signalement->setInformationComplementaire($informationComplementaire);
+
         $this->updateDesordresAndScoreWithSuroccupationChanges($signalement);
         $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $this->entityManager->persist($signalement);
@@ -960,6 +1246,69 @@ class SignalementManager
     public function updateFromProcedureDemarchesRequest(
         Signalement $signalement,
         ProcedureDemarchesRequest $procedureDemarchesRequest,
+    ): bool {
+        $signalement->setIsProprioAverti('' === $procedureDemarchesRequest->getIsProprioAverti() ? null : (bool) ($procedureDemarchesRequest->getIsProprioAverti()));
+
+        $informationProcedure = new InformationProcedure();
+        if (!empty($signalement->getInformationProcedure())) {
+            $informationProcedure = clone $signalement->getInformationProcedure();
+        }
+
+        $assuranceContacteeUpdated = false;
+        if ($procedureDemarchesRequest->getInfoProcedureAssuranceContactee()
+        !== $informationProcedure->getInfoProcedureAssuranceContactee()) {
+            $assuranceContacteeUpdated = true;
+        }
+
+        $informationProcedure
+            ->setInfoProcedureBailMoyen($procedureDemarchesRequest->getInfoProcedureBailMoyen())
+            ->setInfoProcedureBailReponse($procedureDemarchesRequest->getInfoProcedureBailReponse())
+            ->setInfoProcedureBailNumero($procedureDemarchesRequest->getInfoProcedureBailNumero())
+            ->setInfoProcedureAssuranceContactee($procedureDemarchesRequest->getInfoProcedureAssuranceContactee())
+            ->setInfoProcedureReponseAssurance($procedureDemarchesRequest->getInfoProcedureReponseAssurance());
+        $signalement->setInformationProcedure($informationProcedure);
+
+        if ($signalement->getServiceSecours()) {
+            if ($procedureDemarchesRequest->getDateMissionServiceSecours()) {
+                $signalement->setDateMissionServiceSecours(new \DateTimeImmutable($procedureDemarchesRequest->getDateMissionServiceSecours()));
+            }
+            $signalement->setOrigineMissionServiceSecours($procedureDemarchesRequest->getOrigineMissionServiceSecours());
+            $signalement->setOrdreMissionServiceSecours($procedureDemarchesRequest->getOrdreMissionServiceSecours());
+        }
+
+        $informationComplementaire = new InformationComplementaire();
+        if (!empty($signalement->getInformationComplementaire())) {
+            $informationComplementaire = clone $signalement->getInformationComplementaire();
+        }
+        $signalement->setInformationComplementaire($informationComplementaire);
+        $proprioAvertiAt = $procedureDemarchesRequest->getInfoProcedureBailDate() ? \DateTimeImmutable::createFromFormat('m/Y', $procedureDemarchesRequest->getInfoProcedureBailDate()) : null;
+        $proprioAvertiAt ? $signalement->setProprioAvertiAt($proprioAvertiAt) : $signalement->setProprioAvertiAt(null);
+
+        if ($assuranceContacteeUpdated) {
+            $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
+        }
+
+        $this->entityManager->persist($signalement);
+
+        $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $user,
+            signalement: $signalement,
+            type: SuiviDelayedType::BO_EDIT_PROCEDURE_DEMARCHES,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
+        );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
+    }
+
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette méthode (remplacée par updateFromProcedureDemarchesRequest)
+    public function updateFromProcedureDemarchesOldRequest(
+        Signalement $signalement,
+        ProcedureDemarchesOldRequest $procedureDemarchesRequest,
     ): bool {
         $signalement->setIsProprioAverti('' === $procedureDemarchesRequest->getIsProprioAverti() ? null : (bool) ($procedureDemarchesRequest->getIsProprioAverti()));
 
@@ -1003,6 +1352,85 @@ class SignalementManager
             $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         }
 
+        $this->entityManager->persist($signalement);
+
+        $subscriptionCreated = false;
+        /** @var User $user */
+        $user = $this->security->getUser();
+        $suiviDelayed = $this->suiviDelayedFactory->createSuiviDelayed(
+            user: $user,
+            signalement: $signalement,
+            type: SuiviDelayedType::BO_EDIT_PROCEDURE_DEMARCHES,
+            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            subscriptionCreated: $subscriptionCreated
+        );
+        $this->entityManager->persist($suiviDelayed);
+
+        return $subscriptionCreated;
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    public function updateFromConsommationEnergetiqueRequest(
+        Signalement $signalement,
+        ConsommationEnergetiqueRequest $consommationEnergetiqueRequest,
+    ): bool {
+        // mise à jour du signalement
+        if ($consommationEnergetiqueRequest->getDateEntree()) {
+            $signalement->setDateEntree(new \DateTimeImmutable($consommationEnergetiqueRequest->getDateEntree()));
+        }
+
+        $isSuperficieUpdated = false;
+        if (null !== $consommationEnergetiqueRequest->getSuperficie()
+            && $signalement->getSuperficie() !== $consommationEnergetiqueRequest->getSuperficie()
+        ) {
+            $signalement->setSuperficie($consommationEnergetiqueRequest->getSuperficie());
+            $isSuperficieUpdated = true;
+        }
+
+        $typeCompositionLogement = new TypeCompositionLogement();
+        if (!empty($signalement->getTypeCompositionLogement())) {
+            $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
+        }
+        $typeCompositionLogement
+            ->setBailDpeDpe($consommationEnergetiqueRequest->getDPE() ?? 'nsp')
+            // toujours enregistrée pour pouvoir la vider (option vide du select)
+            ->setBailDpeClasseEnergetique($consommationEnergetiqueRequest->getClasseEnergetique());
+        // DPE avant 2023 : consommation annuelle (kWh/an), sinon consommation en kWh/m²/an
+        $consommationEnergie = $consommationEnergetiqueRequest->getConsommationEnergie();
+        switch ($consommationEnergetiqueRequest->getDateDernierDPE()) {
+            case ConsommationEnergetiqueRequest::RADIO_VALUE_BEFORE_2023:
+                $typeCompositionLogement
+                    ->setDesordresLogementChauffageDetailsDpeAnnee('before2023')
+                    ->setDesordresLogementChauffageDetailsDpeConso(null !== $consommationEnergie ? (string) $consommationEnergie : null);
+                break;
+            case ConsommationEnergetiqueRequest::RADIO_VALUE_AFTER_2023:
+                $typeCompositionLogement
+                    ->setDesordresLogementChauffageDetailsDpeAnnee('post2023')
+                    ->setDesordresLogementChauffageDetailsDpeConsoFinale(null !== $consommationEnergie ? (string) $consommationEnergie : null);
+                break;
+        }
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+        // La superficie est aussi modifiable depuis ce panel : on recalcule les désordres qui en dépendent
+        // - "pièce unique de moins de 9 m²" (via le loader des désordres de composition du logement)
+        // - suroccupation (nombre d'occupants rapporté à la superficie), avec recalcul du score
+        if ($isSuperficieUpdated) {
+            $this->desordreCompositionLogementLoader->load($signalement, $typeCompositionLogement);
+            $this->updateDesordresAndScoreWithSuroccupationChanges($signalement);
+        }
+
+        // Mise à jour des détails de la qualification NDE existante (le statut est recalculé ci-dessous)
+        $signalementQualificationNDE = $signalement->getSignalementQualifications()->filter(static function ($qualification) {
+            return Qualification::NON_DECENCE_ENERGETIQUE === $qualification->getQualification();
+        })->first();
+        if ($signalementQualificationNDE) {
+            $signalementQualificationNDE->setDetails($consommationEnergetiqueRequest->getDetails());
+        }
+
+        // Recalcul des qualifications : création / suppression / statut de la NDE selon les règles existantes
+        $this->signalementQualificationUpdater->updateQualificationFromScore($signalement);
         $this->entityManager->persist($signalement);
 
         $subscriptionCreated = false;

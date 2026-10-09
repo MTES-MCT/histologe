@@ -1,0 +1,90 @@
+{% import 'back/signalement/view/_static_picto.html.twig' as picto %}
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-6 fr-pr-6v">
+        <h4 class="fr-h6">Auprès du bailleur</h4>
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Bailleur averti :</span>
+            {% if signalement.isProprioAverti is null %}
+            {% elseif signalement.isProprioAverti %}
+                {{ picto.picto_yes() }}
+            {% else %}
+                {{ picto.picto_no() }}
+            {% endif %}
+        </div>
+        <div class="fr-mb-2v">
+        <span class="fr-text--medium">Moyen d'information du bailleur :</span>
+            {% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailMoyen %}
+                {% set MoyenContact = enum('\\App\\Entity\\Enum\\MoyenContact').tryFromString(signalement.informationProcedure.infoProcedureBailMoyen) %}
+                {{ MoyenContact.label }}
+            {% endif %}
+        </div>
+        <div class="fr-mb-2v">
+        <span class="fr-text--medium">Date d'information du bailleur :</span>
+            {% if signalement.proprioAvertiAt %}
+                {{ signalement.proprioAvertiAt|date('m/Y') }}
+            {% endif %}
+        </div>
+        {% if signalement.isLogementSocial %}
+            <div class="fr-mb-2v">
+                <span class="fr-text--medium">Numéro de réclamation :</span>
+                {% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailNumero %}
+                    {{ signalement.informationProcedure.infoProcedureBailNumero | nl2br  }}
+                {% endif %}
+            </div>        
+        {% endif %}
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Réponse du bailleur :</span>
+            {% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureBailReponse %}
+                <br>
+                <div class="fr-callout">
+                    <p class="fr-callout__text">{{ signalement.informationProcedure.infoProcedureBailReponse | nl2br  }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="fr-col-12 fr-col-md-6">
+        <h4 class="fr-h6">Auprès de l'assurance</h4>
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Assurance contactée :</span>
+            {% if signalement.informationProcedure %}
+                {% if signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'oui' %}
+                    {{ picto.picto_yes() }}
+                {% elseif signalement.informationProcedure.infoProcedureAssuranceContactee is same as 'non' %}
+                    {{ picto.picto_no() }}
+                {% else %}
+                    {{signalement.informationProcedure.infoProcedureAssuranceContactee(false)}}
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="fr-mb-2v">
+            <span class="fr-text--medium">Réponse de l'assurance :</span>
+            {% if signalement.informationProcedure and signalement.informationProcedure.infoProcedureReponseAssurance %}
+                <br>
+                <div class="fr-callout">
+                    <p class="fr-callout__text">{{ signalement.informationProcedure.infoProcedureReponseAssurance | nl2br  }}</p>
+                </div>
+            {% endif %}
+        </div>
+        {% if signalement.serviceSecours %}
+            <h4 class="fr-h6">Intervention service de secours</h4>
+            <div class="fr-mb-2v">
+                <span class="fr-text--medium">Date de la mission du service de secours :</span>
+                {% if signalement.dateMissionServiceSecours %}
+                    {{ signalement.dateMissionServiceSecours|date('d/m/Y') }}
+                {% endif %}
+            </div>
+            <div class="fr-mb-2v">
+                <span class="fr-text--medium">Origine de la mission du service de secours :</span>
+                {% if signalement.origineMissionServiceSecours %}
+                    {{ signalement.origineMissionServiceSecours }}
+                {% endif %}
+            </div>
+            <div class="fr-mb-2v">
+                <span class="fr-text--medium">Ordre de mission du service de secours :</span>
+                {% if signalement.ordreMissionServiceSecours %}
+                    {{ signalement.ordreMissionServiceSecours }}
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>

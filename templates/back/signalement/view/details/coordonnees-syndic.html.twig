@@ -1,0 +1,61 @@
+{% set hasCoordonnees = signalement.denominationSyndic or signalement.nomSyndic or signalement.mailSyndic or signalement.telSyndic or signalement.telSyndicSecondaire %}
+<div class="fr-grid-row">
+    {% if hasCoordonnees %}
+        <div class="fr-col-12 fr-col-md-8">
+            <h5 class="fr-h6">Syndic de copropriété</h5>
+        </div>
+        <div class="fr-col-12 fr-col-md-4 fr-text--right">
+            {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+                <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-edit-line"
+                    data-panel-open="panel-edit-coordonnees-syndic"
+                    aria-controls="panel-edit-coordonnees-syndic"
+                    data-fr-opened="false"
+                    >Modifier</button>
+            {% endif %}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Dénomination :</span> {{ signalement.denominationSyndic }}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Nom :</span> {{ signalement.nomSyndic }}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">E-mail :</span>
+            {% if signalement.mailSyndic %}
+                <a href="mailto:{{ signalement.mailSyndic }}">{{ signalement.mailSyndic }}</a>
+                {% if show_email_alert(signalement.mailSyndic) %}
+                    <p class="fr-badge fr-badge--error">Format non valide</p>
+                {% endif %}
+                {% if show_email_usager_alert_brevo('syndic', signalement.mailSyndic) %}
+                    <p class="fr-badge fr-badge--warning">Problème d'e-mail non remis</p>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Tél. :</span>
+            {% if signalement.telSyndic %}
+                <a href="mailto:{{ signalement.telSyndicDecoded }}">{{ signalement.telSyndicDecoded|phone }}</a>
+            {% endif %}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Tél. sec. :</span>
+            {% if signalement.telSyndicSecondaire %}
+                <a href="mailto:{{ signalement.telSyndicSecondaireDecoded }}">{{ signalement.telSyndicSecondaireDecoded|phone }}</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="fr-col-12">
+            <div class="fr-callout">
+                <p class="fr-callout__title fr-h6">Syndic de copropriété</p>
+                <p class="fr-callout__text">Si le logement est en copropriété, vous pouvez renseigner les coordonnées du syndic.</p>
+                {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+                    <button class="fr-btn"
+                        data-panel-open="panel-edit-coordonnees-syndic"
+                        aria-controls="panel-edit-coordonnees-syndic"
+                        data-fr-opened="false"
+                        >Ajouter les coordonnées</button>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>

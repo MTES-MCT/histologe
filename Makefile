@@ -294,6 +294,9 @@ lighthouse-install: ## Install Lighthouse dependencies
 lighthouse-run: ## Run Lighthouse on URL: make lighthouse-run URL=http://localhost:8080
 	@cd tools/lighthouse && $(NPX) --no-install lighthouse $(URL) --output-path=report/report.html --view
 
+twig-check: ## Check source code with lint twig
+	@$(DOCKER_COMP) exec signal_logement_phpfpm php bin/console lint:twig templates/
+
 ## Tools
 tools-build: ## [Tools] Install tools (Matomo, ...) local environement
 	@bash -l -c 'make .check .tools-destroy .tools-setup tools-run'
