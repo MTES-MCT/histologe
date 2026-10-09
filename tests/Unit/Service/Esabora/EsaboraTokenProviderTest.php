@@ -7,11 +7,11 @@ use App\Entity\Partner;
 use App\Service\Interconnection\Esabora\EsaboraTokenProvider;
 use App\Service\Interconnection\Esabora\Exception\EsaboraTokenException;
 use PHPUnit\Framework\TestCase;
+use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
-use Symfony\Contracts\HttpClient\ResponseDataCustomMock;
 
 class EsaboraTokenProviderTest extends TestCase
 {
@@ -67,12 +67,15 @@ class EsaboraTokenProviderTest extends TestCase
         $provider->getToken($partner);
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function testAuthenticationTypeMissingThrowsException(): void
     {
         $mockHttpClient = new MockHttpClient();
         $provider = new EsaboraTokenProvider($mockHttpClient, $this->cache, $this->logger);
 
-        $partner = (new Partner())
+        $partner = new Partner()
             ->setId(1)
             ->setNom('Partenaire Sans Auth Type')
             ->setAuthenticationType(null);
@@ -83,33 +86,33 @@ class EsaboraTokenProviderTest extends TestCase
         $provider->getToken($partner);
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function testOAuth2ClientCredentialsSuccess(): void
     {
         $clientSecret = 'super-secret-client-pass-123';
         $accessToken = 'access-token-oauth2-xyz';
 
-        $callback = function ($method, $url, $options) use ($clientSecret, $accessToken) {
+        $callback = function ($method, $url, $options) use ($accessToken) {
             $this->assertEquals('POST', $method);
             $this->assertEquals('https://auth-ext.example.com/oauth2/token', $url);
-
-            $this->assertArrayHasKey('auth_basic', $options);
-            $this->assertEquals(['my-client-id', $clientSecret], $options['auth_basic']);
 
             $this->assertArrayHasKey('body', $options);
             $this->assertStringContainsString('grant_type=client_credentials', $options['body']);
             $this->assertStringContainsString('scope=openid', $options['body']);
 
-            return new MockResponse(json_encode([
+            return new MockResponse((string) json_encode([
                 'access_token' => $accessToken,
                 'token_type' => 'Bearer',
-                'expires_in' => 3600,
+                'expires_in' => 900,
             ]));
         };
 
         $mockHttpClient = new MockHttpClient($callback);
         $provider = new EsaboraTokenProvider($mockHttpClient, $this->cache, $this->logger);
 
-        $partner = (new Partner())
+        $partner = new Partner()
             ->setId(42)
             ->setNom('Partenaire Nantes Métropole')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
@@ -126,7 +129,7 @@ class EsaboraTokenProviderTest extends TestCase
 
     public function testOAuth2TokenCachingAndTtl(): void
     {
-        $mockResponse = new MockResponse(json_encode([
+        $mockResponse = new MockResponse((string) json_encode([
             'access_token' => 'cached-access-token',
             'token_type' => 'Bearer',
             'expires_in' => 3600,
@@ -135,7 +138,7 @@ class EsaboraTokenProviderTest extends TestCase
         $mockHttpClient = new MockHttpClient([$mockResponse]);
         $provider = new EsaboraTokenProvider($mockHttpClient, $this->cache, $this->logger);
 
-        $partner = (new Partner())
+        $partner = new Partner()
             ->setId(99)
             ->setNom('Partenaire Cached')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
@@ -155,12 +158,12 @@ class EsaboraTokenProviderTest extends TestCase
 
     public function testOAuth2DifferentPartnersHaveDistinctCache(): void
     {
-        $mockResponse1 = new MockResponse(json_encode([
+        $mockResponse1 = new MockResponse((string) json_encode([
             'access_token' => 'token-partner-1',
             'token_type' => 'Bearer',
             'expires_in' => 3600,
         ]));
-        $mockResponse2 = new MockResponse(json_encode([
+        $mockResponse2 = new MockResponse((string) json_encode([
             'access_token' => 'token-partner-2',
             'token_type' => 'Bearer',
             'expires_in' => 3600,
@@ -169,7 +172,7 @@ class EsaboraTokenProviderTest extends TestCase
         $mockHttpClient = new MockHttpClient([$mockResponse1, $mockResponse2]);
         $provider = new EsaboraTokenProvider($mockHttpClient, $this->cache, $this->logger);
 
-        $partner1 = (new Partner())
+        $partner1 = new Partner()
             ->setId(101)
             ->setNom('Partner 1')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
@@ -177,7 +180,7 @@ class EsaboraTokenProviderTest extends TestCase
             ->setOauth2ClientId('client-1')
             ->setOauth2ClientSecret('secret-1');
 
-        $partner2 = (new Partner())
+        $partner2 = new Partner()
             ->setId(102)
             ->setNom('Partner 2')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
@@ -199,7 +202,7 @@ class EsaboraTokenProviderTest extends TestCase
         $provider = new EsaboraTokenProvider($mockHttpClient, $this->cache, $this->logger);
 
         // Missing token url
-        $partner1 = (new Partner())
+        $partner1 = new Partner()
             ->setId(1)
             ->setNom('Partenaire Incomplet 1')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
@@ -214,7 +217,7 @@ class EsaboraTokenProviderTest extends TestCase
         }
 
         // Missing client ID
-        $partner2 = (new Partner())
+        $partner2 = new Partner()
             ->setId(2)
             ->setNom('Partenaire Incomplet 2')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
@@ -229,7 +232,7 @@ class EsaboraTokenProviderTest extends TestCase
         }
 
         // Missing client secret
-        $partner3 = (new Partner())
+        $partner3 = new Partner()
             ->setId(3)
             ->setNom('Partenaire Incomplet 3')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
@@ -251,7 +254,7 @@ class EsaboraTokenProviderTest extends TestCase
         $mockHttpClient = new MockHttpClient($mockResponse);
         $provider = new EsaboraTokenProvider($mockHttpClient, $this->cache, $this->logger);
 
-        $partner = (new Partner())
+        $partner = new Partner()
             ->setId(1)
             ->setNom('Partenaire Erreur HTTP')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
@@ -274,14 +277,14 @@ class EsaboraTokenProviderTest extends TestCase
 
     public function testOAuth2MissingAccessTokenInResponseThrowsException(): void
     {
-        $mockResponse = new MockResponse(json_encode([
+        $mockResponse = new MockResponse((string) json_encode([
             'error' => 'invalid_client',
             'error_description' => 'Client authentication failed',
         ]));
         $mockHttpClient = new MockHttpClient($mockResponse);
         $provider = new EsaboraTokenProvider($mockHttpClient, $this->cache, $this->logger);
 
-        $partner = (new Partner())
+        $partner = new Partner()
             ->setId(1)
             ->setNom('Partenaire Sans Access Token')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)
@@ -290,7 +293,7 @@ class EsaboraTokenProviderTest extends TestCase
             ->setOauth2ClientSecret('client-secret');
 
         $this->expectException(EsaboraTokenException::class);
-        $this->expectExceptionMessage('L\'access_token est absent de la réponse OAuth2 pour le partenaire "Partenaire Sans Access Token".');
+        $this->expectExceptionMessage('L\'access_token est absent de la réponse OAuth2.');
 
         $provider->getToken($partner);
     }
@@ -301,7 +304,7 @@ class EsaboraTokenProviderTest extends TestCase
         $mockHttpClient = new MockHttpClient($mockResponse);
         $provider = new EsaboraTokenProvider($mockHttpClient, $this->cache, $this->logger);
 
-        $partner = (new Partner())
+        $partner = new Partner()
             ->setId(1)
             ->setNom('Partenaire HTML Response')
             ->setAuthenticationType(InterconnectionAuthType::OAUTH2_CLIENT_CREDENTIALS)

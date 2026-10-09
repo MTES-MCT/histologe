@@ -574,7 +574,6 @@ class AffectationControllerTest extends WebTestCase
         ]);
 
         $response = json_decode((string) $this->client->getResponse()->getContent(), true);
-
         $this->assertArrayHasKey('stayOnPage', $response);
         $this->assertArrayHasKey('flashMessages', $response);
         $this->assertTrue($response['stayOnPage']);

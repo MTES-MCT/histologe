@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures\Loader;
 
+use App\Entity\Enum\InterconnectionAuthType;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Partner;
@@ -44,6 +45,10 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
             ->setIsArchive($row['is_archive'])
             ->setIsEsaboraActive($row['is_esabora_active'] ?? false);
 
+        if (isset($row['auth_type'])) {
+            $partner->setAuthenticationType(InterconnectionAuthType::from($row['auth_type']));
+        }
+
         if ($row['is_archive'] && null !== $row['email']) {
             $partner->setEmail(Sanitizer::tagArchivedEmail($row['email']));
         } else {
@@ -58,6 +63,19 @@ class LoadPartnerData extends Fixture implements OrderedFixtureInterface
 
         if (isset($row['esabora_url'])) {
             $partner->setEsaboraUrl($row['esabora_url'])->setEsaboraToken($this->tokenGenerator->generateToken());
+        }
+
+        if (isset($row['oauth2_token_url'])) {
+            $partner->setOauth2TokenUrl($row['oauth2_token_url']);
+        }
+        if (isset($row['oauth2_client_id'])) {
+            $partner->setOauth2ClientId($row['oauth2_client_id']);
+        }
+        if (isset($row['oauth2_client_secret'])) {
+            $partner->setOauth2ClientSecret($row['oauth2_client_secret']);
+        }
+        if (isset($row['oauth2_scope'])) {
+            $partner->setOauth2Scope($row['oauth2_scope']);
         }
 
         if (isset($row['type'])) {

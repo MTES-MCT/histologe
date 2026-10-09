@@ -19,7 +19,6 @@ final class Version20261008110338 extends AbstractMigration
         $this->addSql('DROP INDEX IDX_312B3E1673F74AD4 ON partner');
         $this->addSql('ALTER TABLE partner ADD authentication_type VARCHAR(255) DEFAULT NULL, ADD oauth2_token_url VARCHAR(255) DEFAULT NULL, ADD oauth2_client_id VARCHAR(255) DEFAULT NULL, ADD oauth2_client_secret VARCHAR(255) DEFAULT NULL, CHANGE uuid uuid CHAR(36) NOT NULL, CHANGE competence competence LONGTEXT DEFAULT NULL, CHANGE idoss_token_expiration_date idoss_token_expiration_date DATETIME DEFAULT NULL, CHANGE created_at created_at DATETIME DEFAULT NULL, CHANGE updated_at updated_at DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE partner ADD oauth2_scope VARCHAR(255) DEFAULT NULL');
-
     }
 
     public function down(Schema $schema): void

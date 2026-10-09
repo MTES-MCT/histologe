@@ -12,6 +12,7 @@ use App\Service\Interconnection\Esabora\Response\DossierStateSISHResponse;
 use App\Service\Interconnection\Esabora\Response\DossierVisiteSISHCollectionResponse;
 use App\Service\Interconnection\JobEventMetaData;
 use App\Service\UploadHandlerService;
+use Psr\Cache\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Emoji\EmojiTransliterator;
@@ -169,6 +170,9 @@ class EsaboraSISHService extends AbstractEsaboraService
         );
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function getArreteDossier(Affectation $affectation, string $uuidSignalement): DossierArreteSISHCollectionResponse
     {
         $url = $affectation->getPartner()->getEsaboraUrl();

@@ -39,6 +39,7 @@ partners:
     territory: "Bouches-du-Rhône"
     esabora_url: "http://signal_logement_wiremock:8080/ws/rest"
     is_esabora_active: 1
+    auth_type: "static_token"
     type: "COMMUNE_SCHS"
     competence: "VISITES"
     is_idoss_active: 1
@@ -50,6 +51,7 @@ partners:
     territory: "Bouches-du-Rhône"
     esabora_url: "http://signal_logement_wiremock:8080/ARS/ws/rest"
     is_esabora_active: 1
+    auth_type: "static_token"
     type: "ARS"
     competence: "VISITES"
   -
@@ -601,7 +603,16 @@ partners:
     insee: "[\"44179\"]"
     is_archive: 0
     territory: "Loire-Atlantique"
+    esabora_url: "http://signal_logement_wiremock:8080/ws/rest"
+    is_esabora_active: 1
+    auth_type: "oauth2_client_credentials"
+    oauth2_token_url: "http://signal_logement_wiremock:8080/oauth2/token"
+    oauth2_client_id: "silooauth2"
+    oauth2_client_secret: "lescanaris"
+    oauth2_scope: "openid"
     type: "COMMUNE_SCHS"
+    competence: "VISITES"
+
   -
     nom: "Cocoland"
     email: "partenaire-44-04@signal-logement.fr"
@@ -643,6 +654,7 @@ partners:
     territory: "Bouches-du-Rhône"
     esabora_url: "http://signal_logement_wiremock:8080/ws/rest"
     is_esabora_active: 1
+    auth_type: "static_token"
     type: "EPCI"
   - 
     nom: "Aideur de bailleurs 44"
@@ -676,4 +688,5 @@ partners:
     competence: "VISITES"
     esabora_url: "http://signal_logement_wiremock:8080/ARS/ws/rest"
     is_esabora_active: 1
+    auth_type: "static_token"
     type: "COMMUNE_SCHS"
