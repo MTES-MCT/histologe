@@ -2,11 +2,11 @@
 
 namespace App\Tests\Unit\Dto\Request\Signalement;
 
-use App\Dto\Request\Signalement\InformationsLogementRequest;
+use App\Dto\Request\Signalement\OccupationLogementRequest;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class InformationsLogementRequestTest extends KernelTestCase
+class OccupationLogementRequestTest extends KernelTestCase
 {
     private ?ValidatorInterface $validator = null;
 
@@ -18,7 +18,7 @@ class InformationsLogementRequestTest extends KernelTestCase
 
     public function testValidateSuccess(): void
     {
-        $informationsLogementRequest = new InformationsLogementRequest(
+        $occupationLogementRequest = new OccupationLogementRequest(
             nombrePersonnes: '3',
             compositionLogementEnfants: 'oui',
             compositionLogementNombreEnfants: '2',
@@ -33,25 +33,25 @@ class InformationsLogementRequestTest extends KernelTestCase
             autresOccupantsDesordre: 'oui',
         );
 
-        $this->assertSame('3', $informationsLogementRequest->getNombrePersonnes());
-        $this->assertSame('oui', $informationsLogementRequest->getCompositionLogementEnfants());
-        $this->assertSame('2022-01-01', $informationsLogementRequest->getDateEntree());
-        $this->assertSame('2022-01-01', $informationsLogementRequest->getBailleurDateEffetBail());
-        $this->assertSame('oui', $informationsLogementRequest->getBailDpeBail());
-        $this->assertSame('abcd12ef34', $informationsLogementRequest->getBailDpeInvariant());
-        $this->assertSame('oui', $informationsLogementRequest->getBailDpeEtatDesLieux());
-        $this->assertSame('750', $informationsLogementRequest->getLoyer());
-        $this->assertSame('oui', $informationsLogementRequest->getLoyersPayes());
-        $this->assertSame('2000', $informationsLogementRequest->getAnneeConstruction());
-        $this->assertSame('oui', $informationsLogementRequest->getAutresOccupantsDesordre());
+        $this->assertSame('3', $occupationLogementRequest->getNombrePersonnes());
+        $this->assertSame('oui', $occupationLogementRequest->getCompositionLogementEnfants());
+        $this->assertSame('2022-01-01', $occupationLogementRequest->getDateEntree());
+        $this->assertSame('2022-01-01', $occupationLogementRequest->getBailleurDateEffetBail());
+        $this->assertSame('oui', $occupationLogementRequest->getBailDpeBail());
+        $this->assertSame('abcd12ef34', $occupationLogementRequest->getBailDpeInvariant());
+        $this->assertSame('oui', $occupationLogementRequest->getBailDpeEtatDesLieux());
+        $this->assertSame('750', $occupationLogementRequest->getLoyer());
+        $this->assertSame('oui', $occupationLogementRequest->getLoyersPayes());
+        $this->assertSame('2000', $occupationLogementRequest->getAnneeConstruction());
+        $this->assertSame('oui', $occupationLogementRequest->getAutresOccupantsDesordre());
 
-        $errors = $this->validator->validate($informationsLogementRequest);
+        $errors = $this->validator->validate($occupationLogementRequest);
         $this->assertCount(0, $errors);
     }
 
     public function testValidateError(): void
     {
-        $informationsLogementRequest = new InformationsLogementRequest(
+        $occupationLogementRequest = new OccupationLogementRequest(
             nombrePersonnes: '-1',
             compositionLogementEnfants: 'maybe',
             compositionLogementNombreEnfants: '-1',
@@ -66,7 +66,7 @@ class InformationsLogementRequestTest extends KernelTestCase
             autresOccupantsDesordre: 'PLOP',
         );
 
-        $errors = $this->validator->validate($informationsLogementRequest);
+        $errors = $this->validator->validate($occupationLogementRequest);
         $this->assertCount(12, $errors);
     }
 }

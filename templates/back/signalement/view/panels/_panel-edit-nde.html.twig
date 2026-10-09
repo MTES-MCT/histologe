@@ -97,7 +97,7 @@
                         {% set bailDpeClasseEnergetique = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeClasseEnergetique : null %}
                         <label class="fr-label" for="signalement-edit-nde-classe-energetique">Classe énergétique
                             {{ show_label_facultatif(
-                                'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
+                                'App\\Dto\\Request\\Signalement\\InformationsLogementRequest',
                                 'bailDpeClasseEnergetique',
                                 signalement.profileDeclarant,
                                 signalement.isV2)

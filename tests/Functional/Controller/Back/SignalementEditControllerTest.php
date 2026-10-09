@@ -316,8 +316,8 @@ class SignalementEditControllerTest extends WebTestCase
         $payload = [
             ...self::getStaticPayloadConsommationEnergetique(),
             'dateDernierDPE' => '1970-01-01',
-            'consommationEnergie' => 30000,
-            'superficie' => 60,
+            'consommationEnergie' => '30000',
+            'superficie' => '60',
             '_token' => $this->getCsrfToken('signalement_edit_consommation_energetique_', $this->signalement->getId()),
         ];
         $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
@@ -343,7 +343,7 @@ class SignalementEditControllerTest extends WebTestCase
         $payload = [
             ...self::getStaticPayloadConsommationEnergetique(),
             'dateDernierDPE' => '2023-01-02',
-            'consommationEnergie' => 500,
+            'consommationEnergie' => '500',
             '_token' => $this->getCsrfToken('signalement_edit_consommation_energetique_', $signalement->getId()),
         ];
         $this->client->request('POST', $route, [], [], [], (string) json_encode($payload));
@@ -408,16 +408,16 @@ class SignalementEditControllerTest extends WebTestCase
                 '#signalement-consommation-energetique-container',
                 '#signalement-occupation-logement-container',
                 '#signalement-description-logement-container',
-                '#informationLogementDateEntree-container',
+                '#occupationLogementDateEntree-container',
                 '#compositionLogementSuperficie-container',
                 '#signalement-pre-evaluation-container',
             ],
         ];
 
-        yield 'Edition Informations sur le logement' => [
-            'back_signalement_edit_informations_logement',
+        yield 'Edition Occupation du logement' => [
+            'back_signalement_edit_occupation_logement',
             array_diff_key(self::getStaticPayloadInformationLogement(), ['bailDpeDpe' => null, 'bailDpeClasseEnergetique' => null]),
-            'signalement_edit_informations_logement_',
+            'signalement_edit_occupation_logement_',
             [
                 '#signalement-occupation-logement-container',
                 '#signalement-consommation-energetique-container',
@@ -613,17 +613,17 @@ class SignalementEditControllerTest extends WebTestCase
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<string>
      */
     private static function getStaticPayloadConsommationEnergetique(): array
     {
         return [
             'dateEntree' => '2021-05-01',
-            'dpe' => true,
+            'dpe' => 'oui',
             'classeEnergetique' => 'F',
             'dateDernierDPE' => '2023-01-02',
-            'consommationEnergie' => 300,
-            'superficie' => 100,
+            'consommationEnergie' => '300',
+            'superficie' => '100',
         ];
     }
 
@@ -726,15 +726,15 @@ class SignalementEditControllerTest extends WebTestCase
         ];
 
         // TODO à la suppression de FEATURE_ORIENTATION : supprimer ce cas
-        yield 'Edition Informations sur le logement (old)' => [
-            'back_signalement_edit_informations_logement_old',
-            self::getStaticPayloadInformationLogement(),
-            'signalement_edit_informations_logement_old_',
-        ];
-        yield 'Edition Informations sur le logement' => [
+        yield 'Edition Informations sur le logement (ancien onglet)' => [
             'back_signalement_edit_informations_logement',
-            array_diff_key(self::getStaticPayloadInformationLogement(), ['bailDpeDpe' => null, 'bailDpeClasseEnergetique' => null]),
+            self::getStaticPayloadInformationLogement(),
             'signalement_edit_informations_logement_',
+        ];
+        yield 'Edition Occupation du logement' => [
+            'back_signalement_edit_occupation_logement',
+            array_diff_key(self::getStaticPayloadInformationLogement(), ['bailDpeDpe' => null, 'bailDpeClasseEnergetique' => null]),
+            'signalement_edit_occupation_logement_',
         ];
 
         yield 'Edition Description du logement' => [

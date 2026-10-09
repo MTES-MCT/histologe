@@ -12,9 +12,9 @@ use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesSyndicRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\InformationsBailleurRequest;
-use App\Dto\Request\Signalement\InformationsLogementOldRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
 use App\Dto\Request\Signalement\InviteTiersRequest;
+use App\Dto\Request\Signalement\OccupationLogementRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesOldRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\SituationFoyerOldRequest;
@@ -724,9 +724,9 @@ class SignalementEditController extends AbstractController
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
     }
 
-    #[Route('/{uuid:signalement}/edit-informations-logement', name: 'back_signalement_edit_informations_logement', methods: 'POST')]
+    #[Route('/{uuid:signalement}/edit-occupation-logement', name: 'back_signalement_edit_occupation_logement', methods: 'POST')]
     #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
-    public function editInformationsLogement(
+    public function editOccupationLogement(
         Signalement $signalement,
         Request $request,
         SignalementManager $signalementManager,
@@ -742,15 +742,15 @@ class SignalementEditController extends AbstractController
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
-        if (!$this->isCsrfTokenValid('signalement_edit_informations_logement_'.$signalement->getId(), $token)) {
+        if (!$this->isCsrfTokenValid('signalement_edit_occupation_logement_'.$signalement->getId(), $token)) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
-        /** @var InformationsLogementRequest $informationsLogementRequest */
-        $informationsLogementRequest = $serializer->deserialize(
+        /** @var OccupationLogementRequest $occupationLogementRequest */
+        $occupationLogementRequest = $serializer->deserialize(
             json_encode($request->getPayload()->all()),
-            InformationsLogementRequest::class,
+            OccupationLogementRequest::class,
             'json'
         );
         $validationGroups = ['Default'];
@@ -758,7 +758,7 @@ class SignalementEditController extends AbstractController
 
         $errorMessage = FormHelper::getErrorsFromRequest(
             $validator,
-            $informationsLogementRequest,
+            $occupationLogementRequest,
             $validationGroups
         );
 
@@ -768,7 +768,7 @@ class SignalementEditController extends AbstractController
 
             return $this->json($response, $response['code']);
         }
-        $subscriptionCreated = $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
+        $subscriptionCreated = $signalementManager->updateFromOccupationLogementRequest($signalement, $occupationLogementRequest);
         $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les informations du logement ont bien été modifiées.'];
         if ($subscriptionCreated) {
@@ -811,11 +811,11 @@ class SignalementEditController extends AbstractController
     }
 
     // TODO à la suppression de FEATURE_ORIENTATION :
-    // - supprimer cette route, son DTO InformationsLogementOldRequest et la méthode SignalementManager::updateFromInformationsLogementOldRequest
-    // - supprimer le panel _panel-edit-informations-logement-old.html.twig et les tests associés
-    #[Route('/{uuid:signalement}/edit-informations-logement-old', name: 'back_signalement_edit_informations_logement_old', methods: 'POST')]
+    // - supprimer cette route, son DTO InformationsLogementRequest et la méthode SignalementManager::updateFromInformationsLogementRequest
+    // - supprimer le panel _panel-edit-informations-logement.html.twig et les tests associés
+    #[Route('/{uuid:signalement}/edit-informations-logement', name: 'back_signalement_edit_informations_logement', methods: 'POST')]
     #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
-    public function editInformationsLogementOld(
+    public function editInformationsLogement(
         Signalement $signalement,
         Request $request,
         SignalementManager $signalementManager,
@@ -826,15 +826,15 @@ class SignalementEditController extends AbstractController
         /** @var array<string, mixed> $payload */
         $payload = $request->getPayload()->all();
         $token = is_scalar($payload['_token']) ? (string) $payload['_token'] : '';
-        if (!$this->isCsrfTokenValid('signalement_edit_informations_logement_old_'.$signalement->getId(), $token)) {
+        if (!$this->isCsrfTokenValid('signalement_edit_informations_logement_'.$signalement->getId(), $token)) {
             $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => MessageHelper::ERROR_MESSAGE_CSRF];
 
             return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages]);
         }
-        /** @var InformationsLogementOldRequest $informationsLogementOldRequest */
-        $informationsLogementOldRequest = $serializer->deserialize(
+        /** @var InformationsLogementRequest $informationsLogementRequest */
+        $informationsLogementRequest = $serializer->deserialize(
             json_encode($request->getPayload()->all()),
-            InformationsLogementOldRequest::class,
+            InformationsLogementRequest::class,
             'json'
         );
         $validationGroups = ['Default'];
@@ -842,7 +842,7 @@ class SignalementEditController extends AbstractController
 
         $errorMessage = FormHelper::getErrorsFromRequest(
             $validator,
-            $informationsLogementOldRequest,
+            $informationsLogementRequest,
             $validationGroups
         );
 
@@ -852,7 +852,7 @@ class SignalementEditController extends AbstractController
 
             return $this->json($response, $response['code']);
         }
-        $subscriptionCreated = $signalementManager->updateFromInformationsLogementOldRequest($signalement, $informationsLogementOldRequest);
+        $subscriptionCreated = $signalementManager->updateFromInformationsLogementRequest($signalement, $informationsLogementRequest);
         $entityManager->flush();
         $flashMessages[] = ['type' => 'success', 'title' => 'Modifications enregistrées', 'message' => 'Les informations du logement ont bien été modifiées.'];
         if ($subscriptionCreated) {
@@ -870,6 +870,9 @@ class SignalementEditController extends AbstractController
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents, 'functions' => $functions]);
     }
 
+    // TODO à la suppression de FEATURE_ORIENTATION : renommer en description-logement (route, méthode, DTO CompositionLogementRequest,
+    // SignalementManager::updateFromCompositionLogementRequest, panel _panel-edit-composition-logement.html.twig et tests)
+    // (non renommé tant que le panel est partagé avec l'ancien onglet Situation)
     #[Route('/{uuid:signalement}/edit-composition-logement', name: 'back_signalement_edit_composition_logement', methods: 'POST')]
     #[IsGranted(SignalementVoter::SIGN_EDIT_ACTIVE, subject: 'signalement')]
     public function editCompositionLogement(
@@ -948,11 +951,11 @@ class SignalementEditController extends AbstractController
                     ['signalement' => $signalement]
                 ),
             ];
-            // on met à jour le champ autres occupants du panel d'édition des informations du logement (affiché pour un appartement)
+            // on met à jour le champ autres occupants du panel d'édition de l'occupation du logement (affiché pour un appartement)
             $htmlTargetContents[] = [
                 'target' => '#autresOccupantsDesordre-container',
                 'content' => $this->renderBlockView(
-                    'back/signalement/view/panels/_panel-edit-informations-logement.html.twig',
+                    'back/signalement/view/panels/_panel-edit-occupation-logement.html.twig',
                     'autres_occupants_desordre_field',
                     ['signalement' => $signalement]
                 ),
@@ -1336,11 +1339,11 @@ class SignalementEditController extends AbstractController
                 'signalement' => $signalement,
             ]),
         ];
-        // on met à jour le champ date d'entrée du panel d'édition des informations du logement
+        // on met à jour le champ date d'entrée du panel d'édition de l'occupation du logement
         $htmlTargetContents[] = [
-            'target' => '#informationLogementDateEntree-container',
+            'target' => '#occupationLogementDateEntree-container',
             'content' => $this->renderBlockView(
-                'back/signalement/view/panels/_panel-edit-informations-logement.html.twig',
+                'back/signalement/view/panels/_panel-edit-occupation-logement.html.twig',
                 'date_entree_field',
                 ['signalement' => $signalement]
             ),

@@ -3,11 +3,13 @@
         <h3 id="title-consommation-energetique" class="fr-h6">Consommation énergétique</h3>
     </div>
     <div class="fr-col-12 fr-col-md-4 fr-text--right">
-        <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-fi-edit-line fr-btn--icon-left"
-            data-fr-opened="false"
-            aria-controls="panel-edit-consommation-energetique"
-            data-panel-open="panel-edit-consommation-energetique"
-            >Modifier</button>
+        {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+            <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-fi-edit-line fr-btn--icon-left"
+                data-fr-opened="false"
+                aria-controls="panel-edit-consommation-energetique"
+                data-panel-open="panel-edit-consommation-energetique"
+                >Modifier</button>
+        {% endif %}
     </div>
 </div>
 <div class="fr-grid-row">

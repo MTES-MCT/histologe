@@ -12,8 +12,8 @@ use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesSyndicRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\InformationsBailleurRequest;
-use App\Dto\Request\Signalement\InformationsLogementOldRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
+use App\Dto\Request\Signalement\OccupationLogementRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesOldRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\QualificationNDERequest;
@@ -710,18 +710,18 @@ class SignalementManager
         return $subscriptionCreated;
     }
 
-    public function updateFromInformationsLogementRequest(
+    public function updateFromOccupationLogementRequest(
         Signalement $signalement,
-        InformationsLogementRequest $informationsLogementRequest,
+        OccupationLogementRequest $occupationLogementRequest,
     ): bool {
-        if (is_numeric($informationsLogementRequest->getNombrePersonnes())) {
-            $signalement->setNbOccupantsLogement((int) $informationsLogementRequest->getNombrePersonnes());
+        if (is_numeric($occupationLogementRequest->getNombrePersonnes())) {
+            $signalement->setNbOccupantsLogement((int) $occupationLogementRequest->getNombrePersonnes());
         }
-        if (is_numeric($informationsLogementRequest->getLoyer())) {
-            $signalement->setLoyer((float) $informationsLogementRequest->getLoyer());
+        if (is_numeric($occupationLogementRequest->getLoyer())) {
+            $signalement->setLoyer((float) $occupationLogementRequest->getLoyer());
         }
-        if (!empty($informationsLogementRequest->getDateEntree())) {
-            $signalement->setDateEntree(new \DateTimeImmutable($informationsLogementRequest->getDateEntree()));
+        if (!empty($occupationLogementRequest->getDateEntree())) {
+            $signalement->setDateEntree(new \DateTimeImmutable($occupationLogementRequest->getDateEntree()));
         } else {
             $signalement->setDateEntree(null);
         }
@@ -732,17 +732,17 @@ class SignalementManager
         }
 
         $typeCompositionLogement
-            ->setCompositionLogementNombreEnfants($informationsLogementRequest->getCompositionLogementNombreEnfants())
-            ->setCompositionLogementEnfants($informationsLogementRequest->getCompositionLogementEnfants())
-            ->setBailDpeBail($informationsLogementRequest->getBailDpeBail())
-            ->setBailDpeEtatDesLieux($informationsLogementRequest->getBailDpeEtatDesLieux());
+            ->setCompositionLogementNombreEnfants($occupationLogementRequest->getCompositionLogementNombreEnfants())
+            ->setCompositionLogementEnfants($occupationLogementRequest->getCompositionLogementEnfants())
+            ->setBailDpeBail($occupationLogementRequest->getBailDpeBail())
+            ->setBailDpeEtatDesLieux($occupationLogementRequest->getBailDpeEtatDesLieux());
 
         $signalement->setTypeCompositionLogement($typeCompositionLogement)
-            ->setNumeroInvariant($informationsLogementRequest->getBailDpeInvariant())
-            ->setAutreSituationVulnerabilite($informationsLogementRequest->getAutreSituationVulnerabilite());
+            ->setNumeroInvariant($occupationLogementRequest->getBailDpeInvariant())
+            ->setAutreSituationVulnerabilite($occupationLogementRequest->getAutreSituationVulnerabilite());
 
         if ('appartement' === $signalement->getNatureLogement()) {
-            $signalement->setAutresOccupantsDesordre($informationsLogementRequest->getAutresOccupantsDesordre());
+            $signalement->setAutresOccupantsDesordre($occupationLogementRequest->getAutresOccupantsDesordre());
         }
 
         $informationComplementaire = new InformationComplementaire();
@@ -751,14 +751,14 @@ class SignalementManager
         }
         $informationComplementaire
             ->setInformationsComplementairesSituationOccupantsLoyersPayes(
-                $informationsLogementRequest->getLoyersPayes()
+                $occupationLogementRequest->getLoyersPayes()
             )
             ->setInformationsComplementairesLogementAnneeConstruction(
-                $informationsLogementRequest->getAnneeConstruction()
+                $occupationLogementRequest->getAnneeConstruction()
             )
             ->setInformationsComplementairesSituationBailleurDateEffetBail(
-                !empty($informationsLogementRequest->getBailleurDateEffetBail())
-                ? $informationsLogementRequest->getBailleurDateEffetBail()
+                !empty($occupationLogementRequest->getBailleurDateEffetBail())
+                ? $occupationLogementRequest->getBailleurDateEffetBail()
                 : null
             );
 
@@ -784,10 +784,10 @@ class SignalementManager
         return $subscriptionCreated;
     }
 
-    // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette méthode (remplacée par updateFromInformationsLogementRequest)
-    public function updateFromInformationsLogementOldRequest(
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette méthode (remplacée par updateFromOccupationLogementRequest)
+    public function updateFromInformationsLogementRequest(
         Signalement $signalement,
-        InformationsLogementOldRequest $informationsLogementRequest,
+        InformationsLogementRequest $informationsLogementRequest,
     ): bool {
         if (is_numeric($informationsLogementRequest->getNombrePersonnes())) {
             $signalement->setNbOccupantsLogement((int) $informationsLogementRequest->getNombrePersonnes());
@@ -1377,19 +1377,8 @@ class SignalementManager
         ConsommationEnergetiqueRequest $consommationEnergetiqueRequest,
     ): bool {
         // mise à jour du signalement
-        if ($consommationEnergetiqueRequest->getDateEntree() || $consommationEnergetiqueRequest->getClasseEnergetique()) {
-            $typeCompositionLogement = new TypeCompositionLogement();
-            if (!empty($signalement->getTypeCompositionLogement())) {
-                $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
-            }
-            if ($consommationEnergetiqueRequest->getDateEntree()) {
-                $signalement->setDateEntree(new \DateTimeImmutable($consommationEnergetiqueRequest->getDateEntree()));
-            }
-            if ($consommationEnergetiqueRequest->getClasseEnergetique()) {
-                $typeCompositionLogement
-                    ->setBailDpeClasseEnergetique($consommationEnergetiqueRequest->getClasseEnergetique());
-            }
-            $signalement->setTypeCompositionLogement($typeCompositionLogement);
+        if ($consommationEnergetiqueRequest->getDateEntree()) {
+            $signalement->setDateEntree(new \DateTimeImmutable($consommationEnergetiqueRequest->getDateEntree()));
         }
 
         $isSuperficieUpdated = false;
@@ -1404,12 +1393,10 @@ class SignalementManager
         if (!empty($signalement->getTypeCompositionLogement())) {
             $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
         }
-        // match (comparaison stricte) : avec un switch, null (« Ne sait pas ») serait égal à false
-        $typeCompositionLogement->setBailDpeDpe(match ($consommationEnergetiqueRequest->getDPE()) {
-            true => 'oui',
-            false => 'non',
-            default => 'nsp',
-        });
+        $typeCompositionLogement
+            ->setBailDpeDpe($consommationEnergetiqueRequest->getDPE() ?? 'nsp')
+            // toujours enregistrée pour pouvoir la vider (option vide du select)
+            ->setBailDpeClasseEnergetique($consommationEnergetiqueRequest->getClasseEnergetique());
         // DPE avant 2023 : consommation annuelle (kWh/an), sinon consommation en kWh/m²/an
         $consommationEnergie = $consommationEnergetiqueRequest->getConsommationEnergie();
         switch ($consommationEnergetiqueRequest->getDateDernierDPE()) {

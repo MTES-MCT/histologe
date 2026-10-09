@@ -389,9 +389,9 @@ class SignalementManagerTest extends WebTestCase
         $consommationEnergetiqueRequest = new ConsommationEnergetiqueRequest(
             dateEntree: '2021-05-01',
             dateDernierDPE: ConsommationEnergetiqueRequest::RADIO_VALUE_BEFORE_2023,
-            superficie: 50,
-            consommationEnergie: 30000,
-            dpe: true,
+            superficie: '50',
+            consommationEnergie: '30000',
+            dpe: 'oui',
             classeEnergetique: 'F',
         );
 
@@ -412,14 +412,14 @@ class SignalementManagerTest extends WebTestCase
         $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-02']);
         $consommationEnergetiqueRequest = new ConsommationEnergetiqueRequest(
             dateDernierDPE: ConsommationEnergetiqueRequest::RADIO_VALUE_AFTER_2023,
-            consommationEnergie: 300,
-            dpe: false,
+            consommationEnergie: '300',
+            dpe: 'oui',
         );
 
         $this->signalementManager->updateFromConsommationEnergetiqueRequest($signalement, $consommationEnergetiqueRequest);
 
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
-        $this->assertEquals('non', $typeCompositionLogement->getBailDpeDpe());
+        $this->assertEquals('oui', $typeCompositionLogement->getBailDpeDpe());
         $this->assertEquals('post2023', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeAnnee());
         $this->assertEquals('300', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeConsoFinale());
     }
@@ -435,17 +435,72 @@ class SignalementManagerTest extends WebTestCase
         $signalement->setTypeCompositionLogement($typeCompositionLogement);
 
         $consommationEnergetiqueRequest = new ConsommationEnergetiqueRequest(
-            consommationEnergie: 999,
-            dpe: null,
+            consommationEnergie: '999',
+            dpe: 'oui',
         );
 
         $this->signalementManager->updateFromConsommationEnergetiqueRequest($signalement, $consommationEnergetiqueRequest);
 
         $typeCompositionLogement = $signalement->getTypeCompositionLogement();
-        $this->assertEquals('nsp', $typeCompositionLogement->getBailDpeDpe());
+        $this->assertEquals('oui', $typeCompositionLogement->getBailDpeDpe());
         $this->assertEquals('post2023', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeAnnee());
         $this->assertEquals('200', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeConsoFinale());
         $this->assertNull($typeCompositionLogement->getDesordresLogementChauffageDetailsDpeConso());
+    }
+
+    /**
+     * @return \Generator<string, array{string}>
+     */
+    public static function provideDpeNonDisponible(): \Generator
+    {
+        yield 'DPE non' => ['non'];
+        yield 'DPE ne sait pas' => ['nsp'];
+    }
+
+    public function testUpdateFromConsommationEnergetiqueRequestWithEmptyClasseEnergetique(): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-02']);
+        $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
+        $typeCompositionLogement->setBailDpeClasseEnergetique('F');
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+        $consommationEnergetiqueRequest = new ConsommationEnergetiqueRequest(dpe: 'oui', classeEnergetique: '');
+
+        $this->signalementManager->updateFromConsommationEnergetiqueRequest($signalement, $consommationEnergetiqueRequest);
+
+        $this->assertNull($signalement->getTypeCompositionLogement()->getBailDpeClasseEnergetique());
+    }
+
+    #[DataProvider('provideDpeNonDisponible')]
+    public function testUpdateFromConsommationEnergetiqueRequestWithoutDpeKeepsValues(string $dpe): void
+    {
+        /** @var Signalement $signalement */
+        $signalement = $this->signalementRepository->findOneBy(['reference' => '2024-02']);
+        $typeCompositionLogement = clone $signalement->getTypeCompositionLogement();
+        $typeCompositionLogement
+            ->setBailDpeClasseEnergetique('F')
+            ->setDesordresLogementChauffageDetailsDpeAnnee('before2023')
+            ->setDesordresLogementChauffageDetailsDpeConso('15000')
+            ->setDesordresLogementChauffageDetailsDpeConsoFinale('200');
+        $signalement->setTypeCompositionLogement($typeCompositionLogement);
+
+        // les champs masqués du panel sont tout de même envoyés avec leurs valeurs
+        $consommationEnergetiqueRequest = new ConsommationEnergetiqueRequest(
+            dateDernierDPE: ConsommationEnergetiqueRequest::RADIO_VALUE_BEFORE_2023,
+            consommationEnergie: '15000',
+            dpe: $dpe,
+            classeEnergetique: 'F',
+        );
+
+        $this->signalementManager->updateFromConsommationEnergetiqueRequest($signalement, $consommationEnergetiqueRequest);
+
+        $typeCompositionLogement = $signalement->getTypeCompositionLogement();
+        $this->assertEquals($dpe, $typeCompositionLogement->getBailDpeDpe());
+        $this->assertEquals('15000', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeConso());
+        $this->assertEquals('200', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeConsoFinale());
+        $this->assertEquals('F', $typeCompositionLogement->getBailDpeClasseEnergetique());
+        $this->assertEquals('before2023', $typeCompositionLogement->getDesordresLogementChauffageDetailsDpeAnnee());
     }
 
     public function testUpdateFromConsommationEnergetiqueRequestWithSuperficieUpdatesDesordres(): void
@@ -462,7 +517,7 @@ class SignalementManagerTest extends WebTestCase
         );
         $this->assertFalse($signalement->hasDesordrePrecision($desordrePrecision));
 
-        $consommationEnergetiqueRequest = new ConsommationEnergetiqueRequest(superficie: 8);
+        $consommationEnergetiqueRequest = new ConsommationEnergetiqueRequest(superficie: '8', dpe: 'oui');
 
         $this->signalementManager->updateFromConsommationEnergetiqueRequest($signalement, $consommationEnergetiqueRequest);
 

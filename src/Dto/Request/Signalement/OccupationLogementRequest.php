@@ -10,8 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     otherProperty: 'nombrePersonnes',
     message: "Le nombre d'enfants ne peut pas dépasser le nombre de personnes."
 )]
-// TODO à la suppression de FEATURE_ORIENTATION : supprimer ce DTO (remplacé par InformationsLogementRequest)
-class InformationsLogementOldRequest implements RequestInterface
+class OccupationLogementRequest implements RequestInterface
 {
     public function __construct(
         #[Assert\NotBlank(message: 'Merci de définir le nombre de personnes.')]
@@ -43,11 +42,6 @@ class InformationsLogementOldRequest implements RequestInterface
         #[Assert\NotBlank(message: 'Merci d\'indiquer si un état des lieux existe (ou a été fourni).', groups: ['LOCATAIRE', 'BAILLEUR'])]
         #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "état des lieux" est incorrect.')]
         private readonly ?string $bailDpeEtatDesLieux = null,
-        #[Assert\NotBlank(message: 'Merci d\'indiquer si un DPE existe (ou a été fourni).', groups: ['LOCATAIRE', 'BAILLEUR', 'BAILLEUR_OCCUPANT'])]
-        #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "DPE" est incorrect.')]
-        private readonly ?string $bailDpeDpe = null,
-        #[Assert\Choice(choices: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'nsp'], message: 'Le champ "Classe énergétique" est incorrect.')]
-        private readonly ?string $bailDpeClasseEnergetique = null,
         #[Assert\Type(type: 'numeric', message: 'Le loyer doit être un nombre.')]
         #[Assert\Length(max: 20, maxMessage: 'Le loyer ne doit pas dépasser {{ limit }} caractères.')]
         private readonly ?string $loyer = null,
@@ -108,16 +102,6 @@ class InformationsLogementOldRequest implements RequestInterface
     public function getBailDpeEtatDesLieux(): ?string
     {
         return $this->bailDpeEtatDesLieux;
-    }
-
-    public function getBailDpeDpe(): ?string
-    {
-        return $this->bailDpeDpe;
-    }
-
-    public function getBailDpeClasseEnergetique(): ?string
-    {
-        return $this->bailDpeClasseEnergetique;
     }
 
     public function getLoyer(): ?string

@@ -1,14 +1,13 @@
-{# TODO à la suppression de FEATURE_ORIENTATION : supprimer ce panel #}
-<dialog aria-labelledby="panel-edit-informations-logement-old-title" id="panel-edit-informations-logement-old" class="side-panel">
+<dialog aria-labelledby="panel-edit-occupation-logement-title" id="panel-edit-occupation-logement" class="side-panel">
     <div class="side-panel__inner">
         <div class="side-panel__header">
-            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-informations-logement-old" aria-controls="panel-edit-informations-logement-old" aria-expanded="false">Fermer</button>
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-occupation-logement" aria-controls="panel-edit-occupation-logement" aria-expanded="false">Fermer</button>
         </div>
 
         <div class="side-panel__content fr-mx-3w">
-            <h1 id="panel-edit-informations-logement-old-title" class="fr-modal__title title-blue-france">Modifier les informations du logement</h1>
+            <h1 id="panel-edit-occupation-logement-title" class="fr-modal__title title-blue-france">Modifier les informations du logement</h1>
 
-            <form method="POST" id="form-edit-informations-logement-old" enctype="application/json" action="{{ path('back_signalement_edit_informations_logement_old',{uuid:signalement.uuid}) }}">
+            <form method="POST" id="form-edit-occupation-logement" enctype="application/json" action="{{ path('back_signalement_edit_occupation_logement',{uuid:signalement.uuid}) }}">
                 <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
                 
                 <div class="fr-input-group">
@@ -18,14 +17,14 @@
                     {% else %}
                         {% set nombrePersonnes = signalement.nbPersonsDeprecated %}
                     {% endif %}
-                    <label class="fr-label" for="informationLogementNombrePersonnes">Nb. personnes
+                    <label class="fr-label" for="occupationLogementNombrePersonnes">Nb. personnes
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
+                            'App\\Dto\\Request\\Signalement\\OccupationLogementRequest',
                             'nombrePersonnes',
                             signalement.profileDeclarant)
                         }}
                     </label>
-                    <input class="fr-input" type="number" id="informationLogementNombrePersonnes" name="nombrePersonnes" value="{{ nombrePersonnes }}" max="99">
+                    <input class="fr-input" type="number" id="occupationLogementNombrePersonnes" name="nombrePersonnes" value="{{ nombrePersonnes }}" max="99">
                 </div>
 
                 <div class="fr-input-group">
@@ -35,15 +34,15 @@
                     {% else %}
                         {% set compositionLogementNombreEnfants = signalement.getNbEnfantsDeprecated %}
                     {% endif %}
-                    <label class="fr-label" for="informationLogementCompositionLogementNombreEnfants">Dont nb. enfants
+                    <label class="fr-label" for="occupationLogementCompositionLogementNombreEnfants">Dont nb. enfants
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
+                            'App\\Dto\\Request\\Signalement\\OccupationLogementRequest',
                             'compositionLogementNombreEnfants',
                             signalement.profileDeclarant,
                             signalement.isV2)
                         }}
                     </label>
-                    <input class="fr-input" type="number" id="informationLogementCompositionLogementNombreEnfants" name="compositionLogementNombreEnfants" value="{{ compositionLogementNombreEnfants }}" max="99">
+                    <input class="fr-input" type="number" id="occupationLogementCompositionLogementNombreEnfants" name="compositionLogementNombreEnfants" value="{{ compositionLogementNombreEnfants }}" max="99">
                 </div>
 
                 <div class="fr-select-group">
@@ -57,15 +56,15 @@
                             {% set compositionLogementEnfants = 'non' %}
                         {% endif %}
                     {% endif %}
-                    <label class="fr-label" for="informationLogementCompositionLogementEnfants">Enfants -6 ans
+                    <label class="fr-label" for="occupationLogementCompositionLogementEnfants">Enfants -6 ans
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
+                            'App\\Dto\\Request\\Signalement\\OccupationLogementRequest',
                             'compositionLogementEnfants',
                             signalement.profileDeclarant,
                             signalement.isV2)
                         }}
                     </label>
-                    <select class="fr-select" id="informationLogementCompositionLogementEnfants" name="compositionLogementEnfants">
+                    <select class="fr-select" id="occupationLogementCompositionLogementEnfants" name="compositionLogementEnfants">
                         <option value="" {{ compositionLogementEnfants not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                         <option value="oui" {{ compositionLogementEnfants == 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ compositionLogementEnfants == 'non' ? 'selected' : '' }}>Non</option>
@@ -74,27 +73,29 @@
                 </div>
 
                 <div class="fr-input-group">
-                    <label class="fr-label" for="informationLogementAutreSituationVulnerabilite"
+                    <label class="fr-label" for="occupationLogementAutreSituationVulnerabilite"
                         >Autre situation de vulnérabilité (facultatif)
                         <span class="fr-hint-text">Ne saisissez pas d'information de santé.</span>
                         </label>
-                    <textarea class="fr-input fr-input--no-resize" id="informationLogementAutreSituationVulnerabilite" name="autreSituationVulnerabilite">{{ signalement.autreSituationVulnerabilite }}</textarea>
+                    <textarea class="fr-input fr-input--no-resize" id="occupationLogementAutreSituationVulnerabilite" name="autreSituationVulnerabilite">{{ signalement.autreSituationVulnerabilite }}</textarea>
                 </div>
 
-                <div class="fr-input-group">
+                <div class="fr-input-group" id="occupationLogementDateEntree-container">
+                    {% block date_entree_field %}
                     {% set dateEntree = '' %}
                     {% if signalement.dateEntree %}
                         {% set dateEntree = signalement.dateEntree.format('Y-m-d') %}
                     {% endif %}
-                    <label class="fr-label" for="informationLogementDateEntree">Date arrivée
+                    <label class="fr-label" for="occupationLogementDateEntree">Date arrivée
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
+                            'App\\Dto\\Request\\Signalement\\OccupationLogementRequest',
                             'dateEntree',
                             signalement.profileDeclarant,
                             signalement.isV2)
                         }}
                     </label>
-                    <input class="fr-input" type="date" id="informationLogementDateEntree" name="dateEntree" value="{{ dateEntree }}">
+                    <input class="fr-input" type="date" id="occupationLogementDateEntree" name="dateEntree" value="{{ dateEntree }}">
+                    {% endblock %}
                 </div>
 
                 <div class="fr-input-group">
@@ -102,21 +103,21 @@
                     {% if signalement.informationComplementaire %}
                         {% set bailleurDateEffetBail = signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail %}
                     {% endif %}
-                    <label class="fr-label" for="informationLogementBailleurDateEffetBail">Date d'effet du bail (facultatif)</label>
-                    <input class="fr-input" type="date" id="informationLogementBailleurDateEffetBail" name="bailleurDateEffetBail" value="{{ bailleurDateEffetBail }}">
+                    <label class="fr-label" for="occupationLogementBailleurDateEffetBail">Date d'effet du bail (facultatif)</label>
+                    <input class="fr-input" type="date" id="occupationLogementBailleurDateEffetBail" name="bailleurDateEffetBail" value="{{ bailleurDateEffetBail }}">
                 </div>
 
                 <div class="fr-select-group">
                     {% set bailDpeBail = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeBail : null %}
-                    <label class="fr-label" for="informationLogementBailDpeBail">Bail
+                    <label class="fr-label" for="occupationLogementBailDpeBail">Bail
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
+                            'App\\Dto\\Request\\Signalement\\OccupationLogementRequest',
                             'bailDpeBail',
                             signalement.profileDeclarant,
                             signalement.isV2)
                         }}
                     </label>
-                    <select class="fr-select" id="informationLogementBailDpeBail" name="bailDpeBail">
+                    <select class="fr-select" id="occupationLogementBailDpeBail" name="bailDpeBail">
                         <option value="" {{ bailDpeBail not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                         <option value="oui" {{ bailDpeBail == 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ bailDpeBail == 'non' ? 'selected' : '' }}>Non</option>
@@ -124,23 +125,17 @@
                     </select>
                 </div>
 
-                <div class="fr-input-group">
-                    {% set bailDpeInvariant = signalement.numeroInvariant %}
-                    <label class="fr-label" for="informationLogementBailDpeInvariant">Invariant fiscal (facultatif)</label>
-                    <input class="fr-input" type="text" id="informationLogementBailDpeInvariant" name="bailDpeInvariant"  maxlength="12" value="{{ bailDpeInvariant }}">
-                </div>
-
                 <div class="fr-select-group">
                     {% set bailDpeEtatDesLieux = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeEtatDesLieux : null %}
-                    <label class="fr-label" for="informationLogementBailDpeEtatDesLieux">Etat des lieux
+                    <label class="fr-label" for="occupationLogementBailDpeEtatDesLieux">Etat des lieux
                         {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
+                            'App\\Dto\\Request\\Signalement\\OccupationLogementRequest',
                             'bailDpeEtatDesLieux',
                             signalement.profileDeclarant,
                             signalement.isV2)
                         }}
                     </label>
-                    <select class="fr-select" id="informationLogementBailDpeEtatDesLieux" name="bailDpeEtatDesLieux">
+                    <select class="fr-select" id="occupationLogementBailDpeEtatDesLieux" name="bailDpeEtatDesLieux">
                         <option value="" {{ bailDpeEtatDesLieux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
                         <option value="oui" {{ bailDpeEtatDesLieux == 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ bailDpeEtatDesLieux == 'non' ? 'selected' : '' }}>Non</option>
@@ -148,56 +143,15 @@
                     </select>
                 </div>
 
-                <div class="fr-select-group">
-                    {% set bailDpeDpe = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeDpe : null %}
-                    <label class="fr-label" for="informationLogementBailDpeDpe">DPE
-                        {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
-                            'bailDpeDpe',
-                            signalement.profileDeclarant,
-                            signalement.isV2)
-                        }}
-                    </label>
-                    <select class="fr-select" id="informationLogementBailDpeDpe" name="bailDpeDpe">
-                        <option value="" {{ bailDpeDpe not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
-                        <option value="oui" {{ bailDpeDpe == 'oui' ? 'selected' : '' }}>Oui</option>
-                        <option value="non" {{ bailDpeDpe == 'non' ? 'selected' : '' }}>Non</option>
-                        <option value="nsp" {{ bailDpeDpe == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
-                    </select>
-                </div>
-
-                <div class="fr-select-group">
-                    {% set bailDpeClasseEnergetique = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeClasseEnergetique : null %}
-                    <label class="fr-label" for="informationLogementBailDpeClasseEnergetique">Classe énergétique
-                        {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\InformationsLogementOldRequest',
-                            'bailDpeClasseEnergetique',
-                            signalement.profileDeclarant,
-                            signalement.isV2)
-                        }}
-                    </label>
-                    <select class="fr-select" id="informationLogementBailDpeClasseEnergetique" name="bailDpeClasseEnergetique">
-                        <option value="" {{ bailDpeClasseEnergetique not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'nsp'] ? 'selected' : '' }}></option>
-                        <option value="A" {{ bailDpeClasseEnergetique is same as 'A' ? 'selected' : '' }}>A</option>
-                        <option value="B" {{ bailDpeClasseEnergetique is same as 'B' ? 'selected' : '' }}>B</option>
-                        <option value="C" {{ bailDpeClasseEnergetique is same as 'C' ? 'selected' : '' }}>C</option>
-                        <option value="D" {{ bailDpeClasseEnergetique is same as 'D' ? 'selected' : '' }}>D</option>
-                        <option value="E" {{ bailDpeClasseEnergetique is same as 'E' ? 'selected' : '' }}>E</option>
-                        <option value="F" {{ bailDpeClasseEnergetique is same as 'F' ? 'selected' : '' }}>F</option>
-                        <option value="G" {{ bailDpeClasseEnergetique is same as 'G' ? 'selected' : '' }}>G</option>
-                        <option value="nsp" {{ bailDpeClasseEnergetique is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
-                    </select>
-                </div>
-
                 <div class="fr-input-group">
-                    <label class="fr-label" for="informationLogementLoyer">Montant du loyer (facultatif)</label>
-                    <input class="fr-input" type="number" id="informationLogementLoyer" name="loyer" value="{{ signalement.loyer }}">
+                    <label class="fr-label" for="occupationLogementLoyer">Montant du loyer (facultatif)</label>
+                    <input class="fr-input" type="number" id="occupationLogementLoyer" name="loyer" value="{{ signalement.loyer }}">
                 </div>
 
                 <div class="fr-select-group">
                     {% set loyersPayes = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes : null %}
-                    <label class="fr-label" for="informationLogementLoyersPayes">Paiement loyers à jour (facultatif)</label>
-                    <select class="fr-select" id="informationLogementLoyersPayes" name="loyersPayes">
+                    <label class="fr-label" for="occupationLogementLoyersPayes">Paiement loyers à jour (facultatif)</label>
+                    <select class="fr-select" id="occupationLogementLoyersPayes" name="loyersPayes">
                         <option value="" {{ loyersPayes not in ['oui', 'non'] ? 'selected' : '' }}></option>
                         <option value="oui" {{ loyersPayes is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ loyersPayes is same as 'non' ? 'selected' : '' }}>Non</option>
@@ -209,10 +163,12 @@
                     {% if signalement.informationComplementaire %}
                         {% set anneeConstruction = signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction %}
                     {% endif %}
-                    <label class="fr-label" for="informationLogementAnneeConstruction">Année de construction (facultatif)</label>
-                    <input class="fr-input" type="number" id="informationLogementAnneeConstruction" name="anneeConstruction" value="{{ anneeConstruction }}" maxlength="4">
+                    <label class="fr-label" for="occupationLogementAnneeConstruction">Année de construction (facultatif)</label>
+                    <input class="fr-input" type="number" id="occupationLogementAnneeConstruction" name="anneeConstruction" value="{{ anneeConstruction }}" maxlength="4">
                 </div>
                 
+                <div id="autresOccupantsDesordre-container">
+                {% block autres_occupants_desordre_field %}
                 {% if signalement.natureLogement == 'appartement' %}
                 <div class="fr-select-group">
                     {% set autresOccupantsDesordre = signalement.autresOccupantsDesordre %}
@@ -226,8 +182,16 @@
                     </select>
                 </div>
                 {% endif %}
+                {% endblock %}
+                </div>
 
-                <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_informations_logement_old_'~signalement.id) }}">
+                <div class="fr-input-group">
+                    {% set bailDpeInvariant = signalement.numeroInvariant %}
+                    <label class="fr-label" for="occupationLogementBailDpeInvariant">Invariant fiscal (facultatif)</label>
+                    <input class="fr-input" type="text" id="occupationLogementBailDpeInvariant" name="bailDpeInvariant"  maxlength="12" value="{{ bailDpeInvariant }}">
+                </div>
+
+                <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_occupation_logement_'~signalement.id) }}">
             </form>
         </div>
         <div class="side-panel__footer">
@@ -235,14 +199,14 @@
                 <li>
                     <button type="submit"
                         class="fr-btn fr-btn--icon-left fr-icon-check-line"
-                        form="form-edit-informations-logement-old"
+                        form="form-edit-occupation-logement"
                         >Valider</button>
                 </li>
                 <li>
                     <button type="button"
                         class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel"
-                        data-panel="panel-edit-informations-logement-old"
-                        aria-controls="panel-edit-informations-logement-old"
+                        data-panel="panel-edit-occupation-logement"
+                        aria-controls="panel-edit-occupation-logement"
                         aria-expanded="false"
                         >Annuler</button>
                 </li>

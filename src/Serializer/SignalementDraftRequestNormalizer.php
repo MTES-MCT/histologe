@@ -9,8 +9,8 @@ use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
 use App\Dto\Request\Signalement\CoordonneesFoyerRequest;
 use App\Dto\Request\Signalement\CoordonneesTiersRequest;
 use App\Dto\Request\Signalement\InformationsBailleurRequest;
-use App\Dto\Request\Signalement\InformationsLogementOldRequest;
 use App\Dto\Request\Signalement\InformationsLogementRequest;
+use App\Dto\Request\Signalement\OccupationLogementRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesOldRequest;
 use App\Dto\Request\Signalement\ProcedureDemarchesRequest;
 use App\Dto\Request\Signalement\RequestInterface;
@@ -121,8 +121,8 @@ class SignalementDraftRequestNormalizer implements DenormalizerInterface, Normal
             CoordonneesFoyerRequest::class,
             ProcedureDemarchesRequest::class,
             ProcedureDemarchesOldRequest::class, // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette ligne
-            InformationsLogementRequest::class,
-            InformationsLogementOldRequest::class, // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette ligne
+            OccupationLogementRequest::class,
+            InformationsLogementRequest::class, // TODO à la suppression de FEATURE_ORIENTATION : supprimer cette ligne
             TypeCompositionLogement::class,
         ]);
     }

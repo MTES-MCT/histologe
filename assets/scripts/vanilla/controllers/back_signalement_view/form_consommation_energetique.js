@@ -1,175 +1,28 @@
-import { jsonResponseHandler } from '../../services/component/component_json_response_handler.js';
+// La soumission et l'affichage des erreurs sont gérés par ajax_form_handler.js (data-ajax-form)
+// Ce fichier ne gère que l'affichage des champs en fonction de la date du dernier DPE
 
-const formBtn = document.querySelector('#signalement-edit-consommation-energetique-form-submit');
+// Les champs consommation et superficie ne sont affichés qu'une fois la date du dernier DPE sélectionnée :
+// - avant 2023 : consommation annuelle (kWh/an) et superficie
+// - à partir de 2023 : consommation en kWh/m²/an sur toute la largeur, sans superficie
+const updateFieldsFromDateDernierDpe = (isBefore2023) => {
+  const formRow = document.querySelector('#signalement-edit-consommation-energetique-form-row');
+  const consoEnergie = document.querySelector('.field-consommation-energetique-conso-energie');
+  const consoEnergieUnity = document.querySelector(
+    '.field-consommation-energetique-conso-energie-unity'
+  );
+  const superficie = document.querySelector('.field-consommation-energetique-superficie');
 
-formBtn?.addEventListener('click', () => {
-  formBtn.disabled = true;
-  formBtn.classList.add('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
+  formRow.classList.remove('fr-hidden');
+  consoEnergie.classList.toggle('fr-col-6', isBefore2023);
+  consoEnergie.classList.toggle('fr-col-12', !isBefore2023);
+  consoEnergieUnity.classList.toggle('fr-hidden', isBefore2023);
+  superficie.classList.toggle('fr-col-6', isBefore2023);
+  superficie.classList.toggle('fr-hidden', !isBefore2023);
+};
 
-  // Check fields
-  let postForm = true;
-  if (!document.querySelector('#signalement-edit-consommation-energetique-date-entree').value) {
-    document
-      .querySelector('#signalement-edit-consommation-energetique-date-entree-error')
-      .classList.remove('fr-hidden');
-    postForm = false;
-  } else {
-    document
-      .querySelector('#signalement-edit-consommation-energetique-date-entree-error')
-      .classList.add('fr-hidden');
-  }
-  if (
-    !document.querySelector('#signalement-edit-consommation-energetique-dpe-0').checked &&
-    !document.querySelector('#signalement-edit-consommation-energetique-dpe-1').checked &&
-    !document.querySelector('#signalement-edit-consommation-energetique-dpe-2').checked
-  ) {
-    document
-      .querySelector('#signalement-edit-consommation-energetique-dpe-error')
-      .classList.remove('fr-hidden');
-    postForm = false;
-  } else {
-    document
-      .querySelector('#signalement-edit-consommation-energetique-dpe-error')
-      .classList.add('fr-hidden');
-  }
-
-  document
-    .querySelector('#signalement-edit-consommation-energetique-superficie-error')
-    .classList.add('fr-hidden');
-
-  // Post form
-  if (postForm) {
-    const form = document.querySelector('form#signalement-edit-consommation-energetique-form');
-    const url = form.action;
-    const type = form.method;
-
-    const stringToBoolean = (stringValue) => {
-      switch (stringValue?.toLowerCase()?.trim()) {
-        case 'true':
-        case 'yes':
-        case '1':
-          return true;
-
-        case 'false':
-        case 'no':
-        case '0':
-          return false;
-
-        case 'null':
-        case null:
-        case undefined:
-        default:
-          return null;
-      }
-    };
-
-    const inputValueToNumber = (inputValue) => {
-      switch (inputValue) {
-        case '':
-        case null:
-        case undefined:
-          return null;
-        default:
-          return Math.round(Number(inputValue));
-      }
-    };
-
-    const data = {
-      _token: document.getElementById('signalement-edit-consommation-energetique-token').value,
-      dateEntree: document.getElementById('signalement-edit-consommation-energetique-date-entree')
-        ?.value,
-      dpe: stringToBoolean(document.querySelector('input[name=dpe]:checked')?.value),
-      classeEnergetique: document.getElementById(
-        'signalement-edit-consommation-energetique-classe-energetique'
-      )?.value,
-      dateDernierDPE: document.querySelector('input[name=dateDernierDPE]:checked')?.value,
-      consommationEnergie: inputValueToNumber(
-        document.getElementById('signalement-edit-consommation-energetique-conso-energie')?.value
-      ),
-      superficie: inputValueToNumber(
-        document.getElementById('signalement-edit-consommation-energetique-superficie')?.value
-      ),
-    };
-
-    const options = {
-      method: type,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    };
-
-    fetch(url, options)
-      .then(async (response) => {
-        if (response.ok) {
-          jsonResponseHandler(response);
-        } else if (response.status === 400) {
-          const data = await response.json();
-          if (data.errors?.superficie) {
-            document
-              .querySelector('#signalement-edit-consommation-energetique-superficie-error')
-              .classList.remove('fr-hidden');
-          }
-        }
-        formBtn.disabled = false;
-        formBtn.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        formBtn.disabled = false;
-        formBtn.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
-      });
-  } else {
-    formBtn.disabled = false;
-    formBtn.classList.remove('fr-btn--loading', 'fr-btn--icon-left', 'fr-icon-refresh-line');
-  }
-});
-
-if (document.querySelector('#signalement-edit-consommation-energetique-dpe-date-before')) {
-  document
-    .querySelector('#signalement-edit-consommation-energetique-dpe-date-before')
-    .addEventListener('change', () => {
-      document
-        .querySelector('#signalement-edit-consommation-energetique-form-row')
-        .classList.remove('fr-hidden');
-      document
-        .querySelector('.field-consommation-energetique-conso-energie')
-        .classList.add('fr-col-6');
-      document
-        .querySelector('.field-consommation-energetique-conso-energie')
-        .classList.remove('fr-col-12');
-      document
-        .querySelector('.field-consommation-energetique-conso-energie-unity')
-        .classList.add('fr-hidden');
-      document
-        .querySelector('.field-consommation-energetique-superficie')
-        .classList.add('fr-col-6');
-      document
-        .querySelector('.field-consommation-energetique-superficie')
-        .classList.remove('fr-hidden');
-    });
-}
-if (document.querySelector('#signalement-edit-consommation-energetique-dpe-date-after')) {
-  document
-    .querySelector('#signalement-edit-consommation-energetique-dpe-date-after')
-    .addEventListener('change', () => {
-      document
-        .querySelector('#signalement-edit-consommation-energetique-form-row')
-        .classList.remove('fr-hidden');
-      document
-        .querySelector('.field-consommation-energetique-conso-energie')
-        .classList.remove('fr-col-6');
-      document
-        .querySelector('.field-consommation-energetique-conso-energie')
-        .classList.add('fr-col-12');
-      document
-        .querySelector('.field-consommation-energetique-conso-energie-unity')
-        .classList.remove('fr-hidden');
-      document
-        .querySelector('.field-consommation-energetique-superficie')
-        .classList.remove('fr-col-6');
-      document
-        .querySelector('.field-consommation-energetique-superficie')
-        .classList.add('fr-hidden');
-    });
-}
+document
+  .querySelector('#signalement-edit-consommation-energetique-dpe-date-before')
+  ?.addEventListener('change', () => updateFieldsFromDateDernierDpe(true));
+document
+  .querySelector('#signalement-edit-consommation-energetique-dpe-date-after')
+  ?.addEventListener('change', () => updateFieldsFromDateDernierDpe(false));
