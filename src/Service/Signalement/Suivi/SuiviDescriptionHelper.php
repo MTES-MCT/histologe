@@ -9,6 +9,7 @@ class SuiviDescriptionHelper
 {
     public const string DESCRIPTION_MOTIF_CLOTURE_PARTNER = 'Le signalement a été clôturé pour %s avec le motif suivant :';
     public const string DESCRIPTION_TRAVAUX_MISE_EN_CONFORMITE = 'Travaux de mise en conformité réalisés ? ';
+    public const string DESCRIPTION_MOTIF_CLOTURE_INJONCTION_ADMIN = 'Un administrateur a clôturé le dossier en démarche accélérée depuis le back-office pour le motif suivant :<br>%s<br>Détails du motif d\'arrêt de procédure : %s';
 
     private const array SPECIFIC_TEMPLATES = [
         SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI->value => [
@@ -30,26 +31,6 @@ class SuiviDescriptionHelper
             SuiviRecipient::USAGER->value => 'suivi/injonction_bailleur_demande_cloture_par_bailleur_usager.html.twig',
             SuiviRecipient::DEFAULT->value => 'suivi/injonction_bailleur_demande_cloture_par_bailleur.html.twig',
         ],
-        SuiviCategory::INJONCTION_BAILLEUR_RAPPEL_REPONSE_BAILLEUR->value => [
-            SuiviRecipient::DEFAULT->value => 'suivi/injonction_bailleur_rappel_reponse_bailleur.html.twig',
-        ],
-        SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_BAILLEUR->value => [
-            SuiviRecipient::DEFAULT->value => 'suivi/injonction_bailleur_reminder_for_bailleur.html.twig',
-        ],
-        SuiviCategory::INJONCTION_BAILLEUR_REMINDER_FOR_USAGER->value => [
-            SuiviRecipient::DEFAULT->value => 'suivi/injonction_bailleur_reminder_for_usager.html.twig',
-        ],
-        SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_SANS_ACTIVITE->value => [
-            SuiviRecipient::DEFAULT->value => 'suivi/injonction_bailleur_cloture_sans_activite.html.twig',
-        ],
-        SuiviCategory::INJONCTION_BAILLEUR_EXPIREE->value => [
-            SuiviRecipient::DEFAULT->value => 'suivi/injonction_bailleur_expiree.html.twig',
-        ],
-    ];
-
-    private const array STORED_DESCRIPTION_TEMPLATES = [
-        SuiviCategory::INJONCTION_BAILLEUR_RELANCE_USAGER_CLOTURE->value => 'suivi/injonction_bailleur_relance_usager_cloture.html.twig',
-        SuiviCategory::INJONCTION_BAILLEUR_CLOTURE_PAR_ADMIN->value => 'suivi/injonction_bailleur_cloture_par_admin.html.twig',
     ];
 
     private const SPECIFIC_DESCRIPTIONS = [
@@ -88,22 +69,6 @@ class SuiviDescriptionHelper
         }
 
         return self::getSpecificDescriptionForCategoryAndRecipient($category, $recipient);
-    }
-
-    /**
-     * Génère la description à enregistrer en base lors de la création du suivi,
-     * pour les catégories dont le texte contient des variables.
-     *
-     * @param array<string, mixed> $params
-     */
-    public function buildStoredDescription(SuiviCategory $category, array $params = []): string
-    {
-        $template = self::STORED_DESCRIPTION_TEMPLATES[$category->value] ?? null;
-        if (null === $template) {
-            throw new \LogicException(\sprintf('No stored description template for suivi category %s', $category->value));
-        }
-
-        return trim($this->twig->render($template, $params));
     }
 
     public static function getSpecificDescriptionForCategoryAndRecipient(SuiviCategory $category, SuiviRecipient $recipient): ?string

@@ -104,10 +104,6 @@
 
 Pour modifier les filtres de l'écran « Historique des adresses » (suggestions d'adresses/communes dépendantes de la zone ou du territoire, route `/bo/settings`), consulter **[ADDRESSES_HISTORY_FILTRES.md](ADDRESSES_HISTORY_FILTRES.md)**.
 
-## Descriptions des suivis automatiques
-
-Pour créer ou modifier le texte d'un suivi automatique (crons, actions bailleur/admin…), consulter **[SUIVI_DESCRIPTIONS.md](SUIVI_DESCRIPTIONS.md)** : textes en templates Twig via `SuiviDescriptionHelper`, calculés à l'affichage ou générés à la création, et migrations associées.
-
 ## Ajouts de données
 
 Pour ajouter un nouveau champ dans l'entité Signalement, consulter le **[Guide d'ajout de données (AJOUT_DONNEES.md)](AJOUT_DONNEES.md)**.
