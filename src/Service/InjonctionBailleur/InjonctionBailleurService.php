@@ -53,11 +53,10 @@ class InjonctionBailleurService
         $description = $reponseInjonctionBailleur->getDescription();
         switch ($reponse) {
             case ReponseInjonctionBailleur::REPONSE_OUI:
-                $contenu = 'Le bailleur s\'engage à résoudre les désordres signalés.';
                 $category = SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI;
                 $this->suiviManager->createSuivi(
                     signalement: $signalement,
-                    description: $contenu,
+                    description: '',
                     category: $category,
                     isVisibleForUsager: true,
                     isVisibleForBailleur: true
@@ -68,11 +67,10 @@ class InjonctionBailleurService
                 $this->saveEngagementTravauxBailleurPdf($signalement);
                 break;
             case ReponseInjonctionBailleur::REPONSE_OUI_AVEC_AIDE:
-                $contenu = 'Le bailleur s\'engage à résoudre les désordres signalés.';
                 $category = SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_AVEC_AIDE;
                 $this->suiviManager->createSuivi(
                     signalement: $signalement,
-                    description: $contenu,
+                    description: '',
                     category: $category,
                     isVisibleForUsager: true,
                     isVisibleForBailleur: true
@@ -82,11 +80,10 @@ class InjonctionBailleurService
                 $this->assignHelpingPartners($signalement);
                 break;
             case ReponseInjonctionBailleur::REPONSE_OUI_DEMARCHES_COMMENCEES:
-                $contenu = 'Le bailleur s\'engage à résoudre les désordres signalés, et indique que les démarches ont déjà commencé.';
                 $category = SuiviCategory::INJONCTION_BAILLEUR_REPONSE_OUI_DEMARCHES_COMMENCEES;
                 $this->suiviManager->createSuivi(
                     signalement: $signalement,
-                    description: $contenu,
+                    description: '',
                     category: $category,
                     isVisibleForUsager: true,
                     isVisibleForBailleur: true
@@ -95,11 +92,10 @@ class InjonctionBailleurService
                 $this->saveEngagementTravauxBailleurPdf($signalement);
                 break;
             case ReponseInjonctionBailleur::REPONSE_NON:
-                $contenu = 'Le bailleur refuse de résoudre les désordres signalés, le signalement va être pris en charge par les partenaires compétents.';
                 $category = SuiviCategory::INJONCTION_BAILLEUR_REPONSE_NON;
                 $this->suiviManager->createSuivi(
                     signalement: $signalement,
-                    description: $contenu,
+                    description: '',
                     category: $category,
                     isVisibleForUsager: true,
                     isVisibleForBailleur: true
@@ -164,7 +160,7 @@ class InjonctionBailleurService
         if (MotifCloture::AUTRE === $reason) {
             $this->suiviManager->createSuivi(
                 signalement: $signalement,
-                description: 'Le bailleur souhaite arrêter la procédure d\'injonction, le signalement va être pris en charge par les partenaires compétents.',
+                description: '',
                 category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR,
                 isVisibleForUsager: true,
                 isVisibleForBailleur: true

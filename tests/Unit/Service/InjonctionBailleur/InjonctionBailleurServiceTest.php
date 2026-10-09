@@ -100,7 +100,7 @@ class InjonctionBailleurServiceTest extends KernelTestCase
             ->willReturnCallback(function (...$args) use (&$callIndex) {
                 if (0 === $callIndex) {
                     $this->assertInstanceOf(Signalement::class, $args[0]);
-                    $this->assertStringContainsString('arrêter la procédure d\'injonction', $args[1]);
+                    $this->assertSame('', $args[1]);
                     $this->assertSame(SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_BAILLEUR, $args[2]);
                 } elseif (1 === $callIndex) {
                     $this->assertInstanceOf(Signalement::class, $args[0]);

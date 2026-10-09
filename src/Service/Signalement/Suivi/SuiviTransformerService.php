@@ -19,12 +19,13 @@ class SuiviTransformerService
         private readonly UrlSignerInterface $urlSigner,
         private readonly DesordreCritereRepository $desordreCritereRepository,
         private readonly LoggerInterface $logger,
+        private readonly SuiviDescriptionHelper $suiviDescriptionHelper,
     ) {
     }
 
     public function transformDescription(Suivi $suivi, bool $transformHtml, SuiviRecipient $recipient): string
     {
-        $calculatedDescription = SuiviDescriptionHelper::getSpecificDescriptionForCategoryAndRecipient($suivi->getCategory(), $recipient);
+        $calculatedDescription = $this->suiviDescriptionHelper->getDescription($suivi->getCategory(), $recipient);
         if ($calculatedDescription) {
             return $calculatedDescription;
         }
