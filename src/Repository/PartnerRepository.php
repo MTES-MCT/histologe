@@ -2,10 +2,12 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\AffectationStatus;
 use App\Entity\Enum\PartnerType;
 use App\Entity\Enum\Qualification;
 use App\Entity\Enum\UserStatus;
 use App\Entity\Partner;
+use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Entity\User;
 use App\Entity\UserPartner;
@@ -210,19 +212,18 @@ class PartnerRepository extends ServiceEntityRepository
     /**
      * @return array<string, Partner>
      */
-    public function findPartnersWithQualification(Qualification $qualification, ?Territory $territory)
+    public function findPartnersWithQualificationAffectedOnSignalement(Qualification $qualification, Signalement $signalement): array
     {
         $qb = $this->createQueryBuilder('p');
+        $qb->select('DISTINCT p');
+        $qb->innerJoin('p.affectations', 'a', 'WITH', 'a.signalement = :signalement')
+            ->setParameter('signalement', $signalement);
         $qb->andWhere('REGEXP(p.competence, :regexp) = true')
             ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
-        if ($territory) {
-            $qb->andWhere('p.territory = :territory')
-                ->setParameter('territory', $territory);
-        }
+        $qb->andWhere('a.statut IN (:statuses)')
+            ->setParameter('statuses', [AffectationStatus::WAIT, AffectationStatus::ACCEPTED]);
 
-        return $qb->indexBy('p', 'p.id')
-            ->getQuery()
-            ->getResult();
+        return $qb->getQuery()->getResult();
     }
 
     /**
