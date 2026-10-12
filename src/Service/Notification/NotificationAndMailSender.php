@@ -212,7 +212,6 @@ class NotificationAndMailSender
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $this->sendMailToUsagers(NotificationMailerType::TYPE_NEW_COMMENT_FRONT_TO_USAGER);
-        $this->createInAppUsagersNotifications(suivi: $suivi);
     }
 
     public function sendNewSuiviToBailleur(Suivi $suivi): void
@@ -258,8 +257,6 @@ class NotificationAndMailSender
                 }
             }
         }
-
-        $this->createInAppUsagersNotifications(suivi: $suivi); // TODO : laisse ?
     }
 
     public function sendSignalementIsAcceptedToUsager(Suivi $suivi): void
@@ -267,7 +264,6 @@ class NotificationAndMailSender
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $this->sendMailToUsagers(NotificationMailerType::TYPE_SIGNALEMENT_VALIDATION_TO_USAGER);
-        $this->createInAppUsagersNotifications(suivi: $suivi);
     }
 
     public function sendSignalementIsRefusedToUsager(Suivi $suivi, string $motif): void
@@ -275,7 +271,6 @@ class NotificationAndMailSender
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $this->sendMailToUsagers(NotificationMailerType::TYPE_SIGNALEMENT_REFUSAL_TO_USAGER, $motif);
-        $this->createInAppUsagersNotifications(suivi: $suivi);
     }
 
     public function sendSignalementIsClosedToUsager(Suivi $suivi): void
@@ -283,7 +278,6 @@ class NotificationAndMailSender
         $this->suivi = $suivi;
         $this->signalement = $suivi->getSignalement();
         $this->sendMailToUsagers(NotificationMailerType::TYPE_SIGNALEMENT_CLOSED_TO_USAGER);
-        $this->createInAppUsagersNotifications(suivi: $suivi);
     }
 
     public function sendSignalementIsClosedToPartners(Suivi $suivi): void

@@ -29,6 +29,12 @@ class SuiviCreatedSubscriber implements EventSubscriberInterface
     {
         $suivi = $event->getSuivi();
 
+        // si le suivi est visible pour l'usager on génère toujours la notification associé afin qu'il puisse être marqué comme lu.
+        // pour les suivis isWaitingNotification, les notifications seront créées au changement d'état. On affichera les suivis uniquement à partir de ce moment la coté usager.
+        if ($suivi->getIsVisibleForUsager() && !$suivi->isWaitingNotification()) {
+            $this->notificationAndMailSender->createInAppUsagersNotifications(suivi: $suivi);
+        }
+
         if (!$suivi->getSendMail()) {
             return;
         }

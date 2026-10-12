@@ -58,7 +58,6 @@ class InterventionAbortedSubscriber implements EventSubscriberInterface
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_ABORTED_TO_USAGER,
-                suivi: $suivi
             );
 
             $this->visiteNotifier->notifySubscribers(

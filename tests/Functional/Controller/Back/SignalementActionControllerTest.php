@@ -16,6 +16,7 @@ use App\Service\Gouv\Rnb\Response\RnbBuilding;
 use App\Service\Gouv\Rnb\RnbService;
 use App\Service\MessageHelper;
 use App\Tests\SessionHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -33,6 +34,7 @@ class SignalementActionControllerTest extends WebTestCase
     private SuiviRepository $suiviRepository;
     private UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository;
     private RouterInterface $router;
+    private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
@@ -43,6 +45,7 @@ class SignalementActionControllerTest extends WebTestCase
         $this->suiviRepository = static::getContainer()->get(SuiviRepository::class);
         $this->signalementRepository = static::getContainer()->get(SignalementRepository::class);
         $this->userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
+        $this->entityManager = static::getContainer()->get('doctrine.orm.entity_manager');
 
         $user = $this->userRepository->findOneBy(['email' => 'admin-01@signal-logement.fr']);
         $this->client->loginUser($user);
@@ -186,6 +189,14 @@ class SignalementActionControllerTest extends WebTestCase
 
         $this->assertResponseHeaderSame('Content-Type', 'application/json');
         $this->assertResponseStatusCodeSame(200);
+
+        $lastSuiviPublic = $this->suiviRepository->findLastPublicSuivi($signalement);
+        $this->assertStringContainsString('Signalement validé', $lastSuiviPublic->getDescription());
+
+        $waitingSuivi = $this->suiviRepository->findOneBy(['signalement' => $signalement, 'waitingNotification' => true, 'isVisibleForUsager' => true]);
+        $this->assertEquals(SuiviCategory::MESSAGE_PARTNER, $waitingSuivi->getCategory());
+        $waitingSuivi->setWaitingNotification(false);
+        $this->entityManager->flush();
 
         $lastSuiviPublic = $this->suiviRepository->findLastPublicSuivi($signalement);
         $this->assertStringContainsString('La procédure avance bien, nous vous tiendrons informé de la suite, bon courage !', $lastSuiviPublic->getDescription());
