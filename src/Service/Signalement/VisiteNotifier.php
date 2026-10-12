@@ -14,7 +14,6 @@ use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Mailer\NotificationMail;
 use App\Service\Mailer\NotificationMailerRegistry;
 use App\Service\Mailer\NotificationMailerType;
-use App\Service\Notification\NotificationAndMailSender;
 use Doctrine\ORM\EntityManagerInterface;
 
 class VisiteNotifier
@@ -24,7 +23,6 @@ class VisiteNotifier
         private readonly NotificationFactory $notificationFactory,
         private readonly NotificationMailerRegistry $notificationMailerRegistry,
         private readonly UserRepository $userRepository,
-        private readonly NotificationAndMailSender $notificationAndMailSender,
         private readonly UserSignalementSubscriptionRepository $userSignalementSubscriptionRepository,
     ) {
     }
@@ -32,14 +30,12 @@ class VisiteNotifier
     public function notifyUsagers(
         Intervention $intervention,
         NotificationMailerType $notificationMailerType,
-        Suivi $suivi,
         ?\DateTimeImmutable $previousDate = null,
     ): void {
         if ($intervention->getSignalement()->getIsLogementVacant()) {
             return;
         }
         $toRecipients = $intervention->getSignalement()->getMailUsagers();
-        $this->notificationAndMailSender->createInAppUsagersNotifications($suivi);
         foreach ($toRecipients as $toRecipient) {
             $this->notificationMailerRegistry->send(
                 new NotificationMail(

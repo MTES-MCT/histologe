@@ -69,6 +69,7 @@ suivis:
   is_public: 1
   signalement: "2023-15"
   category: "MESSAGE_PARTNER"
+  force_notifications: 1
 -
   description: ""
   created_at: "2023-03-18 17:06:33"

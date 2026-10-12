@@ -9,7 +9,6 @@ use App\Repository\SignalementRepository;
 use App\Repository\UserRepository;
 use App\Repository\UserSignalementSubscriptionRepository;
 use App\Service\Mailer\NotificationMailerRegistry;
-use App\Service\Notification\NotificationAndMailSender;
 use App\Service\Signalement\VisiteNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -27,7 +26,6 @@ class VisiteNotifierTest extends KernelTestCase
         $notificationFactory = static::getContainer()->get(NotificationFactory::class);
         $notificationMailerRegistry = static::getContainer()->get(NotificationMailerRegistry::class);
         $userRepository = static::getContainer()->get(UserRepository::class);
-        $notificationAndMailerSender = static::getContainer()->get(NotificationAndMailSender::class);
         $userSignalementSubscriptionRepository = static::getContainer()->get(UserSignalementSubscriptionRepository::class);
 
         $this->visiteNotifier = new VisiteNotifier(
@@ -35,7 +33,6 @@ class VisiteNotifierTest extends KernelTestCase
             $notificationFactory,
             $notificationMailerRegistry,
             $userRepository,
-            $notificationAndMailerSender,
             $userSignalementSubscriptionRepository,
         );
 
