@@ -1,0 +1,17 @@
+{#- Utilisé pour SIGNALEMENT_EDITED_BO et SIGNALEMENT_EDITED_FO (regroupement des SuiviDelayed) -#}
+Des modifications ont été apportées par {{ nomComplet }}.<br>
+{%- for group in groupedChanges -%}
+    <strong>{{ group.label }}</strong><br><ul>
+    {%- for label, value in group.changes -%}
+        <li>{{ label }} : {{ value|raw }}</li>
+    {%- endfor -%}
+    </ul>
+{%- endfor -%}
+{%- if otherChanges is not empty -%}
+    {%- if showOtherChangesTitle -%}<strong>Autres modifications</strong><br>{%- endif -%}
+    <ul>
+    {%- for change in otherChanges -%}
+        <li>{{ change }}</li>
+    {%- endfor -%}
+    </ul>
+{%- endif -%}
