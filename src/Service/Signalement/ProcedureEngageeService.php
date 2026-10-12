@@ -7,6 +7,7 @@ use App\Entity\Enum\ProcedureType;
 use App\Entity\Enum\SuiviCategory;
 use App\Entity\Signalement;
 use App\Entity\SignalementProcedure;
+use App\Entity\Suivi;
 use App\Entity\User;
 use App\Manager\SuiviManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,7 +28,7 @@ class ProcedureEngageeService
     /**
      * @param FormInterface<mixed> $form
      */
-    public function updateProcedureEngageeForSignalement(Signalement $signalement, FormInterface $form, bool &$isEdition = false): void
+    public function updateProcedureEngageeForSignalement(Signalement $signalement, FormInterface $form, bool &$isEdition = false): ?Suivi
     {
         $lastSuivi = $signalement->getSuivisWithCategory(SuiviCategory::ADD_OR_EDIT_PROCEDURE_ENGAGEE)->last();
         $ancienCommentaire = $lastSuivi ? ($lastSuivi->getOriginalData()['commentaire'] ?? null) : null;
@@ -45,7 +46,7 @@ class ProcedureEngageeService
 
         if ($anciennesProcedures === $nouvellesProcedures && trim((string) $ancienCommentaire) === trim((string) $nouveauCommentaire)) {
             // aucun changement détecté, on sort
-            return;
+            return null;
         }
         if (count($anciennesProcedures)) {
             $isEdition = true;
@@ -80,5 +81,7 @@ class ProcedureEngageeService
             user: $user,
         );
         $suivi->setOriginalData(['commentaire' => $nouveauCommentaire]);
+
+        return $suivi;
     }
 }

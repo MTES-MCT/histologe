@@ -41,6 +41,8 @@ class TabOrientationItem
             case self::TYPE_PROCEDURE_RETENUE:
                 $this->date = $this->signalement->getClosedAt();
                 break;
+            default:
+                throw new \LogicException(sprintf('Le type de tabOrientation %s n\'est pas défini.', $type));
         }
     }
 

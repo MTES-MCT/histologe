@@ -47,7 +47,7 @@ class ProcedureEngageeType extends AbstractType
         ]);
         $builder->add('commentaire', TextareaType::class, [
             'label' => 'Commentaire',
-            'help' => 'Précisez le contexte et donnez des informations sur les procédures.',
+            'help' => 'Précisez le contexte et donnez des informations sur les procédures. 10 caractères minimum.',
             'attr' => [
                 'class' => 'editor',
             ],
@@ -56,7 +56,8 @@ class ProcedureEngageeType extends AbstractType
             'data' => $commentaire,
             'constraints' => [
                 new Assert\NotBlank(),
-                new Assert\Length(min: 16, minMessage: 'Le commentaire doit contenir au moins {{ limit }} caractères.'),
+                // on compte 16 pour une limite de 10 car le message est emglobé par <p></p> par l'éditeur de texte
+                new Assert\Length(min: 16, minMessage: 'Le commentaire doit contenir au moins 10 caractères.'),
             ],
         ]);
     }

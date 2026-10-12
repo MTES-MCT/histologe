@@ -8,7 +8,7 @@ use App\Repository\SignalementProcedureRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SignalementProcedureRepository::class)]
-#[ORM\UniqueConstraint(name: 'uniq_signalement_procedure_type', columns: ['signalement_id', 'procedure_type'])]
+#[ORM\UniqueConstraint(name: 'uniq_signalement_procedure_type', columns: ['signalement_id', 'procedure_type', 'procedure_category'])]
 class SignalementProcedure
 {
     #[ORM\Id]

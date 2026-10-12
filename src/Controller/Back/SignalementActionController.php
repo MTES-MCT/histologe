@@ -696,11 +696,14 @@ class SignalementActionController extends AbstractController
         }
 
         $isEdition = false;
-        $procedureEngageeService->updateProcedureEngageeForSignalement($signalement, $form, $isEdition);
+        $suivi = $procedureEngageeService->updateProcedureEngageeForSignalement($signalement, $form, $isEdition);
 
         $entityManager->flush();
         $flashMessages = [['type' => 'success', 'title' => 'Procédures modifiées', 'message' => $isEdition ? 'Les procédures à engager ont bien été modifiées.' : 'Les procédures à engager ont bien été définies.']];
         $entityManager->refresh($signalement);
+        if ($suivi) {
+            $entityManager->refresh($suivi); // on rafraichit afin d'avoir le SuiviTransformerService sur le suivi créé
+        }
         $htmlTargetContents[] = [
             'target' => '#list-suivis',
             'content' => $this->renderView('back/signalement/view/suivis.html.twig', ['signalement' => $signalement]),
