@@ -32,7 +32,7 @@ when@prod:
         sentry_logs:
           type: service
           id: Sentry\SentryBundle\Monolog\LogsHandler
-          channels: [ "!event", "!doctrine", "!console", "!request" ]
+          channels: [ "!event", "!doctrine", "!console", "!request" ] # do not exclude `api` channel
 
 
     services:
