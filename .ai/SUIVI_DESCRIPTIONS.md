@@ -24,9 +24,9 @@ Points d'attention :
 
 ## Texte avec variables
 
-1. Créer le template avec ses variables. Utiliser `|raw` uniquement pour du HTML déjà nettoyé (`HtmlCleaner`).
-2. Le déclarer dans `CREATION_TEMPLATES`.
-3. À la création : `description: $suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::X, ['var' => $value])`. Pas de `renderView()` direct.
+1. Créer le template avec ses variables. Pour une saisie brute de l'usager, utiliser `{{ details|default('')|nl2br }}` : Twig échappe puis ajoute les `<br>`, comme `HtmlCleaner::cleanFrontEndEntry()`. Ne pas repasser le résultat dans `HtmlCleaner`, sinon les `<br>` seraient échappés. Utiliser `|raw` uniquement pour du HTML déjà nettoyé. Le global Twig `platform.name` est disponible.
+2. Le déclarer dans `CREATION_TEMPLATES` sous la clé `SuiviDescriptionVariant::DEFAULT`. Si la même catégorie est créée à plusieurs endroits avec des textes différents, ajouter un cas à l'enum `SuiviDescriptionVariant` et un template suffixé (exemple : `INJONCTION_BAILLEUR_CLOTURE_PAR_USAGER`).
+3. À la création : `description: $suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::X, ['var' => $value], SuiviDescriptionVariant::Y)` (variante facultative). Pas de `renderView()` direct.
 
 ## Migration (texte fixe, catégorie existante)
 
