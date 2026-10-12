@@ -901,7 +901,8 @@ class SignalementController extends AbstractController
             return $redirect;
         }
 
-        $lastSuiviDemandePoursuite = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => SuiviCategory::DEMANDE_POURSUITE_PROCEDURE], ['createdAt' => 'DESC']);
+        $category = SuiviCategory::DEMANDE_POURSUITE_PROCEDURE;
+        $lastSuiviDemandePoursuite = $suiviRepository->findOneBy(['signalement' => $signalement, 'category' => $category], ['createdAt' => 'DESC']);
         $hasRecentDemandePoursuite = false;
         if ($lastSuiviDemandePoursuite && $lastSuiviDemandePoursuite->getCreatedAt() > (new \DateTime('-20 days'))) {
             $hasRecentDemandePoursuite = true;
@@ -917,11 +918,11 @@ class SignalementController extends AbstractController
 
             $suiviManager->createSuivi(
                 signalement: $signalement,
-                description: $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::DEMANDE_POURSUITE_PROCEDURE, [
+                description: $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
                     'nomComplet' => $user->getNomComplet(),
                     'details' => $form->get('details')->getData(),
                 ]),
-                category: SuiviCategory::DEMANDE_POURSUITE_PROCEDURE,
+                category: $category,
                 user: $user,
                 isVisibleForUsager: true,
             );
@@ -966,7 +967,8 @@ class SignalementController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER, [
+            $category = SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER;
+            $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
                 'nomComplet' => $user->getNomComplet(),
                 'details' => $form->get('details')->getData(),
             ]);
@@ -975,7 +977,7 @@ class SignalementController extends AbstractController
                 $suiviManager->createSuivi(
                     signalement: $signalement,
                     description: $description,
-                    category: SuiviCategory::INJONCTION_BAILLEUR_BASCULE_PROCEDURE_PAR_USAGER,
+                    category: $category,
                     user: $user,
                     isVisibleForUsager: true,
                 );
