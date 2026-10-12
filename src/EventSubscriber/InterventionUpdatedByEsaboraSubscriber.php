@@ -62,7 +62,6 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_RESCHEDULED_TO_USAGER,
-                suivi: $suivi,
                 previousDate: $intervention->getPreviousScheduledAt()
             );
         }
@@ -71,7 +70,6 @@ readonly class InterventionUpdatedByEsaboraSubscriber implements EventSubscriber
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
-                suivi: $suivi,
             );
         }
 

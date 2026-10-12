@@ -31,8 +31,8 @@ class SendSuiviWaitingNotificationAndDelayedCommandTest extends KernelTestCase
         $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
 
-        $this->assertStringStartsWith('[OK] Les notifications de 7 suivis ont été envoyées avec succès.', trim($output));
-        $this->assertEmailCount(13);
+        $this->assertStringStartsWith('[OK] Les notifications de 6 suivis ont été envoyées avec succès.', trim($output));
+        $this->assertEmailCount(11);
 
         $suiviRepository = static::getContainer()->get(SuiviRepository::class);
 

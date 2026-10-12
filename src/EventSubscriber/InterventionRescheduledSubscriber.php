@@ -57,7 +57,6 @@ class InterventionRescheduledSubscriber implements EventSubscriberInterface
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_RESCHEDULED_TO_USAGER,
-                suivi: $suivi,
                 previousDate: $event->getPreviousDate()
             );
 

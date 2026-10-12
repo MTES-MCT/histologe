@@ -73,7 +73,6 @@ class InterventionConfirmedSubscriber implements EventSubscriberInterface
                 $this->visiteNotifier->notifyUsagers(
                     intervention: $intervention,
                     notificationMailerType: NotificationMailerType::TYPE_VISITE_CONFIRMED_TO_USAGER,
-                    suivi: $suivi
                 );
             }
 

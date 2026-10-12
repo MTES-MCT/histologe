@@ -50,11 +50,6 @@ notifications:
   signalement: "2023-15"
   suivi: 'Ceci est le premier suivi de partenaire 13-01'
 -
-  user: "joude.bellingham@uk.com"
-  type: "SUIVI_USAGER"
-  signalement: "2023-15"
-  suivi: 'Ceci est le dernier suivi de partenaire 13-01'
--
   user: "admin-01@signal-logement.fr"
   type: "NOUVEAU_SUIVI"
   signalement: "2023-12"

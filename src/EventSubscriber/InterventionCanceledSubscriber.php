@@ -59,7 +59,6 @@ class InterventionCanceledSubscriber implements EventSubscriberInterface
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_CANCELED_TO_USAGER,
-                suivi: $suivi
             );
 
             $this->visiteNotifier->notifyInAppSubscribers(

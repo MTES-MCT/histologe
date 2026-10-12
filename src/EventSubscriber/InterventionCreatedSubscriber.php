@@ -72,7 +72,6 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_VISITE_CREATED_TO_USAGER,
-                suivi: $suivi,
             );
         }
 
@@ -80,7 +79,6 @@ readonly class InterventionCreatedSubscriber implements EventSubscriberInterface
             $this->visiteNotifier->notifyUsagers(
                 intervention: $intervention,
                 notificationMailerType: NotificationMailerType::TYPE_ARRETE_CREATED_TO_USAGER,
-                suivi: $suivi
             );
         }
 
