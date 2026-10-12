@@ -37,7 +37,7 @@ export function displayFormErrors(container, formElement, errors) {
       labelElement.after(pElement);
     } else {
       const inputElements = container.querySelectorAll(
-        `[name="${property}"], [name="${formElement.name}[${property}]"]`
+        `[name="${property}"], [name="${formElement.name}[${property}]"], [data-error-name="${property}"], [data-error-name="${formElement.name}[${property}]"]`
       );
       let inputElement;
       let parentElement;
@@ -46,9 +46,7 @@ export function displayFormErrors(container, formElement, errors) {
         parentElement = inputElement.closest('.fr-fieldset') || inputElement.parentElement;
       } else {
         inputElement =
-          container.querySelector(
-            `[name="${property}"], [name="${formElement.name}[${property}]"] `
-          ) ||
+          inputElements[0] ||
           container.querySelector('.no-field-errors') ||
           container.querySelector('input');
         parentElement = inputElement.parentElement;

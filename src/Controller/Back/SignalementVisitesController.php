@@ -356,7 +356,7 @@ class SignalementVisitesController extends AbstractController
             return $this->json($response, $response['code']);
         }
         if ($editConclusionVisiteForm->isSubmitted()) {
-            $file = $editConclusionVisiteForm->get('rapportDeVisite')->getData();
+            $file = $editConclusionVisiteForm->has('rapportDeVisite') ? $editConclusionVisiteForm->get('rapportDeVisite')->getData() : null;
             [$success, $fileNameOrError] = $this->getUploadedFile($file);
             if (!$success) {
                 $flashMessages[] = ['type' => 'alert', 'title' => 'Erreur', 'message' => $fileNameOrError];
