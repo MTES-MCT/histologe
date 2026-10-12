@@ -1,0 +1,63 @@
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+        <h4 class="fr-h6">Coordonnées du foyer</h4>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+            <button
+                class="fr-btn fr-btn--tertiary fr-btn--icon-left fr-icon-edit-line fr-btn--sm"
+                data-panel-open="panel-edit-coordonnees-foyer"
+                aria-controls="panel-edit-coordonnees-foyer"
+                data-fr-opened="false"
+                >Modifier</button>
+        {% endif %}
+    </div>
+    
+    {% if signalement.profileDeclarant and signalement.profileDeclarant is same as enum('App\\Entity\\Enum\\ProfileDeclarant').BAILLEUR_OCCUPANT %}
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Type de déclarant :</span> {{ signalement.profileDeclarant.label }}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Type de bailleur :</span> {{ signalement.typeProprio ? signalement.typeProprio.label : 'N/C' }}
+        </div>
+        {% if signalement.typeProprio and signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE %}
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Nom de la structure :</span> {{ signalement.structureDeclarant }}
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Civilité :</span> {{signalement.civiliteOccupant(false)}}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Nom :</span> {{ signalement.nomOccupant }}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Prénom :</span> {{ signalement.prenomOccupant }}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">E-mail :</span>
+        {% if signalement.mailOccupant %}
+            <a href="mailto:{{ signalement.mailOccupant }}">{{ signalement.mailOccupant }}</a>
+            {% if show_email_alert(signalement.mailOccupant) %}
+                <p class="fr-badge fr-badge--error">Format non valide</p>
+            {% endif %}
+            {% if show_email_usager_alert_brevo('occupant', signalement.mailOccupant) %}
+                <p class="fr-badge fr-badge--warning">Problème d'e-mail non remis</p>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Tél. :</span>
+        <a href="tel:{{ signalement.telOccupantDecoded }}">{{ signalement.telOccupantDecoded|phone }}</a>
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Tél. sec. :</span>
+        <a href="tel:{{ signalement.telOccupantBisDecoded }}">{{ signalement.telOccupantBisDecoded|phone }}</a>
+    </div>
+
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Type d'occupant :</span> {{ signalement.profileOccupant ? signalement.profileOccupant.label : 'N/C' }}
+    </div>
+</div>

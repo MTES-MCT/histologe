@@ -1,0 +1,126 @@
+<?php
+
+namespace App\Dto\Request\Signalement;
+
+use App\Validator as AppAssert;
+use Symfony\Component\Validator\Constraints as Assert;
+
+#[AppAssert\ValueLessThanOtherValue(
+    property: 'compositionLogementNombreEnfants',
+    otherProperty: 'nombrePersonnes',
+    message: "Le nombre d'enfants ne peut pas dépasser le nombre de personnes."
+)]
+class OccupationLogementRequest implements RequestInterface
+{
+    public function __construct(
+        #[Assert\NotBlank(message: 'Merci de définir le nombre de personnes.')]
+        #[Assert\Positive(message: 'Le nombre de personnes doit être un nombre positif.')]
+        #[Assert\Type(type: 'numeric', message: 'Le nombre de personnes doit être un nombre.')]
+        private readonly ?string $nombrePersonnes = null,
+        #[Assert\Positive(message: 'Le nombre d\'enfants doit être un nombre positif.')]
+        #[Assert\Type(type: 'numeric', message: 'Le nombre d\'enfants doit être un nombre.')]
+        private readonly ?string $compositionLogementNombreEnfants = null,
+        #[Assert\NotBlank(
+            message: 'Merci de définir si il y a des enfants de moins de 6 ans',
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'TIERS_PARTICULIER', 'TIERS_PRO', 'BAILLEUR'])]
+        #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "Enfants -6 ans" est incorrect.')]
+        private readonly ?string $compositionLogementEnfants = null,
+        private readonly ?string $autreSituationVulnerabilite = null,
+        #[Assert\NotBlank(message: 'Merci de définir la date d\'arrivée.', groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
+        #[Assert\DateTime('Y-m-d')]
+        #[Assert\GreaterThan(value: '1900-01-01', message: 'La date d\'entrée dans le logement doit être postérieure au 1er janvier 1900.')]
+        private readonly ?string $dateEntree = null,
+        #[Assert\DateTime('Y-m-d')]
+        private readonly ?string $bailleurDateEffetBail = null,
+        #[Assert\NotBlank(message: 'Merci d\'indiquer si un bail existe (ou a été fourni).', groups: ['LOCATAIRE', 'BAILLEUR'])]
+        #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "bail" est incorrect.')]
+        private readonly ?string $bailDpeBail = null,
+        #[Assert\Choice(choices: ['oui', 'non'], message: 'Le champ "logement vacant" est incorrect.')]
+        private readonly ?string $logementVacant = null,
+        #[Assert\Length(max: 12, maxMessage: 'L\'invariant fiscal ne doit pas dépasser {{ limit }} caractères.')]
+        private readonly ?string $bailDpeInvariant = null,
+        #[Assert\NotBlank(message: 'Merci d\'indiquer si un état des lieux existe (ou a été fourni).', groups: ['LOCATAIRE', 'BAILLEUR'])]
+        #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "état des lieux" est incorrect.')]
+        private readonly ?string $bailDpeEtatDesLieux = null,
+        #[Assert\Type(type: 'numeric', message: 'Le loyer doit être un nombre.')]
+        #[Assert\Length(max: 20, maxMessage: 'Le loyer ne doit pas dépasser {{ limit }} caractères.')]
+        private readonly ?string $loyer = null,
+        #[Assert\Choice(choices: ['oui', 'non'], message: 'Le champ "Paiement loyers à jour" est incorrect.')]
+        private readonly ?string $loyersPayes = null,
+        #[Assert\Regex(pattern: '/^[0-9]{4}$/', message: 'L\'année de construction doit être composée de 4 chiffres.')]
+        private readonly ?string $anneeConstruction = null,
+        #[Assert\Choice(choices: ['oui', 'non', 'nsp'], message: 'Le champ "D\'autres occupants de l\'immeuble ont-ils rencontré des désordres" est incorrect.')]
+        private readonly ?string $autresOccupantsDesordre = null,
+    ) {
+    }
+
+    public function getNombrePersonnes(): ?string
+    {
+        return $this->nombrePersonnes;
+    }
+
+    public function getCompositionLogementNombreEnfants(): ?string
+    {
+        return $this->compositionLogementNombreEnfants;
+    }
+
+    public function getCompositionLogementEnfants(): ?string
+    {
+        return $this->compositionLogementEnfants;
+    }
+
+    public function getAutreSituationVulnerabilite(): ?string
+    {
+        return $this->autreSituationVulnerabilite;
+    }
+
+    public function getDateEntree(): ?string
+    {
+        return $this->dateEntree;
+    }
+
+    public function getBailleurDateEffetBail(): ?string
+    {
+        return $this->bailleurDateEffetBail;
+    }
+
+    public function getBailDpeBail(): ?string
+    {
+        return $this->bailDpeBail;
+    }
+
+    public function getLogementVacant(): ?string
+    {
+        return $this->logementVacant;
+    }
+
+    public function getBailDpeInvariant(): ?string
+    {
+        return $this->bailDpeInvariant;
+    }
+
+    public function getBailDpeEtatDesLieux(): ?string
+    {
+        return $this->bailDpeEtatDesLieux;
+    }
+
+    public function getLoyer(): ?string
+    {
+        return $this->loyer;
+    }
+
+    public function getLoyersPayes(): ?string
+    {
+        return $this->loyersPayes;
+    }
+
+    public function getAnneeConstruction(): ?string
+    {
+        return $this->anneeConstruction;
+    }
+
+    public function getAutresOccupantsDesordre(): ?string
+    {
+        return $this->autresOccupantsDesordre;
+    }
+}

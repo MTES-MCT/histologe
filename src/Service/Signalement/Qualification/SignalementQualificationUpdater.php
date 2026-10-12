@@ -401,6 +401,15 @@ class SignalementQualificationUpdater
 
     /**
      * If one criticité/precision is Nde, we add Nde.
+     *
+     * TODO : étendre la règle pour tenir compte des données de consommation énergétique :
+     *  - créer (et ne pas supprimer) la NDE si la consommation renseignée dépasse le seuil (QualificationStatusService::LIMIT_CONSO_ENERGIE, actuellement privée)
+     *    (ramenée au m² si le DPE date d'avant 2023) ou si le logement n'a pas de DPE
+     *  - aujourd'hui une NDE sans désordre lié et hors classe G est supprimée, même si la consommation dépasse le seuil
+     *
+     * Règles de décence énergétique des logements sur le site de l'anil le 7 octobre 2026
+     * Depuis le 1er janvier 2023, pour être décent, le logement doit respecter une consommation d'énergie inférieure à 450 kilowattheures d'énergie finale par mètre carré de surface habitable et par an.
+     * Depuis le 1er janvier 2025, les conditions dans lesquelles la performance énergétique est appréciée ont évolué. Un logement est considéré comme non décent si son Diagnostic de Performance Énergétique (DPE) est classé G.
      */
     private function updateNdeQualification(
         Signalement $signalement,

@@ -11,7 +11,7 @@ class SuroccupationSpecification
     private const ALLOCATAIRE_SUPERFICIE_2_OCCUPANTS = 16;
     private const ALLOCATAIRE_SUPERFICIE_BASE = 16;
     private const ALLOCATAIRE_SUPERFICIE_PER_OCCUPANT = 9;
-    private const NON_ALLOCATAIRE_MIN_PIECES_PER_OCCUPANT = 2;
+    private const NON_ALLOCATAIRE_MAX_OCCUPANTS_PER_PIECE = 2;
     private ?string $slug = null;
 
     public function isSatisfiedBy(
@@ -36,6 +36,7 @@ class SuroccupationSpecification
     ): bool {
         $suroccupation = false;
         if ('oui' === $isAllocataire) {
+            // https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038878945
             if (null === $superficie) {
                 return $suroccupation;
             }
@@ -56,7 +57,8 @@ class SuroccupationSpecification
                 $this->slug = 'desordres_type_composition_logement_suroccupation_allocataire';
             }
         } else {
-            if (!empty($nbPieces) && $nbPieces < $nbOccupants / $this::NON_ALLOCATAIRE_MIN_PIECES_PER_OCCUPANT) {
+            // https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047945354
+            if (!empty($nbPieces) && $nbPieces < $nbOccupants / $this::NON_ALLOCATAIRE_MAX_OCCUPANTS_PER_PIECE) {
                 $suroccupation = true;
                 $this->slug = 'desordres_type_composition_logement_suroccupation_non_allocataire';
             }

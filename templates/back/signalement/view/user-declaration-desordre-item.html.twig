@@ -1,8 +1,8 @@
 <section class="fr-accordion">
     <div class="fr-background-alt--grey fr-p-3v">
-    <h3 class="fr-accordion__title">
+    <h5 class="fr-accordion__title">
         <button class="fr-accordion__btn" aria-expanded="false" aria-controls="{{ zone }}-collapse-{{ loop.index }}"><strong>{{ situation|capitalize }}</strong></button>
-    </h3>
+    </h5>
     <div class="fr-collapse" id="{{ zone }}-collapse-{{ loop.index }}">
         {# Affichage des données spécifiques liées à la catégorie #}
         {% set firstCritere = criteres|first %}

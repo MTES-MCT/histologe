@@ -7,8 +7,8 @@
         <div class="fr-col-12 fr-col-md-4 fr-text--right">
             {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
                 <button class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-edit-line"
-                    data-panel-open="panel-edit-coordonnees-bailleur"
-                    aria-controls="panel-edit-coordonnees-bailleur"
+                    data-panel-open="panel-edit-coordonnees-bailleur-old"
+                    aria-controls="panel-edit-coordonnees-bailleur-old"
                     data-fr-opened="false"
                     >Modifier</button>
             {% endif %}
@@ -33,7 +33,7 @@
             <strong>Prénom :</strong> {{ signalement.prenomProprio }}
         </div>
         <div class="fr-col-12">
-            <strong>Courriel :</strong>
+            <strong>E-mail :</strong>
             {% if signalement.mailProprio %}
                 <a href="mailto:{{ signalement.mailProprio }}">{{ signalement.mailProprio }}</a>
                 {% if show_email_alert(signalement.mailProprio) %}

@@ -22,7 +22,7 @@
             <strong>Prénom :</strong> {{ signalement.prenomAgence }}
         </div>
         <div class="fr-col-12">
-            <strong>Courriel :</strong>
+            <strong>E-mail :</strong>
             {% if signalement.mailAgence %}
                 <a href="mailto:{{ signalement.mailAgence }}">{{ signalement.mailAgence }}</a>
                 {% if show_email_alert(signalement.mailAgence) %}

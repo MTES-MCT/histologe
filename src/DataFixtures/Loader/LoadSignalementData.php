@@ -554,10 +554,32 @@ class LoadSignalementData extends Fixture implements OrderedFixtureInterface
         string $qualificationLabel,
     ): SignalementQualification {
         $faker = Factory::create();
+        $qualification = Qualification::from($qualificationLabel);
+        $matchQualification = static fn (?array $qualifications): bool => \in_array(
+            $qualification->value,
+            array_map(static fn ($item) => $item instanceof Qualification ? $item->value : $item, $qualifications ?? []),
+            true
+        );
+
+        $criticiteIds = [];
+        foreach ($signalement->getCriticites() as $criticite) {
+            if (null !== $criticite->getId() && $matchQualification($criticite->getQualification())) {
+                $criticiteIds[] = $criticite->getId();
+            }
+        }
+
+        $desordrePrecisionIds = [];
+        foreach ($signalement->getDesordrePrecisions() as $desordrePrecision) {
+            if (null !== $desordrePrecision->getId() && $matchQualification($desordrePrecision->getQualification())) {
+                $desordrePrecisionIds[] = $desordrePrecision->getId();
+            }
+        }
+
         $signalementQualification = (new SignalementQualification())
             ->setSignalement($signalement)
-            ->setQualification(Qualification::from($qualificationLabel))
-            ->setCriticites($signalement->getCriticites()->toArray());
+            ->setQualification($qualification)
+            ->setCriticites($criticiteIds)
+            ->setDesordrePrecisionIds($desordrePrecisionIds);
         if (Qualification::NON_DECENCE_ENERGETIQUE->name == $qualificationLabel) {
             $qualificationDetails = [];
             $qualificationDetails['consommation_energie'] = $faker->numberBetween(450, 700);

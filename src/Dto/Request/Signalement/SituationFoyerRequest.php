@@ -94,6 +94,14 @@ readonly class SituationFoyerRequest implements RequestInterface
         private ?string $beneficiaireFsl = null,
         #[Assert\Length(max: 50)]
         private ?string $revenuFiscal = null,
+        #[Assert\NotBlank(
+            message : 'Merci d\'indiquer si l\'occupant souhaite garder son logement après travaux.',
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
+        #[Assert\Choice(
+            choices: ['oui', 'non', 'nsp'],
+            message: 'Le champ "Souhaite garder le logement après travaux" est incorrect.',
+        )]
+        private ?string $infoProcedureDepartApresTravaux = null,
     ) {
     }
 
@@ -181,5 +189,10 @@ readonly class SituationFoyerRequest implements RequestInterface
     public function getRevenuFiscal(): ?string
     {
         return $this->revenuFiscal;
+    }
+
+    public function getInfoProcedureDepartApresTravaux(): ?string
+    {
+        return $this->infoProcedureDepartApresTravaux;
     }
 }

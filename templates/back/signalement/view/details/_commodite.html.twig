@@ -1,0 +1,22 @@
+{#
+    Paramètres :
+    - label : libellé de la question
+    - dansLogement : 'oui' | 'non' | null
+    - collective : 'oui' | 'non' | null
+    - collectiveLabel : 'collective' (défaut) ou 'collectifs' pour les WC
+#}
+{% set collectiveLabel = collectiveLabel|default('collective') %}
+<div class="fr-col-12 fr-mb-2v">
+    <span class="fr-text--medium">{{ label }} :</span>
+    {% if dansLogement is same as 'oui' %}
+        Oui, dans le logement.
+    {% elseif dansLogement is same as 'non' %}
+        {% if collective is same as 'oui' %}
+            Oui, {{ collectiveLabel }}.
+        {% elseif collective is same as 'non' %}
+            <p class="fr-badge fr-badge--warning fr-badge--sm">Non</p>
+        {% else %}
+            Non, dans le logement.
+        {% endif %}
+    {% endif %}
+</div>

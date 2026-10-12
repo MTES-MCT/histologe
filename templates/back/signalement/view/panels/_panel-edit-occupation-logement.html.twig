@@ -1,0 +1,216 @@
+<dialog aria-labelledby="panel-edit-occupation-logement-title" id="panel-edit-occupation-logement" class="side-panel">
+    <div class="side-panel__inner">
+        <div class="side-panel__header">
+            <button type="button" class="fr-btn--close fr-btn js-close-panel" data-panel="panel-edit-occupation-logement" aria-controls="panel-edit-occupation-logement" aria-expanded="false">Fermer</button>
+        </div>
+
+        <div class="side-panel__content fr-mx-3w">
+            <h1 id="panel-edit-occupation-logement-title" class="fr-modal__title title-blue-france">Modifier les informations du logement</h1>
+
+            <form method="POST" id="form-edit-occupation-logement" enctype="application/json" action="{{ path('back_signalement_edit_occupation_logement',{uuid:signalement.uuid}) }}">
+                <p>Tous les champs sont obligatoires, sauf mention contraire.</p>
+                
+                <div class="fr-input-group">
+                    {% set nombrePersonnes = 0 %}
+                    {% if signalement.typeCompositionLogement %}
+                        {% set nombrePersonnes = signalement.nbOccupantsLogement %}
+                    {% else %}
+                        {% set nombrePersonnes = signalement.nbPersonsDeprecated %}
+                    {% endif %}
+                    <label class="fr-label" for="occupationLogementNombrePersonnes">Nb. personnes
+                        {{ show_label_facultatif(
+                            'App\\Dto\\Request\\Signalement\\OccupationLogementRequest',
+                            'nombrePersonnes',
+                            signalement.profileDeclarant)
+                        }}
+                    </label>
+                    <input class="fr-input" type="number" id="occupationLogementNombrePersonnes" name="nombrePersonnes" value="{{ nombrePersonnes }}" max="99">
+                </div>
+
+                <div class="fr-input-group">
+                    {% set compositionLogementNombreEnfants = null %}
+                    {% if signalement.typeCompositionLogement %}
+                        {% set compositionLogementNombreEnfants = signalement.typeCompositionLogement.compositionLogementNombreEnfants %}
+                    {% else %}
+                        {% set compositionLogementNombreEnfants = signalement.getNbEnfantsDeprecated %}
+                    {% endif %}
+                    <label class="fr-label" for="occupationLogementCompositionLogementNombreEnfants">Dont nb. enfants
+                        {{ show_label_facultatif(
+                            'App\\Dto\\Request\\Signalement\\OccupationLogementRequest',
+                            'compositionLogementNombreEnfants',
+                            signalement.profileDeclarant,
+                            signalement.isV2)
+                        }}
+                    </label>
+                    <input class="fr-input" type="number" id="occupationLogementCompositionLogementNombreEnfants" name="compositionLogementNombreEnfants" value="{{ compositionLogementNombreEnfants }}" max="99">
+                </div>
+
+                <div class="fr-select-group">
+                    {% set compositionLogementEnfants = null %}
+                    {% if signalement.typeCompositionLogement %}
+                        {% set compositionLogementEnfants = signalement.typeCompositionLogement.compositionLogementEnfants %}
+                    {% elseif signalement.nbEnfantsM6 is not null %}
+                        {% if signalement.nbEnfantsM6 > 0 %}
+                            {% set compositionLogementEnfants = 'oui' %}
+                        {% else %}
+                            {% set compositionLogementEnfants = 'non' %}
+                        {% endif %}
+                    {% endif %}
+                    <label class="fr-label" for="occupationLogementCompositionLogementEnfants">Enfants -6 ans
+                        {{ show_label_facultatif(
+                            'App\\Dto\\Request\\Signalement\\OccupationLogementRequest',
+                            'compositionLogementEnfants',
+                            signalement.profileDeclarant,
+                            signalement.isV2)
+                        }}
+                    </label>
+                    <select class="fr-select" id="occupationLogementCompositionLogementEnfants" name="compositionLogementEnfants">
+                        <option value="" {{ compositionLogementEnfants not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="oui" {{ compositionLogementEnfants == 'oui' ? 'selected' : '' }}>Oui</option>
+                        <option value="non" {{ compositionLogementEnfants == 'non' ? 'selected' : '' }}>Non</option>
+                        <option value="nsp" {{ compositionLogementEnfants == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                    </select>
+                </div>
+
+                <div class="fr-input-group">
+                    <label class="fr-label" for="occupationLogementAutreSituationVulnerabilite"
+                        >Autre situation de vulnérabilité (facultatif)
+                        <span class="fr-hint-text">Ne saisissez pas d'information de santé.</span>
+                        </label>
+                    <textarea class="fr-input fr-input--no-resize" id="occupationLogementAutreSituationVulnerabilite" name="autreSituationVulnerabilite">{{ signalement.autreSituationVulnerabilite }}</textarea>
+                </div>
+
+                <div class="fr-input-group" id="occupationLogementDateEntree-container">
+                    {% block date_entree_field %}
+                    {% set dateEntree = '' %}
+                    {% if signalement.dateEntree %}
+                        {% set dateEntree = signalement.dateEntree.format('Y-m-d') %}
+                    {% endif %}
+                    <label class="fr-label" for="occupationLogementDateEntree">Date arrivée
+                        {{ show_label_facultatif(
+                            'App\\Dto\\Request\\Signalement\\OccupationLogementRequest',
+                            'dateEntree',
+                            signalement.profileDeclarant,
+                            signalement.isV2)
+                        }}
+                    </label>
+                    <input class="fr-input" type="date" id="occupationLogementDateEntree" name="dateEntree" value="{{ dateEntree }}">
+                    {% endblock %}
+                </div>
+
+                <div class="fr-input-group">
+                    {% set bailleurDateEffetBail = '' %}
+                    {% if signalement.informationComplementaire %}
+                        {% set bailleurDateEffetBail = signalement.informationComplementaire.informationsComplementairesSituationBailleurDateEffetBail %}
+                    {% endif %}
+                    <label class="fr-label" for="occupationLogementBailleurDateEffetBail">Date d'effet du bail (facultatif)</label>
+                    <input class="fr-input" type="date" id="occupationLogementBailleurDateEffetBail" name="bailleurDateEffetBail" value="{{ bailleurDateEffetBail }}">
+                </div>
+
+                <div class="fr-select-group">
+                    {% set bailDpeBail = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeBail : null %}
+                    <label class="fr-label" for="occupationLogementBailDpeBail">Bail
+                        {{ show_label_facultatif(
+                            'App\\Dto\\Request\\Signalement\\OccupationLogementRequest',
+                            'bailDpeBail',
+                            signalement.profileDeclarant,
+                            signalement.isV2)
+                        }}
+                    </label>
+                    <select class="fr-select" id="occupationLogementBailDpeBail" name="bailDpeBail">
+                        <option value="" {{ bailDpeBail not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="oui" {{ bailDpeBail == 'oui' ? 'selected' : '' }}>Oui</option>
+                        <option value="non" {{ bailDpeBail == 'non' ? 'selected' : '' }}>Non</option>
+                        <option value="nsp" {{ bailDpeBail == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                    </select>
+                </div>
+
+                <div class="fr-select-group">
+                    {% set bailDpeEtatDesLieux = signalement.typeCompositionLogement ? signalement.typeCompositionLogement.bailDpeEtatDesLieux : null %}
+                    <label class="fr-label" for="occupationLogementBailDpeEtatDesLieux">Etat des lieux
+                        {{ show_label_facultatif(
+                            'App\\Dto\\Request\\Signalement\\OccupationLogementRequest',
+                            'bailDpeEtatDesLieux',
+                            signalement.profileDeclarant,
+                            signalement.isV2)
+                        }}
+                    </label>
+                    <select class="fr-select" id="occupationLogementBailDpeEtatDesLieux" name="bailDpeEtatDesLieux">
+                        <option value="" {{ bailDpeEtatDesLieux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="oui" {{ bailDpeEtatDesLieux == 'oui' ? 'selected' : '' }}>Oui</option>
+                        <option value="non" {{ bailDpeEtatDesLieux == 'non' ? 'selected' : '' }}>Non</option>
+                        <option value="nsp" {{ bailDpeEtatDesLieux == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                    </select>
+                </div>
+
+                <div class="fr-input-group">
+                    <label class="fr-label" for="occupationLogementLoyer">Montant du loyer (facultatif)</label>
+                    <input class="fr-input" type="number" id="occupationLogementLoyer" name="loyer" value="{{ signalement.loyer }}">
+                </div>
+
+                <div class="fr-select-group">
+                    {% set loyersPayes = signalement.informationComplementaire ? signalement.informationComplementaire.informationsComplementairesSituationOccupantsLoyersPayes : null %}
+                    <label class="fr-label" for="occupationLogementLoyersPayes">Paiement loyers à jour (facultatif)</label>
+                    <select class="fr-select" id="occupationLogementLoyersPayes" name="loyersPayes">
+                        <option value="" {{ loyersPayes not in ['oui', 'non'] ? 'selected' : '' }}></option>
+                        <option value="oui" {{ loyersPayes is same as 'oui' ? 'selected' : '' }}>Oui</option>
+                        <option value="non" {{ loyersPayes is same as 'non' ? 'selected' : '' }}>Non</option>
+                    </select>
+                </div>
+
+                <div class="fr-input-group">
+                    {% set anneeConstruction = 0 %}
+                    {% if signalement.informationComplementaire %}
+                        {% set anneeConstruction = signalement.informationComplementaire.informationsComplementairesLogementAnneeConstruction %}
+                    {% endif %}
+                    <label class="fr-label" for="occupationLogementAnneeConstruction">Année de construction (facultatif)</label>
+                    <input class="fr-input" type="number" id="occupationLogementAnneeConstruction" name="anneeConstruction" value="{{ anneeConstruction }}" maxlength="4">
+                </div>
+                
+                <div id="autresOccupantsDesordre-container">
+                {% block autres_occupants_desordre_field %}
+                {% if signalement.natureLogement == 'appartement' %}
+                <div class="fr-select-group">
+                    {% set autresOccupantsDesordre = signalement.autresOccupantsDesordre %}
+                    <label class="fr-label" for="autresOccupantsDesordre">D'autres occupants de l'immeuble ont rencontré des désordres (facultatif)
+                    </label>
+                    <select class="fr-select" id="autresOccupantsDesordre" name="autresOccupantsDesordre">
+                        <option value="" {{ autresOccupantsDesordre not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="oui" {{ autresOccupantsDesordre == 'oui' ? 'selected' : '' }}>Oui</option>
+                        <option value="non" {{ autresOccupantsDesordre == 'non' ? 'selected' : '' }}>Non</option>
+                        <option value="nsp" {{ autresOccupantsDesordre == 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                    </select>
+                </div>
+                {% endif %}
+                {% endblock %}
+                </div>
+
+                <div class="fr-input-group">
+                    {% set bailDpeInvariant = signalement.numeroInvariant %}
+                    <label class="fr-label" for="occupationLogementBailDpeInvariant">Invariant fiscal (facultatif)</label>
+                    <input class="fr-input" type="text" id="occupationLogementBailDpeInvariant" name="bailDpeInvariant"  maxlength="12" value="{{ bailDpeInvariant }}">
+                </div>
+
+                <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_occupation_logement_'~signalement.id) }}">
+            </form>
+        </div>
+        <div class="side-panel__footer">
+            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-sm fr-btns-group--icon-left">
+                <li>
+                    <button type="submit"
+                        class="fr-btn fr-btn--icon-left fr-icon-check-line"
+                        form="form-edit-occupation-logement"
+                        >Valider</button>
+                </li>
+                <li>
+                    <button type="button"
+                        class="fr-btn fr-btn--secondary fr-icon-close-line js-close-panel"
+                        data-panel="panel-edit-occupation-logement"
+                        aria-controls="panel-edit-occupation-logement"
+                        aria-expanded="false"
+                        >Annuler</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</dialog>

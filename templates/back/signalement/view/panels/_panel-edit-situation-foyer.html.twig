@@ -21,22 +21,6 @@
                 </div>
 
                 <div class="fr-select-group">
-                    <label class="fr-label" for="situationFoyerIsRelogement">Demande logement social / relogement / mutation
-                        {{ show_label_facultatif(
-                            'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
-                            'isRelogement',
-                            signalement.profileDeclarant,
-                            signalement.isV2)
-                        }}
-                    </label>
-                    <select class="fr-select" id="situationFoyerIsRelogement" name="isRelogement">
-                        <option value=""></option>
-                        <option value="oui" {{ signalement.isRelogement is same as true ? 'selected' : '' }}>Oui</option>
-                        <option value="non" {{ signalement.isRelogement is same as false ? 'selected' : '' }}>Non</option>
-                    </select>
-                </div>
-
-                <div class="fr-select-group">
                     {% set isAllocataire = signalement.isAllocataire %}
                     <label class="fr-label" for="situationFoyerIsAllocataire">Allocataire
                         {{ show_label_facultatif(
@@ -75,6 +59,22 @@
                 </div>
 
                 <div class="fr-select-group">
+                    <label class="fr-label" for="situationFoyerIsRelogement">Demande logement social / relogement / mutation
+                        {{ show_label_facultatif(
+                            'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
+                            'isRelogement',
+                            signalement.profileDeclarant,
+                            signalement.isV2)
+                        }}
+                    </label>
+                    <select class="fr-select" id="situationFoyerIsRelogement" name="isRelogement">
+                        <option value=""></option>
+                        <option value="oui" {{ signalement.isRelogement is same as true ? 'selected' : '' }}>Oui</option>
+                        <option value="non" {{ signalement.isRelogement is same as false ? 'selected' : '' }}>Non</option>
+                    </select>
+                </div>
+
+                <div class="fr-select-group">
                     {% set travailleurSocialQuitteLogement = signalement.situationFoyer ? signalement.situationFoyer.travailleurSocialQuitteLogement : null %}
                     <label class="fr-label" for="situationFoyerTravailleurSocialQuitteLogement">Souhaite quitter le logement
                         {{ show_label_facultatif(
@@ -107,6 +107,25 @@
                         <option value="oui" {{ travailleurSocialPreavisDepart is same as 'oui' ? 'selected' : '' }}>Oui</option>
                         <option value="non" {{ travailleurSocialPreavisDepart is same as 'non' ? 'selected' : '' }}>Non</option>
                         <option value="nsp" {{ travailleurSocialPreavisDepart is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
+                    </select>
+                </div>
+
+                <div class="fr-select-group">
+                    {% set infoProcedureDepartApresTravaux = signalement.informationProcedure ? signalement.informationProcedure.infoProcedureDepartApresTravaux : null %}
+                    <label class="fr-label" for="situationFoyerInfoProcedureDepartApresTravaux">Souhaite garder le logement après travaux
+                        {{ show_label_facultatif(
+                            'App\\Dto\\Request\\Signalement\\SituationFoyerRequest',
+                            'infoProcedureDepartApresTravaux',
+                            signalement.profileDeclarant,
+                            signalement.isV2)
+                        }}
+                    </label>
+                    {# Attention : la question est inversée par rapport à la donnée enregistrée (départ après travaux) #}
+                    <select class="fr-select" id="situationFoyerInfoProcedureDepartApresTravaux" name="infoProcedureDepartApresTravaux">
+                        <option value="" {{ infoProcedureDepartApresTravaux not in ['oui', 'non', 'nsp'] ? 'selected' : '' }}></option>
+                        <option value="non" {{ infoProcedureDepartApresTravaux is same as 'non' ? 'selected' : '' }}>Oui</option>
+                        <option value="oui" {{ infoProcedureDepartApresTravaux is same as 'oui' ? 'selected' : '' }}>Non</option>
+                        <option value="nsp" {{ infoProcedureDepartApresTravaux is same as 'nsp' ? 'selected' : '' }}>Je ne sais pas</option>
                     </select>
                 </div>
 
@@ -171,6 +190,7 @@
                 </div>
                 {% endif %}
                 <input type="hidden" name="_token" value="{{ csrf_token('signalement_edit_situation_foyer_'~signalement.id) }}">
+
             </form>
         </div>
         <div class="side-panel__footer">

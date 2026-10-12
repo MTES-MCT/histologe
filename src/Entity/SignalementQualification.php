@@ -22,7 +22,7 @@ class SignalementQualification
     #[ORM\Column(type: 'string', enumType: Qualification::class)]
     private Qualification $qualification;
 
-    /** @var array<Criticite> $criticites */
+    /** @var array<int> $criticites */
     #[ORM\Column(nullable: true)]
     private ?array $criticites = [];
 
@@ -74,13 +74,13 @@ class SignalementQualification
         return $this;
     }
 
-    /** @return array<Criticite> */
+    /** @return array<int> */
     public function getCriticites(): array
     {
         return $this->criticites;
     }
 
-    /** @param array<Criticite> $criticites */
+    /** @param array<int> $criticites */
     public function setCriticites(?array $criticites): self
     {
         $this->criticites = $criticites;

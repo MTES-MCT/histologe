@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Utils;
 
 use App\Dto\Request\Signalement\CoordonneesBailleurRequest;
-use App\Dto\Request\Signalement\InformationsLogementRequest;
+use App\Dto\Request\Signalement\OccupationLogementRequest;
 use App\Entity\Enum\ProfileDeclarant;
 use App\Utils\AttributeParser;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -41,14 +41,14 @@ class AttributeParserTest extends TestCase
             '',
         ];
         yield 'Old form - show label as facultatif' => [
-            InformationsLogementRequest::class,
+            OccupationLogementRequest::class,
             'compositionLogementEnfants',
             ProfileDeclarant::LOCATAIRE,
             false,
             '(facultatif)',
         ];
         yield 'Old form - do not show label as facultatif' => [
-            InformationsLogementRequest::class,
+            OccupationLogementRequest::class,
             'nombrePersonnes',
             ProfileDeclarant::LOCATAIRE,
             false,

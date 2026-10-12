@@ -18,6 +18,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+// TODO à la suppression de FEATURE_ORIENTATION : supprimer ce contrôleur (route remplacée par SignalementEditController::editConsommationEnergertique)
+// ainsi que _panel-edit-nde.html.twig, nde.html.twig, form_nde.js, SignalementManager::updateFromSignalementQualification
+// et les tests associés (BackSignalementQualificationControllerTest, SignalementManagerTest)
 #[Route('/bo/signalements')]
 class BackSignalementQualificationController extends AbstractController
 {
@@ -67,12 +70,12 @@ class BackSignalementQualificationController extends AbstractController
             'signalementQualificationNDE' => $signalementQualificationNDE,
             'signalementQualificationNDECriticite' => $signalementQualificationNDECriticites,
         ]);
-        $composition = $this->renderView('back/signalement/view/information/information-composition.html.twig', [
-            'signalement' => $signalement,
-        ]);
         $htmlTargetContents = [
             ['target' => '#signalement-bo-nde-container', 'content' => $nde],
-            ['target' => '#signalement-information-composition-container', 'content' => $composition],
+            [
+                'target' => '#signalement-information-composition-container',
+                'content' => $this->renderView('back/signalement/view/information/information-composition.html.twig', ['signalement' => $signalement]),
+            ],
         ];
 
         return $this->json(['stayOnPage' => true, 'flashMessages' => $flashMessages, 'closeModal' => true, 'htmlTargetContents' => $htmlTargetContents]);

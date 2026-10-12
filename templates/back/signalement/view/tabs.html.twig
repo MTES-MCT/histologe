@@ -5,19 +5,24 @@
                 {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION or is_granted('AFFECTATION_ACCEPT_OR_REFUSE', affectation) %}aria-selected="false"{% else %}aria-selected="true"{% endif %}
                 aria-controls="tabpanel-activite-panel">Activité PDLHI ({{ signalement.suivis|length }})</button>
         </li>
+        {# TODO à la suppression de FEATURE_ORIENTATION : ne garder que les onglets Orientation et Détails du dossier #}
         {% if feature_orientation %}
             <li role="presentation">
                 <button id="tabpanel-orientation" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-orientation-panel">Orientation</button>
             </li>
+            <li role="presentation">
+                <button id="tabpanel-details" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-details-panel">Détails du dossier</button>
+            </li>
+        {% else %}
+            <li role="presentation">
+                <button id="tabpanel-situation" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab"
+                    {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION or is_granted('AFFECTATION_ACCEPT_OR_REFUSE', affectation) %}aria-selected="true"{% else %}aria-selected="false"{% endif %}
+                    aria-controls="tabpanel-situation-panel">Situation</button>
+            </li>
+            <li role="presentation">
+                <button id="tabpanel-foyer" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-foyer-panel">Foyer</button>
+            </li>
         {% endif %}
-        <li role="presentation">
-            <button id="tabpanel-situation" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab"
-                {% if signalement.statut is same as enum('App\\Entity\\Enum\\SignalementStatus').NEED_VALIDATION or is_granted('AFFECTATION_ACCEPT_OR_REFUSE', affectation) %}aria-selected="true"{% else %}aria-selected="false"{% endif %}
-                aria-controls="tabpanel-situation-panel">Situation</button>
-        </li>
-        <li role="presentation">
-            <button id="tabpanel-foyer" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-foyer-panel">Foyer</button>
-        </li>
         <li role="presentation">
             <button id="tabpanel-documents" class="fr-tabs__tab fr-icon-checkbox-line fr-tabs__tab--icon-left" tabindex="-1" role="tab" aria-selected="false" aria-controls="tabpanel-documents-panel">
                 Documents et photos
@@ -35,17 +40,24 @@
     <div id="tabpanel-activite-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-activite" tabindex="0">
         {% include 'back/signalement/view/tabs/tab-activite.html.twig' %}
     </div>
+    {# TODO à la suppression de FEATURE_ORIENTATION : ne garder que les onglets Orientation et Détails du dossier, et supprimer les templates de l'ancien affichage :
+       tabs/tab-situation.html.twig, tabs/tab-foyer.html.twig, criticite-qualifications.html.twig, nde.html.twig
+       et information/information-*.html.twig (user-declaration.html.twig est conservé, utilisé par tab-details) #}
     {% if feature_orientation %}
-    <div id="tabpanel-orientation-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-orientation" tabindex="0">
-        {% include 'back/signalement/view/tabs/tab-orientation.html.twig' %}
-    </div>
+        <div id="tabpanel-orientation-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-orientation" tabindex="0">
+            {% include 'back/signalement/view/tabs/tab-orientation.html.twig' %}
+        </div>
+        <div id="tabpanel-details-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-details" tabindex="0">
+            {% include 'back/signalement/view/tabs/tab-details.html.twig' %}
+        </div>
+    {% else %}
+        <div id="tabpanel-situation-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-situation" tabindex="0">
+            {% include 'back/signalement/view/tabs/tab-situation.html.twig' %}
+        </div>
+        <div id="tabpanel-foyer-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-foyer" tabindex="0">
+            {% include 'back/signalement/view/tabs/tab-foyer.html.twig' %}
+        </div>
     {% endif %}
-    <div id="tabpanel-situation-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-situation" tabindex="0">
-        {% include 'back/signalement/view/tabs/tab-situation.html.twig' %}
-    </div>
-    <div id="tabpanel-foyer-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-foyer" tabindex="0">
-        {% include 'back/signalement/view/tabs/tab-foyer.html.twig' %}
-    </div>
     <div id="tabpanel-documents-panel" class="fr-tabs__panel" role="tabpanel" aria-labelledby="tabpanel-documents" tabindex="0">
         {% include 'back/signalement/view/tabs/tab-documents.html.twig' %}
     </div>
