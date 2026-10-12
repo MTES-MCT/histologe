@@ -1390,7 +1390,9 @@
           "validate": {
             "message": "Veuillez renseigner une date d'emménagement.",
             "min": "1900-01-01",
-            "minMessage": "La date d'entrée dans le logement doit être postérieure au 1er janvier 1900."
+            "minMessage": "La date d'entrée dans le logement doit être postérieure au 1er janvier 1900.",
+            "max": "today",
+            "maxMessage": "La date d'emménagement ne peut pas être dans le futur."
           },
           "accessibility": {
             "focus": true

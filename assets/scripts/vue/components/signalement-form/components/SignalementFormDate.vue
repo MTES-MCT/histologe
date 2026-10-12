@@ -13,6 +13,7 @@
       :class="[ customCss, 'fr-input', {'fr-input--error' : hasError} ]"
       @input="updateValue($event)"
       :aria-describedby="hasError ? id + '-text-input-error-desc-error' : undefined"
+      :max="maxDate"
       >
     <div
       :id="id + '-text-input-error-desc-error'"
@@ -60,6 +61,16 @@ export default defineComponent({
     }
   },
   computed: {
+    maxDate (): string {
+      if (this.validate?.max === 'today') {
+        const today = new Date()
+        const month = ('0' + (today.getMonth() + 1)).slice(-2)
+        const day = ('0' + today.getDate()).slice(-2)
+        return `${today.getFullYear()}-${month}-${day}`
+      }
+      // sans max, Chromium accepte une année sur 6 chiffres (ex : 202017-06-28)
+      return '9999-12-31'
+    },
     internalValue: {
       get () {
         return this.modelValue

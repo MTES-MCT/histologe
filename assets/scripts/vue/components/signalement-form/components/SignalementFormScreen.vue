@@ -107,19 +107,19 @@ export default defineComponent({
       }
       return false
     },
-    validateComponents (components: any) {
+    validateComponents (components: any, checkRequired: boolean = true) {
       for (const component of components) {
         const value = formStore.data[component.slug]
         // Les autres composants requis doivent avoir une valeur correspondante dans le Store
-        if (this.isRequired(component) && !value && component.type !== 'SignalementFormAddress') {
+        if (checkRequired && this.isRequired(component) && !value && component.type !== 'SignalementFormAddress') {
           formStore.validationErrors[component.slug] = component.validate?.message ?? 'Ce champ est requis'
         }
 
-        componentValidator.validate(component)
+        componentValidator.validate(component, checkRequired)
 
         // Vérifier si ce composant nécessite une validation de ses sous-composants
         if (this.needToValidateSubComponents(component)) {
-          this.validateComponents(component.components.body)
+          this.validateComponents(component.components.body, checkRequired)
         }
       }
     },
@@ -171,9 +171,9 @@ export default defineComponent({
         (componentToToggle as HTMLButtonElement).disabled = (isVisible !== '1')
       }
     },
-    validateAndFocusFirstError (): boolean {
+    validateAndFocusFirstError (checkRequired: boolean = true): boolean {
       if (this.components && this.components.body) {
-        this.validateComponents(this.components.body)
+        this.validateComponents(this.components.body, checkRequired)
         if (Object.keys(formStore.validationErrors).length > 0) {
           this.$nextTick(() => {
             // Tableau contenant toutes les classes d'erreur possibles
@@ -215,9 +215,13 @@ export default defineComponent({
         if (this.validateAndFocusFirstError()) {
           return
         }
+      } else if (this.validateAndFocusFirstError(false)) {
+        // Sans sauvegarde (ex : écran précédent), on ne bloque que les valeurs saisies mal formées,
+        // sinon elles seraient rejetées par le back au prochain save
+        return
       }
 
-      // Si pas d'erreur de validation, ou screen précédent (donc pas de validation), on change d'écran
+      // Si pas d'erreur de validation, on change d'écran
       if (this.changeEvent !== undefined) {
         formStore.lastButtonClicked = slugButton
         await this.changeEvent(slug, isSaveAndCheck, isCheckLocation)
@@ -237,8 +241,9 @@ export default defineComponent({
         const index = formStore.data.currentStep.includes('batiment') ? this.currentDisorderIndex.batiment : this.currentDisorderIndex.logement
         const { currentCategory, decrementIndex, previousScreenSlug } = findPreviousScreen(formStore, index)
         await this.showScreenBySlug(previousScreenSlug, slugButton, isSaveAndCheck, false)
-
-        this.currentDisorderIndex[currentCategory] = decrementIndex < 0 ? 0 : decrementIndex
+        if (Object.keys(formStore.validationErrors).length === 0) {
+          this.currentDisorderIndex[currentCategory] = decrementIndex < 0 ? 0 : decrementIndex
+        }
       }
     },
     finishLater (slugButton:string) {

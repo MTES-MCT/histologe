@@ -63,7 +63,7 @@ export default defineComponent({
   computed: {
     internalValue: {
       get () {
-        return this.modelValue || this.defaultValue
+        return this.modelValue ?? this.defaultValue
       },
       set (newValue: string) {
         this.$emit('update:modelValue', newValue)
@@ -72,7 +72,11 @@ export default defineComponent({
   },
   methods: {
     updateValue (event: Event) {
-      const value = (event.target as HTMLInputElement).value
+      const target = event.target as HTMLInputElement
+      // pattern et inputmode ne bloquent pas la saisie : on retire tout ce qui n'est pas un chiffre
+      const value = target.value.replace(/\D/g, '')
+      // si la valeur filtrée est identique à la précédente, Vue ne met pas le DOM à jour
+      target.value = value
       this.$emit('update:modelValue', value)
     },
     focusInput () {
@@ -84,8 +88,8 @@ export default defineComponent({
   },
   emits: ['update:modelValue'],
   mounted () {
-    if (this.modelValue === null) {
-      this.$emit('update:modelValue', this.internalValue)
+    if (this.modelValue === null || this.modelValue === '') {
+      this.$emit('update:modelValue', this.defaultValue)
     }
     const element = this.$refs[this.id] as HTMLElement
     if (this.access_focus && element && !element.classList.contains('fr-hidden')) {

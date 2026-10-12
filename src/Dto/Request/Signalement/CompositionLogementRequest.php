@@ -42,15 +42,23 @@ class CompositionLogementRequest implements RequestInterface
             message: 'Merci de saisir une superficie inférieure à 10000.',
         )]
         private readonly ?string $superficie = null,
-        #[Assert\NotBlank(
-            message: 'Merci de définir le nombre de pièces à vivre.',
-            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS']
+        #[Assert\When(
+            expression: 'this.getTypeCompositionLogement() != "piece_unique"',
+            constraints: [
+                new Assert\NotBlank(message: 'Merci de définir le nombre de pièces à vivre.'),
+            ],
+            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT', 'BAILLEUR', 'TIERS_PARTICULIER', 'TIERS_PRO', 'SERVICE_SECOURS'],
         )]
-        #[Assert\Positive(message: 'Merci de saisir une information numérique dans le champs nombre de pièces à vivre.')]
-        #[Assert\Type(type: 'numeric', message: 'Le nombre de pièces à vivre doit être un nombre.')]
-        #[Assert\LessThan(
-            value: 1000,
-            message: 'Merci de saisir un nombre de pièces inférieur à 1000.',
+        #[Assert\When(
+            expression: 'this.getTypeCompositionLogement() != "piece_unique"',
+            constraints: [
+                new Assert\Positive(message: 'Merci de saisir une information numérique dans le champs nombre de pièces à vivre.'),
+                new Assert\Type(type: 'numeric', message: 'Le nombre de pièces à vivre doit être un nombre.'),
+                new Assert\LessThan(
+                    value: 1000,
+                    message: 'Merci de saisir un nombre de pièces inférieur à 1000.',
+                ),
+            ],
         )]
         private readonly ?string $compositionLogementNbPieces = null,
         #[Assert\Type(type: 'numeric', message: 'Le nombre d\'étages doit être un nombre.')]
