@@ -37,7 +37,7 @@
         <strong>Prénom :</strong> {{ signalement.prenomOccupant }}
     </div>
     <div class="fr-col-12">
-        <strong>Courriel :</strong>
+        <strong>E-mail :</strong>
         {% if signalement.mailOccupant %}
             <a href="mailto:{{ signalement.mailOccupant }}">{{ signalement.mailOccupant }}</a>
             {% if show_email_alert(signalement.mailOccupant) %}

@@ -34,7 +34,8 @@ class SituationFoyerRequestTest extends KernelTestCase
             travailleurSocialAccompagnementPrenomReferent: 'Pete',
             beneficiaireRsa: 'oui',
             beneficiaireFsl: 'non',
-            revenuFiscal: '20000'
+            revenuFiscal: '20000',
+            infoProcedureDepartApresTravaux: 'non',
         );
 
         $this->assertSame('oui', $situationFoyerRequest->getIsLogementSocial());
@@ -53,6 +54,7 @@ class SituationFoyerRequestTest extends KernelTestCase
         $this->assertSame('oui', $situationFoyerRequest->getBeneficiaireRsa());
         $this->assertSame('non', $situationFoyerRequest->getBeneficiaireFsl());
         $this->assertSame('20000', $situationFoyerRequest->getRevenuFiscal());
+        $this->assertSame('non', $situationFoyerRequest->getInfoProcedureDepartApresTravaux());
 
         $errors = $this->validator->validate($situationFoyerRequest);
         $this->assertCount(0, $errors);
@@ -73,10 +75,11 @@ class SituationFoyerRequestTest extends KernelTestCase
             travailleurSocialAccompagnementDeclarant: str_repeat('b', 51),
             beneficiaireRsa: 'unknown',
             beneficiaireFsl: 'unknown',
-            revenuFiscal: str_repeat('c', 51)
+            revenuFiscal: str_repeat('c', 51),
+            infoProcedureDepartApresTravaux: 'maybe',
         );
 
         $errors = $this->validator->validate($situationFoyerRequest);
-        $this->assertCount(12, $errors);
+        $this->assertCount(13, $errors);
     }
 }

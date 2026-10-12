@@ -84,15 +84,6 @@ class ProcedureDemarchesRequest implements RequestInterface
         )]
         private readonly ?string $infoProcedureReponseAssurance = null,
 
-        #[Assert\NotBlank(
-            message : 'Merci d\'indiquer si l\'occupant souhaite garder son logement après travaux.',
-            groups: ['LOCATAIRE', 'BAILLEUR_OCCUPANT'])]
-        #[Assert\Choice(
-            choices: ['oui', 'non', 'nsp'],
-            message: 'Le champ "Souhaite garder le logement après travaux" est incorrect.',
-        )]
-        private readonly ?string $infoProcedureDepartApresTravaux = null,
-
         #[Assert\Length(max: 50)]
         private readonly ?string $preavisDepart = null,
 
@@ -140,11 +131,6 @@ class ProcedureDemarchesRequest implements RequestInterface
     public function getInfoProcedureReponseAssurance(): ?string
     {
         return $this->infoProcedureReponseAssurance;
-    }
-
-    public function getInfoProcedureDepartApresTravaux(): ?string
-    {
-        return $this->infoProcedureDepartApresTravaux;
     }
 
     public function getPreavisDepart(): ?string

@@ -35,6 +35,7 @@ class SignalementVoter extends Voter
     public const string SIGN_SEND_MAIL_BAILLEUR = 'SIGN_SEND_MAIL_BAILLEUR';
     public const string SIGN_SUBSCRIBE = 'SIGN_SUBSCRIBE';
     public const string SIGN_ADD_VISITE = 'SIGN_ADD_VISITE';
+    // TODO à la suppression de FEATURE_ORIENTATION : supprimer SIGN_EDIT_NDE et SIGN_SEE_NDE s'ils ne sont plus utilisés
     public const string SIGN_EDIT_NDE = 'SIGN_EDIT_NDE';
     public const string SIGN_SEE_NDE = 'SIGN_SEE_NDE';
     public const string SIGN_CREATE_SUIVI = 'SIGN_CREATE_SUIVI';

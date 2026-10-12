@@ -1,0 +1,62 @@
+
+    {% import 'back/signalement/view/_static_picto.html.twig' as picto %}
+    <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-md-8">
+            <h4 class="fr-h6">Coordonnées du bailleur</h4>
+        </div>
+        <div class="fr-col-12 fr-col-md-4 fr-text--right">
+            {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+                <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-edit-line"
+                    data-panel-open="panel-edit-coordonnees-bailleur"
+                    aria-controls="panel-edit-coordonnees-bailleur"
+                    data-fr-opened="false"
+                    >Modifier</button>
+            {% endif %}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Type de bailleur :</span>
+            {% if signalement.typeProprio is not same as null %}
+                <p class="fr-badge fr-badge--new fr-badge--no-icon">{{ signalement.typeProprio.label }}</p>
+            {% else %}
+                N/C
+            {% endif %}
+        </div>
+        {% if signalement.typeProprio is same as enum('App\\Entity\\Enum\\ProprioType').ORGANISME_SOCIETE %}
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Dénomination :</span> {{ signalement.denominationProprio }}
+        </div>
+        {% endif %}
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Nom :</span> {{ signalement.nomProprio }}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Prénom :</span> {{ signalement.prenomProprio }}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">E-mail :</span>
+            {% if signalement.mailProprio %}
+                <a href="mailto:{{ signalement.mailProprio }}">{{ signalement.mailProprio }}</a>
+                {% if show_email_alert(signalement.mailProprio) %}
+                    <p class="fr-badge fr-badge--error">Format non valide</p>
+                {% endif %}
+                {% if show_email_usager_alert_brevo('proprietaire', signalement.mailProprio) %}
+                    <p class="fr-badge fr-badge--warning">Problème d'e-mail non remis</p>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Tél. :</span>
+            {% if signalement.telProprio %}
+                <a href="mailto:{{ signalement.telProprioDecoded }}">{{ signalement.telProprioDecoded|phone }}</a>
+            {% endif %}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Tél. secondaire :</span>
+            {% if signalement.telProprioSecondaire %}
+                <a href="mailto:{{ signalement.telProprioSecondaireDecoded }}">{{ signalement.telProprioSecondaireDecoded|phone }}</a>
+            {% endif %}
+        </div>
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Adresse :</span> {{ signalement.adresseProprio ? signalement.adresseProprio ~ ', ' ~ signalement.codePostalProprio ~ ' ' ~ signalement.villeProprio}}
+        </div>
+    </div>

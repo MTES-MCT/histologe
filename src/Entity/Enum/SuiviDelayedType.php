@@ -25,6 +25,7 @@ enum SuiviDelayedType: string
     case BO_EDIT_COORDONNEES_TIERS = 'BO_EDIT_COORDONNEES_TIERS';
     case BO_EDIT_COORDONNEES_FOYER = 'BO_EDIT_COORDONNEES_FOYER';
     case BO_EDIT_COORDONNEES_BAILLEUR = 'BO_EDIT_COORDONNEES_BAILLEUR';
+    case BO_EDIT_INFORMATIONS_BAILLEUR = 'BO_EDIT_INFORMATIONS_BAILLEUR';
     case BO_EDIT_COORDONNEES_AGENCE = 'BO_EDIT_COORDONNEES_AGENCE';
     case BO_EDIT_COORDONNEES_SYNDIC = 'BO_EDIT_COORDONNEES_SYNDIC';
     case BO_EDIT_INFORMATIONS_LOGEMENT = 'BO_EDIT_INFORMATIONS_LOGEMENT';
@@ -58,6 +59,7 @@ enum SuiviDelayedType: string
             self::BO_EDIT_COORDONNEES_AGENCE->name => 'Édition des coordonnées de l\'agence',
             self::BO_EDIT_COORDONNEES_SYNDIC->name => 'Édition des coordonnées du syndic',
             self::BO_EDIT_INFORMATIONS_LOGEMENT->name => 'Édition des informations sur le logement',
+            self::BO_EDIT_INFORMATIONS_BAILLEUR->name => 'Édition des informations sur le bailleur',
             self::BO_EDIT_DESCRIPTION_LOGEMENT->name => 'Édition de la description du logement',
             self::BO_EDIT_SITUATION_FOYER->name => 'Édition de la situation du foyer',
             self::BO_EDIT_PROCEDURE_DEMARCHES->name => 'Édition des procédures et démarches',

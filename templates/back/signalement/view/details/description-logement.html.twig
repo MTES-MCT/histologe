@@ -1,0 +1,98 @@
+<div class="fr-grid-row">
+    <div class="fr-col-12 fr-col-md-8">
+        <h4 class="fr-h6">Description du logement</h4>
+    </div>
+    <div class="fr-col-12 fr-col-md-4 fr-text--right">
+        {% if is_granted('SIGN_EDIT_ACTIVE', signalement) %}
+            <button class="fr-btn fr-btn--tertiary fr-btn--sm fr-btn--icon-left fr-icon-edit-line"
+                data-panel-open="panel-edit-composition-logement"
+                aria-controls="panel-edit-composition-logement"
+                data-fr-opened="false"
+                >Modifier</button>
+        {% endif %}
+    </div>
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Type :</span> {{ signalement.natureLogement|capitalize }}
+    </div>
+    {% if signalement.natureLogement|capitalize is same as 'Autre' and signalement.typeCompositionLogement %}
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Précisions :</span> {{ signalement.typeCompositionLogement.typeLogementNatureAutrePrecision }}
+        </div>
+    {% endif %}
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Logement :</span>
+        {% if signalement.typeCompositionLogement %}
+            {{ signalement.typeCompositionLogement.compositionLogementPieceUnique(false) }}
+        {% endif %}
+    </div>
+    
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Superficie totale :</span>
+        {% if signalement.superficie %}
+            {{ signalement.superficie }} m²
+        {% endif %}
+    </div>
+
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Nombre de pièces à vivre :</span>
+        {% if signalement.typeCompositionLogement %}
+            {{ signalement.typeCompositionLogement.compositionLogementNbPieces }}
+        {% endif %}
+    </div>
+
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Nombre d'étages :</span>
+        {% if signalement.informationComplementaire %}
+            {{ signalement.informationComplementaire.informationsComplementairesLogementNombreEtages}}
+        {% endif %}
+    </div>
+
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Etage :</span>
+		{% include '_partials/signalement/signalement-typecomposition-etage.html.twig' %}
+    </div>
+
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">Avec fenêtres :</span>
+		{% include '_partials/signalement/signalement-typecomposition-fenetres.html.twig' %}
+    </div>
+
+    {% if signalement.typeCompositionLogement %}
+        <div class="fr-col-12 fr-mb-2v">
+            <span class="fr-text--medium">Au moins une des pièces à vivre > 9m² :</span>
+            {{ signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m(false)}}
+            {% include '_partials/signalement/display_alert.html.twig' with { 'display': signalement.typeCompositionLogement.typeLogementCommoditesPieceAVivre9m is same as 'non' } %}
+        </div>
+    {% endif %}
+
+    {% include 'back/signalement/view/details/_commodite.html.twig' with {
+        label: 'Cuisine / coin cuisine',
+        dansLogement: signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesCuisine : null,
+        collective: signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesCuisineCollective : null,
+    } %}
+
+    {% include 'back/signalement/view/details/_commodite.html.twig' with {
+        label: 'SDB (baignoire ou douche)',
+        dansLogement: signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBain : null,
+        collective: signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesSalleDeBainCollective : null,
+    } %}
+
+    {% include 'back/signalement/view/details/_commodite.html.twig' with {
+        label: 'WC',
+        dansLogement: signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesWc : null,
+        collective: signalement.typeCompositionLogement ? signalement.typeCompositionLogement.typeLogementCommoditesWcCollective : null,
+        collectiveLabel: 'collectifs',
+    } %}
+
+    {% if signalement.typeCompositionLogement and signalement.typeCompositionLogement.typeLogementCommoditesCuisine is same as 'oui' and signalement.typeCompositionLogement.typeLogementCommoditesWc is same as 'oui' %}
+    <div class="fr-col-12 fr-mb-2v">
+        <span class="fr-text--medium">WC et cuisine dans la même pièce :</span>
+        {% if signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine is same as 'oui' %}
+            <p class="fr-badge fr-badge--warning fr-badge--sm">{{ signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine }}</p>
+        {% else %}
+            {{ signalement.typeCompositionLogement.typeLogementCommoditesWcCuisine }}
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
