@@ -81,9 +81,8 @@ class SuiviDescriptionHelper
             SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_edited.html.twig',
             SuiviDescriptionVariant::INVITATION_TIERS->value => 'suivi/signalement_edited_bo_invitation_tiers.html.twig',
         ],
-        // Même template que SIGNALEMENT_EDITED_BO : le regroupement des SuiviDelayed est commun aux deux catégories
         SuiviCategory::SIGNALEMENT_EDITED_FO->value => [
-            SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_edited.html.twig',
+            SuiviDescriptionVariant::DEFAULT->value => 'suivi/signalement_edited.html.twig', // Même template que SIGNALEMENT_EDITED_BO
         ],
         SuiviCategory::NEW_DOCUMENT->value => [
             SuiviDescriptionVariant::DEFAULT->value => 'suivi/new_document.html.twig',

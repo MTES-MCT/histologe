@@ -206,7 +206,8 @@ class NewSignalementCheckFileMessageHandler
 
     private function createSuivi(Signalement $signalement, string $documents, string $desordres, bool $hasCoordonneesBailleur): Suivi
     {
-        $this->description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::ASK_DOCUMENT, [
+        $category = SuiviCategory::ASK_DOCUMENT;
+        $this->description = $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
             'documents' => $documents,
             'desordres' => $desordres,
             'hasCoordonneesBailleur' => $hasCoordonneesBailleur,
@@ -217,7 +218,7 @@ class NewSignalementCheckFileMessageHandler
         return $this->suiviManager->createSuivi(
             signalement: $signalement,
             description: $this->description,
-            category: SuiviCategory::ASK_DOCUMENT,
+            category: $category,
             user: $userAdmin,
             isVisibleForUsager: true,
         );

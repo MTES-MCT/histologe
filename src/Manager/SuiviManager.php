@@ -119,8 +119,9 @@ class SuiviManager
         $subscriptionCreated = false;
         /** @var User $user */
         $user = $this->security->getUser();
+        $category = SuiviCategory::SIGNALEMENT_EDITED_BO;
         $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(
-            SuiviCategory::SIGNALEMENT_EDITED_BO,
+            $category,
             [
                 'nom' => $inviteTiersRequest->getNom(),
                 'prenom' => $inviteTiersRequest->getPrenom(),
@@ -133,7 +134,7 @@ class SuiviManager
         $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            category: SuiviCategory::SIGNALEMENT_EDITED_BO,
+            category: $category,
             partner: $user->getPartnerInTerritoryOrFirstOne($signalement->getAddress()->getTerritory()),
             user: $user,
             isVisibleForUsager: true,
@@ -245,7 +246,8 @@ class SuiviManager
             $context = 'photo_visite';
         }
 
-        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation(SuiviCategory::NEW_DOCUMENT, [
+        $category = SuiviCategory::NEW_DOCUMENT;
+        $description = $this->suiviDescriptionHelper->buildDescriptionForCreation($category, [
             'context' => $context,
             'nbDocs' => $nbDocs,
             'partnerName' => $partner?->getNom(),
@@ -255,7 +257,7 @@ class SuiviManager
         return $this->createSuivi(
             signalement: $signalement,
             description: $description,
-            category: SuiviCategory::NEW_DOCUMENT,
+            category: $category,
             partner: $partner,
             user: $user,
             isVisibleForUsager: $isVisibleForUsager,
