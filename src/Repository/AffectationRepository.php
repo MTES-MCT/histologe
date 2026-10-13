@@ -10,7 +10,6 @@ use App\Entity\Enum\Qualification;
 use App\Entity\Enum\SignalementStatus;
 use App\Entity\JobEvent;
 use App\Entity\Partner;
-use App\Entity\Signalement;
 use App\Entity\Territory;
 use App\Service\Interconnection\Esabora\EsaboraSCHSService;
 use App\Service\Interconnection\Esabora\EsaboraSISHService;
@@ -107,22 +106,6 @@ class AffectationRepository extends ServiceEntityRepository
                 ->andWhere('DATEDIFF(CURRENT_DATE(), a.answeredAt) >= :nb_days_before_desync')
                 ->setParameter('nb_days_before_desync', $nbDaysBeforeDesync);
         }
-
-        return $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @return array<int, Affectation>
-     */
-    public function findAffectationWithQualification(Qualification $qualification, Signalement $signalement): array
-    {
-        $qb = $this->createQueryBuilder('a');
-        $qb->select('p.id, p.nom')
-            ->where('a.signalement = :signalement')
-            ->setParameter('signalement', $signalement)
-            ->innerJoin('a.partner', 'p')
-            ->andWhere('REGEXP(p.competence, :regexp) = true')
-            ->setParameter('regexp', '(^'.$qualification->name.',)|(,'.$qualification->name.',)|(,'.$qualification->name.'$)|(^'.$qualification->name.'$)');
 
         return $qb->getQuery()->getResult();
     }

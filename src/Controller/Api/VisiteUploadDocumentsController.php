@@ -238,7 +238,7 @@ class VisiteUploadDocumentsController extends AbstractController
 
         if ($this->isRapportVisite($typeDocumentVisite)) {
             $this->eventDispatcher->dispatch(
-                new InterventionEditedEvent($intervention, $user, true, $intervention->getPartner()),
+                new InterventionEditedEvent($intervention, $user, $intervention->getPartner()),
                 InterventionEditedEvent::NAME
             );
         } else {

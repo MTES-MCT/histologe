@@ -14,7 +14,6 @@ class InterventionEditedEvent extends Event
     public function __construct(
         private readonly Intervention $intervention,
         private readonly User $user,
-        private readonly bool $isUsagerNotified,
         private readonly Partner $partner,
     ) {
     }
@@ -27,11 +26,6 @@ class InterventionEditedEvent extends Event
     public function getUser(): ?User
     {
         return $this->user;
-    }
-
-    public function isUsagerNotified(): ?bool
-    {
-        return $this->isUsagerNotified;
     }
 
     public function getPartner(): ?Partner

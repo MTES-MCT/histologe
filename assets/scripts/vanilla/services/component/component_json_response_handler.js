@@ -1,10 +1,8 @@
 import { applyFilter } from '../../controllers/back_signalement_view/toggle-suivi-auto.js';
-import { reloadTinyMCE } from '../form/form_helper.js';
 import { attachAjaxFormHandlers } from '../form/ajax_form_handler.js';
 import { initSearchCheckboxWidgets } from '../component/component_search_checkbox.js';
 import { initSearchAndSelectBadges } from '../component/component_search_and_select_badges.js';
 import { reloadPersonalNoteEditor } from '../../controllers/back_signalement_view/personal_note.js';
-import { initializeVisitesUploadFilesModal } from '../../controllers/back_signalement_view/form_upload_documents.js';
 import {
   openPhotoAlbumAddEventListeners,
   updateBtnAddSuiviForm,
@@ -76,9 +74,6 @@ export function jsonResponseProcess(response) {
           case 'updateBtnAddSuiviForm':
             updateBtnAddSuiviForm();
             break;
-          case 'reloadTinyMCE':
-            reloadTinyMCE(fn.args[0]);
-            break;
           case 'attachAjaxFormHandlers':
             attachAjaxFormHandlers();
             break;
@@ -90,9 +85,6 @@ export function jsonResponseProcess(response) {
             break;
           case 'reloadPersonalNoteEditor':
             reloadPersonalNoteEditor();
-            break;
-          case 'initializeVisitesUploadFilesModal':
-            initializeVisitesUploadFilesModal();
             break;
           case 'openPhotoAlbumAddEventListeners':
             openPhotoAlbumAddEventListeners();
