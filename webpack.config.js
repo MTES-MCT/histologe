@@ -2,8 +2,20 @@ import Encore from '@symfony/webpack-encore';
 import Dotenv from 'dotenv-webpack';
 import webpack from 'webpack';
 import path from 'path';
+import { readFileSync } from 'fs';
 
 const isDev = process.env.NODE_ENV !== 'production';
+
+// Les fichiers copiés depuis node_modules ne sont pas hashés (TinyMCE résout ses plugins par chemin fixe) :
+// on versionne leur URL dans le manifest pour invalider le cache navigateur lors des montées de version.
+const readVersion = (pkg) => JSON.parse(readFileSync(`./node_modules/${pkg}/package.json`, 'utf8')).version;
+const vendorVersions = {
+    'build/dsfr/': readVersion('@gouvfr/dsfr'),
+    'build/popper/': readVersion('@popperjs/core'),
+    'build/leaflet/': readVersion('leaflet'),
+    'build/leaflet.vectorgrid/': readVersion('leaflet.vectorgrid'),
+    'build/tinymce/': `${readVersion('tinymce')}-${readVersion('tinymce-i18n')}`,
+};
 
 Encore
     // directory where compiled assets will be stored
@@ -99,6 +111,17 @@ Encore.enableStimulusBridge('./assets/controllers.json')
     .enableSourceMaps(!Encore.isProduction())
     // enables hashed filenames (e.g. app.abc123.css)
     .enableVersioning(Encore.isProduction())
+
+    .configureManifestPlugin(options => {
+        options.map = file => {
+            const prefix = Object.keys(vendorVersions).find(p => file.name.startsWith(p));
+            return prefix ? { ...file, path: `${file.path}?v=${vendorVersions[prefix]}` } : file;
+        };
+    })
+    // Suffixe appliqué par TinyMCE aux plugins, thèmes, skins et langues qu'il charge dynamiquement
+    .configureDefinePlugin(options => {
+        options.TINYMCE_CACHE_SUFFIX = JSON.stringify(`?v=${vendorVersions['build/tinymce/']}`);
+    })
 
     .enableSassLoader()
 

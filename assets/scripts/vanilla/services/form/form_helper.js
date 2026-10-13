@@ -38,6 +38,7 @@ export function initTinyMCE(selector) {
       selector: selector,
       browser_spellcheck: true,
       license_key: 'gpl',
+      cache_suffix: TINYMCE_CACHE_SUFFIX,
       language: 'fr-FR',
       plugins: 'lists link',
       link_title: false,
