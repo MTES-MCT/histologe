@@ -193,13 +193,12 @@ class Suivi implements EntityHistoryInterface
     }
 
     public function getCreatedByLabel(
-        string $separator = ' : ', 
+        string $separator = ' : ',
         bool $forBailleur = false,
         bool $withAgentName = true,
         bool $withAgentFonction = false,
-    ): ?string
-    {
-        $mention = null;
+    ): ?string {
+        $mention = '';
         if ($this->isAutomatic()) {
             $mention = '(Suivi automatique)';
         }
@@ -219,8 +218,8 @@ class Suivi implements EntityHistoryInterface
 
         $author = null;
         if (
-            in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByBailleur()) || 
-            SuiviCategory::INJONCTION_BAILLEUR_LOGIN_BAILLEUR === $this->getCategory()
+            in_array($this->getCategory(), SuiviCategory::categoriesSubmittedByBailleur())
+            || SuiviCategory::INJONCTION_BAILLEUR_LOGIN_BAILLEUR === $this->getCategory()
         ) {
             $author = $forBailleur ? 'Vous (bailleur)' : 'BAILLEUR';
         } elseif ($this->getCreatedBy()?->isUsager()) {
@@ -244,7 +243,11 @@ class Suivi implements EntityHistoryInterface
             }
         }
 
-        return implode($separator, array_filter([$partnerOrType, $author, $mention]));
+        $label = implode($separator, array_filter([$partnerOrType, $author]));
+        // La mention est accolée avec un espace, sauf si le séparateur est un retour à la ligne
+        $mentionSeparator = str_contains($separator, "\n") ? $separator : ' ';
+
+        return implode($mentionSeparator, array_filter([$label, $mention]));
     }
 
     public function getDescription(bool $transformHtml = true, bool $raw = false, SuiviRecipient $recipient = SuiviRecipient::DEFAULT): string
